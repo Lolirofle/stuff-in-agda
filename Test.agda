@@ -34,15 +34,15 @@ x ⇒ f = f x
 
 data Even : ℕ → Set where
   Even0 : Even ℕ0
-  Even𝑆 : (x : ℕ) → (Even x) → (Even(𝑆(𝑆(x))))
+  Even𝑆 : {x : ℕ} → (Even x) → (Even(𝑆(𝑆(x))))
 
 data Odd : ℕ → Set where
   Odd0 : Odd (𝑆(ℕ0))
-  Odd𝑆 : (x : ℕ) → (Odd x) → (Odd(𝑆(𝑆(x))))
+  Odd𝑆 : {x : ℕ} → (Odd x) → (Odd(𝑆(𝑆(x))))
 
 
 ℕ4IsEven : Even(𝑆(𝑆(𝑆(𝑆(ℕ0)))))
-ℕ4IsEven = Even𝑆 (𝑆(𝑆(ℕ0))) (Even𝑆 ℕ0 Even0)
+ℕ4IsEven = Even𝑆 (Even𝑆 Even0)
 
 ℕ5IsOdd : Odd(𝑆(𝑆(𝑆(𝑆(𝑆(ℕ0))))))
-ℕ5IsOdd = Odd𝑆 (𝑆(𝑆(𝑆(ℕ0)))) (Odd𝑆 (𝑆(ℕ0)) Odd0)
+ℕ5IsOdd = Odd𝑆 (Odd𝑆 Odd0)
