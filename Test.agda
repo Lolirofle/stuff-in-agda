@@ -25,12 +25,34 @@ x / ℕ0 = ℕ0
 id : (T : Set) → T → T
 id _ x = x
 
--- f 2 = 2.f
--- [→]-elim : (X : Set) → (Y : Set) → X → (X → Y) → Y
--- [→]-elim _ _ x f = f x
+------------------------------------------
+-- Conjunction
+data _∧_ (X : Set) (Y : Set) : Set where
+  [∧]-intro : X → Y → (X ∧ Y)
 
+[∧]-elimₗ : {X : Set} → {Y : Set} → (X ∧ Y) → X
+[∧]-elimₗ ([∧]-intro x _) = x
+
+[∧]-elimᵣ : {X : Set} → {Y : Set} → (X ∧ Y) → Y
+[∧]-elimᵣ ([∧]-intro _ y) = y
+
+------------------------------------------
+-- Implication
+[→]-elim : {X : Set} → {Y : Set} → X → (X → Y) → Y
+[→]-elim x f = f x
+
+infixl 0 _⇒_
 _⇒_ : {X : Set} → {Y : Set} → X → (X → Y) → Y
-x ⇒ f = f x
+x ⇒ f = [→]-elim x f
+
+------------------------------------------
+-- Equivalence
+_↔_ : (X : Set) → (Y : Set) → Set
+x ↔ y = (x → y) ∧ (y → x)
+
+------------------------------------------
+-- Disjunction
+-- _∨_ : (X : Set) → (Y : Set) → Set
 
 data Even : ℕ → Set where
   Even0 : Even ℕ0
@@ -40,9 +62,8 @@ data Odd : ℕ → Set where
   Odd0 : Odd (𝑆(ℕ0))
   Odd𝑆 : {x : ℕ} → (Odd x) → (Odd(𝑆(𝑆(x))))
 
-
 ℕ4IsEven : Even(𝑆(𝑆(𝑆(𝑆(ℕ0)))))
-ℕ4IsEven = Even𝑆 (Even𝑆 Even0)
+ℕ4IsEven = Even0 ⇒ Even𝑆 ⇒ Even𝑆
 
 ℕ5IsOdd : Odd(𝑆(𝑆(𝑆(𝑆(𝑆(ℕ0))))))
-ℕ5IsOdd = Odd𝑆 (Odd𝑆 Odd0)
+ℕ5IsOdd = Odd0 ⇒ Odd𝑆 ⇒ Odd𝑆
