@@ -11,6 +11,10 @@ data _∧_ (X : Set) (Y : Set) : Set where
 [∧]-elimᵣ : {X : Set} → {Y : Set} → (X ∧ Y) → Y
 [∧]-elimᵣ ([∧]-intro _ y) = y
 
+infixl 2 _,_
+_,_ : {X : Set} → {Y : Set} → X → Y → X ∧ Y
+x , y = [∧]-intro x y
+
 ------------------------------------------
 -- Implication
 [→]-elim : {X : Set} → {Y : Set} → X → (X → Y) → Y
