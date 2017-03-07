@@ -18,3 +18,5 @@ lift f g = f ∘ g
 
 swap : ∀ {n₁ n₂ n₃} {T₁ : Set n₁} → {T₂ : Set n₂} → {T₃ : Set n₃} → (T₁ → T₂ → T₃) → (T₂ → T₁ → T₃)
 swap f x₂ x₁ = f x₁ x₂
+
+-- 🔁(f ∘ 2)

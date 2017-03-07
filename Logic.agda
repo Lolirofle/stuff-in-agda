@@ -83,8 +83,13 @@ data ⊤ : Stmt where
 ------------------------------------------
 -- Convenient definitions with different semantics
 
+infixl 2 _⨯_
+_⨯_  : Stmt → Stmt → Stmt
+_⨯_ = _∧_
+
 infixl 2 _,_
-_,_ = _∧_
+_,_ : {X Y : Stmt} → X → Y → (X ⨯ Y)
+_,_ = [∧]-intro
 
 infixl 0 _⇒_
 _⇒_ : {X Y : Stmt} → X → (X → Y) → Y

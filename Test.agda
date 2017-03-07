@@ -1,5 +1,6 @@
 module Test where
 
+open import Data
 open import Functional
 open import Logic
 open import NaturalNumbers
@@ -45,3 +46,7 @@ Fnℕ+3 = [≡]-with-[ (λ x → x + 3) ]
 
 f : (⊥ ∧ ℕ) → ℕ
 f = [∧]-elimᵣ
+
+repeat : {R : Set} → R → (R → R) → ℕ → R
+repeat x _ ℕ0 = x
+repeat x f (𝑆 n) = f(repeat x f n)
