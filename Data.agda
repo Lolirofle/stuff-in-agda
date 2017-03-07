@@ -24,3 +24,9 @@ none = left unit
 map : ∀ {T₁ T₂} → (T₁ → T₂) → (Option T₁) → (Option T₂)
 map f (right x) = some(f(x))
 map f (left unit) = none
+
+
+
+infixl 2 _⨯_ _,_
+data _⨯_ (X : Type) (Y : Type) : Type where
+  _,_ : X → Y → (X ⨯ Y)

@@ -4,6 +4,7 @@ open import Data
 open import Functional
 open import Logic
 open import NaturalNumbers
+import Type as T
 
 ℕ4IsEven : Even((𝑆 ∘ 𝑆 ∘ 𝑆 ∘ 𝑆)(ℕ0))
 ℕ4IsEven = Even0 ⇒ Even𝑆 ⇒ Even𝑆
@@ -50,3 +51,18 @@ f = [∧]-elimᵣ
 repeat : {R : Set} → R → (R → R) → ℕ → R
 repeat x _ ℕ0 = x
 repeat x f (𝑆 n) = f(repeat x f n)
+
+data Data1 : T.Type where
+  data1,1 : Data1
+
+data Data2 : T.Type where
+  data2,1 : Data2
+  data2,2 : Data2
+
+data Data3 : T.Type where
+  data3,1 : Data3
+  data3,2 : Data3
+  data3,3 : Data3
+
+dataTest : (Data1 ⨯ Data2 ⨯ Data3) → Data3
+dataTest(x , y , z) = z
