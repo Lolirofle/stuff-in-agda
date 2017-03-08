@@ -25,6 +25,9 @@ module Tuple where
   right : {T₁ T₂ : Type} → (T₁ ⨯ T₂) → T₂
   right(_ , y) = y
 
+  ◅ = left
+  ▻ = right
+
 ------------------------------------------
 -- Either
 

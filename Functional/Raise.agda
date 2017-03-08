@@ -1,7 +1,7 @@
 module Functional.Raise where
 
 open import Functional
-import NaturalNumbers as Nat
+import Numeral.Natural as Nat
 
 _⁰ : ∀ {n} {T : Set n} → (T → T) → (T → T)
 _⁰ = id
@@ -34,19 +34,19 @@ _⁹ : ∀ {n} {T : Set n} → (T → T) → (T → T)
 _⁹ f = f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f
 
 _^_ : ∀ {n} {T : Set n} → (T → T) → Nat.ℕ → (T → T)
-_^_ f Nat.ℕ0 = id
-_^_ f (Nat.𝑆(n)) = f ∘ (f ^ n)
+_^_ f Nat.𝟎 = id
+_^_ f (Nat.𝐒(n)) = f ∘ (f ^ n)
 
 repeatₗ : ∀ {n} {X Y : Set n} → Nat.ℕ → Y → (Y → X → Y) → X → Y
-repeatₗ Nat.ℕ0 null op elem = null
-repeatₗ (Nat.𝑆(n)) null op elem = op (repeatₗ n null op elem) elem
+repeatₗ Nat.𝟎 null op elem = null
+repeatₗ (Nat.𝐒(n)) null op elem = op (repeatₗ n null op elem) elem
 -- Example: repeatₗ 3 id (_∘_) f = ((id ∘ f) ∘ f) ∘ f
 -- Example in Haskell: (foldl (.) (id) (take 5 (repeat f)))
 -- in Haskell: (\n null op elem -> foldl op null (take n (repeat elem))) :: Int -> a -> (b -> a -> b) -> b -> b
 
 repeatᵣ : ∀ {n} {X Y : Set n} → Nat.ℕ → X → (X → Y → Y) → Y → Y
-repeatᵣ Nat.ℕ0 elem op null = null
-repeatᵣ (Nat.𝑆(n)) elem op null = op elem (repeatᵣ n elem op null)
+repeatᵣ Nat.𝟎 elem op null = null
+repeatᵣ (Nat.𝐒(n)) elem op null = op elem (repeatᵣ n elem op null)
 -- in Haskell: (\n elem op null -> foldr op null (take n (repeat elem))) :: Int -> a -> (a -> b -> b) -> b -> b
 
 -- TODO: curry ∘ curry does not work with repeat because LHS≠RHS, but can this be fixed?
