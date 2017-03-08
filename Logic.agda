@@ -11,17 +11,16 @@ Stmt = Set
 ------------------------------------------
 -- Conjunction
 
-_∧_ : Stmt → Stmt → Stmt -- TODO: Använd en egen data definition trots allt?
+_∧_ : Stmt → Stmt → Stmt
 _∧_ = _⨯_
 
-[∧]-intro : {X Y : Stmt} → (X ⨯ Y) → (X ∧ Y)
-[∧]-intro = id
+pattern [∧]-intro x y = x , y
 
 [∧]-elimₗ : {X Y : Stmt} → (X ∧ Y) → X
-[∧]-elimₗ (x , _) = x
+[∧]-elimₗ = Tuple.left
 
 [∧]-elimᵣ : {X Y : Stmt} → (X ∧ Y) → Y
-[∧]-elimᵣ (_ , y) = y
+[∧]-elimᵣ = Tuple.right
 
 ------------------------------------------
 -- Implication
@@ -38,11 +37,11 @@ _∧_ = _⨯_
 _←_ : Stmt → Stmt → Stmt
 y ← x = x → y
 
-[←]-elim : {X Y : Stmt} → (X ⨯ (Y ← X)) → Y
-[←]-elim = [→]-elim
-
 [←]-intro : {X Y : Stmt} → Y → (Y ← X)
 [←]-intro = [→]-intro
+
+[←]-elim : {X Y : Stmt} → (X ⨯ (Y ← X)) → Y
+[←]-elim = [→]-elim
 
 ------------------------------------------
 -- Equivalence
@@ -50,11 +49,13 @@ y ← x = x → y
 _↔_ : Stmt → Stmt → Stmt
 x ↔ y = ((x ← y) ⨯ (x → y))
 
+pattern [↔]-intro l r = l , r
+
 [↔]-elimₗ : {X Y : Stmt} → (X ↔ Y) → (X ← Y)
-[↔]-elimₗ = [∧]-elimₗ
+[↔]-elimₗ = Tuple.left
 
 [↔]-elimᵣ : {X Y : Stmt} → (X ↔ Y) → (X → Y)
-[↔]-elimᵣ = [∧]-elimᵣ
+[↔]-elimᵣ = Tuple.right
 
 ------------------------------------------
 -- Disjunction
@@ -62,11 +63,8 @@ x ↔ y = ((x ← y) ⨯ (x → y))
 _∨_ : Stmt →  Stmt → Stmt
 _∨_ = _‖_
 
-[∨]-introₗ : {X Y : Stmt} → X → (X ∨ Y)
-[∨]-introₗ = Left
-
-[∨]-introᵣ : {X Y : Stmt} → Y → (X ∨ Y)
-[∨]-introᵣ = Right
+pattern [∨]-introₗ l = Left l
+pattern [∨]-introᵣ r = Right r
 
 [∨]-elim : {X Y Z : Stmt} → ((X → Z) ⨯ (Y → Z) ⨯ (X ∨ Y)) → Z
 [∨]-elim(f₁ , _ , (Left x)) = f₁ x

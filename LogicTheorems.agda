@@ -1,15 +1,16 @@
 module LogicTheorems where
 
+open import Data
 open import Functional
+open import Functional.Raise
 open import Logic
-open import Type
 
 [∧]-commutativity : {X Y : Stmt} → (X ∧ Y) → (Y ∧ X)
-[∧]-commutativity (x , y) = (y , x)
+[∧]-commutativity ([∧]-intro x y) = [∧]-intro y x
 
 [∨]-commutativity : {X Y : Stmt} → (X ∨ Y) → (Y ∨ X)
-[∨]-commutativity (Left x) = Right x
-[∨]-commutativity (Right y) = Left y
+[∨]-commutativity ([∨]-introₗ x) = [∨]-introᵣ x
+[∨]-commutativity ([∨]-introᵣ y) = [∨]-introₗ y
 
 [∧]-associativity : {X Y Z : Stmt} → ((X ∧ Y) ∧ Z) → (X ∧ (Y ∧ Z))
 [∧]-associativity ([∧]-intro ([∧]-intro x y) z) = [∧]-intro x ([∧]-intro y z)
@@ -26,7 +27,7 @@ open import Type
 [→]-lift = lift
 
 material-impl : ∀ {X Y : Stmt} → (¬ X) ∨ Y → (X → Y)
-material-impl = [∨]-elim ([→]-lift [⊥]-elim) ([→]-intro)
+material-impl = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([→]-lift [⊥]-elim) ([→]-intro)
 -- material-impl ([∨]-introₗ nx) x = [⊥]-elim(nx x)
 -- material-impl ([∨]-introₗ nx) = [⊥]-elim ∘ nx
 -- material-impl ([∨]-introᵣ y) = [→]-intro y
@@ -42,7 +43,7 @@ material-impl = [∨]-elim ([→]-lift [⊥]-elim) ([→]-intro)
 [→]-syllogism = swap lift
 
 constructive-dilemma : {A B C D : Stmt} → (A → B) → (C → D) → (A ∨ C) → (B ∨ D)
-constructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
+constructive-dilemma l r = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
 
 -- destructive-dilemma : {A B C D : Stmt} → (A → B) → (C → D) → ((¬ B) ∨ (¬ D)) → ((¬ A) ∨ (¬ C))
 -- destructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
@@ -80,7 +81,7 @@ modus-tollens = contrapositive
 -- ((X ∨ Y) → ⊥) → ((X → ⊥) ∧ (Y → ⊥))
 
 [¬]-[∨]₂ : {X Y : Stmt} → ((¬ X) ∧ (¬ Y)) → (¬ (X ∨ Y))
-[¬]-[∨]₂ ([∧]-intro nx ny) or = [∨]-elim nx ny or
+[¬]-[∨]₂ ([∧]-intro nx ny) or = [∨]-elim(nx , ny , or)
 -- ((¬ X) ∧ (¬ Y)) → (¬ (X ∨ Y))
 -- ((X → ⊥) ∧ (Y → ⊥)) → ((X ∨ Y) → ⊥)
 -- ((X → ⊥) ∧ (Y → ⊥)) → (X ∨ Y) → ⊥

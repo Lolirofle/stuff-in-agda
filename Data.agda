@@ -28,6 +28,7 @@ module Tuple where
 ------------------------------------------
 -- Either
 
+infixl 1 _‖_
 data _‖_ (T₁ : Type) (T₂ : Type) : Type where
   Left : T₁ → (T₁ ‖ T₂)
   Right : T₂ → (T₁ ‖ T₂)
@@ -43,11 +44,9 @@ module Either where
 Option : Type → Type
 Option T = (Unit ‖ T)
 
-Some : ∀ {T} → T → Option T
-Some = Right
+pattern Some x = Right x
 
-None : ∀ {T} → Option T
-None = Left unit
+pattern None = Left unit
 
 module Option where
   map : ∀ {T₁ T₂} → (T₁ → T₂) → (Option T₁) → (Option T₂)
