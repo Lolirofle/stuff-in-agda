@@ -16,16 +16,19 @@ data _≡_ : ℕ → ℕ → Set where
 
   [≡]-with-[_] : (f : ℕ → ℕ) → ∀ {x y} → (x ≡ y) → (f(x) ≡ f(y))
 
-  [+]-commutativity : ∀ {x y} → (x + y) ≡ (y + x)
-  [+]-associativity : ∀ {x y z} → ((x + y) + z) ≡ (x + (y + z))
-  [+]-identity : ∀ {x} → (0 + x) ≡ x
+--  [+]-commutativity : ∀ {x y} → (x + y) ≡ (y + x)
+--  [+]-associativity : ∀ {x y z} → ((x + y) + z) ≡ (x + (y + z))
+--  [+]-identity : ∀ {x} → (0 + x) ≡ x
 
-  [⋅]-commutativity : ∀ {x y} → (x ⋅ y) ≡ (y ⋅ x)
-  [⋅]-associativity : ∀ {x y z} → ((x ⋅ y) ⋅ z) ≡ (x ⋅ (y ⋅ z))
-  [⋅]-absorber0 : ∀ {x} → (0 ⋅ x) ≡ x
-  [⋅]-identity : ∀ {x} → (1 ⋅ x) ≡ x
+--  [⋅]-commutativity : ∀ {x y} → (x ⋅ y) ≡ (y ⋅ x)
+--  [⋅]-associativity : ∀ {x y z} → ((x ⋅ y) ⋅ z) ≡ (x ⋅ (y ⋅ z))
+--  [⋅]-absorber0 : ∀ {x} → (0 ⋅ x) ≡ x
+--  [⋅]-identity : ∀ {x} → (1 ⋅ x) ≡ x
 
-  [⋅][+]-distributivity : ∀ {x y z} → (x ⋅ (y + z)) ≡ (x ⋅ y) + (x ⋅ z)
+--  [⋅][+]-distributivity : ∀ {x y z} → (x ⋅ (y + z)) ≡ (x ⋅ y) + (x ⋅ z)
+
+-- [+]-identity : {x : ℕ} → (0 + x) ≡ x -- TODO: How to prove? Can it be proven?
+-- [+]-identity {x} = [≡]-reflexivity {x}
 
 -- Divisibility
 data Even : ℕ → Set where

@@ -3,7 +3,11 @@ module Numeral.Integer.Oper where
 open import Numeral.Natural as ℕ
   using (ℕ)
 import Numeral.Natural.Oper as ℕ
+import Numeral.Natural.UnclosedOper as ℕ
 open import Numeral.Integer
+open import Numeral.Integer.Sign
+import Numeral.Sign as Sign
+import Numeral.Sign.Oper as Sign
 
 ------------------------------------------
 -- Unary operations
@@ -35,11 +39,16 @@ open import Numeral.Integer
 -- Binary operations
 
 -- Addition
--- infixl 5 _+_
--- _+_ : ℤ → ℤ → ℤ
--- (+ x) + (+ y) = + (x ℕ.+ y)
--- (−𝐒 x) + (−𝐒 y) = −𝐒(x ℕ.+ (ℕ.𝐒(y)))
--- +𝐒(x) + −𝐒(ℕ0) = + x
--- −𝐒(ℕ0) + +𝐒(y) = + y
--- (+𝐒(x)) + (−𝐒(y)) = (+ x) + (− y)
--- (−𝐒(x)) + (+𝐒(y)) = (− x) + (+ y)
+_+_ : ℤ → ℤ → ℤ
+(+ x) + (+ y) = + (x ℕ.+ y)
+(−𝐒 x) + (−𝐒 y) = −𝐒(x ℕ.+ (ℕ.𝐒(y)))
+(+ x) + (−𝐒(y)) = x ℕ.− ℕ.𝐒(y)
+(−𝐒(x)) + (+ y) = y ℕ.− ℕ.𝐒(x)
+
+-- Subtraction
+_−_ : ℤ → ℤ → ℤ
+x − y = x + (−₁ y)
+
+-- Multiplication
+_⋅_ : ℤ → ℤ → ℤ
+x ⋅ y = ℕ.signed ((sign x) Sign.⋅ (sign y)) ((abs x) ℕ.⋅ (abs y))

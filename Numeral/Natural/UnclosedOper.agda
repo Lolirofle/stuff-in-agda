@@ -4,9 +4,14 @@ open import Numeral.Integer as ℤ
   using (ℤ)
 open import Numeral.Natural
 open import Numeral.Natural.Oper
+import Numeral.Sign as Sign
 
 -- Subtraction
 _−_ : ℕ → ℕ → ℤ
 x − 𝟎 = ℤ.+ x
 𝟎 − 𝐒(x) = ℤ.−𝐒(x)
 𝐒(x) − 𝐒(y) = ℤ.+(x −₀ y)
+
+signed : (Sign.+|−) → ℕ → ℤ
+signed (Sign.+) n = ℤ.+ n
+signed (Sign.−) n = ℤ.− n

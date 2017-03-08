@@ -14,6 +14,8 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Relation
 import      Numeral.Natural.UnclosedOper
 import      Numeral.Sign
+import      Numeral.Sign.Oper
+import      Numeral.Sign.Oper0
 import      Type as T
 
 ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
@@ -76,3 +78,9 @@ data Data3 : T.Type where
 
 dataTest : (Data1 ⨯ Data2 ⨯ Data3) → Data3
 dataTest(x , y , z) = z
+
+ℕ8Eqℕ2⋅4 : 8 ≡ 2 ⋅ 4
+ℕ8Eqℕ2⋅4 = [≡]-reflexivity
+
+ℕ0Eqℕ0⋅4 : 0 ≡ 0 ⋅ 4
+ℕ0Eqℕ0⋅4 = [≡]-reflexivity
