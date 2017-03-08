@@ -5,12 +5,21 @@ open import Functional
 open import Functional.Raise
 open import Logic
 
+------------------------------------------
+-- Commutativity
+
 [∧]-commutativity : {X Y : Stmt} → (X ∧ Y) → (Y ∧ X)
 [∧]-commutativity ([∧]-intro x y) = [∧]-intro y x
 
 [∨]-commutativity : {X Y : Stmt} → (X ∨ Y) → (Y ∨ X)
 [∨]-commutativity ([∨]-introₗ x) = [∨]-introᵣ x
 [∨]-commutativity ([∨]-introᵣ y) = [∨]-introₗ y
+
+[↔]-commutativity : {X Y : Stmt} → (X ↔ Y) → (Y ↔ X)
+[↔]-commutativity = [∧]-commutativity
+
+------------------------------------------
+-- Associativity
 
 [∧]-associativity : {X Y Z : Stmt} → ((X ∧ Y) ∧ Z) → (X ∧ (Y ∧ Z))
 [∧]-associativity ([∧]-intro ([∧]-intro x y) z) = [∧]-intro x ([∧]-intro y z)
@@ -20,8 +29,18 @@ open import Logic
 [∨]-associativity ([∨]-introₗ([∨]-introᵣ y)) = [∨]-introᵣ([∨]-introₗ y)
 [∨]-associativity ([∨]-introᵣ z) = [∨]-introᵣ([∨]-introᵣ z)
 
-[↔]-commutativity : {X Y : Stmt} → (X ↔ Y) → (Y ↔ X)
-[↔]-commutativity = [∧]-commutativity
+------------------------------------------
+-- Syllogism
+
+[∨]-syllogism : {X Y : Stmt} → (X ∨ Y) → (¬ X) → Y
+[∨]-syllogism ([∨]-introₗ x) nx = [⊥]-elim(nx x)
+[∨]-syllogism ([∨]-introᵣ y) = [→]-intro y
+
+[→]-syllogism : {X Y Z : Stmt} → (X → Y) → (Y → Z) → (X → Z)
+[→]-syllogism = swap lift
+
+------------------------------------------
+-- Other
 
 [→]-lift : {T X Y : Stmt} → (X → Y) → ((T → X) → (T → Y))
 [→]-lift = lift
@@ -34,13 +53,6 @@ material-impl = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([→]-lift [⊥]-eli
 
 -- material-impl2 : ∀ {X Y : Stmt} → (X → Y) → (¬ X) ∨ Y
 -- material-impl2 f =
-
-[∨]-syllogism : {X Y : Stmt} → (X ∨ Y) → (¬ X) → Y
-[∨]-syllogism ([∨]-introₗ x) nx = [⊥]-elim(nx x)
-[∨]-syllogism ([∨]-introᵣ y) = [→]-intro y
-
-[→]-syllogism : {X Y Z : Stmt} → (X → Y) → (Y → Z) → (X → Z)
-[→]-syllogism = swap lift
 
 constructive-dilemma : {A B C D : Stmt} → (A → B) → (C → D) → (A ∨ C) → (B ∨ D)
 constructive-dilemma l r = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
@@ -64,6 +76,9 @@ contrapositive f ny = [⊥]-elim ∘ ny ∘ f
 modus-tollens : {X Y : Stmt} → (X → Y) → (¬ Y) → (¬ X)
 modus-tollens = contrapositive
 
+------------------------------------------
+-- Almost-distributivity with duals (De-morgan's laws)
+
 -- [¬]-[∧]₁ : {X Y : Stmt} → (¬ (X ∧ Y)) → ((¬ X) ∨ (¬ Y))
 -- [¬]-[∧]₁ n = -- TODO: Not possible in constructive logic? Seems to require ¬¬X=X?
 -- ((X ∧ Y) → ⊥) → ((X → ⊥) ∨ (Y → ⊥))
@@ -86,6 +101,9 @@ modus-tollens = contrapositive
 -- ((X → ⊥) ∧ (Y → ⊥)) → ((X ∨ Y) → ⊥)
 -- ((X → ⊥) ∧ (Y → ⊥)) → (X ∨ Y) → ⊥
 -- (X → ⊥) → (Y → ⊥) → (X ∨ Y) → ⊥
+
+------------------------------------------
+-- Tuples and functions (Currying)
 
 [∧]-[→] : {X Y Z : Stmt} → ((X ∧ Y) → Z) → (X → Y → Z)
 [∧]-[→] and x y = and([∧]-intro x y)

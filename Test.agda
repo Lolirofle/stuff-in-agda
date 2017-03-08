@@ -2,6 +2,7 @@ module Test where
 
 open import Data
 open import Functional
+open import IO
 open import Logic
 open import LogicTheorems
 open import NaturalNumbers

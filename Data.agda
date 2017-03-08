@@ -46,7 +46,7 @@ Option T = (Unit ‖ T)
 
 pattern Some x = Right x
 
-pattern None = Left unit
+pattern None = Left ()
 
 module Option where
   map : ∀ {T₁ T₂} → (T₁ → T₂) → (Option T₁) → (Option T₂)

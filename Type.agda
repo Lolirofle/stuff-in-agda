@@ -4,5 +4,6 @@ Type = Set
 
 data ⊥ : Type where
 
-data Unit : Type where
-  unit : Unit
+record Unit : Type where
+
+{-# BUILTIN UNIT Unit #-}

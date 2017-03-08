@@ -12,18 +12,21 @@ infixl 5 _+_
 _+_ : ℕ → ℕ → ℕ
 x + ℕ0 = x
 x + 𝑆(y) = 𝑆(x + y)
+{-# BUILTIN NATPLUS _+_ #-}
 
 -- Multiplication
 infixl 6 _⋅_
 _⋅_ : ℕ → ℕ → ℕ
 x ⋅ ℕ0 = ℕ0
 x ⋅ 𝑆(y) = x + (x ⋅ y)
+{-# BUILTIN NATTIMES _⋅_ #-}
 
 -- Subtraction
 _−_ : ℕ → ℕ → ℕ
 x − ℕ0 = x
 ℕ0 − 𝑆(x) = ℕ0
 𝑆(x) − 𝑆(y) = x − y
+{-# BUILTIN NATMINUS _−_ #-}
 
 -- Division
 -- _/_ : ℕ → ℕ → ℕ
