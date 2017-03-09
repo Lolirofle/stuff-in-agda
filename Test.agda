@@ -16,6 +16,7 @@ import      Numeral.Natural.UnclosedOper
 import      Numeral.Sign
 import      Numeral.Sign.Oper
 import      Numeral.Sign.Oper0
+import      Structure.Equivalence as Eq
 import      Type as T
 
 ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
@@ -84,3 +85,9 @@ dataTest(x , y , z) = z
 
 ℕ0Eqℕ0⋅4 : 0 ≡ 0 ⋅ 4
 ℕ0Eqℕ0⋅4 = [≡]-reflexivity
+
+-- [⨯]-equivalenceRelation : Eq.EquivalenceRelation (_⨯_)
+-- [⨯]-equivalenceRelation =
+--   record {
+--     reflexivity = λ X → (X ⨯ X)
+--   }

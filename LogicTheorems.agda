@@ -61,7 +61,7 @@ constructive-dilemma l r = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([∨]-int
 -- destructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
 
 contrapositive : {X Y : Stmt} → (X → Y) → ((¬ X) ← (¬ Y))
-contrapositive f ny = [⊥]-elim ∘ ny ∘ f
+contrapositive f ny = [⊥]-elim ∘ ny ∘ f -- TODO: Is this a special case of [→]-syllogism?
 
 -- contrapositive2 : {X Y : Stmt} → ((¬ X) ← (¬ Y)) → (X → Y)
 -- contrapositive2 nf x = [⊥]-elim ∘ ((swap nf) x)
