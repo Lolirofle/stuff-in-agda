@@ -1,9 +1,9 @@
-module LogicTheorems where
+module LogicTheorems level where
 
 open import Data
 open import Functional
 open import Functional.Raise
-open import Logic
+open import Logic(level)
 
 ------------------------------------------
 -- Commutativity
@@ -21,13 +21,38 @@ open import Logic
 ------------------------------------------
 -- Associativity
 
-[∧]-associativity : {X Y Z : Stmt} → ((X ∧ Y) ∧ Z) → (X ∧ (Y ∧ Z))
-[∧]-associativity ([∧]-intro ([∧]-intro x y) z) = [∧]-intro x ([∧]-intro y z)
+[∧]-associativity : {X Y Z : Stmt} → ((X ∧ Y) ∧ Z) ↔ (X ∧ (Y ∧ Z))
+[∧]-associativity = [↔]-intro [∧]-associativity₁ [∧]-associativity₂
+  where [∧]-associativity₁ : {X Y Z : Stmt} → ((X ∧ Y) ∧ Z) ← (X ∧ (Y ∧ Z))
+        [∧]-associativity₁ ([∧]-intro x ([∧]-intro y z)) = [∧]-intro ([∧]-intro x y) z
 
-[∨]-associativity : {X Y Z : Stmt} → ((X ∨ Y) ∨ Z) → (X ∨ (Y ∨ Z))
-[∨]-associativity ([∨]-introₗ([∨]-introₗ x)) = [∨]-introₗ x
-[∨]-associativity ([∨]-introₗ([∨]-introᵣ y)) = [∨]-introᵣ([∨]-introₗ y)
-[∨]-associativity ([∨]-introᵣ z) = [∨]-introᵣ([∨]-introᵣ z)
+        [∧]-associativity₂ : {X Y Z : Stmt} → ((X ∧ Y) ∧ Z) → (X ∧ (Y ∧ Z))
+        [∧]-associativity₂ ([∧]-intro ([∧]-intro x y) z) = [∧]-intro x ([∧]-intro y z)
+
+[∨]-associativity : {X Y Z : Stmt} → ((X ∨ Y) ∨ Z) ↔ (X ∨ (Y ∨ Z))
+[∨]-associativity = [↔]-intro [∨]-associativity₁ [∨]-associativity₂
+  where [∨]-associativity₁ : {X Y Z : Stmt} → ((X ∨ Y) ∨ Z) ← (X ∨ (Y ∨ Z))
+        [∨]-associativity₁ ([∨]-introₗ x) = [∨]-introₗ([∨]-introₗ x)
+        [∨]-associativity₁ ([∨]-introᵣ([∨]-introₗ y)) = [∨]-introₗ([∨]-introᵣ y)
+        [∨]-associativity₁ ([∨]-introᵣ([∨]-introᵣ z)) = [∨]-introᵣ z
+
+        [∨]-associativity₂ : {X Y Z : Stmt} → ((X ∨ Y) ∨ Z) → (X ∨ (Y ∨ Z))
+        [∨]-associativity₂ ([∨]-introₗ([∨]-introₗ x)) = [∨]-introₗ x
+        [∨]-associativity₂ ([∨]-introₗ([∨]-introᵣ y)) = [∨]-introᵣ([∨]-introₗ y)
+        [∨]-associativity₂ ([∨]-introᵣ z) = [∨]-introᵣ([∨]-introᵣ z)
+
+        -- [∨]-associativity₂ : {X Y Z : Stmt} → ((X ∨ Y) ∨ Z) ← (X ∨ (Y ∨ Z))
+        -- [∨]-associativity₂ {X} {Y} {Z} stmt = [∨]-associativity₁ {Y} {Z} {X} ([∨]-commutativity {X} {Y ∨ Z} stmt)
+
+-- [↔]-associativity : {X Y Z : Stmt} → ((X ↔ Y) ↔ Z) → (X ↔ (Y ↔ Z))
+-- [↔]-associativity = 
+-- (Z → (X ↔ Y) , (X ↔ Y) → Z) → (X ↔ (Y ↔ Z))
+-- (Z → (X ↔ Y) , (X ↔ Y) → Z) → (X → (Y ↔ Z) , (Y ↔ Z) → X)
+-- (Z → (X → Y , Y → X) , (X → Y , Y → X) → Z) → (X → (Y → Z , Z → Y) , (Y → Z , Z → Y) → X)
+-- ((Z → (X → Y) , Z → (Y → X)) , (X → Y , Y → X) → Z) → ((X → (Y → Z) , X → (Z → Y)) , (Y → Z , Z → Y) → X)
+-- ((Z → X → Y , Z → Y → X) , (X → Y , Y → X) → Z) → ((X → Y → Z , X → Z → Y) , (Y → Z , Z → Y) → X)
+-- ((X → Z → Y , Y → Z → X) , (X → Y , Y → X) → Z) → ((X → Y → Z , X → Z → Y) , (Y → Z , Z → Y) → X)
+-- ((Y → Z → X , X → Z → Y) , (X → Y , Y → X) → Z) → ((X → Y → Z , X → Z → Y) , (Y → Z , Z → Y) → X)
 
 ------------------------------------------
 -- Syllogism
@@ -45,14 +70,23 @@ open import Logic
 [→]-lift : {T X Y : Stmt} → (X → Y) → ((T → X) → (T → Y))
 [→]-lift = lift
 
-material-impl : ∀ {X Y : Stmt} → (¬ X) ∨ Y → (X → Y)
-material-impl = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([→]-lift [⊥]-elim) ([→]-intro)
--- material-impl ([∨]-introₗ nx) x = [⊥]-elim(nx x)
--- material-impl ([∨]-introₗ nx) = [⊥]-elim ∘ nx
--- material-impl ([∨]-introᵣ y) = [→]-intro y
+material-impl₁ : {X Y : Stmt} → ((¬ X) ∨ Y) → (X → Y)
+material-impl₁ = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([→]-lift [⊥]-elim) ([→]-intro)
+-- ((¬ X) ∨ Y)
+-- ((X → ⊥) ∨ Y)
+-- ((X → ⊥) ∨ (X → Y))
+-- ((X → Y) ∨ (X → Y))
+-- (X → Y)
 
--- material-impl2 : ∀ {X Y : Stmt} → (X → Y) → (¬ X) ∨ Y
--- material-impl2 f =
+-- material-impl₂ : {X Y : Stmt} → (X → Y) → ((¬ X) ∨ Y) -- TODO: This does not work either?
+-- material-impl₂ xy = 
+-- (X → Y)
+-- ?
+
+-- ??? : {X Y : Stmt} → (X → Y) → (¬ (X ∧ (¬ Y))) -- TODO: This does not work either?
+-- (¬ (X ∧ (¬ Y)))
+-- ((X ∧ (Y → ⊥)) → ⊥)
+-- ?
 
 constructive-dilemma : {A B C D : Stmt} → (A → B) → (C → D) → (A ∨ C) → (B ∨ D)
 constructive-dilemma l r = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
@@ -60,21 +94,22 @@ constructive-dilemma l r = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([∨]-int
 -- destructive-dilemma : {A B C D : Stmt} → (A → B) → (C → D) → ((¬ B) ∨ (¬ D)) → ((¬ A) ∨ (¬ C))
 -- destructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
 
-contrapositive : {X Y : Stmt} → (X → Y) → ((¬ X) ← (¬ Y))
-contrapositive f ny = [⊥]-elim ∘ ny ∘ f
+contrapositive₁ : {X Y : Stmt} → (X → Y) → ((¬ X) ← (¬ Y))
+contrapositive₁ f ny = [⊥]-elim ∘ ny ∘ f
 
--- contrapositive2 : {X Y : Stmt} → ((¬ X) ← (¬ Y)) → (X → Y)
--- contrapositive2 nf x = [⊥]-elim ∘ ((swap nf) x)
+contrapositive₂ : {X Y : Stmt} → (X → (¬ (¬ Y))) ← ((¬ X) ← (¬ Y)) -- TODO: At least this works? Or am I missing something?
+contrapositive₂ nf x = [⊥]-elim ∘ ((swap nf) x)
 -- (¬ X) ← (¬ Y)
 -- (¬ Y) → (¬ X)
+-- (Y → ⊥) → (X → ⊥)
 -- (Y → ⊥) → X → ⊥
--- (Y → ⊥) → ⊥
--- (Y → Y) → X → ⊥
--- X → ⊥
--- X → Y
+-- X → (Y → ⊥) → ⊥
+-- X → ((Y → ⊥) → ⊥)
+-- X → (¬ (Y → ⊥))
+-- X → (¬ (¬ Y))
 
 modus-tollens : {X Y : Stmt} → (X → Y) → (¬ Y) → (¬ X)
-modus-tollens = contrapositive
+modus-tollens = contrapositive₁
 
 ------------------------------------------
 -- Almost-distributivity with duals (De-morgan's laws)
@@ -90,23 +125,34 @@ modus-tollens = contrapositive
 -- (X → ⊥) → (X ∧ Y) → ⊥
 -- (Y → ⊥) → (X ∧ Y) → ⊥
 
-[¬]-[∨]₁ : {X Y : Stmt} → (¬ (X ∨ Y)) → ((¬ X) ∧ (¬ Y))
-[¬]-[∨]₁ f = [∧]-intro (f ∘ [∨]-introₗ) (f ∘ [∨]-introᵣ)
--- (¬ (X ∨ Y)) → ((¬ X) ∧ (¬ Y))
--- ((X ∨ Y) → ⊥) → ((X → ⊥) ∧ (Y → ⊥))
+[¬]-[∨] : {X Y : Stmt} → ((¬ X) ∧ (¬ Y)) ↔ (¬ (X ∨ Y))
+[¬]-[∨] = [↔]-intro [¬]-[∨]₁ [¬]-[∨]₂
+  where [¬]-[∨]₁ : {X Y : Stmt} → (¬ (X ∨ Y)) → ((¬ X) ∧ (¬ Y))
+        [¬]-[∨]₁ f = [∧]-intro (f ∘ [∨]-introₗ) (f ∘ [∨]-introᵣ)
+        -- (¬ (X ∨ Y)) → ((¬ X) ∧ (¬ Y))
+        -- ((X ∨ Y) → ⊥) → ((X → ⊥) ∧ (Y → ⊥))
 
-[¬]-[∨]₂ : {X Y : Stmt} → ((¬ X) ∧ (¬ Y)) → (¬ (X ∨ Y))
-[¬]-[∨]₂ ([∧]-intro nx ny) or = [∨]-elim(nx , ny , or)
--- ((¬ X) ∧ (¬ Y)) → (¬ (X ∨ Y))
--- ((X → ⊥) ∧ (Y → ⊥)) → ((X ∨ Y) → ⊥)
--- ((X → ⊥) ∧ (Y → ⊥)) → (X ∨ Y) → ⊥
--- (X → ⊥) → (Y → ⊥) → (X ∨ Y) → ⊥
+        [¬]-[∨]₂ : {X Y : Stmt} → ((¬ X) ∧ (¬ Y)) → (¬ (X ∨ Y))
+        [¬]-[∨]₂ ([∧]-intro nx ny) or = [∨]-elim(nx , ny , or)
+        -- ((¬ X) ∧ (¬ Y)) → (¬ (X ∨ Y))
+        -- ((X → ⊥) ∧ (Y → ⊥)) → ((X ∨ Y) → ⊥)
+        -- ((X → ⊥) ∧ (Y → ⊥)) → (X ∨ Y) → ⊥
+        -- (X → ⊥) → (Y → ⊥) → (X ∨ Y) → ⊥
 
 ------------------------------------------
--- Tuples and functions (Currying)
+-- Conjunction and implication (Tuples and functions)
 
-[∧]-[→] : {X Y Z : Stmt} → ((X ∧ Y) → Z) → (X → Y → Z)
-[∧]-[→] and x y = and([∧]-intro x y)
+[∧]↔[→]-in-assumption : {X Y Z : Stmt} → ((X ∧ Y) → Z) ↔ (X → Y → Z)
+[∧]↔[→]-in-assumption = [↔]-intro Tuple.uncurry Tuple.curry
 
-[→]-[∧] : {X Y Z : Stmt} → (X → Y → Z) → ((X ∧ Y) → Z)
-[→]-[∧] f ([∧]-intro x y) = f x y
+[→]-left-distributivity-over-[∧] : {X Y Z : Stmt} → (X → (Y ∧ Z)) ↔ ((X → Y) ∧ (X → Z))
+[→]-left-distributivity-over-[∧] = [↔]-intro [→]-left-distributivity-over-[∧]₁ [→]-left-distributivity-over-[∧]₂
+  where [→]-left-distributivity-over-[∧]₁ : {X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) → (X → (Y ∧ Z))
+        [→]-left-distributivity-over-[∧]₁ ([∧]-intro xy xz) x = [∧]-intro (xy(x)) (xz(x))
+
+        [→]-left-distributivity-over-[∧]₂ : {X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) ← (X → (Y ∧ Z))
+        [→]-left-distributivity-over-[∧]₂ both = [∧]-intro ([∧]-elimₗ ∘ both) ([∧]-elimᵣ ∘ both)
+
+-- (X ∧ Y) ∨ (X ∧ Z)
+-- X → (Y ∨ Z)
+-- X ∨ (Y ∧ Z)

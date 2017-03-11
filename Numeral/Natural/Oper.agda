@@ -2,15 +2,19 @@ module Numeral.Natural.Oper where
 
 open import Numeral.Natural
 
+infixl 10010 _+_
+infix  10010 _−₀_
+infixl 10020 _⋅_
+-- infix  10020 _/₀_
+infixl 10030 _^_
+
 -- Addition
-infixl 5 _+_
 _+_ : ℕ → ℕ → ℕ
 x + 𝟎 = x
 x + 𝐒(y) = 𝐒(x + y)
 {-# BUILTIN NATPLUS _+_ #-}
 
 -- Multiplication
-infixl 6 _⋅_
 _⋅_ : ℕ → ℕ → ℕ
 x ⋅ 𝟎 = 𝟎
 x ⋅ 𝐒(y) = x + (x ⋅ y)

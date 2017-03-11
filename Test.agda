@@ -1,11 +1,16 @@
 module Test where
 
+open import Type
+  renaming (Level to Lvl)
+
 open import Data
+import      FFI.IO   as FFI
+import      FFI.Type as FFI
 open import Functional
 import      Functional.Raise
-open import IO
-open import Logic
-open import LogicTheorems
+open import Logic Lvl.𝟎
+  hiding (⊥)
+open import LogicTheorems Lvl.𝟎
 import      Numeral.Integer
 import      Numeral.Integer.Oper
 import      Numeral.Integer.Sign
@@ -16,7 +21,7 @@ import      Numeral.Natural.UnclosedOper
 import      Numeral.Sign
 import      Numeral.Sign.Oper
 import      Numeral.Sign.Oper0
-import      Type as T
+import      String
 
 ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
 ℕ4IsEven = Even0 ⇒ Even𝐒 ⇒ Even𝐒
@@ -48,30 +53,30 @@ import      Type as T
 ℕ3Eqℕ2+1 : (𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎) + 𝐒(𝟎)
 ℕ3Eqℕ2+1 = [≡]-reflexivity
 
-TestImpl : 𝐒(𝟎) ≡ (𝟎 ⇒ 𝐒)
-TestImpl = [≡]-reflexivity
+testImpl : 𝐒(𝟎) ≡ (𝟎 ⇒ 𝐒)
+testImpl = [≡]-reflexivity
 
-Fnℕ+1 : (𝟎 ≡ 𝐒(𝟎)) → (𝐒(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎))
-Fnℕ+1 = [≡]-with-[ 𝐒 ]
+fnℕ+1 : (𝟎 ≡ 𝐒(𝟎)) → (𝐒(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎))
+fnℕ+1 = [≡]-with-[ 𝐒 ]
 
-Fnℕ+3 : ∀ {x} → (x ≡ 5) → (x + 3 ≡ 8)
-Fnℕ+3 = [≡]-with-[ (λ x → x + 3) ]
+fnℕ+3 : ∀ {x} → (x ≡ 5) → (x + 3 ≡ 8)
+fnℕ+3 = [≡]-with-[ (λ x → x + 3) ]
 
-f : (⊥ ∧ ℕ) → ℕ
-f = [∧]-elimᵣ
+testBottom : (⊥ ∧ ℕ) → ℕ
+testBottom = [∧]-elimᵣ
 
 repeat : {R : Set} → R → (R → R) → ℕ → R
 repeat x _ 𝟎 = x
 repeat x f (𝐒 n) = f(repeat x f n)
 
-data Data1 : T.Type where
+data Data1 : Type where
   data1,1 : Data1
 
-data Data2 : T.Type where
+data Data2 : Type where
   data2,1 : Data2
   data2,2 : Data2
 
-data Data3 : T.Type where
+data Data3 : Type where
   data3,1 : Data3
   data3,2 : Data3
   data3,3 : Data3
@@ -84,3 +89,109 @@ dataTest(x , y , z) = z
 
 ℕ0Eqℕ0⋅4 : 0 ≡ 0 ⋅ 4
 ℕ0Eqℕ0⋅4 = [≡]-reflexivity
+
+-- coprimes m n = ((2*m-n,m) , (2*m+n,m) , (m+2*n,n))
+-- coprimes' m n = (a1/a2,b1/b2,c1/c2) where ((a1,a2),(b1,b2),(c1,c2))=f m n
+-- map (\m -> map (\n -> (m,n,coprimes m n,coprimes' m n)) [1..m-1]) [1..10]
+
+-- 2 − n/m
+-- 2 + n/m
+-- 2 + m/n
+
+-- 2 − n₁/m₁ + 2 − n₂/m₂
+-- 4 − n₁/m₁ − n₂/m₂
+-- 4 − (m₂⋅n₁ − m₁⋅n₂)/(m₁⋅m₂)
+-- 4 + (m₁⋅n₂ − m₂⋅n₁)/(m₁⋅m₂)
+-- 2 + 2 + (m₁⋅n₂ − m₂⋅n₁)/(m₁⋅m₂)
+-- 2 + (2⋅m₁⋅m₂)/(m₁⋅m₂) + (m₁⋅n₂ − m₂⋅n₁)/(m₁⋅m₂)
+-- 2 + (2⋅m₁⋅m₂ + m₁⋅n₂ − m₂⋅n₁)/(m₁⋅m₂)
+
+-- 1  1
+-- 2  3
+-- 3  6
+-- 4  10
+-- 5  15
+-- 6  21
+-- 7  28
+-- 8  36
+-- 9  45
+-- 10 55
+-- n⋅(n+1)/2 = x
+-- n⋅(n+1) = 2⋅x
+-- n²+n = 2⋅x
+-- n = 1/2 + √(1/4+2⋅x)
+-- n = 1/2 + √(9⋅x/4)
+-- n = 1/2 + 3⋅√x/2
+-- n = (1 + 3⋅√x)/2
+-- permutation with sum 4: 1/3 2/2 3/1
+
+-- curryN : {T : Set} → {a : _} → ℕ → (a → T) → (a → T)
+-- curryN 𝟎 = id
+-- curryN (𝐒(n)) = Tuple.curry ∘ (curryN n)
+
+-- test : {a b b1 c : _} → (((a , b) , b1) -> c) -> a -> b -> b1 -> c
+-- test = curryN 2
+
+-- test : {a b c d : Set} → (((a ⨯ b) ⨯ c) -> d) -> a -> b -> c -> d
+-- test = Tuple.curry ∘ Tuple.curry
+
+-- data repeatType (b : Set) : ∀ {q} {a : Set q} -> a -> Set where
+--   simple : repeatType b (b -> b)
+--   complex : repeatType b (b -> (∀ {c : Set} -> b -> c))
+
+-- repeat2 : ∀ {b d c} {q : repeatType c d} -> (r : repeatType b c) -> c -> b -> d
+-- repeat2 f x simple = f (f x)
+-- repeat2 f x complex = f (f x)
+
+_⨯^_ : ∀ {n} → Set n → ℕ → Set n
+_⨯^_ _    𝟎      = Unit
+_⨯^_ type (𝐒(𝟎)) = type
+_⨯^_ type (𝐒(n)) = type ⨯ (type ⨯^ n)
+
+_→^_ : ∀ {n} → Set n → ℕ → Set n
+_→^_ _    𝟎      = Unit
+_→^_ type (𝐒(𝟎)) = type
+_→^_ type (𝐒(n)) = type → (type →^ n)
+
+repeatOp : ∀ {n} → Set n → (Set n → Set n → Set n) → ℕ → Set n
+repeatOp type _  𝟎      = type
+repeatOp type op (𝐒(n)) = op type (repeatOp type op n)
+
+_⨯^₂_ : ∀ {n} → Set n → ℕ → Set n
+_⨯^₂_ _ 𝟎 = Unit
+_⨯^₂_ type (𝐒(n)) = repeatOp type (_⨯_) n
+
+-- curryN : {n : ℕ} → ∀ {T} → (T →^ n)
+
+-- not mine
+-- data repeatType (b : Set) : ∀ {q} {a : Set q} -> a -> Set where
+--   simple : repeatType b (b -> b)
+--   complex : repeatType b (b -> (∀ {c : Set} -> b -> c))
+-- repeat2 : ∀ {b d c} {q : repeatType c d} -> (r : repeatType b c) -> c -> b -> d
+-- repeat2 f x simple = f (f x)
+-- repeat2 f x complex = f (f x)
+
+-- module Test1 where
+--   F : (ℕ ⨯ ℕ) → ℕ
+--   F(x , y) = x + y
+--   f : ℕ → ℕ → ℕ
+--   f = (Functional.Raise.repeatᵣ 1 Tuple.curry (_∘_) id) F
+-- 
+--   testf₁ : F(1 , 2) ≡ 1 + 2
+--   testf₁ = [≡]-reflexivity
+-- 
+--   testf₂ : f 1 2 ≡ 1 + 2
+--   testf₂ = [≡]-reflexivity
+
+module Test2 where
+  f : ℕ
+  f = (Functional.Raise.repeatᵣ 4 𝐒 (_∘_) id) 0
+
+  testf₁ : f ≡ 4
+  testf₁ = [≡]-reflexivity
+
+-- f₂ : ∀ {n} → {A B C D : TypeN n} → (((A ⨯ B) ⨯ C) -> D) -> (A -> B -> C -> D)
+-- f₂ = Functional.Raise.repeatᵣ 2 id (_∘_) Tuple.curry
+
+main : FFI.IO FFI.Unit
+main = FFI.printStrLn "Okay"

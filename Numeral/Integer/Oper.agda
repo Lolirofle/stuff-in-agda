@@ -38,6 +38,9 @@ import Numeral.Sign.Oper as Sign
 ------------------------------------------
 -- Binary operations
 
+infixl 10010 _+_
+infixl 10020 _⋅_
+
 -- Addition
 _+_ : ℤ → ℤ → ℤ
 (+ x) + (+ y) = + (x ℕ.+ y)

@@ -5,53 +5,64 @@ open import Type
 ------------------------------------------
 -- Tuple
 
-infixl 2 _⨯_ _,_
-data _⨯_ (X : Type) (Y : Type) : Type where
-  _,_ : X → Y → (X ⨯ Y)
-
 module Tuple where
-  curry : {T₁ T₂ T₃ : Type} → ((T₁ ⨯ T₂) → T₃) → (T₁ → T₂ → T₃)
+  infixl 200 _⨯_ _,_
+
+  data _⨯_ {n} (X : TypeN n) (Y : TypeN n) : TypeN n where
+    _,_ : X → Y → (X ⨯ Y)
+
+  curry : ∀ {n} → {T₁ T₂ T₃ : TypeN n} → ((T₁ ⨯ T₂) → T₃) → (T₁ → T₂ → T₃)
   curry f x₁ x₂ = f(x₁ , x₂)
 
-  uncurry : {T₁ T₂ T₃ : Type} → (T₁ → T₂ → T₃) → ((T₁ ⨯ T₂) → T₃)
+  uncurry : ∀ {n} → {T₁ T₂ T₃ : TypeN n} → (T₁ → T₂ → T₃) → ((T₁ ⨯ T₂) → T₃)
   uncurry f (x₁ , x₂) = f x₁ x₂
 
-  swap : {T₁ T₂ : Type} → (T₁ ⨯ T₂) → (T₂ ⨯ T₁)
+  swap : ∀ {n} → {T₁ T₂ : TypeN n} → (T₁ ⨯ T₂) → (T₂ ⨯ T₁)
   swap(x , y) = (y , x)
 
-  left : {T₁ T₂ : Type} → (T₁ ⨯ T₂) → T₁
+  left : ∀ {n} → {T₁ T₂ : TypeN n} → (T₁ ⨯ T₂) → T₁
   left(x , _) = x
 
-  right : {T₁ T₂ : Type} → (T₁ ⨯ T₂) → T₂
+  right : ∀ {n} → {T₁ T₂ : TypeN n} → (T₁ ⨯ T₂) → T₂
   right(_ , y) = y
 
   ◅ = left
   ▻ = right
 
+open Tuple  using (_⨯_ ; _,_) public
+
 ------------------------------------------
 -- Either
 
-infixl 1 _‖_
-data _‖_ (T₁ : Type) (T₂ : Type) : Type where
-  Left : T₁ → (T₁ ‖ T₂)
-  Right : T₂ → (T₁ ‖ T₂)
-
 module Either where
-  swap : ∀ {T₁ T₂} → (T₁ ‖ T₂) → (T₂ ‖ T₁)
+  infixl 100 _‖_
+
+  data _‖_ {n} (T₁ : TypeN n) (T₂ : TypeN n) : TypeN n where
+    Left : T₁ → (T₁ ‖ T₂)
+    Right : T₂ → (T₁ ‖ T₂)
+
+  swap : ∀ {n} → {T₁ T₂ : TypeN n} → (T₁ ‖ T₂) → (T₂ ‖ T₁)
   swap (Left t) = Right t
   swap (Right t) = Left t
+
+  map : ∀ {n} → {A₁ A₂ B₁ B₂ : TypeN n} → (A₁ → A₂) → (B₁ → B₂) → (A₁ ‖ B₁) → (A₂ ‖ B₂)
+  map fa _ (Left  a) = Left (fa(a))
+  map _ fb (Right b) = Right(fb(b))
+
+open Either using (_‖_) public
 
 ------------------------------------------
 -- Option
 
-Option : Type → Type
-Option T = (Unit ‖ T)
-
-pattern Some x = Right x
-
-pattern None = Left ()
-
 module Option where
-  map : ∀ {T₁ T₂} → (T₁ → T₂) → (Option T₁) → (Option T₂)
-  map f (Right x) = Some(f(x))
-  map f (Left unit) = None
+  Option : ∀ {n} → (TypeN n) → (TypeN n)
+  Option T = (Unit ‖ T)
+
+  pattern Some x = Either.Right x
+  pattern None   = Either.Left  unit
+
+  map : ∀ {n} → {T₁ T₂ : TypeN n} → (T₁ → T₂) → (Option T₁) → (Option T₂)
+  map f (Some x) = Some(f(x))
+  map f (None  ) = None
+
+open Option using (Option) public

@@ -8,7 +8,7 @@ open import Numeral.Natural.Oper
 [ℕ]-induction base next (𝐒(n)) = next(n)([ℕ]-induction base next n)
 
 -- Equals
-infixl 1 _≡_
+infixl 100 _≡_
 data _≡_ : ℕ → ℕ → Set where
   [≡]-reflexivity : ∀ {x} → (x ≡ x)
   [≡]-symmetry : ∀ {x y} → (x ≡ y) → (y ≡ x)
