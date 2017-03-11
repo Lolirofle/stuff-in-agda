@@ -21,6 +21,7 @@ import      Numeral.Natural.UnclosedOper
 import      Numeral.Sign
 import      Numeral.Sign.Oper
 import      Numeral.Sign.Oper0
+import      Structure.Equivalence as Eq
 import      String
 
 ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
@@ -89,6 +90,12 @@ dataTest(x , y , z) = z
 
 ℕ0Eqℕ0⋅4 : 0 ≡ 0 ⋅ 4
 ℕ0Eqℕ0⋅4 = [≡]-reflexivity
+
+-- [⨯]-equivalenceRelation : Eq.EquivalenceRelation (_⨯_)
+-- [⨯]-equivalenceRelation =
+--   record {
+--     reflexivity = λ X → (X ⨯ X)
+--   }
 
 -- coprimes m n = ((2*m-n,m) , (2*m+n,m) , (m+2*n,n))
 -- coprimes' m n = (a1/a2,b1/b2,c1/c2) where ((a1,a2),(b1,b2),(c1,c2))=f m n
