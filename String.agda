@@ -1,4 +1,8 @@
 module String where
 
-postulate String : Set
-{-# BUILTIN STRING String #-}
+import Level as Lvl
+
+postulate StringL : {n : _} → Set n
+{-# BUILTIN STRING StringL #-}
+
+String = StringL {Lvl.𝟎}

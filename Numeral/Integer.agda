@@ -5,11 +5,11 @@ open import Numeral.Natural as ℕ
 import Numeral.Natural.Oper as ℕ
 
 data ℤ : Set where
-  +_ : ℕ → ℤ
+  +_  : ℕ → ℤ
   −𝐒_ : ℕ → ℤ
 
-{-# BUILTIN INTEGER ℤ #-}
-{-# BUILTIN INTEGERPOS +_ #-}
+{-# BUILTIN INTEGER         ℤ #-}
+{-# BUILTIN INTEGERPOS     +_ #-}
 {-# BUILTIN INTEGERNEGSUC −𝐒_ #-}
 
 ------------------------------------------
@@ -26,5 +26,5 @@ pattern 𝟎 = + ℕ.𝟎
 
 -- Absolute value
 abs : ℤ → ℕ
-abs(+ x) = x
+abs(+ x)  = x
 abs(−𝐒 x) = x
