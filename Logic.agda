@@ -1,12 +1,17 @@
-module Logic where
+module Logic level where
 
 open import Data
 open import Functional
 
+infixl 10 _⇒_
+infixl 1005 _∧_
+infixl 1004 _∨_
+infixl 1000 _←_ _↔_
+
 ------------------------------------------
 -- Statement
 
-Stmt = Set
+Stmt = Set level
 
 ------------------------------------------
 -- Conjunction
@@ -26,7 +31,7 @@ pattern [∧]-intro x y = x , y
 -- Implication
 
 [→]-elim : {X Y : Stmt} → (X ⨯ (X → Y)) → Y
-[→]-elim(x , f) = f(x)
+[→]-elim = Tuple.uncurry apply
 
 [→]-intro : {X Y : Stmt} → Y → (X → Y)
 [→]-intro = const
@@ -63,12 +68,12 @@ pattern [↔]-intro l r = l , r
 _∨_ : Stmt →  Stmt → Stmt
 _∨_ = _‖_
 
-pattern [∨]-introₗ l = Left l
-pattern [∨]-introᵣ r = Right r
+pattern [∨]-introₗ l = Either.Left l
+pattern [∨]-introᵣ r = Either.Right r
 
 [∨]-elim : {X Y Z : Stmt} → ((X → Z) ⨯ (Y → Z) ⨯ (X ∨ Y)) → Z
-[∨]-elim(f₁ , _ , (Left x)) = f₁ x
-[∨]-elim(_ , f₂ , (Right y)) = f₂ y
+[∨]-elim(f₁ , _ , (Either.Left x)) = f₁ x
+[∨]-elim(_ , f₂ , (Either.Right y)) = f₂ y
 
 ------------------------------------------
 -- Bottom (false, absurdity, empty)
@@ -103,6 +108,5 @@ data ⊤ : Stmt where
 ------------------------------------------
 -- Convenient definitions with different semantics
 
-infixl 0 _⇒_
 _⇒_ : {X Y : Stmt} → X → (X → Y) → Y
 _⇒_ = apply

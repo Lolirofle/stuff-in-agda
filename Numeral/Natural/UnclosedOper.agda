@@ -6,6 +6,8 @@ open import Numeral.Natural
 open import Numeral.Natural.Oper
 import Numeral.Sign as Sign
 
+infix  10010 _−_
+
 -- Subtraction
 _−_ : ℕ → ℕ → ℤ
 x − 𝟎 = ℤ.+ x
