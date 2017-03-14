@@ -1,13 +1,11 @@
 module Test where
 
-open import Type
-  renaming (Level to Lvl)
-
 open import Data
 import      FFI.IO   as FFI
 import      FFI.Type as FFI
 open import Functional
 import      Functional.Raise
+import      Level as Lvl
 open import Logic Lvl.𝟎
   hiding (⊥)
 open import LogicTheorems Lvl.𝟎
@@ -28,6 +26,7 @@ import      Structure.Relator.Equivalence as Eq
 import      Structure.Relator.Ordering
 import      Structure.Relator.Properties
 import      String
+open import Type
 
 ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
 ℕ4IsEven = Even0 ⇒ Even𝐒 ⇒ Even𝐒
