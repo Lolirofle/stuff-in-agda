@@ -19,7 +19,7 @@ import      Numeral.Natural.UnclosedOper
 import      Numeral.Sign
 import      Numeral.Sign.Oper
 import      Numeral.Sign.Oper0
-import      Relator.Equals
+open import Relator.Equals Lvl.𝟎
 import      Structure.Operator.Group
 import      Structure.Operator.Properties
 import      Structure.Relator.Equivalence as Eq

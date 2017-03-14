@@ -1,31 +1,62 @@
 module Numeral.Natural.Relation where
 
+import Level as Lvl
+open import Logic
 open import Numeral.Natural
 open import Numeral.Natural.Oper
+open import Relator.Equals Lvl.𝟎
 
 [ℕ]-induction : {X : ℕ → Set} → X(𝟎) → ((i : ℕ) → X(i) → X(𝐒(i))) → (n : ℕ) → X(n)
 [ℕ]-induction base next 𝟎 = base
 [ℕ]-induction base next (𝐒(n)) = next(n)([ℕ]-induction base next n)
 
--- Equals
-infixl 100 _≡_
-data _≡_ : ℕ → ℕ → Set where
-  [≡]-reflexivity : ∀ {x} → (x ≡ x)
-  [≡]-symmetry : ∀ {x y} → (x ≡ y) → (y ≡ x)
-  [≡]-transitivity : ∀ {x y z} → (x ≡ y) → (y ≡ z) → (x ≡ z)
+[+]-identityₗ : ∀ {x} → (0 + x) ≡ x
+[+]-identityₗ {x} = [ℕ]-induction base next x where
+  base : ((0 + 0) ≡ 0)
+  base = [≡]-intro
 
-  [≡]-with-[_] : (f : ℕ → ℕ) → ∀ {x y} → (x ≡ y) → (f(x) ≡ f(y))
+  next : (i : ℕ) → ((0 + i) ≡ i) → ((0 + 𝐒(i)) ≡ 𝐒(i))
+  next _ = [≡]-with-[ 𝐒 ]
 
---  [+]-commutativity : ∀ {x y} → (x + y) ≡ (y + x)
---  [+]-associativity : ∀ {x y z} → ((x + y) + z) ≡ (x + (y + z))
---  [+]-identity : ∀ {x} → (0 + x) ≡ x
+[+]-identityᵣ : ∀ {x} → (x + 0) ≡ x
+[+]-identityᵣ {x} = [ℕ]-induction base next x where
+  base : ((0 + 0) ≡ 0)
+  base = [≡]-intro
 
---  [⋅]-commutativity : ∀ {x y} → (x ⋅ y) ≡ (y ⋅ x)
---  [⋅]-associativity : ∀ {x y z} → ((x ⋅ y) ⋅ z) ≡ (x ⋅ (y ⋅ z))
---  [⋅]-absorber0 : ∀ {x} → (0 ⋅ x) ≡ x
---  [⋅]-identity : ∀ {x} → (1 ⋅ x) ≡ x
+  next : (i : ℕ) → ((i + 0) ≡ i) → ((𝐒(i) + 0) ≡ 𝐒(i))
+  next _ = [≡]-with-[ 𝐒 ]
 
---  [⋅][+]-distributivity : ∀ {x y z} → (x ⋅ (y + z)) ≡ (x ⋅ y) + (x ⋅ z)
+[+]-associativity : ∀ {x y z} → ((x + y) + z) ≡ (x + (y + z))
+[+]-associativity {x} {y} {z} = [ℕ]-induction (base x y) (next x y) z where
+  base : ∀ (x y : ℕ) → ((x + y) + 0) ≡ (x + (y + 0))
+  base _ _ = [≡]-intro
+
+  next : ∀ (x y : ℕ) → (i : ℕ) → ((x + y) + i) ≡ (x + (y + i)) → ((x + y) + 𝐒(i)) ≡ (x + (y + 𝐒(i)))
+  next _ _ _ = [≡]-with-[ 𝐒 ]
+
+-- TODO
+-- [+]-commutativity : ∀ {x y} → (x + y) ≡ (y + x)
+-- [+]-commutativity {x} {y} = [ℕ]-induction (base x) (next x) y where
+--   base : ∀ (x : ℕ) → (0 + x) ≡ (x + 0)
+--   base _ = [≡]-transitivity([∧]-intro [+]-identityₗ ([≡]-symmetry [+]-identityᵣ))
+-- 
+--   next : ∀ (x : ℕ) → (i : ℕ) → (i + x) ≡ (x + i) → (𝐒(i) + x) ≡ (x + 𝐒(i))
+--   next _ _ = 
+
+
+-- [⋅]-identity : ∀ {x} → (1 ⋅ x) ≡ x
+-- [⋅]-identity {x} = [ℕ]-induction base next x where
+--   base : ((1 ⋅ 0) ≡ 0)
+--   base = [≡]-reflexivity
+-- 
+--   next : (i : ℕ) → ((1 ⋅ i) ≡ i) → ((1 ⋅ 𝐒(i)) ≡ 𝐒(i))
+--   next _ stmt = [≡]-reflexivity
+
+-- [⋅]-commutativity : ∀ {x y} → (x ⋅ y) ≡ (y ⋅ x)
+-- [⋅]-associativity : ∀ {x y z} → ((x ⋅ y) ⋅ z) ≡ (x ⋅ (y ⋅ z))
+-- [⋅]-absorber0 : ∀ {x} → (0 ⋅ x) ≡ 0
+
+-- [⋅][+]-distributivity : ∀ {x y z} → (x ⋅ (y + z)) ≡ (x ⋅ y) + (x ⋅ z)
 
 -- [+]-identity : {x : ℕ} → (0 + x) ≡ x -- TODO: How to prove? Can it be proven?
 -- [+]-identity {x} = [≡]-reflexivity {x}
