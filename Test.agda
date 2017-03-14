@@ -16,7 +16,12 @@ import      Numeral.Natural.UnclosedOper
 import      Numeral.Sign
 import      Numeral.Sign.Oper
 import      Numeral.Sign.Oper0
-import      Structure.Equivalence as Eq
+import      Relator.Equals
+import      Structure.Operator.Group
+import      Structure.Operator.Properties
+import      Structure.Relator.Equivalence as Eq
+import      Structure.Relator.Ordering
+import      Structure.Relator.Properties
 import      Type as T
 
 ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
