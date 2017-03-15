@@ -37,12 +37,24 @@ open import Relator.Equals Lvl.𝟎
 -- TODO
 -- [+]-commutativity : ∀ {x y} → (x + y) ≡ (y + x)
 -- [+]-commutativity {x} {y} = [ℕ]-induction (base x) (next x) y where
---   base : ∀ (x : ℕ) → (0 + x) ≡ (x + 0)
---   base _ = [≡]-transitivity([∧]-intro [+]-identityₗ ([≡]-symmetry [+]-identityᵣ))
+--   base : ∀ (x : ℕ) → (x + 0) ≡ (0 + x)
+--   base _ = [≡]-symmetry([≡]-transitivity([∧]-intro [+]-identityₗ ([≡]-symmetry [+]-identityᵣ)))
+--   -- (∀x. 0+x = x) ∧ (∀x. x = x+0) // [∧]-intro [1] [2]
+--   --   ∀x. 0+x = x //[+]-identityₗ [1]
 -- 
---   next : ∀ (x : ℕ) → (i : ℕ) → (i + x) ≡ (x + i) → (𝐒(i) + x) ≡ (x + 𝐒(i))
---   next _ _ = 
-
+--   --   ∀x. x+0 = x //[+]-identityᵣ
+--   --   ∀x. x = x+0 //[≡]-symmetry(..) [2]
+--   -- (∀x. 0+x = x+0) // [≡]-transitivity(..)
+-- 
+--   next : ∀ (x : ℕ) → (i : ℕ) → (x + i) ≡ (i + x) → (x + 𝐒(i)) ≡ (𝐒(i) + x)
+--   next x i eq = [≡]-transitivity([∧]-intro ([≡]-with-[ 𝐒 ] eq) ([+]-associativity {i} {x} {1}))
+--   -- ∀x∀i. x+𝐒(i) = 𝐒(x)+i //[≡]-transitivity [1] [2]
+--   --   ∀x∀i. x+i = i+x //eq
+--   --   ∀x∀i. 𝐒(x+i) = 𝐒(i+x) //[≡]-with-[ 𝐒 ](..)
+--   --   ∀x∀i. x+𝐒(i) = i+𝐒(x) //x + 𝐒(y) = 𝐒(x + y) (Definition of _+_) [1]
+-- 
+--   --   ∀x∀i. i+𝐒(x) = 𝐒(x)+i //[+]-associativity [2]
+--   -- ∀x∀i. 𝐒(x+i) = 𝐒(x)+i //x + 𝐒(y) = 𝐒(x + y) (Definition of _+_)
 
 -- [⋅]-identity : ∀ {x} → (1 ⋅ x) ≡ x
 -- [⋅]-identity {x} = [ℕ]-induction base next x where

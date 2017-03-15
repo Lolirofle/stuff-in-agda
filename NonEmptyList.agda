@@ -4,13 +4,14 @@ open import Data
 open import Numeral.Natural
 import List as NormalList
 
-infixr 1000 _⤙_
+infixr 1000 _⤙_ _⤛_
 
 data List {lvl} (n : ℕ) (T : Set lvl) : Set lvl where
   End : T Tuple.^ n → (List n T)
   _⤙_ : T → (List n T) → (List n T)
 
 pattern prepend elem list = elem ⤙ list
+pattern _⤛_ elem end = elem ⤙ (End end)
 
 toList : ∀ {lvl} → {T : Set lvl} → (List 1 T) → (NormalList.List T)
 toList (End x) = x NormalList.⤙ NormalList.∅

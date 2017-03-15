@@ -14,7 +14,7 @@ infixl 1000 _←_ _↔_
 Stmt = Set level
 
 ------------------------------------------
--- Conjunction
+-- Conjunction (AND)
 
 _∧_ : Stmt → Stmt → Stmt
 _∧_ = _⨯_
@@ -63,9 +63,9 @@ pattern [↔]-intro l r = l , r
 [↔]-elimᵣ = Tuple.right
 
 ------------------------------------------
--- Disjunction
+-- Disjunction (OR)
 
-_∨_ : Stmt →  Stmt → Stmt
+_∨_ : Stmt → Stmt → Stmt
 _∨_ = _‖_
 
 pattern [∨]-introₗ l = Either.Left l
@@ -104,6 +104,39 @@ data ⊤ : Stmt where
 [¬¬]-intro : {X : Stmt} → X → (¬ (¬ X))
 [¬¬]-intro = apply
 -- X → (X → ⊥) → ⊥
+
+------------------------------------------
+-- Exclusive disjunction (XOR)
+
+-- data _⊕_ {X : Stmt} {Y : Stmt} : Stmt where
+--   [⊕]-introₗ X → ¬(X ∧ Y) → (X ⊕ Y)
+--   [⊕]-introᵣ Y → ¬(X ∧ Y) → (X ⊕ Y)
+-- 
+-- [⊕]-elim : {X Y : Stmt} → (X ⊕ Y) → (X ↔ Y) → ⊥
+-- [⊕]-elim ([⊕]-introₗ x nxy)
+
+------------------------------------------
+-- Negative disjunction (NOR)
+
+_⊽_ : Stmt → Stmt → Stmt
+x ⊽ y = (¬ x) ∧ (¬ y)
+
+pattern [⊽]-intro x y = [∧]-intro x y
+
+[⊽]-elimₗ : {X Y : Stmt} → (X ⊽ Y) → ¬ X
+[⊽]-elimₗ = [∧]-elimₗ
+
+[⊽]-elimᵣ : {X Y : Stmt} → (X ⊽ Y) → ¬ Y
+[⊽]-elimᵣ = [∧]-elimᵣ
+
+------------------------------------------
+-- Negative conjunction (NAND)
+
+-- data _⊼_ {X : Stmt} {Y : Stmt} : Stmt where
+--   [⊼]-intro ¬(X ∧ Y) → (X ⊼ Y)
+-- 
+-- [⊼]-elim : {X Y : Stmt} → (X ⨯ Y ⨯ (X ⊼ Y)) → ⊥
+-- [⊼]-elim(x , y , nand)
 
 ------------------------------------------
 -- Convenient definitions with different semantics

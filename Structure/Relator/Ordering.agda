@@ -8,11 +8,11 @@ record PartialOrder {T : Stmt} (_≤_ : T → T → Stmt) (_≡_ : T → T → S
   field
     antisymmetry : Antisymmetry (_≤_) (_≡_)
     transitivity : Transitivity (_≤_)
-    reflexivity  : Reflexivity  (_≤_)
+    irreflexivity  : Irreflexivity  (_≤_)
 
 record StrictOrder {T : Stmt} (_<_ : T → T → Stmt) : Stmt where
   field
-    areflexivity : Areflexivity (_<_)
+    irreflexivity : Irreflexivity (_<_)
     transitivity : Transitivity (_<_)
 
 -- StrictOrder-asymmetry : {T : _} → {_<_ : _} → StrictOrder (_<_) → Asymmetry (_<_)
