@@ -1,7 +1,7 @@
 module Structure.Relator.Properties lvl where
 
 open import Logic(lvl)
-import List
+open import Numeral.Natural
 import NonEmptyList
 
 Reflexivity : {T : Stmt} → (T → T → Stmt) → Stmt
@@ -25,5 +25,14 @@ Areflexivity {T} (_▫_) = {x : T} → ¬(x ▫ x)
 
 
 -- TODO: For constructions/proofs of this form: Proof of a=f: a=b ∧ b=c ∧ c=d ∧ d=e ∧ e=f (also expressed as a=b=c=d=e=f)
--- transitivityChain : {T : Stmt} → (T → T → Stmt) → Stmt
--- transitivityChain {T} (_▫_) = {X : (List.List T)} → (List.reduceₗ (_∧_) ((NonEmptyList.mapWindow2ₗ (_▫_) X) List.or (List.singleton ⊥))) → ((NonEmptyList.firstElem X) ▫ (NonEmptyList.lastElem X))
+-- transitivityChain {T} (_▫_) = {X : (NonEmptyList.List 1 T)} → (NonEmptyList.reduceₗ (_∧_) (NonEmptyList.fromList (NonEmptyList.mapWindow2ₗ (_▫_) X) ⊥)) → ((NonEmptyList.firstElem X) ▫ (NonEmptyList.lastElem X))
+transitivityChain : ∀ {n} → {T : Set n} → (T → T → Stmt) → {_ : NonEmptyList.List 1 T} → Stmt
+transitivityChain {T} (_▫_) {X} = (NonEmptyList.reduceₗ (_∧_) (NonEmptyList.fromList (NonEmptyList.mapWindow2ₗ (_▫_) X) ⊥)) → ((NonEmptyList.firstElem X) ▫ (NonEmptyList.lastElem X))
+
+testType : {_▫_ : ℕ → ℕ → Stmt} → transitivityChain _▫_ {1 NonEmptyList.⤙ 2 NonEmptyList.⤙  3 NonEmptyList.⤙ (NonEmptyList.End 4)} → ((1 ▫ 2) ∧ (2 ▫ 3) ∧ (3 ▫ 4)) → (1 ▫ 4)
+testType x = x
+
+-- transitivityChain {T} (_▫_) X = (NonEmptyList.fromList (NonEmptyList.mapWindow2ₗ (_▫_) X) ⊥)
+-- 
+-- testType : {_▫_ : ℕ → ℕ → Stmt} → transitivityChain _▫_ (1 NonEmptyList.⤙ 2 NonEmptyList.⤙ (NonEmptyList.End 3)) → ((1 ▫ 2) NonEmptyList.⤙ (NonEmptyList.End(2 ▫ 3)))
+-- testType x = x

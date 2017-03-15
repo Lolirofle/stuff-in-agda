@@ -206,5 +206,8 @@ module Test2 where
 -- f₂ : ∀ {n} → {A B C D : TypeN n} → (((A ⨯ B) ⨯ C) -> D) -> (A -> B -> C -> D)
 -- f₂ = Functional.Raise.repeatᵣ 2 id (_∘_) Tuple.curry
 
+testTupleRaise : ℕ Tuple.^ 4 → ℕ ⨯ ℕ ⨯ ℕ ⨯ ℕ
+testTupleRaise x = x
+
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"

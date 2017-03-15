@@ -35,9 +35,9 @@ module Tuple where
     _^_ : ∀ {n} → (TypeN n) → ℕ → (TypeN n)
     _^_ type 0      = Unit
     _^_ type (𝐒(0)) = type
-    _^_ type (𝐒(n)) = type ⨯ (type ^ n)
-
-open Tuple  using (_⨯_ ; _,_) public
+    _^_ type (𝐒(n)) = (type ^ n) ⨯ type
+  open Raise using (_^_) public
+open Tuple using (_⨯_ ; _,_) public
 
 ------------------------------------------
 -- Either

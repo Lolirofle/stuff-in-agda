@@ -6,39 +6,57 @@ import List as NormalList
 
 infixr 1000 _⤙_
 
-data List {n} (T : Set n) : Set n where
-  singleton : T → (List T)
-  _⤙_ : T → (List T) → (List T)
+data List {lvl} (n : ℕ) (T : Set lvl) : Set lvl where
+  End : T Tuple.^ n → (List n T)
+  _⤙_ : T → (List n T) → (List n T)
 
 pattern prepend elem list = elem ⤙ list
 
-map : ∀ {n} → {T₁ T₂ : Set n} → (T₁ → T₂) → (List T₁) → (List T₂)
-map f (singleton x) = singleton(f x)
+toList : ∀ {lvl} → {T : Set lvl} → (List 1 T) → (NormalList.List T)
+toList (End x) = x NormalList.⤙ NormalList.∅
+toList (x ⤙ l) = x NormalList.⤙ (toList l)
+
+fromList : ∀ {lvl} → {T : Set lvl} → (NormalList.List T) → T → (List 1 T)
+fromList NormalList.∅ default = End default
+fromList (x NormalList.⤙ NormalList.∅) _ = End x
+fromList (x NormalList.⤙ l) default = x ⤙ (fromList l default)
+
+map : ∀ {lvl} → {T₁ T₂ : Set lvl} → (T₁ → T₂) → (List 1 T₁) → (List 1 T₂)
+map f (End x) = End(f x)
 map f (elem ⤙ l) = (f elem) ⤙ (map f l)
 
-reduceₗ : ∀ {n} → {T : Set n} → (T → T → T) → (List T) → T
-reduceₗ _   (singleton x) = x
-reduceₗ _▫_ (elem ⤙ l) = elem ▫ (reduceₗ _▫_ l)
+reduceₗ : ∀ {lvl} → {T : Set lvl} → (T → T → T) → (List 1 T) → T
+reduceₗ _   (End x) = x
+reduceₗ _▫_ (elem ⤙ l) = NormalList.foldₗ _▫_ elem (toList l)
 
-index : ∀ {n} → {T : Set n} → ℕ → (List T) → (Option T)
-index 0      (singleton x) = Option.Some(x)
-index 0      (x ⤙ _)       = Option.Some(x)
-index (𝐒(n)) (_ ⤙ l)       = index n l
-index _      _             = Option.None
+reduceᵣ : ∀ {lvl} → {T : Set lvl} → (T → T → T) → (List 1 T) → T
+reduceᵣ _   (End x) = x
+reduceᵣ _▫_ (elem ⤙ l) = elem ▫ (reduceᵣ _▫_ l)
 
-mapWindow2ₗ : ∀ {n} → {T : Set n} → (T → T → T) → (List T) → (NormalList.List T)
+index : ∀ {lvl} → {T : Set lvl} → ℕ → (List 1 T) → (Option T)
+index 0      (End x) = Option.Some(x)
+index 0      (x ⤙ _) = Option.Some(x)
+index (𝐒(n)) (_ ⤙ l) = index n l
+index _      _       = Option.None
+
+mapWindow2ₗ : ∀ {lvl₁ lvl₂} → {T : Set lvl₁} → {R : Set lvl₂} → (T → T → R) → (List 1 T) → (NormalList.List R)
 mapWindow2ₗ f (x₁ ⤙ x₂ ⤙ l) = (f x₁ x₂) NormalList.⤙ (mapWindow2ₗ f (x₂ ⤙ l))
-mapWindow2ₗ f (x₁ ⤙ (singleton x₂)) = (f x₁ x₂) NormalList.⤙ NormalList.∅
-mapWindow2ₗ f (singleton x) = NormalList.∅
+mapWindow2ₗ f (x₁ ⤙ (End x₂)) = (f x₁ x₂) NormalList.⤙ NormalList.∅
+mapWindow2ₗ f (End _) = NormalList.∅
 
-firstElem : ∀ {n} → {T : Set n} → (List T) → T
-firstElem (singleton x) = x
-firstElem (x ⤙ _)       = x
+firstElem : ∀ {lvl} → {T : Set lvl} → (List 1 T) → T
+firstElem (End x) = x
+firstElem (x ⤙ _) = x
 
-lastElem : ∀ {n} → {T : Set n} → (List T) → T
-lastElem (singleton x) = x
-lastElem l = reduceₗ (λ elem _ → elem) l
+lastElem : ∀ {lvl} → {T : Set lvl} → (List 1 T) → T
+lastElem (End x) = x
+lastElem l = reduceᵣ (λ _ elem → elem) l
 
-toList : ∀ {n} → {T : Set n} → (List T) → (NormalList.List T)
-toList (singleton x) = x NormalList.⤙ NormalList.∅
-toList (x ⤙ l) = x NormalList.⤙ (toList l)
+-- testMapWindow0Reduce : {_▫_ : ℕ → ℕ → Set} → {_∧_ : Set → Set → Set} → reduceₗ (_∧_) (fromList (mapWindow2ₗ (_▫_) (End 1)) ℕ) → ℕ
+-- testMapWindow0Reduce x = x
+
+-- testMapWindow1Reduce : {_▫_ : ℕ → ℕ → Set} → {_∧_ : Set → Set → Set} → reduceₗ (_∧_) (fromList (mapWindow2ₗ (_▫_) (1 ⤙ (End 2))) ℕ) → (1 ▫ 2)
+-- testMapWindow1Reduce x = x
+
+-- testMapWindow2Reduce : {_▫_ : ℕ → ℕ → Set} → {_∧_ : Set → Set → Set} → reduceₗ (_∧_) (fromList (mapWindow2ₗ (_▫_) (1 ⤙ 2 ⤙ (End 3))) ℕ) → ((1 ▫ 2) ∧ (2 ▫ 3))
+-- testMapWindow2Reduce x = x
