@@ -34,7 +34,3 @@ data _≡_ {T : Stmt} : T -> T -> Stmt where
     symmetry     = [≡]-symmetry    ;
     transitivity = [≡]-transitivity
   }
-
--- TODO: For constructions/proofs of this form: Proof of a=f: a=b ∧ b=c ∧ c=d ∧ d=e ∧ e=f (also expressed as a=b=c=d=e=f)
-[≡]-transitivity-chain : {T : Stmt} → Transitivity {T} (_≡_ {T})
-[≡]-transitivity-chain([∧]-intro [≡]-intro [≡]-intro) = [≡]-intro

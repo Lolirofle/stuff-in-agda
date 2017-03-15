@@ -29,6 +29,14 @@ module Tuple where
   ◅ = left
   ▻ = right
 
+  module Raise where
+    open import Numeral.Natural
+
+    _^_ : ∀ {n} → (TypeN n) → ℕ → (TypeN n)
+    _^_ type 0      = Unit
+    _^_ type (𝐒(0)) = type
+    _^_ type (𝐒(n)) = type ⨯ (type ^ n)
+
 open Tuple  using (_⨯_ ; _,_) public
 
 ------------------------------------------
@@ -64,5 +72,17 @@ module Option where
   map : ∀ {n} → {T₁ T₂ : TypeN n} → (T₁ → T₂) → (Option T₁) → (Option T₂)
   map f (Some x) = Some(f(x))
   map f (None  ) = None
+
+  _or_ : ∀ {n} → {T : TypeN n} → (Option T) → T → T
+  _or_ (Some x) _   = x
+  _or_ None default = default
+
+  _nor_ : ∀ {n} → {T : TypeN n} → (Option T) → (Option T) → (Option T)
+  _nor_ (Some x) _  = (Some x)
+  _nor_ None option = option
+
+  _andThen_ : ∀ {n} → {T : TypeN n} → (Option T) → (T → (Option T)) → (Option T)
+  _andThen_ None _ = None
+  _andThen_ (Some x) optF = optF x
 
 open Option using (Option) public

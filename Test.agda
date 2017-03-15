@@ -6,9 +6,11 @@ import      FFI.Type as FFI
 open import Functional
 import      Functional.Raise
 import      Level as Lvl
+import      List
 open import Logic Lvl.𝟎
   hiding (⊥)
 open import LogicTheorems Lvl.𝟎
+import      NonEmptyList
 import      Numeral.Integer
 import      Numeral.Integer.Oper
 import      Numeral.Integer.Sign
