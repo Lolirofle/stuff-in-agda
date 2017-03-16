@@ -3,20 +3,20 @@ module Structure.Operator.Properties lvl where
 open import Logic(lvl)
 open import Relator.Equals(lvl)
 
-Commutativity : {T : Stmt} → (T → T → T) → Stmt
-Commutativity {T} (_▫_) = {x y : T} → (x ▫ y) ≡ (y ▫ x)
+Commutativity : {T₁ T₂ : Stmt} → (T₁ → T₁ → T₂) → Stmt
+Commutativity {T₁} (_▫_) = {x y : T₁} → (x ▫ y) ≡ (y ▫ x)
 
 Associativity : {T : Stmt} → (T → T → T) → Stmt
-Associativity {T} (_▫_) = {x y z : T} → ((x ▫ y) ▫ z) ≡ ((x ▫ y) ▫ z)
+Associativity {T} (_▫_) = {x y z : T} → ((x ▫ y) ▫ z) ≡ (x ▫ (y ▫ z))
 
-Identityₗ : {T : Stmt} → (T → T → T) → T → Stmt
-Identityₗ {T} (_▫_) id = {x : T} → (id ▫ x) ≡ x
+Identityₗ : {T₁ T₂ : Stmt} → (T₁ → T₂ → T₂) → T₁ → Stmt
+Identityₗ {_} {T₂} (_▫_) id = {x : T₂} → (id ▫ x) ≡ x
 
-Identityᵣ : {T : Stmt} → (T → T → T) → T → Stmt
-Identityᵣ {T} (_▫_) id = {x : T} → (x ▫ id) ≡ x
+Identityᵣ : {T₁ T₂ : Stmt} → (T₁ → T₂ → T₁) → T₂ → Stmt
+Identityᵣ {T₁} {_} (_▫_) id = {x : T₁} → (x ▫ id) ≡ x
 
-Inverseₗ : {T : Stmt} → (T → T → T) → T → (T → T) → Stmt
-Inverseₗ {T} (_▫_) id inv = {x : T} → ((inv x) ▫ x) ≡ id
+Inverseₗ : {T₊ T₋ Tᵣ : Stmt} → (T₋ → T₊ → Tᵣ) → Tᵣ → (T₊ → T₋) → Stmt
+Inverseₗ {T₊} (_▫_) id inv = {x : T₊} → ((inv x) ▫ x) ≡ id
 
-Inverseᵣ : {T : Stmt} → (T → T → T) → T → (T → T) → Stmt
-Inverseᵣ {T} (_▫_) id inv = {x : T} → (x ▫ (inv x)) ≡ id
+Inverseᵣ : {T₊ T₋ Tᵣ : Stmt} → (T₊ → T₋ → Tᵣ) → Tᵣ → (T₊ → T₋) → Stmt
+Inverseᵣ {T₊} (_▫_) id inv = {x : T₊} → (x ▫ (inv x)) ≡ id

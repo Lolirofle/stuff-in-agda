@@ -37,8 +37,8 @@ TransitivityChain : ∀ {n} → {T : Set n} → (T → T → Stmt) → (List 1 T
 TransitivityChain {T} (_▫_) X = (List.reduceₗ (_∧_) (List.fromList (List.mapWindow2ₗ (_▫_) X) ⊥)) → ((List.firstElem X) ▫ (List.lastElem X))
 
 -- TODO
--- transitivityChain : TransitivityChain 
--- transitivityChain  = 
+-- transitivityChain : TransitivityChain (_▫_) X
+-- transitivityChain op (head-tail) = transitivity(transitivityChain op tail)
 
 -- testTransitivityChain : {_▫_ : ℕ → ℕ → Stmt} → transitivityChain _▫_ (1 ⤙ 2 ⤙ 3 ⤛ 4) → ((1 ▫ 2) ∧ (2 ▫ 3) ∧ (3 ▫ 4)) → (1 ▫ 4)
 -- testTransitivityChain x = x
