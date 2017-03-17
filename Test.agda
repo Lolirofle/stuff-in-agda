@@ -18,6 +18,7 @@ open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Relation
 import      Numeral.Natural.UnclosedOper
+import      Numeral.Real
 import      Numeral.Sign
 import      Numeral.Sign.Oper
 import      Numeral.Sign.Oper0
