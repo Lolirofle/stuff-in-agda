@@ -105,6 +105,7 @@ open import Relator.Equals Lvl.𝟎
 [⋅]-identityᵣ : ∀ {x : ℕ} → (x ⋅ 1) ≡ x
 [⋅]-identityᵣ = [≡]-intro
 
+-- [⋅][+]-distributivityₗ : ∀ {x y z : ℕ} → (x ⋅ (y + z)) ≡ (x ⋅ y) + (x ⋅ z)
 -- [⋅][+]-distributivityᵣ : ∀ {x y z : ℕ} → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z))
 -- [⋅][+]-distributivityᵣ {x} {y} {z} = [ℕ]-induction (base x y) (next x y) z where
 --   base : ∀ (x y : ℕ) → ((x + y) ⋅ 0) ≡ ((x ⋅ 0) + (y ⋅ 0))
@@ -126,9 +127,7 @@ open import Relator.Equals Lvl.𝟎
 
 -- [⋅]-associativity : ∀ {x y z : ℕ} → ((x ⋅ y) ⋅ z) ≡ (x ⋅ (y ⋅ z))
 
--- [⋅][+]-distributivity : ∀ {x y z : ℕ} → (x ⋅ (y + z)) ≡ (x ⋅ y) + (x ⋅ z)
-
-
+-- [+]-abelianGroup (_+_) (1) (−_)
 
 -- Divisibility
 data Even : ℕ → Set where

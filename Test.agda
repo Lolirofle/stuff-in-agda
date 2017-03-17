@@ -23,8 +23,12 @@ import      Numeral.Sign
 import      Numeral.Sign.Oper
 import      Numeral.Sign.Oper0
 open import Relator.Equals Lvl.𝟎
+import      Structure.Function.Domain
+import      Structure.Function.Linear
+import      Structure.Operator.Field
 import      Structure.Operator.Group
 import      Structure.Operator.Properties
+import      Structure.Operator.Vector
 import      Structure.Relator.Equivalence as Eq
 import      Structure.Relator.Ordering
 import      Structure.Relator.Properties
