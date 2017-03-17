@@ -23,4 +23,4 @@ record VectorSpace {V S : Set} {{sym : VectorSpaceSym {V} {S}}} : Stmt where
     [⋅ₛ][⋅ₛᵥ]-compatibility      : Compatibility (_⋅_ {{fieldₛ {V} {S}}}) (_⋅ₛᵥ_ {V} {S})
     [⋅ₛᵥ]-id                     : Identityₗ (_⋅ₛᵥ_ {V} {S}) ([⋅]-id {{fieldₛ {V} {S}}})
     [⋅ₛᵥ][+ᵥ]-distributivity     : Distributivityₗ (_⋅ₛᵥ_ {V} {S}) (_+ᵥ_ {V} {S})
-    [⋅ₛᵥ][+ₛ][+ᵥ]-distributivity : DistributivityIntoᵣ (_⋅ₛᵥ_ {V} {S}) (_+_ {{fieldₛ {V} {S}}}) (_+ᵥ_ {V} {S})
+    [⋅ₛᵥ][+ₛ][+ᵥ]-distributivity : DistributivityPatternᵣ (_⋅ₛᵥ_ {V} {S}) (_+_ {{fieldₛ {V} {S}}}) (_+ᵥ_ {V} {S})

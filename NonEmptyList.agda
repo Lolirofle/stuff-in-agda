@@ -53,6 +53,10 @@ lastElem : ∀ {lvl} → {T : Set lvl} → (List 1 T) → T
 lastElem (End x) = x
 lastElem l = reduceᵣ (λ _ elem → elem) l
 
+length : {T : Set} → (List 1 T) → ℕ
+length (End _) = 1
+length (_ ⤙ tail) = 𝐒(length tail)
+
 -- testMapWindow0Reduce : {_▫_ : ℕ → ℕ → Set} → {_∧_ : Set → Set → Set} → reduceₗ (_∧_) (fromList (mapWindow2ₗ (_▫_) (End 1)) ℕ) → ℕ
 -- testMapWindow0Reduce x = x
 
