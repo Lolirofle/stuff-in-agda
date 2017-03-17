@@ -71,7 +71,7 @@ testImpl = [≡]-reflexivity
 fnℕ+1 : (𝟎 ≡ 𝐒(𝟎)) → (𝐒(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎))
 fnℕ+1 = [≡]-with-[ 𝐒 ]
 
-fnℕ+3 : ∀ {x} → (x ≡ 5) → (x + 3 ≡ 8)
+fnℕ+3 : ∀{x} → (x ≡ 5) → (x + 3 ≡ 8)
 fnℕ+3 = [≡]-with-[ (λ x → x + 3) ]
 
 testBottom : (⊥ ∧ ℕ) → ℕ
@@ -143,7 +143,7 @@ dataTest(x , y , z) = z
 -- n = (1 + 3⋅√x)/2
 -- permutation with sum 4: 1/3 2/2 3/1
 
--- curryN : {T : Set} → {a : _} → ℕ → (a → T) → (a → T)
+-- curryN : {T : Set}{a : _} → ℕ → (a → T) → (a → T)
 -- curryN 𝟎 = id
 -- curryN (𝐒(n)) = Tuple.curry ∘ (curryN n)
 
@@ -153,39 +153,39 @@ dataTest(x , y , z) = z
 -- test : {a b c d : Set} → (((a ⨯ b) ⨯ c) -> d) -> a -> b -> c -> d
 -- test = Tuple.curry ∘ Tuple.curry
 
--- data repeatType (b : Set) : ∀ {q} {a : Set q} -> a -> Set where
+-- data repeatType (b : Set) : ∀{q} {a : Set q} -> a -> Set where
 --   simple : repeatType b (b -> b)
---   complex : repeatType b (b -> (∀ {c : Set} -> b -> c))
+--   complex : repeatType b (b -> (∀{c : Set} -> b -> c))
 
--- repeat2 : ∀ {b d c} {q : repeatType c d} -> (r : repeatType b c) -> c -> b -> d
+-- repeat2 : ∀{b d c} {q : repeatType c d} -> (r : repeatType b c) -> c -> b -> d
 -- repeat2 f x simple = f (f x)
 -- repeat2 f x complex = f (f x)
 
-_⨯^_ : ∀ {n} → Set n → ℕ → Set n
+_⨯^_ : ∀{n} → Set n → ℕ → Set n
 _⨯^_ _    𝟎      = Unit
 _⨯^_ type (𝐒(𝟎)) = type
 _⨯^_ type (𝐒(n)) = type ⨯ (type ⨯^ n)
 
-_→^_ : ∀ {n} → Set n → ℕ → Set n
+_→^_ : ∀{n} → Set n → ℕ → Set n
 _→^_ _    𝟎      = Unit
 _→^_ type (𝐒(𝟎)) = type
 _→^_ type (𝐒(n)) = type → (type →^ n)
 
-repeatOp : ∀ {n} → Set n → (Set n → Set n → Set n) → ℕ → Set n
+repeatOp : ∀{n} → Set n → (Set n → Set n → Set n) → ℕ → Set n
 repeatOp type _  𝟎      = type
 repeatOp type op (𝐒(n)) = op type (repeatOp type op n)
 
-_⨯^₂_ : ∀ {n} → Set n → ℕ → Set n
+_⨯^₂_ : ∀{n} → Set n → ℕ → Set n
 _⨯^₂_ _ 𝟎 = Unit
 _⨯^₂_ type (𝐒(n)) = repeatOp type (_⨯_) n
 
--- curryN : {n : ℕ} → ∀ {T} → (T →^ n)
+-- curryN : {n : ℕ} → ∀{T} → (T →^ n)
 
 -- not mine
--- data repeatType (b : Set) : ∀ {q} {a : Set q} -> a -> Set where
+-- data repeatType (b : Set) : ∀{q} {a : Set q} -> a -> Set where
 --   simple : repeatType b (b -> b)
---   complex : repeatType b (b -> (∀ {c : Set} -> b -> c))
--- repeat2 : ∀ {b d c} {q : repeatType c d} -> (r : repeatType b c) -> c -> b -> d
+--   complex : repeatType b (b -> (∀{c : Set} -> b -> c))
+-- repeat2 : ∀{b d c} {q : repeatType c d} -> (r : repeatType b c) -> c -> b -> d
 -- repeat2 f x simple = f (f x)
 -- repeat2 f x complex = f (f x)
 
@@ -208,7 +208,7 @@ module Test2 where
   testf₁ : f ≡ 4
   testf₁ = [≡]-reflexivity
 
--- f₂ : ∀ {n} → {A B C D : TypeN n} → (((A ⨯ B) ⨯ C) -> D) -> (A -> B -> C -> D)
+-- f₂ : ∀{n}{A B C D : TypeN n} → (((A ⨯ B) ⨯ C) -> D) -> (A -> B -> C -> D)
 -- f₂ = Functional.Raise.repeatᵣ 2 id (_∘_) Tuple.curry
 
 testTupleRaise : ℕ Tuple.^ 4 → ℕ ⨯ ℕ ⨯ ℕ ⨯ ℕ

@@ -17,9 +17,9 @@ record AbelianGroup {T : Set} (_▫_ : T → T → T) (id : T) (inv : T → T) :
     commutativity  : Commutativity (_▫_)
     group          : Group (_▫_) id inv
 
-Group-commutation : ∀ {T _▫_ id inv} → (Group {T} (_▫_) id inv) → ∀ {x y} → (x ▫ y ≡ y ▫ x) ↔ ((x ▫ y) ▫ inv(x) ≡ y)
+Group-commutation : ∀{T _▫_ id inv} → (Group {T} (_▫_) id inv) → ∀{x y} → (x ▫ y ≡ y ▫ x) ↔ ((x ▫ y) ▫ inv(x) ≡ y)
 Group-commutation group = [↔]-intro (Group-commutationₗ group) (Group-commutationᵣ group) where
-  Group-commutationₗ : ∀ {T _▫_ id inv} → (Group {T} (_▫_) id inv) → ∀ {x y} → (x ▫ y ≡ y ▫ x) ← ((x ▫ y) ▫ inv(x) ≡ y)
+  Group-commutationₗ : ∀{T _▫_ id inv} → (Group {T} (_▫_) id inv) → ∀{x y} → (x ▫ y ≡ y ▫ x) ← ((x ▫ y) ▫ inv(x) ≡ y)
   Group-commutationₗ {_} {_▫_} {id} {inv} group {x} {y} comm =
     ([≡]-symmetry
       ([≡]-transitivity([∧]-intro
@@ -44,7 +44,7 @@ Group-commutation group = [↔]-intro (Group-commutationₗ group) (Group-commut
   -- = x▫y //Group.identityᵣ
   -- x▫y = y▫x //[≡]-symmetry
 
-  Group-commutationᵣ : ∀ {T _▫_ id inv} → (Group {T} (_▫_) id inv) → ∀ {x y} → (x ▫ y ≡ y ▫ x) → ((x ▫ y) ▫ inv(x) ≡ y)
+  Group-commutationᵣ : ∀{T _▫_ id inv} → (Group {T} (_▫_) id inv) → ∀{x y} → (x ▫ y ≡ y ▫ x) → ((x ▫ y) ▫ inv(x) ≡ y)
   Group-commutationᵣ {_} {_▫_} {id} {inv} group {x} {y} comm =
     ([≡]-transitivity([∧]-intro
       ([≡]-transitivity([∧]-intro

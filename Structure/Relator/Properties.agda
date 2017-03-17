@@ -32,7 +32,7 @@ Total {T} (_▫_) = {x y : T} → (x ▫ y) ∨ (y ▫ x)
 -- Trichotomy {T} (_▫₁_) (_▫₂_) = {x y : T} → (x ▫₁ y) ⊕ (y ▫₁ x) ⊕ (x ▫₂ y) -- TODO: Not correct. Should only be one of them
 
 -- For constructions/proofs of this form: Proof of a=f: a=b ∧ b=c ∧ c=d ∧ d=e ∧ e=f (also expressed as a=b=c=d=e=f)
-TransitivityChain : ∀ {n}{T : Set n} → (T → T → Stmt) → (List 1 T) → Stmt
+TransitivityChain : ∀{n}{T : Set n} → (T → T → Stmt) → (List 1 T) → Stmt
 TransitivityChain {T} (_▫_) X = (List.reduceₗ (_∧_) (List.fromList (List.mapWindow2ₗ (_▫_) X) ⊥)) → ((List.firstElem X) ▫ (List.lastElem X))
 
 ---------------------------------------------------------
@@ -55,7 +55,7 @@ Asymmetry {T} (_▫_) = FlipPattern (_▫_) (λ x y → ¬(x ▫ y))
 -- Functions
 
 -- TODO
--- transitivityChain : ∀{T _▫_} → {X : List 1 T} → Transitivity (_▫_) → TransitivityChain (_▫_) X
+-- transitivityChain : ∀{T _▫_}{X : List 1 T} → Transitivity (_▫_) → TransitivityChain (_▫_) X
 -- transitivityChain {_} {_} {list} trans _ = (a(List.length list)) (b(List.length list)) where
 --   a : ℕ → (_)
 --   a 0     = id
@@ -94,5 +94,5 @@ Asymmetry {T} (_▫_) = FlipPattern (_▫_) (λ x y → ¬(x ▫ y))
 --   (Tuple.uncurry ∘ Tuple.uncurry ∘ Tuple.uncurry) (Tuple.curry(Tuple.curry((Tuple.curry trans) ∘ trans) ∘ trans))
 
 -- Transitivity as a binary operation (TODO: The symbol is supposed to be the alchemical symbol for horse dung, but it was the best I could find that somewhat represented transitivity)
-_🝖_ : ∀{T _▫_ x y z} → {{_ : Transitivity {T} (_▫_)}} → (x ▫ y) → (y ▫ z) → (x ▫ z)
+_🝖_ : ∀{T _▫_ x y z} {{_ : Transitivity {T} (_▫_)}} → (x ▫ y) → (y ▫ z) → (x ▫ z)
 _🝖_ {_} {_} {_} {_} {_} {{trans}} a b = trans([∧]-intro a b)

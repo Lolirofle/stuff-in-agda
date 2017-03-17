@@ -15,6 +15,6 @@ record StrictOrder {T : Set} (_<_ : T → T → Stmt) : Stmt where
     irreflexivity : Irreflexivity (_<_)
     transitivity : Transitivity (_<_)
 
--- StrictOrder-asymmetry : {T : _} → {_<_ : _} → StrictOrder (_<_) → Asymmetry (_<_)
+-- StrictOrder-asymmetry : {T : _}{_<_ : _} → StrictOrder (_<_) → Asymmetry (_<_)
 -- StrictOrder-asymmetry ordering =
 --   [→]-syllogism (StrictOrder.transitivity ordering) (StrictOrder.areflexivity ordering)

@@ -19,8 +19,8 @@ domain {A} {_} _ = A
 codomain : ∀{A B : Set} → (A → B) → Set
 codomain {_} {B} _ = B
 
-restrict : ∀{A₁ A₂ B : Set} → {_ : A₂ → A₁} → (A₁ → B) → (A₂ → B)
+restrict : ∀{A₁ A₂ B : Set}{_ : A₂ → A₁} → (A₁ → B) → (A₂ → B)
 restrict {_} {_} {_} {tf} f = f ∘ tf
 
-expand : ∀{A B₁ B₂ : Set} → {_ : B₁ → B₂} → (A → B₁) → (A → B₂)
+expand : ∀{A B₁ B₂ : Set}{_ : B₁ → B₂} → (A → B₁) → (A → B₂)
 expand {_} {_} {_} {tf} f = tf ∘ f

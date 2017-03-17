@@ -144,7 +144,7 @@ pattern [⊽]-intro x y = [∧]-intro x y
 data ∃ {X : Set} (body : X → Stmt) : Stmt where
   [∃]-intro : {x : X} → body(x) → ∃ body
 
-[∃]-elim : ∀ {X body} → {Z : Stmt} → ((∀ {x : X} → body(x) → Z) ⨯ (∃ {X} body)) → Z
+[∃]-elim : ∀{X body}{Z : Stmt} → ((∀{x : X} → body(x) → Z) ⨯ (∃ {X} body)) → Z
 [∃]-elim(f , ([∃]-intro stmt)) = f stmt
 
 syntax ∃ {X} (λ x → f) = ∃[ x ∈ X ] f
