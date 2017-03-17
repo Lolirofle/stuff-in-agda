@@ -149,6 +149,10 @@ data ∃ {X : Set} (body : X → Stmt) : Stmt where
 
 syntax ∃ {X} (λ x → f) = ∃[ x ∈ X ] f
 
+-- TODO
+-- testExists : ∀{T : Set}{f : T → Set} → (∃[ x ∈ T ] (f x)) → (∃ {T} (λ x → f x))
+-- testExists x = x
+
 ------------------------------------------
 -- Convenient definitions with different semantics
 

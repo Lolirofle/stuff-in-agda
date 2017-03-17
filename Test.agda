@@ -214,5 +214,8 @@ module Test2 where
 testTupleRaise : ℕ Tuple.^ 4 → ℕ ⨯ ℕ ⨯ ℕ ⨯ ℕ
 testTupleRaise x = x
 
+testTy = 1 :of: ℕ
+-- testTy2 = 1 :of: ⊥
+
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"

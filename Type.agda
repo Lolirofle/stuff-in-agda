@@ -15,3 +15,9 @@ record Unit {n} : TypeN n where
 
 {-# BUILTIN UNIT Unit #-}
 -- {-# COMPILED_DATA Unit () () #-}
+
+type-ascription : ∀{lvl} → (T : TypeN lvl) → T → T
+type-ascription T x = x
+
+syntax type-ascription T x = x :of: T
+

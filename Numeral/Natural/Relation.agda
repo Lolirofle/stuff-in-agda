@@ -1,11 +1,11 @@
 module Numeral.Natural.Relation where
 
 import Level as Lvl
-open import Logic
+open import Logic(Lvl.𝟎)
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Relator.Equals Lvl.𝟎
-open import Structure.Operator.Properties Lvl.𝟎
+open import Relator.Equals(Lvl.𝟎)
+open import Structure.Operator.Properties(Lvl.𝟎)
 
 [ℕ]-induction : {X : ℕ → Set} → X(𝟎) → ((i : ℕ) → X(i) → X(𝐒(i))) → (n : ℕ) → X(n)
 [ℕ]-induction base next 𝟎 = base
@@ -139,20 +139,20 @@ instance
 -- [+]-abelianGroup (_+_) (1) (−_)
 
 -- Divisibility
-data Even : ℕ → Set where
+data Even : ℕ → Stmt where
   Even0 : Even 𝟎
   Even𝐒 : {x : ℕ} → (Even x) → (Even(𝐒(𝐒(x))))
 
-data Odd : ℕ → Set where
+data Odd : ℕ → Stmt where
   Odd0 : Odd (𝐒(𝟎))
   Odd𝐒 : {x : ℕ} → (Odd x) → (Odd(𝐒(𝐒(x))))
 
-data _divides_ : ℕ → ℕ → Set where
+data _divides_ : ℕ → ℕ → Stmt where
   Div0 : {x : ℕ} → x divides 𝟎
   Div𝐒 : {x : ℕ}{y : ℕ} → (x divides y) → (x divides (x + y))
 
-data _divides_withRemainder_ : ℕ → ℕ → ℕ → Set where
-  DivRem0 : {x : ℕ} →{r : ℕ} → x divides r withRemainder r
+data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where
+  DivRem0 : {x : ℕ}{r : ℕ} → x divides r withRemainder r
   DivRem𝐒 : {x : ℕ}{y : ℕ}{r : ℕ} → (x divides y withRemainder r) → (x divides (x + y) withRemainder r)
 
 -- testAssociativityOfSuccessor1 : ∀{x y} → ((x + 1) + y) ≡ (x + (1 + y))
@@ -160,3 +160,11 @@ data _divides_withRemainder_ : ℕ → ℕ → ℕ → Set where
 
 -- testAssociativityOfSuccessor2 : ∀{x y} → (𝐒(x) + y) ≡ (x + (1 + y))
 -- testAssociativityOfSuccessor2 {x} {y} = [+]-associativity {x} {1} {y}
+
+data _≤_ (a b : ℕ) : Stmt where
+  [≤]-from-[≡] : (a ≡ b) → (a ≤ b)
+  [≤]-next     : ∀{x} → ((a ≤ x) ∧ (𝐒(x) ≡ b)) → (a ≤ b)
+    -- (a ≤ b) → (a ≤ 𝐒(b)) //[≤]-next is equivalent with this
+
+_<_ : ℕ → ℕ → Stmt
+_<_ a b = (𝐒(a) ≤ b)
