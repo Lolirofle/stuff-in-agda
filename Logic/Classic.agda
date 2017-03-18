@@ -1,38 +1,23 @@
 module Logic.Classic lvl where
 
-open import Data
-open import Functional
 import      Level as Lvl
 open import Logic(lvl)
-  using (¬_ ; _∧_ ; ⊥)
-import      Logic(lvl) as Constructive
+  renaming(Stmt to ConstructiveStmt)
 open import LogicTheorems(lvl)
   using ([¬¬]-intro)
-open import Type
 
 abstract
-  Stmt : Set(Lvl.𝐒 lvl)
-  Stmt = Constructive.Stmt
+  data Wrap (X : ConstructiveStmt) : Set(Lvl.𝐒 lvl) where
+    classic : X → Wrap X
 
-  private
-    from : Constructive.Stmt → Stmt
-    from stmt = stmt
+  intro : {X : ConstructiveStmt} → X → Wrap X
+  intro = classic
 
-    to : Stmt → Constructive.Stmt
-    to stmt = stmt
+  -- TODO: Is this correct or will it lead to some weird proofs?
+  -- elim : {X : ConstructiveStmt} → Wrap X → ¬ (¬ X)
+  -- elim(classic x) = [¬¬]-intro(x)
 
-  _⇒_ : Stmt → Stmt → Stmt
-  _⇒_ X Y = X → Y
+  map : {X Y : ConstructiveStmt} → (X → Y) → Wrap X → Wrap Y
+  map f (classic x) = classic(f x)
 
-  ¬₂_ : Stmt → Stmt
-  ¬₂_ = ¬_
-
--- postulate [¬¬]-elim : {X : Stmt} → (¬₂ (¬₂ X)) ⇒ X -- TODO: _⇒_ must be of type (Stmt → Stmt → Set n) because of ({X : Stmt} → _)
-
-
-
--- test[¬¬]-elim : {X : Stmt} → (¬ (¬ X)) → Classic X
--- test[¬¬]-elim x = [¬¬]-elim x
-
--- testClassic : {X : Stmt} → Stmt → ClassicStmt
--- testClassic x = x
+postulate [¬¬]-elim : {X : ConstructiveStmt} → Wrap(¬ (¬ X)) → Wrap(X)

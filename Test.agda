@@ -233,5 +233,8 @@ module TestSet {n} (Type : Set n) where
   testFn : Type → Type
   testFn x = x
 
+testClassicLogic1 : {X : Stmt} → ¬(¬ X) → Classic.Wrap(X)
+testClassicLogic1 x = Classic.[¬¬]-elim(Classic.intro x)
+
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"
