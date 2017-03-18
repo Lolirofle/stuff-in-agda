@@ -7,9 +7,9 @@ open import Functional
 import      Functional.Raise
 import      Level as Lvl
 import      List
-open import Logic Lvl.𝟎
-import      Logic.Classic
-open import LogicTheorems Lvl.𝟎
+open import Logic(Lvl.𝟎)
+import      Logic.Classic(Lvl.𝟎) as Classic
+open import LogicTheorems(Lvl.𝟎)
 import      NonEmptyList
 import      Numeral.Integer
 import      Numeral.Integer.Oper
@@ -22,7 +22,7 @@ import      Numeral.Real
 import      Numeral.Sign
 import      Numeral.Sign.Oper
 import      Numeral.Sign.Oper0
-open import Relator.Equals Lvl.𝟎
+open import Relator.Equals(Lvl.𝟎)
 import      Structure.Function.Domain
 import      Structure.Function.Linear
 import      Structure.Operator.Field
@@ -216,6 +216,22 @@ testTupleRaise x = x
 
 testTy = 1 :of: ℕ
 -- testTy2 = 1 :of: ⊥
+
+-- testClassic : {X : Classic.Stmt} → (¬ (¬ X)) → X
+-- testClassic = Classic.[¬¬]-elim
+
+-- Testing universes
+module TestSet {n} (Type : Set n) where
+  postulate _→₂_ : Type → Type → Set n
+  data TestData1 (A : Type) (B : Type) : Set n where
+  -- data TestData2 (A : Type) (B : Type) : Type where -- Data of arbitrary type seems to not be okay
+  data TestData3 (A : Type) (B : Type) : Set n where
+    testConstruct1 : TestData3 A B
+    -- testConstruct2 : A → TestData3 A B -- Because of (_→_ : (Set _) → (Set _))?
+    -- testConstruct3 : A →₂ (TestData3 A B)
+    testConstruct4 : (A →₂ B) → (TestData3 A B)
+  testFn : Type → Type
+  testFn x = x
 
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"

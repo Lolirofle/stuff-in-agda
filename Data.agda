@@ -56,7 +56,6 @@ module Either where
   map : ∀{n}{A₁ A₂ B₁ B₂ : TypeN n} → (A₁ → A₂) → (B₁ → B₂) → (A₁ ‖ B₁) → (A₂ ‖ B₂)
   map fa _ (Left  a) = Left (fa(a))
   map _ fb (Right b) = Right(fb(b))
-
 open Either using (_‖_) public
 
 ------------------------------------------
@@ -84,5 +83,4 @@ module Option where
   _andThen_ : ∀{n}{T : TypeN n} → (Option T) → (T → (Option T)) → (Option T)
   _andThen_ None _ = None
   _andThen_ (Some x) optF = optF x
-
 open Option using (Option) public

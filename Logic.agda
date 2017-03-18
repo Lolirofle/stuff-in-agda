@@ -12,17 +12,8 @@ infixl 1000 _←_ _↔_
 ------------------------------------------
 -- Statement
 
--- abstract
 Stmt : Set(Lvl.𝐒 lvl)
 Stmt = Set lvl
-
---  module Stmt where
---    abstract
---      fromSet : Set(lvl) → Stmt
---      fromSet = id
---
---      toSet : Stmt → Set(lvl)
---      toSet = id
 
 ------------------------------------------
 -- Conjunction (AND)
