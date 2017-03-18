@@ -8,7 +8,7 @@ import      Functional.Raise
 import      Level as Lvl
 import      List
 open import Logic Lvl.𝟎
-  hiding (⊥)
+import      Logic.Classic
 open import LogicTheorems Lvl.𝟎
 import      NonEmptyList
 import      Numeral.Integer

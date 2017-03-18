@@ -1,7 +1,8 @@
-module Logic level where
+module Logic lvl where
 
 open import Data
 open import Functional
+import      Level as Lvl
 
 infixl 10 _⇒_
 infixl 1005 _∧_
@@ -11,7 +12,17 @@ infixl 1000 _←_ _↔_
 ------------------------------------------
 -- Statement
 
-Stmt = Set level
+-- abstract
+Stmt : Set(Lvl.𝐒 lvl)
+Stmt = Set lvl
+
+--  module Stmt where
+--    abstract
+--      fromSet : Set(lvl) → Stmt
+--      fromSet = id
+--
+--      toSet : Stmt → Set(lvl)
+--      toSet = id
 
 ------------------------------------------
 -- Conjunction (AND)
@@ -100,10 +111,6 @@ data ⊤ : Stmt where
 
 [¬]-elim : {X : Stmt} → ¬ X → (X → ⊥) -- written like (X → (¬ X) → ⊥) looks like a [⊥]-intro
 [¬]-elim = id
-
-[¬¬]-intro : {X : Stmt} → X → (¬ (¬ X))
-[¬¬]-intro = apply
--- X → (X → ⊥) → ⊥
 
 ------------------------------------------
 -- Exclusive disjunction (XOR)

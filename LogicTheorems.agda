@@ -95,10 +95,11 @@ constructive-dilemma l r = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([∨]-int
 -- destructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
 
 contrapositive₁ : {X Y : Stmt} → (X → Y) → ((¬ X) ← (¬ Y))
-contrapositive₁ f ny = [⊥]-elim ∘ ny ∘ f -- TODO: Is this a special case of [→]-syllogism?
+contrapositive₁ = [→]-syllogism
+-- contrapositive₁ f ny = ny ∘ f
 
 contrapositive₂ : {X Y : Stmt} → (X → (¬ (¬ Y))) ← ((¬ X) ← (¬ Y)) -- TODO: At least this works? Or am I missing something?
-contrapositive₂ nf x = [⊥]-elim ∘ ((swap nf) x)
+contrapositive₂ nf x = (swap nf) x
 -- (¬ X) ← (¬ Y)
 -- (¬ Y) → (¬ X)
 -- (Y → ⊥) → (X → ⊥)
@@ -110,6 +111,14 @@ contrapositive₂ nf x = [⊥]-elim ∘ ((swap nf) x)
 
 modus-tollens : {X Y : Stmt} → (X → Y) → (¬ Y) → (¬ X)
 modus-tollens = contrapositive₁
+
+[¬¬]-intro : {X : Stmt} → X → (¬ (¬ X))
+[¬¬]-intro = apply
+-- X → (X → ⊥) → ⊥
+
+[¬¬¬]-elim : {X : Stmt} → (¬ (¬ (¬ X))) → (¬ X)
+[¬¬¬]-elim = contrapositive₁ [¬¬]-intro
+-- (((X → ⊥) → ⊥) → ⊥) → (X → ⊥)
 
 ------------------------------------------
 -- Almost-distributivity with duals (De-morgan's laws)
