@@ -1,11 +1,15 @@
 module Numeral.Natural.Oper.Properties where
 
 import Level as Lvl
+open import Data
+open import Functional
 open import Logic(Lvl.𝟎)
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Relator.Equals(Lvl.𝟎)
+open import Structure.Function.Domain(Lvl.𝟎)
 open import Structure.Operator.Properties(Lvl.𝟎)
+open import Structure.Relator.Properties(Lvl.𝟎)
 
 instance
   [+]-identityₗ : Identityₗ (_+_) (0)
@@ -139,3 +143,25 @@ instance
 
 -- testAssociativityOfSuccessor2 : ∀{x y} → (𝐒(x) + y) ≡ (x + (1 + y))
 -- testAssociativityOfSuccessor2 {x} {y} = [+]-associativity {x} {1} {y}
+
+[+]-injectivityₗ : ∀{a} → Injective (λ x → x + a)
+[+]-injectivityₗ {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
+[+]-injectivityₗ {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]-injectivityₗ {n} ([≡]-with-[ 𝐏 ] x₁+𝐒n≡x₂+𝐒n)
+
+-- TODO: It would be great to be able to chain the transitivity here. Also, rename and generalize this later
+commuteBothTemp : ∀{a₁ a₂ b₁ b₂} → (a₁ + a₂ ≡ b₁ + b₂) → (a₂ + a₁ ≡ b₂ + b₁)
+commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
+  ([≡]-transitivity([∧]-intro
+    ([≡]-symmetry ([+]-commutativity {a₁} {a₂}))
+    ([≡]-transitivity([∧]-intro
+      a₁+a₂≡b₁+b₂
+      ([+]-commutativity {b₁} {b₂})
+    ))
+  ))
+
+[+]-injectiveᵣ : ∀{a} → Injective (λ x → a + x)
+[+]-injectiveᵣ {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = commuteBothTemp {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
+[+]-injectiveᵣ {𝐒(n)} {x₁} {x₂} (𝐒n+x₁≡𝐒n+x₂) =
+  [+]-injectiveᵣ {n} (
+    commuteBothTemp {x₁} {n} {x₂} {n} ([≡]-with-[ 𝐏 ] (commuteBothTemp {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
+  )

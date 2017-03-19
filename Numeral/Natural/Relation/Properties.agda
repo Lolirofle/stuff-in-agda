@@ -54,6 +54,12 @@ open import Type
 [≤]-reflexivity = [≤]-from-[≡] [≡]-intro
 
 -- [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
--- [≤]-antisymmetry(([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) =
--- a+(n₁+n₂) = b+(n₁+n₂)
+-- [≤]-antisymmetry(([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) = where
+-- a+n₁ = b
+-- (a+n₁)+n₂ = b+n₂
+-- (a+n₁)+n₂ = a
+-- a+(n₁+n₂) = a
+-- a+(n₁+n₂) = a+0
+-- n₁+n₂ = 0
 -- a = b
+-- TODO: Requires [+]-injectivity

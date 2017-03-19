@@ -7,6 +7,8 @@ open import Numeral.Natural
 open import NonEmptyList as List
   using (List ; _⤙_ ; _⤛_ ; End)
 
+infixl 1000 _🝖_
+
 FlipPattern : {T₁ T₂ : Set} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
 FlipPattern {T₁} {T₂} (_▫₁_) (_▫₂_) = {x : T₁}{y : T₂} → (x ▫₁ y) → (y ▫₂ x)
 
@@ -94,5 +96,5 @@ Asymmetry {T} (_▫_) = FlipPattern (_▫_) (λ x y → ¬(x ▫ y))
 --   (Tuple.uncurry ∘ Tuple.uncurry ∘ Tuple.uncurry) (Tuple.curry(Tuple.curry((Tuple.curry trans) ∘ trans) ∘ trans))
 
 -- Transitivity as a binary operation (TODO: The symbol is supposed to be the alchemical symbol for horse dung, but it was the best I could find that somewhat represented transitivity)
-_🝖_ : ∀{T _▫_ x y z} {{_ : Transitivity {T} (_▫_)}} → (x ▫ y) → (y ▫ z) → (x ▫ z)
-_🝖_ {_} {_} {_} {_} {_} {{trans}} a b = trans([∧]-intro a b)
+_🝖_ : ∀{T _▫_} {{_ : Transitivity {T} (_▫_)}} → ∀{x y z} → (x ▫ y) → (y ▫ z) → (x ▫ z)
+_🝖_ {_} {_} {{trans}} a b = trans([∧]-intro a b)
