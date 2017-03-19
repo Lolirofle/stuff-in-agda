@@ -56,8 +56,15 @@ Distributivityᵣ {T₁} {T₂} (_▫₁_) (_▫₂_) = DistributivityPatternᵣ
 ---------------------------------------------------------
 -- Functions
 
-commute : ∀{T _▫_ x y z} → {{_ : Commutativity {T} {T} (_▫_)}} → (z ≡ x ▫ y) → (z ≡ y ▫ x)
-commute {{comm}} stmt =
+commuteₗ : ∀{T _▫_ x y z} → {{_ : Commutativity {T} {T} (_▫_)}} → (x ▫ y ≡ z) → (y ▫ x ≡ z)
+commuteₗ {{comm}} stmt =
+  [≡]-transitivity([∧]-intro
+    comm
+    stmt
+  )
+
+commuteᵣ : ∀{T _▫_ x y z} → {{_ : Commutativity {T} {T} (_▫_)}} → (z ≡ x ▫ y) → (z ≡ y ▫ x)
+commuteᵣ {{comm}} stmt =
   [≡]-transitivity([∧]-intro
     stmt
     comm

@@ -5,43 +5,55 @@ open import Data
 open import Logic(Lvl.𝟎)
 open import Numeral.Natural
 open import Numeral.Natural.Oper
+open import Numeral.Natural.Oper.Properties
 open import Numeral.Natural.Relation
 open import Relator.Equals(Lvl.𝟎)
 open import Structure.Operator.Properties(Lvl.𝟎)
 open import Structure.Relator.Properties(Lvl.𝟎)
 open import Type
 
+[≤]-from-[≡] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
+[≤]-from-[≡] x≡y = [∃]-intro 0 x≡y
+
 [≤][0]-minimum : ∀{x : ℕ} → (0 ≤ x)
-[≤][0]-minimum {0}    = [≤]-from-[≡]([≡]-intro :of: (0 ≡ 0))
-[≤][0]-minimum {𝐒(n)} = [≤]-next(([≤][0]-minimum {n}) , [≡]-intro)
+[≤][0]-minimum {x} = [∃]-intro x [+]-identityₗ
+-- [∃]-intro {ℕ} {\n → 0 + n ≡ x} (x) ([+]-identityₗ)
 
--- [≤]-successorᵣ : ∀{a b : ℕ} → (a ≤ b) → (a ≤ 𝐒(b))
--- [≤]-successorᵣ([≤]-from-[≡] a≡b) = [≤]-next(([≤]-successorᵣ a≡b) , a≡b)
--- [≤]-successorᵣ([≤]-next(a≤x , 𝐒x≡b)) = [≤]-next(([≤]-successorᵣ a≤b) , [≡]-intro)
+[≤]-successor : ∀{a b : ℕ} → (a ≤ b) → (a ≤ 𝐒(b))
+[≤]-successor ([∃]-intro n f) = [∃]-intro (𝐒(n)) ([≡]-with-[ 𝐒 ] f)
+-- a + n ≡ b //f
+-- a + ? ≡ 𝐒(b) //What value works if f?
+-- a + 𝐒(n) ≡ 𝐒(b)
+-- 𝐒(a + n) ≡ 𝐒(b) //[≡]-with-[ 𝐒 ] f
 
--- [≤]-with-[𝐒] : {a b : ℕ} → (a ≤ b) → (𝐒(a) ≤ 𝐒(b))
--- [≤]-with-[𝐒] ([≤]-from-[≡] a≡b) = [≤]-from-[≡]([≡]-with-[ 𝐒 ](a≡b))
--- [≤]-with-[𝐒] ([≤]-next(a≤x , Sx≡b)) =
---   ([≤]-with-[𝐒] a≤x)
---   ()
--- 𝐒(a) ≤ 𝐒(b)
---   a ≤ x
---   𝐒(a) ≤ 𝐒(x)
+-- [≤]-predecessor : ∀{a b : ℕ} → (𝐒(a) ≤ b) → (a ≤ b)
+-- [≤]-predecessor ([∃]-intro n f) = [∃]-intro (𝐒(n)) ([≡]-with-[ 𝐒 ] f)
 
---   𝐒(x) = b
---   𝐒(x) ≤ b
---   ?
+[≤]-with-[𝐒] : ∀{a b : ℕ} → (a ≤ b) → (𝐒(a) ≤ 𝐒(b))
+[≤]-with-[𝐒] {a} {b} ([∃]-intro n f) =
+  [∃]-intro
+    (n)
+    ([≡]-transitivity([∧]-intro
+      ([+1]-commutativity {a} {n}) -- 𝐒(a)+n = a+𝐒(n)
+      ([≡]-with-[ 𝐒 ] f) -- 𝐒(a+n)=a+𝐒(n) = 𝐒(b)
+    ))
+
+[≤]-transitivity : Transitivity (_≤_)
+[≤]-transitivity {a} {b} {c} (([∃]-intro n₁ a+n₁≡b),([∃]-intro n₂ b+n₂≡c)) =
+  [∃]-intro
+    (n₁ + n₂)
+    ([≡]-transitivity([∧]-intro
+      ([≡]-transitivity([∧]-intro
+        ([≡]-symmetry ([+]-associativity {a} {n₁} {n₂})) -- a+(n₁+n₂) = (a+n₁)+n₂
+        ([≡]-with-[(λ expr → expr + n₂)] (a+n₁≡b)) -- (a+n₁)+n₂ = b+n₂
+      ))
+      (b+n₂≡c) -- b+n₂ = c
+    )) -- a+(n₁+n₂) = c
+
+[≤]-reflexivity : Reflexivity (_≤_)
+[≤]-reflexivity = [≤]-from-[≡] [≡]-intro
 
 -- [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
--- [≤]-antisymmetry([≤]-from-[≡] a≡b , _) = a≡b
--- [≤]-antisymmetry(_ , [≤]-from-[≡] b≡a) = [≡]-symmetry b≡a
--- [≤]-antisymmetry([≤]-next(a≤x₁ , sx₁≡b) , [≤]-next(b≤x₂ , sx₂≡a)) =
---   ([≡]-transitivity([∧]-intro
---     ([≡]-symmetry sx₂≡a)
---     (sx₁≡b)
---   ))
--- ∀{x₁} → ((a ≤ x₁) ∧ (𝐒(x₁) ≡ b)) → (a ≤ b)
--- ∀{x₂} → ((b ≤ x₂) ∧ (𝐒(x₂) ≡ a)) → (b ≤ a)
--- a ≤ x₁
--- 𝐒(a) ≤ 𝐒(x₁)
--- 𝐒(a) ≤ b
+-- [≤]-antisymmetry(([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) =
+-- a+(n₁+n₂) = b+(n₁+n₂)
+-- a = b

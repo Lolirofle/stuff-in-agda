@@ -10,7 +10,7 @@ record PartialOrder {T : Set} (_≤_ : T → T → Stmt) (_≡_ : T → T → St
   field
     antisymmetry : Antisymmetry (_≤_) (_≡_)
     transitivity : Transitivity (_≤_)
-    irreflexivity  : Irreflexivity  (_≤_)
+    reflexivity  : Reflexivity  (_≤_)
 
 record StrictOrder {T : Set} (_<_ : T → T → Stmt) : Stmt where
   field

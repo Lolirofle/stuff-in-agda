@@ -24,11 +24,8 @@ data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where
   DivRem𝐒 : {x : ℕ}{y : ℕ}{r : ℕ} → (x divides y withRemainder r) → (x divides (x + y) withRemainder r)
 
 -- Inequalities/Comparisons
-data _≤_ (a b : ℕ) : Stmt where
-  [≤]-from-[≡] : (a ≡ b) → (a ≤ b)
-  [≤]-next     : ∀{x} → ((a ≤ x) ∧ (𝐒(x) ≡ b)) → (a ≤ b)
-    -- (a ≤ b) → (a ≤ 𝐒(b)) //[≤]-next is equivalent with this?
-    -- (𝐒(a) ≤ b) ∧ (∀{x} → 0 ≤ x) //[≤]-next describes this?
+_≤_ : ℕ → ℕ → Stmt
+_≤_ a b = ∃ \(n : ℕ) → (a + n ≡ b)
 
 _<_ : ℕ → ℕ → Stmt
 _<_ a b = (𝐒(a) ≤ b)
