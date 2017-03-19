@@ -16,7 +16,9 @@ import      Numeral.Integer.Oper
 import      Numeral.Integer.Sign
 open import Numeral.Natural
 open import Numeral.Natural.Oper
+open import Numeral.Natural.Oper.Properties
 open import Numeral.Natural.Relation
+open import Numeral.Natural.Relation.Properties
 import      Numeral.Natural.UnclosedOper
 import      Numeral.Real
 import      Numeral.Sign

@@ -31,6 +31,9 @@ instance
 [≡]-with-[_] : {T : Set} → (f : T → T) → ∀{x y : T} → (x ≡ y) → (f(x) ≡ f(y))
 [≡]-with-[_] f [≡]-intro = [≡]-intro
 
+[≡]-substitution : {T : Set} → (f : T → Set) → ∀{x y : T} → (x ≡ y) → f(x) → f(y)
+[≡]-substitution f [≡]-intro fx = fx
+
 instance
   [≡]-equivalence : {T : Set} → Equivalence {T} (_≡_ {T})
   [≡]-equivalence = record {
@@ -48,4 +51,3 @@ instance
 
 -- testSymInstance : {T : Set} {{_ : Symmetry {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
 -- testSymInstance {{sym}} = sym
-
