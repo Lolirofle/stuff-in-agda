@@ -7,6 +7,8 @@ open import Numeral.Natural.Oper
 open import Relator.Equals(Lvl.𝟎)
 open import Structure.Operator.Properties(Lvl.𝟎)
 
+open import Type
+
 [ℕ]-induction : {X : ℕ → Set} → X(𝟎) → ((i : ℕ) → X(i) → X(𝐒(i))) → (n : ℕ) → X(n)
 [ℕ]-induction base next 𝟎 = base
 [ℕ]-induction base next (𝐒(n)) = next(n)([ℕ]-induction base next n)

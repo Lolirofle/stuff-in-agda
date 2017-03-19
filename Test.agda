@@ -25,6 +25,7 @@ import      Numeral.Sign.Oper0
 open import Relator.Equals(Lvl.𝟎)
 import      Structure.Function.Domain
 import      Structure.Function.Linear
+import      Structure.Function.Ordering
 import      Structure.Operator.Field
 import      Structure.Operator.Group
 import      Structure.Operator.Properties
@@ -35,51 +36,54 @@ import      Structure.Relator.Properties
 import      String
 open import Type
 
-ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
-ℕ4IsEven = Even0 ⇒ Even𝐒 ⇒ Even𝐒
+module NumAndDivisionProofs where
+  ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
+  ℕ4IsEven = Even0 ⇒ Even𝐒 ⇒ Even𝐒
 
-ℕ5IsOdd : Odd((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
-ℕ5IsOdd = Odd0 ⇒ Odd𝐒 ⇒ Odd𝐒
+  ℕ5IsOdd : Odd((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
+  ℕ5IsOdd = Odd0 ⇒ Odd𝐒 ⇒ Odd𝐒
 
-ℕ2Dividesℕ4 : (𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-ℕ2Dividesℕ4 = Div0 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ2Dividesℕ4 : (𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
+  ℕ2Dividesℕ4 = Div0 ⇒ Div𝐒 ⇒ Div𝐒
 
-ℕ6IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-ℕ6IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ6IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
+  ℕ6IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒
 
-ℕ4IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-ℕ4IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ4IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
+  ℕ4IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
-ℕ3IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-ℕ3IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ3IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
+  ℕ3IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
-ℕ2IsDividesℕ12 : (𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-ℕ2IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ2IsDividesℕ12 : (𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
+  ℕ2IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
-ℕ1IsDividesℕ12 : 𝐒(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-ℕ1IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ1IsDividesℕ12 : 𝐒(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
+  ℕ1IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
-ℕ3IsDividesℕ7Remℕ1 : 3 divides 7 withRemainder 1
-ℕ3IsDividesℕ7Remℕ1 = DivRem0 ⇒ DivRem𝐒 ⇒ DivRem𝐒
+  ℕ3IsDividesℕ7Remℕ1 : 3 divides 7 withRemainder 1
+  ℕ3IsDividesℕ7Remℕ1 = DivRem0 ⇒ DivRem𝐒 ⇒ DivRem𝐒
 
-ℕ3Eqℕ2+1 : (𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎) + 𝐒(𝟎)
-ℕ3Eqℕ2+1 = [≡]-reflexivity
+  ℕ3Eqℕ2+1 : (𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎) + 𝐒(𝟎)
+  ℕ3Eqℕ2+1 = [≡]-reflexivity
 
-testImpl : 𝐒(𝟎) ≡ (𝟎 ⇒ 𝐒)
-testImpl = [≡]-reflexivity
+  testImpl : 𝐒(𝟎) ≡ (𝟎 ⇒ 𝐒)
+  testImpl = [≡]-reflexivity
 
-fnℕ+1 : (𝟎 ≡ 𝐒(𝟎)) → (𝐒(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎))
-fnℕ+1 = [≡]-with-[ 𝐒 ]
+  fnℕ+1 : (𝟎 ≡ 𝐒(𝟎)) → (𝐒(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎))
+  fnℕ+1 = [≡]-with-[ 𝐒 ]
 
-fnℕ+3 : ∀{x} → (x ≡ 5) → (x + 3 ≡ 8)
-fnℕ+3 = [≡]-with-[ (λ x → x + 3) ]
+  fnℕ+3 : ∀{x} → (x ≡ 5) → (x + 3 ≡ 8)
+  fnℕ+3 = [≡]-with-[ (λ x → x + 3) ]
+
+  ℕ8Eqℕ2⋅4 : 8 ≡ 2 ⋅ 4
+  ℕ8Eqℕ2⋅4 = [≡]-reflexivity
+
+  ℕ0Eqℕ0⋅4 : 0 ≡ 0 ⋅ 4
+  ℕ0Eqℕ0⋅4 = [≡]-reflexivity
 
 testBottom : (⊥ ∧ ℕ) → ℕ
 testBottom = [∧]-elimᵣ
-
-repeat : {R : Set} → R → (R → R) → ℕ → R
-repeat x _ 𝟎 = x
-repeat x f (𝐒 n) = f(repeat x f n)
 
 data Data1 : Type where
   data1,1 : Data1
@@ -95,18 +99,6 @@ data Data3 : Type where
 
 dataTest : (Data1 ⨯ Data2 ⨯ Data3) → Data3
 dataTest(x , y , z) = z
-
-ℕ8Eqℕ2⋅4 : 8 ≡ 2 ⋅ 4
-ℕ8Eqℕ2⋅4 = [≡]-reflexivity
-
-ℕ0Eqℕ0⋅4 : 0 ≡ 0 ⋅ 4
-ℕ0Eqℕ0⋅4 = [≡]-reflexivity
-
--- [⨯]-equivalenceRelation : Eq.EquivalenceRelation (_⨯_)
--- [⨯]-equivalenceRelation =
---   record {
---     reflexivity = λ X → (X ⨯ X)
---   }
 
 -- coprimes m n = ((2*m-n,m) , (2*m+n,m) , (m+2*n,n))
 -- coprimes' m n = (a1/a2,b1/b2,c1/c2) where ((a1,a2),(b1,b2),(c1,c2))=f m n
@@ -161,23 +153,31 @@ dataTest(x , y , z) = z
 -- repeat2 f x simple = f (f x)
 -- repeat2 f x complex = f (f x)
 
-_⨯^_ : ∀{n} → Set n → ℕ → Set n
-_⨯^_ _    𝟎      = Unit
-_⨯^_ type (𝐒(𝟎)) = type
-_⨯^_ type (𝐒(n)) = type ⨯ (type ⨯^ n)
+module TestRepeatingStuff where
+  repeat : {R : Set} → R → (R → R) → ℕ → R
+  repeat x _ 𝟎 = x
+  repeat x f (𝐒 n) = f(repeat x f n)
 
-_→^_ : ∀{n} → Set n → ℕ → Set n
-_→^_ _    𝟎      = Unit
-_→^_ type (𝐒(𝟎)) = type
-_→^_ type (𝐒(n)) = type → (type →^ n)
+  _⨯^_ : ∀{n} → Set n → ℕ → Set n
+  _⨯^_ _    𝟎      = Unit
+  _⨯^_ type (𝐒(𝟎)) = type
+  _⨯^_ type (𝐒(n)) = type ⨯ (type ⨯^ n)
 
-repeatOp : ∀{n} → Set n → (Set n → Set n → Set n) → ℕ → Set n
-repeatOp type _  𝟎      = type
-repeatOp type op (𝐒(n)) = op type (repeatOp type op n)
+  _→^_ : ∀{n} → Set n → ℕ → Set n
+  _→^_ _    𝟎      = Unit
+  _→^_ type (𝐒(𝟎)) = type
+  _→^_ type (𝐒(n)) = type → (type →^ n)
 
-_⨯^₂_ : ∀{n} → Set n → ℕ → Set n
-_⨯^₂_ _ 𝟎 = Unit
-_⨯^₂_ type (𝐒(n)) = repeatOp type (_⨯_) n
+  repeatOp : ∀{n} → Set n → (Set n → Set n → Set n) → ℕ → Set n
+  repeatOp type _  𝟎      = type
+  repeatOp type op (𝐒(n)) = op type (repeatOp type op n)
+
+  _⨯^₂_ : ∀{n} → Set n → ℕ → Set n
+  _⨯^₂_ _ 𝟎 = Unit
+  _⨯^₂_ type (𝐒(n)) = repeatOp type (_⨯_) n
+
+  testTupleRaise : ℕ Tuple.^ 4 → ℕ ⨯ ℕ ⨯ ℕ ⨯ ℕ
+  testTupleRaise x = x
 
 -- curryN : {n : ℕ} → ∀{T} → (T →^ n)
 
@@ -211,17 +211,13 @@ module Test2 where
 -- f₂ : ∀{n}{A B C D : TypeN n} → (((A ⨯ B) ⨯ C) -> D) -> (A -> B -> C -> D)
 -- f₂ = Functional.Raise.repeatᵣ 2 id (_∘_) Tuple.curry
 
-testTupleRaise : ℕ Tuple.^ 4 → ℕ ⨯ ℕ ⨯ ℕ ⨯ ℕ
-testTupleRaise x = x
+module TestTypeAscription where
+  ty = 1 :of: ℕ
+  -- ty2 = 1 :of: ⊥
 
-testTy = 1 :of: ℕ
--- testTy2 = 1 :of: ⊥
-
--- testClassic : {X : Classic.Stmt} → (¬ (¬ X)) → X
--- testClassic = Classic.[¬¬]-elim
 
 -- Testing universes
-module TestSet {n} (Type : Set n) where
+module TestSetUniverses {n} (Type : Set n) where
   postulate _→₂_ : Type → Type → Set n
   data TestData1 (A : Type) (B : Type) : Set n where
   -- data TestData2 (A : Type) (B : Type) : Type where -- Data of arbitrary type seems to not be okay
@@ -233,8 +229,23 @@ module TestSet {n} (Type : Set n) where
   testFn : Type → Type
   testFn x = x
 
+-- testClassic : {X : Classic.Stmt} → (¬ (¬ X)) → X
+-- testClassic = Classic.[¬¬]-elim
+
 testClassicLogic1 : {X : Stmt} → ¬(¬ X) → Classic.Wrap(X)
 testClassicLogic1 x = Classic.[¬¬]-elim(Classic.intro x)
+
+module testEqProof where
+  open Structure.Operator.Properties(Lvl.𝟎)
+
+  minSkit : {{_ : Absorberₗ (_⋅_) (0)}} → {{_ : Identityᵣ (_+_) (0)}} → ∀{x} → (1 ≡ ((0 ⋅ x) + 1) + 0)
+  minSkit {{absorb}} {{id}} {x} =
+    ([≡]-transitivity([∧]-intro
+      (([≡]-with-[(λ expr → expr + 1)]
+        (([≡]-symmetry (absorb {x})) :of: (0 ≡ 0 ⋅ x))
+      ) :of: (1 ≡ (0 ⋅ x) + 1))
+      (([≡]-symmetry id) :of: (_ ≡ ((0 ⋅ x) + 1) + 0))
+    ))
 
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"

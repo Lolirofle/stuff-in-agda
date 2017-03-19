@@ -119,6 +119,15 @@ modus-tollens = contrapositive₁
 [¬¬¬]-elim : {X : Stmt} → (¬ (¬ (¬ X))) → (¬ X)
 [¬¬¬]-elim = contrapositive₁ [¬¬]-intro
 -- (((X → ⊥) → ⊥) → ⊥) → (X → ⊥)
+-- (((X → ⊥) → ⊥) → ⊥) → X → ⊥
+--   (A → B) → ((B → ⊥) → (A → ⊥)) //contrapositive₁
+--   (A → B) → (B → ⊥) → (A → ⊥)
+--   (A → B) → (B → ⊥) → A → ⊥
+
+--   X → (¬ (¬ X)) //[¬¬]-intro
+--   X → ((X → ⊥) → ⊥)
+
+--   (X → ((X → ⊥) → ⊥)) → (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //Combining those two (A=X , B=((X → ⊥) → ⊥))
 
 ------------------------------------------
 -- Almost-distributivity with duals (De-morgan's laws)
