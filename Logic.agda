@@ -1,7 +1,8 @@
-module Logic level where
+module Logic lvl where
 
 open import Data
 open import Functional
+import      Level as Lvl
 
 infixl 10 _⇒_
 infixl 1005 _∧_
@@ -11,7 +12,8 @@ infixl 1000 _←_ _↔_
 ------------------------------------------
 -- Statement
 
-Stmt = Set level
+Stmt : Set(Lvl.𝐒 lvl)
+Stmt = Set lvl
 
 ------------------------------------------
 -- Conjunction (AND)
@@ -101,10 +103,6 @@ data ⊤ : Stmt where
 [¬]-elim : {X : Stmt} → ¬ X → (X → ⊥) -- written like (X → (¬ X) → ⊥) looks like a [⊥]-intro
 [¬]-elim = id
 
-[¬¬]-intro : {X : Stmt} → X → (¬ (¬ X))
-[¬¬]-intro = apply
--- X → (X → ⊥) → ⊥
-
 ------------------------------------------
 -- Exclusive disjunction (XOR)
 
@@ -142,12 +140,16 @@ pattern [⊽]-intro x y = [∧]-intro x y
 -- Existential quantification
 
 data ∃ {X : Set} (body : X → Stmt) : Stmt where
-  [∃]-intro : {x : X} → body(x) → ∃ body
+  [∃]-intro : (x : X) → body(x) → ∃ body
 
-[∃]-elim : ∀ {X body} → {Z : Stmt} → ((∀ {x : X} → body(x) → Z) ⨯ (∃ {X} body)) → Z
-[∃]-elim(f , ([∃]-intro stmt)) = f stmt
+[∃]-elim : ∀{X body}{Z : Stmt} → ((∀{x : X} → body(x) → Z) ⨯ (∃ {X} body)) → Z
+[∃]-elim(f , ([∃]-intro _ stmt)) = f stmt
 
 syntax ∃ {X} (λ x → f) = ∃[ x ∈ X ] f
+
+-- TODO
+-- testExists : ∀{T : Set}{f : T → Set} → (∃[ x ∈ T ] (f x)) → (∃ {T} (λ x → f x))
+-- testExists x = x
 
 ------------------------------------------
 -- Convenient definitions with different semantics

@@ -10,11 +10,11 @@ data List {lvl} (T : Set lvl) : Set lvl where
   ∅ : (List T)
   _⤙_ : T → (List T) → (List T)
 
-_⤚_ : ∀ {lvl} → {T : Set lvl} → (List T) → T → (List T)
+_⤚_ : ∀{lvl}{T : Set lvl} → (List T) → T → (List T)
 _⤚_ ∅ b = b ⤙ ∅
 _⤚_ (elem ⤙ rest) b = elem ⤙ (rest ⤚ elem)
 
-_⁀_ : ∀ {lvl} → {T : Set lvl} → (List T) → (List T) → (List T)
+_⁀_ : ∀{lvl}{T : Set lvl} → (List T) → (List T) → (List T)
 _⁀_ ∅ b = b
 _⁀_ (elem ⤙ rest) b = elem ⤙ (rest ⁀ b)
 
@@ -23,27 +23,27 @@ pattern prepend elem list = elem ⤙ list
 postpend = _⤚_
 concat   = _⁀_
 
-singleton : ∀ {lvl} → {T : Set lvl} → T → (List T)
+singleton : ∀{lvl}{T : Set lvl} → T → (List T)
 singleton elem = elem ⤙ ∅
 
-map : ∀ {lvl} → {T₁ T₂ : Set lvl} → (T₁ → T₂) → (List T₁) → (List T₂)
+map : ∀{lvl}{T₁ T₂ : Set lvl} → (T₁ → T₂) → (List T₁) → (List T₂)
 map _ ∅ = ∅
 map f (elem ⤙ l) = (f elem) ⤙ (map f l)
 
-foldₗ : ∀ {lvl} → {T Result : Set lvl} → (Result → T → Result) → Result → (List T) → Result
+foldₗ : ∀{lvl}{T Result : Set lvl} → (Result → T → Result) → Result → (List T) → Result
 foldₗ _   result ∅ = result
 foldₗ _▫_ result (elem ⤙ l) = foldₗ _▫_ (result ▫ elem) l
 
-foldᵣ : ∀ {lvl} → {T Result : Set lvl} → (T → Result → Result) → Result → (List T) → Result
+foldᵣ : ∀{lvl}{T Result : Set lvl} → (T → Result → Result) → Result → (List T) → Result
 foldᵣ _   init ∅ = init
 foldᵣ _▫_ init (elem ⤙ l) = elem ▫ (foldᵣ _▫_ init l)
 
-index : ∀ {lvl} → {T : Set lvl} → ℕ → (List T) → (Option T)
+index : ∀{lvl}{T : Set lvl} → ℕ → (List T) → (Option T)
 index _      ∅       = Option.None
 index 𝟎      (x ⤙ _) = Option.Some(x)
 index (𝐒(n)) (_ ⤙ l) = index n l
 
-first : ∀ {lvl} → {T : Set lvl} → ℕ → (List T) → (List T)
+first : ∀{lvl}{T : Set lvl} → ℕ → (List T) → (List T)
 first _      ∅       = ∅
 first 𝟎      (x ⤙ _) = x ⤙ ∅
 first (𝐒(n)) (x ⤙ l) = x ⤙ (first n l)
@@ -51,17 +51,17 @@ first (𝐒(n)) (x ⤙ l) = x ⤙ (first n l)
 length : {T : Set} → (List T) → ℕ -- TODO: Make ℕ a member of (Set lvl), and then generalize this function
 length l = foldᵣ (λ _ count → 𝐒(count)) 0 l
 
-mapWindow2ₗ : ∀ {lvl} → {T : Set lvl} → (T → T → T) → (List T) → (List T)
+mapWindow2ₗ : ∀{lvl}{T : Set lvl} → (T → T → T) → (List T) → (List T)
 mapWindow2ₗ f (x₁ ⤙ x₂ ⤙ l) = (f x₁ x₂) ⤙ (mapWindow2ₗ f (x₂ ⤙ l))
 mapWindow2ₗ _ _ = ∅
 
-firstElem : ∀ {lvl} → {T : Set lvl} → (List T) → (Option T)
+firstElem : ∀{lvl}{T : Set lvl} → (List T) → (Option T)
 firstElem ∅ = Option.None
 firstElem (x ⤙ _) = Option.Some(x)
 
-lastElem : ∀ {lvl} → {T : Set lvl} → (List T) → (Option T)
+lastElem : ∀{lvl}{T : Set lvl} → (List T) → (Option T)
 lastElem l = foldᵣ (λ elem _ → Option.Some(elem)) Option.None l -- TODO: Is this wrong?
 
-_or_ : ∀ {lvl} → {T : Set lvl} → (List T) → (List T) → (List T)
+_or_ : ∀{lvl}{T : Set lvl} → (List T) → (List T) → (List T)
 _or_ ∅ default = default
 _or_ l _ = l
