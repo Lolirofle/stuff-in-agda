@@ -42,3 +42,12 @@ TransitivityChain {T} (_▫_) X = (List.reduceₗ (_∧_) (List.fromList (List.m
 
 -- testTransitivityChain : {_▫_ : ℕ → ℕ → Stmt} → transitivityChain _▫_ (1 ⤙ 2 ⤙ 3 ⤛ 4) → ((1 ▫ 2) ∧ (2 ▫ 3) ∧ (3 ▫ 4)) → (1 ▫ 4)
 -- testTransitivityChain x = x
+
+-- TODO: Maybe try to make transitivity proofs more like regular math syntax-wise:
+-- _ _[Trans:_with_] : (x ▫ y) → ((y ▫ z) : T) → T → (Transitivity _▫_) → (x ▫ z) -- TODO: T and (y ▫ z) is reversed?
+-- (x ≡ 2 ⋅ (a + 1))
+-- (_ ≡ (a + 1)+(a + 1))   [Trans: [⋅]-to-[+]                        with [≡]-transitivity]
+-- (_ ≡ a + (1 + (a + 1))) [Trans: [+]-associativity                 with [≡]-transitivity]
+-- (_ ≡ a + ((a + 1) + 1)) [Trans: ([≡]-with[_] ∘ [+]-commutativity) with [≡]-transitivity]
+-- (_ ≡ a + (a + (1 + 1))) [Trans: ([≡]-with[_] ∘ [+]-associativity) with [≡]-transitivity]
+-- (_ ≡ (a + a) + (1 + 1)) [Trans: [+]-associativity                 with [≡]-transitivity]
