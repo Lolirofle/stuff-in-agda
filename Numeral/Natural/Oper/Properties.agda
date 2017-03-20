@@ -144,9 +144,10 @@ instance
 -- testAssociativityOfSuccessor2 : ∀{x y} → (𝐒(x) + y) ≡ (x + (1 + y))
 -- testAssociativityOfSuccessor2 {x} {y} = [+]-associativity {x} {1} {y}
 
-[+]-injectivityₗ : ∀{a} → Injective (λ x → x + a)
-[+]-injectivityₗ {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
-[+]-injectivityₗ {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]-injectivityₗ {n} ([≡]-with-[ 𝐏 ] x₁+𝐒n≡x₂+𝐒n)
+instance
+  [+]-injectivityₗ : ∀{a} → Injective (λ x → x + a)
+  [+]-injectivityₗ {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
+  [+]-injectivityₗ {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]-injectivityₗ {n} ([≡]-with-[ 𝐏 ] x₁+𝐒n≡x₂+𝐒n)
 
 -- TODO: It would be great to be able to chain the transitivity here. Also, rename and generalize this later
 commuteBothTemp : ∀{a₁ a₂ b₁ b₂} → (a₁ + a₂ ≡ b₁ + b₂) → (a₂ + a₁ ≡ b₂ + b₁)
@@ -159,9 +160,14 @@ commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
     ))
   ))
 
-[+]-injectiveᵣ : ∀{a} → Injective (λ x → a + x)
-[+]-injectiveᵣ {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = commuteBothTemp {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
-[+]-injectiveᵣ {𝐒(n)} {x₁} {x₂} (𝐒n+x₁≡𝐒n+x₂) =
-  [+]-injectiveᵣ {n} (
-    commuteBothTemp {x₁} {n} {x₂} {n} ([≡]-with-[ 𝐏 ] (commuteBothTemp {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
-  )
+instance
+  [+]-injectiveᵣ : ∀{a} → Injective (λ x → a + x)
+  [+]-injectiveᵣ {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = commuteBothTemp {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
+  [+]-injectiveᵣ {𝐒(n)} {x₁} {x₂} (𝐒n+x₁≡𝐒n+x₂) =
+    [+]-injectiveᵣ {n} (
+      commuteBothTemp {x₁} {n} {x₂} {n} ([≡]-with-[ 𝐏 ] (commuteBothTemp {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
+    )
+
+[+]-sum-is-0 : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)
+[+]-sum-is-0 {a} {0}    a+0≡0 = a+0≡0
+[+]-sum-is-0 {a} {𝐒(n)} a+𝐒n≡0 = [+]-sum-is-0 {a} {n} ([≡]-with-[ 𝐏 ] a+𝐒n≡0)

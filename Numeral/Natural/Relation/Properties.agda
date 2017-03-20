@@ -9,6 +9,7 @@ open import Numeral.Natural.Oper.Properties
 open import Numeral.Natural.Relation
 open import Relator.Equals(Lvl.𝟎)
 open import Structure.Operator.Properties(Lvl.𝟎)
+open import Structure.Relator.Ordering(Lvl.𝟎)
 open import Structure.Relator.Properties(Lvl.𝟎)
 open import Type
 
@@ -53,8 +54,23 @@ open import Type
 [≤]-reflexivity : Reflexivity (_≤_)
 [≤]-reflexivity = [≤]-from-[≡] [≡]-intro
 
--- [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
--- [≤]-antisymmetry(([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) = where
+[≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
+[≤]-antisymmetry {a} {b} (([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) = [≡]-substitution (λ n → a + n ≡ b) n₁≡0 a+n₁≡b where
+  n₁+n₂≡0 : ((n₁ + n₂) ≡ 0)
+  n₁+n₂≡0 =
+    [+]-injectiveᵣ(
+      [≡]-transitivity([∧]-intro
+        ([≡]-symmetry([+]-associativity {a} {n₁} {n₂}))
+        ([≡]-transitivity([∧]-intro
+          ([≡]-with-[(λ expr → expr + n₂)]
+            a+n₁≡b
+          )
+          b+n₂≡a
+        ))
+      )
+    )
+  n₁≡0 : (n₁ ≡ 0)
+  n₁≡0 = [+]-sum-is-0 {n₁} {n₂} n₁+n₂≡0
 -- a+n₁ = b
 -- (a+n₁)+n₂ = b+n₂
 -- (a+n₁)+n₂ = a
@@ -62,4 +78,10 @@ open import Type
 -- a+(n₁+n₂) = a+0
 -- n₁+n₂ = 0
 -- a = b
--- TODO: Requires [+]-injectivity
+
+[≤]-weakPartialOrder : WeakPartialOrder (_≤_) (_≡_)
+[≤]-weakPartialOrder = record{
+    antisymmetry = [≤]-antisymmetry;
+    transitivity = [≤]-transitivity;
+    reflexivity  = [≤]-reflexivity
+  }
