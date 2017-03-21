@@ -119,24 +119,28 @@ instance
 -- [⋅][+]-distributivityᵣ {x} {y} {z} = [ℕ]-induction (base x y) (next x y) z where
 --   base : ∀ (x y : ℕ) → ((x + y) ⋅ 0) ≡ ((x ⋅ 0) + (y ⋅ 0))
 --   base _ _ = [≡]-intro
-
+-- 
 --   next : ∀ (x y z : ℕ) → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z)) → ((x + y) ⋅ 𝐒(z)) ≡ ((x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)))
---   next x y z eq = eq
---     -- ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z))
---     -- (x + y) + ((x + y) ⋅ z) = (x + y) + ((x ⋅ z) + (y ⋅ z)) //[≡]-with-[(expr ↦ (x+y) + expr)]
---     -- (x + y) ⋅ 𝐒(z) = (x + y) + ((x ⋅ z) + (y ⋅ z)) // (x + y) ⋅ 𝐒(z) = (x + y) + ((x + y) ⋅ z) (Definition: (⋅))
+--   next x y z (x+y)⋅z≡(x⋅z)+(y⋅z) =
+--     ([≡]-transitivity([∧]-intro
+--       ([≡]-with-[(expr ↦ (x+y) + expr)]
+--         (x+y)⋅z≡(x⋅z)+(y⋅z)
+--       )
+--       [+]-associativity
+--     )
+    -- ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z))
+    -- (x + y) + ((x + y) ⋅ z) = (x + y) + ((x ⋅ z) + (y ⋅ z)) //[≡]-with-[(expr ↦ (x+y) + expr)]
+    -- (x + y) ⋅ 𝐒(z) = (x + y) + ((x ⋅ z) + (y ⋅ z)) // (x + y) ⋅ 𝐒(z) = (x + y) + ((x + y) ⋅ z) (Definition: (⋅))
 
---     -- (x + y) + ((x ⋅ z) + (y ⋅ z)) = (x + y) + ((x ⋅ z) + (y ⋅ z)) //[≡]-intro
---     -- = x + (y + ((x ⋅ z) + (y ⋅ z))) //[+]-associativity
---     -- = x + ((y + (x ⋅ z)) + (y ⋅ z)) //[+]-associativity
---     -- = x + (((x ⋅ z) + y) + (y ⋅ z)) //[+]-commutativity
---     -- = x + ((x ⋅ z) + (y + (y ⋅ z))) //[+]-associativity
---     -- = (x + (x ⋅ z)) + (y + (y ⋅ z)) //[+]-associativity
---     -- = (x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)) //Definition: (⋅)
+    -- (x + y) + ((x ⋅ z) + (y ⋅ z)) = (x + y) + ((x ⋅ z) + (y ⋅ z)) //[≡]-intro
+    -- = x + (y + ((x ⋅ z) + (y ⋅ z))) //[+]-associativity
+    -- = x + ((y + (x ⋅ z)) + (y ⋅ z)) //[+]-associativity
+    -- = x + (((x ⋅ z) + y) + (y ⋅ z)) //[+]-commutativity
+    -- = x + ((x ⋅ z) + (y + (y ⋅ z))) //[+]-associativity
+    -- = (x + (x ⋅ z)) + (y + (y ⋅ z)) //[+]-associativity
+    -- = (x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)) //Definition: (⋅)
 
 -- [⋅]-associativity : ∀{x y z : ℕ} → ((x ⋅ y) ⋅ z) ≡ (x ⋅ (y ⋅ z))
-
--- [+]-abelianGroup (_+_) (1) (−_)
 
 -- testAssociativityOfSuccessor1 : ∀{x y} → ((x + 1) + y) ≡ (x + (1 + y))
 -- testAssociativityOfSuccessor1 {x} {y} = [+]-associativity {x} {1} {y}

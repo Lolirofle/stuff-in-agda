@@ -21,3 +21,15 @@ swap : ∀{n₁ n₂ n₃} {T₁ : Set n₁}{T₂ : Set n₂}{T₃ : Set n₃} �
 swap f x₂ x₁ = f x₁ x₂
 
 -- 🔁(f ∘ 2)
+
+-- curry ∘ curry
+-- (Y → Z) → ((X → Y) → (X → Z))
+-- ((T₁ ⨯ T₂) → T₃) → (T₁ → (T₂ → T₃))
+--   Y = ((T₁ ⨯ T₂) → T₃)
+--   Z = (T₁ → (T₂ → T₃))
+-- ((T₄ ⨯ T₅) → T₆) → (T₄ → (T₅ → T₆))
+--   X = ((T₄ ⨯ T₅) → T₆)
+--   Y = (T₄ → (T₅ → T₆))
+-- 
+--   T₄ = (T₁ ⨯ T₂)
+--   (T₅ → T₆) = T₃
