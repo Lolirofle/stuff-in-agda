@@ -17,6 +17,7 @@ import      Numeral.Integer.Sign
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties
+open import Numeral.Natural.Prime
 open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Properties
 import      Numeral.Natural.UnclosedOper
@@ -248,6 +249,12 @@ module testEqProof where
       ) :of: (1 ≡ (0 ⋅ x) + 1))
       (([≡]-symmetry id) :of: (_ ≡ ((0 ⋅ x) + 1) + 0))
     ))
+
+module testLecture where
+  open Numeral.Natural.UnclosedOper
+
+  test1 : ∀{f : ℕ → ℕ} → (f(0) ≡ 0) ∧ (∀{n : ℕ} → f(n + 1) ≡ f(n) + n + 1) → (∀{n : ℕ} → f(n) ≡ (n ⋅ (n + 1)) /₀ 2)
+  test1 ()
 
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"

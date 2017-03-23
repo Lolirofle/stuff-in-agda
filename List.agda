@@ -3,7 +3,7 @@ module List where
 open import Data
 open import Numeral.Natural
 
-infixl 1000 _⤚_ _⁀_
+infixl 1000 _⤚_ _++_
 infixr 1000 _⤙_
 
 data List {lvl} (T : Set lvl) : Set lvl where
@@ -14,14 +14,14 @@ _⤚_ : ∀{lvl}{T : Set lvl} → (List T) → T → (List T)
 _⤚_ ∅ b = b ⤙ ∅
 _⤚_ (elem ⤙ rest) b = elem ⤙ (rest ⤚ elem)
 
-_⁀_ : ∀{lvl}{T : Set lvl} → (List T) → (List T) → (List T)
-_⁀_ ∅ b = b
-_⁀_ (elem ⤙ rest) b = elem ⤙ (rest ⁀ b)
+_++_ : ∀{lvl}{T : Set lvl} → (List T) → (List T) → (List T)
+_++_ ∅ b = b
+_++_ (elem ⤙ rest) b = elem ⤙ (rest ++ b)
 
 pattern empty = ∅
 pattern prepend elem list = elem ⤙ list
 postpend = _⤚_
-concat   = _⁀_
+concat   = _++_
 
 singleton : ∀{lvl}{T : Set lvl} → T → (List T)
 singleton elem = elem ⤙ ∅

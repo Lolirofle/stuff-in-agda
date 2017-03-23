@@ -40,3 +40,9 @@ record StrictOrder {T : Set} (_<_ : T → T → Stmt) : Stmt where
 -- ∀x. (y<x) → (x<x) → ⊥ //swap (..)
 -- ∀x. (y<x) ∧ (x<x) → ⊥ //Tuple.uncurry
 -- ∀x. (y<x) → ⊥ //Nope
+
+Minimum : {T : Set} → (T → T → Stmt) → T → Stmt
+Minimum {T} (_≤_) min = ∀{x : T} → (min ≤ x)
+
+Maximum : {T : Set} → (T → T → Stmt) → T → Stmt
+Maximum {T} (_≤_) max = ∀{x : T} → (x ≤ max)

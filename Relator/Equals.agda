@@ -51,3 +51,6 @@ instance
 
 -- testSymInstance : {T : Set} {{_ : Symmetry {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
 -- testSymInstance {{sym}} = sym
+
+Uniqueness : ∀{T} → (T → Stmt) → Stmt
+Uniqueness {T} property = ∀{x y : T} → (property(x) ∧ property(y)) → (x ≡ y)

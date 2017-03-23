@@ -174,3 +174,6 @@ modus-tollens = contrapositive₁
 -- (X ∧ Y) ∨ (X ∧ Z)
 -- X → (Y ∨ Z)
 -- X ∨ (Y ∧ Z)
+
+non-contradiction : {X : Stmt} → ¬ (X ∧ (¬ X))
+non-contradiction(x , nx) = nx x

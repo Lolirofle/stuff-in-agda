@@ -21,3 +21,6 @@ abstract
   map f (classic x) = classic(f x)
 
 postulate [¬¬]-elim : {X : ConstructiveStmt} → Wrap(¬ (¬ X)) → Wrap(X)
+
+-- excluded-middle : ∀{A : ConstructiveStmt} → Wrap(A ∨ (¬ A))
+-- excluded-middle = intro(  )
