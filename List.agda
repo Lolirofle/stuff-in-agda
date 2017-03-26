@@ -48,8 +48,10 @@ first _      ∅       = ∅
 first 𝟎      (x ⤙ _) = x ⤙ ∅
 first (𝐒(n)) (x ⤙ l) = x ⤙ (first n l)
 
-length : {T : Set} → (List T) → ℕ -- TODO: Make ℕ a member of (Set lvl), and then generalize this function
-length l = foldᵣ (λ _ count → 𝐒(count)) 0 l
+length : ∀{lvl}{T : Set lvl} → (List T) → ℕ
+length ∅ = 𝟎
+length (_ ⤙ l) = 𝐒(length l)
+-- foldᵣ (λ _ count → 𝐒(count)) 0 l
 
 mapWindow2ₗ : ∀{lvl}{T : Set lvl} → (T → T → T) → (List T) → (List T)
 mapWindow2ₗ f (x₁ ⤙ x₂ ⤙ l) = (f x₁ x₂) ⤙ (mapWindow2ₗ f (x₂ ⤙ l))
@@ -65,3 +67,7 @@ lastElem l = foldᵣ (λ elem _ → Option.Some(elem)) Option.None l -- TODO: Is
 _or_ : ∀{lvl}{T : Set lvl} → (List T) → (List T) → (List T)
 _or_ ∅ default = default
 _or_ l _ = l
+
+List-induction : ∀{lvl}{T : Set lvl}{P : List(T) → Set} → P(∅) → (∀(x : T)(l : List(T)) → P(l) → P(x ⤙ l)) → (∀{l : List(T)} → P(l))
+List-induction base next {∅} = base
+List-induction base next {x ⤙ l} = next(x)(l)(List-induction base next {l})
