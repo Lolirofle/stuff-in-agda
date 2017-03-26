@@ -8,6 +8,7 @@ import      Functional.Raise
 import      Level as Lvl
 import      List
 import      List.Properties
+import      List.Relation
 open import Logic(Lvl.𝟎)
 import      Logic.Classic(Lvl.𝟎) as Classic
 open import LogicTheorems(Lvl.𝟎)

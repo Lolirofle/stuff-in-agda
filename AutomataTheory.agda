@@ -1,5 +1,7 @@
 module AutomataTheory where
 
+import List
+
 -- ∑ denotes an alphabet
 -- String|Word is a list of symbols in an alphabet
 -- ∑* denotes the set of all words for a given alphabet

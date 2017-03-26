@@ -72,6 +72,14 @@ reverse : ∀{lvl}{T : Set lvl} → (List T) → (List T)
 reverse ∅ = ∅
 reverse (x ⊰ l) = (reverse l) ++ (singleton x)
 
+repeat : ∀{lvl}{T : Set lvl} → T → ℕ → (List T)
+repeat _ 𝟎      = ∅
+repeat x (𝐒(n)) = x ⊰ (repeat x n)
+
+multiply : ∀{lvl}{T : Set lvl} → (List T) → ℕ → (List T)
+multiply _ 𝟎      = ∅
+multiply l (𝐒(n)) = l ++ (multiply l n)
+
 List-induction : ∀{lvl}{T : Set lvl}{P : List(T) → Set} → P(∅) → (∀(x : T)(l : List(T)) → P(l) → P(x ⊰ l)) → (∀{l : List(T)} → P(l))
 List-induction base next {∅} = base
 List-induction base next {x ⊰ l} = next(x)(l)(List-induction base next {l})
