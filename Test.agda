@@ -253,8 +253,17 @@ module testEqProof where
 module testLecture where
   open Numeral.Natural.UnclosedOper
 
-  test1 : ∀{f : ℕ → ℕ} → (f(0) ≡ 0) ∧ (∀{n : ℕ} → f(n + 1) ≡ f(n) + n + 1) → (∀{n : ℕ} → f(n) ≡ (n ⋅ (n + 1)) /₀ 2)
-  test1 ()
+  -- test1 : ∀{f : ℕ → ℕ} → (f(0) ≡ 0) ∧ (∀{n : ℕ} → f(n + 1) ≡ f(n) + n + 1) → (∀{n : ℕ} → f(n) ≡ (n ⋅ (n + 1)) /₀ 2)
+  -- test1 ()
+
+module testList where
+  open List
+
+  -- rev1 : (4 ⤙ 3 ⤙ 2 ⤙ 1 ⤙ ∅) → reverse(1 ⤙ 2 ⤙ 3 ⤙ 4 ⤙ ∅)
+  -- rev1 = id
+
+  len1 : length(1 ⤙ 2 ⤙ 3 ⤙ 4 ⤙ ∅) ≡ 4
+  len1 = [≡]-intro
 
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"

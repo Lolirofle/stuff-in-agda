@@ -49,7 +49,9 @@ first 𝟎      (x ⤙ _) = x ⤙ ∅
 first (𝐒(n)) (x ⤙ l) = x ⤙ (first n l)
 
 length : {T : Set} → (List T) → ℕ -- TODO: Make ℕ a member of (Set lvl), and then generalize this function
-length l = foldᵣ (λ _ count → 𝐒(count)) 0 l
+length ∅      = 0
+length (x ⤙ l) = 𝐒(length l)
+-- foldᵣ (λ _ count → 𝐒(count)) 0 l
 
 mapWindow2ₗ : ∀{lvl}{T : Set lvl} → (T → T → T) → (List T) → (List T)
 mapWindow2ₗ f (x₁ ⤙ x₂ ⤙ l) = (f x₁ x₂) ⤙ (mapWindow2ₗ f (x₂ ⤙ l))
@@ -61,6 +63,10 @@ firstElem (x ⤙ _) = Option.Some(x)
 
 lastElem : ∀{lvl}{T : Set lvl} → (List T) → (Option T)
 lastElem l = foldᵣ (λ elem _ → Option.Some(elem)) Option.None l -- TODO: Is this wrong?
+
+reverse : ∀{lvl}{T : Set lvl} → (List T) → (List T)
+reverse ∅       = ∅
+reverse (x ⤙ l) = (reverse l) ++ (x ⤙ ∅)
 
 _or_ : ∀{lvl}{T : Set lvl} → (List T) → (List T) → (List T)
 _or_ ∅ default = default
