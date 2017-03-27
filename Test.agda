@@ -270,10 +270,10 @@ module testDiv where
 module testList where
   open List
 
-  -- rev1 : (4 ⤙ 3 ⤙ 2 ⤙ 1 ⤙ ∅) → reverse(1 ⤙ 2 ⤙ 3 ⤙ 4 ⤙ ∅)
+  -- rev1 : (4 ⊰ 3 ⊰ 2 ⊰ 1 ⊰ ∅) → reverse(1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅)
   -- rev1 = id
 
-  len1 : length(1 ⤙ 2 ⤙ 3 ⤙ 4 ⤙ ∅) ≡ 4
+  len1 : length(1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅) ≡ 4
   len1 = [≡]-intro
 
 main : FFI.IO FFI.Unit
