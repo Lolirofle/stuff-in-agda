@@ -5,7 +5,7 @@ open import Functional
 open import Logic(lvl)
 open import Numeral.Natural
 open import NonEmptyList as List
-  using (List ; _⤙_ ; _⤛_ ; End)
+  using (List ; _⊰_ ; _⤛_ ; End)
 
 infixl 1000 _🝖_
 
@@ -72,7 +72,7 @@ Asymmetry {T} (_▫_) = FlipPattern (_▫_) (λ x y → ¬(x ▫ y))
 --   b(𝐒(n)) = Tuple.curry((b(n)) ∘ trans)
 -- Old idea: trans(transitivityChain trans tail)
 
--- testTransitivityChain : {_▫_ : ℕ → ℕ → Stmt} → TransitivityChain _▫_ (1 ⤙ 2 ⤙ 3 ⤛ 4) → ((1 ▫ 2) ∧ (2 ▫ 3) ∧ (3 ▫ 4)) → (1 ▫ 4)
+-- testTransitivityChain : {_▫_ : ℕ → ℕ → Stmt} → TransitivityChain _▫_ (1 ⊰ 2 ⊰ 3 ⤛ 4) → ((1 ▫ 2) ∧ (2 ▫ 3) ∧ (3 ▫ 4)) → (1 ▫ 4)
 -- testTransitivityChain x = x
 
 -- testTransitivityChain : {_▫_ : ℕ → ℕ → Stmt} → Transitivity (_▫_) → ((1 ▫ 2) ∧ (2 ▫ 3) ∧ (3 ▫ 4)) → (1 ▫ 4)

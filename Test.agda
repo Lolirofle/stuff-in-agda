@@ -7,6 +7,8 @@ open import Functional
 import      Functional.Raise
 import      Level as Lvl
 import      List
+import      List.Properties
+import      List.Relation
 open import Logic(Lvl.𝟎)
 import      Logic.Classic(Lvl.𝟎) as Classic
 open import LogicTheorems(Lvl.𝟎)
@@ -250,8 +252,17 @@ module testEqProof where
       (([≡]-symmetry id) :of: (_ ≡ ((0 ⋅ x) + 1) + 0))
     ))
 
-module testLecture where
+module testDiv where
   open Numeral.Natural.UnclosedOper
+
+  testDiv1 : 4 /₀ 2 ≡ 2
+  testDiv1 = [≡]-reflexivity
+
+  testDiv2 : 2 /₀ 2 ≡ 1
+  testDiv2 = [≡]-reflexivity
+
+  testDiv3 : 1 /₀ 2 ≡ 1
+  testDiv3 = [≡]-reflexivity
 
   -- test1 : ∀{f : ℕ → ℕ} → (f(0) ≡ 0) ∧ (∀{n : ℕ} → f(n + 1) ≡ f(n) + n + 1) → (∀{n : ℕ} → f(n) ≡ (n ⋅ (n + 1)) /₀ 2)
   -- test1 ()

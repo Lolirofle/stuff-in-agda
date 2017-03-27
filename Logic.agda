@@ -97,10 +97,10 @@ data ⊤ : Stmt where
 ¬_ : Stmt → Stmt
 ¬ x = x → ⊥
 
-[¬]-intro : {X : Stmt} → (X → ⊥) → ¬ X
+[¬]-intro : {X : Stmt} → (X → ⊥) → (¬ X)
 [¬]-intro = id
 
-[¬]-elim : {X : Stmt} → ¬ X → (X → ⊥) -- written like (X → (¬ X) → ⊥) looks like a [⊥]-intro
+[¬]-elim : {X : Stmt} → (¬ X) → (X → ⊥) -- written like (X → (¬ X) → ⊥) looks like a [⊥]-intro
 [¬]-elim = id
 
 ------------------------------------------
@@ -145,7 +145,7 @@ data ∃ {X : Set} (body : X → Stmt) : Stmt where
 [∃]-elim : ∀{X body}{Z : Stmt} → ((∀{x : X} → body(x) → Z) ⨯ (∃ {X} body)) → Z
 [∃]-elim(f , ([∃]-intro _ stmt)) = f stmt
 
-syntax ∃ {X} (λ x → f) = ∃[ x ∈ X ] f
+-- syntax ∃ {X} (λ x → f) = ∃[ x ∈ X ] f
 
 -- TODO
 -- testExists : ∀{T : Set}{f : T → Set} → (∃[ x ∈ T ] (f x)) → (∃ {T} (λ x → f x))
