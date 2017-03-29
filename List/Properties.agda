@@ -4,6 +4,8 @@ import Level as Lvl
 open import List
 open import Logic(Lvl.𝟎)
 open import Numeral.Natural
+open import Numeral.Natural.Oper
+open import Numeral.Natural.Oper.Properties
 open import Relator.Equals(Lvl.𝟎)
 open import Structure.Operator.Properties(Lvl.𝟎)
 
@@ -72,20 +74,23 @@ reverse-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
 -- _++_ ∅ b = b
 -- _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
 
--- TODO: length(x++y) = length(x)+length(y)
--- length-[++] : ∀{T}{l₁ l₂ : List(T)} → length(l₁ ++ l₂) ≡ length(l₁) + length(l₂)
--- length-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
---   base : length(∅ ++ l₂) ≡ length(∅) ++ length(l₂)
---   base = [≡]-intro
--- 
---   next : ∀(x : T)(l : List(T)) → (length(l ++ l₂) ≡ length(l) + length(l₂)) → (length((x ⊰ l) ++ l₂) ≡ length(x ⊰ l) + length(l₂))
---   next x _ stmt = [≡]-with-[(λ len → 𝐒 len)] stmt
---   -- length(l++l₂) = length(l)+length(l₂)
---   -- length(l++l₂) = length(l₂)+length(l)
---   -- 𝐒(length(l++l₂)) = 𝐒(length(l₂)+length(l))
---   -- 𝐒(length(l++l₂)) = length(l₂)+𝐒(length(l))
---   -- 𝐒(length(l++l₂)) = 𝐒(length(l))+length(l₂)
---   -- length(x ⊰ (l++l₂)) = length(x ⊰ l)+length(l₂) //TODO: Is this step really okay? 𝐒 cannot uniquely identify that x was the precedant
+length-[++] : ∀{lvl T}{l₁ l₂ : List{lvl}(T)} → (length(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
+length-[++] {lvl} {T} {l₁} {l₂} = List-induction base next {l₁} where
+  base : length{lvl}{T}(∅ ++ l₂) ≡ length{lvl}{T}(∅) + length{lvl}{T}(l₂)
+  base = [≡]-symmetry [+]-identityₗ
+
+  next : ∀(x : T)(l : List(T)) → (length(l ++ l₂) ≡ length(l) + length(l₂)) → (length((x ⊰ l) ++ l₂) ≡ length(x ⊰ l) + length(l₂))
+  next x l stmt =
+    ([≡]-transitivity([∧]-intro
+      ([≡]-with-[(λ len → 𝐒 len)] stmt)
+      ([≡]-symmetry([+1]-commutativity {length(l)} {length(l₂)}))
+    ))
+  -- length(l++l₂) = length(l)+length(l₂)
+  -- length(l++l₂) = length(l₂)+length(l)
+  -- 𝐒(length(l++l₂)) = 𝐒(length(l₂)+length(l))
+  -- 𝐒(length(l++l₂)) = length(l₂)+𝐒(length(l))
+  -- 𝐒(length(l++l₂)) = 𝐒(length(l))+length(l₂)
+  -- length(x ⊰ (l++l₂)) = length(x ⊰ l)+length(l₂) //TODO: Is this step really okay? 𝐒 cannot uniquely identify that x was the precedant
 
 -- TODO: length(reverse(l)) = length(l)
 -- length-reverse : ∀{T}{l : List(T)} → length(reverse(l)) ≡ length(l)
