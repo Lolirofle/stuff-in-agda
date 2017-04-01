@@ -93,16 +93,26 @@ length-[++] {lvl} {T} {l₁} {l₂} = List-induction base next {l₁} where
   -- length(x ⊰ (l++l₂)) = length(x ⊰ l)+length(l₂) //TODO: Is this step really okay? 𝐒 cannot uniquely identify that x was the precedant
 
 -- TODO: length(reverse(l)) = length(l)
--- length-reverse : ∀{T}{l : List(T)} → length(reverse(l)) ≡ length(l)
--- length-reverse {T} = List-induction base next where
---   base : length(reverse(∅)) ≡ length(∅)
+-- length-reverse : ∀{lvl T}{l : List{lvl}(T)} → length(reverse(l)) ≡ length(l)
+-- length-reverse {lvl} {T} = List-induction base next where
+--   base : length{lvl}{T}(reverse(∅)) ≡ length{lvl}{T}(∅)
 --   base = [≡]-intro
 -- 
 --   next : ∀(x : T)(l : List(T)) → (length(reverse(l)) ≡ length(l)) → (length(reverse(x ⊰ l)) ≡ length(x ⊰ l))
---   next x _ stmt = [≡]-with-[(λ len → 𝐒 len)] stmt
+--   next x l stmt =
+--     ([≡]-transitivity([∧]-intro
+--       ([≡]-symmetry(length-[++] {lvl} {T} {singleton(x)} {reverse(l)}))
+--       (([≡]-with-[ 𝐒 ] stmt))
+--     ))
 --   -- length(reverse(l)) = length(l)
---   -- l = l
---   -- l = l
+--   -- 𝐒(length(reverse(l))) = 𝐒(length(l))
+--   -- 𝐒(length(reverse(l))) = length(x⊰l)
+--   -- length(x⊰reverse(l)) = length(x⊰l)
+--   -- length((x⊰ε)++reverse(l)) = length(x⊰l)
+--   -- length(x⊰ε)+length(reverse(l)) = length(x⊰l)
+--   -- length(reverse(l))+length(x⊰ε) = length(x⊰l)
+--   -- length(reverse(l)++x⊰ε) = length(x⊰l)
+--   -- length(reverse(l)++singleton(x)) = length(x⊰l)
 
 -- TODO: Empty list is prefix and suffix of everything
 -- TODO: Whole list is prefix and suffix of everything
