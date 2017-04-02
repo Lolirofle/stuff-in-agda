@@ -2,6 +2,7 @@ module Numeral.Natural.Relation.Properties where
 
 import Level as Lvl
 open import Data
+open import Functional
 open import Logic(Lvl.𝟎)
 open import Numeral.Natural
 open import Numeral.Natural.Oper
@@ -46,7 +47,7 @@ open import Type
     ([≡]-transitivity([∧]-intro
       ([≡]-transitivity([∧]-intro
         ([≡]-symmetry ([+]-associativity {a} {n₁} {n₂})) -- a+(n₁+n₂) = (a+n₁)+n₂
-        ([≡]-with-[(λ expr → expr + n₂)] (a+n₁≡b)) -- (a+n₁)+n₂ = b+n₂
+        ([≡]-with-[(expr ↦ expr + n₂)] (a+n₁≡b)) -- (a+n₁)+n₂ = b+n₂
       ))
       (b+n₂≡c) -- b+n₂ = c
     )) -- a+(n₁+n₂) = c
@@ -55,14 +56,14 @@ open import Type
 [≤]-reflexivity = [≤]-from-[≡] [≡]-intro
 
 [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
-[≤]-antisymmetry {a} {b} (([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) = [≡]-substitution (λ n → a + n ≡ b) n₁≡0 a+n₁≡b where
+[≤]-antisymmetry {a} {b} (([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) = [≡]-substitution (n ↦ (a + n ≡ b)) n₁≡0 a+n₁≡b where
   n₁+n₂≡0 : ((n₁ + n₂) ≡ 0)
   n₁+n₂≡0 =
     [+]-injectiveᵣ(
       [≡]-transitivity([∧]-intro
         ([≡]-symmetry([+]-associativity {a} {n₁} {n₂}))
         ([≡]-transitivity([∧]-intro
-          ([≡]-with-[(λ expr → expr + n₂)]
+          ([≡]-with-[(expr ↦ expr + n₂)]
             a+n₁≡b
           )
           b+n₂≡a

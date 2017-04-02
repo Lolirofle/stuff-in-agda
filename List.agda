@@ -1,6 +1,7 @@
 module List where
 
 open import Data
+open import Functional
 open import Numeral.Natural
 
 infixl 1000 _⊱_ _++_
@@ -51,7 +52,7 @@ first (𝐒(n)) (x ⊰ l) = x ⊰ (first n l)
 length : ∀{lvl}{T : Set lvl} → (List T) → ℕ
 length ∅ = 𝟎
 length (_ ⊰ l) = 𝐒(length l)
--- foldᵣ (λ _ count → 𝐒(count)) 0 l
+-- foldᵣ (_ count ↦ 𝐒(count)) 0 l
 
 mapWindow2ₗ : ∀{lvl}{T : Set lvl} → (T → T → T) → (List T) → (List T)
 mapWindow2ₗ f (x₁ ⊰ x₂ ⊰ l) = (f x₁ x₂) ⊰ (mapWindow2ₗ f (x₂ ⊰ l))
@@ -62,7 +63,7 @@ firstElem ∅ = Option.None
 firstElem (x ⊰ _) = Option.Some(x)
 
 lastElem : ∀{lvl}{T : Set lvl} → (List T) → (Option T)
-lastElem l = foldᵣ (λ elem _ → Option.Some(elem)) Option.None l -- TODO: Is this wrong?
+lastElem l = foldᵣ (elem ↦ _ ↦ Option.Some(elem)) Option.None l -- TODO: Is this wrong?
 
 _or_ : ∀{lvl}{T : Set lvl} → (List T) → (List T) → (List T)
 _or_ ∅ default = default

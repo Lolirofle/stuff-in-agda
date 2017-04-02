@@ -1,6 +1,7 @@
 module List.Properties where
 
 import Level as Lvl
+open import Functional
 open import List
 open import Logic(Lvl.𝟎)
 open import Numeral.Natural
@@ -18,7 +19,7 @@ open import Structure.Operator.Properties(Lvl.𝟎)
   base = [≡]-intro
 
   next : ∀(x : T)(l : List(T)) → ((l ++ ∅) ≡ l) → (((x ⊰ l) ++ ∅) ≡ (x ⊰ l))
-  next x _ stmt = [≡]-with-[(λ list → x ⊰ list)] stmt
+  next x _ stmt = [≡]-with-[(list ↦ x ⊰ list)] stmt
   -- (l ++ ∅) ≡ l
   -- x ⊰ (l ++ ∅) ≡ x ⊰ l
   -- (x ⊰ l) ++ ∅ ≡ x ⊰ l
@@ -31,7 +32,7 @@ open import Structure.Operator.Properties(Lvl.𝟎)
   -- ∅++(l₁++l₂) = (∅++l₁)++l₂
 
   next : ∀(x : T)(l : List(T)) → (((l ++ l₁) ++ l₂) ≡ (l ++ (l₁ ++ l₂))) → ((((x ⊰ l) ++ l₁) ++ l₂) ≡ ((x ⊰ l) ++ (l₁ ++ l₂)))
-  next x _ stmt = [≡]-with-[(λ list → x ⊰ list)] stmt
+  next x _ stmt = [≡]-with-[(list ↦ x ⊰ list)] stmt
   -- (l++l₁)++l₂ = l++(l₁++l₂)
   -- x ⊰ ((l++l₁)++l₂) = x ⊰ (l++(l₁++l₂))
   -- x ⊰ ((l++l₁)++l₂) = (x ⊰ l)++(l₁++l₂)
@@ -60,7 +61,7 @@ reverse-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
   next : ∀(x : T)(l : List(T)) → (reverse(l ++ l₂) ≡ reverse(l₂) ++ reverse(l)) → (reverse((x ⊰ l) ++ l₂) ≡ reverse(l₂) ++ reverse(x ⊰ l))
   next x l stmt =
     ([≡]-transitivity([∧]-intro
-      ([≡]-with-[(λ list → list ++ (singleton x))] stmt)
+      ([≡]-with-[(list ↦ list ++ (singleton x))] stmt)
       ([++]-associativity {_} {reverse(l₂)} {reverse(l)} {singleton x})
     ))
   -- reverse(l₁++l₂) = reverse(l₂)++reverse(l₁)
@@ -82,7 +83,7 @@ length-[++] {lvl} {T} {l₁} {l₂} = List-induction base next {l₁} where
   next : ∀(x : T)(l : List(T)) → (length(l ++ l₂) ≡ length(l) + length(l₂)) → (length((x ⊰ l) ++ l₂) ≡ length(x ⊰ l) + length(l₂))
   next x l stmt =
     ([≡]-transitivity([∧]-intro
-      ([≡]-with-[(λ len → 𝐒 len)] stmt)
+      ([≡]-with-[(len ↦ 𝐒 len)] stmt)
       ([≡]-symmetry([+1]-commutativity {length(l)} {length(l₂)}))
     ))
   -- length(l++l₂) = length(l)+length(l₂)

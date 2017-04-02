@@ -84,7 +84,7 @@ instance
     base = [≡]-reflexivity
 
     next : ∀ (x : ℕ) → (0 ⋅ x) ≡ 0 → (0 ⋅ 𝐒(x)) ≡ 0
-    next _ eq = [≡]-with-[(λ x → 0 + x)] eq
+    next _ eq = [≡]-with-[(x ↦ 0 + x)] eq
 
 instance
   [⋅]-absorberᵣ : Absorberᵣ (_⋅_) (0)
@@ -149,7 +149,7 @@ instance
 -- testAssociativityOfSuccessor2 {x} {y} = [+]-associativity {x} {1} {y}
 
 instance
-  [+]-injectivityₗ : ∀{a} → Injective (λ x → x + a)
+  [+]-injectivityₗ : ∀{a} → Injective (x ↦ x + a)
   [+]-injectivityₗ {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
   [+]-injectivityₗ {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]-injectivityₗ {n} ([≡]-with-[ 𝐏 ] x₁+𝐒n≡x₂+𝐒n)
 
@@ -165,7 +165,7 @@ commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
   ))
 
 instance
-  [+]-injectiveᵣ : ∀{a} → Injective (λ x → a + x)
+  [+]-injectiveᵣ : ∀{a} → Injective (x ↦ a + x)
   [+]-injectiveᵣ {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = commuteBothTemp {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
   [+]-injectiveᵣ {𝐒(n)} {x₁} {x₂} (𝐒n+x₁≡𝐒n+x₂) =
     [+]-injectiveᵣ {n} (

@@ -10,8 +10,7 @@ import      List
 import      List.Properties
 import      List.Relation
 open import Logic(Lvl.𝟎)
-import      Logic.Classic(Lvl.𝟎) as Classic
-import      Logic.ClassicExperimental
+import      Logic.Classic
 open import LogicTheorems(Lvl.𝟎)
 import      NonEmptyList
 import      Numeral.Integer
@@ -80,7 +79,7 @@ module NumAndDivisionProofs where
   fnℕ+1 = [≡]-with-[ 𝐒 ]
 
   fnℕ+3 : ∀{x} → (x ≡ 5) → (x + 3 ≡ 8)
-  fnℕ+3 = [≡]-with-[ (λ x → x + 3) ]
+  fnℕ+3 = [≡]-with-[ (x ↦ x + 3) ]
 
   ℕ8Eqℕ2⋅4 : 8 ≡ 2 ⋅ 4
   ℕ8Eqℕ2⋅4 = [≡]-reflexivity
@@ -235,19 +234,13 @@ module TestSetUniverses {n} (Type : Set n) where
   testFn : Type → Type
   testFn x = x
 
--- testClassic : {X : Classic.Stmt} → (¬ (¬ X)) → X
--- testClassic = Classic.[¬¬]-elim
-
-testClassicLogic1 : {X : Stmt} → ¬(¬ X) → Classic.Wrap(X)
-testClassicLogic1 x = Classic.[¬¬]-elim(Classic.intro x)
-
 module testEqProof where
   open Structure.Operator.Properties(Lvl.𝟎)
 
   minSkit : {{_ : Absorberₗ (_⋅_) (0)}} → {{_ : Identityᵣ (_+_) (0)}} → ∀{x} → (1 ≡ ((0 ⋅ x) + 1) + 0)
   minSkit {{absorb}} {{id}} {x} =
     ([≡]-transitivity([∧]-intro
-      (([≡]-with-[(λ expr → expr + 1)]
+      (([≡]-with-[(_+ 1)]
         (([≡]-symmetry (absorb {x})) :of: (0 ≡ 0 ⋅ x))
       ) :of: (1 ≡ (0 ⋅ x) + 1))
       (([≡]-symmetry id) :of: (_ ≡ ((0 ⋅ x) + 1) + 0))

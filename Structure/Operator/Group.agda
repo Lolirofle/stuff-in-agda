@@ -1,5 +1,6 @@
 module Structure.Operator.Group lvl where
 
+open import Functional
 open import Logic(lvl)
 open import Relator.Equals(lvl)
 open import Structure.Operator.Properties(lvl)
@@ -25,12 +26,12 @@ Group-commutation group = [↔]-intro (Group-commutationₗ group) (Group-commut
       ([≡]-transitivity([∧]-intro
         ([≡]-transitivity([∧]-intro
           ([≡]-transitivity([∧]-intro
-            ([≡]-with-[(λ expr → expr ▫ x)]
+            ([≡]-with-[(_▫ x)]
               ([≡]-symmetry comm)
             )
             (Group.associativity group)
           ))
-          ([≡]-with-[(λ expr → (x ▫ y) ▫ expr)] (Group.inverseₗ group))
+          ([≡]-with-[((x ▫ y) ▫_)] (Group.inverseₗ group))
         ))
         (Group.identityᵣ group)
       ))
@@ -38,7 +39,7 @@ Group-commutation group = [↔]-intro (Group-commutationₗ group) (Group-commut
   -- (x▫y)▫inv(x) = y //comm
   -- y = (x▫y)▫inv(x) //[≡]-symmetry
   -- y▫x
-  -- = ((x▫y)▫inv(x))▫x //[≡]-with-[(λ expr → expr ▫ x)] (..)
+  -- = ((x▫y)▫inv(x))▫x //[≡]-with-[(expr ↦ expr ▫ x)] (..)
   -- = (x▫y)▫(inv(x)▫x) //Group.associativity
   -- = (x▫y)▫id //[≡]-with-[ _ ] Group.inverseₗ
   -- = x▫y //Group.identityᵣ
@@ -49,16 +50,16 @@ Group-commutation group = [↔]-intro (Group-commutationₗ group) (Group-commut
     ([≡]-transitivity([∧]-intro
       ([≡]-transitivity([∧]-intro
         ([≡]-transitivity([∧]-intro
-          ([≡]-with-[(λ expr → expr ▫ inv(x))] comm)
+          ([≡]-with-[(_▫ inv(x))] comm)
           (Group.associativity group)
         ))
-        ([≡]-with-[(λ expr → y ▫ expr)] (Group.inverseᵣ group))
+        ([≡]-with-[(y ▫_)] (Group.inverseᵣ group))
       ))
       (Group.identityᵣ group)
     ))
   -- x▫y = y▫x //comm
   -- (x▫y)▫inv(x)
-  -- = (y▫x)▫inv(x) //[≡]-with-[(λ expr → expr ▫ inv(x))] (..)
+  -- = (y▫x)▫inv(x) //[≡]-with-[(expr ↦ expr ▫ inv(x))] (..)
   -- = y▫(x▫inv(x)) //Group.associativity
-  -- = y▫id //[≡]-with-[(λ expr → y ▫ expr)] Group.inverseᵣ
+  -- = y▫id //[≡]-with-[(expr ↦ y ▫ expr)] Group.inverseᵣ
   -- = y //Group.identityᵣ

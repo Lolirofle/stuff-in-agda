@@ -8,7 +8,7 @@ Injective : ∀{X Y : Set} → (X → Y) → Stmt
 Injective {X} f = ∀{x₁ x₂ : X} → (f(x₁) ≡ f(x₂)) → (x₁ ≡ x₂)
 
 Surjective : ∀{X Y : Set} → (X → Y) → Stmt
-Surjective {X} {Y} f = ∀{y : Y} → ∃{X}(λ x → f(x) ≡ y)
+Surjective {X} {Y} f = ∀{y : Y} → ∃{X}(x ↦ (f(x) ≡ y))
 
 Bijective : ∀{X Y : Set} → (X → Y) → Stmt
 Bijective f = (Injective f) ∧ (Surjective f)

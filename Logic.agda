@@ -145,10 +145,10 @@ data ∃ {X : Set} (body : X → Stmt) : Stmt where
 [∃]-elim : ∀{X body}{Z : Stmt} → ((∀{x : X} → body(x) → Z) ⨯ (∃ {X} body)) → Z
 [∃]-elim(f , ([∃]-intro _ stmt)) = f stmt
 
--- syntax ∃ {X} (λ x → f) = ∃[ x ∈ X ] f
+-- syntax ∃ {X} (x ↦ f) = ∃[ x ∈ X ] f
 
 -- TODO
--- testExists : ∀{T : Set}{f : T → Set} → (∃[ x ∈ T ] (f x)) → (∃ {T} (λ x → f x))
+-- testExists : ∀{T : Set}{f : T → Set} → (∃[ x ∈ T ] (f x)) → (∃ {T} (x ↦ f x))
 -- testExists x = x
 
 ------------------------------------------

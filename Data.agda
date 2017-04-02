@@ -83,4 +83,5 @@ module Option where
   _andThen_ : ∀{n}{T : TypeN n} → (Option T) → (T → (Option T)) → (Option T)
   _andThen_ None _ = None
   _andThen_ (Some x) optF = optF x
+
 open Option using (Option) public

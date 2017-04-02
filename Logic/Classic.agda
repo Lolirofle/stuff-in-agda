@@ -4,6 +4,11 @@ open import Data
 open import Functional
 import      Level as Lvl
 
+infixl 1005 _∧_
+infixl 1004 _∨_
+infixl 1000 _⇐_ _⇔_ _⇒_
+infixl 100 _:with:_
+
 -- Makes Stmt a non-set (separate from Set(lvl))
 postulate Stmt : Set(Lvl.𝐒(lvl))
 
@@ -66,10 +71,10 @@ module NaturalDeduction where
   module Theorems where
     -- Double negated proposition is positive
     [¬¬]-elim : ∀{A : Stmt} → Prop(¬ (¬ A)) ⊢ Prop(A)
-    [¬¬]-elim nna = [¬]-elim(λ na → [⊥]-intro na nna)
+    [¬¬]-elim nna = [¬]-elim(na ↦ [⊥]-intro na nna)
 
     [⊥]-elim : ∀{A : Stmt} → Prop(⊥) ⊢ Prop(A)
-    [⊥]-elim bottom = [¬]-elim (λ _ → bottom)
+    [⊥]-elim bottom = [¬]-elim (_ ↦ bottom)
 
     -- The ability to derive anything from a contradiction
     ex-falso-quodlibet : ∀{A : Stmt} → Prop(⊥) ⊢ Prop(A)
@@ -92,8 +97,8 @@ module NaturalDeduction where
 
     contrapositive : ∀{A B : Stmt} → Prop(A ⇒ B) ⊢ Prop((¬ A) ⇐ (¬ B))
     contrapositive {A} {B} A→B =
-      ((¬ B) ⇒ (¬ A)) :with: [⇒]-intro(λ nb →
-        (¬ A) :with: [¬]-intro(λ a →
+      ((¬ B) ⇒ (¬ A)) :with: [⇒]-intro(nb ↦
+        (¬ A) :with: [¬]-intro(a ↦
           ⊥ :with: [⊥]-intro
             (B     :with: [⇒]-elim (A→B) a)
             ((¬ B) :with: nb)
@@ -102,7 +107,7 @@ module NaturalDeduction where
 
     [⇒]-syllogism : ∀{A B C : Stmt} → Prop(A ⇒ B) → Prop(B ⇒ C) ⊢ Prop(A ⇒ C)
     [⇒]-syllogism {A} {B} {C} A→B B→C =
-      ([⇒]-intro(λ a →
+      ([⇒]-intro(a ↦
         ([⇒]-elim
           B→C
           ([⇒]-elim A→B a)
@@ -112,21 +117,21 @@ module NaturalDeduction where
     [∨]-syllogism : ∀{A B : Stmt} → Prop(A ∨ B) ⊢ Prop((¬ A) ⇒ B)
     [∨]-syllogism {A} {B} A∨B =
       ([∨]-elim
-        (λ a → ((¬ A) ⇒ B) :with: [⇒]-syllogism
+        (a ↦ ((¬ A) ⇒ B) :with: [⇒]-syllogism
           (((¬ A) ⇒ (¬ (¬ B))) :with: contrapositive
-            (((¬ B) ⇒ A) :with: [⇒]-intro(λ _ → a))
+            (((¬ B) ⇒ A) :with: [⇒]-intro(_ ↦ a))
           )
           (((¬ (¬ B)) ⇒ B) :with: [⇒]-intro [¬¬]-elim)
         )
-        (λ b → ((¬ A) ⇒ B) :with: [⇒]-intro(λ _ → b))
+        (b ↦ ((¬ A) ⇒ B) :with: [⇒]-intro(_ ↦ b))
         A∨B
       )
 
     -- Currying
     [∧]→[⇒]-in-assumption : {X Y Z : Stmt} → Prop((X ∧ Y) ⇒ Z) ⊢ Prop(X ⇒ (Y ⇒ Z))
     [∧]→[⇒]-in-assumption x∧y→z =
-      ([⇒]-intro(λ x →
-        ([⇒]-intro(λ y →
+      ([⇒]-intro(x ↦
+        ([⇒]-intro(y ↦
           ([⇒]-elim
             (x∧y→z)
             ([∧]-intro x y)
@@ -137,7 +142,7 @@ module NaturalDeduction where
     -- Uncurrying
     [∧]←[⇒]-in-assumption : {X Y Z : Stmt} → Prop(X ⇒ (Y ⇒ Z)) ⊢ Prop((X ∧ Y) ⇒ Z)
     [∧]←[⇒]-in-assumption x→y→z =
-      ([⇒]-intro(λ x∧y →
+      ([⇒]-intro(x∧y ↦
         ([⇒]-elim
           ([⇒]-elim
             (x→y→z)
@@ -152,10 +157,10 @@ module NaturalDeduction where
     -- There is no other truth values than true and false.
     excluded-middle : ∀{A : Stmt} → Prop(A ∨ (¬ A))
     excluded-middle {A} =
-      ([¬]-elim(λ ¬[a∨¬a] →
+      ([¬]-elim(¬[a∨¬a] ↦
         (⊥ :with: [⊥]-intro
           ((A ∨ (¬ A)) :with: [∨]-introᵣ
-            ((¬ A) :with: [¬]-intro(λ a →
+            ((¬ A) :with: [¬]-intro(a ↦
               (⊥ :with: [⊥]-intro
                 ((A ∨ (¬ A))    :with: [∨]-introₗ(a))
                 ((¬(A ∨ (¬ A))) :with: ¬[a∨¬a])
@@ -170,7 +175,7 @@ module NaturalDeduction where
     -- A proposition cannot be true and false at the same time.
     non-contradiction : ∀{A : Stmt} → Prop(¬ (A ∧ (¬ A)))
     non-contradiction {A} =
-      ([¬]-intro(λ a∧¬a →
+      ([¬]-intro(a∧¬a ↦
         (⊥ :with: [⊥]-intro
           (A     :with: [∧]-elimₗ a∧¬a)
           ((¬ A) :with: [∧]-elimᵣ a∧¬a)
@@ -182,7 +187,7 @@ module NaturalDeduction where
     -- The standard proof technic: Assume the opposite of the conclusion and prove that it leads to a contradiction
     proof-by-contradiction : ∀{A B : Stmt} → (Prop(¬ A) → Prop(B)) → (Prop(¬ A) → Prop(¬ B)) ⊢ Prop(A)
     proof-by-contradiction {A} {B} ¬a→b ¬a→¬b =
-      (A :with: [¬]-elim(λ ¬a →
+      (A :with: [¬]-elim(¬a ↦
         (⊥ :with: [⊥]-intro
           (B     :with: ¬a→b(¬a))
           ((¬ B) :with: ¬a→¬b(¬a))
@@ -191,11 +196,11 @@ module NaturalDeduction where
 
     peirce : ∀{A B : Stmt} → Prop((A ⇒ B) ⇒ A) ⊢ Prop(A)
     peirce {A} {B} [A→B]→A =
-      (A :with: [¬]-elim(λ ¬a →
+      (A :with: [¬]-elim(¬a ↦
         ([⊥]-intro
           (A :with: [⇒]-elim
             [A→B]→A
-            ((A ⇒ B) :with: [⇒]-intro(λ a →
+            ((A ⇒ B) :with: [⇒]-intro(a ↦
               (B :with: [⊥]-elim
                 ([⊥]-intro
                   a

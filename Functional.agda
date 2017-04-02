@@ -33,3 +33,5 @@ swap f x₂ x₁ = f x₁ x₂
 -- 
 --   T₄ = (T₁ ⨯ T₂)
 --   (T₅ → T₆) = T₃
+
+syntax id(λ x → y) = x ↦ y

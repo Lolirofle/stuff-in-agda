@@ -50,7 +50,7 @@ Symmetry {T} (_▫_) = FlipPattern (_▫_) (_▫_)
 -- {x y : T} → (x ▫ y) → (y ▫ x)
 
 Asymmetry : {T : Set} → (T → T → Stmt) → Stmt
-Asymmetry {T} (_▫_) = FlipPattern (_▫_) (λ x y → ¬(x ▫ y))
+Asymmetry {T} (_▫_) = FlipPattern (_▫_) (x ↦ y ↦ ¬(x ▫ y))
 -- {x y : T} → (x ▫ y) → ¬(y ▫ x)
 
 ---------------------------------------------------------

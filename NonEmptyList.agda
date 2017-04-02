@@ -1,6 +1,7 @@
 module NonEmptyList where
 
 open import Data
+open import Functional
 open import Numeral.Natural
 import List as NormalList
 
@@ -51,7 +52,7 @@ firstElem (x ⊰ _) = x
 
 lastElem : ∀{lvl}{T : Set lvl} → (List 1 T) → T
 lastElem (End x) = x
-lastElem l = reduceᵣ (λ _ elem → elem) l
+lastElem l = reduceᵣ (_ ↦ elem ↦ elem) l
 
 length : {T : Set} → (List 1 T) → ℕ
 length (End _) = 1
