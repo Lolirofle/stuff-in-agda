@@ -64,27 +64,31 @@ module NaturalDeduction where
   postulate [⇒]-elim  : ∀{A B : Stmt} → Prop(A ⇒ B) → Prop(A) ⊢ Prop(B)
 
   module Theorems where
+    -- Double negated proposition is positive
     [¬¬]-elim : ∀{A : Stmt} → Prop(¬ (¬ A)) ⊢ Prop(A)
     [¬¬]-elim nna = [¬]-elim(λ na → [⊥]-intro na nna)
 
     [⊥]-elim : ∀{A : Stmt} → Prop(⊥) ⊢ Prop(A)
     [⊥]-elim bottom = [¬]-elim (λ _ → bottom)
 
+    -- The ability to derive anything from a contradiction
     ex-falso-quodlibet : ∀{A : Stmt} → Prop(⊥) ⊢ Prop(A)
     ex-falso-quodlibet = [⊥]-elim
 
     [∧]-commutativity : ∀{A B : Stmt} → Prop(A ∧ B) ⊢ Prop(B ∧ A)
     [∧]-commutativity {A} {B} A∧B =
-      (B ∧ A) :with: [∧]-intro
+      ((B ∧ A) :with: [∧]-intro
         (B :with: [∧]-elimᵣ(A∧B))
         (A :with: [∧]-elimₗ(A∧B))
+      )
 
     [∨]-commutativity : ∀{A B : Stmt} → Prop(A ∨ B) ⊢ Prop(B ∨ A)
     [∨]-commutativity {A} {B} A∨B =
-      (B ∨ A) :with: [∨]-elim
+      ((B ∨ A) :with: [∨]-elim
         [∨]-introᵣ
         [∨]-introₗ
         A∨B
+      )
 
     contrapositive : ∀{A B : Stmt} → Prop(A ⇒ B) ⊢ Prop((¬ A) ⇐ (¬ B))
     contrapositive {A} {B} A→B =
@@ -98,16 +102,16 @@ module NaturalDeduction where
 
     [⇒]-syllogism : ∀{A B C : Stmt} → Prop(A ⇒ B) → Prop(B ⇒ C) ⊢ Prop(A ⇒ C)
     [⇒]-syllogism {A} {B} {C} A→B B→C =
-      [⇒]-intro(λ a →
+      ([⇒]-intro(λ a →
         ([⇒]-elim
           B→C
           ([⇒]-elim A→B a)
         )
-      )
+      ))
 
     [∨]-syllogism : ∀{A B : Stmt} → Prop(A ∨ B) ⊢ Prop((¬ A) ⇒ B)
     [∨]-syllogism {A} {B} A∨B =
-      [∨]-elim
+      ([∨]-elim
         (λ a → ((¬ A) ⇒ B) :with: [⇒]-syllogism
           (((¬ A) ⇒ (¬ (¬ B))) :with: contrapositive
             (((¬ B) ⇒ A) :with: [⇒]-intro(λ _ → a))
@@ -116,7 +120,9 @@ module NaturalDeduction where
         )
         (λ b → ((¬ A) ⇒ B) :with: [⇒]-intro(λ _ → b))
         A∨B
+      )
 
+    -- Currying
     [∧]→[⇒]-in-assumption : {X Y Z : Stmt} → Prop((X ∧ Y) ⇒ Z) ⊢ Prop(X ⇒ (Y ⇒ Z))
     [∧]→[⇒]-in-assumption x∧y→z =
       ([⇒]-intro(λ x →
@@ -128,6 +134,7 @@ module NaturalDeduction where
         ))
       ))
 
+    -- Uncurrying
     [∧]←[⇒]-in-assumption : {X Y Z : Stmt} → Prop(X ⇒ (Y ⇒ Z)) ⊢ Prop((X ∧ Y) ⇒ Z)
     [∧]←[⇒]-in-assumption x→y→z =
       ([⇒]-intro(λ x∧y →
@@ -140,6 +147,9 @@ module NaturalDeduction where
         )
       ))
 
+    -- It is either that a proposition is true or its negation is true.
+    -- A proposition is either true or false.
+    -- There is no other truth values than true and false.
     excluded-middle : ∀{A : Stmt} → Prop(A ∨ (¬ A))
     excluded-middle {A} =
       ([¬]-elim(λ ¬[a∨¬a] →
@@ -156,15 +166,20 @@ module NaturalDeduction where
         )
       ))
 
+    -- It cannot be that a proposition is true and its negation is true at the same time.
+    -- A proposition cannot be true and false at the same time.
     non-contradiction : ∀{A : Stmt} → Prop(¬ (A ∧ (¬ A)))
     non-contradiction {A} =
-      [¬]-intro(λ a∧¬a →
+      ([¬]-intro(λ a∧¬a →
         (⊥ :with: [⊥]-intro
           (A     :with: [∧]-elimₗ a∧¬a)
           ((¬ A) :with: [∧]-elimᵣ a∧¬a)
         )
-      )
+      ))
 
+    -- TODO: Mix of excluded middle and non-contradiction: (A ⊕ (¬ A))
+
+    -- The standard proof technic: Assume the opposite of the conclusion and prove that it leads to a contradiction
     proof-by-contradiction : ∀{A B : Stmt} → (Prop(¬ A) → Prop(B)) → (Prop(¬ A) → Prop(¬ B)) ⊢ Prop(A)
     proof-by-contradiction {A} {B} ¬a→b ¬a→¬b =
       (A :with: [¬]-elim(λ ¬a →
@@ -173,3 +188,30 @@ module NaturalDeduction where
           ((¬ B) :with: ¬a→¬b(¬a))
         )
       ))
+
+    peirce : ∀{A B : Stmt} → Prop((A ⇒ B) ⇒ A) ⊢ Prop(A)
+    peirce {A} {B} [A→B]→A =
+      (A :with: [¬]-elim(λ ¬a →
+        ([⊥]-intro
+          (A :with: [⇒]-elim
+            [A→B]→A
+            ((A ⇒ B) :with: [⇒]-intro(λ a →
+              (B :with: [⊥]-elim
+                ([⊥]-intro
+                  a
+                  ¬a
+                )
+              )
+            ))
+          )
+          ((¬ A) :with: ¬a)
+        )
+      ))
+
+    skip-[⇒]-assumption : ∀{A B : Stmt} → (Prop(A ⇒ B) → Prop(A)) ⊢ Prop(A)
+    skip-[⇒]-assumption A⇒B→A =
+      (peirce
+        ([⇒]-intro
+          (A⇒B→A)
+        )
+      )
