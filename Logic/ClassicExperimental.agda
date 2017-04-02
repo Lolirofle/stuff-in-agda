@@ -140,12 +140,21 @@ module NaturalDeduction where
         )
       ))
 
-    -- excluded-middle : ∀{A : Stmt} → Prop(A ∨ (¬ A))
-    -- excluded-middle {A} =
-    --   ([∨]-elim
-    --     -- TODO: Eliminate to the expression
-    --   )
-    --   -- a  = [¬]-elim(λ a → [¬]-intro(λ na → [⊥]-intro a na))
+    excluded-middle : ∀{A : Stmt} → Prop(A ∨ (¬ A))
+    excluded-middle {A} =
+      ([¬]-elim(λ ¬[a∨¬a] →
+        (⊥ :with: [⊥]-intro
+          ((A ∨ (¬ A)) :with: [∨]-introᵣ
+            ((¬ A) :with: [¬]-intro(λ a →
+              (⊥ :with: [⊥]-intro
+                ((A ∨ (¬ A))    :with: [∨]-introₗ(a))
+                ((¬(A ∨ (¬ A))) :with: ¬[a∨¬a])
+              )
+            ))
+          )
+          (¬[a∨¬a])
+        )
+      ))
 
     non-contradiction : ∀{A : Stmt} → Prop(¬ (A ∧ (¬ A)))
     non-contradiction {A} =
