@@ -10,7 +10,8 @@ infixl 1000 _⇐_ _⇔_ _⇒_
 infixl 100 _:with:_
 
 -- Makes Stmt a non-set (separate from Set(lvl))
-postulate Stmt : Set(Lvl.𝐒(lvl))
+MetaStmt = Set(Lvl.𝐒(lvl))
+postulate Stmt : MetaStmt
 
 -- Required because functions only take sets
 -- (Because it seems like that _→_ : ∀{lvl} → Set(lvl) → Set(lvl) → Set(lvl) → Set(lvl))
@@ -39,7 +40,7 @@ _:with:_ _ x = x
 _⊢_ : Set(lvl) → Set(lvl) → Set(lvl)
 a ⊢ b = a → b -- TODO: Have Prop builtin: a ⊢ b = Prop(a) → Prop(b), and have a (_⨯_) and (_,_)
 
-module Semantics where
+module Semantics where -- TODO: Are these definitions really working and correct?
   import List
   open import List
     using (List ; ∅)
@@ -61,10 +62,13 @@ module Semantics where
 
     postulate [⊤]-truth : ∀{D}{𝔐 : Model D} → Prop(𝔐 ⊧ ⊤)
     postulate [⊥]-truth : ∀{D}{𝔐 : Model D} → Prop(¬(𝔐 ⊧ ⊥))
-    postulate [¬]-truth : ∀{D}{𝔐 : Model D} → ∀{φ} → Prop((𝔐 ⊧ (¬ φ)) ⇔ (¬(𝔐 ⊧ φ)))
-    postulate [∧]-truth : ∀{D}{𝔐 : Model D} → ∀{φ₁ φ₂} → Prop((𝔐 ⊧ (φ₁ ∧ φ₂)) ⇔ ((𝔐 ⊧ φ₁) ∧ (𝔐 ⊧ φ₂)))
-    postulate [∨]-truth : ∀{D}{𝔐 : Model D} → ∀{φ₁ φ₂} → Prop((𝔐 ⊧ (φ₁ ∨ φ₂)) ⇔ ((𝔐 ⊧ φ₁) ∨ (𝔐 ⊧ φ₂)))
-    postulate [⇒]-truth : ∀{D}{𝔐 : Model D} → ∀{φ₁ φ₂} → Prop((𝔐 ⊧ (φ₁ ⇒ φ₂)) ⇔ (¬(𝔐 ⊧ φ₁) ∨ (𝔐 ⊧ φ₂)))
+    postulate [¬]-truth : ∀{D}{𝔐 : Model D}{φ} → Prop((𝔐 ⊧ (¬ φ)) ⇔ (¬(𝔐 ⊧ φ)))
+    postulate [∧]-truth : ∀{D}{𝔐 : Model D}{φ₁ φ₂} → Prop((𝔐 ⊧ (φ₁ ∧ φ₂)) ⇔ ((𝔐 ⊧ φ₁) ∧ (𝔐 ⊧ φ₂)))
+    postulate [∨]-truth : ∀{D}{𝔐 : Model D}{φ₁ φ₂} → Prop((𝔐 ⊧ (φ₁ ∨ φ₂)) ⇔ ((𝔐 ⊧ φ₁) ∨ (𝔐 ⊧ φ₂)))
+    postulate [⇒]-truth : ∀{D}{𝔐 : Model D}{φ₁ φ₂} → Prop((𝔐 ⊧ (φ₁ ⇒ φ₂)) ⇔ (¬(𝔐 ⊧ φ₁) ∨ (𝔐 ⊧ φ₂)))
+
+    Valid : Stmt → MetaStmt
+    Valid φ = ∀{D}{𝔐 : Model D} → Prop(𝔐 ⊧ φ)
 
 -- The "proofs" that results by these postulates are very much alike the classical notation of natural deduction proofs in written as trees.
 -- A function that has the type (Prop(A) → Prop(B)) is a proof of (A ⊢ B) (A is the assumption, B is the single conclusion)
