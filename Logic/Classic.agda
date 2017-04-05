@@ -28,7 +28,7 @@ postulate _⇔_ : Stmt → Stmt → Stmt
 _⇐_ : Stmt → Stmt → Stmt
 _⇐_ A B = _⇒_ B A
 
--- Ensures that a certain proof is a certain proposition
+-- Ensures that a certain proof is for a certain proposition
 -- (Like type ascription, ensures that a certain expression has a certain type)
 -- Example:
 --   (A :with: a) where a : Prop(A)
@@ -38,6 +38,33 @@ _:with:_ _ x = x
 
 _⊢_ : Set(lvl) → Set(lvl) → Set(lvl)
 a ⊢ b = a → b -- TODO: Have Prop builtin: a ⊢ b = Prop(a) → Prop(b), and have a (_⨯_) and (_,_)
+
+module Semantics where
+  import List
+  open import List
+    using (List ; ∅)
+
+  record Model (domain : Set) : Set(Lvl.𝐒(lvl)) where
+    field
+      constants  : List(domain)
+      predicates : List(domain → Stmt)
+
+  module Entailment where
+    postulate _⊨_ : List(Stmt) → Stmt → Stmt
+
+    _⊭_ : List(Stmt) → Stmt → Stmt
+    _⊭_ a b = ¬(_⊨_ a b)
+
+
+  module Satisfiability where
+    postulate _⊧_ : ∀{D} → Model D → Stmt → Stmt
+
+    postulate [⊤]-truth : ∀{D}{𝔐 : Model D} → Prop(𝔐 ⊧ ⊤)
+    postulate [⊥]-truth : ∀{D}{𝔐 : Model D} → Prop(¬(𝔐 ⊧ ⊥))
+    postulate [¬]-truth : ∀{D}{𝔐 : Model D} → ∀{φ} → Prop((𝔐 ⊧ (¬ φ)) ⇔ (¬(𝔐 ⊧ φ)))
+    postulate [∧]-truth : ∀{D}{𝔐 : Model D} → ∀{φ₁ φ₂} → Prop((𝔐 ⊧ (φ₁ ∧ φ₂)) ⇔ ((𝔐 ⊧ φ₁) ∧ (𝔐 ⊧ φ₂)))
+    postulate [∨]-truth : ∀{D}{𝔐 : Model D} → ∀{φ₁ φ₂} → Prop((𝔐 ⊧ (φ₁ ∨ φ₂)) ⇔ ((𝔐 ⊧ φ₁) ∨ (𝔐 ⊧ φ₂)))
+    postulate [⇒]-truth : ∀{D}{𝔐 : Model D} → ∀{φ₁ φ₂} → Prop((𝔐 ⊧ (φ₁ ⇒ φ₂)) ⇔ (¬(𝔐 ⊧ φ₁) ∨ (𝔐 ⊧ φ₂)))
 
 -- The "proofs" that results by these postulates are very much alike the classical notation of natural deduction proofs in written as trees.
 -- A function that has the type (Prop(A) → Prop(B)) is a proof of (A ⊢ B) (A is the assumption, B is the single conclusion)
@@ -67,6 +94,16 @@ module NaturalDeduction where
 
   postulate [⇒]-intro : ∀{A B : Stmt} → (Prop(A) → Prop(B)) ⊢ Prop(A ⇒ B)
   postulate [⇒]-elim  : ∀{A B : Stmt} → Prop(A ⇒ B) → Prop(A) ⊢ Prop(B)
+
+  [⇐]-intro : ∀{A B : Stmt} → (Prop(B) → Prop(A)) ⊢ Prop(A ⇐ B)
+  [⇐]-intro {B} {A} = [⇒]-intro {A} {B}
+
+  [⇐]-elim : ∀{A B : Stmt} → Prop(A ⇐ B) → Prop(B) ⊢ Prop(A)
+  [⇐]-elim {B} {A} = [⇒]-elim {A} {B}
+
+  postulate [⇔]-intro : ∀{A B : Stmt} → (Prop(B) → Prop(A)) → (Prop(A) → Prop(B)) ⊢ Prop(A ⇔ B)
+  postulate [⇔]-elimₗ  : ∀{A B : Stmt} → Prop(A ⇔ B) → Prop(B) ⊢ Prop(A)
+  postulate [⇔]-elimᵣ  : ∀{A B : Stmt} → Prop(A ⇔ B) → Prop(A) ⊢ Prop(B)
 
   module Theorems where
     -- Double negated proposition is positive
@@ -220,3 +257,11 @@ module NaturalDeduction where
           (A⇒B→A)
         )
       )
+
+    [⇔]-implies-[⇒] : ∀{A B : Stmt} → Prop(A ⇔ B) ⊢ Prop(A ⇒ B)
+    [⇔]-implies-[⇒] A⇔B =
+      [⇒]-intro([⇔]-elimᵣ A⇔B)
+
+    [⇔]-implies-[⇐] : ∀{A B : Stmt} → Prop(A ⇔ B) ⊢ Prop(A ⇐ B)
+    [⇔]-implies-[⇐] A⇔B =
+      [⇐]-intro([⇔]-elimₗ A⇔B)
