@@ -85,3 +85,7 @@ module Option where
   _andThen_ (Some x) optF = optF x
 
 open Option using (Option) public
+
+data Bool : Set where
+  𝑇 : Bool
+  𝐹 : Bool

@@ -11,6 +11,7 @@ import      List.Properties
 import      List.Relation
 open import Logic(Lvl.𝟎)
 import      Logic.Classic
+import      Logic.Propositional
 open import LogicTheorems(Lvl.𝟎)
 import      NonEmptyList
 import      Numeral.Integer
