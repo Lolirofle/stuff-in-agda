@@ -1,30 +1,37 @@
 module Logic.Propositional where
 
 open import Data
+import      Level as Lvl
+open import Relator.Equals(Lvl.𝟎)
 
-record Syntax (Formula : Set → Set) : Set where
+record Syntax (Stmt : Set) (Formula : Set → Set) : Set where
   field
-    ⊤ : ∀{Stmt} → Formula(Stmt)
-    ⊥ : ∀{Stmt} → Formula(Stmt)
-    ¬_ : ∀{Stmt} → Formula(Stmt) → Formula(Stmt)
-    _∧_ : ∀{Stmt} → Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-    _∨_ : ∀{Stmt} → Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-    _⇒_ : ∀{Stmt} → Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-    _⇐_ : ∀{Stmt} → Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-    _⇔_ : ∀{Stmt} → Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-    _⊕_ : ∀{Stmt} → Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+    Prop : Stmt → Formula(Stmt)
+    ⊤ : Formula(Stmt)
+    ⊥ : Formula(Stmt)
+    ¬_ : Formula(Stmt) → Formula(Stmt)
+    _∧_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+    _∨_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+    _⇒_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+    _⇐_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+    _⇔_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+    _⊕_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+open Syntax
 
 -- Also known as Interpretation, Structure, Model
 record Model (Stmt : Set) : Set where
   field
     interpretStmt : Stmt → Bool
 
-interpret : ∀{Stmt} → Model(Stmt) → Formula(Stmt) → Bool
-interpret 𝔐 φ = substitute (interpretStmt 𝔐) φ
+-- interpret : ∀{Stmt} → Model(Stmt) → Formula(Stmt) → Bool
+-- interpret 𝔐 φ = substitute (interpretStmt 𝔐) φ
 
-_⊧_ : Model → Formula → Set
-𝔐 ⊧ φ = (interpret 𝔐 φ) ≡ 𝑇
+InterpretationFn : Set → (Set → Set) → Set
+InterpretationFn Stmt Formula = (Model(Stmt) → Formula(Stmt) → Bool)
 
-record Satisfaction (Formula : Set → Set) (syntax : Syntax(Formula)) (_⊨_ : Formula → Formula) : Set where
+_⊧_ : ∀{Stmt : Set}{Formula : Set → Set}{_ : InterpretationFn Stmt Formula} → Model(Stmt) → Formula(Stmt) → Set
+_⊧_ {_} {_} {interpret} 𝔐 φ = ((interpret 𝔐 φ) ≡ 𝑇)
+
+record Semantics {Stmt : Set}{Formula : Set → Set}{_ : InterpretationFn Stmt Formula} : Set where
   field
-    [⊤]-satisfaction : ∀{𝔐 : Model} → (𝔐 ⊧ ⊤)
+    [⊤]-satisfaction : ∀{𝔐 : Model(Stmt)} → (𝔐 ⊧ ⊤)
