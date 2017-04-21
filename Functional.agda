@@ -2,6 +2,10 @@ module Functional where
 
 infixl 10000 _∘_
 
+-- Function type as a function
+_→ᶠ_ : ∀{lvl} → Set(lvl) → Set(lvl) → Set(lvl)
+x →ᶠ y = x → y
+
 _←_ : ∀{lvl} → Set(lvl) → Set(lvl) → Set(lvl)
 y ← x = x → y
 

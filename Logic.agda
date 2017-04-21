@@ -5,6 +5,7 @@ open import Functional
 import      Level as Lvl
 
 infixl 10 _⇒_
+infixl 1010 ¬_
 infixl 1005 _∧_
 infixl 1004 _∨_
 infixl 1000 _↔_

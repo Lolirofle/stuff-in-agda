@@ -5,34 +5,57 @@ open import Functional
 import      Level as Lvl
 open import Relator.Equals(Lvl.𝟎)
 
-record Syntax {lvl} (Stmt : Set(lvl)) (Formula : Set(lvl) → Set(lvl)) : Set(lvl) where
+record Syntax {lvl₁} {lvl₂} (Stmt : Set(lvl₁)) (Formula : Set(lvl₁) → Set(lvl₂)) : Set(lvl₁ Lvl.⊔ lvl₂) where
   field
-    Prop : Stmt → Formula(Stmt)
+    •_ : Stmt → Formula(Stmt)
     ⊤ : Formula(Stmt)
     ⊥ : Formula(Stmt)
     ¬_ : Formula(Stmt) → Formula(Stmt)
     _∧_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
     _∨_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
     _⇒_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-    -- _⇐_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-    -- _⇔_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-    -- _⊕_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-open Syntax
+    _⇐_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+    _⇔_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+    _⊕_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+
+module Operators {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (syn : Syntax Stmt Formula) where
+  infixl 1011 •_
+  infixl 1010 ¬_
+  infixl 1005 _∧_
+  infixl 1004 _∨_ _⊕_
+  infixl 1000 _⇐_ _⇔_ _⇒_
+
+  •_ = Syntax.•_ syn
+  ⊤ = Syntax.⊤ syn
+  ⊥ = Syntax.⊥ syn
+  ¬_ = Syntax.¬_ syn
+  _∧_ = Syntax._∧_ syn
+  _∨_ = Syntax._∨_ syn
+  _⇒_ = Syntax._⇒_ syn
+  _⇐_ = Syntax._⇐_ syn
+  _⇔_ = Syntax._⇔_ syn
+  _⊕_ = Syntax._⊕_ syn
 
 -- Also known as Interpretation, Structure, Model
 record Model {lvl} (Stmt : Set(lvl)) : Set(lvl) where
   field
     interpretStmt : Stmt → Bool
 
+-- TODO: Can this be called a "theory" of propositional logic? So that instances of the type Semantics is the "models" of logic?
 record Semantics {lvl} {Stmt : Set(lvl)} {Formula : Set(lvl) → Set(lvl)} (_⊧_ : Model(Stmt) → Formula(Stmt) → Set(lvl)) : Set(Lvl.𝐒(lvl)) where
-  field
+  field -- Definitions
     {syn}     : Syntax Stmt Formula
     {metasyn} : Syntax (Set(lvl)) (const(Set(lvl)))
-
-    [Prop]-satisfaction : ∀{𝔐 : Model(Stmt)}{stmt : Stmt} → (Model.interpretStmt 𝔐 stmt ≡ 𝑇) → (Prop metasyn (𝔐 ⊧ (Prop syn stmt)))
-    [⊤]-satisfaction : ∀{𝔐 : Model(Stmt)} → Prop metasyn (𝔐 ⊧ (⊤ syn))
-    [⊥]-satisfaction : ∀{𝔐 : Model(Stmt)} → ¬_ metasyn (Prop metasyn (𝔐 ⊧ (⊥ syn)))
-    [¬]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ : Formula(Stmt)} → (¬_ metasyn (𝔐 ⊧ φ)) → (Prop metasyn (𝔐 ⊧ (¬_ syn φ)))
-    [∧]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → (_∧_ metasyn (𝔐 ⊧ φ₁) (𝔐 ⊧ φ₂)) → (Prop metasyn (𝔐 ⊧ (_∧_ syn φ₁ φ₂)))
-    [∨]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → (_∨_ metasyn (𝔐 ⊧ φ₁) (𝔐 ⊧ φ₂)) → (Prop metasyn (𝔐 ⊧ (_∨_ syn φ₁ φ₂)))
-    [⇒]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → (_∨_ metasyn (¬_ metasyn (𝔐 ⊧ φ₁)) (𝔐 ⊧ φ₂)) → (Prop metasyn (𝔐 ⊧ (_⇒_ syn φ₁ φ₂)))
+  open Operators(syn)
+  open Operators(metasyn)
+    hiding (_⇒_)
+    renaming (•_ to ◦_ ; _∧_ to _∧ₘ_ ; _∨_ to _∨ₘ_ ; ¬_ to ¬ₘ_ ; ⊤ to ⊤ₘ ; ⊥ to ⊥ₘ)
+  field -- Axioms
+    [•]-satisfaction : ∀{𝔐 : Model(Stmt)}{stmt : Stmt} → (Model.interpretStmt 𝔐 stmt ≡ 𝑇) → ◦(𝔐 ⊧ (• stmt))
+    [⊤]-satisfaction : ∀{𝔐 : Model(Stmt)} → ◦(𝔐 ⊧ ⊤)
+    [⊥]-satisfaction : ∀{𝔐 : Model(Stmt)} → ¬ₘ ◦(𝔐 ⊧ ⊥)
+    [¬]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ : Formula(Stmt)} → (¬ₘ ◦(𝔐 ⊧ φ)) → ◦(𝔐 ⊧ (¬ φ))
+    [∧]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → (◦(𝔐 ⊧ φ₁) ∧ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∧ φ₂))
+    [∨]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → (◦(𝔐 ⊧ φ₁) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∨ φ₂))
+    [⇒]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → ((¬ₘ ◦(𝔐 ⊧ φ₁)) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ⇒ φ₂))
+-- TODO: How does the satisfaction definitions look like in constructive logic?

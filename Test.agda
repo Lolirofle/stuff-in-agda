@@ -277,14 +277,17 @@ main = FFI.printStrLn "Okay"
 module testPropositionalLogic where
   open import Logic.Propositional as Propositional
 
-  logic-syntax : ∀{T} → Propositional.Syntax T (const Set)
+  logic-syntax : ∀{T : Set(Lvl.𝟎)} → Propositional.Syntax T (const (Set(Lvl.𝟎)))
   logic-syntax =
-    record{
-      Propositional.Syntax.Prop = id;
-      Propositional.Syntax.⊤   = ⊤;
-      Propositional.Syntax.⊥   = ⊥;
-      Propositional.Syntax.¬_  = ¬_;
-      Propositional.Syntax._∧_ = _∧_;
-      Propositional.Syntax._∨_ = _∨_;
-      Propositional.Syntax._⇒_ = _⇒_
+    record {
+      •_ = type-of ;
+      ⊤   = ⊤ ;
+      ⊥   = ⊥ ;
+      ¬_  = ¬_ ;
+      _∧_ = _∧_ ;
+      _∨_ = _∨_ ;
+      _⇒_ = _→ᶠ_ ;
+      _⇐_ = _←_ ;
+      _⇔_ = _↔_ ;
+      _⊕_ = a ↦ b ↦ ((a ∨ b) ∧ ¬(a ∧ b))
     }
