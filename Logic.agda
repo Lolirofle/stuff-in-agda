@@ -7,7 +7,7 @@ import      Level as Lvl
 infixl 10 _⇒_
 infixl 1005 _∧_
 infixl 1004 _∨_
-infixl 1000 _←_ _↔_
+infixl 1000 _↔_
 
 ------------------------------------------
 -- Statement
@@ -40,9 +40,6 @@ pattern [∧]-intro x y = x , y
 
 ------------------------------------------
 -- Reverse implication
-
-_←_ : Stmt → Stmt → Stmt
-y ← x = x → y
 
 [←]-intro : {X Y : Stmt} → Y → (Y ← X)
 [←]-intro = [→]-intro
@@ -156,3 +153,6 @@ data ∃ {X : Set} (body : X → Stmt) : Stmt where
 
 _⇒_ : {X Y : Stmt} → X → (X → Y) → Y
 _⇒_ = apply
+
+------------------------------------------
+

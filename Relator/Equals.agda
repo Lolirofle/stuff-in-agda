@@ -1,12 +1,13 @@
 module Relator.Equals lvl where
 
+open import Functional
 open import Logic(lvl)
 open import Structure.Relator.Equivalence(lvl)
 open import Structure.Relator.Properties(lvl)
 
 infixl 15 _≡_
-data _≡_ {T : Set} : T -> T -> Stmt where
-  [≡]-intro : {x : T} -> (x ≡ x)
+data _≡_ {T : Set} : T → T → Stmt where
+  [≡]-intro : {x : T} → (x ≡ x)
 
 [≡]-elim : {T : Set} → ∀{x y : T} → ∀{f : T → Stmt} → (x ≡ y) → f(x) ↔ f(y)
 [≡]-elim eq = [↔]-intro ([≡]-elimₗ eq) ([≡]-elimᵣ eq) where

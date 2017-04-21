@@ -1,10 +1,11 @@
 module Logic.Propositional where
 
 open import Data
+open import Functional
 import      Level as Lvl
 open import Relator.Equals(Lvl.𝟎)
 
-record Syntax (Stmt : Set) (Formula : Set → Set) : Set where
+record Syntax {lvl} (Stmt : Set(lvl)) (Formula : Set(lvl) → Set(lvl)) : Set(lvl) where
   field
     Prop : Stmt → Formula(Stmt)
     ⊤ : Formula(Stmt)
@@ -13,25 +14,25 @@ record Syntax (Stmt : Set) (Formula : Set → Set) : Set where
     _∧_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
     _∨_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
     _⇒_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-    _⇐_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-    _⇔_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-    _⊕_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+    -- _⇐_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+    -- _⇔_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+    -- _⊕_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
 open Syntax
 
 -- Also known as Interpretation, Structure, Model
-record Model (Stmt : Set) : Set where
+record Model {lvl} (Stmt : Set(lvl)) : Set(lvl) where
   field
     interpretStmt : Stmt → Bool
 
--- interpret : ∀{Stmt} → Model(Stmt) → Formula(Stmt) → Bool
--- interpret 𝔐 φ = substitute (interpretStmt 𝔐) φ
-
-InterpretationFn : Set → (Set → Set) → Set
-InterpretationFn Stmt Formula = (Model(Stmt) → Formula(Stmt) → Bool)
-
-_⊧_ : ∀{Stmt : Set}{Formula : Set → Set}{_ : InterpretationFn Stmt Formula} → Model(Stmt) → Formula(Stmt) → Set
-_⊧_ {_} {_} {interpret} 𝔐 φ = ((interpret 𝔐 φ) ≡ 𝑇)
-
-record Semantics {Stmt : Set}{Formula : Set → Set}{_ : InterpretationFn Stmt Formula} : Set where
+record Semantics {lvl} {Stmt : Set(lvl)} {Formula : Set(lvl) → Set(lvl)} (_⊧_ : Model(Stmt) → Formula(Stmt) → Set(lvl)) : Set(Lvl.𝐒(lvl)) where
   field
-    [⊤]-satisfaction : ∀{𝔐 : Model(Stmt)} → (𝔐 ⊧ ⊤)
+    {syn}     : Syntax Stmt Formula
+    {metasyn} : Syntax (Set(lvl)) (const(Set(lvl)))
+
+    [Prop]-satisfaction : ∀{𝔐 : Model(Stmt)}{stmt : Stmt} → (Model.interpretStmt 𝔐 stmt ≡ 𝑇) → (Prop metasyn (𝔐 ⊧ (Prop syn stmt)))
+    [⊤]-satisfaction : ∀{𝔐 : Model(Stmt)} → Prop metasyn (𝔐 ⊧ (⊤ syn))
+    [⊥]-satisfaction : ∀{𝔐 : Model(Stmt)} → ¬_ metasyn (Prop metasyn (𝔐 ⊧ (⊥ syn)))
+    [¬]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ : Formula(Stmt)} → (¬_ metasyn (𝔐 ⊧ φ)) → (Prop metasyn (𝔐 ⊧ (¬_ syn φ)))
+    [∧]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → (_∧_ metasyn (𝔐 ⊧ φ₁) (𝔐 ⊧ φ₂)) → (Prop metasyn (𝔐 ⊧ (_∧_ syn φ₁ φ₂)))
+    [∨]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → (_∨_ metasyn (𝔐 ⊧ φ₁) (𝔐 ⊧ φ₂)) → (Prop metasyn (𝔐 ⊧ (_∨_ syn φ₁ φ₂)))
+    [⇒]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → (_∨_ metasyn (¬_ metasyn (𝔐 ⊧ φ₁)) (𝔐 ⊧ φ₂)) → (Prop metasyn (𝔐 ⊧ (_⇒_ syn φ₁ φ₂)))

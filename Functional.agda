@@ -2,6 +2,9 @@ module Functional where
 
 infixl 10000 _∘_
 
+_←_ : ∀{lvl} → Set(lvl) → Set(lvl) → Set(lvl)
+y ← x = x → y
+
 id : ∀{n} {T : Set n} → T → T
 id x = x
 

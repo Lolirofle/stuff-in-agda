@@ -273,3 +273,18 @@ module testList where
 
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"
+
+module testPropositionalLogic where
+  open import Logic.Propositional as Propositional
+
+  logic-syntax : ∀{T} → Propositional.Syntax T (const Set)
+  logic-syntax =
+    record{
+      Propositional.Syntax.Prop = id;
+      Propositional.Syntax.⊤   = ⊤;
+      Propositional.Syntax.⊥   = ⊥;
+      Propositional.Syntax.¬_  = ¬_;
+      Propositional.Syntax._∧_ = _∧_;
+      Propositional.Syntax._∨_ = _∨_;
+      Propositional.Syntax._⇒_ = _⇒_
+    }
