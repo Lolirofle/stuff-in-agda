@@ -10,7 +10,6 @@ import      List
 import      List.Properties
 import      List.Relation
 open import Logic(Lvl.𝟎)
-import      Logic.Classic
 import      Logic.Propositional
 open import LogicTheorems(Lvl.𝟎)
 import      NonEmptyList
@@ -277,8 +276,8 @@ main = FFI.printStrLn "Okay"
 module testPropositionalLogic where
   open import Logic.Propositional as Propositional
 
-  logic-syntax : ∀{T : Set(Lvl.𝟎)} → Propositional.Syntax T (const (Set(Lvl.𝟎)))
-  logic-syntax =
+  symbols : ∀{T : Set(Lvl.𝟎)} → Propositional.Syntax.Symbols T (const (Set(Lvl.𝟎)))
+  symbols =
     record {
       •_ = type-of ;
       ⊤   = ⊤ ;

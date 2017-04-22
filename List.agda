@@ -27,15 +27,15 @@ concat   = _++_
 singleton : ∀{lvl}{T : Set lvl} → T → (List T)
 singleton elem = elem ⊰ ∅
 
-map : ∀{lvl}{T₁ T₂ : Set lvl} → (T₁ → T₂) → (List T₁) → (List T₂)
+map : ∀{lvl₁ lvl₂}{T₁ : Set(lvl₁)}{T₂ : Set(lvl₂)} → (T₁ → T₂) → (List T₁) → (List T₂)
 map _ ∅ = ∅
 map f (elem ⊰ l) = (f elem) ⊰ (map f l)
 
-foldₗ : ∀{lvl}{T Result : Set lvl} → (Result → T → Result) → Result → (List T) → Result
+foldₗ : ∀{lvl₁ lvl₂}{T : Set(lvl₁)}{Result : Set(lvl₂)} → (Result → T → Result) → Result → (List T) → Result
 foldₗ _   result ∅ = result
 foldₗ _▫_ result (elem ⊰ l) = foldₗ _▫_ (result ▫ elem) l
 
-foldᵣ : ∀{lvl}{T Result : Set lvl} → (T → Result → Result) → Result → (List T) → Result
+foldᵣ : ∀{lvl₁ lvl₂}{T : Set(lvl₁)}{Result : Set(lvl₂)} → (T → Result → Result) → Result → (List T) → Result
 foldᵣ _   init ∅ = init
 foldᵣ _▫_ init (elem ⊰ l) = elem ▫ (foldᵣ _▫_ init l)
 
