@@ -63,6 +63,9 @@ module Semantics {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁) �
     _⊨_ : List(Formula(Stmt)) → Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
     _⊨_ Γ φ = (∀{𝔐 : Model(Stmt)} → (List.foldᵣ (_∧ₘ_) (⊤ₘ) (List.map (\γ → ◦(𝔐 ⊧ γ)) Γ)) ⇒ₘ ◦(𝔐 ⊧ φ))
 
+    _⊭_ : List(Formula(Stmt)) → Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
+    _⊭_ Γ φ = ¬ₘ(_⊨_ Γ φ)
+
     -- Validity
     valid : Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
     valid = (∅ ⊨_)
@@ -80,19 +83,30 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
   -- • The outer most (shallow) expression is at the bottom of a normal tree that should result in a construction of the conclusion
   -- One difference is that one cannot introduce assumptions however one wants. There are however rules that allows one to to this by using a function, and can be written as a lambda abstraction if one want it to look similar to the tree proofs.
   module NaturalDeduction where
+    open import List
+
     -- Intro rules are like constructors
     -- Elimination rules are like deconstructors
     module Classic where
       record Rules : Set(Lvl.𝐒(lvl₁ Lvl.⊔ lvl₂)) where
         field
-          {Prop} : Formula(Stmt) → Set
+          {Prop} : Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
+
+        -- Derivability
+        -- Examples:
+        --   (∅ ⊢ ⊤) becomes Prop(⊤)
+        --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes (Prop(φ) → (Prop(¬ φ) → Prop(⊥)))
+        _⊢_ : List(Formula(Stmt)) → Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
+        _⊢_ Γ φ = (List.foldₗ (_←_) (Prop(φ)) (List.map Prop (List.reverse Γ)))
+        -- _⊢_ Γ φ = (Prop(List.foldᵣ (_∧_) (⊤) Γ) → Prop(φ))
+
         field
           [⊤]-intro : Prop(⊤)
 
           [⊥]-intro : ∀{φ : Formula(Stmt)} → Prop(φ) → Prop(¬ φ) → Prop(⊥)
 
-          [¬]-intro : ∀{φ₁ : Formula(Stmt)} → (Prop(φ₁) → Prop(⊥)) → Prop(¬ φ₁)
-          [¬]-elim  : ∀{φ₁ : Formula(Stmt)} → (Prop(¬ φ₁) → Prop(⊥)) → Prop(φ₁)
+          [¬]-intro : ∀{φ : Formula(Stmt)} → (Prop(φ) → Prop(⊥)) → Prop(¬ φ)
+          [¬]-elim  : ∀{φ : Formula(Stmt)} → (Prop(¬ φ) → Prop(⊥)) → Prop(φ)
 
           [∧]-intro : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁) → Prop(φ₂) → Prop(φ₁ ∧ φ₂)
           [∧]-elimₗ  : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁ ∧ φ₂) → Prop(φ₁)
@@ -108,12 +122,38 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
           [⇐]-intro : ∀{φ₁ φ₂ : Formula(Stmt)} → (Prop(φ₂) → Prop(φ₁)) → Prop(φ₁ ⇐ φ₂)
           [⇐]-elim : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁ ⇐ φ₂) → Prop(φ₂) → Prop(φ₁)
 
+          [⇔]-intro : ∀{φ₁ φ₂ : Formula(Stmt)} → (Prop(φ₂) → Prop(φ₁)) → (Prop(φ₁) → Prop(φ₂)) → Prop(φ₁ ⇔ φ₂)
+          [⇔]-elimₗ : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁ ⇔ φ₂) → Prop(φ₂) → Prop(φ₁)
+          [⇔]-elimᵣ : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁ ⇔ φ₂) → Prop(φ₁) → Prop(φ₂)
+
         -- Double negated proposition is positive
         [¬¬]-elim : ∀{φ : Formula(Stmt)} → Prop(¬ (¬ φ)) → Prop(φ)
         [¬¬]-elim nna = [¬]-elim(na ↦ [⊥]-intro na nna)
 
         [⊥]-elim : ∀{φ : Formula(Stmt)} → Prop(⊥) → Prop(φ)
         [⊥]-elim bottom = [¬]-elim(_ ↦ bottom)
+
+      module Meta(rules : Rules) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) (const(Set(lvl₁ Lvl.⊔ lvl₂)))) where
+        open Rules(rules) using (_⊢_) public
+        open Syntax.Symbols(meta-symbols)
+          renaming (
+            •_ to ◦_ ;
+            ⊤   to ⊤ₘ ;
+            ⊥   to ⊥ₘ ;
+            ¬_  to ¬ₘ_ ;
+            _∧_ to _∧ₘ_ ;
+            _∨_ to _∨ₘ_ ;
+            _⇒_ to _⇒ₘ_ )
+
+        _⊬_ : List(Formula(Stmt)) → Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
+        _⊬_ Γ φ = ¬ₘ(_⊢_ Γ φ)
+
+        -- Consistency
+        inconsistent : List(Formula(Stmt)) → Set(lvl₁ Lvl.⊔ lvl₂)
+        inconsistent Γ = (Γ ⊢ ⊥)
+
+        consistent : List(Formula(Stmt)) → Set(lvl₁ Lvl.⊔ lvl₂)
+        consistent Γ = ¬ₘ(inconsistent Γ)
 
       module Theorems(rules : Rules) where
         open Rules(rules)
@@ -128,7 +168,7 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
         infixl 100 _:with:_
 
         -- The ability to derive anything from a contradiction
-        ex-falso-quodlibet : ∀{A : Formula(Stmt)} → Prop(⊥) → Prop(A)
+        ex-falso-quodlibet : ∀{A : Formula(Stmt)} → [ ⊥ ] ⊢ A
         ex-falso-quodlibet = [⊥]-elim
 
         [∧]-commutativity : ∀{A B : Formula(Stmt)} → Prop(A ∧ B) → Prop(B ∧ A)

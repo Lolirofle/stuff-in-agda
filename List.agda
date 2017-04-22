@@ -6,6 +6,8 @@ open import Numeral.Natural
 
 infixl 1000 _⊱_ _++_
 infixr 1000 _⊰_
+infixl 1      [_
+infixl 100000 _]
 
 data List {lvl} (T : Set lvl) : Set lvl where
   ∅ : (List T)
@@ -84,3 +86,6 @@ multiply l (𝐒(n)) = l ++ (multiply l n)
 List-induction : ∀{lvl}{T : Set lvl}{P : List(T) → Set} → P(∅) → (∀(x : T)(l : List(T)) → P(l) → P(x ⊰ l)) → (∀{l : List(T)} → P(l))
 List-induction base next {∅} = base
 List-induction base next {x ⊰ l} = next(x)(l)(List-induction base next {l})
+
+pattern [_ l = l
+pattern _] x = x ⊰ ∅
