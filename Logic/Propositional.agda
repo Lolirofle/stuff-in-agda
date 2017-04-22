@@ -7,8 +7,8 @@ open import Relator.Equals(Lvl.𝟎)
 
 -- Propositional logic. Working with propositions and their truth (whether they are true or false).
 
-module Syntax where
-  record Symbols {lvl₁} {lvl₂} (Stmt : Set(lvl₁)) (Formula : Set(lvl₁) → Set(lvl₂)) : Set(lvl₁ Lvl.⊔ lvl₂) where
+module Syntax {lvl₁} {lvl₂} (Prop : Set(lvl₁)) (Formula : Set(lvl₁) → Set(lvl₂)) where
+  record Symbols : Set(lvl₁ Lvl.⊔ lvl₂) where
     infixl 1011 •_
     infixl 1010 ¬_
     infixl 1005 _∧_
@@ -16,23 +16,24 @@ module Syntax where
     infixl 1000 _⇐_ _⇔_ _⇒_
 
     field
-      •_ : Stmt → Formula(Stmt)
-      ⊤ : Formula(Stmt)
-      ⊥ : Formula(Stmt)
-      ¬_ : Formula(Stmt) → Formula(Stmt)
-      _∧_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-      _∨_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-      _⇒_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-      _⇐_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-      _⇔_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
-      _⊕_ : Formula(Stmt) → Formula(Stmt) → Formula(Stmt)
+      •_ : Prop → Formula(Prop)
+      ⊤ : Formula(Prop)
+      ⊥ : Formula(Prop)
+      ¬_ : Formula(Prop) → Formula(Prop)
+      _∧_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
+      _∨_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
+      _⇒_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
+      _⇐_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
+      _⇔_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
+      _⊕_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
 
+-- A model decides whether a proposition is true or false
 -- Also known as Interpretation, Structure, Model
-record Model {lvl} (Stmt : Set(lvl)) : Set(lvl) where
+record Model {lvl} (Prop : Set(lvl)) : Set(lvl) where
   field
-    interpretStmt : Stmt → Bool
+    interpretProp : Prop → Bool
 
-module Semantics {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (symbols : Syntax.Symbols Stmt Formula) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) (const(Set(lvl₁ Lvl.⊔ lvl₂)))) where
+module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (symbols : Syntax.Symbols Prop Formula) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) id) where
   open import List
   open Syntax.Symbols(symbols)
   open Syntax.Symbols(meta-symbols)
@@ -48,36 +49,36 @@ module Semantics {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁) �
   -- TODO: Can this be called a "theory" of propositional logic? So that instances of the type Semantics is the "models" of logic?
   record Theory : Set(Lvl.𝐒(lvl₁ Lvl.⊔ lvl₂)) where
     field -- Definitions
-      {_⊧_} : Model(Stmt) → Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
+      {_⊧_} : Model(Prop) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
     field -- Axioms
-      [•]-satisfaction : ∀{𝔐 : Model(Stmt)}{stmt : Stmt} → (Model.interpretStmt 𝔐 stmt ≡ 𝑇) → ◦(𝔐 ⊧ (• stmt))
-      [⊤]-satisfaction : ∀{𝔐 : Model(Stmt)} → ◦(𝔐 ⊧ ⊤)
-      [⊥]-satisfaction : ∀{𝔐 : Model(Stmt)} → ¬ₘ ◦(𝔐 ⊧ ⊥)
-      [¬]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ : Formula(Stmt)} → (¬ₘ ◦(𝔐 ⊧ φ)) → ◦(𝔐 ⊧ (¬ φ))
-      [∧]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → (◦(𝔐 ⊧ φ₁) ∧ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∧ φ₂))
-      [∨]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → (◦(𝔐 ⊧ φ₁) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∨ φ₂))
-      [⇒]-satisfaction : ∀{𝔐 : Model(Stmt)}{φ₁ φ₂ : Formula(Stmt)} → ((¬ₘ ◦(𝔐 ⊧ φ₁)) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ⇒ φ₂))
+      [•]-satisfaction : ∀{𝔐 : Model(Prop)}{x : Prop} → (Model.interpretProp 𝔐 x ≡ 𝑇) → ◦(𝔐 ⊧ (• x))
+      [⊤]-satisfaction : ∀{𝔐 : Model(Prop)} → ◦(𝔐 ⊧ ⊤)
+      [⊥]-satisfaction : ∀{𝔐 : Model(Prop)} → ¬ₘ ◦(𝔐 ⊧ ⊥)
+      [¬]-satisfaction : ∀{𝔐 : Model(Prop)}{φ : Formula(Prop)} → (¬ₘ ◦(𝔐 ⊧ φ)) → ◦(𝔐 ⊧ (¬ φ))
+      [∧]-satisfaction : ∀{𝔐 : Model(Prop)}{φ₁ φ₂ : Formula(Prop)} → (◦(𝔐 ⊧ φ₁) ∧ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∧ φ₂))
+      [∨]-satisfaction : ∀{𝔐 : Model(Prop)}{φ₁ φ₂ : Formula(Prop)} → (◦(𝔐 ⊧ φ₁) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∨ φ₂))
+      [⇒]-satisfaction : ∀{𝔐 : Model(Prop)}{φ₁ φ₂ : Formula(Prop)} → ((¬ₘ ◦(𝔐 ⊧ φ₁)) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ⇒ φ₂))
     -- TODO: How does the satisfaction definitions look like in constructive logic?
 
     -- Entailment
-    _⊨_ : List(Formula(Stmt)) → Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
-    _⊨_ Γ φ = (∀{𝔐 : Model(Stmt)} → (List.foldᵣ (_∧ₘ_) (⊤ₘ) (List.map (\γ → ◦(𝔐 ⊧ γ)) Γ)) ⇒ₘ ◦(𝔐 ⊧ φ))
+    _⊨_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+    _⊨_ Γ φ = (∀{𝔐 : Model(Prop)} → (List.foldᵣ (_∧ₘ_) (⊤ₘ) (List.map (\γ → ◦(𝔐 ⊧ γ)) Γ)) ⇒ₘ ◦(𝔐 ⊧ φ))
 
-    _⊭_ : List(Formula(Stmt)) → Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
+    _⊭_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
     _⊭_ Γ φ = ¬ₘ(_⊨_ Γ φ)
 
     -- Validity
-    valid : Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
+    valid : Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
     valid = (∅ ⊨_)
 
-module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (symbols : Syntax.Symbols Stmt Formula) where
+module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (symbols : Syntax.Symbols Prop Formula) where
   open Syntax.Symbols(symbols)
 
   module TruthTables where
 
   -- The "proofs" that results by these postulates are very much alike the classical notation of natural deduction proofs in written as trees.
-  -- A function that has the type (Prop(A) → Prop(B)) is a proof of (A ⊢ B) (A is the assumption, B is the single conclusion)
-  -- A function that has the type (Prop(A₁) → Prop(A₂) → Prop(A₃) →  .. → Prop(B)) is a proof of ({A₁,A₂,A₃,..} ⊢ B) (Aᵢ is the assumptions, B is the single result)
+  -- A function that has the type (Node(A) → Node(B)) is a proof of (A ⊢ B) (A is the assumption, B is the single conclusion)
+  -- A function that has the type (Node(A₁) → Node(A₂) → Node(A₃) →  .. → Node(B)) is a proof of ({A₁,A₂,A₃,..} ⊢ B) (Aᵢ is the assumptions, B is the single result)
   -- A function's function body is the "tree proof"
   -- • The inner most (deepest) expression is at the top of a normal tree
   -- • The outer most (shallow) expression is at the bottom of a normal tree that should result in a construction of the conclusion
@@ -90,51 +91,52 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
     module Classic where
       record Rules : Set(Lvl.𝐒(lvl₁ Lvl.⊔ lvl₂)) where
         field
-          {Prop} : Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
+          {Node} : Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
 
         -- Derivability
         -- Examples:
-        --   (∅ ⊢ ⊤) becomes Prop(⊤)
-        --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes (Prop(φ) → (Prop(¬ φ) → Prop(⊥)))
-        _⊢_ : List(Formula(Stmt)) → Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
-        _⊢_ Γ φ = (List.foldₗ (_←_) (Prop(φ)) (List.map Prop (List.reverse Γ)))
-        -- _⊢_ Γ φ = (Prop(List.foldᵣ (_∧_) (⊤) Γ) → Prop(φ))
+        --   (∅ ⊢ ⊤) becomes Node(⊤)
+        --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes (Node(φ) → (Node(¬ φ) → Node(⊥)))
+        _⊢_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+        -- _⊢_ Γ φ = (List.foldₗ (_←_) (Node(φ)) (List.map Node (List.reverse Γ)))
+        _⊢_ Γ φ = (Node(List.foldᵣ (_∧_) (⊤) Γ) → Node(φ))
 
         field
-          [⊤]-intro : Prop(⊤)
+          [⊤]-intro : Node(⊤)
 
-          [⊥]-intro : ∀{φ : Formula(Stmt)} → Prop(φ) → Prop(¬ φ) → Prop(⊥)
+          [⊥]-intro : ∀{φ : Formula(Prop)} → Node(φ) → Node(¬ φ) → Node(⊥)
 
-          [¬]-intro : ∀{φ : Formula(Stmt)} → (Prop(φ) → Prop(⊥)) → Prop(¬ φ)
-          [¬]-elim  : ∀{φ : Formula(Stmt)} → (Prop(¬ φ) → Prop(⊥)) → Prop(φ)
+          [¬]-intro : ∀{φ : Formula(Prop)} → (Node(φ) → Node(⊥)) → Node(¬ φ)
+          [¬]-elim  : ∀{φ : Formula(Prop)} → (Node(¬ φ) → Node(⊥)) → Node(φ)
 
-          [∧]-intro : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁) → Prop(φ₂) → Prop(φ₁ ∧ φ₂)
-          [∧]-elimₗ  : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁ ∧ φ₂) → Prop(φ₁)
-          [∧]-elimᵣ  : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁ ∧ φ₂) → Prop(φ₂)
+          [∧]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁) → Node(φ₂) → Node(φ₁ ∧ φ₂)
+          [∧]-elimₗ  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ∧ φ₂) → Node(φ₁)
+          [∧]-elimᵣ  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ∧ φ₂) → Node(φ₂)
 
-          [∨]-introₗ : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁) → Prop(φ₁ ∨ φ₂)
-          [∨]-introᵣ : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₂) → Prop(φ₁ ∨ φ₂)
-          [∨]-elim  : ∀{φ₁ φ₂ φ₃ : Formula(Stmt)} → (Prop(φ₁) → Prop(φ₃)) → (Prop(φ₂) → Prop(φ₃)) → Prop(φ₁ ∨ φ₂) → Prop(φ₃)
+          [∨]-introₗ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁) → Node(φ₁ ∨ φ₂)
+          [∨]-introᵣ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₂) → Node(φ₁ ∨ φ₂)
+          [∨]-elim  : ∀{φ₁ φ₂ φ₃ : Formula(Prop)} → (Node(φ₁) → Node(φ₃)) → (Node(φ₂) → Node(φ₃)) → Node(φ₁ ∨ φ₂) → Node(φ₃)
 
-          [⇒]-intro : ∀{φ₁ φ₂ : Formula(Stmt)} → (Prop(φ₁) → Prop(φ₂)) → Prop(φ₁ ⇒ φ₂)
-          [⇒]-elim  : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁ ⇒ φ₂) → Prop(φ₁) → Prop(φ₂)
+          [⇒]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₁) → Node(φ₂)) → Node(φ₁ ⇒ φ₂)
+          [⇒]-elim  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇒ φ₂) → Node(φ₁) → Node(φ₂)
 
-          [⇐]-intro : ∀{φ₁ φ₂ : Formula(Stmt)} → (Prop(φ₂) → Prop(φ₁)) → Prop(φ₁ ⇐ φ₂)
-          [⇐]-elim : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁ ⇐ φ₂) → Prop(φ₂) → Prop(φ₁)
+          [⇐]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₂) → Node(φ₁)) → Node(φ₁ ⇐ φ₂)
+          [⇐]-elim : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇐ φ₂) → Node(φ₂) → Node(φ₁)
 
-          [⇔]-intro : ∀{φ₁ φ₂ : Formula(Stmt)} → (Prop(φ₂) → Prop(φ₁)) → (Prop(φ₁) → Prop(φ₂)) → Prop(φ₁ ⇔ φ₂)
-          [⇔]-elimₗ : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁ ⇔ φ₂) → Prop(φ₂) → Prop(φ₁)
-          [⇔]-elimᵣ : ∀{φ₁ φ₂ : Formula(Stmt)} → Prop(φ₁ ⇔ φ₂) → Prop(φ₁) → Prop(φ₂)
+          [⇔]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₂) → Node(φ₁)) → (Node(φ₁) → Node(φ₂)) → Node(φ₁ ⇔ φ₂)
+          [⇔]-elimₗ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇔ φ₂) → Node(φ₂) → Node(φ₁)
+          [⇔]-elimᵣ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇔ φ₂) → Node(φ₁) → Node(φ₂)
 
         -- Double negated proposition is positive
-        [¬¬]-elim : ∀{φ : Formula(Stmt)} → Prop(¬ (¬ φ)) → Prop(φ)
+        [¬¬]-elim : ∀{φ : Formula(Prop)} → Node(¬ (¬ φ)) → Node(φ)
         [¬¬]-elim nna = [¬]-elim(na ↦ [⊥]-intro na nna)
 
-        [⊥]-elim : ∀{φ : Formula(Stmt)} → Prop(⊥) → Prop(φ)
+        [⊥]-elim : ∀{φ : Formula(Prop)} → Node(⊥) → Node(φ)
         [⊥]-elim bottom = [¬]-elim(_ ↦ bottom)
 
-      module Meta(rules : Rules) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) (const(Set(lvl₁ Lvl.⊔ lvl₂)))) where
-        open Rules(rules) using (_⊢_) public
+      module Meta(rules : Rules) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) id) where
+        open Rules(rules) hiding (_⊢_)
+        open Rules(rules) using  (_⊢_) public
         open Syntax.Symbols(meta-symbols)
           renaming (
             •_ to ◦_ ;
@@ -145,15 +147,19 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
             _∨_ to _∨ₘ_ ;
             _⇒_ to _⇒ₘ_ )
 
-        _⊬_ : List(Formula(Stmt)) → Formula(Stmt) → Set(lvl₁ Lvl.⊔ lvl₂)
+        _⊬_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
         _⊬_ Γ φ = ¬ₘ(_⊢_ Γ φ)
 
         -- Consistency
-        inconsistent : List(Formula(Stmt)) → Set(lvl₁ Lvl.⊔ lvl₂)
+        inconsistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
         inconsistent Γ = (Γ ⊢ ⊥)
 
-        consistent : List(Formula(Stmt)) → Set(lvl₁ Lvl.⊔ lvl₂)
+        consistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
         consistent Γ = ¬ₘ(inconsistent Γ)
+
+        module Theorems where
+          -- olt-9-17 : ∀{Γ}{φ} → (Γ ⊢ φ) → ((φ ⊰ Γ) ⊢ ⊥) → (inconsistent Γ)
+          -- olt-9-17 Γ⊢φ Γφ⊢⊥ = (Γ ↦ [⊥]-intro (Γ⊢φ Γ) ([⊥]-elim(Γφ⊢⊥ Γ)))
 
       module Theorems(rules : Rules) where
         open Rules(rules)
@@ -161,24 +167,24 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
         -- Ensures that a certain proof is a certain proposition
         -- (Like type ascription, ensures that a certain expression has a certain type)
         -- Example:
-        --   (A :with: a) where a : Prop(A)
-        --   ((A ∧ B) :with: [∧]-intro a b) where a : Prop(A), b : Prop(B)
-        _:with:_ : ∀(φ : Formula(Stmt)) → Prop(φ) → Prop(φ)
+        --   (A :with: a) where a : Node(A)
+        --   ((A ∧ B) :with: [∧]-intro a b) where a : Node(A), b : Node(B)
+        _:with:_ : ∀(φ : Formula(Prop)) → Node(φ) → Node(φ)
         _:with:_ _ x = x
         infixl 100 _:with:_
 
         -- The ability to derive anything from a contradiction
-        ex-falso-quodlibet : ∀{A : Formula(Stmt)} → [ ⊥ ] ⊢ A
+        ex-falso-quodlibet : ∀{A : Formula(Prop)} → Node(⊥) → Node(A)
         ex-falso-quodlibet = [⊥]-elim
 
-        [∧]-commutativity : ∀{A B : Formula(Stmt)} → Prop(A ∧ B) → Prop(B ∧ A)
+        [∧]-commutativity : ∀{A B : Formula(Prop)} → Node(A ∧ B) → Node(B ∧ A)
         [∧]-commutativity {A} {B} A∧B =
           ((B ∧ A) :with: [∧]-intro
             (B :with: [∧]-elimᵣ(A∧B))
             (A :with: [∧]-elimₗ(A∧B))
           )
 
-        [∨]-commutativity : ∀{A B : Formula(Stmt)} → Prop(A ∨ B) → Prop(B ∨ A)
+        [∨]-commutativity : ∀{A B : Formula(Prop)} → Node(A ∨ B) → Node(B ∨ A)
         [∨]-commutativity {A} {B} A∨B =
           ((B ∨ A) :with: [∨]-elim
             [∨]-introᵣ
@@ -186,7 +192,7 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
             A∨B
           )
 
-        contrapositive : ∀{A B : Formula(Stmt)} → Prop(A ⇒ B) → Prop((¬ B) ⇒ (¬ A))
+        contrapositive : ∀{A B : Formula(Prop)} → Node(A ⇒ B) → Node((¬ B) ⇒ (¬ A))
         contrapositive {A} {B} A→B =
           ((¬ B) ⇒ (¬ A)) :with: [⇒]-intro(nb ↦
             (¬ A) :with: [¬]-intro(a ↦
@@ -196,7 +202,7 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
             )
           )
 
-        [⇒]-syllogism : ∀{A B C : Formula(Stmt)} → Prop(A ⇒ B) → Prop(B ⇒ C) → Prop(A ⇒ C)
+        [⇒]-syllogism : ∀{A B C : Formula(Prop)} → Node(A ⇒ B) → Node(B ⇒ C) → Node(A ⇒ C)
         [⇒]-syllogism {A} {B} {C} A→B B→C =
           ([⇒]-intro(a ↦
             ([⇒]-elim
@@ -205,7 +211,7 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
             )
           ))
 
-        [∨]-syllogism : ∀{A B : Formula(Stmt)} → Prop(A ∨ B) → Prop((¬ A) ⇒ B)
+        [∨]-syllogism : ∀{A B : Formula(Prop)} → Node(A ∨ B) → Node((¬ A) ⇒ B)
         [∨]-syllogism {A} {B} A∨B =
           ([∨]-elim
             (a ↦ ((¬ A) ⇒ B) :with: [⇒]-syllogism
@@ -219,7 +225,7 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
           )
 
         -- Currying
-        [∧]→[⇒]-in-assumption : {X Y Z : Formula(Stmt)} → Prop((X ∧ Y) ⇒ Z) → Prop(X ⇒ (Y ⇒ Z))
+        [∧]→[⇒]-in-assumption : {X Y Z : Formula(Prop)} → Node((X ∧ Y) ⇒ Z) → Node(X ⇒ (Y ⇒ Z))
         [∧]→[⇒]-in-assumption x∧y→z =
           ([⇒]-intro(x ↦
             ([⇒]-intro(y ↦
@@ -231,7 +237,7 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
           ))
 
         -- Uncurrying
-        [∧]←[⇒]-in-assumption : {X Y Z : Formula(Stmt)} → Prop(X ⇒ (Y ⇒ Z)) → Prop((X ∧ Y) ⇒ Z)
+        [∧]←[⇒]-in-assumption : {X Y Z : Formula(Prop)} → Node(X ⇒ (Y ⇒ Z)) → Node((X ∧ Y) ⇒ Z)
         [∧]←[⇒]-in-assumption x→y→z =
           ([⇒]-intro(x∧y ↦
             ([⇒]-elim
@@ -246,7 +252,7 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
         -- It is either that a proposition is true or its negation is true.
         -- A proposition is either true or false.
         -- There is no other truth values than true and false.
-        excluded-middle : ∀{A : Formula(Stmt)} → Prop(A ∨ (¬ A))
+        excluded-middle : ∀{A : Formula(Prop)} → Node(A ∨ (¬ A))
         excluded-middle {A} =
           ([¬]-elim(¬[a∨¬a] ↦
             (⊥ :with: [⊥]-intro
@@ -264,7 +270,7 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
 
         -- It cannot be that a proposition is true and its negation is true at the same time.
         -- A proposition cannot be true and false at the same time.
-        non-contradiction : ∀{A : Formula(Stmt)} → Prop(¬ (A ∧ (¬ A)))
+        non-contradiction : ∀{A : Formula(Prop)} → Node(¬ (A ∧ (¬ A)))
         non-contradiction {A} =
           ([¬]-intro(a∧¬a ↦
             (⊥ :with: [⊥]-intro
@@ -276,7 +282,7 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
         -- TODO: Mix of excluded middle and non-contradiction: (A ⊕ (¬ A))
 
         -- The standard proof technic: Assume the opposite of the conclusion and prove that it leads to a contradiction
-        proof-by-contradiction : ∀{A B : Formula(Stmt)} → (Prop(¬ A) → Prop(B)) → (Prop(¬ A) → Prop(¬ B)) → Prop(A)
+        proof-by-contradiction : ∀{A B : Formula(Prop)} → (Node(¬ A) → Node(B)) → (Node(¬ A) → Node(¬ B)) → Node(A)
         proof-by-contradiction {A} {B} ¬a→b ¬a→¬b =
           (A :with: [¬]-elim(¬a ↦
             (⊥ :with: [⊥]-intro
@@ -285,7 +291,7 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
             )
           ))
 
-        peirce : ∀{A B : Formula(Stmt)} → Prop((A ⇒ B) ⇒ A) → Prop(A)
+        peirce : ∀{A B : Formula(Prop)} → Node((A ⇒ B) ⇒ A) → Node(A)
         peirce {A} {B} [A→B]→A =
           (A :with: [¬]-elim(¬a ↦
             ([⊥]-intro
@@ -304,7 +310,7 @@ module ProofSystems {lvl₁} {lvl₂} {Stmt : Set(lvl₁)} {Formula : Set(lvl₁
             )
           ))
 
-        skip-[⇒]-assumption : ∀{A B : Formula(Stmt)} → (Prop(A ⇒ B) → Prop(A)) → Prop(A)
+        skip-[⇒]-assumption : ∀{A B : Formula(Prop)} → (Node(A ⇒ B) → Node(A)) → Node(A)
         skip-[⇒]-assumption A⇒B→A =
           (peirce
             ([⇒]-intro
