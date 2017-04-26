@@ -20,4 +20,3 @@ type-ascription : ∀{lvl} → (T : TypeN lvl) → T → T
 type-ascription T x = x
 
 syntax type-ascription T x = x :of: T
-
