@@ -23,3 +23,4 @@ syntax type-ascription T x = x :of: T
 
 type-of : ∀{lvl : Level}{T : Set(lvl)} → (_ : T) → Set(lvl)
 type-of {_} {T} _ = T
+

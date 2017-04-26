@@ -83,9 +83,12 @@ module Option where
   _andThen_ : ∀{n}{T : TypeN n} → (Option T) → (T → (Option T)) → (Option T)
   _andThen_ None _ = None
   _andThen_ (Some x) optF = optF x
-
 open Option using (Option) public
 
-data Bool : Set where
-  𝑇 : Bool
-  𝐹 : Bool
+module Bool where
+  data Bool : Set where
+    𝑇 : Bool
+    𝐹 : Bool
+
+  _∧_ : 
+open Bool using (Bool) public
