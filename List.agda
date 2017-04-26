@@ -29,6 +29,10 @@ concat   = _++_
 singleton : ∀{lvl}{T : Set lvl} → T → (List T)
 singleton elem = elem ⊰ ∅
 
+tail : ∀{lvl}{T : Set(lvl)} → (List T) → (List T)
+tail ∅ = ∅
+tail (_ ⊰ l) = l
+
 map : ∀{lvl₁ lvl₂}{T₁ : Set(lvl₁)}{T₂ : Set(lvl₂)} → (T₁ → T₂) → (List T₁) → (List T₂)
 map _ ∅ = ∅
 map f (elem ⊰ l) = (f elem) ⊰ (map f l)
@@ -40,6 +44,11 @@ foldₗ _▫_ result (elem ⊰ l) = foldₗ _▫_ (result ▫ elem) l
 foldᵣ : ∀{lvl₁ lvl₂}{T : Set(lvl₁)}{Result : Set(lvl₂)} → (T → Result → Result) → Result → (List T) → Result
 foldᵣ _   init ∅ = init
 foldᵣ _▫_ init (elem ⊰ l) = elem ▫ (foldᵣ _▫_ init l)
+
+reduceOrᵣ : ∀{lvl}{T : Set(lvl)} → (T → T → T) → T → (List T) → T
+reduceOrᵣ _   init ∅ = init
+reduceOrᵣ _▫_ init (elem ⊰ ∅) = elem
+reduceOrᵣ _▫_ init (elem₁ ⊰ (elem₂ ⊰ l)) = elem₁ ▫ (reduceOrᵣ _▫_ init (elem₂ ⊰  l))
 
 index : ∀{lvl}{T : Set lvl} → ℕ → (List T) → (Option T)
 index _      ∅       = Option.None

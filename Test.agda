@@ -270,6 +270,19 @@ module testList where
   len1 : length(1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅) ≡ 4
   len1 = [≡]-intro
 
+  testFoldᵣ : (foldᵣ (_⊰_) ∅ (1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅)) ≡ (1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅)
+  testFoldᵣ = [≡]-intro
+
+  testReduceOrᵣ0 : (reduceOrᵣ (_++_) (0 ⊰ ∅) ∅) ≡ (0 ⊰ ∅)
+  testReduceOrᵣ0 = [≡]-intro
+
+  testReduceOrᵣ1 : (reduceOrᵣ (_++_) (0 ⊰ ∅) ((1 ⊰ ∅) ⊰ ∅)) ≡ (1 ⊰ ∅)
+  testReduceOrᵣ1 = [≡]-intro
+
+  testReduceOrᵣ2 : (reduceOrᵣ (_++_) (0 ⊰ ∅) ((1 ⊰ ∅) ⊰ (2 ⊰ ∅) ⊰ (3 ⊰ ∅) ⊰ (4 ⊰ ∅) ⊰ ∅)) ≡ (1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅)
+  testReduceOrᵣ2 = [≡]-intro
+
+
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"
 

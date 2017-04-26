@@ -85,6 +85,7 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
   -- One difference is that one cannot introduce assumptions however one wants. There are however rules that allows one to to this by using a function, and can be written as a lambda abstraction if one want it to look similar to the tree proofs.
   module NaturalDeduction where
     open import List
+    import      NonEmptyList
 
     -- Intro rules are like constructors
     -- Elimination rules are like deconstructors
@@ -95,11 +96,14 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
 
         -- Derivability
         -- Examples:
+        --   (∅ ⊢ ⊥) becomes (Node(⊤) → Node(⊥))
+        --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes ((Node(φ) ∧ Node(¬ φ)) → Node(⊥))
+        _⊢_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+        _⊢_ Γ φ = (Node(List.reduceOrᵣ (_∧_) ⊤ Γ) → Node(φ))
         --   (∅ ⊢ ⊤) becomes Node(⊤)
         --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes (Node(φ) → (Node(¬ φ) → Node(⊥)))
-        _⊢_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+        -- _⊢_ Γ φ = (Node(List.foldᵣ (_∧_) ⊤ Γ) → Node(φ))
         -- _⊢_ Γ φ = (List.foldₗ (_←_) (Node(φ)) (List.map Node (List.reverse Γ)))
-        _⊢_ Γ φ = (Node(List.foldᵣ (_∧_) (⊤) Γ) → Node(φ))
 
         field
           [⊤]-intro : Node(⊤)
@@ -158,6 +162,18 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
         consistent Γ = ¬ₘ(inconsistent Γ)
 
         module Theorems where
+          [⊢]-id : ∀{φ} → ([ φ ] ⊢ φ)
+          [⊢]-id = id
+
+          [⊢]-compose : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ([ φ₁ ] ⊢ φ₂) → (Γ ⊢ φ₂)
+          [⊢]-compose proof-Γ⊢φ₁ proof-φ₁⊢φ₂ = (proof-Γ ↦ proof-φ₁⊢φ₂(proof-Γ⊢φ₁ proof-Γ))
+
+          -- [⊢]-compose₂ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ((φ₁ ⊰ Γ) ⊢ φ₂) → (Γ ⊢ φ₂)
+          -- [⊢]-compose₂ proof-Γ⊢φ₁ proof-φ₁Γ⊢φ₂ = (proof-Γ ↦ proof-φ₁Γ⊢φ₂([∧]-intro (proof-Γ⊢φ₁ proof-Γ) proof-Γ))
+
+          [⊢]-weakening : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
+          [⊢]-weakening proof-Γ⊢φ₁ = (proof-φ₂⊰Γ ↦ proof-Γ⊢φ₁ ([∧]-elimᵣ(proof-φ₂⊰Γ)))
+
           -- olt-9-17 : ∀{Γ}{φ} → (Γ ⊢ φ) → ((φ ⊰ Γ) ⊢ ⊥) → (inconsistent Γ)
           -- olt-9-17 Γ⊢φ Γφ⊢⊥ = (Γ ↦ [⊥]-intro (Γ⊢φ Γ) ([⊥]-elim(Γφ⊢⊥ Γ)))
 
