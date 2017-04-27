@@ -1,5 +1,6 @@
 module Test where
 
+import      Boolean
 open import Data
 import      FFI.IO   as FFI
 import      FFI.Type as FFI

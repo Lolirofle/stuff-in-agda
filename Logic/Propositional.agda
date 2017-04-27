@@ -1,5 +1,6 @@
 module Logic.Propositional where
 
+open import Boolean
 open import Data
 open import Functional
 import      Level as Lvl
@@ -85,7 +86,6 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
   -- One difference is that one cannot introduce assumptions however one wants. There are however rules that allows one to to this by using a function, and can be written as a lambda abstraction if one want it to look similar to the tree proofs.
   module NaturalDeduction where
     open import List
-    import      NonEmptyList
 
     -- Intro rules are like constructors
     -- Elimination rules are like deconstructors
@@ -171,8 +171,8 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
           -- [⊢]-compose₂ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ((φ₁ ⊰ Γ) ⊢ φ₂) → (Γ ⊢ φ₂)
           -- [⊢]-compose₂ proof-Γ⊢φ₁ proof-φ₁Γ⊢φ₂ = (proof-Γ ↦ proof-φ₁Γ⊢φ₂([∧]-intro (proof-Γ⊢φ₁ proof-Γ) proof-Γ))
 
-          [⊢]-weakening : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
-          [⊢]-weakening proof-Γ⊢φ₁ = (proof-φ₂⊰Γ ↦ proof-Γ⊢φ₁ ([∧]-elimᵣ(proof-φ₂⊰Γ)))
+          -- [⊢]-weakening : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
+          -- [⊢]-weakening proof-Γ⊢φ₁ = (proof-φ₂⊰Γ ↦ proof-Γ⊢φ₁ ([∧]-elimᵣ(proof-φ₂⊰Γ)))
 
           -- olt-9-17 : ∀{Γ}{φ} → (Γ ⊢ φ) → ((φ ⊰ Γ) ⊢ ⊥) → (inconsistent Γ)
           -- olt-9-17 Γ⊢φ Γφ⊢⊥ = (Γ ↦ [⊥]-intro (Γ⊢φ Γ) ([⊥]-elim(Γφ⊢⊥ Γ)))
