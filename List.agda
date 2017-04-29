@@ -1,5 +1,7 @@
 module List where
 
+open import Boolean
+open        Boolean.Operators
 open import Data
 open import Functional
 open import Numeral.Natural
@@ -98,3 +100,11 @@ List-induction base next {x ⊰ l} = next(x)(l)(List-induction base next {l})
 
 pattern [_ l = l
 pattern _] x = x ⊰ ∅
+
+any : ∀{lvl}{T : Set lvl} → (T → Bool) → List(T) → Bool
+any pred ∅       = 𝐹
+any pred (x ⊰ l) = pred(x) ∨ any(pred)(l)
+
+all : ∀{lvl}{T : Set lvl} → (T → Bool) → List(T) → Bool
+all pred ∅       = 𝑇
+all pred (x ⊰ l) = pred(x) ∧ any(pred)(l)

@@ -4,6 +4,7 @@ open import Boolean
 open import Data
 open import Functional
 import      Level as Lvl
+open import Operator.Equals
 open import Relator.Equals(Lvl.𝟎)
 
 -- Propositional logic. Working with propositions and their truth (whether they are true or false).
@@ -35,7 +36,7 @@ record Model {lvl} (Prop : Set(lvl)) : Set(lvl) where
     interpretProp : Prop → Bool
 
 module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (symbols : Syntax.Symbols Prop Formula) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) id) where
-  open import List
+  open import FnSet
   open Syntax.Symbols(symbols)
   open Syntax.Symbols(meta-symbols)
     renaming (
@@ -62,10 +63,10 @@ module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) �
     -- TODO: How does the satisfaction definitions look like in constructive logic?
 
     -- Entailment
-    _⊨_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-    _⊨_ Γ φ = (∀{𝔐 : Model(Prop)} → (List.foldᵣ (_∧ₘ_) (⊤ₘ) (List.map (\γ → ◦(𝔐 ⊧ γ)) Γ)) ⇒ₘ ◦(𝔐 ⊧ φ))
+    _⊨_ : FnSet(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+    _⊨_ Γ φ = (∀{𝔐 : Model(Prop)} → (∀{γ} → (γ ∈ Γ) → ◦(𝔐 ⊧ γ)) ⇒ₘ ◦(𝔐 ⊧ φ))
 
-    _⊭_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+    _⊭_ : FnSet(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
     _⊭_ Γ φ = ¬ₘ(_⊨_ Γ φ)
 
     -- Validity
@@ -85,7 +86,7 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
   -- • The outer most (shallow) expression is at the bottom of a normal tree that should result in a construction of the conclusion
   -- One difference is that one cannot introduce assumptions however one wants. There are however rules that allows one to to this by using a function, and can be written as a lambda abstraction if one want it to look similar to the tree proofs.
   module NaturalDeduction where
-    open import List
+    open import FnSet
 
     -- Intro rules are like constructors
     -- Elimination rules are like deconstructors
@@ -98,12 +99,12 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
         -- Examples:
         --   (∅ ⊢ ⊥) becomes (Node(⊤) → Node(⊥))
         --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes ((Node(φ) ∧ Node(¬ φ)) → Node(⊥))
-        _⊢_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-        _⊢_ Γ φ = (Node(List.reduceOrᵣ (_∧_) ⊤ Γ) → Node(φ))
+        _⊢_ : FnSet(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+        _⊢_ Γ φ = (∀{γ} → (γ ∈ Γ) → Node(γ) → Node(φ))
         --   (∅ ⊢ ⊤) becomes Node(⊤)
         --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes (Node(φ) → (Node(¬ φ) → Node(⊥)))
-        -- _⊢_ Γ φ = (Node(List.foldᵣ (_∧_) ⊤ Γ) → Node(φ))
-        -- _⊢_ Γ φ = (List.foldₗ (_←_) (Node(φ)) (List.map Node (List.reverse Γ)))
+        -- _⊢_ Γ φ = (Node(FnSet.foldᵣ (_∧_) ⊤ Γ) → Node(φ))
+        -- _⊢_ Γ φ = (FnSet.foldₗ (_←_) (Node(φ)) (FnSet.map Node (FnSet.reverse Γ)))
 
         field
           [⊤]-intro : Node(⊤)
@@ -151,22 +152,22 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
             _∨_ to _∨ₘ_ ;
             _⇒_ to _⇒ₘ_ )
 
-        _⊬_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+        _⊬_ : FnSet(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
         _⊬_ Γ φ = ¬ₘ(_⊢_ Γ φ)
 
         -- Consistency
-        inconsistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
+        inconsistent : FnSet(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
         inconsistent Γ = (Γ ⊢ ⊥)
 
-        consistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
+        consistent : FnSet(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
         consistent Γ = ¬ₘ(inconsistent Γ)
 
         module Theorems where
-          [⊢]-id : ∀{φ} → ([ φ ] ⊢ φ)
-          [⊢]-id = id
+          -- [⊢]-id : ∀{φ} → {{_ : Eq(Formula(Prop))}} → (singleton(φ) ⊢ φ)
+          -- [⊢]-id = id
 
-          [⊢]-compose : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ([ φ₁ ] ⊢ φ₂) → (Γ ⊢ φ₂)
-          [⊢]-compose proof-Γ⊢φ₁ proof-φ₁⊢φ₂ = (proof-Γ ↦ proof-φ₁⊢φ₂(proof-Γ⊢φ₁ proof-Γ))
+          -- [⊢]-compose : ∀{Γ}{φ₁ φ₂} → {{_ : Eq(Formula(Prop))}} → (Γ ⊢ φ₁) → (singleton(φ₁) ⊢ φ₂) → (Γ ⊢ φ₂)
+          -- [⊢]-compose proof-Γ⊢φ₁ proof-φ₁⊢φ₂ = (proof-Γ ↦ proof-φ₁⊢φ₂(proof-Γ⊢φ₁ proof-Γ))
 
           -- [⊢]-compose₂ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ((φ₁ ⊰ Γ) ⊢ φ₂) → (Γ ⊢ φ₂)
           -- [⊢]-compose₂ proof-Γ⊢φ₁ proof-φ₁Γ⊢φ₂ = (proof-Γ ↦ proof-φ₁Γ⊢φ₂([∧]-intro (proof-Γ⊢φ₁ proof-Γ) proof-Γ))
