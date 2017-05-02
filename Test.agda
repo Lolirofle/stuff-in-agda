@@ -6,6 +6,7 @@ import      FFI.IO   as FFI
 import      FFI.Type as FFI
 open import Functional
 import      Functional.Raise
+import      Functional.PrimitiveRecursion
 import      FnSet
 import      Level as Lvl
 import      List

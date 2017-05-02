@@ -35,7 +35,17 @@ module Tuple where
     _^_ : ∀{n} → (TypeN n) → ℕ → (TypeN n)
     _^_ type 0      = Unit
     _^_ type (𝐒(0)) = type
-    _^_ type (𝐒(n)) = (type ^ n) ⨯ type
+    _^_ type (𝐒(n)) = type ⨯ (type ^ n)
+
+    nth : ∀{n : ℕ}{lvl}{T : TypeN(lvl)} → ℕ → (T ^ (𝐒(n))) → T
+    nth {𝟎}    _      x          = x
+    nth {𝐒(_)} 𝟎      (init , _) = init
+    nth {𝐒(n)} (𝐒(i)) (_ , rest) = nth{n}(i)(rest)
+
+    map : ∀{n : ℕ}{lvl₁ lvl₂}{T₁ : TypeN(lvl₁)}{T₂ : TypeN(lvl₂)} → (T₁ → T₂) → (T₁ ^ n) → (T₂ ^ n)
+    map {𝟎}       f _ = unit
+    map {𝐒(𝟎)}    f single        = f(single)
+    map {𝐒(𝐒(n))} f (init , rest) = (f(init) , map{𝐒(n)}(f)(rest))
   open Raise using (_^_) public
 open Tuple using (_⨯_ ; _,_) public
 
