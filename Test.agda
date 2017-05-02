@@ -7,6 +7,7 @@ import      FFI.IO   as FFI
 import      FFI.Type as FFI
 open import Functional
 import      Functional.Raise
+import      Functional.PrimitiveRecursion
 import      FnSet
 import      SimpleSet
 import      Level as Lvl
@@ -189,8 +190,9 @@ module TestRepeatingStuff where
   _⨯^₂_ _ 𝟎 = Unit
   _⨯^₂_ type (𝐒(n)) = repeatOp type (_⨯_) n
 
-  testTupleRaise : ℕ Tuple.^ 4 → ℕ ⨯ ℕ ⨯ ℕ ⨯ ℕ
-  testTupleRaise x = x
+  -- TODO: Reverse the direction
+  -- testTupleRaise : ℕ Tuple.^ 4 → ℕ ⨯ ℕ ⨯ ℕ ⨯ ℕ
+  -- testTupleRaise x = x
 
 -- curryN : {n : ℕ} → ∀{T} → (T →^ n)
 
