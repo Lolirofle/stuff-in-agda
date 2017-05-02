@@ -1,4 +1,4 @@
-module AutomataTheory where
+module Automaton.Language where
 
 import List
 

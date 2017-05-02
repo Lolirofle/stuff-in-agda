@@ -32,7 +32,28 @@ module Tuple where
     ◅ = left
     ▻ = right
 
-  module Raise where
+  module Raiseₗ where
+    open import Numeral.Natural
+    open import Numeral.Natural.Oper using (_−₀_)
+
+    _^_ : ∀{lvl} → Type{lvl} → ℕ → Type{lvl}
+    _^_ type 0      = Unit
+    _^_ type (𝐒(0)) = type
+    _^_ type (𝐒(n)) = (type ^ n) ⨯ type
+
+    nth : ∀{n : ℕ}{lvl}{T : Type{lvl}} → ℕ → (T ^ (𝐒(n))) → T
+    nth {n}{_}{T} i tuple = nth'{n}(n −₀ i)(tuple) where
+      nth' : ∀{n : ℕ} → ℕ → (T ^ (𝐒(n))) → T
+      nth' {𝟎}          _ x     = x
+      nth' {𝐒(_)} 𝟎      (_ , last) = last
+      nth' {𝐒(n)} (𝐒(i)) (rest , _) = nth'{n}(i)(rest)
+
+    map : ∀{n : ℕ}{lvl₁ lvl₂}{T₁ : Type{lvl₁}}{T₂ : Type{lvl₂}} → (T₁ → T₂) → (T₁ ^ n) → (T₂ ^ n)
+    map {𝟎}       f _ = unit
+    map {𝐒(𝟎)}    f single        = f(single)
+    map {𝐒(𝐒(n))} f (rest , last) = (map{𝐒(n)}(f)(rest) , f(last))
+
+  module Raiseᵣ where
     open import Numeral.Natural
 
     _^_ : ∀{lvl} → Type{lvl} → ℕ → Type{lvl}
@@ -49,7 +70,11 @@ module Tuple where
     map {𝟎}       f _ = unit
     map {𝐒(𝟎)}    f single        = f(single)
     map {𝐒(𝐒(n))} f (init , rest) = (f(init) , map{𝐒(n)}(f)(rest))
+
+  module Raise where
+    open Raiseₗ public
   open Raise using (_^_) public
+
 open Tuple using (_⨯_ ; _,_) public
 
 ------------------------------------------
