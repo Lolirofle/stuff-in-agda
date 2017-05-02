@@ -1,9 +1,11 @@
-module Structure.Function.Linear lvl where
+module Structure.Function.Linear {l₁} {l₂} where
 
-open import Logic(lvl)
-open import Relator.Equals(lvl)
+import      Level as Lvl
+open import Logic.Propositional{l₁ Lvl.⊔ l₂}
+open import Relator.Equals{l₁}{l₂}
+open import Type{l₁}
 
-record LinearMap {V S : Set} (f : V → V) (_+_ : V → V → V) (_⋅_ : S → V → V) : Stmt where
+record LinearMap {V S : Type} (f : V → V) (_+_ : V → V → V) (_⋅_ : S → V → V) : Stmt where
   field
     additivity   : ∀{v₁ v₂ : V} → (f(v₁ + v₂) ≡ f(v₁) + f(v₂))
     homogeneity1 : ∀{s : S} → ∀{v : V} → (f(s ⋅ v) ≡ s ⋅ f(v))

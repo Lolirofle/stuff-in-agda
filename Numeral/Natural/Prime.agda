@@ -1,7 +1,7 @@
 module Numeral.Natural.Prime where
 
 import Level as Lvl
-open import Logic(Lvl.𝟎)
+open import Logic.Propositional{Lvl.𝟎}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Relation

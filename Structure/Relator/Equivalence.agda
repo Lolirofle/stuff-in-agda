@@ -1,9 +1,11 @@
-module Structure.Relator.Equivalence lvl where
+module Structure.Relator.Equivalence {l₁} {l₂} where
 
-open import Logic(lvl)
-open import Structure.Relator.Properties(lvl)
+import      Level as Lvl
+open import Logic.Propositional{l₁ Lvl.⊔ l₂}
+open import Structure.Relator.Properties{l₁}{l₂}
+open import Type{l₁}
 
-record Equivalence {T : Set} (_≡_ : T → T → Stmt) : Stmt where
+record Equivalence {T : Type} (_≡_ : T → T → Stmt) : Stmt where
   field
     reflexivity  : Reflexivity  (_≡_)
     symmetry     : Symmetry     (_≡_)

@@ -1,26 +1,23 @@
-module Type where
+module Type {lvl} where
 
 open import Level
 
 Type : _
-Type = Set
+Type = Set(lvl)
 
-TypeN : (_ : Level) → _
-TypeN n = Set n
+data Empty : Type where
 
-data Empty {n} : TypeN n where
-
-record Unit {n} : TypeN n where
+record Unit : Type where
   constructor unit
 
-{-# BUILTIN UNIT Unit #-}
+-- {-# BUILTIN UNIT Unit #-}
 -- {-# COMPILED_DATA Unit () () #-}
 
-type-ascription : ∀{lvl} → (T : TypeN lvl) → T → T
+type-ascription : (T : Type) → T → T
 type-ascription T x = x
 
 syntax type-ascription T x = x :of: T
 
-type-of : ∀{lvl : Level}{T : Set(lvl)} → (_ : T) → Set(lvl)
-type-of {_} {T} _ = T
+type-of : {T : Type} → T → Type
+type-of {T} _ = T
 

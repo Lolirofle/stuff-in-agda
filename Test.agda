@@ -1,19 +1,21 @@
 module Test where
 
 import      Boolean
+import      Boolean.Operators
 open import Data
 import      FFI.IO   as FFI
 import      FFI.Type as FFI
 open import Functional
 import      Functional.Raise
 import      FnSet
+import      SimpleSet
 import      Level as Lvl
 import      List
 import      List.Properties
 import      List.Relation
-open import Logic(Lvl.𝟎)
-import      Logic.Propositional
-open import LogicTheorems(Lvl.𝟎)
+open import Logic.Propositional{Lvl.𝟎}
+import      Logic.Predicate
+open import LogicTheorems{Lvl.𝟎}
 import      NonEmptyList
 import      Numeral.Integer
 import      Numeral.Integer.Oper
@@ -29,7 +31,7 @@ import      Numeral.Real
 import      Numeral.Sign
 import      Numeral.Sign.Oper
 import      Numeral.Sign.Oper0
-open import Relator.Equals(Lvl.𝟎)
+open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 import      Structure.Function.Domain
 import      Structure.Function.Linear
 import      Structure.Function.Ordering
@@ -41,7 +43,6 @@ import      Structure.Relator.Equivalence as Eq
 import      Structure.Relator.Ordering
 import      Structure.Relator.Properties
 import      String
-open import Type
 
 module NumAndDivisionProofs where
   ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
@@ -92,20 +93,23 @@ module NumAndDivisionProofs where
 testBottom : (⊥ ∧ ℕ) → ℕ
 testBottom = [∧]-elimᵣ
 
-data Data1 : Type where
-  data1,1 : Data1
+module DataTest where
+  open import Type{Lvl.𝟎}
 
-data Data2 : Type where
-  data2,1 : Data2
-  data2,2 : Data2
+  data Data1 : Type where
+    data1,1 : Data1
 
-data Data3 : Type where
-  data3,1 : Data3
-  data3,2 : Data3
-  data3,3 : Data3
+  data Data2 : Type where
+    data2,1 : Data2
+    data2,2 : Data2
 
-dataTest : (Data1 ⨯ Data2 ⨯ Data3) → Data3
-dataTest(x , y , z) = z
+  data Data3 : Type where
+    data3,1 : Data3
+    data3,2 : Data3
+    data3,3 : Data3
+
+  dataTest : (Data1 ⨯ Data2 ⨯ Data3) → Data3
+  dataTest(x , y , z) = z
 
 -- coprimes m n = ((2*m-n,m) , (2*m+n,m) , (m+2*n,n))
 -- coprimes' m n = (a1/a2,b1/b2,c1/c2) where ((a1,a2),(b1,b2),(c1,c2))=f m n
@@ -161,6 +165,8 @@ dataTest(x , y , z) = z
 -- repeat2 f x complex = f (f x)
 
 module TestRepeatingStuff where
+  open import Type
+
   repeat : {R : Set} → R → (R → R) → ℕ → R
   repeat x _ 𝟎 = x
   repeat x f (𝐒 n) = f(repeat x f n)
@@ -219,6 +225,7 @@ module Test2 where
 -- f₂ = Functional.Raise.repeatᵣ 2 id (_∘_) Tuple.curry
 
 module TestTypeAscription where
+  open import Type{Lvl.𝟎}
   ty = 1 :of: ℕ
   -- ty2 = 1 :of: ⊥
 
@@ -237,7 +244,8 @@ module TestSetUniverses {n} (Type : Set n) where
   testFn x = x
 
 module testEqProof where
-  open Structure.Operator.Properties(Lvl.𝟎)
+  open        Structure.Operator.Properties{Lvl.𝟎}
+  open import Type{Lvl.𝟎}
 
   minSkit : {{_ : Absorberₗ (_⋅_) (0)}} → {{_ : Identityᵣ (_+_) (0)}} → ∀{x} → (1 ≡ ((0 ⋅ x) + 1) + 0)
   minSkit {{absorb}} {{id}} {x} =
@@ -289,7 +297,8 @@ main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"
 
 module testPropositionalLogic where
-  open import Logic.Propositional as Propositional
+  open import Logic.Classic.Propositional as Propositional
+  open import Type{Lvl.𝟎}
 
   symbols : ∀{T : Set(Lvl.𝟎)} → Propositional.Syntax.Symbols T (const (Set(Lvl.𝟎)))
   symbols =

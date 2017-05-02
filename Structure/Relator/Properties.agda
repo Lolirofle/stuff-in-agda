@@ -1,55 +1,57 @@
-module Structure.Relator.Properties lvl where
+module Structure.Relator.Properties {l₁} {l₂} where
 
+import      Level as Lvl
 open import Data
 open import Functional
-open import Logic(lvl)
+open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Numeral.Natural
 open import NonEmptyList as List
   using (List ; _⊰_ ; _⤛_ ; End)
+open import Type{l₁}
 
 infixl 1000 _🝖_
 
-FlipPattern : {T₁ T₂ : Set} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
+FlipPattern : {T₁ T₂ : Type} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
 FlipPattern {T₁} {T₂} (_▫₁_) (_▫₂_) = {x : T₁}{y : T₂} → (x ▫₁ y) → (y ▫₂ x)
 
-Reflexivity : {T : Set} → (T → T → Stmt) → Stmt
+Reflexivity : {T : Type} → (T → T → Stmt) → Stmt
 Reflexivity {T} (_▫_) = {x : T} → (x ▫ x)
 
-Transitivity : {T : Set} → (T → T → Stmt) → Stmt
+Transitivity : {T : Type} → (T → T → Stmt) → Stmt
 Transitivity {T} (_▫_) = {x y z : T} → ((x ▫ y) ∧ (y ▫ z)) → (x ▫ z)
 
-Antisymmetry : {T : Set} → (T → T → Stmt) → (T → T → Stmt) → Stmt
+Antisymmetry : {T : Type} → (T → T → Stmt) → (T → T → Stmt) → Stmt
 Antisymmetry {T} (_▫₁_) (_▫₂_) = {a b : T} → ((a ▫₁ b) ∧ (b ▫₁ a)) → (a ▫₂ b)
 
-Irreflexivity : {T : Set} → (T → T → Stmt) → Stmt
+Irreflexivity : {T : Type} → (T → T → Stmt) → Stmt
 Irreflexivity {T} (_▫_) = {x : T} → ¬(x ▫ x)
 
-Total : {T : Set} → (T → T → Stmt) → Stmt
+Total : {T : Type} → (T → T → Stmt) → Stmt
 Total {T} (_▫_) = {x y : T} → (x ▫ y) ∨ (y ▫ x)
 
--- Dichotomy : {T : Stmt} → (T → T → Stmt) → Stmt
+-- Dichotomy : {T : Type}} → (T → T → Stmt) → Stmt
 -- Dichotomy {T} (_▫_) = {x y : T} → (x ▫ y) ⊕ (y ▫ x)
 
--- Trichotomy : {T : Stmt} → (T → T → Stmt) → Stmt
+-- Trichotomy : {T : Type} → (T → T → Stmt) → Stmt
 -- Trichotomy {T} (_▫₁_) (_▫₂_) = {x y : T} → (x ▫₁ y) ⊕ (y ▫₁ x) ⊕ (x ▫₂ y) -- TODO: Not correct. Should only be one of them
 
 -- For constructions/proofs of this form: Proof of a=f: a=b ∧ b=c ∧ c=d ∧ d=e ∧ e=f (also expressed as a=b=c=d=e=f)
-TransitivityChain : ∀{n}{T : Set n} → (T → T → Stmt) → (List 1 T) → Stmt
+TransitivityChain : {T : Type} → (T → T → Stmt) → (List 1 T) → Stmt
 TransitivityChain {T} (_▫_) X = (List.reduceₗ (_∧_) (List.fromList (List.mapWindow2ₗ (_▫_) X) ⊥)) → ((List.firstElem X) ▫ (List.lastElem X))
 
 ---------------------------------------------------------
 -- Derived
 
-Converse : {T₁ T₂ : Set} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
+Converse : {T₁ T₂ : Type} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
 Converse {T₁} {T₂} (_▫₁_) (_▫₂_) =
   FlipPattern (_▫₁_) (_▫₂_) ∧ FlipPattern (_▫₂_) (_▫₁_)
 -- {x : T₁}{y : T₂} → (x ▫₁ y) ↔ (y ▫₂ x)
 
-Symmetry : {T : Set} → (T → T → Stmt) → Stmt
+Symmetry : {T : Type} → (T → T → Stmt) → Stmt
 Symmetry {T} (_▫_) = FlipPattern (_▫_) (_▫_)
 -- {x y : T} → (x ▫ y) → (y ▫ x)
 
-Asymmetry : {T : Set} → (T → T → Stmt) → Stmt
+Asymmetry : {T : Type} → (T → T → Stmt) → Stmt
 Asymmetry {T} (_▫_) = FlipPattern (_▫_) (x ↦ y ↦ ¬(x ▫ y))
 -- {x y : T} → (x ▫ y) → ¬(y ▫ x)
 

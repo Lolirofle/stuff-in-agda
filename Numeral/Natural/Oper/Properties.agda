@@ -3,13 +3,13 @@ module Numeral.Natural.Oper.Properties where
 import Level as Lvl
 open import Data
 open import Functional
-open import Logic(Lvl.𝟎)
+open import Logic.Propositional{Lvl.𝟎}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Relator.Equals(Lvl.𝟎)
-open import Structure.Function.Domain(Lvl.𝟎)
-open import Structure.Operator.Properties(Lvl.𝟎)
-open import Structure.Relator.Properties(Lvl.𝟎)
+open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+open import Structure.Function.Domain
+open import Structure.Operator.Properties
+open import Structure.Relator.Properties
 
 instance
   [+]-identityₗ : Identityₗ (_+_) (0)

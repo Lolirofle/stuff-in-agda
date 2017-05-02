@@ -1,9 +1,9 @@
-module LogicTheorems level where
+module LogicTheorems {lvl} where
 
 open import Data
 open import Functional
 open import Functional.Raise
-open import Logic(level)
+open import Logic.Propositional{lvl}
 
 ------------------------------------------
 -- Commutativity

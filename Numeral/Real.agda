@@ -2,9 +2,9 @@ module Numeral.Real where
 
 import Level as Lvl
 open import Functional
-open import Logic(Lvl.𝟎)
-open import Structure.Operator.Group(Lvl.𝟎)
-open import Structure.Operator.Properties(Lvl.𝟎)
+open import Logic.Propositional{Lvl.𝟎}
+open import Structure.Operator.Group{Lvl.𝟎}{Lvl.𝟎}
+open import Structure.Operator.Properties{Lvl.𝟎}{Lvl.𝟎}
 
 data ℝ : Set where
   𝟎 : ℝ

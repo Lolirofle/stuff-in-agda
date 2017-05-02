@@ -1,11 +1,13 @@
-module Structure.Operator.Group lvl where
+module Structure.Operator.Group {l₁} {l₂} where
 
 open import Functional
-open import Logic(lvl)
-open import Relator.Equals(lvl)
-open import Structure.Operator.Properties(lvl)
+import      Level as Lvl
+open import Logic.Propositional{l₁ Lvl.⊔ l₂}
+open import Relator.Equals{l₁}{l₂}
+open import Structure.Operator.Properties{l₁}{l₂}
+open import Type{l₁}
 
-record Group {T : Set} (_▫_ : T → T → T) (id : T) (inv : T → T) : Stmt where
+record Group {T : Type} (_▫_ : T → T → T) (id : T) (inv : T → T) : Stmt where
   field
     associativity  : Associativity  (_▫_)
     identityₗ       : Identityₗ       (_▫_) id
@@ -13,7 +15,7 @@ record Group {T : Set} (_▫_ : T → T → T) (id : T) (inv : T → T) : Stmt w
     inverseₗ        : Inverseₗ        (_▫_) id inv
     inverseᵣ        : Inverseᵣ        (_▫_) id inv
 
-record AbelianGroup {T : Set} (_▫_ : T → T → T) (id : T) (inv : T → T) : Stmt where
+record AbelianGroup {T : Type} (_▫_ : T → T → T) (id : T) (inv : T → T) : Stmt where
   field
     commutativity  : Commutativity (_▫_)
     group          : Group (_▫_) id inv

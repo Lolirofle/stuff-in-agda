@@ -1,24 +1,26 @@
-module Structure.Relator.Ordering lvl where
+module Structure.Relator.Ordering {l₁} {l₂} where
 
+import      Level as Lvl
 open import Data
 open import Functional
-open import Logic(lvl)
-open import LogicTheorems(lvl)
-open import Structure.Relator.Properties(lvl)
+open import Logic.Propositional{l₁ Lvl.⊔ l₂}
+open import LogicTheorems{l₁ Lvl.⊔ l₂}
+open import Structure.Relator.Properties{l₁}{l₂}
+open import Type{l₁}
 
-record WeakPartialOrder {T : Set} (_≤_ : T → T → Stmt) (_≡_ : T → T → Stmt) : Stmt where
+record WeakPartialOrder {T : Type} (_≤_ : T → T → Stmt) (_≡_ : T → T → Stmt) : Stmt where
   field
     antisymmetry : Antisymmetry (_≤_) (_≡_)
     transitivity : Transitivity (_≤_)
     reflexivity  : Reflexivity  (_≤_)
 
-record StrictPartialOrder {T : Set} (_≤_ : T → T → Stmt) (_≡_ : T → T → Stmt) : Stmt where
+record StrictPartialOrder {T : Type} (_≤_ : T → T → Stmt) (_≡_ : T → T → Stmt) : Stmt where
   field
     antisymmetry  : Antisymmetry  (_≤_) (_≡_)
     transitivity  : Transitivity  (_≤_)
     irreflexivity : Irreflexivity (_≤_)
 
-record StrictOrder {T : Set} (_<_ : T → T → Stmt) : Stmt where
+record StrictOrder {T : Type} (_<_ : T → T → Stmt) : Stmt where
   field
     asymmetry     : Asymmetry     (_<_)
     transitivity  : Transitivity  (_<_)
@@ -41,8 +43,8 @@ record StrictOrder {T : Set} (_<_ : T → T → Stmt) : Stmt where
 -- ∀x. (y<x) ∧ (x<x) → ⊥ //Tuple.uncurry
 -- ∀x. (y<x) → ⊥ //Nope
 
-Minimum : {T : Set} → (T → T → Stmt) → T → Stmt
+Minimum : {T : Type} → (T → T → Stmt) → T → Stmt
 Minimum {T} (_≤_) min = ∀{x : T} → (min ≤ x)
 
-Maximum : {T : Set} → (T → T → Stmt) → T → Stmt
+Maximum : {T : Type} → (T → T → Stmt) → T → Stmt
 Maximum {T} (_≤_) max = ∀{x : T} → (x ≤ max)

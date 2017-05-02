@@ -1,42 +1,44 @@
-module Relator.Equals lvl where
+module Relator.Equals {l₁} {l₂} where
 
+import      Level as Lvl
 open import Functional
-open import Logic(lvl)
-open import Structure.Relator.Equivalence(lvl)
-open import Structure.Relator.Properties(lvl)
+open import Logic.Propositional{l₁ Lvl.⊔ l₂}
+open import Structure.Relator.Equivalence{l₁}{l₂}
+open import Structure.Relator.Properties{l₁}{l₂}
+open import Type{l₁}
 
 infixl 15 _≡_
-data _≡_ {T : Set} : T → T → Stmt where
+data _≡_ {T : Type} : T → T → Stmt where
   [≡]-intro : {x : T} → (x ≡ x)
 
-[≡]-elim : {T : Set} → ∀{x y : T} → ∀{f : T → Stmt} → (x ≡ y) → f(x) ↔ f(y)
+[≡]-elim : ∀{T} → ∀{x y : T} → ∀{f : T → Stmt} → (x ≡ y) → f(x) ↔ f(y)
 [≡]-elim eq = [↔]-intro ([≡]-elimₗ eq) ([≡]-elimᵣ eq) where
-  [≡]-elimₗ : {T : Set} → ∀{x y : T} → ∀{f : T → Stmt} → (x ≡ y) → f(x) ← f(y)
+  [≡]-elimₗ : ∀{T} → ∀{x y : T} → ∀{f : T → Stmt} → (x ≡ y) → f(x) ← f(y)
   [≡]-elimₗ [≡]-intro F = F
 
-  [≡]-elimᵣ : {T : Set} → ∀{x y : T} → ∀{f : T → Stmt} → (x ≡ y) → f(x) → f(y)
+  [≡]-elimᵣ : ∀{T} → ∀{x y : T} → ∀{f : T → Stmt} → (x ≡ y) → f(x) → f(y)
   [≡]-elimᵣ [≡]-intro F = F
 
 instance
-  [≡]-reflexivity : {T : Set} → Reflexivity {T} (_≡_ {T})
+  [≡]-reflexivity : ∀{T} → Reflexivity {T} (_≡_ {T})
   [≡]-reflexivity = [≡]-intro
 
 instance
-  [≡]-symmetry : {T : Set} → Symmetry {T} (_≡_ {T})
+  [≡]-symmetry : ∀{T} → Symmetry {T} (_≡_ {T})
   [≡]-symmetry [≡]-intro = [≡]-intro -- TODO: How does this work?
 
 instance
-  [≡]-transitivity : {T : Set} → Transitivity {T} (_≡_ {T})
+  [≡]-transitivity : ∀{T} → Transitivity {T} (_≡_ {T})
   [≡]-transitivity([∧]-intro [≡]-intro [≡]-intro) = [≡]-intro -- TODO: Or even this? But maybe I can ignore it for now
 
-[≡]-with-[_] : {T : Set} → (f : T → T) → ∀{x y : T} → (x ≡ y) → (f(x) ≡ f(y))
+[≡]-with-[_] : ∀{T} → (f : T → T) → ∀{x y : T} → (x ≡ y) → (f(x) ≡ f(y))
 [≡]-with-[_] f [≡]-intro = [≡]-intro
 
-[≡]-substitution : {T : Set} → (f : T → Set) → ∀{x y : T} → (x ≡ y) → f(x) → f(y)
+[≡]-substitution : ∀{T} → (f : T → Type) → ∀{x y : T} → (x ≡ y) → f(x) → f(y)
 [≡]-substitution f [≡]-intro fx = fx
 
 instance
-  [≡]-equivalence : {T : Set} → Equivalence {T} (_≡_ {T})
+  [≡]-equivalence : ∀{T} → Equivalence {T} (_≡_ {T})
   [≡]-equivalence = record {
       reflexivity  = [≡]-reflexivity ;
       symmetry     = [≡]-symmetry    ;
@@ -45,12 +47,12 @@ instance
 
 
 
--- testEqInstance : {T : Set} {{_ : Equivalence {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
+-- testEqInstance : ∀{T} {{_ : Equivalence {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
 -- testEqInstance {{eq}} = Equivalence.symmetry eq
--- testEqInstance2 : {T : Set} → Symmetry {T} (_≡_ {T})
+-- testEqInstance2 : ∀{T} → Symmetry {T} (_≡_ {T})
 -- testEqInstance2 = testEqInstance
 
--- testSymInstance : {T : Set} {{_ : Symmetry {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
+-- testSymInstance : ∀{T} {{_ : Symmetry {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
 -- testSymInstance {{sym}} = sym
 
 Uniqueness : ∀{T} → (T → Stmt) → Stmt

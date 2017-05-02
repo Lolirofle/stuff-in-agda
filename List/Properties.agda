@@ -3,18 +3,18 @@ module List.Properties where
 import Level as Lvl
 open import Functional
 open import List
-open import Logic(Lvl.𝟎)
+open import Logic.Propositional
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties
-open import Relator.Equals(Lvl.𝟎)
-open import Structure.Operator.Properties(Lvl.𝟎)
+open import Relator.Equals
+open import Structure.Operator.Properties
 
-[++]-identityₗ : ∀{T} → Identityₗ {List(T)} (_++_) ∅
+[++]-identityₗ : ∀{lvl₁}{lvl₂}{T} → Identityₗ {lvl₁}{lvl₂}{List(T)} (_++_) ∅
 [++]-identityₗ = [≡]-intro
 
-[++]-identityᵣ : ∀{T} → Identityᵣ {List(T)} (_++_) ∅
-[++]-identityᵣ {T} = List-induction base next where
+[++]-identityᵣ : ∀{lvl₁}{lvl₂}{T} → Identityᵣ {lvl₁}{lvl₂}{List(T)} (_++_) ∅
+[++]-identityᵣ {lvl₁}{lvl₂}{T} = List-induction{lvl₁}{lvl₂} base next where
   base : (∅ ++ ∅) ≡ ∅
   base = [≡]-intro
 
@@ -24,8 +24,8 @@ open import Structure.Operator.Properties(Lvl.𝟎)
   -- x ⊰ (l ++ ∅) ≡ x ⊰ l
   -- (x ⊰ l) ++ ∅ ≡ x ⊰ l
 
-[++]-associativity : ∀{T} → Associativity {List(T)} (_++_)
-[++]-associativity {T} {l₀} {l₁} {l₂} = List-induction base next {l₀} where
+[++]-associativity : ∀{lvl₁}{lvl₂}{T} → Associativity {lvl₁}{lvl₂} {List(T)} (_++_)
+[++]-associativity {lvl₁}{lvl₂} {T} {l₀} {l₁} {l₂} = List-induction{lvl₁}{lvl₂} base next {l₀} where
   base : ((∅ ++ l₁) ++ l₂) ≡ (∅ ++ (l₁ ++ l₂))
   base = [≡]-intro
   -- l₁++l₂ = l₁++l₂
@@ -39,8 +39,8 @@ open import Structure.Operator.Properties(Lvl.𝟎)
   -- (x ⊰ (l++l₁))++l₂ = (x ⊰ l)++(l₁++l₂)
   -- ((x ⊰ l)++l₁)++l₂ = (x ⊰ l)++(l₁++l₂)
 
-reverse-[++] : ∀{T}{l₁ l₂ : List(T)} → (reverse(l₁ ++ l₂) ≡ reverse(l₂) ++ reverse(l₁))
-reverse-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
+reverse-[++] : ∀{lvl₁}{lvl₂}{T}{l₁ l₂ : List(T)} → (reverse(l₁ ++ l₂) ≡ reverse(l₂) ++ reverse(l₁))
+reverse-[++] {lvl₁}{lvl₂} {T} {l₁} {l₂} = List-induction{lvl₁}{lvl₂} base next {l₁} where
   base : reverse(∅ ++ l₂) ≡ reverse(l₂) ++ reverse(∅)
   base =
     ([≡]-transitivity([∧]-intro
@@ -62,7 +62,7 @@ reverse-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
   next x l stmt =
     ([≡]-transitivity([∧]-intro
       ([≡]-with-[(list ↦ list ++ (singleton x))] stmt)
-      ([++]-associativity {_} {reverse(l₂)} {reverse(l)} {singleton x})
+      ([++]-associativity{lvl₁}{lvl₂} {_} {reverse(l₂)} {reverse(l)} {singleton x})
     ))
   -- reverse(l₁++l₂) = reverse(l₂)++reverse(l₁)
   -- reverse(l₁++l₂)++(singleton x) = (reverse(l₂)++reverse(l₁))++(singleton x)
@@ -75,9 +75,9 @@ reverse-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
 -- _++_ ∅ b = b
 -- _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
 
-length-[++] : ∀{lvl T}{l₁ l₂ : List{lvl}(T)} → (length(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
-length-[++] {lvl} {T} {l₁} {l₂} = List-induction base next {l₁} where
-  base : length{lvl}{T}(∅ ++ l₂) ≡ length{lvl}{T}(∅) + length{lvl}{T}(l₂)
+length-[++] : ∀{T}{l₁ l₂ : List(T)} → (length(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
+length-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
+  base : length(∅ ++ l₂) ≡ length{_}{T}(∅) + length(l₂)
   base = [≡]-symmetry [+]-identityₗ
 
   next : ∀(x : T)(l : List(T)) → (length(l ++ l₂) ≡ length(l) + length(l₂)) → (length((x ⊰ l) ++ l₂) ≡ length(x ⊰ l) + length(l₂))

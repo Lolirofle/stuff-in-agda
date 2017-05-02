@@ -1,10 +1,11 @@
-module Operator.Equals where
+module Operator.Equals {lvl} where
 
 import      Level as Lvl
 open import Boolean
 open import Functional
+open import Type{lvl}
 
-record Eq{lvl : Lvl.Level}(T : Set(lvl)) : Set(lvl) where
+record Eq(T : Type) : Type where
   infixl 100 _==_
   field
     _==_ : T → T → Bool

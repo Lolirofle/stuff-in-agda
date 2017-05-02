@@ -3,15 +3,16 @@ module Numeral.Natural.Relation.Properties where
 import Level as Lvl
 open import Data
 open import Functional
-open import Logic(Lvl.𝟎)
+open import Logic.Propositional{Lvl.𝟎}
+open import Logic.Predicate{Lvl.𝟎}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties
 open import Numeral.Natural.Relation
-open import Relator.Equals(Lvl.𝟎)
-open import Structure.Operator.Properties(Lvl.𝟎)
-open import Structure.Relator.Ordering(Lvl.𝟎)
-open import Structure.Relator.Properties(Lvl.𝟎)
+open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+open import Structure.Operator.Properties
+open import Structure.Relator.Ordering
+open import Structure.Relator.Properties
 open import Type
 
 [≤]-from-[≡] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)

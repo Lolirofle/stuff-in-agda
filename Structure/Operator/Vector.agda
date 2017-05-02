@@ -1,12 +1,14 @@
-module Structure.Operator.Vector lvl where
+module Structure.Operator.Vector {l₁} {l₂} where
 
-open import Logic(lvl)
-open import Relator.Equals(lvl)
-open import Structure.Operator.Field(lvl)
-open import Structure.Operator.Group(lvl)
-open import Structure.Operator.Properties(lvl)
+import      Level as Lvl
+open import Logic.Propositional{l₁ Lvl.⊔ l₂}
+open import Relator.Equals{l₁}{l₂}
+open import Structure.Operator.Field{l₁}{l₂}
+open import Structure.Operator.Group{l₁}{l₂}
+open import Structure.Operator.Properties{l₁}{l₂}
+open import Type{l₁}
 
-record VectorSpaceSym {V S : Set} : Set where
+record VectorSpaceSym {V S : Type} : Type where
   field
     {{fieldₛ}} : FieldSym{S}
     _+ᵥ_  : V → V → V
@@ -16,7 +18,7 @@ record VectorSpaceSym {V S : Set} : Set where
 open VectorSpaceSym {{...}}
 open FieldSym {{...}}
 
-record VectorSpace {V S : Set} {{sym : VectorSpaceSym {V} {S}}} : Stmt where
+record VectorSpace {V S : Type} {{sym : VectorSpaceSym {V} {S}}} : Stmt where
   field
     scalarField                  : Field {{fieldₛ {V} {S}}}
     vectorAbelianGroup           : AbelianGroup (_+ᵥ_ {V} {S}) ([+]-idᵥ {V} {S}) ([+]-invᵥ {V} {S})
