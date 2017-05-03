@@ -33,10 +33,12 @@ _⁸ f = f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f
 _⁹ : ∀{n} {T : Set n} → (T → T) → (T → T)
 _⁹ f = f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f
 
+-- Repeated function composition
 _^_ : ∀{n} {T : Set n} → (T → T) → Nat.ℕ → (T → T)
 _^_ f Nat.𝟎 = id
 _^_ f (Nat.𝐒(n)) = f ∘ (f ^ n)
 
+-- Repeat a binary operation n times for the same element and a initial element
 repeatₗ : ∀{n} {X Y : Set n} → Nat.ℕ → Y → (Y → X → Y) → X → Y
 repeatₗ  Nat.𝟎     null _▫_ elem = null
 repeatₗ (Nat.𝐒(n)) null _▫_ elem = (repeatₗ n null _▫_ elem) ▫ elem
@@ -44,9 +46,11 @@ repeatₗ (Nat.𝐒(n)) null _▫_ elem = (repeatₗ n null _▫_ elem) ▫ elem
 -- Example in Haskell: (foldl (.) (id) (take 5 (repeat f)))
 -- in Haskell: (\n null op elem -> foldl op null (take n (repeat elem))) :: Int -> a -> (b -> a -> b) -> b -> b
 
+-- Repeat a binary operation n times for the same element and a initial element
 repeatᵣ : ∀{n} {X Y : Set n} → Nat.ℕ → X → (X → Y → Y) → Y → Y
 repeatᵣ  Nat.𝟎     elem _▫_ null = null
 repeatᵣ (Nat.𝐒(n)) elem _▫_ null = elem ▫ (repeatᵣ n elem _▫_ null)
+-- Example: repeatᵣ 3 id (_∘_) f = id ∘ (f ∘ (f ∘ f))
 -- in Haskell: (\n elem op null -> foldr op null (take n (repeat elem))) :: Int -> a -> (a -> b -> b) -> b -> b
 
 -- TODO: curry ∘ curry does not work with repeat because LHS≠RHS, but can this be fixed?

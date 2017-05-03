@@ -7,6 +7,8 @@ open import Structure.Relator.Equivalence{l₁}{l₂}
 open import Structure.Relator.Properties{l₁}{l₂}
 open import Type{l₁}
 
+-- Definition of equality based on the exact representation of a data structure
+-- TODO: Is this called an instance of an "intensional equality"?
 infixl 15 _≡_
 data _≡_ {T : Type} : T → T → Stmt where
   [≡]-intro : {x : T} → (x ≡ x)
@@ -31,10 +33,12 @@ instance
   [≡]-transitivity : ∀{T} → Transitivity {T} (_≡_ {T})
   [≡]-transitivity([∧]-intro [≡]-intro [≡]-intro) = [≡]-intro -- TODO: Or even this? But maybe I can ignore it for now
 
+-- Applies functions to each side of the equality
 [≡]-with-[_] : ∀{T} → (f : T → T) → ∀{x y : T} → (x ≡ y) → (f(x) ≡ f(y))
 [≡]-with-[_] f [≡]-intro = [≡]-intro
 
-[≡]-substitution : ∀{T} → (f : T → Type) → ∀{x y : T} → (x ≡ y) → f(x) → f(y)
+-- Replaces occurrences of the elements in the equality
+[≡]-substitution : ∀{T} → (f : T → Type) → ∀{x y : T} → (x ≡ y) → f(x) → f(y) -- TODO: Should not f be f: T→Stmt?
 [≡]-substitution f [≡]-intro fx = fx
 
 instance
@@ -55,5 +59,6 @@ instance
 -- testSymInstance : ∀{T} {{_ : Symmetry {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
 -- testSymInstance {{sym}} = sym
 
+-- Definition of uniqueness
 Uniqueness : ∀{T} → (T → Stmt) → Stmt
 Uniqueness {T} property = ∀{x y : T} → (property(x) ∧ property(y)) → (x ≡ y)

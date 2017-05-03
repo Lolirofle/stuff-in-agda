@@ -7,6 +7,7 @@ open        Boolean.Operators.Programming
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Relator.Equals{l₁}{l₂}
 
+-- A boolean operation is either true or false
 bivalence : ∀{a} → ((a ≡ 𝑇) ∨ (a ≡ 𝐹))
 bivalence {𝑇} = [∨]-introₗ [≡]-intro
 bivalence {𝐹} = [∨]-introᵣ [≡]-intro

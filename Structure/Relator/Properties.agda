@@ -14,18 +14,23 @@ infixl 1000 _🝖_
 FlipPattern : {T₁ T₂ : Type} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
 FlipPattern {T₁} {T₂} (_▫₁_) (_▫₂_) = {x : T₁}{y : T₂} → (x ▫₁ y) → (y ▫₂ x)
 
+-- Definition of a reflexive binary operation
 Reflexivity : {T : Type} → (T → T → Stmt) → Stmt
 Reflexivity {T} (_▫_) = {x : T} → (x ▫ x)
 
+-- Definition of a transitive binary operation
 Transitivity : {T : Type} → (T → T → Stmt) → Stmt
 Transitivity {T} (_▫_) = {x y z : T} → ((x ▫ y) ∧ (y ▫ z)) → (x ▫ z)
 
+-- Definition of a antisymmetric binary operation
 Antisymmetry : {T : Type} → (T → T → Stmt) → (T → T → Stmt) → Stmt
 Antisymmetry {T} (_▫₁_) (_▫₂_) = {a b : T} → ((a ▫₁ b) ∧ (b ▫₁ a)) → (a ▫₂ b)
 
+-- Definition of a irreflexive binary operation
 Irreflexivity : {T : Type} → (T → T → Stmt) → Stmt
 Irreflexivity {T} (_▫_) = {x : T} → ¬(x ▫ x)
 
+-- Definition of a total binary operation
 Total : {T : Type} → (T → T → Stmt) → Stmt
 Total {T} (_▫_) = {x y : T} → (x ▫ y) ∨ (y ▫ x)
 
@@ -42,15 +47,18 @@ TransitivityChain {T} (_▫_) X = (List.reduceₗ (_∧_) (List.fromList (List.m
 ---------------------------------------------------------
 -- Derived
 
+-- Definition of a converse binary operation for a binary operation
 Converse : {T₁ T₂ : Type} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
 Converse {T₁} {T₂} (_▫₁_) (_▫₂_) =
   FlipPattern (_▫₁_) (_▫₂_) ∧ FlipPattern (_▫₂_) (_▫₁_)
 -- {x : T₁}{y : T₂} → (x ▫₁ y) ↔ (y ▫₂ x)
 
+-- Definition of a symmetric binary operation
 Symmetry : {T : Type} → (T → T → Stmt) → Stmt
 Symmetry {T} (_▫_) = FlipPattern (_▫_) (_▫_)
 -- {x y : T} → (x ▫ y) → (y ▫ x)
 
+-- Definition of a asymmetric binary operation
 Asymmetry : {T : Type} → (T → T → Stmt) → Stmt
 Asymmetry {T} (_▫_) = FlipPattern (_▫_) (x ↦ y ↦ ¬(x ▫ y))
 -- {x y : T} → (x ▫ y) → ¬(y ▫ x)
