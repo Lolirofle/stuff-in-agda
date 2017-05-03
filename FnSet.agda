@@ -5,7 +5,7 @@ import      List
 open import Boolean
 import      Boolean.Operators
 open        Boolean.Operators.Programming
-open import BooleanTheorems
+open import Boolean.Theorems
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Functional
 open import Operator.Equals

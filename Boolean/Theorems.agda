@@ -1,4 +1,4 @@
-module BooleanTheorems {l₁} {l₂} where -- TODO: Move
+module Boolean.Theorems {l₁} {l₂} where -- TODO: Move
 
 import      Level as Lvl
 open import Boolean

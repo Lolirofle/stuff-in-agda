@@ -1,8 +1,7 @@
 module String where
 
-import Level as Lvl
+import      Level as Lvl
+open import Type{Lvl.𝟎}
 
-postulate StringL : {n : _} → Set n
-{-# BUILTIN STRING StringL #-}
-
-String = StringL {Lvl.𝟎}
+postulate String : Type
+{-# BUILTIN STRING String #-}

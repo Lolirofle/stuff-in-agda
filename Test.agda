@@ -2,7 +2,7 @@ module Test where
 
 import      Automaton.Language
 import      Boolean
-import      BooleanTheorems
+import      Boolean.Theorems
 import      Boolean.Operators
 open import Data
 import      FFI.IO   as FFI
@@ -18,7 +18,7 @@ import      List.Relation
 import      Logic.Classic.Propositional
 open import Logic.Propositional{Lvl.𝟎}
 import      Logic.Predicate
-open import LogicTheorems{Lvl.𝟎}
+open import Logic.Theorems{Lvl.𝟎}
 import      NonEmptyList
 import      Numeral.Integer
 import      Numeral.Integer.Oper

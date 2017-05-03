@@ -22,7 +22,7 @@ record Defs (T : Type) : Type where
     successor : T → T
 
 -- evaluate : ∀{n}{T} → Defs(T) → Function(n) → (T ^ n) → T
--- evaluate defs Constant  _ = Defs.constant(defs)
+-- evaluate defs Constant _ = Defs.constant(defs)
 -- evaluate defs (Successor(i)) x = Defs.successor(defs)(x)
 -- evaluate defs (Projection(i)) x = nth(i)(x)
 -- evaluate defs (Composition{k}(f)(gs)) x = evaluate{k} defs f (map(g ↦ evaluate defs g x)(gs))
