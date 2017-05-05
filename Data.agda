@@ -3,6 +3,16 @@ module Data where
 import      Level as Lvl
 open import Type
 
+-- The empty type which cannot be constructed
+data Empty {lvl} : Type{lvl} where
+
+-- The unit type which can only be constructed in one way
+record Unit {lvl} : Type{lvl} where
+  constructor unit
+
+{-# BUILTIN UNIT Unit #-}
+{-# COMPILED_DATA Unit () () #-}
+
 ------------------------------------------
 -- Tuple
 
