@@ -1,7 +1,7 @@
 module Functional.PrimitiveRecursion{lvl} where
 
 open import Data
-open        Data.Tuple.Raise
+open        Data.Tuple.Raiseᵣ
 open import Functional
 open import Numeral.Natural as Nat using (ℕ)
 open import Type{lvl}
@@ -34,6 +34,7 @@ data Primitive : Type where
   𝟎 : Primitive
   𝐒 : Primitive → Primitive
 
+-- The semantics
 {-# TERMINATING #-}
 evaluate : ∀{n} → Function(n) → (Primitive ^ n) → Primitive
 evaluate {_}               (Constant)                 _  = 𝟎
@@ -42,8 +43,8 @@ evaluate {Nat.𝐒(n)}        (Projection(i))            xs = nth{n}(i)(xs)
 evaluate {_}               (Composition{_}{n}(f)(gs)) xs = evaluate f (map{n}(g ↦ evaluate g xs)(gs))
 evaluate {Nat.𝐒(Nat.𝟎)}    (Recursion(f)(g)) (𝟎   )        = evaluate f Unit.unit
 evaluate {Nat.𝐒(Nat.𝟎)}    (Recursion(f)(g)) (𝐒(n))        = evaluate g (n , evaluate (Recursion(f)(g)) (n))
-evaluate {Nat.𝐒(Nat.𝐒(_))} (Recursion(f)(g)) (rest , 𝟎   ) = evaluate f (rest)
-evaluate {Nat.𝐒(Nat.𝐒(_))} (Recursion(f)(g)) (rest , 𝐒(n)) = evaluate g (rest , n , evaluate (Recursion(f)(g)) (rest , n))
+evaluate {Nat.𝐒(Nat.𝐒(_))} (Recursion(f)(g)) (𝟎    , rest) = evaluate f (rest)
+evaluate {Nat.𝐒(Nat.𝐒(_))} (Recursion(f)(g)) (𝐒(n) , rest) = evaluate g (n , evaluate (Recursion(f)(g)) (n , rest) , rest)
 
 module testAddition where
   open OperShortcut

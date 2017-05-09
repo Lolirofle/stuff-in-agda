@@ -17,7 +17,7 @@ record Unit {lvl} : Type{lvl} where
 -- Tuple
 
 module Tuple where
-  infixl 200 _⨯_ _,_
+  infixl 200 _⨯_ _,_ -- TODO: Raiseᵣ gives the opposite: infixr
 
   data _⨯_ {lvl₁}{lvl₂} (X : Type{lvl₁}) (Y : Type{lvl₂}) : Type{lvl₁ Lvl.⊔ lvl₂} where
     _,_ : X → Y → (X ⨯ Y)
