@@ -3,11 +3,21 @@ module Data where
 import      Level as Lvl
 open import Type
 
+-- The empty type which cannot be constructed
+data Empty {lvl} : Type{lvl} where
+
+-- The unit type which can only be constructed in one way
+record Unit {lvl} : Type{lvl} where
+  constructor unit
+
+{-# BUILTIN UNIT Unit #-}
+{-# COMPILED_DATA Unit () () #-}
+
 ------------------------------------------
 -- Tuple
 
 module Tuple where
-  infixl 200 _⨯_ _,_
+  infixl 200 _⨯_ _,_ -- TODO: Raiseᵣ gives the opposite: infixr
 
   -- Definition of a 2-tuple
   data _⨯_ {lvl₁}{lvl₂} (X : Type{lvl₁}) (Y : Type{lvl₂}) : Type{lvl₁ Lvl.⊔ lvl₂} where
