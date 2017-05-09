@@ -75,4 +75,3 @@ repeatᵣ (Nat.𝐒(n)) elem _▫_ null = elem ▫ (repeatᵣ n elem _▫_ null)
 --   (T₁(a₁,b₁) → z₁) = U₂(a₂,U₂(b₂,U₂(c₂)))
 --   (T₁(a₁,b₁) → z₁) = U₂(a₂,U₂(b₂,U₂(c₂))) -- U₂=
 -- ((B → C) ⨯ (A → B)) → (A → C)
-
