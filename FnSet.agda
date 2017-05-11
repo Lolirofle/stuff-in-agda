@@ -24,10 +24,10 @@ module _ {T : Type} where
   ∅ : FnSet(T)
   ∅ = record{inclusion-fn = const(𝐹)}
 
-  singleton : {{_ : Eq(T)}} → T → FnSet(T)
+  singleton : {{_ : Equals(T)}} → T → FnSet(T)
   singleton(t) = record{inclusion-fn = (x ↦ x == t)}
 
-  enumeration : {{_ : Eq(T)}} → List.List(T) → FnSet(T)
+  enumeration : {{_ : Equals(T)}} → List.List(T) → FnSet(T)
   enumeration(l) = record{inclusion-fn = (x ↦ (List.any(t ↦ x == t)(l)))}
 
   _∈_ : T → FnSet(T) → Stmt

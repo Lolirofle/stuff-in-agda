@@ -8,7 +8,8 @@ data Empty {lvl} : Type{lvl} where
 
 -- The unit type which can only be constructed in one way
 record Unit {lvl} : Type{lvl} where
-  constructor unit
+  constructor <>
+open Unit public
 
 {-# BUILTIN UNIT Unit #-}
 {-# COMPILED_DATA Unit () () #-}
@@ -68,19 +69,19 @@ module Tuple where
 
     -- Applies a function for every element in a tuple
     map : ∀{n : ℕ}{lvl₁ lvl₂}{T₁ : Type{lvl₁}}{T₂ : Type{lvl₂}} → (T₁ → T₂) → (T₁ ^ n) → (T₂ ^ n)
-    map {𝟎}       f _ = unit
+    map {𝟎}       f _ = <>
     map {𝐒(𝟎)}    f single        = f(single)
     map {𝐒(𝐒(n))} f (rest , last) = (map{𝐒(n)}(f)(rest) , f(last))
 
     -- Returns a element repeated a specified number of times in a tuple
     repeat : ∀{lvl}{T : Type{lvl}} → (n : _) → T → (T ^ n)
-    repeat(𝟎)       _ = Unit.unit
+    repeat(𝟎)       _ = <>
     repeat(𝐒(𝟎))    x = x
     repeat(𝐒(𝐒(n))) x = (repeat(𝐒(n)) x , x)
 
     -- Returns a multivariate function from a singlevariate function
     lift : ∀{lvl₁ lvl₂}{A : Type{lvl₁}}{B : Type{lvl₂}} → (n : _) → (A → B) → ((A ^ n) → (B ^ n))
-    lift(𝟎)       f(_)  = Unit.unit
+    lift(𝟎)       f(_)  = <>
     lift(𝐒(𝟎))    f(x)  = f(x)
     lift(𝐒(𝐒(n))) f(rest , last) = (lift(𝐒(n)) f(rest) , f(last))
 
@@ -102,7 +103,7 @@ module Tuple where
     nth {𝐒(n)} (𝐒(i)) (_ , rest) = nth{n}(i)(rest)
 
     map : ∀{n : ℕ}{lvl₁ lvl₂}{T₁ : Type{lvl₁}}{T₂ : Type{lvl₂}} → (T₁ → T₂) → (T₁ ^ n) → (T₂ ^ n)
-    map {𝟎}       f _ = unit
+    map {𝟎}       f _ = <>
     map {𝐒(𝟎)}    f single        = f(single)
     map {𝐒(𝐒(n))} f (init , rest) = (f(init) , map{𝐒(n)}(f)(rest))
 
@@ -139,7 +140,7 @@ module Option where
   Option {lvl} T = (Unit{lvl} ‖ T)
 
   pattern Some x = Either.Right x
-  pattern None   = Either.Left  unit
+  pattern None   = Either.Left  <>
 
   map : ∀{lvl₁ lvl₂}{T₁ : Type{lvl₁}}{T₂ : Type{lvl₂}} → (T₁ → T₂) → Option(T₁) → Option(T₂)
   map f (Some x) = Some(f(x))

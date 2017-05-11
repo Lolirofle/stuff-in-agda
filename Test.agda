@@ -24,6 +24,7 @@ import      Numeral.Integer
 import      Numeral.Integer.Oper
 import      Numeral.Integer.Sign
 open import Numeral.Natural
+open import Numeral.Natural.Function
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties
 open import Numeral.Natural.Prime

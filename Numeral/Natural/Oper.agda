@@ -37,7 +37,9 @@ _−₀_ : ℕ → ℕ → ℕ
 x −₀ 𝟎 = x
 𝟎 −₀ x = 𝟎
 𝐒(x) −₀ 𝐒(y) = x −₀ y
--- {-# BUILTIN NATMINUS _−₀_ #-}
+{-# BUILTIN NATMINUS _−₀_ #-}
+-- x −₀ 𝟎 = x
+-- x −₀ 𝐒(y) = 𝐏(x −₀ y)
 
 -- Closed division (rounding up)
 {-# TERMINATING #-}

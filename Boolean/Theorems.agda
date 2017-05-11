@@ -12,6 +12,13 @@ bivalence : ∀{a} → ((a ≡ 𝑇) ∨ (a ≡ 𝐹))
 bivalence {𝑇} = [∨]-introₗ [≡]-intro
 bivalence {𝐹} = [∨]-introᵣ [≡]-intro
 
+-- A boolean operation is not both true and false at the same time
+disjointness : ∀{a} → ¬((a ≡ 𝑇) ∧ (a ≡ 𝐹))
+disjointness {𝑇} ([∧]-intro [≡]-intro ())
+disjointness {𝐹} ([∧]-intro () [≡]-intro)
+
+
+
 [∧]-intro-[𝑇] : ∀{a b} → (a ≡ 𝑇) → (b ≡ 𝑇) → ((a && b) ≡ 𝑇)
 [∧]-intro-[𝑇] [≡]-intro [≡]-intro = [≡]-intro
 
