@@ -35,7 +35,7 @@ record Model {lvl} (Prop : Set(lvl)) : Set(lvl) where
 
 module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (symbols : Syntax.Symbols Prop Formula) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) id) where
   open import Relator.Equals{lvl₁}{lvl₂}
-  open import SimpleSet{lvl₂}{lvl₁}
+  open import List
   open Syntax.Symbols(symbols)
   open Syntax.Symbols(meta-symbols)
     renaming (
@@ -62,10 +62,11 @@ module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) �
     -- TODO: How does the satisfaction definitions look like in constructive logic?
 
     -- Entailment
-    _⊨_ : SSet(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-    _⊨_ Γ φ = (∀{𝔐 : Model(Prop)} → (∀{γ} → (γ ∈ Γ) → ◦(𝔐 ⊧ γ)) ⇒ₘ ◦(𝔐 ⊧ φ))
+    _⊨_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+    _⊨_ ∅         φ = ∀{𝔐 : Model(Prop)} → ◦(𝔐 ⊧ φ)
+    _⊨_ (Γ₀ ⊰ Γ₊) φ = ∀{𝔐 : Model(Prop)} → (reduceOrᵣ (_⨯_) (◦(𝔐 ⊧ Γ₀)) (map (γ ↦ ◦(𝔐 ⊧ γ)) Γ₊)) → ◦(𝔐 ⊧ φ)
 
-    _⊭_ : SSet(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+    _⊭_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
     _⊭_ Γ φ = ¬ₘ(_⊨_ Γ φ)
 
     -- Validity
@@ -85,25 +86,12 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
   -- • The outer most (shallow) expression is at the bottom of a normal tree that should result in a construction of the conclusion
   -- One difference is that one cannot introduce assumptions however one wants. There are however rules that allows one to to this by using a function, and can be written as a lambda abstraction if one want it to look similar to the tree proofs.
   module NaturalDeduction where
-    open import SimpleSet{lvl₂}{lvl₁}
-
-    -- Intro rules are like constructors
-    -- Elimination rules are like deconstructors
+    -- Intro rules are like constructors of formulas
+    -- Elimination rules are like deconstructors of formulas
     module Classic where
       record Rules : Set(Lvl.𝐒(lvl₁ Lvl.⊔ lvl₂)) where
         field
           {Node} : Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-
-        -- Derivability
-        -- Examples:
-        --   (∅ ⊢ ⊥) becomes (Node(⊤) → Node(⊥))
-        --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes ((Node(φ) ∧ Node(¬ φ)) → Node(⊥))
-        _⊢_ : SSet(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-        _⊢_ Γ φ = (∀{γ} → {_ : γ ∈ Γ} → Node(γ) → Node(φ))
-        --   (∅ ⊢ ⊤) becomes Node(⊤)
-        --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes (Node(φ) → (Node(¬ φ) → Node(⊥)))
-        -- _⊢_ Γ φ = (Node(SSet.foldᵣ (_∧_) ⊤ Γ) → Node(φ))
-        -- _⊢_ Γ φ = (SSet.foldₗ (_←_) (Node(φ)) (SSet.map Node (SSet.reverse Γ)))
 
         field
           [⊤]-intro : Node(⊤)
@@ -139,9 +127,9 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
         [⊥]-elim bottom = [¬]-elim(_ ↦ bottom)
 
       module Meta(rules : Rules) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) id) where
-        open Rules(rules) hiding (_⊢_)
-        open Rules(rules) using  (_⊢_) public
-        open Syntax.Symbols(meta-symbols)
+        open import List
+        open        Rules(rules)
+        open        Syntax.Symbols(meta-symbols)
           renaming (
             •_ to ◦_ ;
             ⊤   to ⊤ₘ ;
@@ -151,28 +139,57 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
             _∨_ to _∨ₘ_ ;
             _⇒_ to _⇒ₘ_ )
 
-        _⊬_ : SSet(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+        -- Derivability
+        -- Examples:
+        --   (∅ ⊢ ⊥) becomes (Node(⊤) → Node(⊥))
+        --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes ((Node(φ) ∧ Node(¬ φ)) → Node(⊥))
+        _⊢_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+        _⊢_ ∅       φ = Node(φ)
+        _⊢_ (γ ⊰ Γ) φ = (foldᵣ-init (_⨯_) (Node(γ)) (map Node Γ)) → Node(φ)
+        --   (∅ ⊢ ⊤) becomes Node(⊤)
+        --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes (Node(φ) → (Node(¬ φ) → Node(⊥)))
+        -- _⊢_ Γ φ = (Node(List.foldᵣ (_∧_) ⊤ Γ) → Node(φ))
+        -- _⊢_ Γ φ = (List.foldₗ (_←_) (Node(φ)) (List.map Node (List.reverse Γ)))
+
+        _⊬_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
         _⊬_ Γ φ = ¬ₘ(_⊢_ Γ φ)
 
         -- Consistency
-        inconsistent : SSet(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
+        inconsistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
         inconsistent Γ = (Γ ⊢ ⊥)
 
-        consistent : SSet(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
+        consistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
         consistent Γ = ¬ₘ(inconsistent Γ)
 
         module Theorems where
-          -- [⊢]-id : ∀{φ} → (S[ φ ] ⊢ φ)
-          -- [⊢]-id = id
+          [⊢]-id : ∀{φ} → ([ φ ] ⊢ φ)
+          [⊢]-id = id
 
-          -- [⊢]-compose : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ([ φ₁ ] ⊢ φ₂) → (Γ ⊢ φ₂)
-          -- [⊢]-compose proof-Γ⊢φ₁ proof-φ₁⊢φ₂ = (proof-Γ ↦ proof-φ₁⊢φ₂(proof-Γ⊢φ₁ proof-Γ))
+          -- [⊢]-lhs-commutativity : ∀{Γ₁ Γ₂}{φ} → ((Γ₁ ++ Γ₂) ⊢ φ) → ((Γ₂ ++ Γ₁) ⊢ φ)
+          -- [⊢]-lhs-commutativity = id
 
-          -- [⊢]-compose₂ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ((φ₁ ⊰ Γ) ⊢ φ₂) → (Γ ⊢ φ₂)
-          -- [⊢]-compose₂ proof-Γ⊢φ₁ proof-φ₁Γ⊢φ₂ = (proof-Γ ↦ proof-φ₁Γ⊢φ₂([∧]-intro (proof-Γ⊢φ₁ proof-Γ) proof-Γ))
+          -- [⊢]-test : ∀{φ₁ φ₂ φ₃} → ([ φ₁ ⊰ φ₂ ⊰ φ₃ ] ⊢ φ₁) → (Node(φ₁) ⨯ (Node(φ₂) ⨯ Node(φ₃)) → Node(φ₁))
+          -- [⊢]-test = id
 
-          -- [⊢]-weakening : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
-          -- [⊢]-weakening proof-Γ⊢φ₁ = (proof-φ₂⊰Γ ↦ proof-Γ⊢φ₁ ([∧]-elimᵣ(proof-φ₂⊰Γ)))
+          [⊢]-compose : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ([ φ₁ ] ⊢ φ₂) → (Γ ⊢ φ₂)
+          [⊢]-compose {∅}     (φ₁)   (φ₁⊢φ₂)      = (φ₁⊢φ₂) (φ₁)
+          [⊢]-compose {_ ⊰ _} (Γ⊢φ₁) (φ₁⊢φ₂) (Γ) = (φ₁⊢φ₂) ((Γ⊢φ₁) (Γ))
+
+          [⊢]-compose₂ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ((φ₁ ⊰ Γ) ⊢ φ₂) → (Γ ⊢ φ₂)
+          [⊢]-compose₂ {∅}     (φ₁)   (φ₁⊢φ₂)      = (φ₁⊢φ₂)(φ₁)
+          [⊢]-compose₂ {_ ⊰ _} (Γ⊢φ₁) (φ₁Γ⊢φ₂) (Γ) = (φ₁Γ⊢φ₂) ((Γ⊢φ₁) (Γ) , (Γ))
+          -- [⊢]-test : ∀{φ₁ φ₂ γ₁ γ₂} → ([ γ₁ ⊰ γ₂ ] ⊢ φ₁) → ([ φ₁ ⊰ γ₁ ⊰ γ₂ ] ⊢ φ₂) → ([ γ₁ ⊰ γ₂ ] ⊢ φ₂)
+          -- [⊢]-test (Γ⊢φ₁) (φ₁Γ⊢φ₂) (Γ) = (φ₁Γ⊢φ₂) ((Γ⊢φ₁) (Γ) , (Γ))
+
+          -- [⊢]-compose₃ : ∀{Γ₁ Γ₂}{φ₁ φ₂} → (Γ₁ ⊢ φ₁) → ((φ₁ ⊰ Γ₂) ⊢ φ₂) → ((Γ₁ ++ Γ₂) ⊢ φ₂)
+          -- [⊢]-compose₃ {∅}{∅} (φ₁)   (φ₁⊢φ₂)      = (φ₁⊢φ₂) (φ₁)
+          -- [⊢]-compose₃ {Γ}{∅} = [⊢]-compose{Γ}
+          -- [⊢]-compose₃ {∅}{Γ}  = [⊢]-compose₂{Γ}
+          -- [⊢]-compose₃ {_ ⊰ _}{_ ⊰ _}  = [⊢]-compose₂
+
+          [⊢]-weakening : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
+          [⊢]-weakening {∅}     (⊢φ₁) (φ₂)      = (⊢φ₁)
+          [⊢]-weakening {_ ⊰ _} (Γ⊢φ₁) (φ₂ , Γ) = (Γ⊢φ₁) (Γ)
 
           -- olt-9-17 : ∀{Γ}{φ} → (Γ ⊢ φ) → ((φ ⊰ Γ) ⊢ ⊥) → (inconsistent Γ)
           -- olt-9-17 Γ⊢φ Γφ⊢⊥ = (Γ ↦ [⊥]-intro (Γ⊢φ Γ) ([⊥]-elim(Γφ⊢⊥ Γ)))

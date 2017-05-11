@@ -51,10 +51,26 @@ foldᵣ : ∀{lvl₁ lvl₂}{T : Type{lvl₁}}{Result : Type{lvl₂}} → (T →
 foldᵣ _   init ∅ = init
 foldᵣ _▫_ init (elem ⊰ l) = elem ▫ (foldᵣ _▫_ init l)
 
+-- Same as (reduceOrᵣ (_▫_) (a) (a⊰l)) except that
+-- this allows matching out one element when
+-- there is only a first element as the head
+--  and an _arbitrary_ list as the tail.
+-- Also, this dIffers from foldᵣ in such a way that:
+--   foldᵣ (_▫_) (1) [2,3] = 2 ▫ (3 ▫ 1)
+--   foldᵣ-init (_▫_) (1) [2,3] = 1 ▫ (2 ▫ 3)
+foldᵣ-init : ∀{lvl}{T : Type{lvl}} → (T → T → T) → T → List(T) → T
+foldᵣ-init _   init ∅ = init
+foldᵣ-init _▫_ init (elem ⊰ l) = init ▫ (foldᵣ-init _▫_ elem l)
+
+reduceOrₗ : ∀{lvl}{T : Type{lvl}} → (T → T → T) → T → List(T) → T
+reduceOrₗ _   result ∅ = result
+reduceOrₗ _▫_ result (elem ⊰ ∅) = elem
+reduceOrₗ _▫_ result (elem₁ ⊰ (elem₂ ⊰ l)) = reduceOrₗ _▫_ (result ▫ elem₁) (elem₂ ⊰ l)
+
 reduceOrᵣ : ∀{lvl}{T : Type{lvl}} → (T → T → T) → T → List(T) → T
 reduceOrᵣ _   init ∅ = init
 reduceOrᵣ _▫_ init (elem ⊰ ∅) = elem
-reduceOrᵣ _▫_ init (elem₁ ⊰ (elem₂ ⊰ l)) = elem₁ ▫ (reduceOrᵣ _▫_ init (elem₂ ⊰  l))
+reduceOrᵣ _▫_ init (elem₁ ⊰ (elem₂ ⊰ l)) = elem₁ ▫ (reduceOrᵣ _▫_ init (elem₂ ⊰ l))
 
 index : ∀{lvl}{T : Type{lvl}} → ℕ → List(T) → Option(T)
 index _      ∅       = Option.None
