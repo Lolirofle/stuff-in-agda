@@ -64,7 +64,7 @@ module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) �
     -- Entailment
     _⊨_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
     _⊨_ ∅         φ = ∀{𝔐 : Model(Prop)} → ◦(𝔐 ⊧ φ)
-    _⊨_ (Γ₀ ⊰ Γ₊) φ = ∀{𝔐 : Model(Prop)} → (reduceOrᵣ (_⨯_) (◦(𝔐 ⊧ Γ₀)) (map (γ ↦ ◦(𝔐 ⊧ γ)) Γ₊)) → ◦(𝔐 ⊧ φ)
+    _⊨_ (Γ₀ ⊰ Γ₊) φ = ∀{𝔐 : Model(Prop)} → (foldᵣ-init (_⨯_) (◦(𝔐 ⊧ Γ₀)) (map (γ ↦ ◦(𝔐 ⊧ γ)) Γ₊)) → ◦(𝔐 ⊧ φ)
 
     _⊭_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
     _⊭_ Γ φ = ¬ₘ(_⊨_ Γ φ)
