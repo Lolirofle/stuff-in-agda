@@ -88,268 +88,291 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
   module NaturalDeduction where
     -- Intro rules are like constructors of formulas
     -- Elimination rules are like deconstructors of formulas
-    module Classic where
-      record Rules : Set(Lvl.𝐒(lvl₁ Lvl.⊔ lvl₂)) where
-        field
-          {Node} : Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+    record Rules : Set(Lvl.𝐒(lvl₁ Lvl.⊔ lvl₂)) where
+      field
+        {Node} : Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
 
-        field
-          [⊤]-intro : Node(⊤)
+      field
+        [⊤]-intro : Node(⊤)
 
-          [⊥]-intro : ∀{φ : Formula(Prop)} → Node(φ) → Node(¬ φ) → Node(⊥)
+        [⊥]-intro : ∀{φ : Formula(Prop)} → Node(φ) → Node(¬ φ) → Node(⊥)
 
-          [¬]-intro : ∀{φ : Formula(Prop)} → (Node(φ) → Node(⊥)) → Node(¬ φ)
-          [¬]-elim  : ∀{φ : Formula(Prop)} → (Node(¬ φ) → Node(⊥)) → Node(φ)
+        [¬]-intro : ∀{φ : Formula(Prop)} → (Node(φ) → Node(⊥)) → Node(¬ φ)
+        [¬]-elim  : ∀{φ : Formula(Prop)} → (Node(¬ φ) → Node(⊥)) → Node(φ)
 
-          [∧]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁) → Node(φ₂) → Node(φ₁ ∧ φ₂)
-          [∧]-elimₗ  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ∧ φ₂) → Node(φ₁)
-          [∧]-elimᵣ  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ∧ φ₂) → Node(φ₂)
+        [∧]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁) → Node(φ₂) → Node(φ₁ ∧ φ₂)
+        [∧]-elimₗ  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ∧ φ₂) → Node(φ₁)
+        [∧]-elimᵣ  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ∧ φ₂) → Node(φ₂)
 
-          [∨]-introₗ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁) → Node(φ₁ ∨ φ₂)
-          [∨]-introᵣ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₂) → Node(φ₁ ∨ φ₂)
-          [∨]-elim  : ∀{φ₁ φ₂ φ₃ : Formula(Prop)} → (Node(φ₁) → Node(φ₃)) → (Node(φ₂) → Node(φ₃)) → Node(φ₁ ∨ φ₂) → Node(φ₃)
+        [∨]-introₗ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁) → Node(φ₁ ∨ φ₂)
+        [∨]-introᵣ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₂) → Node(φ₁ ∨ φ₂)
+        [∨]-elim  : ∀{φ₁ φ₂ φ₃ : Formula(Prop)} → (Node(φ₁) → Node(φ₃)) → (Node(φ₂) → Node(φ₃)) → Node(φ₁ ∨ φ₂) → Node(φ₃)
 
-          [⇒]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₁) → Node(φ₂)) → Node(φ₁ ⇒ φ₂)
-          [⇒]-elim  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇒ φ₂) → Node(φ₁) → Node(φ₂)
+        [⇒]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₁) → Node(φ₂)) → Node(φ₁ ⇒ φ₂)
+        [⇒]-elim  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇒ φ₂) → Node(φ₁) → Node(φ₂)
 
-          [⇐]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₂) → Node(φ₁)) → Node(φ₁ ⇐ φ₂)
-          [⇐]-elim : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇐ φ₂) → Node(φ₂) → Node(φ₁)
+        [⇐]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₂) → Node(φ₁)) → Node(φ₁ ⇐ φ₂)
+        [⇐]-elim : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇐ φ₂) → Node(φ₂) → Node(φ₁)
 
-          [⇔]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₂) → Node(φ₁)) → (Node(φ₁) → Node(φ₂)) → Node(φ₁ ⇔ φ₂)
-          [⇔]-elimₗ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇔ φ₂) → Node(φ₂) → Node(φ₁)
-          [⇔]-elimᵣ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇔ φ₂) → Node(φ₁) → Node(φ₂)
+        [⇔]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₂) → Node(φ₁)) → (Node(φ₁) → Node(φ₂)) → Node(φ₁ ⇔ φ₂)
+        [⇔]-elimₗ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇔ φ₂) → Node(φ₂) → Node(φ₁)
+        [⇔]-elimᵣ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇔ φ₂) → Node(φ₁) → Node(φ₂)
 
-        -- Double negated proposition is positive
-        [¬¬]-elim : ∀{φ : Formula(Prop)} → Node(¬ (¬ φ)) → Node(φ)
-        [¬¬]-elim nna = [¬]-elim(na ↦ [⊥]-intro na nna)
+      -- Double negated proposition is positive
+      [¬¬]-elim : ∀{φ : Formula(Prop)} → Node(¬ (¬ φ)) → Node(φ)
+      [¬¬]-elim nna = [¬]-elim(na ↦ [⊥]-intro na nna)
 
-        [⊥]-elim : ∀{φ : Formula(Prop)} → Node(⊥) → Node(φ)
-        [⊥]-elim bottom = [¬]-elim(_ ↦ bottom)
+      [⊥]-elim : ∀{φ : Formula(Prop)} → Node(⊥) → Node(φ)
+      [⊥]-elim bottom = [¬]-elim(_ ↦ bottom)
 
-      module Meta(rules : Rules) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) id) where
-        open import List
-        open        Rules(rules)
-        open        Syntax.Symbols(meta-symbols)
-          renaming (
-            •_ to ◦_ ;
-            ⊤   to ⊤ₘ ;
-            ⊥   to ⊥ₘ ;
-            ¬_  to ¬ₘ_ ;
-            _∧_ to _∧ₘ_ ;
-            _∨_ to _∨ₘ_ ;
-            _⇒_ to _⇒ₘ_ )
+    module Meta(rules : Rules) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) id) where
+      open import List
+      open        Rules(rules)
+      open        Syntax.Symbols(meta-symbols)
+        renaming (
+          •_ to ◦_ ;
+          ⊤   to ⊤ₘ ;
+          ⊥   to ⊥ₘ ;
+          ¬_  to ¬ₘ_ ;
+          _∧_ to _∧ₘ_ ;
+          _∨_ to _∨ₘ_ ;
+          _⇒_ to _⇒ₘ_ )
 
-        -- Derivability
-        -- Examples:
-        --   (∅ ⊢ ⊥) becomes (Node(⊤) → Node(⊥))
-        --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes ((Node(φ) ∧ Node(¬ φ)) → Node(⊥))
-        _⊢_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-        _⊢_ ∅       φ = Node(φ)
-        _⊢_ (γ ⊰ Γ) φ = (foldᵣ-init (_⨯_) (Node(γ)) (map Node Γ)) → Node(φ)
-        --   (∅ ⊢ ⊤) becomes Node(⊤)
-        --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes (Node(φ) → (Node(¬ φ) → Node(⊥)))
-        -- _⊢_ Γ φ = (Node(List.foldᵣ (_∧_) ⊤ Γ) → Node(φ))
-        -- _⊢_ Γ φ = (List.foldₗ (_←_) (Node(φ)) (List.map Node (List.reverse Γ)))
+      module Test where
+        data _⊢'_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂) where
+          formula-intro : ∀{φ} → ([ φ ] ⊢' φ)
 
-        _⊬_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-        _⊬_ Γ φ = ¬ₘ(_⊢_ Γ φ)
+          [⊤]-i : (∅ ⊢' ⊤)
 
-        -- Consistency
-        inconsistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
-        inconsistent Γ = (Γ ⊢ ⊥)
+          [⊥]-i : ∀{Γ}{φ} → ((Γ ⊢' φ) ⨯ (Γ ⊢' (¬ φ))) → (Γ ⊢' ⊥)
 
-        consistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
-        consistent Γ = ¬ₘ(inconsistent Γ)
+          [¬]-i : ∀{Γ}{φ} → ((φ ⊰ Γ) ⊢' ⊥) → (Γ ⊢' (¬ φ))
+          [¬]-e  : ∀{Γ}{φ} → (((¬ φ) ⊰ Γ) ⊢' ⊥) → (Γ ⊢' φ)
 
-        module Theorems where
-          [⊢]-id : ∀{φ} → ([ φ ] ⊢ φ)
-          [⊢]-id = id
+          [∧]-i : ∀{Γ₁ Γ₂}{φ₁ φ₂} → ((Γ₁ ⊢' φ₁) ⨯ (Γ₂ ⊢' φ₂)) → ((Γ₁ ++ Γ₂) ⊢' (φ₁ ∧ φ₂))
+          [∧]-eₗ  : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' (φ₁ ∧ φ₂)) → (Γ ⊢' φ₁)
+          [∧]-eᵣ  : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' (φ₁ ∧ φ₂)) → (Γ ⊢' φ₂)
 
-          -- [⊢]-lhs-commutativity : ∀{Γ₁ Γ₂}{φ} → ((Γ₁ ++ Γ₂) ⊢ φ) → ((Γ₂ ++ Γ₁) ⊢ φ)
-          -- [⊢]-lhs-commutativity = id
+          [∨]-iₗ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' φ₁) → (Γ ⊢' (φ₁ ∨ φ₂))
+          [∨]-iᵣ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' φ₂) → (Γ ⊢' (φ₁ ∨ φ₂))
+          [∨]-e  : ∀{Γ₁ Γ₂ Γ₃}{φ₁ φ₂ φ₃} → (((φ₁ ⊰ Γ₁) ⊢' φ₃) ⨯ ((φ₂ ⊰ Γ₂) ⊢' φ₃) ⨯ (Γ₃ ⊢' (φ₁ ∨ φ₂))) → ((Γ₁ ++ Γ₂ ++ Γ₃) ⊢' φ₃)
 
-          -- [⊢]-test : ∀{φ₁ φ₂ φ₃} → ([ φ₁ ⊰ φ₂ ⊰ φ₃ ] ⊢ φ₁) → (Node(φ₁) ⨯ (Node(φ₂) ⨯ Node(φ₃)) → Node(φ₁))
-          -- [⊢]-test = id
+          [⇒]-i : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ Γ) ⊢' φ₂) → (Γ ⊢' (φ₁ ⇒ φ₂))
+          [⇒]-e  : ∀{Γ₁ Γ₂}{φ₁ φ₂} → ((Γ₁ ⊢' (φ₁ ⇒ φ₂)) ⨯ (Γ₂ ⊢' φ₁)) → ((Γ₁ ++ Γ₂) ⊢' φ₂)
 
-          [⊢]-compose : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ([ φ₁ ] ⊢ φ₂) → (Γ ⊢ φ₂)
-          [⊢]-compose {∅}     (φ₁)   (φ₁⊢φ₂)      = (φ₁⊢φ₂) (φ₁)
-          [⊢]-compose {_ ⊰ _} (Γ⊢φ₁) (φ₁⊢φ₂) (Γ) = (φ₁⊢φ₂) ((Γ⊢φ₁) (Γ))
+      -- Derivability
+      -- Examples:
+      --   (∅ ⊢ ⊥) becomes (Node(⊤) → Node(⊥))
+      --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes ((Node(φ) ∧ Node(¬ φ)) → Node(⊥))
+      _⊢_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+      _⊢_ ∅       φ = Node(φ)
+      _⊢_ (γ ⊰ Γ) φ = (foldᵣ-init (_⨯_) (Node(γ)) (map Node Γ)) → Node(φ)
+      --   (∅ ⊢ ⊤) becomes Node(⊤)
+      --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes (Node(φ) → (Node(¬ φ) → Node(⊥)))
+      -- _⊢_ Γ φ = (Node(List.foldᵣ (_∧_) ⊤ Γ) → Node(φ))
+      -- _⊢_ Γ φ = (List.foldₗ (_←_) (Node(φ)) (List.map Node (List.reverse Γ)))
 
-          [⊢]-compose₂ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ((φ₁ ⊰ Γ) ⊢ φ₂) → (Γ ⊢ φ₂)
-          [⊢]-compose₂ {∅}     (φ₁)   (φ₁⊢φ₂)      = (φ₁⊢φ₂)(φ₁)
-          [⊢]-compose₂ {_ ⊰ _} (Γ⊢φ₁) (φ₁Γ⊢φ₂) (Γ) = (φ₁Γ⊢φ₂) ((Γ⊢φ₁) (Γ) , (Γ))
-          -- [⊢]-test : ∀{φ₁ φ₂ γ₁ γ₂} → ([ γ₁ ⊰ γ₂ ] ⊢ φ₁) → ([ φ₁ ⊰ γ₁ ⊰ γ₂ ] ⊢ φ₂) → ([ γ₁ ⊰ γ₂ ] ⊢ φ₂)
-          -- [⊢]-test (Γ⊢φ₁) (φ₁Γ⊢φ₂) (Γ) = (φ₁Γ⊢φ₂) ((Γ⊢φ₁) (Γ) , (Γ))
+      _⊬_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+      _⊬_ Γ φ = ¬ₘ(_⊢_ Γ φ)
 
-          -- [⊢]-compose₃ : ∀{Γ₁ Γ₂}{φ₁ φ₂} → (Γ₁ ⊢ φ₁) → ((φ₁ ⊰ Γ₂) ⊢ φ₂) → ((Γ₁ ++ Γ₂) ⊢ φ₂)
-          -- [⊢]-compose₃ {∅}{∅} (φ₁)   (φ₁⊢φ₂)      = (φ₁⊢φ₂) (φ₁)
-          -- [⊢]-compose₃ {Γ}{∅} = [⊢]-compose{Γ}
-          -- [⊢]-compose₃ {∅}{Γ}  = [⊢]-compose₂{Γ}
-          -- [⊢]-compose₃ {_ ⊰ _}{_ ⊰ _}  = [⊢]-compose₂
+      -- Consistency
+      inconsistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
+      inconsistent Γ = (Γ ⊢ ⊥)
 
-          [⊢]-weakening : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
-          [⊢]-weakening {∅}     (⊢φ₁) (φ₂)      = (⊢φ₁)
-          [⊢]-weakening {_ ⊰ _} (Γ⊢φ₁) (φ₂ , Γ) = (Γ⊢φ₁) (Γ)
+      consistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
+      consistent Γ = ¬ₘ(inconsistent Γ)
 
-          -- olt-9-17 : ∀{Γ}{φ} → (Γ ⊢ φ) → ((φ ⊰ Γ) ⊢ ⊥) → (inconsistent Γ)
-          -- olt-9-17 Γ⊢φ Γφ⊢⊥ = (Γ ↦ [⊥]-intro (Γ⊢φ Γ) ([⊥]-elim(Γφ⊢⊥ Γ)))
+      module Theorems where
+        [⊢]-id : ∀{φ} → ([ φ ] ⊢ φ)
+        [⊢]-id = id
 
-      module Theorems(rules : Rules) where
-        open Rules(rules)
+        -- [⊢]-lhs-commutativity : ∀{Γ₁ Γ₂}{φ} → ((Γ₁ ++ Γ₂) ⊢ φ) → ((Γ₂ ++ Γ₁) ⊢ φ)
+        -- [⊢]-lhs-commutativity = id
 
-        -- Ensures that a certain proof is a certain proposition
-        -- (Like type ascription, ensures that a certain expression has a certain type)
-        -- Example:
-        --   (A :with: a) where a : Node(A)
-        --   ((A ∧ B) :with: [∧]-intro a b) where a : Node(A), b : Node(B)
-        _:with:_ : ∀(φ : Formula(Prop)) → Node(φ) → Node(φ)
-        _:with:_ _ x = x
-        infixl 100 _:with:_
+        -- [⊢]-test : ∀{φ₁ φ₂ φ₃} → ([ φ₁ ⊰ φ₂ ⊰ φ₃ ] ⊢ φ₁) → (Node(φ₁) ⨯ (Node(φ₂) ⨯ Node(φ₃)) → Node(φ₁))
+        -- [⊢]-test = id
 
-        -- The ability to derive anything from a contradiction
-        ex-falso-quodlibet : ∀{A : Formula(Prop)} → Node(⊥) → Node(A)
-        ex-falso-quodlibet = [⊥]-elim
+        [⊢]-compose : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ([ φ₁ ] ⊢ φ₂) → (Γ ⊢ φ₂)
+        [⊢]-compose {∅}     (φ₁)   (φ₁⊢φ₂)      = (φ₁⊢φ₂) (φ₁)
+        [⊢]-compose {_ ⊰ _} (Γ⊢φ₁) (φ₁⊢φ₂) (Γ) = (φ₁⊢φ₂) ((Γ⊢φ₁) (Γ))
 
-        [∧]-commutativity : ∀{A B : Formula(Prop)} → Node(A ∧ B) → Node(B ∧ A)
-        [∧]-commutativity {A} {B} A∧B =
-          ((B ∧ A) :with: [∧]-intro
-            (B :with: [∧]-elimᵣ(A∧B))
-            (A :with: [∧]-elimₗ(A∧B))
+        [⊢]-compose₂ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ((φ₁ ⊰ Γ) ⊢ φ₂) → (Γ ⊢ φ₂)
+        [⊢]-compose₂ {∅}     (φ₁)   (φ₁⊢φ₂)      = (φ₁⊢φ₂)(φ₁)
+        [⊢]-compose₂ {_ ⊰ _} (Γ⊢φ₁) (φ₁Γ⊢φ₂) (Γ) = (φ₁Γ⊢φ₂) ((Γ⊢φ₁) (Γ) , (Γ))
+        -- [⊢]-test : ∀{φ₁ φ₂ γ₁ γ₂} → ([ γ₁ ⊰ γ₂ ] ⊢ φ₁) → ([ φ₁ ⊰ γ₁ ⊰ γ₂ ] ⊢ φ₂) → ([ γ₁ ⊰ γ₂ ] ⊢ φ₂)
+        -- [⊢]-test (Γ⊢φ₁) (φ₁Γ⊢φ₂) (Γ) = (φ₁Γ⊢φ₂) ((Γ⊢φ₁) (Γ) , (Γ))
+
+        -- [⊢]-compose₃ : ∀{Γ₁ Γ₂}{φ₁ φ₂} → (Γ₁ ⊢ φ₁) → ((φ₁ ⊰ Γ₂) ⊢ φ₂) → ((Γ₁ ++ Γ₂) ⊢ φ₂)
+        -- [⊢]-compose₃ {∅}    {∅} (φ₁) (φ₁⊢φ₂) = (φ₁⊢φ₂) (φ₁)
+        -- [⊢]-compose₃ {_ ⊰ _}{∅} = [⊢]-compose
+        -- [⊢]-compose₃ {∅}{∅} (φ₁)   (φ₁⊢φ₂)      = (φ₁⊢φ₂) (φ₁)
+        -- [⊢]-compose₃ {Γ}{∅} = [⊢]-compose{Γ}
+        -- [⊢]-compose₃ {∅}{Γ}  = [⊢]-compose₂{Γ}
+        -- [⊢]-compose₃ {_ ⊰ _}{_ ⊰ _}  = [⊢]-compose₂
+
+        [⊢]-weakening : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
+        [⊢]-weakening {∅}     (⊢φ₁) (φ₂)      = (⊢φ₁)
+        [⊢]-weakening {_ ⊰ _} (Γ⊢φ₁) (φ₂ , Γ) = (Γ⊢φ₁) (Γ)
+
+        -- olt-9-17 : ∀{Γ}{φ} → (Γ ⊢ φ) → ((φ ⊰ Γ) ⊢ ⊥) → (inconsistent Γ)
+        -- olt-9-17 Γ⊢φ Γφ⊢⊥ = (Γ ↦ [⊥]-intro (Γ⊢φ Γ) ([⊥]-elim(Γφ⊢⊥ Γ)))
+
+    module Theorems(rules : Rules) where
+      open Rules(rules)
+
+      -- Ensures that a certain proof is a certain proposition
+      -- (Like type ascription, ensures that a certain expression has a certain type)
+      -- Example:
+      --   (A :with: a) where a : Node(A)
+      --   ((A ∧ B) :with: [∧]-intro a b) where a : Node(A), b : Node(B)
+      _:with:_ : ∀(φ : Formula(Prop)) → Node(φ) → Node(φ)
+      _:with:_ _ x = x
+      infixl 100 _:with:_
+
+      -- The ability to derive anything from a contradiction
+      ex-falso-quodlibet : ∀{A : Formula(Prop)} → Node(⊥) → Node(A)
+      ex-falso-quodlibet = [⊥]-elim
+
+      [∧]-commutativity : ∀{A B : Formula(Prop)} → Node(A ∧ B) → Node(B ∧ A)
+      [∧]-commutativity {A} {B} A∧B =
+        ((B ∧ A) :with: [∧]-intro
+          (B :with: [∧]-elimᵣ(A∧B))
+          (A :with: [∧]-elimₗ(A∧B))
+        )
+
+      [∨]-commutativity : ∀{A B : Formula(Prop)} → Node(A ∨ B) → Node(B ∨ A)
+      [∨]-commutativity {A} {B} A∨B =
+        ((B ∨ A) :with: [∨]-elim
+          [∨]-introᵣ
+          [∨]-introₗ
+          A∨B
+        )
+
+      contrapositive : ∀{A B : Formula(Prop)} → Node(A ⇒ B) → Node((¬ B) ⇒ (¬ A))
+      contrapositive {A} {B} A→B =
+        ((¬ B) ⇒ (¬ A)) :with: [⇒]-intro(nb ↦
+          (¬ A) :with: [¬]-intro(a ↦
+            ⊥ :with: [⊥]-intro
+              (B     :with: [⇒]-elim (A→B) a)
+              ((¬ B) :with: nb)
           )
+        )
 
-        [∨]-commutativity : ∀{A B : Formula(Prop)} → Node(A ∨ B) → Node(B ∨ A)
-        [∨]-commutativity {A} {B} A∨B =
-          ((B ∨ A) :with: [∨]-elim
-            [∨]-introᵣ
-            [∨]-introₗ
-            A∨B
+      [⇒]-syllogism : ∀{A B C : Formula(Prop)} → Node(A ⇒ B) → Node(B ⇒ C) → Node(A ⇒ C)
+      [⇒]-syllogism {A} {B} {C} A→B B→C =
+        ([⇒]-intro(a ↦
+          ([⇒]-elim
+            B→C
+            ([⇒]-elim A→B a)
           )
+        ))
 
-        contrapositive : ∀{A B : Formula(Prop)} → Node(A ⇒ B) → Node((¬ B) ⇒ (¬ A))
-        contrapositive {A} {B} A→B =
-          ((¬ B) ⇒ (¬ A)) :with: [⇒]-intro(nb ↦
-            (¬ A) :with: [¬]-intro(a ↦
-              ⊥ :with: [⊥]-intro
-                (B     :with: [⇒]-elim (A→B) a)
-                ((¬ B) :with: nb)
+      [∨]-syllogism : ∀{A B : Formula(Prop)} → Node(A ∨ B) → Node((¬ A) ⇒ B)
+      [∨]-syllogism {A} {B} A∨B =
+        ([∨]-elim
+          (a ↦ ((¬ A) ⇒ B) :with: [⇒]-syllogism
+            (((¬ A) ⇒ (¬ (¬ B))) :with: contrapositive
+              (((¬ B) ⇒ A) :with: [⇒]-intro(_ ↦ a))
             )
+            (((¬ (¬ B)) ⇒ B) :with: [⇒]-intro [¬¬]-elim)
           )
+          (b ↦ ((¬ A) ⇒ B) :with: [⇒]-intro(_ ↦ b))
+          A∨B
+        )
 
-        [⇒]-syllogism : ∀{A B C : Formula(Prop)} → Node(A ⇒ B) → Node(B ⇒ C) → Node(A ⇒ C)
-        [⇒]-syllogism {A} {B} {C} A→B B→C =
-          ([⇒]-intro(a ↦
+      -- Currying
+      [∧]→[⇒]-in-assumption : {X Y Z : Formula(Prop)} → Node((X ∧ Y) ⇒ Z) → Node(X ⇒ (Y ⇒ Z))
+      [∧]→[⇒]-in-assumption x∧y→z =
+        ([⇒]-intro(x ↦
+          ([⇒]-intro(y ↦
             ([⇒]-elim
-              B→C
-              ([⇒]-elim A→B a)
+              (x∧y→z)
+              ([∧]-intro x y)
             )
           ))
+        ))
 
-        [∨]-syllogism : ∀{A B : Formula(Prop)} → Node(A ∨ B) → Node((¬ A) ⇒ B)
-        [∨]-syllogism {A} {B} A∨B =
-          ([∨]-elim
-            (a ↦ ((¬ A) ⇒ B) :with: [⇒]-syllogism
-              (((¬ A) ⇒ (¬ (¬ B))) :with: contrapositive
-                (((¬ B) ⇒ A) :with: [⇒]-intro(_ ↦ a))
-              )
-              (((¬ (¬ B)) ⇒ B) :with: [⇒]-intro [¬¬]-elim)
-            )
-            (b ↦ ((¬ A) ⇒ B) :with: [⇒]-intro(_ ↦ b))
-            A∨B
-          )
-
-        -- Currying
-        [∧]→[⇒]-in-assumption : {X Y Z : Formula(Prop)} → Node((X ∧ Y) ⇒ Z) → Node(X ⇒ (Y ⇒ Z))
-        [∧]→[⇒]-in-assumption x∧y→z =
-          ([⇒]-intro(x ↦
-            ([⇒]-intro(y ↦
-              ([⇒]-elim
-                (x∧y→z)
-                ([∧]-intro x y)
-              )
-            ))
-          ))
-
-        -- Uncurrying
-        [∧]←[⇒]-in-assumption : {X Y Z : Formula(Prop)} → Node(X ⇒ (Y ⇒ Z)) → Node((X ∧ Y) ⇒ Z)
-        [∧]←[⇒]-in-assumption x→y→z =
-          ([⇒]-intro(x∧y ↦
+      -- Uncurrying
+      [∧]←[⇒]-in-assumption : {X Y Z : Formula(Prop)} → Node(X ⇒ (Y ⇒ Z)) → Node((X ∧ Y) ⇒ Z)
+      [∧]←[⇒]-in-assumption x→y→z =
+        ([⇒]-intro(x∧y ↦
+          ([⇒]-elim
             ([⇒]-elim
-              ([⇒]-elim
-                (x→y→z)
-                ([∧]-elimₗ x∧y)
-              )
-              ([∧]-elimᵣ x∧y)
+              (x→y→z)
+              ([∧]-elimₗ x∧y)
             )
-          ))
-
-        -- It is either that a proposition is true or its negation is true.
-        -- A proposition is either true or false.
-        -- There is no other truth values than true and false.
-        excluded-middle : ∀{A : Formula(Prop)} → Node(A ∨ (¬ A))
-        excluded-middle {A} =
-          ([¬]-elim(¬[a∨¬a] ↦
-            (⊥ :with: [⊥]-intro
-              ((A ∨ (¬ A)) :with: [∨]-introᵣ
-                ((¬ A) :with: [¬]-intro(a ↦
-                  (⊥ :with: [⊥]-intro
-                    ((A ∨ (¬ A))    :with: [∨]-introₗ(a))
-                    ((¬(A ∨ (¬ A))) :with: ¬[a∨¬a])
-                  )
-                ))
-              )
-              (¬[a∨¬a])
-            )
-          ))
-
-        -- It cannot be that a proposition is true and its negation is true at the same time.
-        -- A proposition cannot be true and false at the same time.
-        non-contradiction : ∀{A : Formula(Prop)} → Node(¬ (A ∧ (¬ A)))
-        non-contradiction {A} =
-          ([¬]-intro(a∧¬a ↦
-            (⊥ :with: [⊥]-intro
-              (A     :with: [∧]-elimₗ a∧¬a)
-              ((¬ A) :with: [∧]-elimᵣ a∧¬a)
-            )
-          ))
-
-        -- TODO: Mix of excluded middle and non-contradiction: (A ⊕ (¬ A))
-
-        -- The standard proof technic: Assume the opposite of the conclusion and prove that it leads to a contradiction
-        proof-by-contradiction : ∀{A B : Formula(Prop)} → (Node(¬ A) → Node(B)) → (Node(¬ A) → Node(¬ B)) → Node(A)
-        proof-by-contradiction {A} {B} ¬a→b ¬a→¬b =
-          (A :with: [¬]-elim(¬a ↦
-            (⊥ :with: [⊥]-intro
-              (B     :with: ¬a→b(¬a))
-              ((¬ B) :with: ¬a→¬b(¬a))
-            )
-          ))
-
-        peirce : ∀{A B : Formula(Prop)} → Node((A ⇒ B) ⇒ A) → Node(A)
-        peirce {A} {B} [A→B]→A =
-          (A :with: [¬]-elim(¬a ↦
-            ([⊥]-intro
-              (A :with: [⇒]-elim
-                [A→B]→A
-                ((A ⇒ B) :with: [⇒]-intro(a ↦
-                  (B :with: [⊥]-elim
-                    ([⊥]-intro
-                      a
-                      ¬a
-                    )
-                  )
-                ))
-              )
-              ((¬ A) :with: ¬a)
-            )
-          ))
-
-        skip-[⇒]-assumption : ∀{A B : Formula(Prop)} → (Node(A ⇒ B) → Node(A)) → Node(A)
-        skip-[⇒]-assumption A⇒B→A =
-          (peirce
-            ([⇒]-intro
-              (A⇒B→A)
-            )
+            ([∧]-elimᵣ x∧y)
           )
+        ))
+
+      -- It is either that a proposition is true or its negation is true.
+      -- A proposition is either true or false.
+      -- There is no other truth values than true and false.
+      excluded-middle : ∀{A : Formula(Prop)} → Node(A ∨ (¬ A))
+      excluded-middle {A} =
+        ([¬]-elim(¬[a∨¬a] ↦
+          (⊥ :with: [⊥]-intro
+            ((A ∨ (¬ A)) :with: [∨]-introᵣ
+              ((¬ A) :with: [¬]-intro(a ↦
+                (⊥ :with: [⊥]-intro
+                  ((A ∨ (¬ A))    :with: [∨]-introₗ(a))
+                  ((¬(A ∨ (¬ A))) :with: ¬[a∨¬a])
+                )
+              ))
+            )
+            (¬[a∨¬a])
+          )
+        ))
+
+      -- It cannot be that a proposition is true and its negation is true at the same time.
+      -- A proposition cannot be true and false at the same time.
+      non-contradiction : ∀{A : Formula(Prop)} → Node(¬ (A ∧ (¬ A)))
+      non-contradiction {A} =
+        ([¬]-intro(a∧¬a ↦
+          (⊥ :with: [⊥]-intro
+            (A     :with: [∧]-elimₗ a∧¬a)
+            ((¬ A) :with: [∧]-elimᵣ a∧¬a)
+          )
+        ))
+
+      -- TODO: Mix of excluded middle and non-contradiction: (A ⊕ (¬ A))
+
+      -- The standard proof technic: Assume the opposite of the conclusion and prove that it leads to a contradiction
+      proof-by-contradiction : ∀{A B : Formula(Prop)} → (Node(¬ A) → Node(B)) → (Node(¬ A) → Node(¬ B)) → Node(A)
+      proof-by-contradiction {A} {B} ¬a→b ¬a→¬b =
+        (A :with: [¬]-elim(¬a ↦
+          (⊥ :with: [⊥]-intro
+            (B     :with: ¬a→b(¬a))
+            ((¬ B) :with: ¬a→¬b(¬a))
+          )
+        ))
+
+      peirce : ∀{A B : Formula(Prop)} → Node((A ⇒ B) ⇒ A) → Node(A)
+      peirce {A} {B} [A→B]→A =
+        (A :with: [¬]-elim(¬a ↦
+          ([⊥]-intro
+            (A :with: [⇒]-elim
+              [A→B]→A
+              ((A ⇒ B) :with: [⇒]-intro(a ↦
+                (B :with: [⊥]-elim
+                  ([⊥]-intro
+                    a
+                    ¬a
+                  )
+                )
+              ))
+            )
+            ((¬ A) :with: ¬a)
+          )
+        ))
+
+      skip-[⇒]-assumption : ∀{A B : Formula(Prop)} → (Node(A ⇒ B) → Node(A)) → Node(A)
+      skip-[⇒]-assumption A⇒B→A =
+        (peirce
+          ([⇒]-intro
+            (A⇒B→A)
+          )
+        )
 
 {-
 data □ : Formula(Prop) → Set where
