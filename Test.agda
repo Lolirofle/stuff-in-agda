@@ -50,6 +50,7 @@ import      Structure.Relator.Ordering
 import      Structure.Relator.Properties
 import      String
 import      Type
+import      TypeSet
 
 module NumAndDivisionProofs where
   ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))

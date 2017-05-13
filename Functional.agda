@@ -50,3 +50,4 @@ swap(f)(x₂)(x₁) = f(x₁)(x₂)
 
 -- Custom syntax for anonymous functions/mappings
 syntax id(λ x → y) = x ↦ y
+
