@@ -1,4 +1,4 @@
-module Automaton.Language where
+module FormalLanguage.Language where
 
 import      Level as Lvl
 open import List renaming (∅ to [])

@@ -1,4 +1,4 @@
-module TypeSet {l₁} {l₂} where
+module Sets.TypeSet {l₁} {l₂} where
 
 import      Level as Lvl
 open import Data

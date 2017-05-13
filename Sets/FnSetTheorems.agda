@@ -1,6 +1,6 @@
-module FnSetTheorems where
+module Sets.FnSetTheorems where
 
-open import FnSet
+open import Sets.FnSet
 
 [∈]-in-[∪] : ∀{T}{a : T}{S₁ S₂ : FnSet(T)} → (a ∈ S₁) → (a ∈ (S₁ ∪ S₂))
 [∈]-in-[∪] proof-a = [∨]-introₗ-[𝑇] proof-a

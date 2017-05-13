@@ -1,16 +1,15 @@
 module Test where
 
-import      Automaton.Language
 import      Boolean
 import      Boolean.Theorems
 import      Boolean.Operators
 open import Data
 import      FFI.IO   as FFI
 import      FFI.Type as FFI
+import      FormalLanguage.Language
 open import Functional
 import      Functional.Raise
 import      Functional.PrimitiveRecursion
-import      FnSet
 import      Level as Lvl
 import      List
 import      List.Properties
@@ -37,7 +36,9 @@ import      Numeral.Sign.Oper
 import      Numeral.Sign.Oper0
 import      Operator.Equals
 open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-import      SimpleSet
+import      Sets.FnSet
+import      Sets.SimpleSet
+import      Sets.TypeSet
 import      Structure.Function.Domain
 import      Structure.Function.Linear
 import      Structure.Function.Ordering
@@ -50,7 +51,6 @@ import      Structure.Relator.Ordering
 import      Structure.Relator.Properties
 import      String
 import      Type
-import      TypeSet
 
 module NumAndDivisionProofs where
   ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))

@@ -1,4 +1,4 @@
-module FnSet {l₁} {l₂} where
+module Sets.FnSet {l₁} {l₂} where
 
 import      Level as Lvl
 import      List

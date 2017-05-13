@@ -1,4 +1,4 @@
-module SimpleSet {l₁} {l₂} where
+module Sets.SimpleSet {l₁} {l₂} where
 
 import      Level as Lvl
 open import Functional
