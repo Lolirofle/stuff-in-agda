@@ -14,6 +14,7 @@ import      Level as Lvl
 import      List
 import      List.Properties
 import      List.Relation
+import      List.Theorems
 import      Logic.Classic.Propositional
 open import Logic.Propositional{Lvl.𝟎}
 import      Logic.Predicate
@@ -322,3 +323,28 @@ module testPropositionalLogic where
       _⇔_ = _↔_ ;
       _⊕_ = a ↦ b ↦ ((a ∨ b) ∧ ¬(a ∧ b))
     }
+
+module testListOrderedContainment where
+  open import Functional
+  open import Numeral.Natural
+  open import List
+  open import List.Theorems{Lvl.𝟎}{Lvl.𝟎}
+  open        List.Theorems.OrderedContainment hiding (_contains-in-order_)
+
+  test1 : ([ 1 ]) contains-in-order ([ 1 ])
+  test1 = use(empty)
+
+  test2 : ([ 1 ⊰ 2 ]) contains-in-order ([ 1 ])
+  test2 = (use ∘ skip)(empty)
+
+  test3 : ([ 1 ⊰ 2 ]) contains-in-order ([ 1 ⊰ 2 ])
+  test3 = (use ∘ use)(empty)
+
+  test4 : ([ 1 ⊰ 10 ⊰ 2 ]) contains-in-order ([ 1 ⊰ 2 ])
+  test4 = (use ∘ skip ∘ use)(empty)
+
+  test5 : ([ 1 ⊰ 10 ⊰ 2 ⊰ 3 ]) contains-in-order ([ 1 ⊰ 2 ⊰ 3 ])
+  test5 = (use ∘ skip ∘ use ∘ use)(empty)
+
+  test6 : ([ 1 ⊰ 10 ⊰ 2 ⊰ 3 ⊰ 20 ⊰ 30 ⊰ 4 ⊰ 40 ]) contains-in-order ([ 1 ⊰ 2 ⊰ 3 ⊰ 4 ])
+  test6 = (use ∘ skip ∘ use ∘ use ∘ skip ∘ skip ∘ use ∘ skip)(empty)

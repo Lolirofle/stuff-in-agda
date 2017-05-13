@@ -27,10 +27,11 @@ _++_ : ∀{lvl}{T : Type{lvl}} → List(T) → List(T) → List(T)
 _++_ ∅ b = b
 _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
 
-pattern empty = ∅
-pattern prepend elem list = elem ⊰ list
-postpend = _⊱_
-concat   = _++_
+module LongOper where
+  pattern empty = ∅
+  pattern prepend elem list = elem ⊰ list
+  postpend = _⊱_
+  concat   = _++_
 
 singleton : ∀{lvl}{T : Type{lvl}} → T → List(T)
 singleton elem = elem ⊰ ∅

@@ -44,7 +44,7 @@ instance
 [≡]-with-[_] f [≡]-intro = [≡]-intro
 
 -- Replaces occurrences of the elements in the equality
-[≡]-substitution : ∀{T} → (f : T → Type) → ∀{x y : T} → (x ≡ y) → f(x) → f(y) -- TODO: Should not f be f: T→Stmt?
+[≡]-substitution : ∀{T} → (f : T → Stmt) → ∀{x y : T} → (x ≡ y) → f(x) → f(y)
 [≡]-substitution f [≡]-intro fx = fx
 
 instance
