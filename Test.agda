@@ -1,16 +1,20 @@
 module Test where
 
-import      Automaton.Language
+import      Automaton.DeterministicFinite
+import      Automaton.NonDeterministicFinite
+import      Automaton.Pushdown
+import      Automaton.TuringMachine
 import      Boolean
 import      Boolean.Theorems
 import      Boolean.Operators
 open import Data
 import      FFI.IO   as FFI
 import      FFI.Type as FFI
+import      FormalLanguage
+import      FormalLanguage.Properties
 open import Functional
 import      Functional.Raise
 import      Functional.PrimitiveRecursion
-import      FnSet
 import      Level as Lvl
 import      List
 import      List.Properties
@@ -38,13 +42,16 @@ import      Numeral.Sign.Oper
 import      Numeral.Sign.Oper0
 import      Operator.Equals
 open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-import      SimpleSet
+import      Sets.FnSet
+import      Sets.SimpleSet
+import      Sets.TypeSet
 import      Structure.Function.Domain
 import      Structure.Function.Linear
 import      Structure.Function.Ordering
 import      Structure.Operator.Field
 import      Structure.Operator.Group
 import      Structure.Operator.Properties
+import      Structure.Operator.SetAlgebra
 import      Structure.Operator.Vector
 import      Structure.Relator.Equivalence as Eq
 import      Structure.Relator.Ordering
