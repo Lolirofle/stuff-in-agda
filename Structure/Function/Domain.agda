@@ -37,7 +37,7 @@ expand {_} {_} {_} {tf} f = tf ∘ f
 
 -- Definition of a fixed point for a function
 FixPoint : ∀{T : Type} → (T → T) → T → Stmt
-FixPoint f(x) = (∀{x} → f(x) ≡ x)
+FixPoint f(x) = (f(x) ≡ x)
 
 -- Definition of an inverse function for a function
 Inverse : ∀{A B : Type} → (A → B) → (B → A) → Stmt

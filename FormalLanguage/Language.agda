@@ -38,71 +38,80 @@ record Language (∑ : Alphabet) {s₁ : Size} : Set where
     accepts-ε : Bool
     suffix-lang : ∀{s₂ : Size< s₁} → ∑ → Language(∑){s₂}
 
-infixl 1003 _∪_
-infixl 1002 _∩_
-infixl 1001 _𝁼_
-infixl 1000 _*
+module Oper {∑} where
+  infixl 1003 _∪_
+  infixl 1002 _∩_
+  infixl 1001 _𝁼_
+  infixl 1000 _*
 
--- The empty language
--- The language that does not include any word at all.
-∅ : ∀{∑}{s} → Language(∑){s}
-Language.accepts-ε   ∅ = 𝐹
-Language.suffix-lang ∅ = const(∅)
+  -- The empty language
+  -- The language that does not include any word at all.
+  ∅ : ∀{s} → Language(∑){s}
+  Language.accepts-ε   ∅ = 𝐹
+  Language.suffix-lang ∅ = const(∅)
 
--- The empty word language
--- The language with only the empty word.
-ε-lang : ∀{∑}{s} → Language(∑){s}
-Language.accepts-ε   ε-lang = 𝑇
-Language.suffix-lang ε-lang = const(∅)
+  -- The empty word language
+  -- The language with only the empty word.
+  ε : ∀{s} → Language(∑){s}
+  Language.accepts-ε   ε = 𝑇
+  Language.suffix-lang ε = const(∅)
 
--- Union
--- The language that includes any words that the two languages have.
-_∪_ : ∀{∑}{s} → Language(∑){s} → Language(∑){s} → Language(∑){s}
-Language.accepts-ε   (L₁ ∪ L₂) = Language.accepts-ε(L₁) || Language.accepts-ε(L₂)
-Language.suffix-lang (L₁ ∪ L₂) = (c ↦ Language.suffix-lang(L₁)(c) ∪ Language.suffix-lang(L₂)(c))
+  -- Union
+  -- The language that includes any words that the two languages have.
+  _∪_ : ∀{s} → Language(∑){s} → Language(∑){s} → Language(∑){s}
+  Language.accepts-ε   (L₁ ∪ L₂) = Language.accepts-ε(L₁) || Language.accepts-ε(L₂)
+  Language.suffix-lang (L₁ ∪ L₂) = (c ↦ Language.suffix-lang(L₁)(c) ∪ Language.suffix-lang(L₂)(c))
 
--- Intersection
--- The language that only includes the words that both languages have in common.
-_∩_ : ∀{∑}{s} → Language(∑){s} → Language(∑){s} → Language(∑){s}
-Language.accepts-ε   (L₁ ∩ L₂) = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
-Language.suffix-lang (L₁ ∩ L₂) = (c ↦ Language.suffix-lang(L₁)(c) ∩ Language.suffix-lang(L₂)(c))
+  -- Intersection
+  -- The language that only includes the words that both languages have in common.
+  _∩_ : ∀{s} → Language(∑){s} → Language(∑){s} → Language(∑){s}
+  Language.accepts-ε   (L₁ ∩ L₂) = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
+  Language.suffix-lang (L₁ ∩ L₂) = (c ↦ Language.suffix-lang(L₁)(c) ∩ Language.suffix-lang(L₂)(c))
 
--- Concatenation
--- The language that includes words that start with the first language and end in the second language.
-_𝁼_ : ∀{∑}{s} → Language(∑){s} → Language(∑){s} → Language(∑){s}
-Language.accepts-ε   (L₁ 𝁼 L₂) = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
-Language.suffix-lang (L₁ 𝁼 L₂) =
-  (c ↦
-    if  Language.accepts-ε(L₁)
-    then((Language.suffix-lang(L₁)(c) 𝁼 L₂) ∪ Language.suffix-lang(L₂)(c))
-    else(Language.suffix-lang(L₁)(c) 𝁼 L₂)
-  )
+  -- Concatenation
+  -- The language that includes words that start with the first language and end in the second language.
+  _𝁼_ : ∀{s} → Language(∑){s} → Language(∑){s} → Language(∑){s}
+  Language.accepts-ε   (L₁ 𝁼 L₂) = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
+  Language.suffix-lang (L₁ 𝁼 L₂) =
+    (c ↦
+      if  Language.accepts-ε(L₁)
+      then((Language.suffix-lang(L₁)(c) 𝁼 L₂) ∪ Language.suffix-lang(L₂)(c))
+      else(Language.suffix-lang(L₁)(c) 𝁼 L₂)
+    )
 
--- Star
--- The language that includes words in any number of concatenations with itself.
-_* : ∀{∑}{s} → Language(∑){s} → Language(∑){s}
-Language.accepts-ε   (L *) = 𝑇
-Language.suffix-lang (L *) =
-  (c ↦
-    Language.suffix-lang(L)(c) 𝁼 (L *)
-  )
+  -- Star/Closure
+  -- The language that includes words in any number of concatenations with itself.
+  _* : ∀{s} → Language(∑){s} → Language(∑){s}
+  Language.accepts-ε   (L *) = 𝑇
+  Language.suffix-lang (L *) =
+    (c ↦
+      Language.suffix-lang(L)(c) 𝁼 (L *)
+    )
 
--- All
--- The language that includes all words in any combination of the alphabet.
-∑* : ∀{∑}{s} → Language(∑){s}
-Language.accepts-ε   (∑*) = 𝑇
-Language.suffix-lang (∑*) = const(∑*)
+  -- TODO: How to define the complement?
 
--- Containment check
--- Checks whether a word is in the language.
-_is-in_ : ∀{∑} → Word(∑) → Language(∑){ω} → Bool
-_is-in_ ([])    (L) = Language.accepts-ε(L)
-_is-in_ (c ⊰ w) (L) = w is-in (Language.suffix-lang(L)(c))
+  -- All
+  -- The language that includes all words in any combination of the alphabet.
+  -- The largest language (with most words) with a certain alphabet.
+  ∑* : ∀{s} → Language(∑){s}
+  Language.accepts-ε   (∑*) = 𝑇
+  Language.suffix-lang (∑*) = const(∑*)
 
--- Containment
--- The relation of whether a word is in the language or not.
-_∈_ : ∀{∑} → Word(∑) → Language(∑){ω} → Set
-_∈_ a b = (a is-in b) ≡ 𝑇
+  -- Containment check
+  -- Checks whether a word is in the language.
+  _is-in_ : Word(∑) → Language(∑){ω} → Bool
+  _is-in_ ([])    (L) = Language.accepts-ε(L)
+  _is-in_ (c ⊰ w) (L) = w is-in (Language.suffix-lang(L)(c))
+
+  -- Containment
+  -- The relation of whether a word is in the language or not.
+  _∈_ : Word(∑) → Language(∑){ω} → Set
+  _∈_ a b = (a is-in b) ≡ 𝑇
+
+  -- The language of length 1 words that only accepts some symbols of its alphabet
+  alphabet-filter : ∀{s} → (∑ → Bool) → Language(∑){s}
+  Language.accepts-ε   (alphabet-filter f) = 𝐹
+  Language.suffix-lang (alphabet-filter f) = (c ↦ if f(c) then (ε) else (∅))
 
 module TestOnOffSwitch where
   data ∑ : Alphabet where
