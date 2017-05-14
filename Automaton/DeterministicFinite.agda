@@ -4,7 +4,7 @@ open import Boolean
 import      Boolean.Operators
 open        Boolean.Operators.Programming
 open import Data renaming(_⨯_ to _⨯'_)
-open import FormalLanguage.Language
+open import FormalLanguage
 open import Functional
 open import List renaming (∅ to [])
 

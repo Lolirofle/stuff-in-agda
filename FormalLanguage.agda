@@ -1,4 +1,4 @@
-module FormalLanguage.Language where
+module FormalLanguage where
 
 import      Level as Lvl
 open import List renaming (∅ to [])

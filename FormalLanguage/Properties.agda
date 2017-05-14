@@ -1,7 +1,7 @@
 module FormalLanguage.Properties where
 
 import Level as Lvl
-open import FormalLanguage.Language
+open import FormalLanguage
 open import Logic.Propositional{Lvl.𝟎}
 open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Properties{Lvl.𝟎}{Lvl.𝟎}

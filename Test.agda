@@ -10,7 +10,7 @@ import      Boolean.Operators
 open import Data
 import      FFI.IO   as FFI
 import      FFI.Type as FFI
-import      FormalLanguage.Language
+import      FormalLanguage
 import      FormalLanguage.Properties
 open import Functional
 import      Functional.Raise
