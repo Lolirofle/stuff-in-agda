@@ -11,7 +11,9 @@ open import Data
 import      FFI.IO   as FFI
 import      FFI.Type as FFI
 import      FormalLanguage
+import      FormalLanguage.ContextFreeGrammar
 import      FormalLanguage.Properties
+import      FormalLanguage.RegularExpression
 open import Functional
 import      Functional.Raise
 import      Functional.PrimitiveRecursion
