@@ -19,22 +19,6 @@ Surjective {X} {Y} f = ∀{y : Y} → ∃{X}(x ↦ (f(x) ≡ y))
 Bijective : ∀{X Y : Type} → (X → Y) → Stmt
 Bijective f = (Injective f) ∧ (Surjective f)
 
--- Returns the domain of a function
-domain : ∀{A B : Type} → (A → B) → Type
-domain {A} {_} _ = A
-
--- Returns the codomain of a function
-codomain : ∀{A B : Type} → (A → B) → Type
-codomain {_} {B} _ = B
-
--- Returns a function with a smaller domain
-restrict : ∀{A₁ A₂ B : Type}{_ : A₂ → A₁} → (A₁ → B) → (A₂ → B)
-restrict {_} {_} {_} {tf} f = f ∘ tf
-
--- Returns a function with a larger codomain
-expand : ∀{A B₁ B₂ : Type}{_ : B₁ → B₂} → (A → B₁) → (A → B₂)
-expand {_} {_} {_} {tf} f = tf ∘ f
-
 -- Definition of a fixed point for a function
 FixPoint : ∀{T : Type} → (T → T) → T → Stmt
 FixPoint f(x) = (f(x) ≡ x)

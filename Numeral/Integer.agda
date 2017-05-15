@@ -8,7 +8,7 @@ data ℤ : Set where
   +_  : ℕ → ℤ
   −𝐒_ : ℕ → ℤ
 
-{-# BUILTIN INTEGER         ℤ #-}
+{-# BUILTIN INTEGER        ℤ #-}
 {-# BUILTIN INTEGERPOS     +_ #-}
 {-# BUILTIN INTEGERNEGSUC −𝐒_ #-}
 
@@ -27,4 +27,4 @@ pattern 𝟎 = + ℕ.𝟎
 -- Absolute value
 abs : ℤ → ℕ
 abs(+ x)  = x
-abs(−𝐒 x) = x
+abs(−𝐒 x) = ℕ.𝐒(x)

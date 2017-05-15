@@ -1,10 +1,10 @@
 module Automaton.DeterministicFinite where
 
+import      Level as Lvl
 open import Boolean
 import      Boolean.Operators
 open        Boolean.Operators.Programming
 open import Data renaming(_⨯_ to _⨯'_)
-open import FormalLanguage
 open import Functional
 open import List renaming (∅ to [])
 
@@ -26,7 +26,7 @@ record DFA (State : Set) (Alphabet : Set) : Set where
   states   = State
   alphabet = Alphabet
 
-  wordTransition : State → Word(Alphabet) → State
+  wordTransition : State → List(Alphabet) → State
   wordTransition initialState []            = initialState
   wordTransition initialState (head ⊰ tail) = wordTransition state tail where
     state = transition initialState head
@@ -39,16 +39,8 @@ record DFA (State : Set) (Alphabet : Set) : Set where
   F  = isFinalState
 
   -- If when the input is read from the start state the automaton stops in a final state, it accepts the word.
-  isWordAccepted : Word(∑) → Bool
+  isWordAccepted : List(∑) → Bool
   isWordAccepted word = F(δ̂(q₀)(word))
-
--- The language accepted by a DFA.
--- This is a lingvistic interpretation of an automaton, that it is a grammar of the language.
--- A language accepts the empty word when the start state is a final state.
--- The language of a suffix is the transition function applied to the start state.
-language : ∀{Q}{∑}{s} → DFA(Q)(∑) → Language(∑){s}
-Language.accepts-ε   (language(Dfa δ q₀ F)) = F(q₀)
-Language.suffix-lang (language(Dfa δ q₀ F)) = (c ↦ language(Dfa δ (δ(q₀)(c)) F))
 
 _⨯_ : ∀{Q₁ Q₂}{∑} → DFA(Q₁)(∑) → DFA(Q₂)(∑) → DFA(Q₁ ⨯' Q₂)(∑)
 _⨯_ {Q₁}{Q₂}{∑} (Dfa δ₁ q₀₁ F₁) (Dfa δ₂ q₀₂ F₂) = Dfa δ q₀ F where
@@ -74,3 +66,49 @@ _+_ {Q₁}{Q₂}{∑} (Dfa δ₁ q₀₁ F₁) (Dfa δ₂ q₀₂ F₂) = Dfa δ
 
 ∁_ : ∀{Q}{∑} → DFA(Q)(∑) → DFA(Q)(∑)
 ∁_ (Dfa δ q₀ F) = Dfa δ q₀ ((!_) ∘ F)
+
+module Language where
+  open import Logic.Propositional{Lvl.𝟎}
+  open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
+  open import FormalLanguage
+  open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+
+  -- The language accepted by a DFA.
+  -- This is a lingvistic interpretation of an automaton, that it is a grammar of the language.
+  -- A language accepts the empty word when the start state is a final state.
+  -- The language of a suffix is the transition function applied to the start state.
+  language : ∀{Q}{∑}{s} → DFA(Q)(∑) → Language(∑){s}
+  Language.accepts-ε   (language(Dfa δ q₀ F)) = F(q₀)
+  Language.suffix-lang (language(Dfa δ q₀ F)) = (c ↦ language(Dfa δ (δ(q₀)(c)) F))
+
+  -- TODO
+  -- RegularLanguage : ∀{∑}{s} → Language(∑){s} → Stmt
+  -- RegularLanguage{∑}{s}(L) = ∃(Q ↦ ∃{DFA(Q)(∑)}(auto ↦ (language{Q}{∑}{s}(auto) ≡ L)))
+
+module Theorems{Q}{∑} (auto : DFA(Q)(∑)) where
+  open        Language
+  open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open import FormalLanguage
+  open        FormalLanguage.Oper
+
+  δ̂-on-[𝁼] : ∀{q : Q}{w₁ w₂ : Word(∑)} → DFA.δ̂(auto)(q)(w₁ ++ w₂) ≡ DFA.δ̂(auto)(DFA.δ̂(auto)(q)(w₁))(w₂)
+  δ̂-on-[𝁼] {_}{[]}         = [≡]-intro
+  δ̂-on-[𝁼] {q}{a ⊰ w₁}{w₂} = δ̂-on-[𝁼] {DFA.δ(auto)(q)(a)}{w₁}{w₂}
+
+  -- TODO: Prove postulates
+  postulate [∁]-isWordAccepted : ∀{w} → DFA.isWordAccepted(∁ auto)(w) ≡ ! DFA.isWordAccepted(auto)(w)
+
+  module _ {Q₂} (auto₂ : DFA(Q₂)(∑)) where
+    δ̂-on-[⨯] : ∀{q₁ : Q}{q₂ : Q₂}{w : Word(∑)} → DFA.δ̂(auto ⨯ auto₂)(q₁ , q₂)(w) ≡ (DFA.δ̂(auto)(q₁)(w) , DFA.δ̂(auto₂)(q₂)(w))
+    δ̂-on-[⨯] {_}{_}{[]}      = [≡]-intro
+    δ̂-on-[⨯] {q₁}{q₂}{a ⊰ w} = δ̂-on-[⨯] {DFA.δ(auto)(q₁)(a)}{DFA.δ(auto₂)(q₂)(a)}{w}
+
+    δ̂-on-[+] : ∀{q₁ : Q}{q₂ : Q₂}{w : Word(∑)} → DFA.δ̂(auto + auto₂)(q₁ , q₂)(w) ≡ (DFA.δ̂(auto)(q₁)(w) , DFA.δ̂(auto₂)(q₂)(w))
+    δ̂-on-[+] {_}{_}{[]}      = [≡]-intro
+    δ̂-on-[+] {q₁}{q₂}{a ⊰ w} = δ̂-on-[+] {DFA.δ(auto)(q₁)(a)}{DFA.δ(auto₂)(q₂)(a)}{w}
+
+    -- TODO: Prove postulates
+    postulate [⨯]-language : language(auto ⨯ auto₂) ≡ language(auto) ∩ language(auto₂)
+    postulate [+]-language : language(auto + auto₂) ≡ language(auto) ∪ language(auto₂)
+    postulate [⨯]-isWordAccepted : ∀{w} → DFA.isWordAccepted(auto ⨯ auto₂)(w) ≡ DFA.isWordAccepted(auto)(w) && DFA.isWordAccepted(auto₂)(w)
+    postulate [+]-isWordAccepted : ∀{w} → DFA.isWordAccepted(auto + auto₂)(w) ≡ DFA.isWordAccepted(auto)(w) || DFA.isWordAccepted(auto₂)(w)
