@@ -116,6 +116,11 @@ module Oper {∑} where
   _∈_ : Word(∑) → Language(∑){ω} → Set
   _∈_ a b = (a is-in b) ≡ 𝑇
 
+  -- Uncontainment
+  -- The relation of whether a word is not in the language or not.
+  _∉_ : Word(∑) → Language(∑){ω} → Set
+  _∉_ a b = (a is-in b) ≡ 𝐹
+
   -- The language of length 1 words that only accepts some symbols of its alphabet
   alphabet-filter : ∀{s} → (∑ → Bool) → Language(∑){s}
   Language.accepts-ε   (alphabet-filter f) = 𝐹

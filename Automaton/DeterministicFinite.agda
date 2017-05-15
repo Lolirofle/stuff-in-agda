@@ -100,8 +100,7 @@ module Theorems{Q}{∑} (auto : DFA(Q)(∑)) where
   δ̂-on-[∁] {q}{a ⊰ w} = δ̂-on-[∁] {DFA.δ(∁ auto)(q)(a)}{w}
 
   [∁]-isWordAccepted : ∀{w} → DFA.isWordAccepted(∁ auto)(w) ≡ !(DFA.isWordAccepted(auto)(w))
-  [∁]-isWordAccepted {w} =
-      [≡]-with-[ x ↦ !(DFA.F(auto)(x)) ] (δ̂-on-[∁]{DFA.q₀(auto)}{w})
+  [∁]-isWordAccepted {w} = [≡]-with-[ x ↦ !(DFA.F(auto)(x)) ] (δ̂-on-[∁]{DFA.q₀(auto)}{w})
 
   -- TODO: Prove ∁ postulates regarding languages before accepting them, because the definition of ∁ for languages might be wrong.
   -- postulate [∁]-language : language(∁ auto) ≡ Oper.∁(language(auto))
@@ -117,8 +116,12 @@ module Theorems{Q}{∑} (auto : DFA(Q)(∑)) where
 
     -- TODO: δ̂-on-[𝁼]
 
+    [⨯]-isWordAccepted : ∀{w} → DFA.isWordAccepted(auto ⨯ auto₂)(w) ≡ DFA.isWordAccepted(auto)(w) && DFA.isWordAccepted(auto₂)(w)
+    [⨯]-isWordAccepted {w} = [≡]-with-[ DFA.F(auto ⨯ auto₂) ] (δ̂-on-[⨯]{DFA.q₀(auto)}{DFA.q₀(auto₂)}{w})
+
+    [+]-isWordAccepted : ∀{w} → DFA.isWordAccepted(auto + auto₂)(w) ≡ DFA.isWordAccepted(auto)(w) || DFA.isWordAccepted(auto₂)(w)
+    [+]-isWordAccepted {w} = [≡]-with-[ DFA.F(auto + auto₂) ] (δ̂-on-[+]{DFA.q₀(auto)}{DFA.q₀(auto₂)}{w})
+
     -- TODO: Prove postulates
     postulate [⨯]-language : language(auto ⨯ auto₂) ≡ language(auto) ∩ language(auto₂)
     postulate [+]-language : language(auto + auto₂) ≡ language(auto) ∪ language(auto₂)
-    postulate [⨯]-isWordAccepted : ∀{w} → DFA.isWordAccepted(auto ⨯ auto₂)(w) ≡ DFA.isWordAccepted(auto)(w) && DFA.isWordAccepted(auto₂)(w)
-    postulate [+]-isWordAccepted : ∀{w} → DFA.isWordAccepted(auto + auto₂)(w) ≡ DFA.isWordAccepted(auto)(w) || DFA.isWordAccepted(auto₂)(w)
