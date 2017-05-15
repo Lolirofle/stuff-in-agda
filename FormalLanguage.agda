@@ -88,7 +88,15 @@ module Oper {∑} where
       Language.suffix-lang(L)(c) 𝁼 (L *)
     )
 
-  -- TODO: How to define the complement?
+  -- Complement
+  -- The language that includes all words that a language does not have.
+  -- TODO: Is this correct?
+  ∁_ : ∀{s} → Language(∑){s} → Language(∑){s}
+  Language.accepts-ε   (∁ L) = !(Language.accepts-ε(L))
+  Language.suffix-lang (∁ L) =
+    (c ↦
+      ∁(Language.suffix-lang(L)(c))
+    )
 
   -- All
   -- The language that includes all words in any combination of the alphabet.

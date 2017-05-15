@@ -40,7 +40,7 @@ instance
   [≡]-transitivity([∧]-intro [≡]-intro [≡]-intro) = [≡]-intro
 
 -- Applies functions to each side of the equality
-[≡]-with-[_] : ∀{T} → (f : T → T) → ∀{x y : T} → (x ≡ y) → (f(x) ≡ f(y))
+[≡]-with-[_] : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
 [≡]-with-[_] f [≡]-intro = [≡]-intro
 
 -- Replaces occurrences of the elements in the equality
@@ -65,6 +65,6 @@ instance
 -- testSymInstance : ∀{T} {{_ : Symmetry {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
 -- testSymInstance {{sym}} = sym
 
--- Definition of uniqueness
+-- Definition of uniqueness of elements satisfying a property
 Uniqueness : ∀{T} → (T → Stmt) → Stmt
 Uniqueness {T} property = ∀{x y : T} → (property(x) ∧ property(y)) → (x ≡ y)

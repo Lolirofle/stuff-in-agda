@@ -89,14 +89,22 @@ module Theorems{Q}{∑} (auto : DFA(Q)(∑)) where
   open        Language
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open import FormalLanguage
-  open        FormalLanguage.Oper
+  open        FormalLanguage.Oper hiding (∁_)
 
-  δ̂-on-[𝁼] : ∀{q : Q}{w₁ w₂ : Word(∑)} → DFA.δ̂(auto)(q)(w₁ ++ w₂) ≡ DFA.δ̂(auto)(DFA.δ̂(auto)(q)(w₁))(w₂)
-  δ̂-on-[𝁼] {_}{[]}         = [≡]-intro
-  δ̂-on-[𝁼] {q}{a ⊰ w₁}{w₂} = δ̂-on-[𝁼] {DFA.δ(auto)(q)(a)}{w₁}{w₂}
+  δ̂-with-[++] : ∀{q : Q}{w₁ w₂ : Word(∑)} → DFA.δ̂(auto)(q)(w₁ ++ w₂) ≡ DFA.δ̂(auto)(DFA.δ̂(auto)(q)(w₁))(w₂)
+  δ̂-with-[++] {_}{[]}         = [≡]-intro
+  δ̂-with-[++] {q}{a ⊰ w₁}{w₂} = δ̂-with-[++] {DFA.δ(auto)(q)(a)}{w₁}{w₂}
 
-  -- TODO: Prove postulates
-  postulate [∁]-isWordAccepted : ∀{w} → DFA.isWordAccepted(∁ auto)(w) ≡ ! DFA.isWordAccepted(auto)(w)
+  δ̂-on-[∁] : ∀{q : Q}{w : Word(∑)} → DFA.δ̂(∁ auto)(q)(w) ≡ DFA.δ̂(auto)(q)(w)
+  δ̂-on-[∁] {_}{[]}    = [≡]-intro
+  δ̂-on-[∁] {q}{a ⊰ w} = δ̂-on-[∁] {DFA.δ(∁ auto)(q)(a)}{w}
+
+  [∁]-isWordAccepted : ∀{w} → DFA.isWordAccepted(∁ auto)(w) ≡ !(DFA.isWordAccepted(auto)(w))
+  [∁]-isWordAccepted {w} =
+      [≡]-with-[ x ↦ !(DFA.F(auto)(x)) ] (δ̂-on-[∁]{DFA.q₀(auto)}{w})
+
+  -- TODO: Prove ∁ postulates regarding languages before accepting them, because the definition of ∁ for languages might be wrong.
+  -- postulate [∁]-language : language(∁ auto) ≡ Oper.∁(language(auto))
 
   module _ {Q₂} (auto₂ : DFA(Q₂)(∑)) where
     δ̂-on-[⨯] : ∀{q₁ : Q}{q₂ : Q₂}{w : Word(∑)} → DFA.δ̂(auto ⨯ auto₂)(q₁ , q₂)(w) ≡ (DFA.δ̂(auto)(q₁)(w) , DFA.δ̂(auto₂)(q₂)(w))
@@ -106,6 +114,8 @@ module Theorems{Q}{∑} (auto : DFA(Q)(∑)) where
     δ̂-on-[+] : ∀{q₁ : Q}{q₂ : Q₂}{w : Word(∑)} → DFA.δ̂(auto + auto₂)(q₁ , q₂)(w) ≡ (DFA.δ̂(auto)(q₁)(w) , DFA.δ̂(auto₂)(q₂)(w))
     δ̂-on-[+] {_}{_}{[]}      = [≡]-intro
     δ̂-on-[+] {q₁}{q₂}{a ⊰ w} = δ̂-on-[+] {DFA.δ(auto)(q₁)(a)}{DFA.δ(auto₂)(q₂)(a)}{w}
+
+    -- TODO: δ̂-on-[𝁼]
 
     -- TODO: Prove postulates
     postulate [⨯]-language : language(auto ⨯ auto₂) ≡ language(auto) ∩ language(auto₂)
