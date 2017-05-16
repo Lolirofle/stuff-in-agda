@@ -74,38 +74,65 @@ module Language where
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 
   -- The language accepted by a DFA.
-  -- This is a lingvistic interpretation of an automaton, that it is a grammar of the language.
+  -- This is a linguistic interpretation of an automaton, that it is a grammar of the language.
   -- A language accepts the empty word when the start state is a final state.
   -- The language of a suffix is the transition function applied to the start state.
-  language : ∀{Q}{∑}{s} → DFA(Q)(∑) → Language(∑){s}
-  Language.accepts-ε   (language(Dfa δ q₀ F)) = F(q₀)
-  Language.suffix-lang (language(Dfa δ q₀ F)) = (c ↦ language(Dfa δ (δ(q₀)(c)) F))
+  𝔏 : ∀{Q}{∑}{s} → DFA(Q)(∑) → Language(∑){s}
+  Language.accepts-ε   (𝔏(Dfa δ q₀ F)) = F(q₀)
+  Language.suffix-lang (𝔏(Dfa δ q₀ F)) = (c ↦ 𝔏(Dfa δ (δ(q₀)(c)) F))
 
   -- TODO
   -- RegularLanguage : ∀{∑}{s} → Language(∑){s} → Stmt
-  -- RegularLanguage{∑}{s}(L) = ∃(Q ↦ ∃{DFA(Q)(∑)}(auto ↦ (language{Q}{∑}{s}(auto) ≡ L)))
+  -- RegularLanguage{∑}{s}(L) = ∃(Q ↦ ∃{DFA(Q)(∑)}(auto ↦ (𝔏{Q}{∑}{s}(auto) ≡ L)))
 
-module Theorems{Q}{∑} (auto : DFA(Q)(∑)) where
+module Theorems where
   open        Language
+  open import Logic.Propositional{Lvl.𝟎}
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open import FormalLanguage
   open        FormalLanguage.Oper hiding (∁_)
 
-  δ̂-with-[++] : ∀{q : Q}{w₁ w₂ : Word(∑)} → DFA.δ̂(auto)(q)(w₁ ++ w₂) ≡ DFA.δ̂(auto)(DFA.δ̂(auto)(q)(w₁))(w₂)
-  δ̂-with-[++] {_}{[]}         = [≡]-intro
-  δ̂-with-[++] {q}{a ⊰ w₁}{w₂} = δ̂-with-[++] {DFA.δ(auto)(q)(a)}{w₁}{w₂}
+  -- TODO: Is this wrong?
+  -- step-isWordAccepted : ∀{Q}{∑} → (auto : DFA(Q)(∑)) → ∀{c}{w} → DFA.isWordAccepted(auto)(c ⊰ w) ≡ DFA.isWordAccepted(Dfa (DFA.δ auto) (DFA.δ(auto)(DFA.q₀(auto))(c)) (DFA.F auto))(w)
+  -- step-isWordAccepted auto {c}{[]} = [≡]-intro
+  -- step-isWordAccepted auto {c}{w} = [≡]-with-[ DFA.F(auto) ] [≡]-intro
 
-  δ̂-on-[∁] : ∀{q : Q}{w : Word(∑)} → DFA.δ̂(∁ auto)(q)(w) ≡ DFA.δ̂(auto)(q)(w)
-  δ̂-on-[∁] {_}{[]}    = [≡]-intro
-  δ̂-on-[∁] {q}{a ⊰ w} = δ̂-on-[∁] {DFA.δ(∁ auto)(q)(a)}{w}
+  Language-isWordAccepted : ∀{Q}{∑} → (auto : DFA(Q)(∑)) → ∀{w} → DFA.isWordAccepted(auto)(w) ≡ w is-in (𝔏(auto))
+  Language-isWordAccepted{_}{∑}(auto){w} = List-induction base step {w} where
+    base : DFA.isWordAccepted(auto)[] ≡ [] is-in (𝔏(auto))
+    base = [≡]-intro
 
-  [∁]-isWordAccepted : ∀{w} → DFA.isWordAccepted(∁ auto)(w) ≡ !(DFA.isWordAccepted(auto)(w))
-  [∁]-isWordAccepted {w} = [≡]-with-[ x ↦ !(DFA.F(auto)(x)) ] (δ̂-on-[∁]{DFA.q₀(auto)}{w})
+    -- TODO: Prove
+    postulate step : ∀(c : ∑)(w : List(∑)) → (DFA.isWordAccepted(auto)(w) ≡ w is-in (𝔏(auto))) → (DFA.isWordAccepted(auto)(c ⊰ w) ≡ (c ⊰ w) is-in (𝔏(auto)))
+    -- step(c)(w)(prev) =
+  -- Language-isWordAccepted (_)          {[]}    = [≡]-intro
+  -- Language-isWordAccepted (Dfa δ q₀ F) {c ⊰ w} = test(Dfa δ q₀ F){c ⊰ w} -- Language-isWordAccepted (Dfa δ (δ(q₀)(c)) F) {w}
+    -- DFA.isWordAccepted(auto)(c ⊰ w)
+    -- DFA.isWordAccepted(Dfa δ q₀ F)(c ⊰ w)
+    -- F(δ̂(q₀)(c ⊰ w))
+    -- F(δ̂(δ(q₀)(c))(w))
 
-  -- TODO: Prove ∁ postulates regarding languages before accepting them, because the definition of ∁ for languages might be wrong.
-  -- postulate [∁]-language : language(∁ auto) ≡ Oper.∁(language(auto))
+    -- (c ⊰ w) is-in (𝔏(auto))
+    -- (c ⊰ w) is-in (𝔏(Dfa δ q₀ F))
+    -- w is-in (Language.suffix-lang(𝔏(Dfa δ q₀ F))(c))
+    -- w is-in (𝔏(Dfa δ (δ(q₀)(c)) F))
 
-  module _ {Q₂} (auto₂ : DFA(Q₂)(∑)) where
+  module _ {∑} {Q}(auto : DFA(Q)(∑)) where
+    δ̂-with-[++] : ∀{q : Q}{w₁ w₂ : Word(∑)} → DFA.δ̂(auto)(q)(w₁ ++ w₂) ≡ DFA.δ̂(auto)(DFA.δ̂(auto)(q)(w₁))(w₂)
+    δ̂-with-[++] {_}{[]}         = [≡]-intro
+    δ̂-with-[++] {q}{a ⊰ w₁}{w₂} = δ̂-with-[++] {DFA.δ(auto)(q)(a)}{w₁}{w₂}
+
+    δ̂-on-[∁] : ∀{q : Q}{w : Word(∑)} → DFA.δ̂(∁ auto)(q)(w) ≡ DFA.δ̂(auto)(q)(w)
+    δ̂-on-[∁] {_}{[]}    = [≡]-intro
+    δ̂-on-[∁] {q}{a ⊰ w} = δ̂-on-[∁] {DFA.δ(∁ auto)(q)(a)}{w}
+
+    [∁]-isWordAccepted : ∀{w} → DFA.isWordAccepted(∁ auto)(w) ≡ !(DFA.isWordAccepted(auto)(w))
+    [∁]-isWordAccepted {w} = [≡]-with-[ x ↦ !(DFA.F(auto)(x)) ] (δ̂-on-[∁]{DFA.q₀(auto)}{w})
+
+    -- TODO: Prove ∁ postulates regarding languages before accepting them, because the definition of ∁ for languages might be wrong.
+    -- postulate [∁]-language : 𝔏(∁ auto) ≡ Oper.∁(𝔏(auto))
+
+  module _ {∑} {Q}(auto : DFA(Q)(∑)) {Q₂} (auto₂ : DFA(Q₂)(∑)) where
     δ̂-on-[⨯] : ∀{q₁ : Q}{q₂ : Q₂}{w : Word(∑)} → DFA.δ̂(auto ⨯ auto₂)(q₁ , q₂)(w) ≡ (DFA.δ̂(auto)(q₁)(w) , DFA.δ̂(auto₂)(q₂)(w))
     δ̂-on-[⨯] {_}{_}{[]}      = [≡]-intro
     δ̂-on-[⨯] {q₁}{q₂}{a ⊰ w} = δ̂-on-[⨯] {DFA.δ(auto)(q₁)(a)}{DFA.δ(auto₂)(q₂)(a)}{w}
@@ -123,5 +150,5 @@ module Theorems{Q}{∑} (auto : DFA(Q)(∑)) where
     [+]-isWordAccepted {w} = [≡]-with-[ DFA.F(auto + auto₂) ] (δ̂-on-[+]{DFA.q₀(auto)}{DFA.q₀(auto₂)}{w})
 
     -- TODO: Prove postulates
-    postulate [⨯]-language : language(auto ⨯ auto₂) ≡ language(auto) ∩ language(auto₂)
-    postulate [+]-language : language(auto + auto₂) ≡ language(auto) ∪ language(auto₂)
+    postulate [⨯]-language : 𝔏(auto ⨯ auto₂) ≡ 𝔏(auto) ∩ 𝔏(auto₂)
+    postulate [+]-language : 𝔏(auto + auto₂) ≡ 𝔏(auto) ∪ 𝔏(auto₂)

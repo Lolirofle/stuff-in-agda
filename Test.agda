@@ -26,7 +26,6 @@ import      Logic.Classic.Propositional
 open import Logic.Propositional{Lvl.𝟎}
 import      Logic.Predicate
 open import Logic.Theorems{Lvl.𝟎}
-import      NonEmptyList
 import      Numeral.Integer
 import      Numeral.Integer.Oper
 import      Numeral.Integer.Sign

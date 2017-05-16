@@ -5,8 +5,6 @@ open import Data
 open import Functional
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Numeral.Natural
-open import NonEmptyList as List
-  using (List ; _⊰_ ; _⤛_ ; End)
 open import Type{l₁}
 
 infixl 1000 _🝖_
@@ -41,8 +39,8 @@ Total {T} (_▫_) = {x y : T} → (x ▫ y) ∨ (y ▫ x)
 -- Trichotomy {T} (_▫₁_) (_▫₂_) = {x y : T} → (x ▫₁ y) ⊕ (y ▫₁ x) ⊕ (x ▫₂ y) -- TODO: Not correct. Should only be one of them
 
 -- For constructions/proofs of this form: Proof of a=f: a=b ∧ b=c ∧ c=d ∧ d=e ∧ e=f (also expressed as a=b=c=d=e=f)
-TransitivityChain : {T : Type} → (T → T → Stmt) → (List 1 T) → Stmt
-TransitivityChain {T} (_▫_) X = (List.reduceₗ (_∧_) (List.fromList (List.mapWindow2ₗ (_▫_) X) ⊥)) → ((List.firstElem X) ▫ (List.lastElem X))
+-- TransitivityChain : {T : Type} → (T → T → Stmt) → (List 1 T) → Stmt
+-- TransitivityChain {T} (_▫_) X = (List.reduceₗ (_∧_) (List.fromList (List.mapWindow2ₗ (_▫_) X) ⊥)) → ((List.firstElem X) ▫ (List.lastElem X))
 
 ---------------------------------------------------------
 -- Derived

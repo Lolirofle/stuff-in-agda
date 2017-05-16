@@ -50,6 +50,7 @@ module _ {∑} where
   postulate [∁]-containment : ∀{x}{A : Language(∑){ω}} → (x ∈ (∁ A)) ↔ (x ∉ A)
   postulate [∅]-containment : ∀{x}{A : Language(∑){ω}} → (x ∈ ∅) ↔ ⊥
   postulate [ε]-containment : ∀{x}{A : Language(∑){ω}} → (x ∈ ε) ↔ (x ≡ [])
+  -- postulate Language-[≡]-intro : {A B : Language(∑){ω}} → (∀{x} → (x ∈ A) ↔ (x ∈ B)) ↔ (A ≡ B)
 
 -- TODO: Set properties
 -- TODO: Connection with logic (from sets) in relations
