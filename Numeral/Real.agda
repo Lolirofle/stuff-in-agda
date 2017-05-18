@@ -14,10 +14,12 @@ open import Structure.Operator.Properties{Lvl.𝟎}{Lvl.𝟎}
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [The set]
+
 postulate ℝ : Set
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Conversions]
+
 record [ℝ]-conversion (T : Set) : Set where
   infixl 10000 #_
   field
@@ -29,25 +31,37 @@ instance postulate [ℤ]-to-[ℝ] : [ℝ]-conversion(ℤ)
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Elements]
+
 postulate e : ℝ
 postulate π : ℝ
+postulate 𝑖 : ℝ -- TODO: Let's pretend because I am lazy
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Operators]
+
+infixl 1000 _+_ _−_
+infixl 1001 _⋅_ _/_
+infixl 1002 _^_ _√_
 postulate _+_ : ℝ → ℝ → ℝ
 postulate _−_ : ℝ → ℝ → ℝ
 postulate _⋅_ : ℝ → ℝ → ℝ
-postulate _/_ : ℝ → ℝ → ℝ
+postulate _/_ : ℝ → ℝ → ℝ -- TODO: Some of these are either partial functions or have a smaller domain
 postulate _^_ : ℝ → ℝ → ℝ
 postulate log : ℝ → ℝ → ℝ
 postulate _√_ : ℝ → ℝ → ℝ
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Functions]
-postulate abs : ℝ → ℝ
+
+abs : ℝ → ℝ
+abs(x) = #(2) √ (x ^ #(2))
+
 postulate sin : ℝ → ℝ
 postulate cos : ℝ → ℝ
-postulate tan : ℝ → ℝ
+
+tan : ℝ → ℝ
+tan(x) = sin(x) / cos(x)
+
 postulate asin : ℝ → ℝ
 postulate acos : ℝ → ℝ
 postulate atan : ℝ → ℝ
@@ -82,7 +96,8 @@ _<_<_ : ℝ → ℝ → ℝ → Stmt
 x < y < z = (x < y) ∧ (y < z)
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- [Properties of operations on ℝ]
+-- [Properties of operations in ℝ]
+
 instance
   [ℝ]-fieldSym : FieldSym
   [ℝ]-fieldSym =
@@ -97,6 +112,15 @@ instance
 
 instance
   postulate [ℝ]-field : Field {ℝ}
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- [Properties of functions in ℝ]
+instance postulate abs-positive : ∀{x} → (abs(x) ≥ #(0))
+instance postulate cos-periodicity : ∀{v}{n : ℕ} → (cos(v) ≡ cos(v + #(2) ⋅ π ⋅ #(n)))
+instance postulate sin-periodicity : ∀{v}{n : ℕ} → (sin(v) ≡ sin(v + #(2) ⋅ π ⋅ #(n)))
+instance postulate cos-even : ∀{v} → (cos(v) ≡ cos(#(0) − v))
+instance postulate sin-odd  : ∀{v} → (sin(v) ≡ #(0) − sin(#(0) − v))
+instance postulate circle : ∀{v} → (cos(v) ^ #(2) + sin(v) ^ #(2) ≡ #(1))
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Data structures]
@@ -121,31 +145,48 @@ data ClosedInterval (a : ℝ) (b : ℝ) : Set where
 -- [Properties on functions of ℝ]
 
 module Limit where
+  -- Statement that the limit of the function f at point l exists and its value is L
   Limit : (ℝ → ℝ) → ℝ → ℝ → Stmt
   Limit f(l) L = ∀{ε : ℝ₊} → ∃{ℝ₊}(δ ↦ ∀{x : ℝ} → (#(0) < abs(x − l) < #(δ)) → (abs(f(x) − L) < #(ε)))
 
+  -- Limit value function f (if the limit exists)
   lim : (f : ℝ → ℝ) → (x : ℝ) → ∀{L} → {{_ : Limit f(x) (L)}} → ℝ
   lim _ _ {L} = L
 
 module Continuity where
   open Limit
 
+  -- Statement that the point x of function f is a continous point
   ContinuousPoint : (ℝ → ℝ) → ℝ → Stmt
   ContinuousPoint f(x) = Limit f(x) (f(x))
 
+  -- Statement that the function f is continous
   Continuous : (ℝ → ℝ) → Stmt
   Continuous f = ∀{x} → ContinuousPoint f(x)
 
 module Derivative where
   open Limit
 
+  -- Statement that the derivative of a function f at a point p exists and its value is D
   Derivative : (ℝ → ℝ) → ℝ → ℝ → Stmt
   Derivative f(p) D = Limit(x ↦ ((f(x) − f(p))/(x − p)))(# 0)(D)
 
+  -- Derivative value of function f at point x (if the derivative exists)
   𝐷 : (f : ℝ → ℝ) → (x : ℝ) → ∀{D} → {{_ : Derivative f(x) D}} → ℝ
   𝐷 _ _ {D} = D
 
   -- DifferentiablePoint : (ℝ → ℝ) → ℝ → Stmt
+
+  module Theorems where
+    instance postulate Derivative-constant     : ∀{x a} → Derivative(x ↦ a)(x)(#(0))
+    instance postulate Derivative-id           : ∀{x}   → Derivative(x ↦ x)(x)(#(1))
+    instance postulate Derivative-monomial     : ∀{x a} → Derivative(x ↦ x ^ a)(x)(a ⋅ x ^ (a − #(1)))
+    instance postulate Derivative-[eˣ]         : ∀{x}   → Derivative(x ↦ e ^ x)(x)(e ^ x)
+    instance postulate Derivative-[+]-function : ∀{x f g F G} → {{_ : Derivative f(x)(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(x) + g(x))(x)(F + G)
+    instance postulate Derivative-[−]-function : ∀{x f g F G} → {{_ : Derivative f(x)(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(x) − g(x))(x)(F − G)
+    instance postulate Derivative-[⋅]-function : ∀{x f g F G} → {{_ : Derivative f(x)(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(x) ⋅ g(x))(x)(F ⋅ g(x) + f(x) ⋅ G)
+    instance postulate Derivative-[/]-function : ∀{x f g F G} → {{_ : Derivative f(x)(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(x) / g(x))(x)((F ⋅ g(x) − f(x) ⋅ G)/(g(x) ^ #(2)))
+    instance postulate Derivative-[∘]-function : ∀{x f g F G} → {{_ : Derivative f(g(x))(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(g(x)))(x)(F ⋅ G)
 
 -- postulate Axiom1 : {x y : ℝ} → (x < y) → ¬ (y < x)
 -- postulate Axiom2 : {x z : ℝ} → (x < z) → ∃(y ↦ (x < y) ∧ (y < z))
