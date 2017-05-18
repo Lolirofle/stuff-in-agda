@@ -5,7 +5,7 @@ open import List
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Logic.Predicate{l₁}{l₂}
 open import Relator.Equals{l₁}{l₂}
-open import Type{l₁}
+open import Type{l₂}
 
 -- Statement of whether a list is contained in the beginning of another list
 _isPrefixOf_ : ∀{T} → List(T) → List(T) → Stmt

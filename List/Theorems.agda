@@ -6,12 +6,12 @@ open import List
 open import List.Properties
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Logic.Predicate{l₁}{l₂}
-open import Relator.Equals{l₁}{l₂} renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_)
-open import Type{l₁}
+open import Relator.Equals{l₁} renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_)
+open import Type{l₂}
 
 -- Statement of whether a list is contained in the beginning of another list
 module OrderedContainment {T} where
-  data _contains-in-order_ : List{l₁}(T) → List{l₁}(T) → Stmt where
+  data _contains-in-order_ : List{l₂}(T) → List{l₂}(T) → Stmt where
     empty : (∅ contains-in-order ∅)
     use   : ∀{x}{L₁ L₂} → (L₁ contains-in-order L₂) → ((x ⊰ L₁) contains-in-order (x ⊰ L₂))
     skip  : ∀{x}{L₁ L₂} → (L₁ contains-in-order L₂) → ((x ⊰ L₁) contains-in-order L₂)
@@ -30,33 +30,35 @@ module OrderedContainment {T} where
   -- concatᵣ {L₁}{∅} = emptyᵣ -- Either this line or the first seems to be redundant
   concatᵣ {a₁ ⊰ L₁}{L₂} = skip{a₁}(concatᵣ{L₁}{L₂})
 
-  constructₗ : ∀{L₁ L₂} → (L₁ contains-in-order L₂) → List{l₁}(T)
+  constructₗ : ∀{L₁ L₂} → (L₁ contains-in-order L₂) → List{l₂}(T)
   constructₗ {L₁}{_} (_) = L₁
 
-  constructᵣ : ∀{L₁ L₂} → (L₁ contains-in-order L₂) → List{l₁}(T)
+  constructᵣ : ∀{L₁ L₂} → (L₁ contains-in-order L₂) → List{l₂}(T)
   constructᵣ {_}{L₂} (_) = L₂
 open OrderedContainment using (_contains-in-order_) public
 
--- List as sets
+-- List as finite sets
 module Sets {T} where
   open import Numeral.Natural
 
   -- The statement of whether an element is in a list
-  data _∈_ : T → List{l₁}(T) → Stmt where
+  data _∈_ : T → List{l₂}(T) → Stmt where
     [∈]-use  : ∀{a}{L} → (a ∈ (a ⊰ L)) -- Proof of containment when the element is the first element in the list
     [∈]-skip : ∀{a x}{L} → (a ∈ L) → (a ∈ (x ⊰ L)) -- Proof of containment of a longer list when already having a proof of a shorter list
 
-  _∉_ : T → List{l₁}(T) → Stmt
+  _∉_ : T → List{l₂}(T) → Stmt
   _∉_ x L = ¬(x ∈ L)
 
-  _∋_ : List{l₁}(T) → T → Stmt
+  _∋_ : List{l₂}(T) → T → Stmt
   _∋_ L x = (x ∈ L)
 
-  _∌_ : List{l₁}(T) → T → Stmt
+  _∌_ : List{l₂}(T) → T → Stmt
   _∌_ L x = ¬(L ∋ x)
 
   -- General proofs about the containment relation
   module [∈]-proof where
+    open import Logic.Theorems{l₁ Lvl.⊔ l₂}
+
     pattern use  {a}{L}          = [∈]-use  {a}{L}
     pattern skip {a}{x}{L} proof = [∈]-skip {a}{x}{L} (proof)
 
@@ -86,24 +88,32 @@ module Sets {T} where
     concat : ∀{a}{L₁ L₂} → ((a ∈ L₁)∨(a ∈ L₂)) ↔ (a ∈ (L₁ ++ L₂))
     concat = [↔]-intro concatₗ concatᵣ
 
+    [++]-commutativity : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → (a ∈ (L₂ ++ L₁))
+    [++]-commutativity {a}{L₁}{L₂} a∈L₁++L₂ = concatᵣ{a}{L₂}{L₁}([∨]-commutativity(concatₗ(a∈L₁++L₂)))
+
+    construct : ∀{a}{L} → (a ∈ L) → T
+    construct{a}(_) = a
+
     -- at : ∀{x}{L} → (n : ℕ) → (x ∈ (reduceᵣ(⊰) L))
     -- at(𝟎)    = use
     -- at(𝐒(n)) = skip(at(n))
 
-  _⊆_ : List{l₁}(T) → List{l₁}(T) → Stmt
-  _⊆_ L₁ L₂ = ∀{x} → (x ∈ L₁) ← (x ∈ L₂)
+  -- Other relators regarding sets
+  module Relators where
+    _⊆_ : List{l₂}(T) → List{l₂}(T) → Stmt
+    _⊆_ L₁ L₂ = ∀{x} → (x ∈ L₁) ← (x ∈ L₂)
 
-  _⊇_ : List{l₁}(T) → List{l₁}(T) → Stmt
-  _⊇_ L₁ L₂ = ∀{x} → (x ∈ L₁) → (x ∈ L₂)
+    _⊇_ : List{l₂}(T) → List{l₂}(T) → Stmt
+    _⊇_ L₁ L₂ = ∀{x} → (x ∈ L₁) → (x ∈ L₂)
 
-  _≡_ : List{l₁}(T) → List{l₁}(T) → Stmt
-  _≡_ L₁ L₂ = ∀{x} → (x ∈ L₁) ↔ (x ∈ L₂)
+    _≡_ : List{l₂}(T) → List{l₂}(T) → Stmt
+    _≡_ L₁ L₂ = ∀{x} → (x ∈ L₁) ↔ (x ∈ L₂)
 
-  _⊈_ : List{l₁}(T) → List{l₁}(T) → Stmt
-  _⊈_ L₁ L₂ = ¬(L₁ ⊆ L₂)
+    _⊈_ : List{l₂}(T) → List{l₂}(T) → Stmt
+    _⊈_ L₁ L₂ = ¬(L₁ ⊆ L₂)
 
-  _⊉_ : List{l₁}(T) → List{l₁}(T) → Stmt
-  _⊉_ L₁ L₂ = ¬(L₁ ⊇ L₂)
+    _⊉_ : List{l₂}(T) → List{l₂}(T) → Stmt
+    _⊉_ L₁ L₂ = ¬(L₁ ⊇ L₂)
 
-  _≢_ : List{l₁}(T) → List{l₁}(T) → Stmt
-  _≢_ L₁ L₂ = ¬(L₁ ≡ L₂)
+    _≢_ : List{l₂}(T) → List{l₂}(T) → Stmt
+    _≢_ L₁ L₂ = ¬(L₁ ≡ L₂)

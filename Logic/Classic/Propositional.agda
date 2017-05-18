@@ -34,7 +34,7 @@ record Model {lvl} (Prop : Set(lvl)) : Set(lvl) where
     interpretProp : Prop → Bool
 
 module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (symbols : Syntax.Symbols Prop Formula) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) id) where
-  open import Relator.Equals{lvl₁}{lvl₂}
+  open import Relator.Equals{lvl₂}{lvl₁}
   open import List
   open Syntax.Symbols(symbols)
   open Syntax.Symbols(meta-symbols)

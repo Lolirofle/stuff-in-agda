@@ -1,19 +1,19 @@
-module Numeral.Natural.Relation.Properties where
+module Numeral.Natural.Relation.Properties{lvl} where
 
 import Level as Lvl
 open import Data
 open import Functional
-open import Logic.Propositional{Lvl.𝟎}
-open import Logic.Predicate{Lvl.𝟎}
+open import Logic.Propositional{lvl}
+open import Logic.Predicate{lvl}{Lvl.𝟎}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Oper.Properties
-open import Numeral.Natural.Relation
-open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-open import Structure.Operator.Properties
-open import Structure.Relator.Ordering
-open import Structure.Relator.Properties
-open import Type
+open import Numeral.Natural.Oper.Properties{lvl}
+open import Numeral.Natural.Relation{lvl}
+open import Relator.Equals{lvl}{Lvl.𝟎}
+open import Structure.Operator.Properties{lvl}{Lvl.𝟎}
+open import Structure.Relator.Ordering{lvl}{Lvl.𝟎}
+open import Structure.Relator.Properties{lvl}{Lvl.𝟎}
+open import Type{Lvl.𝟎}
 
 instance
   [≤]-from-[≡] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
@@ -64,7 +64,7 @@ instance
 
 instance
   [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
-  [≤]-antisymmetry {a} {b} (([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) = [≡]-substitution (n ↦ (a + n ≡ b)) n₁≡0 a+n₁≡b where
+  [≤]-antisymmetry {a} {b} (([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) = [≡]-elimᵣ n₁≡0 {n ↦ (a + n ≡ b)} a+n₁≡b where
     n₁+n₂≡0 : ((n₁ + n₂) ≡ 0)
     n₁+n₂≡0 =
       [+]-injectiveᵣ(

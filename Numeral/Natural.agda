@@ -14,7 +14,7 @@ data ℕ : Set where
 𝐏(𝐒(n)) = n
 
 -- The induction proof method on natural numbers
-[ℕ]-induction : {X : ℕ → Set} → X(𝟎) → ((i : ℕ) → X(i) → X(𝐒(i))) → (n : ℕ) → X(n)
+[ℕ]-induction : ∀{lvl}{X : ℕ → Set(lvl)} → X(𝟎) → ((i : ℕ) → X(i) → X(𝐒(i))) → (n : ℕ) → X(n)
 [ℕ]-induction base next 𝟎 = base
 [ℕ]-induction base next (𝐒(n)) = next(n)([ℕ]-induction base next n)
 

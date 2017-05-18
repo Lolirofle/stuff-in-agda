@@ -3,7 +3,7 @@ module Structure.Operator.Properties {l₁} {l₂} where
 import      Level as Lvl
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Relator.Equals{l₁}{l₂}
-open import Type{l₁}
+open import Type{l₂}
 
 -- Definition of commutativity
 Commutativity : {T₁ T₂ : Type} → (T₁ → T₁ → T₂) → Stmt

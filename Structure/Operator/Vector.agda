@@ -6,7 +6,7 @@ open import Relator.Equals{l₁}{l₂}
 open import Structure.Operator.Field{l₁}{l₂}
 open import Structure.Operator.Group{l₁}{l₂}
 open import Structure.Operator.Properties{l₁}{l₂}
-open import Type{l₁}
+open import Type{l₂}
 
 record VectorSpaceSym {V S : Type} : Type where
   field

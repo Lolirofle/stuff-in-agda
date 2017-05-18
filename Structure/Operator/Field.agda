@@ -5,7 +5,7 @@ open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Relator.Equals{l₁}{l₂}
 open import Structure.Operator.Group{l₁}{l₂}
 open import Structure.Operator.Properties{l₁}{l₂}
-open import Type{l₁}
+open import Type{l₂}
 
 record FieldSym {T : Type} : Type where
   field

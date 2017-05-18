@@ -3,7 +3,7 @@ module Structure.Function.Linear {l₁} {l₂} where
 import      Level as Lvl
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Relator.Equals{l₁}{l₂}
-open import Type{l₁}
+open import Type{l₂}
 
 record LinearMap {V S : Type} (f : V → V) (_+_ : V → V → V) (_⋅_ : S → V → V) : Stmt where
   field

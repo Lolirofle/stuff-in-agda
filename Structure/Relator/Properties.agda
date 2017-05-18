@@ -5,7 +5,7 @@ open import Data
 open import Functional
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Numeral.Natural
-open import Type{l₁}
+open import Type{l₂}
 
 infixl 1000 _🝖_
 

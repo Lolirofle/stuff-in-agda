@@ -6,7 +6,7 @@ open import Functional
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Logic.Theorems{l₁ Lvl.⊔ l₂}
 open import Structure.Relator.Properties{l₁}{l₂}
-open import Type{l₁}
+open import Type{l₂}
 
 record WeakPartialOrder {T : Type} (_≤_ : T → T → Stmt) (_≡_ : T → T → Stmt) : Stmt where
   field

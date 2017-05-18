@@ -5,7 +5,7 @@ open import Functional
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Logic.Predicate{l₁}{l₂}
 open import Relator.Equals{l₁}{l₂}
-open import Type{l₁}
+open import Type{l₂}
 
 -- Definition of injectivity for a function
 Injective : ∀{X Y : Type} → (X → Y) → Stmt

@@ -5,7 +5,7 @@ open import Functional
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Structure.Relator.Equivalence{l₁}{l₂}
 open import Structure.Relator.Properties{l₁}{l₂}
-open import Type{l₁}
+open import Type{l₂}
 
 -- Definition of equality based on the exact representation of a data structure
 -- TODO: Is this called an instance of an "intensional equality"?

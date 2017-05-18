@@ -1,22 +1,23 @@
-module List.Properties where
+module List.Properties{lvl₁}{lvl₂} where
 
 import Level as Lvl
 open import Functional
 open import List
-open import Logic.Propositional
+open import Logic.Propositional{lvl₁ Lvl.⊔ lvl₂}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Oper.Properties
-open import Relator.Equals
+open import Numeral.Natural.Oper.Properties{lvl₁}
+open import Relator.Equals{lvl₁}
 open import Structure.Operator.Properties
+open import Type{lvl₂}
 
 instance
-  [++]-identityₗ : ∀{lvl₁}{lvl₂}{T} → Identityₗ {lvl₁}{lvl₂}{List(T)} (_++_) ∅
+  [++]-identityₗ : ∀{T} → Identityₗ {lvl₁}{lvl₂}{List(T)} (_++_) ∅
   [++]-identityₗ = [≡]-intro
 
 instance
-  [++]-identityᵣ : ∀{lvl₁}{lvl₂}{T} → Identityᵣ {lvl₁}{lvl₂}{List(T)} (_++_) ∅
-  [++]-identityᵣ {lvl₁}{lvl₂}{T} = List-induction{lvl₁}{lvl₂} base next where
+  [++]-identityᵣ : ∀{T} → Identityᵣ {lvl₁}{lvl₂}{List(T)} (_++_) ∅
+  [++]-identityᵣ {T} = List-induction{lvl₁}{lvl₂} base next where
     base : (∅ ++ ∅) ≡ ∅
     base = [≡]-intro
 
@@ -27,8 +28,8 @@ instance
     -- (x ⊰ l) ++ ∅ ≡ x ⊰ l
 
 instance
-  [++]-associativity : ∀{lvl₁}{lvl₂}{T} → Associativity {lvl₁}{lvl₂} {List(T)} (_++_)
-  [++]-associativity {lvl₁}{lvl₂} {T} {l₀} {l₁} {l₂} = List-induction{lvl₁}{lvl₂} base next {l₀} where
+  [++]-associativity : ∀{T} → Associativity {lvl₁}{lvl₂} {List(T)} (_++_)
+  [++]-associativity {T} {l₀} {l₁} {l₂} = List-induction{lvl₁}{lvl₂} base next {l₀} where
     base : ((∅ ++ l₁) ++ l₂) ≡ (∅ ++ (l₁ ++ l₂))
     base = [≡]-intro
     -- l₁++l₂ = l₁++l₂
@@ -43,8 +44,8 @@ instance
     -- ((x ⊰ l)++l₁)++l₂ = (x ⊰ l)++(l₁++l₂)
 
 instance
-  reverse-[++] : ∀{lvl₁}{lvl₂}{T}{l₁ l₂ : List(T)} → (reverse(l₁ ++ l₂) ≡ reverse(l₂) ++ reverse(l₁))
-  reverse-[++] {lvl₁}{lvl₂} {T} {l₁} {l₂} = List-induction{lvl₁}{lvl₂} base next {l₁} where
+  reverse-[++] : ∀{T}{l₁ l₂ : List(T)} → (reverse(l₁ ++ l₂) ≡ reverse(l₂) ++ reverse(l₁))
+  reverse-[++] {T} {l₁} {l₂} = List-induction{lvl₁}{lvl₂} base next {l₁} where
     base : reverse(∅ ++ l₂) ≡ reverse(l₂) ++ reverse(∅)
     base =
       ([≡]-transitivity([∧]-intro
@@ -66,7 +67,7 @@ instance
     next x l stmt =
       ([≡]-transitivity([∧]-intro
         ([≡]-with-[(list ↦ list ++ (singleton x))] stmt)
-        ([++]-associativity{lvl₁}{lvl₂} {_} {reverse(l₂)} {reverse(l)} {singleton x})
+        ([++]-associativity {_} {reverse(l₂)} {reverse(l)} {singleton x})
       ))
     -- reverse(l₁++l₂) = reverse(l₂)++reverse(l₁)
     -- reverse(l₁++l₂)++(singleton x) = (reverse(l₂)++reverse(l₁))++(singleton x)
@@ -81,7 +82,7 @@ instance
 
 instance
   length-[++] : ∀{T}{l₁ l₂ : List(T)} → (length(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
-  length-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
+  length-[++] {T} {l₁} {l₂} = List-induction{lvl₁}{Lvl.𝟎} base next {l₁} where
     base : length(∅ ++ l₂) ≡ length{_}{T}(∅) + length(l₂)
     base = [≡]-symmetry [+]-identityₗ
 
@@ -119,6 +120,11 @@ instance
   --   -- length(reverse(l))+length(x⊰ε) = length(x⊰l)
   --   -- length(reverse(l)++x⊰ε) = length(x⊰l)
   --   -- length(reverse(l)++singleton(x)) = length(x⊰l)
+
+instance
+  length-[∅]ᵣ : ∀{T : Type}{L : List(T)} → (length(L) ≡ 0) → (L ≡ ∅)
+  length-[∅]ᵣ {_}{∅}     (_) = [≡]-intro
+  length-[∅]ᵣ {_}{_ ⊰ _} ()
 
 -- TODO: Empty list is prefix and suffix of everything
 -- TODO: Whole list is prefix and suffix of everything

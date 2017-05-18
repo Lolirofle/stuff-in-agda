@@ -4,7 +4,7 @@ import      Level as Lvl
 open import Functional
 open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Relator.Equals{l₁}{l₂}
-open import Type{l₁}
+open import Type{l₂}
 
 data SSet(T : Type) : Type where
   ∅ : SSet(T)

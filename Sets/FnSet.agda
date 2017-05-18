@@ -10,7 +10,7 @@ open import Logic.Propositional{l₁ Lvl.⊔ l₂}
 open import Functional
 open import Operator.Equals
 open import Relator.Equals{l₁}{l₂}
-open import Type{l₁}
+open import Type{l₂}
 
 record FnSet(T : Type) : Type where
   field

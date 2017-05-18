@@ -1,12 +1,12 @@
-module Numeral.Natural.Oper.Properties where
+module Numeral.Natural.Oper.Properties{lvl} where
 
 import Level as Lvl
 open import Data
 open import Functional
-open import Logic.Propositional{Lvl.𝟎}
+open import Logic.Propositional{lvl}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+open import Relator.Equals{lvl}{Lvl.𝟎}
 open import Structure.Function.Domain
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties

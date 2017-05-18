@@ -1,10 +1,10 @@
-module Numeral.Natural.Prime where
+module Numeral.Natural.Prime{lvl} where
 
 import Level as Lvl
-open import Logic.Propositional{Lvl.𝟎}
+open import Logic.Propositional{lvl}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Relation
+open import Numeral.Natural.Relation{lvl}
 
 Prime : (n : ℕ) → Stmt
 Prime n = ∀{x y : ℕ} → (n divides (x ⋅ y)) → (n divides x) ∨ (n divides y)
