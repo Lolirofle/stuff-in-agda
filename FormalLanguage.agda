@@ -33,6 +33,7 @@ Word     = List
 -- Copied (with modifications) from: http://agda.readthedocs.io/en/v2.5.2/language/sized-types.html (2017-05-13)
 -- which links the following paper: "Formal Languages, Formally and Coinductively, Dmitriy Traytel, FSCD (2016)" [https://www21.in.tum.de/~traytel/papers/fscd16-coind_lang/paper.pdf]
 record Language (∑ : Alphabet) {s₁ : Size} : Set where
+  constructor Lang
   coinductive
   field
     accepts-ε : Bool

@@ -11,7 +11,7 @@ open import Type{l₁}
 -- TODO: Is this called an instance of an "intensional equality"?
 infixl 15 _≡_
 data _≡_ {T : Type} : T → T → Stmt where
-  [≡]-intro : {x : T} → (x ≡ x)
+  instance [≡]-intro : {x : T} → (x ≡ x)
   -- Interpretation:
   --   The only way to construct something of type _≡_ is to have both sides equal.
   --   When matching on the constructor, the type checker "unifies" the two terms,
@@ -19,13 +19,17 @@ data _≡_ {T : Type} : T → T → Stmt where
   --   This is how the builtin pattern matching by [≡]-intro works, //TODO: ...I think
   --   and therefore many propositions for equality becomes "trivial" textually.
 
-[≡]-elim : ∀{T} → ∀{x y : T} → ∀{f : T → Stmt} → (x ≡ y) → f(x) ↔ f(y)
-[≡]-elim eq = [↔]-intro ([≡]-elimₗ eq) ([≡]-elimᵣ eq) where
-  [≡]-elimₗ : ∀{T} → ∀{x y : T} → ∀{f : T → Stmt} → (x ≡ y) → f(x) ← f(y)
-  [≡]-elimₗ [≡]-intro F = F
+_≢_ : ∀{T : Type} → T → T → Stmt
+_≢_ a b = ¬(a ≡ b)
 
-  [≡]-elimᵣ : ∀{T} → ∀{x y : T} → ∀{f : T → Stmt} → (x ≡ y) → f(x) → f(y)
-  [≡]-elimᵣ [≡]-intro F = F
+[≡]-elimₗ : ∀{T} → ∀{x y : T} → (x ≡ y) → ∀{f : T → Stmt} → f(x) ← f(y)
+[≡]-elimₗ [≡]-intro F = F
+
+[≡]-elimᵣ : ∀{T} → ∀{x y : T} → (x ≡ y) → ∀{f : T → Stmt} → f(x) → f(y)
+[≡]-elimᵣ [≡]-intro F = F
+
+[≡]-elim : ∀{T} → ∀{x y : T} → (x ≡ y) → ∀{f : T → Stmt} → f(x) ↔ f(y)
+[≡]-elim eq = [↔]-intro ([≡]-elimₗ eq) ([≡]-elimᵣ eq)
 
 instance
   [≡]-reflexivity : ∀{T} → Reflexivity {T} (_≡_ {T})
@@ -44,7 +48,7 @@ instance
 [≡]-with-[_] f [≡]-intro = [≡]-intro
 
 -- Replaces occurrences of the elements in the equality
-[≡]-substitution : ∀{T} → (f : T → Stmt) → ∀{x y : T} → (x ≡ y) → f(x) → f(y)
+[≡]-substitution : ∀{T} → (f : T → Type) → ∀{x y : T} → (x ≡ y) → f(x) → f(y)
 [≡]-substitution f [≡]-intro fx = fx
 
 instance

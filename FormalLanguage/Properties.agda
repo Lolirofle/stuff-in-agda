@@ -1,8 +1,11 @@
 module FormalLanguage.Properties where
 
 open import Agda.Builtin.Size
+open import Boolean
 import      Level as Lvl
 open import FormalLanguage
+open        FormalLanguage.Oper using (_is-in_)
+open import Functional
 open import List renaming (∅ to [])
 open import Logic.Propositional{Lvl.𝟎}
 open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
@@ -50,7 +53,19 @@ module _ {∑} where
   postulate [∁]-containment : ∀{x}{A : Language(∑){ω}} → (x ∈ (∁ A)) ↔ (x ∉ A)
   postulate [∅]-containment : ∀{x}{A : Language(∑){ω}} → (x ∈ ∅) ↔ ⊥
   postulate [ε]-containment : ∀{x}{A : Language(∑){ω}} → (x ∈ ε) ↔ (x ≡ [])
-  -- postulate Language-[≡]-intro : {A B : Language(∑){ω}} → (∀{x} → (x ∈ A) ↔ (x ∈ B)) ↔ (A ≡ B)
+
+  -- Language-[≡]-intro : ∀{A B : Language(∑){ω}} → (∀{w} → (w is-in A) ≡ (w is-in B)) ↔ (A ≡ B)
+  -- Language-[≡]-intro = [↔]-intro Language-[≡]-introₗ Language-[≡]-introᵣ where
+  --   Language-[≡]-introₗ : ∀{A B} → (∀{w} → (w is-in A) ≡ (w is-in B)) ← (A ≡ B)
+  --   Language-[≡]-introₗ [≡]-intro = [≡]-intro
+
+  --   Language-[≡]-introᵣ : ∀{A B} → (∀{w} → (w is-in A) ≡ (w is-in B)) → (A ≡ B)
+  --   Language-[≡]-introᵣ {Lang 𝑇 _}{Lang 𝑇 _} f with f{[]}
+  --   Language-[≡]-introᵣ {Lang 𝑇 _}{Lang 𝑇 _} f | [≡]-intro = [≡]-intro
+    --   f{∅}     = [≡]-intro
+    --   f{c ⊰ w} = [≡]-intro
+
+  -- postulate Language-[≡]-intro : {A B : Language(∑){ω}} → (∀{w} → (w ∈ A) ↔ (w ∈ B)) ↔ (A ≡ B)
 
 -- TODO: Set properties
 -- TODO: Connection with logic (from sets) in relations

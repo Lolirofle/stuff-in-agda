@@ -172,6 +172,14 @@ instance
       commuteBothTemp {x₁} {n} {x₂} {n} ([≡]-with-[ 𝐏 ] (commuteBothTemp {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
     )
 
-[+]-sum-is-0 : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)
-[+]-sum-is-0 {a} {0}    a+0≡0 = a+0≡0
-[+]-sum-is-0 {a} {𝐒(n)} a+𝐒n≡0 = [+]-sum-is-0 {a} {n} ([≡]-with-[ 𝐏 ] a+𝐒n≡0)
+instance
+  [+]-sum-is-0 : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)
+  [+]-sum-is-0 {a}{0}    a+0≡0 = a+0≡0
+  [+]-sum-is-0 {a}{𝐒(n)} a+𝐒n≡0 = [+]-sum-is-0 {a} {n} ([≡]-with-[ 𝐏 ] a+𝐒n≡0)
+
+-- instance
+--   [⋅]-product-is-0 : ∀{a b} → (a ⋅ b ≡ 0) → ((a ≡ 0)∨(b ≡ 0))
+--   [⋅]-product-is-0 {a}{0}    a+0≡0 = a+0≡0
+--   [⋅]-product-is-0 {0}{b}    a+0≡0 = a+0≡0
+--   [⋅]-product-is-0 {_}{𝐒(n)} ()
+--   [⋅]-product-is-0 {𝐒(n)}{_} ()
