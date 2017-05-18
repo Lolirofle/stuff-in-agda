@@ -59,16 +59,6 @@ instance
       transitivity = [≡]-transitivity
     }
 
-
-
--- testEqInstance : ∀{T} {{_ : Equivalence {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
--- testEqInstance {{eq}} = Equivalence.symmetry eq
--- testEqInstance2 : ∀{T} → Symmetry {T} (_≡_ {T})
--- testEqInstance2 = testEqInstance
-
--- testSymInstance : ∀{T} {{_ : Symmetry {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
--- testSymInstance {{sym}} = sym
-
 -- Definition of uniqueness of elements satisfying a property
 Uniqueness : ∀{T} → (T → Stmt) → Stmt
 Uniqueness {T} property = ∀{x y : T} → (property(x) ∧ property(y)) → (x ≡ y)

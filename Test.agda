@@ -1,66 +1,73 @@
 module Test where
 
-import      Automaton.DeterministicFinite
-import      Automaton.NonDeterministicFinite
-import      Automaton.Pushdown
-import      Automaton.TuringMachine
-import      Boolean
-import      Boolean.Theorems
-import      Boolean.Operators
-open import Data
-import      FFI.IO   as FFI
-import      FFI.Type as FFI
-import      FormalLanguage
-import      FormalLanguage.ContextFreeGrammar
-import      FormalLanguage.Properties
-import      FormalLanguage.RegularExpression
-open import Functional
-import      Functional.Raise
-import      Functional.PrimitiveRecursion
-import      Level as Lvl
-import      List
-import      List.Properties
-import      List.Relation
-import      List.Theorems
-import      Logic.Classic.Propositional
-open import Logic.Propositional{Lvl.𝟎}
-import      Logic.Predicate
-open import Logic.Theorems{Lvl.𝟎}
-import      Numeral.Integer
-import      Numeral.Integer.Oper
-import      Numeral.Integer.Sign
-open import Numeral.Natural
-open import Numeral.Natural.Function
-open import Numeral.Natural.Oper
-open import Numeral.Natural.Oper.Properties
-open import Numeral.Natural.Prime
-open import Numeral.Natural.Relation
-open import Numeral.Natural.Relation.Properties
-import      Numeral.Natural.UnclosedOper
-import      Numeral.Real
-import      Numeral.Sign
-import      Numeral.Sign.Oper
-import      Numeral.Sign.Oper0
-import      Operator.Equals
-open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-import      Sets.FnSet
-import      Sets.SimpleSet
-import      Sets.TypeSet
-import      Structure.Function.Domain
-import      Structure.Function.Linear
-import      Structure.Function.Ordering
-import      Structure.Operator.Field
-import      Structure.Operator.Group
-import      Structure.Operator.Properties
-import      Structure.Operator.SetAlgebra
-import      Structure.Operator.Vector
-import      Structure.Relator.Equivalence as Eq
-import      Structure.Relator.Ordering
-import      Structure.Relator.Properties
-import      String
-import      Type
+import Automaton.DeterministicFinite
+import Automaton.NonDeterministicFinite
+import Automaton.Pushdown
+import Automaton.TuringMachine
+import Boolean
+import Boolean.Theorems
+import Boolean.Operators
+import Data
+import FFI.IO   as FFI
+import FFI.Type as FFI
+import FormalLanguage
+import FormalLanguage.ContextFreeGrammar
+import FormalLanguage.Properties
+import FormalLanguage.RegularExpression
+import Functional
+import Functional.Raise
+import Functional.PrimitiveRecursion
+import Level as Lvl
+import List
+import List.Properties
+import List.Relation
+import List.Theorems
+import Logic.Classic.Propositional
+import Logic.Propositional
+import Logic.Predicate
+import Logic.Theorems
+import Numeral.Integer
+import Numeral.Integer.Oper
+import Numeral.Integer.Sign
+import Numeral.Natural
+import Numeral.Natural.Function
+import Numeral.Natural.Oper
+import Numeral.Natural.Oper.Properties
+import Numeral.Natural.Prime
+import Numeral.Natural.Relation
+import Numeral.Natural.Relation.Properties
+import Numeral.Natural.UnclosedOper
+import Numeral.Real
+import Numeral.Sign
+import Numeral.Sign.Oper
+import Numeral.Sign.Oper0
+import Operator.Equals
+import Relator.Equals
+import Sets.FnSet
+import Sets.SimpleSet
+import Sets.TypeSet
+import Structure.Function.Domain
+import Structure.Function.Linear
+import Structure.Function.Ordering
+import Structure.Operator.Field
+import Structure.Operator.Group
+import Structure.Operator.Properties
+import Structure.Operator.SetAlgebra
+import Structure.Operator.Vector
+import Structure.Relator.Equivalence as Eq
+import Structure.Relator.Ordering
+import Structure.Relator.Properties
+import String
+import Type
 
 module NumAndDivisionProofs where
+  open Functional
+  open Logic.Propositional{Lvl.𝟎}
+  open Numeral.Natural
+  open Numeral.Natural.Oper
+  open Numeral.Natural.Relation
+  open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+
   ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
   ℕ4IsEven = Even0 ⇒ Even𝐒 ⇒ Even𝐒
 
@@ -106,11 +113,12 @@ module NumAndDivisionProofs where
   ℕ0Eqℕ0⋅4 : 0 ≡ 0 ⋅ 4
   ℕ0Eqℕ0⋅4 = [≡]-reflexivity
 
-testBottom : (⊥ ∧ ℕ) → ℕ
-testBottom = [∧]-elimᵣ
+  testBottom : (⊥ ∧ ℕ) → ℕ
+  testBottom = [∧]-elimᵣ
 
 module DataTest where
-  open import Type{Lvl.𝟎}
+  open Data
+  open Type{Lvl.𝟎}
 
   data Data1 : Type where
     data1,1 : Data1
@@ -181,7 +189,9 @@ module DataTest where
 -- repeat2 f x complex = f (f x)
 
 module TestRepeatingStuff where
-  open import Type
+  open Data
+  open Numeral.Natural
+  open Type
 
   repeat : {R : Set} → R → (R → R) → ℕ → R
   repeat x _ 𝟎 = x
@@ -231,6 +241,10 @@ module TestRepeatingStuff where
 --   testf₂ = [≡]-reflexivity
 
 module Test2 where
+  open Functional
+  open Numeral.Natural
+  open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+
   f : ℕ
   f = (Functional.Raise.repeatᵣ 4 𝐒 (_∘_) id) 0
 
@@ -241,7 +255,9 @@ module Test2 where
 -- f₂ = Functional.Raise.repeatᵣ 2 id (_∘_) Tuple.curry
 
 module TestTypeAscription where
-  open import Type{Lvl.𝟎}
+  open Numeral.Natural
+  open Type{Lvl.𝟎}
+
   ty = 1 :of: ℕ
   -- ty2 = 1 :of: ⊥
 
@@ -260,8 +276,11 @@ module TestSetUniverses {n} (Type : Set n) where
   testFn x = x
 
 module testEqProof where
-  open        Structure.Operator.Properties{Lvl.𝟎}
-  open import Type{Lvl.𝟎}
+  open Logic.Propositional{Lvl.𝟎}
+  open Numeral.Natural.Oper
+  open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open Structure.Operator.Properties{Lvl.𝟎}
+  open Type{Lvl.𝟎}
 
   minSkit : {{_ : Absorberₗ (_⋅_) (0)}} → {{_ : Identityᵣ (_+_) (0)}} → ∀{x} → (1 ≡ ((0 ⋅ x) + 1) + 0)
   minSkit {{absorb}} {{id}} {x} =
@@ -273,7 +292,9 @@ module testEqProof where
     ))
 
 module testDiv where
+  open Numeral.Natural.Oper
   open Numeral.Natural.UnclosedOper
+  open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 
   testDiv1 : 4 /₀ 2 ≡ 2
   testDiv1 = [≡]-reflexivity
@@ -289,6 +310,7 @@ module testDiv where
 
 module testList where
   open List
+  open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 
   -- rev1 : (4 ⊰ 3 ⊰ 2 ⊰ 1 ⊰ ∅) → reverse(1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅)
   -- rev1 = id
@@ -313,8 +335,10 @@ main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"
 
 module testPropositionalLogic where
-  open import Logic.Classic.Propositional as Propositional
-  open import Type{Lvl.𝟎}
+  open Functional
+  open Logic.Propositional{Lvl.𝟎}
+  module Propositional = Logic.Classic.Propositional
+  open Type{Lvl.𝟎}
 
   symbols : ∀{T : Set(Lvl.𝟎)} → Propositional.Syntax.Symbols T (const (Set(Lvl.𝟎)))
   symbols =
@@ -332,11 +356,11 @@ module testPropositionalLogic where
     }
 
 module testListOrderedContainment where
-  open import Functional
-  open import Numeral.Natural
-  open import List
-  open import List.Theorems{Lvl.𝟎}{Lvl.𝟎}
-  open        List.Theorems.OrderedContainment hiding (_contains-in-order_)
+  open Functional
+  open Numeral.Natural
+  open List
+  open List.Theorems{Lvl.𝟎}{Lvl.𝟎}
+  open List.Theorems.OrderedContainment hiding (_contains-in-order_)
 
   test1 : ([ 1 ]) contains-in-order ([ 1 ])
   test1 = use(empty)
@@ -355,3 +379,82 @@ module testListOrderedContainment where
 
   test6 : ([ 1 ⊰ 10 ⊰ 2 ⊰ 3 ⊰ 20 ⊰ 30 ⊰ 4 ⊰ 40 ]) contains-in-order ([ 1 ⊰ 2 ⊰ 3 ⊰ 4 ])
   test6 = (use ∘ skip ∘ use ∘ use ∘ skip ∘ skip ∘ use ∘ skip)(empty)
+
+module testPrimitiveRecursiveDefinitions where
+  open   Data
+  open   Functional.PrimitiveRecursion
+  open   Functional.PrimitiveRecursion.OperShortcut
+  open   Numeral.Natural
+  import Numeral.Natural.Oper     as Nat
+  import Numeral.Natural.Function as Nat
+  open   Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+
+  plus   = Rec(2) (P(1)(0)) (Comp(1)(3) (Succ) (P(3)(1)))
+  pred   = Rec(1) (Zero) (P(2)(0))
+  monus  = Comp(2)(2) (Rec(2) (P(1)(0)) (Comp(1)(3) (pred) (P(3)(1)))) (P(2)(1) , P(2)(0))
+  max    = Comp(2)(2) (plus) (P(2)(0) , Comp(2)(2) (monus) (P(2)(1) , P(2)(0)))
+  min    = Comp(2)(2) (monus) (plus , max)
+  iszero = Rec(1) (Comp(1)(0) (Succ) (Zero)) (Comp(0)(2) (Zero) <>)
+  const3 = Comp(1)(0) (Succ) (Comp(1)(0) (Succ) (Comp(1)(0) (Succ) (Zero)))
+
+  -- testPlus1 : evaluate plus(4 , 2) ≡ 6
+  -- testPlus1 = [≡]-intro
+
+  -- testMonus1 : evaluate monus(4 , 0) ≡ 4
+  -- testMonus1 = [≡]-intro
+
+  -- testMonus2 : evaluate monus(0 , 4) ≡ 0
+  -- testMonus2 = [≡]-intro
+
+  -- testMonus3 : evaluate monus(10 , 2) ≡ 8
+  -- testMonus3 = [≡]-intro
+
+  -- testMonus4 : evaluate monus(2 , 10) ≡ 0
+  -- testMonus4 = [≡]-intro
+
+  -- testMin1 : evaluate min(3 , 2) ≡ Nat.min(3)(2)
+  -- testMin1 = [≡]-intro
+
+  proofPred : ∀{n} → evaluate pred(n) ≡ 𝐏(n)
+  proofPred{𝟎}    = [≡]-intro
+  proofPred{𝐒(n)} = [≡]-intro
+
+  proofPlus : ∀{a b} → evaluate plus(b , a) ≡ (a Nat.+ b)
+  proofPlus{𝟎}   {𝟎}    = [≡]-intro
+  proofPlus{𝐒(_)}{𝟎}    = [≡]-intro
+  proofPlus{a}   {𝐒(b)} = [≡]-with-[ 𝐒 ] (proofPlus{a}{b})
+
+  is-zero : ℕ → ℕ
+  is-zero(0) = 1
+  is-zero(_) = 0
+
+  proofIsZero : ∀{n} → evaluate iszero(n) ≡ is-zero(n)
+  proofIsZero{𝟎}    = [≡]-intro
+  proofIsZero{𝐒(_)} = [≡]-intro
+
+  proofMonus : ∀{a} → evaluate monus(a , 𝟎) ≡ (a Nat.−₀ 𝟎)
+  proofMonus{𝟎} = [≡]-intro
+  proofMonus{_} = [≡]-intro
+
+  proofMax : ∀{a} → evaluate max(0 , a) ≡ Nat.max(a)(0)
+  proofMax{𝟎}    = [≡]-intro
+  proofMax{𝐒(_)} = [≡]-intro
+
+  -- proofMin : ∀{a} → evaluate min(0 , a) ≡ Nat.min(a)(0)
+  -- proofMin{𝟎}    = [≡]-intro
+  -- proofMin{𝐒(_)} = [≡]-intro
+
+module testEq where
+  -- testEqInstance : ∀{T} {{_ : Equivalence {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
+  -- testEqInstance {{eq}} = Equivalence.symmetry eq
+  -- testEqInstance2 : ∀{T} → Symmetry {T} (_≡_ {T})
+  -- testEqInstance2 = testEqInstance
+
+  -- testSymInstance : ∀{T} {{_ : Symmetry {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
+  -- testSymInstance {{sym}} = sym
+
+module testExistential where
+  -- TODO
+  -- testExists : ∀{T : Type}{f : T → Type} → (∃[ x ∈ T ] (f x)) → (∃ {T} (x ↦ f x))
+  -- testExists x = x
+
