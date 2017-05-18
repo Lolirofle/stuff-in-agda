@@ -14,4 +14,5 @@ data ∃ {X : Type} (body : X → Stmt) : Stmt where
 [∃]-elim : ∀{X body}{Z : Stmt} → ((∀{x : X} → body(x) → Z) ⨯ (∃{X} body)) → Z
 [∃]-elim(f , ([∃]-intro _ stmt)) = f stmt
 
--- syntax ∃ {X} (x ↦ f) = ∃[ x ∈ X ] f
+-- syntax ∃ {X} (λ x → f) = ∃[ x ∈ X ] f
+-- syntax ∃ (λ x → f) = ∃[ x ] f

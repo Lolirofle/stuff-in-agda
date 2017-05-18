@@ -94,12 +94,18 @@ module Sets {T} where
     construct : ∀{a}{L} → (a ∈ L) → T
     construct{a}(_) = a
 
+    application : ∀{a}{L} → (a ∈ L) → ∀{f} → (f(a) ∈ (map f(L)))
+    application(use) = use
+    application(skip(proof)) = skip(application(proof))
+
     -- at : ∀{x}{L} → (n : ℕ) → (x ∈ (reduceᵣ(⊰) L))
     -- at(𝟎)    = use
     -- at(𝐒(n)) = skip(at(n))
 
   -- Other relators regarding sets
   module Relators where
+    open import Functional
+
     _⊆_ : List{l₂}(T) → List{l₂}(T) → Stmt
     _⊆_ L₁ L₂ = ∀{x} → (x ∈ L₁) ← (x ∈ L₂)
 
@@ -117,3 +123,7 @@ module Sets {T} where
 
     _≢_ : List{l₂}(T) → List{l₂}(T) → Stmt
     _≢_ L₁ L₂ = ¬(L₁ ≡ L₂)
+
+    -- [⊆]-application : ∀{L₁ L₂} → (L₁ ⊆ L₂) → ∀{f} → (map f(L₁))⊆(map f(L₂))
+    -- [⊆]-application proof fL₁ = [∈]-proof.application ∘ proof
+    -- (∀{x} → (x ∈ L₂) → (x ∈ L₁)) → ∀{f} → (∀{x} → (x ∈ map f(L₂)) → (x ∈ map f(L₁)))

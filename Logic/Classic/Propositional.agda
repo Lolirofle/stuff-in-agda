@@ -183,6 +183,16 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
       consistent Γ = ¬ₘ(inconsistent Γ)
 
       module Theorems where
+        open import List.Properties{lvl₁}{lvl₂}
+        import      List.Theorems
+        open        List.Theorems.Sets
+        open        List.Theorems.Sets.Relators
+        open import Relator.Equals{lvl₁}{lvl₂}
+
+        -- [⊢]-subset : (Γ₁ ⊆ Γ₂) → (Γ₁ ⊢ φ) → (Γ₂ ⊢ φ)
+        -- [⊢]-subset proof = 
+        -- [⊢]-subset : ∀{T}{L₁ L₂ : List(Stmt)} → (L₁ ⊆ L₂) → ∀{X} → (f(L₁) → X) → (f(L₂) → X)
+
         [⊢]-id : ∀{φ} → ([ φ ] ⊢ φ)
         [⊢]-id = id
 
@@ -191,6 +201,14 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
 
         -- [⊢]-test : ∀{φ₁ φ₂ φ₃} → ([ φ₁ ⊰ φ₂ ⊰ φ₃ ] ⊢ φ₁) → (Node(φ₁) ⨯ (Node(φ₂) ⨯ Node(φ₃)) → Node(φ₁))
         -- [⊢]-test = id
+
+        [⊢]-weakening : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
+        [⊢]-weakening {∅}     (⊢φ₁) (φ₂)      = (⊢φ₁)
+        [⊢]-weakening {_ ⊰ _} (Γ⊢φ₁) (φ₂ , Γ) = (Γ⊢φ₁) (Γ)
+
+        -- [⊢]-weakening₂ : ∀{Γ₁}{φ₁} → (Γ₁ ⊢ φ₁) → ∀{Γ₂} → ((Γ₁ ++ Γ₂) ⊢ φ₁)
+        -- [⊢]-weakening₂ {Γ₁}{φ₁} (Γ⊢φ₁)  {∅}       = [≡]-elimᵣ {_}{_}{_} [++]-identityₗ {expr ↦ (expr ⊢ φ₁)} Γ⊢φ₁
+        -- [⊢]-weakening₂ {Γ₁}{φ₁} (Γ₁⊢φ₁) {φ₂ ⊰ Γ₂} = [⊢]-weakening₂ {Γ₁}{φ₁} ([⊢]-weakening{Γ₁}{φ₁} (Γ₁⊢φ₁) {φ₂}) {Γ₂}
 
         [⊢]-compose : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ([ φ₁ ] ⊢ φ₂) → (Γ ⊢ φ₂)
         [⊢]-compose {∅}     (φ₁)   (φ₁⊢φ₂)      = (φ₁⊢φ₂) (φ₁)
@@ -206,13 +224,9 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
         -- [⊢]-compose₃ {∅}    {∅} (φ₁) (φ₁⊢φ₂) = (φ₁⊢φ₂) (φ₁)
         -- [⊢]-compose₃ {_ ⊰ _}{∅} = [⊢]-compose
         -- [⊢]-compose₃ {∅}{∅} (φ₁)   (φ₁⊢φ₂)      = (φ₁⊢φ₂) (φ₁)
-        -- [⊢]-compose₃ {Γ}{∅} = [⊢]-compose{Γ}
+        -- [⊢]-compose₃ {Γ}{∅} = [≡]-elimᵣ [++]-identityₗ [⊢]-compose{Γ}
         -- [⊢]-compose₃ {∅}{Γ}  = [⊢]-compose₂{Γ}
         -- [⊢]-compose₃ {_ ⊰ _}{_ ⊰ _}  = [⊢]-compose₂
-
-        [⊢]-weakening : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
-        [⊢]-weakening {∅}     (⊢φ₁) (φ₂)      = (⊢φ₁)
-        [⊢]-weakening {_ ⊰ _} (Γ⊢φ₁) (φ₂ , Γ) = (Γ⊢φ₁) (Γ)
 
         -- olt-9-17 : ∀{Γ}{φ} → (Γ ⊢ φ) → ((φ ⊰ Γ) ⊢ ⊥) → (inconsistent Γ)
         -- olt-9-17 Γ⊢φ Γφ⊢⊥ = (Γ ↦ [⊥]-intro (Γ⊢φ Γ) ([⊥]-elim(Γφ⊢⊥ Γ)))
