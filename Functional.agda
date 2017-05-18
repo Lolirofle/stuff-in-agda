@@ -6,11 +6,11 @@ open import Type
 infixl 10000 _∘_
 
 -- Function type as a function
-_→ᶠ_ : ∀{l} → Type{l} → Type{l} → Type{l}
+_→ᶠ_ : ∀{l₁ l₂} → Type{l₁} → Type{l₂} → Type{l₁ Lvl.⊔ l₂}
 x →ᶠ y = x → y
 
 -- Converse of a function type
-_←_ : ∀{l} → Type{l} → Type{l} → Type{l}
+_←_ : ∀{l₁ l₂} → Type{l₁} → Type{l₂} → Type{l₁ Lvl.⊔ l₂}
 y ← x = x → y
 
 -- Identity functions

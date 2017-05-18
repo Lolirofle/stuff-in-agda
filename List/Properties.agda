@@ -122,6 +122,10 @@ instance
   --   -- length(reverse(l)++singleton(x)) = length(x⊰l)
 
 instance
+  length-[∅]ₗ : ∀{T : Type}{L : List(T)} → (L ≡ ∅) → (length(L) ≡ 0)
+  length-[∅]ₗ [≡]-intro = [≡]-intro
+
+instance
   length-[∅]ᵣ : ∀{T : Type}{L : List(T)} → (length(L) ≡ 0) → (L ≡ ∅)
   length-[∅]ᵣ {_}{∅}     (_) = [≡]-intro
   length-[∅]ᵣ {_}{_ ⊰ _} ()
