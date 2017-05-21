@@ -1,6 +1,7 @@
 module Numeral.Real where
 
 import Level as Lvl
+open import Data
 open import Functional
 open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
@@ -70,6 +71,8 @@ postulate atan : ℝ → ℝ
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Relations]
 
+-- infixr 100 _≡_ _≢_ _<_ _>_ _≤_ _≥_ _<_<_
+
 -- Equals
 postulate _≡_ : ℝ → ℝ → Stmt
 
@@ -136,15 +139,17 @@ instance postulate circle : ∀{v} → (cos(v) ^ #(2) + sin(v) ^ #(2) ≡ #(1))
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Data structures]
 
+data ℝ-subset (P : ℝ → Stmt) : Set where
+  subelem : ∀(x : ℝ) → {{_ : P(x)}} → ℝ-subset(P)
+
 -- Positive real numbers
-data ℝ₊ : Set where
-  r₊ : (x : ℝ) → (x > #(0)) → ℝ₊
+ℝ₊ = ℝ-subset(x ↦ (x > #(0)))
 
 instance
-  [ℝ₊]-to-[ℝ] : [ℝ]-conversion(ℝ₊)
-  [ℝ₊]-to-[ℝ] = record{#_ = f} where
-    f : ℝ₊ → ℝ
-    f(r₊ x _) = x
+  subset-to-[ℝ] : ∀{P} → [ℝ]-conversion(ℝ-subset(P))
+  subset-to-[ℝ] {P} = record{#_ = f} where
+    f : ℝ-subset(P) → ℝ
+    f(subelem x) = x
 
 data OpenInterval (a : ℝ) (b : ℝ) : Set where
   open-interval : (a ≤ b) → OpenInterval(a)(b)
@@ -164,6 +169,10 @@ module Limit where
   lim : (f : ℝ → ℝ) → (x : ℝ) → ∀{L} → {{_ : Limit f(x) (L)}} → ℝ
   lim _ _ {L} = L
 
+  module Theorems where
+    -- instance postulate [+]-limit : ∀{f g p F G} → (Limit f(p) (F) ∧ Limit g(p) (G)) → Limit(x ↦ f(x) + g(x))(p) (F + G)
+    -- instance postulate [+]-lim : ∀{f g p F G} → {{limit-f : Limit f(p) (F)}} → {{limit-g : Limit g(p) (G)}} → lim(x ↦ f(x) + g(x))(p){{[+]-limit{f}{g}{p}{F}{G}(limit-f , limit-g)}} ≡ (lim f(p){{limit-f}}) + (lim g(p){{limit-g}})
+
 module Continuity where
   open Limit
 
@@ -176,7 +185,7 @@ module Continuity where
   Continuous f = ∀{x} → ContinuousPoint f(x)
 
 module Derivative where
-  open Limit
+  open Limit using (Limit ; lim)
 
   -- Statement that the derivative of a function f at a point p exists and its value is D
   Derivative : (ℝ → ℝ) → ℝ → ℝ → Stmt
@@ -186,7 +195,13 @@ module Derivative where
   𝐷 : (f : ℝ → ℝ) → (x : ℝ) → ∀{D} → {{_ : Derivative f(x) D}} → ℝ
   𝐷 _ _ {D} = D
 
-  -- DifferentiablePoint : (ℝ → ℝ) → ℝ → Stmt
+  -- Statement that the point x of function f is a differentiable point
+  DifferentiablePoint : (ℝ → ℝ) → ℝ → Stmt
+  DifferentiablePoint f(x) = ∃(D ↦ Derivative f(x) D)
+
+  -- Statement that function f is differentiable
+  Differentiable : (ℝ → ℝ) → ℝ → Stmt
+  Differentiable f(x) = ∀{D} → Derivative f(x) D
 
   module Theorems where
     instance postulate Derivative-constant     : ∀{x a} → Derivative(x ↦ a)(x)(#(0))
@@ -198,6 +213,9 @@ module Derivative where
     instance postulate Derivative-[⋅]-function : ∀{x f g F G} → {{_ : Derivative f(x)(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(x) ⋅ g(x))(x)(F ⋅ g(x) + f(x) ⋅ G)
     instance postulate Derivative-[/]-function : ∀{x f g F G} → {{_ : Derivative f(x)(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(x) / g(x))(x)((F ⋅ g(x) − f(x) ⋅ G)/(g(x) ^ #(2)))
     instance postulate Derivative-[∘]-function : ∀{x f g F G} → {{_ : Derivative f(g(x))(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(g(x)))(x)(F ⋅ G)
+
+    -- [𝐷]-constant : ∀{x a} → 𝐷(x ↦ a)(x) ≡ a
+    -- [𝐷]-constant = 
 
 -- postulate Axiom1 : {x y : ℝ} → (x < y) → ¬ (y < x)
 -- postulate Axiom2 : {x z : ℝ} → (x < z) → ∃(y ↦ (x < y) ∧ (y < z))
