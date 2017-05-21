@@ -39,6 +39,7 @@ import Numeral.Natural.Relation.Properties
 import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
 import Numeral.Real
+import Numeral.Real.Properties
 import Numeral.Sign
 import Numeral.Sign.Oper
 import Numeral.Sign.Oper0
