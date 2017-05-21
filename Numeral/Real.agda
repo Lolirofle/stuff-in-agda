@@ -26,7 +26,7 @@ record [ℝ]-conversion (T : Set) : Set where
   infixl 10000 #_
   field
     #_ : T → ℝ
-open [ℝ]-conversion {{...}} public
+open [ℝ]-conversion ⦃ ... ⦄ public
 
 instance postulate [ℕ]-to-[ℝ] : [ℝ]-conversion(ℕ)
 instance postulate [ℤ]-to-[ℝ] : [ℝ]-conversion(ℤ)
@@ -95,9 +95,13 @@ x ≤ y = (x < y) ∨ (x ≡ y)
 _≥_ : ℝ → ℝ → Stmt
 x ≥ y = (x > y) ∨ (x ≡ y)
 
--- In an interval
+-- In an open interval
 _<_<_ : ℝ → ℝ → ℝ → Stmt
 x < y < z = (x < y) ∧ (y < z)
+
+-- In an closed interval
+_≤_≤_ : ℝ → ℝ → ℝ → Stmt
+x ≤ y ≤ z = (x ≤ y) ∧ (y ≤ z)
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Properties of operations in ℝ]
@@ -140,7 +144,7 @@ instance postulate circle : ∀{v} → (cos(v) ^ #(2) + sin(v) ^ #(2) ≡ #(1))
 -- [Data structures]
 
 data ℝ-subset (P : ℝ → Stmt) : Set where
-  subelem : ∀(x : ℝ) → {{_ : P(x)}} → ℝ-subset(P)
+  subelem : ∀(x : ℝ) → ⦃ _ : P(x) ⦄ → ℝ-subset(P)
 
 -- Positive real numbers
 ℝ₊ = ℝ-subset(x ↦ (x > #(0)))
@@ -161,61 +165,72 @@ data ClosedInterval (a : ℝ) (b : ℝ) : Set where
 -- [Properties on functions of ℝ]
 
 module Limit where
-  -- Statement that the limit of the function f at point l exists and its value is L
-  Limit : (ℝ → ℝ) → ℝ → ℝ → Stmt
-  Limit f(l) L = ∀{ε : ℝ₊} → ∃{ℝ₊}(δ ↦ ∀{x : ℝ} → (#(0) < abs(x − l) < #(δ)) → (abs(f(x) − L) < #(ε)))
+  -- Statement that the limit of the function f at point l exists (and its value is L)
+  data Limit (f : ℝ → ℝ) (p : ℝ) : Stmt where
+    limit : (L : ℝ) → (∀{ε : ℝ₊} → ∃{ℝ₊}(δ ↦ ∀{x : ℝ} → (#(0) < abs(x − p) < #(δ)) → (abs(f(x) − L) < #(ε)))) → Limit f(p)
 
   -- Limit value function f (if the limit exists)
-  lim : (f : ℝ → ℝ) → (x : ℝ) → ∀{L} → {{_ : Limit f(x) (L)}} → ℝ
-  lim _ _ {L} = L
+  lim : (f : ℝ → ℝ) → (x : ℝ) → ⦃ _ : Limit f(x) ⦄ → ℝ
+  lim _ _ ⦃ limit L _ ⦄ = L
 
   module Theorems where
-    -- instance postulate [+]-limit : ∀{f g p F G} → (Limit f(p) (F) ∧ Limit g(p) (G)) → Limit(x ↦ f(x) + g(x))(p) (F + G)
-    -- instance postulate [+]-lim : ∀{f g p F G} → {{limit-f : Limit f(p) (F)}} → {{limit-g : Limit g(p) (G)}} → lim(x ↦ f(x) + g(x))(p){{[+]-limit{f}{g}{p}{F}{G}(limit-f , limit-g)}} ≡ (lim f(p){{limit-f}}) + (lim g(p){{limit-g}})
+    instance postulate [+]-limit : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → Limit(x ↦ f(x) + g(x))(p)
+    instance postulate [−]-limit : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → Limit(x ↦ f(x) − g(x))(p)
+    instance postulate [⋅]-limit : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → Limit(x ↦ f(x) ⋅ g(x))(p)
+    instance postulate [/]-limit : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → Limit(x ↦ f(x) / g(x))(p)
+
+    instance postulate [+]-lim : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → (lim(x ↦ f(x) + g(x))(p)⦃ [+]-limit ⦃ lim-f ⦄ ⦃ lim-g ⦄ ⦄ ≡ lim f(p)⦃ lim-f ⦄ + lim g(p)⦃ lim-g ⦄)
+    instance postulate [−]-lim : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → (lim(x ↦ f(x) − g(x))(p)⦃ [−]-limit ⦃ lim-f ⦄ ⦃ lim-g ⦄ ⦄ ≡ lim f(p)⦃ lim-f ⦄ − lim g(p)⦃ lim-g ⦄)
+    instance postulate [⋅]-lim : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → (lim(x ↦ f(x) ⋅ g(x))(p)⦃ [⋅]-limit ⦃ lim-f ⦄ ⦃ lim-g ⦄ ⦄ ≡ lim f(p)⦃ lim-f ⦄ ⋅ lim g(p)⦃ lim-g ⦄)
+    instance postulate [/]-lim : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → (lim(x ↦ f(x) / g(x))(p)⦃ [/]-limit ⦃ lim-f ⦄ ⦃ lim-g ⦄ ⦄ ≡ lim f(p)⦃ lim-f ⦄ / lim g(p)⦃ lim-g ⦄)
 
 module Continuity where
   open Limit
 
   -- Statement that the point x of function f is a continous point
   ContinuousPoint : (ℝ → ℝ) → ℝ → Stmt
-  ContinuousPoint f(x) = Limit f(x) (f(x))
+  ContinuousPoint f(x) = (⦃ limit : Limit f(x) ⦄ → (lim f(x)⦃ limit ⦄ ≡ f(x)))
 
   -- Statement that the function f is continous
   Continuous : (ℝ → ℝ) → Stmt
   Continuous f = ∀{x} → ContinuousPoint f(x)
 
 module Derivative where
-  open Limit using (Limit ; lim)
-
-  -- Statement that the derivative of a function f at a point p exists and its value is D
-  Derivative : (ℝ → ℝ) → ℝ → ℝ → Stmt
-  Derivative f(p) D = Limit(x ↦ ((f(x) − f(p))/(x − p)))(# 0)(D)
-
-  -- Derivative value of function f at point x (if the derivative exists)
-  𝐷 : (f : ℝ → ℝ) → (x : ℝ) → ∀{D} → {{_ : Derivative f(x) D}} → ℝ
-  𝐷 _ _ {D} = D
+  open Limit using (Limit ; limit ; lim)
 
   -- Statement that the point x of function f is a differentiable point
   DifferentiablePoint : (ℝ → ℝ) → ℝ → Stmt
-  DifferentiablePoint f(x) = ∃(D ↦ Derivative f(x) D)
+  DifferentiablePoint f(p) = Limit(x ↦ ((f(x) − f(p))/(x − p)))(p)
 
   -- Statement that function f is differentiable
-  Differentiable : (ℝ → ℝ) → ℝ → Stmt
-  Differentiable f(x) = ∀{D} → Derivative f(x) D
+  Differentiable : (ℝ → ℝ) → Stmt
+  Differentiable f = ∀{x} → DifferentiablePoint f(x)
+
+  -- Derivative value of function f at point x (if the point is differentiable)
+  𝐷 : (f : ℝ → ℝ) → (x : ℝ) → ⦃ _ : DifferentiablePoint f(x) ⦄ → ℝ
+  𝐷 _ _ ⦃ limit D _ ⦄ = D
 
   module Theorems where
-    instance postulate Derivative-constant     : ∀{x a} → Derivative(x ↦ a)(x)(#(0))
-    instance postulate Derivative-id           : ∀{x}   → Derivative(x ↦ x)(x)(#(1))
-    instance postulate Derivative-monomial     : ∀{x a} → Derivative(x ↦ x ^ a)(x)(a ⋅ x ^ (a − #(1)))
-    instance postulate Derivative-[eˣ]         : ∀{x}   → Derivative(x ↦ e ^ x)(x)(e ^ x)
-    instance postulate Derivative-[+]-function : ∀{x f g F G} → {{_ : Derivative f(x)(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(x) + g(x))(x)(F + G)
-    instance postulate Derivative-[−]-function : ∀{x f g F G} → {{_ : Derivative f(x)(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(x) − g(x))(x)(F − G)
-    instance postulate Derivative-[⋅]-function : ∀{x f g F G} → {{_ : Derivative f(x)(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(x) ⋅ g(x))(x)(F ⋅ g(x) + f(x) ⋅ G)
-    instance postulate Derivative-[/]-function : ∀{x f g F G} → {{_ : Derivative f(x)(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(x) / g(x))(x)((F ⋅ g(x) − f(x) ⋅ G)/(g(x) ^ #(2)))
-    instance postulate Derivative-[∘]-function : ∀{x f g F G} → {{_ : Derivative f(g(x))(F)}} → {{_ : Derivative g(x)(G)}} → Derivative(x ↦ f(g(x)))(x)(F ⋅ G)
+    instance postulate Differentiable-constant     : ∀{a} → Differentiable(const(a))
+    instance postulate Differentiable-id           : Differentiable(id)
+    instance postulate Differentiable-monomial     : ∀{a} → Differentiable(x ↦ x ^ a)
+    instance postulate Differentiable-[eˣ]         : Differentiable(x ↦ e ^ x)
+    instance postulate Differentiable-[⋅]-scalar   : ∀{a} → Differentiable(x ↦ a ⋅ x)
+    instance postulate Differentiable-[+]-function : ∀{f g} → ⦃ _ : Differentiable f ⦄ → ⦃ _ : Differentiable g ⦄ → Differentiable(x ↦ f(x) + g(x))
+    instance postulate Differentiable-[−]-function : ∀{f g} → ⦃ _ : Differentiable f ⦄ → ⦃ _ : Differentiable g ⦄ → Differentiable(x ↦ f(x) − g(x))
+    instance postulate Differentiable-[⋅]-function : ∀{f g} → ⦃ _ : Differentiable f ⦄ → ⦃ _ : Differentiable g ⦄ → Differentiable(x ↦ f(x) ⋅ g(x))
+    instance postulate Differentiable-[/]-function : ∀{f g} → ⦃ _ : Differentiable f ⦄ → ⦃ _ : Differentiable g ⦄ → Differentiable(x ↦ f(x) / g(x))
+    instance postulate Differentiable-[∘]-function : ∀{f g} → ⦃ _ : Differentiable f ⦄ → ⦃ _ : Differentiable g ⦄ → Differentiable(f ∘ g)
 
-    -- [𝐷]-constant : ∀{x a} → 𝐷(x ↦ a)(x) ≡ a
-    -- [𝐷]-constant = 
+    instance postulate [𝐷]-constant     : ∀{a} → ⦃ diff : Differentiable(const(a)) ⦄ → ∀{x} → 𝐷(const(a))(x)⦃ diff ⦄ ≡ a
+    instance postulate [𝐷]-id           : ⦃ diff : Differentiable(id) ⦄ → ∀{x} → 𝐷(id)(x)⦃ diff ⦄ ≡ #(1)
+    instance postulate [𝐷]-monomial     : ∀{a} → ⦃ diff : Differentiable(x ↦ x ^ a) ⦄ → ∀{x} → 𝐷(x ↦ x ^ a)(x)⦃ diff ⦄ ≡ a ⋅ x ^ (a − #(1))
+    instance postulate [𝐷]-[eˣ]         : ⦃ diff : Differentiable(x ↦ e ^ x) ⦄ → ∀{x} → 𝐷(x ↦ e ^ x)(x)⦃ diff ⦄ ≡ e ^ x
+    instance postulate [𝐷]-[+]-function : ∀{f g} → ⦃ diff-f : Differentiable(f) ⦄ → ⦃ diff-g : Differentiable(g) ⦄ → ∀{x} → 𝐷(x ↦ f(x) + g(x))(x)⦃ Differentiable-[+]-function ⦃ diff-f ⦄ ⦃ diff-g ⦄ ⦄ ≡ 𝐷(f)(x)⦃ diff-f ⦄ + 𝐷(g)(x)⦃ diff-g ⦄
+    instance postulate [𝐷]-[−]-function : ∀{f g} → ⦃ diff-f : Differentiable(f) ⦄ → ⦃ diff-g : Differentiable(g) ⦄ → ∀{x} → 𝐷(x ↦ f(x) − g(x))(x)⦃ Differentiable-[−]-function ⦃ diff-f ⦄ ⦃ diff-g ⦄ ⦄ ≡ 𝐷(f)(x)⦃ diff-f ⦄ − 𝐷(g)(x)⦃ diff-g ⦄
+    instance postulate [𝐷]-[⋅]-function : ∀{f g} → ⦃ diff-f : Differentiable(f) ⦄ → ⦃ diff-g : Differentiable(g) ⦄ → ∀{x} → 𝐷(x ↦ f(x) ⋅ g(x))(x)⦃ Differentiable-[⋅]-function ⦃ diff-f ⦄ ⦃ diff-g ⦄ ⦄ ≡ 𝐷(f)(x)⦃ diff-f ⦄ ⋅ g(x) + f(x) ⋅ 𝐷(g)(x)⦃ diff-g ⦄
+    instance postulate [𝐷]-[/]-function : ∀{f g} → ⦃ diff-f : Differentiable(f) ⦄ → ⦃ diff-g : Differentiable(g) ⦄ → ∀{x} → 𝐷(x ↦ f(x) / g(x))(x)⦃ Differentiable-[/]-function ⦃ diff-f ⦄ ⦃ diff-g ⦄ ⦄ ≡ (𝐷(f)(x)⦃ diff-f ⦄ ⋅ g(x) − f(x) ⋅ 𝐷(g)(x)⦃ diff-g ⦄)/(g(x) ^ #(2))
+    instance postulate [𝐷]-[∘]-function : ∀{f g} → ⦃ diff-f : Differentiable(f) ⦄ → ⦃ diff-g : Differentiable(g) ⦄ → ∀{x} → 𝐷(x ↦ f(g(x)))(x)⦃ Differentiable-[∘]-function ⦃ diff-f ⦄ ⦃ diff-g ⦄ ⦄ ≡ 𝐷(f)(g(x))⦃ diff-f ⦄ ⋅ 𝐷(g)(x)⦃ diff-g ⦄
 
 -- postulate Axiom1 : {x y : ℝ} → (x < y) → ¬ (y < x)
 -- postulate Axiom2 : {x z : ℝ} → (x < z) → ∃(y ↦ (x < y) ∧ (y < z))
