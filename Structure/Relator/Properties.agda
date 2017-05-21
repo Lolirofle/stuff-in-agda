@@ -115,3 +115,28 @@ _🝖_ {_} {_} {{trans}} a b = trans([∧]-intro a b)
 -- (_ ≡ a + ((a + 1) + 1)) [Trans: ([≡]-with[_] ∘ [+]-commutativity) with [≡]-transitivity]
 -- (_ ≡ a + (a + (1 + 1))) [Trans: ([≡]-with[_] ∘ [+]-associativity) with [≡]-transitivity]
 -- (_ ≡ (a + a) + (1 + 1)) [Trans: [+]-associativity                 with [≡]-transitivity]
+
+module Theorems where
+  open import Logic.Theorems{l₁ Lvl.⊔ l₂}
+
+  [asymmetry]-to-irreflexivity : ∀{T _<_} → Asymmetry{T}(_<_) → Irreflexivity{T}(_<_)
+  [asymmetry]-to-irreflexivity(asymmetry) = [→]-redundancy(asymmetry)
+    -- ∀x∀y. (x<y) → ¬(y<x)
+    -- ∀x. (x<x) → ¬(x<x)
+    -- ∀x. (x<x) → (x<x) → ⊥
+    -- ∀x. (x<x) → ⊥
+
+  [irreflexivity,transitivity]-to-asymmetry : ∀{T _<_} → Irreflexivity{T}(_<_) → Transitivity{T}(_<_) → Asymmetry{T}(_<_)
+  [irreflexivity,transitivity]-to-asymmetry(irreflexivity)(transitivity) = Tuple.curry(irreflexivity ∘ transitivity)
+    -- ∀x. ¬(x<x)
+    -- ∀x. (x<x) → ⊥
+    --   ∀x∀y∀z. (x<y)∧(y<z) → (x<z)
+    --   ∀x∀y. (x<y)∧(y<x) → (x<x)
+    --   ∀y. (x<y)∧(y<x) → (x<x)
+    -- ∀x∀y. (x<y)∧(y<x) → ⊥
+    -- ∀x∀y. (x<y) → (y<x) → ⊥
+    -- ∀x∀y. (x<y) → ¬(y<x)
+
+  -- Definition of a total binary operation
+  [total]-to-reflexivity : ∀{T _<_} → Total{T}(_<_) → Reflexivity{T}(_<_)
+  [total]-to-reflexivity(total) = [∨]-elim(id , id , total)

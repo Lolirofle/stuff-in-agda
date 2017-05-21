@@ -32,7 +32,9 @@ instance
   -- a + 𝐒(n) ≡ 𝐒(b)
   -- 𝐒(a + n) ≡ 𝐒(b) //[≡]-with-[ 𝐒 ] f
 
-  -- [≤]-predecessor : ∀{a b : ℕ} → (𝐒(a) ≤ b) → (a ≤ b)
+-- TODO: Implement
+instance
+  postulate [≤]-predecessor : ∀{a b : ℕ} → (𝐒(a) ≤ b) → (a ≤ b)
   -- [≤]-predecessor ([∃]-intro n f) = [∃]-intro (𝐒(n)) ([≡]-with-[ 𝐒 ] f)
 
 instance
@@ -44,6 +46,10 @@ instance
         ([+1]-commutativity {a} {n}) -- 𝐒(a)+n = a+𝐒(n)
         ([≡]-with-[ 𝐒 ] f) -- 𝐒(a+n)=a+𝐒(n) = 𝐒(b)
       ))
+
+-- TODO: Implement
+instance
+  postulate [≤]-without-[𝐒] : ∀{a b : ℕ} → (a ≤ b) ← (𝐒(a) ≤ 𝐒(b))
 
 instance
   [≤]-transitivity : Transitivity (_≤_)
@@ -95,3 +101,24 @@ instance
       transitivity = [≤]-transitivity;
       reflexivity  = [≤]-reflexivity
     }
+
+instance
+  [<][0]-minimum : ∀{x : ℕ} → (0 < 𝐒(x))
+  [<][0]-minimum {x} = [≤]-with-[𝐒] ([≤][0]-minimum)
+
+-- TODO
+instance
+  postulate [≮]-is-[≥] : ∀{a b : ℕ} → ¬(a < b) → (a ≥ b)
+  postulate [≥]-is-[≮] : ∀{a b : ℕ} → ¬(a < b) ← (a ≥ b)
+
+instance
+  postulate [≯]-is-[≤] : ∀{a b : ℕ} → ¬(a > b) → (a ≤ b)
+  postulate [≤]-is-[≯] : ∀{a b : ℕ} → ¬(a > b) ← (a ≤ b)
+
+instance
+  postulate [≰]-is-[>] : ∀{a b : ℕ} → ¬(a ≤ b) → (a > b)
+  postulate [>]-is-[≰] : ∀{a b : ℕ} → ¬(a ≤ b) ← (a > b)
+
+instance
+  postulate [≱]-is-[<] : ∀{a b : ℕ} → ¬(a ≥ b) → (a < b)
+  postulate [<]-is-[≱] : ∀{a b : ℕ} → ¬(a ≥ b) ← (a < b)

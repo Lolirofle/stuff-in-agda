@@ -36,6 +36,7 @@ import Numeral.Natural.Oper.Properties
 import Numeral.Natural.Prime
 import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Properties
+import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
 import Numeral.Real
 import Numeral.Sign

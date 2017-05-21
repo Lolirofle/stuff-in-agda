@@ -9,6 +9,7 @@ open import Numeral.Natural
 open import Structure.Operator.Field{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Group{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Properties{Lvl.𝟎}{Lvl.𝟎}
+open import Structure.Relator.Ordering{Lvl.𝟎}{Lvl.𝟎}
 
 -- TODO: Write it properly (maybe with a "construction of the reals"?). The following in this file is something to get this started
 
@@ -114,7 +115,17 @@ instance
   postulate [ℝ]-field : Field {ℝ}
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- [Properties of relations in ℝ]
+
+instance
+  postulate [ℝ][≤][≡]-totalWeakPartialOrder : TotalWeakPartialOrder {ℝ} (_≤_)(_≡_)
+
+instance
+  postulate [ℝ][<]-strictPartialOrder       : StrictPartialOrder {ℝ} (_<_)
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Properties of functions in ℝ]
+
 instance postulate abs-positive : ∀{x} → (abs(x) ≥ #(0))
 instance postulate cos-periodicity : ∀{v}{n : ℕ} → (cos(v) ≡ cos(v + #(2) ⋅ π ⋅ #(n)))
 instance postulate sin-periodicity : ∀{v}{n : ℕ} → (sin(v) ≡ sin(v + #(2) ⋅ π ⋅ #(n)))

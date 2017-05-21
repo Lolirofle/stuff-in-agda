@@ -129,6 +129,18 @@ modus-tollens = contrapositive₁
 
 --   (X → ((X → ⊥) → ⊥)) → (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //Combining those two (A=X , B=((X → ⊥) → ⊥))
 
+and-impl₁ : {X Y : Stmt} → ¬(X ∧ (¬ Y)) → (X → ¬(¬ Y))
+and-impl₁ = Tuple.curry
+-- ¬(A ∧ ¬B) → (A → ¬¬B)
+--   ¬(A ∧ (¬ B)) //assumption
+--   ((A ∧ (B → ⊥)) → ⊥) //Definition: (¬)
+--   (A → (B → ⊥) → ⊥) //Tuple.curry
+--   (A → ¬(B → ⊥)) //Definition: (¬)
+--   (A → ¬(¬ B)) //Definition: (¬)
+
+and-impl₂ : {X Y : Stmt} → (X → Y) → ¬(X ∧ (¬ Y))
+and-impl₂ f = Tuple.uncurry([¬¬]-intro ∘ f)
+
 ------------------------------------------
 -- Almost-distributivity with duals (De-morgan's laws)
 
@@ -177,3 +189,6 @@ modus-tollens = contrapositive₁
 
 non-contradiction : {X : Stmt} → ¬ (X ∧ (¬ X))
 non-contradiction(x , nx) = nx x
+
+[→]-redundancy : ∀{A B : Stmt} → (A → A → B) → (A → B)
+[→]-redundancy(f)(a) = f(a)(a)
