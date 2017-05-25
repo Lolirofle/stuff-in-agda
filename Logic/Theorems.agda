@@ -123,11 +123,13 @@ modus-tollens = contrapositive₁
 --   (A → B) → ((B → ⊥) → (A → ⊥)) //contrapositive₁
 --   (A → B) → (B → ⊥) → (A → ⊥)
 --   (A → B) → (B → ⊥) → A → ⊥
+--   (X → ((X → ⊥) → ⊥)) → (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //A≔X , B≔((X → ⊥) → ⊥)
 
 --   X → (¬ (¬ X)) //[¬¬]-intro
 --   X → ((X → ⊥) → ⊥)
 
---   (X → ((X → ⊥) → ⊥)) → (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //Combining those two (A=X , B=((X → ⊥) → ⊥))
+--   (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //[→]-elim (Combining those two)
+--   (((X → ⊥) → ⊥) → ⊥) → (X → ⊥)
 
 and-impl₁ : {X Y : Stmt} → ¬(X ∧ (¬ Y)) → (X → ¬(¬ Y))
 and-impl₁ = Tuple.curry
@@ -147,7 +149,7 @@ and-impl₂ f = Tuple.uncurry([¬¬]-intro ∘ f)
 -- [¬]-[∧]₁ : {X Y : Stmt} → (¬ (X ∧ Y)) → ((¬ X) ∨ (¬ Y))
 -- [¬]-[∧]₁ n = -- TODO: Not possible in constructive logic? Seems to require ¬¬X=X?
 -- ((X ∧ Y) → ⊥) → ((X → ⊥) ∨ (Y → ⊥))
--- ((X ∧ Y) → ⊥) → (X → ⊥)
+-- ¬((X ∧ Y) → ⊥) ← ¬((X → ⊥) ∨ (Y → ⊥))
 
 [¬]-[∧]₂ : {X Y : Stmt} → ((¬ X) ∨ (¬ Y)) → (¬ (X ∧ Y))
 [¬]-[∧]₂ ([∨]-introₗ nx) = nx ∘ [∧]-elimₗ

@@ -7,9 +7,9 @@ open import Logic.Propositional{lvl}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Relator.Equals{lvl}{Lvl.𝟎}
-open import Structure.Function.Domain
-open import Structure.Operator.Properties
-open import Structure.Relator.Properties
+open import Structure.Function.Domain{lvl}{Lvl.𝟎}
+open import Structure.Operator.Properties{lvl}{Lvl.𝟎}
+open import Structure.Relator.Properties{lvl}{Lvl.𝟎}
 
 instance
   [+]-identityₗ : Identityₗ (_+_) (0)
@@ -114,8 +114,8 @@ instance
   [⋅]-identityᵣ : Identityᵣ (_⋅_) (1)
   [⋅]-identityᵣ = [≡]-intro
 
--- [⋅][+]-distributivityₗ : ∀{x y z : ℕ} → (x ⋅ (y + z)) ≡ (x ⋅ y) + (x ⋅ z)
--- [⋅][+]-distributivityᵣ : ∀{x y z : ℕ} → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z))
+instance postulate [⋅][+]-distributivityₗ : ∀{x y z : ℕ} → (x ⋅ (y + z)) ≡ (x ⋅ y) + (x ⋅ z)
+instance postulate [⋅][+]-distributivityᵣ : ∀{x y z : ℕ} → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z))
 -- [⋅][+]-distributivityᵣ {x} {y} {z} = [ℕ]-induction (base x y) (next x y) z where
 --   base : ∀ (x y : ℕ) → ((x + y) ⋅ 0) ≡ ((x ⋅ 0) + (y ⋅ 0))
 --   base _ _ = [≡]-intro
@@ -140,13 +140,23 @@ instance
     -- = (x + (x ⋅ z)) + (y + (y ⋅ z)) //[+]-associativity
     -- = (x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)) //Definition: (⋅)
 
--- [⋅]-associativity : ∀{x y z : ℕ} → ((x ⋅ y) ⋅ z) ≡ (x ⋅ (y ⋅ z))
+instance postulate [⋅]-associativity : Associativity (_⋅_)
+instance postulate [⋅]-commutativity : Commutativity (_⋅_)
 
 -- testAssociativityOfSuccessor1 : ∀{x y} → ((x + 1) + y) ≡ (x + (1 + y))
 -- testAssociativityOfSuccessor1 {x} {y} = [+]-associativity {x} {1} {y}
 
 -- testAssociativityOfSuccessor2 : ∀{x y} → (𝐒(x) + y) ≡ (x + (1 + y))
 -- testAssociativityOfSuccessor2 {x} {y} = [+]-associativity {x} {1} {y}
+
+instance
+  [𝐒]-injectivity : Injective(𝐒)
+  [𝐒]-injectivity {0}    ([≡]-intro) = [≡]-intro
+  [𝐒]-injectivity {𝐒(n)} (𝐒x≡𝐒y)     = [≡]-with-[ 𝐏 ] 𝐒x≡𝐒y
+
+instance
+  [𝐒]-not-0 : ∀{n} → (𝐒(n) ≢ 𝟎)
+  [𝐒]-not-0 ()
 
 instance
   [+]-injectivityₗ : ∀{a} → Injective (x ↦ x + a)

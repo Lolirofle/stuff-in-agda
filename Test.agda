@@ -17,17 +17,20 @@ import FormalLanguage.RegularExpression
 import Functional
 import Functional.Raise
 import Functional.PrimitiveRecursion
+import Functional.Properties
 import Level as Lvl
 import List
 import List.Properties
 import List.Relation
 import List.Theorems
 import Logic.Classic.Propositional
+import Logic.DiagonalProof
 import Logic.Propositional
 import Logic.Predicate
 import Logic.Theorems
 import Numeral.Integer
 import Numeral.Integer.Oper
+import Numeral.Integer.Relation
 import Numeral.Integer.Sign
 import Numeral.Natural
 import Numeral.Natural.Function
@@ -35,6 +38,7 @@ import Numeral.Natural.Oper
 import Numeral.Natural.Oper.Properties
 import Numeral.Natural.Prime
 import Numeral.Natural.Relation
+import Numeral.Natural.Relation.Countable
 import Numeral.Natural.Relation.Properties
 import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
@@ -44,6 +48,7 @@ import Numeral.Sign
 import Numeral.Sign.Oper
 import Numeral.Sign.Oper0
 import Operator.Equals
+import Relator.Bijection
 import Relator.Equals
 import Sets.FnSet
 import Sets.SimpleSet
@@ -298,16 +303,16 @@ module testDiv where
   open Numeral.Natural.UnclosedOper
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 
-  testDiv1 : 4 /₀ 2 ≡ 2
+  testDiv1 : 4 ⌈/₀⌉ 2 ≡ 2
   testDiv1 = [≡]-reflexivity
 
-  testDiv2 : 2 /₀ 2 ≡ 1
+  testDiv2 : 2 ⌈/₀⌉ 2 ≡ 1
   testDiv2 = [≡]-reflexivity
 
-  testDiv3 : 1 /₀ 2 ≡ 1
+  testDiv3 : 1 ⌈/₀⌉ 2 ≡ 1
   testDiv3 = [≡]-reflexivity
 
-  -- test1 : ∀{f : ℕ → ℕ} → (f(0) ≡ 0) ∧ (∀{n : ℕ} → f(n + 1) ≡ f(n) + n + 1) → (∀{n : ℕ} → f(n) ≡ (n ⋅ (n + 1)) /₀ 2)
+  -- test1 : ∀{f : ℕ → ℕ} → (f(0) ≡ 0) ∧ (∀{n : ℕ} → f(n + 1) ≡ f(n) + n + 1) → (∀{n : ℕ} → f(n) ≡ (n ⋅ (n + 1)) ⌈/₀⌉ 2)
   -- test1 ()
 
 module testList where

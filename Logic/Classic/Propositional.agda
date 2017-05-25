@@ -36,6 +36,8 @@ record Model {lvl} (Prop : Set(lvl)) : Set(lvl) where
 module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (symbols : Syntax.Symbols Prop Formula) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) id) where
   open import Relator.Equals{lvl₂}{lvl₁}
   open import List
+  import      List.Theorems
+  open        List.Theorems.Sets{lvl₁}{lvl₂}
   open Syntax.Symbols(symbols)
   open Syntax.Symbols(meta-symbols)
     renaming (
@@ -62,9 +64,12 @@ module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) �
     -- TODO: How does the satisfaction definitions look like in constructive logic?
 
     -- Entailment
-    _⊨_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-    _⊨_ ∅         φ = ∀{𝔐 : Model(Prop)} → ◦(𝔐 ⊧ φ)
-    _⊨_ (Γ₀ ⊰ Γ₊) φ = ∀{𝔐 : Model(Prop)} → (foldᵣ-init (_⨯_) (◦(𝔐 ⊧ Γ₀)) (map (γ ↦ ◦(𝔐 ⊧ γ)) Γ₊)) → ◦(𝔐 ⊧ φ)
+    data _⊨_ (Γ : List(Formula(Prop))) (φ : Formula(Prop)) : Set(lvl₁ Lvl.⊔ lvl₂) where
+      [⊨]-construct : (∀{𝔐} → (∀{γ} → (γ ∈ Γ) → (𝔐 ⊧ γ)) → (𝔐 ⊧ φ)) → (Γ ⊨ φ)
+
+    [⊨]-elim : ∀{Γ}{φ} → (Γ ⊨ φ) → Set(lvl₁ Lvl.⊔ lvl₂)
+    [⊨]-elim {∅}     {φ} ([⊨]-construct proof) = ∀{𝔐 : Model(Prop)} → ◦(𝔐 ⊧ φ)
+    [⊨]-elim {γ ⊰ Γ} {φ} ([⊨]-construct proof) = ∀{𝔐 : Model(Prop)} → (foldᵣ-init (_⨯_) (◦(𝔐 ⊧ γ)) (map (γ ↦ ◦(𝔐 ⊧ γ)) Γ)) → ◦(𝔐 ⊧ φ)
 
     _⊭_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
     _⊭_ Γ φ = ¬ₘ(_⊨_ Γ φ)

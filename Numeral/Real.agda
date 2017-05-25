@@ -144,7 +144,10 @@ instance postulate circle : ∀{v} → (cos(v) ^ #(2) + sin(v) ^ #(2) ≡ #(1))
 -- [Data structures]
 
 data ℝ-subset (P : ℝ → Stmt) : Set where
-  subelem : ∀(x : ℝ) → ⦃ _ : P(x) ⦄ → ℝ-subset(P)
+  subelem-construct : ∀(x : ℝ) → ⦃ _ : P(x) ⦄ → ℝ-subset(P)
+
+subelem : ∀{P} → ℝ-subset(P) → ℝ
+subelem(subelem-construct(x)) = x
 
 -- Positive real numbers
 ℝ₊ = ℝ-subset(x ↦ (x > #(0)))
@@ -153,25 +156,26 @@ instance
   subset-to-[ℝ] : ∀{P} → [ℝ]-conversion(ℝ-subset(P))
   subset-to-[ℝ] {P} = record{#_ = f} where
     f : ℝ-subset(P) → ℝ
-    f(subelem x) = x
+    f(subelem-construct x) = x
 
-data OpenInterval (a : ℝ) (b : ℝ) : Set where
-  open-interval : (a ≤ b) → OpenInterval(a)(b)
+UpperBounds : ∀{P} → ℝ-subset(P) → Set
+UpperBounds(sub) = ℝ-subset(x ↦ (subelem(sub) ≤ x))
 
-data ClosedInterval (a : ℝ) (b : ℝ) : Set where
-  closed-interval : (a ≤ b) → ClosedInterval(a)(b)
+Supremum : ∀(P : ℝ → Stmt) → ℝ → Stmt -- TODO: Seems wrong?
+Supremum(P)(sup) = (∀{sub : ℝ-subset(P)}{upper : UpperBounds(sub)} → (subelem(sub) ≤ sup ≤ subelem(upper)))
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Properties on functions of ℝ]
 
 module Limit where
   -- Statement that the limit of the function f at point l exists (and its value is L)
+  -- This is expressed by converting the standard (ε,δ)-limit definition to Skolem normal form (TODO: ...I think? Is this correct? I am just having a hunch)
   data Limit (f : ℝ → ℝ) (p : ℝ) : Stmt where
-    limit : (L : ℝ) → (∀{ε : ℝ₊} → ∃{ℝ₊}(δ ↦ ∀{x : ℝ} → (#(0) < abs(x − p) < #(δ)) → (abs(f(x) − L) < #(ε)))) → Limit f(p)
+    limit : (L : ℝ) → (δ : ℝ₊ → ℝ₊) → (∀{ε : ℝ₊}{x : ℝ} → (#(0) < abs(x − p) < #(δ(ε))) → (abs(f(x) − L) < #(ε))) → Limit f(p)
 
   -- Limit value functio§n f (if the limit exists)
   lim : (f : ℝ → ℝ) → (x : ℝ) → ⦃ _ : Limit f(x) ⦄ → ℝ
-  lim _ _ ⦃ limit L _ ⦄ = L
+  lim _ _ ⦃ limit L _ _ ⦄ = L
 
 module Continuity where
   open Limit
@@ -197,7 +201,7 @@ module Derivative where
 
   -- Derivative value of function f at point x (if the point is differentiable)
   𝐷 : (f : ℝ → ℝ) → (x : ℝ) → ⦃ _ : DifferentiablePoint f(x) ⦄ → ℝ
-  𝐷 _ _ ⦃ limit D _ ⦄ = D
+  𝐷 _ _ ⦃ limit D _ _ ⦄ = D
 
 -- postulate Axiom1 : {x y : ℝ} → (x < y) → ¬ (y < x)
 -- postulate Axiom2 : {x z : ℝ} → (x < z) → ∃(y ↦ (x < y) ∧ (y < z))
