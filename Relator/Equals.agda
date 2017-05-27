@@ -62,3 +62,10 @@ instance
 -- Definition of uniqueness of elements satisfying a property
 Uniqueness : ∀{T} → (T → Stmt) → Stmt
 Uniqueness {T} property = ∀{x y : T} → (property(x) ∧ property(y)) → (x ≡ y)
+
+[≡]-function : ∀{A B : Type}{f₁ f₂ : A → B} → (f₁ ≡ f₂) → (∀{x} → (f₁(x) ≡ f₂(x)))
+[≡]-function [≡]-intro = [≡]-intro
+
+-- TODO: Unprovable?
+-- [≡]-functionᵣ : ∀{f₁ f₂} → (∀{x} → (f₁(x) ≡ f₂(x))) → (f₁ ≡ f₂)
+-- [≡]-functionᵣ [≡]-intro = [≡]-intro

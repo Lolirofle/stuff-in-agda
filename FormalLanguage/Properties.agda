@@ -11,7 +11,7 @@ open import Logic.Propositional{Lvl.𝟎}
 open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Properties{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.SetAlgebra{Lvl.𝟎}{Lvl.𝟎}
-open import Structure.Function.Domain{Lvl.𝟎}{Lvl.𝟎}
+open import Structure.Function.Domain{Lvl.𝟎}
 
 -- TODO: Prove all these
 

@@ -7,7 +7,7 @@ open import Logic.Propositional{lvl}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Relator.Equals{lvl}{Lvl.𝟎}
-open import Structure.Function.Domain{lvl}{Lvl.𝟎}
+open import Structure.Function.Domain{lvl}
 open import Structure.Operator.Properties{lvl}{Lvl.𝟎}
 open import Structure.Relator.Properties{lvl}{Lvl.𝟎}
 

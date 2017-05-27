@@ -465,3 +465,34 @@ module testExistential where
   -- testExists : ∀{T : Type}{f : T → Type} → (∃[ x ∈ T ] (f x)) → (∃ {T} (x ↦ f x))
   -- testExists x = x
 
+module testCantor where
+  open Boolean{Lvl.𝟎}
+  open Boolean.Operators.Programming
+  open Functional
+  open Logic.Propositional{Lvl.𝟎}
+  open Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
+  open Logic.DiagonalProof{Lvl.𝟎}{Lvl.𝟎}
+  open Numeral.Natural
+  open Numeral.Natural.Relation.Countable{Lvl.𝟎}{Lvl.𝟎}
+  open Relator.Bijection{Lvl.𝟎}{Lvl.𝟎}
+  open Relator.Equals {Lvl.𝟎}{Lvl.𝟎}
+  open Type{Lvl.𝟎}
+
+  BitSequence           = (ℕ → Bool)
+  CountableBitSequences = (ℕ → BitSequence)
+
+  -- ∀l∃seq∀n. l(n)(n)≠seq(n)
+  -- There is a bit sequence that is not in the countable list of bit sequences
+  bitSequenceCantor : (l : CountableBitSequences) → ∃{BitSequence}(seq ↦ ∀{n : ℕ} → (l(n)(n) ≢ seq(n)))
+  bitSequenceCantor = diagonal-proof (!_) ([!]-unequality) where
+    [!]-unequality : ∀{b : Bool} → (b ≢ ! b)
+    [!]-unequality {𝑇} ()
+    [!]-unequality {𝐹} ()
+
+  -- TODO
+  -- uncountableProof : CountableBitSequences → ¬(Countable(BitSequence))
+  -- uncountableProof (l) ([∃]-intro(seq-to-n)(inj)) =
+  --   [∃]-elim f (bitSequenceCantor(l)) where
+  --     postulate f : ∀{seq}{n : ℕ} → _ → ⊥ -- ∀{T}{seq}{n : ℕ} → (l(n)(n) ≢ seq(n)) → T
+      -- f{_}{n}(lnn≢seqn) = lnn≢seqn ∘ inj
+  -- Countable: ∃(seq-to-n: (ℕ → Bool) → ℕ)∀(x₁ : ℕ → Bool)∀(x₂: ℕ → Bool). (seq-to-n(seq₁)=seq-to-n(seq₂)) → (seq₁=seq₂)
