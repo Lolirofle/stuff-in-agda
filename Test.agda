@@ -15,6 +15,7 @@ import FormalLanguage.ContextFreeGrammar
 import FormalLanguage.Properties
 import FormalLanguage.RegularExpression
 import Functional
+import Functional.Equals
 import Functional.Raise
 import Functional.PrimitiveRecursion
 import Functional.Properties
@@ -357,9 +358,8 @@ module testPropositionalLogic where
       _∧_ = _∧_ ;
       _∨_ = _∨_ ;
       _⇒_ = _→ᶠ_ ;
-      _⇐_ = _←_ ;
-      _⇔_ = _↔_ ;
-      _⊕_ = a ↦ b ↦ ((a ∨ b) ∧ ¬(a ∧ b))
+      _⇔_ = _↔_
+      -- _⊕_ = a ↦ b ↦ ((a ∨ b) ∧ ¬(a ∧ b))
     }
 
 module testListOrderedContainment where
@@ -489,10 +489,10 @@ module testCantor where
     [!]-unequality {𝑇} ()
     [!]-unequality {𝐹} ()
 
-  -- TODO
   -- uncountableProof : CountableBitSequences → ¬(Countable(BitSequence))
   -- uncountableProof (l) ([∃]-intro(seq-to-n)(inj)) =
   --   [∃]-elim f (bitSequenceCantor(l)) where
-  --     postulate f : ∀{seq}{n : ℕ} → _ → ⊥ -- ∀{T}{seq}{n : ℕ} → (l(n)(n) ≢ seq(n)) → T
-      -- f{_}{n}(lnn≢seqn) = lnn≢seqn ∘ inj
+  --     postulate f : ∀{seq}{x : ℕ → Bool} → {n : ℕ} → (l n n ≢ x n) → ⊥ -- ∀{T}{seq}{n : ℕ} → (l(n)(n) ≢ seq(n)) → T
+  --     f : ∀{_}{_}(₎
+  --     f{_}{n}(lnn≢seqn) = lnn≢seqn ∘ inj
   -- Countable: ∃(seq-to-n: (ℕ → Bool) → ℕ)∀(x₁ : ℕ → Bool)∀(x₂: ℕ → Bool). (seq-to-n(seq₁)=seq-to-n(seq₂)) → (seq₁=seq₂)

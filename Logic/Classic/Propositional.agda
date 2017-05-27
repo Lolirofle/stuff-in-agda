@@ -7,12 +7,12 @@ import      Level as Lvl
 
 -- Propositional logic. Working with propositions and their truth (whether they are true or false).
 
-module Syntax {lvl₁} {lvl₂} (Prop : Set(lvl₁)) (Formula : Set(lvl₁) → Set(lvl₂)) where
-  record Symbols : Set(lvl₁ Lvl.⊔ lvl₂) where
+module Syntax {lvlp} {lvll} (Prop : Set(lvlp)) (Formula : Set(lvlp) → Set(lvll)) where
+  record Symbols : Set(lvlp Lvl.⊔ lvll) where
     infixl 1011 •_
     infixl 1010 ¬_
     infixl 1005 _∧_
-    infixl 1004 _∨_ _⊕_
+    infixl 1004 _∨_
     infixl 1000 _⇐_ _⇔_ _⇒_
 
     field
@@ -23,9 +23,10 @@ module Syntax {lvl₁} {lvl₂} (Prop : Set(lvl₁)) (Formula : Set(lvl₁) → 
       _∧_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
       _∨_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
       _⇒_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
-      _⇐_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
       _⇔_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
-      _⊕_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
+
+    _⇐_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
+    _⇐_ a b = _⇒_ b a
 
 -- A model decides whether a proposition is true or false
 -- Also known as Interpretation, Structure, Model
@@ -52,20 +53,39 @@ module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) �
   -- TODO: Can this be called a "theory" of propositional logic? So that instances of the type Semantics is the "models" of logic?
   record Theory : Set(Lvl.𝐒(lvl₁ Lvl.⊔ lvl₂)) where
     field -- Definitions
-      {_⊧_} : Model(Prop) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+      _satisfies_ : Model(Prop) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+
+    private _⊧_ = _satisfies_
+
     field -- Axioms
-      [•]-satisfaction : ∀{𝔐 : Model(Prop)}{x : Prop} → (Model.interpretProp 𝔐 x ≡ 𝑇) → ◦(𝔐 ⊧ (• x))
-      [⊤]-satisfaction : ∀{𝔐 : Model(Prop)} → ◦(𝔐 ⊧ ⊤)
-      [⊥]-satisfaction : ∀{𝔐 : Model(Prop)} → ¬ₘ ◦(𝔐 ⊧ ⊥)
-      [¬]-satisfaction : ∀{𝔐 : Model(Prop)}{φ : Formula(Prop)} → (¬ₘ ◦(𝔐 ⊧ φ)) → ◦(𝔐 ⊧ (¬ φ))
-      [∧]-satisfaction : ∀{𝔐 : Model(Prop)}{φ₁ φ₂ : Formula(Prop)} → (◦(𝔐 ⊧ φ₁) ∧ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∧ φ₂))
-      [∨]-satisfaction : ∀{𝔐 : Model(Prop)}{φ₁ φ₂ : Formula(Prop)} → (◦(𝔐 ⊧ φ₁) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∨ φ₂))
-      [⇒]-satisfaction : ∀{𝔐 : Model(Prop)}{φ₁ φ₂ : Formula(Prop)} → ((¬ₘ ◦(𝔐 ⊧ φ₁)) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ⇒ φ₂))
-    -- TODO: How does the satisfaction definitions look like in constructive logic?
+      [•]-satisfaction : ∀{𝔐}{x} → (Model.interpretProp 𝔐 x ≡ 𝑇) → ◦(𝔐 ⊧ (• x))
+      [⊤]-satisfaction : ∀{𝔐} → ◦(𝔐 ⊧ ⊤)
+      [⊥]-satisfaction : ∀{𝔐} → ¬ₘ ◦(𝔐 ⊧ ⊥)
+      [¬]-satisfaction : ∀{𝔐}{φ} → (¬ₘ ◦(𝔐 ⊧ φ)) → ◦(𝔐 ⊧ (¬ φ))
+      [∧]-satisfaction : ∀{𝔐}{φ₁ φ₂} → (◦(𝔐 ⊧ φ₁) ∧ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∧ φ₂))
+      [∨]-satisfaction : ∀{𝔐}{φ₁ φ₂} → (◦(𝔐 ⊧ φ₁) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∨ φ₂))
+      [⇒]-satisfaction : ∀{𝔐}{φ₁ φ₂} → ((¬ₘ ◦(𝔐 ⊧ φ₁)) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ⇒ φ₂))
+
+  module _ {{theory : Theory}} where
+    open Theory(theory)
+
+    -- Syntactic details with the relation symbol
+    record SatisfactionRelation (T : Set(lvl₂) → Set(lvl₂)) : Set(Lvl.𝐒(lvl₁ Lvl.⊔ lvl₂)) where
+      field
+        _⊧_ : Model(Prop) → T(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
+    open SatisfactionRelation{{...}} public
+
+    instance
+      formula-satisfaction-relation : SatisfactionRelation(id)
+      formula-satisfaction-relation = record{_⊧_ = _satisfies_}
+
+    instance
+      list-satisfaction-relation : SatisfactionRelation(List)
+      list-satisfaction-relation = record{_⊧_ = \𝔐 Γ → (∀{γ} → (γ ∈ Γ) → ◦(𝔐 satisfies γ))}
 
     -- Entailment
     data _⊨_ (Γ : List(Formula(Prop))) (φ : Formula(Prop)) : Set(lvl₁ Lvl.⊔ lvl₂) where
-      [⊨]-construct : (∀{𝔐} → (∀{γ} → (γ ∈ Γ) → (𝔐 ⊧ γ)) → (𝔐 ⊧ φ)) → (Γ ⊨ φ)
+      [⊨]-construct : (∀{𝔐} → ◦(𝔐 ⊧ Γ) → ◦(𝔐 ⊧ φ)) → (Γ ⊨ φ)
 
     [⊨]-elim : ∀{Γ}{φ} → (Γ ⊨ φ) → Set(lvl₁ Lvl.⊔ lvl₂)
     [⊨]-elim {∅}     {φ} ([⊨]-construct proof) = ∀{𝔐 : Model(Prop)} → ◦(𝔐 ⊧ φ)
@@ -77,6 +97,14 @@ module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) �
     -- Validity
     valid : Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
     valid = (∅ ⊨_)
+
+    module Theorems where
+      [⊤]-entailment : (∅ ⊨ ⊤)
+      [⊤]-entailment = [⊨]-construct(const [⊤]-satisfaction)
+
+      -- TODO: Try to prove some theorems with non-empty assumptions
+      -- [¬]-entailment : (∅ ⊨ ⊤)
+      -- [¬]-entailment = [⊨]-construct(const [⊤]-satisfaction)
 
 module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (symbols : Syntax.Symbols Prop Formula) where
   open Syntax.Symbols(symbols)
