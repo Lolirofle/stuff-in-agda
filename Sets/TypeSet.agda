@@ -1,16 +1,16 @@
-module Sets.TypeSet {l₁} {l₂} where
+module Sets.TypeSet {ℓ₁} {ℓ₂} where
 
 import      Level as Lvl
 open import Data
 open import Functional
-open import Logic.Propositional{Lvl.𝐒(l₁) Lvl.⊔ l₂}
-open import Logic.Predicate{Lvl.𝐒(l₁)}{l₂}
+open import Logic.Propositional{Lvl.𝐒(ℓ₁) Lvl.⊔ ℓ₂}
+open import Logic.Predicate{Lvl.𝐒(ℓ₁)}{ℓ₂}
 open import Type
 
-data TSet : Type{Lvl.𝐒(l₁)} where
-  set : Set(l₁) → TSet
+data TSet : Type{Lvl.𝐒(ℓ₁)} where
+  set : Set(ℓ₁) → TSet
 
-set-of : TSet → Set(l₁)
+set-of : TSet → Set(ℓ₁)
 set-of (set s) = s
 
 -- _∋_ : (S : TSet) → set-of(S) → Stmt

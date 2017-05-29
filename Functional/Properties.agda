@@ -1,14 +1,14 @@
-module Functional.Properties {l₁} {l₂} where
+module Functional.Properties {ℓ₁} {ℓ₂} where
 
 import      Level as Lvl
-open import Logic.Propositional{l₁ Lvl.⊔ l₂}
-open import Logic.Predicate{l₁}{l₂}
+open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Functional
-open import Relator.Equals{l₁}{l₂}
-open import Structure.Function.Domain {l₁}
+open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Structure.Function.Domain {ℓ₁}
 open import Type
 
-id-injective : ∀{T} → Injective(id{l₂}{T})
+id-injective : ∀{T} → Injective(id{ℓ₂}{T})
 id-injective [≡]-intro = [≡]-intro
 
 id-surjective : ∀{T} → Surjective(id{_}{T})

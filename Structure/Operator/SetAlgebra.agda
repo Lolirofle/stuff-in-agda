@@ -1,10 +1,10 @@
-module Structure.Operator.SetAlgebra {l₁} {l₂} where
+module Structure.Operator.SetAlgebra {ℓ₁} {ℓ₂} where
 
 import      Level as Lvl
-open import Logic.Propositional{l₁ Lvl.⊔ l₂}
-open import Relator.Equals{l₁}{l₂}
-open import Structure.Operator.Properties{l₁}{l₂}
-open import Type{l₂}
+open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
+open import Type{ℓ₂}
 
 record SetAlgebraSym {S : Type} : Type where
   infixl 1002 ∁_

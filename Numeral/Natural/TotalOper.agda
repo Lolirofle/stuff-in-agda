@@ -1,12 +1,12 @@
-module Numeral.Natural.TotalOper{lvl} where
+module Numeral.Natural.TotalOper{ℓ} where
 
 import Level as Lvl
-open import Logic.Propositional{lvl}
-open import Logic.Predicate{lvl}{Lvl.𝟎}
+open import Logic.Propositional{ℓ}
+open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Numeral.Natural hiding (𝐏)
-open import Numeral.Natural.Relation{lvl}
-open import Numeral.Natural.Relation.Properties{lvl}
-open import Relator.Equals{lvl}{Lvl.𝟎}
+open import Numeral.Natural.Relation{ℓ}
+open import Numeral.Natural.Relation.Properties{ℓ}
+open import Relator.Equals{ℓ}{Lvl.𝟎}
 
 -- Total predecessor function
 𝐏 : (n : ℕ) → {{_ : n ≢ 𝟎}} → ℕ

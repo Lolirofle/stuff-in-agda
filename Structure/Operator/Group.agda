@@ -1,11 +1,11 @@
-module Structure.Operator.Group {l₁} {l₂} where
+module Structure.Operator.Group {ℓ₁} {ℓ₂} where
 
 open import Functional
 import      Level as Lvl
-open import Logic.Propositional{l₁ Lvl.⊔ l₂}
-open import Relator.Equals{l₁}{l₂}
-open import Structure.Operator.Properties{l₁}{l₂}
-open import Type{l₂}
+open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
+open import Type{ℓ₂}
 
 record Group {T : Type} (_▫_ : T → T → T) (id : T) (inv : T → T) : Stmt where
   field

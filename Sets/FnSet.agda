@@ -1,4 +1,4 @@
-module Sets.FnSet {l₁} {l₂} where
+module Sets.FnSet {ℓ₁} {ℓ₂} where
 
 import      Level as Lvl
 import      List
@@ -6,11 +6,11 @@ open import Boolean
 import      Boolean.Operators
 open        Boolean.Operators.Programming
 open import Boolean.Theorems
-open import Logic.Propositional{l₁ Lvl.⊔ l₂}
+open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Functional
 open import Operator.Equals
-open import Relator.Equals{l₁}{l₂}
-open import Type{l₂}
+open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Type{ℓ₂}
 
 record FnSet(T : Type) : Type where
   field

@@ -1,11 +1,11 @@
-module Structure.Operator.Field {l₁} {l₂} where
+module Structure.Operator.Field {ℓ₁} {ℓ₂} where
 
 import      Level as Lvl
-open import Logic.Propositional{l₁ Lvl.⊔ l₂}
-open import Relator.Equals{l₁}{l₂}
-open import Structure.Operator.Group{l₁}{l₂}
-open import Structure.Operator.Properties{l₁}{l₂}
-open import Type{l₂}
+open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Structure.Operator.Group{ℓ₁}{ℓ₂}
+open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
+open import Type{ℓ₂}
 
 record FieldSym {T : Type} : Type where
   field

@@ -1,12 +1,12 @@
-module Numeral.Natural.Relation{lvl} where
+module Numeral.Natural.Relation{ℓ} where
 
 import Level as Lvl
 open import Functional
-open import Logic.Propositional{lvl}
-open import Logic.Predicate{lvl}{Lvl.𝟎}
+open import Logic.Propositional{ℓ}
+open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Relator.Equals{lvl}{Lvl.𝟎}
+open import Relator.Equals{ℓ}{Lvl.𝟎}
 
 -- Divisibility
 data Even : ℕ → Stmt where

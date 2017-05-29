@@ -1,9 +1,9 @@
-module Logic.Predicate {l₁} {l₂} where
+module Logic.Predicate {ℓ₁} {ℓ₂} where
 
 open import Data
 import      Level as Lvl
-open import Logic.Propositional{l₁ Lvl.⊔ l₂}
-open import Type{l₂}
+open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Type{ℓ₂}
 
 ------------------------------------------
 -- Existential quantification

@@ -1,4 +1,4 @@
-module Logic.Propositional {lvl} where
+module Logic.Propositional {ℓ} where
 
 open import Data
 open import Functional
@@ -14,8 +14,8 @@ infixl 1000 _↔_
 ------------------------------------------
 -- Statement
 
-Stmt : Type{Lvl.𝐒(lvl)}
-Stmt = Type{lvl}
+Stmt : Type{Lvl.𝐒(ℓ)}
+Stmt = Type{ℓ}
 
 ------------------------------------------
 -- Conjunction (AND)

@@ -1,6 +1,6 @@
-module Boolean {lvl} where
+module Boolean {ℓ} where
 
-open import Type{lvl}
+open import Type{ℓ}
 
 -- Boolean type
 data Bool : Type where

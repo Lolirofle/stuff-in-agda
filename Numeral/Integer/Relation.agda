@@ -1,6 +1,6 @@
-module Numeral.Integer.Relation{lvl} where
+module Numeral.Integer.Relation{ℓ} where
 
-open import Logic.Propositional{lvl}
+open import Logic.Propositional{ℓ}
 open import Numeral.Integer
 open import Numeral.Integer.Oper
 import      Numeral.Natural.Relation as ℕ

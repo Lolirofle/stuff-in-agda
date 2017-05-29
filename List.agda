@@ -14,24 +14,24 @@ infixl 1      [_
 infixl 100000 _]
 
 -- A list is a container/collection with elements in order and allowing multiples
-data List {lvl} (T : Type{lvl}) : Type{lvl} where
+data List {ℓ} (T : Type{ℓ}) : Type{ℓ} where
   ∅ : List(T) -- The empty list
   _⊰_ : T → List(T) → List(T) -- Cons
 
-_⊱_ : ∀{lvl}{T : Type{lvl}} → List(T) → T → List(T)
+_⊱_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → T → List(T)
 _⊱_ ∅ b = b ⊰ ∅
 _⊱_ (elem ⊰ rest) b = elem ⊰ (rest ⊱ elem)
 
 -- List concatenation
-_++_ : ∀{lvl}{T : Type{lvl}} → List(T) → List(T) → List(T)
+_++_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T) → List(T)
 _++_ ∅ b = b
 _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
 
-module _ {lvl₁ lvl₂} where
+module _ {ℓ₁ ℓ₂} where
   import      Level as Lvl
-  open import Logic.Propositional{lvl₁ Lvl.⊔ lvl₂}
+  open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 
-  List-induction : ∀{T : Type{lvl₂}}{P : List(T) → Stmt} → P(∅) → (∀(x : T)(l : List(T)) → P(l) → P(x ⊰ l)) → (∀{l : List(T)} → P(l))
+  List-induction : ∀{T : Type{ℓ₂}}{P : List(T) → Stmt} → P(∅) → (∀(x : T)(l : List(T)) → P(l) → P(x ⊰ l)) → (∀{l : List(T)} → P(l))
   List-induction base next {∅} = base
   List-induction base next {x ⊰ l} = next(x)(l)(List-induction base next {l})
 
@@ -42,16 +42,16 @@ module LongOper where
   concat   = _++_
 
 -- The list with a single element
-singleton : ∀{lvl}{T : Type{lvl}} → T → List(T)
+singleton : ∀{ℓ}{T : Type{ℓ}} → T → List(T)
 singleton elem = elem ⊰ ∅
 
 -- The list without its first element
-tail : ∀{lvl}{T : Type{lvl}} → List(T) → List(T)
+tail : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T)
 tail ∅ = ∅
 tail (_ ⊰ l) = l
 
 -- Applies a function to each element in the list
-map : ∀{lvl₁ lvl₂}{T₁ : Type{lvl₁}}{T₂ : Type{lvl₂}} → (T₁ → T₂) → List(T₁) → List(T₂)
+map : ∀{ℓ₁ ℓ₂}{T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (T₁ → T₂) → List(T₁) → List(T₂)
 map _ ∅ = ∅
 map f (elem ⊰ l) = (f elem) ⊰ (map f l)
 
@@ -61,7 +61,7 @@ map f (elem ⊰ l) = (f elem) ⊰ (map f l)
 --   foldₗ(▫)(init)[a]         = init▫a
 --   foldₗ(▫)(init)[a,b]       = (init▫a)▫b
 --   foldₗ(▫)(init)[a,b,c,d,e] = ((((init▫a)▫b)▫c)▫d)▫e
-foldₗ : ∀{lvl₁ lvl₂}{T : Type{lvl₁}}{Result : Type{lvl₂}} → (Result → T → Result) → Result → List(T) → Result
+foldₗ : ∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}}{Result : Type{ℓ₂}} → (Result → T → Result) → Result → List(T) → Result
 foldₗ _   result ∅ = result
 foldₗ _▫_ result (elem ⊰ l) = foldₗ _▫_ (result ▫ elem) l
 
@@ -71,7 +71,7 @@ foldₗ _▫_ result (elem ⊰ l) = foldₗ _▫_ (result ▫ elem) l
 --   foldᵣ(▫)(init)[a]         = a▫init
 --   foldᵣ(▫)(init)[a,b]       = a▫(b▫init)
 --   foldᵣ(▫)(init)[a,b,c,d,e] = a▫(b▫(c▫(d▫(e▫init))))
-foldᵣ : ∀{lvl₁ lvl₂}{T : Type{lvl₁}}{Result : Type{lvl₂}} → (T → Result → Result) → Result → List(T) → Result
+foldᵣ : ∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}}{Result : Type{ℓ₂}} → (T → Result → Result) → Result → List(T) → Result
 foldᵣ _   init ∅ = init
 foldᵣ _▫_ init (elem ⊰ l) = elem ▫ (foldᵣ _▫_ init l)
 
@@ -89,7 +89,7 @@ foldᵣ _▫_ init (elem ⊰ l) = elem ▫ (foldᵣ _▫_ init l)
 --   foldᵣ (_▫_) (1) [2,3] = 2 ▫ (3 ▫ 1)
 --   foldᵣ-init (_▫_) (1) [2,3] = 1 ▫ (2 ▫ 3)
 -- Also: foldᵣ-init(▫)(init)(l++[last]) = foldᵣ(▫)(last)(init⊰l)
-foldᵣ-init : ∀{lvl}{T : Type{lvl}} → (T → T → T) → T → List(T) → T
+foldᵣ-init : ∀{ℓ}{T : Type{ℓ}} → (T → T → T) → T → List(T) → T
 foldᵣ-init _   init ∅ = init
 foldᵣ-init _▫_ init (elem ⊰ l) = init ▫ (foldᵣ-init _▫_ elem l)
 
@@ -100,7 +100,7 @@ foldᵣ-init _▫_ init (elem ⊰ l) = init ▫ (foldᵣ-init _▫_ elem l)
 --   reduceOrₗ(▫)(result)[a,b]       = a▫b
 --   reduceOrₗ(▫)(result)[a,b,c]     = (a▫b)▫c
 --   reduceOrₗ(▫)(result)[a,b,c,d,e] = (((a▫b)▫c)▫d)▫e
-reduceOrₗ : ∀{lvl}{T : Type{lvl}} → (T → T → T) → T → List(T) → T
+reduceOrₗ : ∀{ℓ}{T : Type{ℓ}} → (T → T → T) → T → List(T) → T
 reduceOrₗ _   result ∅ = result
 reduceOrₗ _▫_ result (elem ⊰ ∅) = elem
 reduceOrₗ _▫_ result (elem₁ ⊰ (elem₂ ⊰ l)) = reduceOrₗ _▫_ (result ▫ elem₁) (elem₂ ⊰ l)
@@ -112,69 +112,69 @@ reduceOrₗ _▫_ result (elem₁ ⊰ (elem₂ ⊰ l)) = reduceOrₗ _▫_ (resu
 --   reduceOrᵣ(▫)(result)[a,b]       = a▫b
 --   reduceOrᵣ(▫)(result)[a,b,c]     = a▫(b▫c)
 --   reduceOrᵣ(▫)(result)[a,b,c,d,e] = a▫(b▫(c▫(d▫e)))
-reduceOrᵣ : ∀{lvl}{T : Type{lvl}} → (T → T → T) → T → List(T) → T
+reduceOrᵣ : ∀{ℓ}{T : Type{ℓ}} → (T → T → T) → T → List(T) → T
 reduceOrᵣ _   init ∅ = init
 reduceOrᵣ _▫_ init (elem ⊰ ∅) = elem
 reduceOrᵣ _▫_ init (elem₁ ⊰ (elem₂ ⊰ l)) = elem₁ ▫ (reduceOrᵣ _▫_ init (elem₂ ⊰ l))
 
 -- The nth element in the list
-index : ∀{lvl}{T : Type{lvl}} → ℕ → List(T) → Option(T)
+index : ∀{ℓ}{T : Type{ℓ}} → ℕ → List(T) → Option(T)
 index _      ∅       = Option.None
 index 𝟎      (x ⊰ _) = Option.Some(x)
 index (𝐒(n)) (_ ⊰ l) = index n l
 
 -- The sublist with the first n elements in the list
-first : ∀{lvl}{T : Type{lvl}} → ℕ → List(T) → List(T)
+first : ∀{ℓ}{T : Type{ℓ}} → ℕ → List(T) → List(T)
 first _      ∅       = ∅
 first 𝟎      (x ⊰ _) = x ⊰ ∅
 first (𝐒(n)) (x ⊰ l) = x ⊰ (first n l)
 
 -- Length of the list (number of elements in the list)
-length : ∀{lvl}{T : Type{lvl}} → List(T) → ℕ
+length : ∀{ℓ}{T : Type{ℓ}} → List(T) → ℕ
 length ∅ = 𝟎
 length (_ ⊰ l) = 𝐒(length l)
 -- foldᵣ (_ count ↦ 𝐒(count)) 0 l
 
 -- TODO: Generalize
-mapWindow2ₗ : ∀{lvl}{T : Type{lvl}} → (T → T → T) → List(T) → List(T)
+mapWindow2ₗ : ∀{ℓ}{T : Type{ℓ}} → (T → T → T) → List(T) → List(T)
 mapWindow2ₗ f (x₁ ⊰ x₂ ⊰ l) = (f x₁ x₂) ⊰ (mapWindow2ₗ f (x₂ ⊰ l))
 mapWindow2ₗ _ _ = ∅
 
 -- The first element of the list (head)
-firstElem : ∀{lvl}{T : Type{lvl}} → List(T) → Option(T)
+firstElem : ∀{ℓ}{T : Type{ℓ}} → List(T) → Option(T)
 firstElem ∅ = Option.None
 firstElem (x ⊰ _) = Option.Some(x)
 
 -- The last element of the list
-lastElem : ∀{lvl}{T : Type{lvl}} → List(T) → Option(T)
+lastElem : ∀{ℓ}{T : Type{ℓ}} → List(T) → Option(T)
 lastElem l = foldᵣ (elem ↦ _ ↦ Option.Some(elem)) Option.None l -- TODO: Is this wrong?
 
-_or_ : ∀{lvl}{T : Type{lvl}} → List(T) → List(T) → List(T)
+_or_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T) → List(T)
 _or_ ∅ default = default
 _or_ l _ = l
 
 -- Reverse the order of the elements in the list
-reverse : ∀{lvl}{T : Type{lvl}} → List(T) → List(T)
+reverse : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T)
 reverse ∅ = ∅
 reverse (x ⊰ l) = (reverse l) ++ (singleton x)
 
 -- The list with an element repeated n times
-repeat : ∀{lvl}{T : Type{lvl}} → T → ℕ → List(T)
+repeat : ∀{ℓ}{T : Type{ℓ}} → T → ℕ → List(T)
 repeat _ 𝟎      = ∅
 repeat x (𝐒(n)) = x ⊰ (repeat x n)
 
 -- The list with a list concatenated (repeated) n times
-multiply : ∀{lvl}{T : Type{lvl}} → List(T) → ℕ → List(T)
+multiply : ∀{ℓ}{T : Type{ℓ}} → List(T) → ℕ → List(T)
 multiply _ 𝟎      = ∅
 multiply l (𝐒(n)) = l ++ (multiply l n)
 
 pattern [_ l = l
 pattern _] x = x ⊰ ∅
 
-any : ∀{lvl}{T : Type{lvl}} → (T → Bool{lvl}) → List(T) → Bool
+any : ∀{ℓ}{T : Type{ℓ}} → (T → Bool{ℓ}) → List(T) → Bool
 any pred ∅       = 𝐹
 any pred (x ⊰ l) = pred(x) || any(pred)(l)
 
-all : ∀{lvl}{T : Type{lvl}} → (T → Bool{lvl}) → List(T) → Bool
+all : ∀{ℓ}{T : Type{ℓ}} → (T → Bool{ℓ}) → List(T) → Bool
 all pred ∅       = 𝑇
 all pred (x ⊰ l) = pred(x) && any(pred)(l)
