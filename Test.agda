@@ -51,8 +51,8 @@ import Numeral.Sign.Oper0
 import Operator.Equals
 import Relator.Bijection
 import Relator.Equals
+import Sets.AdditiveSet
 import Sets.FnSet
-import Sets.SimpleSet
 import Sets.TypeSet
 import Structure.Function.Domain
 import Structure.Function.Linear

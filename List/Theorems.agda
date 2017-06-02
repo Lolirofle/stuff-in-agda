@@ -24,11 +24,11 @@ module OrderedContainment {T} where
   emptyᵣ {∅}     = empty
   emptyᵣ {a ⊰ L} = skip(emptyᵣ{L})
 
-  concatᵣ : ∀{L₁ L₂} → ((L₁ ++ L₂) contains-in-order L₂)
-  concatᵣ {∅}{∅} = empty
-  concatᵣ {∅}{L₂} = self
-  -- concatᵣ {L₁}{∅} = emptyᵣ -- Either this line or the first seems to be redundant
-  concatᵣ {a₁ ⊰ L₁}{L₂} = skip{a₁}(concatᵣ{L₁}{L₂})
+  [∈]-of-[++]ₗ : ∀{L₁ L₂} → ((L₁ ++ L₂) contains-in-order L₂)
+  [∈]-of-[++]ₗ {∅}{∅} = empty
+  [∈]-of-[++]ₗ {∅}{L₂} = self
+  -- [∈]-of-[++]ₗ {L₁}{∅} = emptyᵣ -- Either this line or the first seems to be redundant
+  [∈]-of-[++]ₗ {a₁ ⊰ L₁}{L₂} = skip{a₁}([∈]-of-[++]ₗ{L₁}{L₂})
 
   constructₗ : ∀{L₁ L₂} → (L₁ contains-in-order L₂) → List{ℓ₂}(T)
   constructₗ {L₁}{_} (_) = L₁
@@ -58,49 +58,62 @@ module Sets {T} where
   -- General proofs about the containment relation
   module [∈]-proof where
     open import Logic.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
+    open import Numeral.Natural.Oper.Properties
 
-    pattern use  {a}{L}          = [∈]-use  {a}{L}
-    pattern skip {a}{x}{L} proof = [∈]-skip {a}{x}{L} (proof)
+    pattern [∈]-head     {a}{L}          = [∈]-use  {a}{L}
+    pattern [∈]-with-[⊰] {a}{x}{L} proof = [∈]-skip {a}{x}{L} (proof)
 
-    empty : ∀{a} → (a ∉ ∅)
-    empty ()
+    [∉]-empty : ∀{a} → (a ∉ ∅)
+    [∉]-empty ()
 
-    single : ∀{a} → (a ∈ ([ a ]))
-    single = use
+    [∈]-singleton : ∀{a} → (a ∈ ([ a ]))
+    [∈]-singleton = [∈]-head
 
-    concatₗ : ∀{a}{L₁ L₂} → ((a ∈ L₁)∨(a ∈ L₂)) ← (a ∈ (L₁ ++ L₂))
-    concatₗ {a}{_}{∅} a∈L₁ = [∨]-introₗ([≡]-elimᵣ [++]-identityᵣ {expr ↦ (a ∈ expr)} (a∈L₁))
-    concatₗ {_}{∅}{_} a∈L₂ = [∨]-introᵣ(a∈L₂)
-    concatₗ {_}{_ ⊰ L₁}{L₂} (use) = [∨]-introₗ(use)
-    concatₗ {a}{x ⊰ L₁}{L₂} (skip a∈L₁) with concatₗ {a}{L₁}{L₂} (a∈L₁)
-    ...                                 | [∨]-introₗ(a∈L₁∖a) = [∨]-introₗ(skip(a∈L₁∖a))
-    ...                                 | [∨]-introᵣ(a∈L₂) = [∨]-introᵣ(a∈L₂)
+    [∈]-singleton-[≡] : ∀{a b} → (a ∈ ([ b ])) → (a [≡] b)
+    [∈]-singleton-[≡] ([∈]-head)  = [≡]-intro
+    [∈]-singleton-[≡] ([∈]-with-[⊰] ())
 
-    concatᵣ : ∀{a}{L₁ L₂} → ((a ∈ L₁)∨(a ∈ L₂)) → (a ∈ (L₁ ++ L₂))
-    concatᵣ {_}{∅}{_} ([∨]-introₗ ())
-    -- concatᵣ {_}{_}{∅} ([∨]-introᵣ ())
-    -- concatᵣ {a}{_}{∅} ([∨]-introₗ a∈L₁) = [≡]-elimₗ [++]-identityᵣ {expr ↦ (a ∈ expr)} (a∈L₁)
-    concatᵣ {_}{∅}{_} ([∨]-introᵣ(a∈L₂)) = (a∈L₂)
-    concatᵣ {_}{_ ⊰ L₁}{L₂} ([∨]-introₗ(use)) = use
-    concatᵣ {a}{x ⊰ L₁}{L₂} ([∨]-introₗ(skip a∈L₁)) = skip(concatᵣ {a}{L₁}{L₂} ([∨]-introₗ(a∈L₁)))
-    concatᵣ {a}{x ⊰ L₁}{L₂} ([∨]-introᵣ(a∈L₂)) = skip{a}{x}(concatᵣ {a}{L₁}{L₂} ([∨]-introᵣ(a∈L₂)))
+    [∉]-singleton-[≢] : ∀{a b} → (a [≢] b) → (a ∉ ([ b ]))
+    [∉]-singleton-[≢] = contrapositive₁ [∈]-singleton-[≡]
 
-    concat : ∀{a}{L₁ L₂} → ((a ∈ L₁)∨(a ∈ L₂)) ↔ (a ∈ (L₁ ++ L₂))
-    concat = [↔]-intro concatₗ concatᵣ
+    [∈]-of-[++]ᵣ : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → ((a ∈ L₁)∨(a ∈ L₂))
+    [∈]-of-[++]ᵣ {a}{_}{∅} a∈L₁ = [∨]-introₗ([≡]-elimᵣ [++]-identityᵣ {expr ↦ (a ∈ expr)} (a∈L₁))
+    [∈]-of-[++]ᵣ {_}{∅}{_} a∈L₂ = [∨]-introᵣ(a∈L₂)
+    [∈]-of-[++]ᵣ {_}{_ ⊰ L₁}{L₂} ([∈]-head) = [∨]-introₗ([∈]-head)
+    [∈]-of-[++]ᵣ {a}{x ⊰ L₁}{L₂} ([∈]-with-[⊰] a∈L₁) with [∈]-of-[++]ᵣ {a}{L₁}{L₂} (a∈L₁)
+    ...                                               | [∨]-introₗ(a∈L₁∖a) = [∨]-introₗ([∈]-with-[⊰](a∈L₁∖a))
+    ...                                               | [∨]-introᵣ(a∈L₂) = [∨]-introᵣ(a∈L₂)
 
-    [++]-commutativity : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → (a ∈ (L₂ ++ L₁))
-    [++]-commutativity {a}{L₁}{L₂} a∈L₁++L₂ = concatᵣ{a}{L₂}{L₁}([∨]-commutativity(concatₗ(a∈L₁++L₂)))
+    [∈]-of-[++]ₗ : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) ← ((a ∈ L₁)∨(a ∈ L₂))
+    [∈]-of-[++]ₗ {_}{∅}{_} ([∨]-introₗ ())
+    -- [∈]-of-[++]ₗ {_}{_}{∅} ([∨]-introᵣ ())
+    -- [∈]-of-[++]ₗ {a}{_}{∅} ([∨]-introₗ a∈L₁) = [≡]-elimₗ [++]-identityᵣ {expr ↦ (a ∈ expr)} (a∈L₁)
+    [∈]-of-[++]ₗ {_}{∅}{_} ([∨]-introᵣ(a∈L₂)) = (a∈L₂)
+    [∈]-of-[++]ₗ {_}{_ ⊰ L₁}{L₂} ([∨]-introₗ([∈]-head)) = [∈]-head
+    [∈]-of-[++]ₗ {a}{x ⊰ L₁}{L₂} ([∨]-introₗ([∈]-with-[⊰] a∈L₁)) = [∈]-with-[⊰]([∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introₗ(a∈L₁)))
+    [∈]-of-[++]ₗ {a}{x ⊰ L₁}{L₂} ([∨]-introᵣ(a∈L₂)) = [∈]-with-[⊰]{a}{x}([∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introᵣ(a∈L₂)))
+
+    [∈]-of-[++] : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) ↔ ((a ∈ L₁)∨(a ∈ L₂))
+    [∈]-of-[++] = [↔]-intro [∈]-of-[++]ₗ [∈]-of-[++]ᵣ
+
+    [∈][++]-commutativity : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → (a ∈ (L₂ ++ L₁))
+    [∈][++]-commutativity {a}{L₁}{L₂} a∈L₁++L₂ = [∈]-of-[++]ₗ{a}{L₂}{L₁}([∨]-commutativity([∈]-of-[++]ᵣ(a∈L₁++L₂)))
 
     construct : ∀{a}{L} → (a ∈ L) → T
     construct{a}(_) = a
 
-    application : ∀{a}{L} → (a ∈ L) → ∀{f} → (f(a) ∈ (map f(L)))
-    application(use) = use
-    application(skip(proof)) = skip(application(proof))
+    [∈]-apply : ∀{a}{L} → (a ∈ L) → ∀{f} → (f(a) ∈ (map f(L)))
+    [∈]-apply ([∈]-head)            = [∈]-head
+    [∈]-apply ([∈]-with-[⊰](proof)) = [∈]-with-[⊰]([∈]-apply(proof))
 
-    -- at : ∀{x}{L} → (n : ℕ) → (x ∈ (reduceᵣ(⊰) L))
-    -- at(𝟎)    = use
-    -- at(𝐒(n)) = skip(at(n))
+    [∈]-at-last : ∀{n}{L} → (length(L) [≡] n) → ∀{a} → (a ∈ (L ++ singleton(a)))
+    [∈]-at-last{𝟎}   {∅}        (_)         = [∈]-head
+    [∈]-at-last{𝟎}   {_ ⊰ _}    ()
+    [∈]-at-last{𝐒(_)}{∅}        ()
+    [∈]-at-last{𝐒(n)}{_ ⊰ rest} (len-proof) = [∈]-with-[⊰] ([∈]-at-last{n}{rest} ([𝐒]-injectivity(len-proof)))
+
+    [∈]-at : (n : ℕ) → ∀{L₁ L₂} → ⦃ _ : length(L₁) [≡] n ⦄ → ∀{a} → (a ∈ ((L₁ ++ singleton(a)) ++ L₂))
+    [∈]-at(n) ⦃ len-proof ⦄ = [∈]-of-[++]ₗ ([∨]-introₗ ([∈]-at-last{n} (len-proof)))
 
   -- Other relators regarding sets
   module Relators where

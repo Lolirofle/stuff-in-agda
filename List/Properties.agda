@@ -81,6 +81,14 @@ instance
   -- _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
 
 instance
+  length-[∅] : ∀{T : Type} → (length(∅{_}{T}) ≡ 0)
+  length-[∅] = [≡]-intro
+
+instance
+  length-singleton : ∀{T : Type}{a : T} → (length(singleton(a)) ≡ 1)
+  length-singleton = [≡]-intro
+
+instance
   length-[++] : ∀{T}{l₁ l₂ : List(T)} → (length(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
   length-[++] {T} {l₁} {l₂} = List-induction{ℓ₁}{Lvl.𝟎} base next {l₁} where
     base : length(∅ ++ l₂) ≡ length{_}{T}(∅) + length(l₂)
@@ -120,15 +128,6 @@ instance
   --   -- length(reverse(l))+length(x⊰ε) = length(x⊰l)
   --   -- length(reverse(l)++x⊰ε) = length(x⊰l)
   --   -- length(reverse(l)++singleton(x)) = length(x⊰l)
-
-instance
-  length-[∅]ₗ : ∀{T : Type}{L : List(T)} → (L ≡ ∅) → (length(L) ≡ 0)
-  length-[∅]ₗ [≡]-intro = [≡]-intro
-
-instance
-  length-[∅]ᵣ : ∀{T : Type}{L : List(T)} → (length(L) ≡ 0) → (L ≡ ∅)
-  length-[∅]ᵣ {_}{∅}     (_) = [≡]-intro
-  length-[∅]ᵣ {_}{_ ⊰ _} ()
 
 -- TODO: Empty list is prefix and suffix of everything
 -- TODO: Whole list is prefix and suffix of everything

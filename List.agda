@@ -178,3 +178,11 @@ any pred (x ⊰ l) = pred(x) || any(pred)(l)
 all : ∀{ℓ}{T : Type{ℓ}} → (T → Bool{ℓ}) → List(T) → Bool
 all pred ∅       = 𝑇
 all pred (x ⊰ l) = pred(x) && any(pred)(l)
+
+-- TODO
+-- List-apply : ∀{ℓ}{L : List(Type{ℓ})} → (foldᵣ (_⨯_) (Out) (L)) → ∀{Out : Type{ℓ}} → (foldᵣ (_→ᶠ_) (Out) (L)) → Out
+-- List-apply(∅)           (f) = f
+-- List-apply(head ⊰ rest) (f) = List-apply(rest) (f(head))
+
+-- fn-to-list : ∀{ℓ}{L : List(Type{ℓ})}{Out : Type{ℓ}} → (foldᵣ (_→ᶠ_) (Out) (L)) → (List(Type{ℓ}) → Out)
+-- fn-to-list{∅} = 
