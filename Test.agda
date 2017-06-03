@@ -24,7 +24,8 @@ import List
 import List.Properties
 import List.Relation
 import List.Theorems
-import Logic.Classic.Propositional
+import Logic.Classic.Propositional.Syntax
+import Logic.Classic.Propositional.Semantics
 import Logic.DiagonalProof
 import Logic.Propositional
 import Logic.Predicate
@@ -342,25 +343,25 @@ module testList where
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"
 
-module testPropositionalLogic where
-  open Functional
-  open Logic.Propositional{Lvl.𝟎}
-  module Propositional = Logic.Classic.Propositional
-  open Type{Lvl.𝟎}
-
-  symbols : ∀{T : Set(Lvl.𝟎)} → Propositional.Syntax.Symbols T (const (Set(Lvl.𝟎)))
-  symbols =
-    record {
-      •_ = type-of ;
-      ⊤   = ⊤ ;
-      ⊥   = ⊥ ;
-      ¬_  = ¬_ ;
-      _∧_ = _∧_ ;
-      _∨_ = _∨_ ;
-      _⇒_ = _→ᶠ_ ;
-      _⇔_ = _↔_
-      -- _⊕_ = a ↦ b ↦ ((a ∨ b) ∧ ¬(a ∧ b))
-    }
+-- module testPropositionalLogic where
+--   open Functional
+--   open Logic.Propositional{Lvl.𝟎}
+--   module Propositional = Logic.Classic.Propositional
+--   open Type{Lvl.𝟎}
+-- 
+--   symbols : ∀{T : Set(Lvl.𝟎)} → Propositional.Syntax.Symbols T (const (Set(Lvl.𝟎)))
+--   symbols =
+--     record {
+--       •_ = type-of ;
+--       ⊤   = ⊤ ;
+--       ⊥   = ⊥ ;
+--       ¬_  = ¬_ ;
+--       _∧_ = _∧_ ;
+--       _∨_ = _∨_ ;
+--       _⇒_ = _→ᶠ_ ;
+--       _⇔_ = _↔_
+--       -- _⊕_ = a ↦ b ↦ ((a ∨ b) ∧ ¬(a ∧ b))
+--     }
 
 module testListOrderedContainment where
   open Functional
@@ -496,3 +497,24 @@ module testCantor where
   --     f : ∀{_}{_}(₎
   --     f{_}{n}(lnn≢seqn) = lnn≢seqn ∘ inj
   -- Countable: ∃(seq-to-n: (ℕ → Bool) → ℕ)∀(x₁ : ℕ → Bool)∀(x₂: ℕ → Bool). (seq-to-n(seq₁)=seq-to-n(seq₂)) → (seq₁=seq₂)
+
+module testListSets where
+  open Functional
+  open List
+  open List.Theorems.Sets{Lvl.𝟎}
+  open List.Theorems.Sets.[∈]-proof
+  open Logic.Propositional
+  open Type{Lvl.𝟎}
+
+  -- TODO: Probably incorrectly formulated
+  -- Example:
+  --   (∀a. a∈{P,Q} → R)
+  --   P → Q → R
+  -- [∈]-list : ∀{L : List(Type)}{Out : Type} → (∀{a} → (a ∈ L) → Out) → (foldᵣ (_→ᶠ_) (Out) (L))
+  -- [∈]-list{∅}(f) = f ∘ [⊥]-elim ∘ [∉]-empty
+  -- f            : ∀{a} → (a ∈ ∅) → Out
+  -- f ∘ [⊥]-elim : ⊥ → Out
+
+  -- [∈]-list : ∀{L : List(Type)}{Out : Type} → (foldᵣ (_→ᶠ_) (Out) (L)) → (∀{a} → (a ∈ L) → Out)
+  -- [∈]-list{∅}     (out) (a∈∅)   = out
+  -- [∈]-list{x ⊰ l} (f)   (a∈x⊰l) = [∈]-list{l} (f)

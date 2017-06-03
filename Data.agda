@@ -6,6 +6,10 @@ open import Type
 -- The empty type which cannot be constructed
 data Empty {ℓ} : Type{ℓ} where
 
+-- Empty function
+empty-fn : ∀{ℓ}{T : Type{ℓ}} → Empty{ℓ} → T
+empty-fn ()
+
 -- The unit type which can only be constructed in one way
 record Unit {ℓ} : Type{ℓ} where
   constructor <>

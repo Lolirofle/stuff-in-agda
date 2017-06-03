@@ -6,7 +6,7 @@ open import List
 open import List.Properties
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}
-open import Relator.Equals{ℓ₁} renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_)
+open import Relator.Equals{ℓ₁} renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_) hiding ([≡]-substitution)
 open import Type{ℓ₂}
 
 -- Statement of whether a list is contained in the beginning of another list
@@ -106,24 +106,22 @@ module Sets {T} where
     [∈]-apply ([∈]-head)            = [∈]-head
     [∈]-apply ([∈]-with-[⊰](proof)) = [∈]-with-[⊰]([∈]-apply(proof))
 
-    [∈]-at-last : ∀{n}{L} → (length(L) [≡] n) → ∀{a} → (a ∈ (L ++ singleton(a)))
-    [∈]-at-last{𝟎}   {∅}        (_)         = [∈]-head
-    [∈]-at-last{𝟎}   {_ ⊰ _}    ()
-    [∈]-at-last{𝐒(_)}{∅}        ()
-    [∈]-at-last{𝐒(n)}{_ ⊰ rest} (len-proof) = [∈]-with-[⊰] ([∈]-at-last{n}{rest} ([𝐒]-injectivity(len-proof)))
+    [∈]-at-last : ∀{L} → ∀{a} → (a ∈ (L ++ singleton(a)))
+    [∈]-at-last{∅}        = [∈]-head
+    [∈]-at-last{_ ⊰ rest} = [∈]-with-[⊰] ([∈]-at-last{rest})
 
-    [∈]-at : (n : ℕ) → ∀{L₁ L₂} → ⦃ _ : length(L₁) [≡] n ⦄ → ∀{a} → (a ∈ ((L₁ ++ singleton(a)) ++ L₂))
-    [∈]-at(n) ⦃ len-proof ⦄ = [∈]-of-[++]ₗ ([∨]-introₗ ([∈]-at-last{n} (len-proof)))
+    [∈]-in-middle : ∀{L₁ L₂} → ∀{a} → (a ∈ (L₁ ++ singleton(a) ++ L₂))
+    [∈]-in-middle{L₁} = [∈]-of-[++]ₗ ([∨]-introₗ ([∈]-at-last{L₁}))
 
   -- Other relators regarding sets
   module Relators where
     open import Functional
 
     _⊆_ : List{ℓ₂}(T) → List{ℓ₂}(T) → Stmt
-    _⊆_ L₁ L₂ = ∀{x} → (x ∈ L₁) ← (x ∈ L₂)
+    _⊆_ L₁ L₂ = ∀{x} → (x ∈ L₁) → (x ∈ L₂)
 
     _⊇_ : List{ℓ₂}(T) → List{ℓ₂}(T) → Stmt
-    _⊇_ L₁ L₂ = ∀{x} → (x ∈ L₁) → (x ∈ L₂)
+    _⊇_ L₁ L₂ = ∀{x} → (x ∈ L₁) ← (x ∈ L₂)
 
     _≡_ : List{ℓ₂}(T) → List{ℓ₂}(T) → Stmt
     _≡_ L₁ L₂ = ∀{x} → (x ∈ L₁) ↔ (x ∈ L₂)
@@ -136,6 +134,15 @@ module Sets {T} where
 
     _≢_ : List{ℓ₂}(T) → List{ℓ₂}(T) → Stmt
     _≢_ L₁ L₂ = ¬(L₁ ≡ L₂)
+
+    [⊆]-substitution : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{P : T → Stmt} → (∀{a} → (a ∈ L₂) → P(a)) → (∀{a} → (a ∈ L₁) → P(a))
+    [⊆]-substitution (L₁⊆L₂) proof = proof ∘ (L₁⊆L₂)
+
+    [≡]-substitutionₗ : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ≡ L₂) → ∀{P : T → Stmt} → (∀{a} → (a ∈ L₁) → P(a)) → (∀{a} → (a ∈ L₂) → P(a))
+    [≡]-substitutionₗ (L₁≡L₂) = [⊆]-substitution ([↔]-elimₗ (L₁≡L₂))
+
+    [≡]-substitutionᵣ : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ≡ L₂) → ∀{P : T → Stmt} → (∀{a} → (a ∈ L₂) → P(a)) → (∀{a} → (a ∈ L₁) → P(a))
+    [≡]-substitutionᵣ (L₁≡L₂) = [⊆]-substitution ([↔]-elimᵣ (L₁≡L₂))
 
     -- [⊆]-application : ∀{L₁ L₂} → (L₁ ⊆ L₂) → ∀{f} → (map f(L₁))⊆(map f(L₂))
     -- [⊆]-application proof fL₁ = [∈]-proof.application ∘ proof
