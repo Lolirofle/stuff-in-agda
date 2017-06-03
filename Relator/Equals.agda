@@ -48,8 +48,8 @@ instance
 [≡]-with-[_] f [≡]-intro = [≡]-intro
 
 -- Replaces occurrences of the elements in the equality
-[≡]-substitution : ∀{T} → (f : T → Type) → ∀{x y : T} → (x ≡ y) → f(x) → f(y)
-[≡]-substitution f [≡]-intro fx = fx
+[≡]-substitution : ∀{T} → ∀{x y : T} → (x ≡ y) → ∀{f : T → Type} → f(x) → f(y)
+[≡]-substitution [≡]-intro {f} fx = fx
 
 instance
   [≡]-equivalence : ∀{T} → Equivalence {T} (_≡_ {T})
@@ -65,3 +65,7 @@ Uniqueness {T} property = ∀{x y : T} → (property(x) ∧ property(y)) → (x 
 
 [≡]-function : ∀{A B : Type}{f₁ f₂ : A → B} → (f₁ ≡ f₂) → (∀{x} → (f₁(x) ≡ f₂(x)))
 [≡]-function [≡]-intro = [≡]-intro
+
+[≡]-operation : ∀{A B C : Type}{a₁ a₂ : A}{b₁ b₂ : B} → (a₁ ≡ a₂) → (b₁ ≡ b₂) → {_▫_ : A → B → C} → ((a₁ ▫ b₁) ≡ (a₂ ▫ b₂))
+[≡]-operation{_}{_}{_} {a₁}{a₂} {b₁}{b₂} (a₁≡a₂) (b₁≡b₂) {_▫_} =
+  [≡]-elimᵣ (b₁≡b₂) {\x → (a₁ ▫ b₁) ≡ (a₂ ▫ x)} ([≡]-with-[(x ↦ (x ▫ b₁))] (a₁≡a₂))
