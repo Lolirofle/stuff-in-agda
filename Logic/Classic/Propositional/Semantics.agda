@@ -9,7 +9,6 @@ import      List.Theorems
 open        List.Theorems.Sets{ℓ}{ℓ}
 open import Logic.Classic.Propositional.Syntax{ℓ} (Prop)
   renaming (
-    Formula to Formulaₗ ;
     ⊤   to ⊤ₗ ;
     ⊥   to ⊥ₗ ;
     ¬_  to ¬ₗ_ ;
@@ -26,11 +25,11 @@ record Model{ℓₘ} : Set(ℓ Lvl.⊔ ℓₘ) where
 
 -- TODO: Can this be called a "theory" of propositional logic? So that instances of the type Semantics is the "models" of logic?
 -- TODO: Now, all the metalogic depends on booleans, which may not be satisfactory
-module _ {T : Set(ℓ)} where
+module _ where
   import      Boolean.Operators
   open        Boolean.Operators.Logic
 
-  satisfaction : Model{ℓ} → Formulaₗ(T) → Bool
+  satisfaction : Model{ℓ} → Formula → Bool
   satisfaction(𝔐)(• prop) = Model.interpretProp(𝔐) (prop)
   satisfaction(𝔐)(⊤ₗ) = 𝑇
   satisfaction(𝔐)(⊥ₗ) = 𝐹
@@ -42,7 +41,7 @@ module _ {T : Set(ℓ)} where
   -- Syntactic details with the relation symbol
   record SatisfactionRelation (Obj : Set(ℓ) → Set(ℓ)) : Set(Lvl.𝐒(ℓ)) where
     field
-      _⊧_ : Model{ℓ} → Obj(Formulaₗ(T)) → Set(ℓ)
+      _⊧_ : Model{ℓ} → Obj(Formula) → Set(ℓ)
   open SatisfactionRelation{{...}} public
 
   instance
@@ -56,18 +55,18 @@ module _ {T : Set(ℓ)} where
     list-satisfaction-relation = record{_⊧_ = \𝔐 Γ → (∀{γ} → (γ ∈ Γ) → satisfaction(𝔐)(γ) ≡ 𝑇)}
 
   -- Entailment
-  data _⊨_ (Γ : List(Formulaₗ(T))) (φ : Formulaₗ(T)) : Set(ℓ) where
+  data _⊨_ (Γ : List(Formula)) (φ : Formula) : Set(ℓ) where
     [⊨]-construct : (∀{𝔐} → (𝔐 ⊧ Γ) → (𝔐 ⊧ φ)) → (Γ ⊨ φ)
 
   [⊨]-elim : ∀{Γ}{φ} → (Γ ⊨ φ) → Set(ℓ)
   [⊨]-elim {∅}     {φ} ([⊨]-construct proof) = ∀{𝔐 : Model} → (𝔐 ⊧ φ)
   [⊨]-elim {γ ⊰ Γ} {φ} ([⊨]-construct proof) = ∀{𝔐 : Model} → (foldᵣ-init (_⨯_) (𝔐 ⊧ γ) (map (γ ↦ (𝔐 ⊧ γ)) Γ)) → (𝔐 ⊧ φ)
 
-  _⊭_ : List(Formulaₗ(T)) → Formulaₗ(T) → Set(ℓ)
+  _⊭_ : List(Formula) → Formula → Set(ℓ)
   _⊭_ Γ φ = (_⊨_ Γ φ) → Empty{ℓ}
 
   -- Validity
-  valid : Formulaₗ(T) → Set(ℓ)
+  valid : Formula → Set(ℓ)
   valid = (∅ ⊨_)
 
   module Theorems where

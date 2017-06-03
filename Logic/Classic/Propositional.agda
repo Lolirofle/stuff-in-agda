@@ -74,49 +74,6 @@ module ProofSystems {ℓ₁} {ℓ₂} {Prop : Set(ℓ₁)} {Formula : Set(ℓ₁
           _∨_ to _∨ₘ_ ;
           _⇒_ to _⇒ₘ_ )
 
-      module Test where
-        data _⊢'_ : List(Formula(Prop)) → Formula(Prop) → Set(ℓ₁ Lvl.⊔ ℓ₂) where
-          formula-intro : ∀{φ} → ([ φ ] ⊢' φ)
-
-          [⊤]-i : (∅ ⊢' ⊤)
-
-          [⊥]-i : ∀{Γ}{φ} → ((Γ ⊢' φ) ⨯ (Γ ⊢' (¬ φ))) → (Γ ⊢' ⊥)
-
-          [¬]-i : ∀{Γ}{φ} → ((φ ⊰ Γ) ⊢' ⊥) → (Γ ⊢' (¬ φ))
-          [¬]-e  : ∀{Γ}{φ} → (((¬ φ) ⊰ Γ) ⊢' ⊥) → (Γ ⊢' φ)
-
-          [∧]-i : ∀{Γ₁ Γ₂}{φ₁ φ₂} → ((Γ₁ ⊢' φ₁) ⨯ (Γ₂ ⊢' φ₂)) → ((Γ₁ ++ Γ₂) ⊢' (φ₁ ∧ φ₂))
-          [∧]-eₗ  : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' (φ₁ ∧ φ₂)) → (Γ ⊢' φ₁)
-          [∧]-eᵣ  : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' (φ₁ ∧ φ₂)) → (Γ ⊢' φ₂)
-
-          [∨]-iₗ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' φ₁) → (Γ ⊢' (φ₁ ∨ φ₂))
-          [∨]-iᵣ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' φ₂) → (Γ ⊢' (φ₁ ∨ φ₂))
-          [∨]-e  : ∀{Γ₁ Γ₂ Γ₃}{φ₁ φ₂ φ₃} → (((φ₁ ⊰ Γ₁) ⊢' φ₃) ⨯ ((φ₂ ⊰ Γ₂) ⊢' φ₃) ⨯ (Γ₃ ⊢' (φ₁ ∨ φ₂))) → ((Γ₁ ++ Γ₂ ++ Γ₃) ⊢' φ₃)
-
-          [⇒]-i : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ Γ) ⊢' φ₂) → (Γ ⊢' (φ₁ ⇒ φ₂))
-          [⇒]-e  : ∀{Γ₁ Γ₂}{φ₁ φ₂} → ((Γ₁ ⊢' (φ₁ ⇒ φ₂)) ⨯ (Γ₂ ⊢' φ₁)) → ((Γ₁ ++ Γ₂) ⊢' φ₂)
-
-      -- Derivability
-      -- Examples:
-      --   (∅ ⊢ ⊥) becomes (Node(⊤) → Node(⊥))
-      --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes ((Node(φ) ∧ Node(¬ φ)) → Node(⊥))
-      _⊢_ : List(Formula(Prop)) → Formula(Prop) → Set(ℓ₁ Lvl.⊔ ℓ₂)
-      _⊢_ ∅       φ = Node(φ)
-      _⊢_ (γ ⊰ Γ) φ = (foldᵣ-init (_⨯_) (Node(γ)) (map Node Γ)) → Node(φ)
-      --   (∅ ⊢ ⊤) becomes Node(⊤)
-      --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes (Node(φ) → (Node(¬ φ) → Node(⊥)))
-      -- _⊢_ Γ φ = (Node(List.foldᵣ (_∧_) ⊤ Γ) → Node(φ))
-      -- _⊢_ Γ φ = (List.foldₗ (_←_) (Node(φ)) (List.map Node (List.reverse Γ)))
-
-      _⊬_ : List(Formula(Prop)) → Formula(Prop) → Set(ℓ₁ Lvl.⊔ ℓ₂)
-      _⊬_ Γ φ = ¬ₘ(_⊢_ Γ φ)
-
-      -- Consistency
-      inconsistent : List(Formula(Prop)) → Set(ℓ₁ Lvl.⊔ ℓ₂)
-      inconsistent Γ = (Γ ⊢ ⊥)
-
-      consistent : List(Formula(Prop)) → Set(ℓ₁ Lvl.⊔ ℓ₂)
-      consistent Γ = ¬ₘ(inconsistent Γ)
 
       module Theorems where
         open import List.Properties{ℓ₁}{ℓ₂}

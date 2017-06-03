@@ -8,20 +8,20 @@ infixl 1005 _∧_
 infixl 1004 _∨_
 infixl 1000 _⇐_ _⇔_ _⇒_
 
-data Formula{ℓₜ} (T : Set(ℓₜ)) : Set(ℓₚ Lvl.⊔ ℓₜ) where
-  •_ : Prop → Formula(T)
+data Formula : Set(ℓₚ) where
+  •_ : Prop → Formula
 
-  ⊤ : Formula(T)
-  ⊥ : Formula(T)
+  ⊤ : Formula
+  ⊥ : Formula
 
-  ¬_ : Formula(T) → Formula(T)
+  ¬_ : Formula → Formula
 
-  _∧_ : Formula(T) → Formula(T) → Formula(T)
-  _∨_ : Formula(T) → Formula(T) → Formula(T)
-  _⇒_ : Formula(T) → Formula(T) → Formula(T)
+  _∧_ : Formula → Formula → Formula
+  _∨_ : Formula → Formula → Formula
+  _⇒_ : Formula → Formula → Formula
 
-_⇐_ : ∀{ℓₜ}{T : Set(ℓₜ)} → Formula(T) → Formula(T) → Formula(T)
+_⇐_ : Formula → Formula → Formula
 _⇐_ a b = _⇒_ b a
 
-_⇔_ : ∀{ℓₜ}{T : Set(ℓₜ)} → Formula(T) → Formula(T) → Formula(T)
+_⇔_ : Formula → Formula → Formula
 _⇔_ a b = (_⇐_ a b) ∧ (_⇒_ a b)

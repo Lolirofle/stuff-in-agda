@@ -24,8 +24,9 @@ import List
 import List.Properties
 import List.Relation
 import List.Theorems
-import Logic.Classic.Propositional.Syntax
+import Logic.Classic.Propositional.ProofSystem
 import Logic.Classic.Propositional.Semantics
+import Logic.Classic.Propositional.Syntax
 import Logic.DiagonalProof
 import Logic.Propositional
 import Logic.Predicate
