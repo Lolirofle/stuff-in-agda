@@ -13,7 +13,7 @@ open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Ordering{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
-open import Type{Lvl.𝟎}
+open import Type
 
 instance
   [≤]-from-[≡] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
@@ -122,3 +122,82 @@ instance
 instance
   postulate [≱]-is-[<] : ∀{a b : ℕ} → ¬(a ≥ b) → (a < b)
   postulate [<]-is-[≱] : ∀{a b : ℕ} → ¬(a ≥ b) ← (a < b)
+
+instance
+  divides-transitivity : Transitivity (_divides_)
+  divides-transitivity {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
+  ...                                                     | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (b⋅n₂≡c))) =
+    (divides-intro
+      ([∃]-intro
+        (n₁ ⋅ n₂)
+        ([≡]-transitivity([∧]-intro
+          ([≡]-transitivity([∧]-intro
+            ([≡]-symmetry ([⋅]-associativity {a}{n₁}{n₂}))
+            ([≡]-with-[(expr ↦ expr ⋅ n₂)] (a⋅n₁≡b))
+          ))
+          (b⋅n₂≡c)
+        ))
+      )
+    )
+
+instance
+  divides-with-[+] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b + c))
+  divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
+  ...                                                 | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (a⋅n₂≡c))) =
+    (divides-intro
+      ([∃]-intro
+        (n₁ + n₂)
+        ([≡]-transitivity([∧]-intro
+          ([⋅][+]-distributivityₗ {a}{n₁}{n₂})
+          ([≡]-with-op-[ _+_ ]
+            (a⋅n₁≡b)
+            (a⋅n₂≡c)
+          )
+        ))
+      )
+    )
+
+instance
+  divides-with-[⋅] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b ⋅ c))
+  divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
+  ...                                                 | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (a⋅n₂≡c))) =
+    (divides-intro
+      ([∃]-intro
+        (n₁ ⋅ (a ⋅ n₂))
+        ([≡]-transitivity([∧]-intro
+          ([≡]-symmetry ([⋅]-associativity {a}{n₁}{a ⋅ n₂}))
+          ([≡]-with-op-[ _⋅_ ]
+            (a⋅n₁≡b)
+            (a⋅n₂≡c)
+          )
+        ))
+      )
+    )
+
+-- instance
+--   divides-with-fn : ∀{a b} → (a divides b) → ∀{f : ℕ → ℕ} → {_ : ∀{x y : ℕ} → ∃{ℕ → ℕ}(\g → f(x ⋅ y) ≡ f(x) ⋅ g(y))} → ((f(a)) divides (f(b)))
+--   divides-with-fn {a}{b} (a-div-b) {f} {{f-prop}}
+
+-- instance
+--   divides-[≡] : ∀{a b} → (a divides b) → (b divides a) → (a ≡ b)
+--   divides-[≡] {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
+--   ...                                                     | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (b⋅n₂≡c))) =
+
+instance
+  [1]-divides : ∀{n} → (1 divides n)
+  [1]-divides {𝟎}    = Div𝟎
+  [1]-divides {𝐒(n)} =
+    [≡]-elimₗ
+      ([+]-commutativity {n}{1})
+      {expr ↦ (1 divides expr)}
+      (Div𝐒([1]-divides{n}))
+
+instance
+  divides-id : ∀{n} → (n divides n)
+  divides-id = Div𝐒(Div𝟎)
+
+instance
+  postulate [0]-divides-not : ∀{n} → ¬(0 divides 𝐒(n))
+
+instance
+  postulate divides-upper-limit : ∀{a b} → (a divides b) → (a ≤ b)

@@ -9,7 +9,7 @@ open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Relator.Equals{ℓ₁} renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_) hiding ([≡]-substitution)
 open import Type{ℓ₂}
 
--- Statement of whether a list is contained in the beginning of another list
+-- Statement of whether a list is contained in the beginning of another list (TODO: Move to a separate file)
 module OrderedContainment {T} where
   data _contains-in-order_ : List{ℓ₂}(T) → List{ℓ₂}(T) → Stmt where
     empty : (∅ contains-in-order ∅)
@@ -37,7 +37,7 @@ module OrderedContainment {T} where
   constructᵣ {_}{L₂} (_) = L₂
 open OrderedContainment using (_contains-in-order_) public
 
--- List as finite sets
+-- List as finite sets (TODO: Move to a separate file)
 module Sets {T} where
   open import Numeral.Natural
 
@@ -57,6 +57,7 @@ module Sets {T} where
 
   -- General proofs about the containment relation
   module [∈]-proof where
+    open import Data
     open import Logic.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
     open import Numeral.Natural.Oper.Properties
 
@@ -97,7 +98,10 @@ module Sets {T} where
     [∈]-of-[++] = [↔]-intro [∈]-of-[++]ₗ [∈]-of-[++]ᵣ
 
     [∈][++]-commutativity : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → (a ∈ (L₂ ++ L₁))
-    [∈][++]-commutativity {a}{L₁}{L₂} a∈L₁++L₂ = [∈]-of-[++]ₗ{a}{L₂}{L₁}([∨]-commutativity([∈]-of-[++]ᵣ(a∈L₁++L₂)))
+    [∈][++]-commutativity {a}{L₁}{L₂} (a∈L₁++L₂) = [∈]-of-[++]ₗ {a} {L₂}{L₁} ([∨]-commutativity([∈]-of-[++]ᵣ (a∈L₁++L₂)))
+
+    [∈][++]-duplicate : ∀{a}{L} → (a ∈ (L ++ L)) → (a ∈ L)
+    [∈][++]-duplicate {a}{L} (a∈LL) = [∨]-elim (id , id , ([∈]-of-[++]ᵣ {a} {L}{L} (a∈LL)))
 
     construct : ∀{a}{L} → (a ∈ L) → T
     construct{a}(_) = a
@@ -113,8 +117,26 @@ module Sets {T} where
     [∈]-in-middle : ∀{L₁ L₂} → ∀{a} → (a ∈ (L₁ ++ singleton(a) ++ L₂))
     [∈]-in-middle{L₁} = [∈]-of-[++]ₗ ([∨]-introₗ ([∈]-at-last{L₁}))
 
+    -- TODO
+    postulate [∈]-with-[++]ₗ : ∀{a}{L₂} → (a ∈ L₂) → ∀{L₁} → (a ∈ (L₁ ++ L₂))
+    -- [∈]-with-[++] {_}{∅}            (a∈L₂) = (a∈L₂)
+    -- [∈]-with-[++] {a}{x ⊰ rest}{L₂} (a∈L₂) = [∈]-with-[++] {a}{rest}{x ⊰ L₂} ([∈]-skip (a∈L₂))
+
+    [∈]-with-[++]ᵣ : ∀{a}{L₁} → (a ∈ L₁) → ∀{L₂} → (a ∈ (L₁ ++ L₂))
+    [∈]-with-[++]ᵣ {a}{L₁} (a∈L₁) {L₂} = [∈][++]-commutativity {a}{L₂}{L₁} ([∈]-with-[++]ₗ {a}{L₁} (a∈L₁) {L₂})
+
+    -- TODO: What is the type?
+    -- [∈]-at : (n : ℕ) → ∀{a} → (a ∈ _)
+    -- [∈]-at (𝟎)    = [∈]-use
+    -- [∈]-at (𝐒(n)) = [∈]-skip ([∈]-at (n))
+
+    -- TODO: Should have an general method of obtaining these forms (_ → φ)
+    [∈]-with-[⊰][→] : ∀{a x}{L}{φ : Stmt} → ((a ∈ (x ⊰ L)) → φ) → ((a ∈ L) → φ)
+    [∈]-with-[⊰][→] (f) ([∈]-proof) = f([∈]-skip([∈]-proof))
+
   -- Other relators regarding sets
   module Relators where
+    open        [∈]-proof
     open import Functional
 
     _⊆_ : List{ℓ₂}(T) → List{ℓ₂}(T) → Stmt
@@ -147,3 +169,17 @@ module Sets {T} where
     -- [⊆]-application : ∀{L₁ L₂} → (L₁ ⊆ L₂) → ∀{f} → (map f(L₁))⊆(map f(L₂))
     -- [⊆]-application proof fL₁ = [∈]-proof.application ∘ proof
     -- (∀{x} → (x ∈ L₂) → (x ∈ L₁)) → ∀{f} → (∀{x} → (x ∈ map f(L₂)) → (x ∈ map f(L₁)))
+
+    [⊆]-with-[⊰] : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{b} → (L₁ ⊆ (b ⊰ L₂))
+    [⊆]-with-[⊰] (L₁⊆L₂) (x∈L₁) = [∈]-with-[⊰] ((L₁⊆L₂) (x∈L₁))
+
+    [⊆]-with-[++]ₗ : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{L₃} → (L₁ ⊆ (L₃ ++ L₂))
+    [⊆]-with-[++]ₗ {L₁}{L₂} (L₁⊆L₂) {L₃} (x∈L₁) = [∈]-with-[++]ₗ {_}{L₂} ((L₁⊆L₂) (x∈L₁)) {L₃}
+
+    [⊆]-with-[++]ᵣ : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{L₃} → (L₁ ⊆ (L₂ ++ L₃))
+    [⊆]-with-[++]ᵣ {L₁}{L₂} (L₁⊆L₂) {L₃} (x∈L₁) = [∈]-with-[++]ᵣ {_}{L₂} ((L₁⊆L₂) (x∈L₁)) {L₃}
+
+    -- TODO: Does this work? It would be easier to "port" all (∈)-theorems to (⊆)-theorems then.
+    -- [∈]-to-[⊆]-property : ∀{L₂}{f : List{ℓ₂}(T) → List{ℓ₂}(T)} → (∀{a} → (a ∈ L₂) → (a ∈ f(L₂))) → (∀{L₁} → (L₁ ⊆ L₂) → (L₁ ⊆ f(L₂)))
+
+    -- [∈]-generaliser : ∀{a x}{L₁ L₂} → (L₁ ⊇ L₂) → (a ∈ L₁) → (a ∈ L₂)

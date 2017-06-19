@@ -18,18 +18,23 @@ data Odd : ℕ → Stmt where
   Odd𝐒 : ∀{x : ℕ} → (Odd x) → (Odd(𝐒(𝐒(x))))
 
 data _divides_ : ℕ → ℕ → Stmt where
-  Div0 : ∀{y : ℕ} → y divides 𝟎
+  Div𝟎 : ∀{y : ℕ} → y divides 𝟎
   Div𝐒 : ∀{x : ℕ}{y : ℕ} → (y divides x) → (y divides (y + x))
 
 DivN : ∀{y : ℕ} → (n : ℕ) → y divides (y ⋅ n)
-DivN {y}(𝟎)    = Div0
+DivN {y}(𝟎)    = Div𝟎
 DivN {y}(𝐒(n)) = Div𝐒(DivN{y}(n))
 
 divides-intro : ∀{x y} → (∃ \(n : ℕ) → (y ⋅ n ≡ x)) → (y divides x)
 divides-intro {x}{y} ([∃]-intro (n) (y⋅n≡x)) = [≡]-elimᵣ (y⋅n≡x) {expr ↦ (y divides expr)} (DivN{y}(n))
 
-data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where
-  DivRem0 : ∀{x : ℕ}{r : ℕ} → x divides r withRemainder r
+divides-elim : ∀{x y} → (y divides x) → (∃ \(n : ℕ) → (y ⋅ n ≡ x))
+divides-elim (Div𝟎) = [∃]-intro (0) ([≡]-intro)
+divides-elim (Div𝐒{x}{y} (y-div-x)) with divides-elim(y-div-x)
+...                                | ([∃]-intro (n) (y⋅n≡x)) = [∃]-intro (𝐒(n)) ([≡]-with-[(expr ↦ y + expr)] (y⋅n≡x))
+
+data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where -- TODO: Make _divides_ a special case of this
+  DivRem𝟎 : ∀{x : ℕ}{r : ℕ} → x divides r withRemainder r
   DivRem𝐒 : ∀{x : ℕ}{y : ℕ}{r : ℕ} → (x divides y withRemainder r) → (x divides (x + y) withRemainder r)
 
 -- Inequalities/Comparisons

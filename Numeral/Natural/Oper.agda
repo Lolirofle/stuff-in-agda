@@ -44,7 +44,7 @@ x −₀ 𝟎 = x
 -- Closed division (rounding up)
 {-# TERMINATING #-}
 _⌈/₀⌉_ : ℕ → ℕ → ℕ
-𝟎 ⌈/₀⌉ x = 𝟎
+𝟎 ⌈/₀⌉ y = 𝟎
 x ⌈/₀⌉ 𝟎 = 𝟎
 x ⌈/₀⌉ y = 𝐒((x −₀ y) ⌈/₀⌉ y)
 

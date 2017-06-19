@@ -36,7 +36,9 @@ import Numeral.Integer.Oper
 import Numeral.Integer.Relation
 import Numeral.Integer.Sign
 import Numeral.Natural
+import Numeral.Natural.Finite
 import Numeral.Natural.Function
+import Numeral.Natural.BooleanOper
 import Numeral.Natural.Oper
 import Numeral.Natural.Oper.Properties
 import Numeral.Natural.Prime
@@ -52,6 +54,7 @@ import Numeral.Sign.Oper
 import Numeral.Sign.Oper0
 import Operator.Equals
 import Relator.Bijection
+import Relator.Congruence
 import Relator.Equals
 import Sets.AdditiveSet
 import Sets.FnSet
@@ -85,25 +88,25 @@ module NumAndDivisionProofs where
   ℕ5IsOdd = Odd0 ⇒ Odd𝐒 ⇒ Odd𝐒
 
   ℕ2Dividesℕ4 : (𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ2Dividesℕ4 = Div0 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ2Dividesℕ4 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ6IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ6IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ6IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ4IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ4IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ4IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ3IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ3IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ3IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ2IsDividesℕ12 : (𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ2IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ2IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ1IsDividesℕ12 : 𝐒(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ1IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ1IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ3IsDividesℕ7Remℕ1 : 3 divides 7 withRemainder 1
-  ℕ3IsDividesℕ7Remℕ1 = DivRem0 ⇒ DivRem𝐒 ⇒ DivRem𝐒
+  ℕ3IsDividesℕ7Remℕ1 = DivRem𝟎 ⇒ DivRem𝐒 ⇒ DivRem𝐒
 
   ℕ3Eqℕ2+1 : (𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎) + 𝐒(𝟎)
   ℕ3Eqℕ2+1 = [≡]-reflexivity
@@ -519,3 +522,22 @@ module testListSets where
   -- [∈]-list : ∀{L : List(Type)}{Out : Type} → (foldᵣ (_→ᶠ_) (Out) (L)) → (∀{a} → (a ∈ L) → Out)
   -- [∈]-list{∅}     (out) (a∈∅)   = out
   -- [∈]-list{x ⊰ l} (f)   (a∈x⊰l) = [∈]-list{l} (f)
+
+
+module testFinite where
+  open Numeral.Natural.Finite
+
+  test2-0 : Finite-ℕ(2)
+  test2-0 = Finite-𝟎
+
+  test2-1 : Finite-ℕ(2)
+  test2-1 = Finite-𝐒(Finite-𝟎)
+
+  test2-2 : Finite-ℕ(2)
+  test2-2 = Finite-𝐒(Finite-𝐒(Finite-𝟎))
+
+  -- test2-3 : Finite-ℕ(2)
+  -- test2-3 = Finite-𝐒(Finite-𝐒(Finite-𝐒(Finite-𝟎)))
+
+  -- test2-4 : Finite-ℕ(2)
+  -- test2-4 = Finite-𝐒(Finite-𝐒(Finite-𝐒(Finite-𝐒(Finite-𝟎))))

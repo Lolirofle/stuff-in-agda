@@ -6,6 +6,7 @@ open import Functional
 open import Logic.Propositional{ℓ}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
+open import Numeral.Natural.Relation
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Structure.Function.Domain{ℓ}
 open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
@@ -193,3 +194,7 @@ instance
 --   [⋅]-product-is-0 {0}{b}    a+0≡0 = a+0≡0
 --   [⋅]-product-is-0 {_}{𝐒(n)} ()
 --   [⋅]-product-is-0 {𝐒(n)}{_} ()
+
+-- Also called "The Division Algorithm" or "Euclides Algorithm"
+-- TODO: Prove
+postulate [/]-uniqueness : ∀{a b} → {{_ : b ≢ 0}} → ∃!{ℕ ⨯ ℕ}(\{(q , r) → ((a ≡ (b ⋅ q) + r)∧(0 ≤ r)∧(r < b))})

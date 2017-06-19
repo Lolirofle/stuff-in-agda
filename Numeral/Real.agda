@@ -173,7 +173,7 @@ module Limit where
   data Limit (f : ℝ → ℝ) (p : ℝ) : Stmt where
     limit : (L : ℝ) → (δ : ℝ₊ → ℝ₊) → (∀{ε : ℝ₊}{x : ℝ} → (#(0) < abs(x − p) < #(δ(ε))) → (abs(f(x) − L) < #(ε))) → Limit f(p)
 
-  -- Limit value functio§n f (if the limit exists)
+  -- Limit value function f (if the limit exists)
   lim : (f : ℝ → ℝ) → (x : ℝ) → ⦃ _ : Limit f(x) ⦄ → ℝ
   lim _ _ ⦃ limit L _ _ ⦄ = L
 

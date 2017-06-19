@@ -22,7 +22,6 @@ _−_ 𝟎 (𝐒(b)) {{0≥𝐒b}} with ([<]-is-[≱] ([<][0]-minimum{b})) (0≥
 _−_ (𝐒(a)) (𝐒(b)) {{𝐒b≤𝐒a}} = _−_ a b {{[≤]-without-[𝐒] (𝐒b≤𝐒a)}}
 
 -- Total division
--- _/_ : (a : ℕ) → (b : ℕ) → {{_ : b divides a}} → ℕ
--- 𝟎 / x = 𝟎
--- x / 𝟎 = 𝟎
--- x / y = 𝐒((x −₀ y) /₀ y)
+_/_ : (a : ℕ) → (b : ℕ) → {{_ : b divides a}} → {{_ : b ≢ 0}} → ℕ
+_/_ _ _ {{b-div-a}} {{_}} with divides-elim (b-div-a)
+...                          | [∃]-intro (n) (b⋅n≡a) = n

@@ -9,4 +9,4 @@ open import Structure.Function.Domain{ℓ₁}
 open import Type{ℓ₂}
 
 Countable : Type → Stmt
-Countable T = (∃{T → ℕ}(f ↦ Injective(f)))
+Countable(T) = (∃{T → ℕ}(f ↦ Injective(f)))
