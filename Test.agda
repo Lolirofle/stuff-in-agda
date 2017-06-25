@@ -8,6 +8,7 @@ import Boolean
 import Boolean.Theorems
 import Boolean.Operators
 import Data
+import Data.Tuple.List
 import FFI.IO   as FFI
 import FFI.Type as FFI
 import FormalLanguage

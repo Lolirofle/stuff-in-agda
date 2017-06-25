@@ -6,7 +6,7 @@ open import List
 open import List.Properties
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}
-open import Relator.Equals{ℓ₁} renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_) hiding ([≡]-substitution)
+open import Relator.Equals{ℓ₁} renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_) hiding ([≡]-substitution ; [≡]-substitutionₗ ; [≡]-substitutionᵣ)
 open import Type{ℓ₂}
 
 -- Statement of whether a list is contained in the beginning of another list (TODO: Move to a separate file)
@@ -181,5 +181,3 @@ module Sets {T} where
 
     -- TODO: Does this work? It would be easier to "port" all (∈)-theorems to (⊆)-theorems then.
     -- [∈]-to-[⊆]-property : ∀{L₂}{f : List{ℓ₂}(T) → List{ℓ₂}(T)} → (∀{a} → (a ∈ L₂) → (a ∈ f(L₂))) → (∀{L₁} → (L₁ ⊆ L₂) → (L₁ ⊆ f(L₂)))
-
-    -- [∈]-generaliser : ∀{a x}{L₁ L₂} → (L₁ ⊇ L₂) → (a ∈ L₁) → (a ∈ L₂)

@@ -7,6 +7,7 @@ open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Structure.Relator.Equivalence{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}
+open import Type using () renaming (Type to TypeN)
 
 -- Definition of equality based on the exact representation of a data structure
 -- TODO: Is this called "intensional equality"?
@@ -23,21 +24,30 @@ data _≡_ {T : Type} : T → T → Stmt where
 _≢_ : ∀{T : Type} → T → T → Stmt
 _≢_ a b = ¬(a ≡ b)
 
+module _ {ℓ₃} where
+  -- Replaces occurrences of an element in a function
+  [≡]-substitutionₗ : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → TypeN{ℓ₃}} → f(x) ← f(y)
+  [≡]-substitutionₗ [≡]-intro = id
+
+  -- Replaces occurrences of an element in a function
+  [≡]-substitutionᵣ : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → TypeN{ℓ₃}} → f(x) → f(y)
+  [≡]-substitutionᵣ [≡]-intro = id
+
+-- TODO: Backwards compatibility with code I had earlier
+[≡]-substitution : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Type} → f(x) → f(y)
+[≡]-substitution = [≡]-substitutionᵣ
+
 [≡]-elimₗ : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Stmt} → f(x) ← f(y)
-[≡]-elimₗ [≡]-intro F = F
+[≡]-elimₗ = [≡]-substitutionₗ
 
 [≡]-elimᵣ : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Stmt} → f(x) → f(y)
-[≡]-elimᵣ [≡]-intro F = F
+[≡]-elimᵣ = [≡]-substitutionᵣ
 
 [≡]-elim : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Stmt} → f(x) ↔ f(y)
 [≡]-elim eq = [↔]-intro ([≡]-elimₗ eq) ([≡]-elimᵣ eq)
 
 [≡]-unelim : ∀{T}{x y : T} → (∀{f : T → Stmt} → f(x) → f(y)) → (x ≡ y)
 [≡]-unelim {_}{x}{_} (F) = F {y ↦ (x ≡ y)} ([≡]-intro)
-
--- Replaces occurrences of an element in a function (TODO: Consider merging with [≡]-elim)
-[≡]-substitution : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Type} → f(x) → f(y)
-[≡]-substitution [≡]-intro {f} fx = fx
 
 instance
   [≡]-reflexivity : ∀{T} → Reflexivity {T} (_≡_ {T})
