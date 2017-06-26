@@ -31,6 +31,14 @@ Inverse f f⁻¹ = (∀{x}{y} → (f(x) ≡ y) → (f⁻¹(y) ≡ x))
 InverseId : ∀{ℓ₂}{X : Type{ℓ₂}}{Y : Type{ℓ₂}} → (X → Y) → (Y → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
 InverseId f f⁻¹ = ((f ∘ f⁻¹) ≡ id) -- TODO: Prove equivalence of this and above
 
--- Definition of an constant function
+-- Definition of a constant function
 Constant : ∀{ℓ₂}{X : Type{ℓ₂}}{Y : Type{ℓ₂}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
 Constant f = (∃(y ↦ ∀{x} → f(x) ≡ y))
+
+-- Definition of the relation between a function and an operation that says:
+-- The function preserves the operation
+-- Special cases:
+--   Additive function (Operator is a conventional _+_)
+--   Multiplicative function (Operator is a conventional _*_)
+_preserves_ : ∀{ℓ₂}{T : Type{ℓ₂}} → (T → T) → (T → T → T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+_preserves_ (f)(_▫_) = (∀{x y} → (f(x ▫ y) ≡ f(x) ▫ f(y)))

@@ -36,6 +36,7 @@ import Numeral.Integer
 import Numeral.Integer.Oper
 import Numeral.Integer.Relation
 import Numeral.Integer.Sign
+import Numeral.Integer.Theorems
 import Numeral.Natural
 import Numeral.Natural.Finite
 import Numeral.Natural.Function
