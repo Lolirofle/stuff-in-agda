@@ -1,9 +1,9 @@
 module Numeral.Natural.BooleanOper where
 
 import      Level as Lvl
-open import Boolean{Lvl.𝟎}
+open import Boolean
 import      Boolean.Operators
-open        Boolean.Operators.Programming{Lvl.𝟎}
+open        Boolean.Operators.Programming
 open import Numeral.Natural
 
 -- Equality check

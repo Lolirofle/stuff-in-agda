@@ -49,6 +49,14 @@ module _ {ℓ₃} where
 [≡]-unelim : ∀{T}{x y : T} → (∀{f : T → Stmt} → f(x) → f(y)) → (x ≡ y)
 [≡]-unelim {_}{x}{_} (F) = F {y ↦ (x ≡ y)} ([≡]-intro)
 
+{-
+[≡]-elim-stmtₗ : ∀{T}{X Y : Stmt} → (X ≡ Y) → X ← Y
+[≡]-elim-stmtₗ = [≡]-substitutionₗ
+
+[≡]-elim-stmtᵣ : ∀{T}{X Y : Stmt} → (X ≡ Y) → X → Y
+[≡]-elim-stmtᵣ = [≡]-substitutionₗ
+-}
+
 instance
   [≡]-reflexivity : ∀{T} → Reflexivity {T} (_≡_ {T})
   [≡]-reflexivity = [≡]-intro
@@ -64,6 +72,10 @@ instance
 -- Applies a function to each side of the equality
 [≡]-with-[_] : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
 [≡]-with-[_] f [≡]-intro = [≡]-intro
+{-
+[≡]-with-[_] : ∀{T₁ : TypeN{ℓ₂}}{T₂ : TypeN{ℓ₃}} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
+[≡]-with-[_] f [≡]-intro = [≡]-intro
+-}
 
 -- Applies an operation to each side of the equality
 [≡]-with-op-[_] : ∀{A B C : Type} → (_▫_ : A → B → C) → {a₁ a₂ : A}{b₁ b₂ : B} → (a₁ ≡ a₂) → (b₁ ≡ b₂) → ((a₁ ▫ b₁) ≡ (a₂ ▫ b₂))

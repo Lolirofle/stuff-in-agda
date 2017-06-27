@@ -171,11 +171,11 @@ multiply l (𝐒(n)) = l ++ (multiply l n)
 pattern [_ l = l
 pattern _] x = x ⊰ ∅
 
-any : ∀{ℓ}{T : Type{ℓ}} → (T → Bool{ℓ}) → List(T) → Bool
+any : ∀{ℓ}{T : Type{ℓ}} → (T → Bool) → List(T) → Bool
 any pred ∅       = 𝐹
 any pred (x ⊰ l) = pred(x) || any(pred)(l)
 
-all : ∀{ℓ}{T : Type{ℓ}} → (T → Bool{ℓ}) → List(T) → Bool
+all : ∀{ℓ}{T : Type{ℓ}} → (T → Bool) → List(T) → Bool
 all pred ∅       = 𝑇
 all pred (x ⊰ l) = pred(x) && any(pred)(l)
 

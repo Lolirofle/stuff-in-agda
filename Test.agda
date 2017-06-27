@@ -29,6 +29,7 @@ import Logic.Classic.Propositional.ProofSystem
 import Logic.Classic.Propositional.Semantics
 import Logic.Classic.Propositional.Syntax
 import Logic.DiagonalProof
+import Logic.LambdaCalculus
 import Logic.Propositional
 import Logic.Predicate
 import Logic.Theorems
@@ -345,6 +346,13 @@ module testList where
   testReduceOrᵣ2 : (reduceOrᵣ (_++_) (0 ⊰ ∅) ((1 ⊰ ∅) ⊰ (2 ⊰ ∅) ⊰ (3 ⊰ ∅) ⊰ (4 ⊰ ∅) ⊰ ∅)) ≡ (1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅)
   testReduceOrᵣ2 = [≡]-intro
 
+module testTransitivity where
+  open Numeral.Natural
+  open Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
+  open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+
+  test1 : (0 ≡ 1) → (1 ≡ 2) → (0 ≡ 2)
+  test1 (0≡1) (1≡2) = _🝖_ {_}{_≡_} {{[≡]-transitivity}} (0≡1) (1≡2)
 
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"
@@ -473,7 +481,7 @@ module testExistential where
   -- testExists x = x
 
 module testCantor where
-  open Boolean{Lvl.𝟎}
+  open Boolean
   open Boolean.Operators.Programming
   open Functional
   open Logic.Propositional{Lvl.𝟎}

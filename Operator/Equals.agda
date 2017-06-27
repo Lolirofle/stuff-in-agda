@@ -3,7 +3,7 @@ module Operator.Equals {ℓ} where
 import      Level as Lvl
 open import Boolean
 open import Functional
-open import Relator.Equals{ℓ}{ℓ}
+open import Relator.Equals{ℓ}
 open import Type{ℓ}
 
 -- Type class for run-time checking of equality

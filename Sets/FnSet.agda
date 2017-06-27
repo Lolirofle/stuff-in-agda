@@ -1,4 +1,4 @@
-module Sets.FnSet {ℓ₁} {ℓ₂} where
+module Sets.FnSet {ℓ₁} where
 
 import      Level as Lvl
 import      List
@@ -6,17 +6,17 @@ open import Boolean
 import      Boolean.Operators
 open        Boolean.Operators.Programming
 open import Boolean.Theorems
-open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Logic.Propositional
 open import Functional
 open import Operator.Equals
-open import Relator.Equals{ℓ₁}{ℓ₂}
-open import Type{ℓ₂}
+open import Relator.Equals{ℓ₁}{Lvl.𝟎}
+open import Type
 
-record FnSet(T : Type) : Type where
+record FnSet{ℓ₂}(T : Type{ℓ₂}) : Type{ℓ₂} where
   field
     inclusion-fn : T → Bool
 
-module _ {T : Type} where
+module _ {ℓ₂}{T : Type{ℓ₂}} where
 
   Universe : FnSet(T)
   Universe = record{inclusion-fn = const(𝑇)}

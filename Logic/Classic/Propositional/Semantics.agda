@@ -21,7 +21,7 @@ open import Relator.Equals{ℓ}
 -- Also known as Interpretation, Structure, Model
 record Model{ℓₘ} : Set(ℓ Lvl.⊔ ℓₘ) where
   field
-    interpretProp : Prop → Bool{ℓ Lvl.⊔ ℓₘ}
+    interpretProp : Prop → Bool
 
 -- TODO: Can this be called a "theory" of propositional logic? So that instances of the type Semantics is the "models" of logic?
 -- TODO: Now, all the metalogic depends on booleans, which may not be satisfactory
