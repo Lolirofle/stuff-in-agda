@@ -1,9 +1,9 @@
-module Type {lvl} where
+module Type {ℓ} where
 
 open import Level
 
 Type : _
-Type = Set(lvl)
+Type = Set(ℓ)
 
 -- Assures that a value has a certain type
 type-ascription : (T : Type) → T → T

@@ -8,6 +8,7 @@ import Boolean
 import Boolean.Theorems
 import Boolean.Operators
 import Data
+import Data.Tuple.List
 import FFI.IO   as FFI
 import FFI.Type as FFI
 import FormalLanguage
@@ -15,6 +16,7 @@ import FormalLanguage.ContextFreeGrammar
 import FormalLanguage.Properties
 import FormalLanguage.RegularExpression
 import Functional
+import Functional.Equals
 import Functional.Raise
 import Functional.PrimitiveRecursion
 import Functional.Properties
@@ -23,8 +25,11 @@ import List
 import List.Properties
 import List.Relation
 import List.Theorems
-import Logic.Classic.Propositional
+import Logic.Classic.Propositional.ProofSystem
+import Logic.Classic.Propositional.Semantics
+import Logic.Classic.Propositional.Syntax
 import Logic.DiagonalProof
+import Logic.LambdaCalculus
 import Logic.Propositional
 import Logic.Predicate
 import Logic.Theorems
@@ -32,8 +37,11 @@ import Numeral.Integer
 import Numeral.Integer.Oper
 import Numeral.Integer.Relation
 import Numeral.Integer.Sign
+import Numeral.Integer.Theorems
 import Numeral.Natural
+import Numeral.Natural.Finite
 import Numeral.Natural.Function
+import Numeral.Natural.BooleanOper
 import Numeral.Natural.Oper
 import Numeral.Natural.Oper.Properties
 import Numeral.Natural.Prime
@@ -49,9 +57,10 @@ import Numeral.Sign.Oper
 import Numeral.Sign.Oper0
 import Operator.Equals
 import Relator.Bijection
+import Relator.Congruence
 import Relator.Equals
+import Sets.AdditiveSet
 import Sets.FnSet
-import Sets.SimpleSet
 import Sets.TypeSet
 import Structure.Function.Domain
 import Structure.Function.Linear
@@ -82,25 +91,25 @@ module NumAndDivisionProofs where
   ℕ5IsOdd = Odd0 ⇒ Odd𝐒 ⇒ Odd𝐒
 
   ℕ2Dividesℕ4 : (𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ2Dividesℕ4 = Div0 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ2Dividesℕ4 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ6IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ6IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ6IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ4IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ4IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ4IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ3IsDividesℕ12 : (𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ3IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ3IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ2IsDividesℕ12 : (𝐒 ∘ 𝐒)(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ2IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ2IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ1IsDividesℕ12 : 𝐒(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
-  ℕ1IsDividesℕ12 = Div0 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
+  ℕ1IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
   ℕ3IsDividesℕ7Remℕ1 : 3 divides 7 withRemainder 1
-  ℕ3IsDividesℕ7Remℕ1 = DivRem0 ⇒ DivRem𝐒 ⇒ DivRem𝐒
+  ℕ3IsDividesℕ7Remℕ1 = DivRem𝟎 ⇒ DivRem𝐒 ⇒ DivRem𝐒
 
   ℕ3Eqℕ2+1 : (𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎) + 𝐒(𝟎)
   ℕ3Eqℕ2+1 = [≡]-reflexivity
@@ -337,30 +346,36 @@ module testList where
   testReduceOrᵣ2 : (reduceOrᵣ (_++_) (0 ⊰ ∅) ((1 ⊰ ∅) ⊰ (2 ⊰ ∅) ⊰ (3 ⊰ ∅) ⊰ (4 ⊰ ∅) ⊰ ∅)) ≡ (1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅)
   testReduceOrᵣ2 = [≡]-intro
 
+module testTransitivity where
+  open Numeral.Natural
+  open Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
+  open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+
+  test1 : (0 ≡ 1) → (1 ≡ 2) → (0 ≡ 2)
+  test1 (0≡1) (1≡2) = _🝖_ {_}{_≡_} {{[≡]-transitivity}} (0≡1) (1≡2)
 
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"
 
-module testPropositionalLogic where
-  open Functional
-  open Logic.Propositional{Lvl.𝟎}
-  module Propositional = Logic.Classic.Propositional
-  open Type{Lvl.𝟎}
-
-  symbols : ∀{T : Set(Lvl.𝟎)} → Propositional.Syntax.Symbols T (const (Set(Lvl.𝟎)))
-  symbols =
-    record {
-      •_ = type-of ;
-      ⊤   = ⊤ ;
-      ⊥   = ⊥ ;
-      ¬_  = ¬_ ;
-      _∧_ = _∧_ ;
-      _∨_ = _∨_ ;
-      _⇒_ = _→ᶠ_ ;
-      _⇐_ = _←_ ;
-      _⇔_ = _↔_ ;
-      _⊕_ = a ↦ b ↦ ((a ∨ b) ∧ ¬(a ∧ b))
-    }
+-- module testPropositionalLogic where
+--   open Functional
+--   open Logic.Propositional{Lvl.𝟎}
+--   module Propositional = Logic.Classic.Propositional
+--   open Type{Lvl.𝟎}
+-- 
+--   symbols : ∀{T : Set(Lvl.𝟎)} → Propositional.Syntax.Symbols T (const (Set(Lvl.𝟎)))
+--   symbols =
+--     record {
+--       •_ = type-of ;
+--       ⊤   = ⊤ ;
+--       ⊥   = ⊥ ;
+--       ¬_  = ¬_ ;
+--       _∧_ = _∧_ ;
+--       _∨_ = _∨_ ;
+--       _⇒_ = _→ᶠ_ ;
+--       _⇔_ = _↔_
+--       -- _⊕_ = a ↦ b ↦ ((a ∨ b) ∧ ¬(a ∧ b))
+--     }
 
 module testListOrderedContainment where
   open Functional
@@ -465,3 +480,74 @@ module testExistential where
   -- testExists : ∀{T : Type}{f : T → Type} → (∃[ x ∈ T ] (f x)) → (∃ {T} (x ↦ f x))
   -- testExists x = x
 
+module testCantor where
+  open Boolean
+  open Boolean.Operators.Programming
+  open Functional
+  open Logic.Propositional{Lvl.𝟎}
+  open Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
+  open Logic.DiagonalProof{Lvl.𝟎}{Lvl.𝟎}
+  open Numeral.Natural
+  open Numeral.Natural.Relation.Countable{Lvl.𝟎}{Lvl.𝟎}
+  open Relator.Bijection{Lvl.𝟎}{Lvl.𝟎}
+  open Relator.Equals {Lvl.𝟎}{Lvl.𝟎}
+  open Type{Lvl.𝟎}
+
+  BitSequence           = (ℕ → Bool)
+  CountableBitSequences = (ℕ → BitSequence)
+
+  -- ∀l∃seq∀n. l(n)(n)≠seq(n)
+  -- There is a bit sequence that is not in the countable list of bit sequences
+  bitSequenceCantor : (l : CountableBitSequences) → ∃{BitSequence}(seq ↦ ∀{n : ℕ} → (l(n)(n) ≢ seq(n)))
+  bitSequenceCantor = diagonal-proof (!_) ([!]-unequality) where
+    [!]-unequality : ∀{b : Bool} → (b ≢ ! b)
+    [!]-unequality {𝑇} ()
+    [!]-unequality {𝐹} ()
+
+  -- uncountableProof : CountableBitSequences → ¬(Countable(BitSequence))
+  -- uncountableProof (l) ([∃]-intro(seq-to-n)(inj)) =
+  --   [∃]-elim f (bitSequenceCantor(l)) where
+  --     postulate f : ∀{seq}{x : ℕ → Bool} → {n : ℕ} → (l n n ≢ x n) → ⊥ -- ∀{T}{seq}{n : ℕ} → (l(n)(n) ≢ seq(n)) → T
+  --     f : ∀{_}{_}(₎
+  --     f{_}{n}(lnn≢seqn) = lnn≢seqn ∘ inj
+  -- Countable: ∃(seq-to-n: (ℕ → Bool) → ℕ)∀(x₁ : ℕ → Bool)∀(x₂: ℕ → Bool). (seq-to-n(seq₁)=seq-to-n(seq₂)) → (seq₁=seq₂)
+
+module testListSets where
+  open Functional
+  open List
+  open List.Theorems.Sets{Lvl.𝟎}
+  open List.Theorems.Sets.[∈]-proof
+  open Logic.Propositional
+  open Type{Lvl.𝟎}
+
+  -- TODO: Probably incorrectly formulated
+  -- Example:
+  --   (∀a. a∈{P,Q} → R)
+  --   P → Q → R
+  -- [∈]-list : ∀{L : List(Type)}{Out : Type} → (∀{a} → (a ∈ L) → Out) → (foldᵣ (_→ᶠ_) (Out) (L))
+  -- [∈]-list{∅}(f) = f ∘ [⊥]-elim ∘ [∉]-empty
+  -- f            : ∀{a} → (a ∈ ∅) → Out
+  -- f ∘ [⊥]-elim : ⊥ → Out
+
+  -- [∈]-list : ∀{L : List(Type)}{Out : Type} → (foldᵣ (_→ᶠ_) (Out) (L)) → (∀{a} → (a ∈ L) → Out)
+  -- [∈]-list{∅}     (out) (a∈∅)   = out
+  -- [∈]-list{x ⊰ l} (f)   (a∈x⊰l) = [∈]-list{l} (f)
+
+
+module testFinite where
+  open Numeral.Natural.Finite
+
+  test2-0 : Finite-ℕ(2)
+  test2-0 = Finite-𝟎
+
+  test2-1 : Finite-ℕ(2)
+  test2-1 = Finite-𝐒(Finite-𝟎)
+
+  test2-2 : Finite-ℕ(2)
+  test2-2 = Finite-𝐒(Finite-𝐒(Finite-𝟎))
+
+  -- test2-3 : Finite-ℕ(2)
+  -- test2-3 = Finite-𝐒(Finite-𝐒(Finite-𝐒(Finite-𝟎)))
+
+  -- test2-4 : Finite-ℕ(2)
+  -- test2-4 = Finite-𝐒(Finite-𝐒(Finite-𝐒(Finite-𝐒(Finite-𝟎))))

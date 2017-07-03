@@ -1,9 +1,9 @@
-module Logic.Theorems {lvl} where
+module Logic.Theorems {ℓ} where
 
 open import Data
 open import Functional
 open import Functional.Raise
-open import Logic.Propositional{lvl}
+open import Logic.Propositional{ℓ}
 
 ------------------------------------------
 -- Commutativity
@@ -62,13 +62,13 @@ open import Logic.Propositional{lvl}
 [∨]-syllogism ([∨]-introᵣ y) = [→]-intro y
 
 [→]-syllogism : {X Y Z : Stmt} → (X → Y) → (Y → Z) → (X → Z)
-[→]-syllogism = swap lift
+[→]-syllogism = liftᵣ
 
 ------------------------------------------
 -- Other
 
 [→]-lift : {T X Y : Stmt} → (X → Y) → ((T → X) → (T → Y))
-[→]-lift = lift
+[→]-lift = liftₗ
 
 material-impl₁ : {X Y : Stmt} → ((¬ X) ∨ Y) → (X → Y)
 material-impl₁ = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([→]-lift [⊥]-elim) ([→]-intro)

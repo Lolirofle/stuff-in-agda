@@ -1,9 +1,9 @@
-module Structure.Relator.Equivalence {l₁} {l₂} where
+module Structure.Relator.Equivalence {ℓ₁} {ℓ₂} where
 
 import      Level as Lvl
-open import Logic.Propositional{l₁ Lvl.⊔ l₂}
-open import Structure.Relator.Properties{l₁}{l₂}
-open import Type{l₂}
+open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
+open import Type{ℓ₂}
 
 -- Definition of an equivalence class
 record Equivalence {T : Type} (_≡_ : T → T → Stmt) : Stmt where

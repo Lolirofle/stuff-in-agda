@@ -1,11 +1,11 @@
-module Structure.Relator.Properties {l₁} {l₂} where
+module Structure.Relator.Properties {ℓ₁} {ℓ₂} where
 
 import      Level as Lvl
 open import Data
 open import Functional
-open import Logic.Propositional{l₁ Lvl.⊔ l₂}
+open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Numeral.Natural
-open import Type{l₂}
+open import Type{ℓ₂}
 
 infixl 1000 _🝖_
 
@@ -117,7 +117,7 @@ _🝖_ {_} {_} {{trans}} a b = trans([∧]-intro a b)
 -- (_ ≡ (a + a) + (1 + 1)) [Trans: [+]-associativity                 with [≡]-transitivity]
 
 module Theorems where
-  open import Logic.Theorems{l₁ Lvl.⊔ l₂}
+  open import Logic.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
 
   [asymmetry]-to-irreflexivity : ∀{T _<_} → Asymmetry{T}(_<_) → Irreflexivity{T}(_<_)
   [asymmetry]-to-irreflexivity(asymmetry) = [→]-redundancy(asymmetry)

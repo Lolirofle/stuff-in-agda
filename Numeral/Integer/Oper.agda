@@ -2,6 +2,7 @@ module Numeral.Integer.Oper where
 
 open import Numeral.Natural as ℕ
   using (ℕ)
+  renaming (𝟎 to 𝟎ₙ ; 𝐒 to 𝐒ₙ)
 import Numeral.Natural.Oper as ℕ
 import Numeral.Natural.UnclosedOper as ℕ
 open import Numeral.Integer
@@ -14,15 +15,15 @@ import Numeral.Sign.Oper as Sign
 
 -- Predecessor
 𝐏 : ℤ → ℤ
-𝐏(+ ℕ.𝟎) = −𝐒(ℕ.𝟎)
-𝐏(+(ℕ.𝐒(n))) = + n
-𝐏(−𝐒 n) = −𝐒 (ℕ.𝐒(n))
+𝐏(+ 𝟎ₙ) = −𝐒(𝟎ₙ)
+𝐏(+(𝐒ₙ(n))) = + n
+𝐏(−𝐒 n) = −𝐒(𝐒ₙ(n))
 
 -- Successor
 𝐒 : ℤ → ℤ
-𝐒(+ n) = + ℕ.𝐒(n)
-𝐒(−𝐒 ℕ.𝟎) = + ℕ.𝟎
-𝐒(−𝐒 (ℕ.𝐒(n))) = −𝐒(n)
+𝐒(+ n) = + 𝐒ₙ(n)
+𝐒(−𝐒 𝟎ₙ) = + 𝟎ₙ
+𝐒(−𝐒 (𝐒ₙ(n))) = −𝐒(n)
 
 -- TODO: Rename operators and constructors to something better?
 -- Identity
@@ -44,9 +45,9 @@ infixl 10020 _⋅_
 -- Addition
 _+_ : ℤ → ℤ → ℤ
 (+ x) + (+ y) = + (x ℕ.+ y)
-(−𝐒 x) + (−𝐒 y) = −𝐒(x ℕ.+ (ℕ.𝐒(y)))
-(+ x) + (−𝐒(y)) = x ℕ.− ℕ.𝐒(y)
-(−𝐒(x)) + (+ y) = y ℕ.− ℕ.𝐒(x)
+(−𝐒 x) + (−𝐒 y) = −𝐒(x ℕ.+ (𝐒ₙ(y)))
+(+ x) + (−𝐒(y)) = x ℕ.− 𝐒ₙ(y)
+(−𝐒(x)) + (+ y) = y ℕ.− 𝐒ₙ(x)
 
 -- Subtraction
 _−_ : ℤ → ℤ → ℤ

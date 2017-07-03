@@ -7,78 +7,9 @@ import      Level as Lvl
 
 -- Propositional logic. Working with propositions and their truth (whether they are true or false).
 
-module Syntax {lvl₁} {lvl₂} (Prop : Set(lvl₁)) (Formula : Set(lvl₁) → Set(lvl₂)) where
-  record Symbols : Set(lvl₁ Lvl.⊔ lvl₂) where
-    infixl 1011 •_
-    infixl 1010 ¬_
-    infixl 1005 _∧_
-    infixl 1004 _∨_ _⊕_
-    infixl 1000 _⇐_ _⇔_ _⇒_
 
-    field
-      •_ : Prop → Formula(Prop)
-      ⊤ : Formula(Prop)
-      ⊥ : Formula(Prop)
-      ¬_ : Formula(Prop) → Formula(Prop)
-      _∧_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
-      _∨_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
-      _⇒_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
-      _⇐_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
-      _⇔_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
-      _⊕_ : Formula(Prop) → Formula(Prop) → Formula(Prop)
 
--- A model decides whether a proposition is true or false
--- Also known as Interpretation, Structure, Model
-record Model {lvl} (Prop : Set(lvl)) : Set(lvl) where
-  field
-    interpretProp : Prop → Bool
-
-module Semantics {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (symbols : Syntax.Symbols Prop Formula) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) id) where
-  open import Relator.Equals{lvl₂}{lvl₁}
-  open import List
-  import      List.Theorems
-  open        List.Theorems.Sets{lvl₁}{lvl₂}
-  open Syntax.Symbols(symbols)
-  open Syntax.Symbols(meta-symbols)
-    renaming (
-      •_ to ◦_ ;
-      ⊤   to ⊤ₘ ;
-      ⊥   to ⊥ₘ ;
-      ¬_  to ¬ₘ_ ;
-      _∧_ to _∧ₘ_ ;
-      _∨_ to _∨ₘ_ ;
-      _⇒_ to _⇒ₘ_ )
-
-  -- TODO: Can this be called a "theory" of propositional logic? So that instances of the type Semantics is the "models" of logic?
-  record Theory : Set(Lvl.𝐒(lvl₁ Lvl.⊔ lvl₂)) where
-    field -- Definitions
-      {_⊧_} : Model(Prop) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-    field -- Axioms
-      [•]-satisfaction : ∀{𝔐 : Model(Prop)}{x : Prop} → (Model.interpretProp 𝔐 x ≡ 𝑇) → ◦(𝔐 ⊧ (• x))
-      [⊤]-satisfaction : ∀{𝔐 : Model(Prop)} → ◦(𝔐 ⊧ ⊤)
-      [⊥]-satisfaction : ∀{𝔐 : Model(Prop)} → ¬ₘ ◦(𝔐 ⊧ ⊥)
-      [¬]-satisfaction : ∀{𝔐 : Model(Prop)}{φ : Formula(Prop)} → (¬ₘ ◦(𝔐 ⊧ φ)) → ◦(𝔐 ⊧ (¬ φ))
-      [∧]-satisfaction : ∀{𝔐 : Model(Prop)}{φ₁ φ₂ : Formula(Prop)} → (◦(𝔐 ⊧ φ₁) ∧ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∧ φ₂))
-      [∨]-satisfaction : ∀{𝔐 : Model(Prop)}{φ₁ φ₂ : Formula(Prop)} → (◦(𝔐 ⊧ φ₁) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ∨ φ₂))
-      [⇒]-satisfaction : ∀{𝔐 : Model(Prop)}{φ₁ φ₂ : Formula(Prop)} → ((¬ₘ ◦(𝔐 ⊧ φ₁)) ∨ₘ ◦(𝔐 ⊧ φ₂)) → ◦(𝔐 ⊧ (φ₁ ⇒ φ₂))
-    -- TODO: How does the satisfaction definitions look like in constructive logic?
-
-    -- Entailment
-    data _⊨_ (Γ : List(Formula(Prop))) (φ : Formula(Prop)) : Set(lvl₁ Lvl.⊔ lvl₂) where
-      [⊨]-construct : (∀{𝔐} → (∀{γ} → (γ ∈ Γ) → (𝔐 ⊧ γ)) → (𝔐 ⊧ φ)) → (Γ ⊨ φ)
-
-    [⊨]-elim : ∀{Γ}{φ} → (Γ ⊨ φ) → Set(lvl₁ Lvl.⊔ lvl₂)
-    [⊨]-elim {∅}     {φ} ([⊨]-construct proof) = ∀{𝔐 : Model(Prop)} → ◦(𝔐 ⊧ φ)
-    [⊨]-elim {γ ⊰ Γ} {φ} ([⊨]-construct proof) = ∀{𝔐 : Model(Prop)} → (foldᵣ-init (_⨯_) (◦(𝔐 ⊧ γ)) (map (γ ↦ ◦(𝔐 ⊧ γ)) Γ)) → ◦(𝔐 ⊧ φ)
-
-    _⊭_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-    _⊭_ Γ φ = ¬ₘ(_⊨_ Γ φ)
-
-    -- Validity
-    valid : Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-    valid = (∅ ⊨_)
-
-module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁) → Set(lvl₂)} (symbols : Syntax.Symbols Prop Formula) where
+module ProofSystems {ℓ₁} {ℓ₂} {Prop : Set(ℓ₁)} {Formula : Set(ℓ₁) → Set(ℓ₂)} (symbols : Syntax.Symbols Prop Formula) where
   open Syntax.Symbols(symbols)
 
   module TruthTables where
@@ -93,9 +24,9 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
   module NaturalDeduction where
     -- Intro rules are like constructors of formulas
     -- Elimination rules are like deconstructors of formulas
-    record Rules : Set(Lvl.𝐒(lvl₁ Lvl.⊔ lvl₂)) where
+    record Rules : Set(Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂)) where
       field
-        {Node} : Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
+        {Node} : Formula(Prop) → Set(ℓ₁ Lvl.⊔ ℓ₂)
 
       field
         [⊤]-intro : Node(⊤)
@@ -130,7 +61,7 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
       [⊥]-elim : ∀{φ : Formula(Prop)} → Node(⊥) → Node(φ)
       [⊥]-elim bottom = [¬]-elim(_ ↦ bottom)
 
-    module Meta(rules : Rules) (meta-symbols : Syntax.Symbols (Set(lvl₁ Lvl.⊔ lvl₂)) id) where
+    module Meta(rules : Rules) (meta-symbols : Syntax.Symbols (Set(ℓ₁ Lvl.⊔ ℓ₂)) id) where
       open import List
       open        Rules(rules)
       open        Syntax.Symbols(meta-symbols)
@@ -143,56 +74,13 @@ module ProofSystems {lvl₁} {lvl₂} {Prop : Set(lvl₁)} {Formula : Set(lvl₁
           _∨_ to _∨ₘ_ ;
           _⇒_ to _⇒ₘ_ )
 
-      module Test where
-        data _⊢'_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂) where
-          formula-intro : ∀{φ} → ([ φ ] ⊢' φ)
-
-          [⊤]-i : (∅ ⊢' ⊤)
-
-          [⊥]-i : ∀{Γ}{φ} → ((Γ ⊢' φ) ⨯ (Γ ⊢' (¬ φ))) → (Γ ⊢' ⊥)
-
-          [¬]-i : ∀{Γ}{φ} → ((φ ⊰ Γ) ⊢' ⊥) → (Γ ⊢' (¬ φ))
-          [¬]-e  : ∀{Γ}{φ} → (((¬ φ) ⊰ Γ) ⊢' ⊥) → (Γ ⊢' φ)
-
-          [∧]-i : ∀{Γ₁ Γ₂}{φ₁ φ₂} → ((Γ₁ ⊢' φ₁) ⨯ (Γ₂ ⊢' φ₂)) → ((Γ₁ ++ Γ₂) ⊢' (φ₁ ∧ φ₂))
-          [∧]-eₗ  : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' (φ₁ ∧ φ₂)) → (Γ ⊢' φ₁)
-          [∧]-eᵣ  : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' (φ₁ ∧ φ₂)) → (Γ ⊢' φ₂)
-
-          [∨]-iₗ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' φ₁) → (Γ ⊢' (φ₁ ∨ φ₂))
-          [∨]-iᵣ : ∀{Γ}{φ₁ φ₂} → (Γ ⊢' φ₂) → (Γ ⊢' (φ₁ ∨ φ₂))
-          [∨]-e  : ∀{Γ₁ Γ₂ Γ₃}{φ₁ φ₂ φ₃} → (((φ₁ ⊰ Γ₁) ⊢' φ₃) ⨯ ((φ₂ ⊰ Γ₂) ⊢' φ₃) ⨯ (Γ₃ ⊢' (φ₁ ∨ φ₂))) → ((Γ₁ ++ Γ₂ ++ Γ₃) ⊢' φ₃)
-
-          [⇒]-i : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ Γ) ⊢' φ₂) → (Γ ⊢' (φ₁ ⇒ φ₂))
-          [⇒]-e  : ∀{Γ₁ Γ₂}{φ₁ φ₂} → ((Γ₁ ⊢' (φ₁ ⇒ φ₂)) ⨯ (Γ₂ ⊢' φ₁)) → ((Γ₁ ++ Γ₂) ⊢' φ₂)
-
-      -- Derivability
-      -- Examples:
-      --   (∅ ⊢ ⊥) becomes (Node(⊤) → Node(⊥))
-      --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes ((Node(φ) ∧ Node(¬ φ)) → Node(⊥))
-      _⊢_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-      _⊢_ ∅       φ = Node(φ)
-      _⊢_ (γ ⊰ Γ) φ = (foldᵣ-init (_⨯_) (Node(γ)) (map Node Γ)) → Node(φ)
-      --   (∅ ⊢ ⊤) becomes Node(⊤)
-      --   ([ φ ⊰ (¬ φ) ] ⊢ ⊥) becomes (Node(φ) → (Node(¬ φ) → Node(⊥)))
-      -- _⊢_ Γ φ = (Node(List.foldᵣ (_∧_) ⊤ Γ) → Node(φ))
-      -- _⊢_ Γ φ = (List.foldₗ (_←_) (Node(φ)) (List.map Node (List.reverse Γ)))
-
-      _⊬_ : List(Formula(Prop)) → Formula(Prop) → Set(lvl₁ Lvl.⊔ lvl₂)
-      _⊬_ Γ φ = ¬ₘ(_⊢_ Γ φ)
-
-      -- Consistency
-      inconsistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
-      inconsistent Γ = (Γ ⊢ ⊥)
-
-      consistent : List(Formula(Prop)) → Set(lvl₁ Lvl.⊔ lvl₂)
-      consistent Γ = ¬ₘ(inconsistent Γ)
 
       module Theorems where
-        open import List.Properties{lvl₁}{lvl₂}
+        open import List.Properties{ℓ₁}{ℓ₂}
         import      List.Theorems
         open        List.Theorems.Sets
         open        List.Theorems.Sets.Relators
-        open import Relator.Equals{lvl₁}{lvl₂}
+        open import Relator.Equals{ℓ₁}{ℓ₂}
 
         -- [⊢]-subset : (Γ₁ ⊆ Γ₂) → (Γ₁ ⊢ φ) → (Γ₂ ⊢ φ)
         -- [⊢]-subset proof = 

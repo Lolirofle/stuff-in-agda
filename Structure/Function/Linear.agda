@@ -1,9 +1,9 @@
-module Structure.Function.Linear {l₁} {l₂} where
+module Structure.Function.Linear {ℓ₁} {ℓ₂} where
 
 import      Level as Lvl
-open import Logic.Propositional{l₁ Lvl.⊔ l₂}
-open import Relator.Equals{l₁}{l₂}
-open import Type{l₂}
+open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Type{ℓ₂}
 
 record LinearMap {V S : Type} (f : V → V) (_+_ : V → V → V) (_⋅_ : S → V → V) : Stmt where
   field

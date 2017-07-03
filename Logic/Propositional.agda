@@ -1,4 +1,4 @@
-module Logic.Propositional {lvl} where
+module Logic.Propositional {ℓ} where
 
 open import Data
 open import Functional
@@ -14,8 +14,8 @@ infixl 1000 _↔_
 ------------------------------------------
 -- Statement
 
-Stmt : Type{Lvl.𝐒(lvl)}
-Stmt = Type{lvl}
+Stmt : Type{Lvl.𝐒(ℓ)}
+Stmt = Type{ℓ}
 
 ------------------------------------------
 -- Conjunction (AND)
@@ -77,18 +77,24 @@ pattern [∨]-introᵣ r = Either.Right r
 [∨]-elim(_ , f₂ , (Either.Right y)) = f₂ y
 
 ------------------------------------------
--- Bottom (false, absurdity, empty)
+-- Bottom (false, absurdity, empty, contradiction)
 
-data ⊥ : Stmt where
+⊥ : Stmt
+⊥ = Empty
+
+[⊥]-intro : {X : Stmt} → X → (X → ⊥) → ⊥
+[⊥]-intro x f = f x
 
 [⊥]-elim : {X : Stmt} → ⊥ → X
-[⊥]-elim ()
+[⊥]-elim = empty-fn
 
 ------------------------------------------
--- Top (true, truth, unit)
+-- Top (true, truth, unit, validity)
 
-data ⊤ : Stmt where
-  [⊤]-intro : ⊤
+⊤ : Stmt
+⊤ = Unit
+
+pattern [⊤]-intro = <>
 
 ------------------------------------------
 -- Negation

@@ -1,46 +1,44 @@
-import Level as Lvl
-module Structure.Function.Domain {l₁ : Lvl.Level} where
+module Structure.Function.Domain {ℓ₁} where
 
+import      Level as Lvl
 open import Functional
+open import Logic.Propositional
+open import Logic.Predicate{ℓ₁}
+open import Relator.Equals{ℓ₁}
 open import Type
 
-module _ {l₂}{T : Type{l₂}} where
-  open import Logic.Propositional{l₁ Lvl.⊔ l₂}
-  open import Logic.Predicate{l₁}{l₂}
-  open import Relator.Equals{l₁}{l₂}
+-- Definition of injectivity for a function
+Injective : ∀{ℓ₂ ℓ₃}{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+Injective {_}{_} {X} f = ∀{x₁ x₂ : X} → (f(x₁) ≡ f(x₂)) → (x₁ ≡ x₂)
 
-  -- Definition of a fixed point for a function
-  FixPoint : ∀{T : Type{l₂}} → (T → T) → T → Stmt
-  FixPoint f(x) = (f(x) ≡ x)
+-- Definition of surjectivity for a function
+Surjective : ∀{ℓ₂}{X : Type{ℓ₂}}{Y : Type{ℓ₂}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+Surjective {_} {X}{Y} f = ∀{y : Y} → ∃{_}{X}(x ↦ (f(x) ≡ y))
 
-module _ {l₂}{l₃}{X : Type{l₂}}{Y : Type{l₂ Lvl.⊔ l₃}} where
-  open import Logic.Propositional{l₁ Lvl.⊔ l₂ Lvl.⊔ l₃}
-  open import Logic.Predicate{l₁}{l₂ Lvl.⊔ l₃}
-  open import Relator.Equals{l₁}
+-- Definition of bijectivity for a function
+Bijective : ∀{ℓ₂}{X Y : Type{ℓ₂}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+Bijective f = (Injective f) ∧ (Surjective f)
 
-  private _≡₂_ = _≡_{l₂}
-  private _≡₃_ = _≡_{l₂ Lvl.⊔ l₃}
+-- Definition of a fixed point for a function
+FixPoint : ∀{ℓ₂}{T : Type{ℓ₂}} → (T → T) → T → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+FixPoint f(x) = (f(x) ≡ x)
 
-  -- Definition of injectivity for a function
-  Injective : (X → Y) → Stmt
-  Injective f = ∀{x₁ x₂ : X} → (f(x₁) ≡₃ f(x₂)) → (x₁ ≡₂ x₂)
+-- Definition of an inverse function for a function
+Inverse : ∀{ℓ₂ ℓ₃}{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (Y → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+Inverse f f⁻¹ = (∀{x}{y} → (f(x) ≡ y) → (f⁻¹(y) ≡ x))
 
-  -- Definition of surjectivity for a function
-  Surjective : (X → Y) → Stmt
-  Surjective f = ∀{y : Y} → ∃(\(x : X) → (f(x) ≡₃ y))
+-- Definition of an inverse function for a function
+InverseId : ∀{ℓ₂}{X : Type{ℓ₂}}{Y : Type{ℓ₂}} → (X → Y) → (Y → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+InverseId f f⁻¹ = ((f ∘ f⁻¹) ≡ id) -- TODO: Prove equivalence of this and above
 
-  -- Definition of bijectivity for a function
-  Bijective : (X → Y) → Stmt
-  Bijective f = (Injective f) ∧ (Surjective f)
+-- Definition of a constant function
+Constant : ∀{ℓ₂}{X : Type{ℓ₂}}{Y : Type{ℓ₂}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+Constant f = (∃(y ↦ ∀{x} → f(x) ≡ y))
 
-  -- Definition of an inverse function for a function
-  Inverse : (X → Y) → (Y → X) → Stmt
-  Inverse f f⁻¹ = (∀{x}{y} → (f(x) ≡ y) → (f⁻¹(y) ≡ x))
-
-  -- Definition of an inverse function for a function
-  InverseId : (X → Y) → (Y → X) → Stmt
-  InverseId f f⁻¹ = ((f ∘ f⁻¹) ≡ id) -- TODO: Prove equivalence of this and above
-
-  -- Definition of an constant function
-  Constant : (X → Y) → Stmt{l₂ Lvl.⊔ l₃}
-  Constant f = (∃{Y}(y ↦ ∀{x : X} → f(x) ≡ y))
+-- Definition of the relation between a function and an operation that says:
+-- The function preserves the operation
+-- Special cases:
+--   Additive function (Operator is a conventional _+_)
+--   Multiplicative function (Operator is a conventional _*_)
+_preserves_ : ∀{ℓ₂}{T : Type{ℓ₂}} → (T → T) → (T → T → T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+_preserves_ (f)(_▫_) = (∀{x y} → (f(x ▫ y) ≡ f(x) ▫ f(y)))

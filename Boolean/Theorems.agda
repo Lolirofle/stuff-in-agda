@@ -1,11 +1,11 @@
-module Boolean.Theorems {l₁} {l₂} where -- TODO: Move
+module Boolean.Theorems {ℓ₁} where -- TODO: Move
 
 import      Level as Lvl
 open import Boolean
 import      Boolean.Operators
 open        Boolean.Operators.Programming
-open import Logic.Propositional{l₁ Lvl.⊔ l₂}
-open import Relator.Equals{l₁}{l₂}
+open import Logic.Propositional{ℓ₁}
+open import Relator.Equals{ℓ₁}{Lvl.𝟎}
 
 -- A boolean operation is either true or false
 bivalence : ∀{a} → ((a ≡ 𝑇) ∨ (a ≡ 𝐹))
@@ -50,6 +50,7 @@ disjointness {𝐹} ([∧]-intro () [≡]-intro)
 [¬]-elim-[𝑇] {𝐹} [≡]-intro = [≡]-intro
 
 
+
 [∧]-introₗ-[𝐹] : ∀{a b} → (a ≡ 𝐹) → ((a && b) ≡ 𝐹)
 [∧]-introₗ-[𝐹] {_}{𝑇} [≡]-intro = [≡]-intro
 [∧]-introₗ-[𝐹] {_}{𝐹} [≡]-intro = [≡]-intro
@@ -66,3 +67,13 @@ disjointness {𝐹} ([∧]-intro () [≡]-intro)
 
 [¬]-elim-[𝐹] : ∀{a} → (a ≡ 𝐹) → (! a ≡ 𝑇)
 [¬]-elim-[𝐹] = [¬]-intro-[𝑇]
+
+
+
+[≢][𝑇]-is-[𝐹] : ∀{a} → (a ≢ 𝑇) → (a ≡ 𝐹)
+[≢][𝑇]-is-[𝐹] {𝑇} (a≢𝑇) = [⊥]-elim ((a≢𝑇) ([≡]-intro))
+[≢][𝑇]-is-[𝐹] {𝐹} (a≢𝑇) = [≡]-intro
+
+[≢][𝐹]-is-[𝑇] : ∀{a} → (a ≢ 𝐹) → (a ≡ 𝑇)
+[≢][𝐹]-is-[𝑇] {𝑇} (a≢𝐹) = [≡]-intro
+[≢][𝐹]-is-[𝑇] {𝐹} (a≢𝐹) = [⊥]-elim ((a≢𝐹) ([≡]-intro))

@@ -1,13 +1,13 @@
-module Structure.Relator.Ordering {l₁} {l₂} where
+module Structure.Relator.Ordering {ℓ₁} {ℓ₂} where
 
 import      Level as Lvl
 open import Data
 open import Functional
-open import Logic.Propositional{l₁ Lvl.⊔ l₂}
-open import Logic.Predicate{l₁}{l₂}
-open import Logic.Theorems{l₁ Lvl.⊔ l₂}
-open import Structure.Relator.Properties{l₁}{l₂}
-open import Type{l₂}
+open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Logic.Predicate{ℓ₁}{ℓ₂}
+open import Logic.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
+open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
+open import Type{ℓ₂}
 
 record WeakPartialOrder {T : Type} (_≤_ : T → T → Stmt) (_≡_ : T → T → Stmt) : Stmt where
   field

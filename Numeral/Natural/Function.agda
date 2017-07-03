@@ -17,3 +17,10 @@ min a b = (a + b) −₀ max(a)(b)
 infixl 100 _[max]_ _[min]_
 _[max]_ = max
 _[min]_ = min
+
+module Theorems{ℓ} where
+  import      Level as Lvl
+  open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
+
+  postulate max-commutativity : Commutativity(max)
+  postulate min-commutativity : Commutativity(min)

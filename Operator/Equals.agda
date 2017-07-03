@@ -1,10 +1,10 @@
-module Operator.Equals {lvl} where
+module Operator.Equals {ℓ} where
 
 import      Level as Lvl
 open import Boolean
 open import Functional
-open import Relator.Equals{lvl}{lvl}
-open import Type{lvl}
+open import Relator.Equals{ℓ}
+open import Type{ℓ}
 
 -- Type class for run-time checking of equality
 record Equals(T : Type) : Type where

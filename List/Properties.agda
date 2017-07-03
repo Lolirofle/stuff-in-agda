@@ -1,23 +1,23 @@
-module List.Properties{lvl₁}{lvl₂} where
+module List.Properties{ℓ₁}{ℓ₂} where
 
 import Level as Lvl
 open import Functional
 open import List
-open import Logic.Propositional{lvl₁ Lvl.⊔ lvl₂}
+open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Oper.Properties{lvl₁}
-open import Relator.Equals{lvl₁}
+open import Numeral.Natural.Oper.Properties{ℓ₁}
+open import Relator.Equals{ℓ₁}
 open import Structure.Operator.Properties
-open import Type{lvl₂}
+open import Type{ℓ₂}
 
 instance
-  [++]-identityₗ : ∀{T} → Identityₗ {lvl₁}{lvl₂}{List(T)} (_++_) ∅
+  [++]-identityₗ : ∀{T} → Identityₗ {ℓ₁}{ℓ₂}{List(T)} (_++_) ∅
   [++]-identityₗ = [≡]-intro
 
 instance
-  [++]-identityᵣ : ∀{T} → Identityᵣ {lvl₁}{lvl₂}{List(T)} (_++_) ∅
-  [++]-identityᵣ {T} = List-induction{lvl₁}{lvl₂} base next where
+  [++]-identityᵣ : ∀{T} → Identityᵣ {ℓ₁}{ℓ₂}{List(T)} (_++_) ∅
+  [++]-identityᵣ {T} = List-induction{ℓ₁}{ℓ₂} base next where
     base : (∅ ++ ∅) ≡ ∅
     base = [≡]-intro
 
@@ -28,8 +28,8 @@ instance
     -- (x ⊰ l) ++ ∅ ≡ x ⊰ l
 
 instance
-  [++]-associativity : ∀{T} → Associativity {lvl₁}{lvl₂} {List(T)} (_++_)
-  [++]-associativity {T} {l₀} {l₁} {l₂} = List-induction{lvl₁}{lvl₂} base next {l₀} where
+  [++]-associativity : ∀{T} → Associativity {ℓ₁}{ℓ₂} {List(T)} (_++_)
+  [++]-associativity {T} {l₀} {l₁} {l₂} = List-induction{ℓ₁}{ℓ₂} base next {l₀} where
     base : ((∅ ++ l₁) ++ l₂) ≡ (∅ ++ (l₁ ++ l₂))
     base = [≡]-intro
     -- l₁++l₂ = l₁++l₂
@@ -45,7 +45,7 @@ instance
 
 instance
   reverse-[++] : ∀{T}{l₁ l₂ : List(T)} → (reverse(l₁ ++ l₂) ≡ reverse(l₂) ++ reverse(l₁))
-  reverse-[++] {T} {l₁} {l₂} = List-induction{lvl₁}{lvl₂} base next {l₁} where
+  reverse-[++] {T} {l₁} {l₂} = List-induction{ℓ₁}{ℓ₂} base next {l₁} where
     base : reverse(∅ ++ l₂) ≡ reverse(l₂) ++ reverse(∅)
     base =
       ([≡]-transitivity([∧]-intro
@@ -81,8 +81,16 @@ instance
   -- _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
 
 instance
+  length-[∅] : ∀{T : Type} → (length(∅{_}{T}) ≡ 0)
+  length-[∅] = [≡]-intro
+
+instance
+  length-singleton : ∀{T : Type}{a : T} → (length(singleton(a)) ≡ 1)
+  length-singleton = [≡]-intro
+
+instance
   length-[++] : ∀{T}{l₁ l₂ : List(T)} → (length(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
-  length-[++] {T} {l₁} {l₂} = List-induction{lvl₁}{Lvl.𝟎} base next {l₁} where
+  length-[++] {T} {l₁} {l₂} = List-induction{ℓ₁}{Lvl.𝟎} base next {l₁} where
     base : length(∅ ++ l₂) ≡ length{_}{T}(∅) + length(l₂)
     base = [≡]-symmetry [+]-identityₗ
 
@@ -100,15 +108,15 @@ instance
     -- length(x ⊰ (l++l₂)) = length(x ⊰ l)+length(l₂) //TODO: Is this step really okay? 𝐒 cannot uniquely identify that x was the precedant
 
   -- TODO: length(reverse(l)) = length(l)
-  -- length-reverse : ∀{lvl T}{l : List{lvl}(T)} → length(reverse(l)) ≡ length(l)
-  -- length-reverse {lvl} {T} = List-induction base next where
-  --   base : length{lvl}{T}(reverse(∅)) ≡ length{lvl}{T}(∅)
+  -- length-reverse : ∀{ℓ T}{l : List{ℓ}(T)} → length(reverse(l)) ≡ length(l)
+  -- length-reverse {ℓ} {T} = List-induction base next where
+  --   base : length{ℓ}{T}(reverse(∅)) ≡ length{ℓ}{T}(∅)
   --   base = [≡]-intro
   -- 
   --   next : ∀(x : T)(l : List(T)) → (length(reverse(l)) ≡ length(l)) → (length(reverse(x ⊰ l)) ≡ length(x ⊰ l))
   --   next x l stmt =
   --     ([≡]-transitivity([∧]-intro
-  --       ([≡]-symmetry(length-[++] {lvl} {T} {singleton(x)} {reverse(l)}))
+  --       ([≡]-symmetry(length-[++] {ℓ} {T} {singleton(x)} {reverse(l)}))
   --       (([≡]-with-[ 𝐒 ] stmt))
   --     ))
   --   -- length(reverse(l)) = length(l)
@@ -120,15 +128,6 @@ instance
   --   -- length(reverse(l))+length(x⊰ε) = length(x⊰l)
   --   -- length(reverse(l)++x⊰ε) = length(x⊰l)
   --   -- length(reverse(l)++singleton(x)) = length(x⊰l)
-
-instance
-  length-[∅]ₗ : ∀{T : Type}{L : List(T)} → (L ≡ ∅) → (length(L) ≡ 0)
-  length-[∅]ₗ [≡]-intro = [≡]-intro
-
-instance
-  length-[∅]ᵣ : ∀{T : Type}{L : List(T)} → (length(L) ≡ 0) → (L ≡ ∅)
-  length-[∅]ᵣ {_}{∅}     (_) = [≡]-intro
-  length-[∅]ᵣ {_}{_ ⊰ _} ()
 
 -- TODO: Empty list is prefix and suffix of everything
 -- TODO: Whole list is prefix and suffix of everything
