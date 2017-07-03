@@ -42,6 +42,7 @@ record DFA (State : Set) (Alphabet : Set) : Set where
   isWordAccepted : List(∑) → Bool
   isWordAccepted word = F(δ̂(q₀)(word))
 
+-- Automaton that accepts words accepted by both of the specified automatons
 _⨯_ : ∀{Q₁ Q₂}{∑} → DFA(Q₁)(∑) → DFA(Q₂)(∑) → DFA(Q₁ ⨯' Q₂)(∑)
 _⨯_ {Q₁}{Q₂}{∑} (Dfa δ₁ q₀₁ F₁) (Dfa δ₂ q₀₂ F₂) = Dfa δ q₀ F where
   δ : (Q₁ ⨯' Q₂) → ∑ → (Q₁ ⨯' Q₂)
@@ -53,6 +54,7 @@ _⨯_ {Q₁}{Q₂}{∑} (Dfa δ₁ q₀₁ F₁) (Dfa δ₂ q₀₂ F₂) = Dfa 
   F : (Q₁ ⨯' Q₂) → Bool
   F(q₁ , q₂) = F₁(q₁) && F₂(q₂)
 
+-- Automaton that accepts words accepted by any of the specified automatons
 _+_ : ∀{Q₁ Q₂}{∑} → DFA(Q₁)(∑) → DFA(Q₂)(∑) → DFA(Q₁ ⨯' Q₂)(∑)
 _+_ {Q₁}{Q₂}{∑} (Dfa δ₁ q₀₁ F₁) (Dfa δ₂ q₀₂ F₂) = Dfa δ q₀ F where
   δ : (Q₁ ⨯' Q₂) → ∑ → (Q₁ ⨯' Q₂)
@@ -64,6 +66,7 @@ _+_ {Q₁}{Q₂}{∑} (Dfa δ₁ q₀₁ F₁) (Dfa δ₂ q₀₂ F₂) = Dfa δ
   F : (Q₁ ⨯' Q₂) → Bool
   F(q₁ , q₂) = F₁(q₁) || F₂(q₂)
 
+-- Automaton that accepts words not accepted by the specified automaton
 ∁_ : ∀{Q}{∑} → DFA(Q)(∑) → DFA(Q)(∑)
 ∁_ (Dfa δ q₀ F) = Dfa δ q₀ ((!_) ∘ F)
 
