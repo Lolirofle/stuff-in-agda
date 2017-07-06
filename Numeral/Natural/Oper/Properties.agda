@@ -198,3 +198,20 @@ instance
 -- Also called "The Division Algorithm" or "Euclides Algorithm"
 -- TODO: Prove
 postulate [/]-uniqueness : ∀{a b} → {{_ : b ≢ 0}} → ∃!{ℕ ⨯ ℕ}(\{(q , r) → ((a ≡ (b ⋅ q) + r)∧(0 ≤ r)∧(r < b))})
+
+instance
+  [+]-cancellationᵣ : ∀{a b c} → (a + c ≡ b + c) → (a ≡ b)
+  [+]-cancellationᵣ {a}{b}{𝟎}    (rel) = rel
+  [+]-cancellationᵣ {a}{b}{𝐒(c)} (rel) = [+]-cancellationᵣ {a}{b}{c} ([≡]-with-[ 𝐏 ] rel)
+
+instance
+  [+]-cancellationₗ : ∀{a b c} → (a + b ≡ a + c) → (b ≡ c)
+  [+]-cancellationₗ {𝟎}   {b}{c} (rel) =
+    ([≡]-transitivity([∧]-intro
+      ([≡]-transitivity([∧]-intro
+        ([≡]-symmetry [+]-identityₗ)
+        (rel)
+      ))
+      ([+]-identityₗ)
+    ))
+  [+]-cancellationₗ {𝐒(a)}{b}{c} (rel) = [+]-cancellationᵣ {a} ([≡]-with-[ 𝐏 ] rel)

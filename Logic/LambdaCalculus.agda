@@ -77,8 +77,9 @@ module Transformations where
       (Var(upscale-[+] {d₁}{d₂} (n)))
     )
 
-  Apply : ∀{d₂ d₁} → Term(d₁ + d₂) → Term(d₁) → Term(d₁ + d₂)
-  Apply {d₁}{d₂} (f)(x) = Application(f)(depth-[+] {d₁}{d₂} (x))
+  -- TODO
+  -- Apply : ∀{d₂ d₁} → Term(d₁ + d₂) → Term(d₁) → Term(d₁ + d₂)
+  -- Apply {d₁}{d₂} (f)(x) = Application(f)(depth-[+] {d₁}{d₂} (x))
 
   substitute : ∀{d} → Finite-ℕ(d) → Term(d) → Term(d) → Term(d)
   substitute (var) (val) (Application(f)(x)) = Application (substitute (var) (val) (f)) (substitute (var) (val) (x))
