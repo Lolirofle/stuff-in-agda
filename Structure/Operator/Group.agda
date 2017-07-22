@@ -12,8 +12,8 @@ record Group {T : Type} (_▫_ : T → T → T) (id : T) (inv : T → T) : Stmt 
     associativity  : Associativity  (_▫_)
     identityₗ       : Identityₗ       (_▫_) id
     identityᵣ       : Identityᵣ       (_▫_) id
-    inverseₗ        : Inverseₗ        (_▫_) id inv
-    inverseᵣ        : Inverseᵣ        (_▫_) id inv
+    inverseₗ        : InverseFunctionₗ        (_▫_) id inv
+    inverseᵣ        : InverseFunctionᵣ        (_▫_) id inv
 
 record AbelianGroup {T : Type} (_▫_ : T → T → T) (id : T) (inv : T → T) : Stmt where
   field

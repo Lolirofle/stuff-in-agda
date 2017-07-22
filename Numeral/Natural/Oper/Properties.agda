@@ -160,6 +160,10 @@ instance
   [𝐒]-not-0 ()
 
 instance
+  [𝐏][𝐒]-identity : ∀{n} → (𝐏(𝐒(n)) ≡ n)
+  [𝐏][𝐒]-identity = [≡]-intro
+
+instance
   [+]-injectivityₗ : ∀{a} → Injective (x ↦ x + a)
   [+]-injectivityₗ {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
   [+]-injectivityₗ {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]-injectivityₗ {n} ([≡]-with-[ 𝐏 ] x₁+𝐒n≡x₂+𝐒n)
@@ -183,30 +187,57 @@ instance
       commuteBothTemp {x₁} {n} {x₂} {n} ([≡]-with-[ 𝐏 ] (commuteBothTemp {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
     )
 
-instance
-  [+]-sum-is-0 : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)
-  [+]-sum-is-0 {a}{0}    a+0≡0 = a+0≡0
-  [+]-sum-is-0 {a}{𝐒(n)} a+𝐒n≡0 = [+]-sum-is-0 {a} {n} ([≡]-with-[ 𝐏 ] a+𝐒n≡0)
+[+]-sum-is-0ₗ : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)
+[+]-sum-is-0ₗ {a}{0}    a+0≡0 = a+0≡0
+[+]-sum-is-0ₗ {a}{𝐒(n)} a+𝐒n≡0 = [+]-sum-is-0ₗ {a} {n} ([≡]-with-[ 𝐏 ] a+𝐒n≡0)
 
--- instance
---   [⋅]-product-is-0 : ∀{a b} → (a ⋅ b ≡ 0) → ((a ≡ 0)∨(b ≡ 0))
---   [⋅]-product-is-0 {a}{0}    a+0≡0 = a+0≡0
---   [⋅]-product-is-0 {0}{b}    a+0≡0 = a+0≡0
---   [⋅]-product-is-0 {_}{𝐒(n)} ()
---   [⋅]-product-is-0 {𝐒(n)}{_} ()
+[+]-sum-is-0ᵣ : ∀{a b} → (a + b ≡ 0) → (b ≡ 0)
+[+]-sum-is-0ᵣ {b}{a} (b+a≡0) =
+  ([+]-sum-is-0ₗ {a}{b}
+    ([≡]-transitivity([∧]-intro
+      ([+]-commutativity {a}{b})
+      (b+a≡0)
+    ))
+  )
+
+[+]-sum-is-0 : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)∧(b ≡ 0)
+[+]-sum-is-0 {a}{b} (proof) =
+  ([∧]-intro
+    ([+]-sum-is-0ₗ {a}{b} (proof))
+    ([+]-sum-is-0ᵣ {a}{b} (proof))
+  )
+
+[⋅]-product-is-0 : ∀{a b} → (a ⋅ b ≡ 0) → ((a ≡ 0)∨(b ≡ 0))
+[⋅]-product-is-0 {a}{0} (_) = [∨]-introᵣ ([≡]-intro)
+[⋅]-product-is-0 {0}{b} (_) = [∨]-introₗ ([≡]-intro)
+[⋅]-product-is-0 {𝐒(a)}{𝐒(b)} (𝐒a⋅𝐒b≡0) =
+  ([⊥]-elim
+    ([𝐒]-not-0 {(𝐒(a) ⋅ b) + a}
+      ([≡]-transitivity([∧]-intro
+        ([+]-commutativity {𝐒(a) ⋅ b}{𝐒(a)})
+        (𝐒a⋅𝐒b≡0)
+      ))
+    )
+  )
+  -- 𝐒a⋅𝐒b = 0 //assumption
+  -- 𝐒a+(𝐒a⋅b) = 0 //Definition: (⋅)
+  -- (𝐒a⋅b)+𝐒a = 0 //Commutativity (+)
+  -- 𝐒((𝐒a⋅b)+a) = 0 //Definition: (+)
+  -- ⊥ //∀n. 𝐒(n) ≠ 0
+  -- (a = 0) ∨ (b = 0) //[⊥]-elim
 
 -- Also called "The Division Algorithm" or "Euclides Algorithm"
 -- TODO: Prove
 postulate [/]-uniqueness : ∀{a b} → {{_ : b ≢ 0}} → ∃!{ℕ ⨯ ℕ}(\{(q , r) → ((a ≡ (b ⋅ q) + r)∧(0 ≤ r)∧(r < b))})
 
 instance
-  [+]-cancellationᵣ : ∀{a b c} → (a + c ≡ b + c) → (a ≡ b)
-  [+]-cancellationᵣ {a}{b}{𝟎}    (rel) = rel
-  [+]-cancellationᵣ {a}{b}{𝐒(c)} (rel) = [+]-cancellationᵣ {a}{b}{c} ([≡]-with-[ 𝐏 ] rel)
+  [+]-cancellationᵣ : Cancellationᵣ(_+_)
+  [+]-cancellationᵣ {𝟎}    (rel) = rel
+  [+]-cancellationᵣ {𝐒(x)} (rel) = [+]-cancellationᵣ {x} ([≡]-with-[ 𝐏 ] rel)
 
 instance
-  [+]-cancellationₗ : ∀{a b c} → (a + b ≡ a + c) → (b ≡ c)
-  [+]-cancellationₗ {𝟎}   {b}{c} (rel) =
+  [+]-cancellationₗ : Cancellationₗ(_+_)
+  [+]-cancellationₗ {𝟎}{a}{b} (rel) =
     ([≡]-transitivity([∧]-intro
       ([≡]-transitivity([∧]-intro
         ([≡]-symmetry [+]-identityₗ)
@@ -214,4 +245,15 @@ instance
       ))
       ([+]-identityₗ)
     ))
-  [+]-cancellationₗ {𝐒(a)}{b}{c} (rel) = [+]-cancellationᵣ {a} ([≡]-with-[ 𝐏 ] rel)
+  [+]-cancellationₗ {𝐒(x)}{a}{b} (rel) =
+    ([+]-cancellationₗ {x}{a}{b}
+      ([≡]-with-[ 𝐏 ]
+        ([≡]-transitivity([∧]-intro
+          ([≡]-transitivity([∧]-intro
+            ([≡]-symmetry ([+1]-commutativity {x}{a}))
+            (rel)
+          ))
+          ([+1]-commutativity {x}{b})
+        ))
+      )
+    )

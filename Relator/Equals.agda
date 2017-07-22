@@ -102,9 +102,16 @@ Uniqueness {T} property = ∀{x y : T} → (property(x) ∧ property(y)) → (x 
 ∃! : ∀{T} → (T → Stmt) → Stmt
 ∃! {T} property = ∃(a ↦ property(a)) ∧ Uniqueness{T}(property)
 
-[≡]-function : ∀{A B : Type}{f₁ f₂ : A → B} → (f₁ ≡ f₂) → (∀{x} → (f₁(x) ≡ f₂(x)))
-[≡]-function [≡]-intro = [≡]-intro
+[≡]-function-application : ∀{A B : Type}{f₁ f₂ : A → B} → (f₁ ≡ f₂) → (∀{x} → (f₁(x) ≡ f₂(x)))
+[≡]-function-application [≡]-intro = [≡]-intro
 
 -- TODO: This seems to require extensional equality with functions. Create a new equality relation with an additional constructor for this case.
--- [≡]-functionₗ : ∀{A B : Type}{f₁ f₂ : A → B} → (∀{x} → (f₁(x) ≡ f₂(x))) → (f₁ ≡ f₂)
--- [≡]-functionₗ (f₁x≡f₂x) = [≡]-intro
+FunctionEquality = ∀{A B : Type}{f₁ f₂ : A → B} → (∀{x} → (f₁(x) ≡ f₂(x))) → (f₁ ≡ f₂)
+{-
+[≡]-functionₗ : FunctionEquality(_≡_)
+[≡]-functionₗ (f₁x≡f₂x) = [≡]-intro
+
+data _≡ᶠ_ : ∀{T : Type} → T → T → Stmt where
+  [≡ᶠ]-intro : ∀{T : Type}{x : T} → (x ≡ᶠ x)
+  [≡ᶠ]-function : ∀{A B : Type}{f₁ f₂ : A → B} → (∀{x} → (f₁(x) ≡ᶠ f₂(x))) → (f₁ ≡ᶠ f₂)
+-}
