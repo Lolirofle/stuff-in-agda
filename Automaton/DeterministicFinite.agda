@@ -133,7 +133,15 @@ module Theorems where
     [∁]-isWordAccepted {w} = [≡]-with-[ x ↦ !(DFA.F(auto)(x)) ] (δ̂-on-[∁]{DFA.q₀(auto)}{w})
 
     -- TODO: Prove ∁ postulates regarding languages before accepting them, because the definition of ∁ for languages might be wrong.
-    -- postulate [∁]-language : 𝔏(∁ auto) ≡ Oper.∁(𝔏(auto))
+    -- [∁]-language : 𝔏(∁ auto) ≡ Oper.∁(𝔏(auto))
+    -- [∁]-language = [≡]-intro
+      -- testtt : ∀{auto}{q} → Language.accepts-ε(𝔏(∁ auto)) ≡ ! Language.accepts-ε(𝔏(auto))
+      -- testtt {_}{_} = [≡]-intro
+
+      -- testtt2 : ∀{auto}{c} → Language.suffix-lang(𝔏(∁ auto))(c) ≡ Oper.∁(Language.suffix-lang(𝔏(auto))(c))
+      -- testtt2 : ∀{auto}{c} → Language.suffix-lang(𝔏(∁ auto))(c) ≡ Language.suffix-lang(Oper.∁(𝔏(auto)))(c)
+      -- testtt2 : ∀{auto}{c} → Language.suffix-lang(Oper.∁(𝔏(auto)))(c) ≡ Oper.∁(Language.suffix-lang(𝔏(auto))(c))
+      -- testtt2 {_}{_} = [≡]-intro
 
   module _ {∑} {Q}(auto : DFA(Q)(∑)) {Q₂} (auto₂ : DFA(Q₂)(∑)) where
     δ̂-on-[⨯] : ∀{q₁ : Q}{q₂ : Q₂}{w : Word(∑)} → DFA.δ̂(auto ⨯ auto₂)(q₁ , q₂)(w) ≡ (DFA.δ̂(auto)(q₁)(w) , DFA.δ̂(auto₂)(q₂)(w))
