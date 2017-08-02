@@ -65,8 +65,21 @@ module Meta (_⊢_ : List(Formula) → Formula → Set(ℓₚ)) where
 module TruthTables where
   open Meta
 
+-- Natural deduction proof trees.
+-- This is a proof system that should reflect the semantic truth of formulas.
 module NaturalDeduction where
-  {-# NO_POSITIVITY_CHECK #-} -- TODO: Could this make deriving ⊥ possible?
+  -- A `Tree` is associated with a formula.
+  -- [Proposition without assumptions (Axiom)]
+  --   Represented by the type `Tree(φ)`.
+  --   It means that a tree with the formula φ at the bottom exists (is constructable).
+  --   This represents that the formula φ is provable in the natural deduction proof system.
+  -- [Proposition with an assumption]
+  --   Represented by the type `Tree(φ₁) → Tree(φ₂)`.
+  --   It means that a tree with φ₁ as a leaf and φ₂ at the bottom exists (is constructable).
+  --   This represents that the formula φ₂ is provable if one can assume the formula φ₁.
+  -- The constructors of `Tree` are all the possible ways to construct a natural deduction proof tree.
+  -- If a tree with a certain formula cannot be constructed, then it means that the formula is not provable.
+  {-# NO_POSITIVITY_CHECK #-} -- TODO: Could this be a problem?
   data Tree : Formula → Set(ℓₚ) where
     [⊤]-intro : Tree(⊤)
 
@@ -81,18 +94,23 @@ module NaturalDeduction where
 
     [∨]-introₗ : ∀{φ₁ φ₂} → Tree(φ₁) → Tree(φ₁ ∨ φ₂)
     [∨]-introᵣ : ∀{φ₁ φ₂} → Tree(φ₂) → Tree(φ₁ ∨ φ₂)
-    [∨]-elim  : ∀{φ₁ φ₂ φ₃} → (Tree(φ₁) → Tree(φ₃)) → (Tree(φ₂) → Tree(φ₃)) → Tree(φ₃)
+    [∨]-elim  : ∀{φ₁ φ₂ φ₃} → Tree(φ₁ ∨ φ₂) → (Tree(φ₁) → Tree(φ₃)) → (Tree(φ₂) → Tree(φ₃)) → Tree(φ₃)
 
     [⇒]-intro : ∀{φ₁ φ₂} → (Tree(φ₁) → Tree(φ₂)) → Tree(φ₁ ⇒ φ₂)
     [⇒]-elim  : ∀{φ₁ φ₂} → Tree(φ₁ ⇒ φ₂) → Tree(φ₁) → Tree(φ₂)
 
-  -- Double negated proposition is positive
+  -- Double negated proposition is positive.
   [¬¬]-elim : ∀{φ} → Tree(¬ (¬ φ)) → Tree(φ)
   [¬¬]-elim nna = [¬]-elim(na ↦ [⊥]-intro na nna)
 
+  -- A contradiction can derive every formula.
   [⊥]-elim : ∀{φ} → Tree(⊥) → Tree(φ)
   [⊥]-elim bottom = [¬]-elim(_ ↦ bottom)
 
+  -- List of natural deduction proof trees.
+  -- A `Trees` is associated with a list of formulas.
+  -- If all formulas in the list can be constructed, then all the formulas in the list are provable.
+  -- This is used to express (⊢) using the usual conventions in formal logic.
   Trees : List(Formula) → Set(ℓₚ)
   Trees(Γ) = (∀{γ} → (γ ∈ Γ) → Tree(γ))
 
@@ -104,6 +122,10 @@ module NaturalDeduction where
   module Theorems where
     open [∈]-proof {Formula}
     open Meta(_⊢_)
+
+    Tree-to-Trees : ∀{φ} → Tree(φ) → Trees([ φ ])
+    Tree-to-Trees (φ-tree) ([∈]-use) = φ-tree
+    Tree-to-Trees (φ-tree) ([∈]-skip ())
 
     -- Trees-proof-by-[∈]-fn : ∀{Γ₁ Γ₂} → (∀{a} → (a ∈ Γ₁) → (a ∈ Γ₂)) → (Trees(Γ₂) → Trees(Γ₁))
     -- Trees-proof-by-[∈]-fn = liftᵣ
@@ -124,8 +146,8 @@ module NaturalDeduction where
     -- φ ⊰ (Γ₂ ++ Γ₁) //Definition: (++)
     -- φ ⊰ (Γ₁ ++ Γ₂) //[≡]-substitution (Trees-[++]-commutativity)
 
-    -- Trees-[++]-duplicate : ∀{Γ} → Trees(Γ ++ Γ) → Trees(Γ)
-    -- Trees-[++]-duplicate {Γ} (trees) = \{γ} → liftᵣ([∈][++]-duplicate)(trees{γ})
+    Trees-[++]-duplicate : ∀{Γ} → Trees(Γ ++ Γ) → Trees(Γ)
+    Trees-[++]-duplicate {Γ} (trees) = \{γ} → liftᵣ([∈][++]-expandₗ {γ}{Γ}{Γ})(trees{γ})
 
     [⊢]-tree-rule : ∀{Γ₁ Γ₂}{φ} → (Trees(Γ₂) → Trees(Γ₁)) → (Γ₁ ⊢ φ) → (Γ₂ ⊢ φ)
     [⊢]-tree-rule (trees-fn) ([⊢]-construct (Γ₁⊢φ)) = [⊢]-construct ((Γ₁⊢φ) ∘ (trees-fn))
@@ -153,14 +175,84 @@ module NaturalDeduction where
     -- f(g ↦ g(x))
 
     [⊢][⊤]-intro : (∅ ⊢ ⊤)
-    [⊢][⊤]-intro = [⊢]-construct (const [⊤]-intro)
+    [⊢][⊤]-intro = [⊢]-construct
+      (const [⊤]-intro)
+
+    [⊢][⊥]-intro : ∀{φ} → ([ φ ⊰ (¬ φ) ] ⊢ ⊥)
+    [⊢][⊥]-intro = [⊢]-construct
+      ([∈]-to-tree ↦ [⊥]-intro
+        ([∈]-to-tree ([∈]-use))
+        ([∈]-to-tree ([∈]-skip [∈]-use))
+      )
+
+    [⊢][¬]-intro : ∀{φ} → ([ φ ] ⊢ ⊥) → (∅ ⊢ (¬ φ))
+    [⊢][¬]-intro ([⊢]-construct φ⊢⊥) = [⊢]-construct
+      ([∈]-to-tree ↦ [¬]-intro
+        ((φ⊢⊥)∘(Tree-to-Trees))
+      )
+
+    [⊢][¬]-elim : ∀{φ} → ([(¬ φ)] ⊢ ⊥) → (∅ ⊢ φ)
+    [⊢][¬]-elim ([⊢]-construct ¬φ⊢⊥) = [⊢]-construct
+      ([∈]-to-tree ↦ [¬]-elim
+        ((¬φ⊢⊥)∘(Tree-to-Trees))
+      )
+
+    [⊢][∧]-intro : ∀{φ₁ φ₂} → ([ φ₁ ⊰ φ₂ ] ⊢ (φ₁ ∧ φ₂))
+    [⊢][∧]-intro = [⊢]-construct
+      ([∈]-to-tree ↦ [∧]-intro
+        ([∈]-to-tree ([∈]-use))
+        ([∈]-to-tree ([∈]-skip [∈]-use))
+      )
+
+    [⊢][∧]-elimₗ : ∀{φ₁ φ₂} → ([(φ₁ ∧ φ₂)] ⊢ φ₁)
+    [⊢][∧]-elimₗ = [⊢]-construct
+      ([∈]-to-tree ↦ [∧]-elimₗ
+          ([∈]-to-tree ([∈]-use))
+      )
+
+    [⊢][∧]-elimᵣ : ∀{φ₁ φ₂} → ([(φ₁ ∧ φ₂)] ⊢ φ₂)
+    [⊢][∧]-elimᵣ = [⊢]-construct
+      ([∈]-to-tree ↦ [∧]-elimᵣ
+        ([∈]-to-tree ([∈]-use))
+      )
+
+    [⊢][∨]-introₗ : ∀{φ₁ φ₂} → ([ φ₁ ] ⊢ (φ₁ ∨ φ₂))
+    [⊢][∨]-introₗ = [⊢]-construct
+      ([∈]-to-tree ↦ [∨]-introₗ
+        ([∈]-to-tree ([∈]-use))
+      )
+
+    [⊢][∨]-introᵣ : ∀{φ₁ φ₂} → ([ φ₂ ] ⊢ (φ₁ ∨ φ₂))
+    [⊢][∨]-introᵣ = [⊢]-construct
+      ([∈]-to-tree ↦ [∨]-introᵣ
+        ([∈]-to-tree ([∈]-use))
+      )
+
+    [⊢][∨]-elim : ∀{φ₁ φ₂ φ₃} → ([ φ₁ ] ⊢ φ₃) → ([ φ₂ ] ⊢ φ₃) → ([(φ₁ ∨ φ₂)] ⊢ φ₃)
+    [⊢][∨]-elim ([⊢]-construct φ₁⊢φ₃) ([⊢]-construct φ₂⊢φ₃) = [⊢]-construct
+      ([∈]-to-tree ↦ [∨]-elim
+        ([∈]-to-tree ([∈]-use))
+        ((φ₁⊢φ₃)∘(Tree-to-Trees))
+        ((φ₂⊢φ₃)∘(Tree-to-Trees))
+      )
+
+    [⊢][⇒]-intro : ∀{φ₁ φ₂} → ([ φ₁ ] ⊢ φ₂) → (∅ ⊢ (φ₁ ⇒ φ₂))
+    [⊢][⇒]-intro ([⊢]-construct φ₁⊢φ₂) = [⊢]-construct
+      ([∈]-to-tree ↦ [⇒]-intro
+        ((φ₁⊢φ₂)∘(Tree-to-Trees))
+      )
+
+    [⊢][⇒]-elim : ∀{φ₁ φ₂} → ([ (φ₁ ⇒ φ₂) ⊰ φ₁ ] ⊢ φ₂)
+    [⊢][⇒]-elim = [⊢]-construct
+      ([∈]-to-tree ↦ [⇒]-elim
+        ([∈]-to-tree ([∈]-use))
+        ([∈]-to-tree ([∈]-skip [∈]-use))
+      )
 
 module NaturalDeductionDerivability where
   open Meta
 
   data _⊢_ : List(Formula) → Formula → Set(ℓₚ) where
-    id-intro : ∀{φ} → ([ φ ] ⊢ φ)
-
     [⊤]-intro : (∅ ⊢ ⊤)
 
     [⊥]-intro : ∀{Γ₁ Γ₂}{φ} → ((Γ₁ ⊢ φ) ⨯ (Γ₂ ⊢ (¬ φ))) → ((Γ₁ ++ Γ₂) ⊢ ⊥)

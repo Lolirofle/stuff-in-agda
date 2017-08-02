@@ -74,7 +74,6 @@ module ProofSystems {ℓ₁} {ℓ₂} {Prop : Set(ℓ₁)} {Formula : Set(ℓ₁
           _∨_ to _∨ₘ_ ;
           _⇒_ to _⇒ₘ_ )
 
-
       module Theorems where
         open import List.Properties{ℓ₁}{ℓ₂}
         import      List.Theorems
