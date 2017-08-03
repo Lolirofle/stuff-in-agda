@@ -61,6 +61,7 @@ import Relator.Congruence
 import Relator.Equals
 import Sets.AdditiveSet
 import Sets.FnSet
+import Sets.ListSet
 import Sets.TypeSet
 import Structure.Function.Domain
 import Structure.Function.Linear

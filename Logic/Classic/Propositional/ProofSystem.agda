@@ -104,19 +104,19 @@ module NaturalDeduction where
     singleton (φ-tree) ([∈]-use) = φ-tree
     singleton (φ-tree) ([∈]-skip ())
 
-    -- proof-by-[∈]-fn : ∀{Γ₁ Γ₂} → (∀{a} → (a ∈ Γ₁) → (a ∈ Γ₂)) → (Trees(Γ₂) → Trees(Γ₁))
-    -- proof-by-[∈]-fn = liftᵣ
+    from-[∈] : ∀{Γ₁ Γ₂} → (∀{a} → (a ∈ Γ₁) → (a ∈ Γ₂)) → (Trees(Γ₂) → Trees(Γ₁))
+    from-[∈] (f) (Γ₂-trees) {γ} = liftᵣ (f{γ}) (Γ₂-trees)
 
     push : ∀{Γ}{φ} → Tree(φ) → Trees(Γ) → Trees(φ ⊰ Γ)
     push (φ-tree) (Γ-tree) ([∈]-use) = φ-tree
     push (φ-tree) (Γ-tree) ([∈]-skip inclusion) = Γ-tree (inclusion)
 
     pop : ∀{Γ}{φ} → Trees(φ ⊰ Γ) → Trees(Γ)
-    pop(φ⊰Γ) = [∈]-with-[⊰][→] (φ⊰Γ)
+    pop = from-[∈] ([∈]-skip)
 
     -- TODO: Could be removed because liftᵣ is easier to use. ALthough a note/tip should be written for these purposes.
-    formula-weaken : ∀{ℓ}{T : Set(ℓ)}{Γ}{φ} → (Trees(Γ) → T) → (Trees(φ ⊰ Γ) → T)
-    formula-weaken = liftᵣ(pop)
+    -- formula-weaken : ∀{ℓ}{T : Set(ℓ)}{Γ₁ Γ₂} → (Trees(Γ₁) → Trees(Γ₂)) → (Trees(Γ₂) → T) → (Trees(Γ₁) → T)
+    -- formula-weaken = liftᵣ
 
     [++]-commute : ∀{Γ₁ Γ₂} → Trees(Γ₁ ++ Γ₂) → Trees(Γ₂ ++ Γ₁)
     [++]-commute {Γ₁}{Γ₂} (trees) = trees ∘ ([∈][++]-commute{_}{Γ₂}{Γ₁})
@@ -127,11 +127,11 @@ module NaturalDeduction where
     [++]-right : ∀{Γ₁ Γ₂} → Trees(Γ₁ ++ Γ₂) → Trees(Γ₂)
     [++]-right {Γ₁}{Γ₂} (trees) ([∈]-[Γ₂]) = trees ([∈][++]-expandₗ {_}{Γ₁}{Γ₂} [∈]-[Γ₂])
 
-    deduplicate : ∀{Γ} → Trees(Γ ++ Γ) → Trees(Γ)
-    deduplicate {Γ} (trees) = \{γ} → liftᵣ([∈][++]-expandₗ {γ}{Γ}{Γ})(trees{γ})
+    [++]-deduplicate : ∀{Γ} → Trees(Γ ++ Γ) → Trees(Γ)
+    [++]-deduplicate {Γ} (trees) = \{γ} → liftᵣ([∈][++]-expandₗ {γ}{Γ}{Γ})(trees{γ})
 
-    -- reorderₗ : ∀{Γ₁ Γ₂}{φ} → Trees(Γ₁ ++ (φ ⊰ Γ₂)) → Trees(φ ⊰ (Γ₁ ++ Γ₂))
-    -- reorderₗ (Γ₁φΓ₂) = [≡]-substitution (Trees.[++]-commute (Trees.[++]-commute (Γ₁φΓ₂)))
+    -- [⊰]-reorderₗ : ∀{Γ₁ Γ₂}{φ} → Trees(Γ₁ ++ (φ ⊰ Γ₂)) → Trees(φ ⊰ (Γ₁ ++ Γ₂))
+    -- [⊰]-reorderₗ (Γ₁φΓ₂-trees) = 
     -- Γ₁ ++ (φ ⊰ Γ₂) //assumption
     -- (φ ⊰ Γ₂) ++ Γ₁ //Trees.[++]-commute
     -- φ ⊰ (Γ₂ ++ Γ₁) //Definition: (++)
@@ -145,25 +145,21 @@ module NaturalDeduction where
   module Theorems where
     open [∈]-proof {Formula}
 
-    [⊢]-tree-rule : ∀{Γ₁ Γ₂}{φ} → (Trees(Γ₂) → Trees(Γ₁)) → (Γ₁ ⊢ φ) → (Γ₂ ⊢ φ)
-    [⊢]-tree-rule (trees-fn) ([⊢]-construct (Γ₁⊢φ)) = [⊢]-construct ((Γ₁⊢φ) ∘ (trees-fn))
+    [⊢]-from-trees : ∀{Γ₁ Γ₂}{φ} → (Trees(Γ₂) → Trees(Γ₁)) → (Γ₁ ⊢ φ) → (Γ₂ ⊢ φ)
+    [⊢]-from-trees (trees-fn) ([⊢]-construct (Γ₁⊢φ)) = [⊢]-construct ((Γ₁⊢φ) ∘ (trees-fn))
 
     [⊢]-formula-weaken : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ((φ₂ ⊰ Γ) ⊢ φ₁)
-    [⊢]-formula-weaken {_}{_}{φ₂} = [⊢]-tree-rule (Trees.pop {_}{φ₂})
-    -- [⊢]-formula-weaken : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
-    -- [⊢]-formula-weaken ([⊢]-construct (Γ⊢φ₁)) = [⊢]-construct (Trees.formula-weaken(Γ⊢φ₁))
-    -- ∀{Γ}{φ₁} → (Trees(Γ) → Tree(φ₁))   →   ∀{φ₂} → (Trees(φ₂ ⊰ Γ) → Tree(φ₁))
-    -- ∀{Γ}{φ₁} → ((∀{γ} → (γ ∈ Γ) → Tree(γ)) → Tree(φ₁))   →   ∀{φ₂} → ((∀{γ} → (γ ∈ (φ₂ ⊰ Γ)) → Tree(γ)) → Tree(φ₁))
+    [⊢]-formula-weaken {_}{_}{φ₂} = [⊢]-from-trees (Trees.pop {_}{φ₂})
 
     [⊢]-weakenₗ : ∀{Γ₂}{φ} → (Γ₂ ⊢ φ) → ∀{Γ₁} → ((Γ₁ ++ Γ₂) ⊢ φ)
     [⊢]-weakenₗ {_} {_} (Γ₂⊢φ) {∅}       = (Γ₂⊢φ)
     [⊢]-weakenₗ {Γ₂}{φ} (Γ₂⊢φ) {φ₂ ⊰ Γ₁} = [⊢]-formula-weaken {Γ₁ ++ Γ₂} ([⊢]-weakenₗ (Γ₂⊢φ) {Γ₁})
 
     [⊢]-reorder-[++] : ∀{Γ₁ Γ₂}{φ} → ((Γ₁ ++ Γ₂) ⊢ φ) → ((Γ₂ ++ Γ₁) ⊢ φ)
-    [⊢]-reorder-[++] {Γ₁}{Γ₂} = [⊢]-tree-rule (Trees.[++]-commute {Γ₂}{Γ₁})
+    [⊢]-reorder-[++] {Γ₁}{Γ₂} = [⊢]-from-trees (Trees.[++]-commute {Γ₂}{Γ₁})
 
     -- [⊢]-reorder-first : ∀{Γ₁ Γ₂}{φ₁ φ₂} → ((Γ₁ ++ (φ₁ ⊰ Γ₂)) ⊢ φ₂) → ((φ₁ ⊰ (Γ₁ ++ Γ₂)) ⊢ φ₂)
-    -- [⊢]-reorder-first {Γ₁}{Γ₂} = 
+    -- [⊢]-reorder-first {Γ₁}{Γ₂} = [⊢]-reorder-[++]
 
     [⊢]-id : ∀{Γ}{φ} → ((φ ⊰ Γ) ⊢ φ)
     [⊢]-id = [⊢]-construct ([∈]-proof ↦ [∈]-proof ([∈]-use))
