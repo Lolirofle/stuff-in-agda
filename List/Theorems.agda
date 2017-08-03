@@ -43,7 +43,7 @@ module Sets {T} where
 
   -- The statement of whether an element is in a list
   data _∈_ : T → List{ℓ₂}(T) → Stmt where
-    [∈]-use  : ∀{a}{L} → (a ∈ (a ⊰ L)) -- Proof of containment when the element is the first element in the list
+    [∈]-use  : ∀{a}  {L} → (a ∈ (a ⊰ L)) -- Proof of containment when the element is the first element in the list
     [∈]-skip : ∀{a x}{L} → (a ∈ L) → (a ∈ (x ⊰ L)) -- Proof of containment of a longer list when already having a proof of a shorter list
 
   _∉_ : T → List{ℓ₂}(T) → Stmt
@@ -97,8 +97,8 @@ module Sets {T} where
     [∈]-of-[++] : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) ↔ ((a ∈ L₁)∨(a ∈ L₂))
     [∈]-of-[++] = [↔]-intro [∈]-of-[++]ₗ [∈]-of-[++]ᵣ
 
-    [∈][++]-commutativity : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → (a ∈ (L₂ ++ L₁))
-    [∈][++]-commutativity {a}{L₁}{L₂} (a∈L₁++L₂) = [∈]-of-[++]ₗ {a} {L₂}{L₁} ([∨]-commutativity([∈]-of-[++]ᵣ (a∈L₁++L₂)))
+    [∈][++]-commute : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → (a ∈ (L₂ ++ L₁))
+    [∈][++]-commute {a}{L₁}{L₂} (a∈L₁++L₂) = [∈]-of-[++]ₗ {a} {L₂}{L₁} ([∨]-commutativity([∈]-of-[++]ᵣ (a∈L₁++L₂)))
 
     [∈][++]-duplicate : ∀{a}{L} → (a ∈ (L ++ L)) → (a ∈ L)
     [∈][++]-duplicate {a}{L} (a∈LL) = [∨]-elim (id , id , ([∈]-of-[++]ᵣ {a} {L}{L} (a∈LL)))
@@ -129,7 +129,7 @@ module Sets {T} where
     -- [∈]-with-[++] {a}{x ⊰ rest}{L₂} (a∈L₂) = [∈]-with-[++] {a}{rest}{x ⊰ L₂} ([∈]-skip (a∈L₂))
 
     [∈]-with-[++]ᵣ : ∀{a}{L₁} → (a ∈ L₁) → ∀{L₂} → (a ∈ (L₁ ++ L₂))
-    [∈]-with-[++]ᵣ {a}{L₁} (a∈L₁) {L₂} = [∈][++]-commutativity {a}{L₂}{L₁} ([∈]-with-[++]ₗ {a}{L₁} (a∈L₁) {L₂})
+    [∈]-with-[++]ᵣ {a}{L₁} (a∈L₁) {L₂} = [∈][++]-commute {a}{L₂}{L₁} ([∈]-with-[++]ₗ {a}{L₁} (a∈L₁) {L₂})
 
     -- TODO: What is the type?
     -- [∈]-at : (n : ℕ) → ∀{a} → (a ∈ _)

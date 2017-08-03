@@ -2,7 +2,8 @@ module Logic.Classic.Propositional.ProofSystem {ℓₚ} (Prop : Set(ℓₚ)) whe
 
 import      Level as Lvl
 open import Data
-open import List
+import      List
+open        List using (List ; ∅ ; _⊰_ ; _++_ ; [_ ; _])
 import      List.Theorems
 open        List.Theorems.Sets{ℓₚ}{ℓₚ}
 open        List.Theorems.Sets.Relators{ℓₚ}{ℓₚ}
@@ -22,45 +23,24 @@ module Meta (_⊢_ : List(Formula) → Formula → Set(ℓₚ)) where
 
   record [⊢]-rules : Set(ℓₚ) where
     field
-      [⊢][⊤]-intro : ∀{Γ} → (Γ ⊢ ⊤)
+      [⊤]-intro : ∀{Γ} → (Γ ⊢ ⊤)
 
-      [⊢][⊥]-intro : ∀{Γ}{φ} → ((φ ⊰ (¬ φ) ⊰ Γ) ⊢ ⊥)
-      [⊢][⊥]-elim  : ∀{Γ}{φ} → ((⊥ ⊰ Γ) ⊢ φ)
+      [⊥]-intro : ∀{Γ}{φ} → ((φ ⊰ (¬ φ) ⊰ Γ) ⊢ ⊥)
+      [⊥]-elim  : ∀{Γ}{φ} → ((⊥ ⊰ Γ) ⊢ φ)
 
-      [⊢][¬]-intro : ∀{Γ}{φ} → ((φ ⊰ Γ) ⊢ ⊥) → (Γ ⊢ (¬ φ))
-      [⊢][¬]-elim  : ∀{Γ}{φ} → (((¬ φ) ⊰ Γ) ⊢ ⊥) → (Γ ⊢ φ)
+      [¬]-intro : ∀{Γ}{φ} → ((φ ⊰ Γ) ⊢ ⊥) → (Γ ⊢ (¬ φ))
+      [¬]-elim  : ∀{Γ}{φ} → (((¬ φ) ⊰ Γ) ⊢ ⊥) → (Γ ⊢ φ)
 
-      [⊢][∧]-intro : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ φ₂ ⊰ Γ) ⊢ (φ₁ ∧ φ₂))
-      [⊢][∧]-elimₗ  : ∀{Γ}{φ₁ φ₂} → (((φ₁ ∧ φ₂) ⊰ Γ) ⊢ φ₁)
-      [⊢][∧]-elimᵣ  : ∀{Γ}{φ₁ φ₂} → (((φ₁ ∧ φ₂) ⊰ Γ) ⊢ φ₂)
+      [∧]-intro : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ φ₂ ⊰ Γ) ⊢ (φ₁ ∧ φ₂))
+      [∧]-elimₗ  : ∀{Γ}{φ₁ φ₂} → (((φ₁ ∧ φ₂) ⊰ Γ) ⊢ φ₁)
+      [∧]-elimᵣ  : ∀{Γ}{φ₁ φ₂} → (((φ₁ ∧ φ₂) ⊰ Γ) ⊢ φ₂)
 
-      [⊢][∨]-introₗ : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ Γ) ⊢ (φ₁ ∨ φ₂))
-      [⊢][∨]-introᵣ : ∀{Γ}{φ₁ φ₂} → ((φ₂ ⊰ Γ) ⊢ (φ₁ ∨ φ₂))
-      [⊢][∨]-elim   : ∀{Γ₁ Γ₂}{φ₁ φ₂ φ₃} → ((φ₁ ⊰ Γ₁) ⊢ φ₃) → ((φ₂ ⊰ Γ₂) ⊢ φ₃) → (((φ₁ ∨ φ₂) ⊰ (Γ₁ ++ Γ₂)) ⊢ φ₃)
+      [∨]-introₗ : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ Γ) ⊢ (φ₁ ∨ φ₂))
+      [∨]-introᵣ : ∀{Γ}{φ₁ φ₂} → ((φ₂ ⊰ Γ) ⊢ (φ₁ ∨ φ₂))
+      [∨]-elim   : ∀{Γ₁ Γ₂}{φ₁ φ₂ φ₃} → ((φ₁ ⊰ Γ₁) ⊢ φ₃) → ((φ₂ ⊰ Γ₂) ⊢ φ₃) → (((φ₁ ∨ φ₂) ⊰ (Γ₁ ++ Γ₂)) ⊢ φ₃)
 
-      [⊢][⇒]-intro : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ Γ) ⊢ φ₂) → (Γ ⊢ (φ₁ ⇒ φ₂))
-      [⊢][⇒]-elim  : ∀{Γ}{φ₁ φ₂} → (((φ₁ ⇒ φ₂) ⊰ (φ₁) ⊰ Γ) ⊢ φ₂)
-
-  record [⊢]-deduction : Set(ℓₚ) where
-    field
-      [⊢][⊤]-intro : ∀{Γ} → (Γ ⊢ ⊤)
-
-      [⊢][⊥]-intro : ∀{Γ}{φ} → (φ ∈ Γ) → ((¬ φ) ∈ Γ) → (Γ ⊢ ⊥)
-      [⊢][⊥]-elim  : ∀{Γ}{φ} → (⊥ ∈ Γ) → (Γ ⊢ φ)
-
-      [⊢][¬]-intro : ∀{Γ}{φ} → ((φ ∈ Γ) → (Γ ⊢ ⊥)) → (Γ ⊢ (¬ φ))
-      [⊢][¬]-elim  : ∀{Γ}{φ} → (((¬ φ) ∈ Γ) → (Γ ⊢ ⊥)) → (Γ ⊢ φ)
-
-      [⊢][∧]-intro : ∀{Γ}{φ₁ φ₂} → (φ₁ ∈ Γ) → (φ₂ ∈ Γ) → (Γ ⊢ (φ₁ ∧ φ₂))
-      [⊢][∧]-elimₗ  : ∀{Γ}{φ₁ φ₂} → ((φ₁ ∧ φ₂) ∈ Γ) → (Γ ⊢ φ₁)
-      [⊢][∧]-elimᵣ  : ∀{Γ}{φ₁ φ₂} → ((φ₁ ∧ φ₂) ∈ Γ) → (Γ ⊢ φ₂)
-
-      [⊢][∨]-introₗ : ∀{Γ}{φ₁ φ₂} → (φ₁ ∈ Γ) → (Γ ⊢ (φ₁ ∨ φ₂))
-      [⊢][∨]-introᵣ : ∀{Γ}{φ₁ φ₂} → (φ₂ ∈ Γ) → (Γ ⊢ (φ₁ ∨ φ₂))
-      [⊢][∨]-elim   : ∀{Γ₁ Γ₂}{φ₁ φ₂ φ₃} → ((φ₁ ∈ Γ₁) → (Γ₁ ⊢ φ₃)) → ((φ₂ ∈ Γ₂) → (Γ₂ ⊢ φ₃)) → ((φ₁ ∨ φ₂) ∈ (Γ₁ ++ Γ₂)) → ((Γ₁ ++ Γ₂) ⊢ φ₃)
-
-      [⊢][⇒]-intro : ∀{Γ}{φ₁ φ₂} → ((φ₁ ∈ Γ) → (Γ ⊢ φ₂)) → (Γ ⊢ (φ₁ ⇒ φ₂))
-      [⊢][⇒]-elim  : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⇒ φ₂) ∈ Γ) → (φ₁ ∈ Γ) → (Γ ⊢ φ₂)
+      [⇒]-intro : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ Γ) ⊢ φ₂) → (Γ ⊢ (φ₁ ⇒ φ₂))
+      [⇒]-elim  : ∀{Γ}{φ₁ φ₂} → (((φ₁ ⇒ φ₂) ⊰ (φ₁) ⊰ Γ) ⊢ φ₂)
 
 module TruthTables where
   open Meta
@@ -114,6 +94,49 @@ module NaturalDeduction where
   Trees : List(Formula) → Set(ℓₚ)
   Trees(Γ) = (∀{γ} → (γ ∈ Γ) → Tree(γ))
 
+  module Trees where
+    open [∈]-proof {Formula}
+
+    empty : Trees(∅)
+    empty ()
+
+    singleton : ∀{φ} → Tree(φ) → Trees([ φ ])
+    singleton (φ-tree) ([∈]-use) = φ-tree
+    singleton (φ-tree) ([∈]-skip ())
+
+    -- proof-by-[∈]-fn : ∀{Γ₁ Γ₂} → (∀{a} → (a ∈ Γ₁) → (a ∈ Γ₂)) → (Trees(Γ₂) → Trees(Γ₁))
+    -- proof-by-[∈]-fn = liftᵣ
+
+    push : ∀{Γ}{φ} → Tree(φ) → Trees(Γ) → Trees(φ ⊰ Γ)
+    push (φ-tree) (Γ-tree) ([∈]-use) = φ-tree
+    push (φ-tree) (Γ-tree) ([∈]-skip inclusion) = Γ-tree (inclusion)
+
+    pop : ∀{Γ}{φ} → Trees(φ ⊰ Γ) → Trees(Γ)
+    pop(φ⊰Γ) = [∈]-with-[⊰][→] (φ⊰Γ)
+
+    -- TODO: Could be removed because liftᵣ is easier to use. ALthough a note/tip should be written for these purposes.
+    formula-weaken : ∀{ℓ}{T : Set(ℓ)}{Γ}{φ} → (Trees(Γ) → T) → (Trees(φ ⊰ Γ) → T)
+    formula-weaken = liftᵣ(pop)
+
+    [++]-commute : ∀{Γ₁ Γ₂} → Trees(Γ₁ ++ Γ₂) → Trees(Γ₂ ++ Γ₁)
+    [++]-commute {Γ₁}{Γ₂} (trees) = trees ∘ ([∈][++]-commute{_}{Γ₂}{Γ₁})
+
+    [++]-left : ∀{Γ₁ Γ₂} → Trees(Γ₁ ++ Γ₂) → Trees(Γ₁)
+    [++]-left {Γ₁}{Γ₂} (trees) ([∈]-[Γ₁]) = trees ([∈][++]-expandᵣ {_}{Γ₁}{Γ₂} [∈]-[Γ₁])
+
+    [++]-right : ∀{Γ₁ Γ₂} → Trees(Γ₁ ++ Γ₂) → Trees(Γ₂)
+    [++]-right {Γ₁}{Γ₂} (trees) ([∈]-[Γ₂]) = trees ([∈][++]-expandₗ {_}{Γ₁}{Γ₂} [∈]-[Γ₂])
+
+    deduplicate : ∀{Γ} → Trees(Γ ++ Γ) → Trees(Γ)
+    deduplicate {Γ} (trees) = \{γ} → liftᵣ([∈][++]-expandₗ {γ}{Γ}{Γ})(trees{γ})
+
+    -- reorderₗ : ∀{Γ₁ Γ₂}{φ} → Trees(Γ₁ ++ (φ ⊰ Γ₂)) → Trees(φ ⊰ (Γ₁ ++ Γ₂))
+    -- reorderₗ (Γ₁φΓ₂) = [≡]-substitution (Trees.[++]-commute (Trees.[++]-commute (Γ₁φΓ₂)))
+    -- Γ₁ ++ (φ ⊰ Γ₂) //assumption
+    -- (φ ⊰ Γ₂) ++ Γ₁ //Trees.[++]-commute
+    -- φ ⊰ (Γ₂ ++ Γ₁) //Definition: (++)
+    -- φ ⊰ (Γ₁ ++ Γ₂) //[≡]-substitution (Trees.[++]-commute)
+
   -- Derivability
   -- Proof of: If there exists a tree for every formula in Γ, then there exists a tree for the formula φ.
   data _⊢_ (Γ : List(Formula)) (φ : Formula) : Set(ℓₚ) where
@@ -121,133 +144,130 @@ module NaturalDeduction where
 
   module Theorems where
     open [∈]-proof {Formula}
-    open Meta(_⊢_)
-
-    Tree-to-Trees : ∀{φ} → Tree(φ) → Trees([ φ ])
-    Tree-to-Trees (φ-tree) ([∈]-use) = φ-tree
-    Tree-to-Trees (φ-tree) ([∈]-skip ())
-
-    -- Trees-proof-by-[∈]-fn : ∀{Γ₁ Γ₂} → (∀{a} → (a ∈ Γ₁) → (a ∈ Γ₂)) → (Trees(Γ₂) → Trees(Γ₁))
-    -- Trees-proof-by-[∈]-fn = liftᵣ
-
-    Trees-fewer : ∀{Γ}{φ} → Trees(φ ⊰ Γ) → Trees(Γ)
-    Trees-fewer(φ⊰Γ) = [∈]-with-[⊰][→] (φ⊰Γ)
-
-    Trees-formula-weakening : ∀{ℓ}{T : Set(ℓ)}{Γ} → (Trees(Γ) → T) → ∀{φ} → (Trees(φ ⊰ Γ) → T)
-    Trees-formula-weakening(φ→T) (φ⊰Γ) = (φ→T) (Trees-fewer (φ⊰Γ))
-
-    Trees-[++]-commutativity : ∀{Γ₁ Γ₂} → Trees(Γ₁ ++ Γ₂) → Trees(Γ₂ ++ Γ₁)
-    Trees-[++]-commutativity {Γ₁}{Γ₂} (trees) = trees ∘ ([∈][++]-commutativity{_}{Γ₂}{Γ₁})
-
-    -- Trees-reorderₗ : ∀{Γ₁ Γ₂}{φ} → Trees(Γ₁ ++ (φ ⊰ Γ₂)) → Trees(φ ⊰ (Γ₁ ++ Γ₂))
-    -- Trees-reorderₗ (Γ₁φΓ₂) = [≡]-substitution (Trees-[++]-commutativity (Trees-[++]-commutativity (Γ₁φΓ₂)))
-    -- Γ₁ ++ (φ ⊰ Γ₂) //assumption
-    -- (φ ⊰ Γ₂) ++ Γ₁ //Trees-[++]-commutativity
-    -- φ ⊰ (Γ₂ ++ Γ₁) //Definition: (++)
-    -- φ ⊰ (Γ₁ ++ Γ₂) //[≡]-substitution (Trees-[++]-commutativity)
-
-    Trees-[++]-duplicate : ∀{Γ} → Trees(Γ ++ Γ) → Trees(Γ)
-    Trees-[++]-duplicate {Γ} (trees) = \{γ} → liftᵣ([∈][++]-expandₗ {γ}{Γ}{Γ})(trees{γ})
 
     [⊢]-tree-rule : ∀{Γ₁ Γ₂}{φ} → (Trees(Γ₂) → Trees(Γ₁)) → (Γ₁ ⊢ φ) → (Γ₂ ⊢ φ)
     [⊢]-tree-rule (trees-fn) ([⊢]-construct (Γ₁⊢φ)) = [⊢]-construct ((Γ₁⊢φ) ∘ (trees-fn))
 
-    [⊢]-formula-weakening : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ((φ₂ ⊰ Γ) ⊢ φ₁)
-    [⊢]-formula-weakening {_}{_}{φ₂} = [⊢]-tree-rule (Trees-fewer {_}{φ₂})
-    -- [⊢]-formula-weakening : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
-    -- [⊢]-formula-weakening ([⊢]-construct (Γ⊢φ₁)) = [⊢]-construct (Trees-formula-weakening(Γ⊢φ₁))
+    [⊢]-formula-weaken : ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ((φ₂ ⊰ Γ) ⊢ φ₁)
+    [⊢]-formula-weaken {_}{_}{φ₂} = [⊢]-tree-rule (Trees.pop {_}{φ₂})
+    -- [⊢]-formula-weaken : ∀{Γ}{φ₁} → (Γ ⊢ φ₁) → ∀{φ₂} → ((φ₂ ⊰ Γ) ⊢ φ₁)
+    -- [⊢]-formula-weaken ([⊢]-construct (Γ⊢φ₁)) = [⊢]-construct (Trees.formula-weaken(Γ⊢φ₁))
     -- ∀{Γ}{φ₁} → (Trees(Γ) → Tree(φ₁))   →   ∀{φ₂} → (Trees(φ₂ ⊰ Γ) → Tree(φ₁))
     -- ∀{Γ}{φ₁} → ((∀{γ} → (γ ∈ Γ) → Tree(γ)) → Tree(φ₁))   →   ∀{φ₂} → ((∀{γ} → (γ ∈ (φ₂ ⊰ Γ)) → Tree(γ)) → Tree(φ₁))
 
-    [⊢]-weakeningₗ : ∀{Γ₂}{φ} → (Γ₂ ⊢ φ) → ∀{Γ₁} → ((Γ₁ ++ Γ₂) ⊢ φ)
-    [⊢]-weakeningₗ {_} {_} (Γ₂⊢φ) {∅}       = (Γ₂⊢φ)
-    [⊢]-weakeningₗ {Γ₂}{φ} (Γ₂⊢φ) {φ₂ ⊰ Γ₁} = [⊢]-formula-weakening {Γ₁ ++ Γ₂} ([⊢]-weakeningₗ (Γ₂⊢φ) {Γ₁})
+    [⊢]-weakenₗ : ∀{Γ₂}{φ} → (Γ₂ ⊢ φ) → ∀{Γ₁} → ((Γ₁ ++ Γ₂) ⊢ φ)
+    [⊢]-weakenₗ {_} {_} (Γ₂⊢φ) {∅}       = (Γ₂⊢φ)
+    [⊢]-weakenₗ {Γ₂}{φ} (Γ₂⊢φ) {φ₂ ⊰ Γ₁} = [⊢]-formula-weaken {Γ₁ ++ Γ₂} ([⊢]-weakenₗ (Γ₂⊢φ) {Γ₁})
 
     [⊢]-reorder-[++] : ∀{Γ₁ Γ₂}{φ} → ((Γ₁ ++ Γ₂) ⊢ φ) → ((Γ₂ ++ Γ₁) ⊢ φ)
-    [⊢]-reorder-[++] {Γ₁}{Γ₂} = [⊢]-tree-rule (Trees-[++]-commutativity {Γ₂}{Γ₁})
+    [⊢]-reorder-[++] {Γ₁}{Γ₂} = [⊢]-tree-rule (Trees.[++]-commute {Γ₂}{Γ₁})
 
     -- [⊢]-reorder-first : ∀{Γ₁ Γ₂}{φ₁ φ₂} → ((Γ₁ ++ (φ₁ ⊰ Γ₂)) ⊢ φ₂) → ((φ₁ ⊰ (Γ₁ ++ Γ₂)) ⊢ φ₂)
     -- [⊢]-reorder-first {Γ₁}{Γ₂} = 
 
-    [⊢]-id : ∀{φ} → ([ φ ] ⊢ φ)
+    [⊢]-id : ∀{Γ}{φ} → ((φ ⊰ Γ) ⊢ φ)
     [⊢]-id = [⊢]-construct ([∈]-proof ↦ [∈]-proof ([∈]-use))
     -- ((A → B) → B) → C
     -- f(g ↦ g(x))
 
-    [⊢][⊤]-intro : (∅ ⊢ ⊤)
+    [⊢][⊤]-intro : ∀{Γ} → (Γ ⊢ ⊤)
     [⊢][⊤]-intro = [⊢]-construct
       (const [⊤]-intro)
 
-    [⊢][⊥]-intro : ∀{φ} → ([ φ ⊰ (¬ φ) ] ⊢ ⊥)
+    [⊢][⊥]-intro : ∀{Γ}{φ} → ((φ ⊰ (¬ φ) ⊰ Γ) ⊢ ⊥)
     [⊢][⊥]-intro = [⊢]-construct
-      ([∈]-to-tree ↦ [⊥]-intro
-        ([∈]-to-tree ([∈]-use))
-        ([∈]-to-tree ([∈]-skip [∈]-use))
+      (assumption-trees ↦ [⊥]-intro
+        (assumption-trees ([∈]-use))
+        (assumption-trees ([∈]-skip [∈]-use))
       )
 
-    [⊢][¬]-intro : ∀{φ} → ([ φ ] ⊢ ⊥) → (∅ ⊢ (¬ φ))
-    [⊢][¬]-intro ([⊢]-construct φ⊢⊥) = [⊢]-construct
-      ([∈]-to-tree ↦ [¬]-intro
-        ((φ⊢⊥)∘(Tree-to-Trees))
+    [⊢][⊥]-elim : ∀{Γ}{φ} → ((⊥ ⊰ Γ) ⊢ φ)
+    [⊢][⊥]-elim = [⊢]-construct
+      (assumption-trees ↦ [⊥]-elim
+        (assumption-trees ([∈]-use))
       )
 
-    [⊢][¬]-elim : ∀{φ} → ([(¬ φ)] ⊢ ⊥) → (∅ ⊢ φ)
-    [⊢][¬]-elim ([⊢]-construct ¬φ⊢⊥) = [⊢]-construct
-      ([∈]-to-tree ↦ [¬]-elim
-        ((¬φ⊢⊥)∘(Tree-to-Trees))
+    [⊢][¬]-intro : ∀{Γ}{φ} → ((φ ⊰ Γ) ⊢ ⊥) → (Γ ⊢ (¬ φ))
+    [⊢][¬]-intro ([⊢]-construct φΓ⊢⊥) = [⊢]-construct
+      (assumption-trees ↦ [¬]-intro
+        (φ-tree ↦ (φΓ⊢⊥) (Trees.push (φ-tree) (\{γ} → assumption-trees {γ})))
       )
 
-    [⊢][∧]-intro : ∀{φ₁ φ₂} → ([ φ₁ ⊰ φ₂ ] ⊢ (φ₁ ∧ φ₂))
+    [⊢][¬]-elim : ∀{Γ}{φ} → (((¬ φ) ⊰ Γ) ⊢ ⊥) → (Γ ⊢ φ)
+    [⊢][¬]-elim ([⊢]-construct ¬φΓ⊢⊥) = [⊢]-construct
+      (assumption-trees ↦ [¬]-elim
+        (φ-tree ↦ (¬φΓ⊢⊥) (Trees.push (φ-tree) (\{γ} → assumption-trees {γ})))
+      )
+
+    [⊢][∧]-intro : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ φ₂ ⊰ Γ) ⊢ (φ₁ ∧ φ₂))
     [⊢][∧]-intro = [⊢]-construct
-      ([∈]-to-tree ↦ [∧]-intro
-        ([∈]-to-tree ([∈]-use))
-        ([∈]-to-tree ([∈]-skip [∈]-use))
+      (assumption-trees ↦ [∧]-intro
+        (assumption-trees ([∈]-use))
+        (assumption-trees ([∈]-skip [∈]-use))
       )
 
-    [⊢][∧]-elimₗ : ∀{φ₁ φ₂} → ([(φ₁ ∧ φ₂)] ⊢ φ₁)
+    [⊢][∧]-elimₗ : ∀{Γ}{φ₁ φ₂} → (((φ₁ ∧ φ₂) ⊰ Γ) ⊢ φ₁)
     [⊢][∧]-elimₗ = [⊢]-construct
-      ([∈]-to-tree ↦ [∧]-elimₗ
-          ([∈]-to-tree ([∈]-use))
+      (assumption-trees ↦ [∧]-elimₗ
+          (assumption-trees ([∈]-use))
       )
 
-    [⊢][∧]-elimᵣ : ∀{φ₁ φ₂} → ([(φ₁ ∧ φ₂)] ⊢ φ₂)
+    [⊢][∧]-elimᵣ : ∀{Γ}{φ₁ φ₂} → (((φ₁ ∧ φ₂) ⊰ Γ) ⊢ φ₂)
     [⊢][∧]-elimᵣ = [⊢]-construct
-      ([∈]-to-tree ↦ [∧]-elimᵣ
-        ([∈]-to-tree ([∈]-use))
+      (assumption-trees ↦ [∧]-elimᵣ
+        (assumption-trees ([∈]-use))
       )
 
-    [⊢][∨]-introₗ : ∀{φ₁ φ₂} → ([ φ₁ ] ⊢ (φ₁ ∨ φ₂))
+    [⊢][∨]-introₗ : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ Γ) ⊢ (φ₁ ∨ φ₂))
     [⊢][∨]-introₗ = [⊢]-construct
-      ([∈]-to-tree ↦ [∨]-introₗ
-        ([∈]-to-tree ([∈]-use))
+      (assumption-trees ↦ [∨]-introₗ
+        (assumption-trees ([∈]-use))
       )
 
-    [⊢][∨]-introᵣ : ∀{φ₁ φ₂} → ([ φ₂ ] ⊢ (φ₁ ∨ φ₂))
+    [⊢][∨]-introᵣ : ∀{Γ}{φ₁ φ₂} → ((φ₂ ⊰ Γ) ⊢ (φ₁ ∨ φ₂))
     [⊢][∨]-introᵣ = [⊢]-construct
-      ([∈]-to-tree ↦ [∨]-introᵣ
-        ([∈]-to-tree ([∈]-use))
+      (assumption-trees ↦ [∨]-introᵣ
+        (assumption-trees ([∈]-use))
       )
 
-    [⊢][∨]-elim : ∀{φ₁ φ₂ φ₃} → ([ φ₁ ] ⊢ φ₃) → ([ φ₂ ] ⊢ φ₃) → ([(φ₁ ∨ φ₂)] ⊢ φ₃)
-    [⊢][∨]-elim ([⊢]-construct φ₁⊢φ₃) ([⊢]-construct φ₂⊢φ₃) = [⊢]-construct
-      ([∈]-to-tree ↦ [∨]-elim
-        ([∈]-to-tree ([∈]-use))
-        ((φ₁⊢φ₃)∘(Tree-to-Trees))
-        ((φ₂⊢φ₃)∘(Tree-to-Trees))
+    [⊢][∨]-elim : ∀{Γ₁ Γ₂}{φ₁ φ₂ φ₃} → ((φ₁ ⊰ Γ₁) ⊢ φ₃) → ((φ₂ ⊰ Γ₂) ⊢ φ₃) → (((φ₁ ∨ φ₂) ⊰ (Γ₁ ++ Γ₂)) ⊢ φ₃)
+    [⊢][∨]-elim {Γ₁}{Γ₂} ([⊢]-construct φ₁Γ⊢φ₃) ([⊢]-construct φ₂Γ⊢φ₃) = [⊢]-construct
+      (assumption-trees ↦ [∨]-elim
+        (assumption-trees ([∈]-use))
+        (φ₁-tree ↦ (φ₁Γ⊢φ₃) (Trees.push (φ₁-tree) (Trees.[++]-left  {Γ₁}{Γ₂} (Trees.pop (\{γ} → assumption-trees {γ})))))
+        (φ₂-tree ↦ (φ₂Γ⊢φ₃) (Trees.push (φ₂-tree) (Trees.[++]-right {Γ₁}{Γ₂} (Trees.pop (\{γ} → assumption-trees {γ})))))
       )
 
-    [⊢][⇒]-intro : ∀{φ₁ φ₂} → ([ φ₁ ] ⊢ φ₂) → (∅ ⊢ (φ₁ ⇒ φ₂))
-    [⊢][⇒]-intro ([⊢]-construct φ₁⊢φ₂) = [⊢]-construct
-      ([∈]-to-tree ↦ [⇒]-intro
-        ((φ₁⊢φ₂)∘(Tree-to-Trees))
+    [⊢][⇒]-intro : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ Γ) ⊢ φ₂) → (Γ ⊢ (φ₁ ⇒ φ₂))
+    [⊢][⇒]-intro ([⊢]-construct φ₁Γ⊢φ₂) = [⊢]-construct
+      (assumption-trees ↦ [⇒]-intro
+        (φ-tree ↦ (φ₁Γ⊢φ₂) (Trees.push (φ-tree) (\{γ} → assumption-trees {γ})))
       )
 
-    [⊢][⇒]-elim : ∀{φ₁ φ₂} → ([ (φ₁ ⇒ φ₂) ⊰ φ₁ ] ⊢ φ₂)
+    [⊢][⇒]-elim : ∀{Γ}{φ₁ φ₂} → (((φ₁ ⇒ φ₂) ⊰ φ₁ ⊰ Γ) ⊢ φ₂)
     [⊢][⇒]-elim = [⊢]-construct
-      ([∈]-to-tree ↦ [⇒]-elim
-        ([∈]-to-tree ([∈]-use))
-        ([∈]-to-tree ([∈]-skip [∈]-use))
+      (assumption-trees ↦ [⇒]-elim
+        (assumption-trees ([∈]-use))
+        (assumption-trees ([∈]-skip [∈]-use))
       )
+
+    [⊢]-rules : Meta.[⊢]-rules (_⊢_)
+    [⊢]-rules =
+      record{
+        [⊤]-intro  = \{Γ} → [⊢][⊤]-intro {Γ} ;
+        [⊥]-intro  = \{Γ}{φ} → [⊢][⊥]-intro {Γ}{φ} ;
+        [⊥]-elim   = \{Γ}{φ} → [⊢][⊥]-elim {Γ}{φ} ;
+        [¬]-intro  = \{Γ}{φ} → [⊢][¬]-intro {Γ}{φ} ;
+        [¬]-elim   = \{Γ}{φ} → [⊢][¬]-elim {Γ}{φ} ;
+        [∧]-intro  = \{Γ}{φ₁}{φ₂} → [⊢][∧]-intro {Γ}{φ₁}{φ₂} ;
+        [∧]-elimₗ  = \{Γ}{φ₁}{φ₂} → [⊢][∧]-elimₗ {Γ}{φ₁}{φ₂} ;
+        [∧]-elimᵣ  = \{Γ}{φ₁}{φ₂} → [⊢][∧]-elimᵣ {Γ}{φ₁}{φ₂} ;
+        [∨]-introₗ = \{Γ}{φ₁}{φ₂} → [⊢][∨]-introₗ {Γ}{φ₁}{φ₂} ;
+        [∨]-introᵣ = \{Γ}{φ₁}{φ₂} → [⊢][∨]-introᵣ {Γ}{φ₁}{φ₂} ;
+        [∨]-elim   = \{Γ₁}{Γ₂}{φ₁ φ₂ φ₃} → [⊢][∨]-elim {Γ₁}{Γ₂}{φ₁}{φ₂}{φ₃} ;
+        [⇒]-intro  = \{Γ}{φ₁}{φ₂} → [⊢][⇒]-intro {Γ}{φ₁}{φ₂} ;
+        [⇒]-elim   = \{Γ}{φ₁}{φ₂} → [⊢][⇒]-elim {Γ}{φ₁}{φ₂}
+      }
 
 module NaturalDeductionDerivability where
   open Meta
