@@ -4,9 +4,9 @@ import      Level as Lvl
 open import Data
 import      List
 open        List using (List ; ∅ ; _⊰_ ; _++_ ; [_ ; _])
-import      List.Theorems
-open        List.Theorems.Sets{ℓₚ}{ℓₚ}
-open        List.Theorems.Sets.Relators{ℓₚ}{ℓₚ}
+import      Sets.ListSet
+open        Sets.ListSet{ℓₚ}{ℓₚ}
+open        Sets.ListSet.Relators{ℓₚ}{ℓₚ}
 open import Logic.Classic.Propositional.Syntax(Prop)
 open import Functional
 
@@ -104,6 +104,7 @@ module NaturalDeduction where
     singleton (φ-tree) ([∈]-use) = φ-tree
     singleton (φ-tree) ([∈]-skip ())
 
+    -- TODO: This could possibly be generalized to: ∀{Γ₁ Γ₂}{F : T → Set} → (∀{a} → (a ∈ Γ₁) → (a ∈ Γ₂)) → ((∀{γ} → (γ ∈ Γ₂) → F(γ)) → (∀{γ} → (γ ∈ Γ₁) → F(γ)))
     from-[∈] : ∀{Γ₁ Γ₂} → (∀{a} → (a ∈ Γ₁) → (a ∈ Γ₂)) → (Trees(Γ₂) → Trees(Γ₁))
     from-[∈] (f) (Γ₂-trees) {γ} = liftᵣ (f{γ}) (Γ₂-trees)
 

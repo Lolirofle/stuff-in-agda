@@ -5,8 +5,7 @@ open import Boolean
 open import Data
 open import Functional
 open import List
-import      List.Theorems
-open        List.Theorems.Sets{ℓ}{ℓ}
+open import Sets.ListSet{ℓ}{ℓ}
 open import Logic.Classic.Propositional.Syntax{ℓ} (Prop)
   renaming (
     ⊤   to ⊤ₗ ;

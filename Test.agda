@@ -516,8 +516,8 @@ module testCantor where
 module testListSets where
   open Functional
   open List
-  open List.Theorems.Sets{Lvl.𝟎}
-  open List.Theorems.Sets.[∈]-proof
+  open Sets.ListSet{Lvl.𝟎}
+  open Sets.ListSet.[∈]-proof
   open Logic.Propositional
   open Type{Lvl.𝟎}
 
