@@ -55,11 +55,13 @@ module Transformations where
   open import Numeral.Natural.Oper.Properties{Lvl.𝟎}
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 
+  -- Increment the depth level of the given term
   depth-𝐒 : ∀{d} → Term(d) → Term(𝐒(d))
   depth-𝐒 (Application(f)(x)) = Application (depth-𝐒(f)) (depth-𝐒(x))
   depth-𝐒 (Abstract(body))    = Abstract(depth-𝐒(body))
   depth-𝐒 (Var(n))            = Var(upscale-𝐒 (n))
 
+  -- Add to the depth level of the given term
   depth-[+] : ∀{d₁ d₂} → Term(d₁) → Term(d₁ + d₂)
   depth-[+] {d₁}{d₂} (Application(f)(x)) = Application (depth-[+] {d₁}{d₂} (f)) (depth-[+] {d₁}{d₂} (x))
   depth-[+] {d₁}{d₂} (Abstract(body)) =
@@ -109,7 +111,6 @@ module Transformations where
 
 module Test where
   open        Transformations
-
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 
   test1 : Expression

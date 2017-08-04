@@ -72,3 +72,7 @@ restrict {_}{_}{_} {_}{_}{_} {tf} f = f ∘ tf
 -- Returns a function with a larger codomain
 expand : ∀{ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}}{B₁ : Type{ℓ₂}}{B₂ : Type{ℓ₃}} {_ : B₁ → B₂} → (A → B₁) → (A → B₂)
 expand {_}{_}{_} {_}{_}{_} {tf} f = tf ∘ f
+
+-- Functions with two paramters as an infix binary operator
+_〔_〕_ : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} → A → (A → B → C) → B → C
+a 〔 op 〕 b = op a b

@@ -9,7 +9,18 @@ open import Structure.Function.Domain
 open import Type
 
 -- The finite set of natural numbers (0,..,n).
--- Positive integers including zero less than a specified integer.
+-- Positive integers including zero less than a specified integer (0≤_≤n).
+-- This structure works in the following way:
+--   • Finite-𝟎 can always be constructed, for any upper bound (n).
+--   • Finite-𝐒 can only be constructed from a smaller upper bounded Finite-ℕ.
+--       Example: A Finite-ℕ constructed through Finite-𝐒{3} can only be the following:
+--         0 ≡ Finite-𝟎{3}
+--         1 ≡ Finite-𝐒{3} (Finite-𝟎{2})
+--         2 ≡ Finite-𝐒{3} (Finite-𝐒{2} (Finite-𝟎{1}))
+--         3 ≡ Finite-𝐒{3} (Finite-𝐒{2} (Finite-𝐒{1} (Finite-𝟎{0})))
+--         because there is nothing that could fill the blank in (Finite-𝐒{3} (Finite-𝐒{2} (Finite-𝐒{1} (Finite-𝐒{0} (_))))).
+--       The smallest upper bound that can be is 0 (from using ℕ and its definition).
+--       This limits how many successors (Finite-𝐒) that can "fit".
 data Finite-ℕ : ℕ → Set where
   Finite-𝟎 : ∀{n} → Finite-ℕ(n)                   -- Zero
   Finite-𝐒 : ∀{n} → Finite-ℕ(n) → Finite-ℕ(𝐒(n)) -- Successor function
