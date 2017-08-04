@@ -13,8 +13,9 @@ open import Type{ℓ₂}
 
 -- The statement of whether an element is in a list
 data _∈_ : T → List{ℓ₂}(T) → Stmt where
-  [∈]-use  : ∀{a}  {L} → (a ∈ (a ⊰ L)) -- Proof of containment when the element is the first element in the list
-  [∈]-skip : ∀{a x}{L} → (a ∈ L) → (a ∈ (x ⊰ L)) -- Proof of containment of a longer list when already having a proof of a shorter list
+  instance
+    [∈]-use  : ∀{a}  {L} → (a ∈ (a ⊰ L)) -- Proof of containment when the element is the first element in the list
+    [∈]-skip : ∀{a x}{L} → (a ∈ L) → (a ∈ (x ⊰ L)) -- Proof of containment of a longer list when already having a proof of a shorter list
 
 _∉_ : T → List{ℓ₂}(T) → Stmt
 _∉_ x L = ¬(x ∈ L)
@@ -34,59 +35,71 @@ module [∈]-proof where
   pattern [∈]-id        {a}{L}          = [∈]-use  {a}{L}
   pattern [∈][⊰]-expand {a}{x}{L} proof = [∈]-skip {a}{x}{L} (proof)
 
-  [∉]-empty : ∀{a} → (a ∉ ∅)
-  [∉]-empty ()
+  instance
+    [∉]-empty : ∀{a} → (a ∉ ∅)
+    [∉]-empty ()
 
-  [∈]-singleton : ∀{a} → (a ∈ ([ a ]))
-  [∈]-singleton = [∈]-id
+  instance
+    [∈]-singleton : ∀{a} → (a ∈ ([ a ]))
+    [∈]-singleton = [∈]-id
 
-  [∈]-singleton-[≡] : ∀{a b} → (a ∈ ([ b ])) → (a [≡] b)
-  [∈]-singleton-[≡] ([∈]-id)  = [≡]-intro
-  [∈]-singleton-[≡] ([∈][⊰]-expand ())
+  instance
+    [∈]-singleton-[≡] : ∀{a b} → (a ∈ ([ b ])) → (a [≡] b)
+    [∈]-singleton-[≡] ([∈]-id)  = [≡]-intro
+    [∈]-singleton-[≡] ([∈][⊰]-expand ())
 
-  [∉]-singleton-[≢] : ∀{a b} → (a [≢] b) → (a ∉ ([ b ]))
-  [∉]-singleton-[≢] = contrapositive₁ [∈]-singleton-[≡]
+  instance
+    [∉]-singleton-[≢] : ∀{a b} → (a [≢] b) → (a ∉ ([ b ]))
+    [∉]-singleton-[≢] = contrapositive₁ [∈]-singleton-[≡]
 
-  [∈]-of-[++]ᵣ : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → ((a ∈ L₁)∨(a ∈ L₂))
-  [∈]-of-[++]ᵣ {a}{_}{∅} a∈L₁ = [∨]-introₗ([≡]-elimᵣ [++]-identityᵣ {expr ↦ (a ∈ expr)} (a∈L₁))
-  [∈]-of-[++]ᵣ {_}{∅}{_} a∈L₂ = [∨]-introᵣ(a∈L₂)
-  [∈]-of-[++]ᵣ {_}{_ ⊰ L₁}{L₂} ([∈]-id) = [∨]-introₗ([∈]-id)
-  [∈]-of-[++]ᵣ {a}{x ⊰ L₁}{L₂} ([∈][⊰]-expand a∈L₁) with [∈]-of-[++]ᵣ {a}{L₁}{L₂} (a∈L₁)
-  ...                                               | [∨]-introₗ(a∈L₁∖a) = [∨]-introₗ([∈][⊰]-expand(a∈L₁∖a))
-  ...                                               | [∨]-introᵣ(a∈L₂) = [∨]-introᵣ(a∈L₂)
+  instance
+    [∈]-of-[++]ᵣ : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → ((a ∈ L₁)∨(a ∈ L₂))
+    [∈]-of-[++]ᵣ {a}{_}{∅} a∈L₁ = [∨]-introₗ([≡]-elimᵣ [++]-identityᵣ {expr ↦ (a ∈ expr)} (a∈L₁))
+    [∈]-of-[++]ᵣ {_}{∅}{_} a∈L₂ = [∨]-introᵣ(a∈L₂)
+    [∈]-of-[++]ᵣ {_}{_ ⊰ L₁}{L₂} ([∈]-id) = [∨]-introₗ([∈]-id)
+    [∈]-of-[++]ᵣ {a}{x ⊰ L₁}{L₂} ([∈][⊰]-expand a∈L₁) with [∈]-of-[++]ᵣ {a}{L₁}{L₂} (a∈L₁)
+    ...                                               | [∨]-introₗ(a∈L₁∖a) = [∨]-introₗ([∈][⊰]-expand(a∈L₁∖a))
+    ...                                               | [∨]-introᵣ(a∈L₂) = [∨]-introᵣ(a∈L₂)
 
-  [∈]-of-[++]ₗ : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) ← ((a ∈ L₁)∨(a ∈ L₂))
-  [∈]-of-[++]ₗ {_}{∅}{_} ([∨]-introₗ ())
-  -- [∈]-of-[++]ₗ {_}{_}{∅} ([∨]-introᵣ ())
-  -- [∈]-of-[++]ₗ {a}{_}{∅} ([∨]-introₗ a∈L₁) = [≡]-elimₗ [++]-identityᵣ {expr ↦ (a ∈ expr)} (a∈L₁)
-  [∈]-of-[++]ₗ {_}{∅}{_} ([∨]-introᵣ(a∈L₂)) = (a∈L₂)
-  [∈]-of-[++]ₗ {_}{_ ⊰ L₁}{L₂} ([∨]-introₗ([∈]-id)) = [∈]-id
-  [∈]-of-[++]ₗ {a}{x ⊰ L₁}{L₂} ([∨]-introₗ([∈][⊰]-expand a∈L₁)) = [∈][⊰]-expand([∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introₗ(a∈L₁)))
-  [∈]-of-[++]ₗ {a}{x ⊰ L₁}{L₂} ([∨]-introᵣ(a∈L₂)) = [∈][⊰]-expand{a}{x}([∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introᵣ(a∈L₂)))
+  instance
+    [∈]-of-[++]ₗ : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) ← ((a ∈ L₁)∨(a ∈ L₂))
+    [∈]-of-[++]ₗ {_}{∅}{_} ([∨]-introₗ ())
+    -- [∈]-of-[++]ₗ {_}{_}{∅} ([∨]-introᵣ ())
+    -- [∈]-of-[++]ₗ {a}{_}{∅} ([∨]-introₗ a∈L₁) = [≡]-elimₗ [++]-identityᵣ {expr ↦ (a ∈ expr)} (a∈L₁)
+    [∈]-of-[++]ₗ {_}{∅}{_} ([∨]-introᵣ(a∈L₂)) = (a∈L₂)
+    [∈]-of-[++]ₗ {_}{_ ⊰ L₁}{L₂} ([∨]-introₗ([∈]-id)) = [∈]-id
+    [∈]-of-[++]ₗ {a}{x ⊰ L₁}{L₂} ([∨]-introₗ([∈][⊰]-expand a∈L₁)) = [∈][⊰]-expand([∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introₗ(a∈L₁)))
+    [∈]-of-[++]ₗ {a}{x ⊰ L₁}{L₂} ([∨]-introᵣ(a∈L₂)) = [∈][⊰]-expand{a}{x}([∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introᵣ(a∈L₂)))
 
-  [∈]-of-[++] : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) ↔ ((a ∈ L₁)∨(a ∈ L₂))
-  [∈]-of-[++] = [↔]-intro [∈]-of-[++]ₗ [∈]-of-[++]ᵣ
+  instance
+    [∈]-of-[++] : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) ↔ ((a ∈ L₁)∨(a ∈ L₂))
+    [∈]-of-[++] = [↔]-intro [∈]-of-[++]ₗ [∈]-of-[++]ᵣ
 
-  [∈][++]-commute : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → (a ∈ (L₂ ++ L₁))
-  [∈][++]-commute {a}{L₁}{L₂} (a∈L₁++L₂) = [∈]-of-[++]ₗ {a} {L₂}{L₁} ([∨]-commutativity([∈]-of-[++]ᵣ (a∈L₁++L₂)))
+  instance
+    [∈][++]-commute : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → (a ∈ (L₂ ++ L₁))
+    [∈][++]-commute {a}{L₁}{L₂} (a∈L₁++L₂) = [∈]-of-[++]ₗ {a} {L₂}{L₁} ([∨]-commutativity([∈]-of-[++]ᵣ (a∈L₁++L₂)))
 
-  [∈][++]-duplicate : ∀{a}{L} → (a ∈ (L ++ L)) → (a ∈ L)
-  [∈][++]-duplicate {a}{L} (a∈LL) = [∨]-elim (id , id , ([∈]-of-[++]ᵣ {a} {L}{L} (a∈LL)))
+  instance
+    [∈][++]-duplicate : ∀{a}{L} → (a ∈ (L ++ L)) → (a ∈ L)
+    [∈][++]-duplicate {a}{L} (a∈LL) = [∨]-elim (id , id , ([∈]-of-[++]ᵣ {a} {L}{L} (a∈LL)))
 
-  [∈][++]-expandₗ : ∀{a}{L₁ L₂} → (a ∈ L₂) → (a ∈ (L₁ ++ L₂))
-  [∈][++]-expandₗ {a}{L₁}{L₂} (a∈L₂) = [∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introᵣ (a∈L₂))
+  instance
+    [∈][++]-expandₗ : ∀{a}{L₁ L₂} → (a ∈ L₂) → (a ∈ (L₁ ++ L₂))
+    [∈][++]-expandₗ {a}{L₁}{L₂} (a∈L₂) = [∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introᵣ (a∈L₂))
 
-  [∈][++]-expandᵣ : ∀{a}{L₁ L₂} → (a ∈ L₁) → (a ∈ (L₁ ++ L₂))
-  [∈][++]-expandᵣ {a}{L₁}{L₂} (a∈L₁) = [∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introₗ (a∈L₁))
+  instance
+    [∈][++]-expandᵣ : ∀{a}{L₁ L₂} → (a ∈ L₁) → (a ∈ (L₁ ++ L₂))
+    [∈][++]-expandᵣ {a}{L₁}{L₂} (a∈L₁) = [∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introₗ (a∈L₁))
 
-  [∈][⊰]-reorderₗ : ∀{a x}{L₁ L₂} → (a ∈ (L₁ ++ (x ⊰ L₂))) → (a ∈ (x ⊰ (L₁ ++ L₂)))
-  [∈][⊰]-reorderₗ {a}{x}{L₁}{L₂} (a∈L₁++xL₂) = [∨]-elim (left , right , [∈]-of-[++]ᵣ (a∈L₁++xL₂)) where
-    left : (a ∈ L₁) → (a ∈ (x ⊰ (L₁ ++ L₂)))
-    left (a∈L₁) = [∈][⊰]-expand ([∈][++]-expandᵣ (a∈L₁))
+  instance
+    [∈][⊰]-reorderₗ : ∀{a x}{L₁ L₂} → (a ∈ (L₁ ++ (x ⊰ L₂))) → (a ∈ (x ⊰ (L₁ ++ L₂)))
+    [∈][⊰]-reorderₗ {a}{x}{L₁}{L₂} (a∈L₁++xL₂) = [∨]-elim (left , right , [∈]-of-[++]ᵣ (a∈L₁++xL₂)) where
+      left : (a ∈ L₁) → (a ∈ (x ⊰ (L₁ ++ L₂)))
+      left (a∈L₁) = [∈][⊰]-expand ([∈][++]-expandᵣ (a∈L₁))
 
-    right : ∀{a} → (a ∈ (x ⊰ L₂)) → (a ∈ (x ⊰ (L₁ ++ L₂)))
-    right ([∈]-use)              = [∈]-use
-    right ([∈][⊰]-expand (a∈L₂)) = [∈][⊰]-expand ([∈][++]-expandₗ {_}{L₁}{L₂} (a∈L₂))
+      right : ∀{a} → (a ∈ (x ⊰ L₂)) → (a ∈ (x ⊰ (L₁ ++ L₂)))
+      right ([∈]-use)              = [∈]-use
+      right ([∈][⊰]-expand (a∈L₂)) = [∈][⊰]-expand ([∈][++]-expandₗ {_}{L₁}{L₂} (a∈L₂))
 
   -- [∈][⊰]-reorderᵣ : ∀{a x}{L₁ L₂} → (a ∈ (x ⊰ (L₁ ++ L₂))) → (a ∈ (L₁ ++ (x ⊰ L₂)))
   -- [∈][⊰]-reorderᵣ {a}{x}{L₁}{L₂} ([∈]-id) = 
@@ -95,16 +108,19 @@ module [∈]-proof where
   construct : ∀{a}{L} → (a ∈ L) → T
   construct{a}(_) = a
 
-  [∈]-apply : ∀{a}{L} → (a ∈ L) → ∀{f} → (f(a) ∈ (map f(L)))
-  [∈]-apply ([∈]-id)               = [∈]-id
-  [∈]-apply ([∈][⊰]-expand(proof)) = [∈][⊰]-expand([∈]-apply(proof))
+  instance
+    [∈]-apply : ∀{a}{L} → (a ∈ L) → ∀{f} → (f(a) ∈ (map f(L)))
+    [∈]-apply ([∈]-id)               = [∈]-id
+    [∈]-apply ([∈][⊰]-expand(proof)) = [∈][⊰]-expand([∈]-apply(proof))
 
-  [∈]-at-last : ∀{L} → ∀{a} → (a ∈ (L ++ singleton(a)))
-  [∈]-at-last{∅}        = [∈]-id
-  [∈]-at-last{_ ⊰ rest} = [∈][⊰]-expand ([∈]-at-last{rest})
+  instance
+    [∈]-at-last : ∀{L} → ∀{a} → (a ∈ (L ++ singleton(a)))
+    [∈]-at-last{∅}        = [∈]-id
+    [∈]-at-last{_ ⊰ rest} = [∈][⊰]-expand ([∈]-at-last{rest})
 
-  [∈]-in-middle : ∀{L₁ L₂} → ∀{a} → (a ∈ (L₁ ++ singleton(a) ++ L₂))
-  [∈]-in-middle{L₁} = [∈]-of-[++]ₗ ([∨]-introₗ ([∈]-at-last{L₁}))
+  instance
+    [∈]-in-middle : ∀{L₁ L₂} → ∀{a} → (a ∈ (L₁ ++ singleton(a) ++ L₂))
+    [∈]-in-middle{L₁} = [∈]-of-[++]ₗ ([∨]-introₗ ([∈]-at-last{L₁}))
 
 -- Other relators regarding sets
 module Relators where
@@ -145,14 +161,17 @@ module Relators where
   -- [⊆]-application proof fL₁ = [∈]-proof.application ∘ proof
   -- (∀{x} → (x ∈ L₂) → (x ∈ L₁)) → ∀{f} → (∀{x} → (x ∈ map f(L₂)) → (x ∈ map f(L₁)))
 
-  [⊆]-with-[⊰] : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{b} → (L₁ ⊆ (b ⊰ L₂))
-  [⊆]-with-[⊰] (L₁⊆L₂) (x∈L₁) = [∈][⊰]-expand ((L₁⊆L₂) (x∈L₁))
+  instance
+    [⊆]-with-[⊰] : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{b} → (L₁ ⊆ (b ⊰ L₂))
+    [⊆]-with-[⊰] (L₁⊆L₂) (x∈L₁) = [∈][⊰]-expand ((L₁⊆L₂) (x∈L₁))
 
-  [⊆]-with-[++]ₗ : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{L₃} → (L₁ ⊆ (L₃ ++ L₂))
-  [⊆]-with-[++]ₗ {L₁}{L₂} (L₁⊆L₂) {L₃} (x∈L₁) = [∈][++]-expandₗ {_}{L₃}{L₂} ((L₁⊆L₂) (x∈L₁))
+  instance
+    [⊆]-with-[++]ₗ : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{L₃} → (L₁ ⊆ (L₃ ++ L₂))
+    [⊆]-with-[++]ₗ {L₁}{L₂} (L₁⊆L₂) {L₃} (x∈L₁) = [∈][++]-expandₗ {_}{L₃}{L₂} ((L₁⊆L₂) (x∈L₁))
 
-  [⊆]-with-[++]ᵣ : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{L₃} → (L₁ ⊆ (L₂ ++ L₃))
-  [⊆]-with-[++]ᵣ {L₁}{L₂} (L₁⊆L₂) {L₃} (x∈L₁) = [∈][++]-expandᵣ {_}{L₂}{L₃} ((L₁⊆L₂) (x∈L₁))
+  instance
+    [⊆]-with-[++]ᵣ : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{L₃} → (L₁ ⊆ (L₂ ++ L₃))
+    [⊆]-with-[++]ᵣ {L₁}{L₂} (L₁⊆L₂) {L₃} (x∈L₁) = [∈][++]-expandᵣ {_}{L₂}{L₃} ((L₁⊆L₂) (x∈L₁))
 
   -- TODO: Does this work? It would be easier to "port" all (∈)-theorems to (⊆)-theorems then.
   -- [∈]-to-[⊆]-property : ∀{L₂}{f : List{ℓ₂}(T) → List{ℓ₂}(T)} → (∀{a} → (a ∈ L₂) → (a ∈ f(L₂))) → (∀{L₁} → (L₁ ⊆ L₂) → (L₁ ⊆ f(L₂)))

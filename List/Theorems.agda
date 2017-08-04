@@ -12,23 +12,27 @@ open import Type{ℓ₂}
 -- Statement of whether a list is contained in the beginning of another list (TODO: Move to a separate file)
 module OrderedContainment {T} where
   data _contains-in-order_ : List{ℓ₂}(T) → List{ℓ₂}(T) → Stmt where
-    empty : (∅ contains-in-order ∅)
-    use   : ∀{x}{L₁ L₂} → (L₁ contains-in-order L₂) → ((x ⊰ L₁) contains-in-order (x ⊰ L₂))
-    skip  : ∀{x}{L₁ L₂} → (L₁ contains-in-order L₂) → ((x ⊰ L₁) contains-in-order L₂)
+    instance
+      empty : (∅ contains-in-order ∅)
+      use   : ∀{x}{L₁ L₂} → (L₁ contains-in-order L₂) → ((x ⊰ L₁) contains-in-order (x ⊰ L₂))
+      skip  : ∀{x}{L₁ L₂} → (L₁ contains-in-order L₂) → ((x ⊰ L₁) contains-in-order L₂)
 
-  self : ∀{L} → (L contains-in-order L)
-  self {∅}     = empty
-  self {a ⊰ L} = use(self{L})
+  instance
+    self : ∀{L} → (L contains-in-order L)
+    self {∅}     = empty
+    self {a ⊰ L} = use(self{L})
 
-  emptyᵣ : ∀{L} → (L contains-in-order ∅)
-  emptyᵣ {∅}     = empty
-  emptyᵣ {a ⊰ L} = skip(emptyᵣ{L})
+  instance
+    emptyᵣ : ∀{L} → (L contains-in-order ∅)
+    emptyᵣ {∅}     = empty
+    emptyᵣ {a ⊰ L} = skip(emptyᵣ{L})
 
-  [∈]-of-[++]ₗ : ∀{L₁ L₂} → ((L₁ ++ L₂) contains-in-order L₂)
-  [∈]-of-[++]ₗ {∅}{∅} = empty
-  [∈]-of-[++]ₗ {∅}{L₂} = self
-  -- [∈]-of-[++]ₗ {L₁}{∅} = emptyᵣ -- Either this line or the first seems to be redundant
-  [∈]-of-[++]ₗ {a₁ ⊰ L₁}{L₂} = skip{a₁}([∈]-of-[++]ₗ{L₁}{L₂})
+  instance
+    [∈]-of-[++]ₗ : ∀{L₁ L₂} → ((L₁ ++ L₂) contains-in-order L₂)
+    [∈]-of-[++]ₗ {∅}{∅} = empty
+    [∈]-of-[++]ₗ {∅}{L₂} = self
+    -- [∈]-of-[++]ₗ {L₁}{∅} = emptyᵣ -- Either this line or the first seems to be redundant
+    [∈]-of-[++]ₗ {a₁ ⊰ L₁}{L₂} = skip{a₁}([∈]-of-[++]ₗ{L₁}{L₂})
 
   constructₗ : ∀{L₁ L₂} → (L₁ contains-in-order L₂) → List{ℓ₂}(T)
   constructₗ {L₁}{_} (_) = L₁

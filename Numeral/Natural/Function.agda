@@ -26,22 +26,17 @@ module Theorems{ℓ} where
   open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
 
   postulate min-commutativity : Commutativity(min)
-  postulate max-commutativity : Commutativity(max)
-
   postulate min-associativity : Associativity(min)
-  postulate max-associativity : Associativity(max)
-
   postulate min-orderₗ : ∀{a b} → (min(a)(b) ≤ a)
-  postulate max-orderₗ : ∀{a b} → (max(a)(b) ≥ a)
-
   postulate min-orderᵣ : ∀{a b} → (min(a)(b) ≤ b)
-  postulate max-orderᵣ : ∀{a b} → (max(a)(b) ≥ b)
-
   postulate min-arg : ∀{a b} → (min(a)(b) ≡ a)∨(min(a)(b) ≡ b)
-  postulate max-arg : ∀{a b} → (max(a)(b) ≡ a)∨(max(a)(b) ≡ b)
-
   postulate min-defₗ : ∀{a b} → (a ≤ b) → (min(a)(b) ≡ a)
-  postulate max-defₗ : ∀{a b} → (a ≥ b) → (max(a)(b) ≡ b)
-
   postulate min-defᵣ : ∀{a b} → (b ≤ a) → (min(a)(b) ≡ b)
+
+  postulate max-commutativity : Commutativity(max)
+  postulate max-associativity : Associativity(max)
+  postulate max-orderₗ : ∀{a b} → (max(a)(b) ≥ a)
+  postulate max-orderᵣ : ∀{a b} → (max(a)(b) ≥ b)
+  postulate max-arg : ∀{a b} → (max(a)(b) ≡ a)∨(max(a)(b) ≡ b)
+  postulate max-defₗ : ∀{a b} → (a ≥ b) → (max(a)(b) ≡ b)
   postulate max-defᵣ : ∀{a b} → (b ≥ a) → (max(a)(b) ≡ a)

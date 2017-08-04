@@ -76,3 +76,7 @@ expand {_}{_}{_} {_}{_}{_} {tf} f = tf ∘ f
 -- Functions with two paramters as an infix binary operator
 _〔_〕_ : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} → A → (A → B → C) → B → C
 a 〔 op 〕 b = op a b
+
+-- Resolves/(searches for) an instance/proof of the specified type/statement
+resolve-instance : ∀{ℓ}(T : Type{ℓ}) {{_ : T}} → T
+resolve-instance (_) {{x}} = x

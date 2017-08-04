@@ -10,16 +10,19 @@ open import Relator.Equals{ℓ}{Lvl.𝟎}
 
 -- Divisibility
 data Even : ℕ → Stmt where
-  Even0 : Even 𝟎
-  Even𝐒 : ∀{x : ℕ} → (Even x) → (Even(𝐒(𝐒(x))))
+  instance
+    Even0 : Even 𝟎
+    Even𝐒 : ∀{x : ℕ} → (Even x) → (Even(𝐒(𝐒(x))))
 
 data Odd : ℕ → Stmt where
-  Odd0 : Odd (𝐒(𝟎))
-  Odd𝐒 : ∀{x : ℕ} → (Odd x) → (Odd(𝐒(𝐒(x))))
+  instance
+    Odd0 : Odd (𝐒(𝟎))
+    Odd𝐒 : ∀{x : ℕ} → (Odd x) → (Odd(𝐒(𝐒(x))))
 
 data _divides_ : ℕ → ℕ → Stmt where
-  Div𝟎 : ∀{y : ℕ} → y divides 𝟎
-  Div𝐒 : ∀{x : ℕ}{y : ℕ} → (y divides x) → (y divides (y + x))
+  instance
+    Div𝟎 : ∀{y : ℕ} → y divides 𝟎
+    Div𝐒 : ∀{x : ℕ}{y : ℕ} → (y divides x) → (y divides (y + x))
 
 DivN : ∀{y : ℕ} → (n : ℕ) → y divides (y ⋅ n)
 DivN {y}(𝟎)    = Div𝟎
@@ -34,8 +37,9 @@ divides-elim (Div𝐒{x}{y} (y-div-x)) with divides-elim(y-div-x)
 ...                                | ([∃]-intro (n) (y⋅n≡x)) = [∃]-intro (𝐒(n)) ([≡]-with-[(expr ↦ y + expr)] (y⋅n≡x))
 
 data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where -- TODO: Make _divides_ a special case of this
-  DivRem𝟎 : ∀{x : ℕ}{r : ℕ} → x divides r withRemainder r
-  DivRem𝐒 : ∀{x : ℕ}{y : ℕ}{r : ℕ} → (x divides y withRemainder r) → (x divides (x + y) withRemainder r)
+  instance
+    DivRem𝟎 : ∀{x : ℕ}{r : ℕ} → x divides r withRemainder r
+    DivRem𝐒 : ∀{x : ℕ}{y : ℕ}{r : ℕ} → (x divides y withRemainder r) → (x divides (x + y) withRemainder r)
 
 -- Inequalities/Comparisons
 _≤_ : ℕ → ℕ → Stmt

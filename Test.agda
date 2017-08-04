@@ -552,3 +552,15 @@ module testFinite where
 
   -- test2-4 : Finite-ℕ(2)
   -- test2-4 = Finite-𝐒(Finite-𝐒(Finite-𝐒(Finite-𝐒(Finite-𝟎))))
+
+module testResolveInstance where
+  open Functional
+  open List
+
+  data _∈_ {T : Set} (x : T) : List(T) → Set where
+    instance
+      𝟎 : ∀{l} → x ∈ (x ⊰ l)
+      𝐒 : ∀{l}{y} → (x ∈ l) → (x ∈ (y ⊰ l))
+
+  test1 : (2 ∈ 1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅)
+  test1 = resolve-instance(_)  -- Becomes 𝐒(𝐒(𝟎))

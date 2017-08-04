@@ -9,7 +9,8 @@ open import Type{ℓ₂}
 -- Existential quantification
 
 data ∃ {X : Type} (body : X → Stmt) : Stmt where
-  [∃]-intro : (x : X) → body(x) → ∃ body
+  instance
+    [∃]-intro : (x : X) → body(x) → ∃ body
 
 [∃]-extract : ∀{X}{body} → ∃{X}(body) → X
 [∃]-extract([∃]-intro(x)(_)) = x
