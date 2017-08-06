@@ -15,14 +15,14 @@ open import Structure.Function.Domain{Lvl.𝟎}
 
 -- TODO: Prove all these
 
-module _ {∑}{s} where
-  private _𝁼_ = Oper._𝁼_ {∑}{s}
-  private _∪_ = Oper._∪_ {∑}{s}
-  private _∩_ = Oper._∩_ {∑}{s}
-  private ε   = Oper.ε {∑}{s}
-  private ∅   = Oper.∅ {∑}{s}
-  private _*   = Oper._* {∑}{s}
-  private ∁_   = Oper.∁_ {∑}{s}
+module _ {Σ}{s} where
+  private _𝁼_ = Oper._𝁼_ {Σ}{s}
+  private _∪_ = Oper._∪_ {Σ}{s}
+  private _∩_ = Oper._∩_ {Σ}{s}
+  private ε   = Oper.ε {Σ}{s}
+  private ∅   = Oper.∅ {Σ}{s}
+  private _*   = Oper._* {Σ}{s}
+  private ∁_   = Oper.∁_ {Σ}{s}
 
   postulate [𝁼]-associativity : Associativity(_𝁼_)
   postulate [𝁼]-distributivityₗ : Distributivityₗ(_𝁼_)(_∪_)
@@ -37,24 +37,24 @@ module _ {∑}{s} where
   postulate [𝁼]-commutativity-with-[*] : ∀{L} → ((L *) 𝁼 L ≡ L 𝁼 (L *))
   -- postulate [𝁼]-set-algebra : SetAlgebra -- TODO: Complement is missing
 
-module _ {∑} where
-  private _𝁼_ = Oper._𝁼_ {∑}{ω}
-  private _∪_ = Oper._∪_ {∑}{ω}
-  private _∩_ = Oper._∩_ {∑}{ω}
-  private ε   = Oper.ε {∑}{ω}
-  private ∅   = Oper.∅ {∑}{ω}
-  private _*   = Oper._* {∑}{ω}
-  private ∁_   = Oper.∁_ {∑}{ω}
-  private _∈_ = Oper._∈_ {∑}
-  private _∉_ = Oper._∉_ {∑}
+module _ {Σ} where
+  private _𝁼_ = Oper._𝁼_ {Σ}{ω}
+  private _∪_ = Oper._∪_ {Σ}{ω}
+  private _∩_ = Oper._∩_ {Σ}{ω}
+  private ε   = Oper.ε {Σ}{ω}
+  private ∅   = Oper.∅ {Σ}{ω}
+  private _*   = Oper._* {Σ}{ω}
+  private ∁_   = Oper.∁_ {Σ}{ω}
+  private _∈_ = Oper._∈_ {Σ}
+  private _∉_ = Oper._∉_ {Σ}
 
-  postulate [∪]-containment : ∀{x}{A B : Language(∑){ω}} → (x ∈ (A ∪ B)) ↔ ((x ∈ A)∨(x ∈ B))
-  postulate [∩]-containment : ∀{x}{A B : Language(∑){ω}} → (x ∈ (A ∩ B)) ↔ ((x ∈ A)∧(x ∈ B))
-  postulate [∁]-containment : ∀{x}{A : Language(∑){ω}} → (x ∈ (∁ A)) ↔ (x ∉ A)
-  postulate [∅]-containment : ∀{x}{A : Language(∑){ω}} → (x ∈ ∅) ↔ ⊥
-  postulate [ε]-containment : ∀{x}{A : Language(∑){ω}} → (x ∈ ε) ↔ (x ≡ [])
+  postulate [∪]-containment : ∀{x}{A B : Language(Σ){ω}} → (x ∈ (A ∪ B)) ↔ ((x ∈ A)∨(x ∈ B))
+  postulate [∩]-containment : ∀{x}{A B : Language(Σ){ω}} → (x ∈ (A ∩ B)) ↔ ((x ∈ A)∧(x ∈ B))
+  postulate [∁]-containment : ∀{x}{A : Language(Σ){ω}} → (x ∈ (∁ A)) ↔ (x ∉ A)
+  postulate [∅]-containment : ∀{x}{A : Language(Σ){ω}} → (x ∈ ∅) ↔ ⊥
+  postulate [ε]-containment : ∀{x}{A : Language(Σ){ω}} → (x ∈ ε) ↔ (x ≡ [])
 
-  -- Language-[≡]-intro : ∀{A B : Language(∑){ω}} → (∀{w} → (w is-in A) ≡ (w is-in B)) ↔ (A ≡ B)
+  -- Language-[≡]-intro : ∀{A B : Language(Σ){ω}} → (∀{w} → (w is-in A) ≡ (w is-in B)) ↔ (A ≡ B)
   -- Language-[≡]-intro = [↔]-intro Language-[≡]-introₗ Language-[≡]-introᵣ where
   --   Language-[≡]-introₗ : ∀{A B} → (∀{w} → (w is-in A) ≡ (w is-in B)) ← (A ≡ B)
   --   Language-[≡]-introₗ [≡]-intro = [≡]-intro
@@ -65,7 +65,7 @@ module _ {∑} where
     --   f{∅}     = [≡]-intro
     --   f{c ⊰ w} = [≡]-intro
 
-  -- postulate Language-[≡]-intro : {A B : Language(∑){ω}} → (∀{w} → (w ∈ A) ↔ (w ∈ B)) ↔ (A ≡ B)
+  -- postulate Language-[≡]-intro : {A B : Language(Σ){ω}} → (∀{w} → (w ∈ A) ↔ (w ∈ B)) ↔ (A ≡ B)
 
 -- TODO: Set properties
 -- TODO: Connection with logic (from sets) in relations

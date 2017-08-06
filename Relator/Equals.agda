@@ -37,6 +37,7 @@ module _ {ℓ₃} where
 [≡]-substitution : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Type} → f(x) → f(y)
 [≡]-substitution = [≡]-substitutionᵣ
 
+
 [≡]-elimₗ : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Stmt} → f(x) ← f(y)
 [≡]-elimₗ = [≡]-substitutionₗ
 

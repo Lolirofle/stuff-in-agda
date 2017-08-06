@@ -17,7 +17,7 @@ open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 --   A string is a word.
 -- Standard conventions for variable naming in languages:
 --   L is a language
---   ∑ is an alphabet
+--   Σ is an alphabet
 
 Alphabet = Set
 Word     = List
@@ -32,14 +32,14 @@ Word     = List
 --     suffix-lang(L)(c) returns the language of the rest of the words when a word is starting with c in L.
 -- Copied (with modifications) from: http://agda.readthedocs.io/en/v2.5.2/language/sized-types.html (2017-05-13)
 -- which links the following paper: "Formal Languages, Formally and Coinductively, Dmitriy Traytel, FSCD (2016)" [https://www21.in.tum.de/~traytel/papers/fscd16-coind_lang/paper.pdf]
-record Language (∑ : Alphabet) {s₁ : Size} : Set where
+record Language (Σ : Alphabet) {s₁ : Size} : Set where
   constructor Lang
   coinductive
   field
     accepts-ε : Bool
-    suffix-lang : ∀{s₂ : Size< s₁} → ∑ → Language(∑){s₂}
+    suffix-lang : ∀{s₂ : Size< s₁} → Σ → Language(Σ){s₂}
 
-module Oper {∑} where
+module Oper {Σ} where
   infixl 1003 _∪_
   infixl 1002 _∩_
   infixl 1001 _𝁼_
@@ -47,31 +47,31 @@ module Oper {∑} where
 
   -- The empty language
   -- The language that does not include any word at all.
-  ∅ : ∀{s} → Language(∑){s}
+  ∅ : ∀{s} → Language(Σ){s}
   Language.accepts-ε   ∅ = 𝐹
   Language.suffix-lang ∅ = const(∅)
 
   -- The empty word language
   -- The language with only the empty word.
-  ε : ∀{s} → Language(∑){s}
+  ε : ∀{s} → Language(Σ){s}
   Language.accepts-ε   ε = 𝑇
   Language.suffix-lang ε = const(∅)
 
   -- Union
   -- The language that includes any words that the two languages have.
-  _∪_ : ∀{s} → Language(∑){s} → Language(∑){s} → Language(∑){s}
+  _∪_ : ∀{s} → Language(Σ){s} → Language(Σ){s} → Language(Σ){s}
   Language.accepts-ε   (L₁ ∪ L₂) = Language.accepts-ε(L₁) || Language.accepts-ε(L₂)
   Language.suffix-lang (L₁ ∪ L₂) = (c ↦ Language.suffix-lang(L₁)(c) ∪ Language.suffix-lang(L₂)(c))
 
   -- Intersection
   -- The language that only includes the words that both languages have in common.
-  _∩_ : ∀{s} → Language(∑){s} → Language(∑){s} → Language(∑){s}
+  _∩_ : ∀{s} → Language(Σ){s} → Language(Σ){s} → Language(Σ){s}
   Language.accepts-ε   (L₁ ∩ L₂) = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
   Language.suffix-lang (L₁ ∩ L₂) = (c ↦ Language.suffix-lang(L₁)(c) ∩ Language.suffix-lang(L₂)(c))
 
   -- Concatenation
   -- The language that includes words that start with the first language and end in the second language.
-  _𝁼_ : ∀{s} → Language(∑){s} → Language(∑){s} → Language(∑){s}
+  _𝁼_ : ∀{s} → Language(Σ){s} → Language(Σ){s} → Language(Σ){s}
   Language.accepts-ε   (L₁ 𝁼 L₂) = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
   Language.suffix-lang (L₁ 𝁼 L₂) =
     (c ↦
@@ -82,7 +82,7 @@ module Oper {∑} where
 
   -- Star/Closure
   -- The language that includes words in any number of concatenations with itself.
-  _* : ∀{s} → Language(∑){s} → Language(∑){s}
+  _* : ∀{s} → Language(Σ){s} → Language(Σ){s}
   Language.accepts-ε   (L *) = 𝑇
   Language.suffix-lang (L *) =
     (c ↦
@@ -92,7 +92,7 @@ module Oper {∑} where
   -- Complement
   -- The language that includes all words that a language does not have.
   -- TODO: Is this correct?
-  ∁_ : ∀{s} → Language(∑){s} → Language(∑){s}
+  ∁_ : ∀{s} → Language(Σ){s} → Language(Σ){s}
   Language.accepts-ε   (∁ L) = !(Language.accepts-ε(L))
   Language.suffix-lang (∁ L) =
     (c ↦
@@ -102,38 +102,38 @@ module Oper {∑} where
   -- All
   -- The language that includes all words in any combination of the alphabet.
   -- The largest language (with most words) with a certain alphabet.
-  ∑* : ∀{s} → Language(∑){s}
-  Language.accepts-ε   (∑*) = 𝑇
-  Language.suffix-lang (∑*) = const(∑*)
+  Σ* : ∀{s} → Language(Σ){s}
+  Language.accepts-ε   (Σ*) = 𝑇
+  Language.suffix-lang (Σ*) = const(Σ*)
 
   -- Containment check
   -- Checks whether a word is in the language.
-  _is-in_ : Word(∑) → Language(∑){ω} → Bool
+  _is-in_ : Word(Σ) → Language(Σ){ω} → Bool
   _is-in_ ([])    (L) = Language.accepts-ε(L)
   _is-in_ (c ⊰ w) (L) = w is-in (Language.suffix-lang(L)(c))
 
   -- Containment
   -- The relation of whether a word is in the language or not.
-  _∈_ : Word(∑) → Language(∑){ω} → Set
+  _∈_ : Word(Σ) → Language(Σ){ω} → Set
   _∈_ a b = (a is-in b) ≡ 𝑇
 
   -- Uncontainment
   -- The relation of whether a word is not in the language or not.
-  _∉_ : Word(∑) → Language(∑){ω} → Set
+  _∉_ : Word(Σ) → Language(Σ){ω} → Set
   _∉_ a b = (a is-in b) ≡ 𝐹
 
   -- The language of length 1 words that only accepts some symbols of its alphabet
-  alphabet-filter : ∀{s} → (∑ → Bool) → Language(∑){s}
+  alphabet-filter : ∀{s} → (Σ → Bool) → Language(Σ){s}
   Language.accepts-ε   (alphabet-filter f) = 𝐹
   Language.suffix-lang (alphabet-filter f) = (c ↦ if f(c) then (ε) else (∅))
 
 module TestOnOffSwitch where
-  data ∑ : Alphabet where
-    Push : ∑
+  data Σ : Alphabet where
+    Push : Σ
 
 module TestVendingMachine where
-  data ∑ : Alphabet where
-    OutputTea    : ∑
-    OutputCoffee : ∑
-    Input5kr     : ∑
-    Input10kr    : ∑
+  data Σ : Alphabet where
+    OutputTea    : Σ
+    OutputCoffee : Σ
+    Input5kr     : Σ
+    Input10kr    : Σ
