@@ -33,6 +33,7 @@ import Logic.LambdaCalculus
 import Logic.Propositional
 import Logic.Predicate
 import Logic.Theorems
+import Graph
 import Numeral.Integer
 import Numeral.Integer.Oper
 import Numeral.Integer.Relation
