@@ -8,8 +8,17 @@ open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
 open import Sets.ListSet{Lvl.𝟎}
 
+record Edge ⦃ Self : Set ⦄ (V : Set) : Set where
+  constructor edge
+  field
+    from : ⦃ _ : Self ⦄ → V
+    to   : ⦃ _ : Self ⦄ → V
+
+-- TupleEdge : Edge
+
 record Graph (V : Set) : Set where
   constructor graph
+
   field
     edges : List(V ⨯ V)
 
@@ -23,19 +32,19 @@ record Graph (V : Set) : Set where
   HasEdge[_⟷_] : V → V → Set
   HasEdge[_⟷_](v₁)(v₂) = HasEdge[_⟵_](v₁)(v₂) ∧ HasEdge[_⟶_](v₁)(v₂)
 
-  data Path : List(V) → Set where
-    Path𝟎 : Path(∅)
-    Path𝐏 : ∀{v₁ v₂}{l} → HasEdge[ v₂ ⟵ v₁ ] → Path(v₂ ⊰ l) → Path(v₁ ⊰ v₂ ⊰ l)
+  data Path : V → V → Set where
+    PathIntro        : ∀{v₁ v₂    : V} → HasEdge[ v₁ ⟶ v₂ ] → Path(v₁)(v₂)
+    PathTransitivity : ∀{v₁ v₂ v₃ : V} → Path(v₁)(v₂) → Path(v₂)(v₃) → Path(v₁)(v₃)
 
   Connected : V → V → Set
-  Connected(v₁)(v₂) = (∃{List(V)}(l ↦ Path((v₁ ⊰ l) ++ ([ v₂ ]))))
+  Connected(v₁)(v₂) = Path(v₁)(v₂)
 
   Disconnected : V → V → Set
   Disconnected(v₁)(v₂) = ¬(Connected(v₁)(v₂))
 
   -- Constructions
-  subgraph : ∀{V₂} → (V → V₂) → Graph(V₂)
-  subgraph(f) = record{edges = map (\{(v₁ , v₂) → (f(v₁) , f(v₂))}) (edges)}
+  map_vertices : ∀{V₂} → (V → V₂) → Graph(V₂)
+  map_vertices(f) = record{edges = map (\{(v₁ , v₂) → (f(v₁) , f(v₂))}) (edges)}
 
   -- Boolean testing
   -- with-edge
