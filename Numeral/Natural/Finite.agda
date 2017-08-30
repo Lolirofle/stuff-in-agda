@@ -8,7 +8,7 @@ open import Numeral.Natural
 open import Structure.Function.Domain
 open import Type
 
--- The finite set of natural numbers (0,..,n).
+-- A structure corresponding to a finite set of natural numbers (0,..,n).
 -- Positive integers including zero less than a specified integer (0≤_≤n).
 -- This structure works in the following way:
 --   • Finite-𝟎 can always be constructed, for any upper bound (n).

@@ -257,3 +257,8 @@ instance
         ))
       )
     )
+
+instance
+  [−₀]-negative : ∀{x} → ((0 −₀ x) ≡ 0)
+  [−₀]-negative{𝟎}    = [≡]-intro
+  [−₀]-negative{𝐒(n)} = [≡]-intro

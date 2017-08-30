@@ -123,6 +123,25 @@ instance
   postulate [≱]-is-[<] : ∀{a b : ℕ} → ¬(a ≥ b) → (a < b)
   postulate [<]-is-[≱] : ∀{a b : ℕ} → ¬(a ≥ b) ← (a < b)
 
+DivN : ∀{y : ℕ} → (n : ℕ) → y divides (y ⋅ n)
+DivN {y}(𝟎)    = Div𝟎
+DivN {y}(𝐒(n)) = Div𝐒(DivN{y}(n))
+
+{- TODO
+Div𝐏 : ∀{x y : ℕ} → (y divides x) → (y divides (x −₀ y))
+Div𝐏 {x}   {𝟎}    (0-div-x) = 0-div-x
+Div𝐏 {𝟎}   {y}    (y-div-0) = [≡]-substitutionₗ ([−₀]-negative{y}) {expr ↦ (y divides expr)} (Div𝟎)
+Div𝐏 {_}{y} (Div𝐒{x} (y-div-x)) = y-div-x
+-}
+
+divides-intro : ∀{x y} → (∃ \(n : ℕ) → (y ⋅ n ≡ x)) → (y divides x)
+divides-intro {x}{y} ([∃]-intro (n) (y⋅n≡x)) = [≡]-elimᵣ (y⋅n≡x) {expr ↦ (y divides expr)} (DivN{y}(n))
+
+divides-elim : ∀{x y} → (y divides x) → (∃ \(n : ℕ) → (y ⋅ n ≡ x))
+divides-elim {_}{_} (Div𝟎) = [∃]-intro (0) ([≡]-intro)
+divides-elim {_}{y} (Div𝐒{x} (y-div-x)) with divides-elim(y-div-x)
+...                                | ([∃]-intro (n) (y⋅n≡x)) = [∃]-intro (𝐒(n)) ([≡]-with-[(expr ↦ y + expr)] (y⋅n≡x))
+
 instance
   divides-transitivity : Transitivity (_divides_)
   divides-transitivity {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
@@ -201,3 +220,6 @@ instance
 
 instance
   postulate divides-upper-limit : ∀{a b} → (a divides b) → (a ≤ b)
+
+instance
+  postulate divides-not-lower-limit : ∀{a b} → (a > b) → ¬(a divides b)

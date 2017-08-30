@@ -20,55 +20,6 @@ open import Structure.Relator.Ordering{Lvl.𝟎}{Lvl.𝟎}
 postulate ℝ : Set
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- [Conversions]
-
-record [ℝ]-conversion (T : Set) : Set where
-  infixl 10000 #_
-  field
-    #_ : T → ℝ
-open [ℝ]-conversion ⦃ ... ⦄ public
-
-instance postulate [ℕ]-to-[ℝ] : [ℝ]-conversion(ℕ)
-instance postulate [ℤ]-to-[ℝ] : [ℝ]-conversion(ℤ)
-
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- [Elements]
-
-postulate e : ℝ
-postulate π : ℝ
-postulate 𝑖 : ℝ -- TODO: Let's pretend because I am lazy
-
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- [Operators]
-
-infixl 1000 _+_ _−_
-infixl 1001 _⋅_ _/_
-infixl 1002 _^_ _√_
-postulate _+_ : ℝ → ℝ → ℝ
-postulate _−_ : ℝ → ℝ → ℝ
-postulate _⋅_ : ℝ → ℝ → ℝ
-postulate _/_ : ℝ → ℝ → ℝ -- TODO: Some of these are either partial functions or have a smaller domain
-postulate _^_ : ℝ → ℝ → ℝ
-postulate log : ℝ → ℝ → ℝ
-postulate _√_ : ℝ → ℝ → ℝ
-
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- [Functions]
-
-abs : ℝ → ℝ
-abs(x) = #(2) √ (x ^ #(2))
-
-postulate sin : ℝ → ℝ
-postulate cos : ℝ → ℝ
-
-tan : ℝ → ℝ
-tan(x) = sin(x) / cos(x)
-
-postulate asin : ℝ → ℝ
-postulate acos : ℝ → ℝ
-postulate atan : ℝ → ℝ
-
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Relations]
 
 -- infixr 100 _≡_ _≢_ _<_ _>_ _≤_ _≥_ _<_<_
@@ -102,6 +53,80 @@ x < y < z = (x < y) ∧ (y < z)
 -- In an closed interval
 _≤_≤_ : ℝ → ℝ → ℝ → Stmt
 x ≤ y ≤ z = (x ≤ y) ∧ (y ≤ z)
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- [Conversions]
+
+record [ℝ]-conversion (T : Set) : Set where
+  infixl 10000 #_
+  field
+    #_ : T → ℝ
+open [ℝ]-conversion ⦃ ... ⦄ public
+
+instance postulate [ℕ]-to-[ℝ] : [ℝ]-conversion(ℕ)
+instance postulate [ℤ]-to-[ℝ] : [ℝ]-conversion(ℤ)
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- [Subsets]
+
+data ℝ-subset (P : ℝ → Stmt) : Set where
+  subelem-construct : ∀(x : ℝ) → ⦃ _ : P(x) ⦄ → ℝ-subset(P)
+
+subelem : ∀{P} → ℝ-subset(P) → ℝ
+subelem(subelem-construct(x)) = x
+
+instance
+  subset-to-[ℝ] : ∀{P} → [ℝ]-conversion(ℝ-subset(P))
+  subset-to-[ℝ] {P} = record{#_ = f} where
+    f : ℝ-subset(P) → ℝ
+    f(subelem-construct x) = x
+
+-- Positive real numbers
+ℝ₊ = ℝ-subset(x ↦ (x > #(0)))
+
+-- Negative real numbers
+ℝ₋ = ℝ-subset(x ↦ (x < #(0)))
+
+-- Non-zero real numbers
+ℝ₊₋ = ℝ-subset(x ↦ (x ≢ #(0)))
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- [Elements]
+
+postulate e : ℝ
+postulate π : ℝ
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- [Operators]
+
+infixl 1000 _+_ _−_
+infixl 1001 _⋅_ _/_
+infixl 1002 _^_ _√_
+postulate _+_ : ℝ → ℝ → ℝ
+postulate _−_ : ℝ → ℝ → ℝ
+postulate _⋅_ : ℝ → ℝ → ℝ
+postulate _/_ : ℝ → ℝ → ℝ -- TODO: Some of these are partial functions/have smaller domains
+postulate _^_ : ℝ → ℝ → ℝ
+postulate log : ℝ → ℝ → ℝ
+postulate _√_ : ℝ → ℝ → ℝ
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- [Functions]
+
+abs : ℝ → ℝ
+abs(x) = #(2) √ (x ^ #(2))
+
+postulate sin : ℝ → ℝ
+
+cos : ℝ → ℝ
+cos(x) = sin(x − (π / #(2)))
+
+tan : ℝ → ℝ
+tan(x) = sin(x) / cos(x)
+
+postulate asin : ℝ → ℝ
+postulate acos : ℝ → ℝ
+postulate atan : ℝ → ℝ
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Properties of operations in ℝ]
@@ -142,21 +167,6 @@ instance postulate circle : ∀{v} → (cos(v) ^ #(2) + sin(v) ^ #(2) ≡ #(1))
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Data structures]
-
-data ℝ-subset (P : ℝ → Stmt) : Set where
-  subelem-construct : ∀(x : ℝ) → ⦃ _ : P(x) ⦄ → ℝ-subset(P)
-
-subelem : ∀{P} → ℝ-subset(P) → ℝ
-subelem(subelem-construct(x)) = x
-
--- Positive real numbers
-ℝ₊ = ℝ-subset(x ↦ (x > #(0)))
-
-instance
-  subset-to-[ℝ] : ∀{P} → [ℝ]-conversion(ℝ-subset(P))
-  subset-to-[ℝ] {P} = record{#_ = f} where
-    f : ℝ-subset(P) → ℝ
-    f(subelem-construct x) = x
 
 UpperBounds : ∀{P} → ℝ-subset(P) → Set
 UpperBounds(sub) = ℝ-subset(x ↦ (subelem(sub) ≤ x))

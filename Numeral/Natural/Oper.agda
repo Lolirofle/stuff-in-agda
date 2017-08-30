@@ -30,6 +30,12 @@ _! : ℕ → ℕ
 𝟎 ! = 𝐒(𝟎)
 𝐒(x) ! = 𝐒(x) ⋅ (x !)
 
+-- Distance (Absolute value of subtraction)
+_𝄩_ : ℕ → ℕ → ℕ
+x 𝄩 𝟎 = x
+𝟎 𝄩 x = x
+𝐒(x) 𝄩 𝐒(y) = x 𝄩 y
+
 
 
 -- Closed subtraction

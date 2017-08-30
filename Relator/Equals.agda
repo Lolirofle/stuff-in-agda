@@ -78,6 +78,9 @@ instance
 [≡]-with-[_] f [≡]-intro = [≡]-intro
 -}
 
+[≢]-without-[_] : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (f(x) ≢ f(y)) → (x ≢ y)
+[≢]-without-[_] f {_}{_} = liftᵣ([≡]-with-[_] f)
+
 -- Applies an operation to each side of the equality
 [≡]-with-op-[_] : ∀{A B C : Type} → (_▫_ : A → B → C) → {a₁ a₂ : A}{b₁ b₂ : B} → (a₁ ≡ a₂) → (b₁ ≡ b₂) → ((a₁ ▫ b₁) ≡ (a₂ ▫ b₂))
 [≡]-with-op-[_] (_▫_) [≡]-intro [≡]-intro = [≡]-intro
