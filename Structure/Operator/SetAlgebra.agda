@@ -17,24 +17,25 @@ record SetAlgebraSym {S : Type} : Type where
     ∁_  : S → S -- Complement
     ∅  : S -- Empty set
     𝐔  : S -- Universal set
-open SetAlgebraSym {{...}}
 
-record SetAlgebra {S : Type} {{sym : SetAlgebraSym {S}}} : Stmt where
+record SetAlgebra {S : Type} {{sym : SetAlgebraSym{S}}} : Stmt where
+  open SetAlgebraSym {{...}}
+
   field
-    [∪]-commutativity : Commutativity(_∪_ {S})
-    [∩]-commutativity : Commutativity(_∩_ {S})
+    [∪]-commutativity : Commutativity{S}(_∪_)
+    [∩]-commutativity : Commutativity{S}(_∩_)
 
-    [∪]-associativity : Associativity(_∪_ {S})
-    [∩]-associativity : Associativity(_∩_ {S})
+    [∪]-associativity : Associativity{S}(_∪_)
+    [∩]-associativity : Associativity{S}(_∩_)
 
-    [∪][∩]-distributivityₗ : Distributivityₗ(_∪_ {S})(_∩_ {S})
-    [∩][∪]-distributivityₗ : Distributivityₗ(_∩_ {S})(_∪_ {S})
+    [∪][∩]-distributivityₗ : Distributivityₗ{S}(_∪_)(_∩_)
+    [∩][∪]-distributivityₗ : Distributivityₗ{S}(_∩_)(_∪_)
 
-    [∪]-identityₗ : Identityₗ(_∪_ {S})(∅ {S})
-    [∪]-identityᵣ : Identityᵣ(_∪_ {S})(∅ {S})
+    [∪]-identityₗ : Identityₗ{S}(_∪_)(∅)
+    [∪]-identityᵣ : Identityᵣ{S}(_∪_)(∅)
 
-    [∪]-with-[∁] : ∀{s} → (s ∪ ∁(s) ≡ 𝐔 {S})
-    [∩]-with-[∁] : ∀{s} → (s ∪ ∁(s) ≡ ∅ {S})
+    [∪]-with-[∁] : ∀{s : S} → (s ∪ ∁(s) ≡ 𝐔)
+    [∩]-with-[∁] : ∀{s : S} → (s ∪ ∁(s) ≡ ∅)
 
   -- TODO: Theorems from https://en.wikipedia.org/wiki/Algebra_of_sets
   -- [∪][∩]-distributivityᵣ : Distributivityᵣ(_∪_ {S})(_∩_ {S})

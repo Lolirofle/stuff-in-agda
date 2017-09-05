@@ -6,35 +6,44 @@ open import Functional
 open import List
 open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
+open import Relator.Equals{Lvl.𝟎}
 open import Sets.ListSet{Lvl.𝟎}
 
-record Edge ⦃ Self : Set ⦄ (V : Set) : Set where
-  constructor edge
+record EdgeClass (V : Set) (Self : Set) : Set where
+  constructor edgeInstance
   field
-    from : ⦃ _ : Self ⦄ → V
-    to   : ⦃ _ : Self ⦄ → V
+    from           : Self → V
+    to             : Self → V
+    _withVertices_ : Self → (V ⨯ V) → Self
 
--- TupleEdge : Edge
+module Edge where
+  open EdgeClass ⦃ ... ⦄ public
 
-record Graph (V : Set) : Set where
+instance
+  EdgeInstance-Tuple : ∀{V} → EdgeClass(V)(V ⨯ V)
+  Edge.from           ⦃ EdgeInstance-Tuple ⦄ (v₁ , v₂) = v₁
+  Edge.to             ⦃ EdgeInstance-Tuple ⦄ (v₁ , v₂) = v₂
+  Edge._withVertices_ ⦃ EdgeInstance-Tuple ⦄ (v₁ , v₂) (w₁ , w₂) = (w₁ , w₂)
+
+record Graph (V : Set) (E : Set) : Set where
   constructor graph
 
   field
-    edges : List(V ⨯ V)
+    edges : List(E)
 
   -- Propositions
-  HasEdge[_⟶_] : V → V → Set
-  HasEdge[_⟶_](v₁)(v₂) = ((v₁ , v₂) ∈ edges)
+  HasEdge[_⟶_] : ⦃ _ : EdgeClass(V)(E) ⦄ → V → V → Set
+  HasEdge[_⟶_](v₁)(v₂) = ∃(edge ↦ (edge ∈ edges)∧(Edge.from(edge) ≡ v₁)∧(Edge.to(edge) ≡ v₂))
 
-  HasEdge[_⟵_] : V → V → Set
+  HasEdge[_⟵_] : ⦃ _ : EdgeClass(V)(E) ⦄ → V → V → Set
   HasEdge[_⟵_](v₁)(v₂) = HasEdge[_⟶_](v₂)(v₁)
 
-  HasEdge[_⟷_] : V → V → Set
+  HasEdge[_⟷_] : ⦃ _ : EdgeClass(V)(E) ⦄ → V → V → Set
   HasEdge[_⟷_](v₁)(v₂) = HasEdge[_⟵_](v₁)(v₂) ∧ HasEdge[_⟶_](v₁)(v₂)
 
   data Path : V → V → Set where
-    PathIntro        : ∀{v₁ v₂    : V} → HasEdge[ v₁ ⟶ v₂ ] → Path(v₁)(v₂)
-    PathTransitivity : ∀{v₁ v₂ v₃ : V} → Path(v₁)(v₂) → Path(v₂)(v₃) → Path(v₁)(v₃)
+    PathIntro        : ⦃ _ : EdgeClass(V)(E) ⦄ → ∀{v₁ v₂    : V} → HasEdge[ v₁ ⟶ v₂ ] → Path(v₁)(v₂)
+    PathTransitivity :                      ∀{v₁ v₂ v₃ : V} → Path(v₁)(v₂) → Path(v₂)(v₃) → Path(v₁)(v₃)
 
   Connected : V → V → Set
   Connected(v₁)(v₂) = Path(v₁)(v₂)
@@ -43,8 +52,8 @@ record Graph (V : Set) : Set where
   Disconnected(v₁)(v₂) = ¬(Connected(v₁)(v₂))
 
   -- Constructions
-  map_vertices : ∀{V₂} → (V → V₂) → Graph(V₂)
-  map_vertices(f) = record{edges = map (\{(v₁ , v₂) → (f(v₁) , f(v₂))}) (edges)}
+  mapVertices : ⦃ _ : EdgeClass(V)(E) ⦄ → ∀{V₂} → ⦃ _ : EdgeClass(V₂)(E) ⦄ → (V → V₂) → Graph(V₂)(E)
+  mapVertices(f) = record{edges = map(edge ↦ (edge Edge.withVertices(f(Edge.from(edge)) , f(Edge.to(edge))))) (edges)}
 
   -- Boolean testing
   -- with-edge

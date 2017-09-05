@@ -11,15 +11,15 @@ open        Numeral.Real.Derivative
 open        Numeral.Real.Limit
 
 module Limits where
-  instance postulate [+]-limit : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → Limit(x ↦ f(x) + g(x))(p)
-  instance postulate [−]-limit : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → Limit(x ↦ f(x) − g(x))(p)
-  instance postulate [⋅]-limit : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → Limit(x ↦ f(x) ⋅ g(x))(p)
-  instance postulate [/]-limit : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → Limit(x ↦ f(x) / g(x))(p)
+  instance postulate [+]-limit : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → Lim(x ↦ f(x) + g(x))(p)
+  instance postulate [−]-limit : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → Lim(x ↦ f(x) − g(x))(p)
+  instance postulate [⋅]-limit : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → Lim(x ↦ f(x) ⋅ g(x))(p)
+  instance postulate [/]-limit : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → Lim(x ↦ f(x) / g(x))(p)
 
-  instance postulate [+]-lim : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → (lim(x ↦ f(x) + g(x))(p)⦃ [+]-limit ⦃ lim-f ⦄ ⦃ lim-g ⦄ ⦄ ≡ lim f(p)⦃ lim-f ⦄ + lim g(p)⦃ lim-g ⦄)
-  instance postulate [−]-lim : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → (lim(x ↦ f(x) − g(x))(p)⦃ [−]-limit ⦃ lim-f ⦄ ⦃ lim-g ⦄ ⦄ ≡ lim f(p)⦃ lim-f ⦄ − lim g(p)⦃ lim-g ⦄)
-  instance postulate [⋅]-lim : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → (lim(x ↦ f(x) ⋅ g(x))(p)⦃ [⋅]-limit ⦃ lim-f ⦄ ⦃ lim-g ⦄ ⦄ ≡ lim f(p)⦃ lim-f ⦄ ⋅ lim g(p)⦃ lim-g ⦄)
-  instance postulate [/]-lim : ∀{f g p} → ⦃ lim-f : Limit f(p) ⦄ → ⦃ lim-g : Limit g(p) ⦄ → (lim(x ↦ f(x) / g(x))(p)⦃ [/]-limit ⦃ lim-f ⦄ ⦃ lim-g ⦄ ⦄ ≡ lim f(p)⦃ lim-f ⦄ / lim g(p)⦃ lim-g ⦄)
+  instance postulate [+]-lim : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → (lim(x ↦ f(x) + g(x))(p) ≡ lim f(p) + lim g(p))
+  instance postulate [−]-lim : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → (lim(x ↦ f(x) − g(x))(p) ≡ lim f(p) − lim g(p))
+  instance postulate [⋅]-lim : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → (lim(x ↦ f(x) ⋅ g(x))(p) ≡ lim f(p) ⋅ lim g(p))
+  instance postulate [/]-lim : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → (lim(x ↦ f(x) / g(x))(p) ≡ lim f(p) / lim g(p))
 
 module Continuities where
   -- instance postulate DifferentiablePoint-to-ContinuousPoint : ∀{f}{x}{diff} → ⦃ _ : DifferentiablePoint f(x)⦃ diff ⦄ ⦄ → ContinuousPoint f(x)

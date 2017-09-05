@@ -7,6 +7,7 @@ open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
 open import Numeral.Integer hiding (𝟎 ; −_ ; abs)
 open import Numeral.Natural
+open import Sets.Subset{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Field{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Group{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Properties{Lvl.𝟎}{Lvl.𝟎}
@@ -33,6 +34,8 @@ postulate _<_ : ℝ → ℝ → Stmt
 -- Not equals
 _≢_ : ℝ → ℝ → Stmt
 x ≢ y = ¬(x ≡ y)
+
+-- TODO: Move these below to Relator.Ordering
 
 -- Greater than
 _>_ : ℝ → ℝ → Stmt
@@ -69,26 +72,20 @@ instance postulate [ℤ]-to-[ℝ] : [ℝ]-conversion(ℤ)
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Subsets]
 
-data ℝ-subset (P : ℝ → Stmt) : Set where
-  subelem-construct : ∀(x : ℝ) → ⦃ _ : P(x) ⦄ → ℝ-subset(P)
-
-subelem : ∀{P} → ℝ-subset(P) → ℝ
-subelem(subelem-construct(x)) = x
-
 instance
-  subset-to-[ℝ] : ∀{P} → [ℝ]-conversion(ℝ-subset(P))
+  subset-to-[ℝ] : ∀{P} → [ℝ]-conversion(Subset{ℝ}(P))
   subset-to-[ℝ] {P} = record{#_ = f} where
-    f : ℝ-subset(P) → ℝ
-    f(subelem-construct x) = x
+    f : Subset{ℝ}(P) → ℝ
+    f(subelem x) = x
 
 -- Positive real numbers
-ℝ₊ = ℝ-subset(x ↦ (x > #(0)))
+ℝ₊ = Subset{ℝ}(x ↦ (x > #(0)))
 
 -- Negative real numbers
-ℝ₋ = ℝ-subset(x ↦ (x < #(0)))
+ℝ₋ = Subset{ℝ}(x ↦ (x < #(0)))
 
 -- Non-zero real numbers
-ℝ₊₋ = ℝ-subset(x ↦ (x ≢ #(0)))
+ℝ₊₋ = Subset{ℝ}(x ↦ (x ≢ #(0)))
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Elements]
@@ -132,28 +129,16 @@ postulate atan : ℝ → ℝ
 -- [Properties of operations in ℝ]
 
 instance
-  [ℝ]-fieldSym : FieldSym
-  [ℝ]-fieldSym =
-    record{
-      _+_     = _+_ ;
-      _⋅_     = _⋅_ ;
-      [+]-id  = #(0) ;
-      [+]-inv = #(0) −_ ;
-      [⋅]-id  = #(1) ;
-      [⋅]-inv = #(1) /_
-    }
-
-instance
-  postulate [ℝ]-field : Field {ℝ}
+  postulate [ℝ]-field : Field(_+_)(_⋅_)
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Properties of relations in ℝ]
 
 instance
-  postulate [ℝ][≤][≡]-totalWeakPartialOrder : TotalWeakPartialOrder {ℝ} (_≤_)(_≡_)
+  postulate [ℝ][≤][≡]-totalWeakPartialOrder : Weak.TotalOrder {ℝ} (_≤_)(_≡_)
 
 instance
-  postulate [ℝ][<]-strictPartialOrder       : StrictPartialOrder {ℝ} (_<_)
+  postulate [ℝ][<]-strictPartialOrder       : Strict.Order {ℝ} (_<_)
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Properties of functions in ℝ]
@@ -166,44 +151,38 @@ instance postulate sin-odd  : ∀{v} → (sin(v) ≡ #(0) − sin(#(0) − v))
 instance postulate circle : ∀{v} → (cos(v) ^ #(2) + sin(v) ^ #(2) ≡ #(1))
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- [Data structures]
-
-UpperBounds : ∀{P} → ℝ-subset(P) → Set
-UpperBounds(sub) = ℝ-subset(x ↦ (subelem(sub) ≤ x))
-
-Supremum : ∀(P : ℝ → Stmt) → ℝ → Stmt -- TODO: Seems wrong?
-Supremum(P)(sup) = (∀{sub : ℝ-subset(P)}{upper : UpperBounds(sub)} → (subelem(sub) ≤ sup ≤ subelem(upper)))
-
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Properties on functions of ℝ]
 
 module Limit where
   -- Statement that the limit of the function f at point l exists (and its value is L)
   -- This is expressed by converting the standard (ε,δ)-limit definition to Skolem normal form (TODO: ...I think? Is this correct? I am just having a hunch)
-  data Limit (f : ℝ → ℝ) (p : ℝ) : Stmt where
-    limit : (L : ℝ) → (δ : ℝ₊ → ℝ₊) → (∀{ε : ℝ₊}{x : ℝ} → (#(0) < abs(x − p) < #(δ(ε))) → (abs(f(x) − L) < #(ε))) → Limit f(p)
+  record Lim (f : ℝ → ℝ) (p : ℝ) : Stmt where
+    field
+      L : ℝ -- The limit point
+      δ : ℝ₊ → ℝ₊ -- The delta function that is able to depend on epsilon
+      satisfaction : ∀{ε : ℝ₊}{x : ℝ} → (#(0) < abs(x − p) < #(δ(ε))) → (abs(f(x) − L) < #(ε))
 
   -- Limit value function f (if the limit exists)
-  lim : (f : ℝ → ℝ) → (x : ℝ) → ⦃ _ : Limit f(x) ⦄ → ℝ
-  lim _ _ ⦃ limit L _ _ ⦄ = L
+  lim : (f : ℝ → ℝ) → (p : ℝ) → ⦃ _ : Lim f(p) ⦄ → ℝ
+  lim _ _ ⦃ l ⦄ = Lim.L(l)
 
 module Continuity where
   open Limit
 
   -- Statement that the point x of function f is a continous point
   ContinuousPoint : (ℝ → ℝ) → ℝ → Stmt
-  ContinuousPoint f(x) = (⦃ limit : Limit f(x) ⦄ → (lim f(x)⦃ limit ⦄ ≡ f(x)))
+  ContinuousPoint f(x) = (⦃ limit : Lim f(x) ⦄ → (lim f(x)⦃ limit ⦄ ≡ f(x)))
 
   -- Statement that the function f is continous
   Continuous : (ℝ → ℝ) → Stmt
   Continuous f = ∀{x} → ContinuousPoint f(x)
 
 module Derivative where
-  open Limit using (Limit ; limit ; lim)
+  open Limit using (Lim ; lim)
 
   -- Statement that the point x of function f is a differentiable point
   DifferentiablePoint : (ℝ → ℝ) → ℝ → Stmt
-  DifferentiablePoint f(p) = Limit(x ↦ ((f(x) − f(p))/(x − p)))(p)
+  DifferentiablePoint f(p) = Lim(x ↦ ((f(x) − f(p))/(x − p)))(p)
 
   -- Statement that function f is differentiable
   Differentiable : (ℝ → ℝ) → Stmt
@@ -211,7 +190,7 @@ module Derivative where
 
   -- Derivative value of function f at point x (if the point is differentiable)
   𝐷 : (f : ℝ → ℝ) → (x : ℝ) → ⦃ _ : DifferentiablePoint f(x) ⦄ → ℝ
-  𝐷 _ _ ⦃ limit D _ _ ⦄ = D
+  𝐷 _ _ ⦃ l ⦄ = Lim.L(l)
 
 -- postulate Axiom1 : {x y : ℝ} → (x < y) → ¬ (y < x)
 -- postulate Axiom2 : {x z : ℝ} → (x < z) → ∃(y ↦ (x < y) ∧ (y < z))

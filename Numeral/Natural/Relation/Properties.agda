@@ -95,7 +95,7 @@ instance
   -- a = b
 
 instance
-  [≤]-weakPartialOrder : WeakPartialOrder (_≤_) (_≡_)
+  [≤]-weakPartialOrder : Weak.PartialOrder (_≤_) (_≡_)
   [≤]-weakPartialOrder = record{
       antisymmetry = [≤]-antisymmetry;
       transitivity = [≤]-transitivity;

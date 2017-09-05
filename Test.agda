@@ -61,6 +61,7 @@ import Relator.Bijection
 import Relator.Congruence
 import Relator.Equals
 import Sets.AdditiveSet
+import Sets.BoolSet
 import Sets.FnSet
 import Sets.ListSet
 import Sets.TypeSet
