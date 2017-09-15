@@ -1,6 +1,6 @@
 module Numeral.Integer.Theorems{ℓ} where
 
-import      Level as Lvl
+import      Lvl
 open import Functional
 open import Numeral.Integer
 open import Numeral.Integer.Oper

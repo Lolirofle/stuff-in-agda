@@ -1,6 +1,6 @@
 module Numeral.Real.Theory where
 
-import      Level as Lvl
+import      Lvl
 open import Structure.Operator.Field {Lvl.𝟎}{Lvl.𝟎}
 
 record [ℝ]-sym (R : Set) : Set where

@@ -1,6 +1,6 @@
 module List.Relation {ℓ₁} {ℓ₂} where
 
-import Level as Lvl
+import Lvl
 open import List
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}

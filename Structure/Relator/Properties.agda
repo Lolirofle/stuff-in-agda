@@ -1,6 +1,6 @@
 module Structure.Relator.Properties {ℓ₁} {ℓ₂} where
 
-import      Level as Lvl
+import      Lvl
 open import Data
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}

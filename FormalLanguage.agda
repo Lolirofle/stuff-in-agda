@@ -1,6 +1,6 @@
 module FormalLanguage where
 
-import      Level as Lvl
+import      Lvl
 open import List renaming (∅ to [])
 open import Agda.Builtin.Size
 open import Boolean

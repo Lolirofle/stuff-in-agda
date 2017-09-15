@@ -1,6 +1,6 @@
 module Logic.LambdaCalculus where
 
-import      Level as Lvl
+import      Lvl
 open import Boolean
 open import Numeral.Natural
 open import Numeral.Natural.BooleanOper

@@ -1,6 +1,6 @@
 module Logic.Classic.Propositional.Semantics {ℓ} (Prop : Set(ℓ)) where
 
-import      Level as Lvl
+import      Lvl
 open import Boolean
 open import Data
 open import Functional

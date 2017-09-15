@@ -1,6 +1,6 @@
 module Functional where
 
-import      Level as Lvl
+import      Lvl
 open import Type
 
 infixl 10000 _∘_

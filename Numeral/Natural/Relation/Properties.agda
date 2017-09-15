@@ -1,6 +1,6 @@
 module Numeral.Natural.Relation.Properties{ℓ} where
 
-import Level as Lvl
+import Lvl
 open import Data
 open import Functional
 open import Logic.Propositional{ℓ}

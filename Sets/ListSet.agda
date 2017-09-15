@@ -1,7 +1,7 @@
 -- Finite sets represented by lists
 module Sets.ListSet {ℓ₁} {ℓ₂} {T : Set(ℓ₂)} where
 
-import Level as Lvl
+import Lvl
 open import Functional
 open import List
 open import List.Properties

@@ -1,6 +1,6 @@
 module Logic.Classic.Propositional.Syntax {ℓₚ} (Prop : Set(ℓₚ)) where
 
-import Level as Lvl
+import Lvl
 
 infixl 1011 •_
 infixl 1010 ¬_

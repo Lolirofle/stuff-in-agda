@@ -1,7 +1,7 @@
 module Structure.Operator.Group {ℓ₁} {ℓ₂} where
 
 open import Functional hiding (id)
-import      Level as Lvl
+import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}

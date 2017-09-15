@@ -1,4 +1,4 @@
-import      Level as Lvl
+import      Lvl
 open import Logic.Propositional
 open import Type
 module Functional.Equals {ℓl} (_≡ᵥ_ : ∀{ℓ}{T : Type{ℓ}} → T → T → Stmt{ℓl Lvl.⊔ ℓ}) where

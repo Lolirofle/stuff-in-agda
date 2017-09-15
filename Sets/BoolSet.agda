@@ -1,6 +1,6 @@
 module Sets.BoolSet {ℓ₁} where
 
-import      Level as Lvl
+import      Lvl
 import      List
 open import Boolean
 import      Boolean.Operators

@@ -1,6 +1,6 @@
 module Structure.Relator.Equivalence {ℓ₁} {ℓ₂} where
 
-import      Level as Lvl
+import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}

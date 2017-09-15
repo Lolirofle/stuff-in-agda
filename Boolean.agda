@@ -1,6 +1,6 @@
 module Boolean where
 
-import Level as Lvl
+import Lvl
 open import Type
 
 -- Boolean type

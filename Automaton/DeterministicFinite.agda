@@ -1,6 +1,6 @@
 module Automaton.DeterministicFinite where
 
-import      Level as Lvl
+import      Lvl
 open import Boolean
 import      Boolean.Operators
 open        Boolean.Operators.Programming

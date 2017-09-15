@@ -1,6 +1,6 @@
 module Numeral.Natural.Finite where
 
-import Level as Lvl
+import Lvl
 open import Functional
 open import Logic.Propositional
 open import Logic.Predicate

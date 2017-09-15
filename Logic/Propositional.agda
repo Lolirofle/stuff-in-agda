@@ -2,7 +2,7 @@ module Logic.Propositional {ℓ} where
 
 open import Data
 open import Functional
-import      Level as Lvl
+import      Lvl
 open import Type
 
 infixl 10 _⇒_

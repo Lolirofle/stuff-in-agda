@@ -3,7 +3,7 @@ module Logic.Classic.Propositional where
 open import Boolean
 open import Data
 open import Functional
-import      Level as Lvl
+import      Lvl
 
 -- Propositional logic. Working with propositions and their truth (whether they are true or false).
 

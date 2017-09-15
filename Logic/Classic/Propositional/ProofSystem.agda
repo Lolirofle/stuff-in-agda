@@ -1,6 +1,6 @@
 module Logic.Classic.Propositional.ProofSystem {ℓₚ} (Prop : Set(ℓₚ)) where
 
-import      Level as Lvl
+import      Lvl
 open import Data
 import      List
 open        List using (List ; ∅ ; _⊰_ ; _++_ ; [_ ; _])

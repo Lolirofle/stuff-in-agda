@@ -20,7 +20,7 @@ import Functional.Equals
 import Functional.Raise
 import Functional.PrimitiveRecursion
 import Functional.Properties
-import Level as Lvl
+import Lvl
 import List
 import List.Properties
 import List.Relation

@@ -1,6 +1,6 @@
 module List.Properties{ℓ₁}{ℓ₂} where
 
-import Level as Lvl
+import Lvl
 open import Functional
 open import List
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}

@@ -1,6 +1,6 @@
 module Sets.AdditiveSet {ℓ₁} {ℓ₂} where
 
-import      Level as Lvl
+import      Lvl
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Theorems{ℓ₁ Lvl.⊔ ℓ₂}

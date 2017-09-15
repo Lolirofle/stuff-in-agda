@@ -1,6 +1,6 @@
 module Relator.Bijection {ℓ₁} {ℓ₂} where
 
-import      Level as Lvl
+import      Lvl
 open import Functional
 open import Functional.Properties
 open import Logic.Propositional{ℓ₁ Lvl.⊔ (Lvl.𝐒 ℓ₂)}

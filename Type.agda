@@ -1,7 +1,5 @@
 module Type {ℓ} where
 
-open import Level
-
 Type : _
 Type = Set(ℓ)
 
