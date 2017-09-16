@@ -117,7 +117,3 @@ data _≡ᶠ_ : ∀{T : Type} → T → T → Stmt where
   [≡ᶠ]-intro : ∀{T : Type}{x : T} → (x ≡ᶠ x)
   [≡ᶠ]-function : ∀{A B : Type}{f₁ f₂ : A → B} → (∀{x} → (f₁(x) ≡ᶠ f₂(x))) → (f₁ ≡ᶠ f₂)
 -}
-
-infixl 1000 _🝖_
-_🝖_ : ∀{T}{x y z} → (x ≡ y) → (y ≡ z) → (x ≡ z)
-_🝖_ {T} A B = transitivity{T}([∧]-intro A B)

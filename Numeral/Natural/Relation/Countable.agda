@@ -10,3 +10,5 @@ open import Type{ℓ₂}
 
 Countable : Type → Stmt
 Countable(T) = (∃{T → ℕ}(f ↦ Injective(f)))
+
+-- TODO: (∃{ℕ → T}(f ↦ Surjective(f))) is equivalent?

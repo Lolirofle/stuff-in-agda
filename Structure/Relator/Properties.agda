@@ -22,6 +22,12 @@ open Reflexivity {{...}} public
 record Transitivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
   field
     transitivity : ∀{x y z : T} → ((x ▫ y) ∧ (y ▫ z)) → (x ▫ z)
+
+  -- The transitivity operator
+  infixl 1000 _🝖_
+  _🝖_ : ∀{x y z} → (x ▫ y) → (y ▫ z) → (x ▫ z)
+  _🝖_ {T} A B = transitivity{T}([∧]-intro A B)
+
 open Transitivity {{...}} public
 
 -- Definition of a antisymmetric binary operation
