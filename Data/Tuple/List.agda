@@ -1,6 +1,6 @@
 module Data.Tuple.List{ℓ} where
 
-import      Level as Lvl
+import      Lvl
 open import Data using (Unit ; <>)
 open        Data.Tuple
 import      List

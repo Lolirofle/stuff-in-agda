@@ -28,7 +28,7 @@ _++_ ∅ b = b
 _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
 
 module _ {ℓ₁ ℓ₂} where
-  import      Level as Lvl
+  import      Lvl
   open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 
   List-induction : ∀{T : Type{ℓ₂}}{P : List(T) → Stmt} → P(∅) → (∀(x : T)(l : List(T)) → P(l) → P(x ⊰ l)) → (∀{l : List(T)} → P(l))

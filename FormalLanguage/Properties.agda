@@ -2,7 +2,7 @@ module FormalLanguage.Properties where
 
 open import Agda.Builtin.Size
 open import Boolean
-import      Level as Lvl
+import      Lvl
 open import FormalLanguage
 open        FormalLanguage.Oper using (_is-in_)
 open import Functional

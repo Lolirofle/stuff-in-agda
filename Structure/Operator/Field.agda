@@ -1,6 +1,6 @@
 module Structure.Operator.Field {ℓ₁} {ℓ₂} where
 
-import      Level as Lvl
+import      Lvl
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁}{ℓ₂}

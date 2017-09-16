@@ -20,7 +20,7 @@ import Functional.Equals
 import Functional.Raise
 import Functional.PrimitiveRecursion
 import Functional.Properties
-import Level as Lvl
+import Lvl
 import List
 import List.Properties
 import List.Relation
@@ -87,6 +87,7 @@ module NumAndDivisionProofs where
   open Numeral.Natural.Oper
   open Numeral.Natural.Relation
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
 
   ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
   ℕ4IsEven = Even0 ⇒ Even𝐒 ⇒ Even𝐒
@@ -117,10 +118,10 @@ module NumAndDivisionProofs where
   -- ℕ3IsDividesℕ7Remℕ1 = DivRem𝟎 ⇒ DivRem𝐒 ⇒ DivRem𝐒
 
   ℕ3Eqℕ2+1 : (𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎) + 𝐒(𝟎)
-  ℕ3Eqℕ2+1 = [≡]-reflexivity
+  ℕ3Eqℕ2+1 = reflexivity
 
   testImpl : 𝐒(𝟎) ≡ (𝟎 ⇒ 𝐒)
-  testImpl = [≡]-reflexivity
+  testImpl = reflexivity
 
   fnℕ+1 : (𝟎 ≡ 𝐒(𝟎)) → (𝐒(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎))
   fnℕ+1 = [≡]-with-[ 𝐒 ]
@@ -129,10 +130,10 @@ module NumAndDivisionProofs where
   fnℕ+3 = [≡]-with-[ (x ↦ x + 3) ]
 
   ℕ8Eqℕ2⋅4 : 8 ≡ 2 ⋅ 4
-  ℕ8Eqℕ2⋅4 = [≡]-reflexivity
+  ℕ8Eqℕ2⋅4 = reflexivity
 
   ℕ0Eqℕ0⋅4 : 0 ≡ 0 ⋅ 4
-  ℕ0Eqℕ0⋅4 = [≡]-reflexivity
+  ℕ0Eqℕ0⋅4 = reflexivity
 
   testBottom : (⊥ ∧ ℕ) → ℕ
   testBottom = [∧]-elimᵣ
@@ -265,12 +266,13 @@ module Test2 where
   open Functional
   open Numeral.Natural
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
 
   f : ℕ
   f = (Functional.Raise.repeatᵣ 4 𝐒 (_∘_) id) 0
 
   testf₁ : f ≡ 4
-  testf₁ = [≡]-reflexivity
+  testf₁ = reflexivity
 
 -- f₂ : ∀{n}{A B C D : TypeN n} → (((A ⨯ B) ⨯ C) -> D) -> (A -> B -> C -> D)
 -- f₂ = Functional.Raise.repeatᵣ 2 id (_∘_) Tuple.curry
@@ -301,30 +303,30 @@ module testEqProof where
   open Numeral.Natural.Oper
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open Structure.Operator.Properties{Lvl.𝟎}
+  open Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
   open Type{Lvl.𝟎}
 
   minSkit : {{_ : Absorberₗ (_⋅_) (0)}} → {{_ : Identityᵣ (_+_) (0)}} → ∀{x} → (1 ≡ ((0 ⋅ x) + 1) + 0)
   minSkit {{absorb}} {{id}} {x} =
-    ([≡]-transitivity([∧]-intro
-      (([≡]-with-[(_+ 1)]
-        (([≡]-symmetry (absorb {x})) :of: (0 ≡ 0 ⋅ x))
-      ) :of: (1 ≡ (0 ⋅ x) + 1))
-      (([≡]-symmetry id) :of: (_ ≡ ((0 ⋅ x) + 1) + 0))
-    ))
+    (([≡]-with-[(_+ 1)]
+      ((symmetry (absorb {x})) :of: (0 ≡ 0 ⋅ x))
+    ) :of: (1 ≡ (0 ⋅ x) + 1))
+    🝖 ((symmetry id) :of: (_ ≡ ((0 ⋅ x) + 1) + 0))
 
 module testDiv where
   open Numeral.Natural.Oper
   open Numeral.Natural.UnclosedOper
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
 
   testDiv1 : 4 ⌈/₀⌉ 2 ≡ 2
-  testDiv1 = [≡]-reflexivity
+  testDiv1 = reflexivity
 
   testDiv2 : 2 ⌈/₀⌉ 2 ≡ 1
-  testDiv2 = [≡]-reflexivity
+  testDiv2 = reflexivity
 
   testDiv3 : 1 ⌈/₀⌉ 2 ≡ 1
-  testDiv3 = [≡]-reflexivity
+  testDiv3 = reflexivity
 
   -- test1 : ∀{f : ℕ → ℕ} → (f(0) ≡ 0) ∧ (∀{n : ℕ} → f(n + 1) ≡ f(n) + n + 1) → (∀{n : ℕ} → f(n) ≡ (n ⋅ (n + 1)) ⌈/₀⌉ 2)
   -- test1 ()
@@ -357,7 +359,7 @@ module testTransitivity where
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 
   test1 : (0 ≡ 1) → (1 ≡ 2) → (0 ≡ 2)
-  test1 (0≡1) (1≡2) = _🝖_ {_}{_≡_} {{[≡]-transitivity}} (0≡1) (1≡2)
+  test1 (0≡1) (1≡2) = (0≡1) 🝖 (1≡2)
 
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"

@@ -1,6 +1,6 @@
 module Operator.Equals {ℓ} where
 
-import      Level as Lvl
+import      Lvl
 open import Boolean
 open import Functional
 open import Relator.Equals{ℓ}

@@ -19,7 +19,7 @@ _[max]_ = max
 _[min]_ = min
 
 module Theorems{ℓ} where
-  import      Level as Lvl
+  import      Lvl
   open import Logic.Propositional{ℓ}
   open import Numeral.Natural.Relation{ℓ}
   open import Relator.Equals{ℓ}

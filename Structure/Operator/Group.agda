@@ -1,10 +1,11 @@
 module Structure.Operator.Group {ℓ₁} {ℓ₂} where
 
 open import Functional hiding (id)
-import      Level as Lvl
+import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
+open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}
 
 record Group {T : Type} (_▫_ : T → T → T) : Stmt where
@@ -20,19 +21,13 @@ record Group {T : Type} (_▫_ : T → T → T) : Stmt where
 
   commutationₗ : ∀{x y} → (x ▫ y ≡ y ▫ x) ← ((x ▫ y) ▫ inv(x) ≡ y)
   commutationₗ {x}{y} (comm) =
-    ([≡]-symmetry
-      ([≡]-transitivity([∧]-intro
-        ([≡]-transitivity([∧]-intro
-          ([≡]-transitivity([∧]-intro
-            ([≡]-with-[(_▫ x)]
-              ([≡]-symmetry comm)
-            )
-            (associativity)
-          ))
-          ([≡]-with-[((x ▫ y) ▫_)] (inverseₗ))
-        ))
-        (identityᵣ)
-      ))
+    symmetry(
+      ([≡]-with-[(_▫ x)]
+        (symmetry comm)
+      )
+      🝖 (associativity)
+      🝖 ([≡]-with-[((x ▫ y) ▫_)] (inverseₗ))
+      🝖 (identityᵣ)
     )
   -- (x▫y)▫inv(x) = y //comm
   -- y = (x▫y)▫inv(x) //[≡]-symmetry
@@ -45,16 +40,10 @@ record Group {T : Type} (_▫_ : T → T → T) : Stmt where
 
   commutationᵣ : ∀{x y} → (x ▫ y ≡ y ▫ x) → ((x ▫ y) ▫ inv(x) ≡ y)
   commutationᵣ {x}{y} (comm) =
-    ([≡]-transitivity([∧]-intro
-      ([≡]-transitivity([∧]-intro
-        ([≡]-transitivity([∧]-intro
-          ([≡]-with-[(_▫ inv(x))] comm)
-          (associativity)
-        ))
-        ([≡]-with-[(y ▫_)] (inverseᵣ))
-      ))
-      (identityᵣ)
-    ))
+    ([≡]-with-[(_▫ inv(x))] comm)
+    🝖 (associativity)
+    🝖 ([≡]-with-[(y ▫_)] (inverseᵣ))
+    🝖 (identityᵣ)
   -- x▫y = y▫x //comm
   -- (x▫y)▫inv(x)
   -- = (y▫x)▫inv(x) //[≡]-with-[(expr ↦ expr ▫ inv(x))] (..)

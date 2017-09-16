@@ -1,6 +1,6 @@
 module Data where
 
-import      Level as Lvl
+import      Lvl
 open import Type
 
 -- The empty type which cannot be constructed

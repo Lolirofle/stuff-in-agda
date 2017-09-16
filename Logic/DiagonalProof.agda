@@ -1,6 +1,6 @@
 module Logic.DiagonalProof {ℓ₁} {ℓ₂} where
 
-import      Level as Lvl
+import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Functional

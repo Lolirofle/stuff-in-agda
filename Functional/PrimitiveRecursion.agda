@@ -1,6 +1,6 @@
 module Functional.PrimitiveRecursion where
 
-import      Level as Lvl
+import      Lvl
 open import Data
 open        Data.Tuple.Raiseᵣ
 open import Functional

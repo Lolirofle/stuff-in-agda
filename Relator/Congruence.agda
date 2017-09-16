@@ -1,6 +1,6 @@
 module Relator.Congruence {ℓ₁} {ℓ₂} where
 
-import      Level as Lvl
+import      Lvl
 open import Data
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
@@ -20,15 +20,15 @@ data _≅_ {X Y : Type} {f : X → Y} (x₁ : X) (x₂ : X) : Stmt where
 
 instance
   [≅]-reflexivity : ∀{X Y}{f} → Reflexivity {X} (_≅_ {X}{Y}{f})
-  [≅]-reflexivity = [≅]-intro [≡]-intro
+  reflexivity{{[≅]-reflexivity}} = [≅]-intro [≡]-intro
 
 instance
   [≅]-symmetry : ∀{X Y}{f} → Symmetry {X} (_≅_ {X}{Y}{f})
-  [≅]-symmetry = ([≅]-intro ∘ [≡]-symmetry ∘ [≅]-elim)
+  symmetry{{[≅]-symmetry}} = ([≅]-intro ∘ symmetry ∘ [≅]-elim)
 
 instance
   [≅]-transitivity : ∀{X Y}{f} → Transitivity {X} (_≅_ {X}{Y}{f})
-  [≅]-transitivity(eq1 , eq2) = [≅]-intro([≡]-transitivity([≅]-elim eq1 , [≅]-elim eq2))
+  transitivity{{[≅]-transitivity}}(eq1 , eq2) = [≅]-intro(transitivity([≅]-elim eq1 , [≅]-elim eq2))
 
 instance
   [≅]-equivalence : ∀{X Y}{f} → Equivalence {X} (_≅_ {X}{Y}{f})

@@ -1,6 +1,6 @@
 module Numeral.Natural.Relation.Properties{ℓ} where
 
-import Level as Lvl
+import Lvl
 open import Data
 open import Functional
 open import Logic.Propositional{ℓ}
@@ -42,10 +42,10 @@ instance
   [≤]-with-[𝐒] {a} {b} ([∃]-intro n f) =
     [∃]-intro
       (n)
-      ([≡]-transitivity([∧]-intro
+      (
         ([+1]-commutativity {a} {n}) -- 𝐒(a)+n = a+𝐒(n)
-        ([≡]-with-[ 𝐒 ] f) -- 𝐒(a+n)=a+𝐒(n) = 𝐒(b)
-      ))
+        🝖 ([≡]-with-[ 𝐒 ] f) -- 𝐒(a+n)=a+𝐒(n) = 𝐒(b)
+      )
 
 -- TODO: Implement
 instance
@@ -53,36 +53,28 @@ instance
 
 instance
   [≤]-transitivity : Transitivity (_≤_)
-  [≤]-transitivity {a} {b} {c} (([∃]-intro n₁ a+n₁≡b),([∃]-intro n₂ b+n₂≡c)) =
+  transitivity{{[≤]-transitivity}} {a}{b}{c} (([∃]-intro n₁ a+n₁≡b),([∃]-intro n₂ b+n₂≡c)) =
     [∃]-intro
       (n₁ + n₂)
-      ([≡]-transitivity([∧]-intro
-        ([≡]-transitivity([∧]-intro
-          ([≡]-symmetry ([+]-associativity {a} {n₁} {n₂})) -- a+(n₁+n₂) = (a+n₁)+n₂
-          ([≡]-with-[(expr ↦ expr + n₂)] (a+n₁≡b)) -- (a+n₁)+n₂ = b+n₂
-        ))
-        (b+n₂≡c) -- b+n₂ = c
-      )) -- a+(n₁+n₂) = c
+      (
+        (symmetry ([+]-associativity {a} {n₁} {n₂})) -- a+(n₁+n₂) = (a+n₁)+n₂
+        🝖 ([≡]-with-[(expr ↦ expr + n₂)] (a+n₁≡b)) -- (a+n₁)+n₂ = b+n₂
+        🝖 (b+n₂≡c) -- b+n₂ = c
+      ) -- a+(n₁+n₂) = c
 
 instance
   [≤]-reflexivity : Reflexivity (_≤_)
-  [≤]-reflexivity = [≤]-from-[≡] [≡]-intro
+  reflexivity{{[≤]-reflexivity}} = [≤]-from-[≡] [≡]-intro
 
 instance
   [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
-  [≤]-antisymmetry {a} {b} (([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) = [≡]-elimᵣ n₁≡0 {n ↦ (a + n ≡ b)} a+n₁≡b where
+  antisymmetry{{[≤]-antisymmetry}} {a} {b} (([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) = [≡]-elimᵣ n₁≡0 {n ↦ (a + n ≡ b)} a+n₁≡b where
     n₁+n₂≡0 : ((n₁ + n₂) ≡ 0)
     n₁+n₂≡0 =
       [+]-injectiveᵣ(
-        [≡]-transitivity([∧]-intro
-          ([≡]-symmetry([+]-associativity {a} {n₁} {n₂}))
-          ([≡]-transitivity([∧]-intro
-            ([≡]-with-[(expr ↦ expr + n₂)]
-              a+n₁≡b
-            )
-            b+n₂≡a
-          ))
-        )
+        (symmetry([+]-associativity {a} {n₁} {n₂}))
+        🝖 ([≡]-with-[(expr ↦ expr + n₂)] a+n₁≡b)
+        🝖 b+n₂≡a
       )
     n₁≡0 : (n₁ ≡ 0)
     n₁≡0 = [+]-sum-is-0ₗ {n₁} {n₂} n₁+n₂≡0
@@ -144,18 +136,16 @@ divides-elim {_}{y} (Div𝐒{x} (y-div-x)) with divides-elim(y-div-x)
 
 instance
   divides-transitivity : Transitivity (_divides_)
-  divides-transitivity {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
+  transitivity{{divides-transitivity}} {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
   ...                                                     | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (b⋅n₂≡c))) =
     (divides-intro
       ([∃]-intro
         (n₁ ⋅ n₂)
-        ([≡]-transitivity([∧]-intro
-          ([≡]-transitivity([∧]-intro
-            ([≡]-symmetry ([⋅]-associativity {a}{n₁}{n₂}))
-            ([≡]-with-[(expr ↦ expr ⋅ n₂)] (a⋅n₁≡b))
-          ))
-          (b⋅n₂≡c)
-        ))
+        (
+          (symmetry ([⋅]-associativity {a}{n₁}{n₂}))
+          🝖 ([≡]-with-[(expr ↦ expr ⋅ n₂)] (a⋅n₁≡b))
+          🝖 (b⋅n₂≡c)
+        )
       )
     )
 
@@ -166,13 +156,13 @@ instance
     (divides-intro
       ([∃]-intro
         (n₁ + n₂)
-        ([≡]-transitivity([∧]-intro
+        (
           ([⋅][+]-distributivityₗ {a}{n₁}{n₂})
-          ([≡]-with-op-[ _+_ ]
+          🝖 ([≡]-with-op-[ _+_ ]
             (a⋅n₁≡b)
             (a⋅n₂≡c)
           )
-        ))
+        )
       )
     )
 
@@ -183,13 +173,13 @@ instance
     (divides-intro
       ([∃]-intro
         (n₁ ⋅ (a ⋅ n₂))
-        ([≡]-transitivity([∧]-intro
-          ([≡]-symmetry ([⋅]-associativity {a}{n₁}{a ⋅ n₂}))
-          ([≡]-with-op-[ _⋅_ ]
+        (
+          (symmetry ([⋅]-associativity {a}{n₁}{a ⋅ n₂}))
+          🝖 ([≡]-with-op-[ _⋅_ ]
             (a⋅n₁≡b)
             (a⋅n₂≡c)
           )
-        ))
+        )
       )
     )
 

@@ -1,6 +1,6 @@
 module Numeral.Natural.Prime{ℓ} where
 
-import Level as Lvl
+import Lvl
 open import Functional
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}

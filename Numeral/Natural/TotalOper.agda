@@ -1,6 +1,6 @@
 module Numeral.Natural.TotalOper{ℓ} where
 
-import Level as Lvl
+import Lvl
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Numeral.Natural hiding (𝐏)

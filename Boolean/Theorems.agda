@@ -1,6 +1,6 @@
 module Boolean.Theorems {ℓ₁} where -- TODO: Move
 
-import      Level as Lvl
+import      Lvl
 open import Boolean
 import      Boolean.Operators
 open        Boolean.Operators.Programming
