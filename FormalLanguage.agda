@@ -86,7 +86,7 @@ module Oper {Σ} where
   Language.accepts-ε   (L *) = 𝑇
   Language.suffix-lang (L *) =
     (c ↦
-      Language.suffix-lang(L)(c) 𝁼 (L *)
+      Language.suffix-lang(L)(c) *
     )
 
   -- Complement

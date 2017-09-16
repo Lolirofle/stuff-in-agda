@@ -10,8 +10,8 @@ open import Type{ℓ₂}
 
 record VectorSpace (V S : Type) (_+ᵥ_ : V → V → V) (_⋅ₛᵥ_ : S → V → V) (_+ₛ_ : S → S → S) (_⋅ₛ_ : S → S → S) : Stmt where
   field
-    scalarField                  : Field(_+ₛ_)(_⋅ₛ_)
-    vectorAbelianGroup           : AbelianGroup(_+ᵥ_)
+    {{scalarField}}        : Field(_+ₛ_)(_⋅ₛ_)
+    {{vectorAbelianGroup}} : AbelianGroup(_+ᵥ_)
 
   open AbelianGroup {{...}}
   open Field {{...}}

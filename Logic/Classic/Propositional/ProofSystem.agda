@@ -129,7 +129,7 @@ module NaturalDeduction where
     [++]-right {Γ₁}{Γ₂} (trees) ([∈]-[Γ₂]) = trees ([∈][++]-expandₗ {_}{Γ₁}{Γ₂} [∈]-[Γ₂])
 
     [++]-deduplicate : ∀{Γ} → Trees(Γ ++ Γ) → Trees(Γ)
-    [++]-deduplicate {Γ} (trees) = \{γ} → liftᵣ([∈][++]-expandₗ {γ}{Γ}{Γ})(trees{γ})
+    [++]-deduplicate {Γ} (trees) {γ} = liftᵣ([∈][++]-expandₗ {γ}{Γ}{Γ})(trees{γ})
 
     -- [⊰]-reorderₗ : ∀{Γ₁ Γ₂}{φ} → Trees(Γ₁ ++ (φ ⊰ Γ₂)) → Trees(φ ⊰ (Γ₁ ++ Γ₂))
     -- [⊰]-reorderₗ (Γ₁φΓ₂-trees) = 

@@ -21,6 +21,8 @@ data _≡_ {T : Type} : T → T → Stmt where
   --   This is how the builtin pattern matching by [≡]-intro works, //TODO: ...I think
   --   and therefore many propositions for equality becomes "trivial" textually.
 
+-- {-# BUILTIN EQUALITY _≡_ #-}
+
 _≢_ : ∀{T : Type} → T → T → Stmt
 _≢_ a b = ¬(a ≡ b)
 

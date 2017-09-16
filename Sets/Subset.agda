@@ -9,7 +9,7 @@ open import Type{ℓ₂}
 
 -- An element in Subset(S) is in the subset of S.
 -- Something of type Subset(S) is of a restricted part of S.
-record Subset {S : Type} (P : S → Stmt) : Stmt where
+record Subset {S : Type} (P : S → Stmt) : Stmt where -- TODO: Cannot be Type
   constructor subelem
   field
     elem             : S

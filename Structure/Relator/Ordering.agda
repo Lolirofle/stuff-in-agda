@@ -40,7 +40,7 @@ module Weak {T : Type} (_≤_ : T → T → Stmt) where
         lowerBound : ∀{x} → P(x) → (l ≤ x)
 
     -- LowerBounds(P) represents the set {x. P(x)}
-    LowerBounds : (P : T → Stmt) → Set(ℓ₁ Lvl.⊔ ℓ₂)
+    LowerBounds : (P : T → Stmt) → Stmt
     LowerBounds(P) = Subset{T}(l ↦ LowerBound(P)(l))
 
     -- Infinum(P) contains the supremum (inf(P)) of the set {x. P(x)} (The greatest lower bound of the set)
