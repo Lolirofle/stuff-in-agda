@@ -35,27 +35,7 @@ postulate _<_ : ℝ → ℝ → Stmt
 _≢_ : ℝ → ℝ → Stmt
 x ≢ y = ¬(x ≡ y)
 
--- TODO: Move these below to Relator.Ordering
-
--- Greater than
-_>_ : ℝ → ℝ → Stmt
-x > y = y < x
-
--- Lesser than or equals
-_≤_ : ℝ → ℝ → Stmt
-x ≤ y = (x < y) ∨ (x ≡ y)
-
--- Greater than or equals
-_≥_ : ℝ → ℝ → Stmt
-x ≥ y = (x > y) ∨ (x ≡ y)
-
--- In an open interval
-_<_<_ : ℝ → ℝ → ℝ → Stmt
-x < y < z = (x < y) ∧ (y < z)
-
--- In an closed interval
-_≤_≤_ : ℝ → ℝ → ℝ → Stmt
-x ≤ y ≤ z = (x ≤ y) ∧ (y ≤ z)
+open From-[<][≡] (_<_) (_≡_) public
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Conversions]
@@ -126,19 +106,13 @@ postulate acos : ℝ → ℝ
 postulate atan : ℝ → ℝ
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- [Properties of operations in ℝ]
+-- [Stuctures]
 
 instance
-  postulate [ℝ]-field : Field(_+_)(_⋅_)
-
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- [Properties of relations in ℝ]
+  postulate [ℝ]-realTheory : RealTheory(_+_)(_⋅_)(_≤_)(_≡_)
 
 instance
-  postulate [ℝ][≤][≡]-totalWeakPartialOrder : Weak.TotalOrder {ℝ} (_≤_)(_≡_)
-
-instance
-  postulate [ℝ][<]-strictPartialOrder       : Strict.Order {ℝ} (_<_)
+  postulate [ℝ][<]-strictPartialOrder : Strict.Order {ℝ} (_<_)
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Properties of functions in ℝ]

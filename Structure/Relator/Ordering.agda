@@ -50,7 +50,7 @@ module Weak {T : Type} (_≤_ : T → T → Stmt) where
     UpperBound(P)(u) = (∀{x} → P(x) → (x ≤ u))
 
     -- UpperBounds(P) represents the set {x. P(x)}
-    UpperBounds : (P : T → Stmt) → Set(ℓ₁ Lvl.⊔ ℓ₂)
+    UpperBounds : (P : T → Stmt) → Stmt
     UpperBounds(P) = Subset{T}(u ↦ UpperBound(P)(u))
 
     -- Supremum(P) contains the supremum (sup(P)) of the set {x. P(x)} (The least upper bound of the set)
@@ -71,3 +71,45 @@ module Strict {T : Type} (_<_ : T → T → Stmt) where
   module Properties where
     Dense : Stmt
     Dense = ∀{x y : T} → (x < y) → ∃(z ↦ (x < z)∧(z < y))
+
+module From-[<][≡] {T : Type} (_<_ : T → T → Stmt) (_≡_ : T → T → Stmt) where
+  -- Greater than
+  _>_ : T → T → Stmt
+  x > y = y < x
+
+  -- Lesser than or equals
+  _≤_ : T → T → Stmt
+  x ≤ y = (x < y) ∨ (x ≡ y)
+
+  -- Greater than or equals
+  _≥_ : T → T → Stmt
+  x ≥ y = (x > y) ∨ (x ≡ y)
+
+  -- In an open interval
+  _<_<_ : T → T → T → Stmt
+  x < y < z = (x < y) ∧ (y < z)
+
+  -- In an closed interval
+  _≤_≤_ : T → T → T → Stmt
+  x ≤ y ≤ z = (x ≤ y) ∧ (y ≤ z)
+
+module From-[≤] {T : Type} (_≤_ : T → T → Stmt) where
+  -- Greater than
+  _>_ : T → T → Stmt
+  x > y = ¬(x ≤ y)
+
+  -- Lesser than or equals
+  _<_ : T → T → Stmt
+  x < y = (y > x)
+
+  -- Greater than or equals
+  _≥_ : T → T → Stmt
+  x ≥ y = (y ≤ x)
+
+  -- In an open interval
+  _<_<_ : T → T → T → Stmt
+  x < y < z = (x < y) ∧ (y < z)
+
+  -- In an closed interval
+  _≤_≤_ : T → T → T → Stmt
+  x ≤ y ≤ z = (x ≤ y) ∧ (y ≤ z)
