@@ -92,16 +92,8 @@ Distributivityᵣ {T₁} {T₂} (_▫₁_) (_▫₂_) = DistributivityPatternᵣ
 
 -- Returns a commuted LHS of an equality
 commuteₗ : ∀{T _▫_ x y z} → {{_ : Commutativity {T} {T} (_▫_)}} → (x ▫ y ≡ z) → (y ▫ x ≡ z)
-commuteₗ {{comm}} stmt =
-  [≡]-transitivity([∧]-intro
-    comm
-    stmt
-  )
+commuteₗ {{comm}} stmt = comm 🝖 stmt
 
 -- Returns a commuted RHS of an equality
 commuteᵣ : ∀{T _▫_ x y z} → {{_ : Commutativity {T} {T} (_▫_)}} → (z ≡ x ▫ y) → (z ≡ y ▫ x)
-commuteᵣ {{comm}} stmt =
-  [≡]-transitivity([∧]-intro
-    stmt
-    comm
-  )
+commuteᵣ {{comm}} stmt = stmt 🝖 comm

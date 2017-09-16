@@ -51,7 +51,11 @@ instance
   [+]-commutativity : Commutativity (_+_)
   [+]-commutativity {x} {y} = [ℕ]-induction (base x) (next x) y where
     base : ∀ (x : ℕ) → (x + 0) ≡ (0 + x)
-    base _ = [≡]-symmetry([≡]-transitivity([∧]-intro [+]-identityₗ ([≡]-symmetry [+]-identityᵣ)))
+    base _ =
+      symmetry(
+        [+]-identityₗ
+        🝖 (symmetry [+]-identityᵣ)
+      )
     -- (∀x. 0+x = x) ∧ (∀x. x = x+0) // [∧]-intro [1] [2]
     --   ∀x. 0+x = x //[+]-identityₗ [1]
 
@@ -61,15 +65,8 @@ instance
 
     next : ∀ (x i : ℕ) → (x + i) ≡ (i + x) → (x + 𝐒(i)) ≡ (𝐒(i) + x)
     next x i eq =
-      [≡]-transitivity([∧]-intro
-        ([≡]-with-[ 𝐒 ]
-          eq
-        )
-
-        ([≡]-symmetry(
-          [+1]-commutativity {i} {x}
-        ))
-      )
+      ([≡]-with-[ 𝐒 ] eq)
+      🝖 (symmetry([+1]-commutativity {i} {x}))
     --   ∀x∀i. x+i = i+x //eq
     --   ∀x∀i. 𝐒(x+i) = 𝐒(i+x) //[≡]-with-[ 𝐒 ](..)
     --   ∀x∀i. x+𝐒(i) = i+𝐒(x) //x + 𝐒(y) = 𝐒(x + y) (Definition of _+_) [1]
@@ -90,7 +87,7 @@ instance
   [⋅]-absorberₗ : Absorberₗ (_⋅_) (0)
   [⋅]-absorberₗ {x} = [ℕ]-induction base next x where
     base : (0 ⋅ 0) ≡ 0
-    base = [≡]-reflexivity
+    base = reflexivity
 
     next : ∀ (x : ℕ) → (0 ⋅ x) ≡ 0 → (0 ⋅ 𝐒(x)) ≡ 0
     next _ eq = [≡]-with-[(x ↦ 0 + x)] eq
@@ -103,14 +100,12 @@ instance
   [⋅]-identityₗ : Identityₗ (_⋅_) (1)
   [⋅]-identityₗ {x} = [ℕ]-induction base next x where
     base : ((1 ⋅ 0) ≡ 0)
-    base = [≡]-reflexivity
+    base = reflexivity
 
     next : (i : ℕ) → ((1 ⋅ i) ≡ i) → ((1 ⋅ 𝐒(i)) ≡ 𝐒(i))
     next i eq =
-      [≡]-transitivity([∧]-intro
-        ([+]-commutativity {1} {1 ⋅ i})
-        ([≡]-with-[ 𝐒 ] eq)
-      )
+      ([+]-commutativity {1} {1 ⋅ i})
+      🝖 ([≡]-with-[ 𝐒 ] eq)
   --   1 + 1⋅i = 1⋅i + 1 //[+]-commutativity
 
   --   1⋅i = i //eq
@@ -137,7 +132,7 @@ instance
         🝖 ([≡]-with-[(expr ↦ a + expr)] ([+]-commutativity{b}{c + d}))
         🝖 ([≡]-with-[(expr ↦ a + expr)] ([+]-associativity{c}{d}{b}))
         🝖 ([≡]-with-[(expr ↦ a + (c + expr))] ([+]-commutativity{d}{b}))
-        🝖 ([≡]-symmetry([+]-associativity{a}{c}{b + d}))
+        🝖 (symmetry([+]-associativity{a}{c}{b + d}))
     -- (x+y)⋅𝐒(z)
     -- = (x+y) + (x+y)⋅z //Definition: (⋅)
     -- = (x+y) + (x⋅z + y⋅z) //proof
@@ -194,13 +189,9 @@ instance
 -- TODO: It would be great to be able to chain the transitivity here. Also, rename and generalize this later
 commuteBothTemp : ∀{a₁ a₂ b₁ b₂} → (a₁ + a₂ ≡ b₁ + b₂) → (a₂ + a₁ ≡ b₂ + b₁)
 commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
-  ([≡]-transitivity([∧]-intro
-    ([≡]-symmetry ([+]-commutativity {a₁} {a₂}))
-    ([≡]-transitivity([∧]-intro
-      a₁+a₂≡b₁+b₂
-      ([+]-commutativity {b₁} {b₂})
-    ))
-  ))
+    (symmetry ([+]-commutativity {a₁} {a₂}))
+    🝖 a₁+a₂≡b₁+b₂
+    🝖 ([+]-commutativity {b₁} {b₂})
 
 instance
   [+]-injectiveᵣ : ∀{a} → Injective (x ↦ a + x)
@@ -217,10 +208,10 @@ instance
 [+]-sum-is-0ᵣ : ∀{a b} → (a + b ≡ 0) → (b ≡ 0)
 [+]-sum-is-0ᵣ {b}{a} (b+a≡0) =
   ([+]-sum-is-0ₗ {a}{b}
-    ([≡]-transitivity([∧]-intro
+    (
       ([+]-commutativity {a}{b})
-      (b+a≡0)
-    ))
+      🝖 (b+a≡0)
+    )
   )
 
 [+]-sum-is-0 : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)∧(b ≡ 0)
@@ -235,12 +226,10 @@ instance
 [⋅]-product-is-0 {0}{b} (_) = [∨]-introₗ ([≡]-intro)
 [⋅]-product-is-0 {𝐒(a)}{𝐒(b)} (𝐒a⋅𝐒b≡0) =
   ([⊥]-elim
-    ([𝐒]-not-0 {(𝐒(a) ⋅ b) + a}
-      ([≡]-transitivity([∧]-intro
-        ([+]-commutativity {𝐒(a) ⋅ b}{𝐒(a)})
-        (𝐒a⋅𝐒b≡0)
-      ))
-    )
+    ([𝐒]-not-0 {(𝐒(a) ⋅ b) + a}(
+      ([+]-commutativity {𝐒(a) ⋅ b}{𝐒(a)})
+      🝖 (𝐒a⋅𝐒b≡0)
+    ))
   )
   -- 𝐒a⋅𝐒b = 0 //assumption
   -- 𝐒a+(𝐒a⋅b) = 0 //Definition: (⋅)
@@ -261,24 +250,17 @@ instance
 instance
   [+]-cancellationₗ : Cancellationₗ(_+_)
   [+]-cancellationₗ {𝟎}{a}{b} (rel) =
-    ([≡]-transitivity([∧]-intro
-      ([≡]-transitivity([∧]-intro
-        ([≡]-symmetry [+]-identityₗ)
-        (rel)
-      ))
-      ([+]-identityₗ)
-    ))
+    (symmetry [+]-identityₗ)
+    🝖 (rel)
+    🝖 ([+]-identityₗ)
+
   [+]-cancellationₗ {𝐒(x)}{a}{b} (rel) =
     ([+]-cancellationₗ {x}{a}{b}
-      ([≡]-with-[ 𝐏 ]
-        ([≡]-transitivity([∧]-intro
-          ([≡]-transitivity([∧]-intro
-            ([≡]-symmetry ([+1]-commutativity {x}{a}))
-            (rel)
-          ))
-          ([+1]-commutativity {x}{b})
-        ))
-      )
+      ([≡]-with-[ 𝐏 ](
+        (symmetry ([+1]-commutativity {x}{a}))
+        🝖 (rel)
+        🝖 ([+1]-commutativity {x}{b})
+      ))
     )
 
 instance

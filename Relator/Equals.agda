@@ -60,15 +60,15 @@ module _ {ℓ₃} where
 
 instance
   [≡]-reflexivity : ∀{T} → Reflexivity {T} (_≡_ {T})
-  [≡]-reflexivity = [≡]-intro
+  reflexivity{{[≡]-reflexivity}} = [≡]-intro
 
 instance
   [≡]-symmetry : ∀{T} → Symmetry {T} (_≡_ {T})
-  [≡]-symmetry [≡]-intro = [≡]-intro
+  symmetry{{[≡]-symmetry}} [≡]-intro = [≡]-intro
 
 instance
   [≡]-transitivity : ∀{T} → Transitivity {T} (_≡_ {T})
-  [≡]-transitivity([∧]-intro [≡]-intro [≡]-intro) = [≡]-intro
+  transitivity{{[≡]-transitivity}} ([∧]-intro [≡]-intro [≡]-intro) = [≡]-intro
 
 -- Applies a function to each side of the equality
 [≡]-with-[_] : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
@@ -89,11 +89,9 @@ instance
 
 instance
   [≡]-equivalence : ∀{T} → Equivalence {T} (_≡_ {T})
-  [≡]-equivalence = record {
-      reflexivity  = [≡]-reflexivity ;
-      symmetry     = [≡]-symmetry    ;
-      transitivity = [≡]-transitivity
-    }
+  Equivalence.reflexivity ([≡]-equivalence) = infer
+  Equivalence.symmetry    ([≡]-equivalence) = infer
+  Equivalence.transitivity([≡]-equivalence) = infer
 
 -- Definition of uniqueness of a property.
 -- This means that there is at most one element that satisfies this property.
@@ -122,4 +120,4 @@ data _≡ᶠ_ : ∀{T : Type} → T → T → Stmt where
 
 infixl 1000 _🝖_
 _🝖_ : ∀{T}{x y z} → (x ≡ y) → (y ≡ z) → (x ≡ z)
-_🝖_ {T} A B = [≡]-transitivity{T}([∧]-intro A B)
+_🝖_ {T} A B = transitivity{T}([∧]-intro A B)

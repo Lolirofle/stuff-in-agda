@@ -9,6 +9,7 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ₁}
 open import Relator.Equals{ℓ₁}
 open import Structure.Operator.Properties
+open import Structure.Relator.Properties
 open import Type{ℓ₂}
 
 instance
@@ -48,10 +49,8 @@ instance
   reverse-[++] {T} {l₁} {l₂} = List-induction{ℓ₁}{ℓ₂} base next {l₁} where
     base : reverse(∅ ++ l₂) ≡ reverse(l₂) ++ reverse(∅)
     base =
-      ([≡]-transitivity([∧]-intro
-        ([≡]-with-[ reverse ] {l₂} ([≡]-intro))
-        ([≡]-symmetry [++]-identityᵣ)
-      ))
+      ([≡]-with-[ reverse ] {l₂} ([≡]-intro))
+      🝖 (symmetry [++]-identityᵣ)
     -- ∅++l = l //[++]-identityₗ
     -- reverse(∅++l) = l //[≡]-with-[ reverse ] (..)
     --   l = l++∅
@@ -65,10 +64,8 @@ instance
 
     next : ∀(x : T)(l : List(T)) → (reverse(l ++ l₂) ≡ reverse(l₂) ++ reverse(l)) → (reverse((x ⊰ l) ++ l₂) ≡ reverse(l₂) ++ reverse(x ⊰ l))
     next x l stmt =
-      ([≡]-transitivity([∧]-intro
-        ([≡]-with-[(list ↦ list ++ (singleton x))] stmt)
-        ([++]-associativity {_} {reverse(l₂)} {reverse(l)} {singleton x})
-      ))
+      ([≡]-with-[(list ↦ list ++ (singleton x))] stmt)
+      🝖 ([++]-associativity {_} {reverse(l₂)} {reverse(l)} {singleton x})
     -- reverse(l₁++l₂) = reverse(l₂)++reverse(l₁)
     -- reverse(l₁++l₂)++(singleton x) = (reverse(l₂)++reverse(l₁))++(singleton x)
     -- reverse(l₁++l₂)++(singleton x) = reverse(l₂)++(reverse(l₁)++(singleton x))
@@ -92,14 +89,12 @@ instance
   length-[++] : ∀{T}{l₁ l₂ : List(T)} → (length(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
   length-[++] {T} {l₁} {l₂} = List-induction{ℓ₁}{Lvl.𝟎} base next {l₁} where
     base : length(∅ ++ l₂) ≡ length{_}{T}(∅) + length(l₂)
-    base = [≡]-symmetry [+]-identityₗ
+    base = symmetry [+]-identityₗ
 
     next : ∀(x : T)(l : List(T)) → (length(l ++ l₂) ≡ length(l) + length(l₂)) → (length((x ⊰ l) ++ l₂) ≡ length(x ⊰ l) + length(l₂))
     next x l stmt =
-      ([≡]-transitivity([∧]-intro
-        ([≡]-with-[(len ↦ 𝐒 len)] stmt)
-        ([≡]-symmetry([+1]-commutativity {length(l)} {length(l₂)}))
-      ))
+      ([≡]-with-[(len ↦ 𝐒 len)] stmt)
+      🝖 (symmetry([+1]-commutativity {length(l)} {length(l₂)}))
     -- length(l++l₂) = length(l)+length(l₂)
     -- length(l++l₂) = length(l₂)+length(l)
     -- 𝐒(length(l++l₂)) = 𝐒(length(l₂)+length(l))

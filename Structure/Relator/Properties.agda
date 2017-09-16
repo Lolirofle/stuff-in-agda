@@ -13,24 +13,34 @@ FlipPattern : {T₁ T₂ : Type} → (T₁ → T₂ → Stmt) → (T₂ → T₁
 FlipPattern {T₁} {T₂} (_▫₁_) (_▫₂_) = {x : T₁}{y : T₂} → (x ▫₁ y) → (y ▫₂ x)
 
 -- Definition of a reflexive binary operation
-Reflexivity : {T : Type} → (T → T → Stmt) → Stmt
-Reflexivity {T} (_▫_) = {x : T} → (x ▫ x)
+record Reflexivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  field
+    reflexivity : ∀{x : T} → (x ▫ x)
+open Reflexivity {{...}} public
 
 -- Definition of a transitive binary operation
-Transitivity : {T : Type} → (T → T → Stmt) → Stmt
-Transitivity {T} (_▫_) = {x y z : T} → ((x ▫ y) ∧ (y ▫ z)) → (x ▫ z)
+record Transitivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  field
+    transitivity : ∀{x y z : T} → ((x ▫ y) ∧ (y ▫ z)) → (x ▫ z)
+open Transitivity {{...}} public
 
 -- Definition of a antisymmetric binary operation
-Antisymmetry : {T : Type} → (T → T → Stmt) → (T → T → Stmt) → Stmt
-Antisymmetry {T} (_▫₁_) (_▫₂_) = {a b : T} → ((a ▫₁ b) ∧ (b ▫₁ a)) → (a ▫₂ b)
+record Antisymmetry {T : Type} (_▫₁_ _▫₂_ : T → T → Stmt) : Stmt where
+  field
+    antisymmetry : ∀{a b : T} → ((a ▫₁ b) ∧ (b ▫₁ a)) → (a ▫₂ b)
+open Antisymmetry {{...}} public
 
 -- Definition of a irreflexive binary operation
-Irreflexivity : {T : Type} → (T → T → Stmt) → Stmt
-Irreflexivity {T} (_▫_) = {x : T} → ¬(x ▫ x)
+record Irreflexivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  field
+    irreflexivity : ∀{x : T} → ¬(x ▫ x)
+open Irreflexivity {{...}} public
 
 -- Definition of a total binary operation
-Total : {T : Type} → (T → T → Stmt) → Stmt
-Total {T} (_▫_) = {x y : T} → (x ▫ y) ∨ (y ▫ x)
+record Total {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  field
+    total : ∀{x y : T} → (x ▫ y)∨(y ▫ x)
+open Total {{...}} public
 
 -- Dichotomy : {T : Type}} → (T → T → Stmt) → Stmt
 -- Dichotomy {T} (_▫_) = {x y : T} → (x ▫ y) ⊕ (y ▫ x)
@@ -46,19 +56,24 @@ Total {T} (_▫_) = {x y : T} → (x ▫ y) ∨ (y ▫ x)
 -- Derived
 
 -- Definition of a converse binary operation for a binary operation
-Converse : {T₁ T₂ : Type} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
-Converse {T₁} {T₂} (_▫₁_) (_▫₂_) =
-  FlipPattern (_▫₁_) (_▫₂_) ∧ FlipPattern (_▫₂_) (_▫₁_)
+record Converse {T₁ T₂ : Type} (_▫₁_ : T₁ → T₂ → Stmt) (_▫₂_ : T₂ → T₁ → Stmt) : Stmt where
+  field
+    converse : FlipPattern (_▫₁_) (_▫₂_) ∧ FlipPattern (_▫₂_) (_▫₁_)
+open Converse {{...}} public
 -- {x : T₁}{y : T₂} → (x ▫₁ y) ↔ (y ▫₂ x)
 
 -- Definition of a symmetric binary operation
-Symmetry : {T : Type} → (T → T → Stmt) → Stmt
-Symmetry {T} (_▫_) = FlipPattern (_▫_) (_▫_)
+record Symmetry {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  field
+    symmetry : FlipPattern (_▫_) (_▫_)
+open Symmetry {{...}} public
 -- {x y : T} → (x ▫ y) → (y ▫ x)
 
 -- Definition of a asymmetric binary operation
-Asymmetry : {T : Type} → (T → T → Stmt) → Stmt
-Asymmetry {T} (_▫_) = FlipPattern (_▫_) (x ↦ y ↦ ¬(x ▫ y))
+record Asymmetry {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  field
+    asymmetry : FlipPattern (_▫_) (x ↦ y ↦ ¬(x ▫ y))
+open Asymmetry {{...}} public
 -- {x y : T} → (x ▫ y) → ¬(y ▫ x)
 
 ---------------------------------------------------------
@@ -119,15 +134,15 @@ Asymmetry {T} (_▫_) = FlipPattern (_▫_) (x ↦ y ↦ ¬(x ▫ y))
 module Theorems where
   open import Logic.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
 
-  [asymmetry]-to-irreflexivity : ∀{T _<_} → Asymmetry{T}(_<_) → Irreflexivity{T}(_<_)
-  [asymmetry]-to-irreflexivity(asymmetry) = [→]-redundancy(asymmetry)
+  [asymmetry]-to-irreflexivity : ∀{T}{_<_} → {{_ : Asymmetry{T}(_<_)}} → Irreflexivity{T}(_<_)
+  irreflexivity{{[asymmetry]-to-irreflexivity}} = [→]-redundancy(asymmetry)
     -- ∀x∀y. (x<y) → ¬(y<x)
     -- ∀x. (x<x) → ¬(x<x)
     -- ∀x. (x<x) → (x<x) → ⊥
     -- ∀x. (x<x) → ⊥
 
-  [irreflexivity,transitivity]-to-asymmetry : ∀{T _<_} → Irreflexivity{T}(_<_) → Transitivity{T}(_<_) → Asymmetry{T}(_<_)
-  [irreflexivity,transitivity]-to-asymmetry(irreflexivity)(transitivity) = Tuple.curry(irreflexivity ∘ transitivity)
+  [irreflexivity,transitivity]-to-asymmetry : ∀{T}{_<_} → {{_ : Irreflexivity{T}(_<_)}} → {{_ : Transitivity{T}(_<_)}} → Asymmetry{T}(_<_)
+  asymmetry{{[irreflexivity,transitivity]-to-asymmetry}} = Tuple.curry(irreflexivity ∘ transitivity)
     -- ∀x. ¬(x<x)
     -- ∀x. (x<x) → ⊥
     --   ∀x∀y∀z. (x<y)∧(y<z) → (x<z)
@@ -138,5 +153,5 @@ module Theorems where
     -- ∀x∀y. (x<y) → ¬(y<x)
 
   -- Definition of a total binary operation
-  [total]-to-reflexivity : ∀{T _<_} → Total{T}(_<_) → Reflexivity{T}(_<_)
-  [total]-to-reflexivity(total) = [∨]-elim(id , id , total)
+  [total]-to-reflexivity : ∀{T}{_<_} → {{_ : Total{T}(_<_)}} → Reflexivity{T}(_<_)
+  reflexivity{{[total]-to-reflexivity}} = [∨]-elim(id , id , total)

@@ -9,6 +9,7 @@ import      Numeral.Natural as ℕ
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
+open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 
 [𝐏]-negative-successor : (n : ℕ) → (𝐏(−𝐒(n)) ≡ −𝐒(𝐒ₙ(n)))
 [𝐏]-negative-successor (_) = [≡]-intro
@@ -68,13 +69,9 @@ open import Relator.Equals{ℓ}{Lvl.𝟎}
 
   next : (n : ℕ) → (𝐏(− n) ≡ −𝐒(n)) → (𝐏(−(𝐒ₙ(n))) ≡ −𝐒(𝐒ₙ(n)))
   next(n)(proof) =
-    [≡]-transitivity([∧]-intro
-      ([≡]-symmetry ([𝐏𝐏]-negative(n)))
-      ([≡]-transitivity([∧]-intro
-        ([≡]-with-[ 𝐏 ] (proof))
-        ([𝐏]-negative-successor(n))
-      ))
-    )
+    (symmetry ([𝐏𝐏]-negative(n)))
+    🝖 ([≡]-with-[ 𝐏 ] (proof))
+    🝖 ([𝐏]-negative-successor(n))
     -- 𝐏(− n) ≡ −𝐒(n)
     -- 𝐏(𝐏(− n)) ≡ 𝐏(−𝐒(n))
     -- 𝐏(−(𝐒ₙ(n))) ≡ 𝐏(𝐏(− n)) ≡ 𝐏(−𝐒(n)) ≡ −𝐒(𝐒ₙ(n))

@@ -28,11 +28,11 @@ inverse{T₁}{T₂} (bijection-intro f ([∧]-intro injective surjective)) =
 
 instance
   Bijection-reflexivity : Reflexivity(Bijection)
-  Bijection-reflexivity = bijection-intro(id)(id-bijective)
+  reflexivity{{Bijection-reflexivity}} = bijection-intro(id)(id-bijective)
 
 instance
   Bijection-symmetry : Symmetry(Bijection)
-  Bijection-symmetry(bijection) = inverse(bijection)
+  symmetry{{Bijection-symmetry}}(bijection) = inverse(bijection)
 
 -- TODO: Use function composition and other compositions in some way
 instance
