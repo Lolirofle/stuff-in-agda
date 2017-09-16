@@ -7,7 +7,7 @@ open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Numeral.Natural
 open import Type{ℓ₂}
 
-infixl 1000 _🝖_
+-- infixl 1000 _🝖_
 
 FlipPattern : {T₁ T₂ : Type} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
 FlipPattern {T₁} {T₂} (_▫₁_) (_▫₂_) = {x : T₁}{y : T₂} → (x ▫₁ y) → (y ▫₂ x)
@@ -72,7 +72,7 @@ Asymmetry {T} (_▫_) = FlipPattern (_▫_) (x ↦ y ↦ ¬(x ▫ y))
 --   a 1     = id
 --   a 2     = id
 --   a(𝐒(n)) = Tuple.uncurry ∘ (a(n))
--- 
+--
 --   b : ℕ → (_)
 --   b 0     = id
 --   b 1     = id
@@ -104,8 +104,8 @@ Asymmetry {T} (_▫_) = FlipPattern (_▫_) (x ↦ y ↦ ¬(x ▫ y))
 --   (Tuple.uncurry ∘ Tuple.uncurry ∘ Tuple.uncurry) (Tuple.curry(Tuple.curry((Tuple.curry trans) ∘ trans) ∘ trans))
 
 -- Transitivity as a binary operation (TODO: The symbol is supposed to be the alchemical symbol for horse dung, but it was the best I could find that somewhat represented transitivity)
-_🝖_ : ∀{T _▫_} {{_ : Transitivity {T} (_▫_)}} → ∀{x y z} → (x ▫ y) → (y ▫ z) → (x ▫ z)
-_🝖_ {_} {_} {{trans}} a b = trans([∧]-intro a b)
+-- _🝖_ : ∀{T _▫_} {{_ : Transitivity {T} (_▫_)}} → ∀{x y z} → (x ▫ y) → (y ▫ z) → (x ▫ z)
+-- _🝖_ {_} {_} {{trans}} a b = trans([∧]-intro a b)
 
 -- TODO: Maybe try to make transitivity proofs more like regular math syntax-wise:
 -- _ _[Trans:_with_] : (x ▫ y) → ((y ▫ z) : T) → T → (Transitivity _▫_) → (x ▫ z) -- TODO: T and (y ▫ z) is reversed?

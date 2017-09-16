@@ -356,7 +356,7 @@ module testTransitivity where
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 
   test1 : (0 ≡ 1) → (1 ≡ 2) → (0 ≡ 2)
-  test1 (0≡1) (1≡2) = _🝖_ {_}{_≡_} {{[≡]-transitivity}} (0≡1) (1≡2)
+  test1 (0≡1) (1≡2) = (0≡1) 🝖 (1≡2)
 
 main : FFI.IO FFI.Unit
 main = FFI.printStrLn "Okay"
