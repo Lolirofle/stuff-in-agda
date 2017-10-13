@@ -192,8 +192,14 @@ and-impl₂ f = Tuple.uncurry([¬¬]-intro ∘ f)
 -- X → (Y ∨ Z)
 -- X ∨ (Y ∧ Z)
 
-non-contradiction : {X : Stmt} → ¬ (X ∧ (¬ X))
+non-contradiction : ∀{X : Stmt} → ¬ (X ∧ (¬ X))
 non-contradiction(x , nx) = nx x
 
 [→]-redundancy : ∀{A B : Stmt} → (A → A → B) → (A → B)
 [→]-redundancy(f)(a) = f(a)(a)
+
+[∨]-redundancy : ∀{A : Stmt} → (A ∨ A) ↔ A
+[∨]-redundancy = [↔]-intro [∨]-introₗ (x ↦ [∨]-elim(id , id , x)) where
+
+[↔]-transitivity : ∀{X Y Z : Stmt} → (X ↔ Y) → (Y ↔ Z) → (X ↔ Z)
+[↔]-transitivity {X}{Y}{Z} ([↔]-intro yx xy) ([↔]-intro zy yz) = [↔]-intro (yx ∘ zy) (yz ∘ xy)

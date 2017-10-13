@@ -64,6 +64,7 @@ import Relator.Equals
 import Sets.AdditiveSet
 import Sets.BoolSet
 import Sets.FnSet
+import Sets.IZF
 import Sets.ListSet
 import Sets.TypeSet
 import Structure.Function.Domain
