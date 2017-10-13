@@ -109,6 +109,9 @@ contrapositive₂ nf x = (swap nf) x
 -- X → (¬ (Y → ⊥))
 -- X → (¬ (¬ Y))
 
+contrapositive₃ : {X Y : Stmt} → (X → (¬ Y)) → ((¬ X) ← Y)
+contrapositive₃ nf x = (swap nf) x
+
 modus-tollens : {X Y : Stmt} → (X → Y) → (¬ Y) → (¬ X)
 modus-tollens = contrapositive₁
 
