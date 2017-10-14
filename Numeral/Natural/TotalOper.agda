@@ -25,9 +25,3 @@ _−_ (𝐒(a)) (𝐒(b)) {{𝐒b≤𝐒a}} = _−_ a b {{[≤]-without-[𝐒] (
 _/_ : (a : ℕ) → (b : ℕ) → {{_ : b divides a}} → {{_ : b ≢ 0}} → ℕ
 _/_ _ _ {{b-div-a}} {{_}} with divides-elim (b-div-a)
 ...                          | [∃]-intro (n) (b⋅n≡a) = n
-
--- Absolute subtraction (Interval length)
-_𝄩_ : ℕ → ℕ → ℕ
-_𝄩_ a 𝟎 = a
-_𝄩_ 𝟎 b = b
-_𝄩_ (𝐒(a)) (𝐒(b)) = a 𝄩 b

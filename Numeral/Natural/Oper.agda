@@ -30,7 +30,7 @@ _! : ℕ → ℕ
 𝟎 ! = 𝐒(𝟎)
 𝐒(x) ! = 𝐒(x) ⋅ (x !)
 
--- Distance (Absolute value of subtraction)
+-- Distance (Absolute subtraction) (Interval length)
 _𝄩_ : ℕ → ℕ → ℕ
 x 𝄩 𝟎 = x
 𝟎 𝄩 x = x

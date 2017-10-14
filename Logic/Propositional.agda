@@ -5,7 +5,6 @@ open import Functional
 import      Lvl
 open import Type
 
-infixl 10 _⇒_
 infixl 1010 ¬_
 infixl 1005 _∧_
 infixl 1004 _∨_
@@ -140,9 +139,3 @@ pattern [⊽]-intro x y = [∧]-intro x y
 -- 
 -- [⊼]-elim : {X Y : Stmt} → (X ⨯ Y ⨯ (X ⊼ Y)) → ⊥
 -- [⊼]-elim(x , y , nand)
-
-------------------------------------------
--- Convenient definitions with different semantics
-
-_⇒_ : {X Y : Stmt} → X → (X → Y) → Y
-_⇒_ = apply

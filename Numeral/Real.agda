@@ -47,8 +47,11 @@ record [ℝ]-conversion (T : Set) : Set where
     #_ : T → ℝ
 open [ℝ]-conversion ⦃ ... ⦄ public
 
-instance postulate [ℕ]-to-[ℝ] : [ℝ]-conversion(ℕ)
 instance postulate [ℤ]-to-[ℝ] : [ℝ]-conversion(ℤ)
+instance postulate [ℕ]-to-[ℝ] : [ℝ]-conversion(ℕ)
+
+instance
+  postulate ℝ-From-ℕ : From-ℕ (ℝ)
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Subsets]
@@ -60,13 +63,13 @@ instance
     f(subelem x) = x
 
 -- Positive real numbers
-ℝ₊ = Subset{ℝ}(x ↦ (x > #(0)))
+ℝ₊ = Subset{ℝ}(x ↦ (x > 0))
 
 -- Negative real numbers
-ℝ₋ = Subset{ℝ}(x ↦ (x < #(0)))
+ℝ₋ = Subset{ℝ}(x ↦ (x < 0))
 
 -- Non-zero real numbers
-ℝ₊₋ = Subset{ℝ}(x ↦ (x ≢ #(0)))
+ℝ₊₋ = Subset{ℝ}(x ↦ (x ≢ 0))
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Elements]
@@ -92,12 +95,12 @@ postulate _√_ : ℝ → ℝ → ℝ
 -- [Functions]
 
 abs : ℝ → ℝ
-abs(x) = #(2) √ (x ^ #(2))
+abs(x) = 2 √ (x ^ 2)
 
 postulate sin : ℝ → ℝ
 
 cos : ℝ → ℝ
-cos(x) = sin(x − (π / #(2)))
+cos(x) = sin(x − (π / 2))
 
 tan : ℝ → ℝ
 tan(x) = sin(x) / cos(x)
@@ -118,12 +121,12 @@ instance
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Properties of functions in ℝ]
 
-instance postulate abs-positive : ∀{x} → (abs(x) ≥ #(0))
-instance postulate cos-periodicity : ∀{v}{n : ℕ} → (cos(v) ≡ cos(v + #(2) ⋅ π ⋅ #(n)))
-instance postulate sin-periodicity : ∀{v}{n : ℕ} → (sin(v) ≡ sin(v + #(2) ⋅ π ⋅ #(n)))
-instance postulate cos-even : ∀{v} → (cos(v) ≡ cos(#(0) − v))
-instance postulate sin-odd  : ∀{v} → (sin(v) ≡ #(0) − sin(#(0) − v))
-instance postulate circle : ∀{v} → (cos(v) ^ #(2) + sin(v) ^ #(2) ≡ #(1))
+instance postulate abs-positive : ∀{x} → (abs(x) ≥ 0)
+instance postulate cos-periodicity : ∀{v}{n : ℕ} → (cos(v) ≡ cos(v + 2 ⋅ π ⋅ #(n)))
+instance postulate sin-periodicity : ∀{v}{n : ℕ} → (sin(v) ≡ sin(v + 2 ⋅ π ⋅ #(n)))
+instance postulate cos-even : ∀{v} → (cos(v) ≡ cos(0 − v))
+instance postulate sin-odd  : ∀{v} → (sin(v) ≡ 0 − sin(0 − v))
+instance postulate circle : ∀{v} → (cos(v) ^ 2 + sin(v) ^ 2 ≡ 1)
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Properties on functions of ℝ]
@@ -135,7 +138,7 @@ module Limit where
     field
       L : ℝ -- The limit point
       δ : ℝ₊ → ℝ₊ -- The delta function that is able to depend on epsilon
-      satisfaction : ∀{ε : ℝ₊}{x : ℝ} → (#(0) < abs(x − p) < #(δ(ε))) → (abs(f(x) − L) < #(ε))
+      satisfaction : ∀{ε : ℝ₊}{x : ℝ} → (0 < abs(x − p) < #(δ(ε))) → (abs(f(x) − L) < #(ε))
 
   -- Limit value function f (if the limit exists)
   lim : (f : ℝ → ℝ) → (p : ℝ) → ⦃ _ : Lim f(p) ⦄ → ℝ

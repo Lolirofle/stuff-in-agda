@@ -6,6 +6,7 @@ open import Functional
 open import Logic.Propositional{ℓ}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
+open import Numeral.Natural.Proof
 open import Numeral.Natural.Relation
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Structure.Function.Domain{ℓ}

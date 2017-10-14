@@ -4,7 +4,8 @@ import      Lvl
 open import Functional
 open import Numeral.Integer
 open import Numeral.Integer.Oper
-open import Numeral.Natural using (ℕ ; [ℕ]-induction) renaming (𝟎 to 𝟎ₙ ; 𝐒 to 𝐒ₙ)
+open import Numeral.Natural.Proof
+open import Numeral.Natural using (ℕ) renaming (𝟎 to 𝟎ₙ ; 𝐒 to 𝐒ₙ)
 import      Numeral.Natural as ℕ
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}

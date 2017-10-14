@@ -172,6 +172,8 @@ module Theorems ⦃ _ : ConstructionAxioms ⦄ ⦃ _ : ProofAxioms ⦄ where
   open ProofAxioms ⦃ ... ⦄
   open Relations
 
+  ℕ = [∃]-extract infinity -- TODO: This is not an unique set as it is currently defined
+
 {-
   Singleton-elem-uniqueness : ∀{x y₁ y₂} → (y₁ ∈ Singleton(x)) → (y₂ ∈ Singleton(x)) → (y₁ ≡ y₂)
   Singleton-elem-uniqueness (y₁-proof)(y₂-proof) =

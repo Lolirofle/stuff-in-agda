@@ -30,3 +30,13 @@ pattern 𝟎 = + 𝟎ₙ -- Zero
 abs : ℤ → ℕ
 abs(+ x)  = x
 abs(−𝐒 x) = 𝐒ₙ(x)
+
+-- Syntax
+record From-negative-ℕ (T : Set) : Set where
+  field from-negative-ℕ : ℕ → T
+open From-negative-ℕ {{...}} public
+{-# BUILTIN FROMNEG from-negative-ℕ #-}
+
+instance
+  ℤ-From-negative-ℕ : From-negative-ℕ (ℤ)
+  from-negative-ℕ ⦃ ℤ-From-negative-ℕ ⦄ = −_

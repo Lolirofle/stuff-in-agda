@@ -13,10 +13,12 @@ data ℕ : Set where
 𝐏(𝟎)    = 𝟎
 𝐏(𝐒(n)) = n
 
--- The induction proof method on natural numbers
--- TODO: Consider making i and n implicit
-[ℕ]-induction : ∀{ℓ}{X : ℕ → Set(ℓ)} → X(𝟎) → ((i : ℕ) → X(i) → X(𝐒(i))) → (n : ℕ) → X(n)
-[ℕ]-induction base next 𝟎 = base
-[ℕ]-induction base next (𝐒(n)) = next(n)([ℕ]-induction base next n)
+-- Syntax
+record From-ℕ (T : Set) : Set where
+  field from-ℕ : ℕ → T
+open From-ℕ {{...}} public
+{-# BUILTIN FROMNAT from-ℕ #-}
 
--- [ℕ]-induction' : ∀{X : ℕ → Set}{b : ℕ} → (∀{i : ℕ} → i ≤ b → X(i)) → ((i : ℕ) → X(i) → X(𝐒(i))) → (n : ℕ) → X(n)
+instance
+  ℕ-From-ℕ : From-ℕ (ℕ)
+  from-ℕ ⦃ ℕ-From-ℕ ⦄ (x) = x

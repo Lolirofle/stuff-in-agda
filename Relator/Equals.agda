@@ -13,7 +13,7 @@ open import Type using () renaming (Type to TypeN)
 -- TODO: Is this called "intensional equality"?
 infixl 15 _≡_
 data _≡_ {T : Type} : T → T → Stmt where
-  instance [≡]-intro : {x : T} → (x ≡ x)
+  instance [≡]-intro : ∀{x : T} → (x ≡ x)
   -- Interpretation:
   --   The only way to construct something of type _≡_ is to have both sides equal.
   --   When matching on the constructor, the type checker "unifies" the two terms,

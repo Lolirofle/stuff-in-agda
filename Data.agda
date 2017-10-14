@@ -25,9 +25,12 @@ module Tuple where
   infixl 200 _⨯_ _,_ -- TODO: Raiseᵣ gives the opposite: infixr
 
   -- Definition of a 2-tuple
-  data _⨯_ {ℓ₁}{ℓ₂} (X : Type{ℓ₁}) (Y : Type{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂} where
-    instance
-      _,_ : X → Y → (X ⨯ Y)
+  record _⨯_ {ℓ₁}{ℓ₂} (X : Type{ℓ₁}) (Y : Type{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂} where
+    instance constructor _,_
+    field
+      left  : X
+      right : Y
+  open _⨯_ public
 
   module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} where
     -- Curries a function taking a 2-tuple, transforming it to a function returning a function instead
@@ -42,17 +45,6 @@ module Tuple where
     -- Swaps the left and right elements of a 2-tuple
     swap : (T₁ ⨯ T₂) → (T₂ ⨯ T₁)
     swap(x , y) = (y , x)
-
-    -- Returns the left element of a 2-tuple
-    left : (T₁ ⨯ T₂) → T₁ -- TODO: Can this be made to a pattern?
-    left(x , _) = x
-
-    -- Returns the right element of a 2-tuple
-    right : (T₁ ⨯ T₂) → T₂
-    right(_ , y) = y
-
-    ◅ = left
-    ▻ = right
 
   module Raiseₗ where
     open import Numeral.Natural
