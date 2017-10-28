@@ -42,11 +42,11 @@ Absorberₗ {_} {T₂} (_▫_) null = ∀{x : T₂} → (null ▫ x) ≡ null
 Absorberᵣ : {T₁ T₂ : Type} → (T₁ → T₂ → T₂) → T₂ → Stmt
 Absorberᵣ {T₁} {_} (_▫_) null = ∀{x : T₁} → (x ▫ null) ≡ null
 
--- Definition of left cancellation
+-- Definition of left cancellation (Injectivity for the right param)
 Cancellationₗ : {T₁ T₂ : Type} → (T₁ → T₂ → T₁) → Stmt
 Cancellationₗ {T₁}{T₂} (_▫_) = ∀{x : T₁}{a b : T₂} → ((x ▫ a) ≡ (x ▫ b)) → (a ≡ b)
 
--- Definition of right cancellation
+-- Definition of right cancellation (Injectivity for the left param)
 Cancellationᵣ : {T₁ T₂ : Type} → (T₁ → T₂ → T₁) → Stmt
 Cancellationᵣ {T₁}{T₂} (_▫_) = ∀{x : T₂}{a b : T₁} → ((a ▫ x) ≡ (b ▫ x)) → (a ≡ b)
 

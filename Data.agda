@@ -16,7 +16,8 @@ record Unit {ℓ} : Type{ℓ} where
 open Unit public
 
 {-# BUILTIN UNIT Unit #-}
-{-# COMPILED_DATA Unit () () #-}
+{-# FOREIGN GHC type AgdaUnit ℓ = () #-}
+{-# COMPILE GHC Unit = data AgdaUnit (()) #-}
 
 ------------------------------------------
 -- Tuple
@@ -120,6 +121,8 @@ module Either where
     instance
       Left : T₁ → (T₁ ‖ T₂)
       Right : T₂ → (T₁ ‖ T₂)
+  {-# FOREIGN GHC type AgdaEither ℓ₁ ℓ₂ = Either #-}
+  {-# COMPILE GHC _‖_ = data AgdaEither (Left | Right) #-}
 
   instance
     swap : ∀{ℓ₁ ℓ₂}{T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (T₁ ‖ T₂) → (T₂ ‖ T₁)

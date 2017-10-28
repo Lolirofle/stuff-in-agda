@@ -40,23 +40,4 @@ _≱_ a b = (a < b)
 _≯_ : ℕ → ℕ → Stmt
 _≯_ a b = (a ≤ b)
 
--- Divisibility
-data Even : ℕ → Stmt where
-  instance
-    Even0 : Even 𝟎
-    Even𝐒 : ∀{x : ℕ} → (Even x) → (Even(𝐒(𝐒(x))))
-
-data Odd : ℕ → Stmt where
-  instance
-    Odd0 : Odd (𝐒(𝟎))
-    Odd𝐒 : ∀{x : ℕ} → (Odd x) → (Odd(𝐒(𝐒(x))))
-
-data _divides_ (y : ℕ) : ℕ → Stmt where
-  instance
-    Div𝟎 : y divides 𝟎
-    Div𝐒 : ∀{x : ℕ} → (y divides x) → (y divides (y + x))
-
-data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where -- TODO: Make _divides_ a special case of this
-  instance
-    DivRem𝟎 : ∀{x : ℕ}{r : ℕ} → (r < x) → x divides r withRemainder r
-    DivRem𝐒 : ∀{x : ℕ}{y : ℕ}{r : ℕ} → (x divides y withRemainder r) → (x divides (x + y) withRemainder r)
+-- TODO: CoPrime

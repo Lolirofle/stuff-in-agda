@@ -1,16 +1,18 @@
 module FFI.IO where
 
-open import FFI.Type
+import      Lvl
+open import Data
 open import String
 
 postulate IO : ∀{a} → Set a → Set a
 {-# BUILTIN IO IO #-}
-{-# HASKELL type AgdaIO a b = IO b #-}
-{-# COMPILED_TYPE IO AgdaIO #-}
+{-# FOREIGN GHC type AgdaIO a b = IO b #-}
+{-# COMPILE GHC IO = type AgdaIO #-}
 
-postulate
-  printStr   : String → IO Unit
-  printStrLn : String → IO Unit
+{-# FOREIGN GHC import qualified Data.Text.IO #-}
 
-{-# COMPILED printStr   putStr   #-}
-{-# COMPILED printStrLn putStrLn #-}
+postulate printStr : String → IO(Unit{Lvl.𝟎})
+{-# COMPILE GHC printStr = Data.Text.IO.putStr #-}
+
+postulate printStrLn : String → IO(Unit{Lvl.𝟎})
+{-# COMPILE GHC printStrLn = Data.Text.IO.putStrLn #-}

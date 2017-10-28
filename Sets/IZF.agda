@@ -8,6 +8,9 @@ open import Logic.Theorems{Lvl.𝟎}
 module Sets.IZF (S : Set(Lvl.𝟎)) (_∈_ : S → S → Stmt) where
 
 module Relations where
+  _∉_ : S → S → Stmt
+  _∉_ x a = ¬(x ∈ a)
+
   _⊆_ : S → S → Stmt
   _⊆_ a b = (∀{x} → (x ∈ a) → (x ∈ b))
 
@@ -24,6 +27,15 @@ module Relations where
   -- The statement that the set s is non-empty
   NonEmpty : S → Stmt
   NonEmpty(s) = ∃(x ↦ (x ∈ s))
+
+module RelationsTheorems where
+  open Relations
+
+  [≡]-reflexivity : ∀{s} → (s ≡ s)
+  [≡]-reflexivity = [↔]-reflexivity
+
+  [≡]-transitivity : ∀{s₁ s₂ s₃} → (s₁ ≡ s₂) → (s₂ ≡ s₃) → (s₁ ≡ s₃)
+  [≡]-transitivity(s12)(s23){x} = [↔]-transitivity(s12{x})(s23{x})
 
 record ConstructionAxioms : Set(Lvl.𝐒(Lvl.𝟎)) where
   open Relations
@@ -42,7 +54,7 @@ record ConstructionAxioms : Set(Lvl.𝐒(Lvl.𝟎)) where
     power : ∀{s} → ∃(sₚ ↦ (∀{x} → (x ∈ sₚ) ↔ (x ⊆ s)))
 
     -- A set which is the subset of a set where all elements satisfies a predicate exists.
-    separation : ∀{φ : S → Stmt} → ∀{a} → ∃(x ↦ (∀{y} → (y ∈ x) ↔ ((y ∈ a) ∧ φ(y))))
+    separation : ∀{s}{φ : S → Stmt} → ∃(sₛ ↦ (∀{x} → (x ∈ sₛ) ↔ ((x ∈ s) ∧ φ(x))))
 
 module ConstructionTheorems ⦃ _ : ConstructionAxioms ⦄ where
   open ConstructionAxioms ⦃ ... ⦄
@@ -95,10 +107,10 @@ module Operations ⦃ _ : ConstructionAxioms ⦄ where
   ℘ : S → S
   ℘(s) = [∃]-extract(power{s})
 
-  -- Definition of the usual "set builder notation": {x∈s. φ(x)} for some set s
+  -- Definition of the usual "set builder notation": {x∊s. φ(x)} for some set s
   -- This can be used to construct a set that is the subset which satisfies a certain predicate for every element.
   subset : S → (S → Stmt) → S
-  subset(s)(φ) = [∃]-extract(separation{φ}{s})
+  subset(s)(φ) = [∃]-extract(separation{s}{φ})
 
   -- Definition of the intersection of two sets: s₁∩s₂ for two sets s₁ and s₂
   -- This can be used to construct a set that contains all elements that only are in both sets.
@@ -110,27 +122,98 @@ module Operations ⦃ _ : ConstructionAxioms ⦄ where
   -- reduce-[∪] : S → S
   -- reduce-[∪] ss = subset(s₁)(x ↦ (x ∈ s₂))
 
+  _∖_ : S → S → S
+  _∖_ (s₁)(s₂) = subset(s₁)(_∉ s₂)
+
 module OperationsTheorems ⦃ _ : ConstructionAxioms ⦄ where
   open ConstructionAxioms ⦃ ... ⦄
   open ConstructionTheorems
   open Operations
   open Relations
+  open RelationsTheorems
 
-  postulate [∪]-containment : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∪ s₂)) ↔ (x ∈ s₁)∨(x ∈ s₂)
+  -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  -- Containment
 
-  postulate [∩]-containment : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∩ s₂)) ↔ (x ∈ s₁)∧(x ∈ s₂)
+  [∅]-containment : Empty(∅)
+  [∅]-containment = [∃]-property(empty)
 
-  postulate [∅]-containment : Empty(∅)
+  [•]-containment : ∀{x₁} → (x₁ ∈ •(x₁))
+  [•]-containment{x₁} = [↔]-elimₗ([∃]-property(single{x₁})) ([≡]-reflexivity)
 
-  postulate [∪]-subset : ∀{s₁ s₂} → (s₁ ⊆ (s₁ ∪ s₂))∧(s₂ ⊆ (s₁ ∪ s₂))
+  [⟒]-containment : ∀{x₁ x₂} → (x₁ ∈ (x₁ ⟒ x₂))∧(x₂ ∈ (x₁ ⟒ x₂))
+  [⟒]-containment{x₁}{x₂} =
+    ([∧]-intro
+      ([↔]-elimₗ([∃]-property(pair{x₁}{x₂})) ([∨]-introₗ([≡]-reflexivity)))
+      ([↔]-elimₗ([∃]-property(pair{x₁}{x₂})) ([∨]-introᵣ([≡]-reflexivity)))
+    )
 
-  postulate [∩]-subset : ∀{s₁ s₂} → ((s₁ ∩ s₂) ⊆ s₁)∧((s₁ ∪ s₂) ⊆ s₂)
+  subset-containment : ∀{s}{φ}{x} → (x ∈ subset(s)(φ)) ↔ ((x ∈ s) ∧ φ(x))
+  subset-containment{s} = [∃]-property(separation)
 
-  postulate [℘]-subset : ∀{s} → (s ⊆ ℘(s))
+  [∪]-containment : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∪ s₂)) ↔ (x ∈ s₁)∨(x ∈ s₂)
+  [∪]-containment = [↔]-intro [∪]-containmentₗ [∪]-containmentᵣ where
+    postulate [∪]-containmentₗ : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∪ s₂)) ← (x ∈ s₁)∨(x ∈ s₂)
+    postulate [∪]-containmentᵣ : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∪ s₂)) → (x ∈ s₁)∨(x ∈ s₂)
 
-  postulate subset-subset : ∀{s}{φ} → (subset(s)(φ) ⊆ s)
+  [∩]-containment : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∩ s₂)) ↔ (x ∈ s₁)∧(x ∈ s₂)
+  [∩]-containment = subset-containment
 
-  -- TODO: Does this hold: Empty(s) ∨ NonEmpty(s) ?
+  [℘]-containment : ∀{s sₛ} → (sₛ ⊆ s) ↔ (sₛ ∈ ℘(s))
+  [℘]-containment{s} = [↔]-commutativity([∃]-property(power{s}))
+
+  -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  -- Subset
+
+  [∪]-subsetₗ : ∀{s₁ s₂} → (s₁ ⊆ (s₁ ∪ s₂))
+  [∪]-subsetₗ = ([↔]-elimₗ([∪]-containment)) ∘ [∨]-introₗ
+
+  [∪]-subsetᵣ : ∀{s₁ s₂} → (s₂ ⊆ (s₁ ∪ s₂))
+  [∪]-subsetᵣ = ([↔]-elimₗ([∪]-containment)) ∘ [∨]-introᵣ
+
+  [∩]-subsetₗ : ∀{s₁ s₂} → ((s₁ ∩ s₂) ⊆ s₁)
+  [∩]-subsetₗ = [∧]-elimₗ ∘ ([↔]-elimᵣ([∩]-containment))
+
+  [∩]-subsetᵣ : ∀{s₁ s₂} → ((s₁ ∩ s₂) ⊆ s₂)
+  [∩]-subsetᵣ = [∧]-elimᵣ ∘ ([↔]-elimᵣ([∩]-containment))
+
+  postulate [℘]-subset : ∀{s₁ s₂} → (s₁ ⊆ s₂) → (℘(s₁) ⊆ ℘(s₂))
+
+  subset-subset : ∀{s}{φ} → (subset(s)(φ) ⊆ s)
+  subset-subset{s}{φ} {x}(x∈s) = [∧]-elimₗ([↔]-elimᵣ([∃]-property(separation{s}{φ}))(x∈s))
+
+  -- TODO: Does this hold: Empty(s) ∨ NonEmpty(s) ? Probably not
+
+  -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  -- Commutativity
+
+  -- [⟒]-commutativity : ∀{s₁ s₂} → (s₁ ⟒ s₂) ≡ (s₂ ⟒ s₁)
+  -- [⟒]-commutativity{s₁}{s₂} {x} = [↔]-intro (f{s₂}{s₁}) (f{s₁}{s₂}) where
+  --   f : ∀{s₁ s₂} → (x ∈ (s₁ ⟒ s₂)) → (x ∈ (s₂ ⟒ s₁))
+  --   f{s₁}{s₂} = ([↔]-elimₗ([⟒]-containment{s₂}{s₁}{x})) ∘ ([∨]-commutativity) ∘ ([↔]-elimᵣ([∪]-containment{s₁}{s₂}{x}))
+
+  [∪]-commutativity : ∀{s₁ s₂} → (s₁ ∪ s₂) ≡ (s₂ ∪ s₁)
+  [∪]-commutativity{s₁}{s₂} {x} = [↔]-intro (f{s₂}{s₁}) (f{s₁}{s₂}) where
+    f : ∀{s₁ s₂} → (x ∈ (s₁ ∪ s₂)) → (x ∈ (s₂ ∪ s₁))
+    f{s₁}{s₂} = ([↔]-elimₗ([∪]-containment{s₂}{s₁}{x})) ∘ ([∨]-commutativity) ∘ ([↔]-elimᵣ([∪]-containment{s₁}{s₂}{x}))
+
+  [∩]-commutativity : ∀{s₁ s₂} → (s₁ ∩ s₂) ≡ (s₂ ∩ s₁)
+  [∩]-commutativity{s₁}{s₂} {x} = [↔]-intro (f{s₂}{s₁}) (f{s₁}{s₂}) where
+    f : ∀{s₁ s₂} → (x ∈ (s₁ ∩ s₂)) → (x ∈ (s₂ ∩ s₁))
+    f{s₁}{s₂} = ([↔]-elimₗ([∩]-containment{s₂}{s₁}{x})) ∘ ([∧]-commutativity) ∘ ([↔]-elimᵣ([∩]-containment{s₁}{s₂}{x}))
+
+  -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  -- Other
+
+  [∅]-in-subset : ∀{s} → (∅ ⊆ s)
+  [∅]-in-subset = [⊥]-elim ∘ [∅]-containment
+
+  [℘][∅]-containment : ∀{s} → (∅ ∈ ℘(s))
+  [℘][∅]-containment = [↔]-elimᵣ([℘]-containment)([∅]-in-subset)
+
+  -- TODO: Is this provable?
+  -- self-containment : ∀{s} → ¬(s ∈ s) -- ¬ ∃(s ↦ s ∈ s)
+  -- self-containment = 
 
 module NaturalNumbers ⦃ _ : ConstructionAxioms ⦄ where
   open Operations
@@ -159,20 +242,24 @@ record ProofAxioms ⦃ _ : ConstructionAxioms ⦄ : Set(Lvl.𝐒(Lvl.𝟎)) wher
 
   field
     -- Sets can model ℕ.
+    -- This can be used to construct a set representing the natural numbers.
     infinity : ∃(N ↦ ((∅ ∈ N) ∧ (∀{n} → (n ∈ N) → (𝐒(n) ∈ N))))
 
     -- ??
     collection : ∀{φ : S → S → Stmt} → ∀{a} → (∀{x} → (x ∈ a) → ∃(y ↦ φ(x)(y))) → ∃(b ↦ ∀{x} → (x ∈ a) → ∃(y ↦ ((y ∈ b) ∧ φ(x)(y))))
 
-    -- ??
-    induction : ∀{φ : S → Stmt} → (∀{a} → (∀{y} → (y ∈ a) → φ(y)) → φ(a)) → (∀{a} → φ(a))
+    -- Induction proof on sets.
+    -- This can be used to prove stuff about all sets.
+    -- This can be interpreted as:
+    --   A proof of a predicate satisfying every element of an arbitrary set is a proof of this predicate satisfying every set.
+    induction : ∀{φ : S → Stmt} → (∀{s} → (∀{x} → (x ∈ s) → φ(x)) → φ(s)) → (∀{s} → φ(s))
 
 module Theorems ⦃ _ : ConstructionAxioms ⦄ ⦃ _ : ProofAxioms ⦄ where
   open ConstructionAxioms ⦃ ... ⦄
   open ProofAxioms ⦃ ... ⦄
   open Relations
 
-  ℕ = [∃]-extract infinity -- TODO: This is not an unique set as it is currently defined
+  ℕ = [∃]-extract(infinity) -- TODO: This is not an unique set as it is currently defined (What did I mean when I wrote this?)
 
 {-
   Singleton-elem-uniqueness : ∀{x y₁ y₂} → (y₁ ∈ Singleton(x)) → (y₂ ∈ Singleton(x)) → (y₁ ≡ y₂)

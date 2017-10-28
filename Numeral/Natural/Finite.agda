@@ -24,6 +24,7 @@ open import Type
 data Finite-ℕ : ℕ → Set where
   Finite-𝟎 : ∀{n} → Finite-ℕ(n)                   -- Zero
   Finite-𝐒 : ∀{n} → Finite-ℕ(n) → Finite-ℕ(𝐒(n)) -- Successor function
+{-# INJECTIVE Finite-ℕ #-}
 
 -- Definition of a finite set/type
 Finite : ∀{ℓ₁ ℓ₂} → Type{ℓ₂} → Stmt{ℓ₁ Lvl.⊔ ℓ₂}

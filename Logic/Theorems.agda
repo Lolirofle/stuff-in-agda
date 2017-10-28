@@ -5,6 +5,12 @@ open import Functional
 open import Functional.Raise
 open import Logic.Propositional{ℓ}
 
+[↔]-reflexivity : {X : Stmt} → (X ↔ X)
+[↔]-reflexivity = [↔]-intro id id
+
+[↔]-transitivity : ∀{X Y Z : Stmt} → (X ↔ Y) → (Y ↔ Z) → (X ↔ Z)
+[↔]-transitivity {X}{Y}{Z} ([↔]-intro yx xy) ([↔]-intro zy yz) = [↔]-intro (yx ∘ zy) (yz ∘ xy)
+
 ------------------------------------------
 -- Commutativity
 
@@ -203,6 +209,3 @@ non-contradiction(x , nx) = nx x
 
 [∨]-redundancy : ∀{A : Stmt} → (A ∨ A) ↔ A
 [∨]-redundancy = [↔]-intro [∨]-introₗ (x ↦ [∨]-elim(id , id , x))
-
-[↔]-transitivity : ∀{X Y Z : Stmt} → (X ↔ Y) → (Y ↔ Z) → (X ↔ Z)
-[↔]-transitivity {X}{Y}{Z} ([↔]-intro yx xy) ([↔]-intro zy yz) = [↔]-intro (yx ∘ zy) (yz ∘ xy)

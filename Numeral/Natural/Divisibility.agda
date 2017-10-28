@@ -1,0 +1,150 @@
+module Numeral.Natural.Divisibility{ℓ} where
+
+import Lvl
+open import Data
+open import Functional
+open import Logic.Propositional{ℓ}
+open import Logic.Predicate{ℓ}{Lvl.𝟎}
+open import Numeral.Natural
+open import Numeral.Natural.Oper
+open import Numeral.Natural.Oper.Properties{ℓ}
+open import Numeral.Natural.Relation{ℓ}
+open import Relator.Equals{ℓ}
+open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
+open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
+open import Type
+
+data Even : ℕ → Stmt where
+  instance
+    Even0 : Even(𝟎)
+    Even𝐒 : ∀{x : ℕ} → Even(x) → Even(𝐒(𝐒(x)))
+{-# INJECTIVE Even #-}
+
+even-unique-instance : ∀{n} → (proof₁ : Even(n)) → (proof₂ : Even(n)) → (proof₁ ≡ proof₂)
+even-unique-instance (Even0) (Even0) = [≡]-intro
+even-unique-instance (Even𝐒 proof₁) (Even𝐒 proof₂) = [≡]-with-[ Even𝐒 ] (even-unique-instance(proof₁)(proof₂))
+
+data Odd : ℕ → Stmt where
+  instance
+    Odd0 : Odd(𝐒(𝟎))
+    Odd𝐒 : ∀{x : ℕ} → Odd(x) → Odd(𝐒(𝐒(x)))
+{-# INJECTIVE Odd #-}
+
+data _divides_ (y : ℕ) : ℕ → Stmt where
+  instance
+    Div𝟎 : y divides 𝟎
+    Div𝐒 : ∀{x : ℕ} → (y divides x) → (y divides (y + x))
+{-# INJECTIVE _divides_ #-}
+
+data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where -- TODO: Make _divides_ a special case of this
+  instance
+    DivRem𝟎 : ∀{x : ℕ}{r : ℕ} → (r < x) → x divides r withRemainder r
+    DivRem𝐒 : ∀{x : ℕ}{y : ℕ}{r : ℕ} → (x divides y withRemainder r) → (x divides (x + y) withRemainder r)
+{-# INJECTIVE _divides_withRemainder_ #-}
+
+DivN : ∀{y : ℕ} → (n : ℕ) → y divides (y ⋅ n)
+DivN {y}(𝟎)    = Div𝟎
+DivN {y}(𝐒(n)) = Div𝐒(DivN{y}(n))
+
+{-
+Div𝐏 : ∀{x y : ℕ} → (y divides x) → (y divides (x −₀ y))
+Div𝐏 {x}   {𝟎}    (0-div-x) = 0-div-x
+Div𝐏 {𝟎}   {y}    (y-div-0) = [≡]-substitutionₗ ([−₀]-negative{y}) {expr ↦ (y divides expr)} (Div𝟎)
+Div𝐏 {_}{y} (Div𝐒{x} (y-div-x)) = [≡]-substitutionᵣ [+][−₀]-nullify {expr ↦ (y divides expr)} y-div-x
+-}
+
+divides-intro : ∀{x y} → (∃ \(n : ℕ) → (y ⋅ n ≡ x)) → (y divides x)
+divides-intro {x}{y} ([∃]-intro (n) (y⋅n≡x)) = [≡]-elimᵣ (y⋅n≡x) {expr ↦ (y divides expr)} (DivN{y}(n))
+
+divides-elim : ∀{x y} → (y divides x) → (∃ \(n : ℕ) → (y ⋅ n ≡ x))
+divides-elim {_}{_} (Div𝟎) = [∃]-intro (0) ([≡]-intro)
+divides-elim {_}{y} (Div𝐒{x} (y-div-x)) with divides-elim(y-div-x)
+...                                | ([∃]-intro (n) (y⋅n≡x)) = [∃]-intro (𝐒(n)) ([≡]-with-[(expr ↦ y + expr)] (y⋅n≡x))
+
+instance
+  divides-transitivity : Transitivity (_divides_)
+  transitivity{{divides-transitivity}} {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
+  ...                                                     | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (b⋅n₂≡c))) =
+    (divides-intro
+      ([∃]-intro
+        (n₁ ⋅ n₂)
+        (
+          (symmetry ([⋅]-associativity {a}{n₁}{n₂}))
+          🝖 ([≡]-with-[(expr ↦ expr ⋅ n₂)] (a⋅n₁≡b))
+          🝖 (b⋅n₂≡c)
+        )
+      )
+    )
+
+instance
+  divides-with-[+] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b + c))
+  divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
+  ...                                                 | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (a⋅n₂≡c))) =
+    (divides-intro
+      ([∃]-intro
+        (n₁ + n₂)
+        (
+          ([⋅][+]-distributivityₗ {a}{n₁}{n₂})
+          🝖 ([≡]-with-op-[ _+_ ]
+            (a⋅n₁≡b)
+            (a⋅n₂≡c)
+          )
+        )
+      )
+    )
+
+instance
+  divides-with-[⋅] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b ⋅ c))
+  divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
+  ...                                                 | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (a⋅n₂≡c))) =
+    (divides-intro
+      ([∃]-intro
+        (n₁ ⋅ (a ⋅ n₂))
+        (
+          (symmetry ([⋅]-associativity {a}{n₁}{a ⋅ n₂}))
+          🝖 ([≡]-with-op-[ _⋅_ ]
+            (a⋅n₁≡b)
+            (a⋅n₂≡c)
+          )
+        )
+      )
+    )
+
+-- instance
+--   divides-with-fn : ∀{a b} → (a divides b) → ∀{f : ℕ → ℕ} → {_ : ∀{x y : ℕ} → ∃{ℕ → ℕ}(\g → f(x ⋅ y) ≡ f(x) ⋅ g(y))} → ((f(a)) divides (f(b)))
+--   divides-with-fn {a}{b} (a-div-b) {f} {{f-prop}}
+
+-- instance
+--   divides-[≡] : ∀{a b} → (a divides b) → (b divides a) → (a ≡ b)
+--   divides-[≡] {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
+--   ...                                                     | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (b⋅n₂≡c))) =
+
+instance
+  [1]-divides : ∀{n} → (1 divides n)
+  [1]-divides {𝟎}    = Div𝟎
+  [1]-divides {𝐒(n)} =
+    [≡]-elimₗ
+      ([+]-commutativity {n}{1})
+      {expr ↦ (1 divides expr)}
+      (Div𝐒([1]-divides{n}))
+
+instance
+  divides-id : ∀{n} → (n divides n)
+  divides-id = Div𝐒(Div𝟎)
+
+instance
+  postulate [0]-divides-not : ∀{n} → ¬(0 divides 𝐒(n))
+
+instance
+  postulate divides-not-[1] : ∀{n} → ¬(n divides 1)
+
+instance
+  postulate divides-upper-limit : ∀{a b} → (a divides b) → (a ≤ b)
+
+instance
+  postulate divides-not-lower-limit : ∀{a b} → (a > b) → ¬(a divides b)
+
+-- Div𝐏 : ∀{x y : ℕ} → (y divides (y + x)) → (y divides x)
+-- Div𝐏 {x}   {𝟎}    (0-div-x) = 0-div-x
+-- Div𝐏 {𝟎}   {y}    (y-div-y) = Div𝟎
+-- Div𝐏 {x₁}{y} (Div𝐒{x₂} y-div-x) =

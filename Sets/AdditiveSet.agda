@@ -7,6 +7,7 @@ open import Logic.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
 import      Relator.Equals{ℓ₁}{ℓ₂} as Eq
 open import Type{ℓ₂}
 
+-- TODO: Remove this? This is almost too similar to ListSet, but done badly
 data AddSet(T : Type) : Type where
   ∅    : AddSet(T)
   S[_] : T → AddSet(T)

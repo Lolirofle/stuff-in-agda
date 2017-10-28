@@ -268,3 +268,15 @@ instance
   [−₀]-negative : ∀{x} → ((0 −₀ x) ≡ 0)
   [−₀]-negative{𝟎}    = [≡]-intro
   [−₀]-negative{𝐒(n)} = [≡]-intro
+
+instance
+  [−₀]-self : ∀{x} → ((x −₀ x) ≡ 0)
+  [−₀]-self{𝟎}    = [≡]-intro
+  [−₀]-self{𝐒(n)} = [≡]-intro 🝖 ([−₀]-self{n})
+
+instance
+  [+][−₀]-nullify : ∀{x y} → ((x + y) −₀ y ≡ x)
+  [+][−₀]-nullify{𝟎}   {𝟎}    = [≡]-intro
+  [+][−₀]-nullify{𝐒(x)}{y}    = PROVE where
+    postulate PROVE : ∀{x} → x -- TODO
+  [+][−₀]-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([+][−₀]-nullify{x}{y})

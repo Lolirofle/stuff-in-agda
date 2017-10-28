@@ -10,7 +10,6 @@ import Boolean.Operators
 import Data
 import Data.Tuple.List
 import FFI.IO   as FFI
-import FFI.Type as FFI
 import FormalLanguage
 import FormalLanguage.ContextFreeGrammar
 import FormalLanguage.Properties
@@ -41,6 +40,7 @@ import Numeral.Integer.Relation
 import Numeral.Integer.Sign
 import Numeral.Integer.Theorems
 import Numeral.Natural
+import Numeral.Natural.Divisibility
 import Numeral.Natural.Finite
 import Numeral.Natural.Function
 import Numeral.Natural.BooleanOper
@@ -65,7 +65,6 @@ import Relator.Congruence
 import Relator.Equals
 import Sets.AdditiveSet
 import Sets.BoolSet
-import Sets.FnSet
 import Sets.IZF
 import Sets.ListSet
 import Sets.TypeSet
@@ -83,5 +82,5 @@ import Structure.Relator.Properties
 import String
 import Type
 
-main : FFI.IO FFI.Unit
-main = FFI.printStrLn "Okay"
+main : FFI.IO Data.Unit
+main = FFI.printStrLn("Okay")

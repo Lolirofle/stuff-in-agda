@@ -4,6 +4,7 @@ import Lvl
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Numeral.Natural hiding (𝐏)
+open import Numeral.Natural.Divisibility{ℓ}
 open import Numeral.Natural.Relation{ℓ}
 open import Numeral.Natural.Relation.Properties{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}

@@ -18,6 +18,10 @@ data List {ℓ} (T : Type{ℓ}) : Type{ℓ} where
   ∅ : List(T) -- The empty list
   _⊰_ : T → List(T) → List(T) -- Cons
 
+{-# BUILTIN LIST List #-}
+{-# BUILTIN NIL  ∅  #-}
+{-# BUILTIN CONS _⊰_ #-}
+
 _⊱_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → T → List(T)
 _⊱_ ∅ b = b ⊰ ∅
 _⊱_ (elem ⊰ rest) b = elem ⊰ (rest ⊱ elem)

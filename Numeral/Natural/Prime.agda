@@ -5,11 +5,13 @@ open import Functional
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}
 open import Numeral.Natural
+open import Numeral.Natural.Divisibility{ℓ}
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Relation{ℓ}
 open import Numeral.Natural.Relation.Properties{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
+open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 
 data Prime(n : ℕ) : Stmt where
   Prime-intro : (n ≢ 0) → (n ≢ 1) → (∀{x} → (x divides n) → (x ≡ 1)∨(x ≡ n)) → Prime(n)
@@ -32,7 +34,8 @@ data Prime(n : ℕ) : Stmt where
 
 -- TODO: Related to below: How to prove this?
 -- test22 : ¬(2 divides 3)
--- test22 (Div𝐒{1} (div)) = [⊥]-elim(divides-not-lower-limit([∃]-intro(1) ([+]-commutativity{2}{1})) (div))
+-- test22 (Div𝐒 ())
+-- test22 (Div𝐒 (div)) = [⊥]-elim(divides-not-lower-limit([∃]-intro(1) ([+]-commutativity{2}{1})) (div))
 
 -- TODO: Is this a bug? Cannot deconstruct (2 divides 3) to (2 divides 1) using Div𝐒?
 -- [3]-prime : Prime(3)
