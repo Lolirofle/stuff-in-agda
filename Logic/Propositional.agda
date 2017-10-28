@@ -33,8 +33,8 @@ pattern [∧]-intro x y = x , y
 ------------------------------------------
 -- Implication
 
-[→]-elim : {X Y : Stmt} → (X ⨯ (X → Y)) → Y
-[→]-elim = Tuple.uncurry apply
+[→]-elim : {X Y : Stmt} → X → (X → Y) → Y
+[→]-elim = apply
 
 [→]-intro : {X Y : Stmt} → Y → (X → Y)
 [→]-intro = const
@@ -45,7 +45,7 @@ pattern [∧]-intro x y = x , y
 [←]-intro : {X Y : Stmt} → Y → (Y ← X)
 [←]-intro = [→]-intro
 
-[←]-elim : {X Y : Stmt} → (X ⨯ (Y ← X)) → Y
+[←]-elim : {X Y : Stmt} → X → (Y ← X) → Y
 [←]-elim = [→]-elim
 
 ------------------------------------------
@@ -71,9 +71,9 @@ _∨_ = _‖_
 pattern [∨]-introₗ l = Either.Left l
 pattern [∨]-introᵣ r = Either.Right r
 
-[∨]-elim : {X Y Z : Stmt} → ((X → Z) ⨯ (Y → Z) ⨯ (X ∨ Y)) → Z
-[∨]-elim(f₁ , _ , (Either.Left x)) = f₁ x
-[∨]-elim(_ , f₂ , (Either.Right y)) = f₂ y
+[∨]-elim : {X Y Z : Stmt} → (X → Z) → (Y → Z) → (X ∨ Y) → Z
+[∨]-elim(f₁) (_) (Either.Left x) = f₁ x
+[∨]-elim(_) (f₂) (Either.Right y) = f₂ y
 
 ------------------------------------------
 -- Bottom (false, absurdity, empty, contradiction)
@@ -82,7 +82,7 @@ pattern [∨]-introᵣ r = Either.Right r
 ⊥ = Empty
 
 [⊥]-intro : {X : Stmt} → X → (X → ⊥) → ⊥
-[⊥]-intro x f = f x
+[⊥]-intro = apply
 
 [⊥]-elim : {X : Stmt} → ⊥ → X
 [⊥]-elim = empty-fn

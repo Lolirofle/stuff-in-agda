@@ -160,4 +160,4 @@ module Theorems where
 
   -- Definition of a total binary operation
   [total]-to-reflexivity : ∀{T}{_<_} → {{_ : Total{T}(_<_)}} → Reflexivity{T}(_<_)
-  reflexivity{{[total]-to-reflexivity}} = [∨]-elim(id , id , total)
+  reflexivity{{[total]-to-reflexivity}} = [∨]-elim id id total

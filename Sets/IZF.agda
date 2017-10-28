@@ -3,6 +3,7 @@ open import Functional
 open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
 open import Logic.Theorems{Lvl.𝟎}
+open import Type{Lvl.𝟎}
 
 -- Based on https://plato.stanford.edu/entries/set-theory-constructive/axioms-CZF-IZF.html (2017-10-13)
 module Sets.IZF (S : Set(Lvl.𝟎)) (_∈_ : S → S → Stmt) where
@@ -141,12 +142,14 @@ module OperationsTheorems ⦃ _ : ConstructionAxioms ⦄ where
   [•]-containment : ∀{x₁} → (x₁ ∈ •(x₁))
   [•]-containment{x₁} = [↔]-elimₗ([∃]-property(single{x₁})) ([≡]-reflexivity)
 
-  [⟒]-containment : ∀{x₁ x₂} → (x₁ ∈ (x₁ ⟒ x₂))∧(x₂ ∈ (x₁ ⟒ x₂))
-  [⟒]-containment{x₁}{x₂} =
-    ([∧]-intro
-      ([↔]-elimₗ([∃]-property(pair{x₁}{x₂})) ([∨]-introₗ([≡]-reflexivity)))
-      ([↔]-elimₗ([∃]-property(pair{x₁}{x₂})) ([∨]-introᵣ([≡]-reflexivity)))
-    )
+  [⟒]-containment : ∀{x₁ x₂}{x} → (x ∈ (x₁ ⟒ x₂)) ↔ (x ≡ x₁)∨(x ≡ x₂)
+  [⟒]-containment{x₁}{x₂} = [∃]-property(pair{x₁}{x₂})
+
+  [⟒]-containmentₗ : ∀{x₁ x₂} → (x₁ ∈ (x₁ ⟒ x₂))
+  [⟒]-containmentₗ{x₁}{x₂} = [↔]-elimₗ([∃]-property(pair{x₁}{x₂})) ([∨]-introₗ([≡]-reflexivity))
+
+  [⟒]-containmentᵣ : ∀{x₁ x₂} → (x₂ ∈ (x₁ ⟒ x₂))
+  [⟒]-containmentᵣ{x₁}{x₂} = [↔]-elimₗ([∃]-property(pair{x₁}{x₂})) ([∨]-introᵣ([≡]-reflexivity))
 
   subset-containment : ∀{s}{φ}{x} → (x ∈ subset(s)(φ)) ↔ ((x ∈ s) ∧ φ(x))
   subset-containment{s} = [∃]-property(separation)
@@ -195,12 +198,53 @@ module OperationsTheorems ⦃ _ : ConstructionAxioms ⦄ where
   [∪]-commutativity : ∀{s₁ s₂} → (s₁ ∪ s₂) ≡ (s₂ ∪ s₁)
   [∪]-commutativity{s₁}{s₂} {x} = [↔]-intro (f{s₂}{s₁}) (f{s₁}{s₂}) where
     f : ∀{s₁ s₂} → (x ∈ (s₁ ∪ s₂)) → (x ∈ (s₂ ∪ s₁))
-    f{s₁}{s₂} = ([↔]-elimₗ([∪]-containment{s₂}{s₁}{x})) ∘ ([∨]-commutativity) ∘ ([↔]-elimᵣ([∪]-containment{s₁}{s₂}{x}))
+    f{s₁}{s₂} =
+      ([↔]-elimₗ([∪]-containment{s₂}{s₁}{x}))
+      ∘ ([∨]-commutativity)
+      ∘ ([↔]-elimᵣ([∪]-containment{s₁}{s₂}{x}))
 
   [∩]-commutativity : ∀{s₁ s₂} → (s₁ ∩ s₂) ≡ (s₂ ∩ s₁)
   [∩]-commutativity{s₁}{s₂} {x} = [↔]-intro (f{s₂}{s₁}) (f{s₁}{s₂}) where
     f : ∀{s₁ s₂} → (x ∈ (s₁ ∩ s₂)) → (x ∈ (s₂ ∩ s₁))
-    f{s₁}{s₂} = ([↔]-elimₗ([∩]-containment{s₂}{s₁}{x})) ∘ ([∧]-commutativity) ∘ ([↔]-elimᵣ([∩]-containment{s₁}{s₂}{x}))
+    f{s₁}{s₂} =
+      ([↔]-elimₗ([∩]-containment{s₂}{s₁}{x}))
+      ∘ ([∧]-commutativity)
+      ∘ ([↔]-elimᵣ([∩]-containment{s₁}{s₂}{x}))
+
+  -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  -- Associativity
+
+  [∪]-associativity : ∀{s₁ s₂ s₃} → ((s₁ ∪ s₂) ∪ s₃) ≡ (s₁ ∪ (s₂ ∪ s₃))
+  [∪]-associativity{s₁}{s₂}{s₃} {x} = [↔]-intro l r where
+    l : (x ∈ ((s₁ ∪ s₂) ∪ s₃)) ← (x ∈ (s₁ ∪ (s₂ ∪ s₃)))
+    l = ([↔]-elimₗ([∪]-containment{s₁ ∪ s₂}{s₃}{x}))
+      ∘ ([∨]-elim ([∨]-introₗ ∘ ([↔]-elimₗ([∪]-containment{s₁}{s₂}{x}))) ([∨]-introᵣ))
+      ∘ ([↔]-elimₗ [∨]-associativity)
+      ∘ ([∨]-elim ([∨]-introₗ) ([∨]-introᵣ ∘ ([↔]-elimᵣ([∪]-containment{s₂}{s₃}{x}))))
+      ∘ ([↔]-elimᵣ([∪]-containment{s₁}{s₂ ∪ s₃}{x}))
+
+    r : (x ∈ ((s₁ ∪ s₂) ∪ s₃)) → (x ∈ (s₁ ∪ (s₂ ∪ s₃)))
+    r = ([↔]-elimₗ([∪]-containment{s₁}{s₂ ∪ s₃}{x}))
+      ∘ ([∨]-elim ([∨]-introₗ) ([∨]-introᵣ ∘ ([↔]-elimₗ([∪]-containment{s₂}{s₃}{x}))))
+      ∘ ([↔]-elimᵣ [∨]-associativity)
+      ∘ ([∨]-elim ([∨]-introₗ ∘ ([↔]-elimᵣ([∪]-containment{s₁}{s₂}{x}))) ([∨]-introᵣ))
+      ∘ ([↔]-elimᵣ([∪]-containment{s₁ ∪ s₂}{s₃}{x}))
+
+  [∩]-associativity : ∀{s₁ s₂ s₃} → ((s₁ ∩ s₂) ∩ s₃) ≡ (s₁ ∩ (s₂ ∩ s₃))
+  [∩]-associativity{s₁}{s₂}{s₃} {x} = [↔]-intro l r where
+    l : (x ∈ ((s₁ ∩ s₂) ∩ s₃)) ← (x ∈ (s₁ ∩ (s₂ ∩ s₃)))
+    l = (([↔]-elimₗ([∩]-containment{s₁ ∩ s₂}{s₃}{x}))                                                   :of: ((x ∈ ((s₁ ∩ s₂) ∩ s₃)) ← (x ∈ (s₁ ∩ s₂))∧(x ∈ s₃)))
+      ∘ ((prop ↦ ([∧]-intro ([↔]-elimₗ([∩]-containment{s₁}{s₂}{x}) ([∧]-elimₗ prop)) ([∧]-elimᵣ prop))) :of: ((x ∈ (s₁ ∩ s₂))∧(x ∈ s₃) ← ((x ∈ s₁)∧(x ∈ s₂))∧(x ∈ s₃)))
+      ∘ ([↔]-elimₗ [∧]-associativity)
+      ∘ ((prop ↦ ([∧]-intro ([∧]-elimₗ prop) ([↔]-elimᵣ([∩]-containment{s₂}{s₃}{x}) ([∧]-elimᵣ prop)))) :of: ((x ∈ s₁)∧((x ∈ s₂)∧(x ∈ s₃)) ← (x ∈ s₁)∧(x ∈ (s₂ ∩ s₃))))
+      ∘ (([↔]-elimᵣ([∩]-containment{s₁}{s₂ ∩ s₃}{x}))                                                   :of: ((x ∈ s₁)∧(x ∈ (s₂ ∩ s₃)) ← (x ∈ (s₁ ∩ (s₂ ∩ s₃)))))
+
+    r : (x ∈ ((s₁ ∩ s₂) ∩ s₃)) → (x ∈ (s₁ ∩ (s₂ ∩ s₃)))
+    r = (([↔]-elimₗ([∩]-containment{s₁}{s₂ ∩ s₃}{x}))                                                   :of: ((x ∈ s₁)∧(x ∈ (s₂ ∩ s₃)) → (x ∈ (s₁ ∩ (s₂ ∩ s₃)))))
+      ∘ ((prop ↦ ([∧]-intro ([∧]-elimₗ prop) ([↔]-elimₗ([∩]-containment{s₂}{s₃}{x}) ([∧]-elimᵣ prop)))) :of: ((x ∈ s₁)∧((x ∈ s₂)∧(x ∈ s₃)) → (x ∈ s₁)∧(x ∈ (s₂ ∩ s₃))))
+      ∘ ([↔]-elimᵣ [∧]-associativity)
+      ∘ ((prop ↦ ([∧]-intro ([↔]-elimᵣ([∩]-containment{s₁}{s₂}{x}) ([∧]-elimₗ prop)) ([∧]-elimᵣ prop))) :of: ((x ∈ (s₁ ∩ s₂))∧(x ∈ s₃) → ((x ∈ s₁)∧(x ∈ s₂))∧(x ∈ s₃)))
+      ∘ (([↔]-elimᵣ([∩]-containment{s₁ ∩ s₂}{s₃}{x}))                                                   :of: ((x ∈ ((s₁ ∩ s₂) ∩ s₃)) → (x ∈ (s₁ ∩ s₂))∧(x ∈ s₃)))
 
   -- -- -- -- -- -- -- -- -- -- -- -- -- --
   -- Other

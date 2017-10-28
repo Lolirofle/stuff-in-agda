@@ -63,6 +63,7 @@ import Operator.Equals
 import Relator.Bijection
 import Relator.Congruence
 import Relator.Equals
+import Relator.FunctionEquals
 import Sets.AdditiveSet
 import Sets.BoolSet
 import Sets.IZF

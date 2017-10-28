@@ -77,7 +77,7 @@ open import Logic.Propositional{ℓ}
 [→]-lift = liftₗ
 
 material-impl₁ : {X Y : Stmt} → ((¬ X) ∨ Y) → (X → Y)
-material-impl₁ = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([→]-lift [⊥]-elim) ([→]-intro)
+material-impl₁ = [∨]-elim ([→]-lift [⊥]-elim) ([→]-intro)
 -- ((¬ X) ∨ Y)
 -- ((X → ⊥) ∨ Y)
 -- ((X → ⊥) ∨ (X → Y))
@@ -95,7 +95,7 @@ material-impl₁ = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([→]-lift [⊥]-
 -- ?
 
 constructive-dilemma : {A B C D : Stmt} → (A → B) → (C → D) → (A ∨ C) → (B ∨ D)
-constructive-dilemma l r = ((Tuple.curry ∘ Tuple.curry) [∨]-elim) ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
+constructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
 
 -- destructive-dilemma : {A B C D : Stmt} → (A → B) → (C → D) → ((¬ B) ∨ (¬ D)) → ((¬ A) ∨ (¬ C))
 -- destructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
@@ -174,7 +174,7 @@ and-impl₂ f = Tuple.uncurry([¬¬]-intro ∘ f)
         -- ((X ∨ Y) → ⊥) → ((X → ⊥) ∧ (Y → ⊥))
 
         [¬]-[∨]₂ : {X Y : Stmt} → ((¬ X) ∧ (¬ Y)) → (¬ (X ∨ Y))
-        [¬]-[∨]₂ ([∧]-intro nx ny) or = [∨]-elim(nx , ny , or)
+        [¬]-[∨]₂ ([∧]-intro nx ny) = [∨]-elim nx ny
         -- ((¬ X) ∧ (¬ Y)) → (¬ (X ∨ Y))
         -- ((X → ⊥) ∧ (Y → ⊥)) → ((X ∨ Y) → ⊥)
         -- ((X → ⊥) ∧ (Y → ⊥)) → (X ∨ Y) → ⊥
@@ -208,4 +208,4 @@ non-contradiction(x , nx) = nx x
 [∧]-redundancy = [↔]-intro (x ↦ [∧]-intro(x)(x)) [∧]-elimₗ
 
 [∨]-redundancy : ∀{A : Stmt} → (A ∨ A) ↔ A
-[∨]-redundancy = [↔]-intro [∨]-introₗ (x ↦ [∨]-elim(id , id , x))
+[∨]-redundancy = [↔]-intro [∨]-introₗ (x ↦ [∨]-elim id id x)

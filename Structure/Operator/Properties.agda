@@ -59,11 +59,11 @@ AssociativityPattern {T₁} {T₂} {T₃} {Tᵣ₂} {Tᵣ₃} {Tᵣ} (_▫₁_) 
 
 DistributivityPatternₗ : {T₁ T₂ T₃ : Type} → (T₁ → T₂ → T₃) → (T₂ → T₂ → T₂) → (T₃ → T₃ → T₃) → Stmt
 DistributivityPatternₗ {T₁} {T₂} {T₃} (_▫₁_) (_▫₂_) (_▫₃_) =
-  ∀{x : T₁} {y z : T₂} → (x ▫₁ (y ▫₂ z)) ≡ (x ▫₁ y) ▫₃ (x ▫₁ z)
+  ∀{x : T₁} {y z : T₂} → (x ▫₁ (y ▫₂ z)) ≡ ((x ▫₁ y) ▫₃ (x ▫₁ z))
 
 DistributivityPatternᵣ : {T₁ T₂ T₃ : Type} → (T₁ → T₂ → T₃) → (T₁ → T₁ → T₁) → (T₃ → T₃ → T₃) → Stmt
 DistributivityPatternᵣ {T₁} {T₂} {T₃} (_▫₁_) (_▫₂_) (_▫₃_) =
-  ∀{x y : T₁} {z : T₂} → ((x ▫₂ y) ▫₁ z) ≡ (x ▫₁ z) ▫₃ (y ▫₁ z)
+  ∀{x y : T₁} {z : T₂} → ((x ▫₂ y) ▫₁ z) ≡ ((x ▫₁ z) ▫₃ (y ▫₁ z))
 
 ---------------------------------------------------------
 -- Derived
@@ -92,9 +92,9 @@ Distributivityᵣ {T₁} {T₂} (_▫₁_) (_▫₂_) = DistributivityPatternᵣ
 -- Functions
 
 -- Returns a commuted LHS of an equality
-commuteₗ : ∀{T _▫_ x y z} → {{_ : Commutativity {T} {T} (_▫_)}} → (x ▫ y ≡ z) → (y ▫ x ≡ z)
+commuteₗ : ∀{T}{_▫_}{x y z} → {{_ : Commutativity {T} {T} (_▫_)}} → ((x ▫ y) ≡ z) → ((y ▫ x) ≡ z)
 commuteₗ {{comm}} stmt = comm 🝖 stmt
 
 -- Returns a commuted RHS of an equality
-commuteᵣ : ∀{T _▫_ x y z} → {{_ : Commutativity {T} {T} (_▫_)}} → (z ≡ x ▫ y) → (z ≡ y ▫ x)
+commuteᵣ : ∀{T}{_▫_}{x y z} → {{_ : Commutativity {T} {T} (_▫_)}} → (z ≡ (x ▫ y)) → (z ≡ (y ▫ x))
 commuteᵣ {{comm}} stmt = stmt 🝖 comm

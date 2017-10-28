@@ -109,13 +109,8 @@ Uniqueness {T} property = ∀{x y : T} → (property(x) ∧ property(y)) → (x 
 [≡]-function-application : ∀{A B : Type}{f₁ f₂ : A → B} → (f₁ ≡ f₂) → (∀{x} → (f₁(x) ≡ f₂(x)))
 [≡]-function-application [≡]-intro = [≡]-intro
 
--- TODO: This seems to require extensional equality with functions. Create a new equality relation with an additional constructor for this case.
-FunctionEquality = ∀{A B : Type}{f₁ f₂ : A → B} → (∀{x} → (f₁(x) ≡ f₂(x))) → (f₁ ≡ f₂)
-{-
-[≡]-functionₗ : FunctionEquality(_≡_)
-[≡]-functionₗ (f₁x≡f₂x) = [≡]-intro
-
-data _≡ᶠ_ : ∀{T : Type} → T → T → Stmt where
-  [≡ᶠ]-intro : ∀{T : Type}{x : T} → (x ≡ᶠ x)
-  [≡ᶠ]-function : ∀{A B : Type}{f₁ f₂ : A → B} → (∀{x} → (f₁(x) ≡ᶠ f₂(x))) → (f₁ ≡ᶠ f₂)
--}
+-- I think this is called "Extentional equality" and cannot be proved?
+-- See:
+--   https://www.reddit.com/r/agda/comments/4te0rg/functors_extensional_equality_and_function/
+--   https://mathoverflow.net/questions/156238/function-extensionality-does-it-make-a-difference-why-would-one-keep-it-out-of
+-- [≡]-function : ∀{T₁ T₂ : Type}{f₁ f₂ : T₁ → T₂) → (∀{x} → (f₁(x) ≡ f₂(x))) → (f₁ ≡ f₂)

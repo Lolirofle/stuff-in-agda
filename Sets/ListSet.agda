@@ -81,7 +81,7 @@ module [∈]-proof where
 
   instance
     [∈][++]-duplicate : ∀{a}{L} → (a ∈ (L ++ L)) → (a ∈ L)
-    [∈][++]-duplicate {a}{L} (a∈LL) = [∨]-elim (id , id , ([∈]-of-[++]ᵣ {a} {L}{L} (a∈LL)))
+    [∈][++]-duplicate {a}{L} (a∈LL) = [∨]-elim id id ([∈]-of-[++]ᵣ {a} {L}{L} (a∈LL))
 
   instance
     [∈][++]-expandₗ : ∀{a}{L₁ L₂} → (a ∈ L₂) → (a ∈ (L₁ ++ L₂))
@@ -93,7 +93,7 @@ module [∈]-proof where
 
   instance
     [∈][⊰]-reorderₗ : ∀{a x}{L₁ L₂} → (a ∈ (L₁ ++ (x ⊰ L₂))) → (a ∈ (x ⊰ (L₁ ++ L₂)))
-    [∈][⊰]-reorderₗ {a}{x}{L₁}{L₂} (a∈L₁++xL₂) = [∨]-elim (left , right , [∈]-of-[++]ᵣ (a∈L₁++xL₂)) where
+    [∈][⊰]-reorderₗ {a}{x}{L₁}{L₂} (a∈L₁++xL₂) = [∨]-elim left right ([∈]-of-[++]ᵣ (a∈L₁++xL₂)) where
       left : (a ∈ L₁) → (a ∈ (x ⊰ (L₁ ++ L₂)))
       left (a∈L₁) = [∈][⊰]-expand ([∈][++]-expandᵣ (a∈L₁))
 
