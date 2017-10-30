@@ -50,7 +50,7 @@ module [∈]-proof where
 
   instance
     [∉]-singleton-[≢] : ∀{a b} → (a [≢] b) → (a ∉ ([ b ]))
-    [∉]-singleton-[≢] = contrapositive₁ [∈]-singleton-[≡]
+    [∉]-singleton-[≢] = contrapositiveᵣ [∈]-singleton-[≡]
 
   instance
     [∈]-of-[++]ᵣ : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → ((a ∈ L₁)∨(a ∈ L₂))

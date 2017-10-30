@@ -5,7 +5,7 @@ open import Functional
 import      Lvl
 open import Type
 
-infixl 1010 ¬_
+infixl 1010 ¬_ ¬¬_
 infixl 1005 _∧_
 infixl 1004 _∨_
 infixl 1000 _↔_
@@ -36,7 +36,7 @@ pattern [∧]-intro x y = x , y
 [→]-elim : {X Y : Stmt} → X → (X → Y) → Y
 [→]-elim = apply
 
-[→]-intro : {X Y : Stmt} → Y → (X → Y)
+[→]-intro : {X Y : Stmt} → Y → (X → Y) -- TODO: Not really like [→]-intro in ND. This do not introduce a new variable.
 [→]-intro = const
 
 ------------------------------------------
@@ -106,6 +106,9 @@ pattern [⊤]-intro = <>
 
 [¬]-elim : {X : Stmt} → (¬ X) → (X → ⊥) -- written like (X → (¬ X) → ⊥) looks like a [⊥]-intro
 [¬]-elim = id
+
+¬¬_ : Stmt → Stmt
+¬¬ x = ¬(¬ x)
 
 ------------------------------------------
 -- Exclusive disjunction (XOR)

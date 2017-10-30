@@ -24,9 +24,10 @@ import List
 import List.Properties
 import List.Relation
 import List.Theorems
-import Logic.Classic.Propositional.ProofSystem
-import Logic.Classic.Propositional.Semantics
-import Logic.Classic.Propositional.Syntax
+import Logic.Meta.Classic.Propositional.ProofSystem
+import Logic.Meta.Classic.Propositional.Semantics
+import Logic.Meta.Classic.Propositional.Syntax
+import Logic.Classic.Propositional
 import Logic.Convenience
 import Logic.DiagonalProof
 import Logic.LambdaCalculus

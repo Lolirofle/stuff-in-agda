@@ -126,14 +126,3 @@ module Oper {Σ} where
   alphabet-filter : ∀{s} → (Σ → Bool) → Language(Σ){s}
   Language.accepts-ε   (alphabet-filter f) = 𝐹
   Language.suffix-lang (alphabet-filter f) = (c ↦ if f(c) then (ε) else (∅))
-
-module TestOnOffSwitch where
-  data Σ : Alphabet where
-    Push : Σ
-
-module TestVendingMachine where
-  data Σ : Alphabet where
-    OutputTea    : Σ
-    OutputCoffee : Σ
-    Input5kr     : Σ
-    Input10kr    : Σ

@@ -62,5 +62,6 @@ record VectorSpace (V S : Type) (_+ᵥ_ : V → V → V) (_⋅ₛᵥ_ : S → V 
     [⋅ₛᵥ][+ₛ][+ᵥ]-distributivity : DistributivityPatternᵣ(_⋅ₛᵥ_)(_+ₛ_)(_+ᵥ_)
 
   module Theorems where
-    postulate [⋅ₛᵥ]-absorber : ∀{v} → (𝟎ₛ ⋅ₛᵥ v ≡ 𝟎ᵥ)
+    postulate [⋅ₛᵥ]-absorberₗ : ∀{v} → (𝟎ₛ ⋅ₛᵥ v ≡ 𝟎ᵥ)
+    postulate [⋅ₛᵥ]-absorberᵣ : ∀{s} → (s ⋅ₛᵥ 𝟎ᵥ ≡ 𝟎ᵥ)
     postulate [⋅ₛᵥ]-negation : ∀{v} → ((−₁ₛ 𝟏ₛ) ⋅ₛᵥ v ≡ −₁ᵥ v)

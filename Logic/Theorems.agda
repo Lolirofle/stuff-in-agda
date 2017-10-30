@@ -4,12 +4,16 @@ open import Data
 open import Functional
 open import Functional.Raise
 open import Logic.Propositional{ℓ}
+open import Type
 
 [↔]-reflexivity : {X : Stmt} → (X ↔ X)
 [↔]-reflexivity = [↔]-intro id id
 
 [↔]-transitivity : ∀{X Y Z : Stmt} → (X ↔ Y) → (Y ↔ Z) → (X ↔ Z)
 [↔]-transitivity {X}{Y}{Z} ([↔]-intro yx xy) ([↔]-intro zy yz) = [↔]-intro (yx ∘ zy) (yz ∘ xy)
+
+[∧]-transitivity : ∀{X Y Z : Stmt} → (X ∧ Y) → (Y ∧ Z) → (X ∧ Z)
+[∧]-transitivity ([∧]-intro x _) ([∧]-intro _ z) = [∧]-intro x z
 
 ------------------------------------------
 -- Commutativity
@@ -100,11 +104,11 @@ constructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘
 -- destructive-dilemma : {A B C D : Stmt} → (A → B) → (C → D) → ((¬ B) ∨ (¬ D)) → ((¬ A) ∨ (¬ C))
 -- destructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
 
-contrapositive₁ : {X Y : Stmt} → (X → Y) → ((¬ X) ← (¬ Y))
-contrapositive₁ = [→]-syllogism
--- contrapositive₁ f ny = ny ∘ f
+contrapositiveᵣ : {X Y : Stmt} → (X → Y) → ((¬ X) ← (¬ Y))
+contrapositiveᵣ = [→]-syllogism
+-- contrapositiveᵣ f ny = ny ∘ f
 
-contrapositive₂ : {X Y : Stmt} → (X → (¬ (¬ Y))) ← ((¬ X) ← (¬ Y)) -- TODO: At least this works? Or am I missing something?
+contrapositive₂ : {X Y : Stmt} → (X → (¬¬ Y)) ← ((¬ X) ← (¬ Y)) -- TODO: At least this works? Or am I missing something?
 contrapositive₂ nf x = (swap nf) x
 -- (¬ X) ← (¬ Y)
 -- (¬ Y) → (¬ X)
@@ -115,21 +119,24 @@ contrapositive₂ nf x = (swap nf) x
 -- X → (¬ (Y → ⊥))
 -- X → (¬ (¬ Y))
 
-contrapositive₃ : {X Y : Stmt} → (X → (¬ Y)) → ((¬ X) ← Y)
+contrapositive₃ : {X Y : Stmt} → (X → (¬ Y)) → ((¬ X) ← Y) -- TODO: Generalized variant of contrapositive₂
 contrapositive₃ nf x = (swap nf) x
 
 modus-tollens : {X Y : Stmt} → (X → Y) → (¬ Y) → (¬ X)
-modus-tollens = contrapositive₁
+modus-tollens = contrapositiveᵣ
 
-[¬¬]-intro : {X : Stmt} → X → (¬ (¬ X))
+double-contrapositiveᵣ : {X Y : Stmt} → (X → Y) → ((¬¬ X) → (¬¬ Y))
+double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
+
+[¬¬]-intro : {X : Stmt} → X → (¬¬ X)
 [¬¬]-intro = apply
 -- X → (X → ⊥) → ⊥
 
 [¬¬¬]-elim : {X : Stmt} → (¬ (¬ (¬ X))) → (¬ X)
-[¬¬¬]-elim = contrapositive₁ [¬¬]-intro
+[¬¬¬]-elim = contrapositiveᵣ [¬¬]-intro
 -- (((X → ⊥) → ⊥) → ⊥) → (X → ⊥)
 -- (((X → ⊥) → ⊥) → ⊥) → X → ⊥
---   (A → B) → ((B → ⊥) → (A → ⊥)) //contrapositive₁
+--   (A → B) → ((B → ⊥) → (A → ⊥)) //contrapositiveᵣ
 --   (A → B) → (B → ⊥) → (A → ⊥)
 --   (A → B) → (B → ⊥) → A → ⊥
 --   (X → ((X → ⊥) → ⊥)) → (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //A≔X , B≔((X → ⊥) → ⊥)
@@ -140,8 +147,32 @@ modus-tollens = contrapositive₁
 --   (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //[→]-elim (Combining those two)
 --   (((X → ⊥) → ⊥) → ⊥) → (X → ⊥)
 
-and-impl₁ : {X Y : Stmt} → ¬(X ∧ (¬ Y)) → (X → ¬(¬ Y))
-and-impl₁ = Tuple.curry
+[→]ₗ-[¬¬]-elim : {X Y : Stmt} → ((¬¬ X) → Y) → (X → Y)
+[→]ₗ-[¬¬]-elim = liftᵣ([¬¬]-intro)
+
+[→]ᵣ-[¬¬]-move-out  : ∀{X Y : Stmt} → (X → (¬¬ Y)) → ¬¬(X → Y)
+[→]ᵣ-[¬¬]-move-out {X}{Y} (xnny) =
+  (nxy ↦
+    ([→]-elim
+      ((x ↦
+        (([⊥]-elim
+          (([→]-elim
+            ((y ↦
+              (([→]-elim
+                (([→]-intro y) :of: (X → Y))
+                (nxy           :of: ¬(X → Y))
+              ) :of: ⊥)
+            ) :of: (¬ Y))
+            (([→]-elim x xnny) :of: (¬¬ Y))
+          ) :of: ⊥)
+        ) :of: Y)
+      ) :of: (X → Y))
+      (nxy :of: ¬(X → Y))
+    )
+  )
+
+[→][∧]ₗ : {X Y : Stmt} → (X → (¬¬ Y)) ← ¬(X ∧ (¬ Y))
+[→][∧]ₗ = Tuple.curry
 -- ¬(A ∧ ¬B) → (A → ¬¬B)
 --   ¬(A ∧ (¬ B)) //assumption
 --   ((A ∧ (B → ⊥)) → ⊥) //Definition: (¬)
@@ -149,32 +180,32 @@ and-impl₁ = Tuple.curry
 --   (A → ¬(B → ⊥)) //Definition: (¬)
 --   (A → ¬(¬ B)) //Definition: (¬)
 
-and-impl₂ : {X Y : Stmt} → (X → Y) → ¬(X ∧ (¬ Y))
-and-impl₂ f = Tuple.uncurry([¬¬]-intro ∘ f)
+[→][∧]ᵣ : {X Y : Stmt} → (X → Y) → ¬(X ∧ (¬ Y))
+[→][∧]ᵣ f = Tuple.uncurry([¬¬]-intro ∘ f)
 
 ------------------------------------------
 -- Almost-distributivity with duals (De-morgan's laws)
 
--- [¬]-[∧]₁ : {X Y : Stmt} → (¬ (X ∧ Y)) → ((¬ X) ∨ (¬ Y))
--- [¬]-[∧]₁ n = -- TODO: Not possible in constructive logic? Seems to require ¬¬X=X?
+-- [¬][∧]ₗ : {X Y : Stmt} → ((¬ X) ∨ (¬ Y)) ← (¬ (X ∧ Y))
+-- [¬][∧]ₗ n = -- TODO: Not possible in constructive logic? Seems to require ¬¬X=X?
 -- ((X ∧ Y) → ⊥) → ((X → ⊥) ∨ (Y → ⊥))
 -- ¬((X ∧ Y) → ⊥) ← ¬((X → ⊥) ∨ (Y → ⊥))
 
-[¬]-[∧]₂ : {X Y : Stmt} → ((¬ X) ∨ (¬ Y)) → (¬ (X ∧ Y))
-[¬]-[∧]₂ ([∨]-introₗ nx) = nx ∘ [∧]-elimₗ
-[¬]-[∧]₂ ([∨]-introᵣ ny) = ny ∘ [∧]-elimᵣ
+[¬][∧]ᵣ : {X Y : Stmt} → ((¬ X) ∨ (¬ Y)) → (¬ (X ∧ Y))
+[¬][∧]ᵣ ([∨]-introₗ nx) = nx ∘ [∧]-elimₗ
+[¬][∧]ᵣ ([∨]-introᵣ ny) = ny ∘ [∧]-elimᵣ
 -- (X → ⊥) → (X ∧ Y) → ⊥
 -- (Y → ⊥) → (X ∧ Y) → ⊥
 
-[¬]-[∨] : {X Y : Stmt} → ((¬ X) ∧ (¬ Y)) ↔ (¬ (X ∨ Y))
-[¬]-[∨] = [↔]-intro [¬]-[∨]₁ [¬]-[∨]₂
-  where [¬]-[∨]₁ : {X Y : Stmt} → (¬ (X ∨ Y)) → ((¬ X) ∧ (¬ Y))
-        [¬]-[∨]₁ f = [∧]-intro (f ∘ [∨]-introₗ) (f ∘ [∨]-introᵣ)
+[¬][∨] : {X Y : Stmt} → ((¬ X) ∧ (¬ Y)) ↔ (¬ (X ∨ Y))
+[¬][∨] = [↔]-intro [¬][∨]₁ [¬][∨]₂
+  where [¬][∨]₁ : {X Y : Stmt} → (¬ (X ∨ Y)) → ((¬ X) ∧ (¬ Y))
+        [¬][∨]₁ f = [∧]-intro (f ∘ [∨]-introₗ) (f ∘ [∨]-introᵣ)
         -- (¬ (X ∨ Y)) → ((¬ X) ∧ (¬ Y))
         -- ((X ∨ Y) → ⊥) → ((X → ⊥) ∧ (Y → ⊥))
 
-        [¬]-[∨]₂ : {X Y : Stmt} → ((¬ X) ∧ (¬ Y)) → (¬ (X ∨ Y))
-        [¬]-[∨]₂ ([∧]-intro nx ny) = [∨]-elim nx ny
+        [¬][∨]₂ : {X Y : Stmt} → ((¬ X)∧(¬ Y)) → ¬(X ∨ Y)
+        [¬][∨]₂ ([∧]-intro nx ny) = [∨]-elim nx ny
         -- ((¬ X) ∧ (¬ Y)) → (¬ (X ∨ Y))
         -- ((X → ⊥) ∧ (Y → ⊥)) → ((X ∨ Y) → ⊥)
         -- ((X → ⊥) ∧ (Y → ⊥)) → (X ∨ Y) → ⊥
@@ -183,23 +214,26 @@ and-impl₂ f = Tuple.uncurry([¬¬]-intro ∘ f)
 ------------------------------------------
 -- Conjunction and implication (Tuples and functions)
 
-[∧]↔[→]-in-assumption : {X Y Z : Stmt} → ((X ∧ Y) → Z) ↔ (X → Y → Z)
-[∧]↔[→]-in-assumption = [↔]-intro Tuple.uncurry Tuple.curry
+[→][∧]-assumption : {X Y Z : Stmt} → ((X ∧ Y) → Z) ↔ (X → Y → Z)
+[→][∧]-assumption = [↔]-intro Tuple.uncurry Tuple.curry
 
-[→]-left-distributivity-over-[∧] : {X Y Z : Stmt} → (X → (Y ∧ Z)) ↔ ((X → Y) ∧ (X → Z))
-[→]-left-distributivity-over-[∧] = [↔]-intro [→]-left-distributivity-over-[∧]₁ [→]-left-distributivity-over-[∧]₂
-  where [→]-left-distributivity-over-[∧]₁ : {X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) → (X → (Y ∧ Z))
-        [→]-left-distributivity-over-[∧]₁ ([∧]-intro xy xz) x = [∧]-intro (xy(x)) (xz(x))
+[→][∧]-distributivityₗ : {X Y Z : Stmt} → (X → (Y ∧ Z)) ↔ ((X → Y) ∧ (X → Z))
+[→][∧]-distributivityₗ = [↔]-intro [→][∧]-distributivityₗ₁ [→][∧]-distributivityₗ₂
+  where [→][∧]-distributivityₗ₁ : {X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) → (X → (Y ∧ Z))
+        [→][∧]-distributivityₗ₁ ([∧]-intro xy xz) x = [∧]-intro (xy(x)) (xz(x))
 
-        [→]-left-distributivity-over-[∧]₂ : {X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) ← (X → (Y ∧ Z))
-        [→]-left-distributivity-over-[∧]₂ both = [∧]-intro ([∧]-elimₗ ∘ both) ([∧]-elimᵣ ∘ both)
+        [→][∧]-distributivityₗ₂ : {X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) ← (X → (Y ∧ Z))
+        [→][∧]-distributivityₗ₂ both = [∧]-intro ([∧]-elimₗ ∘ both) ([∧]-elimᵣ ∘ both)
 
 -- (X ∧ Y) ∨ (X ∧ Z)
 -- X → (Y ∨ Z)
 -- X ∨ (Y ∧ Z)
 
-non-contradiction : ∀{X : Stmt} → ¬ (X ∧ (¬ X))
+non-contradiction : ∀{X : Stmt} → ¬(X ∧ (¬ X))
 non-contradiction(x , nx) = nx x
+
+------------------------------------------
+-- Redundant formulas in operations
 
 [→]-redundancy : ∀{A B : Stmt} → (A → A → B) → (A → B)
 [→]-redundancy(f)(a) = f(a)(a)
