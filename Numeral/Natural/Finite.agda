@@ -22,7 +22,7 @@ open import Type
 --       The smallest upper bound that can be is 0 (from using ℕ and its definition).
 --       This limits how many successors (Finite-𝐒) that can "fit".
 data Finite-ℕ : ℕ → Set where
-  Finite-𝟎 : ∀{n} → Finite-ℕ(n)                   -- Zero
+  Finite-𝟎 : ∀{n} → Finite-ℕ(n)                  -- Zero
   Finite-𝐒 : ∀{n} → Finite-ℕ(n) → Finite-ℕ(𝐒(n)) -- Successor function
 {-# INJECTIVE Finite-ℕ #-}
 
