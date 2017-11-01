@@ -196,6 +196,16 @@ module _ where
   [¬]-elim = [→]₁-intro(Constructive.[¬]-elim)
 
   ------------------------------------------
+  -- For-all quantification
+
+  -- [∀]-intro : ∀{P} → (∀{x} → Classic(P(x))) → Classic(∀{x} → P(x))
+  -- [∀]-intro = [→]₁-intro(Constructive.[¬]-intro)
+    -- (∀x. ¬¬P(x)) → (¬¬∀x. P(x))
+    -- (∀x. ¬¬P(x)) → (¬¬∀x. P(x))
+
+  -- postulate [∀]-elim : ∀{P} → Classic(∀{x} → P(x)) → ∀{x} → Classic(P(x))
+
+  ------------------------------------------
   -- Theorems exclusive to classic logic (compared to constructive logic)
 
   [¬¬]-elim : ∀{X} → Classic(¬¬ X) → Classic(X)
