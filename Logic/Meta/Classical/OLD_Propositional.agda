@@ -1,4 +1,4 @@
-module Logic.Classic.Propositional where
+module Logic.Classical.Propositional where
 
 open import Boolean
 open import Data

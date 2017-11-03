@@ -1,4 +1,4 @@
-module Logic.Meta.Classic.Propositional.Semantics {ℓ} (Prop : Set(ℓ)) where
+module Logic.Meta.Classical.Propositional.Semantics {ℓ} (Prop : Set(ℓ)) where
 
 import      Lvl
 open import Boolean
@@ -6,7 +6,7 @@ open import Data
 open import Functional
 open import List
 open import Sets.ListSet{ℓ}{ℓ}
-open import Logic.Meta.Classic.Propositional.Syntax{ℓ} (Prop)
+open import Logic.Meta.Classical.Propositional.Syntax{ℓ} (Prop)
   renaming (
     ⊤   to ⊤ₗ ;
     ⊥   to ⊥ₗ ;

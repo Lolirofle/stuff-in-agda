@@ -1,4 +1,4 @@
-module Logic.Meta.Classic.Propositional.ProofSystem {ℓₚ} (Prop : Set(ℓₚ)) where
+module Logic.Meta.Classical.Propositional.ProofSystem {ℓₚ} (Prop : Set(ℓₚ)) where
 
 import      Lvl
 open import Data
@@ -7,7 +7,7 @@ open        List using (List ; ∅ ; _⊰_ ; _++_ ; [_ ; _])
 import      Sets.ListSet
 open        Sets.ListSet{ℓₚ}{ℓₚ}
 open        Sets.ListSet.Relators{ℓₚ}{ℓₚ}
-open import Logic.Meta.Classic.Propositional.Syntax(Prop)
+open import Logic.Meta.Classical.Propositional.Syntax(Prop)
 open import Functional
 
 module Meta (_⊢_ : List(Formula) → Formula → Set(ℓₚ)) where

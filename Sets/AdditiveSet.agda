@@ -3,7 +3,7 @@ module Sets.AdditiveSet {ℓ₁} {ℓ₂} where
 import      Lvl
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Logic.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
+open import Logic.Propositional.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
 import      Relator.Equals{ℓ₁}{ℓ₂} as Eq
 open import Type{ℓ₂}
 

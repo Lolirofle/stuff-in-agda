@@ -1,9 +1,9 @@
-module Logic.Classic.Propositional {ℓ} where
+module Logic.Classical.Propositional {ℓ} where
 
 open import Data
 open import Functional
 import      Logic.Propositional{ℓ} as Constructive
-import      Logic.Theorems{ℓ}      as ConstructiveTheorems
+import      Logic.Propositional.Theorems{ℓ}      as ConstructiveTheorems
 import      Lvl
 open import Type
 

@@ -1,4 +1,4 @@
-module Logic.Theorems {ℓ} where
+module Logic.Propositional.Theorems {ℓ} where
 
 open import Data
 open import Functional

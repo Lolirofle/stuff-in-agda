@@ -2,7 +2,7 @@ import      Lvl
 open import Functional
 open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
-open import Logic.Theorems{Lvl.𝟎}
+open import Logic.Propositional.Theorems{Lvl.𝟎}
 open import Type{Lvl.𝟎}
 
 -- Based on https://plato.stanford.edu/entries/set-theory-constructive/axioms-CZF-IZF.html (2017-10-13)
@@ -110,21 +110,21 @@ module Operations ⦃ _ : ConstructionAxioms ⦄ where
 
   -- Definition of the usual "set builder notation": {x∊s. φ(x)} for some set s
   -- This can be used to construct a set that is the subset which satisfies a certain predicate for every element.
-  subset : S → (S → Stmt) → S
-  subset(s)(φ) = [∃]-extract(separation{s}{φ})
+  filter : S → (S → Stmt) → S
+  filter(s)(φ) = [∃]-extract(separation{s}{φ})
 
   -- Definition of the intersection of two sets: s₁∩s₂ for two sets s₁ and s₂
   -- This can be used to construct a set that contains all elements that only are in both sets.
   _∩_ : S → S → S
-  _∩_ (s₁)(s₂) = subset(s₁)(x ↦ (x ∈ s₂))
+  _∩_ (s₁)(s₂) = filter(s₁)(x ↦ (x ∈ s₂))
 
   -- Definition of the intersection of a set of sets: ⋃(ss) for a set of sets ss
   -- This can be used to construct a set that contains all elements that only are in all of the sets.
   -- reduce-[∪] : S → S
-  -- reduce-[∪] ss = subset(s₁)(x ↦ (x ∈ s₂))
+  -- reduce-[∪] ss = filter(s₁)(x ↦ (x ∈ s₂))
 
   _∖_ : S → S → S
-  _∖_ (s₁)(s₂) = subset(s₁)(_∉ s₂)
+  _∖_ (s₁)(s₂) = filter(s₁)(_∉ s₂)
 
 module OperationsTheorems ⦃ _ : ConstructionAxioms ⦄ where
   open ConstructionAxioms ⦃ ... ⦄
@@ -151,8 +151,8 @@ module OperationsTheorems ⦃ _ : ConstructionAxioms ⦄ where
   [⟒]-containmentᵣ : ∀{x₁ x₂} → (x₂ ∈ (x₁ ⟒ x₂))
   [⟒]-containmentᵣ{x₁}{x₂} = [↔]-elimₗ([∃]-property(pair{x₁}{x₂})) ([∨]-introᵣ([≡]-reflexivity))
 
-  subset-containment : ∀{s}{φ}{x} → (x ∈ subset(s)(φ)) ↔ ((x ∈ s) ∧ φ(x))
-  subset-containment{s} = [∃]-property(separation)
+  filter-containment : ∀{s}{φ}{x} → (x ∈ filter(s)(φ)) ↔ ((x ∈ s) ∧ φ(x))
+  filter-containment{s} = [∃]-property(separation)
 
   [∪]-containment : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∪ s₂)) ↔ (x ∈ s₁)∨(x ∈ s₂)
   [∪]-containment = [↔]-intro [∪]-containmentₗ [∪]-containmentᵣ where
@@ -160,7 +160,7 @@ module OperationsTheorems ⦃ _ : ConstructionAxioms ⦄ where
     postulate [∪]-containmentᵣ : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∪ s₂)) → (x ∈ s₁)∨(x ∈ s₂)
 
   [∩]-containment : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∩ s₂)) ↔ (x ∈ s₁)∧(x ∈ s₂)
-  [∩]-containment = subset-containment
+  [∩]-containment = filter-containment
 
   [℘]-containment : ∀{s sₛ} → (sₛ ⊆ s) ↔ (sₛ ∈ ℘(s))
   [℘]-containment{s} = [↔]-commutativity([∃]-property(power{s}))
@@ -182,8 +182,8 @@ module OperationsTheorems ⦃ _ : ConstructionAxioms ⦄ where
 
   postulate [℘]-subset : ∀{s₁ s₂} → (s₁ ⊆ s₂) → (℘(s₁) ⊆ ℘(s₂))
 
-  subset-subset : ∀{s}{φ} → (subset(s)(φ) ⊆ s)
-  subset-subset{s}{φ} {x}(x∈s) = [∧]-elimₗ([↔]-elimᵣ([∃]-property(separation{s}{φ}))(x∈s))
+  filter-subset : ∀{s}{φ} → (filter(s)(φ) ⊆ s)
+  filter-subset{s}{φ} {x}(x∈s) = [∧]-elimₗ([↔]-elimᵣ([∃]-property(separation{s}{φ}))(x∈s))
 
   -- TODO: Does this hold: Empty(s) ∨ NonEmpty(s) ? Probably not
 

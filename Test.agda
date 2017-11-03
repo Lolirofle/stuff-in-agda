@@ -290,7 +290,7 @@ module testTransitivity where
 -- module testPropositionalLogic where
 --   open import Functional
 --   open import Logic.Propositional{Lvl.𝟎}
---   module Propositional = Logic.Classic.Propositional
+--   module Propositional = Logic.Classical.Propositional
 --   open import Type{Lvl.𝟎}
 -- 
 --   symbols : ∀{T : Set(Lvl.𝟎)} → Propositional.Syntax.Symbols T (const (Set(Lvl.𝟎)))

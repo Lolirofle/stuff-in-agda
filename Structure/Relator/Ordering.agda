@@ -5,7 +5,7 @@ open import Data
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}
-open import Logic.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
+open import Logic.Propositional.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
 open import Sets.Subset{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
   hiding (antisymmetry ; asymmetry ; transitivity ; reflexivity ; irreflexivity)

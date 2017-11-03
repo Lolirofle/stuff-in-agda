@@ -138,7 +138,7 @@ open Asymmetry {{...}} public
 -- (_ ≡ (a + a) + (1 + 1)) [Trans: [+]-associativity                 with [≡]-transitivity]
 
 module Theorems where
-  open import Logic.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
+  open import Logic.Propositional.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
 
   [asymmetry]-to-irreflexivity : ∀{T}{_<_} → {{_ : Asymmetry{T}(_<_)}} → Irreflexivity{T}(_<_)
   irreflexivity{{[asymmetry]-to-irreflexivity}} = [→]-redundancy(asymmetry)

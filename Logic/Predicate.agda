@@ -8,9 +8,11 @@ open import Type{ℓ₂}
 ------------------------------------------
 -- Existential quantification
 
-data ∃ {X : Type} (Pred : X → Stmt) : Stmt where
-  instance
-    [∃]-intro : (x : X) → Pred(x) → ∃ Pred
+record ∃ {X : Type} (Pred : X → Stmt) : Stmt where
+  constructor [∃]-intro
+  field
+    element   : X
+    predicate : Pred(element)
 
 [∃]-extract : ∀{X}{Pred} → ∃{X}(Pred) → X
 [∃]-extract([∃]-intro(x)(_)) = x
@@ -21,14 +23,11 @@ data ∃ {X : Type} (Pred : X → Stmt) : Stmt where
 [∃]-elim : ∀{X}{Pred}{Z : Stmt} → (∀{x : X} → Pred(x) → Z) → (∃{X} Pred) → Z
 [∃]-elim (f) ([∃]-intro _ stmt) = f stmt
 
-syntax ∃ {X} (λ x → f) = ∃[ x ∈ X ] f
--- syntax ∃ (λ x → f) = ∃[ x ] f
+-- syntax ∃ {X} (λ x → f) = ∃[ x ∊ X ] f
+-- syntax ∃     (λ x → f) = ∃[ x ] f
 
-[∀]-elim : ∀{X : Stmt}{Pred : X → Stmt} → (∀{x : X} → Pred(x)) → ∀{a : X} → Pred(a)
+∀ₗ : ∀{X : Type} → (Pred : X → Stmt) → Stmt
+∀ₗ (Pred) = (∀{x} → Pred(x))
+
+[∀]-elim : ∀{X : Type}{Pred : X → Stmt} → (∀{x : X} → Pred(x)) → ∀{a : X} → Pred(a)
 [∀]-elim p{a} = p{a}
-
-module PredicateTheorems where
-  open import Functional
-
-  [∀]-to-[∃] : ∀{X}{P : X → Stmt} → (∀{x} → P(x)) → ¬(∃(x ↦ ¬(P(x))))
-  [∀]-to-[∃]{P} (p)(ep) = [∃]-elim(\{a} → npa ↦ npa(p{a}))(ep)
