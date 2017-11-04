@@ -7,6 +7,7 @@ import Automaton.TuringMachine
 import Boolean
 import Boolean.Theorems
 import Boolean.Operators
+import Category.Meta
 import Data
 import Data.Tuple.List
 import FFI.IO   as FFI
@@ -29,6 +30,7 @@ import Logic.Meta.Classical.Propositional.Semantics
 import Logic.Meta.Classical.Propositional.Syntax
 import Logic.Classical.NaturalDeduction
 import Logic.Classical.Propositional
+import Logic.Classical.SetTheory.ZFC
 import Logic.Convenience
 import Logic.DiagonalProof
 import Logic.LambdaCalculus

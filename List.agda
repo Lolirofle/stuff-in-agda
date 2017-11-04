@@ -3,7 +3,7 @@ module List where
 open import Boolean
 import      Boolean.Operators
 open        Boolean.Operators.Programming
-open import Data
+open import Data hiding (empty)
 open import Functional
 open import Numeral.Natural
 open import Type

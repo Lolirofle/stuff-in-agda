@@ -7,8 +7,8 @@ open import Type
 data Empty {ℓ} : Type{ℓ} where
 
 -- Empty function
-empty-fn : ∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}} → Empty{ℓ₂} → T
-empty-fn ()
+empty : ∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}} → Empty{ℓ₂} → T
+empty ()
 
 -- The unit type which can only be constructed in one way
 record Unit {ℓ} : Type{ℓ} where

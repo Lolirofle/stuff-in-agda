@@ -85,7 +85,7 @@ pattern [∨]-introᵣ r = Either.Right r
 [⊥]-intro = apply
 
 [⊥]-elim : {X : Stmt} → ⊥ → X
-[⊥]-elim = empty-fn
+[⊥]-elim = empty
 
 ------------------------------------------
 -- Top (true, truth, unit, validity)

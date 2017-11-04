@@ -1,7 +1,7 @@
 module Logic.Meta.Classical.Propositional.ProofSystem {ℓₚ} (Prop : Set(ℓₚ)) where
 
 import      Lvl
-open import Data
+open import Data hiding (empty)
 import      List
 open        List using (List ; ∅ ; _⊰_ ; _++_ ; [_ ; _])
 import      Sets.ListSet
