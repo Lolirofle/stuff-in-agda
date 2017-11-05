@@ -5,6 +5,7 @@ open import List
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}
 
 -- Statement of whether a list is contained in the beginning of another list

@@ -9,6 +9,8 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Proof
 open import Numeral.Natural.Relation
 open import Relator.Equals{ℓ}{Lvl.𝟎}
+open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
+open import Relator.Equals.Uniqueness{ℓ}{Lvl.𝟎}
 open import Structure.Function.Domain{ℓ}
 open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}

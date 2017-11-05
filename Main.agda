@@ -68,6 +68,8 @@ import Operator.Equals
 import Relator.Bijection
 import Relator.Congruence
 import Relator.Equals
+import Relator.Equals.Theorems
+import Relator.Equals.Uniqueness
 import Relator.FunctionEquals
 import Sets.AdditiveSet
 import Sets.BoolSet

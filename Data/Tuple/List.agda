@@ -32,9 +32,10 @@ tail{_}{_ List.⊰ _}(_ ⊰+ l) = l
 module _ where
   open import List.Properties
   open import Relator.Equals
+  open import Relator.Equals.Theorems
 
   _++_ : ∀{L₁ L₂} → Tuple(L₁) → Tuple(L₂) → Tuple(L₁ List.++ L₂)
-  _++_{L}                   {List.∅} (l)(_)         = [≡]-substitutionₗ {Lvl.𝟎}{_}{_}{_}{_}{L} ([++]-identityᵣ) {Tuple} (l)
+  _++_{L}                   {List.∅} (l)(_)         = [≡]-substitutionₗ {Lvl.𝟎}{_}{_}{_}{_}{L} ([++]-identityᵣ{ℓ}) {Tuple} (l)
   _++_{List.∅}              {_}      (_)(l)         = l
   _++_{A List.⊰ List.∅}     {L₂}     (a ⊰∅)   (l₂) = _⊰_ {A}{L₂} (a) (l₂)
   _++_{A List.⊰ B List.⊰ L₁}{L₂}     (a ⊰+ l₁)(l₂) = _⊰_ {A}{(B List.⊰ L₁) List.++ L₂} (a) (_++_ {B List.⊰ L₁}{L₂} l₁ l₂)

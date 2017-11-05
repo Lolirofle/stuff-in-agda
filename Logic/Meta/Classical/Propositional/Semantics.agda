@@ -15,6 +15,7 @@ open import Logic.Meta.Classical.Propositional.Syntax{ℓ} (Prop)
     _∨_ to _∨ₗ_ ;
     _⇒_ to _⇒ₗ_ )
 open import Relator.Equals{ℓ}
+open import Relator.Equals.Theorems{ℓ}
 
 -- A model decides whether a proposition is true or false
 -- Also known as Interpretation, Structure, Model

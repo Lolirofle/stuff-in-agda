@@ -5,6 +5,7 @@ open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Functional
 open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
 open import Structure.Function.Domain {ℓ₁}
 open import Type
 

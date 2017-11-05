@@ -10,6 +10,7 @@ open import Logic.Propositional
 open import Functional
 open import Operator.Equals
 open import Relator.Equals{ℓ₁}{Lvl.𝟎}
+open import Relator.Equals.Theorems{ℓ₁}{Lvl.𝟎}
 open import Type
 
 record BoolSet{ℓ₂}(T : Type{ℓ₂}) : Type{ℓ₂} where

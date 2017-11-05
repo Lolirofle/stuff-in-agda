@@ -10,6 +10,7 @@ import      Numeral.Natural as ℕ
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
+open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 
 [𝐏]-negative-successor : (n : ℕ) → (𝐏(−𝐒(n)) ≡ −𝐒(𝐒ₙ(n)))

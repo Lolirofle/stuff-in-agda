@@ -10,6 +10,7 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Relation{ℓ}
 open import Relator.Equals{ℓ}
+open import Relator.Equals.Theorems{ℓ}
 open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 open import Type

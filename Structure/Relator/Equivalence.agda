@@ -9,6 +9,6 @@ open import Type{ℓ₂}
 -- Definition of an equivalence class
 record Equivalence {T : Type} (_≡_ : T → T → Stmt) : Stmt where
   field
-    {{reflexivity}}  : Reflexivity  (_≡_)
-    {{symmetry}}     : Symmetry     (_≡_)
-    {{transitivity}} : Transitivity (_≡_)
+    ⦃ reflexivity ⦄  : Reflexivity  (_≡_)
+    ⦃ symmetry ⦄     : Symmetry     (_≡_)
+    ⦃ transitivity ⦄ : Transitivity (_≡_)

@@ -10,6 +10,7 @@ module NumAndDivisionProofs where
   open import Numeral.Natural.Oper
   open import Numeral.Natural.Relation
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
 
   ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
@@ -190,6 +191,7 @@ module Test2 where
   open import Functional.Raise
   open import Numeral.Natural
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
 
   f : ℕ
@@ -226,6 +228,7 @@ module testEqProof where
   open import Logic.Propositional{Lvl.𝟎}
   open import Numeral.Natural.Oper
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
   open import Structure.Operator.Properties{Lvl.𝟎}
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
   open import Type{Lvl.𝟎}
@@ -241,6 +244,7 @@ module testDiv where
   open import Numeral.Natural.Oper
   open import Numeral.Natural.UnclosedOper
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
 
   testDiv1 : 4 ⌈/₀⌉ 2 ≡ 2
@@ -258,6 +262,7 @@ module testDiv where
 module testList where
   open import List
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
   open import Numeral.Natural
 
   -- rev1 : (4 ⊰ 3 ⊰ 2 ⊰ 1 ⊰ ∅) → reverse(1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅)
@@ -282,6 +287,7 @@ module testTransitivity where
   open import Numeral.Natural
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
   open import Type
 
   test1 : (0 :of: ℕ ≡ 1) → (1 ≡ 2) → (0 ≡ 2)

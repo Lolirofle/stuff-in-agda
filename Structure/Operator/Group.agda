@@ -4,6 +4,7 @@ open import Functional hiding (id)
 import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}

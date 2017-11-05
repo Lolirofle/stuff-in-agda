@@ -57,7 +57,7 @@ module Axioms where
   -- • Allows a construction of a set that is the union of some sets.
   Union = ∀ₗ(ss ↦ ∃ₗ(sᵤ ↦ ∀ₗ(x ↦ ∀ₗ(s ↦ ((x ∈ sᵤ) ⟷ (x ∈ s)∧(s ∈ ss))))))
 
-  -- Infinity
+  Infinity = ⊤
 
   -- Set equality is determined by its contents.
   -- • Guarantees the definition of equality for sets.
@@ -68,7 +68,33 @@ module Axioms where
   -- • Making every set have a ordinal rank.
   Regularity = ∀ₗ(s₁ ↦ (NonEmpty(s₁) ⟶ ∃ₗ(s₂ ↦ (s₂ ∈ s₁) ∧ Disjoint(s₁)(s₂))))
 
-  -- Replacement
+  Replacement = ⊤
+
+  Choice = ⊤
 
 record ZF : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
+  open Axioms
+
+  field
+    extensional   : Extensionality
+    regular       : Regularity
+    comprehension : RestrictedComprehension
+    pairing       : Pairing
+    union         : Union
+    replacement   : Replacement
+    infinity      : Infinity
+    power         : PowerSet
+
 record ZFC : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
+  open Axioms
+
+  field
+    extensional   : Extensionality
+    regular       : Regularity
+    comprehension : RestrictedComprehension
+    pairing       : Pairing
+    union         : Union
+    replacement   : Replacement
+    infinity      : Infinity
+    power         : PowerSet
+    choice        : Choice

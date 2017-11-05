@@ -4,6 +4,7 @@ import      Lvl
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
 open import Structure.Operator.Group{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}

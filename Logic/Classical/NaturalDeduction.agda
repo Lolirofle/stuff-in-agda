@@ -68,6 +68,10 @@ record Predicate {ℓₗ ℓₒ} : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
     [∃]-intro : ∀{P : Domain → Stmt}{a} → P(a) → (∃ₗ P)
     [∃]-elim  : ∀{P : Domain → Stmt}{Z : Stmt} → (∀{x : Domain} → P(x) → Z) → (∃ₗ P) → Z
 
+    -- TODO: These are convenient, but it may not actually be possible to construct it constructively?
+    [∃]-elem  : ∀{P : Domain → Stmt} → (∃ₗ P) → Domain
+    [∃]-proof : ∀{P : Domain → Stmt} → (e : ∃ₗ P) → P([∃]-elem(e))
+
     [∀]-intro : ∀{P : Domain → Stmt} → (∀{x : Domain} → P(x)) → (∀ₗ P)
     [∀]-elim  : ∀{P : Domain → Stmt} → (∀ₗ P) → (∀{x : Domain} → P(x))
 open Predicate ⦃ ... ⦄ public

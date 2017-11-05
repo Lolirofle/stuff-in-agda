@@ -80,6 +80,7 @@ module ProofSystems {ℓ₁} {ℓ₂} {Prop : Set(ℓ₁)} {Formula : Set(ℓ₁
         open        Sets.ListSet
         open        Sets.ListSet.Relators
         open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
 
         -- [⊢]-subset : (Γ₁ ⊆ Γ₂) → (Γ₁ ⊢ φ) → (Γ₂ ⊢ φ)
         -- [⊢]-subset proof = 

@@ -9,6 +9,7 @@ open import Structure.Function.Domain{ℓ₁}
 open import Structure.Relator.Equivalence{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
 open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}
 
 infixl 15 _≅_

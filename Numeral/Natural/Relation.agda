@@ -7,6 +7,7 @@ open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Relator.Equals{ℓ}{Lvl.𝟎}
+open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
 
 -- Inequalities/Comparisons
 -- TODO: Consider defining (_≤_) in the same way as (_divides_)

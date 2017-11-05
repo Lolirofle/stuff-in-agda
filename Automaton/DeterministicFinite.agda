@@ -75,6 +75,7 @@ module Language where
   open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
   open import FormalLanguage
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
 
   -- The language accepted by a DFA.
   -- This is a linguistic interpretation of an automaton, that it is a grammar of the language.
@@ -92,6 +93,7 @@ module Theorems where
   open        Language
   open import Logic.Propositional{Lvl.𝟎}
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
   open import FormalLanguage
   open        FormalLanguage.Oper hiding (∁_)
 

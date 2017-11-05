@@ -40,6 +40,7 @@ module Theorems{ℓ} where
   open import Numeral.Natural.Oper
   open import Numeral.Natural.Oper.Properties{ℓ}
   open import Relator.Equals{ℓ}{Lvl.𝟎}
+  open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
 
   upscale-𝐒 : ∀{n} → Finite-ℕ(n) → Finite-ℕ(𝐒(n))
   upscale-𝐒 (Finite-𝟎)    = Finite-𝟎

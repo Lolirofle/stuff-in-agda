@@ -1,13 +1,15 @@
+OPTIONS=--rewriting
+
 all: typecheck
 
 run: build
 	./Main
 
 build:
-	agda -c Main.agda
+	agda ${OPTIONS} -c Main.agda
 
 typecheck:
-	agda Main.agda
+	agda ${OPTIONS} Main.agda
 
 test:
-	agda Test.agda
+	agda ${OPTIONS} Test.agda

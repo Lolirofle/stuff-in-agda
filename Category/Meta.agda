@@ -6,6 +6,7 @@ open import Functional using (const) renaming (id to idf ; _∘_ to _∘f_)
 open import Logic.Propositional
 open import Logic.Predicate{Lvl.𝟎}
 open import Relator.Equals{Lvl.𝟎}
+open import Relator.Equals.Theorems{Lvl.𝟎}
 
 -- The type of a morphism
 Morphism : ∀{ℓₒ ℓₘ} → Set(ℓₒ) → Set(ℓₒ Lvl.⊔ (Lvl.𝐒 ℓₘ))

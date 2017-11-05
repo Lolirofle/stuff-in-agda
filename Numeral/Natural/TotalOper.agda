@@ -8,6 +8,7 @@ open import Numeral.Natural.Divisibility{ℓ}
 open import Numeral.Natural.Relation{ℓ}
 open import Numeral.Natural.Relation.Properties{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
+open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
 
 -- Total predecessor function (Truncated predecessor)
 𝐏 : (n : ℕ) → {{_ : n ≢ 𝟎}} → ℕ
