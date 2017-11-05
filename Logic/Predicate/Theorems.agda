@@ -17,35 +17,48 @@ open import Type
 [∃]-irrelevant : ∀{X}{P : Stmt} → ∃{X}(x ↦ P) → P
 [∃]-irrelevant([∃]-intro(_)(proof)) = proof
 
--- TODO: Probably unprovable? X is not guaranteed to not be the empty type, and even if it was, the ∀ function requires a constructed value. Does this require the function/exentional equality axiom?
+-- TODO: Probably unprovable? X is not guaranteed to not be the empty type, and even if it was, the ∀ function requires a constructed value. It seems to need a non-empty domain to quantify over
 -- [∀]-irrelevant : ∀{X}{P : Stmt} → ∀ₗ{X}(x ↦ P) → P
 
-[∀]-irrelevant : ∀{X}{P : Stmt} → ∃{X}(x ↦ ⊤) → ∀ₗ{X}(x ↦ P) → P
-[∀]-irrelevant([∃]-intro(x)(_)) (f) = f{x}
-
-[∀][∃¬]-contradiction : ∀{X}{P : X → Stmt} → (∀{x} → P(x)) → (∃(x ↦ ¬(P(x)))) → ⊥
+[∀][∃¬]-contradiction : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ P(x)) → ∃(x ↦ ¬(P(x))) → ⊥
 [∀][∃¬]-contradiction{X}{P} (ap)(enp) =
   ([∃]-elim(\{a} → np ↦ (
     ([⊥]-intro
-      ([∀]-elim{X}{P}(ap) {a})
+      ([∀]-elim{X}{P} ap(a))
       np
     )
   )) (enp))
 
-[∀]-to-[¬∃¬] : ∀{X}{P : X → Stmt} → (∀{x} → P(x)) → (¬ ∃(x ↦ ¬(P(x))))
+[∀]-to-[¬∃¬] : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ P(x)) → (¬ ∃(x ↦ ¬(P(x))))
 [∀]-to-[¬∃¬] = [∀][∃¬]-contradiction -- [∃]-elim(\{a} → npa ↦ npa(p{a}))(ep)
 
 [∃¬]-to-[¬∀] : ∀{X}{P : X → Stmt} → (∃(x ↦ ¬(P(x)))) → (¬ ∀{x} → P(x))
 [∃¬]-to-[¬∀] = swap [∀][∃¬]-contradiction
 
-[∀¬¬][∃¬]-contradiction : ∀{X}{P : X → Stmt} → (∀{x} → ¬¬(P(x))) → (∃(x ↦ ¬(P(x)))) → ⊥
+{- TODO: Not sure?
+[¬∀]-to-[∃¬] : ∀{X}{P : X → Stmt} → (∃(x ↦ ¬(P(x)))) ← (¬ ∀{x} → P(x))
+[¬∀]-to-[∃¬] {X} (napx) = test where
+  postulate a : X
+
+  test =
+    ([∃]-intro(a)
+      ([¬]-intro
+        ([⊥]-intro(pa ↦
+          ([∀]-intro(pa))
+          (napx)
+        ))
+      )
+    )
+-}
+
+[∀¬¬][∃¬]-contradiction : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬¬(P(x))) → (∃(x ↦ ¬(P(x)))) → ⊥
 [∀¬¬][∃¬]-contradiction{X}{P} (annp)([∃]-intro(a)(na)) =
   [∀][∃¬]-contradiction{X}{¬¬_ ∘ P} (annp)([∃]-intro(a)([¬¬]-intro(na)))
 
-[∀¬¬]-to-[¬∃¬] : ∀{X}{P : X → Stmt} → (∀{x} → ¬¬(P(x))) → (¬ ∃(x ↦ ¬(P(x))))
+[∀¬¬]-to-[¬∃¬] : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬¬(P(x))) → (¬ ∃(x ↦ ¬(P(x))))
 [∀¬¬]-to-[¬∃¬] = [∀¬¬][∃¬]-contradiction
 
-[¬¬∀]-to-[¬∃¬] : ∀{X}{P : X → Stmt} → ¬¬(∀{x} → (P(x))) → (¬ ∃(x ↦ ¬(P(x))))
+[¬¬∀]-to-[¬∃¬] : ∀{X}{P : X → Stmt} → ¬¬ ∀ₗ(x ↦ (P(x))) → (¬ ∃(x ↦ ¬(P(x))))
 [¬¬∀]-to-[¬∃¬] = contrapositiveᵣ [∃¬]-to-[¬∀]
 -- [¬¬∀]-to-[¬∃¬] (annx) (enx) =
 --   ([⊥]-intro
@@ -53,16 +66,16 @@ open import Type
 --     (annx)
 --   )
 
-[¬∃¬]-to-[∀¬¬] : ∀{X}{P : X → Stmt} → ¬(∃(x ↦ ¬(P(x)))) → (∀{x} → ¬¬(P(x)))
+[¬∃¬]-to-[∀¬¬] : ∀{X}{P : X → Stmt} → ¬(∃(x ↦ ¬(P(x)))) → ∀ₗ(x ↦ ¬¬(P(x)))
 [¬∃¬]-to-[∀¬¬] {X}{P} (nenx) {a} (npa) = nenx([∃]-intro(a)(npa))
 
-[¬¬∀]-to-[∀¬¬] : ∀{X}{P : X → Stmt} → ¬¬(∀{x} → (P(x))) → (∀{x} → ¬¬(P(x)))
+[¬¬∀]-to-[∀¬¬] : ∀{X}{P : X → Stmt} → ¬¬ ∀ₗ(x ↦ (P(x))) → ∀ₗ(x ↦ ¬¬(P(x)))
 [¬¬∀]-to-[∀¬¬] = [¬∃¬]-to-[∀¬¬] ∘ [¬¬∀]-to-[¬∃¬]
 
--- TODO: Probably unprovable
--- [∀¬¬]-to-[¬¬∀] : ∀{X}{P : X → Stmt} → ¬¬(∀{x} → (P(x))) ← (∀{x} → ¬¬(P(x)))
+-- TODO: Probably unprovable because people said so. Not sure why. Maybe because (¬¬A is valid in constructive logic) ⇔ (A is valid in classical logic), and therefore this would not be possible because everything here is in constructive logic.
+-- [∀¬¬]-to-[¬¬∀] : ∀{X}{P : X → Stmt} → ¬¬∀ₗ(x ↦ (P(x))) ← ∀ₗ(x ↦ ¬¬(P(x)))
 
-[∀¬]-to-[¬∃] : ∀{X}{P : X → Stmt} → (∀{x} → ¬(P(x))) → ¬(∃(x ↦ P(x)))
+[∀¬]-to-[¬∃] : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬(P(x))) → ¬(∃(x ↦ P(x)))
 [∀¬]-to-[¬∃] (anpx) =
   ([¬]-intro(epx ↦
     [∃]-elim(\{a} → pa ↦
@@ -73,7 +86,7 @@ open import Type
     )(epx)
   ))
 
-[¬∃]-to-[∀¬] : ∀{X}{P : X → Stmt} → (∀{x} → ¬(P(x))) ← ¬(∃(x ↦ P(x)))
+[¬∃]-to-[∀¬] : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬(P(x))) ← ¬(∃(x ↦ P(x)))
 [¬∃]-to-[∀¬] {X}{P} (nepx) =
   ([∀]-intro(a ↦
     (([¬]-intro(pa ↦
@@ -83,3 +96,13 @@ open import Type
       ) :of: ⊥)
     )) :of: ¬(P(a)))
   ))
+
+-- TODO: Probably unprovable because [∀]-elim seems to need a constructed element?
+-- [∀]-to-[∃] : ∀{X}{P : X → Stmt} → ∀(x ↦ P(x)) → ∃(x ↦ P(x))
+
+[∀ₑ]-to-[∃] : ∀{X}{P : X → Stmt} → ∀ₑ(x ↦ P(x)) → ∃(x ↦ P(x))
+[∀ₑ]-to-[∃] (apx) =
+  [∃]-intro(_)([∀ₑ]-elimₑ(apx))
+
+[∀ₑ]-irrelevant : ∀{X}{P : Stmt} → ∀ₑ{X}(x ↦ P) → P
+[∀ₑ]-irrelevant = [∀ₑ]-elimₑ

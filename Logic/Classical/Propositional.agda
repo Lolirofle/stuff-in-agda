@@ -34,6 +34,7 @@ Stmt = Constructive.Stmt
 --     Therefore it is at least a classical logic.
 -- This cannot be done with predicate logic because the translation for [∀] does not hold in both directions.
 Classic = Constructive.¬¬_
+-- TODO: Another idea: Classic(X) = (∀{Y} → (Y ∨ (¬ Y))) → X
 
 module Opers where
   infixl 1010 ¬_

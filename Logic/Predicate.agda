@@ -1,6 +1,7 @@
 module Logic.Predicate {ℓ₁} {ℓ₂} where
 
 open import Data
+open import Functional
 import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Type{ℓ₂}
@@ -11,8 +12,8 @@ open import Type{ℓ₂}
 record ∃ {X : Type} (Pred : X → Stmt) : Stmt where
   constructor [∃]-intro
   field
-    element   : X
-    predicate : Pred(element)
+    element : X
+    proof   : Pred(element)
 
 [∃]-extract : ∀{X}{Pred} → ∃{X}(Pred) → X
 [∃]-extract([∃]-intro(x)(_)) = x
@@ -32,11 +33,11 @@ record ∃ {X : Type} (Pred : X → Stmt) : Stmt where
 ∀ₗ : ∀{X : Type} → (Pred : X → Stmt) → Stmt
 ∀ₗ (Pred) = (∀{x} → Pred(x))
 
-[∀]-intro : ∀{X : Type}{Pred : X → Stmt} → ((a : X) → Pred(a)) → ∀{a : X} → Pred(a)
+[∀]-intro : ∀{X : Type}{Pred : X → Stmt} → ((a : X) → Pred(a)) → ∀ₗ(x ↦ Pred(x))
 [∀]-intro p{a} = p(a)
 
-[∀]-elim : ∀{X : Type}{Pred : X → Stmt} → (∀{x : X} → Pred(x)) → ∀{a : X} → Pred(a)
-[∀]-elim p{a} = p{a}
+[∀]-elim : ∀{X : Type}{Pred : X → Stmt} → ∀ₗ(x ↦ Pred(x)) → (a : X) → Pred(a)
+[∀]-elim p(a) = p{a}
 
 ------------------------------------------
 -- Universal quantification with non-empty domain
@@ -45,5 +46,11 @@ record ∃ {X : Type} (Pred : X → Stmt) : Stmt where
 record ∀ₑ {X : Type} (Pred : X → Stmt) : Stmt where
   constructor [∀ₑ]-intro
   field
-    element : X
-    proof   : ∀ₗ Pred
+    element        : X
+    quantification : ∀ₗ Pred
+
+[∀ₑ]-elim : ∀{X : Type}{Pred : X → Stmt} → ∀ₑ(x ↦ Pred(x)) → (a : X) → Pred(a)
+[∀ₑ]-elim (apx) (a) = (∀ₑ.quantification apx){a}
+
+[∀ₑ]-elimₑ : ∀{X : Type}{Pred : X → Stmt} → (apx : ∀ₑ(x ↦ Pred(x))) → Pred(∀ₑ.element(apx))
+[∀ₑ]-elimₑ apx = [∀ₑ]-elim apx(∀ₑ.element(apx))
