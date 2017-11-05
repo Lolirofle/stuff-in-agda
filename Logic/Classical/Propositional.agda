@@ -32,6 +32,7 @@ Stmt = Constructive.Stmt
 --     the propositions inside a double negation are at least a constructive logic.
 --     But [¬¬]-elim also exists in there.
 --     Therefore it is at least a classical logic.
+-- This cannot be done with predicate logic because the translation for [∀] does not hold in both directions.
 Classic = Constructive.¬¬_
 
 module Opers where

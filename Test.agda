@@ -313,31 +313,31 @@ module testTransitivity where
 --       -- _⊕_ = a ↦ b ↦ ((a ∨ b) ∧ ¬(a ∧ b))
 --     }
 
-module testListOrderedContainment where
+module testListSublist where
   open import Functional
   open import Numeral.Natural
   open import List
   import      List.Theorems
   open        List.Theorems{Lvl.𝟎}{Lvl.𝟎}
-  open        List.Theorems.OrderedContainment hiding (_contains-in-order_)
+  open        List.Theorems.Sublist hiding (_⊑_)
   open import Type
 
-  test1 : ([ 1 ]) contains-in-order ([ 1 ] :of: List(ℕ))
+  test1 : ([ 1 ]) ⊑ ([ 1 ] :of: List(ℕ))
   test1 = use(empty)
 
-  test2 : ([ 1 ⊰ 2 ]) contains-in-order ([ 1 ] :of: List(ℕ))
+  test2 : ([ 1 ⊰ 2 ]) ⊑ ([ 1 ] :of: List(ℕ))
   test2 = (use ∘ skip)(empty)
 
-  test3 : ([ 1 ⊰ 2 ]) contains-in-order ([ 1 ⊰ 2 ] :of: List(ℕ))
+  test3 : ([ 1 ⊰ 2 ]) ⊑ ([ 1 ⊰ 2 ] :of: List(ℕ))
   test3 = (use ∘ use)(empty)
 
-  test4 : ([ 1 ⊰ 10 ⊰ 2 ]) contains-in-order ([ 1 ⊰ 2 ] :of: List(ℕ))
+  test4 : ([ 1 ⊰ 10 ⊰ 2 ]) ⊑ ([ 1 ⊰ 2 ] :of: List(ℕ))
   test4 = (use ∘ skip ∘ use)(empty)
 
-  test5 : ([ 1 ⊰ 10 ⊰ 2 ⊰ 3 ]) contains-in-order ([ 1 ⊰ 2 ⊰ 3 ] :of: List(ℕ))
+  test5 : ([ 1 ⊰ 10 ⊰ 2 ⊰ 3 ]) ⊑ ([ 1 ⊰ 2 ⊰ 3 ] :of: List(ℕ))
   test5 = (use ∘ skip ∘ use ∘ use)(empty)
 
-  test6 : ([ 1 ⊰ 10 ⊰ 2 ⊰ 3 ⊰ 20 ⊰ 30 ⊰ 4 ⊰ 40 ]) contains-in-order ([ 1 ⊰ 2 ⊰ 3 ⊰ 4 ] :of: List(ℕ))
+  test6 : ([ 1 ⊰ 10 ⊰ 2 ⊰ 3 ⊰ 20 ⊰ 30 ⊰ 4 ⊰ 40 ]) ⊑ ([ 1 ⊰ 2 ⊰ 3 ⊰ 4 ] :of: List(ℕ))
   test6 = (use ∘ skip ∘ use ∘ use ∘ skip ∘ skip ∘ use ∘ skip)(empty)
 
 module testPrimitiveRecursiveDefinitions where
