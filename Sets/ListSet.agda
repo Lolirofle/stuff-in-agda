@@ -96,7 +96,7 @@ module [∈]-proof where
     [∈][⊰]-reorderₗ : ∀{a x}{L₁ L₂} → (a ∈ (L₁ ++ (x ⊰ L₂))) → (a ∈ (x ⊰ (L₁ ++ L₂)))
     [∈][⊰]-reorderₗ {a}{x}{L₁}{L₂} (a∈L₁++xL₂) = [∨]-elim left right ([∈]-of-[++]ᵣ (a∈L₁++xL₂)) where
       left : (a ∈ L₁) → (a ∈ (x ⊰ (L₁ ++ L₂)))
-      left (a∈L₁) = [∈][⊰]-expand ([∈][++]-expandᵣ (a∈L₁))
+      left (a∈L₁) = [∈][⊰]-expand ([∈][++]-expandᵣ {a}{L₁}{L₂} (a∈L₁))
 
       right : ∀{a} → (a ∈ (x ⊰ L₂)) → (a ∈ (x ⊰ (L₁ ++ L₂)))
       right ([∈]-use)              = [∈]-use
@@ -121,7 +121,7 @@ module [∈]-proof where
 
   instance
     [∈]-in-middle : ∀{L₁ L₂} → ∀{a} → (a ∈ (L₁ ++ singleton(a) ++ L₂))
-    [∈]-in-middle{L₁} = [∈]-of-[++]ₗ ([∨]-introₗ ([∈]-at-last{L₁}))
+    [∈]-in-middle{L₁}{L₂}{a} = [∈]-of-[++]ₗ {a}{_}{L₂} ([∨]-introₗ ([∈]-at-last{L₁}))
 
 -- Other relators regarding sets
 module Relators where

@@ -28,6 +28,7 @@ instance
     -- (l ++ ∅) ≡ l
     -- x ⊰ (l ++ ∅) ≡ x ⊰ l
     -- (x ⊰ l) ++ ∅ ≡ x ⊰ l
+{-# REWRITE [++]-identityᵣ #-}
 
 instance
   [++]-associativity : ∀{T} → Associativity {ℓ₁}{ℓ₂} {List(T)} (_++_)
@@ -44,6 +45,7 @@ instance
     -- x ⊰ ((l++l₁)++l₂) = (x ⊰ l)++(l₁++l₂)
     -- (x ⊰ (l++l₁))++l₂ = (x ⊰ l)++(l₁++l₂)
     -- ((x ⊰ l)++l₁)++l₂ = (x ⊰ l)++(l₁++l₂)
+{-# REWRITE [++]-associativity #-}
 
 instance
   reverse-[++] : ∀{T}{l₁ l₂ : List(T)} → (reverse(l₁ ++ l₂) ≡ reverse(l₂) ++ reverse(l₁))
@@ -77,6 +79,7 @@ instance
   -- reverse (x ⊰ l) = (reverse l) ++ (singleton x)
   -- _++_ ∅ b = b
   -- _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
+{-# REWRITE reverse-[++] #-}
 
 instance
   length-[∅] : ∀{T : Type} → (length(∅{_}{T}) ≡ 0)
@@ -124,6 +127,7 @@ instance
   --   -- length(reverse(l))+length(x⊰ε) = length(x⊰l)
   --   -- length(reverse(l)++x⊰ε) = length(x⊰l)
   --   -- length(reverse(l)++singleton(x)) = length(x⊰l)
+{-# REWRITE length-[++] #-}
 
 -- TODO: Empty list is prefix and suffix of everything
 -- TODO: Whole list is prefix and suffix of everything

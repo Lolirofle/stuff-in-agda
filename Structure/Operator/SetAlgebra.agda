@@ -35,29 +35,45 @@ record SetAlgebra {S : Type} {{sym : SetAlgebraSym{S}}} : Stmt where
     [∩][∪]-distributivityₗ : Distributivityₗ{S}(_∩_)(_∪_)
 
     [∪]-identityₗ : Identityₗ{S}(_∪_)(∅)
-    [∪]-identityᵣ : Identityᵣ{S}(_∪_)(∅)
+    [∩]-identityₗ : Identityₗ{S}(_∩_)(𝐔)
 
     [∪]-with-[∁] : ∀{s : S} → (s ∪ ∁(s) ≡ 𝐔)
     [∩]-with-[∁] : ∀{s : S} → (s ∩ ∁(s) ≡ ∅)
 
   -- TODO: Theorems from https://en.wikipedia.org/wiki/Algebra_of_sets
-  [∪][∩]-distributivityᵣ : Distributivityᵣ(_∪_ {S})(_∩_ {S})
+  [∪][∩]-distributivityᵣ : Distributivityᵣ{S}(_∪_)(_∩_)
   [∪][∩]-distributivityᵣ{a}{b}{c} =
     [∪]-commutativity
     🝖 [∪][∩]-distributivityₗ
     🝖 ([≡]-with-[ expr ↦ (expr ∩ (c ∪ b)) ] [∪]-commutativity)
     🝖 ([≡]-with-[ expr ↦ ((a ∪ c) ∩ expr) ] [∪]-commutativity)
 
-  [∩][∪]-distributivityᵣ : Distributivityᵣ(_∩_ {S})(_∪_ {S})
+  [∩][∪]-distributivityᵣ : Distributivityᵣ{S}(_∩_)(_∪_)
   [∩][∪]-distributivityᵣ{a}{b}{c} =
     [∩]-commutativity
     🝖 [∩][∪]-distributivityₗ
     🝖 ([≡]-with-[ expr ↦ (expr ∪ (c ∩ b)) ] [∩]-commutativity)
     🝖 ([≡]-with-[ expr ↦ ((a ∩ c) ∪ expr) ] [∩]-commutativity)
 
-  postulate [∩]-identityₗ : Identityₗ(_∩_ {S})(𝐔 {S})
+  [∁]-of-[∅] : (∁(∅) ≡ 𝐔)
+  [∁]-of-[∅] =
+    (symmetry [∪]-identityₗ)
+    🝖 ([∪]-with-[∁])
 
-  postulate [∩]-identityᵣ : Identityᵣ(_∩_ {S})(𝐔 {S})
+  [∪]-identityᵣ : Identityᵣ{S}(_∪_)(∅)
+  [∪]-identityᵣ =
+    ([∪]-commutativity)
+    🝖 ([∪]-identityₗ)
+
+  [∩]-identityᵣ : Identityᵣ{S}(_∩_)(𝐔)
+  [∩]-identityᵣ =
+    ([∩]-commutativity)
+    🝖 ([∩]-identityₗ)
+
+  [∁]-of-[𝐔] : (∁(𝐔) ≡ ∅ {S})
+  [∁]-of-[𝐔] =
+    (symmetry [∩]-identityₗ)
+    🝖 ([∩]-with-[∁])
 
   [∪]-idempotence : ∀{s : S} → (s ∪ s) ≡ s
   [∪]-idempotence{s} =
@@ -77,11 +93,26 @@ record SetAlgebra {S : Type} {{sym : SetAlgebraSym{S}}} : Stmt where
     🝖 ([≡]-with-[ expr ↦ (s ∩ expr) ] [∪]-with-[∁])
     🝖 ([∩]-identityᵣ)
 
-  postulate [∪]-domination : ∀{s : S} → (s ∪ 𝐔) ≡ 𝐔
+  [∪]-domination : ∀{s : S} → (s ∪ 𝐔) ≡ 𝐔
+  [∪]-domination{s} =
+    ([≡]-with-[(expr ↦ s ∪ expr)] (symmetry [∪]-with-[∁]))
+    🝖 (symmetry [∪]-associativity)
+    🝖 ([≡]-with-[(expr ↦ expr ∪ ∁(s))] [∪]-idempotence)
+    🝖 ([∪]-with-[∁])
     -- s∪𝐔 = s∪(s ∪ ∁(s)) = (s∪s) ∪ ∁(s) = s ∪ ∁(s) = 𝐔
 
-  postulate [∩]-domination : ∀{s : S} → (s ∩ ∅) ≡ ∅
+  [∩]-domination : ∀{s : S} → (s ∩ ∅) ≡ ∅
+  [∩]-domination{s} =
+    ([≡]-with-[(expr ↦ s ∩ expr)] (symmetry [∩]-with-[∁]))
+    🝖 (symmetry [∩]-associativity)
+    🝖 ([≡]-with-[(expr ↦ expr ∩ ∁(s))] [∩]-idempotence)
+    🝖 ([∩]-with-[∁])
     -- s∩∅ = s∩(s ∩ ∁(s)) = (s∩s) ∩ ∁(s) = s ∩ ∁(s) = ∅
 
   postulate [∪]-absorption : ∀{s₁ s₂ : S} → (s₁ ∪ (s₁ ∩ s₂)) ≡ s₁
   postulate [∩]-absorption : ∀{s₁ s₂ : S} → (s₁ ∩ (s₁ ∪ s₂)) ≡ s₁
+
+  postulate [∁]-of-[∪] : ∀{s₁ s₂ : S} → ∁(s₁ ∪ s₂) ≡ ∁(s₁) ∩ ∁(s₂)
+  postulate [∁]-of-[∩] : ∀{s₁ s₂ : S} → ∁(s₁ ∩ s₂) ≡ ∁(s₁) ∪ ∁(s₂)
+  postulate [∁∁] : ∀{s : S} → ∁(∁(s)) ≡ s
+  postulate [∁]-uniqueness : ∀{s₁ s₂ : S} → (s₁ ∪ s₂ ≡ 𝐔) → (s₁ ∩ s₂ ≡ ∅) → (s₁ ≡ ∁(s₂))

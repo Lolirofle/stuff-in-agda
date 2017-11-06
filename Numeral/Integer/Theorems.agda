@@ -13,6 +13,8 @@ open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 
+-- TODO: Prove the usual strcutures for ℤ
+
 [𝐏]-negative-successor : (n : ℕ) → (𝐏(−𝐒(n)) ≡ −𝐒(𝐒ₙ(n)))
 [𝐏]-negative-successor (_) = [≡]-intro
   {-
