@@ -37,6 +37,12 @@ module NumAndDivisionProofs where
   ℕ1IsDividesℕ12 : 𝐒(𝟎) divides (𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎)
   ℕ1IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
+  test22 : (2 divides 4) → (2 divides 2)
+  test22 (Div𝐒{2}{2} (proof)) = proof
+
+  test23 : ¬(2 divides 3)
+  test23 (Div𝐒{2}{1} ())
+
   -- TODO
   -- ℕ3IsDividesℕ7Remℕ1 : 3 divides 7 withRemainder 1
   -- ℕ3IsDividesℕ7Remℕ1 = DivRem𝟎 ⇒ DivRem𝐒 ⇒ DivRem𝐒

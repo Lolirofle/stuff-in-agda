@@ -21,7 +21,7 @@ _−_ : (a : ℕ) → (b : ℕ) → {{_ : a ≥ b}} → ℕ
 _−_ a 𝟎 = a
 _−_ 𝟎 (𝐒(b)) {{0≥𝐒b}} with ([<]-is-[≱] ([<][0]-minimum{b})) (0≥𝐒b)
 ...                      | ()
-_−_ (𝐒(a)) (𝐒(b)) {{𝐒b≤𝐒a}} = _−_ a b {{[≤]-without-[𝐒] (𝐒b≤𝐒a)}}
+_−_ (𝐒(a)) (𝐒(b)) {{𝐒b≤𝐒a}} = _−_ a b {{[≤]-without-[𝐒] {b} (𝐒b≤𝐒a)}}
 
 -- Total division (Positive whole number division)
 _/_ : (a : ℕ) → (b : ℕ) → {{_ : b divides a}} → {{_ : b ≢ 0}} → ℕ

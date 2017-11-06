@@ -23,6 +23,7 @@ instance
 
     next : ∀ (i : ℕ) → ((0 + i) ≡ i) → ((0 + 𝐒(i)) ≡ 𝐒(i))
     next _ = [≡]-with-[ 𝐒 ]
+{-# REWRITE [+]-identityₗ #-}
 
 instance
   [+]-identityᵣ : Identityᵣ (_+_) (0)
@@ -41,6 +42,7 @@ instance
 
     next : ∀ (x y : ℕ) → (i : ℕ) → ((x + y) + i) ≡ (x + (y + i)) → ((x + y) + 𝐒(i)) ≡ (x + (y + 𝐒(i)))
     next _ _ _ = [≡]-with-[ 𝐒 ]
+{-# REWRITE [+]-associativity #-} -- TODO: I thought that rewriting only worked from left to right and that this would get the compiler stuck? Maybe not?
 
 [+1]-commutativity : ∀{x y : ℕ} → (𝐒(x) + y) ≡ (x + 𝐒(y))
 [+1]-commutativity {x} {y} = [ℕ]-induction (base x) (next x) y where
@@ -49,6 +51,7 @@ instance
 
   next : ∀ (x : ℕ) → (i : ℕ) → (𝐒(x) + i) ≡ (x + 𝐒(i)) → (𝐒(x) + 𝐒(i)) ≡ (x + 𝐒(𝐒(i)))
   next x i = [≡]-with-[ 𝐒 ]
+{-# REWRITE [+1]-commutativity #-}
 
 instance
   [+]-commutativity : Commutativity (_+_)
@@ -79,12 +82,12 @@ instance
     -- ∀x∀i. x+𝐒(i) = 𝐒(i)+x //[≡]-transitivity [1] [2]
 
 instance
-  [𝐒]-and-[+1] : ∀{x : ℕ} → 𝐒(x) ≡ x + 1
-  [𝐒]-and-[+1] {x} = [≡]-intro
+  [+1]-and-[𝐒] : ∀{x : ℕ} → x + 1 ≡ 𝐒(x)
+  [+1]-and-[𝐒] {x} = [≡]-intro
 
 instance
-  [𝐒]-and-[1+] : ∀{x : ℕ} → 𝐒(x) ≡ 1 + x
-  [𝐒]-and-[1+] {x} = ([𝐒]-and-[+1] {x}) 🝖 ([+]-commutativity{x}{1})
+  [1+]-and-[𝐒] : ∀{x : ℕ} → 1 + x ≡ 𝐒(x)
+  [1+]-and-[𝐒] {x} = ([+1]-and-[𝐒] {x}) 🝖 ([+]-commutativity{x}{1})
 
 instance
   [⋅]-absorberₗ : Absorberₗ (_⋅_) (0)
@@ -94,6 +97,7 @@ instance
 
     next : ∀ (x : ℕ) → (0 ⋅ x) ≡ 0 → (0 ⋅ 𝐒(x)) ≡ 0
     next _ eq = [≡]-with-[(x ↦ 0 + x)] eq
+{-# REWRITE [⋅]-absorberₗ #-}
 
 instance
   [⋅]-absorberᵣ : Absorberᵣ (_⋅_) (0)
@@ -116,6 +120,7 @@ instance
   --   1⋅i + 1 = 𝐒(i) //Definition: (+)
   -- 1 + 1⋅i = 𝐒(i)
   -- 1 ⋅ 𝐒(i) = 𝐒(i) //1 ⋅ 𝐒(y) = 1 + (1 ⋅ y) (Definition: (⋅))
+{-# REWRITE [⋅]-identityₗ #-}
 
 instance
   [⋅]-identityᵣ : Identityᵣ (_⋅_) (1)
@@ -155,6 +160,7 @@ instance
   -- = (x+1)⋅y
   -- = x⋅y + 1⋅y
   -- = x⋅y + y
+{-# REWRITE [⋅]-with-[𝐒]ₗ #-}
 
 instance
   [⋅]-with-[𝐒]ᵣ : ∀{x y} → x ⋅ 𝐒(y) ≡ x + (x ⋅ y)
@@ -163,6 +169,8 @@ instance
 instance postulate [⋅][+]-distributivityₗ : ∀{x y z : ℕ} → (x ⋅ (y + z)) ≡ (x ⋅ y) + (x ⋅ z)
 
 instance postulate [⋅]-associativity : Associativity (_⋅_)
+{-# REWRITE [⋅]-associativity #-}
+
 instance postulate [⋅]-commutativity : Commutativity (_⋅_)
 
 -- testAssociativityOfSuccessor1 : ∀{x y} → ((x + 1) + y) ≡ (x + (1 + y))
@@ -189,7 +197,7 @@ instance
   [+]-injectivityₗ {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
   [+]-injectivityₗ {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]-injectivityₗ {n} ([≡]-with-[ 𝐏 ] x₁+𝐒n≡x₂+𝐒n)
 
--- TODO: It would be great to be able to chain the transitivity here. Also, rename and generalize this later
+-- TODO: Rename and generalize this (How?)
 commuteBothTemp : ∀{a₁ a₂ b₁ b₂} → (a₁ + a₂ ≡ b₁ + b₂) → (a₂ + a₁ ≡ b₂ + b₁)
 commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
     (symmetry ([+]-commutativity {a₁} {a₂}))
@@ -270,11 +278,13 @@ instance
   [−₀]-negative : ∀{x} → ((0 −₀ x) ≡ 0)
   [−₀]-negative{𝟎}    = [≡]-intro
   [−₀]-negative{𝐒(n)} = [≡]-intro
+{-# REWRITE [−₀]-negative #-}
 
 instance
   [−₀]-self : ∀{x} → ((x −₀ x) ≡ 0)
   [−₀]-self{𝟎}    = [≡]-intro
   [−₀]-self{𝐒(n)} = [≡]-intro 🝖 ([−₀]-self{n})
+{-# REWRITE [−₀]-self #-}
 
 instance
   [+][−₀]-nullify : ∀{x y} → ((x + y) −₀ y ≡ x)
@@ -282,3 +292,4 @@ instance
   [+][−₀]-nullify{𝐒(x)}{y}    = PROVE where
     postulate PROVE : ∀{x} → x -- TODO
   [+][−₀]-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([+][−₀]-nullify{x}{y})
+{-# REWRITE [+][−₀]-nullify #-}

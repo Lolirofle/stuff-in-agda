@@ -1,8 +1,10 @@
 module Numeral.Natural.Oper.Modulo{ℓ} where
 
 _mod_ : ℕ → ℕ → ℕ
-_mod_ a b = 
+_mod_ a b = a −₀ ((a / b) ⋅ b)
 
+postulate _ : (a + b) mod b ≡ a mod b
+{-
 6 mod 3
 3 mod 3
 0 mod 3
@@ -15,3 +17,4 @@ _mod_ a b =
 1 mod 3
 
 2 mod 3
+-}

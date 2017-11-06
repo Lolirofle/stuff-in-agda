@@ -31,17 +31,32 @@ data Odd : ℕ → Stmt where
     Odd𝐒 : ∀{x : ℕ} → Odd(x) → Odd(𝐒(𝐒(x)))
 {-# INJECTIVE Odd #-}
 
+-- Note on the definition of Div𝐒:
+--   The order (y + x) works and depends on rewriting rules of ℕ at the moment (Specifically on the commuted identity and successor rules, I think).
+--   Without rewriting rules, deconstruction of Div𝐒 seems not working.
+--   Example:
+--     div23 : ¬(2 divides 3)
+--     div23(Div𝐒())
+--     This is a "valid" proof, but would not type-check because deconstruction from (2 divides 3) to (2 divides 1) is impossible.
+--     Seems like the compiler would see (3 = 2+x), but because of definition of (_+_), only (3 = x+2) can be found.
+--   Defining Div𝐒 with (x + y) inside would work, but then the definition of DivN becomes more complicated because (_⋅_) is defined in this order.
 data _divides_ (y : ℕ) : ℕ → Stmt where
   instance
-    Div𝟎 : y divides 𝟎
+    Div𝟎 : (y divides 𝟎)
     Div𝐒 : ∀{x : ℕ} → (y divides x) → (y divides (y + x))
-{-# INJECTIVE _divides_ #-}
 
-data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where -- TODO: Make _divides_ a special case of this
+data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where -- TODO: Make _divides_ a special case of this. Tries (See below), but noticed that r<x would guarantee x≠0, which is good but not the same as the current definition of _divides_.
   instance
-    DivRem𝟎 : ∀{x : ℕ}{r : ℕ} → (r < x) → x divides r withRemainder r
-    DivRem𝐒 : ∀{x : ℕ}{y : ℕ}{r : ℕ} → (x divides y withRemainder r) → (x divides (x + y) withRemainder r)
+    DivRem𝟎 : ∀{x r : ℕ}   → ⦃ _ : r < x ⦄ → x divides r withRemainder r
+    DivRem𝐒 : ∀{x y r : ℕ} → (x divides y withRemainder r) → (x divides (x + y) withRemainder r)
 {-# INJECTIVE _divides_withRemainder_ #-}
+
+{-
+_divides_ : ℕ → ℕ → Stmt
+_divides_ y x = _divides_withRemainder_ y x 𝟎
+pattern Div𝟎 {x}    = DivRem𝟎 {x}
+pattern Div𝐒 {x}{y} = DivRem𝐒 {x}{y}
+-}
 
 DivN : ∀{y : ℕ} → (n : ℕ) → y divides (y ⋅ n)
 DivN {y}(𝟎)    = Div𝟎
@@ -137,7 +152,8 @@ instance
   postulate [0]-divides-not : ∀{n} → ¬(0 divides 𝐒(n))
 
 instance
-  postulate divides-not-[1] : ∀{n} → ¬(n divides 1)
+  divides-not-[1] : ∀{n} → ¬((n + 2) divides 1)
+  divides-not-[1] ()
 
 instance
   postulate divides-upper-limit : ∀{a b} → (a divides b) → (a ≤ b)

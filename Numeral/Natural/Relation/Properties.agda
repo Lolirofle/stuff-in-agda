@@ -97,7 +97,7 @@ instance
 
 instance
   [<][0]-minimum : ∀{x : ℕ} → (0 < 𝐒(x))
-  [<][0]-minimum {x} = [≤]-with-[𝐒] ([≤][0]-minimum)
+  [<][0]-minimum {x} = [≤]-with-[𝐒] {0} ([≤][0]-minimum)
 
 -- TODO
 instance
