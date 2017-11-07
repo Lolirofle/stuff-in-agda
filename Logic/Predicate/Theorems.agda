@@ -106,3 +106,15 @@ open import Type
 
 [∀ₑ]-irrelevant : ∀{X}{P : Stmt} → ∀ₑ{X}(x ↦ P) → P
 [∀ₑ]-irrelevant = [∀ₑ]-elimₑ
+
+[∀][→]-elim : ∀{X}{P Q : X → Stmt} → ∀ₗ(x ↦ (P(x) → Q(x))) → ∀ₗ(x ↦ P(x)) → ∀ₗ(x ↦ Q(x))
+[∀][→]-elim (PxQx) (Px) = PxQx(Px)
+
+[∀][∧]-combine : ∀{X}{P Q : X → Stmt} → (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x))) → ∀ₗ(x ↦ (P(x) ∧ Q(x)))
+[∀][∧]-combine ([∧]-intro (axPx) (axQx)) {x} = [∧]-intro (axPx{x}) (axQx{x})
+
+[∀][→]ᵣ-unmentionedᵣ : ∀{X}{P : Stmt}{Q : X → Stmt} → ∀ₗ(x ↦ (P → Q(x))) → (P → ∀ₗ(x ↦ Q(x)))
+[∀][→]ᵣ-unmentionedᵣ (xPQx) (P) {x} = xPQx(P)
+
+[∀][→]ᵣ-unmentionedₗ : ∀{X}{P : Stmt}{Q : X → Stmt} → ∀ₗ(x ↦ (P → Q(x))) ← (P → ∀ₗ(x ↦ Q(x)))
+[∀][→]ᵣ-unmentionedₗ {_}{_}{_} (PaxQx) {x} (P) = PaxQx(P){x}

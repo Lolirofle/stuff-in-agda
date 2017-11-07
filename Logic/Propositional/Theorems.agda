@@ -183,6 +183,20 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 [→][∧]ᵣ : {X Y : Stmt} → (X → Y) → ¬(X ∧ (¬ Y))
 [→][∧]ᵣ f = Tuple.uncurry([¬¬]-intro ∘ f)
 
+[↔]-of-[∧] : ∀{X Y Z} → ((X ∧ Z) ↔ (Y ∧ Z)) → (Z → (X ↔ Y))
+[↔]-of-[∧] ([↔]-intro yzxz xzyz) z =
+  ([↔]-intro
+    (y ↦ [∧]-elimₗ(yzxz([∧]-intro y z)))
+    (x ↦ [∧]-elimₗ(xzyz([∧]-intro x z)))
+  )
+
+[→]-adding-[∧] : ∀{X Y Z} → (X ↔ Y) → ((X ∧ Z) ↔ (Y ∧ Z))
+[→]-adding-[∧] ([↔]-intro yx xy) =
+  ([↔]-intro
+    (yz ↦ [∧]-intro (yx([∧]-elimₗ yz)) ([∧]-elimᵣ yz))
+    (xz ↦ [∧]-intro (xy([∧]-elimₗ xz)) ([∧]-elimᵣ xz))
+  )
+
 ------------------------------------------
 -- Almost-distributivity with duals (De-morgan's laws)
 
@@ -243,3 +257,4 @@ non-contradiction(x , nx) = nx x
 
 [∨]-redundancy : ∀{A : Stmt} → (A ∨ A) ↔ A
 [∨]-redundancy = [↔]-intro [∨]-introₗ (x ↦ [∨]-elim id id x)
+
