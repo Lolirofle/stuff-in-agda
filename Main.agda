@@ -45,6 +45,7 @@ import Numeral.Integer.Relation
 import Numeral.Integer.Sign
 import Numeral.Integer.Theorems
 import Numeral.Natural
+import Numeral.Natural.Coprime
 import Numeral.Natural.Divisibility
 import Numeral.Natural.Finite
 import Numeral.Natural.Function

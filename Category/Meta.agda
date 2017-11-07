@@ -2,7 +2,7 @@ module Category.Meta where
 
 import      Lvl
 open import Data
-open import Functional using (const) renaming (id to idf ; _∘_ to _∘f_)
+open import Functional using (const ; [↦]) renaming (id to idf ; _∘_ to _∘f_)
 open import Logic.Propositional
 open import Logic.Predicate{Lvl.𝟎}
 open import Relator.Equals{Lvl.𝟎}

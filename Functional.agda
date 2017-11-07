@@ -61,7 +61,9 @@ swap(f)(x₂)(x₁) = f(x₁)(x₂)
 --   (T₅ → T₆) = T₃
 
 -- Custom syntax for anonymous functions/mappings
-syntax id(λ x → y) = x ↦ y
+[↦] = id
+infix 1 [↦]
+syntax [↦](λ x → y) = x ↦ y
 
 -- Returns the domain of a function
 ⊷_ : ∀{ℓ₁ ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → Type{ℓ₁}

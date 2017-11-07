@@ -44,6 +44,7 @@ data _divides_ (y : ℕ) : ℕ → Stmt where
   instance
     Div𝟎 : (y divides 𝟎)
     Div𝐒 : ∀{x : ℕ} → (y divides x) → (y divides (y + x))
+_∣_ = _divides_
 
 data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where -- TODO: Make _divides_ a special case of this. Tries (See below), but noticed that r<x would guarantee x≠0, which is good but not the same as the current definition of _divides_.
   instance
