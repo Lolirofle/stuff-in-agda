@@ -9,3 +9,4 @@ open import Numeral.Natural
 [ℕ]-induction base next (𝐒(n)) = next(n)([ℕ]-induction base next n)
 
 -- [ℕ]-induction' : ∀{X : ℕ → Set}{b : ℕ} → (∀{i : ℕ} → i ≤ b → X(i)) → ((i : ℕ) → X(i) → X(𝐒(i))) → (n : ℕ) → X(n)
+

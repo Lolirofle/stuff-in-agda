@@ -14,3 +14,11 @@ record Subset {S : Type} (P : S → Stmt) : Stmt where -- TODO: Cannot be Type?
   field
     elem             : S
     ⦃ satisfaction ⦄ : P(elem)
+
+-- An element in Subset(S) is in the subset of S.
+-- Something of type Subset(S) is of a restricted part of S.
+record Subset2 {S : Type} (P : S → Set) : Type where
+  constructor subelem
+  field
+    elem             : S
+    ⦃ satisfaction ⦄ : P(elem)

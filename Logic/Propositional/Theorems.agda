@@ -258,3 +258,33 @@ non-contradiction(x , nx) = nx x
 [∨]-redundancy : ∀{A : Stmt} → (A ∨ A) ↔ A
 [∨]-redundancy = [↔]-intro [∨]-introₗ (x ↦ [∨]-elim id id x)
 
+------------------------------------------
+-- Stuff related to classical logic
+
+[¬¬]-excluded-middle : ∀{X} → ¬¬(X ∨ (¬ X))
+[¬¬]-excluded-middle{X} =
+  ([¬]-intro(naorna ↦
+    ((non-contradiction([∧]-intro
+      (([∨]-introᵣ
+        (([¬]-intro(a ↦
+          ((non-contradiction([∧]-intro
+            (([∨]-introₗ a) :of:  (X ∨ (¬ X)))
+            (naorna         :of: ¬(X ∨ (¬ X)))
+          )) :of: ⊥)
+        )) :of: (¬ X))
+      ) :of: (X ∨ (¬ X)))
+      (naorna :of: ¬(X ∨ (¬ X)))
+    )) :of: ⊥)
+  )) :of: ¬¬(X ∨ (¬ X))
+
+[¬¬]-elim-from-excluded-middle : ∀{X} → (X ∨ (¬ X)) → ((¬¬ X) → X)
+[¬¬]-elim-from-excluded-middle ([∨]-introₗ x)  (nnx) = x
+[¬¬]-elim-from-excluded-middle ([∨]-introᵣ nx) (nnx) = [⊥]-elim(nnx(nx))
+
+[[¬¬]-elim]-[excluded-middle]-eqₗ : (∀{X} → (¬¬ X) → X) ← (∀{X} → X ∨ (¬ X))
+[[¬¬]-elim]-[excluded-middle]-eqₗ or {X} (nnx) with or
+...                                           | ([∨]-introₗ x ) = x
+...                                           | ([∨]-introᵣ nx) = [⊥]-elim(nnx(nx))
+
+[[¬¬]-elim]-[excluded-middle]-eqᵣ : (∀{X} → (¬¬ X) → X) → (∀{X} → (X ∨ (¬ X)))
+[[¬¬]-elim]-[excluded-middle]-eqᵣ (nnxx) = nnxx([¬¬]-excluded-middle)

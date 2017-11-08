@@ -4,6 +4,7 @@ import Lvl
 open import Data
 open import Functional
 open import Logic.Propositional{ℓ}
+open import Logic.Propositional.Theorems{ℓ}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Proof
@@ -187,6 +188,18 @@ instance
 instance
   [𝐒]-not-0 : ∀{n} → (𝐒(n) ≢ 𝟎)
   [𝐒]-not-0 ()
+
+instance
+  [ℕ]-zero-or-nonzero : ∀{n} → (n ≡ 𝟎)∨(n ≢ 𝟎)
+  [ℕ]-zero-or-nonzero {𝟎}    = [∨]-introₗ [≡]-intro
+  [ℕ]-zero-or-nonzero {𝐒(_)} = [∨]-introᵣ \()
+
+instance
+  [ℕ]-eq-or-not : ∀{a b} → (a ≡ b)∨(a ≢ b)
+  [ℕ]-eq-or-not {𝟎}   {𝟎}    = [∨]-introₗ [≡]-intro
+  [ℕ]-eq-or-not {𝟎}   {𝐒(_)} = [∨]-introᵣ \()
+  [ℕ]-eq-or-not {𝐒(_)}{𝟎}    = [∨]-introᵣ \()
+  [ℕ]-eq-or-not {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ [≡]-with-[ 𝐒 ]) ([∨]-introᵣ ∘ (contrapositiveᵣ [𝐒]-injectivity)) ([ℕ]-eq-or-not {a}{b}) where
 
 instance
   [𝐏][𝐒]-identity : ∀{n} → (𝐏(𝐒(n)) ≡ n)

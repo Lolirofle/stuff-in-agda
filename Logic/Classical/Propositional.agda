@@ -214,20 +214,7 @@ module _ where
   [¬¬]-elim = ConstructiveTheorems.[¬¬¬]-elim
 
   excluded-middle : ∀{X} → Classic(X ∨ (¬ X))
-  excluded-middle{X} =
-    (Constructive.[¬]-intro(naorna ↦
-      ((ConstructiveTheorems.non-contradiction(Constructive.[∧]-intro
-        ((Constructive.[∨]-introᵣ
-          ((Constructive.[¬]-intro(a ↦
-            ((ConstructiveTheorems.non-contradiction(Constructive.[∧]-intro
-              ((Constructive.[∨]-introₗ a) :of:  (X ∨ (¬ X)))
-              (naorna                      :of: ¬(X ∨ (¬ X)))
-            )) :of: ⊥)
-          )) :of: (¬ X))
-        ) :of: (X ∨ (¬ X)))
-        (naorna :of: ¬(X ∨ (¬ X)))
-      )) :of: ⊥)
-    )) :of: ¬¬(X ∨ (¬ X))
+  excluded-middle{X} = ConstructiveTheorems.[¬¬]-excluded-middle
 
   [¬]-elim₂ : ∀{X} → Classic((¬ X) → ⊥) → Classic(X)
   [¬]-elim₂ = [¬¬]-elim ∘ [¬]-intro
