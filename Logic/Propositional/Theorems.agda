@@ -190,12 +190,28 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
     (x ↦ [∧]-elimₗ(xzyz([∧]-intro x z)))
   )
 
-[→]-adding-[∧] : ∀{X Y Z} → (X ↔ Y) → ((X ∧ Z) ↔ (Y ∧ Z))
-[→]-adding-[∧] ([↔]-intro yx xy) =
+[↔]-adding-[∧] : ∀{X Y Z} → (X ↔ Y) → ((X ∧ Z) ↔ (Y ∧ Z))
+[↔]-adding-[∧] ([↔]-intro yx xy) =
   ([↔]-intro
     (yz ↦ [∧]-intro (yx([∧]-elimₗ yz)) ([∧]-elimᵣ yz))
     (xz ↦ [∧]-intro (xy([∧]-elimₗ xz)) ([∧]-elimᵣ xz))
   )
+
+[↔]-elimₗ-[¬] : ∀{X Y} → (X ↔ Y) → (¬ X) → (¬ Y)
+[↔]-elimₗ-[¬] xy nx y = nx([↔]-elimₗ(xy)(y))
+
+[↔]-elimᵣ-[¬] : ∀{X Y} → (X ↔ Y) → (¬ Y) → (¬ X)
+[↔]-elimᵣ-[¬] xy ny x = ny([↔]-elimᵣ(xy)(x))
+
+[↔]-negative : ∀{X Y} → (X ↔ Y) → ((¬ X) ↔ (¬ Y))
+[↔]-negative xy = [↔]-intro ([↔]-elimᵣ-[¬] (xy)) ([↔]-elimₗ-[¬] (xy))
+
+[↔]-elim-[∨] : ∀{X Y} → (X ↔ Y) → (X ∨ Y) → (X ∧ Y)
+[↔]-elim-[∨] (x↔y) ([∨]-introₗ x) = [∧]-intro x (([↔]-elimᵣ x↔y)(x))
+[↔]-elim-[∨] (x↔y) ([∨]-introᵣ y) = [∧]-intro (([↔]-elimₗ x↔y)(y)) y
+
+-- TODO: Is this possible to prove?
+-- [↔]-elim-[¬∨¬] : ∀{X Y} → (X ↔ Y) → ((¬ X) ∨ (¬ Y)) → (X ∧ Y)
 
 ------------------------------------------
 -- Almost-distributivity with duals (De-morgan's laws)

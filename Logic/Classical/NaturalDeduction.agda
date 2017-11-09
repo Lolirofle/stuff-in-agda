@@ -52,6 +52,39 @@ record Propositional {ℓ} : Type{Lvl.𝐒(ℓ)} where
     [⊥]-elim  : ∀{X : Stmt} → ⊥ → X
 
     [⊤]-intro : ⊤
+
+{-
+Propositional-from-[∧][∨][⊥] : ∀{ℓ} → (_∧_ _∨_ : Stmt → Stmt → Stmt) → (⊥ : Stmt) →
+  ([∧]-intro : ∀{X Y} → X → Y → (X ∧ Y)) →
+  ([∧]-elimₗ  : ∀{X Y} → (X ∧ Y) → X) →
+  ([∧]-elimᵣ  : ∀{X Y} → (X ∧ Y) → Y) →
+  ([∨]-introₗ : ∀{X Y} → X → (X ∨ Y)) →
+  ([∨]-introᵣ : ∀{X Y} → Y → (X ∨ Y)) →
+  ([∨]-elim  : ∀{X Y Z : Stmt} → (X → Z) → (Y → Z) → (X ∨ Y) → Z) →
+  ([⊥]-intro : ∀{X : Stmt} → X → (X → ⊥) → ⊥) →
+  ([⊥]-elim  : ∀{X : Stmt} → ⊥ → X) →
+  Propositional{ℓ}
+Propositional-from-[∧][∨][⊥]
+  (_∧_) (_∨_) (⊥)
+  ([∧]-intro)
+  ([∧]-elimₗ)
+  ([∧]-elimᵣ)
+  ([∨]-introₗ)
+  ([∨]-introᵣ)
+  ([∨]-elim)
+  ([⊥]-intro)
+  ([⊥]-elim)
+  = record{
+    _∧_  = _∧_ ;
+    _∨_  = _∨_ ;
+    _⟶_ = (x ↦ y ↦ (x ∨ (¬ y))) ;
+    _⟵_ = swap _⟶_ ;
+    _⟷_ = (x ↦ y ↦ ((x ⟵ y)∧(x ⟶ y))) ;
+    ¬_   = (x ↦ (x ⟶ ⊥)) ;
+    ⊥    = ⊥ ;
+    ⊤    = ¬ ⊥
+  }
+-}
 open Propositional ⦃ ... ⦄ public
 
 -- Theory of classical predicate/(first-order) logic expressed using natural deduction rules
