@@ -86,3 +86,6 @@ instance
 --   https://www.reddit.com/r/agda/comments/4te0rg/functors_extensional_equality_and_function/
 --   https://mathoverflow.net/questions/156238/function-extensionality-does-it-make-a-difference-why-would-one-keep-it-out-of
 -- [≡]-function : ∀{T₁ T₂ : Type}{f₁ f₂ : T₁ → T₂) → (∀{x} → (f₁(x) ≡ f₂(x))) → (f₁ ≡ f₂)
+
+[≡]-intro-[→] : ∀{T}{x y : T}{f : T → Stmt} → f(x) → ((x ≡ y) → f(y))
+[≡]-intro-[→] {T}{x}{y}{f} fx xy = [≡]-elimᵣ {T}{x}{y} xy {f} fx

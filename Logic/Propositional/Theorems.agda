@@ -80,16 +80,17 @@ open import Type
 [→]-lift : {T X Y : Stmt} → (X → Y) → ((T → X) → (T → Y))
 [→]-lift = liftₗ
 
-material-impl₁ : {X Y : Stmt} → ((¬ X) ∨ Y) → (X → Y)
-material-impl₁ = [∨]-elim ([→]-lift [⊥]-elim) ([→]-intro)
+material-implₗ : {X Y : Stmt} → (X → Y) ← ((¬ X) ∨ Y)
+material-implₗ = [∨]-elim ([→]-lift [⊥]-elim) ([→]-intro)
 -- ((¬ X) ∨ Y)
 -- ((X → ⊥) ∨ Y)
 -- ((X → ⊥) ∨ (X → Y))
 -- ((X → Y) ∨ (X → Y))
 -- (X → Y)
 
--- material-impl₂ : {X Y : Stmt} → (X → Y) → ((¬ X) ∨ Y) -- TODO: This does not work either?
--- material-impl₂ xy = 
+-- This seems to be unprovable in constructive logic
+-- material-implᵣ : {X Y : Stmt} → (X → Y) → ((¬ X) ∨ Y)
+-- material-implᵣ xy = 
 -- (X → Y)
 -- ?
 
@@ -119,8 +120,8 @@ contrapositive₂ nf x = (swap nf) x
 -- X → (¬ (Y → ⊥))
 -- X → (¬ (¬ Y))
 
-contrapositive₃ : {X Y : Stmt} → (X → (¬ Y)) → ((¬ X) ← Y) -- TODO: Generalized variant of contrapositive₂
-contrapositive₃ nf x = (swap nf) x
+contrapositive-variant : {X Y : Stmt} → (X → (¬ Y)) → ((¬ X) ← Y)
+contrapositive-variant {X}{Y} = swap
 
 modus-tollens : {X Y : Stmt} → (X → Y) → (¬ Y) → (¬ X)
 modus-tollens = contrapositiveᵣ

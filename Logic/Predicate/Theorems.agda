@@ -113,8 +113,43 @@ open import Type
 [∀][∧]-combine : ∀{X}{P Q : X → Stmt} → (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x))) → ∀ₗ(x ↦ (P(x) ∧ Q(x)))
 [∀][∧]-combine ([∧]-intro (axPx) (axQx)) {x} = [∧]-intro (axPx{x}) (axQx{x})
 
+-- TODO: Same as below
 [∀][→]ᵣ-unmentionedᵣ : ∀{X}{P : Stmt}{Q : X → Stmt} → ∀ₗ(x ↦ (P → Q(x))) → (P → ∀ₗ(x ↦ Q(x)))
 [∀][→]ᵣ-unmentionedᵣ (xPQx) (P) {x} = xPQx(P)
 
 [∀][→]ᵣ-unmentionedₗ : ∀{X}{P : Stmt}{Q : X → Stmt} → ∀ₗ(x ↦ (P → Q(x))) ← (P → ∀ₗ(x ↦ Q(x)))
 [∀][→]ᵣ-unmentionedₗ {_}{_}{_} (PaxQx) {x} (P) = PaxQx(P){x}
+
+[∀]-unrelatedₗ-[→] : ∀{X}{P : X → Stmt}{Q : Stmt} → ∀ₗ(x ↦ (P(x) → Q)) ↔ (∃(x ↦ P(x)) → Q)
+[∀]-unrelatedₗ-[→] {X}{P}{Q} = [↔]-intro l r where
+  l : ∀ₗ(x ↦ (P(x) → Q)) ← (∃(x ↦ P(x)) → Q)
+  l(expxq) {x} px = expxq([∃]-intro(x)(px))
+
+  r : ∀ₗ(x ↦ (P(x) → Q)) → (∃(x ↦ P(x)) → Q)
+  r(axpxq) = [∃]-elim(\{x} → px ↦ axpxq{x}(px))
+
+[∀]-unrelatedᵣ-[→] : ∀{X}{P : Stmt}{Q : X → Stmt} → ∀ₗ(x ↦ (P → Q(x))) ↔ (P → ∀ₗ(x ↦ Q(x)))
+[∀]-unrelatedᵣ-[→] {X}{P}{Q} = [↔]-intro l r where
+  l : ∀ₗ(x ↦ (P → Q(x))) ← (P → ∀ₗ(x ↦ Q(x)))
+  l(paxqx) {x} p = paxqx(p){x}
+
+  r : ∀ₗ(x ↦ (P → Q(x))) → (P → ∀ₗ(x ↦ Q(x)))
+  r(axpqx)(p){x} = axpqx{x}(p)
+
+-- TODO: Would this work with ∀ₑ?
+[∃]-unrelatedₗ-[→] : ∀{X}{P : X → Stmt}{Q : Stmt} → ∃(x ↦ (P(x) → Q)) → (∀ₗ(x ↦ P(x)) → Q)
+[∃]-unrelatedₗ-[→] {X}{P}{Q} = r where -- [↔]-intro l r where
+  -- l : ∃(x ↦ (P(x) → Q)) ← (∀ₗ(x ↦ P(x)) → Q)
+  -- l(axpxq) = [∃]-intro(_) (px ↦ axpxq(px))
+
+  r : ∃(x ↦ (P(x) → Q)) → (∀ₗ(x ↦ P(x)) → Q)
+  r(expxq)(axpx) = [∃]-property(expxq) (axpx{[∃]-extract(expxq)})
+
+-- TODO
+[∃]-unrelatedᵣ-[→] : ∀{X}{P : Stmt}{Q : X → Stmt} → ∃(x ↦ (P → Q(x))) → (P → ∃(x ↦ Q(x)))
+[∃]-unrelatedᵣ-[→] {X}{P}{Q} = r where -- [↔]-intro l r where
+  -- l : ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
+  -- l(pexqx) = [∃]-intro(_) (p ↦ [∃]-property(pexqx(p)))
+
+  r : ∃(x ↦ (P → Q(x))) → (P → ∃(x ↦ Q(x)))
+  r(expqx)(p) = [∃]-elim(\{x} → pqx ↦ [∃]-intro(x)(pqx(p))) (expqx)
