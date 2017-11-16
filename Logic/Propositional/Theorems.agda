@@ -54,15 +54,7 @@ open import Type
         -- [∨]-associativity₂ : {X Y Z : Stmt} → ((X ∨ Y) ∨ Z) ← (X ∨ (Y ∨ Z))
         -- [∨]-associativity₂ {X} {Y} {Z} stmt = [∨]-associativity₁ {Y} {Z} {X} ([∨]-commutativity {X} {Y ∨ Z} stmt)
 
--- [↔]-associativity : {X Y Z : Stmt} → ((X ↔ Y) ↔ Z) → (X ↔ (Y ↔ Z))
--- [↔]-associativity = 
--- (Z → (X ↔ Y) , (X ↔ Y) → Z) → (X ↔ (Y ↔ Z))
--- (Z → (X ↔ Y) , (X ↔ Y) → Z) → (X → (Y ↔ Z) , (Y ↔ Z) → X)
--- (Z → (X → Y , Y → X) , (X → Y , Y → X) → Z) → (X → (Y → Z , Z → Y) , (Y → Z , Z → Y) → X)
--- ((Z → (X → Y) , Z → (Y → X)) , (X → Y , Y → X) → Z) → ((X → (Y → Z) , X → (Z → Y)) , (Y → Z , Z → Y) → X)
--- ((Z → X → Y , Z → Y → X) , (X → Y , Y → X) → Z) → ((X → Y → Z , X → Z → Y) , (Y → Z , Z → Y) → X)
--- ((X → Z → Y , Y → Z → X) , (X → Y , Y → X) → Z) → ((X → Y → Z , X → Z → Y) , (Y → Z , Z → Y) → X)
--- ((Y → Z → X , X → Z → Y) , (X → Y , Y → X) → Z) → ((X → Y → Z , X → Z → Y) , (Y → Z , Z → Y) → X)
+postulate [↔]-associativity : {X Y Z : Stmt} → ((X ↔ Y) ↔ Z) → (X ↔ (Y ↔ Z))
 
 ------------------------------------------
 -- Syllogism

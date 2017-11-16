@@ -41,15 +41,15 @@ open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
     -- −𝐒(𝐒ₙ(n))) ≡ 𝐏(−(𝐒ₙ(n)))
   -}
 
-[𝐏𝐏]-negative : (n : ℕ) → (𝐏(𝐏(− n)) ≡ 𝐏(−(𝐒ₙ(n))))
-[𝐏]-negative : (n : ℕ) → (𝐏(− n) ≡ −𝐒(n))
+[𝐏𝐏]-negative : ∀{n} → (𝐏(𝐏(− n)) ≡ 𝐏(−(𝐒ₙ(n))))
+[𝐏]-negative : ∀{n} → (𝐏(− n) ≡ −𝐒(n))
 
 [𝐏𝐏]-negative = [ℕ]-induction base next where
   base : (𝐏(𝐏(− 𝟎ₙ)) ≡ 𝐏(−(𝐒ₙ(𝟎ₙ))))
   base = [≡]-intro
 
   -- TODO: One proof of this would rely on [𝐏]-negative
-  postulate next : (n : ℕ) → (𝐏(𝐏(− n)) ≡ 𝐏(−(𝐒ₙ(n)))) → (𝐏(𝐏(− 𝐒ₙ(n))) ≡ 𝐏(−(𝐒ₙ(𝐒ₙ(n)))))
+  postulate next : ∀(n : ℕ) → (𝐏(𝐏(− n)) ≡ 𝐏(−(𝐒ₙ(n)))) → (𝐏(𝐏(− 𝐒ₙ(n))) ≡ 𝐏(−(𝐒ₙ(𝐒ₙ(n)))))
   {-next(n)(proof) =
     ([≡]-with-[ 𝐏 ]
       ([≡]-transitivity([∧]-intro
@@ -71,9 +71,9 @@ open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
   base : 𝐏(− 𝟎ₙ) ≡ −𝐒(𝟎ₙ)
   base = [≡]-intro
 
-  next : (n : ℕ) → (𝐏(− n) ≡ −𝐒(n)) → (𝐏(−(𝐒ₙ(n))) ≡ −𝐒(𝐒ₙ(n)))
+  next : ∀(n : ℕ) → (𝐏(− n) ≡ −𝐒(n)) → (𝐏(−(𝐒ₙ(n))) ≡ −𝐒(𝐒ₙ(n)))
   next(n)(proof) =
-    (symmetry ([𝐏𝐏]-negative(n)))
+    (symmetry ([𝐏𝐏]-negative{n}))
     🝖 ([≡]-with-[ 𝐏 ] (proof))
     🝖 ([𝐏]-negative-successor(n))
     -- 𝐏(− n) ≡ −𝐒(n)

@@ -41,4 +41,4 @@ _≱_ a b = (a < b)
 _≯_ : ℕ → ℕ → Stmt
 _≯_ a b = (a ≤ b)
 
--- TODO: CoPrime
+-- TODO: Prove that these are the negations

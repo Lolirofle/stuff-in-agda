@@ -91,7 +91,9 @@ open Propositional ⦃ ... ⦄ public
 record Predicate {ℓₗ ℓₒ} : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
   field
     ⦃ propositional ⦄ : Propositional{ℓₗ Lvl.⊔ ℓₒ}
-    Domain : Type{ℓₒ}
+    Metadomain : Type{ℓₒ}
+    Domain     : Type{ℓₒ}
+    obj : Metadomain → Domain
 
   field
     ∀ₗ : (Domain → Stmt) → Stmt
@@ -99,14 +101,15 @@ record Predicate {ℓₗ ℓₒ} : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
 
   field
     [∃]-intro : ∀{P : Domain → Stmt}{a} → P(a) → (∃ₗ P)
-    [∃]-elim  : ∀{P : Domain → Stmt}{Z : Stmt} → (∀{x : Domain} → P(x) → Z) → (∃ₗ P) → Z
+    [∃]-elim  : ∀{P : Domain → Stmt}{Z : Stmt} → (∀{x : Metadomain} → P(obj(x)) → Z) → (∃ₗ P) → Z
 
-    -- TODO: These are convenient, but it may not actually be possible to construct it constructively?
+    -- TODO: These are convenient, but it may not actually be possible to construct it constructively? Maybe wrap it inside something?
     [∃]-elem  : ∀{P : Domain → Stmt} → (∃ₗ P) → Domain
     [∃]-proof : ∀{P : Domain → Stmt} → (e : ∃ₗ P) → P([∃]-elem(e))
 
-    [∀]-intro : ∀{P : Domain → Stmt} → (∀{x : Domain} → P(x)) → (∀ₗ P)
-    [∀]-elim  : ∀{P : Domain → Stmt} → (∀ₗ P) → (∀{x : Domain} → P(x))
+    -- TODO: Are these really correct?
+    [∀]-intro : ∀{P : Domain → Stmt} → (∀{x : Metadomain} → P(obj(x))) → (∀ₗ P)
+    [∀]-elim  : ∀{P : Domain → Stmt} → (∀ₗ P) → (∀{x : Metadomain} → P(obj(x)))
 open Predicate ⦃ ... ⦄ public
 
 record PredicateEq {ℓₗ ℓₒ} : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where

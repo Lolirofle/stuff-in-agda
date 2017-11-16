@@ -4,10 +4,12 @@ import Lvl
 open import Data
 open import Functional
 open import Logic.Propositional{ℓ}
+open import Logic.Propositional.Theorems{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ}
+open import Numeral.Natural.Proof{ℓ}
 open import Numeral.Natural.Relation{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
@@ -27,16 +29,22 @@ instance
 
 instance
   [≤]-successor : ∀{a b : ℕ} → (a ≤ b) → (a ≤ 𝐒(b))
-  [≤]-successor ([∃]-intro n f) = [∃]-intro (𝐒(n)) ([≡]-with-[ 𝐒 ] f)
+  [≤]-successor ([∃]-intro(n) (proof)) = [∃]-intro (𝐒(n)) ([≡]-with-[ 𝐒 ] proof)
   -- a + n ≡ b //f
   -- a + ? ≡ 𝐒(b) //What value works if f?
   -- a + 𝐒(n) ≡ 𝐒(b)
   -- 𝐒(a + n) ≡ 𝐒(b) //[≡]-with-[ 𝐒 ] f
 
--- TODO: Implement
 instance
-  postulate [≤]-predecessor : ∀{a b : ℕ} → (𝐒(a) ≤ b) → (a ≤ b)
-  -- [≤]-predecessor ([∃]-intro n f) = [∃]-intro (𝐒(n)) ([≡]-with-[ 𝐒 ] f)
+  [≤]-predecessor : ∀{a b : ℕ} → (𝐒(a) ≤ b) → (a ≤ b)
+  [≤]-predecessor ([∃]-intro(n) (proof)) = [∃]-intro (𝐒(n)) (proof)
+
+[ℕ]-strong-induction : ∀{b : ℕ}{φ : ℕ → Stmt} → (∀(i : ℕ) → (i ≤ b) → φ(i)) → (∀(i : ℕ) → φ(i) → φ(𝐒(i))) → (∀{n} → φ(n))
+[ℕ]-strong-induction {𝟎}   {φ} (base) (next) = [ℕ]-induction {φ} (base(𝟎) ([∃]-intro(𝟎)([≡]-intro))) (next)
+[ℕ]-strong-induction {𝐒(b)}{φ} (base) (next) = [ℕ]-strong-induction {b}{φ} (base-prev) (next) where
+  base-prev : ∀(i : ℕ) → (i ≤ b) → φ(i)
+  base-prev(𝟎)    (proof) = base(𝟎) ([≤][0]-minimum)
+  base-prev(𝐒(i)) (proof) = next(i) (base-prev(i) ([≤]-predecessor {i}{b} proof))
 
 instance
   [≤]-with-[𝐒] : ∀{a b : ℕ} → (a ≤ b) → (𝐒(a) ≤ 𝐒(b))
@@ -48,9 +56,11 @@ instance
         🝖 ([≡]-with-[ 𝐒 ] f) -- 𝐒(a+n)=a+𝐒(n) = 𝐒(b)
       )
 
--- TODO: Implement
 instance
-  postulate [≤]-without-[𝐒] : ∀{a b : ℕ} → (a ≤ b) ← (𝐒(a) ≤ 𝐒(b))
+  [≤]-without-[𝐒] : ∀{a b : ℕ} → (a ≤ b) ← (𝐒(a) ≤ 𝐒(b))
+  [≤]-without-[𝐒] {𝟎}   {b}    (_)                    = [≤][0]-minimum
+  [≤]-without-[𝐒] {𝐒(a)}{𝟎}    ()
+  [≤]-without-[𝐒] {𝐒(a)}{𝐒(b)} ([∃]-intro(n) (proof)) = [≤]-with-[𝐒] {a}{b} ([≤]-without-[𝐒] {a}{b} ([∃]-intro(n) ([𝐒]-injectivity proof)))
 
 instance
   [≤]-transitivity : Transitivity (_≤_)
@@ -115,3 +125,15 @@ instance
 instance
   postulate [≱]-is-[<] : ∀{a b : ℕ} → ¬(a ≥ b) → (a < b)
   postulate [<]-is-[≱] : ∀{a b : ℕ} → ¬(a ≥ b) ← (a < b)
+
+instance
+  [ℕ]-zero-or-nonzero : ∀{n} → (n ≡ 𝟎)∨(n ≢ 𝟎)
+  [ℕ]-zero-or-nonzero {𝟎}    = [∨]-introₗ [≡]-intro
+  [ℕ]-zero-or-nonzero {𝐒(_)} = [∨]-introᵣ \()
+
+instance
+  [ℕ]-eq-or-not : ∀{a b} → (a ≡ b)∨(a ≢ b)
+  [ℕ]-eq-or-not {𝟎}   {𝟎}    = [∨]-introₗ [≡]-intro
+  [ℕ]-eq-or-not {𝟎}   {𝐒(_)} = [∨]-introᵣ \()
+  [ℕ]-eq-or-not {𝐒(_)}{𝟎}    = [∨]-introᵣ \()
+  [ℕ]-eq-or-not {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ [≡]-with-[ 𝐒 ]) ([∨]-introᵣ ∘ (contrapositiveᵣ [𝐒]-injectivity)) ([ℕ]-eq-or-not {a}{b})

@@ -151,6 +151,7 @@ instance
 
 instance
   postulate [0]-divides-not : ∀{n} → ¬(0 divides 𝐒(n))
+  -- [0]-divides-not {n} (Div𝐒(proof)) = -- TODO: This makes Div𝐒(proof)≡proof ?
 
 instance
   divides-not-[1] : ∀{n} → ¬((n + 2) divides 1)

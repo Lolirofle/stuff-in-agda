@@ -4,10 +4,9 @@ import Lvl
 open import Data
 open import Functional
 open import Logic.Propositional{ℓ}
-open import Logic.Propositional.Theorems{ℓ}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Proof
+open import Numeral.Natural.Proof{ℓ}
 open import Numeral.Natural.Relation
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
@@ -18,46 +17,46 @@ open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 
 instance
   [+]-identityₗ : Identityₗ (_+_) (0)
-  [+]-identityₗ {x} = [ℕ]-induction base next x where
+  [+]-identityₗ {x} = [ℕ]-induction base next {x} where
     base : ((0 + 0) ≡ 0)
     base = [≡]-intro
 
-    next : ∀ (i : ℕ) → ((0 + i) ≡ i) → ((0 + 𝐒(i)) ≡ 𝐒(i))
+    next : ∀(i : ℕ) → ((0 + i) ≡ i) → ((0 + 𝐒(i)) ≡ 𝐒(i))
     next _ = [≡]-with-[ 𝐒 ]
 {-# REWRITE [+]-identityₗ #-}
 
 instance
   [+]-identityᵣ : Identityᵣ (_+_) (0)
-  [+]-identityᵣ {x} = [ℕ]-induction base next x where
+  [+]-identityᵣ {x} = [ℕ]-induction base next {x} where
     base : ((0 + 0) ≡ 0)
     base = [≡]-intro
 
-    next : ∀ (i : ℕ) → ((i + 0) ≡ i) → ((𝐒(i) + 0) ≡ 𝐒(i))
+    next : ∀(i : ℕ) → ((i + 0) ≡ i) → ((𝐒(i) + 0) ≡ 𝐒(i))
     next _ = [≡]-with-[ 𝐒 ]
 
 instance
   [+]-associativity : Associativity (_+_)
-  [+]-associativity {x} {y} {z} = [ℕ]-induction (base x y) (next x y) z where
-    base : ∀ (x y : ℕ) → ((x + y) + 0) ≡ (x + (y + 0))
+  [+]-associativity {x}{y}{z} = [ℕ]-induction (base x y) (next x y) {z} where
+    base : (x y : ℕ) → ((x + y) + 0) ≡ (x + (y + 0))
     base _ _ = [≡]-intro
 
-    next : ∀ (x y : ℕ) → (i : ℕ) → ((x + y) + i) ≡ (x + (y + i)) → ((x + y) + 𝐒(i)) ≡ (x + (y + 𝐒(i)))
+    next : ∀(x y i : ℕ) → ((x + y) + i) ≡ (x + (y + i)) → ((x + y) + 𝐒(i)) ≡ (x + (y + 𝐒(i)))
     next _ _ _ = [≡]-with-[ 𝐒 ]
 {-# REWRITE [+]-associativity #-} -- TODO: I thought that rewriting only worked from left to right and that this would get the compiler stuck? Maybe not?
 
 [+1]-commutativity : ∀{x y : ℕ} → (𝐒(x) + y) ≡ (x + 𝐒(y))
-[+1]-commutativity {x} {y} = [ℕ]-induction (base x) (next x) y where
-  base : ∀ (x : ℕ) → (𝐒(x) + 0) ≡ (x + 𝐒(0))
+[+1]-commutativity {x}{y} = [ℕ]-induction (base x) (next x) {y} where
+  base : (x : ℕ) → (𝐒(x) + 0) ≡ (x + 𝐒(0))
   base _ = [≡]-intro
 
-  next : ∀ (x : ℕ) → (i : ℕ) → (𝐒(x) + i) ≡ (x + 𝐒(i)) → (𝐒(x) + 𝐒(i)) ≡ (x + 𝐒(𝐒(i)))
-  next x i = [≡]-with-[ 𝐒 ]
+  next : ∀(x i : ℕ) → (𝐒(x) + i) ≡ (x + 𝐒(i)) → (𝐒(x) + 𝐒(i)) ≡ (x + 𝐒(𝐒(i)))
+  next(x)(_) = [≡]-with-[ 𝐒 ]
 {-# REWRITE [+1]-commutativity #-}
 
 instance
   [+]-commutativity : Commutativity (_+_)
-  [+]-commutativity {x} {y} = [ℕ]-induction (base x) (next x) y where
-    base : ∀ (x : ℕ) → (x + 0) ≡ (0 + x)
+  [+]-commutativity {x}{y} = [ℕ]-induction (base x) (next x) {y} where
+    base : ∀(x : ℕ) → (x + 0) ≡ (0 + x)
     base _ =
       symmetry(
         [+]-identityₗ
@@ -70,8 +69,8 @@ instance
     --   ∀x. x = x+0 //[≡]-symmetry(..) [2]
     -- (∀x. 0+x = x+0) // [≡]-transitivity(..)
 
-    next : ∀ (x i : ℕ) → (x + i) ≡ (i + x) → (x + 𝐒(i)) ≡ (𝐒(i) + x)
-    next x i eq =
+    next : ∀(x i : ℕ) → ((x + i) ≡ (i + x)) → ((x + 𝐒(i)) ≡ (𝐒(i) + x))
+    next (x) (i) (eq) =
       ([≡]-with-[ 𝐒 ] eq)
       🝖 (symmetry([+1]-commutativity {i} {x}))
     --   ∀x∀i. x+i = i+x //eq
@@ -92,12 +91,12 @@ instance
 
 instance
   [⋅]-absorberₗ : Absorberₗ (_⋅_) (0)
-  [⋅]-absorberₗ {x} = [ℕ]-induction base next x where
+  [⋅]-absorberₗ {x} = [ℕ]-induction base next {x} where
     base : (0 ⋅ 0) ≡ 0
     base = reflexivity
 
-    next : ∀ (x : ℕ) → (0 ⋅ x) ≡ 0 → (0 ⋅ 𝐒(x)) ≡ 0
-    next _ eq = [≡]-with-[(x ↦ 0 + x)] eq
+    next : ∀(x : ℕ) → ((0 ⋅ x) ≡ 0) → ((0 ⋅ 𝐒(x)) ≡ 0)
+    next(_)(eq) = [≡]-with-[(x ↦ 0 + x)] eq
 {-# REWRITE [⋅]-absorberₗ #-}
 
 instance
@@ -106,12 +105,12 @@ instance
 
 instance
   [⋅]-identityₗ : Identityₗ (_⋅_) (1)
-  [⋅]-identityₗ {x} = [ℕ]-induction base next x where
+  [⋅]-identityₗ {x} = [ℕ]-induction base next {x} where
     base : ((1 ⋅ 0) ≡ 0)
     base = reflexivity
 
-    next : (i : ℕ) → ((1 ⋅ i) ≡ i) → ((1 ⋅ 𝐒(i)) ≡ 𝐒(i))
-    next i eq =
+    next : ∀(i : ℕ) → ((1 ⋅ i) ≡ i) → ((1 ⋅ 𝐒(i)) ≡ 𝐒(i))
+    next(i)(eq) =
       ([+]-commutativity {1} {1 ⋅ i})
       🝖 ([≡]-with-[ 𝐒 ] eq)
   --   1 + 1⋅i = 1⋅i + 1 //[+]-commutativity
@@ -129,12 +128,12 @@ instance
 
 instance
   [⋅][+]-distributivityᵣ : ∀{x y z : ℕ} → ((x + y) ⋅ z) ≡ (x ⋅ z) + (y ⋅ z)
-  [⋅][+]-distributivityᵣ {x}{y}{z} = [ℕ]-induction (base x y) (next x y) z where
-    base : ∀(x y : ℕ) → ((x + y) ⋅ 0) ≡ ((x ⋅ 0) + (y ⋅ 0))
+  [⋅][+]-distributivityᵣ {x}{y}{z} = [ℕ]-induction (base x y) (next x y) {z} where
+    base : (x y : ℕ) → ((x + y) ⋅ 0) ≡ ((x ⋅ 0) + (y ⋅ 0))
     base _ _ = [≡]-intro
 
     next : ∀(x y z : ℕ) → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z)) → ((x + y) ⋅ 𝐒(z)) ≡ ((x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)))
-    next x y z proof = ([≡]-with-[(expr ↦ ((x + y) + expr))] proof) 🝖 (swap-stuff-around{x}{y}{x ⋅ z}{y ⋅ z}) where
+    next(x)(y)(z) (proof) = ([≡]-with-[(expr ↦ ((x + y) + expr))] proof) 🝖 (swap-stuff-around{x}{y}{x ⋅ z}{y ⋅ z}) where
       swap-stuff-around : ∀{a b c d} → (a + b) + (c + d) ≡ (a + c) + (b + d)
       swap-stuff-around {a}{b}{c}{d} =
         [+]-associativity{a}{b}{c + d}
@@ -188,18 +187,6 @@ instance
 instance
   [𝐒]-not-0 : ∀{n} → (𝐒(n) ≢ 𝟎)
   [𝐒]-not-0 ()
-
-instance
-  [ℕ]-zero-or-nonzero : ∀{n} → (n ≡ 𝟎)∨(n ≢ 𝟎)
-  [ℕ]-zero-or-nonzero {𝟎}    = [∨]-introₗ [≡]-intro
-  [ℕ]-zero-or-nonzero {𝐒(_)} = [∨]-introᵣ \()
-
-instance
-  [ℕ]-eq-or-not : ∀{a b} → (a ≡ b)∨(a ≢ b)
-  [ℕ]-eq-or-not {𝟎}   {𝟎}    = [∨]-introₗ [≡]-intro
-  [ℕ]-eq-or-not {𝟎}   {𝐒(_)} = [∨]-introᵣ \()
-  [ℕ]-eq-or-not {𝐒(_)}{𝟎}    = [∨]-introᵣ \()
-  [ℕ]-eq-or-not {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ [≡]-with-[ 𝐒 ]) ([∨]-introᵣ ∘ (contrapositiveᵣ [𝐒]-injectivity)) ([ℕ]-eq-or-not {a}{b}) where
 
 instance
   [𝐏][𝐒]-identity : ∀{n} → (𝐏(𝐒(n)) ≡ n)

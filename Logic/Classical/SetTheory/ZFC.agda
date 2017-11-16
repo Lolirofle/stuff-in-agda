@@ -68,7 +68,7 @@ module Axioms where
   -- • Making every set have a ordinal rank.
   Regularity = ∀ₗ(s₁ ↦ (NonEmpty(s₁) ⟶ ∃ₗ(s₂ ↦ (s₂ ∈ s₁) ∧ Disjoint(s₁)(s₂))))
 
-  Replacement = ⊤
+  Replacement = ∀{φ : Domain → Domain → Stmt} → ∀ₗ(A ↦ ∀ₗ(x ↦ (x ∈ A) ⟶ ∃ₗ!(y ↦ φ(x)(y))) ⟶ ∃ₗ(B ↦ ∀ₗ(y ↦ (y ∈ B) ⟷ ∃ₗ(x ↦ (x ∈ A) ∧ φ(x)(y)))))
 
   Choice = ⊤
 

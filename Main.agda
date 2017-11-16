@@ -28,8 +28,9 @@ import List.Theorems
 import Logic.Meta.Classical.Propositional.ProofSystem
 import Logic.Meta.Classical.Propositional.Semantics
 import Logic.Meta.Classical.Propositional.Syntax
+import Logic.Classical.Mere
 import Logic.Classical.NaturalDeduction
-import Logic.Classical.Propositional
+import Logic.Classical.DoubleNegated
 import Logic.Classical.SetTheory.ZFC
 import Logic.Convenience
 import Logic.DiagonalProof
