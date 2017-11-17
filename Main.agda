@@ -78,6 +78,7 @@ import Sets.BoolSet
 import Sets.IZF
 import Sets.ListSet
 import Sets.TypeSet
+import Structure.Arithmetic
 import Structure.Function.Domain
 import Structure.Function.Linear
 import Structure.Function.Ordering

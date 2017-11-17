@@ -286,6 +286,10 @@ non-contradiction(x , nx) = nx x
     )) :of: ⊥)
   )) :of: ¬¬(X ∨ (¬ X))
 
+-- Note:
+--   ∀{X} → (X ∨ (¬ X)) ← ((¬¬ X) → X)
+--   is not provable because the statement (X ∨ (¬ X)) requires a [¬¬]-elim.
+--   TODO: ...I think? I do not think (∀{X} → ¬¬(X ∨ (¬ X)) → ((¬¬ X) ∨ (¬ X))) is provable.
 [¬¬]-elim-from-excluded-middle : ∀{X} → (X ∨ (¬ X)) → ((¬¬ X) → X)
 [¬¬]-elim-from-excluded-middle ([∨]-introₗ x)  (nnx) = x
 [¬¬]-elim-from-excluded-middle ([∨]-introᵣ nx) (nnx) = [⊥]-elim(nnx(nx))

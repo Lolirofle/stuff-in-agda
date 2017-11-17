@@ -205,10 +205,10 @@ commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
     🝖 ([+]-commutativity {b₁} {b₂})
 
 instance
-  [+]-injectiveᵣ : ∀{a} → Injective (x ↦ a + x)
-  [+]-injectiveᵣ {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = commuteBothTemp {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
-  [+]-injectiveᵣ {𝐒(n)} {x₁} {x₂} (𝐒n+x₁≡𝐒n+x₂) =
-    [+]-injectiveᵣ {n} (
+  [+]-injectivityᵣ : ∀{a} → Injective (x ↦ a + x)
+  [+]-injectivityᵣ {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = commuteBothTemp {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
+  [+]-injectivityᵣ {𝐒(n)} {x₁} {x₂} (𝐒n+x₁≡𝐒n+x₂) =
+    [+]-injectivityᵣ {n} (
       commuteBothTemp {x₁} {n} {x₂} {n} ([≡]-with-[ 𝐏 ] (commuteBothTemp {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
     )
 

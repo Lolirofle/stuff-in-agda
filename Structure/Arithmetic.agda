@@ -1,6 +1,12 @@
-module Structure.Arithmetic {ℓ} where
+module Structure.Arithmetic {ℓₗ}{ℓₒ} where
 
-record Language (T : Set) : Set where
+import      Lvl
+open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
+open import Relator.Equals{ℓₗ}{ℓₒ}
+open import Structure.Function.Domain{ℓₗ}
+open import Type
+
+record Language (T : Type{ℓₒ}) : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
   field
     𝟎 : T
     𝐒 : T → T
@@ -8,30 +14,31 @@ record Language (T : Set) : Set where
     _+_ : T → T → T
     _⋅_ : T → T → T
 
-    _<_ : T → T → Set
+    _<_ : T → T → Stmt
 
-  _>_ : T → T → Set
-  _>_ = _<_
+record Minimal (T : Type{ℓₒ}) ⦃ _ : Language(T) ⦄ : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
+  open Language ⦃ ... ⦄
 
-record Minimal (T : Set) ⦃ _ : Language(T) ⦄ : Set where
   field
-    [𝐒]-positivity  : ∀{x} → (𝐒(x) ≢ 𝟎)
-    [𝐒]-injectivity : Injective(𝐒)
+    [𝐒]-positivity  : ∀{x : T} → (𝐒(x) ≢ 𝟎)
+    [𝐒]-injectivity : Injective{ℓₒ}{ℓₒ}{T}{T}(𝐒)
 
-    [+]-base    : ∀{x} → (x + 𝟎 ≡ x)
-    [+]-step    : ∀{x y} → (x + 𝐒(y) ≡ 𝐒(x + y))
+    [+]-base    : ∀{x : T} → (x + 𝟎 ≡ x)
+    [+]-step    : ∀{x y : T} → (x + 𝐒(y) ≡ 𝐒(x + y))
 
-    [⋅]-base    : ∀{x} → (x ⋅ 𝟎 ≡ 𝟎)
-    [⋅]-step    : ∀{x y} → (x ⋅ 𝐒(y) ≡ (x ⋅ y) + x)
+    [⋅]-base    : ∀{x : T} → (x ⋅ 𝟎 ≡ 𝟎)
+    [⋅]-step    : ∀{x y : T} → (x ⋅ 𝐒(y) ≡ (x ⋅ y) + x)
 
-    [<]-minimum : ∀{x} → (x ≮ 0)
-    [<][𝟎]      : ∀{x} → (𝟎 < x) ↔ (x ≢ 𝟎)
-    [<][𝐒]₁     : ∀{x y} → (x < 𝐒(y)) ↔ ((x < y)∨(x ≡ y))
-    [<][𝐒]₂     : ∀{x y} → (𝐒(x) < y) ↔ ((x < y)∧(𝐒(x) ≢ y))
+    [<][𝟎]ₗ : ∀{x : T} → (𝟎 < x) ↔ (x ≢ 𝟎)
+    [<][𝟎]ᵣ : ∀{x : T} → ¬(x < 𝟎) -- Minimum in the order (TODO: Is (∀x. x≥0) neccessary? Which means (0<x)∨(0=x))
+    [<][𝐒]ₗ : ∀{x y : T} → (𝐒(x) < y) ↔ ((x < y)∧(𝐒(x) ≢ y)) -- TODO: Also the definition of (_≤_)?
+    [<][𝐒]ᵣ : ∀{x y : T} → (x < 𝐒(y)) ↔ ((x < y)∨(x ≡ y))
 
-record Peano (T : Set) ⦃ _ : Language(T) ⦄ : Set where
+record Peano (T : Type{ℓₒ}) ⦃ _ : Language(T) ⦄ : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
+  open Language ⦃ ... ⦄
+
   field
     ⦃ minimal ⦄ : Minimal(T)
 
   field
-    induction : ∀{P : T → Set} → P(𝟎) → (∀{x} → P(x) → P(𝐒(x))) → (∀{x} → P(x))
+    induction : ∀{P : T → Stmt} → P(𝟎) → (∀{x} → P(x) → P(𝐒(x))) → (∀{x} → P(x))

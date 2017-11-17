@@ -18,10 +18,11 @@ module _ {ℓ₃} where
   [≡]-substitutionᵣ : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Type{ℓ₃}} → f(x) → f(y)
   [≡]-substitutionᵣ [≡]-intro = id
 
--- TODO: Backwards compatibility with code I had earlier
-[≡]-substitution : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → f(x) → f(y)
-[≡]-substitution = [≡]-substitutionᵣ
-
+-- Note:
+--   The elimination rules can be used in different ways:
+--   • From (f(x) ∧ (x=y)) to f(y)
+--   • From f(x) to ((x=y) → f(y))
+-- ((x=y) → f(y)) cannot prove f(x) alone because of implication rules.
 
 [≡]-elimₗ : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Stmt} → f(x) ← f(y)
 [≡]-elimₗ = [≡]-substitutionₗ

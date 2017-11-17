@@ -78,6 +78,16 @@ divides-elim {_}{_} (Div𝟎) = [∃]-intro (0) ([≡]-intro)
 divides-elim {_}{y} (Div𝐒{x} (y-div-x)) with divides-elim(y-div-x)
 ...                                | ([∃]-intro (n) (y⋅n≡x)) = [∃]-intro (𝐒(n)) ([≡]-with-[(expr ↦ y + expr)] (y⋅n≡x))
 
+{-
+Div𝐏 : ∀{x y : ℕ} → (y divides (y + x)) → (y divides x)
+Div𝐏 {x}{y} (proof) with divides-elim(proof)
+...             | [∃]-intro (𝟎)    (y0≡yx)  = divides-intro(y0≡yx) TODO
+...             | [∃]-intro (𝐒(n)) (ySn≡yx) = divides-intro([∃]-intro (n) ([+]-injectivityᵣ {y} ySn≡yx))
+-}
+
+{-test : ∀{y}{x}{proof} → Div𝐒{y}{x}(proof) ≢ proof
+test ()
+-}
 instance
   divides-transitivity : Transitivity (_divides_)
   transitivity{{divides-transitivity}} {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
@@ -93,39 +103,37 @@ instance
       )
     )
 
-instance
-  divides-with-[+] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b + c))
-  divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
-  ...                                                 | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (a⋅n₂≡c))) =
-    (divides-intro
-      ([∃]-intro
-        (n₁ + n₂)
-        (
-          ([⋅][+]-distributivityₗ {a}{n₁}{n₂})
-          🝖 ([≡]-with-op-[ _+_ ]
-            (a⋅n₁≡b)
-            (a⋅n₂≡c)
-          )
+divides-with-[+] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b + c))
+divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
+...                                                 | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (a⋅n₂≡c))) =
+  (divides-intro
+    ([∃]-intro
+      (n₁ + n₂)
+      (
+        ([⋅][+]-distributivityₗ {a}{n₁}{n₂})
+        🝖 ([≡]-with-op-[ _+_ ]
+          (a⋅n₁≡b)
+          (a⋅n₂≡c)
         )
       )
     )
+  )
 
-instance
-  divides-with-[⋅] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b ⋅ c))
-  divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
-  ...                                                 | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (a⋅n₂≡c))) =
-    (divides-intro
-      ([∃]-intro
-        (n₁ ⋅ (a ⋅ n₂))
-        (
-          (symmetry ([⋅]-associativity {a}{n₁}{a ⋅ n₂}))
-          🝖 ([≡]-with-op-[ _⋅_ ]
-            (a⋅n₁≡b)
-            (a⋅n₂≡c)
-          )
+divides-with-[⋅] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b ⋅ c))
+divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
+...                                                 | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (a⋅n₂≡c))) =
+  (divides-intro
+    ([∃]-intro
+      (n₁ ⋅ (a ⋅ n₂))
+      (
+        (symmetry ([⋅]-associativity {a}{n₁}{a ⋅ n₂}))
+        🝖 ([≡]-with-op-[ _⋅_ ]
+          (a⋅n₁≡b)
+          (a⋅n₂≡c)
         )
       )
     )
+  )
 
 -- instance
 --   divides-with-fn : ∀{a b} → (a divides b) → ∀{f : ℕ → ℕ} → {_ : ∀{x y : ℕ} → ∃{ℕ → ℕ}(\g → f(x ⋅ y) ≡ f(x) ⋅ g(y))} → ((f(a)) divides (f(b)))
@@ -150,18 +158,23 @@ instance
   divides-id = Div𝐒(Div𝟎)
 
 instance
-  postulate [0]-divides-not : ∀{n} → ¬(0 divides 𝐒(n))
-  -- [0]-divides-not {n} (Div𝐒(proof)) = -- TODO: This makes Div𝐒(proof)≡proof ?
+  [0]-divides-[0] : (0 divides 0)
+  [0]-divides-[0] = Div𝟎
 
-instance
-  divides-not-[1] : ∀{n} → ¬((n + 2) divides 1)
-  divides-not-[1] ()
+[0]-only-divides-[0] : ∀{n} → (0 divides n) → (n ≡ 0)
+[0]-only-divides-[0] {𝟎} _ = [≡]-intro
+[0]-only-divides-[0] {𝐒(n)} (proof) = [⊥]-elim(([𝐒]-not-0 ∘ symmetry) ([∃]-property(divides-elim(proof)))) -- ∃(i ↦ 0 ⋅ i ≡ 𝐒(n))
 
-instance
-  postulate divides-upper-limit : ∀{a b} → (a divides b) → (a ≤ b)
+[0]-divides-not : ∀{n} → ¬(0 divides 𝐒(n))
+[0]-divides-not (0divSn) = [𝐒]-not-0([0]-only-divides-[0] (0divSn))
+-- [0]-divides-not {n} (Div𝐒(proof)) =  -- TODO: This makes Div𝐒(proof)≡proof ? Is Div𝐒(proof)≢proof provable?
 
-instance
-  postulate divides-not-lower-limit : ∀{a b} → (a > b) → ¬(a divides b)
+divides-not-[1] : ∀{n} → ¬((n + 2) divides 1)
+divides-not-[1] ()
+
+postulate divides-upper-limit : ∀{a b} → (a divides b) → (a ≤ b)
+
+postulate divides-not-lower-limit : ∀{a b} → (a > b) → ¬(a divides b)
 
 -- Div𝐏 : ∀{x y : ℕ} → (y divides (y + x)) → (y divides x)
 -- Div𝐏 {x}   {𝟎}    (0-div-x) = 0-div-x
