@@ -180,6 +180,8 @@ module OperationsTheorems ⦃ _ : ConstructionAxioms ⦄ where
   [∩]-subsetᵣ : ∀{s₁ s₂} → ((s₁ ∩ s₂) ⊆ s₂)
   [∩]-subsetᵣ = [∧]-elimᵣ ∘ ([↔]-elimᵣ([∩]-containment))
 
+  postulate [∪]-subset-eq : ∀{s₁ s₂ s₃} → ((s₁ ∪ s₂) ⊆ s₃) ↔ ((s₁ ⊆ s₃)∧(s₂ ⊆ s₃))
+
   postulate [℘]-subset : ∀{s₁ s₂} → (s₁ ⊆ s₂) → (℘(s₁) ⊆ ℘(s₂))
 
   filter-subset : ∀{s}{φ} → (filter(s)(φ) ⊆ s)
@@ -287,7 +289,7 @@ record ProofAxioms ⦃ _ : ConstructionAxioms ⦄ : Set(Lvl.𝐒(Lvl.𝟎)) wher
   field
     -- Sets can model ℕ.
     -- This can be used to construct a set representing the natural numbers.
-    infinity : ∃(N ↦ ((∅ ∈ N) ∧ (∀{n} → (n ∈ N) → (𝐒(n) ∈ N))))
+    infinity : ∃(N ↦ ((𝟎 ∈ N) ∧ (∀{n} → (n ∈ N) → (𝐒(n) ∈ N))))
 
     -- ??
     collection : ∀{φ : S → S → Stmt} → ∀{a} → (∀{x} → (x ∈ a) → ∃(y ↦ φ(x)(y))) → ∃(b ↦ ∀{x} → (x ∈ a) → ∃(y ↦ ((y ∈ b) ∧ φ(x)(y))))
@@ -303,7 +305,23 @@ module Theorems ⦃ _ : ConstructionAxioms ⦄ ⦃ _ : ProofAxioms ⦄ where
   open ProofAxioms ⦃ ... ⦄
   open Relations
 
+module NaturalNumberTheorems ⦃ _ : ConstructionAxioms ⦄ ⦃ _ : ProofAxioms ⦄ where
+  open ConstructionAxioms ⦃ ... ⦄
+  open NaturalNumbers ⦃ ... ⦄
+  open ProofAxioms ⦃ ... ⦄
+  open Relations
+
   ℕ = [∃]-extract(infinity) -- TODO: This is not an unique set as it is currently defined (What did I mean when I wrote this?)
+
+  [ℕ]-contains-[𝟎] : (𝟎 ∈ ℕ)
+  [ℕ]-contains-[𝟎] = [∧]-elimₗ ([∃]-property(infinity))
+
+  [ℕ]-contains-[𝐒] : ∀{n} → (n ∈ ℕ) → (𝐒(n) ∈ ℕ)
+  [ℕ]-contains-[𝐒] = [∧]-elimᵣ ([∃]-property(infinity))
+
+  postulate [ℕ]-induction : ∀{Nₛ} → (Nₛ ⊆ ℕ) → (𝟎 ∈ Nₛ) → (∀{n} → (n ∈ Nₛ) → (𝐒(n) ∈ Nₛ)) → (Nₛ ≡ ℕ)
+
+  postulate [ℕ]-contains-only : ∀{n} → (n ∈ ℕ) → (n ≡ 𝟎)∨(∃(x ↦ n ≡ 𝐒(x)))
 
 {-
   Singleton-elem-uniqueness : ∀{x y₁ y₂} → (y₁ ∈ Singleton(x)) → (y₂ ∈ Singleton(x)) → (y₁ ≡ y₂)

@@ -196,7 +196,7 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 [↔]-elimᵣ-[¬] : ∀{X Y} → (X ↔ Y) → (¬ Y) → (¬ X)
 [↔]-elimᵣ-[¬] xy ny x = ny([↔]-elimᵣ(xy)(x))
 
-[↔]-negative : ∀{X Y} → (X ↔ Y) → ((¬ X) ↔ (¬ Y))
+[↔]-negative : ∀{X Y} → (X ↔ Y) → ((¬ X) ↔ (¬ Y)) -- TODO: Is the other direction also valid?
 [↔]-negative xy = [↔]-intro ([↔]-elimᵣ-[¬] (xy)) ([↔]-elimₗ-[¬] (xy))
 
 [↔]-elim-[∨] : ∀{X Y} → (X ↔ Y) → (X ∨ Y) → (X ∧ Y)

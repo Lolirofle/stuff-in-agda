@@ -5,7 +5,7 @@ open import Data
 open import Functional
 open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
-open import Numeral.Integer hiding (𝟎 ; −_ ; abs)
+open import Numeral.Integer hiding (𝟎)
 open import Numeral.Natural
 open import Numeral.Real.Theory{Lvl.𝟎}{Lvl.𝟎}
 open import Sets.Subset{Lvl.𝟎}{Lvl.𝟎}

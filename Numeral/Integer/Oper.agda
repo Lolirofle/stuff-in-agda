@@ -1,40 +1,42 @@
 module Numeral.Integer.Oper where
 
-open import Numeral.Natural as ℕ
-  using (ℕ)
-  renaming (𝟎 to 𝟎ₙ ; 𝐒 to 𝐒ₙ)
-import Numeral.Natural.Oper as ℕ
-import Numeral.Natural.UnclosedOper as ℕ
+open import Numeral.Natural              as ℕ using (ℕ)
+import      Numeral.Natural.Oper         as ℕ
+import      Numeral.Natural.UnclosedOper as ℕ
 open import Numeral.Integer
 open import Numeral.Integer.Sign
-import Numeral.Sign as Sign
-import Numeral.Sign.Oper as Sign
+import      Numeral.Sign      as Sign
+import      Numeral.Sign.Oper as Sign
 
 ------------------------------------------
 -- Unary operations
 
 -- Predecessor
 𝐏 : ℤ → ℤ
-𝐏(+ 𝟎ₙ) = −𝐒(𝟎ₙ)
-𝐏(+(𝐒ₙ(n))) = + n
-𝐏(−𝐒 n) = −𝐒(𝐒ₙ(n))
+𝐏(+ₙ ℕ.𝟎)     = −𝐒ₙ(ℕ.𝟎)
+𝐏(+ₙ(ℕ.𝐒(n))) = +ₙ n
+𝐏(−𝐒ₙ n)      = −𝐒ₙ(ℕ.𝐒(n))
 
 -- Successor
 𝐒 : ℤ → ℤ
-𝐒(+ n) = + 𝐒ₙ(n)
-𝐒(−𝐒 𝟎ₙ) = + 𝟎ₙ
-𝐒(−𝐒 (𝐒ₙ(n))) = −𝐒(n)
+𝐒(+ₙ n)        = +ₙ ℕ.𝐒(n)
+𝐒(−𝐒ₙ(ℕ.𝟎))    = +ₙ ℕ.𝟎
+𝐒(−𝐒ₙ(ℕ.𝐒(n))) = −𝐒ₙ(n)
 
--- TODO: Rename operators and constructors to something better?
 -- Identity
-+₁_ : ℤ → ℤ
-+₁ n = n
++_ : ℤ → ℤ
++ n = n
 
 -- Negation
-−₁_ : ℤ → ℤ
-−₁ 𝟎 = 𝟎
-−₁ (+𝐒(n)) = −𝐒(n)
-−₁ (−𝐒(n)) = +𝐒(n)
+−_ : ℤ → ℤ
+− 𝟎 = 𝟎
+− (+𝐒ₙ(n)) = −𝐒ₙ(n)
+− (−𝐒ₙ(n)) = +𝐒ₙ(n)
+
+-- Absolute value
+abs : ℤ → ℤ
+abs(+ₙ x)  = +ₙ x
+abs(−𝐒ₙ x) = 𝐒(+ₙ x)
 
 ------------------------------------------
 -- Binary operations
@@ -44,15 +46,15 @@ infixl 10020 _⋅_
 
 -- Addition
 _+_ : ℤ → ℤ → ℤ
-(+ x) + (+ y) = + (x ℕ.+ y)
-(−𝐒 x) + (−𝐒 y) = −𝐒(x ℕ.+ (𝐒ₙ(y)))
-(+ x) + (−𝐒(y)) = x ℕ.− 𝐒ₙ(y)
-(−𝐒(x)) + (+ y) = y ℕ.− 𝐒ₙ(x)
+(+ₙ x) + (+ₙ y) = +ₙ (x ℕ.+ y)
+(−𝐒ₙ x) + (−𝐒ₙ y) = −𝐒ₙ(x ℕ.+ (ℕ.𝐒(y)))
+(+ₙ x) + (−𝐒ₙ(y)) = x ℕ.− ℕ.𝐒(y)
+(−𝐒ₙ(x)) + (+ₙ y) = y ℕ.− ℕ.𝐒(x)
 
 -- Subtraction
 _−_ : ℤ → ℤ → ℤ
-x − y = x + (−₁ y)
+x − y = x + (− y)
 
 -- Multiplication
 _⋅_ : ℤ → ℤ → ℤ
-x ⋅ y = ℕ.signed ((sign x) Sign.⋅ (sign y)) ((abs x) ℕ.⋅ (abs y))
+x ⋅ y = ℕ.signed ((sign x) Sign.⋅ (sign y)) ((absₙ x) ℕ.⋅ (absₙ y))

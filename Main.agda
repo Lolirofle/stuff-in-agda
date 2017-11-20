@@ -41,6 +41,7 @@ import Logic.Predicate
 import Logic.Predicate.Theorems
 import Graph
 import Numeral.Integer
+import Numeral.Integer.Function
 import Numeral.Integer.Oper
 import Numeral.Integer.Relation
 import Numeral.Integer.Sign
@@ -73,7 +74,6 @@ import Relator.Equals
 import Relator.Equals.Theorems
 import Relator.Equals.Uniqueness
 import Relator.FunctionEquals
-import Sets.AdditiveSet
 import Sets.BoolSet
 import Sets.IZF
 import Sets.ListSet
