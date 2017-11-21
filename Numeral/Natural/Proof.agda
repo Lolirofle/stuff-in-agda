@@ -8,3 +8,7 @@ open import Numeral.Natural
 [ℕ]-induction : ∀{φ : ℕ → Stmt} → φ(𝟎) → (∀(i : ℕ) → φ(i) → φ(𝐒(i))) → (∀{n} → φ(n))
 [ℕ]-induction {φ} (base) (next) {𝟎}    = base
 [ℕ]-induction {φ} (base) (next) {𝐒(n)} = next(n) ([ℕ]-induction {φ} (base) (next) {n})
+
+[ℕ]-inductionᵢ : ∀{φ : ℕ → Stmt} → φ(𝟎) → (∀{i : ℕ} → φ(i) → φ(𝐒(i))) → (∀{n} → φ(n))
+[ℕ]-inductionᵢ {φ} (base) (next) {𝟎}    = base
+[ℕ]-inductionᵢ {φ} (base) (next) {𝐒(n)} = next{n} ([ℕ]-inductionᵢ {φ} (base) (next) {n})

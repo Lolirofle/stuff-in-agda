@@ -65,25 +65,6 @@ instance
   base-prev(𝟎)    (proof) = base(𝟎) ([≤][0]-minimum)
   base-prev(𝐒(i)) (proof) = next(i) (base-prev(i) ([≤]-predecessor {i}{b} proof))
 
-[ℕ]-strong-induction : ∀{φ : ℕ → Stmt} → φ(𝟎) → (∀(i : ℕ) → (∀(j : ℕ) → (j ≤ i) → φ(j)) → φ(𝐒(i))) → (∀{n} → φ(n))
-[ℕ]-strong-induction {φ} (base) (next) {𝟎}    = base
-[ℕ]-strong-induction {φ} (base) (next) {𝐒(n)} = next(n) (base-prev) where
-  induction-step : ∀(i : ℕ) → φ(i) → φ(𝐒(i))
-  induction-step(𝟎)(proof) = next(𝟎) (f) where
-    f : ∀(j : ℕ) → (j ≤ 𝟎) → φ(j)
-    f(𝟎)    (_) = base
-    f(𝐒(j)) (proof) = [⊥]-elim([≤][0]ᵣ-negation {j} (proof))
-  induction-step(𝐒(i))(proof) = induction-step(i)(next(?) (proof))
-  -- next(𝐒(i)) (f) where
-    -- TODO: Stuck like before. Like base-prev
-    -- f : ∀(j : ℕ) → (j ≤ 𝐒(i)) → φ(j)
-    -- f(𝟎)    (_) = base
-    -- f(𝐒(j)) (proof) = f(j) ([≤]-predecessor proof)
-
-  base-prev : ∀(i : ℕ) → (i ≤ n) → φ(i)
-  base-prev(𝟎)    (proof) = base
-  base-prev(𝐒(i)) (proof) = induction-step(i) (base-prev(i) ([≤]-predecessor {i}{n} proof))
-
 instance
   [≤]-with-[𝐒] : ∀{a b : ℕ} → (a ≤ b) → (𝐒(a) ≤ 𝐒(b))
   [≤]-with-[𝐒] {a} {b} ([∃]-intro n f) =
@@ -221,3 +202,22 @@ instance
     -- (a≢b) → (a≰b)
     -- ((a≡b)→⊥) → ((a≤b)→⊥)
     -- ((a≡b)→⊥) → (a≤b) → ⊥
+
+[ℕ]-strong-induction : ∀{φ : ℕ → Stmt} → φ(𝟎) → (∀{i : ℕ} → (∀{j : ℕ} → (j ≤ i) → φ(j)) → φ(𝐒(i))) → (∀{n} → φ(n))
+[ℕ]-strong-induction {φ} (base) (next) {n} = ([ℕ]-inductionᵢ {Q} (Q0) (QS) {n}) {n} (reflexivity) where
+  Q : ℕ → Stmt
+  Q(k) = (∀{n} → (n ≤ k) → φ(n))
+
+  Q0 : Q(𝟎)
+  Q0{𝟎}    (_) = base
+  Q0{𝐒(j)} (proof) = [⊥]-elim([≤][0]ᵣ-negation {j} (proof))
+
+  QS : ∀{k : ℕ} → Q(k) → Q(𝐒(k))
+  QS{k} (qk) {𝟎}    (0≤k)  = base
+  QS{k} (qk) {𝐒(n)} (Sn≤Sk) = (next{n} (qn)) :of: φ(𝐒(n)) where
+    n≤k : n ≤ k
+    n≤k = [≤]-without-[𝐒] {n}{k} (Sn≤Sk)
+
+    qn : Q(n)
+    qn{a} (a≤n) = qk{a} (transitivity{_}{_}{a} ((a≤n) , (n≤k))) where
+
