@@ -275,21 +275,49 @@ instance
     )
 
 instance
-  [−₀]-negative : ∀{x} → ((0 −₀ x) ≡ 0)
-  [−₀]-negative{𝟎}    = [≡]-intro
-  [−₀]-negative{𝐒(n)} = [≡]-intro
+  [−₀]-negative : ∀{x} → ((𝟎 −₀ x) ≡ 𝟎)
+  [−₀]-negative {𝟎}    = [≡]-intro
+  [−₀]-negative {𝐒(n)} = [≡]-intro
 {-# REWRITE [−₀]-negative #-}
 
 instance
-  [−₀]-self : ∀{x} → ((x −₀ x) ≡ 0)
-  [−₀]-self{𝟎}    = [≡]-intro
-  [−₀]-self{𝐒(n)} = [≡]-intro 🝖 ([−₀]-self{n})
+  [−₀]-self : ∀{x} → ((x −₀ x) ≡ 𝟎)
+  [−₀]-self {𝟎}    = [≡]-intro
+  [−₀]-self {𝐒(n)} = [≡]-intro 🝖 ([−₀]-self{n})
 {-# REWRITE [−₀]-self #-}
 
+-- TODO: Is any of the directions true? Does not seem like
+{-instance
+  [𝐒]-of-[−₀] : ∀{x y z} → (𝐒(x −₀ y) ≡ z) → (𝐒(x) −₀ y ≡ z)
+  [𝐒]-of-[−₀] {𝟎}   {𝟎} (proof) = proof
+  [𝐒]-of-[−₀] {x}   {𝟎} (proof) = proof
+  [𝐒]-of-[−₀] {𝟎}   {𝐒(y)} {𝟎} ()
+  [𝐒]-of-[−₀] {𝟎}   {𝐒(y)} {𝐒(z)} ([≡]-intro) = [≡]-intro
+  -- = PROVE where -- ([≡]-with-[ 𝐒 ] proof) 🝖 (symmetry ([𝐒]-of-[−₀] {𝐒(𝟎)} {𝐒(y)} (proof)))
+    -- postulate PROVE : ∀{y z} → (𝐒(𝟎 −₀ 𝐒(y)) ≡ z) → (𝐒(𝟎) −₀ 𝐒(y) ≡ z)
+  -- 𝐒(𝟎 −₀ 𝐒(y)) ≡ 𝐒(z)
+  -- ⇔ 𝐒(𝟎) ≡ 𝐒(z)
+  -- ⇔ 𝟎 ≡ z
+
+  -- 𝟎 ≡ 𝐒(z)
+  -- ⇔ 𝟎 −₀ y ≡ 𝐒(z)
+  -- ⇔ 𝐒(𝟎) −₀ 𝐒(y) ≡ 𝐒(z)
+-}
+
+instance
+  [−₀]-self-[𝐒] : ∀{x} → ((𝐒(x) −₀ x) ≡ 𝐒(x −₀ x))
+  [−₀]-self-[𝐒] {𝟎}    = [≡]-intro
+  [−₀]-self-[𝐒] {𝐒(n)} = [−₀]-self-[𝐒] {n}
+{-# REWRITE [−₀]-self-[𝐒] #-}
+
+-- TODO: Could [−₀]-self-[𝐒] be used to prove this?
 instance
   [+][−₀]-nullify : ∀{x y} → ((x + y) −₀ y ≡ x)
   [+][−₀]-nullify{𝟎}   {𝟎}    = [≡]-intro
-  [+][−₀]-nullify{𝐒(x)}{y}    = PROVE where
-    postulate PROVE : ∀{x} → x -- TODO
   [+][−₀]-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([+][−₀]-nullify{x}{y})
+  [+][−₀]-nullify{𝐒(x)}{y}    = z where postulate z : ∀{z} → z
+  -- [+][−₀]-nullify{𝐒(x)}{y}    = [𝐒]-of-[−₀] {x + y}{y}{𝐒(x)} ([≡]-with-[ 𝐒 ] ([+][−₀]-nullify{x}{y}))
+    -- (𝐒(x) + y) −₀ y
+    -- (x + 𝐒(y)) −₀ y
+    -- 𝐒(x + y) −₀ y
 {-# REWRITE [+][−₀]-nullify #-}

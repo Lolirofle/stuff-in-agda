@@ -57,6 +57,38 @@ open import Type
 postulate [↔]-associativity : {X Y Z : Stmt} → ((X ↔ Y) ↔ Z) → (X ↔ (Y ↔ Z))
 
 ------------------------------------------
+-- Identity
+
+[∧]-identityₗ : {X : Stmt} → (⊤ ∧ X) → X
+[∧]-identityₗ ([∧]-intro _ x) = x
+
+[∧]-identityᵣ : {X : Stmt} → (X ∧ ⊤) → X
+[∧]-identityᵣ ([∧]-intro x _) = x
+
+[∨]-identityₗ : {X : Stmt} → (⊥ ∨ X) → X
+[∨]-identityₗ ([∨]-introₗ ())
+[∨]-identityₗ ([∨]-introᵣ x) = x
+
+[∨]-identityᵣ : {X : Stmt} → (X ∨ ⊥) → X
+[∨]-identityᵣ ([∨]-introₗ x) = x
+[∨]-identityᵣ ([∨]-introᵣ ())
+
+[→]-identityₗ : {X : Stmt} → (⊤ → X) → X
+[→]-identityₗ f = f([⊤]-intro)
+
+[∧]-nullifierₗ : {X : Stmt} → (⊥ ∧ X) → ⊥
+[∧]-nullifierₗ ([∧]-intro () _)
+
+[∧]-nullifierᵣ : {X : Stmt} → (X ∧ ⊥) → ⊥
+[∧]-nullifierᵣ ([∧]-intro _ ())
+
+[⊤]-as-nullifierₗ : {_▫_ : Stmt → Stmt → Stmt}{X : Stmt} → (⊤ ▫ X) → ⊤
+[⊤]-as-nullifierₗ _ = [⊤]-intro
+
+[⊤]-as-nullifierᵣ : {_▫_ : Stmt → Stmt → Stmt}{X : Stmt} → (X ▫ ⊤) → ⊤
+[⊤]-as-nullifierᵣ _ = [⊤]-intro
+
+------------------------------------------
 -- Syllogism
 
 [∨]-syllogism : {X Y : Stmt} → (X ∨ Y) → (¬ X) → Y
