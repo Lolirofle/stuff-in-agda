@@ -6,8 +6,20 @@ open import Functional.Raise
 open import Logic.Propositional{ℓ}
 open import Type
 
-[↔]-reflexivity : {X : Stmt} → (X ↔ X)
+------------------------------------------
+-- Reflexivity
+
+[↔]-reflexivity : ∀{X : Stmt} → (X ↔ X)
 [↔]-reflexivity = [↔]-intro id id
+
+[→]-reflexivity : ∀{X : Stmt} → (X → X)
+[→]-reflexivity = id
+
+------------------------------------------
+-- Transitivity
+
+[→]-transitivity : ∀{X Y Z : Stmt} → (X → Y) → (Y → Z) → (X → Z)
+[→]-transitivity = swap _∘_
 
 [↔]-transitivity : ∀{X Y Z : Stmt} → (X ↔ Y) → (Y ↔ Z) → (X ↔ Z)
 [↔]-transitivity {X}{Y}{Z} ([↔]-intro yx xy) ([↔]-intro zy yz) = [↔]-intro (yx ∘ zy) (yz ∘ xy)
@@ -16,95 +28,133 @@ open import Type
 [∧]-transitivity ([∧]-intro x _) ([∧]-intro _ z) = [∧]-intro x z
 
 ------------------------------------------
--- Commutativity
+-- Symmetry
 
-[∧]-commutativity : {X Y : Stmt} → (X ∧ Y) → (Y ∧ X)
-[∧]-commutativity ([∧]-intro x y) = [∧]-intro y x
+[∧]-symmetry : ∀{X Y : Stmt} → (X ∧ Y) → (Y ∧ X)
+[∧]-symmetry ([∧]-intro x y) = [∧]-intro y x
 
-[∨]-commutativity : {X Y : Stmt} → (X ∨ Y) → (Y ∨ X)
-[∨]-commutativity ([∨]-introₗ x) = [∨]-introᵣ x
-[∨]-commutativity ([∨]-introᵣ y) = [∨]-introₗ y
+[∨]-symmetry : ∀{X Y : Stmt} → (X ∨ Y) → (Y ∨ X)
+[∨]-symmetry ([∨]-introₗ x) = [∨]-introᵣ x
+[∨]-symmetry ([∨]-introᵣ y) = [∨]-introₗ y
 
-[↔]-commutativity : {X Y : Stmt} → (X ↔ Y) → (Y ↔ X)
-[↔]-commutativity = [∧]-commutativity
+[↔]-symmetry : ∀{X Y : Stmt} → (X ↔ Y) → (Y ↔ X)
+[↔]-symmetry = [∧]-symmetry
 
 ------------------------------------------
--- Associativity
+-- Operators that implies other ones
 
-[∧]-associativity : {X Y Z : Stmt} → ((X ∧ Y) ∧ Z) ↔ (X ∧ (Y ∧ Z))
+[∧]-implies-[↔] : ∀{X Y : Stmt} → (X ∧ Y) → (X ↔ Y)
+[∧]-implies-[↔] ([∧]-intro x y) = [↔]-intro (const x) (const y)
+
+[∧]-implies-[→] : ∀{X Y : Stmt} → (X ∧ Y) → (X → Y)
+[∧]-implies-[→] ([∧]-intro x y) = const y
+
+[∧]-implies-[←] : ∀{X Y : Stmt} → (X ∧ Y) → (X ← Y)
+[∧]-implies-[←] ([∧]-intro x y) = const x
+
+------------------------------------------
+-- Associativity (with respect to ↔)
+
+[∧]-associativity : ∀{X Y Z : Stmt} → ((X ∧ Y) ∧ Z) ↔ (X ∧ (Y ∧ Z))
 [∧]-associativity = [↔]-intro [∧]-associativity₁ [∧]-associativity₂
-  where [∧]-associativity₁ : {X Y Z : Stmt} → ((X ∧ Y) ∧ Z) ← (X ∧ (Y ∧ Z))
+  where [∧]-associativity₁ : ∀{X Y Z : Stmt} → ((X ∧ Y) ∧ Z) ← (X ∧ (Y ∧ Z))
         [∧]-associativity₁ ([∧]-intro x ([∧]-intro y z)) = [∧]-intro ([∧]-intro x y) z
 
-        [∧]-associativity₂ : {X Y Z : Stmt} → ((X ∧ Y) ∧ Z) → (X ∧ (Y ∧ Z))
+        [∧]-associativity₂ : ∀{X Y Z : Stmt} → ((X ∧ Y) ∧ Z) → (X ∧ (Y ∧ Z))
         [∧]-associativity₂ ([∧]-intro ([∧]-intro x y) z) = [∧]-intro x ([∧]-intro y z)
 
-[∨]-associativity : {X Y Z : Stmt} → ((X ∨ Y) ∨ Z) ↔ (X ∨ (Y ∨ Z))
+[∨]-associativity : ∀{X Y Z : Stmt} → ((X ∨ Y) ∨ Z) ↔ (X ∨ (Y ∨ Z))
 [∨]-associativity = [↔]-intro [∨]-associativity₁ [∨]-associativity₂
-  where [∨]-associativity₁ : {X Y Z : Stmt} → ((X ∨ Y) ∨ Z) ← (X ∨ (Y ∨ Z))
+  where [∨]-associativity₁ : ∀{X Y Z : Stmt} → ((X ∨ Y) ∨ Z) ← (X ∨ (Y ∨ Z))
         [∨]-associativity₁ ([∨]-introₗ x) = [∨]-introₗ([∨]-introₗ x)
         [∨]-associativity₁ ([∨]-introᵣ([∨]-introₗ y)) = [∨]-introₗ([∨]-introᵣ y)
         [∨]-associativity₁ ([∨]-introᵣ([∨]-introᵣ z)) = [∨]-introᵣ z
 
-        [∨]-associativity₂ : {X Y Z : Stmt} → ((X ∨ Y) ∨ Z) → (X ∨ (Y ∨ Z))
+        [∨]-associativity₂ : ∀{X Y Z : Stmt} → ((X ∨ Y) ∨ Z) → (X ∨ (Y ∨ Z))
         [∨]-associativity₂ ([∨]-introₗ([∨]-introₗ x)) = [∨]-introₗ x
         [∨]-associativity₂ ([∨]-introₗ([∨]-introᵣ y)) = [∨]-introᵣ([∨]-introₗ y)
         [∨]-associativity₂ ([∨]-introᵣ z) = [∨]-introᵣ([∨]-introᵣ z)
 
-        -- [∨]-associativity₂ : {X Y Z : Stmt} → ((X ∨ Y) ∨ Z) ← (X ∨ (Y ∨ Z))
-        -- [∨]-associativity₂ {X} {Y} {Z} stmt = [∨]-associativity₁ {Y} {Z} {X} ([∨]-commutativity {X} {Y ∨ Z} stmt)
+        -- [∨]-associativity₂ : ∀{X Y Z : Stmt} → ((X ∨ Y) ∨ Z) ← (X ∨ (Y ∨ Z))
+        -- [∨]-associativity₂ {X} {Y} {Z} stmt = [∨]-associativity₁ {Y} {Z} {X} ([∨]-symmetry {X} {Y ∨ Z} stmt)
 
-postulate [↔]-associativity : {X Y Z : Stmt} → ((X ↔ Y) ↔ Z) → (X ↔ (Y ↔ Z))
+[↔]-associativity : ∀{X Y Z : Stmt} → ((X ↔ Y) ↔ Z) ↔ (X ↔ (Y ↔ Z))
+[↔]-associativity {X}{Y}{Z} = [↔]-intro [↔]-associativityₗ [↔]-associativityᵣ where
+  [↔]-associativityₗ : ((X ↔ Y) ↔ Z) ← (X ↔ (Y ↔ Z))
+  [↔]-associativityₗ ([↔]-intro yz2x x2yz) = [↔]-intro z2xy xy2z where
+    z2xy : (X ↔ Y) ← Z
+    z2xy z = [↔]-intro y2x x2y where
+      y2x : Y → X
+      y2x y = yz2x([∧]-implies-[↔]([∧]-intro y z))
+
+      x2y : X → Y
+      x2y x = [↔]-elimₗ (x2yz(x)) (z)
+
+    postulate xy2z : (X ↔ Y) → Z -- TODO: How?
+    -- xy2z ([↔]-intro y2x x2y) = ([↔]-elimᵣ (x2yz(x))) (y)
+
+  [↔]-associativityᵣ : ((X ↔ Y) ↔ Z) → (X ↔ (Y ↔ Z))
+  [↔]-associativityᵣ ([↔]-intro z2xy xy2z) = [↔]-intro yz2x x2yz where
+    postulate yz2x : X ← (Y ↔ Z)
+    -- yz2x ([↔]-intro z2y y2z) = 
+
+    x2yz : X → (Y ↔ Z)
+    x2yz x = [↔]-intro z2y y2z where
+      z2y : Z → Y
+      z2y z = [↔]-elimᵣ (z2xy(z)) (x)
+
+      y2z : Y → Z
+      y2z y = xy2z([∧]-implies-[↔]([∧]-intro x y))
 
 ------------------------------------------
--- Identity
+-- Identity (with respect to ↔)
 
-[∧]-identityₗ : {X : Stmt} → (⊤ ∧ X) → X
+[∧]-identityₗ : ∀{X : Stmt} → (⊤ ∧ X) → X
 [∧]-identityₗ ([∧]-intro _ x) = x
 
-[∧]-identityᵣ : {X : Stmt} → (X ∧ ⊤) → X
+[∧]-identityᵣ : ∀{X : Stmt} → (X ∧ ⊤) → X
 [∧]-identityᵣ ([∧]-intro x _) = x
 
-[∨]-identityₗ : {X : Stmt} → (⊥ ∨ X) → X
+[∨]-identityₗ : ∀{X : Stmt} → (⊥ ∨ X) → X
 [∨]-identityₗ ([∨]-introₗ ())
 [∨]-identityₗ ([∨]-introᵣ x) = x
 
-[∨]-identityᵣ : {X : Stmt} → (X ∨ ⊥) → X
+[∨]-identityᵣ : ∀{X : Stmt} → (X ∨ ⊥) → X
 [∨]-identityᵣ ([∨]-introₗ x) = x
 [∨]-identityᵣ ([∨]-introᵣ ())
 
-[→]-identityₗ : {X : Stmt} → (⊤ → X) → X
+[→]-identityₗ : ∀{X : Stmt} → (⊤ → X) → X
 [→]-identityₗ f = f([⊤]-intro)
 
-[∧]-nullifierₗ : {X : Stmt} → (⊥ ∧ X) → ⊥
+[∧]-nullifierₗ : ∀{X : Stmt} → (⊥ ∧ X) → ⊥
 [∧]-nullifierₗ ([∧]-intro () _)
 
-[∧]-nullifierᵣ : {X : Stmt} → (X ∧ ⊥) → ⊥
+[∧]-nullifierᵣ : ∀{X : Stmt} → (X ∧ ⊥) → ⊥
 [∧]-nullifierᵣ ([∧]-intro _ ())
 
-[⊤]-as-nullifierₗ : {_▫_ : Stmt → Stmt → Stmt}{X : Stmt} → (⊤ ▫ X) → ⊤
+[⊤]-as-nullifierₗ : ∀{_▫_ : Stmt → Stmt → Stmt}{X : Stmt} → (⊤ ▫ X) → ⊤
 [⊤]-as-nullifierₗ _ = [⊤]-intro
 
-[⊤]-as-nullifierᵣ : {_▫_ : Stmt → Stmt → Stmt}{X : Stmt} → (X ▫ ⊤) → ⊤
+[⊤]-as-nullifierᵣ : ∀{_▫_ : Stmt → Stmt → Stmt}{X : Stmt} → (X ▫ ⊤) → ⊤
 [⊤]-as-nullifierᵣ _ = [⊤]-intro
 
 ------------------------------------------
 -- Syllogism
 
-[∨]-syllogism : {X Y : Stmt} → (X ∨ Y) → (¬ X) → Y
+[∨]-syllogism : ∀{X Y : Stmt} → (X ∨ Y) → (¬ X) → Y
 [∨]-syllogism ([∨]-introₗ x) nx = [⊥]-elim(nx x)
 [∨]-syllogism ([∨]-introᵣ y) = [→]-intro y
 
-[→]-syllogism : {X Y Z : Stmt} → (X → Y) → (Y → Z) → (X → Z)
+[→]-syllogism : ∀{X Y Z : Stmt} → (X → Y) → (Y → Z) → (X → Z)
 [→]-syllogism = liftᵣ
 
 ------------------------------------------
 -- Other
 
-[→]-lift : {T X Y : Stmt} → (X → Y) → ((T → X) → (T → Y))
+[→]-lift : ∀{T X Y : Stmt} → (X → Y) → ((T → X) → (T → Y))
 [→]-lift = liftₗ
 
-material-implₗ : {X Y : Stmt} → (X → Y) ← ((¬ X) ∨ Y)
+material-implₗ : ∀{X Y : Stmt} → (X → Y) ← ((¬ X) ∨ Y)
 material-implₗ = [∨]-elim ([→]-lift [⊥]-elim) ([→]-intro)
 -- ((¬ X) ∨ Y)
 -- ((X → ⊥) ∨ Y)
@@ -113,27 +163,27 @@ material-implₗ = [∨]-elim ([→]-lift [⊥]-elim) ([→]-intro)
 -- (X → Y)
 
 -- This seems to be unprovable in constructive logic
--- material-implᵣ : {X Y : Stmt} → (X → Y) → ((¬ X) ∨ Y)
+-- material-implᵣ : ∀{X Y : Stmt} → (X → Y) → ((¬ X) ∨ Y)
 -- material-implᵣ xy = 
 -- (X → Y)
 -- ?
 
--- ??? : {X Y : Stmt} → (X → Y) → (¬ (X ∧ (¬ Y))) -- TODO: This does not work either?
+-- ??? : ∀{X Y : Stmt} → (X → Y) → (¬ (X ∧ (¬ Y))) -- TODO: This does not work either?
 -- (¬ (X ∧ (¬ Y)))
 -- ((X ∧ (Y → ⊥)) → ⊥)
 -- ?
 
-constructive-dilemma : {A B C D : Stmt} → (A → B) → (C → D) → (A ∨ C) → (B ∨ D)
+constructive-dilemma : ∀{A B C D : Stmt} → (A → B) → (C → D) → (A ∨ C) → (B ∨ D)
 constructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
 
--- destructive-dilemma : {A B C D : Stmt} → (A → B) → (C → D) → ((¬ B) ∨ (¬ D)) → ((¬ A) ∨ (¬ C))
+-- destructive-dilemma : ∀{A B C D : Stmt} → (A → B) → (C → D) → ((¬ B) ∨ (¬ D)) → ((¬ A) ∨ (¬ C))
 -- destructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
 
-contrapositiveᵣ : {X Y : Stmt} → (X → Y) → ((¬ X) ← (¬ Y))
+contrapositiveᵣ : ∀{X Y : Stmt} → (X → Y) → ((¬ X) ← (¬ Y))
 contrapositiveᵣ = [→]-syllogism
 -- contrapositiveᵣ f ny = ny ∘ f
 
-contrapositive₂ : {X Y : Stmt} → (X → (¬¬ Y)) ← ((¬ X) ← (¬ Y)) -- TODO: At least this works? Or am I missing something?
+contrapositive₂ : ∀{X Y : Stmt} → (X → (¬¬ Y)) ← ((¬ X) ← (¬ Y)) -- TODO: At least this works? Or am I missing something?
 contrapositive₂ nf x = (swap nf) x
 -- (¬ X) ← (¬ Y)
 -- (¬ Y) → (¬ X)
@@ -144,20 +194,20 @@ contrapositive₂ nf x = (swap nf) x
 -- X → (¬ (Y → ⊥))
 -- X → (¬ (¬ Y))
 
-contrapositive-variant : {X Y : Stmt} → (X → (¬ Y)) → ((¬ X) ← Y)
+contrapositive-variant : ∀{X Y : Stmt} → (X → (¬ Y)) → ((¬ X) ← Y)
 contrapositive-variant {X}{Y} = swap
 
-modus-tollens : {X Y : Stmt} → (X → Y) → (¬ Y) → (¬ X)
+modus-tollens : ∀{X Y : Stmt} → (X → Y) → (¬ Y) → (¬ X)
 modus-tollens = contrapositiveᵣ
 
-double-contrapositiveᵣ : {X Y : Stmt} → (X → Y) → ((¬¬ X) → (¬¬ Y))
+double-contrapositiveᵣ : ∀{X Y : Stmt} → (X → Y) → ((¬¬ X) → (¬¬ Y))
 double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 
-[¬¬]-intro : {X : Stmt} → X → (¬¬ X)
+[¬¬]-intro : ∀{X : Stmt} → X → (¬¬ X)
 [¬¬]-intro = apply
 -- X → (X → ⊥) → ⊥
 
-[¬¬¬]-elim : {X : Stmt} → (¬ (¬ (¬ X))) → (¬ X)
+[¬¬¬]-elim : ∀{X : Stmt} → (¬ (¬ (¬ X))) → (¬ X)
 [¬¬¬]-elim = contrapositiveᵣ [¬¬]-intro
 -- (((X → ⊥) → ⊥) → ⊥) → (X → ⊥)
 -- (((X → ⊥) → ⊥) → ⊥) → X → ⊥
@@ -172,7 +222,7 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 --   (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //[→]-elim (Combining those two)
 --   (((X → ⊥) → ⊥) → ⊥) → (X → ⊥)
 
-[→]ₗ-[¬¬]-elim : {X Y : Stmt} → ((¬¬ X) → Y) → (X → Y)
+[→]ₗ-[¬¬]-elim : ∀{X Y : Stmt} → ((¬¬ X) → Y) → (X → Y)
 [→]ₗ-[¬¬]-elim = liftᵣ([¬¬]-intro)
 
 [→]ᵣ-[¬¬]-move-out  : ∀{X Y : Stmt} → (X → (¬¬ Y)) → ¬¬(X → Y)
@@ -196,7 +246,7 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
     )
   )
 
-[→][∧]ₗ : {X Y : Stmt} → (X → (¬¬ Y)) ← ¬(X ∧ (¬ Y))
+[→][∧]ₗ : ∀{X Y : Stmt} → (X → (¬¬ Y)) ← ¬(X ∧ (¬ Y))
 [→][∧]ₗ = Tuple.curry
 -- ¬(A ∧ ¬B) → (A → ¬¬B)
 --   ¬(A ∧ (¬ B)) //assumption
@@ -205,7 +255,7 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 --   (A → ¬(B → ⊥)) //Definition: (¬)
 --   (A → ¬(¬ B)) //Definition: (¬)
 
-[→][∧]ᵣ : {X Y : Stmt} → (X → Y) → ¬(X ∧ (¬ Y))
+[→][∧]ᵣ : ∀{X Y : Stmt} → (X → Y) → ¬(X ∧ (¬ Y))
 [→][∧]ᵣ f = Tuple.uncurry([¬¬]-intro ∘ f)
 
 [↔]-of-[∧] : ∀{X Y Z} → ((X ∧ Z) ↔ (Y ∧ Z)) → (Z → (X ↔ Y))
@@ -241,25 +291,25 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 ------------------------------------------
 -- Almost-distributivity with duals (De-morgan's laws)
 
--- [¬][∧]ₗ : {X Y : Stmt} → ((¬ X) ∨ (¬ Y)) ← (¬ (X ∧ Y))
+-- [¬][∧]ₗ : ∀{X Y : Stmt} → ((¬ X) ∨ (¬ Y)) ← (¬ (X ∧ Y))
 -- [¬][∧]ₗ n = -- TODO: Not possible in constructive logic? Seems to require ¬¬X=X?
 -- ((X ∧ Y) → ⊥) → ((X → ⊥) ∨ (Y → ⊥))
 -- ¬((X ∧ Y) → ⊥) ← ¬((X → ⊥) ∨ (Y → ⊥))
 
-[¬][∧]ᵣ : {X Y : Stmt} → ((¬ X) ∨ (¬ Y)) → (¬ (X ∧ Y))
+[¬][∧]ᵣ : ∀{X Y : Stmt} → ((¬ X) ∨ (¬ Y)) → (¬ (X ∧ Y))
 [¬][∧]ᵣ ([∨]-introₗ nx) = nx ∘ [∧]-elimₗ
 [¬][∧]ᵣ ([∨]-introᵣ ny) = ny ∘ [∧]-elimᵣ
 -- (X → ⊥) → (X ∧ Y) → ⊥
 -- (Y → ⊥) → (X ∧ Y) → ⊥
 
-[¬][∨] : {X Y : Stmt} → ((¬ X) ∧ (¬ Y)) ↔ (¬ (X ∨ Y))
+[¬][∨] : ∀{X Y : Stmt} → ((¬ X) ∧ (¬ Y)) ↔ (¬ (X ∨ Y))
 [¬][∨] = [↔]-intro [¬][∨]₁ [¬][∨]₂
-  where [¬][∨]₁ : {X Y : Stmt} → (¬ (X ∨ Y)) → ((¬ X) ∧ (¬ Y))
+  where [¬][∨]₁ : ∀{X Y : Stmt} → (¬ (X ∨ Y)) → ((¬ X) ∧ (¬ Y))
         [¬][∨]₁ f = [∧]-intro (f ∘ [∨]-introₗ) (f ∘ [∨]-introᵣ)
         -- (¬ (X ∨ Y)) → ((¬ X) ∧ (¬ Y))
         -- ((X ∨ Y) → ⊥) → ((X → ⊥) ∧ (Y → ⊥))
 
-        [¬][∨]₂ : {X Y : Stmt} → ((¬ X)∧(¬ Y)) → ¬(X ∨ Y)
+        [¬][∨]₂ : ∀{X Y : Stmt} → ((¬ X)∧(¬ Y)) → ¬(X ∨ Y)
         [¬][∨]₂ ([∧]-intro nx ny) = [∨]-elim nx ny
         -- ((¬ X) ∧ (¬ Y)) → (¬ (X ∨ Y))
         -- ((X → ⊥) ∧ (Y → ⊥)) → ((X ∨ Y) → ⊥)
@@ -269,15 +319,15 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 ------------------------------------------
 -- Conjunction and implication (Tuples and functions)
 
-[→][∧]-assumption : {X Y Z : Stmt} → ((X ∧ Y) → Z) ↔ (X → Y → Z)
+[→][∧]-assumption : ∀{X Y Z : Stmt} → ((X ∧ Y) → Z) ↔ (X → Y → Z)
 [→][∧]-assumption = [↔]-intro Tuple.uncurry Tuple.curry
 
-[→][∧]-distributivityₗ : {X Y Z : Stmt} → (X → (Y ∧ Z)) ↔ ((X → Y) ∧ (X → Z))
+[→][∧]-distributivityₗ : ∀{X Y Z : Stmt} → (X → (Y ∧ Z)) ↔ ((X → Y) ∧ (X → Z))
 [→][∧]-distributivityₗ = [↔]-intro [→][∧]-distributivityₗ₁ [→][∧]-distributivityₗ₂
-  where [→][∧]-distributivityₗ₁ : {X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) → (X → (Y ∧ Z))
+  where [→][∧]-distributivityₗ₁ : ∀{X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) → (X → (Y ∧ Z))
         [→][∧]-distributivityₗ₁ ([∧]-intro xy xz) x = [∧]-intro (xy(x)) (xz(x))
 
-        [→][∧]-distributivityₗ₂ : {X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) ← (X → (Y ∧ Z))
+        [→][∧]-distributivityₗ₂ : ∀{X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) ← (X → (Y ∧ Z))
         [→][∧]-distributivityₗ₂ both = [∧]-intro ([∧]-elimₗ ∘ both) ([∧]-elimᵣ ∘ both)
 
 -- (X ∧ Y) ∨ (X ∧ Z)

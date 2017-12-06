@@ -529,3 +529,17 @@ module testPureSet where
     union : ∀{s₁ s₂} → (x ∈ s₁)∨(x ∈ s₂) → (x ∈ (s₁ ∪ s₂))
     -- power : ∀{s} → (∀{y} → (y ∈ x) → (y ∈ s)) → (x ∈ ℘(s))
 
+module testInstanceResolution where
+  open Logic.Propositional{Lvl.𝟎}
+  open Functional
+
+  postulate A₁ : Set → Set
+  postulate A₂ : Set
+
+  instance postulate test0 : ∀{x}{y} → ⦃ _ : x ← y ⦄ → ⦃ _ : x → y ⦄ → (x ↔ y)
+  instance postulate test1 : A₁(A₂) ← A₁(A₂)
+  instance postulate test2 : A₁(A₂) → A₁(A₂)
+
+  B = A₁(A₂) ↔ A₁(A₂)
+  f : (B → ⊤) → ⊤
+  f(g) = g(resolve-instance(B))

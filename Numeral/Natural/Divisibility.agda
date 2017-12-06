@@ -90,7 +90,7 @@ test ()
 -}
 instance
   divides-transitivity : Transitivity (_divides_)
-  transitivity{{divides-transitivity}} {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
+  transitivity{{divides-transitivity}} {a}{b}{c} (a-div-b) (b-div-c) with (divides-elim (a-div-b) , divides-elim (b-div-c))
   ...                                                     | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (b⋅n₂≡c))) =
     (divides-intro
       ([∃]-intro

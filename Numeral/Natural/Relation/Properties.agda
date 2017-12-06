@@ -88,7 +88,7 @@ instance
 
 instance
   [≤]-transitivity : Transitivity (_≤_)
-  transitivity{{[≤]-transitivity}} {a}{b}{c} (([∃]-intro n₁ a+n₁≡b),([∃]-intro n₂ b+n₂≡c)) =
+  transitivity{{[≤]-transitivity}} {a}{b}{c} ([∃]-intro n₁ a+n₁≡b) ([∃]-intro n₂ b+n₂≡c) =
     [∃]-intro
       (n₁ + n₂)
       (
@@ -142,7 +142,7 @@ instance
     -- (a<b) → ⊥
 
   [≥]-is-[≮] : ∀{a b : ℕ} → ¬(a < b) ← (a ≥ b)
-  [≥]-is-[≮] {a}{b} (b≤a) (Sa≤b) = [≤][𝐒]ₗ (transitivity {_}{_}{𝐒(a)}{b}{a} ((Sa≤b),(b≤a)))
+  [≥]-is-[≮] {a}{b} (b≤a) (Sa≤b) = [≤][𝐒]ₗ (transitivity {_}{_}{𝐒(a)}{b}{a} (Sa≤b) (b≤a))
 
   -- a ≥ b
   -- b ≤ a
@@ -203,6 +203,7 @@ instance
     -- ((a≡b)→⊥) → ((a≤b)→⊥)
     -- ((a≡b)→⊥) → (a≤b) → ⊥
 
+-- TODO: Can this proof be made more simple?
 [ℕ]-strong-induction : ∀{φ : ℕ → Stmt} → φ(𝟎) → (∀{i : ℕ} → (∀{j : ℕ} → (j ≤ i) → φ(j)) → φ(𝐒(i))) → (∀{n} → φ(n))
 [ℕ]-strong-induction {φ} (base) (next) {n} = ([ℕ]-inductionᵢ {Q} (Q0) (QS) {n}) {n} (reflexivity) where
   Q : ℕ → Stmt
@@ -213,11 +214,10 @@ instance
   Q0{𝐒(j)} (proof) = [⊥]-elim([≤][0]ᵣ-negation {j} (proof))
 
   QS : ∀{k : ℕ} → Q(k) → Q(𝐒(k))
-  QS{k} (qk) {𝟎}    (0≤k)  = base
+  QS{k} (qk) {𝟎}    (0≤Sk)  = base
   QS{k} (qk) {𝐒(n)} (Sn≤Sk) = (next{n} (qn)) :of: φ(𝐒(n)) where
     n≤k : n ≤ k
     n≤k = [≤]-without-[𝐒] {n}{k} (Sn≤Sk)
 
     qn : Q(n)
-    qn{a} (a≤n) = qk{a} (transitivity{_}{_}{a} ((a≤n) , (n≤k))) where
-
+    qn{a} (a≤n) = qk{a} (transitivity{_}{_}{a} (a≤n) (n≤k))

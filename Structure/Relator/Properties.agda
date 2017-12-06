@@ -21,12 +21,12 @@ open Reflexivity {{...}} public
 -- Definition of a transitive binary operation
 record Transitivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
   field
-    transitivity : ∀{x y z : T} → ((x ▫ y) ∧ (y ▫ z)) → (x ▫ z)
+    transitivity : ∀{x y z : T} → (x ▫ y) → (y ▫ z) → (x ▫ z)
 
   -- The transitivity operator
   infixl 1000 _🝖_
   _🝖_ : ∀{x y z} → (x ▫ y) → (y ▫ z) → (x ▫ z)
-  _🝖_ {T} A B = transitivity{T}([∧]-intro A B)
+  _🝖_ {T} (A)(B) = transitivity{T} (A)(B)
 
 open Transitivity {{...}} public
 
@@ -148,7 +148,7 @@ module Theorems where
     -- ∀x. (x<x) → ⊥
 
   [irreflexivity,transitivity]-to-asymmetry : ∀{T}{_<_} → {{_ : Irreflexivity{T}(_<_)}} → {{_ : Transitivity{T}(_<_)}} → Asymmetry{T}(_<_)
-  asymmetry{{[irreflexivity,transitivity]-to-asymmetry}} = Tuple.curry(irreflexivity ∘ transitivity)
+  asymmetry{{[irreflexivity,transitivity]-to-asymmetry}} = Tuple.curry(irreflexivity ∘ (Tuple.uncurry transitivity))
     -- ∀x. ¬(x<x)
     -- ∀x. (x<x) → ⊥
     --   ∀x∀y∀z. (x<y)∧(y<z) → (x<z)

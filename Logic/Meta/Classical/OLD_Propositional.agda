@@ -140,15 +140,15 @@ open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
       ex-falso-quodlibet : ∀{A : Formula(Prop)} → Node(⊥) → Node(A)
       ex-falso-quodlibet = [⊥]-elim
 
-      [∧]-commutativity : ∀{A B : Formula(Prop)} → Node(A ∧ B) → Node(B ∧ A)
-      [∧]-commutativity {A} {B} A∧B =
+      [∧]-symmetry : ∀{A B : Formula(Prop)} → Node(A ∧ B) → Node(B ∧ A)
+      [∧]-symmetry {A} {B} A∧B =
         ((B ∧ A) :with: [∧]-intro
           (B :with: [∧]-elimᵣ(A∧B))
           (A :with: [∧]-elimₗ(A∧B))
         )
 
-      [∨]-commutativity : ∀{A B : Formula(Prop)} → Node(A ∨ B) → Node(B ∨ A)
-      [∨]-commutativity {A} {B} A∨B =
+      [∨]-symmetry : ∀{A B : Formula(Prop)} → Node(A ∨ B) → Node(B ∨ A)
+      [∨]-symmetry {A} {B} A∨B =
         ((B ∨ A) :with: [∨]-elim
           [∨]-introᵣ
           [∨]-introₗ

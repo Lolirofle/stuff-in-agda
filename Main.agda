@@ -75,6 +75,7 @@ import Relator.Equals.Theorems
 import Relator.Equals.Uniqueness
 import Relator.FunctionEquals
 import Sets.BoolSet
+import Sets.ETCS
 import Sets.IZF
 import Sets.ListSet
 import Sets.TypeSet
