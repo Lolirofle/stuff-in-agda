@@ -407,6 +407,10 @@ module NaturalNumbers where
     𝐒 : S → S
     𝐒(x) = (x ∪ •(x))
 
+  module _ ⦃ _ : EmptySetExistence ⦄ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
+    Inductive : S → Set
+    Inductive(N) = ((𝟎 ∈ N) ∧ (∀{n} → (n ∈ N) → (𝐒(n) ∈ N)))
+
 module Tuples where
   open Axioms1
   open Operations
@@ -447,7 +451,7 @@ module Axioms2 where
     -- This can be used to construct a set representing the natural numbers.
     -- In this context, "Model" and "Representing" means a bijection.
     record InfinityAxiom : Set(Lvl.𝟎) where
-      field infinity : ∃(N ↦ ((𝟎 ∈ N) ∧ (∀{n} → (n ∈ N) → (𝐒(n) ∈ N))))
+      field infinity : ∃(N ↦ Inductive(N))
     open InfinityAxiom ⦃ ... ⦄ public
 
   record ChoiceAxiom : Set(Lvl.𝟎) where
@@ -464,8 +468,7 @@ module NaturalNumberTheorems where
   open RelationsTheorems
 
   module _ ⦃ _ : EmptySetExistence ⦄ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ ⦃ _ : InfinityAxiom ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ where
-    -- ℕ = [∃]-extract(infinity) -- TODO: This is not an unique set as it is currently defined. The minimal set such that infinity holds is ℕ, but is it possible to express?.
-    -- TODO: I think a filtering like this gives the minimal?
+    -- TODO: I think a filtering like this gives the minimal inductive set?
     ℕ : S
     ℕ = filter([∃]-extract(infinity)) (n ↦ (n ≡ 𝟎) ∨ ∃(y ↦ n ≡ 𝐒(y)))
 
@@ -488,17 +491,17 @@ module NaturalNumberTheorems where
       satisfy-property : (𝐒(n) ≡ 𝟎) ∨ ∃(y ↦ 𝐒(n) ≡ 𝐒(y))
       satisfy-property = [∨]-introᵣ ([∃]-intro n [≡]-reflexivity)
 
-    -- TODO: The following is not neccessarily true when ℕ is not the minimal inductive set.
     [ℕ]-contains-only : ∀{n} → (n ∈ ℕ) → (n ≡ 𝟎)∨(∃(x ↦ n ≡ 𝐒(x)))
     [ℕ]-contains-only {n} (n-containment) = [∧]-elimᵣ (([↔]-elimᵣ (filter-containment {_}{_}{n})) (n-containment))
 
-    postulate [ℕ]-subset : ∀{Nₛ} → (𝟎 ∈ Nₛ) → (∀{n} → (n ∈ Nₛ) → (𝐒(n) ∈ Nₛ)) → (ℕ ⊆ Nₛ)
+    postulate [ℕ]-subset : ∀{Nₛ} → Inductive(Nₛ) → (ℕ ⊆ Nₛ)
     -- [ℕ]-subset {Nₛ} (zero-containment) (successor-containment) {n} ([ℕ]-n-containment) =
     --   [ℕ]-contains-only{n} ([ℕ]-n-containment)
 
-    [ℕ]-set-induction : ∀{Nₛ} → (Nₛ ⊆ ℕ) → (𝟎 ∈ Nₛ) → (∀{n} → (n ∈ Nₛ) → (𝐒(n) ∈ Nₛ)) → (Nₛ ≡ ℕ)
-    [ℕ]-set-induction {Nₛ} (Nₛ-subset) (zero-containment) (successor-containment) =
-      [↔]-intro ([ℕ]-subset {Nₛ} (zero-containment) (successor-containment)) (Nₛ-subset)
+    [ℕ]-set-induction : ∀{Nₛ} → (Nₛ ⊆ ℕ) → Inductive(Nₛ) → (Nₛ ≡ ℕ)
+    [ℕ]-set-induction {Nₛ} (Nₛ-subset) (ind) = [↔]-intro ([ℕ]-subset {Nₛ} (ind)) (Nₛ-subset)
+
+    -- TODO: Is it possible to connect this to the ℕ in Numeral.Natural.ℕ?
 
 record IZF : Set(Lvl.𝐒(Lvl.𝟎)) where
   instance constructor IZFStructure
