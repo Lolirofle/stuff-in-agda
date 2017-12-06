@@ -85,32 +85,47 @@ module RelationsTheorems where
 module Axioms1 where
   open Relations
 
+  -- Axiom of the empty set
   -- A set which is empty exists.
-  record EmptySetAxiom : Set(Lvl.𝟎) where
+  record EmptySetExistence : Set(Lvl.𝟎) where
     field empty : ∃(s ↦ Empty(s))
-  open EmptySetAxiom ⦃ ... ⦄ public
+  open EmptySetExistence ⦃ ... ⦄ public
 
+  -- Axiom of pairing
   -- A set with two elements exists.
-  record PairingAxiom : Set(Lvl.𝟎) where
+  record PairExistence : Set(Lvl.𝟎) where
     field pair : ∀{x₁ x₂} → ∃(s ↦ Pair(s)(x₁)(x₂))
-  open PairingAxiom ⦃ ... ⦄ public
+  open PairExistence ⦃ ... ⦄ public
 
+  -- Axiom of union
   -- A set which contains all the elements of a group of sets exists.
-  record UnionAxiom : Set(Lvl.𝟎) where
+  record UnionExistence : Set(Lvl.𝟎) where
     field union : ∀{ss} → ∃(sᵤ ↦ UnionAll(sᵤ)(ss))
-  open UnionAxiom ⦃ ... ⦄ public
+  open UnionExistence ⦃ ... ⦄ public
 
+  -- Axiom of the power set
   -- A set which contains all the subsets of a set exists.
-  record PowerSetAxiom : Set(Lvl.𝟎) where
+  record PowerSetExistence : Set(Lvl.𝟎) where
     field power : ∀{s} → ∃(sₚ ↦ Power(sₚ)(s))
-  open PowerSetAxiom ⦃ ... ⦄ public
+  open PowerSetExistence ⦃ ... ⦄ public
 
+  -- Axiom schema of restricted comprehension | Axiom schema of specification | Axiom schema of separation
   -- A set which is the subset of a set where all elements satisfies a predicate exists.
-  record ComprehensionAxiom : Set(Lvl.𝐒(Lvl.𝟎)) where
+  record RestrictedComprehensionExistence : Set(Lvl.𝐒(Lvl.𝟎)) where
     field comprehension : ∀{s}{φ : S → Stmt} → ∃(sₛ ↦ FilteredSubset(sₛ)(s)(φ))
-  open ComprehensionAxiom ⦃ ... ⦄ public
+  open RestrictedComprehensionExistence ⦃ ... ⦄ public
 
-  -- ??
+  -- Axiom schema of collection
+  -- A set which collects all RHS in a binary relation (and possibly more elements) exists.
+  -- The image of a function has a superset?
+  -- Detailed explanation:
+  --   Given a set a and a formula φ:
+  --   If ∀(x∊a)∃y. φ(x)(y)
+  --     The binary relation φ describes a total multivalued function from the set a to b:
+  --       φ: a→b
+  --     Note: φ is not neccessarily a set.
+  --   Then ∃b∀(x∊a)∃(y∊b). φ(x)(y)
+  --     There exists a set b such that every argument of the function has one of its function values in it.
   record CollectionAxiom : Set(Lvl.𝐒(Lvl.𝟎)) where
     field collection : ∀{φ : S → S → Stmt} → ∀{a} → (∀{x} → (x ∈ a) → ∃(y ↦ φ(x)(y))) → ∃(b ↦ ∀{x} → (x ∈ a) → ∃(y ↦ ((y ∈ b) ∧ φ(x)(y))))
   open CollectionAxiom ⦃ ... ⦄ public
@@ -119,21 +134,21 @@ module Axioms1 where
   -- This can be used to prove stuff about all sets.
   -- This can be interpreted as:
   --   A proof of a predicate satisfying every element of an arbitrary set is a proof of this predicate satisfying every set.
-  record InductionAxiom : Set(Lvl.𝐒(Lvl.𝟎)) where
+  record InductionProof : Set(Lvl.𝐒(Lvl.𝟎)) where
     field induction : ∀{φ : S → Stmt} → (∀{s} → (∀{x} → (x ∈ s) → φ(x)) → φ(s)) → (∀{s} → φ(s))
-  open InductionAxiom ⦃ ... ⦄
+  open InductionProof ⦃ ... ⦄ public
 
 module Theorems1 where
   open Axioms1
   open Relations
 
-  module _ ⦃ _ : PairingAxiom ⦄ where
+  module _ ⦃ _ : PairExistence ⦄ where
       -- A set with only one element exists.
     single : ∀{x₁} → ∃(s ↦ (∀{x} → (x ∈ s) ↔ (x ≡ x₁)))
     single{x} with pair{x}{x}
     ...          | [∃]-intro (z) (f) = ([∃]-intro (z) (\{w} → [↔]-transitivity (f{w}) [∨]-redundancy))
 
-  module _ ⦃ _ : EmptySetAxiom ⦄ where
+  module _ ⦃ _ : EmptySetExistence ⦄ where
     [∅]-uniqueness : ∀{x y} → Empty(x) → Empty(y) → (x ≡ y)
     [∅]-uniqueness (empty-x)(empty-y) =
       ([↔]-intro
@@ -141,18 +156,27 @@ module Theorems1 where
         ([⊥]-elim ∘ empty-x)
       )
 
+  {-
+    Singleton-elem-uniqueness : ∀{x y₁ y₂} → (y₁ ∈ Singleton(x)) → (y₂ ∈ Singleton(x)) → (y₁ ≡ y₂)
+    Singleton-elem-uniqueness (y₁-proof)(y₂-proof) =
+      ([↔]-intro
+        (y₁-proof)
+        (y₂-proof)
+      )
+  -}
+
 module Operations where
   open Axioms1
   open Relations
   open Theorems1
 
-  module _ ⦃ _ : EmptySetAxiom ⦄ where
+  module _ ⦃ _ : EmptySetExistence ⦄ where
     -- Definition of the empty set: ∅={}.
     -- This can be used to construct a set with no elements.
     ∅ : S
     ∅ = [∃]-extract(empty)
 
-  module _ ⦃ _ : PairingAxiom ⦄ where
+  module _ ⦃ _ : PairExistence ⦄ where
     -- Definition of a singleton set: {x} for some element x.
     -- This can be used to construct a set with a single element.
     • : S → S
@@ -163,25 +187,25 @@ module Operations where
     _⟒_ : S → S → S
     _⟒_ (x)(y) = [∃]-extract(pair{x}{y})
 
-  module _ ⦃ _ : UnionAxiom ⦄ ⦃ _ : PairingAxiom ⦄ where
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
     -- Definition of the union of two sets: s₁∪s₂ for two sets s₁ and s₂
     -- This can be used to construct a set that contains all elements from either of the two sets.
     _∪_ : S → S → S
     _∪_ s₁ s₂ = [∃]-extract(union{s₁ ⟒ s₂})
 
-  module _ ⦃ _ : UnionAxiom ⦄ where
+  module _ ⦃ _ : UnionExistence ⦄ where
     -- Definition of the union of a set of sets: ⋃(ss) for a set of sets ss
     -- This can be used to construct a set that contains all elements from the sets.
     reduce-[∪] : S → S
     reduce-[∪] ss = [∃]-extract(union{ss})
 
-  module _ ⦃ _ : PowerSetAxiom ⦄ where
+  module _ ⦃ _ : PowerSetExistence ⦄ where
     -- Definition of the power set of a set: ℘(s) for some set s
     -- This can be used to construct a set that contains all subsets of a set.
     ℘ : S → S
     ℘(s) = [∃]-extract(power{s})
 
-  module _ ⦃ _ : ComprehensionAxiom ⦄ where
+  module _ ⦃ _ : RestrictedComprehensionExistence ⦄ where
     -- Definition of the usual "set builder notation": {x∊s. φ(x)} for some set s
     -- This can be used to construct a set that is the subset which satisfies a certain predicate for every element.
     filter : S → (S → Stmt) → S
@@ -213,11 +237,11 @@ module OperationsTheorems where
   -- -- -- -- -- -- -- -- -- -- -- -- -- --
   -- Containment
 
-  module _ ⦃ _ : EmptySetAxiom ⦄ where
+  module _ ⦃ _ : EmptySetExistence ⦄ where
     [∅]-containment : Empty(∅)
     [∅]-containment = [∃]-property(empty)
 
-  module _ ⦃ _ : PairingAxiom ⦄ where
+  module _ ⦃ _ : PairExistence ⦄ where
     [•]-containment : ∀{x₁} → (x₁ ∈ •(x₁))
     [•]-containment{x₁} = [↔]-elimₗ([∃]-property(single{x₁})) ([≡]-reflexivity)
 
@@ -230,27 +254,53 @@ module OperationsTheorems where
     [⟒]-containmentᵣ : ∀{x₁ x₂} → (x₂ ∈ (x₁ ⟒ x₂))
     [⟒]-containmentᵣ{x₁}{x₂} = [↔]-elimₗ([∃]-property(pair{x₁}{x₂})) ([∨]-introᵣ([≡]-reflexivity))
 
-  module _ ⦃ _ : ComprehensionAxiom ⦄ where
+  module _ ⦃ _ : RestrictedComprehensionExistence ⦄ where
     filter-containment : ∀{s}{φ}{x} → (x ∈ filter(s)(φ)) ↔ ((x ∈ s) ∧ φ(x))
     filter-containment{s} = [∃]-property(comprehension)
 
     [∩]-containment : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∩ s₂)) ↔ (x ∈ s₁)∧(x ∈ s₂)
     [∩]-containment = filter-containment
 
-  module _ ⦃ _ : UnionAxiom ⦄ ⦃ _ : PairingAxiom ⦄ where
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
     [∪]-containment : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∪ s₂)) ↔ (x ∈ s₁)∨(x ∈ s₂)
     [∪]-containment = [↔]-intro [∪]-containmentₗ [∪]-containmentᵣ where
       postulate [∪]-containmentₗ : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∪ s₂)) ← (x ∈ s₁)∨(x ∈ s₂)
       postulate [∪]-containmentᵣ : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∪ s₂)) → (x ∈ s₁)∨(x ∈ s₂)
 
-  module _ ⦃ _ : PowerSetAxiom ⦄ where
+  module _ ⦃ _ : PowerSetExistence ⦄ where
     [℘]-containment : ∀{s sₛ} → (sₛ ⊆ s) ↔ (sₛ ∈ ℘(s))
     [℘]-containment{s} = [↔]-symmetry([∃]-property(power{s}))
 
   -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  -- Other
+
+  module _ ⦃ _ : EmptySetExistence ⦄ where
+    [∅]-in-subset : ∀{s} → (∅ ⊆ s)
+    [∅]-in-subset = [⊥]-elim ∘ [∅]-containment
+
+  module _ ⦃ _ : EmptySetExistence ⦄ ⦃ _ : PowerSetExistence ⦄ where
+    [℘][∅]-containment : ∀{s} → (∅ ∈ ℘(s))
+    [℘][∅]-containment = [↔]-elimᵣ([℘]-containment)([∅]-in-subset)
+
+  module _ ⦃ _ : PowerSetExistence ⦄ where
+    [℘]-set-containment : ∀{s} → (s ∈ ℘(s))
+    [℘]-set-containment = [↔]-elimᵣ([℘]-containment)([⊆]-reflexivity)
+
+  module _ ⦃ _ : InductionProof ⦄ where
+    self-noncontainment : ∀{s} → (s ∉ s) -- ¬ ∃(s ↦ s ∈ s)
+    self-noncontainment = induction{x ↦ x ∉ x} (proof) where
+      proof : ∀{s} → (∀{x} → (x ∈ s) → (x ∉ x)) → (s ∉ s)
+      proof{s} (f)(s∈s) = f{s}(s∈s)(s∈s)
+      -- ∀{s} → (∀{x} → (x ∈ s) → (x ∉ x)) → (s ∉ s)
+      -- ∀{s} → (∀{x} → (x ∈ s) → (x ∈ x) → ⊥) → (s ∈ s) → ⊥
+
+    [𝐔]-nonexistence : ¬ ∃(𝐔 ↦ ∀{x} → (x ∈ 𝐔))
+    [𝐔]-nonexistence ([∃]-intro 𝐔 proof) = self-noncontainment {𝐔} (proof{𝐔})
+
+  -- -- -- -- -- -- -- -- -- -- -- -- -- --
   -- Subset
 
-  module _ ⦃ _ : UnionAxiom ⦄ ⦃ _ : PairingAxiom ⦄ where
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
     [∪]-subsetₗ : ∀{s₁ s₂} → (s₁ ⊆ (s₁ ∪ s₂))
     [∪]-subsetₗ = ([↔]-elimₗ([∪]-containment)) ∘ [∨]-introₗ
 
@@ -259,7 +309,7 @@ module OperationsTheorems where
 
     postulate [∪]-subset-eq : ∀{s₁ s₂ s₃} → ((s₁ ∪ s₂) ⊆ s₃) ↔ ((s₁ ⊆ s₃)∧(s₂ ⊆ s₃))
 
-  module _ ⦃ _ : ComprehensionAxiom ⦄ where
+  module _ ⦃ _ : RestrictedComprehensionExistence ⦄ where
     [∩]-subsetₗ : ∀{s₁ s₂} → ((s₁ ∩ s₂) ⊆ s₁)
     [∩]-subsetₗ = [∧]-elimₗ ∘ ([↔]-elimᵣ([∩]-containment))
 
@@ -269,9 +319,14 @@ module OperationsTheorems where
     filter-subset : ∀{s}{φ} → (filter(s)(φ) ⊆ s)
     filter-subset{s}{φ} {x}(x∈s) = [∧]-elimₗ([↔]-elimᵣ([∃]-property(comprehension{s}{φ}))(x∈s))
 
-  module _ ⦃ _ : PowerSetAxiom ⦄ where
-   postulate [℘]-subset : ∀{s₁ s₂} → (s₁ ⊆ s₂) → (℘(s₁) ⊆ ℘(s₂))
+  module _ ⦃ _ : PowerSetExistence ⦄ where
+    [℘]-subset : ∀{s₁ s₂} → (s₁ ⊆ s₂) ↔ (℘(s₁) ⊆ ℘(s₂))
+    [℘]-subset = [↔]-intro l r where
+      l : ∀{s₁ s₂} → (s₁ ⊆ s₂) ← (℘(s₁) ⊆ ℘(s₂))
+      l {s₁}{s₂} (p1p2) = ([↔]-elimₗ [℘]-containment) (p1p2{s₁} ([℘]-set-containment))
 
+      r : ∀{s₁ s₂} → (s₁ ⊆ s₂) → (℘(s₁) ⊆ ℘(s₂))
+      r {s₁}{s₂} (s12) {a} (aps1) = ([↔]-elimᵣ [℘]-containment) ([⊆]-transitivity (([↔]-elimₗ [℘]-containment) aps1) (s12))
 
   -- TODO: Does this hold: Empty(s) ∨ NonEmpty(s) ? Probably not
 
@@ -283,7 +338,7 @@ module OperationsTheorems where
   --   f : ∀{s₁ s₂} → (x ∈ (s₁ ⟒ s₂)) → (x ∈ (s₂ ⟒ s₁))
   --   f{s₁}{s₂} = ([↔]-elimₗ([⟒]-containment{s₂}{s₁}{x})) ∘ ([∨]-symmetry) ∘ ([↔]-elimᵣ([∪]-containment{s₁}{s₂}{x}))
 
-  module _ ⦃ _ : UnionAxiom ⦄ ⦃ _ : PairingAxiom ⦄ where
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
     [∪]-commutativity : ∀{s₁ s₂} → (s₁ ∪ s₂) ≡ (s₂ ∪ s₁)
     [∪]-commutativity{s₁}{s₂} {x} = [↔]-intro (f{s₂}{s₁}) (f{s₁}{s₂}) where
       f : ∀{s₁ s₂} → (x ∈ (s₁ ∪ s₂)) → (x ∈ (s₂ ∪ s₁))
@@ -292,7 +347,7 @@ module OperationsTheorems where
         ∘ ([∨]-symmetry)
         ∘ ([↔]-elimᵣ([∪]-containment{s₁}{s₂}{x}))
 
-  module _ ⦃ _ : ComprehensionAxiom ⦄ where
+  module _ ⦃ _ : RestrictedComprehensionExistence ⦄ where
     [∩]-commutativity : ∀{s₁ s₂} → (s₁ ∩ s₂) ≡ (s₂ ∩ s₁)
     [∩]-commutativity{s₁}{s₂} {x} = [↔]-intro (f{s₂}{s₁}) (f{s₁}{s₂}) where
       f : ∀{s₁ s₂} → (x ∈ (s₁ ∩ s₂)) → (x ∈ (s₂ ∩ s₁))
@@ -304,7 +359,7 @@ module OperationsTheorems where
   -- -- -- -- -- -- -- -- -- -- -- -- -- --
   -- Associativity
 
-  module _ ⦃ _ : UnionAxiom ⦄ ⦃ _ : PairingAxiom ⦄ where
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
     [∪]-associativity : ∀{s₁ s₂ s₃} → ((s₁ ∪ s₂) ∪ s₃) ≡ (s₁ ∪ (s₂ ∪ s₃))
     [∪]-associativity{s₁}{s₂}{s₃} {x} = [↔]-intro l r where
       l : (x ∈ ((s₁ ∪ s₂) ∪ s₃)) ← (x ∈ (s₁ ∪ (s₂ ∪ s₃)))
@@ -321,7 +376,7 @@ module OperationsTheorems where
         ∘ ([∨]-elim ([∨]-introₗ ∘ ([↔]-elimᵣ([∪]-containment{s₁}{s₂}{x}))) ([∨]-introᵣ))
         ∘ ([↔]-elimᵣ([∪]-containment{s₁ ∪ s₂}{s₃}{x}))
 
-  module _ ⦃ _ : ComprehensionAxiom ⦄ where
+  module _ ⦃ _ : RestrictedComprehensionExistence ⦄ where
     [∩]-associativity : ∀{s₁ s₂ s₃} → ((s₁ ∩ s₂) ∩ s₃) ≡ (s₁ ∩ (s₂ ∩ s₃))
     [∩]-associativity{s₁}{s₂}{s₃} {x} = [↔]-intro l r where
       l : (x ∈ ((s₁ ∩ s₂) ∩ s₃)) ← (x ∈ (s₁ ∩ (s₂ ∩ s₃)))
@@ -338,35 +393,16 @@ module OperationsTheorems where
         ∘ ((prop ↦ ([∧]-intro ([↔]-elimᵣ([∩]-containment{s₁}{s₂}{x}) ([∧]-elimₗ prop)) ([∧]-elimᵣ prop))) :of: ((x ∈ (s₁ ∩ s₂))∧(x ∈ s₃) → ((x ∈ s₁)∧(x ∈ s₂))∧(x ∈ s₃)))
         ∘ (([↔]-elimᵣ([∩]-containment{s₁ ∩ s₂}{s₃}{x}))                                                   :of: ((x ∈ ((s₁ ∩ s₂) ∩ s₃)) → (x ∈ (s₁ ∩ s₂))∧(x ∈ s₃)))
 
-  -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  -- Other
-
-  module _ ⦃ _ : EmptySetAxiom ⦄ where
-    [∅]-in-subset : ∀{s} → (∅ ⊆ s)
-    [∅]-in-subset = [⊥]-elim ∘ [∅]-containment
-
-  module _ ⦃ _ : EmptySetAxiom ⦄ ⦃ _ : PowerSetAxiom ⦄ where
-    [℘][∅]-containment : ∀{s} → (∅ ∈ ℘(s))
-    [℘][∅]-containment = [↔]-elimᵣ([℘]-containment)([∅]-in-subset)
-
-  module _ ⦃ _ : PowerSetAxiom ⦄ where
-    [℘]-set-containment : ∀{s} → (s ∈ ℘(s))
-    [℘]-set-containment = [↔]-elimᵣ([℘]-containment)([⊆]-reflexivity)
-
-  -- TODO: Is this provable?
-  -- self-containment : ∀{s} → ¬(s ∈ s) -- ¬ ∃(s ↦ s ∈ s)
-  -- self-containment = 
-
 module NaturalNumbers where
   open Axioms1
   open Operations
 
-  module _ ⦃ _ : EmptySetAxiom ⦄ where
+  module _ ⦃ _ : EmptySetExistence ⦄ where
     -- Could be interpreted as a set theoretic definition of zero from the natural numbers.
     𝟎 : S
     𝟎 = ∅
 
-  module _ ⦃ _ : UnionAxiom ⦄ ⦃ _ : PairingAxiom ⦄ where
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
     -- Could be interpreted as a set theoretic definition of the successor function from the natural numbers.
     𝐒 : S → S
     𝐒(x) = (x ∪ •(x))
@@ -374,31 +410,42 @@ module NaturalNumbers where
 module Tuples where
   open Axioms1
   open Operations
+  open Relations
 
-  module _ ⦃ _ : UnionAxiom ⦄ ⦃ _ : PairingAxiom ⦄ where
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
     _,_ : S → S → S
     _,_ x y = (x ∪ (x ⟒ y))
 
-  -- _⨯_ : S → S → S
-  -- _⨯_ s₁ s₂ = 
+    postulate Tuple-elem-uniqueness : ∀{x₁ x₂ y₁ y₂} → ((x₁ , y₁) ≡ (x₂ , y₂)) → (x₁ ≡ x₂)∧(y₁ ≡ y₂)
+    -- Tuple-elem-uniqueness (x1y1x2y2) =
 
-{-
-  Singleton-elem-uniqueness : ∀{x y₁ y₂} → (y₁ ∈ Singleton(x)) → (y₂ ∈ Singleton(x)) → (y₁ ≡ y₂)
-  Singleton-elem-uniqueness (y₁-proof)(y₂-proof) =
-    ([↔]-intro
-      (y₁-proof)
-      (y₂-proof)
-    )
--}
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ ⦃ _ : PowerSetExistence ⦄ where
+    _⨯_ : S → S → S
+    _⨯_ s₁ s₂ = filter(℘(℘(s₁ ∪ s₂))) (s ↦ ∃(x ↦ ∃(y ↦ (x ∈ s₁) ∧ (y ∈ s₂) ∧ (s ≡ (x , y)))))
+
+module Functions where
+  open Axioms1
+  open Operations
+  open Relations
+  open Tuples
+
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ where
+    Function : S → S → S → Set
+    Function(f) (s₁)(s₂) = (∀{x} → (x ∈ s₁) → ∃(y ↦ (y ∈ s₂) ∧ ((x , y) ∈ f) ∧ (∀{y₂} → ((x , y₂) ∈ f) → (y ≡ y₂))))
+
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ ⦃ _ : PowerSetExistence ⦄ where
+    _^_ : S → S → S
+    _^_ s₁ s₂ = filter(℘(s₂ ⨯ s₁)) (f ↦ Function(f)(s₁)(s₂))
 
 module Axioms2 where
   open Axioms1
   open NaturalNumbers
   open Relations
 
-  module _ ⦃ _ : EmptySetAxiom ⦄ ⦃ _ : UnionAxiom ⦄ ⦃ _ : PairingAxiom ⦄ where
+  module _ ⦃ _ : EmptySetExistence ⦄ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
     -- Sets can model ℕ.
     -- This can be used to construct a set representing the natural numbers.
+    -- In this context, "Model" and "Representing" means a bijection.
     record InfinityAxiom : Set(Lvl.𝟎) where
       field infinity : ∃(N ↦ ((𝟎 ∈ N) ∧ (∀{n} → (n ∈ N) → (𝐒(n) ∈ N))))
     open InfinityAxiom ⦃ ... ⦄ public
@@ -411,20 +458,47 @@ module NaturalNumberTheorems where
   open Axioms1
   open Axioms2
   open NaturalNumbers
+  open Operations
+  open OperationsTheorems
   open Relations
+  open RelationsTheorems
 
-  module _ ⦃ _ : EmptySetAxiom ⦄ ⦃ _ : UnionAxiom ⦄ ⦃ _ : PairingAxiom ⦄ ⦃ _ : InfinityAxiom ⦄ where
-    ℕ = [∃]-extract(infinity) -- TODO: This is not an unique set as it is currently defined (What did I mean when I wrote this?)
+  module _ ⦃ _ : EmptySetExistence ⦄ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ ⦃ _ : InfinityAxiom ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ where
+    -- ℕ = [∃]-extract(infinity) -- TODO: This is not an unique set as it is currently defined. The minimal set such that infinity holds is ℕ, but is it possible to express?.
+    -- TODO: I think a filtering like this gives the minimal?
+    ℕ : S
+    ℕ = filter([∃]-extract(infinity)) (n ↦ (n ≡ 𝟎) ∨ ∃(y ↦ n ≡ 𝐒(y)))
+
+    [ℕ]-containment-in-infinity : ∀{n} → (n ∈ ℕ) → (n ∈ [∃]-extract(infinity))
+    [ℕ]-containment-in-infinity {n} (n-containment) = [∧]-elimₗ (([↔]-elimᵣ (filter-containment {_}{_}{n})) (n-containment))
 
     [ℕ]-contains-[𝟎] : (𝟎 ∈ ℕ)
-    [ℕ]-contains-[𝟎] = [∧]-elimₗ ([∃]-property(infinity))
+    [ℕ]-contains-[𝟎] = ([↔]-elimₗ (filter-containment {_}{_}{𝟎})) ([∧]-intro in-infinity satisfy-property) where
+       in-infinity : 𝟎 ∈ [∃]-extract(infinity)
+       in-infinity = [∧]-elimₗ ([∃]-property(infinity))
+
+       satisfy-property : (𝟎 ≡ 𝟎) ∨ ∃(y ↦ 𝟎 ≡ 𝐒(y))
+       satisfy-property = [∨]-introₗ [≡]-reflexivity
 
     [ℕ]-contains-[𝐒] : ∀{n} → (n ∈ ℕ) → (𝐒(n) ∈ ℕ)
-    [ℕ]-contains-[𝐒] = [∧]-elimᵣ ([∃]-property(infinity))
+    [ℕ]-contains-[𝐒] {n} (n-containment) = ([↔]-elimₗ (filter-containment {_}{_}{𝐒(n)})) ([∧]-intro in-infinity satisfy-property) where
+      in-infinity : (𝐒(n) ∈ [∃]-extract(infinity))
+      in-infinity = [∧]-elimᵣ ([∃]-property(infinity)) {n} ([ℕ]-containment-in-infinity {n} (n-containment))
 
-    postulate [ℕ]-induction : ∀{Nₛ} → (Nₛ ⊆ ℕ) → (𝟎 ∈ Nₛ) → (∀{n} → (n ∈ Nₛ) → (𝐒(n) ∈ Nₛ)) → (Nₛ ≡ ℕ)
+      satisfy-property : (𝐒(n) ≡ 𝟎) ∨ ∃(y ↦ 𝐒(n) ≡ 𝐒(y))
+      satisfy-property = [∨]-introᵣ ([∃]-intro n [≡]-reflexivity)
 
-    postulate [ℕ]-contains-only : ∀{n} → (n ∈ ℕ) → (n ≡ 𝟎)∨(∃(x ↦ n ≡ 𝐒(x)))
+    -- TODO: The following is not neccessarily true when ℕ is not the minimal inductive set.
+    [ℕ]-contains-only : ∀{n} → (n ∈ ℕ) → (n ≡ 𝟎)∨(∃(x ↦ n ≡ 𝐒(x)))
+    [ℕ]-contains-only {n} (n-containment) = [∧]-elimᵣ (([↔]-elimᵣ (filter-containment {_}{_}{n})) (n-containment))
+
+    postulate [ℕ]-subset : ∀{Nₛ} → (𝟎 ∈ Nₛ) → (∀{n} → (n ∈ Nₛ) → (𝐒(n) ∈ Nₛ)) → (ℕ ⊆ Nₛ)
+    -- [ℕ]-subset {Nₛ} (zero-containment) (successor-containment) {n} ([ℕ]-n-containment) =
+    --   [ℕ]-contains-only{n} ([ℕ]-n-containment)
+
+    [ℕ]-set-induction : ∀{Nₛ} → (Nₛ ⊆ ℕ) → (𝟎 ∈ Nₛ) → (∀{n} → (n ∈ Nₛ) → (𝐒(n) ∈ Nₛ)) → (Nₛ ≡ ℕ)
+    [ℕ]-set-induction {Nₛ} (Nₛ-subset) (zero-containment) (successor-containment) =
+      [↔]-intro ([ℕ]-subset {Nₛ} (zero-containment) (successor-containment)) (Nₛ-subset)
 
 record IZF : Set(Lvl.𝐒(Lvl.𝟎)) where
   instance constructor IZFStructure
@@ -432,11 +506,11 @@ record IZF : Set(Lvl.𝐒(Lvl.𝟎)) where
   open Axioms2
 
   field
-    ⦃ empty ⦄         : EmptySetAxiom
-    ⦃ pair ⦄          : PairingAxiom
-    ⦃ union ⦄         : UnionAxiom
-    ⦃ power ⦄         : PowerSetAxiom
-    ⦃ comprehension ⦄ : ComprehensionAxiom
+    ⦃ empty ⦄         : EmptySetExistence
+    ⦃ pair ⦄          : PairExistence
+    ⦃ union ⦄         : UnionExistence
+    ⦃ power ⦄         : PowerSetExistence
+    ⦃ comprehension ⦄ : RestrictedComprehensionExistence
     ⦃ infinity ⦄      : InfinityAxiom
     ⦃ collection ⦄    : CollectionAxiom
-    ⦃ induction ⦄     : InductionAxiom
+    ⦃ induction ⦄     : InductionProof
