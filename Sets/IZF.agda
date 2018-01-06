@@ -73,6 +73,10 @@ module RelationsTheorems where
   [≡]-symmetry : ∀{s₁ s₂} → (s₁ ≡ s₂) → (s₂ ≡ s₁)
   [≡]-symmetry(s12){x} = [↔]-symmetry(s12{x})
 
+  -- TODO: Are these even provable with my def. of set equality?
+  -- [≡]-substitute : ∀{φ : S → Stmt}{s₁ s₂} → (s₁ ≡ s₂) → ∀{x} → φ(s₁) ↔ φ(s₂)
+  -- [≡]-substituteₗ : ∀{φ : Stmt → Stmt}{s₁ s₂} → (s₁ ≡ s₂) → ∀{x} → φ(s₁ ∈ x) ↔ φ(s₂ ∈ x)
+
   [⊆]-reflexivity : ∀{s} → (s ⊆ s)
   [⊆]-reflexivity = [→]-reflexivity
 
@@ -225,6 +229,12 @@ module Operations where
     -- This can be used to construct a set that contains all elements from s₁ which is not in s₂.
     _∖_ : S → S → S
     _∖_ (s₁)(s₂) = filter(s₁)(_∉ s₂)
+
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ where
+    -- Definition of the intersection of a set of sets: ⋂(ss) for a set of sets ss
+    -- This can be used to construct a set that only contains the elements which all the sets have in common.
+    reduce-[∩] : S → S
+    reduce-[∩] ss = filter(reduce-[∪] (ss))(x ↦ ∀{s} → (s ∈ ss) → (x ∈ s))
 
 module OperationsTheorems where
   open Axioms1
@@ -408,7 +418,7 @@ module NaturalNumbers where
     𝐒(x) = (x ∪ •(x))
 
   module _ ⦃ _ : EmptySetExistence ⦄ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
-    Inductive : S → Set
+    Inductive : S → Stmt
     Inductive(N) = ((𝟎 ∈ N) ∧ (∀{n} → (n ∈ N) → (𝐒(n) ∈ N)))
 
 module Tuples where
@@ -434,7 +444,7 @@ module Functions where
   open Tuples
 
   module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ where
-    Function : S → S → S → Set
+    Function : S → S → S → Stmt
     Function(f) (s₁)(s₂) = (∀{x} → (x ∈ s₁) → ∃(y ↦ (y ∈ s₂) ∧ ((x , y) ∈ f) ∧ (∀{y₂} → ((x , y₂) ∈ f) → (y ≡ y₂))))
 
   module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ ⦃ _ : PowerSetExistence ⦄ where
@@ -491,17 +501,54 @@ module NaturalNumberTheorems where
       satisfy-property : (𝐒(n) ≡ 𝟎) ∨ ∃(y ↦ 𝐒(n) ≡ 𝐒(y))
       satisfy-property = [∨]-introᵣ ([∃]-intro n [≡]-reflexivity)
 
+    -- TODO: Is this even provable without extensionality and with ℕ defined like this?
+    -- [ℕ]-contains : ∀{n} → (n ∈ ℕ) ← (n ≡ 𝟎)∨(∃(x ↦ n ≡ 𝐒(x)))
+    -- [ℕ]-contains {_} ([∨]-introₗ [≡]-intro) = [ℕ]-contains-[𝟎]
+    -- [ℕ]-contains {n} ([∨]-introᵣ ([∃]-intro (x) ([≡]-intro))) = [ℕ]-contains-[𝐒] {n} [≡]-intro
+
     [ℕ]-contains-only : ∀{n} → (n ∈ ℕ) → (n ≡ 𝟎)∨(∃(x ↦ n ≡ 𝐒(x)))
     [ℕ]-contains-only {n} (n-containment) = [∧]-elimᵣ (([↔]-elimᵣ (filter-containment {_}{_}{n})) (n-containment))
 
-    postulate [ℕ]-subset : ∀{Nₛ} → Inductive(Nₛ) → (ℕ ⊆ Nₛ)
-    -- [ℕ]-subset {Nₛ} (zero-containment) (successor-containment) {n} ([ℕ]-n-containment) =
-    --   [ℕ]-contains-only{n} ([ℕ]-n-containment)
+    [ℕ]-subset : ∀{Nₛ} → Inductive(Nₛ) → (ℕ ⊆ Nₛ)
+    [ℕ]-subset {Nₛ} ([∧]-intro zero-containment successor-containment) {n} ([ℕ]-n-containment) =
+      [∨]-elim (zero) (succ) ([ℕ]-contains-only{n} ([ℕ]-n-containment)) where
+
+      postulate zero : (n ≡ 𝟎) → (n ∈ Nₛ)
+      postulate succ : (∃(x ↦ n ≡ 𝐒(x))) → (n ∈ Nₛ)
 
     [ℕ]-set-induction : ∀{Nₛ} → (Nₛ ⊆ ℕ) → Inductive(Nₛ) → (Nₛ ≡ ℕ)
     [ℕ]-set-induction {Nₛ} (Nₛ-subset) (ind) = [↔]-intro ([ℕ]-subset {Nₛ} (ind)) (Nₛ-subset)
 
+    [ℕ]-induction : ∀{φ} → φ(𝟎) → (∀{n} → (n ∈ ℕ) → φ(n) → φ(𝐒(n))) → (∀{n} → (n ∈ ℕ) → φ(n))
+    [ℕ]-induction {φ} (zero) (succ) {n} (n-in-ℕ) =
+      ([∧]-elimᵣ
+        (([↔]-elimᵣ filter-containment)
+          ([ℕ]-subset {filter(ℕ)(φ)} ([∧]-intro (zero-in) (succ-in)) {n} (n-in-ℕ))
+        )
+      ) where
+
+      module _ {n} (n-in-ℕ : n ∈ ℕ) where
+        n-inₗ : φ(n) ← (n ∈ filter(ℕ)(φ))
+        n-inₗ (proof) = [∧]-elimᵣ (([↔]-elimᵣ filter-containment) (proof))
+
+        n-inᵣ : φ(n) → (n ∈ filter(ℕ)(φ))
+        n-inᵣ (proof) = ([↔]-elimₗ filter-containment) ([∧]-intro (n-in-ℕ) (proof))
+
+        Sn-inₗ : φ(𝐒(n)) ← (𝐒(n) ∈ filter(ℕ)(φ))
+        Sn-inₗ (proof) = [∧]-elimᵣ (([↔]-elimᵣ filter-containment) (proof))
+
+        Sn-inᵣ : φ(𝐒(n)) → (𝐒(n) ∈ filter(ℕ)(φ))
+        Sn-inᵣ (proof) = ([↔]-elimₗ filter-containment) ([∧]-intro ([ℕ]-contains-[𝐒] (n-in-ℕ)) (proof))
+
+      zero-in : 𝟎 ∈ filter(ℕ)(φ)
+      zero-in = ([↔]-elimₗ filter-containment) ([∧]-intro ([ℕ]-contains-[𝟎]) (zero))
+
+      postulate succ-in : ∀{n} → (n ∈ filter(ℕ)(φ)) → (𝐒(n) ∈ filter(ℕ)(φ))
+      -- succ-in = (Sn-inᵣ) ∘ (succ {n} (n-in-ℕ)) ∘ (n-inₗ)
+
     -- TODO: Is it possible to connect this to the ℕ in Numeral.Natural.ℕ?
+
+    -- TODO: Is (∀{s₁ s₂ : S} → (s₁ ≡ s₂) → (s₁ ∈ S) → (s₂ ∈ S)) provable without axiom of extensionality?
 
 record IZF : Set(Lvl.𝐒(Lvl.𝟎)) where
   instance constructor IZFStructure

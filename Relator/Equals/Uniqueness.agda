@@ -1,4 +1,4 @@
-module Relator.Equals.Uniqueness {ℓ₁}{ℓ₂} where
+module Relator.Equals.Uniqueness {ℓ₁}{ℓ₂} where -- TODO: _≡_ as a parameter
 
 import      Lvl
 open import Functional
@@ -17,3 +17,6 @@ Uniqueness {T} property = ∀{x y : T} → (property(x) ∧ property(y)) → (x 
 -- This means that there is one and only one element that satisfies this property.
 ∃! : ∀{T} → (T → Stmt) → Stmt
 ∃! {T} property = ∃(a ↦ property(a)) ∧ Uniqueness{T}(property)
+
+module Theorems where
+  -- TODO: Injectivity-Uniqueness : ∀{T} → (∀(z : T) → Uniqueness{T} (a ↦ f(a) ≡ f(z))) ↔ (∀{x y : T} → (f(x) ≡ f(y)) → (x ≡ y))

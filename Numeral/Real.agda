@@ -7,11 +7,11 @@ open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
 open import Numeral.Integer hiding (𝟎)
 open import Numeral.Natural
-open import Numeral.Real.Theory{Lvl.𝟎}{Lvl.𝟎}
 open import Sets.Subset{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Field{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Group{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Properties{Lvl.𝟎}{Lvl.𝟎}
+open import Structure.Real{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Relator.Ordering{Lvl.𝟎}{Lvl.𝟎}
 
 -- TODO: Write it properly (maybe with a "construction of the reals"?). The following in this file is something to get this started

@@ -44,7 +44,7 @@ Primitive = ℕ
 evaluate : ∀{n} → Function(n) → (Primitive ^ n) → Primitive
 evaluate {𝟎}       (Base)                       <> = 𝟎
 evaluate {𝐒(𝟎)}    (Successor)                  x  = 𝐒(x)
-evaluate {𝐒(n)}    (Projection(i))              xs = nth{n}(i)(xs)
+evaluate {𝐒(n)}    (Projection(i))              xs = index{_}{_}{n}(i)(xs)
 evaluate {_}       (Composition{_}{n}(f)(gs))   xs = evaluate f (map{n}(g ↦ evaluate g xs)(gs))
 evaluate {𝐒(𝟎)}    (Recursion(f)(g)) (𝟎)           = evaluate f <>
 evaluate {𝐒(𝟎)}    (Recursion(f)(g)) (𝐒(n))        = evaluate g (n , evaluate (Recursion(f)(g)) (n))

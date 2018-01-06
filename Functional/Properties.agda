@@ -17,3 +17,24 @@ id-surjective {_}{y} = [∃]-intro (y) ([≡]-intro)
 
 id-bijective : ∀{T} → Bijective(id{_}{T})
 id-bijective = [∧]-intro(id-injective)(id-surjective)
+
+[∘]-associativity : ∀{a b c d : Type}{f : a → b}{g : b → c}{h : c → d} → ((h ∘ (g ∘ f)) ≡ ((h ∘ g) ∘ f))
+[∘]-associativity = [≡]-intro
+
+[∘]-identityₗ : ∀{a b : Type}{f : a → b} → (id ∘ f ≡ f)
+[∘]-identityₗ = [≡]-intro
+
+[∘]-identityᵣ : ∀{a b : Type}{f : a → b} → (f ∘ id ≡ f)
+[∘]-identityᵣ = [≡]-intro
+
+postulate [∘]-inverseₗ : ∀{a b}{f : a → b} → ⦃ _ : Bijective(f) ⦄ → ∃(g ↦ g ∘ f ≡ id)
+postulate [∘]-inverseᵣ : ∀{a b}{f : a → b} → ⦃ _ : Bijective(f) ⦄ → ∃(g ↦ f ∘ g ≡ id)
+
+inv-fnₗ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
+inv-fnₗ (f) = [∃]-extract([∘]-inverseₗ{_}{_}{f})
+
+inv-fnᵣ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
+inv-fnᵣ (f) = [∃]-extract([∘]-inverseᵣ{_}{_}{f})
+
+inv-fn : ∀{a} → (f : a → a) → ⦃ _ : Bijective(f) ⦄ → (a → a)
+inv-fn = inv-fnₗ

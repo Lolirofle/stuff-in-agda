@@ -7,6 +7,7 @@ import Automaton.TuringMachine
 import Boolean
 import Boolean.Theorems
 import Boolean.Operators
+-- import Cardinal
 import Category.Meta
 import Data
 import Data.Tuple.List
@@ -63,7 +64,6 @@ import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
 import Numeral.Real
 import Numeral.Real.Properties
-import Numeral.Real.Theory
 import Numeral.Sign
 import Numeral.Sign.Oper
 import Numeral.Sign.Oper0
@@ -83,13 +83,16 @@ import Structure.Arithmetic
 import Structure.Function.Domain
 import Structure.Function.Linear
 import Structure.Function.Ordering
+import Structure.LinearAlgebra
 import Structure.Operator.Field
 import Structure.Operator.Group
 import Structure.Operator.Properties
 import Structure.Operator.SetAlgebra
 import Structure.Operator.Vector
+import Structure.Real
 import Structure.Relator.Equivalence as Eq
 import Structure.Relator.Ordering
+import Structure.Relator.Ordering.Subsets
 import Structure.Relator.Properties
 import String
 import Type

@@ -9,16 +9,23 @@ open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}
 
-record Group {T : Type} (_▫_ : T → T → T) : Stmt where
+record Monoid {T : Type} (_▫_ : T → T → T) : Stmt where
   field
     id : T
-    inv : T → T
   field
     associativity  : Associativity    (_▫_)
     identityₗ       : Identityₗ        (_▫_) id
     identityᵣ       : Identityᵣ        (_▫_) id
-    inverseₗ        : InverseFunctionₗ (_▫_) id inv
-    inverseᵣ        : InverseFunctionᵣ (_▫_) id inv
+
+record Group {T : Type} (_▫_ : T → T → T) : Stmt where
+  open Monoid {{...}}
+
+  field
+    inv : T → T
+  field
+    ⦃ monoid ⦄ : Monoid{T} (_▫_)
+    inverseₗ     : InverseFunctionₗ (_▫_) (id ⦃ monoid ⦄) inv
+    inverseᵣ     : InverseFunctionᵣ (_▫_) (id ⦃ monoid ⦄) inv
 
   commutationₗ : ∀{x y} → (x ▫ y ≡ y ▫ x) ← ((x ▫ y) ▫ inv(x) ≡ y)
   commutationₗ {x}{y} (comm) =
@@ -52,16 +59,30 @@ record Group {T : Type} (_▫_ : T → T → T) : Stmt where
   -- = y▫id //[≡]-with-[(expr ↦ y ▫ expr)] Group.inverseᵣ
   -- = y //Group.identityᵣ
 
-  commutation : ∀{x y} → (x ▫ y ≡ y ▫ x) ↔ ((x ▫ y) ▫ inv(x) ≡ y)
-  commutation = [↔]-intro (commutationₗ) (commutationᵣ)
+-- Multiplicative Group
+record MultGroup {T : Type} (_▫_ : T → T → T) (𝟎 : T) : Stmt where
+  open Monoid {{...}}
+
+  field
+    inv : (x : T) → ⦃ _ : x ≢ 𝟎 ⦄ → T
+  field
+    ⦃ monoid ⦄ : Monoid{T} (_▫_)
+    inverseₗ        : ∀{x} → ⦃ nonzero : (x ≢ 𝟎) ⦄ → ((inv x ⦃ nonzero ⦄) ▫ x) ≡ id ⦃ monoid ⦄
+    inverseᵣ        : ∀{x} → ⦃ nonzero : (x ≢ 𝟎) ⦄ → (x ▫ (inv x ⦃ nonzero ⦄)) ≡ id ⦃ monoid ⦄
+
+  identity = identityₗ
+  inverse = inverseₗ
 
 record AbelianGroup {T : Type} (_▫_ : T → T → T) : Stmt where
+  open Group {{...}}
+  open Monoid {{...}}
+
   field
     commutativity  : Commutativity (_▫_)
-    group          : Group (_▫_)
+    ⦃ group ⦄     : Group (_▫_)
 
-  identity = Group.identityₗ(group)
-  inverse = Group.inverseₗ(group)
+  identity = identityₗ
+  inverse = inverseₗ
 
-  commutation : ∀{x y} → ((x ▫ y) ▫ Group.inv(group)(x) ≡ y)
-  commutation = Group.commutationᵣ(group)(commutativity)
+  commutation : ∀{x y} → ((x ▫ y) ▫ (inv ⦃ group ⦄)(x) ≡ y)
+  commutation = commutationᵣ(commutativity)

@@ -1,24 +1,29 @@
-module Sets.Subset {ℓ₁} {ℓ₂} where
+module Sets.Subset {ℓₒ} {ℓₒₗ} where -- {ℓₗ}
 
 import      Lvl
 open import Data
 open import Functional
-open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Logic.Predicate{ℓ₁}{ℓ₂}
-open import Type{ℓ₂}
+open import Logic.Propositional
+open import Type{ℓₒ Lvl.⊔ ℓₒₗ}
 
--- An element in Subset(S) is in the subset of S.
--- Something of type Subset(S) is of a restricted part of S.
-record Subset {S : Type} (P : S → Stmt) : Stmt where -- TODO: Cannot be Type?
+-- An element in Subset(T) is in the subset of T.
+-- Something of type Subset(T) is of a restricted part of T.
+-- Note: The level of Stmt inside P is lower than Type.
+record Subset {T : Type} (P : T → Stmt{ℓₒₗ}) : Type where -- TODO: Cannot be Type?
   constructor subelem
   field
-    elem             : S
+    elem             : T
     ⦃ satisfaction ⦄ : P(elem)
 
--- An element in Subset(S) is in the subset of S.
--- Something of type Subset(S) is of a restricted part of S.
-record Subset2 {S : Type} (P : S → Set) : Type where
+-- postulate nested-subset : ∀{T}{φ₁}{φ₂} → (Tₛ₁ : Subset{T}(φ₁)) → (Tₛ₂ : Subset{Subset{T}(φ₁)}(φ₂)) → Subset{T}(x ↦ φ₁(x) ∧ φ₂(subelem (x) ⦃  ⦄))
+postulate nested-subset : ∀{T}{φ₁}{φ₂} → (Tₛ₁ : Subset{T}(φ₁)) → (Tₛ₂ : Subset{Subset{T}(φ₁)}(φ₂ ∘ Subset.elem)) → Subset{T}(x ↦ φ₁(x) ∧ φ₂(x))
+-- nested-subset
+
+{-open import Logic.Predicate
+
+record SubElem2 (T : Type) : Type where
   constructor subelem
   field
-    elem             : S
-    ⦃ satisfaction ⦄ : P(elem)
+    elem  : T
+    .func : ∃(A ↦ A → T)
+-}

@@ -6,7 +6,7 @@ open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}
 
-record LinearMap {V S : Type} (f : V → V) (_+_ : V → V → V) (_⋅_ : S → V → V) : Stmt where
+record LinearMap {V₁ V₂ S : Type} (_+₁_ : V₁ → V₁ → V₁) (_⋅₁_ : S → V₁ → V₁)  (_+₂_ : V₂ → V₂ → V₂) (_⋅₂_ : S → V₂ → V₂) (f : V₁ → V₂) : Stmt where
   field
-    additivity   : ∀{v₁ v₂ : V} → (f(v₁ + v₂) ≡ f(v₁) + f(v₂))
-    homogeneity1 : ∀{s : S} → ∀{v : V} → (f(s ⋅ v) ≡ s ⋅ f(v))
+    additivity   : ∀{v₁ v₂ : V₁} → (f(v₁ +₁ v₂) ≡ f(v₁) +₂ f(v₂))
+    homogeneity1 : ∀{s : S} → ∀{v : V₁} → (f(s ⋅₁ v) ≡ s ⋅₂ f(v))

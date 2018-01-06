@@ -44,15 +44,6 @@ module Sets.ETCS where
     open import Logic.Propositional.Theorems{Lvl.𝐒(Lvl.𝟎)}
     open import Relator.Equals{Lvl.𝟎}
 
-    [∘]-associativity : ∀{a b c d : Set}{f : a → b}{g : b → c}{h : c → d} → ((h ∘ (g ∘ f)) ≡ ((h ∘ g) ∘ f))
-    [∘]-associativity = [≡]-intro
-
-    [∘]-identityₗ : ∀{a b : Set}{f : a → b} → (id ∘ f ≡ f)
-    [∘]-identityₗ = [≡]-intro
-
-    [∘]-identityᵣ : ∀{a b : Set}{f : a → b} → (f ∘ id ≡ f)
-    [∘]-identityᵣ = [≡]-intro
-
     Terminal : Set → Stmt
     Terminal(x) = (∀{a : Set}{f g : a → x} → (f ≡ g))
 

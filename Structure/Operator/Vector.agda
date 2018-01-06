@@ -9,48 +9,59 @@ open import Structure.Operator.Group{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}
 
-record VectorSpace (V S : Type) (_+ᵥ_ : V → V → V) (_⋅ₛᵥ_ : S → V → V) (_+ₛ_ : S → S → S) (_⋅ₛ_ : S → S → S) : Stmt where
+record Language (V S : Type) : Stmt where
   field
-    {{scalarField}}        : Field(_+ₛ_)(_⋅ₛ_)
-    {{vectorAbelianGroup}} : AbelianGroup(_+ᵥ_)
+    _+ᵥ_ : V → V → V
+    _⋅ₛᵥ_ : S → V → V
+    _+ₛ_ : S → S → S
+    _⋅ₛ_ : S → S → S
+
+record VectorSpace (V S : Type) ⦃ lang : Language(V)(S) ⦄ : Stmt where
+  open Language(lang)
+
+  field
+    ⦃ scalarField ⦄        : Field(_+ₛ_)(_⋅ₛ_)
+    ⦃ vectorAbelianGroup ⦄ : AbelianGroup(_+ᵥ_)
 
   open AbelianGroup {{...}}
   open Field {{...}}
   open Group {{...}}
+  open Monoid {{...}}
+  open MultGroup {{...}}
 
   -- Scalar zero
   𝟎ₛ : S
-  𝟎ₛ = id ⦃ [+]-group ⦃ scalarField ⦄ ⦄
+  𝟎ₛ = id ⦃ Group.monoid ([+]-group ⦃ scalarField ⦄) ⦄
 
   -- Scalar one
   𝟏ₛ : S
-  𝟏ₛ = id ⦃ [⋅]-group ⦃ scalarField ⦄ ⦄
+  𝟏ₛ = id ⦃ MultGroup.monoid ([⋅]-group ⦃ scalarField ⦄) ⦄
 
   [⋅ₛᵥ]-id = 𝟏ₛ
 
   -- Scalar negation
   −₁ₛ_ : S → S
-  −₁ₛ_ = inv ⦃ [+]-group ⦃ scalarField ⦄ ⦄
+  −₁ₛ_ = Group.inv ([+]-group ⦃ scalarField ⦄)
 
   -- Scalar subtraction
   _−ₛ_ : S → S → S
   _−ₛ_ (a)(b) = a +ₛ (−₁ₛ_ b)
 
   -- Scalar reciprocal
-  ⅟ₛ_ : S → S
-  ⅟ₛ_ = inv ⦃ [⋅]-group ⦃ scalarField ⦄ ⦄
+  ⅟ₛ_ : (x : S) → ⦃ _ : (x ≢ 𝟎ₛ) ⦄ → S
+  ⅟ₛ_ = MultGroup.inv ([⋅]-group ⦃ scalarField ⦄)
 
   -- Scalar division
-  _/ₛ_ : S → S → S
-  _/ₛ_ (a)(b) = a ⋅ₛ (⅟ₛ_ b)
+  _/ₛ_ : S → (b : S) → ⦃ _ : (b ≢ 𝟎ₛ) ⦄ → S
+  _/ₛ_ (a)(b) ⦃ nonzero ⦄ = a ⋅ₛ (⅟ₛ_ b ⦃ nonzero ⦄)
 
   -- Vector zero
   𝟎ᵥ : V
-  𝟎ᵥ = id ⦃ group ⦃ vectorAbelianGroup ⦄ ⦄
+  𝟎ᵥ = id ⦃ Group.monoid(group ⦃ vectorAbelianGroup ⦄) ⦄
 
   -- Vector negation
   −₁ᵥ_ : V → V
-  −₁ᵥ_ = inv ⦃ group ⦃ vectorAbelianGroup ⦄ ⦄
+  −₁ᵥ_ = Group.inv(group ⦃ vectorAbelianGroup ⦄)
 
   -- Vector subtraction
   _−ᵥ_ : V → V → V
