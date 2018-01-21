@@ -71,18 +71,18 @@ Div𝐏 {_}{y} (Div𝐒{x} (y-div-x)) = [≡]-substitutionᵣ [+][−₀]-nullif
 -}
 
 divides-intro : ∀{x y} → (∃ \(n : ℕ) → (y ⋅ n ≡ x)) → (y divides x)
-divides-intro {x}{y} ([∃]-intro (n) (y⋅n≡x)) = [≡]-elimᵣ (y⋅n≡x) {expr ↦ (y divides expr)} (DivN{y}(n))
+divides-intro {x}{y} ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [≡]-elimᵣ (y⋅n≡x) {expr ↦ (y divides expr)} (DivN{y}(n))
 
 divides-elim : ∀{x y} → (y divides x) → (∃ \(n : ℕ) → (y ⋅ n ≡ x))
-divides-elim {_}{_} (Div𝟎) = [∃]-intro (0) ([≡]-intro)
+divides-elim {_}{_} (Div𝟎) = [∃]-intro (0) ⦃ [≡]-intro ⦄
 divides-elim {_}{y} (Div𝐒{x} (y-div-x)) with divides-elim(y-div-x)
-...                                | ([∃]-intro (n) (y⋅n≡x)) = [∃]-intro (𝐒(n)) ([≡]-with-[(expr ↦ y + expr)] (y⋅n≡x))
+...                                | ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with-[(expr ↦ y + expr)] (y⋅n≡x) ⦄
 
 {-
 Div𝐏 : ∀{x y : ℕ} → (y divides (y + x)) → (y divides x)
 Div𝐏 {x}{y} (proof) with divides-elim(proof)
-...             | [∃]-intro (𝟎)    (y0≡yx)  = divides-intro(y0≡yx) TODO
-...             | [∃]-intro (𝐒(n)) (ySn≡yx) = divides-intro([∃]-intro (n) ([+]-injectivityᵣ {y} ySn≡yx))
+...             | [∃]-intro (𝟎)    ⦃ y0≡yx ⦄  = divides-intro(y0≡yx) TODO
+...             | [∃]-intro (𝐒(n)) ⦃ ySn≡yx ⦄ = divides-intro([∃]-intro (n) ⦃ [+]-injectivityᵣ {y} ySn≡yx ⦄)
 -}
 
 {-test : ∀{y}{x}{proof} → Div𝐒{y}{x}(proof) ≢ proof
@@ -91,47 +91,47 @@ test ()
 instance
   divides-transitivity : Transitivity (_divides_)
   transitivity{{divides-transitivity}} {a}{b}{c} (a-div-b) (b-div-c) with (divides-elim (a-div-b) , divides-elim (b-div-c))
-  ...                                                     | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (b⋅n₂≡c))) =
+  ...                                                     | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ b⋅n₂≡c ⦄)) =
     (divides-intro
       ([∃]-intro
         (n₁ ⋅ n₂)
-        (
+        ⦃
           (symmetry ([⋅]-associativity {a}{n₁}{n₂}))
           🝖 ([≡]-with-[(expr ↦ expr ⋅ n₂)] (a⋅n₁≡b))
           🝖 (b⋅n₂≡c)
-        )
+        ⦄
       )
     )
 
 divides-with-[+] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b + c))
 divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
-...                                                 | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (a⋅n₂≡c))) =
+...                                                 | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
   (divides-intro
     ([∃]-intro
       (n₁ + n₂)
-      (
+      ⦃
         ([⋅][+]-distributivityₗ {a}{n₁}{n₂})
         🝖 ([≡]-with-op-[ _+_ ]
           (a⋅n₁≡b)
           (a⋅n₂≡c)
         )
-      )
+      ⦄
     )
   )
 
 divides-with-[⋅] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b ⋅ c))
 divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
-...                                                 | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (a⋅n₂≡c))) =
+...                                                 | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
   (divides-intro
     ([∃]-intro
       (n₁ ⋅ (a ⋅ n₂))
-      (
+      ⦃
         (symmetry ([⋅]-associativity {a}{n₁}{a ⋅ n₂}))
         🝖 ([≡]-with-op-[ _⋅_ ]
           (a⋅n₁≡b)
           (a⋅n₂≡c)
         )
-      )
+      ⦄
     )
   )
 
@@ -142,7 +142,7 @@ divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , 
 -- instance
 --   divides-[≡] : ∀{a b} → (a divides b) → (b divides a) → (a ≡ b)
 --   divides-[≡] {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
---   ...                                                     | (([∃]-intro (n₁) (a⋅n₁≡b)),([∃]-intro (n₂) (b⋅n₂≡c))) =
+--   ...                                                     | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ b⋅n₂≡c ⦄)) =
 
 instance
   [1]-divides : ∀{n} → (1 divides n)
@@ -163,7 +163,7 @@ instance
 
 [0]-only-divides-[0] : ∀{n} → (0 divides n) → (n ≡ 0)
 [0]-only-divides-[0] {𝟎} _ = [≡]-intro
-[0]-only-divides-[0] {𝐒(n)} (proof) = [⊥]-elim(([𝐒]-not-0 ∘ symmetry) ([∃]-property(divides-elim(proof)))) -- ∃(i ↦ 0 ⋅ i ≡ 𝐒(n))
+[0]-only-divides-[0] {𝐒(n)} (proof) = [⊥]-elim(([𝐒]-not-0 ∘ symmetry) ([∃]-proof(divides-elim(proof)))) -- ∃(i ↦ 0 ⋅ i ≡ 𝐒(n))
 
 [0]-divides-not : ∀{n} → ¬(0 divides 𝐒(n))
 [0]-divides-not (0divSn) = [𝐒]-not-0([0]-only-divides-[0] (0divSn))

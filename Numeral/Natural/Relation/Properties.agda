@@ -20,12 +20,12 @@ open import Type
 
 instance
   [≤]-from-[≡] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
-  [≤]-from-[≡] x≡y = [∃]-intro 0 x≡y
+  [≤]-from-[≡] x≡y = [∃]-intro 0 ⦃ x≡y ⦄
 
 instance
   [≤][0]-minimum : ∀{x : ℕ} → (0 ≤ x)
-  [≤][0]-minimum {x} = [∃]-intro x [+]-identityₗ
-  -- [∃]-intro {ℕ} {\n → 0 + n ≡ x} (x) ([+]-identityₗ)
+  [≤][0]-minimum {x} = [∃]-intro x ⦃ [+]-identityₗ ⦄
+  -- [∃]-intro {ℕ} {\n → 0 + n ≡ x} (x) ⦃ [+]-identityₗ ⦄
 
 instance
   [≤][0]ᵣ : ∀{x : ℕ} → (x ≤ 0) ↔ (x ≡ 0)
@@ -40,7 +40,7 @@ instance
     l ()
 
     r : (𝐒(n) ≤ 0) → (𝐒(n) ≡ 0)
-    r ([∃]-intro _ ())
+    r ([∃]-intro _ ⦃ ⦄ )
 
 instance
   [≤][0]ᵣ-negation : ∀{x : ℕ} → ¬(𝐒(x) ≤ 0)
@@ -48,7 +48,7 @@ instance
 
 instance
   [≤]-successor : ∀{a b : ℕ} → (a ≤ b) → (a ≤ 𝐒(b))
-  [≤]-successor ([∃]-intro(n) (proof)) = [∃]-intro (𝐒(n)) ([≡]-with-[ 𝐒 ] proof)
+  [≤]-successor ([∃]-intro(n) ⦃ proof ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with-[ 𝐒 ] (proof) ⦄
   -- a + n ≡ b //f
   -- a + ? ≡ 𝐒(b) //What value works if f?
   -- a + 𝐒(n) ≡ 𝐒(b)
@@ -56,10 +56,10 @@ instance
 
 instance
   [≤]-predecessor : ∀{a b : ℕ} → (𝐒(a) ≤ b) → (a ≤ b)
-  [≤]-predecessor ([∃]-intro(n) (proof)) = [∃]-intro (𝐒(n)) (proof)
+  [≤]-predecessor ([∃]-intro(n) ⦃ proof ⦄) = [∃]-intro (𝐒(n)) ⦃ proof ⦄
 
 [ℕ]-unnecessary-induction : ∀{b : ℕ}{φ : ℕ → Stmt} → (∀(i : ℕ) → (i ≤ b) → φ(i)) → (∀(i : ℕ) → φ(i) → φ(𝐒(i))) → (∀{n} → φ(n))
-[ℕ]-unnecessary-induction {𝟎}   {φ} (base) (next) = [ℕ]-induction {φ} (base(𝟎) ([∃]-intro(𝟎)([≡]-intro))) (next)
+[ℕ]-unnecessary-induction {𝟎}   {φ} (base) (next) = [ℕ]-induction {φ} (base(𝟎) ([∃]-intro(𝟎) ⦃ [≡]-intro ⦄)) (next)
 [ℕ]-unnecessary-induction {𝐒(b)}{φ} (base) (next) = [ℕ]-unnecessary-induction {b}{φ} (base-prev) (next) where
   base-prev : ∀(i : ℕ) → (i ≤ b) → φ(i)
   base-prev(𝟎)    (proof) = base(𝟎) ([≤][0]-minimum)
@@ -67,19 +67,19 @@ instance
 
 instance
   [≤]-with-[𝐒] : ∀{a b : ℕ} → (a ≤ b) → (𝐒(a) ≤ 𝐒(b))
-  [≤]-with-[𝐒] {a} {b} ([∃]-intro n f) =
+  [≤]-with-[𝐒] {a} {b} ([∃]-intro n ⦃ f ⦄) =
     [∃]-intro
       (n)
-      (
+      ⦃
         ([+1]-commutativity {a} {n}) -- 𝐒(a)+n = a+𝐒(n)
         🝖 ([≡]-with-[ 𝐒 ] f) -- 𝐒(a+n)=a+𝐒(n) = 𝐒(b)
-      )
+      ⦄
 
 instance
   [≤]-without-[𝐒] : ∀{a b : ℕ} → (a ≤ b) ← (𝐒(a) ≤ 𝐒(b))
   [≤]-without-[𝐒] {𝟎}   {b}    (_)                    = [≤][0]-minimum
   [≤]-without-[𝐒] {𝐒(a)}{𝟎}    ()
-  [≤]-without-[𝐒] {𝐒(a)}{𝐒(b)} ([∃]-intro(n) (proof)) = [≤]-with-[𝐒] {a}{b} ([≤]-without-[𝐒] {a}{b} ([∃]-intro(n) ([𝐒]-injectivity proof)))
+  [≤]-without-[𝐒] {𝐒(a)}{𝐒(b)} ([∃]-intro(n) ⦃ proof ⦄) = [≤]-with-[𝐒] {a}{b} ([≤]-without-[𝐒] {a}{b} ([∃]-intro(n) ⦃ [𝐒]-injectivity proof ⦄))
 
 instance
   [≤][𝐒]ₗ : ∀{x : ℕ} → ¬(𝐒(x) ≤ x)
@@ -88,14 +88,14 @@ instance
 
 instance
   [≤]-transitivity : Transitivity (_≤_)
-  transitivity{{[≤]-transitivity}} {a}{b}{c} ([∃]-intro n₁ a+n₁≡b) ([∃]-intro n₂ b+n₂≡c) =
+  transitivity{{[≤]-transitivity}} {a}{b}{c} ([∃]-intro n₁ ⦃ a+n₁≡b ⦄) ([∃]-intro n₂ ⦃ b+n₂≡c ⦄) =
     [∃]-intro
       (n₁ + n₂)
-      (
+      ⦃
         (symmetry ([+]-associativity {a} {n₁} {n₂})) -- a+(n₁+n₂) = (a+n₁)+n₂
         🝖 ([≡]-with-[(expr ↦ expr + n₂)] (a+n₁≡b)) -- (a+n₁)+n₂ = b+n₂
         🝖 (b+n₂≡c) -- b+n₂ = c
-      ) -- a+(n₁+n₂) = c
+      ⦄ -- a+(n₁+n₂) = c
 
 instance
   [≤]-reflexivity : Reflexivity (_≤_)
@@ -103,7 +103,7 @@ instance
 
 instance
   [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
-  antisymmetry{{[≤]-antisymmetry}} {a} {b} (([∃]-intro n₁ a+n₁≡b) , ([∃]-intro n₂ b+n₂≡a)) = [≡]-elimᵣ n₁≡0 {n ↦ (a + n ≡ b)} a+n₁≡b where
+  antisymmetry{{[≤]-antisymmetry}} {a} {b} (([∃]-intro(n₁) ⦃ a+n₁≡b ⦄) , ([∃]-intro(n₂) ⦃ b+n₂≡a ⦄)) = [≡]-elimᵣ (n₁≡0) {n ↦ (a + n ≡ b)} (a+n₁≡b) where
     n₁+n₂≡0 : ((n₁ + n₂) ≡ 0)
     n₁+n₂≡0 =
       [+]-injectivityᵣ(

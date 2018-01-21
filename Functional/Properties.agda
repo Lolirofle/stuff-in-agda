@@ -13,7 +13,7 @@ id-injective : ∀{T} → Injective(id{ℓ₂}{T})
 id-injective [≡]-intro = [≡]-intro
 
 id-surjective : ∀{T} → Surjective(id{_}{T})
-id-surjective {_}{y} = [∃]-intro (y) ([≡]-intro)
+id-surjective {_}{y} = [∃]-intro (y) ⦃ [≡]-intro ⦄
 
 id-bijective : ∀{T} → Bijective(id{_}{T})
 id-bijective = [∧]-intro(id-injective)(id-surjective)
@@ -31,10 +31,10 @@ postulate [∘]-inverseₗ : ∀{a b}{f : a → b} → ⦃ _ : Bijective(f) ⦄ 
 postulate [∘]-inverseᵣ : ∀{a b}{f : a → b} → ⦃ _ : Bijective(f) ⦄ → ∃(g ↦ f ∘ g ≡ id)
 
 inv-fnₗ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
-inv-fnₗ (f) = [∃]-extract([∘]-inverseₗ{_}{_}{f})
+inv-fnₗ (f) = [∃]-witness([∘]-inverseₗ{_}{_}{f})
 
 inv-fnᵣ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
-inv-fnᵣ (f) = [∃]-extract([∘]-inverseᵣ{_}{_}{f})
+inv-fnᵣ (f) = [∃]-witness([∘]-inverseᵣ{_}{_}{f})
 
 inv-fn : ∀{a} → (f : a → a) → ⦃ _ : Bijective(f) ⦄ → (a → a)
 inv-fn = inv-fnₗ

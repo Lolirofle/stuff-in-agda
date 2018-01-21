@@ -28,13 +28,13 @@ record Category {ℓₒ ℓₘ} (Obj : Set(ℓₒ)) (M : Morphism{ℓₒ}{ℓₘ
   Isomorphism(f) = ∃(g ↦ (g ∘ f ≡ id)∧(f ∘ g ≡ id))
 
   inv : ∀{x y} (f : M x y) → ⦃ _ : Isomorphism(f) ⦄ → (M y x)
-  inv (_) ⦃ proof ⦄ = [∃]-extract(proof)
+  inv (_) ⦃ proof ⦄ = [∃]-witness(proof)
 
   inverseₗ : ∀{x y}{f : M x y} → ⦃ _ : Isomorphism(f) ⦄ → ((inv f) ∘ f ≡ id)
-  inverseₗ ⦃ proof ⦄ = [∧]-elimₗ([∃]-property(proof))
+  inverseₗ ⦃ proof ⦄ = [∧]-elimₗ([∃]-proof(proof))
 
   inverseᵣ : ∀{x y}{f : M x y} → ⦃ _ : Isomorphism(f) ⦄ → (f ∘ (inv f) ≡ id)
-  inverseᵣ ⦃ proof ⦄ = [∧]-elimᵣ([∃]-property(proof))
+  inverseᵣ ⦃ proof ⦄ = [∧]-elimᵣ([∃]-proof(proof))
 
   Isomorphic : Obj → Obj → Stmt
   Isomorphic(x)(y) = ∃(Isomorphism{x}{y})
@@ -95,7 +95,7 @@ record Category (Obj : Set) (M : Set) : Set where
     composition : ∀{f g : M} → ⦃ _ : codomain(f) ≡ domain(g) ⦄ → ∃(h ↦ (domain(h) ≡ domain(f)) ∧ (codomain(h) ≡ codomain(g)))
 
   _∘_ : (g : M) → (f : M) → ⦃ _ : codomain(f) ≡ domain(g) ⦄ → M
-  _∘_ g f ⦃ proof ⦄ = [∃]-extract(composition ⦃ proof ⦄)
+  _∘_ g f ⦃ proof ⦄ = [∃]-witness(composition ⦃ proof ⦄)
 
   field
     identity      : ∃(id ↦ (domain(id) ≡ codomain(id)) ∧ (∀{f} → ⦃ _ : codomain(id) ≡ domain(f) ⦄ → (f ∘ id ≡ f)) ∧ (∀{f} → ⦃ _ : codomain(f) ≡ domain(id) ⦄ → (id ∘ f ≡ f)))

@@ -452,7 +452,7 @@ module testCantor where
     [!]-unequality {𝐹} ()
 
   -- uncountableProof : CountableBitSequences → ¬(Countable(BitSequence))
-  -- uncountableProof (l) ([∃]-intro(seq-to-n)(inj)) =
+  -- uncountableProof (l) ([∃]-intro(seq-to-n) ⦃ inj ⦄) =
   --   [∃]-elim f (bitSequenceCantor(l)) where
   --     postulate f : ∀{seq}{x : ℕ → Bool} → {n : ℕ} → (l n n ≢ x n) → ⊥ -- ∀{T}{seq}{n : ℕ} → (l(n)(n) ≢ seq(n)) → T
   --     f : ∀{_}{_}(₎

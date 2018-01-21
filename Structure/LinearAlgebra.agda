@@ -35,8 +35,8 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
     module _ where
       LinearCombination : ∀{n} → Scalars(n) → Vectors(n) → V
       LinearCombination {0}       _ _ = 𝟎ᵥ
-      LinearCombination {1}       sf vf = (sf(0) ⦃ [∃]-intro(0)([≡]-intro)⦄) ⋅ₛᵥ (vf(0) ⦃ [∃]-intro(0)([≡]-intro)⦄)
-      LinearCombination {𝐒(𝐒(n))} sf vf = (LinearCombination {𝐒(n)} sf₋ vf₋) +ᵥ ((sf(𝐒(n)) ⦃ [∃]-intro(0)([≡]-intro)⦄) ⋅ₛᵥ (vf(𝐒(n)) ⦃ [∃]-intro(0)([≡]-intro)⦄)) where
+      LinearCombination {1}       sf vf = (sf(0) ⦃ [∃]-intro(0) ⦃ [≡]-intro ⦄ ⦄) ⋅ₛᵥ (vf(0) ⦃ [∃]-intro(0) ⦃ [≡]-intro ⦄ ⦄)
+      LinearCombination {𝐒(𝐒(n))} sf vf = (LinearCombination {𝐒(n)} sf₋ vf₋) +ᵥ ((sf(𝐒(n)) ⦃ [∃]-intro(0) ⦃ [≡]-intro ⦄ ⦄) ⋅ₛᵥ (vf(𝐒(n)) ⦃ [∃]-intro(0) ⦃ [≡]-intro ⦄ ⦄)) where
         postulate sf₋ : (i : ℕ) → ⦃ _ : i < 𝐒(n) ⦄ → S
         postulate vf₋ : (i : ℕ) → ⦃ _ : i < 𝐒(n) ⦄ → V
 
@@ -71,7 +71,7 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
 
       -- The dimension of the vector space
       dim :  ℕ
-      dim = [∃]-extract(basis-existence)
+      dim = [∃]-witness(basis-existence)
 
       -- Existence of a superset of linearly independent vectors which is a basis
       -- TODO: basis-from-linearly-independent : ∀{n}{vf} → ⦃ _ : Spanning{n}(vf) ⦄ → ∃(m ↦ (m ≥ n) ∧ ∃(f ↦ Basis{n}(vf ∘ f) ∧ Injective(f)))

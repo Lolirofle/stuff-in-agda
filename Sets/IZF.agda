@@ -3,6 +3,7 @@ open import Functional
 open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
 open import Logic.Propositional.Theorems{Lvl.𝟎}
+open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎} renaming (_≡_ to _≡ₑ_)
 open import Type{Lvl.𝟎}
 
 -- Based on https://plato.stanford.edu/entries/set-theory-constructive/axioms-CZF-IZF.html (2017-10-13)
@@ -89,6 +90,12 @@ module RelationsTheorems where
 module Axioms1 where
   open Relations
 
+  -- Axiom of extensionality
+  -- Sets are equal when they have the same elements.
+  record SetEquality : Set(Lvl.𝟎) where
+    field equality : ∀{s₁ s₂} → (s₁ ≡ s₂) → (s₁ ≡ₑ s₂)
+  open SetEquality ⦃ ... ⦄ public
+
   -- Axiom of the empty set
   -- A set which is empty exists.
   record EmptySetExistence : Set(Lvl.𝟎) where
@@ -150,7 +157,7 @@ module Theorems1 where
       -- A set with only one element exists.
     single : ∀{x₁} → ∃(s ↦ (∀{x} → (x ∈ s) ↔ (x ≡ x₁)))
     single{x} with pair{x}{x}
-    ...          | [∃]-intro (z) (f) = ([∃]-intro (z) (\{w} → [↔]-transitivity (f{w}) [∨]-redundancy))
+    ...          | [∃]-intro (z) ⦃ f ⦄ = ([∃]-intro (z) ⦃ \{w} → [↔]-transitivity (f{w}) [∨]-redundancy ⦄)
 
   module _ ⦃ _ : EmptySetExistence ⦄ where
     [∅]-uniqueness : ∀{x y} → Empty(x) → Empty(y) → (x ≡ y)
@@ -178,52 +185,47 @@ module Operations where
     -- Definition of the empty set: ∅={}.
     -- This can be used to construct a set with no elements.
     ∅ : S
-    ∅ = [∃]-extract(empty)
+    ∅ = [∃]-witness(empty)
 
   module _ ⦃ _ : PairExistence ⦄ where
     -- Definition of a singleton set: {x} for some element x.
     -- This can be used to construct a set with a single element.
     • : S → S
-    •(x) = [∃]-extract(single{x})
+    •(x) = [∃]-witness(single{x})
 
     -- Definition of a pair set: {x,y} for some elements x and y.
     -- This can be used to construct a set with a countable number of elements: x⟒y⟒z.
     _⟒_ : S → S → S
-    _⟒_ (x)(y) = [∃]-extract(pair{x}{y})
+    _⟒_ (x)(y) = [∃]-witness(pair{x}{y})
 
   module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
     -- Definition of the union of two sets: s₁∪s₂ for two sets s₁ and s₂
     -- This can be used to construct a set that contains all elements from either of the two sets.
     _∪_ : S → S → S
-    _∪_ s₁ s₂ = [∃]-extract(union{s₁ ⟒ s₂})
+    _∪_ s₁ s₂ = [∃]-witness(union{s₁ ⟒ s₂})
 
   module _ ⦃ _ : UnionExistence ⦄ where
     -- Definition of the union of a set of sets: ⋃(ss) for a set of sets ss
     -- This can be used to construct a set that contains all elements from the sets.
     reduce-[∪] : S → S
-    reduce-[∪] ss = [∃]-extract(union{ss})
+    reduce-[∪] ss = [∃]-witness(union{ss})
 
   module _ ⦃ _ : PowerSetExistence ⦄ where
     -- Definition of the power set of a set: ℘(s) for some set s
     -- This can be used to construct a set that contains all subsets of a set.
     ℘ : S → S
-    ℘(s) = [∃]-extract(power{s})
+    ℘(s) = [∃]-witness(power{s})
 
   module _ ⦃ _ : RestrictedComprehensionExistence ⦄ where
     -- Definition of the usual "set builder notation": {x∊s. φ(x)} for some set s
     -- This can be used to construct a set that is the subset which satisfies a certain predicate for every element.
     filter : S → (S → Stmt) → S
-    filter(s)(φ) = [∃]-extract(comprehension{s}{φ})
+    filter(s)(φ) = [∃]-witness(comprehension{s}{φ})
 
     -- Definition of the intersection of two sets: s₁∩s₂ for two sets s₁ and s₂
     -- This can be used to construct a set that contains all elements that only are in both sets.
     _∩_ : S → S → S
     _∩_ (s₁)(s₂) = filter(s₁)(x ↦ (x ∈ s₂))
-
-    -- Definition of the intersection of a set of sets: ⋃(ss) for a set of sets ss
-    -- This can be used to construct a set that contains all elements that only are in all of the sets.
-    -- reduce-[∪] : S → S
-    -- reduce-[∪] ss = filter(s₁)(x ↦ (x ∈ s₂))
 
     -- Definition of the subtraction of two sets: s₁∖s₂ for two sets s₁ and s₂
     -- This can be used to construct a set that contains all elements from s₁ which is not in s₂.
@@ -249,27 +251,30 @@ module OperationsTheorems where
 
   module _ ⦃ _ : EmptySetExistence ⦄ where
     [∅]-containment : Empty(∅)
-    [∅]-containment = [∃]-property(empty)
+    [∅]-containment = [∃]-proof(empty)
 
   module _ ⦃ _ : PairExistence ⦄ where
     [•]-containment : ∀{x₁} → (x₁ ∈ •(x₁))
-    [•]-containment{x₁} = [↔]-elimₗ([∃]-property(single{x₁})) ([≡]-reflexivity)
+    [•]-containment{x₁} = [↔]-elimₗ([∃]-proof(single{x₁})) ([≡]-reflexivity)
 
     [⟒]-containment : ∀{x₁ x₂}{x} → (x ∈ (x₁ ⟒ x₂)) ↔ (x ≡ x₁)∨(x ≡ x₂)
-    [⟒]-containment{x₁}{x₂} = [∃]-property(pair{x₁}{x₂})
+    [⟒]-containment{x₁}{x₂} = [∃]-proof(pair{x₁}{x₂})
 
     [⟒]-containmentₗ : ∀{x₁ x₂} → (x₁ ∈ (x₁ ⟒ x₂))
-    [⟒]-containmentₗ{x₁}{x₂} = [↔]-elimₗ([∃]-property(pair{x₁}{x₂})) ([∨]-introₗ([≡]-reflexivity))
+    [⟒]-containmentₗ{x₁}{x₂} = [↔]-elimₗ([∃]-proof(pair{x₁}{x₂})) ([∨]-introₗ([≡]-reflexivity))
 
     [⟒]-containmentᵣ : ∀{x₁ x₂} → (x₂ ∈ (x₁ ⟒ x₂))
-    [⟒]-containmentᵣ{x₁}{x₂} = [↔]-elimₗ([∃]-property(pair{x₁}{x₂})) ([∨]-introᵣ([≡]-reflexivity))
+    [⟒]-containmentᵣ{x₁}{x₂} = [↔]-elimₗ([∃]-proof(pair{x₁}{x₂})) ([∨]-introᵣ([≡]-reflexivity))
 
   module _ ⦃ _ : RestrictedComprehensionExistence ⦄ where
     filter-containment : ∀{s}{φ}{x} → (x ∈ filter(s)(φ)) ↔ ((x ∈ s) ∧ φ(x))
-    filter-containment{s} = [∃]-property(comprehension)
+    filter-containment{s} = [∃]-proof(comprehension)
 
     [∩]-containment : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∩ s₂)) ↔ (x ∈ s₁)∧(x ∈ s₂)
     [∩]-containment = filter-containment
+
+  module _ ⦃ _ : UnionExistence ⦄ where
+    postulate reduce-[∪]-containment : ∀{ss}{x} → (x ∈ reduce-[∪] (ss)) ↔ ∃(s ↦ (s ∈ ss)∧(x ∈ s))
 
   module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
     [∪]-containment : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∪ s₂)) ↔ (x ∈ s₁)∨(x ∈ s₂)
@@ -279,7 +284,10 @@ module OperationsTheorems where
 
   module _ ⦃ _ : PowerSetExistence ⦄ where
     [℘]-containment : ∀{s sₛ} → (sₛ ⊆ s) ↔ (sₛ ∈ ℘(s))
-    [℘]-containment{s} = [↔]-symmetry([∃]-property(power{s}))
+    [℘]-containment{s} = [↔]-symmetry([∃]-proof(power{s}))
+
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ where
+    postulate reduce-[∩]-containment : ∀{ss}{x} → (x ∈ reduce-[∪] (ss)) ↔ (∀{s} → (s ∈ ss) → (x ∈ s))
 
   -- -- -- -- -- -- -- -- -- -- -- -- -- --
   -- Other
@@ -305,10 +313,13 @@ module OperationsTheorems where
       -- ∀{s} → (∀{x} → (x ∈ s) → (x ∈ x) → ⊥) → (s ∈ s) → ⊥
 
     [𝐔]-nonexistence : ¬ ∃(𝐔 ↦ ∀{x} → (x ∈ 𝐔))
-    [𝐔]-nonexistence ([∃]-intro 𝐔 proof) = self-noncontainment {𝐔} (proof{𝐔})
+    [𝐔]-nonexistence ([∃]-intro(𝐔) ⦃ proof ⦄) = self-noncontainment {𝐔} (proof{𝐔})
 
   -- -- -- -- -- -- -- -- -- -- -- -- -- --
   -- Subset
+
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ where
+    postulate reduce-[∪]-subset : ∀{ss}{s} → (s ∈ ss) → (s ⊆ reduce-[∪] (ss))
 
   module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
     [∪]-subsetₗ : ∀{s₁ s₂} → (s₁ ⊆ (s₁ ∪ s₂))
@@ -327,7 +338,7 @@ module OperationsTheorems where
     [∩]-subsetᵣ = [∧]-elimᵣ ∘ ([↔]-elimᵣ([∩]-containment))
 
     filter-subset : ∀{s}{φ} → (filter(s)(φ) ⊆ s)
-    filter-subset{s}{φ} {x}(x∈s) = [∧]-elimₗ([↔]-elimᵣ([∃]-property(comprehension{s}{φ}))(x∈s))
+    filter-subset{s}{φ} {x}(x∈s) = [∧]-elimₗ([↔]-elimᵣ([∃]-proof(comprehension{s}{φ}))(x∈s))
 
   module _ ⦃ _ : PowerSetExistence ⦄ where
     [℘]-subset : ∀{s₁ s₂} → (s₁ ⊆ s₂) ↔ (℘(s₁) ⊆ ℘(s₂))
@@ -337,6 +348,9 @@ module OperationsTheorems where
 
       r : ∀{s₁ s₂} → (s₁ ⊆ s₂) → (℘(s₁) ⊆ ℘(s₂))
       r {s₁}{s₂} (s12) {a} (aps1) = ([↔]-elimᵣ [℘]-containment) ([⊆]-transitivity (([↔]-elimₗ [℘]-containment) aps1) (s12))
+
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ where
+    postulate reduce-[∩]-subset : ∀{ss}{s} → (s ∈ ss) → (reduce-[∩] (ss) ⊆ s)
 
   -- TODO: Does this hold: Empty(s) ∨ NonEmpty(s) ? Probably not
 
@@ -477,90 +491,181 @@ module NaturalNumberTheorems where
   open Relations
   open RelationsTheorems
 
-  module _ ⦃ _ : EmptySetExistence ⦄ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ ⦃ _ : InfinityAxiom ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ where
-    -- TODO: I think a filtering like this gives the minimal inductive set?
-    ℕ : S
-    ℕ = filter([∃]-extract(infinity)) (n ↦ (n ≡ 𝟎) ∨ ∃(y ↦ n ≡ 𝐒(y)))
+  module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
+    [𝐒]-contains-arg : ∀{x} → (x ∈ 𝐒(x))
+    [𝐒]-contains-arg = [↔]-elimₗ ([∪]-containment) ([∨]-introᵣ [•]-containment)
 
-    [ℕ]-containment-in-infinity : ∀{n} → (n ∈ ℕ) → (n ∈ [∃]-extract(infinity))
-    [ℕ]-containment-in-infinity {n} (n-containment) = [∧]-elimₗ (([↔]-elimᵣ (filter-containment {_}{_}{n})) (n-containment))
+    [𝐒]-subset-arg : ∀{x} → (x ⊆ 𝐒(x))
+    [𝐒]-subset-arg = [∪]-subsetₗ
+
+  module _ ⦃ _ : EmptySetExistence ⦄ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ ⦃ _ : InfinityAxiom ⦄ where
+    Infinity-contains-[𝟎] : (𝟎 ∈ [∃]-witness(infinity))
+    Infinity-contains-[𝟎] = [∧]-elimₗ ([∃]-proof(infinity))
+
+    Infinity-contains-[𝐒] : ∀{n} → (n ∈ [∃]-witness(infinity)) → (𝐒(n) ∈ [∃]-witness(infinity))
+    Infinity-contains-[𝐒] = [∧]-elimᵣ ([∃]-proof(infinity))
+
+    Infinity-inductive : Inductive([∃]-witness(infinity))
+    Infinity-inductive = [∧]-intro (Infinity-contains-[𝟎]) (Infinity-contains-[𝐒])
+
+  module _ ⦃ _ : EmptySetExistence ⦄ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ ⦃ _ : InfinityAxiom ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ where
+    ℕ : S
+    ℕ = filter([∃]-witness(infinity)) (n ↦ ∀{I} → Inductive(I) → (n ∈ I))
+
+    [ℕ]-subset-of-infinity : (ℕ ⊆ [∃]-witness(infinity))
+    [ℕ]-subset-of-infinity = filter-subset
 
     [ℕ]-contains-[𝟎] : (𝟎 ∈ ℕ)
-    [ℕ]-contains-[𝟎] = ([↔]-elimₗ (filter-containment {_}{_}{𝟎})) ([∧]-intro in-infinity satisfy-property) where
-       in-infinity : 𝟎 ∈ [∃]-extract(infinity)
-       in-infinity = [∧]-elimₗ ([∃]-property(infinity))
-
-       satisfy-property : (𝟎 ≡ 𝟎) ∨ ∃(y ↦ 𝟎 ≡ 𝐒(y))
-       satisfy-property = [∨]-introₗ [≡]-reflexivity
+    [ℕ]-contains-[𝟎] = ([↔]-elimₗ (filter-containment {_}{_}{𝟎})) ([∧]-intro (Infinity-contains-[𝟎]) (\{_} → [∧]-elimₗ))
 
     [ℕ]-contains-[𝐒] : ∀{n} → (n ∈ ℕ) → (𝐒(n) ∈ ℕ)
-    [ℕ]-contains-[𝐒] {n} (n-containment) = ([↔]-elimₗ (filter-containment {_}{_}{𝐒(n)})) ([∧]-intro in-infinity satisfy-property) where
-      in-infinity : (𝐒(n) ∈ [∃]-extract(infinity))
-      in-infinity = [∧]-elimᵣ ([∃]-property(infinity)) {n} ([ℕ]-containment-in-infinity {n} (n-containment))
+    [ℕ]-contains-[𝐒] {n} (n-in) with ([↔]-elimᵣ filter-containment) (n-in)
+    ... | ([∧]-intro (n-in-inf) (n-satisfies)) =
+      (([↔]-elimₗ (filter-containment {_}{_}{𝐒(n)}))
+        ([∧]-intro
+          (Sn-in-inf)
+          (\{_} → Sn-satisfies)
+        )
+      )
+      where
+        Sn-in-inf : (𝐒(n) ∈ [∃]-witness(infinity))
+        Sn-in-inf = Infinity-contains-[𝐒] (n-in-inf)
 
-      satisfy-property : (𝐒(n) ≡ 𝟎) ∨ ∃(y ↦ 𝐒(n) ≡ 𝐒(y))
-      satisfy-property = [∨]-introᵣ ([∃]-intro n [≡]-reflexivity)
+        Sn-satisfies : ∀{I} → Inductive(I) → (𝐒(n) ∈ I)
+        Sn-satisfies{I}(I-inductive) = ([∧]-elimᵣ(I-inductive)) (n-satisfies{I}(I-inductive))
 
-    -- TODO: Is this even provable without extensionality and with ℕ defined like this?
-    -- [ℕ]-contains : ∀{n} → (n ∈ ℕ) ← (n ≡ 𝟎)∨(∃(x ↦ n ≡ 𝐒(x)))
-    -- [ℕ]-contains {_} ([∨]-introₗ [≡]-intro) = [ℕ]-contains-[𝟎]
-    -- [ℕ]-contains {n} ([∨]-introᵣ ([∃]-intro (x) ([≡]-intro))) = [ℕ]-contains-[𝐒] {n} [≡]-intro
+    -- TODO: Is this provable without extensionality? The problem is (x∈z ↔ y∈z) when (x≡y).
+    module _ ⦃ _ : SetEquality ⦄ where
+      [ℕ]-containsₗ : ∀{n} → (n ∈ ℕ) ← (n ≡ 𝟎)∨(∃(x ↦ (x ∈ ℕ)∧(n ≡ 𝐒(x))))
+      [ℕ]-containsₗ {_} ([∨]-introₗ n-zero) with equality(n-zero)
+      ... | [≡]-intro = [ℕ]-contains-[𝟎]
+      [ℕ]-containsₗ {n} ([∨]-introᵣ ([∃]-intro (x) ⦃ [∧]-intro (in-N) (n-succ) ⦄)) with equality(n-succ)
+      ... | [≡]-intro = [ℕ]-contains-[𝐒] {x} (in-N)
 
+    [ℕ]-inductive : Inductive(ℕ)
+    [ℕ]-inductive = [∧]-intro ([ℕ]-contains-[𝟎]) ([ℕ]-contains-[𝐒])
+
+    [ℕ]-subset : ∀{I} → Inductive(I) → (ℕ ⊆ I)
+    [ℕ]-subset{I} (I-inductive) {n} (n-in-ℕ) with ([↔]-elimᵣ filter-containment) (n-in-ℕ)
+    ... | ([∧]-intro (n-in-inf) (n-satisfies)) = n-satisfies{I} (I-inductive)
+
+    -- [ℕ]-containsᵣ : ∀{n} → (n ∈ ℕ) → (n ≡ 𝟎)∨(∃(x ↦ (x ∈ ℕ)∧(n ≡ 𝐒(x))))
+    -- [ℕ]-containsᵣ{n} (n-in) with ([↔]-elimᵣ filter-containment) (n-in) =
+
+    [ℕ]-set-induction : ∀{Nₛ} → (Nₛ ⊆ ℕ) → Inductive(Nₛ) → (Nₛ ≡ ℕ)
+    [ℕ]-set-induction {Nₛ} (Nₛ-subset) (ind) = [↔]-intro ([ℕ]-subset {Nₛ} (ind)) (Nₛ-subset)
+
+    module _ ⦃ _ : (𝟎 ∈ ℕ)⦄ ⦃ _ : ∀{n} → ⦃ _ : (n ∈ ℕ) ⦄ → (𝐒(n) ∈ ℕ) ⦄ where
+      [ℕ]-induction : ∀{φ} → φ(𝟎) → (∀{n} → ⦃ n-in : (n ∈ ℕ) ⦄ → φ(n) → φ(𝐒(n))) → (∀{n} → ⦃ _ : n ∈ ℕ ⦄ → φ(n))
+      [ℕ]-induction {φ} (zero) (succ) {n} ⦃ n-in-ℕ ⦄ =
+        ([∧]-elimᵣ
+          (([↔]-elimᵣ filter-containment)
+            ([ℕ]-subset {set} ([∧]-intro (zero-in) (succ-in)) {n} (n-in-ℕ))
+          )
+        ) where
+
+        set = filter(ℕ)(φ)
+
+        module _ {n} ⦃ n-in-ℕ : (n ∈ ℕ) ⦄ where
+          n-inₗ : φ(n) ← (n ∈ set)
+          n-inₗ (proof) = [∧]-elimᵣ (([↔]-elimᵣ filter-containment) (proof))
+
+          n-inᵣ : φ(n) → (n ∈ set)
+          n-inᵣ (proof) = ([↔]-elimₗ filter-containment) ([∧]-intro (n-in-ℕ) (proof))
+
+          Sn-inₗ : φ(𝐒(n)) ← (𝐒(n) ∈ set)
+          Sn-inₗ (proof) = [∧]-elimᵣ (([↔]-elimᵣ filter-containment) (proof))
+
+          Sn-inᵣ : φ(𝐒(n)) → (𝐒(n) ∈ set)
+          Sn-inᵣ (proof) = ([↔]-elimₗ filter-containment) ([∧]-intro ([ℕ]-contains-[𝐒] (n-in-ℕ)) (proof))
+
+        zero-in : 𝟎 ∈ set
+        zero-in =
+          (([↔]-elimₗ filter-containment)
+            ([∧]-intro
+              ([ℕ]-contains-[𝟎])
+              (zero)
+            )
+          )
+
+        succ-in : ∀{n} → (n ∈ set) → (𝐒(n) ∈ set)
+        succ-in{n} (n-in-filter) with ([↔]-elimᵣ filter-containment) (n-in-filter)
+        ... | ([∧]-intro (n-in-ℕ) (φn)) = (Sn-inᵣ ⦃ n-in-ℕ ⦄ (succ ⦃ n-in-ℕ ⦄ (n-inₗ ⦃ n-in-ℕ ⦄ n-in-filter)))
+        {- ... | ([∧]-intro (n-in-ℕ) (φn)) =
+          (([↔]-elimₗ filter-containment)
+            ([∧]-intro
+              ([ℕ]-contains-[𝐒] (n-in-ℕ))
+              (?)
+            )
+          )
+        -}
+        -- succ-in = (Sn-inᵣ) ∘ (succ {n} (n-in-ℕ)) ∘ (n-inₗ)
+
+      _<_ : (a : S) → ⦃ _ : (a ∈ ℕ) ⦄ → (b : S) → ⦃ _ : (b ∈ ℕ) ⦄ → Stmt
+      a < b = (a ∈ b)
+
+      _≤_ : (a : S) → ⦃ _ : (a ∈ ℕ) ⦄ → (b : S) → ⦃ _ : (b ∈ ℕ) ⦄ → Stmt
+      a ≤ b = (a < b) ∨ (a ≡ b)
+
+      {- [<]-transitivity : ∀{a b c} → ⦃ _ : (a ∈ ℕ) ⦄ → ⦃ _ : (b ∈ ℕ) ⦄ → ⦃ _ : (c ∈ ℕ) ⦄ → (a < b) → (b < c) → (a < c)
+      [<]-transitivity{a}{b}{c} = [ℕ]-induction{n ↦ \ ⦃ _ ⦄ → ((a < b) → (b < n) → (a < n))} φ-zero φ-succ {c} where
+        postulate φ-zero : (a < b) → (b < 𝟎) ⦃ _ ⦄ ⦃ [ℕ]-contains-[𝟎] ⦄ → (a < 𝟎) ⦃ _ ⦄ ⦃ [ℕ]-contains-[𝟎] ⦄
+        postulate φ-succ : ∀{n} → ⦃ _ : n ∈ ℕ ⦄ → ((a < b) → (b < n) → (a < n)) → ((a < b) → (b < 𝐒(n)) → (a < 𝐒(n)))
+      -}
+
+    {--- TODO: I think a filtering like this gives the minimal inductive set? But probably not. (x∈ℕ) is missing, and then the definition is refering to itself.
+    ℕ : S
+    ℕ = filter([∃]-witness(infinity)) (n ↦ (n ≡ 𝟎) ∨ ∃(x ↦ ∧(n ≡ 𝐒(x)))) -- TODO: Does this potentially include other stuff too? Like 𝐒{{𝟎}}?
+
+    -- TODO: ∀{n} → (n ∈ ℕ) → (n ≡ 𝟎)∨(∃(x ↦ (x ∈ ℕ)∧(n ≡ 𝐒(x)))). COuld use [ℕ]-contains-[𝐒]-arg to achieve this.
     [ℕ]-contains-only : ∀{n} → (n ∈ ℕ) → (n ≡ 𝟎)∨(∃(x ↦ n ≡ 𝐒(x)))
     [ℕ]-contains-only {n} (n-containment) = [∧]-elimᵣ (([↔]-elimᵣ (filter-containment {_}{_}{n})) (n-containment))
+
+    -- [ℕ]-contains-[𝐒]-arg : ∀{n} → (𝐒(n) ∈ ℕ) → (n ∈ ℕ)
+    -- [ℕ]-contains-[𝐒]-arg{n} (sn-in) = [ℕ]-contains-only{𝐒(n)} ([∨]-introᵣ )
+
+    [ℕ]-contains-[𝟎] : (𝟎 ∈ ℕ)
+    [ℕ]-contains-[𝟎] = ([↔]-elimₗ (filter-containment {_}{_}{𝟎})) ([∧]-intro Infinity-contains-[𝟎] satisfy-property) where
+      satisfy-property : (𝟎 ≡ 𝟎) ∨ ∃(y ↦ 𝟎 ≡ 𝐒(y))
+      satisfy-property = [∨]-introₗ [≡]-reflexivity
+
+    [ℕ]-contains-[𝐒] : ∀{n} → (n ∈ ℕ) → (𝐒(n) ∈ ℕ)
+    [ℕ]-contains-[𝐒] {n} (n-containment) = ([↔]-elimₗ (filter-containment {_}{_}{𝐒(n)})) ([∧]-intro (Infinity-contains-[𝐒] {n} ([ℕ]-subset-of-infinity {n} (n-containment))) satisfy-property) where
+      satisfy-property : (𝐒(n) ≡ 𝟎) ∨ ∃(y ↦ 𝐒(n) ≡ 𝐒(y))
+      satisfy-property = [∨]-introᵣ ([∃]-intro n ⦃ [≡]-reflexivity ⦄)
+
+    -- [ℕ]-subset-implies-containment : ∀{n} → (n ⊆ ℕ) → (n ∈ ℕ)
+    -- [ℕ]-strict-subset-is-containment : ∀{n} → (n ⊂ ℕ) ↔ (n ∈ ℕ)
 
     [ℕ]-subset : ∀{Nₛ} → Inductive(Nₛ) → (ℕ ⊆ Nₛ)
     [ℕ]-subset {Nₛ} ([∧]-intro zero-containment successor-containment) {n} ([ℕ]-n-containment) =
       [∨]-elim (zero) (succ) ([ℕ]-contains-only{n} ([ℕ]-n-containment)) where
 
-      postulate zero : (n ≡ 𝟎) → (n ∈ Nₛ)
-      postulate succ : (∃(x ↦ n ≡ 𝐒(x))) → (n ∈ Nₛ)
+      zero : (n ≡ 𝟎) → (n ∈ Nₛ)
+      zero(n0) with equality(n0)
+      ... | [≡]-intro = zero-containment
 
-    [ℕ]-set-induction : ∀{Nₛ} → (Nₛ ⊆ ℕ) → Inductive(Nₛ) → (Nₛ ≡ ℕ)
-    [ℕ]-set-induction {Nₛ} (Nₛ-subset) (ind) = [↔]-intro ([ℕ]-subset {Nₛ} (ind)) (Nₛ-subset)
-
-    [ℕ]-induction : ∀{φ} → φ(𝟎) → (∀{n} → (n ∈ ℕ) → φ(n) → φ(𝐒(n))) → (∀{n} → (n ∈ ℕ) → φ(n))
-    [ℕ]-induction {φ} (zero) (succ) {n} (n-in-ℕ) =
-      ([∧]-elimᵣ
-        (([↔]-elimᵣ filter-containment)
-          ([ℕ]-subset {filter(ℕ)(φ)} ([∧]-intro (zero-in) (succ-in)) {n} (n-in-ℕ))
-        )
-      ) where
-
-      module _ {n} (n-in-ℕ : n ∈ ℕ) where
-        n-inₗ : φ(n) ← (n ∈ filter(ℕ)(φ))
-        n-inₗ (proof) = [∧]-elimᵣ (([↔]-elimᵣ filter-containment) (proof))
-
-        n-inᵣ : φ(n) → (n ∈ filter(ℕ)(φ))
-        n-inᵣ (proof) = ([↔]-elimₗ filter-containment) ([∧]-intro (n-in-ℕ) (proof))
-
-        Sn-inₗ : φ(𝐒(n)) ← (𝐒(n) ∈ filter(ℕ)(φ))
-        Sn-inₗ (proof) = [∧]-elimᵣ (([↔]-elimᵣ filter-containment) (proof))
-
-        Sn-inᵣ : φ(𝐒(n)) → (𝐒(n) ∈ filter(ℕ)(φ))
-        Sn-inᵣ (proof) = ([↔]-elimₗ filter-containment) ([∧]-intro ([ℕ]-contains-[𝐒] (n-in-ℕ)) (proof))
-
-      zero-in : 𝟎 ∈ filter(ℕ)(φ)
-      zero-in = ([↔]-elimₗ filter-containment) ([∧]-intro ([ℕ]-contains-[𝟎]) (zero))
-
-      postulate succ-in : ∀{n} → (n ∈ filter(ℕ)(φ)) → (𝐒(n) ∈ filter(ℕ)(φ))
-      -- succ-in = (Sn-inᵣ) ∘ (succ {n} (n-in-ℕ)) ∘ (n-inₗ)
+      succ : (∃(x ↦ n ≡ 𝐒(x))) → (n ∈ Nₛ)
+      succ([∃]-intro(x) ⦃ prop ⦄) with equality(prop)
+      ... | [≡]-intro = successor-containment(x-in) where
+        postulate x-in : (x ∈ Nₛ) -- TODO: Impossible to prove? Something is missing in the definition of ℕ?
 
     -- TODO: Is it possible to connect this to the ℕ in Numeral.Natural.ℕ?
 
     -- TODO: Is (∀{s₁ s₂ : S} → (s₁ ≡ s₂) → (s₁ ∈ S) → (s₂ ∈ S)) provable without axiom of extensionality?
-
+-}
 record IZF : Set(Lvl.𝐒(Lvl.𝟎)) where
   instance constructor IZFStructure
   open Axioms1
   open Axioms2
 
   field
-    ⦃ empty ⦄         : EmptySetExistence
-    ⦃ pair ⦄          : PairExistence
-    ⦃ union ⦄         : UnionExistence
-    ⦃ power ⦄         : PowerSetExistence
-    ⦃ comprehension ⦄ : RestrictedComprehensionExistence
-    ⦃ infinity ⦄      : InfinityAxiom
-    ⦃ collection ⦄    : CollectionAxiom
-    ⦃ induction ⦄     : InductionProof
+    ⦃ extensionality ⦄ : SetEquality
+    ⦃ empty ⦄          : EmptySetExistence
+    ⦃ pair ⦄           : PairExistence
+    ⦃ union ⦄          : UnionExistence
+    ⦃ power ⦄          : PowerSetExistence
+    ⦃ comprehension ⦄  : RestrictedComprehensionExistence
+    ⦃ infinity ⦄       : InfinityAxiom
+    ⦃ collection ⦄     : CollectionAxiom
+    ⦃ induction ⦄      : InductionProof

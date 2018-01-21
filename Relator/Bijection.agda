@@ -15,13 +15,13 @@ data Bijection (T₁ : Type) (T₂ : Type) : Stmt where
 
 Bijection-inverse-fn : ∀{T₁ T₂} → Bijection(T₁)(T₂) → (T₂ → T₁)
 Bijection-inverse-fn(bijection-intro f ([∧]-intro injective surjective)) =
-  (y ↦ [∃]-extract(surjective{y}))
+  (y ↦ [∃]-witness(surjective{y}))
 
 -- TODO
 inverse : ∀{T₁ T₂} → Bijection(T₁)(T₂) → Bijection(T₂)(T₁)
 inverse{T₁}{T₂} (bijection-intro f ([∧]-intro injective surjective)) =
   bijection-intro f⁻¹ ([∧]-intro (inj f⁻¹) (surj f⁻¹)) where
-    f⁻¹ = (y ↦ [∃]-extract(surjective{y}))
+    f⁻¹ = (y ↦ [∃]-witness(surjective{y}))
     postulate inj  : (f : T₂ → T₁) → Injective(f)
     postulate surj : (f : T₂ → T₁) → Surjective(f)
     -- (\{x} → [∃]-intro(f(x)))

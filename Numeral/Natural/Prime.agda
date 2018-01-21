@@ -41,7 +41,7 @@ instance
     divisor-proof{0} (0div2) = [⊥]-elim([0]-divides-not(0div2))
     divisor-proof{1} (1div2) = [∨]-introₗ ([≡]-intro)
     divisor-proof{2} (2div2) = [∨]-introᵣ ([≡]-intro)
-    divisor-proof{𝐒(𝐒(𝐒(n)))} (xdiv2) = [⊥]-elim(divides-not-lower-limit([∃]-intro(n) ([+]-commutativity{3}{n})) (xdiv2))
+    divisor-proof{𝐒(𝐒(𝐒(n)))} (xdiv2) = [⊥]-elim(divides-not-lower-limit([∃]-intro(n) ⦃ [+]-commutativity{3}{n} ⦄) (xdiv2))
 
 instance
   [3]-prime : Prime(3)
@@ -51,7 +51,7 @@ instance
     divisor-proof{1} (1div3) = [∨]-introₗ ([≡]-intro)
     divisor-proof{2} (Div𝐒())
     divisor-proof{3} (3div3) = [∨]-introᵣ ([≡]-intro)
-    divisor-proof{𝐒(𝐒(𝐒(𝐒(n))))} (xdiv3) = [⊥]-elim(divides-not-lower-limit([∃]-intro(n) ([+]-commutativity{4}{n})) (xdiv3))
+    divisor-proof{𝐒(𝐒(𝐒(𝐒(n))))} (xdiv3) = [⊥]-elim(divides-not-lower-limit([∃]-intro(n) ⦃ [+]-commutativity{4}{n} ⦄) (xdiv3))
 
 instance
   [4]-nonprime : ¬(Prime(4))
@@ -67,7 +67,7 @@ instance
     divisor-proof{3} (Div𝐒())
     divisor-proof{4} (Div𝐒())
     divisor-proof{5} (5div5) = [∨]-introᵣ ([≡]-intro)
-    divisor-proof{𝐒(𝐒(𝐒(𝐒(𝐒(𝐒(n))))))} (xdiv5) = [⊥]-elim(divides-not-lower-limit([∃]-intro(n) ([+]-commutativity{6}{n})) (xdiv5))
+    divisor-proof{𝐒(𝐒(𝐒(𝐒(𝐒(𝐒(n))))))} (xdiv5) = [⊥]-elim(divides-not-lower-limit([∃]-intro(n) ⦃ [+]-commutativity{6}{n} ⦄) (xdiv5))
 
 instance
   [6]-nonprime : ¬(Prime(6))
@@ -85,4 +85,4 @@ instance
     divisor-proof{5} (Div𝐒())
     divisor-proof{6} (Div𝐒())
     divisor-proof{7} (7div7) = [∨]-introᵣ ([≡]-intro)
-    divisor-proof{𝐒(𝐒(𝐒(𝐒(𝐒(𝐒(𝐒(𝐒(n))))))))} (xdiv7) = [⊥]-elim(divides-not-lower-limit([∃]-intro(n) ([+]-commutativity{8}{n})) (xdiv7))
+    divisor-proof{𝐒(𝐒(𝐒(𝐒(𝐒(𝐒(𝐒(𝐒(n))))))))} (xdiv7) = [⊥]-elim(divides-not-lower-limit([∃]-intro(n) ⦃ [+]-commutativity{8}{n} ⦄) (xdiv7))

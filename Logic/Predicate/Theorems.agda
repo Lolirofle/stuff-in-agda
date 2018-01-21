@@ -12,10 +12,10 @@ open import Type
 [∀]-swap(xypxy){y}{x} = xypxy{x}{y}
 
 [∃]-swap : ∀{X Y}{P : X → Y → Stmt} → ∃(x ↦ ∃(y ↦ P(x)(y))) → ∃(y ↦ ∃(x ↦ P(x)(y)))
-[∃]-swap([∃]-intro(x)([∃]-intro(y)(proof))) = [∃]-intro(y)([∃]-intro(x)(proof))
+[∃]-swap([∃]-intro(x) ⦃ [∃]-intro(y) ⦃ proof ⦄ ⦄) = [∃]-intro(y) ⦃ [∃]-intro(x) ⦃ proof ⦄ ⦄
 
 [∃]-irrelevant : ∀{X}{P : Stmt} → ∃{X}(x ↦ P) → P
-[∃]-irrelevant([∃]-intro(_)(proof)) = proof
+[∃]-irrelevant([∃]-intro(_) ⦃ proof ⦄) = proof
 
 -- TODO: Probably unprovable? X is not guaranteed to not be the empty type, and even if it was, the ∀ function requires a constructed value. It seems to need a non-empty domain to quantify over
 -- [∀]-irrelevant : ∀{X}{P : Stmt} → ∀ₗ{X}(x ↦ P) → P
@@ -52,8 +52,8 @@ open import Type
 -}
 
 [∀¬¬][∃¬]-contradiction : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬¬(P(x))) → (∃(x ↦ ¬(P(x)))) → ⊥
-[∀¬¬][∃¬]-contradiction{X}{P} (annp)([∃]-intro(a)(na)) =
-  [∀][∃¬]-contradiction{X}{¬¬_ ∘ P} (annp)([∃]-intro(a)([¬¬]-intro(na)))
+[∀¬¬][∃¬]-contradiction{X}{P} (annp)([∃]-intro(a) ⦃ na ⦄) =
+  [∀][∃¬]-contradiction{X}{¬¬_ ∘ P} (annp)([∃]-intro(a) ⦃ [¬¬]-intro(na) ⦄)
 
 [∀¬¬]-to-[¬∃¬] : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬¬(P(x))) → (¬ ∃(x ↦ ¬(P(x))))
 [∀¬¬]-to-[¬∃¬] = [∀¬¬][∃¬]-contradiction
@@ -67,7 +67,7 @@ open import Type
 --   )
 
 [¬∃¬]-to-[∀¬¬] : ∀{X}{P : X → Stmt} → ¬(∃(x ↦ ¬(P(x)))) → ∀ₗ(x ↦ ¬¬(P(x)))
-[¬∃¬]-to-[∀¬¬] {X}{P} (nenx) {a} (npa) = nenx([∃]-intro(a)(npa))
+[¬∃¬]-to-[∀¬¬] {X}{P} (nenx) {a} (npa) = nenx([∃]-intro(a) ⦃ npa ⦄)
 
 [¬¬∀]-to-[∀¬¬] : ∀{X}{P : X → Stmt} → ¬¬ ∀ₗ(x ↦ (P(x))) → ∀ₗ(x ↦ ¬¬(P(x)))
 [¬¬∀]-to-[∀¬¬] = [¬∃¬]-to-[∀¬¬] ∘ [¬¬∀]-to-[¬∃¬]
@@ -91,7 +91,7 @@ open import Type
   ([∀]-intro(a ↦
     (([¬]-intro(pa ↦
       (([⊥]-intro
-        (([∃]-intro a pa) :of: (∃(x ↦ P(x))))
+        (([∃]-intro a ⦃ pa ⦄) :of: (∃(x ↦ P(x))))
         (nepx :of: ¬(∃(x ↦ P(x))))
       ) :of: ⊥)
     )) :of: ¬(P(a)))
@@ -102,7 +102,7 @@ open import Type
 
 [∀ₑ]-to-[∃] : ∀{X}{P : X → Stmt} → ∀ₑ(x ↦ P(x)) → ∃(x ↦ P(x))
 [∀ₑ]-to-[∃] (apx) =
-  [∃]-intro(_)([∀ₑ]-elimₑ(apx))
+  [∃]-intro(_) ⦃ [∀ₑ]-elimₑ(apx) ⦄
 
 [∀ₑ]-irrelevant : ∀{X}{P : Stmt} → ∀ₑ{X}(x ↦ P) → P
 [∀ₑ]-irrelevant = [∀ₑ]-elimₑ
@@ -123,7 +123,7 @@ open import Type
 [∀]-unrelatedₗ-[→] : ∀{X}{P : X → Stmt}{Q : Stmt} → ∀ₗ(x ↦ (P(x) → Q)) ↔ (∃(x ↦ P(x)) → Q)
 [∀]-unrelatedₗ-[→] {X}{P}{Q} = [↔]-intro l r where
   l : ∀ₗ(x ↦ (P(x) → Q)) ← (∃(x ↦ P(x)) → Q)
-  l(expxq) {x} px = expxq([∃]-intro(x)(px))
+  l(expxq) {x} px = expxq([∃]-intro(x) ⦃ px ⦄)
 
   r : ∀ₗ(x ↦ (P(x) → Q)) → (∃(x ↦ P(x)) → Q)
   r(axpxq) = [∃]-elim(\{x} → px ↦ axpxq{x}(px))
@@ -140,16 +140,16 @@ open import Type
 [∃]-unrelatedₗ-[→] : ∀{X}{P : X → Stmt}{Q : Stmt} → ∃(x ↦ (P(x) → Q)) → (∀ₗ(x ↦ P(x)) → Q)
 [∃]-unrelatedₗ-[→] {X}{P}{Q} = r where -- [↔]-intro l r where
   -- l : ∃(x ↦ (P(x) → Q)) ← (∀ₗ(x ↦ P(x)) → Q)
-  -- l(axpxq) = [∃]-intro(_) (px ↦ axpxq(px))
+  -- l(axpxq) = [∃]-intro(_) ⦃ px ↦ axpxq(px) ⦄
 
   r : ∃(x ↦ (P(x) → Q)) → (∀ₗ(x ↦ P(x)) → Q)
-  r(expxq)(axpx) = [∃]-property(expxq) (axpx{[∃]-extract(expxq)})
+  r(expxq)(axpx) = [∃]-proof(expxq) (axpx{[∃]-witness(expxq)})
 
 -- TODO
 [∃]-unrelatedᵣ-[→] : ∀{X}{P : Stmt}{Q : X → Stmt} → ∃(x ↦ (P → Q(x))) → (P → ∃(x ↦ Q(x)))
 [∃]-unrelatedᵣ-[→] {X}{P}{Q} = r where -- [↔]-intro l r where
   -- l : ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
-  -- l(pexqx) = [∃]-intro(_) (p ↦ [∃]-property(pexqx(p)))
+  -- l(pexqx) = [∃]-intro(_) ⦃ p ↦ [∃]-proof(pexqx(p)) ⦄
 
   r : ∃(x ↦ (P → Q(x))) → (P → ∃(x ↦ Q(x)))
-  r(expqx)(p) = [∃]-elim(\{x} → pqx ↦ [∃]-intro(x)(pqx(p))) (expqx)
+  r(expqx)(p) = [∃]-elim(\{x} → pqx ↦ [∃]-intro(x) ⦃ pqx(p) ⦄) (expqx)

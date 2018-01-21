@@ -24,7 +24,7 @@ module Sets.ETCS where
         terminal : ∃(term ↦ Terminal(term))
 
       𝟏 : S
-      𝟏 = [∃]-extract(terminal)
+      𝟏 = [∃]-witness(terminal)
 
       _∈_ : ∀{a b : S} → F(a)(b) → S → Stmt
       _∈_ {a}{b} x X = (a ≡ᵣ 𝟏)∧(b ≡ᵣ X)

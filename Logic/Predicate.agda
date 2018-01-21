@@ -12,17 +12,17 @@ open import Type{ℓ₂}
 record ∃ {X : Type} (Pred : X → Stmt) : Stmt where
   constructor [∃]-intro
   field
-    element : X
-    proof   : Pred(element)
+    element   : X
+    ⦃ proof ⦄ : Pred(element)
 
-[∃]-extract : ∀{X}{Pred} → ∃{X}(Pred) → X
-[∃]-extract([∃]-intro(x)(_)) = x
+[∃]-witness : ∀{X}{Pred} → ∃{X}(Pred) → X
+[∃]-witness([∃]-intro(x) ⦃ _ ⦄ ) = x
 
-[∃]-property : ∀{X}{Pred} → (e : ∃{X}(Pred)) → Pred([∃]-extract(e))
-[∃]-property([∃]-intro(_)(p)) = p
+[∃]-proof : ∀{X}{Pred} → (e : ∃{X}(Pred)) → Pred([∃]-witness(e))
+[∃]-proof([∃]-intro(_) ⦃ p ⦄ ) = p
 
 [∃]-elim : ∀{X}{Pred}{Z : Stmt} → (∀{x : X} → Pred(x) → Z) → (∃{X} Pred) → Z
-[∃]-elim (f) ([∃]-intro _ stmt) = f stmt
+[∃]-elim (f) ([∃]-intro(_) ⦃ stmt ⦄) = f stmt
 
 -- syntax ∃ {X} (λ x → f) = ∃[ x ∊ X ] f
 -- syntax ∃     (λ x → f) = ∃[ x ] f
