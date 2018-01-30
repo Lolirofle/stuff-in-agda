@@ -7,7 +7,7 @@ import Automaton.TuringMachine
 import Boolean
 import Boolean.Theorems
 import Boolean.Operators
--- import Cardinal
+import Cardinal
 import Category.Meta
 import Data
 import Data.Tuple.List
@@ -80,6 +80,7 @@ import Sets.IZF
 import Sets.ListSet
 import Sets.TypeSet
 import Structure.Arithmetic
+import Structure.Function
 import Structure.Function.Domain
 import Structure.Function.Linear
 import Structure.Function.Ordering

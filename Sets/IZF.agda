@@ -59,8 +59,8 @@ module Relations where
   IntersectionAll(sᵢ) (ss) = (∀{x} → (x ∈ sᵢ) ↔ (∀{s} → (s ∈ ss) → (x ∈ s)))
 
   -- The statement that the set sₛ is the subset of s where every element satisfies φ
-  FilteredSubset : S → S → (S → Stmt) → Stmt
-  FilteredSubset(sₛ) (s)(φ) = (∀{x} → (x ∈ sₛ) ↔ ((x ∈ s) ∧ φ(x)))
+  FilteredSubset : S → (s : S) → ((x : S) → ⦃ _ : (x ∈ s) ⦄ → Stmt) → Stmt
+  FilteredSubset(sₛ) (s)(φ) = (∀{x} → (x ∈ sₛ) ↔ ∃{x ∈ s}(proof ↦ φ(x) ⦃ proof ⦄))
 
 module RelationsTheorems where
   open Relations
@@ -123,7 +123,7 @@ module Axioms1 where
   -- Axiom schema of restricted comprehension | Axiom schema of specification | Axiom schema of separation
   -- A set which is the subset of a set where all elements satisfies a predicate exists.
   record RestrictedComprehensionExistence : Set(Lvl.𝐒(Lvl.𝟎)) where
-    field comprehension : ∀{s}{φ : S → Stmt} → ∃(sₛ ↦ FilteredSubset(sₛ)(s)(φ))
+    field comprehension : ∀{s}{φ : (x : S) → ⦃ _ : (x ∈ s) ⦄ → Stmt} → ∃(sₛ ↦ FilteredSubset(sₛ)(s)(φ))
   open RestrictedComprehensionExistence ⦃ ... ⦄ public
 
   -- Axiom schema of collection
@@ -199,41 +199,46 @@ module Operations where
     _⟒_ (x)(y) = [∃]-witness(pair{x}{y})
 
   module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : PairExistence ⦄ where
-    -- Definition of the union of two sets: s₁∪s₂ for two sets s₁ and s₂
+    -- Definition of the union of two sets: s₁∪s₂ for two sets s₁ and s₂.
     -- This can be used to construct a set that contains all elements from either of the two sets.
     _∪_ : S → S → S
     _∪_ s₁ s₂ = [∃]-witness(union{s₁ ⟒ s₂})
 
   module _ ⦃ _ : UnionExistence ⦄ where
-    -- Definition of the union of a set of sets: ⋃(ss) for a set of sets ss
+    -- Definition of the union of a set of sets: ⋃(ss) for a set of sets ss.
     -- This can be used to construct a set that contains all elements from the sets.
     reduce-[∪] : S → S
     reduce-[∪] ss = [∃]-witness(union{ss})
 
   module _ ⦃ _ : PowerSetExistence ⦄ where
-    -- Definition of the power set of a set: ℘(s) for some set s
+    -- Definition of the power set of a set: ℘(s) for some set s.
     -- This can be used to construct a set that contains all subsets of a set.
     ℘ : S → S
     ℘(s) = [∃]-witness(power{s})
 
   module _ ⦃ _ : RestrictedComprehensionExistence ⦄ where
-    -- Definition of the usual "set builder notation": {x∊s. φ(x)} for some set s
+    -- Definition of the usual "set builder notation": {(x∊s). φ(x)} for some set s.
     -- This can be used to construct a set that is the subset which satisfies a certain predicate for every element.
     filter : S → (S → Stmt) → S
-    filter(s)(φ) = [∃]-witness(comprehension{s}{φ})
+    filter(s)(φ) = [∃]-witness(comprehension{s}{x ↦ \ ⦃ _ ⦄ → φ(x)})
 
-    -- Definition of the intersection of two sets: s₁∩s₂ for two sets s₁ and s₂
+    -- Definition of a "set builder notation": {(x∊s). φ(x)} for some set s where the predicate φ gets a proof of (x∈s).
+    -- This can be used to construct a set that is the subset which satisfies a certain predicate for every element.
+    filter-dep : (s : S) → ((x : S) → ⦃ _ : (x ∈ s) ⦄ → Stmt) → S
+    filter-dep(s)(φ) = [∃]-witness(comprehension{s}{φ})
+
+    -- Definition of the intersection of two sets: s₁∩s₂ for two sets s₁ and s₂.
     -- This can be used to construct a set that contains all elements that only are in both sets.
     _∩_ : S → S → S
     _∩_ (s₁)(s₂) = filter(s₁)(x ↦ (x ∈ s₂))
 
-    -- Definition of the subtraction of two sets: s₁∖s₂ for two sets s₁ and s₂
+    -- Definition of the subtraction of two sets: s₁∖s₂ for two sets s₁ and s₂.
     -- This can be used to construct a set that contains all elements from s₁ which is not in s₂.
     _∖_ : S → S → S
     _∖_ (s₁)(s₂) = filter(s₁)(_∉ s₂)
 
   module _ ⦃ _ : UnionExistence ⦄ ⦃ _ : RestrictedComprehensionExistence ⦄ where
-    -- Definition of the intersection of a set of sets: ⋂(ss) for a set of sets ss
+    -- Definition of the intersection of a set of sets: ⋂(ss) for a set of sets ss.
     -- This can be used to construct a set that only contains the elements which all the sets have in common.
     reduce-[∩] : S → S
     reduce-[∩] ss = filter(reduce-[∪] (ss))(x ↦ ∀{s} → (s ∈ ss) → (x ∈ s))
@@ -267,8 +272,21 @@ module OperationsTheorems where
     [⟒]-containmentᵣ{x₁}{x₂} = [↔]-elimₗ([∃]-proof(pair{x₁}{x₂})) ([∨]-introᵣ([≡]-reflexivity))
 
   module _ ⦃ _ : RestrictedComprehensionExistence ⦄ where
-    filter-containment : ∀{s}{φ}{x} → (x ∈ filter(s)(φ)) ↔ ((x ∈ s) ∧ φ(x))
-    filter-containment{s} = [∃]-proof(comprehension)
+    filter-dep-containment : ∀{s}{φ}{x} → (x ∈ filter-dep(s)(φ)) ↔ (∃{x ∈ s}(proof ↦ φ(x) ⦃ proof ⦄))
+    filter-dep-containment{s} = [∃]-proof(comprehension)
+
+    test : ∀{s}{φ}{x} → (x ∈ filter-dep(s)(φ)) → (∃{x ∈ s}(proof ↦ φ(x) ⦃ proof ⦄))
+    test{s} = [↔]-elimᵣ (filter-dep-containment)
+
+    test2 : ∀{s}{φ}{x} → (x ∈ filter-dep(s)(φ)) → (x ∈ s)
+    test2(a) = [∃]-witness (test(a))
+
+    -- TODO: ?
+    -- test3 : ∀{s}{φ}{x} → (x ∈ filter-dep(s)(φ)) → ⦃ _ : (x ∈ s) ⦄ → φ(x)
+    -- test3(a) ⦃ _ ⦄ = [∃]-proof (test(a))
+
+    postulate filter-containment : ∀{s}{φ}{x} → (x ∈ filter(s)(φ)) ↔ ((x ∈ s) ∧ φ(x))
+    -- filter-containment{s} = [∃]-proof(comprehension)
 
     [∩]-containment : ∀{s₁ s₂}{x} → (x ∈ (s₁ ∩ s₂)) ↔ (x ∈ s₁)∧(x ∈ s₂)
     [∩]-containment = filter-containment
@@ -337,8 +355,11 @@ module OperationsTheorems where
     [∩]-subsetᵣ : ∀{s₁ s₂} → ((s₁ ∩ s₂) ⊆ s₂)
     [∩]-subsetᵣ = [∧]-elimᵣ ∘ ([↔]-elimᵣ([∩]-containment))
 
+    filter-dep-subset : ∀{s}{φ} → (filter-dep(s)(φ) ⊆ s)
+    filter-dep-subset{s}{φ} {x}(x∈s) = [∃]-witness([↔]-elimᵣ(filter-dep-containment{s}{φ})(x∈s))
+
     filter-subset : ∀{s}{φ} → (filter(s)(φ) ⊆ s)
-    filter-subset{s}{φ} {x}(x∈s) = [∧]-elimₗ([↔]-elimᵣ([∃]-proof(comprehension{s}{φ}))(x∈s))
+    filter-subset{s}{φ} {x}(x∈s) = [∧]-elimₗ([↔]-elimᵣ(filter-containment{s}{φ})(x∈s))
 
   module _ ⦃ _ : PowerSetExistence ⦄ where
     [℘]-subset : ∀{s₁ s₂} → (s₁ ⊆ s₂) ↔ (℘(s₁) ⊆ ℘(s₂))
@@ -556,23 +577,25 @@ module NaturalNumberTheorems where
     [ℕ]-set-induction {Nₛ} (Nₛ-subset) (ind) = [↔]-intro ([ℕ]-subset {Nₛ} (ind)) (Nₛ-subset)
 
     module _ ⦃ _ : (𝟎 ∈ ℕ)⦄ ⦃ _ : ∀{n} → ⦃ _ : (n ∈ ℕ) ⦄ → (𝐒(n) ∈ ℕ) ⦄ where
-      [ℕ]-induction : ∀{φ} → φ(𝟎) → (∀{n} → ⦃ n-in : (n ∈ ℕ) ⦄ → φ(n) → φ(𝐒(n))) → (∀{n} → ⦃ _ : n ∈ ℕ ⦄ → φ(n))
-      [ℕ]-induction {φ} (zero) (succ) {n} ⦃ n-in-ℕ ⦄ =
+      postulate [ℕ]-induction : ∀{φ : (n : S) → ⦃ _ : (n ∈ ℕ) ⦄ → Stmt} → φ(𝟎) → (∀{n} → ⦃ n-in : (n ∈ ℕ) ⦄ → φ(n) → φ(𝐒(n))) → (∀{n} → ⦃ _ : n ∈ ℕ ⦄ → φ(n))
+      {-[ℕ]-induction {φ} (zero) (succ) {n} ⦃ n-in-ℕ ⦄ =
         ([∧]-elimᵣ
           (([↔]-elimᵣ filter-containment)
             ([ℕ]-subset {set} ([∧]-intro (zero-in) (succ-in)) {n} (n-in-ℕ))
           )
         ) where
 
-        set = filter(ℕ)(φ)
+        set : S
+        set = filter-dep(ℕ)(φ)
 
         module _ {n} ⦃ n-in-ℕ : (n ∈ ℕ) ⦄ where
           n-inₗ : φ(n) ← (n ∈ set)
-          n-inₗ (proof) = [∧]-elimᵣ (([↔]-elimᵣ filter-containment) (proof))
+          n-inₗ (proof) = [∃]-proof (([↔]-elimᵣ filter-dep-containment) (proof))
 
           n-inᵣ : φ(n) → (n ∈ set)
           n-inᵣ (proof) = ([↔]-elimₗ filter-containment) ([∧]-intro (n-in-ℕ) (proof))
 
+          -- TODO: Unnecessary
           Sn-inₗ : φ(𝐒(n)) ← (𝐒(n) ∈ set)
           Sn-inₗ (proof) = [∧]-elimᵣ (([↔]-elimᵣ filter-containment) (proof))
 
@@ -591,6 +614,7 @@ module NaturalNumberTheorems where
         succ-in : ∀{n} → (n ∈ set) → (𝐒(n) ∈ set)
         succ-in{n} (n-in-filter) with ([↔]-elimᵣ filter-containment) (n-in-filter)
         ... | ([∧]-intro (n-in-ℕ) (φn)) = (Sn-inᵣ ⦃ n-in-ℕ ⦄ (succ ⦃ n-in-ℕ ⦄ (n-inₗ ⦃ n-in-ℕ ⦄ n-in-filter)))
+        -}
         {- ... | ([∧]-intro (n-in-ℕ) (φn)) =
           (([↔]-elimₗ filter-containment)
             ([∧]-intro

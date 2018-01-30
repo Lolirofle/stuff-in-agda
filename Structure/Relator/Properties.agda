@@ -12,6 +12,8 @@ open import Type{ℓ₂}
 FlipPattern : {T₁ T₂ : Type} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
 FlipPattern {T₁} {T₂} (_▫₁_) (_▫₂_) = {x : T₁}{y : T₂} → (x ▫₁ y) → (y ▫₂ x)
 
+-- TODO: Maybe use `abstract` blocks instead of `records`? The reason for having records is after all to get ⦃⦄-implicits working.
+
 -- Definition of a reflexive binary operation
 record Reflexivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
   field

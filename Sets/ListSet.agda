@@ -6,10 +6,11 @@ open import Functional
 open import List
 open import List.Properties{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Logic.Propositional.Theorems{ℓ₁ Lvl.⊔ ℓ₂} using ([↔]-transitivity)
 open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Numeral.Natural
 open import Relator.Equals{ℓ₁} renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_)
-open import Relator.Equals.Theorems{ℓ₁} hiding ([≡]-substitutionₗ ; [≡]-substitutionᵣ)
+open import Relator.Equals.Theorems{ℓ₁} hiding ([≡]-substitutionₗ ; [≡]-substitutionᵣ ; [≡]-reflexivity ; [≡]-transitivity ; [≡]-symmetry)
 open import Type{ℓ₂}
 
 -- The statement of whether an element is in a list
@@ -161,6 +162,37 @@ module Relators where
   -- [⊆]-application : ∀{L₁ L₂} → (L₁ ⊆ L₂) → ∀{f} → (map f(L₁))⊆(map f(L₂))
   -- [⊆]-application proof fL₁ = [∈]-proof.application ∘ proof
   -- (∀{x} → (x ∈ L₂) → (x ∈ L₁)) → ∀{f} → (∀{x} → (x ∈ map f(L₂)) → (x ∈ map f(L₁)))
+
+  postulate [≡]-included-in : ∀{L : List{ℓ₂}(T)}{x} → (x ∈ L) → ((x ⊰ L) ≡ L)
+  -- [≡]-included-in (x-in) {a} = 
+
+  postulate [≡]-included-subset : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ((L₁ ++ L₂) ≡ L₂)
+
+  instance
+    [⊆]-reflexivity : ∀{L} → (L ⊆ L)
+    [⊆]-reflexivity = id
+
+  instance
+    [⊆]-antisymmetry : ∀{L₁ L₂} → (L₁ ⊆ L₂) → (L₂ ⊆ L₁) → (L₁ ≡ L₂)
+    [⊆]-antisymmetry a b = (swap [↔]-intro) a b
+
+  instance
+    [⊆]-transitivity : ∀{L₁ L₂ L₃} → (L₁ ⊆ L₂) → (L₂ ⊆ L₃) → (L₁ ⊆ L₃)
+    [⊆]-transitivity a b = (swap _∘_) a b
+
+  instance
+    [≡]-reflexivity : ∀{L} → (L ≡ L)
+    [≡]-reflexivity = [↔]-intro [⊆]-reflexivity [⊆]-reflexivity
+
+  instance
+    [≡]-symmetry : ∀{L₁ L₂} → (L₁ ≡ L₂) → (L₂ ≡ L₁)
+    [≡]-symmetry (L₁≡L₂) {x} with (L₁≡L₂){x}
+    ... | [↔]-intro l r = [↔]-intro r l
+
+  instance
+    [≡]-transitivity : ∀{L₁ L₂ L₃} → (L₁ ≡ L₂) → (L₂ ≡ L₃) → (L₁ ≡ L₃)
+    [≡]-transitivity (L₁≡L₂) (L₂≡L₃) {x} with [∧]-intro ((L₁≡L₂){x}) ((L₂≡L₃){x})
+    ... | ([∧]-intro (lr₁) (lr₂)) = [↔]-transitivity  (lr₁) (lr₂)
 
   instance
     [⊆]-with-[⊰] : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{b} → (L₁ ⊆ (b ⊰ L₂))

@@ -543,3 +543,21 @@ module testInstanceResolution where
   B = A₁(A₂) ↔ A₁(A₂)
   f : (B → ⊤) → ⊤
   f(g) = g(resolve-instance(B))
+
+module inferAbstract where
+  postulate A : Set -> Set
+
+  abstract -- TODO: This pattern could be a macro? See http://agda.readthedocs.io/en/v2.5.3/language/reflection.html for docs and https://github.com/asr/my-agda/blob/4ef826275053a502075e66de7a5cc77964b4291c/test/Succeed/UnquoteDef.agda for examples of macros
+    Test = ∀{a} → A(a) → A(a)
+
+    module Test where
+      elim : Test → ∀{a} → A(a) → A(a)
+      elim(x) = x
+
+  instance
+    postulate test2 : Test
+
+  postulate test3 : Test → Test
+
+  test4 : Test
+  test4 = test3(infer)

@@ -104,8 +104,8 @@ record Predicate {ℓₗ ℓₒ} : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
     [∃]-elim  : ∀{P : Domain → Stmt}{Z : Stmt} → (∀{x : Metadomain} → P(obj(x)) → Z) → (∃ₗ P) → Z
 
     -- TODO: These are convenient, but it may not actually be possible to construct it constructively? Maybe wrap it inside something?
-    [∃]-elem  : ∀{P : Domain → Stmt} → (∃ₗ P) → Domain
-    [∃]-proof : ∀{P : Domain → Stmt} → (e : ∃ₗ P) → P([∃]-elem(e))
+    {-[∃]-elem  : ∀{P : Domain → Stmt} → (∃ₗ P) → Domain
+    [∃]-proof : ∀{P : Domain → Stmt} → (e : ∃ₗ P) → P([∃]-elem(e))-}
 
     -- TODO: Are these really correct?
     [∀]-intro : ∀{P : Domain → Stmt} → (∀{x : Metadomain} → P(obj(x))) → (∀ₗ P)
