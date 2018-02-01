@@ -17,6 +17,11 @@ data _lteq_ : ℕ → ℕ → Stmt where
     LtEq𝟎 : ∀{x} → 0 lteq x
     LtEq𝐒 : ∀{x y} → (x lteq y) → (x lteq (𝐒(y)))
 
+_lteq2_ : ℕ → ℕ → Stmt
+𝟎    lteq2 n    = ⊤
+𝐒(_) lteq2 𝟎    = ⊥
+𝐒(a) lteq2 𝐒(b) = a lteq2 b
+
 _≤_ : ℕ → ℕ → Stmt
 _≤_ a b = ∃ \(n : ℕ) → (a + n ≡ b)
 

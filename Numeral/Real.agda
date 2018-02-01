@@ -1,6 +1,7 @@
 module Numeral.Real where
 
 import Lvl
+open import Syntax.Number
 open import Data
 open import Functional
 open import Logic.Propositional{Lvl.𝟎}

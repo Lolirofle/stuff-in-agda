@@ -10,7 +10,9 @@ import Boolean.Operators
 import Cardinal
 import Category.Meta
 import Data
+import Data.Matrix
 import Data.Tuple.List
+import Data.Vector
 import FFI.IO   as FFI
 import FormalLanguage
 import FormalLanguage.ContextFreeGrammar
@@ -96,6 +98,7 @@ import Structure.Relator.Ordering
 import Structure.Relator.Ordering.Subsets
 import Structure.Relator.Properties
 import String
+import Syntax.Number
 import Type
 
 main : FFI.IO Data.Unit

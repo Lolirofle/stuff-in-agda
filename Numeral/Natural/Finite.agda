@@ -1,6 +1,7 @@
 module Numeral.Natural.Finite where
 
 import Lvl
+open import Syntax.Number
 open import Functional
 open import Logic.Propositional
 open import Logic.Predicate
@@ -34,6 +35,17 @@ Finite {ℓ₁}{ℓ₂} (T) = ∃{ℓ₁ Lvl.⊔ ℓ₂}{Lvl.𝟎}{ℕ}(n ↦ (�
 [Finite-ℕ]-to-[ℕ] : ∀{n} → Finite-ℕ(n) → ℕ
 [Finite-ℕ]-to-[ℕ] (Finite-𝟎)    = 𝟎
 [Finite-ℕ]-to-[ℕ] (Finite-𝐒(n)) = 𝐒([Finite-ℕ]-to-[ℕ] (n))
+
+instance
+  open import Numeral.Natural.Relation
+
+  Finite-ℕ-from-ℕ : ∀{N} → From-ℕsubset(Finite-ℕ(𝐒(N)))
+  From-ℕsubset.restriction ( Finite-ℕ-from-ℕ {N} ) (n) = (n lteq2 N)
+  from-ℕsubset ⦃ Finite-ℕ-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = [ℕ]-to-[Finite-ℕ] {n}{N} (proof) where
+    [ℕ]-to-[Finite-ℕ] : ∀{m n} → (m lteq2 n) → Finite-ℕ(𝐒(n))
+    [ℕ]-to-[Finite-ℕ] {𝟎}    {_}    _   = Finite-𝟎
+    [ℕ]-to-[Finite-ℕ] {𝐒(_)} {𝟎}    ()
+    [ℕ]-to-[Finite-ℕ] {𝐒(m)} {𝐒(n)} (p) = Finite-𝐒([ℕ]-to-[Finite-ℕ] {m}{n} (p))
 
 module Theorems{ℓ} where
   open import Numeral.Natural.Function

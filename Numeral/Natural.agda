@@ -12,13 +12,3 @@ data ℕ : Set where
 𝐏 : ℕ → ℕ
 𝐏(𝟎)    = 𝟎
 𝐏(𝐒(n)) = n
-
--- Syntax
-record From-ℕ (T : Set) : Set where
-  field from-ℕ : ℕ → T
-open From-ℕ {{...}} public
-{-# BUILTIN FROMNAT from-ℕ #-}
-
-instance
-  ℕ-From-ℕ : From-ℕ (ℕ)
-  from-ℕ ⦃ ℕ-From-ℕ ⦄ (x) = x
