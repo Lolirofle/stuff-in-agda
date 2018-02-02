@@ -10,9 +10,7 @@ import Boolean.Operators
 import Cardinal
 import Category.Meta
 import Data
-import Data.Matrix
 import Data.Tuple.List
-import Data.Vector
 import FFI.IO   as FFI
 import FormalLanguage
 import FormalLanguage.ContextFreeGrammar
@@ -52,7 +50,7 @@ import Numeral.Integer.Theorems
 import Numeral.Natural
 import Numeral.Natural.Coprime
 import Numeral.Natural.Divisibility
-import Numeral.Natural.Finite
+import Numeral.Finite
 import Numeral.Natural.Function
 import Numeral.Natural.BooleanOper
 import Numeral.Natural.Oper
@@ -64,11 +62,13 @@ import Numeral.Natural.Relation.Countable
 import Numeral.Natural.Relation.Properties
 import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
+import Numeral.Matrix
 import Numeral.Real
 import Numeral.Real.Properties
 import Numeral.Sign
 import Numeral.Sign.Oper
 import Numeral.Sign.Oper0
+import Numeral.Vector
 import Operator.Equals
 import Relator.Bijection
 import Relator.Congruence

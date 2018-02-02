@@ -51,7 +51,7 @@ module _ {ℓₒ} where
   [∘]-identityᵣ = [≡]-intro
 
   {- -- Every injective function has a left inverse with respect to function composition.
-  -- TODO: Maybe also need to assume (∃x. x∈a)? That Inhabited(a).
+  -- TODO: Maybe also need to assume (∃x. x∈a)? That Inhabited(a). f: ∅→b is okay, but not g: b→∅
   [∘]-inverseₗ-value : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
   [∘]-inverseₗ-value {a}{b} {f} ⦃ f-injective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
     f⁻¹ : b → a

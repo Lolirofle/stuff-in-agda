@@ -4,8 +4,8 @@ import      Lvl
 open import Boolean
 open import Numeral.Natural
 open import Numeral.Natural.BooleanOper
-open import Numeral.Natural.Finite
-  renaming (Finite-𝟎 to 𝟎ᶠ ; Finite-𝐒 to 𝐒ᶠ)
+open import Numeral.Finite
+  renaming (𝟎fin to 𝟎ᶠ ; 𝐒fin to 𝐒ᶠ)
 open import Numeral.Natural.Function
 open import Numeral.Natural.Oper
 
@@ -14,7 +14,7 @@ open import Numeral.Natural.Oper
 data Term : ℕ → Set where
   Application : ∀{d} → Term(d) → Term(d) → Term(d)
   Abstract    : ∀{d} → Term(𝐒(d)) → Term(d)
-  Var         : ∀{d} → Finite-ℕ(d) → Term(𝐒(d))
+  Var         : ∀{d} → ℕfin(d) → Term(𝐒(d))
 
 Expression : Set
 Expression = Term(0)
@@ -51,7 +51,7 @@ module Functions where
     )
 
 module Transformations where
-  open        Numeral.Natural.Finite.Theorems{Lvl.𝟎}
+  open        Numeral.Finite.Theorems{Lvl.𝟎}
   open import Numeral.Natural.Oper.Properties{Lvl.𝟎}
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
@@ -84,23 +84,23 @@ module Transformations where
   -- Apply : ∀{d₂ d₁} → Term(d₁ + d₂) → Term(d₁) → Term(d₁ + d₂)
   -- Apply {d₁}{d₂} (f)(x) = Application(f)(depth-[+] {d₁}{d₂} (x))
 
-  substitute : ∀{d} → Finite-ℕ(d) → Term(d) → Term(d) → Term(d)
+  substitute : ∀{d} → ℕfin(d) → Term(d) → Term(d) → Term(d)
   substitute (var) (val) (Application(f)(x)) = Application (substitute (var) (val) (f)) (substitute (var) (val) (x))
   substitute (var) (val) (Var(n)) =
-    if([Finite-ℕ]-to-[ℕ] (var) ≡? [Finite-ℕ]-to-[ℕ] (n)) then
+    if([ℕfin]-to-[ℕ] (var) ≡? [ℕfin]-to-[ℕ] (n)) then
       (val)
     else
       (Var(n))
   substitute (var) (val) (Abstract(body)) = Abstract (substitute (upscale-𝐒(var)) (depth-𝐒 val) (body))
 
   {-
-  β-reduce : ∀{d₁ d₂} → Finite-ℕ(d₁ + 𝐒(d₂)) → Term(d₁ + 𝐒(d₂)) → Term(𝐒(d₂)) → Term(d₂)
+  β-reduce : ∀{d₁ d₂} → ℕfin(d₁ + 𝐒(d₂)) → Term(d₁ + 𝐒(d₂)) → Term(𝐒(d₂)) → Term(d₂)
   β-reduce{d₁}   {d₂}    (var) (val) (Application(f)(x))    = Application{d₂} (β-reduce{d₁}{d₂} (var)(val) (f)) (β-reduce (var)(val) (x))
   β-reduce{d₁}   {d₂}    (var) (val) (Abstract(body)) = Abstract (β-reduce{d₁}{𝐒(d₂)} (upscale-𝐒 var)(val) (body))
   β-reduce{𝟎}    {𝐒(d₂)} (𝟎ᶠ)      (val) (Var(n)) = Var{d₂}(𝟎ᶠ)
   β-reduce{𝟎}    {𝐒(d₂)} (𝐒ᶠ(var)) (val) (Var(n)) = Var{d₂}(var)
   β-reduce{𝐒(d₁)}{𝐒(d₂)} (var)     (val) (Var(n)) = Var{d₂}(n)
-    if([Finite-ℕ]-to-[ℕ](var) ≡? [Finite-ℕ]-to-[ℕ](n)) then
+    if([ℕfin]-to-[ℕ](var) ≡? [ℕfin]-to-[ℕ](n)) then
       (val)
     else
       (val) -- (Var{max (𝐒 d₁) (𝐒 d₂)} (upscale-maxᵣ n))

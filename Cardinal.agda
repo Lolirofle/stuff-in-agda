@@ -12,8 +12,6 @@ open import Structure.Relator.Ordering
 open import Structure.Relator.Properties{ℓₗ Lvl.⊔ (Lvl.𝐒(ℓₒ))}
 open import Type
 
--- Lvl.𝐒(ℓₒ)
-
 _≍_ : Type{ℓₒ} → Type{ℓₒ} → Stmt
 _≍_ A B = ∃{_}{_}{A → B}(Bijective)
 

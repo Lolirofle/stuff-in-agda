@@ -1,4 +1,4 @@
-module Structure.Function.Domain {ℓ₁} where
+module Structure.Function.Domain {ℓ₁} where -- TODO: Parameterize (_≡_ : ₎and comment out import of Relator.Equals
 
 import      Lvl
 open import Functional

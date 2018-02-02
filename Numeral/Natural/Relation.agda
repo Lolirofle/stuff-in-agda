@@ -14,7 +14,7 @@ open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
 
 data _lteq_ : ℕ → ℕ → Stmt where
   instance
-    LtEq𝟎 : ∀{x} → 0 lteq x
+    LtEq𝟎 : ∀{y} → 0 lteq y
     LtEq𝐒 : ∀{x y} → (x lteq y) → (x lteq (𝐒(y)))
 
 _lteq2_ : ℕ → ℕ → Stmt

@@ -483,22 +483,22 @@ module testListSets where
 
 
 module testFinite where
-  open import Numeral.Natural.Finite
+  open import Numeral.Finite
 
-  test2-0 : Finite-ℕ(2)
-  test2-0 = Finite-𝟎
+  test2-0 : ℕfin(2)
+  test2-0 = 𝟎fin
 
-  test2-1 : Finite-ℕ(2)
-  test2-1 = Finite-𝐒(Finite-𝟎)
+  test2-1 : ℕfin(2)
+  test2-1 = 𝐒fin(𝟎fin)
 
-  test2-2 : Finite-ℕ(2)
-  test2-2 = Finite-𝐒(Finite-𝐒(Finite-𝟎))
+  test2-2 : ℕfin(2)
+  test2-2 = 𝐒fin(𝐒fin(𝟎fin))
 
-  -- test2-3 : Finite-ℕ(2)
-  -- test2-3 = Finite-𝐒(Finite-𝐒(Finite-𝐒(Finite-𝟎)))
+  -- test2-3 : ℕfin(2)
+  -- test2-3 = 𝐒fin(𝐒fin(𝐒fin(𝟎fin)))
 
-  -- test2-4 : Finite-ℕ(2)
-  -- test2-4 = Finite-𝐒(Finite-𝐒(Finite-𝐒(Finite-𝐒(Finite-𝟎))))
+  -- test2-4 : ℕfin(2)
+  -- test2-4 = 𝐒fin(𝐒fin(𝐒fin(𝐒fin(𝟎fin))))
 
 module testResolveInstance where
   open import Functional
