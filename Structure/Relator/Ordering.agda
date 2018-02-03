@@ -13,27 +13,27 @@ open import Type{ℓ₂}
 module Weak {T : Type} (_≤_ : T → T → Stmt) where
   record PartialOrder (_≡_ : T → T → Stmt) : Stmt where
     field
-      ⦃ antisymmetry ⦄ : Antisymmetry (_≤_) (_≡_)
-      ⦃ transitivity ⦄ : Transitivity (_≤_)
-      ⦃ reflexivity ⦄  : Reflexivity  (_≤_)
+     ⦃ antisymmetry ⦄ : Antisymmetry (_≤_) (_≡_)
+     ⦃ transitivity ⦄ : Transitivity (_≤_)
+     ⦃ reflexivity ⦄ : Reflexivity  (_≤_)
 
   record TotalOrder (_≡_ : T → T → Stmt) : Stmt where
     field
-      ⦃ partialOrder ⦄ : PartialOrder (_≡_)
-      ⦃ totality ⦄     : Total (_≤_)
+     ⦃ partialOrder ⦄ : PartialOrder (_≡_)
+     ⦃ totality ⦄    : Total (_≤_)
 
   module Properties where
     record Minimum : Stmt where
       field
         min : T
         minimum : ∀{x : T} → (min ≤ x)
-    open Minimum {{...}} using (min) public
+    open Minimum ⦃ ... ⦄ using (min) public
 
     record Maximum : Stmt where
       field
         max : T
         maximum : ∀{x : T} → (x ≤ max)
-    open Maximum {{...}} using (max) public
+    open Maximum ⦃ ... ⦄ using (max) public
 
     -- LowerBound(P)(x) represents that x is a lower bound of the set {x. P(x)}
     record LowerBound (P : T → Stmt) (l : T) : Stmt where
@@ -48,9 +48,9 @@ module Weak {T : Type} (_≤_ : T → T → Stmt) where
 module Strict {T : Type} (_<_ : T → T → Stmt) where
   record Order : Stmt where
     field
-      ⦃ transitivity ⦄  : Transitivity  (_<_)
-      ⦃ asymmetry ⦄     : Asymmetry     (_<_)
-      ⦃ irreflexivity ⦄ : Irreflexivity (_<_)
+     ⦃ transitivity ⦄ : Transitivity  (_<_)
+     ⦃ asymmetry ⦄    : Asymmetry     (_<_)
+     ⦃ irreflexivity ⦄ : Irreflexivity (_<_)
 
   module Properties where
     record Dense : Stmt where

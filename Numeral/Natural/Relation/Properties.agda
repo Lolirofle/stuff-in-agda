@@ -70,7 +70,7 @@ instance
   [≤]-with-[𝐒] {a} {b} ([∃]-intro n ⦃ f ⦄) =
     [∃]-intro
       (n)
-      ⦃
+     ⦃
         ([+1]-commutativity {a} {n}) -- 𝐒(a)+n = a+𝐒(n)
         🝖 ([≡]-with(𝐒) f) -- 𝐒(a+n)=a+𝐒(n) = 𝐒(b)
       ⦄
@@ -88,10 +88,10 @@ instance
 
 instance
   [≤]-transitivity : Transitivity (_≤_)
-  transitivity{{[≤]-transitivity}} {a}{b}{c} ([∃]-intro n₁ ⦃ a+n₁≡b ⦄) ([∃]-intro n₂ ⦃ b+n₂≡c ⦄) =
+  transitivity ⦃ [≤]-transitivity ⦄ {a}{b}{c} ([∃]-intro n₁ ⦃ a+n₁≡b ⦄) ([∃]-intro n₂ ⦃ b+n₂≡c ⦄) =
     [∃]-intro
       (n₁ + n₂)
-      ⦃
+     ⦃
         (symmetry ([+]-associativity {a} {n₁} {n₂})) -- a+(n₁+n₂) = (a+n₁)+n₂
         🝖 ([≡]-with(expr ↦ expr + n₂) (a+n₁≡b)) -- (a+n₁)+n₂ = b+n₂
         🝖 (b+n₂≡c) -- b+n₂ = c
@@ -99,11 +99,11 @@ instance
 
 instance
   [≤]-reflexivity : Reflexivity (_≤_)
-  reflexivity{{[≤]-reflexivity}} = [≤]-from-[≡] [≡]-intro
+  reflexivity ⦃ [≤]-reflexivity ⦄ = [≤]-from-[≡] [≡]-intro
 
 instance
   [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
-  antisymmetry{{[≤]-antisymmetry}} {a} {b} (([∃]-intro(n₁) ⦃ a+n₁≡b ⦄) , ([∃]-intro(n₂) ⦃ b+n₂≡a ⦄)) = [≡]-elimᵣ (n₁≡0) {n ↦ (a + n ≡ b)} (a+n₁≡b) where
+  antisymmetry ⦃ [≤]-antisymmetry ⦄ {a} {b} (([∃]-intro(n₁) ⦃ a+n₁≡b ⦄) , ([∃]-intro(n₂) ⦃ b+n₂≡a ⦄)) = [≡]-elimᵣ (n₁≡0) {n ↦ (a + n ≡ b)} (a+n₁≡b) where
     n₁+n₂≡0 : ((n₁ + n₂) ≡ 0)
     n₁+n₂≡0 =
       [+]-injectivityᵣ(

@@ -38,7 +38,7 @@ record Peano (T : Type{ℓₒ}) ⦃ _ : Language(T) ⦄ : Type{Lvl.𝐒(ℓₗ L
   open Language ⦃ ... ⦄
 
   field
-    ⦃ minimal ⦄ : Minimal(T)
+   ⦃ minimal ⦄ : Minimal(T)
 
   field
     induction : ∀{P : T → Stmt} → P(𝟎) → (∀{x} → P(x) → P(𝐒(x))) → (∀{x} → P(x))

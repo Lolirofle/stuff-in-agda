@@ -239,8 +239,8 @@ module testEqProof where
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
   open import Type{Lvl.𝟎}
 
-  minSkit : {{_ : Absorberₗ (_⋅_) (0)}} → {{_ : Identityᵣ (_+_) (0)}} → ∀{x} → (1 ≡ ((0 ⋅ x) + 1) + 0)
-  minSkit {{absorb}} {{id}} {x} =
+  minSkit : ⦃ _ : Absorberₗ (_⋅_) (0) ⦄ → ⦃ _ : Identityᵣ (_+_) (0) ⦄ → ∀{x} → (1 ≡ ((0 ⋅ x) + 1) + 0)
+  minSkit ⦃ absorb ⦄ ⦃ id ⦄ {x} =
     (([≡]-with(_+ 1)
       ((symmetry (absorb {x})) :of: (0 ≡ 0 ⋅ x))
     ) :of: (1 ≡ (0 ⋅ x) + 1))
@@ -412,13 +412,13 @@ module testPrimitiveRecursiveDefinitions where
   -- proofMin{𝐒(_)} = [≡]-intro
 
 module testEq where
-  -- testEqInstance : ∀{T} {{_ : Equivalence {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
-  -- testEqInstance {{eq}} = Equivalence.symmetry eq
+  -- testEqInstance : ∀{T} ⦃ _ : Equivalence {T} (_≡_ {T}) ⦄ → Symmetry {T} (_≡_ {T})
+  -- testEqInstance ⦃ eq ⦄ = Equivalence.symmetry eq
   -- testEqInstance2 : ∀{T} → Symmetry {T} (_≡_ {T})
   -- testEqInstance2 = testEqInstance
 
-  -- testSymInstance : ∀{T} {{_ : Symmetry {T} (_≡_ {T})}} → Symmetry {T} (_≡_ {T})
-  -- testSymInstance {{sym}} = sym
+  -- testSymInstance : ∀{T} ⦃ _ : Symmetry {T} (_≡_ {T}) ⦄ → Symmetry {T} (_≡_ {T})
+  -- testSymInstance ⦃ sym ⦄ = sym
 
 module testExistential where
   -- TODO

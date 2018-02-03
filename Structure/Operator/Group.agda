@@ -14,7 +14,7 @@ open import Type{ℓ₂}
 -- • It is a monoid.
 -- • The operator have an inverse in both directions.
 record Group {T : Type} (_▫_ : T → T → T) : Stmt where
-  open Monoid {{...}}
+  open Monoid ⦃ ... ⦄ 
 
   field
     inv : T → T
@@ -57,7 +57,7 @@ record Group {T : Type} (_▫_ : T → T → T) : Stmt where
 
 -- Multiplicative Group
 record MultGroup {T : Type} (_▫_ : T → T → T) (𝟎 : T) : Stmt where
-  open Monoid {{...}}
+  open Monoid ⦃ ... ⦄ 
 
   field
     inv : (x : T) → ⦃ _ : x ≢ 𝟎 ⦄ → T
@@ -70,12 +70,12 @@ record MultGroup {T : Type} (_▫_ : T → T → T) (𝟎 : T) : Stmt where
   inverse = inverseₗ
 
 record AbelianGroup {T : Type} (_▫_ : T → T → T) : Stmt where
-  open Group {{...}}
-  open Monoid {{...}}
+  open Group ⦃ ... ⦄ 
+  open Monoid ⦃ ... ⦄ 
 
   field
     commutativity  : Commutativity (_▫_)
-    ⦃ group ⦄     : Group (_▫_)
+    ⦃ group ⦄    : Group (_▫_)
 
   identity = identityₗ
   inverse = inverseₗ

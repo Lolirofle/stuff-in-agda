@@ -110,7 +110,7 @@ record [ℤ]-induction-data (P : ℤ → Stmt) : Set(ℓ) where
 {-
 [ℤ]-induction : ∀{P} → [ℤ]-induction-data(P) → (∀{n} → P(n))
 [ℤ]-induction {_} ([ℤ]-ind [−] [0] [+]) {𝟎} with [0]
-...                                         | [∃]-intro (𝟎)      ⦃ base ⦄ = base
+...                                         | [∃]-intro (𝟎)     ⦃ base ⦄ = base
 ...                                         | [∃]-intro (+𝐒ₙ(n)) ⦃ base ⦄ = [ℤ]-induction record{[0] = [∃]-intro (+ₙ n) ([−] {+𝐒ₙ(n)} (base)) ; [+] = [+] ; [−] = [−]} {𝟎}
 ...                                         | [∃]-intro (−𝐒ₙ(n)) ⦃ base ⦄ = [ℤ]-induction record{[0] = [∃]-intro (−ₙ n) ([+] {−𝐒ₙ(n)} (base)) ; [+] = [+] ; [−] = [−]} {𝟎}
 [ℤ]-induction {P} ([ℤ]-ind [−] [0] [+]) {+𝐒ₙ(n)} = [+]  ([ℤ]-induction {P} ([ℤ]-ind [−] [0] [+]) {+ n})

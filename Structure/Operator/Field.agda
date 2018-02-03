@@ -11,7 +11,7 @@ open import Type{ℓ₂}
 open import Sets.Subset{ℓ₁}{ℓ₂}
 
 record Field {T : Type} (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt where
-  open Monoid {{...}}
+  open Monoid ⦃ ... ⦄ 
 
   field
     ⦃ [+]-group ⦄ : Group (_+_)

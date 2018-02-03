@@ -32,7 +32,7 @@ absₙ(−𝐒ₙ(x)) = ℕ.𝐒(x)
 -- Syntax
 record From-negative-ℕ (T : Set) : Set where
   field from-negative-ℕ : ℕ → T
-open From-negative-ℕ {{...}} public
+open From-negative-ℕ ⦃ ... ⦄ public
 {-# BUILTIN FROMNEG from-negative-ℕ #-}
 
 instance

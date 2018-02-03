@@ -15,7 +15,7 @@ record Subset {T : Type} (P : T → Stmt{ℓₒₗ}) : Type where -- TODO: Canno
     elem             : T
     ⦃ satisfaction ⦄ : P(elem)
 
--- postulate nested-subset : ∀{T}{φ₁}{φ₂} → (Tₛ₁ : Subset{T}(φ₁)) → (Tₛ₂ : Subset{Subset{T}(φ₁)}(φ₂)) → Subset{T}(x ↦ φ₁(x) ∧ φ₂(subelem (x) ⦃  ⦄))
+-- postulate nested-subset : ∀{T}{φ₁}{φ₂} → (Tₛ₁ : Subset{T}(φ₁)) → (Tₛ₂ : Subset{Subset{T}(φ₁)}(φ₂)) → Subset{T}(x ↦ φ₁(x) ∧ φ₂(subelem (x) ⦃ ⦄))
 postulate nested-subset : ∀{T}{φ₁}{φ₂} → (Tₛ₁ : Subset{T}(φ₁)) → (Tₛ₂ : Subset{Subset{T}(φ₁)}(φ₂ ∘ Subset.elem)) → Subset{T}(x ↦ φ₁(x) ∧ φ₂(x))
 -- nested-subset
 

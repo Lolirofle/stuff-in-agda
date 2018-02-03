@@ -21,8 +21,8 @@ module Edge where
 
 instance
   EdgeInstance-Tuple : ∀{V} → EdgeClass(V)(V ⨯ V)
-  Edge.from           ⦃ EdgeInstance-Tuple ⦄ (v₁ , v₂) = v₁
-  Edge.to             ⦃ EdgeInstance-Tuple ⦄ (v₁ , v₂) = v₂
+  Edge.from          ⦃ EdgeInstance-Tuple ⦄ (v₁ , v₂) = v₁
+  Edge.to            ⦃ EdgeInstance-Tuple ⦄ (v₁ , v₂) = v₂
   Edge._withVertices_ ⦃ EdgeInstance-Tuple ⦄ (v₁ , v₂) (w₁ , w₂) = (w₁ , w₂)
 
 record Graph (V : Set) (E : Set) ⦃ _ : EdgeClass(V)(E) ⦄ : Set where

@@ -639,7 +639,7 @@ module NaturalNumberTheorems where
 
     {--- TODO: I think a filtering like this gives the minimal inductive set? But probably not. (x∈ℕ) is missing, and then the definition is refering to itself.
     ℕ : S
-    ℕ = filter([∃]-witness(infinity)) (n ↦ (n ≡ 𝟎) ∨ ∃(x ↦ ∧(n ≡ 𝐒(x)))) -- TODO: Does this potentially include other stuff too? Like 𝐒{{𝟎}}?
+    ℕ = filter([∃]-witness(infinity)) (n ↦ (n ≡ 𝟎) ∨ ∃(x ↦ ∧(n ≡ 𝐒(x)))) -- TODO: Does this potentially include other stuff too? Like 𝐒 ⦃ 𝟎 ⦄ ?
 
     -- TODO: ∀{n} → (n ∈ ℕ) → (n ≡ 𝟎)∨(∃(x ↦ (x ∈ ℕ)∧(n ≡ 𝐒(x)))). COuld use [ℕ]-contains-[𝐒]-arg to achieve this.
     [ℕ]-contains-only : ∀{n} → (n ∈ ℕ) → (n ≡ 𝟎)∨(∃(x ↦ n ≡ 𝐒(x)))
@@ -684,12 +684,12 @@ record IZF : Set(Lvl.𝐒(Lvl.𝟎)) where
   open Axioms2
 
   field
-    ⦃ extensionality ⦄ : SetEquality
-    ⦃ empty ⦄          : EmptySetExistence
-    ⦃ pair ⦄           : PairExistence
-    ⦃ union ⦄          : UnionExistence
-    ⦃ power ⦄          : PowerSetExistence
-    ⦃ comprehension ⦄  : RestrictedComprehensionExistence
-    ⦃ infinity ⦄       : InfinityAxiom
-    ⦃ collection ⦄     : CollectionAxiom
-    ⦃ induction ⦄      : InductionProof
+   ⦃ extensionality ⦄ : SetEquality
+   ⦃ empty ⦄         : EmptySetExistence
+   ⦃ pair ⦄          : PairExistence
+   ⦃ union ⦄         : UnionExistence
+   ⦃ power ⦄         : PowerSetExistence
+   ⦃ comprehension ⦄ : RestrictedComprehensionExistence
+   ⦃ infinity ⦄      : InfinityAxiom
+   ⦃ collection ⦄    : CollectionAxiom
+   ⦃ induction ⦄     : InductionProof

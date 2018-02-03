@@ -31,7 +31,7 @@ instance
 
 instance
   [1]-nonprime : ¬(Prime(1))
-  [1]-nonprime (Prime-intro ⦃ _ ⦄  ⦃ n≢1 ⦄ _) = (n≢1)([≡]-intro)
+  [1]-nonprime (Prime-intro ⦃ _ ⦄ ⦃ n≢1 ⦄ _) = (n≢1)([≡]-intro)
   -- [1]-nonprime (Prime-intro _) = infer
 
 instance
@@ -55,7 +55,7 @@ instance
 
 instance
   [4]-nonprime : ¬(Prime(4))
-  [4]-nonprime (Prime-intro ⦃ _ ⦄  ⦃ _ ⦄ (xdiv4→x1xn)) = [∨]-elim (\()) (\()) (xdiv4→x1xn{2} (DivN(2))) where
+  [4]-nonprime (Prime-intro ⦃ _ ⦄ ⦃ _ ⦄ (xdiv4→x1xn)) = [∨]-elim (\()) (\()) (xdiv4→x1xn{2} (DivN(2))) where
 
 instance
   [5]-prime : Prime(5)
@@ -71,7 +71,7 @@ instance
 
 instance
   [6]-nonprime : ¬(Prime(6))
-  [6]-nonprime (Prime-intro ⦃ _ ⦄  ⦃ _ ⦄ (xdiv6→x1xn)) = [∨]-elim (\()) (\()) (xdiv6→x1xn{2} (DivN(3))) where
+  [6]-nonprime (Prime-intro ⦃ _ ⦄ ⦃ _ ⦄ (xdiv6→x1xn)) = [∨]-elim (\()) (\()) (xdiv6→x1xn{2} (DivN(3))) where
 
 instance
   [7]-prime : Prime(7)

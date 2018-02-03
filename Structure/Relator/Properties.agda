@@ -18,7 +18,7 @@ FlipPattern {T₁} {T₂} (_▫₁_) (_▫₂_) = {x : T₁}{y : T₂} → (x �
 record Reflexivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
   field
     reflexivity : ∀{x : T} → (x ▫ x)
-open Reflexivity {{...}} public
+open Reflexivity ⦃ ... ⦄ public
 
 -- Definition of a transitive binary operation
 record Transitivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
@@ -30,25 +30,25 @@ record Transitivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
   _🝖_ : ∀{x y z} → (x ▫ y) → (y ▫ z) → (x ▫ z)
   _🝖_ {T} (A)(B) = transitivity{T} (A)(B)
 
-open Transitivity {{...}} public
+open Transitivity ⦃ ... ⦄ public
 
 -- Definition of a antisymmetric binary operation
 record Antisymmetry {T : Type} (_▫₁_ _▫₂_ : T → T → Stmt) : Stmt where
   field
     antisymmetry : ∀{a b : T} → ((a ▫₁ b) ∧ (b ▫₁ a)) → (a ▫₂ b)
-open Antisymmetry {{...}} public
+open Antisymmetry ⦃ ... ⦄ public
 
 -- Definition of a irreflexive binary operation
 record Irreflexivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
   field
     irreflexivity : ∀{x : T} → ¬(x ▫ x)
-open Irreflexivity {{...}} public
+open Irreflexivity ⦃ ... ⦄ public
 
 -- Definition of a total binary operation
 record Total {T : Type} (_▫_ : T → T → Stmt) : Stmt where
   field
     total : ∀{x y : T} → (x ▫ y)∨(y ▫ x)
-open Total {{...}} public
+open Total ⦃ ... ⦄ public
 
 -- Dichotomy : {T : Type}} → (T → T → Stmt) → Stmt
 -- Dichotomy {T} (_▫_) = {x y : T} → (x ▫ y) ⊕ (y ▫ x)
@@ -67,21 +67,21 @@ open Total {{...}} public
 record Converse {T₁ T₂ : Type} (_▫₁_ : T₁ → T₂ → Stmt) (_▫₂_ : T₂ → T₁ → Stmt) : Stmt where
   field
     converse : FlipPattern (_▫₁_) (_▫₂_) ∧ FlipPattern (_▫₂_) (_▫₁_)
-open Converse {{...}} public
+open Converse ⦃ ... ⦄ public
 -- {x : T₁}{y : T₂} → (x ▫₁ y) ↔ (y ▫₂ x)
 
 -- Definition of a symmetric binary operation
 record Symmetry {T : Type} (_▫_ : T → T → Stmt) : Stmt where
   field
     symmetry : FlipPattern (_▫_) (_▫_)
-open Symmetry {{...}} public
+open Symmetry ⦃ ... ⦄ public
 -- {x y : T} → (x ▫ y) → (y ▫ x)
 
 -- Definition of a asymmetric binary operation
 record Asymmetry {T : Type} (_▫_ : T → T → Stmt) : Stmt where
   field
     asymmetry : FlipPattern (_▫_) (x ↦ y ↦ ¬(x ▫ y))
-open Asymmetry {{...}} public
+open Asymmetry ⦃ ... ⦄ public
 -- {x y : T} → (x ▫ y) → ¬(y ▫ x)
 
 ---------------------------------------------------------
@@ -127,8 +127,8 @@ open Asymmetry {{...}} public
 --   (Tuple.uncurry ∘ Tuple.uncurry ∘ Tuple.uncurry) (Tuple.curry(Tuple.curry((Tuple.curry trans) ∘ trans) ∘ trans))
 
 -- Transitivity as a binary operation (TODO: The symbol is supposed to be the alchemical symbol for horse dung, but it was the best I could find that somewhat represented transitivity)
--- _🝖_ : ∀{T _▫_} {{_ : Transitivity {T} (_▫_)}} → ∀{x y z} → (x ▫ y) → (y ▫ z) → (x ▫ z)
--- _🝖_ {_} {_} {{trans}} a b = trans([∧]-intro a b)
+-- _🝖_ : ∀{T _▫_} ⦃ _ : Transitivity {T} (_▫_) ⦄ → ∀{x y z} → (x ▫ y) → (y ▫ z) → (x ▫ z)
+-- _🝖_ {_} {_} ⦃ trans ⦄ a b = trans([∧]-intro a b)
 
 -- TODO: Maybe try to make transitivity proofs more like regular math syntax-wise:
 -- _ _[Trans:_with_] : (x ▫ y) → ((y ▫ z) : T) → T → (Transitivity _▫_) → (x ▫ z) -- TODO: T and (y ▫ z) is reversed?
@@ -142,15 +142,15 @@ open Asymmetry {{...}} public
 module Theorems where
   open import Logic.Propositional.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
 
-  [asymmetry]-to-irreflexivity : ∀{T}{_<_} → {{_ : Asymmetry{T}(_<_)}} → Irreflexivity{T}(_<_)
-  irreflexivity{{[asymmetry]-to-irreflexivity}} = [→]-redundancy(asymmetry)
+  [asymmetry]-to-irreflexivity : ∀{T}{_<_} → ⦃ _ : Asymmetry{T}(_<_) ⦄ → Irreflexivity{T}(_<_)
+  irreflexivity ⦃ [asymmetry]-to-irreflexivity ⦄ = [→]-redundancy(asymmetry)
     -- ∀x∀y. (x<y) → ¬(y<x)
     -- ∀x. (x<x) → ¬(x<x)
     -- ∀x. (x<x) → (x<x) → ⊥
     -- ∀x. (x<x) → ⊥
 
-  [irreflexivity,transitivity]-to-asymmetry : ∀{T}{_<_} → {{_ : Irreflexivity{T}(_<_)}} → {{_ : Transitivity{T}(_<_)}} → Asymmetry{T}(_<_)
-  asymmetry{{[irreflexivity,transitivity]-to-asymmetry}} = Tuple.curry(irreflexivity ∘ (Tuple.uncurry transitivity))
+  [irreflexivity,transitivity]-to-asymmetry : ∀{T}{_<_} → ⦃ _ : Irreflexivity{T}(_<_) ⦄ → ⦃ _ : Transitivity{T}(_<_) ⦄ → Asymmetry{T}(_<_)
+  asymmetry ⦃ [irreflexivity,transitivity]-to-asymmetry ⦄ = Tuple.curry(irreflexivity ∘ (Tuple.uncurry transitivity))
     -- ∀x. ¬(x<x)
     -- ∀x. (x<x) → ⊥
     --   ∀x∀y∀z. (x<y)∧(y<z) → (x<z)
@@ -161,5 +161,5 @@ module Theorems where
     -- ∀x∀y. (x<y) → ¬(y<x)
 
   -- Definition of a total binary operation
-  [total]-to-reflexivity : ∀{T}{_<_} → {{_ : Total{T}(_<_)}} → Reflexivity{T}(_<_)
-  reflexivity{{[total]-to-reflexivity}} = [∨]-elim id id total
+  [total]-to-reflexivity : ∀{T}{_<_} → ⦃ _ : Total{T}(_<_) ⦄ → Reflexivity{T}(_<_)
+  reflexivity ⦃ [total]-to-reflexivity ⦄ = [∨]-elim id id total

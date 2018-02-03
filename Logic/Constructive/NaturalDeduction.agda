@@ -56,7 +56,7 @@ open Propositional ⦃ ... ⦄ public
 -- Theory of constructive predicate/(first-order) logic expressed using natural deduction rules
 record Predicate {ℓₗ ℓₒ} (Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}) : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
   field
-    ⦃ propositional ⦄ : Propositional{ℓₗ Lvl.⊔ ℓₒ}(Stmt)
+   ⦃ propositional ⦄ : Propositional{ℓₗ Lvl.⊔ ℓₒ}(Stmt)
 
   field
     ∀ₗ : ∀{X : Type{ℓₒ}} → (X → Stmt) → Stmt

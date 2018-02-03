@@ -24,10 +24,10 @@ module _ {ℓ₂}{T : Type{ℓ₂}} where
   ∅ : BoolSet(T)
   ∅ = record{inclusion-fn = const(𝐹)}
 
-  singleton : {{_ : Equals(T)}} → T → BoolSet(T)
+  singleton : ⦃ _ : Equals(T) ⦄ → T → BoolSet(T)
   singleton(t) = record{inclusion-fn = (x ↦ x == t)}
 
-  enumeration : {{_ : Equals(T)}} → List.List(T) → BoolSet(T)
+  enumeration : ⦃ _ : Equals(T) ⦄ → List.List(T) → BoolSet(T)
   enumeration(l) = record{inclusion-fn = (x ↦ (List.any(t ↦ x == t)(l)))}
 
   _∈_ : T → BoolSet(T) → Stmt

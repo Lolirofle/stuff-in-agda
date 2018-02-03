@@ -251,7 +251,7 @@ instance
 
 -- Also called "The Division Algorithm" or "Euclides Algorithm"
 -- TODO: Prove
-postulate [/]-uniqueness : ∀{a b} → {{_ : b ≢ 0}} → ∃!{ℕ ⨯ ℕ}(\{(q , r) → ((a ≡ (b ⋅ q) + r)∧(0 ≤ r)∧(r < b))})
+postulate [/]-uniqueness : ∀{a b} → ⦃ _ : b ≢ 0 ⦄ → ∃!{ℕ ⨯ ℕ}(\{(q , r) → ((a ≡ (b ⋅ q) + r)∧(0 ≤ r)∧(r < b))})
 
 instance
   [+]-cancellationᵣ : Cancellationᵣ(_+_)

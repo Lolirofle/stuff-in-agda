@@ -21,7 +21,7 @@ module Weak {T : Type} (_≤_ : T → T → Stmt{ℓₒ Lvl.⊔ ℓₒₗ}) wher
       inf : T
       ⦃ lowerBound ⦄ : LowerBound(P)(inf)
       greatestLowerbound : ∀{l} → LowerBound(P)(l) → (l ≤ inf)
-  open Infinum {{...}} using (inf) public
+  open Infinum ⦃ ... ⦄ using (inf) public
 
   -- UpperBounds(P) represents the set {x. P(x)}
   UpperBounds : (P : T → Stmt{ℓₒ Lvl.⊔ ℓₒₗ}) → Type
@@ -33,4 +33,4 @@ module Weak {T : Type} (_≤_ : T → T → Stmt{ℓₒ Lvl.⊔ ℓₒₗ}) wher
       sup : T
       ⦃ upperBound ⦄ : UpperBound(P)(sup)
       leastUpperbound : ∀{u} → UpperBound(P)(u) → (sup ≤ u)
-  open Supremum {{...}} using (sup) public
+  open Supremum ⦃ ... ⦄ using (sup) public

@@ -42,7 +42,7 @@ module _ where
   record SatisfactionRelation (Obj : Set(ℓ) → Set(ℓ)) : Set(Lvl.𝐒(ℓ)) where
     field
       _⊧_ : Model{ℓ} → Obj(Formula) → Set(ℓ)
-  open SatisfactionRelation{{...}} public
+  open SatisfactionRelation ⦃ ... ⦄ public
 
   instance
     -- Satisfaction for a single formula

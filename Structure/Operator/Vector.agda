@@ -21,14 +21,14 @@ record VectorSpace (V S : Type) ⦃ lang : Language(V)(S) ⦄ : Stmt where
   open Language(lang)
 
   field
-    ⦃ scalarField ⦄        : Field(_+ₛ_)(_⋅ₛ_)
-    ⦃ vectorAbelianGroup ⦄ : AbelianGroup(_+ᵥ_)
+   ⦃ scalarField ⦄       : Field(_+ₛ_)(_⋅ₛ_)
+   ⦃ vectorAbelianGroup ⦄ : AbelianGroup(_+ᵥ_)
 
-  open AbelianGroup {{...}}
-  open Field {{...}}
-  open Group {{...}}
-  open Monoid {{...}}
-  open MultGroup {{...}}
+  open AbelianGroup ⦃ ... ⦄ 
+  open Field ⦃ ... ⦄ 
+  open Group ⦃ ... ⦄ 
+  open Monoid ⦃ ... ⦄ 
+  open MultGroup ⦃ ... ⦄ 
 
   -- Scalar zero
   𝟎ₛ : S

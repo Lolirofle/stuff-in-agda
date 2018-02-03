@@ -9,13 +9,13 @@ record From-ℕsubset {ℓ} (T : Set(ℓ)) : Set(Lvl.𝐒(ℓ)) where
   field
     restriction  : ℕ → Set(ℓ)
     from-ℕsubset : (n : ℕ) → ⦃ _ : restriction(n) ⦄ → T
-open From-ℕsubset {{...}} public using (from-ℕsubset)
+open From-ℕsubset ⦃ ... ⦄ public using (from-ℕsubset)
 {-# BUILTIN FROMNAT from-ℕsubset #-}
 
 record From-ℕ {ℓ} (T : Set(ℓ)) : Set(ℓ) where
   field
     from-ℕ : ℕ → T
-open From-ℕ {{...}} public using (from-ℕ)
+open From-ℕ ⦃ ... ⦄ public using (from-ℕ)
 
 instance
   From-ℕsubset-from-From-ℕ : ∀{ℓ}{T} → ⦃ _ : From-ℕ{ℓ}(T) ⦄ → From-ℕsubset{ℓ}(T)

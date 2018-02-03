@@ -81,7 +81,7 @@ divides-elim {_}{y} (Div𝐒{x} (y-div-x)) with divides-elim(y-div-x)
 {-
 Div𝐏 : ∀{x y : ℕ} → (y divides (y + x)) → (y divides x)
 Div𝐏 {x}{y} (proof) with divides-elim(proof)
-...             | [∃]-intro (𝟎)    ⦃ y0≡yx ⦄  = divides-intro(y0≡yx) TODO
+...             | [∃]-intro (𝟎)   ⦃ y0≡yx ⦄ = divides-intro(y0≡yx) TODO
 ...             | [∃]-intro (𝐒(n)) ⦃ ySn≡yx ⦄ = divides-intro([∃]-intro (n) ⦃ [+]-injectivityᵣ {y} ySn≡yx ⦄)
 -}
 
@@ -90,12 +90,12 @@ test ()
 -}
 instance
   divides-transitivity : Transitivity (_divides_)
-  transitivity{{divides-transitivity}} {a}{b}{c} (a-div-b) (b-div-c) with (divides-elim (a-div-b) , divides-elim (b-div-c))
+  transitivity ⦃ divides-transitivity ⦄ {a}{b}{c} (a-div-b) (b-div-c) with (divides-elim (a-div-b) , divides-elim (b-div-c))
   ...                                                     | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ b⋅n₂≡c ⦄)) =
     (divides-intro
       ([∃]-intro
         (n₁ ⋅ n₂)
-        ⦃
+       ⦃
           (symmetry ([⋅]-associativity {a}{n₁}{n₂}))
           🝖 ([≡]-with(expr ↦ expr ⋅ n₂) (a⋅n₁≡b))
           🝖 (b⋅n₂≡c)
@@ -109,7 +109,7 @@ divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , di
   (divides-intro
     ([∃]-intro
       (n₁ + n₂)
-      ⦃
+     ⦃
         ([⋅][+]-distributivityₗ {a}{n₁}{n₂})
         🝖 ([≡]-with-op(_+_)
           (a⋅n₁≡b)
@@ -125,7 +125,7 @@ divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , 
   (divides-intro
     ([∃]-intro
       (n₁ ⋅ (a ⋅ n₂))
-      ⦃
+     ⦃
         (symmetry ([⋅]-associativity {a}{n₁}{a ⋅ n₂}))
         🝖 ([≡]-with-op(_⋅_)
           (a⋅n₁≡b)
@@ -137,7 +137,7 @@ divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , 
 
 -- instance
 --   divides-with-fn : ∀{a b} → (a divides b) → ∀{f : ℕ → ℕ} → {_ : ∀{x y : ℕ} → ∃{ℕ → ℕ}(\g → f(x ⋅ y) ≡ f(x) ⋅ g(y))} → ((f(a)) divides (f(b)))
---   divides-with-fn {a}{b} (a-div-b) {f} {{f-prop}}
+--   divides-with-fn {a}{b} (a-div-b) {f} ⦃ f-prop ⦄ 
 
 -- instance
 --   divides-[≡] : ∀{a b} → (a divides b) → (b divides a) → (a ≡ b)

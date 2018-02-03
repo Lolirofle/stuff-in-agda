@@ -21,15 +21,15 @@ data _≅_ {X Y : Type} {f : X → Y} (x₁ : X) (x₂ : X) : Stmt where
 
 instance
   [≅]-reflexivity : ∀{X Y}{f} → Reflexivity {X} (_≅_ {X}{Y}{f})
-  reflexivity{{[≅]-reflexivity}} = [≅]-intro [≡]-intro
+  reflexivity ⦃ [≅]-reflexivity ⦄ = [≅]-intro [≡]-intro
 
 instance
   [≅]-symmetry : ∀{X Y}{f} → Symmetry {X} (_≅_ {X}{Y}{f})
-  symmetry{{[≅]-symmetry}} = ([≅]-intro ∘ symmetry ∘ [≅]-elim)
+  symmetry ⦃ [≅]-symmetry ⦄ = ([≅]-intro ∘ symmetry ∘ [≅]-elim)
 
 instance
   [≅]-transitivity : ∀{X Y}{f} → Transitivity {X} (_≅_ {X}{Y}{f})
-  transitivity{{[≅]-transitivity}} (eq1) (eq2) = [≅]-intro(([≅]-elim eq1) 🝖 ([≅]-elim eq2))
+  transitivity ⦃ [≅]-transitivity ⦄ (eq1) (eq2) = [≅]-intro(([≅]-elim eq1) 🝖 ([≅]-elim eq2))
 
 instance
   [≅]-equivalence : ∀{X Y}{f} → Equivalence {X} (_≅_ {X}{Y}{f})

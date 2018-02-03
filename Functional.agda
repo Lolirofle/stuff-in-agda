@@ -86,9 +86,9 @@ _〔_〕_ : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Ty
 a 〔 op 〕 b = op a b
 
 -- Infers/resolves/(searches for) an instance/proof of the specified type/statement
-resolve-instance : ∀{ℓ}(T : Type{ℓ}) {{_ : T}} → T
-resolve-instance (_) {{x}} = x
+resolve-instance : ∀{ℓ}(T : Type{ℓ}) ⦃ _ : T ⦄ → T
+resolve-instance (_) ⦃ x ⦄ = x
 
 -- Infers/resolves/(searches for) an instance/proof of an inferred type/statement
-infer : ∀{ℓ}{T : Type{ℓ}} {{_ : T}} → T
-infer {{x}} = x
+infer : ∀{ℓ}{T : Type{ℓ}} ⦃ _ : T ⦄ → T
+infer ⦃ x ⦄ = x

@@ -36,9 +36,9 @@ module _ {ℓₒ}{ℓₘ} where
       id  : ∀{x : Obj} → (M x x)
 
     field
-      ⦃ .identityₗ     ⦄ : ∀{x y : Obj}{f : M x y} → (id ∘ f ≡ f)
-      ⦃ .identityᵣ     ⦄ : ∀{x y : Obj}{f : M x y} → (f ∘ id ≡ f)
-      ⦃ .associativity ⦄ : ∀{x y z W : Obj}{f : M y x}{g : M z y}{h : M W z} → (f ∘ (g ∘ h) ≡ (f ∘ g) ∘ h)
+     ⦃ .identityₗ     ⦄ : ∀{x y : Obj}{f : M x y} → (id ∘ f ≡ f)
+     ⦃ .identityᵣ     ⦄ : ∀{x y : Obj}{f : M x y} → (f ∘ id ≡ f)
+     ⦃ .associativity ⦄ : ∀{x y z W : Obj}{f : M y x}{g : M z y}{h : M W z} → (f ∘ (g ∘ h) ≡ (f ∘ g) ∘ h)
 
     -- A morphism is a isomorphism when there is an inverse of the morphism.
     Isomorphism : ∀{x y} → (M x y) → Stmt
@@ -115,8 +115,8 @@ module _ {ℓₒ₁}{ℓₘ₁} {ℓₒ₂}{ℓₘ₂} where
       map : ∀{x y} → (M₁ x y) → (M₂(F x)(F y))
 
     field
-      ⦃ .[∘]-preserving ⦄ : ∀{x y z}{f : M₁ y z}{g : M₁ x y} → (map(f ∘₁ g) ≡ map(f) ∘₂ map(g))
-      ⦃ .id-preserving  ⦄ : ∀{x} → (map(id₁{x}) ≡ id₂)
+     ⦃ .[∘]-preserving ⦄ : ∀{x y z}{f : M₁ y z}{g : M₁ x y} → (map(f ∘₁ g) ≡ map(f) ∘₂ map(g))
+     ⦃ .id-preserving  ⦄ : ∀{x} → (map(id₁{x}) ≡ id₂)
 
     -- Morphs/Transforms objects from category 1 to category 2
     functor = F
