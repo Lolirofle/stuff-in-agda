@@ -5,18 +5,14 @@ import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
+open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}
 
-record Monoid {T : Type} (_▫_ : T → T → T) : Stmt where
-  field
-    id : T
-  field
-    associativity  : Associativity    (_▫_)
-    identityₗ       : Identityₗ        (_▫_) id
-    identityᵣ       : Identityᵣ        (_▫_) id
-
+-- A type and a binary operator using this type is a group when:
+-- • It is a monoid.
+-- • The operator have an inverse in both directions.
 record Group {T : Type} (_▫_ : T → T → T) : Stmt where
   open Monoid {{...}}
 

@@ -56,7 +56,7 @@ instance
   [≡]-transitivity : ∀{T} → Transitivity {T} (_≡_ {T})
   transitivity{{[≡]-transitivity}} [≡]-intro [≡]-intro = [≡]-intro
 
--- Applies a function to each side of the equality (TODO: Maybe rename to [≡]-apply?)
+-- Applies a function to each side of the equality (TODO: Maybe rename to [≡]-with?)
 [≡]-with-[_] : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
 [≡]-with-[_] f [≡]-intro = [≡]-intro
 {-

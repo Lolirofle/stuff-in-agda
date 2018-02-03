@@ -6,6 +6,7 @@ open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
 open import Structure.Operator.Field{ℓ₁}{ℓ₂}
 open import Structure.Operator.Group{ℓ₁}{ℓ₂}
+open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}
 

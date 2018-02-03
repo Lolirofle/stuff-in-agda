@@ -5,6 +5,7 @@ open import Functional
 open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
 open import Logic.Predicate{ℓₗ}{ℓₒ}
 open import Structure.Operator.Field{ℓₗ}{ℓₒ}
+open import Structure.Operator.Monoid{ℓₗ}{ℓₒ}
 open import Structure.Operator.Group{ℓₗ}{ℓₒ}
 import      Structure.Relator.Ordering
 open        Structure.Relator.Ordering{ℓₗ}{ℓₒ}

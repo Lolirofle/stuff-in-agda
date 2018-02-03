@@ -8,7 +8,6 @@ import Boolean
 import Boolean.Theorems
 import Boolean.Operators
 import Cardinal
-import Category.Meta
 import Data
 import Data.Tuple.List
 import FFI.IO   as FFI
@@ -82,6 +81,7 @@ import Sets.IZF
 import Sets.ListSet
 import Sets.TypeSet
 import Structure.Arithmetic
+import Structure.Category
 import Structure.Function
 import Structure.Function.Domain
 import Structure.Function.Linear
@@ -89,6 +89,7 @@ import Structure.Function.Ordering
 import Structure.LinearAlgebra
 import Structure.Operator.Field
 import Structure.Operator.Group
+import Structure.Operator.Monoid
 import Structure.Operator.Properties
 import Structure.Operator.SetAlgebra
 import Structure.Operator.Vector
