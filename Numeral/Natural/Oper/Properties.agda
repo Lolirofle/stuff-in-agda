@@ -22,7 +22,7 @@ instance
     base = [≡]-intro
 
     next : ∀(i : ℕ) → ((0 + i) ≡ i) → ((0 + 𝐒(i)) ≡ 𝐒(i))
-    next _ = [≡]-with-[ 𝐒 ]
+    next _ = [≡]-with(𝐒)
 {-# REWRITE [+]-identityₗ #-}
 
 instance
@@ -32,7 +32,7 @@ instance
     base = [≡]-intro
 
     next : ∀(i : ℕ) → ((i + 0) ≡ i) → ((𝐒(i) + 0) ≡ 𝐒(i))
-    next _ = [≡]-with-[ 𝐒 ]
+    next _ = [≡]-with(𝐒)
 
 instance
   [+]-associativity : Associativity (_+_)
@@ -41,7 +41,7 @@ instance
     base _ _ = [≡]-intro
 
     next : ∀(x y i : ℕ) → ((x + y) + i) ≡ (x + (y + i)) → ((x + y) + 𝐒(i)) ≡ (x + (y + 𝐒(i)))
-    next _ _ _ = [≡]-with-[ 𝐒 ]
+    next _ _ _ = [≡]-with(𝐒)
 {-# REWRITE [+]-associativity #-} -- TODO: I thought that rewriting only worked from left to right and that this would get the compiler stuck? Maybe not?
 
 [+1]-commutativity : ∀{x y : ℕ} → (𝐒(x) + y) ≡ (x + 𝐒(y))
@@ -50,7 +50,7 @@ instance
   base _ = [≡]-intro
 
   next : ∀(x i : ℕ) → (𝐒(x) + i) ≡ (x + 𝐒(i)) → (𝐒(x) + 𝐒(i)) ≡ (x + 𝐒(𝐒(i)))
-  next(x)(_) = [≡]-with-[ 𝐒 ]
+  next(x)(_) = [≡]-with(𝐒)
 {-# REWRITE [+1]-commutativity #-}
 
 instance
@@ -71,10 +71,10 @@ instance
 
     next : ∀(x i : ℕ) → ((x + i) ≡ (i + x)) → ((x + 𝐒(i)) ≡ (𝐒(i) + x))
     next (x) (i) (eq) =
-      ([≡]-with-[ 𝐒 ] eq)
+      ([≡]-with(𝐒) eq)
       🝖 (symmetry([+1]-commutativity {i} {x}))
     --   ∀x∀i. x+i = i+x //eq
-    --   ∀x∀i. 𝐒(x+i) = 𝐒(i+x) //[≡]-with-[ 𝐒 ](..)
+    --   ∀x∀i. 𝐒(x+i) = 𝐒(i+x) //[≡]-with(𝐒)(..)
     --   ∀x∀i. x+𝐒(i) = i+𝐒(x) //x + 𝐒(y) = 𝐒(x + y) (Definition of _+_) [1]
 
     --   ∀x∀i. 𝐒(i)+x = i+𝐒(x) //[+1]-commutativity
@@ -96,7 +96,7 @@ instance
     base = reflexivity
 
     next : ∀(x : ℕ) → ((0 ⋅ x) ≡ 0) → ((0 ⋅ 𝐒(x)) ≡ 0)
-    next(_)(eq) = [≡]-with-[(x ↦ 0 + x)] eq
+    next(_)(eq) = [≡]-with(x ↦ 0 + x) eq
 {-# REWRITE [⋅]-absorberₗ #-}
 
 instance
@@ -112,7 +112,7 @@ instance
     next : ∀(i : ℕ) → ((1 ⋅ i) ≡ i) → ((1 ⋅ 𝐒(i)) ≡ 𝐒(i))
     next(i)(eq) =
       ([+]-commutativity {1} {1 ⋅ i})
-      🝖 ([≡]-with-[ 𝐒 ] eq)
+      🝖 ([≡]-with(𝐒) eq)
   --   1 + 1⋅i = 1⋅i + 1 //[+]-commutativity
 
   --   1⋅i = i //eq
@@ -133,13 +133,13 @@ instance
     base _ _ = [≡]-intro
 
     next : ∀(x y z : ℕ) → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z)) → ((x + y) ⋅ 𝐒(z)) ≡ ((x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)))
-    next(x)(y)(z) (proof) = ([≡]-with-[(expr ↦ ((x + y) + expr))] proof) 🝖 (swap-stuff-around{x}{y}{x ⋅ z}{y ⋅ z}) where
+    next(x)(y)(z) (proof) = ([≡]-with(expr ↦ ((x + y) + expr)) proof) 🝖 (swap-stuff-around{x}{y}{x ⋅ z}{y ⋅ z}) where
       swap-stuff-around : ∀{a b c d} → (a + b) + (c + d) ≡ (a + c) + (b + d)
       swap-stuff-around {a}{b}{c}{d} =
         [+]-associativity{a}{b}{c + d}
-        🝖 ([≡]-with-[(expr ↦ a + expr)] ([+]-commutativity{b}{c + d}))
-        🝖 ([≡]-with-[(expr ↦ a + expr)] ([+]-associativity{c}{d}{b}))
-        🝖 ([≡]-with-[(expr ↦ a + (c + expr))] ([+]-commutativity{d}{b}))
+        🝖 ([≡]-with(expr ↦ a + expr) ([+]-commutativity{b}{c + d}))
+        🝖 ([≡]-with(expr ↦ a + expr) ([+]-associativity{c}{d}{b}))
+        🝖 ([≡]-with(expr ↦ a + (c + expr)) ([+]-commutativity{d}{b}))
         🝖 (symmetry([+]-associativity{a}{c}{b + d}))
     -- (x+y)⋅𝐒(z)
     -- = (x+y) + (x+y)⋅z //Definition: (⋅)
@@ -155,7 +155,7 @@ instance
   [⋅]-with-[𝐒]ₗ : ∀{x y} → 𝐒(x) ⋅ y ≡ (x ⋅ y) + y
   [⋅]-with-[𝐒]ₗ {x}{y} =
     ([⋅][+]-distributivityᵣ{x}{1}{y})
-    🝖 ([≡]-with-[(expr ↦ (x ⋅ y) + expr)] ([⋅]-identityₗ {y}))
+    🝖 ([≡]-with(expr ↦ (x ⋅ y) + expr) ([⋅]-identityₗ {y}))
   -- 𝐒(x)⋅y
   -- = (x+1)⋅y
   -- = x⋅y + 1⋅y
@@ -182,7 +182,7 @@ instance postulate [⋅]-commutativity : Commutativity (_⋅_)
 instance
   [𝐒]-injectivity : Injective(𝐒)
   [𝐒]-injectivity {0}    ([≡]-intro) = [≡]-intro
-  [𝐒]-injectivity {𝐒(n)} (𝐒x≡𝐒y)     = [≡]-with-[ 𝐏 ] 𝐒x≡𝐒y
+  [𝐒]-injectivity {𝐒(n)} (𝐒x≡𝐒y)     = [≡]-with(𝐏) 𝐒x≡𝐒y
 
 instance
   [𝐒]-not-0 : ∀{n} → (𝐒(n) ≢ 𝟎)
@@ -195,7 +195,7 @@ instance
 instance
   [+]-injectivityₗ : ∀{a} → Injective (x ↦ x + a)
   [+]-injectivityₗ {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
-  [+]-injectivityₗ {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]-injectivityₗ {n} ([≡]-with-[ 𝐏 ] x₁+𝐒n≡x₂+𝐒n)
+  [+]-injectivityₗ {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]-injectivityₗ {n} ([≡]-with(𝐏) x₁+𝐒n≡x₂+𝐒n)
 
 -- TODO: Rename and generalize this (How?)
 commuteBothTemp : ∀{a₁ a₂ b₁ b₂} → (a₁ + a₂ ≡ b₁ + b₂) → (a₂ + a₁ ≡ b₂ + b₁)
@@ -209,12 +209,12 @@ instance
   [+]-injectivityᵣ {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = commuteBothTemp {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
   [+]-injectivityᵣ {𝐒(n)} {x₁} {x₂} (𝐒n+x₁≡𝐒n+x₂) =
     [+]-injectivityᵣ {n} (
-      commuteBothTemp {x₁} {n} {x₂} {n} ([≡]-with-[ 𝐏 ] (commuteBothTemp {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
+      commuteBothTemp {x₁} {n} {x₂} {n} ([≡]-with(𝐏) (commuteBothTemp {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
     )
 
 [+]-sum-is-0ₗ : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)
 [+]-sum-is-0ₗ {a}{0}    a+0≡0 = a+0≡0
-[+]-sum-is-0ₗ {a}{𝐒(n)} a+𝐒n≡0 = [+]-sum-is-0ₗ {a} {n} ([≡]-with-[ 𝐏 ] a+𝐒n≡0)
+[+]-sum-is-0ₗ {a}{𝐒(n)} a+𝐒n≡0 = [+]-sum-is-0ₗ {a} {n} ([≡]-with(𝐏) a+𝐒n≡0)
 
 [+]-sum-is-0ᵣ : ∀{a b} → (a + b ≡ 0) → (b ≡ 0)
 [+]-sum-is-0ᵣ {b}{a} (b+a≡0) =
@@ -256,7 +256,7 @@ postulate [/]-uniqueness : ∀{a b} → {{_ : b ≢ 0}} → ∃!{ℕ ⨯ ℕ}(\{
 instance
   [+]-cancellationᵣ : Cancellationᵣ(_+_)
   [+]-cancellationᵣ {𝟎}    (rel) = rel
-  [+]-cancellationᵣ {𝐒(x)} (rel) = [+]-cancellationᵣ {x} ([≡]-with-[ 𝐏 ] rel)
+  [+]-cancellationᵣ {𝐒(x)} (rel) = [+]-cancellationᵣ {x} ([≡]-with(𝐏) rel)
 
 instance
   [+]-cancellationₗ : Cancellationₗ(_+_)
@@ -267,7 +267,7 @@ instance
 
   [+]-cancellationₗ {𝐒(x)}{a}{b} (rel) =
     ([+]-cancellationₗ {x}{a}{b}
-      ([≡]-with-[ 𝐏 ](
+      ([≡]-with(𝐏)(
         (symmetry ([+1]-commutativity {x}{a}))
         🝖 (rel)
         🝖 ([+1]-commutativity {x}{b})
@@ -293,7 +293,7 @@ instance
   [𝐒]-of-[−₀] {x}   {𝟎} (proof) = proof
   [𝐒]-of-[−₀] {𝟎}   {𝐒(y)} {𝟎} ()
   [𝐒]-of-[−₀] {𝟎}   {𝐒(y)} {𝐒(z)} ([≡]-intro) = [≡]-intro
-  -- = PROVE where -- ([≡]-with-[ 𝐒 ] proof) 🝖 (symmetry ([𝐒]-of-[−₀] {𝐒(𝟎)} {𝐒(y)} (proof)))
+  -- = PROVE where -- ([≡]-with(𝐒) proof) 🝖 (symmetry ([𝐒]-of-[−₀] {𝐒(𝟎)} {𝐒(y)} (proof)))
     -- postulate PROVE : ∀{y z} → (𝐒(𝟎 −₀ 𝐒(y)) ≡ z) → (𝐒(𝟎) −₀ 𝐒(y) ≡ z)
   -- 𝐒(𝟎 −₀ 𝐒(y)) ≡ 𝐒(z)
   -- ⇔ 𝐒(𝟎) ≡ 𝐒(z)
@@ -316,7 +316,7 @@ instance
   [+][−₀]-nullify{𝟎}   {𝟎}    = [≡]-intro
   [+][−₀]-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([+][−₀]-nullify{x}{y})
   [+][−₀]-nullify{𝐒(x)}{y}    = z where postulate z : ∀{z} → z
-  -- [+][−₀]-nullify{𝐒(x)}{y}    = [𝐒]-of-[−₀] {x + y}{y}{𝐒(x)} ([≡]-with-[ 𝐒 ] ([+][−₀]-nullify{x}{y}))
+  -- [+][−₀]-nullify{𝐒(x)}{y}    = [𝐒]-of-[−₀] {x + y}{y}{𝐒(x)} ([≡]-with(𝐒) ([+][−₀]-nullify{x}{y}))
     -- (𝐒(x) + y) −₀ y
     -- (x + 𝐒(y)) −₀ y
     -- 𝐒(x + y) −₀ y

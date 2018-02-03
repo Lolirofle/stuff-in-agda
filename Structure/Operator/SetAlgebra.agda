@@ -37,15 +37,15 @@ record Fundamentals (S : Type) : Stmt where
   [∪][∩]-distributivityᵣ{a}{b}{c} =
     [∪]-commutativity
     🝖 [∪][∩]-distributivityₗ
-    🝖 ([≡]-with-[ expr ↦ (expr ∩ (c ∪ b)) ] [∪]-commutativity)
-    🝖 ([≡]-with-[ expr ↦ ((a ∪ c) ∩ expr) ] [∪]-commutativity)
+    🝖 ([≡]-with(expr ↦ (expr ∩ (c ∪ b))) [∪]-commutativity)
+    🝖 ([≡]-with(expr ↦ ((a ∪ c) ∩ expr)) [∪]-commutativity)
 
   [∩][∪]-distributivityᵣ : Distributivityᵣ{S}(_∩_)(_∪_)
   [∩][∪]-distributivityᵣ{a}{b}{c} =
     [∩]-commutativity
     🝖 [∩][∪]-distributivityₗ
-    🝖 ([≡]-with-[ expr ↦ (expr ∪ (c ∩ b)) ] [∩]-commutativity)
-    🝖 ([≡]-with-[ expr ↦ ((a ∩ c) ∪ expr) ] [∩]-commutativity)
+    🝖 ([≡]-with(expr ↦ (expr ∪ (c ∩ b))) [∩]-commutativity)
+    🝖 ([≡]-with(expr ↦ ((a ∩ c) ∪ expr)) [∩]-commutativity)
 
   [∪]-identityᵣ : Identityᵣ{S}(_∪_)(∅)
   [∪]-identityᵣ =
@@ -88,33 +88,33 @@ record Complement (S : Type) : Stmt where
   [∪]-idempotence{s} =
     ([≡]-intro)
     🝖 (symmetry [∩]-identityᵣ)
-    🝖 ([≡]-with-[ expr ↦ ((s ∪ s) ∩ expr) ] (symmetry [∪]-with-[∁]))
+    🝖 ([≡]-with(expr ↦ ((s ∪ s) ∩ expr)) (symmetry [∪]-with-[∁]))
     🝖 (symmetry [∪][∩]-distributivityₗ)
-    🝖 ([≡]-with-[ expr ↦ (s ∪ expr) ] [∩]-with-[∁])
+    🝖 ([≡]-with(expr ↦ (s ∪ expr)) [∩]-with-[∁])
     🝖 ([∪]-identityᵣ)
 
   [∩]-idempotence : ∀{s : S} → (s ∩ s) ≡ s
   [∩]-idempotence{s} =
     ([≡]-intro)
     🝖 (symmetry [∪]-identityᵣ)
-    🝖 ([≡]-with-[ expr ↦ ((s ∩ s) ∪ expr) ] (symmetry [∩]-with-[∁]))
+    🝖 ([≡]-with(expr ↦ ((s ∩ s) ∪ expr)) (symmetry [∩]-with-[∁]))
     🝖 (symmetry [∩][∪]-distributivityₗ)
-    🝖 ([≡]-with-[ expr ↦ (s ∩ expr) ] [∪]-with-[∁])
+    🝖 ([≡]-with(expr ↦ (s ∩ expr)) [∪]-with-[∁])
     🝖 ([∩]-identityᵣ)
 
   [∪]-domination : ∀{s : S} → (s ∪ 𝐔) ≡ 𝐔
   [∪]-domination{s} =
-    ([≡]-with-[(expr ↦ s ∪ expr)] (symmetry [∪]-with-[∁]))
+    ([≡]-with(expr ↦ s ∪ expr) (symmetry [∪]-with-[∁]))
     🝖 (symmetry [∪]-associativity)
-    🝖 ([≡]-with-[(expr ↦ expr ∪ ∁(s))] [∪]-idempotence)
+    🝖 ([≡]-with(expr ↦ expr ∪ ∁(s)) [∪]-idempotence)
     🝖 ([∪]-with-[∁])
     -- s∪𝐔 = s∪(s ∪ ∁(s)) = (s∪s) ∪ ∁(s) = s ∪ ∁(s) = 𝐔
 
   [∩]-domination : ∀{s : S} → (s ∩ ∅) ≡ ∅
   [∩]-domination{s} =
-    ([≡]-with-[(expr ↦ s ∩ expr)] (symmetry [∩]-with-[∁]))
+    ([≡]-with(expr ↦ s ∩ expr) (symmetry [∩]-with-[∁]))
     🝖 (symmetry [∩]-associativity)
-    🝖 ([≡]-with-[(expr ↦ expr ∩ ∁(s))] [∩]-idempotence)
+    🝖 ([≡]-with(expr ↦ expr ∩ ∁(s)) [∩]-idempotence)
     🝖 ([∩]-with-[∁])
     -- s∩∅ = s∩(s ∩ ∁(s)) = (s∩s) ∩ ∁(s) = s ∩ ∁(s) = ∅
 

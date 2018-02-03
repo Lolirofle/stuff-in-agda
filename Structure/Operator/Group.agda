@@ -26,33 +26,33 @@ record Group {T : Type} (_▫_ : T → T → T) : Stmt where
   commutationₗ : ∀{x y} → (x ▫ y ≡ y ▫ x) ← ((x ▫ y) ▫ inv(x) ≡ y)
   commutationₗ {x}{y} (comm) =
     symmetry(
-      ([≡]-with-[(_▫ x)]
+      ([≡]-with(_▫ x)
         (symmetry comm)
       )
       🝖 (associativity)
-      🝖 ([≡]-with-[((x ▫ y) ▫_)] (inverseₗ))
+      🝖 ([≡]-with((x ▫ y) ▫_)) (inverseₗ)
       🝖 (identityᵣ)
     )
   -- (x▫y)▫inv(x) = y //comm
   -- y = (x▫y)▫inv(x) //[≡]-symmetry
   -- y▫x
-  -- = ((x▫y)▫inv(x))▫x //[≡]-with-[(expr ↦ expr ▫ x)] (..)
+  -- = ((x▫y)▫inv(x))▫x //[≡]-with(expr ↦ expr ▫ x) (..)
   -- = (x▫y)▫(inv(x)▫x) //Group.associativity
-  -- = (x▫y)▫id //[≡]-with-[ _ ] Group.inverseₗ
+  -- = (x▫y)▫id //[≡]-with(_) Group.inverseₗ
   -- = x▫y //Group.identityᵣ
   -- x▫y = y▫x //[≡]-symmetry
 
   commutationᵣ : ∀{x y} → (x ▫ y ≡ y ▫ x) → ((x ▫ y) ▫ inv(x) ≡ y)
   commutationᵣ {x}{y} (comm) =
-    ([≡]-with-[(_▫ inv(x))] comm)
+    ([≡]-with(_▫ inv(x)) comm)
     🝖 (associativity)
-    🝖 ([≡]-with-[(y ▫_)] (inverseᵣ))
+    🝖 ([≡]-with(y ▫_) (inverseᵣ))
     🝖 (identityᵣ)
   -- x▫y = y▫x //comm
   -- (x▫y)▫inv(x)
-  -- = (y▫x)▫inv(x) //[≡]-with-[(expr ↦ expr ▫ inv(x))] (..)
+  -- = (y▫x)▫inv(x) //[≡]-with(expr ↦ expr ▫ inv(x)) (..)
   -- = y▫(x▫inv(x)) //Group.associativity
-  -- = y▫id //[≡]-with-[(expr ↦ y ▫ expr)] Group.inverseᵣ
+  -- = y▫id //[≡]-with(expr ↦ y ▫ expr) Group.inverseᵣ
   -- = y //Group.identityᵣ
 
 -- Multiplicative Group

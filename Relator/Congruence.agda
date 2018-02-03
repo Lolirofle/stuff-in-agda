@@ -44,6 +44,6 @@ instance
 
 -- Applies functions to each side of the congruence (TODO: Probably an invalid operation)
 -- [≅]-with-[_] : ∀{X₁ X₂ Y} → (F : X₁ → X₂) → ∀{x₁ : X₁}{x₂ : X₁}{f} → (x₁ ≅ x₂) → (F(x₁) ≅ F(x₂))
--- [≅]-with-[_] F {_}{_}{f} = [≅]-intro ∘ ([≡]-with-[_] F) ∘ [≅]-elim
+-- [≅]-with-[_] F {_}{_}{f} = [≅]-intro ∘ ([≡]-with(_) F) ∘ [≅]-elim
 
 -- ∀{x₁ x₂ : X} → (f(x₁) ≡ f(x₂)) → (x₁ ≡ x₂)

@@ -57,21 +57,21 @@ instance
   transitivity{{[≡]-transitivity}} [≡]-intro [≡]-intro = [≡]-intro
 
 -- Applies a function to each side of the equality (TODO: Maybe rename to [≡]-with?)
-[≡]-with-[_] : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
-[≡]-with-[_] f [≡]-intro = [≡]-intro
+[≡]-with : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
+[≡]-with f [≡]-intro = [≡]-intro
 {-
-[≡]-with-[_] : ∀{T₁ : Type{ℓ₂}}{T₂ : Type{ℓ₃}} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
-[≡]-with-[_] f [≡]-intro = [≡]-intro
+[≡]-with(_) : ∀{T₁ : Type{ℓ₂}}{T₂ : Type{ℓ₃}} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
+[≡]-with(_) f [≡]-intro = [≡]-intro
 -}
 
-[≢]-without-[_] : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (f(x) ≢ f(y)) → (x ≢ y)
-[≢]-without-[_] f {_}{_} = liftᵣ([≡]-with-[_] f)
+[≢]-without : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (f(x) ≢ f(y)) → (x ≢ y)
+[≢]-without f {_}{_} = liftᵣ([≡]-with f)
 
 -- Applies an operation to each side of the equality
-[≡]-with-op-[_] : ∀{A B C : Type} → (_▫_ : A → B → C) → {a₁ a₂ : A}{b₁ b₂ : B} → (a₁ ≡ a₂) → (b₁ ≡ b₂) → ((a₁ ▫ b₁) ≡ (a₂ ▫ b₂))
-[≡]-with-op-[_] (_▫_) [≡]-intro [≡]-intro = [≡]-intro
+[≡]-with-op : ∀{A B C : Type} → (_▫_ : A → B → C) → {a₁ a₂ : A}{b₁ b₂ : B} → (a₁ ≡ a₂) → (b₁ ≡ b₂) → ((a₁ ▫ b₁) ≡ (a₂ ▫ b₂))
+[≡]-with-op (_▫_) [≡]-intro [≡]-intro = [≡]-intro
 -- [≡]-with-op-[_] (_▫_) {a₁}{a₂} {b₁}{b₂} (a₁≡a₂) (b₁≡b₂) =
---   [≡]-elimᵣ (b₁≡b₂) {\x → (a₁ ▫ b₁) ≡ (a₂ ▫ x)} ([≡]-with-[(x ↦ (x ▫ b₁))] (a₁≡a₂))
+--   [≡]-elimᵣ (b₁≡b₂) {\x → (a₁ ▫ b₁) ≡ (a₂ ▫ x)} ([≡]-with(x ↦ (x ▫ b₁)) (a₁≡a₂))
 
 instance
   [≡]-equivalence : ∀{T} → Equivalence {T} (_≡_ {T})

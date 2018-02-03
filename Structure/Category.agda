@@ -139,12 +139,12 @@ module _ {ℓₒ₁}{ℓₘ₁} {ℓₒ₂}{ℓₘ₂} where
                                → Functor{ℓₒ₁}{ℓₘ₁} {ℓₒ₃}{ℓₘ₃} {Obj₁}{Obj₃}{M₁}{M₃} (F₂₃ ∘f F₁₂)(cat₁)(cat₃)
   Functor.map           (compositionFunctor (functor₂₃)(functor₁₂)){x}{y} = (Functor.map(functor₂₃){Functor.functor(functor₁₂)(x)}{Functor.functor(functor₁₂)(y)}) ∘f (Functor.map(functor₁₂){x}{y})
   Functor.[∘]-preserving(compositionFunctor (functor₂₃)(functor₁₂)) =
-    ([≡]-with-[(expr ↦ Functor.map(functor₂₃)(expr))]
+    ([≡]-with(expr ↦ Functor.map(functor₂₃)(expr))
       (Functor.[∘]-preserving(functor₁₂))
     )
     🝖 (Functor.[∘]-preserving(functor₂₃))
   Functor.id-preserving (compositionFunctor (functor₂₃)(functor₁₂)) =
-    ([≡]-with-[(expr ↦ Functor.map(functor₂₃)(expr))]
+    ([≡]-with(expr ↦ Functor.map(functor₂₃)(expr))
       (Functor.id-preserving(functor₁₂))
     )
     🝖 (Functor.id-preserving(functor₂₃))-}

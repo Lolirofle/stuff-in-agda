@@ -48,11 +48,11 @@ instance
 
 instance
   [≤]-successor : ∀{a b : ℕ} → (a ≤ b) → (a ≤ 𝐒(b))
-  [≤]-successor ([∃]-intro(n) ⦃ proof ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with-[ 𝐒 ] (proof) ⦄
+  [≤]-successor ([∃]-intro(n) ⦃ proof ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with(𝐒) (proof) ⦄
   -- a + n ≡ b //f
   -- a + ? ≡ 𝐒(b) //What value works if f?
   -- a + 𝐒(n) ≡ 𝐒(b)
-  -- 𝐒(a + n) ≡ 𝐒(b) //[≡]-with-[ 𝐒 ] f
+  -- 𝐒(a + n) ≡ 𝐒(b) //[≡]-with(𝐒) f
 
 instance
   [≤]-predecessor : ∀{a b : ℕ} → (𝐒(a) ≤ b) → (a ≤ b)
@@ -72,7 +72,7 @@ instance
       (n)
       ⦃
         ([+1]-commutativity {a} {n}) -- 𝐒(a)+n = a+𝐒(n)
-        🝖 ([≡]-with-[ 𝐒 ] f) -- 𝐒(a+n)=a+𝐒(n) = 𝐒(b)
+        🝖 ([≡]-with(𝐒) f) -- 𝐒(a+n)=a+𝐒(n) = 𝐒(b)
       ⦄
 
 instance
@@ -93,7 +93,7 @@ instance
       (n₁ + n₂)
       ⦃
         (symmetry ([+]-associativity {a} {n₁} {n₂})) -- a+(n₁+n₂) = (a+n₁)+n₂
-        🝖 ([≡]-with-[(expr ↦ expr + n₂)] (a+n₁≡b)) -- (a+n₁)+n₂ = b+n₂
+        🝖 ([≡]-with(expr ↦ expr + n₂) (a+n₁≡b)) -- (a+n₁)+n₂ = b+n₂
         🝖 (b+n₂≡c) -- b+n₂ = c
       ⦄ -- a+(n₁+n₂) = c
 
@@ -108,7 +108,7 @@ instance
     n₁+n₂≡0 =
       [+]-injectivityᵣ(
         (symmetry([+]-associativity {a} {n₁} {n₂}))
-        🝖 ([≡]-with-[(expr ↦ expr + n₂)] a+n₁≡b)
+        🝖 ([≡]-with(expr ↦ expr + n₂) a+n₁≡b)
         🝖 b+n₂≡a
       )
     n₁≡0 : (n₁ ≡ 0)
@@ -192,7 +192,7 @@ instance
   [≡][ℕ]-excluded-middle {𝟎}   {𝟎}    = [∨]-introₗ [≡]-intro
   [≡][ℕ]-excluded-middle {𝟎}   {𝐒(_)} = [∨]-introᵣ \()
   [≡][ℕ]-excluded-middle {𝐒(_)}{𝟎}    = [∨]-introᵣ \()
-  [≡][ℕ]-excluded-middle {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ [≡]-with-[ 𝐒 ]) ([∨]-introᵣ ∘ (contrapositiveᵣ [𝐒]-injectivity)) ([≡][ℕ]-excluded-middle {a}{b})
+  [≡][ℕ]-excluded-middle {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ [≡]-with(𝐒)) ([∨]-introᵣ ∘ (contrapositiveᵣ [𝐒]-injectivity)) ([≡][ℕ]-excluded-middle {a}{b})
 
 -- instance
 --  [≤][ℕ]-excluded-middle : ∀{a b} → (a ≤ b)∨(a ≰ b)

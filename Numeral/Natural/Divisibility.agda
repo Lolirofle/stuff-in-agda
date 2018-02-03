@@ -23,7 +23,7 @@ data Even : ℕ → Stmt where
 
 even-unique-instance : ∀{n} → (proof₁ : Even(n)) → (proof₂ : Even(n)) → (proof₁ ≡ proof₂)
 even-unique-instance (Even0) (Even0) = [≡]-intro
-even-unique-instance (Even𝐒 proof₁) (Even𝐒 proof₂) = [≡]-with-[ Even𝐒 ] (even-unique-instance(proof₁)(proof₂))
+even-unique-instance (Even𝐒 proof₁) (Even𝐒 proof₂) = [≡]-with(Even𝐒) (even-unique-instance(proof₁)(proof₂))
 
 data Odd : ℕ → Stmt where
   instance
@@ -76,7 +76,7 @@ divides-intro {x}{y} ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [≡]-elimᵣ (y⋅n�
 divides-elim : ∀{x y} → (y divides x) → (∃ \(n : ℕ) → (y ⋅ n ≡ x))
 divides-elim {_}{_} (Div𝟎) = [∃]-intro (0) ⦃ [≡]-intro ⦄
 divides-elim {_}{y} (Div𝐒{x} (y-div-x)) with divides-elim(y-div-x)
-...                                | ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with-[(expr ↦ y + expr)] (y⋅n≡x) ⦄
+...                                | ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with(expr ↦ y + expr) (y⋅n≡x) ⦄
 
 {-
 Div𝐏 : ∀{x y : ℕ} → (y divides (y + x)) → (y divides x)
@@ -97,7 +97,7 @@ instance
         (n₁ ⋅ n₂)
         ⦃
           (symmetry ([⋅]-associativity {a}{n₁}{n₂}))
-          🝖 ([≡]-with-[(expr ↦ expr ⋅ n₂)] (a⋅n₁≡b))
+          🝖 ([≡]-with(expr ↦ expr ⋅ n₂) (a⋅n₁≡b))
           🝖 (b⋅n₂≡c)
         ⦄
       )
@@ -111,7 +111,7 @@ divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , di
       (n₁ + n₂)
       ⦃
         ([⋅][+]-distributivityₗ {a}{n₁}{n₂})
-        🝖 ([≡]-with-op-[ _+_ ]
+        🝖 ([≡]-with-op(_+_)
           (a⋅n₁≡b)
           (a⋅n₂≡c)
         )
@@ -127,7 +127,7 @@ divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , 
       (n₁ ⋅ (a ⋅ n₂))
       ⦃
         (symmetry ([⋅]-associativity {a}{n₁}{a ⋅ n₂}))
-        🝖 ([≡]-with-op-[ _⋅_ ]
+        🝖 ([≡]-with-op(_⋅_)
           (a⋅n₁≡b)
           (a⋅n₂≡c)
         )

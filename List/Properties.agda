@@ -24,7 +24,7 @@ instance
     base = [≡]-intro
 
     next : ∀(x : T)(l : List(T)) → ((l ++ ∅) ≡ l) → (((x ⊰ l) ++ ∅) ≡ (x ⊰ l))
-    next x _ stmt = [≡]-with-[(list ↦ x ⊰ list)] stmt
+    next x _ stmt = [≡]-with(list ↦ x ⊰ list) stmt
     -- (l ++ ∅) ≡ l
     -- x ⊰ (l ++ ∅) ≡ x ⊰ l
     -- (x ⊰ l) ++ ∅ ≡ x ⊰ l
@@ -39,7 +39,7 @@ instance
     -- ∅++(l₁++l₂) = (∅++l₁)++l₂
 
     next : ∀(x : T)(l : List(T)) → (((l ++ l₁) ++ l₂) ≡ (l ++ (l₁ ++ l₂))) → ((((x ⊰ l) ++ l₁) ++ l₂) ≡ ((x ⊰ l) ++ (l₁ ++ l₂)))
-    next x _ stmt = [≡]-with-[(list ↦ x ⊰ list)] stmt
+    next x _ stmt = [≡]-with(list ↦ x ⊰ list) stmt
     -- (l++l₁)++l₂ = l++(l₁++l₂)
     -- x ⊰ ((l++l₁)++l₂) = x ⊰ (l++(l₁++l₂))
     -- x ⊰ ((l++l₁)++l₂) = (x ⊰ l)++(l₁++l₂)
@@ -52,22 +52,22 @@ instance
   reverse-[++] {T} {l₁} {l₂} = List-induction{ℓ₁}{ℓ₂} base next {l₁} where
     base : reverse(∅ ++ l₂) ≡ reverse(l₂) ++ reverse(∅)
     base =
-      ([≡]-with-[ reverse ] {l₂} ([≡]-intro))
+      ([≡]-with(reverse) {l₂} ([≡]-intro))
       🝖 (symmetry [++]-identityᵣ)
     -- ∅++l = l //[++]-identityₗ
-    -- reverse(∅++l) = l //[≡]-with-[ reverse ] (..)
+    -- reverse(∅++l) = l //[≡]-with(reverse) (..)
     --   l = l++∅
 
-    -- ([≡]-with-[ reverse ] {l₂} ([≡]-symmetry [++]-identityᵣ))
+    -- ([≡]-with(reverse) {l₂} ([≡]-symmetry [++]-identityᵣ))
     -- l++∅ = l //[++]-identityᵣ
     -- l = l++∅ //[≡]-symmetry(..)
-    -- reverse(l) = reverse(l++∅) //[≡]-with-[ reverse ] (..)
+    -- reverse(l) = reverse(l++∅) //[≡]-with(reverse) (..)
     -- ∅++reverse(l) = reverse(l++∅)
     -- reverse(∅)++reverse(l) = reverse(l++∅)
 
     next : ∀(x : T)(l : List(T)) → (reverse(l ++ l₂) ≡ reverse(l₂) ++ reverse(l)) → (reverse((x ⊰ l) ++ l₂) ≡ reverse(l₂) ++ reverse(x ⊰ l))
     next x l stmt =
-      ([≡]-with-[(list ↦ list ++ (singleton x))] stmt)
+      ([≡]-with(list ↦ list ++ (singleton x)) stmt)
       🝖 ([++]-associativity {_} {reverse(l₂)} {reverse(l)} {singleton x})
     -- reverse(l₁++l₂) = reverse(l₂)++reverse(l₁)
     -- reverse(l₁++l₂)++(singleton x) = (reverse(l₂)++reverse(l₁))++(singleton x)
@@ -97,7 +97,7 @@ instance
 
     next : ∀(x : T)(l : List(T)) → (length(l ++ l₂) ≡ length(l) + length(l₂)) → (length((x ⊰ l) ++ l₂) ≡ length(x ⊰ l) + length(l₂))
     next x l stmt =
-      ([≡]-with-[(len ↦ 𝐒 len)] stmt)
+      ([≡]-with(len ↦ 𝐒 len) stmt)
       🝖 (symmetry([+1]-commutativity {length(l)} {length(l₂)}))
     -- length(l++l₂) = length(l)+length(l₂)
     -- length(l++l₂) = length(l₂)+length(l)
@@ -116,7 +116,7 @@ instance
   --   next x l stmt =
   --     ([≡]-transitivity([∧]-intro
   --       ([≡]-symmetry(length-[++] {ℓ} {T} {singleton(x)} {reverse(l)}))
-  --       (([≡]-with-[ 𝐒 ] stmt))
+  --       (([≡]-with(𝐒) stmt))
   --     ))
   --   -- length(reverse(l)) = length(l)
   --   -- 𝐒(length(reverse(l))) = 𝐒(length(l))
