@@ -76,13 +76,13 @@ divides-intro {x}{y} ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [≡]-elimᵣ (y⋅n�
 divides-elim : ∀{x y} → (y divides x) → (∃ \(n : ℕ) → (y ⋅ n ≡ x))
 divides-elim {_}{_} (Div𝟎) = [∃]-intro (0) ⦃ [≡]-intro ⦄
 divides-elim {_}{y} (Div𝐒{x} (y-div-x)) with divides-elim(y-div-x)
-...                                | ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with(expr ↦ y + expr) (y⋅n≡x) ⦄
+... | ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with(expr ↦ y + expr) (y⋅n≡x) ⦄
 
 {-
 Div𝐏 : ∀{x y : ℕ} → (y divides (y + x)) → (y divides x)
 Div𝐏 {x}{y} (proof) with divides-elim(proof)
-...             | [∃]-intro (𝟎)   ⦃ y0≡yx ⦄ = divides-intro(y0≡yx) TODO
-...             | [∃]-intro (𝐒(n)) ⦃ ySn≡yx ⦄ = divides-intro([∃]-intro (n) ⦃ [+]-injectivityᵣ {y} ySn≡yx ⦄)
+... | [∃]-intro (𝟎)   ⦃ y0≡yx ⦄ = divides-intro(y0≡yx) TODO
+... | [∃]-intro (𝐒(n)) ⦃ ySn≡yx ⦄ = divides-intro([∃]-intro (n) ⦃ [+]-injectivityᵣ {y} ySn≡yx ⦄)
 -}
 
 {-test : ∀{y}{x}{proof} → Div𝐒{y}{x}(proof) ≢ proof
@@ -91,7 +91,7 @@ test ()
 instance
   divides-transitivity : Transitivity (_divides_)
   transitivity ⦃ divides-transitivity ⦄ {a}{b}{c} (a-div-b) (b-div-c) with (divides-elim (a-div-b) , divides-elim (b-div-c))
-  ...                                                     | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ b⋅n₂≡c ⦄)) =
+  ... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ b⋅n₂≡c ⦄)) =
     (divides-intro
       ([∃]-intro
         (n₁ ⋅ n₂)
@@ -105,7 +105,7 @@ instance
 
 divides-with-[+] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b + c))
 divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
-...                                                 | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
+... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
   (divides-intro
     ([∃]-intro
       (n₁ + n₂)
@@ -121,7 +121,7 @@ divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , di
 
 divides-with-[⋅] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b ⋅ c))
 divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
-...                                                 | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
+... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
   (divides-intro
     ([∃]-intro
       (n₁ ⋅ (a ⋅ n₂))
@@ -142,7 +142,7 @@ divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , 
 -- instance
 --   divides-[≡] : ∀{a b} → (a divides b) → (b divides a) → (a ≡ b)
 --   divides-[≡] {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
---   ...                                                     | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ b⋅n₂≡c ⦄)) =
+--   ... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ b⋅n₂≡c ⦄)) =
 
 instance
   [1]-divides : ∀{n} → (1 divides n)

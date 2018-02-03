@@ -157,7 +157,7 @@ module Theorems1 where
       -- A set with only one element exists.
     single : ∀{x₁} → ∃(s ↦ (∀{x} → (x ∈ s) ↔ (x ≡ x₁)))
     single{x} with pair{x}{x}
-    ...          | [∃]-intro (z) ⦃ f ⦄ = ([∃]-intro (z) ⦃ \{w} → [↔]-transitivity (f{w}) [∨]-redundancy ⦄)
+    ... | [∃]-intro (z) ⦃ f ⦄ = ([∃]-intro (z) ⦃ \{w} → [↔]-transitivity (f{w}) [∨]-redundancy ⦄)
 
   module _ ⦃ _ : EmptySetExistence ⦄ where
     [∅]-uniqueness : ∀{x y} → Empty(x) → Empty(y) → (x ≡ y)
