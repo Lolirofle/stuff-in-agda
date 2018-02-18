@@ -5,11 +5,13 @@ open import Data
 open import Functional using (const ; [↦] ; _→ᶠ_) renaming (id to idf ; _∘_ to _∘f_)
 open import Logic.Propositional
 open import Logic.Predicate{Lvl.𝟎}
-open import Relator.Equals{Lvl.𝟎}
+import      Relator.Equals
 open import Relator.Equals.Theorems{Lvl.𝟎}
 open import Structure.Relator.Properties{Lvl.𝟎}
 
-module _ {ℓₒ}{ℓₘ} where
+module _ {ℓₒ ℓₘ : Lvl.Level} where
+  open Relator.Equals{ℓₘ}
+
   -- The type of collections of morphisms
   -- Could be seen as an generalization of functions.
   Morphism : Set(ℓₒ) → Set(ℓₒ Lvl.⊔ (Lvl.𝐒 ℓₘ))
@@ -25,24 +27,46 @@ module _ {ℓₒ}{ℓₘ} where
   -- because these are the algebraic rules that makes composition of functions useful.
   -- In this special case, the relator describes the existence of a function between two sets.
   --
+  -- When the objects are algebraic structures (or categories themselves), (TODO: Probably separate cases)
+  -- then the morphisms are functors, and are usually called homomorphisms. (TODO: But maybe not. Homomorphisms is usually defined with not having the property of`id-preserving`: https://math.stackexchange.com/questions/405459/homomorphisms-vs-functors/405479#comment867772_405459 https://ncatlab.org/nlab/show/homomorphism)
+  --
   -- Obj is the collection of objects.
   -- M   is the collection of morphisms.
-  record Category (Obj : Set(ℓₒ)) (M : Morphism(Obj)) : Set(ℓₒ Lvl.⊔ ℓₘ) where
+  record Category {Obj : Set(ℓₒ)} (M : Morphism(Obj)) : Set(ℓₒ Lvl.⊔ ℓₘ) where -- TODO: A category could also be seen as an algebraic structure, but one difference from e.g. groups is that this definition also tries to generalize the notion of functions as elements of the algebraic structure
     field
       -- Existence of morphisms constructed by connecting two morphisms (The composition of two morphisms).
-      _∘_ : ∀{x y z : Obj} → (M y z) → (M x y) → (M x z)
+      -- Existence of a binary operator on morphisms connecting the ends of two morphisms.
+      -- Proof of transitivity for the binary relator M.
+      _∘_ : ∀{x y z : Obj} → (M y z) → (M x y) → (M x z) -- TODO: Note that this is the operator like the operators in other algebraic structures with binary operators
 
       -- Existence of a morphism connected to itself (The identity morphism).
+      -- Proof of reflexivity for the binary relator M.
       id  : ∀{x : Obj} → (M x x)
 
     field
-     ⦃ .identityₗ     ⦄ : ∀{x y : Obj}{f : M x y} → (id ∘ f ≡ f)
-     ⦃ .identityᵣ     ⦄ : ∀{x y : Obj}{f : M x y} → (f ∘ id ≡ f)
-     ⦃ .associativity ⦄ : ∀{x y z W : Obj}{f : M y x}{g : M z y}{h : M W z} → (f ∘ (g ∘ h) ≡ (f ∘ g) ∘ h)
+      -- The morphism `id` behaves like a left identity element with respect to the binary operator.
+      -- Applying the proof of reflexivity on transitivity to the left is an identity function for proofs.
+      ⦃ .identityₗ ⦄ : ∀{x y : Obj}{f : M x y} → (id ∘ f ≡ f)
 
-    -- A morphism is a isomorphism when there is an inverse of the morphism.
+      -- The morphism `id` behaves like a right identity element with respect to the binary operator.
+      -- Applying the proof of reflexivity on transitivity to the right is an identity function for proofs.
+      ⦃ .identityᵣ ⦄ : ∀{x y : Obj}{f : M x y} → (f ∘ id ≡ f)
+
+      -- The binary operator on mophisms is associative.
+      -- The order of applying two transitiviies on three proofs does not matter. It it the same proof.
+      ⦃ .associativity ⦄ : ∀{x y z W : Obj}{f : M y x}{g : M z y}{h : M W z} → ((f ∘ g) ∘ h ≡ f ∘ (g ∘ h))
+
+    -- A morphism is an isomorphism when it is bijective (there is an inverse of the morphism with respect to the operator).
     Isomorphism : ∀{x y} → (M x y) → Stmt
     Isomorphism(f) = ∃(g ↦ (g ∘ f ≡ id)∧(f ∘ g ≡ id))
+
+    -- A morphism is an endomorphism when the domain equals the codomain.
+    Endomorphism : ∀{x y} → (M x y) → Stmt
+    Endomorphism{x}{y}(_) = (x ≡ y)
+
+    -- A morphism is an endomorphism and an isomorphism.
+    Automorphism : ∀{x y} → (M x y) → Stmt
+    Automorphism(f) = (Isomorphism(f) ∧ Endomorphism(f))
 
     -- The inverse of a morphism.
     inv : ∀{x y} (f : M x y) → ⦃ _ : Isomorphism(f) ⦄ → (M y x)
@@ -63,7 +87,7 @@ module _ {ℓₒ}{ℓₘ} where
   -- The empty category is a category containing nothing.
   -- The objects are empty.
   -- The morphisms are empty.
-  emptyCategory : Category(Empty)(empty)
+  emptyCategory : Category{Empty}(empty)
   Category._∘_           (emptyCategory) {}
   Category.id            (emptyCategory) {}
   Category.identityₗ     (emptyCategory) {}
@@ -73,24 +97,29 @@ module _ {ℓₒ}{ℓₘ} where
   -- The single category is a category containing a single object.
   -- The objects consists of a single thing.
   -- The morphisms consists of a single connection connecting the single thing to itself.
-  singleCategory : Category(Unit)(const(const Unit))
+  singleCategory : Category{Unit}(const(const Unit))
   Category._∘_           (singleCategory) <> <> = <>
   Category.id            (singleCategory) = <>
   Category.identityₗ     (singleCategory) = [≡]-intro
   Category.identityᵣ     (singleCategory) = [≡]-intro
   Category.associativity (singleCategory) = [≡]-intro
 
--- The set category is a category containing all sets/types of a single level in the language.
--- The objects are all sets/types.
--- The morphisms are all functions where the domain/codomain-pair are from these objects.
-setCategory : ∀{ℓ} → Category(Set(ℓ))(_→ᶠ_)
-Category._∘_           (setCategory) = _∘f_
-Category.id            (setCategory) = idf
-Category.identityₗ     (setCategory) = [≡]-intro
-Category.identityᵣ     (setCategory) = [≡]-intro
-Category.associativity (setCategory) = [≡]-intro
+module _ {ℓ} where
+  open Relator.Equals{ℓ}
 
-module _ {ℓₒ₁}{ℓₘ₁} {ℓₒ₂}{ℓₘ₂} where
+  -- The set category is a category containing all sets/types of a single level in the language.
+  -- The objects are all sets/types.
+  -- The morphisms are all functions where the domain/codomain-pair are from these objects.
+  setCategory : Category{_}{_}{Set(ℓ)}(_→ᶠ_)
+  Category._∘_           (setCategory) = _∘f_
+  Category.id            (setCategory) = idf
+  Category.identityₗ     (setCategory) = [≡]-intro
+  Category.identityᵣ     (setCategory) = [≡]-intro
+  Category.associativity (setCategory) = [≡]-intro
+
+module _ {ℓₒ₁ ℓₘ₁ ℓₒ₂ ℓₘ₂ : Lvl.Level} where
+  open Relator.Equals{ℓₘ₂}
+
   -- A covariant functor.
   -- A morphism between categories.
   -- "Preserves structure"
@@ -100,8 +129,8 @@ module _ {ℓₒ₁}{ℓₘ₁} {ℓₒ₂}{ℓₘ₂} where
       {M₁ : Obj₁ → Obj₁ → Set(ℓₘ₁)}
       {M₂ : Obj₂ → Obj₂ → Set(ℓₘ₂)}
       (F : Obj₁ → Obj₂)
-      (Category₁ : Category Obj₁ M₁)
-      (Category₂ : Category Obj₂ M₂)
+      (Category₁ : Category {_}{_} {Obj₁} M₁)
+      (Category₂ : Category {_}{_} {Obj₂} M₂)
     : Set((ℓₒ₁ Lvl.⊔ ℓₘ₁) Lvl.⊔ (ℓₒ₂ Lvl.⊔ ℓₘ₂))
     where
     _∘₁_ = Category._∘_ (Category₁)
@@ -132,7 +161,7 @@ module _ {ℓₒ₁}{ℓₘ₁} {ℓₒ₂}{ℓₘ₂} where
   Functor.[∘]-preserving(constantFunctor(obj₂) (_)(cat₂)) = symmetry (Category.identityₗ(cat₂))
   Functor.id-preserving (constantFunctor(obj₂) (_)(cat₂)) = [≡]-intro
 
-{-module _ {ℓₒ₁}{ℓₘ₁} {ℓₒ₂}{ℓₘ₂} {ℓₒ₃}{ℓₘ₃} where
+{- module _ {ℓₒ₁}{ℓₘ₁} {ℓₒ₂}{ℓₘ₂} {ℓₒ₃}{ℓₘ₃} where
   compositionFunctor : ∀{Obj₁}{Obj₂}{Obj₃} {M₁}{M₂}{M₃} {cat₁}{cat₂}{cat₃} {F₁₂}{F₂₃}
                                → Functor{ℓₒ₂}{ℓₘ₂} {ℓₒ₃}{ℓₘ₃} {Obj₂}{Obj₃}{M₂}{M₃} (F₂₃)(cat₂)(cat₃)
                                → Functor{ℓₒ₁}{ℓₘ₁} {ℓₒ₂}{ℓₘ₂} {Obj₁}{Obj₂}{M₁}{M₂} (F₁₂)(cat₁)(cat₂)
@@ -147,17 +176,20 @@ module _ {ℓₒ₁}{ℓₘ₁} {ℓₒ₂}{ℓₘ₂} where
     ([≡]-with(expr ↦ Functor.map(functor₂₃)(expr))
       (Functor.id-preserving(functor₁₂))
     )
-    🝖 (Functor.id-preserving(functor₂₃))-}
+    🝖 (Functor.id-preserving(functor₂₃))
   -- • {
   --     map₁₂(f ∘₁ g) ≡ map₁₂(f) ∘₂ map₁₂(g)
   --     map₂₃(map₁₂(f ∘₁ g)) ≡ map₂₃(map₁₂(f) ∘₂ map₁₂(g))
   -- }
   -- • map₂₃(f ∘₂ g) ≡ map₂₃(f) ∘₃ map₂₃(g)
   -- ⇒ map₂₃(map₁₂(f ∘₁ g)) ≡ map₂₃(map₁₂(f)) ∘₂ map₂₃(map₁₂(g))
+-}
 
-module _ {ℓₒ}{ℓₘ} where
+module _ {ℓₒ ℓₘ} where
+  open Relator.Equals
+
   -- A covariant functor from a category to itself
-  EndoFunctor : ∀{Obj : Set(ℓₒ)} {M : Obj → Obj → Set(ℓₘ)} → (Obj → Obj) → Category(Obj)(M) → Set(ℓₒ Lvl.⊔ ℓₘ)
+  EndoFunctor : ∀{Obj : Set(ℓₒ)} {M : Obj → Obj → Set(ℓₘ)} → (Obj → Obj) → Category{_}{_} {Obj}(M) → Set(ℓₒ Lvl.⊔ ℓₘ)
   EndoFunctor {Obj}{M} (F) (Category) = Functor {ℓₒ}{ℓₘ}{ℓₒ}{ℓₘ} {Obj}{Obj} {M}{M} (F) (Category)(Category)
 
   identityFunctor : ∀{Obj}{M} → (cat : _) → EndoFunctor{Obj}{M} (Functional.id)(cat)
@@ -174,19 +206,12 @@ Category.identityᵣ     (categoryCategory) = [≡]-intro
 Category.associativity (categoryCategory) = [≡]-intro
 -}
 
-{-
-record Category (Obj : Set) (M : Set) : Set where
-  field
-    domain   : M → Obj
-    codomain : M → Obj
+module _ {ℓ} where
+  open import Structure.Operator.Monoid{Lvl.𝟎}{ℓ}
 
-  field
-    composition : ∀{f g : M} → ⦃ _ : codomain(f) ≡ domain(g) ⦄ → ∃(h ↦ (domain(h) ≡ domain(f)) ∧ (codomain(h) ≡ codomain(g)))
-
-  _∘_ : (g : M) → (f : M) → ⦃ _ : codomain(f) ≡ domain(g) ⦄ → M
-  _∘_ g f ⦃ proof ⦄ = [∃]-witness(composition ⦃ proof ⦄)
-
-  field
-    identity      : ∃(id ↦ (domain(id) ≡ codomain(id)) ∧ (∀{f} → ⦃ _ : codomain(id) ≡ domain(f) ⦄ → (f ∘ id ≡ f)) ∧ (∀{f} → ⦃ _ : codomain(f) ≡ domain(id) ⦄ → (id ∘ f ≡ f)))
-    associativity : ∀{f g h} → ⦃ _ : codomain(h) ≡ domain(g) ⦄ → ⦃ _ : codomain(g) ≡ domain(f) ⦄ → (f ∘ (g ∘ h) ≡ (f ∘ g) ∘ h)
--}
+  monoidCategory : ∀{T : Set(ℓ)}{_▫_ : T → T → T} → Monoid{T}(_▫_) → Category{Lvl.𝟎}{ℓ} {Unit}(\_ → \_ → T)
+  Category._∘_           (monoidCategory{_}{_▫_}(M)) {_}{_}{_} = (_▫_)
+  Category.id            (monoidCategory{_}{_▫_}(M)) {_} = Monoid.id(M)
+  Category.identityₗ     (monoidCategory{_}{_▫_}(M)) {_}{_} = Monoid.identityₗ(M)
+  Category.identityᵣ     (monoidCategory{_}{_▫_}(M)) {_}{_} = Monoid.identityᵣ(M)
+  Category.associativity (monoidCategory{_}{_▫_}(M)) {_}{_}{_}{_} = Monoid.associativity(M)

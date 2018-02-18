@@ -33,8 +33,8 @@ pattern [∧]-intro x y = x , y
 ------------------------------------------
 -- Implication
 
-[→]-elim : {X Y : Stmt} → X → (X → Y) → Y
-[→]-elim = apply
+[→]-elim : {X Y : Stmt} → (X → Y) → X → Y
+[→]-elim f(x) = f(x)
 
 [→]-intro : {X Y : Stmt} → Y → (X → Y) -- TODO: Not really like [→]-intro in ND. This do not introduce a new variable.
 [→]-intro = const
@@ -46,7 +46,7 @@ pattern [∧]-intro x y = x , y
 [←]-intro = [→]-intro
 
 [←]-elim : {X Y : Stmt} → X → (Y ← X) → Y
-[←]-elim = [→]-elim
+[←]-elim = swap [→]-elim
 
 ------------------------------------------
 -- Equivalence
@@ -56,10 +56,10 @@ x ↔ y = ((x ← y) ⨯ (x → y))
 
 pattern [↔]-intro l r = l , r
 
-[↔]-elimₗ : {X Y : Stmt} → (X ↔ Y) → (X ← Y)
+[↔]-elimₗ : {X Y : Stmt} → (X ↔ Y) → Y → X
 [↔]-elimₗ = Tuple.left
 
-[↔]-elimᵣ : {X Y : Stmt} → (X ↔ Y) → (X → Y)
+[↔]-elimᵣ : {X Y : Stmt} → (X ↔ Y) → X → Y
 [↔]-elimᵣ = Tuple.right
 
 ------------------------------------------

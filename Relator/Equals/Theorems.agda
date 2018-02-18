@@ -3,7 +3,7 @@ module Relator.Equals.Theorems {ℓ₁}{ℓ₂} where
 import      Lvl
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
 open import Structure.Relator.Equivalence{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
 open import Type
@@ -36,14 +36,6 @@ module _ {ℓ₃} where
 [≡]-unelim : ∀{T}{x y : T} → (∀{f : T → Stmt} → f(x) → f(y)) → (x ≡ y)
 [≡]-unelim {_}{x}{_} (F) = F {y ↦ (x ≡ y)} ([≡]-intro)
 
-{-
-[≡]-elim-stmtₗ : ∀{T}{X Y : Stmt} → (X ≡ Y) → X ← Y
-[≡]-elim-stmtₗ = [≡]-substitutionₗ
-
-[≡]-elim-stmtᵣ : ∀{T}{X Y : Stmt} → (X ≡ Y) → X → Y
-[≡]-elim-stmtᵣ = [≡]-substitutionₗ
--}
-
 instance
   [≡]-reflexivity : ∀{T} → Reflexivity {T} (_≡_ {T})
   reflexivity ⦃ [≡]-reflexivity ⦄ = [≡]-intro
@@ -56,13 +48,9 @@ instance
   [≡]-transitivity : ∀{T} → Transitivity {T} (_≡_ {T})
   transitivity ⦃ [≡]-transitivity ⦄ [≡]-intro [≡]-intro = [≡]-intro
 
--- Applies a function to each side of the equality (TODO: Maybe rename to [≡]-with?)
-[≡]-with : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
+-- Applies a function to each side of the equality
+[≡]-with : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
 [≡]-with f [≡]-intro = [≡]-intro
-{-
-[≡]-with(_) : ∀{T₁ : Type{ℓ₂}}{T₂ : Type{ℓ₃}} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (x ≡ y) → (f(x) ≡ f(y))
-[≡]-with(_) f [≡]-intro = [≡]-intro
--}
 
 [≢]-without : ∀{T₁ T₂} → (f : T₁ → T₂) → ∀{x : T₁}{y : T₁} → (f(x) ≢ f(y)) → (x ≢ y)
 [≢]-without f {_}{_} = liftᵣ([≡]-with f)
@@ -87,6 +75,3 @@ instance
 --   https://www.reddit.com/r/agda/comments/4te0rg/functors_extensional_equality_and_function/
 --   https://mathoverflow.net/questions/156238/function-extensionality-does-it-make-a-difference-why-would-one-keep-it-out-of
 -- [≡]-function : ∀{T₁ T₂ : Type}{f₁ f₂ : T₁ → T₂) → (∀{x} → (f₁(x) ≡ f₂(x))) → (f₁ ≡ f₂)
-
-[≡]-intro-[→] : ∀{T}{x y : T}{f : T → Stmt} → f(x) → ((x ≡ y) → f(y))
-[≡]-intro-[→] {T}{x}{y}{f} fx xy = [≡]-elimᵣ {T}{x}{y} xy {f} fx

@@ -7,7 +7,7 @@ open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ₁}
-open import Relator.Equals{ℓ₁}
+open import Relator.EqualsOld{ℓ₁}
 open import Relator.Equals.Theorems{ℓ₁}
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties

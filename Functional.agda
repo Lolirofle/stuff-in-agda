@@ -14,7 +14,7 @@ _←_ : ∀{ℓ₁ ℓ₂} → Type{ℓ₁} → Type{ℓ₂} → Type{ℓ₁ Lvl
 y ← x = x → y
 
 -- Identity functions
-id : ∀{ℓ} → {T : Type{ℓ}} → T → T
+id : ∀{ℓ} {T : Type{ℓ}} → T → T
 id(x) = x
 
 -- Constant functions
@@ -24,6 +24,12 @@ const(x)(_) = x
 -- Function application as a function
 apply : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₂) → T₂
 apply(x)(f) = f(x)
+
+apply-repeat₂ : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₁ → T₂) → T₂
+apply-repeat₂(x)(f) = f(x)(x)
+
+apply-repeat₃ : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₁ → T₁ → T₂) → T₂
+apply-repeat₃(x)(f) = f(x)(x)(x)
 
 -- Function composition
 _∘_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y → Z) → (X → Y) → (X → Z)
@@ -73,21 +79,13 @@ syntax [↦](λ x → y) = x ↦ y
 ⊶_ : ∀{ℓ₁ ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → Type{ℓ₂}
 ⊶_ {_}{_} {_}{B} _ = B
 
--- Returns a function with a smaller domain
-restrict : ∀{ℓ₁ ℓ₂ ℓ₃} {A₁ : Type{ℓ₁}}{A₂ : Type{ℓ₂}}{B : Type{ℓ₃}} {_ : A₂ → A₁} → (A₁ → B) → (A₂ → B)
-restrict {_}{_}{_} {_}{_}{_} {tf} f = f ∘ tf
-
--- Returns a function with a larger codomain
-expand : ∀{ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}}{B₁ : Type{ℓ₂}}{B₂ : Type{ℓ₃}} {_ : B₁ → B₂} → (A → B₁) → (A → B₂)
-expand {_}{_}{_} {_}{_}{_} {tf} f = tf ∘ f
-
 -- Functions with two paramters as an infix binary operator
 _〔_〕_ : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} → A → (A → B → C) → B → C
 a 〔 op 〕 b = op a b
 
 -- Infers/resolves/(searches for) an instance/proof of the specified type/statement
-resolve-instance : ∀{ℓ}(T : Type{ℓ}) ⦃ _ : T ⦄ → T
-resolve-instance (_) ⦃ x ⦄ = x
+resolve : ∀{ℓ}(T : Type{ℓ}) ⦃ _ : T ⦄ → T
+resolve (_) ⦃ x ⦄ = x
 
 -- Infers/resolves/(searches for) an instance/proof of an inferred type/statement
 infer : ∀{ℓ}{T : Type{ℓ}} ⦃ _ : T ⦄ → T

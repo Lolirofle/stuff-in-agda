@@ -17,41 +17,42 @@ record Propositional {ℓ} : Type{Lvl.𝐒(ℓ)} where
   Stmt = Type{ℓ}
 
   field
-    _∧_  : Stmt → Stmt → Stmt
-    _⟶_ : Stmt → Stmt → Stmt
-    _⟵_ : Stmt → Stmt → Stmt
-    _⟷_ : Stmt → Stmt → Stmt
-    _∨_  : Stmt → Stmt → Stmt
-    ¬_   : Stmt → Stmt
-    ⊥    : Stmt
-    ⊤    : Stmt
+    Proof : Stmt → Stmt
+    _∧_   : Stmt → Stmt → Stmt
+    _⟶_  : Stmt → Stmt → Stmt
+    _⟵_  : Stmt → Stmt → Stmt
+    _⟷_  : Stmt → Stmt → Stmt
+    _∨_   : Stmt → Stmt → Stmt
+    ¬_    : Stmt → Stmt
+    ⊥     : Stmt
+    ⊤     : Stmt
 
   field
-    [∧]-intro : ∀{X Y} → X → Y → (X ∧ Y)
-    [∧]-elimₗ  : ∀{X Y} → (X ∧ Y) → X
-    [∧]-elimᵣ  : ∀{X Y} → (X ∧ Y) → Y
+    [∧]-intro : ∀{X Y} → Proof(X) → Proof(Y) → Proof(X ∧ Y)
+    [∧]-elimₗ  : ∀{X Y} → Proof(X ∧ Y) → Proof(X)
+    [∧]-elimᵣ  : ∀{X Y} → Proof(X ∧ Y) → Proof(Y)
 
-    [→]-intro : ∀{X Y} → Y → (X ⟶ Y)
-    [→]-elim  : ∀{X Y} → X → (X ⟶ Y) → Y
+    [→]-intro : ∀{X Y} → Proof(Y) → Proof(X ⟶ Y)
+    [→]-elim  : ∀{X Y} → Proof(X) → Proof(X ⟶ Y) → Proof(Y)
 
-    [←]-intro : ∀{X Y} → Y → (Y ⟵ X)
-    [←]-elim  : ∀{X Y} → X → (Y ⟵ X) → Y
+    [←]-intro : ∀{X Y} → Proof(Y) → Proof(Y ⟵ X)
+    [←]-elim  : ∀{X Y} → Proof(X) → Proof(Y ⟵ X) → Proof(Y)
 
-    [↔]-intro : ∀{X Y} → (X ← Y) → (X → Y) → (X ⟷ Y)
-    [↔]-elimₗ  : ∀{X Y} → (X ⟷ Y) → (X ⟵ Y)
-    [↔]-elimᵣ  : ∀{X Y} → (X ⟷ Y) → (X ⟶ Y)
+    [↔]-intro : ∀{X Y} → Proof(X ← Y) → Proof(X → Y) → Proof(X ⟷ Y)
+    [↔]-elimₗ  : ∀{X Y} → Proof(X ⟷ Y) → Proof(X ⟵ Y)
+    [↔]-elimᵣ  : ∀{X Y} → Proof(X ⟷ Y) → Proof(X ⟶ Y)
 
-    [∨]-introₗ : ∀{X Y} → X → (X ∨ Y)
-    [∨]-introᵣ : ∀{X Y} → Y → (X ∨ Y)
-    [∨]-elim  : ∀{X Y Z : Stmt} → (X → Z) → (Y → Z) → (X ∨ Y) → Z
+    [∨]-introₗ : ∀{X Y} → Proof(X) → Proof(X ∨ Y)
+    [∨]-introᵣ : ∀{X Y} → Proof(Y) → Proof(X ∨ Y)
+    [∨]-elim  : ∀{X Y Z : Stmt} → Proof(X → Z) → Proof(Y → Z) → Proof(X ∨ Y) → Proof(Z)
 
-    [¬]-intro : ∀{X} → (X → ⊥) → (¬ X)
-    [¬]-elim  : ∀{X} → ((¬ X) → ⊥) → X
+    [¬]-intro : ∀{X} → Proof(X → ⊥) → Proof(¬ X)
+    [¬]-elim  : ∀{X} → (Proof(¬ X) → Proof(⊥)) → Proof(X)
 
-    [⊥]-intro : ∀{X : Stmt} → X → (X → ⊥) → ⊥
-    [⊥]-elim  : ∀{X : Stmt} → ⊥ → X
+    [⊥]-intro : ∀{X : Stmt} → Proof(X) → Proof(X → ⊥) → Proof(⊥)
+    [⊥]-elim  : ∀{X : Stmt} → Proof(⊥) → Proof(X)
 
-    [⊤]-intro : ⊤
+    [⊤]-intro : Proof(⊤)
 
 {-
 Propositional-from-[∧][∨][⊥] : ∀{ℓ} → (_∧_ _∨_ : Stmt → Stmt → Stmt) → (⊥ : Stmt) →

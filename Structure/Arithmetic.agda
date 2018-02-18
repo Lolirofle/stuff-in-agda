@@ -2,7 +2,7 @@ module Structure.Arithmetic {ℓₗ}{ℓₒ} where
 
 import      Lvl
 open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
-open import Relator.Equals{ℓₗ}{ℓₒ}
+open import Relator.Equals{ℓₗ Lvl.⊔ ℓₒ}{ℓₒ}
 open import Structure.Function.Domain{ℓₗ}
 open import Type
 

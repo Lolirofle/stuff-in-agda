@@ -6,7 +6,7 @@ open import List
 open import List.Properties
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}
-open import Relator.Equals{ℓ₁}
+open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}
 open import Type
 
 -- Statement of whether a list is contained in the beginning of another list (TODO: Move to List.Relation)

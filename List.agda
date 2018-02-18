@@ -15,7 +15,7 @@ infixl 100000 _]
 
 -- A list is a container/collection with elements in order and allowing multiples
 data List {ℓ} (T : Type{ℓ}) : Type{ℓ} where
-  ∅ : List(T) -- The empty list
+  ∅   : List(T) -- The empty list
   _⊰_ : T → List(T) → List(T) -- Cons
 
 {-# BUILTIN LIST List #-}

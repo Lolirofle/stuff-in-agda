@@ -4,7 +4,7 @@ import      Lvl
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
 open import Logic.Predicate{ℓ₁ Lvl.⊔ ℓ₃}{ℓ₂}
-open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₃}{ℓ₂}
+open import Relator.EqualsOld{ℓ₁ Lvl.⊔ ℓ₃}{ℓ₂}
 open import Type
 
 -- Definition of uniqueness of a property.

@@ -3,7 +3,7 @@ module Structure.Operator.SetAlgebra {ℓ₁} {ℓ₂} where
 import      Lvl
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
 open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}

@@ -83,26 +83,26 @@ module Propositional{ℓ} where
       r : Classic(X → Y) → (Classic(X) → Classic(Y))
       r(nnxy)(nnx)(ny) =
         (([→]-elim
+          (nnxy :of: ¬¬(X → Y))
           ((xy ↦
             (([→]-elim
+              (ny :of: (Y → ⊥))
               (([→]-elim
+                (xy :of: (X → Y))
                 (([⊥]-elim
                   (([→]-elim
+                    (nnx :of: ((X → ⊥) → ⊥))
                     ((x ↦
                       (([→]-elim
-                        (([→]-elim x xy) :of: Y)
                         (ny :of: (Y → ⊥))
+                        (([→]-elim xy x) :of: Y)
                       ) :of: ⊥)
                     ) :of: (X → ⊥))
-                    (nnx :of: ((X → ⊥) → ⊥))
                   ) :of: ⊥)
                 ) :of: X)
-                (xy :of: (X → Y))
               ) :of: Y)
-              (ny :of: (Y → ⊥))
             ) :of: ⊥)
           ) :of: ((X → Y) → ⊥))
-          (nnxy :of: ¬¬(X → Y))
         ) :of: ⊥)
 
     ------------------------------------------
@@ -135,17 +135,17 @@ module Propositional{ℓ} where
     ------------------------------------------
     -- Implication
 
-    [→]-elim : ∀{X Y} → Classic(X) → Classic(X → Y) → Classic(Y)
+    [→]-elim : ∀{X Y} → Classic(X → Y) → Classic(X) → Classic(Y)
     [→]-elim = [→]₂-intro(Constructive.[→]-elim)
 
-    [→]-intro : ∀{X Y : Stmt} → Classic(Y) → Classic(X → Y)
-    [→]-intro = [→]₁-intro(Constructive.[→]-intro)
+    [→]-intro : ∀{X Y : Stmt} → (Classic(X) → Classic(Y)) → Classic(X → Y)
+    [→]-intro = ConstructiveTheorems.[¬¬]-double-contrapositiveₗ
 
     ------------------------------------------
     -- Reverse implication
 
-    [←]-intro : ∀{X Y : Stmt} → Classic(Y) → Classic(Y ← X)
-    [←]-intro = [→]₁-intro(Constructive.[←]-intro)
+    [←]-intro : ∀{X Y : Stmt} → (Classic(Y) ← Classic(X)) → Classic(Y ← X)
+    [←]-intro = ConstructiveTheorems.[¬¬]-double-contrapositiveₗ
 
     [←]-elim : ∀{X Y} → Classic(X) → Classic(Y ← X) → Classic(Y)
     [←]-elim = [→]₂-intro(Constructive.[←]-elim)
@@ -153,14 +153,14 @@ module Propositional{ℓ} where
     ------------------------------------------
     -- Equivalence
 
-    [↔]-intro : ∀{X Y} → Classic(X ← Y) → Classic(X → Y) → Classic(X ↔ Y)
-    [↔]-intro = [→]₂-intro(Constructive.[↔]-intro)
+    [↔]-intro : ∀{X Y} → (Classic(X) ← Classic(Y)) → (Classic(X) → Classic(Y)) → Classic(X ↔ Y)
+    [↔]-intro yx xy = ([→]₂-intro(Constructive.[↔]-intro)) ([→]-intro yx) ([→]-intro xy)
 
-    [↔]-elimₗ : ∀{X Y} → Classic(X ↔ Y) → Classic(X ← Y)
-    [↔]-elimₗ = [→]₁-intro(Constructive.[↔]-elimₗ)
+    [↔]-elimₗ : ∀{X Y} → Classic(X ↔ Y) → Classic(X) ← Classic(Y)
+    [↔]-elimₗ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-elimₗ))
 
-    [↔]-elimᵣ : ∀{X Y} → Classic(X ↔ Y) → Classic(X → Y)
-    [↔]-elimᵣ = [→]₁-intro(Constructive.[↔]-elimᵣ)
+    [↔]-elimᵣ : ∀{X Y} → Classic(X ↔ Y) → Classic(X) → Classic(Y)
+    [↔]-elimᵣ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-elimᵣ))
 
     ------------------------------------------
     -- Disjunction (OR)
@@ -171,13 +171,13 @@ module Propositional{ℓ} where
     [∨]-introᵣ : ∀{X Y} → Classic(Y) → Classic(X ∨ Y)
     [∨]-introᵣ = [→]₁-intro(Constructive.[∨]-introᵣ)
 
-    [∨]-elim : ∀{X Y Z} → Classic(X → Z) → Classic(Y → Z) → Classic(X ∨ Y) → Classic(Z)
-    [∨]-elim = [→]₃-intro(Constructive.[∨]-elim)
+    [∨]-elim : ∀{X Y Z} → (Classic(X) → Classic(Z)) → (Classic(Y) → Classic(Z)) → Classic(X ∨ Y) → Classic(Z)
+    [∨]-elim xz yz = ([→]₃-intro(Constructive.[∨]-elim)) ([→]-intro xz) ([→]-intro yz)
 
     ------------------------------------------
     -- Bottom (false, absurdity, empty, contradiction)
 
-    [⊥]-intro : ∀{X} → Classic(X) → Classic(X → ⊥) → Classic(⊥)
+    [⊥]-intro : ∀{X} → Classic(X) → Classic(¬ X) → Classic(⊥)
     [⊥]-intro = [→]₂-intro(Constructive.[⊥]-intro)
 
     [⊥]-elim : ∀{X} → Classic(⊥) → Classic(X)
@@ -192,21 +192,20 @@ module Propositional{ℓ} where
     ------------------------------------------
     -- Negation
 
-    [¬]-intro : ∀{X} → Classic(X → ⊥) → Classic(¬ X)
-    [¬]-intro = [→]₁-intro(Constructive.[¬]-intro)
+    [¬]-intro : ∀{X} → (Classic(X) → Classic(⊥)) → Classic(¬ X)
+    [¬]-intro = ([→]₁-intro(Constructive.[¬]-intro)) ∘ [→]-intro
 
-    [¬]-elim : ∀{X} → Classic(¬ X) → Classic(X → ⊥)
+    [¬]-elim : ∀{X} → Classic(¬ X) → Classic(X → ⊥) -- TODO
     [¬]-elim = [→]₁-intro(Constructive.[¬]-elim)
 
     ------------------------------------------
     -- For-all quantification
 
     -- [∀]-intro : ∀{P} → (∀{x} → Classic(P(x))) → Classic(∀{x} → P(x))
-    -- [∀]-intro = [→]₁-intro(Constructive.[¬]-intro)
-      -- (∀x. ¬¬P(x)) → (¬¬∀x. P(x))
-      -- (∀x. ¬¬P(x)) → (¬¬∀x. P(x))
+    -- [∀]-intro (f) (g) = ConstructiveTheorems.[→]ᵣ-[¬¬]-move-out (f) (g)
 
     -- postulate [∀]-elim : ∀{P} → Classic(∀{x} → P(x)) → ∀{x} → Classic(P(x))
+    -- TODO: [→]ₗ-[¬¬]-elim
 
     ------------------------------------------
     -- Theorems exclusive to classic logic (compared to constructive logic)
@@ -218,12 +217,24 @@ module Propositional{ℓ} where
     excluded-middle{X} = ConstructiveTheorems.[¬¬]-excluded-middle
 
     [¬]-elim₂ : ∀{X} → Classic((¬ X) → ⊥) → Classic(X)
-    [¬]-elim₂ = [¬¬]-elim ∘ [¬]-intro
+    [¬]-elim₂ = [¬¬]-elim ∘ [¬]-intro ∘ [→]-elim
+
+    postulate material-implᵣ : ∀{X Y : Stmt} → Classic(X → Y) → Classic((¬ X) ∨ Y)
 
     postulate contrapositiveₗ : ∀{X Y : Stmt} → Classic(X → Y) ← Classic((¬ X) ← (¬ Y))
 
     double-contrapositiveₗ : ∀{X Y : Stmt} → Classic(X → Y) ← Classic((¬¬ X) → (¬¬ Y))
     double-contrapositiveₗ = contrapositiveₗ ∘ contrapositiveₗ
+
+    postulate callcc : ∀{X Y : Stmt} → Classic(((X → Y) → X) → X)
+    {-callcc =
+      ([→]-intro(xyx ↦
+        (material-implᵣ
+        )
+      ))
+    -}
+
+    -- postulate callcc2 : ∀{X Y Z} → ((X → Y) → Z) → X
 
     ------------------------------------------
     -- Theorems

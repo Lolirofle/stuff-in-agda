@@ -9,7 +9,7 @@ open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Propositional.Theorems{ℓ₁ Lvl.⊔ ℓ₂} using ([↔]-transitivity)
 open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Numeral.Natural
-open import Relator.Equals{ℓ₁} renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_)
+open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂} renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_)
 open import Relator.Equals.Theorems{ℓ₁} hiding ([≡]-substitutionₗ ; [≡]-substitutionᵣ ; [≡]-reflexivity ; [≡]-transitivity ; [≡]-symmetry)
 open import Type{ℓ₂}
 

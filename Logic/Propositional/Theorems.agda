@@ -52,6 +52,9 @@ open import Type
 [∧]-implies-[←] : ∀{X Y : Stmt} → (X ∧ Y) → (X ← Y)
 [∧]-implies-[←] ([∧]-intro x y) = const x
 
+[∧]-implies-[∨] : ∀{X Y : Stmt} → (X ∧ Y) → (X ∨ Y)
+[∧]-implies-[∨] ([∧]-intro x y) = [∨]-introₗ x
+
 ------------------------------------------
 -- Associativity (with respect to ↔)
 
@@ -229,22 +232,25 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 [→]ᵣ-[¬¬]-move-out {X}{Y} (xnny) =
   (nxy ↦
     ([→]-elim
+      (nxy :of: ¬(X → Y))
       ((x ↦
         (([⊥]-elim
           (([→]-elim
+            (([→]-elim xnny x) :of: (¬¬ Y))
             ((y ↦
               (([→]-elim
-                (([→]-intro y) :of: (X → Y))
                 (nxy           :of: ¬(X → Y))
+                (([→]-intro y) :of: (X → Y))
               ) :of: ⊥)
             ) :of: (¬ Y))
-            (([→]-elim x xnny) :of: (¬¬ Y))
           ) :of: ⊥)
         ) :of: Y)
       ) :of: (X → Y))
-      (nxy :of: ¬(X → Y))
     )
   )
+
+[¬¬]-double-contrapositiveₗ : ∀{X Y : Stmt} → ¬¬(X → Y) ← ((¬¬ X) → (¬¬ Y))
+[¬¬]-double-contrapositiveₗ {X}{Y} p = [→]ᵣ-[¬¬]-move-out {X}{Y} ([→]ₗ-[¬¬]-elim {X}{¬¬ Y} p)
 
 [→][∧]ₗ : ∀{X Y : Stmt} → (X → (¬¬ Y)) ← ¬(X ∧ (¬ Y))
 [→][∧]ₗ = Tuple.curry
@@ -257,6 +263,16 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 
 [→][∧]ᵣ : ∀{X Y : Stmt} → (X → Y) → ¬(X ∧ (¬ Y))
 [→][∧]ᵣ f = Tuple.uncurry([¬¬]-intro ∘ f)
+
+-- [→][∧]₂ : ∀{X Y : Stmt} → (X → ¬ Y) ↔ ¬(X ∧ Y) -- TODO
+
+[→][∨]ₗ : ∀{X Y : Stmt} → (X → Y) ← ((¬ X) ∨ Y)
+[→][∨]ₗ ([∨]-introₗ nx) x = [⊥]-elim(nx x)
+[→][∨]ₗ ([∨]-introᵣ y)  x = y
+
+-- TODO: Probably unprovable. (X ∨ ¬X) and [∨]-intro would be enough
+-- [→][∨]ᵣ : ∀{X Y : Stmt} → (X → Y) → ((¬ X) ∨ Y)
+-- [→][∨]ᵣ f =
 
 [↔]-of-[∧] : ∀{X Y Z} → ((X ∧ Z) ↔ (Y ∧ Z)) → (Z → (X ↔ Y))
 [↔]-of-[∧] ([↔]-intro yzxz xzyz) z =
@@ -278,7 +294,7 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 [↔]-elimᵣ-[¬] : ∀{X Y} → (X ↔ Y) → (¬ Y) → (¬ X)
 [↔]-elimᵣ-[¬] xy ny x = ny([↔]-elimᵣ(xy)(x))
 
-[↔]-negative : ∀{X Y} → (X ↔ Y) → ((¬ X) ↔ (¬ Y)) -- TODO: Is the other direction also valid?
+[↔]-negative : ∀{X Y} → (X ↔ Y) → ((¬ X) ↔ (¬ Y)) -- TODO: Is the other direction also valid? Probably not
 [↔]-negative xy = [↔]-intro ([↔]-elimᵣ-[¬] (xy)) ([↔]-elimₗ-[¬] (xy))
 
 [↔]-elim-[∨] : ∀{X Y} → (X ↔ Y) → (X ∨ Y) → (X ∧ Y)
@@ -383,3 +399,5 @@ non-contradiction(x , nx) = nx x
 
 [[¬¬]-elim]-[excluded-middle]-eqᵣ : (∀{X} → (¬¬ X) → X) → (∀{X} → (X ∨ (¬ X)))
 [[¬¬]-elim]-[excluded-middle]-eqᵣ (nnxx) = nnxx([¬¬]-excluded-middle)
+
+-- TODO: https://math.stackexchange.com/questions/910240/equivalence-between-middle-excluded-law-and-double-negation-elimination-in-heyti

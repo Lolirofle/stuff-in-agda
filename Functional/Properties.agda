@@ -4,7 +4,7 @@ import      Lvl
 open import Logic.Propositional
 open import Logic.Predicate{ℓₗ}
 open import Functional
-open import Relator.Equals{ℓₗ}
+import      Relator.Equals
 open import Relator.Equals.Theorems{ℓₗ}
 open import Structure.Function.Domain {ℓₗ}
 open import Type
@@ -23,6 +23,8 @@ surjective-choice{_}{_} {X}{Y}{φ} (surjective) = [∃]-intro (choice) ⦃ \{x} 
   proof{x} = [∃]-proof(surjective{x})
 
 module _ {ℓₒ} where
+  open Relator.Equals{ℓₒ Lvl.⊔ ℓₗ}
+
   Function-totality : ∀{A B : Type{ℓₒ}}{f : A → B} → ∀{x} → ∃(y ↦ f(x) ≡ y)
   Function-totality{_}{_} {f}{x} = [∃]-intro(f(x)) ⦃ [≡]-intro ⦄
 
@@ -51,7 +53,7 @@ module _ {ℓₒ} where
   [∘]-identityᵣ = [≡]-intro
 
   {- -- Every injective function has a left inverse with respect to function composition.
-  -- TODO: Maybe also need to assume (∃x. x∈a)? That Inhabited(a). f: ∅→b is okay, but not g: b→∅
+  -- TODO: Maybe also need to assume (∃x. x∈a)? That Inhabited(a). f: ∅→b is okay, but not g: b→∅. But that case should be impossible?
   [∘]-inverseₗ-value : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
   [∘]-inverseₗ-value {a}{b} {f} ⦃ f-injective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
     f⁻¹ : b → a
@@ -60,6 +62,26 @@ module _ {ℓₒ} where
     f⁻¹-proof : ∀{y} → ((f⁻¹ ∘ f)(y) ≡ id(y))
     f⁻¹-proof{y} = [∃]-proof(f-surjective{y})
   -}
+
+  -- TODO: https://math.stackexchange.com/questions/2049511/is-the-composition-of-two-injective-functions-injective/2049521
+  [∘]-injective : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Injective(f) → Injective(g) → Injective(f ∘ g)
+  [∘]-injective{_}{_}{_} {f}{g} (injective-f) (injective-g) {x₁}{x₂} = (injective-g {x₁} {x₂}) ∘ (injective-f {g(x₁)} {g(x₂)})
+  -- Alternative proof: [∘]-associativity {f⁻¹}{g⁻¹}{g}{f} becomes id by inverseₗ-value injective equivalence
+
+  [∘]-injective-elim : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Injective(f ∘ g) → Injective(g)
+  [∘]-injective-elim{_}{_}{_} {f}{g} (injective-fg) {x₁}{x₂} (gx₁gx₂) = injective-fg {x₁} {x₂} ([≡]-with(f) (gx₁gx₂))
+
+  [∘]-surjective : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Surjective(f) → Surjective(g) → Surjective(f ∘ g)
+  [∘]-surjective{_}{_}{_} {f}{g} (surjective-f) (surjective-g) {y}
+    with (surjective-f {y})
+  ... | [∃]-intro (gx) ⦃ [≡]-intro ⦄
+    with (surjective-g {gx})
+  ... | [∃]-intro (x) ⦃ [≡]-intro ⦄
+    = [∃]-intro (x) ⦃ [≡]-intro ⦄
+
+  [∘]-surjective-elim : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Surjective(f ∘ g) → Surjective(f)
+  [∘]-surjective-elim{_}{_}{_} {f}{g} (surjective-fg) {y} with (surjective-fg {y})
+  ... | [∃]-intro (x) ⦃ [≡]-intro ⦄ = [∃]-intro (g(x)) ⦃ [≡]-intro ⦄
 
   -- Every surjective function has a right inverse with respect to function composition.
   -- Note: Equivalent to axiom of choice from set theory.

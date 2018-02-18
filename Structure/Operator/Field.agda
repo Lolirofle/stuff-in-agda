@@ -2,7 +2,7 @@ module Structure.Operator.Field {ℓ₁} {ℓ₂} where
 
 import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Relator.Equals{ℓ₁}{ℓ₂}
+open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
 open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
 open import Structure.Operator.Group{ℓ₁}{ℓ₂}
 open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}

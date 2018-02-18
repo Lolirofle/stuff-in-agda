@@ -512,7 +512,7 @@ module testResolveInstance where
       𝐒 : ∀{l}{y} → (x ∈ l) → (x ∈ (y ⊰ l))
 
   test1 : 2 ∈ ((1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅) :of: List(ℕ))
-  test1 = resolve-instance(_)  -- Becomes 𝐒(𝐒(𝟎))
+  test1 = resolve(_)  -- Becomes 𝐒(𝐒(𝟎))
 
 module testPureSet where
   open import Logic.Propositional{Lvl.𝟎}
@@ -542,7 +542,7 @@ module testInstanceResolution where
 
   B = A₁(A₂) ↔ A₁(A₂)
   f : (B → ⊤) → ⊤
-  f(g) = g(resolve-instance(B))
+  f(g) = g(resolve(B))
 
 module inferAbstract where
   postulate A : Set -> Set
