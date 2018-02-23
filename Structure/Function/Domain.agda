@@ -36,6 +36,16 @@ module _ {ℓ₂ ℓ₃} where
   Inverse : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (Y → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
   Inverse f f⁻¹ = (∀{x}{y} → (f(x) ≡ y) → (f⁻¹(y) ≡ x))
 
+  Invertible : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+  Invertible f = ∃(Inverse f)
+
+  -- Definition of the relation between a function and an operation that says:
+  -- The function preserves the operation.
+  -- Also called: Homomorphism
+  Preserving : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (X → X) → (Y → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+  Preserving {X}{Y} (f)(x)(y) = (∀{a : X} → (f(x(a)) ≡ y(f(a)))) -- TODO: Is it possible to make this more general? So that multiple function applications are allowed?
+  -- ∀{a : X} → ((f ∘ x)(a) ≡ (y ∘ f)(a))
+
 module _ {ℓ₂} where
   open Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
 
@@ -48,7 +58,8 @@ module _ {ℓ₂} where
   Constant f = (∃(y ↦ ∀{x} → f(x) ≡ y))
 
   -- Definition of the relation between a function and an operation that says:
-  -- The function preserves the operation
+  -- The function preserves the operation.
+  -- This is a special case of the (_preserves_)-relation that has the same operator inside and outside.
   -- Special cases:
   --   Additive function (Operator is a conventional _+_)
   --   Multiplicative function (Operator is a conventional _*_)

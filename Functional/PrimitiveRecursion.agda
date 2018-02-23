@@ -2,7 +2,7 @@ module Functional.PrimitiveRecursion where
 
 import      Lvl
 open import Data
-open        Data.Tuple.Raiseᵣ
+open import Data.Tuple.Raiseᵣ
 open import Functional
 open import Numeral.Natural
 open import Type{Lvl.𝟎}

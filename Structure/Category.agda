@@ -9,6 +9,18 @@ import      Relator.Equals
 open import Relator.Equals.Theorems{Lvl.𝟎}
 open import Structure.Relator.Properties{Lvl.𝟎}
 
+{- TODO:
+Usually, a homomorphism is a function which have the following property:
+  For a function f: A → B, and two operations (▫ᴬ): A² → A, (▫ᴮ): B² → B
+  (f is a homomorphism) ⇔ (∀(a₁∊A)∀(a₂∊A). f(a₁ ▫ᴬ a₂) = f(a₁) ▫ᴮ f(a₂))
+Or maybe more generally:
+  For a function f: A → B, a whole number n, and two operations ga: Aⁿ → A, gb: Bⁿ → B
+  (f is a homomorphism) ⇔ (∀(a∊Aⁿ). f(ga(a)) = gb(map f(a)))
+But what is it called in "Category theory"?
+Is the following what usually is called a "homomorphism"?
+  https://en.wikipedia.org/wiki/Natural_transformation
+-}
+
 module _ {ℓₒ ℓₘ : Lvl.Level} where
   open Relator.Equals{ℓₘ}
 

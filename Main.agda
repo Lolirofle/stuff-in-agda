@@ -10,6 +10,9 @@ import Boolean.Operators
 import Cardinal
 import Data
 import Data.Tuple.List
+import Data.Tuple.Raise
+import Data.Tuple.Raiseₗ
+import Data.Tuple.Raiseᵣ
 import FFI.IO   as FFI
 import FormalLanguage
 import FormalLanguage.ContextFreeGrammar
@@ -17,9 +20,10 @@ import FormalLanguage.Properties
 import FormalLanguage.RegularExpression
 import Functional
 import Functional.Equals
-import Functional.Raise
+import Functional.ComposeRaise
 import Functional.PrimitiveRecursion
 import Functional.Properties
+import Functional.TypeRaise
 import Lvl
 import List
 import List.Properties

@@ -9,6 +9,27 @@ open import Relator.Equals.Theorems{ℓₗ}
 open import Structure.Function.Domain {ℓₗ}
 open import Type
 
+module _ {ℓ₂ ℓ₃} where
+  open Relator.Equals{ℓₗ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+
+  -- The image/range of a function
+  data Image {X : Type{ℓ₂}} {Y : Type{ℓ₃}} (f : X → Y) : Type{ℓₗ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    image-intro : (x : X) → (y : Y) → ⦃ _ : (f(x) ≡ y) ⦄ → Image(f)
+
+  image-apply : ∀{X}{Y}{f : X → Y} → X → (Image(f) → Y) → Y
+  image-apply{X}{Y}{f} (x) (fimg) = fimg(image-intro (x) (f(x)) ⦃ [≡]-intro ⦄)
+
+  image-value : ∀{X}{Y}{f : X → Y} → Image(f) → Y
+  image-value(image-intro _ y) = y
+
+  -- TODO: https://www.iis.sinica.edu.tw/~scm/2009/no-inverses-for-injective-but-non-surjective-functions/
+  {-image-identity : ∀{X}{Y} → (f : X → Y) → ∃{_}{Image(f) → Y} (fid ↦ ∀{x} → (f(x) ≡ image-apply(x) (fid)))
+  image-identity{X}{Y} (f) = [∃]-intro(witness) ⦃ proof ⦄ where
+    witness : Image(f) → Y
+    witness(image-intro x y ⦃ proof ⦄) = y
+
+    postulate proof : ∀{x} → (f(x) ≡ image-apply(x) (witness))
+-}
 -- Every binary predicate that have its first argument defined for all values
 -- have at least one choice function that can determine the second argument from the first.
 -- Proposition: ∀(X: Type)∀(Y: Type)∀(φ: X → Y → Stmt). (∀(x: X)∃(y: Y). φ(x)(y)) → (∃(choice: X → Y)∀(x: X). φ(x)(choice(x)))
@@ -52,15 +73,15 @@ module _ {ℓₒ} where
   [∘]-identityᵣ : ∀{a b : Type{ℓₒ}}{f : a → b} → (f ∘ id ≡ f)
   [∘]-identityᵣ = [≡]-intro
 
-  {- -- Every injective function has a left inverse with respect to function composition.
+  -- Every injective function has a left inverse with respect to function composition.
   -- TODO: Maybe also need to assume (∃x. x∈a)? That Inhabited(a). f: ∅→b is okay, but not g: b→∅. But that case should be impossible?
-  [∘]-inverseₗ-value : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
+  {- [∘]-inverseₗ-value : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
   [∘]-inverseₗ-value {a}{b} {f} ⦃ f-injective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
     f⁻¹ : b → a
-    f⁻¹(y) = [∃]-witness(f-surjective{y})
+    f⁻¹(y) = [∃]-witness(f-injective{y})
 
     f⁻¹-proof : ∀{y} → ((f⁻¹ ∘ f)(y) ≡ id(y))
-    f⁻¹-proof{y} = [∃]-proof(f-surjective{y})
+    f⁻¹-proof{y} = [∃]-proof(f-injective{y})
   -}
 
   -- TODO: https://math.stackexchange.com/questions/2049511/is-the-composition-of-two-injective-functions-injective/2049521

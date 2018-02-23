@@ -1,4 +1,4 @@
-module Functional.Raise where
+module Functional.ComposeRaise where
 
 open import Functional
 import Numeral.Natural as Nat

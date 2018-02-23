@@ -2,7 +2,7 @@ module Logic.Propositional.Theorems {ℓ} where
 
 open import Data
 open import Functional
-open import Functional.Raise
+open import Functional.ComposeRaise
 open import Logic.Propositional{ℓ}
 open import Type
 
