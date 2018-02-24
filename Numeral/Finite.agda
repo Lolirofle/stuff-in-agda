@@ -11,6 +11,7 @@ open import Structure.Function.Domain
 open import Type
 
 -- A structure corresponding to a finite set of natural numbers (0,..,n).
+-- Specifically an upper bounded set of natural numbers, and the boundary is lesser than or equals the parameter.
 -- Positive integers including zero less than a specified integer (0≤_≤n).
 -- This structure works in the following way:
 --   • 𝟎fin can always be constructed, for any upper bound (n).
@@ -28,26 +29,23 @@ data ℕfin : ℕ → Set where
   𝐒fin : ∀{n} → ℕfin(n) → ℕfin(𝐒(n)) -- Successor function
 {-# INJECTIVE ℕfin #-}
 
--- Definition of a finite set/type
-Finite : ∀{ℓ₁ ℓ₂} → Type{ℓ₂} → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
-Finite {ℓ₁}{ℓ₂} (T) = ∃{ℓ₁ Lvl.⊔ ℓ₂}{Lvl.𝟎}{ℕ}(n ↦ (∃{ℓ₁}{ℓ₂}{T → ℕfin(n)}(f ↦ Injective{ℓ₁}(f))))
--- TODO: Create a module Relator.Injection like Relator.Bijection
-
 [ℕfin]-to-[ℕ] : ∀{n} → ℕfin(n) → ℕ
 [ℕfin]-to-[ℕ] (𝟎fin)    = 𝟎
 [ℕfin]-to-[ℕ] (𝐒fin(n)) = 𝐒([ℕfin]-to-[ℕ] (n))
 
+module _ {ℓ} where
+  open Numeral.Natural.Relation{ℓ}
+
+  [ℕ]-to-[ℕfin] : (x : ℕ) → ∀{n} → ⦃ _ : (x lteq2 n) ⦄ → ℕfin(n)
+  [ℕ]-to-[ℕfin] (𝟎)    {_}    ⦃ _ ⦄ = 𝟎fin
+  [ℕ]-to-[ℕfin] (𝐒(_)) {𝟎}    ⦃ ⦄
+  [ℕ]-to-[ℕfin] (𝐒(x)) {𝐒(n)} ⦃ p ⦄ = 𝐒fin([ℕ]-to-[ℕfin] (x) {n} ⦃ p ⦄)
+
 instance
-  ℕfin-from-ℕ : ∀{N} → From-ℕsubset(ℕfin(𝐒(N)))
+  ℕfin-from-ℕ : ∀{N} → From-ℕsubset(ℕfin(N))
   From-ℕsubset.restriction ( ℕfin-from-ℕ {N} ) (n) = (n lteq2 N) where
     open Numeral.Natural.Relation
-  from-ℕsubset ⦃ ℕfin-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = [ℕ]-to-[ℕfin] {n}{N} (proof) where
-    open Numeral.Natural.Relation
-
-    [ℕ]-to-[ℕfin] : ∀{m n} → (m lteq2 n) → ℕfin(𝐒(n))
-    [ℕ]-to-[ℕfin] {𝟎}    {_}    _   = 𝟎fin
-    [ℕ]-to-[ℕfin] {𝐒(_)} {𝟎}    ()
-    [ℕ]-to-[ℕfin] {𝐒(m)} {𝐒(n)} (p) = 𝐒fin([ℕ]-to-[ℕfin] {m}{n} (p))
+  from-ℕsubset ⦃ ℕfin-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = [ℕ]-to-[ℕfin] (n) {N} ⦃ proof ⦄ where
 
 module Theorems{ℓ} where
   open import Numeral.Natural.Function

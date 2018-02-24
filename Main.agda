@@ -54,6 +54,7 @@ import Numeral.Natural
 import Numeral.Natural.Coprime
 import Numeral.Natural.Divisibility
 import Numeral.Finite
+import Numeral.FiniteStrict
 import Numeral.Natural.Function
 import Numeral.Natural.BooleanOper
 import Numeral.Natural.Oper
@@ -75,9 +76,11 @@ import Numeral.Vector
 import Operator.Equals
 import Relator.Bijection
 import Relator.Congruence
+import Relator.Countable
 import Relator.Equals
 import Relator.Equals.Theorems
 import Relator.Equals.Uniqueness
+import Relator.Finite
 import Relator.FunctionEquals
 import Sets.BoolSet
 import Sets.ETCS

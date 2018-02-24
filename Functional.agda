@@ -43,10 +43,10 @@ _∘₃_ : ∀{ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅} {X₁ : Type{ℓ₁}}{X₂ : 
 
 -- Function lifting //TODO: Consider removing because it is the same as _∘_
 liftₗ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → ((Z → X) → (Z → Y))
-liftₗ f g = f ∘ g
+liftₗ f g = f ∘ g -- liftₗ(f) = f ∘_
 
 liftᵣ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → ((Y → Z) → (X → Z))
-liftᵣ f g = g ∘ f
+liftᵣ f g = g ∘ f -- liftᵣ(f) = _∘ f
 
 -- Swapping the arguments of a binary operation
 swap : ∀{ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}}{T₃ : Type{ℓ₃}} → (T₁ → T₂ → T₃) → (T₂ → T₁ → T₃)

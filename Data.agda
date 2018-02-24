@@ -12,7 +12,7 @@ empty ()
 
 -- The unit type which can only be constructed in one way
 record Unit {ℓ} : Type{ℓ} where
-  constructor <>
+  instance constructor <>
 open Unit public
 
 {-# BUILTIN UNIT Unit #-}
@@ -89,15 +89,41 @@ module Option where
   map f (Some x) = Some(f(x))
   map f (None  ) = None
 
-  _or_ : ∀{ℓ}{T : Type{ℓ}} → Option(T) → T → T
-  _or_ (Some x) _   = x
-  _or_ None default = default
+  _default_ : ∀{ℓ}{T : Type{ℓ}} → Option(T) → T → T
+  _default_ (Some x) _   = x
+  _default_ None     def = def
 
-  _nor_ : ∀{ℓ}{T : Type{ℓ}} → Option(T) → Option(T) → Option(T)
-  _nor_ (Some x) _  = (Some x)
-  _nor_ None option = option
+  module Same where
+    _orₗ_ : ∀{ℓ}{T : Type{ℓ}} → Option(T) → Option(T) → Option(T)
+    _orₗ_ (Some x) (Some y)  = Some(x)
+    _orₗ_ (Some x) None      = Some(x)
+    _orₗ_ None     (Some y)  = Some(y)
+    _orₗ_ None     None      = None
 
-  _andThen_ : ∀{ℓ}{T : Type{ℓ}} → Option(T) → (T → Option(T)) → Option(T)
-  _andThen_ None _ = None
-  _andThen_ (Some x) optF = optF x
+    _orᵣ_ : ∀{ℓ}{T : Type{ℓ}} → Option(T) → Option(T) → Option(T)
+    _orᵣ_ (Some x) (Some y)  = Some(y)
+    _orᵣ_ (Some x) None      = Some(x)
+    _orᵣ_ None     (Some y)  = Some(y)
+    _orᵣ_ None     None      = None
+
+    _andThen_ : ∀{ℓ}{T : Type{ℓ}} → Option(T) → (T → Option(T)) → Option(T)
+    _andThen_ None _ = None
+    _andThen_ (Some x) optF = optF x
+
+  module Different where
+    _orₗ_ : ∀{ℓ}{T₁ T₂ : Type{ℓ}} → Option(T₁) → Option(T₂) → Option(T₁ ‖ T₂)
+    _orₗ_ (Some x) (Some y)  = Some(Either.Left(x))
+    _orₗ_ (Some x) None      = Some(Either.Left(x))
+    _orₗ_ None     (Some y)  = Some(Either.Right(y))
+    _orₗ_ None     None      = None
+
+    _orᵣ_ : ∀{ℓ}{T₁ T₂ : Type{ℓ}} → Option(T₁) → Option(T₂) → Option(T₁ ‖ T₂)
+    _orᵣ_ (Some x) (Some y)  = Some(Either.Right(y))
+    _orᵣ_ (Some x) None      = Some(Either.Left(x))
+    _orᵣ_ None     (Some y)  = Some(Either.Right(y))
+    _orᵣ_ None     None      = None
+
+    _and_ : ∀{ℓ}{T : Type{ℓ}} → Option(T) → Option(T) → Option(T ⨯ T)
+    _and_ (Some x) (Some y)  = Some(x , y)
+    _and_ _        _         = None
 open Option using (Option) public

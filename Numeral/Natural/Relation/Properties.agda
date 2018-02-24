@@ -221,3 +221,12 @@ instance
 
     qn : Q(n)
     qn{a} (a≤n) = qk{a} (transitivity{_}{_}{a} (a≤n) (n≤k))
+
+instance
+  lteq2-𝟎 : ∀{n} → (𝟎 lteq2 n)
+  lteq2-𝟎 = [⊤]-intro
+
+instance
+  lteq2-𝐒 : ∀{n} → (n lteq2 n)
+  lteq2-𝐒 {𝟎}    = [⊤]-intro
+  lteq2-𝐒 {𝐒(n)} = lteq2-𝐒 {n}
