@@ -87,6 +87,7 @@ import Sets.ETCS
 import Sets.IZF
 import Sets.ListSet
 import Sets.TypeSet
+import Sets.PredicateSet
 import Structure.Arithmetic
 import Structure.Category
 import Structure.Function

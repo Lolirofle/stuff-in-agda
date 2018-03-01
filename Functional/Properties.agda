@@ -14,7 +14,8 @@ module _ {ℓ₂ ℓ₃} where
 
   -- The image/range of a function
   data Image {X : Type{ℓ₂}} {Y : Type{ℓ₃}} (f : X → Y) : Type{ℓₗ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
-    image-intro : (x : X) → (y : Y) → ⦃ _ : (f(x) ≡ y) ⦄ → Image(f)
+    image-intro : (x : X) → (y : Y) → ⦃ _ : f(x) ≡ y ⦄ → Image(f)
+    -- TODO: image-intro : (x : X) → (y : Y) → .⦃ _ : ∃(x ↦ f(x) ≡ y) ⦄ → Image(f)
 
   image-apply : ∀{X}{Y}{f : X → Y} → X → (Image(f) → Y) → Y
   image-apply{X}{Y}{f} (x) (fimg) = fimg(image-intro (x) (f(x)) ⦃ [≡]-intro ⦄)
