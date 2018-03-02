@@ -125,5 +125,5 @@ module _ {ℓₒ} where
   inv-fnᵣ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
   inv-fnᵣ (f) = [∃]-witness([∘]-inverseᵣ{_}{_}{f})
 
-  inv-fn : ∀{a} → (f : a → a) → ⦃ _ : Bijective(f) ⦄ → (a → a)
+  inv-fn : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
   inv-fn = inv-fnₗ
