@@ -1,3 +1,4 @@
+-- TODO: This is the same idea as PredicateSet
 module Sets.TypeSet {ℓ₁} {ℓ₂} where
 
 import      Lvl

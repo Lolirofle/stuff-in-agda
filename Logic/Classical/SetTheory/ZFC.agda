@@ -2,7 +2,7 @@ open import Logic.Classical.NaturalDeduction
 
 module Logic.Classical.SetTheory.ZFC {ℓₗ} {ℓₒ} ⦃ _ : PredicateEq{ℓₗ}{ℓₒ} ⦄ (_∈_ : Domain → Domain → Stmt) where
 
-open import Functional
+open import Functional hiding (Domain)
 import      Lvl
 open import Type
 

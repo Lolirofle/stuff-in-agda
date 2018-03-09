@@ -42,6 +42,9 @@ pattern [∧]-intro x y = x , y
 ------------------------------------------
 -- Reverse implication
 
+-- _←_ : Stmt → Stmt → Stmt
+-- _←_ = _←ᶠ_
+
 [←]-intro : {X Y : Stmt} → Y → (Y ← X)
 [←]-intro = [→]-intro
 

@@ -2,6 +2,7 @@ module Test where
 
 import Lvl
 
+{- TODO: Unsolved metas
 module NumAndDivisionProofs where
   open import Functional
   open import Logic.Propositional{Lvl.𝟎}
@@ -9,6 +10,7 @@ module NumAndDivisionProofs where
   open import Numeral.Natural
   open import Numeral.Natural.Oper
   open import Numeral.Natural.Relation
+  open import Numeral.Natural.Divisibility
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
@@ -38,10 +40,10 @@ module NumAndDivisionProofs where
   ℕ1IsDividesℕ12 = Div𝟎 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒 ⇒ Div𝐒
 
   test22 : (2 divides 4) → (2 divides 2)
-  test22 (Div𝐒{2}{2} (proof)) = proof
+  test22 (Div𝐒{2} (proof)) = proof
 
   test23 : ¬(2 divides 3)
-  test23 (Div𝐒{2}{1} ())
+  test23 (Div𝐒{1} ())
 
   -- TODO
   -- ℕ3IsDividesℕ7Remℕ1 : 3 divides 7 withRemainder 1
@@ -67,7 +69,7 @@ module NumAndDivisionProofs where
 
   testBottom : (⊥ ∧ ℕ) → ℕ
   testBottom = [∧]-elimᵣ
-
+-}
 module DataTest where
   open import Data
   open import Type{Lvl.𝟎}
@@ -142,12 +144,13 @@ module DataTest where
 
 module TestRepeatingStuff where
   open import Data
+  open import Data.Tuple.Raise
   open import Numeral.Natural
   open import Type
 
-  repeat : {R : Set} → R → (R → R) → ℕ → R
-  repeat x _ 𝟎 = x
-  repeat x f (𝐒 n) = f(repeat x f n)
+  repeat' : {R : Set} → R → (R → R) → ℕ → R
+  repeat' x _ 𝟎 = x
+  repeat' x f (𝐒 n) = f(repeat' x f n)
 
   _⨯^_ : ∀{n} → Set n → ℕ → Set n
   _⨯^_ _    𝟎      = Unit
@@ -167,7 +170,7 @@ module TestRepeatingStuff where
   _⨯^₂_ _ 𝟎 = Unit
   _⨯^₂_ type (𝐒(n)) = repeatOp type (_⨯_) n
 
-  testTupleRaise : ℕ Tuple.^ 4 → ℕ ⨯ ℕ ⨯ ℕ ⨯ ℕ
+  testTupleRaise : (ℕ ^ 4) → ℕ ⨯ ℕ ⨯ ℕ ⨯ ℕ
   testTupleRaise x = x
 
 -- curryN : {n : ℕ} → ∀{T} → (T →^ n)
@@ -355,6 +358,7 @@ module testPrimitiveRecursiveDefinitions where
   import Numeral.Natural.Oper     as Nat
   import Numeral.Natural.Function as Nat
   open import   Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
+  open import   Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
 
   plus   = Rec(2) (P(1)(0)) (Comp(1)(3) (Succ) (P(3)(1)))
   pred   = Rec(1) (Zero) (P(2)(0))
@@ -529,9 +533,10 @@ module testPureSet where
     union : ∀{s₁ s₂} → (x ∈ s₁)∨(x ∈ s₂) → (x ∈ (s₁ ∪ s₂))
     -- power : ∀{s} → (∀{y} → (y ∈ x) → (y ∈ s)) → (x ∈ ℘(s))
 
+{- TODO: Stuck
 module testInstanceResolution where
-  open Logic.Propositional{Lvl.𝟎}
-  open Functional
+  open import Logic.Propositional{Lvl.𝟎}
+  open import Functional
 
   postulate A₁ : Set → Set
   postulate A₂ : Set
@@ -543,16 +548,18 @@ module testInstanceResolution where
   B = A₁(A₂) ↔ A₁(A₂)
   f : (B → ⊤) → ⊤
   f(g) = g(resolve(B))
+-}
 
 module inferAbstract where
+  open import Functional
+
   postulate A : Set -> Set
 
   abstract -- TODO: This pattern could be a macro? See http://agda.readthedocs.io/en/v2.5.3/language/reflection.html for docs and https://github.com/asr/my-agda/blob/4ef826275053a502075e66de7a5cc77964b4291c/test/Succeed/UnquoteDef.agda for examples of macros
     Test = ∀{a} → A(a) → A(a)
 
-    module Test where
-      elim : Test → ∀{a} → A(a) → A(a)
-      elim(x) = x
+    Test-elim : Test → ∀{a} → A(a) → A(a)
+    Test-elim(x) = x
 
   instance
     postulate test2 : Test
@@ -561,3 +568,43 @@ module inferAbstract where
 
   test4 : Test
   test4 = test3(infer)
+
+module testDomainRaise where
+  open import Functional.DomainRaise
+  open import List
+  open import Numeral.Natural
+  open import Numeral.FiniteStrict
+  open import Numeral.Natural.Oper
+  open import Syntax.Number
+  open import Relator.Equals {Lvl.𝟎}{Lvl.𝟎}
+
+  f : (ℕ →̂ List(ℕ))(3)
+  f a b c = (a ⋅ 10) ⊰ (b ⋅ 100) ⊰ (c ⋅ 1000) ⊰ ∅
+
+  testApplyRepeated : applyRepeated{Lvl.𝟎}{Lvl.𝟎}{3}(f)(1) ≡ 10 ⊰ 100 ⊰ 1000 ⊰ ∅
+  testApplyRepeated = [≡]-intro
+
+  g : 𝕟(3) → ℕ
+  g(𝐒(𝐒(𝟎))) = 1
+  g(𝐒(𝟎))    = 2
+  g(𝟎)       = 3
+
+  testApplyFn : applyFn{Lvl.𝟎}{Lvl.𝟎}{3}(f)(g) ≡ 10 ⊰ 200 ⊰ 3000 ⊰ ∅
+  testApplyFn = [≡]-intro
+
+  testOn : _on_{Lvl.𝟎}{Lvl.𝟎}{Lvl.𝟎}{3} (𝐒) f 1 2 3 ≡ (𝐒(1) ⋅ 10) ⊰ (𝐒(2) ⋅ 100) ⊰ (𝐒(3) ⋅ 1000) ⊰ ∅
+  testOn = [≡]-intro
+
+  testNaryL1 : naryₗ{Lvl.𝟎}{2}{List(ℕ)}(_++_) (0 ⊰ ∅) (1 ⊰ ∅) (2 ⊰ ∅) (3 ⊰ ∅) ≡ 0 ⊰ 1 ⊰ 2 ⊰ 3 ⊰ ∅
+  testNaryL1 = [≡]-intro
+
+  testNaryL2 : naryₗ{Lvl.𝟎}{2}{ℕ}(_−₀_) (12) (5) (2) (1) ≡ ((12 −₀ 5) −₀ 2) −₀ 1
+  testNaryL2 = [≡]-intro
+  -- 12−(5−(2−1)) = 8
+  -- (((12−5)−2)−1) = 4
+
+  testNaryR1 : naryᵣ{Lvl.𝟎}{2}{List(ℕ)}(_++_) (0 ⊰ ∅) (1 ⊰ ∅) (2 ⊰ ∅) (3 ⊰ ∅) ≡ 0 ⊰ 1 ⊰ 2 ⊰ 3 ⊰ ∅
+  testNaryR1 = [≡]-intro
+
+  testNaryR2 : naryᵣ{Lvl.𝟎}{2}{ℕ}(_−₀_) (12) (5) (2) (1) ≡ 12 −₀ (5 −₀ (2 −₀ 1))
+  testNaryR2 = [≡]-intro

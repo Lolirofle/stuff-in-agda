@@ -1,6 +1,6 @@
 module Logic.Classical.NaturalDeduction where
 
-open import Functional
+open import Functional hiding (Domain)
 import      Lvl
 open import Type
 

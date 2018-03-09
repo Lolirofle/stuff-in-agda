@@ -18,8 +18,8 @@ record BoolSet{ℓ₂}(T : Type{ℓ₂}) : Type{ℓ₂} where
     inclusion-fn : T → Bool
 
 module _ {ℓ₂}{T : Type{ℓ₂}} where
-  Universe : BoolSet(T)
-  Universe = record{inclusion-fn = const(𝑇)}
+  𝐔 : BoolSet(T)
+  𝐔 = record{inclusion-fn = const(𝑇)}
 
   ∅ : BoolSet(T)
   ∅ = record{inclusion-fn = const(𝐹)}

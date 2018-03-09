@@ -20,17 +20,23 @@ module _ {ℓ₂ ℓ₃} where
   image-apply : ∀{X}{Y}{f : X → Y} → X → (Image(f) → Y) → Y
   image-apply{X}{Y}{f} (x) (fimg) = fimg(image-intro (x) (f(x)) ⦃ [≡]-intro ⦄)
 
+  -- Could also be interpreted as an identity function with a larger codomain.
   image-value : ∀{X}{Y}{f : X → Y} → Image(f) → Y
   image-value(image-intro _ y) = y
 
   -- TODO: https://www.iis.sinica.edu.tw/~scm/2009/no-inverses-for-injective-but-non-surjective-functions/
-  {-image-identity : ∀{X}{Y} → (f : X → Y) → ∃{_}{Image(f) → Y} (fid ↦ ∀{x} → (f(x) ≡ image-apply(x) (fid)))
-  image-identity{X}{Y} (f) = [∃]-intro(witness) ⦃ proof ⦄ where
-    witness : Image(f) → Y
-    witness(image-intro x y ⦃ proof ⦄) = y
+  image-value-identity : ∀{X}{Y} → (f : X → Y) → ∀{x} → (f(x) ≡ image-apply(x) (image-value{X}{Y}{f}))
+  image-value-identity{X}{Y} (f) = [≡]-intro
 
-    postulate proof : ∀{x} → (f(x) ≡ image-apply(x) (witness))
--}
+  -- image-function-surjective : ∀{X}{Y}{f : X → Y} → (fimg : X → Image(f)) → Surjective(fimg)
+  -- image-function-injective : ∀{X}{Y}{f : X → Y} → (fimg : X → Image(f)) → ⦃ _ : Injective(f) ⦄ → Injective(fimg)
+
+  {-
+  -- Image-in(f)(y) means whether the image of `f` contains `y`.
+  Image-in : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → Y → Stmt{ℓₗ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+  Image-in f y = ∃(x ↦ (f(x) ≡ y))
+  -}
+
 -- Every binary predicate that have its first argument defined for all values
 -- have at least one choice function that can determine the second argument from the first.
 -- Proposition: ∀(X: Type)∀(Y: Type)∀(φ: X → Y → Stmt). (∀(x: X)∃(y: Y). φ(x)(y)) → (∃(choice: X → Y)∀(x: X). φ(x)(choice(x)))
@@ -76,7 +82,7 @@ module _ {ℓₒ} where
 
   -- Every injective function has a left inverse with respect to function composition.
   -- TODO: Maybe also need to assume (∃x. x∈a)? That Inhabited(a). f: ∅→b is okay, but not g: b→∅. But that case should be impossible?
-  {- [∘]-inverseₗ-value : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
+  {- [∘]-inverseₗ-value : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ⦃ _ : Inhabited(a) ⦄ → ⦃ _ : ∀{y} → Decidable(Image-in(f)(y)) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
   [∘]-inverseₗ-value {a}{b} {f} ⦃ f-injective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
     f⁻¹ : b → a
     f⁻¹(y) = [∃]-witness(f-injective{y})

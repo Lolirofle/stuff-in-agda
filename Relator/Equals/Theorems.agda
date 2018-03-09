@@ -11,7 +11,7 @@ open import Type
 
 module _ {ℓ₃} where
   -- Replaces occurrences of an element in a function
-  [≡]-substitutionₗ : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Type{ℓ₃}} → f(x) ← f(y)
+  [≡]-substitutionₗ : ∀{T}{x y : T} → (x ≡ y) → ∀{f : T → Type{ℓ₃}} → f(x) ←ᶠ f(y)
   [≡]-substitutionₗ [≡]-intro = id
 
   -- Replaces occurrences of an element in a function

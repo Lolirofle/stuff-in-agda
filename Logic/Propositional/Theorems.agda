@@ -392,7 +392,7 @@ non-contradiction(x , nx) = nx x
 [¬¬]-elim-from-excluded-middle ([∨]-introₗ x)  (nnx) = x
 [¬¬]-elim-from-excluded-middle ([∨]-introᵣ nx) (nnx) = [⊥]-elim(nnx(nx))
 
-[[¬¬]-elim]-[excluded-middle]-eqₗ : (∀{X} → (¬¬ X) → X) ← (∀{X} → X ∨ (¬ X))
+[[¬¬]-elim]-[excluded-middle]-eqₗ : (∀{X} → (¬¬ X) → X) ←ᶠ (∀{X} → X ∨ (¬ X))
 [[¬¬]-elim]-[excluded-middle]-eqₗ or {X} (nnx) with or
 ... | ([∨]-introₗ x ) = x
 ... | ([∨]-introᵣ nx) = [⊥]-elim(nnx(nx))

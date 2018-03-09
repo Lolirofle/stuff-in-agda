@@ -19,11 +19,12 @@ import FormalLanguage.ContextFreeGrammar
 import FormalLanguage.Properties
 import FormalLanguage.RegularExpression
 import Functional
+import Functional.Domains
 import Functional.Equals
 import Functional.ComposeRaise
 import Functional.PrimitiveRecursion
 import Functional.Properties
-import Functional.TypeRaise
+import Functional.DomainRaise
 import Lvl
 import List
 import List.Properties

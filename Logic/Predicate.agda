@@ -10,7 +10,7 @@ open import Type{ℓ₂}
 -- Existential quantification (Existance, Exists)
 
 record ∃ {X : Type} (Pred : X → Stmt) : Stmt where
-  constructor [∃]-intro
+  instance constructor [∃]-intro
   field
     witness   : X
     ⦃ proof ⦄ : Pred(witness)

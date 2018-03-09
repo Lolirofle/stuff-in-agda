@@ -5,13 +5,19 @@ open import Type
 
 infixl 10000 _∘_
 
+-- Converse of a function type
+_←_ : ∀{ℓ₁ ℓ₂} → Type{ℓ₁} → Type{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}
+y ← x = x → y
+
 -- Function type as a function
 _→ᶠ_ : ∀{ℓ₁ ℓ₂} → Type{ℓ₁} → Type{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}
 x →ᶠ y = x → y
 
--- Converse of a function type
-_←_ : ∀{ℓ₁ ℓ₂} → Type{ℓ₁} → Type{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}
-y ← x = x → y
+-- Converse function type as a function
+_←ᶠ_ : ∀{ℓ₁ ℓ₂} → Type{ℓ₁} → Type{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}
+y ←ᶠ x = y ← x
+
+
 
 -- Identity functions
 id : ∀{ℓ} {T : Type{ℓ}} → T → T
@@ -25,32 +31,35 @@ const(x)(_) = x
 apply : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₂) → T₂
 apply(x)(f) = f(x)
 
-apply-repeat₂ : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₁ → T₂) → T₂
-apply-repeat₂(x)(f) = f(x)(x)
-
-apply-repeat₃ : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₁ → T₁ → T₂) → T₂
-apply-repeat₃(x)(f) = f(x)(x)(x)
+-- Swapping the arguments of a binary operation
+swap : ∀{ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}}{T₃ : Type{ℓ₃}} → (T₁ → T₂ → T₃) → (T₂ → T₁ → T₃)
+swap f(x₂)(x₁) = f(x₁)(x₂)
 
 -- Function composition
 _∘_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y → Z) → (X → Y) → (X → Z)
 (f ∘ g)(x) = f(g(x))
 
+_on₂_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → (Y → Y → Z) → (X → X → Z)
+(f on₂ (_▫_))(y₁)(y₂) = f(y₁) ▫ f(y₂)
+
+
+
 _∘₂_ : ∀{ℓ₁ ℓ₂ ℓ₃ ℓ₄} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{Y : Type{ℓ₃}}{Z : Type{ℓ₄}} → (Y → Z) → (X₁ → X₂ → Y) → (X₁ → X₂ → Z)
-(f ∘₂ g)(x₁)(x₂) = f(g(x₁)(x₂)) -- TODO: (f ∘₂ g) = curry(f ∘ (uncurry g))
+(f ∘₂ g)(x₁) = f ∘ (g(x₁))
+-- (f ∘₂ g)(x₁)(x₂) = f(g(x₁)(x₂)) = curry(f ∘ (uncurry g))(x₁)(x₂) = (f ∘ (g(x₁)))(x₂)
 
 _∘₃_ : ∀{ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{X₃ : Type{ℓ₃}}{Y : Type{ℓ₄}}{Z : Type{ℓ₅}} → (Y → Z) → (X₁ → X₂ → X₃ → Y) → (X₁ → X₂ → X₃ → Z)
-(f ∘₃ g)(x)(y)(z) = f(g(x)(y)(z))
+(f ∘₃ g)(x₁) = f ∘₂ (g(x₁))
+-- (f ∘₃ g)(x)(y)(z) = f(g(x)(y)(z))
 
 -- Function lifting //TODO: Consider removing because it is the same as _∘_
 liftₗ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → ((Z → X) → (Z → Y))
-liftₗ f g = f ∘ g -- liftₗ(f) = f ∘_
+liftₗ = _∘_ -- liftₗ(f) = f ∘_
 
 liftᵣ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → ((Y → Z) → (X → Z))
-liftᵣ f g = g ∘ f -- liftᵣ(f) = _∘ f
+liftᵣ = swap _∘_ -- liftᵣ(f) = _∘ f
 
--- Swapping the arguments of a binary operation
-swap : ∀{ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}}{T₃ : Type{ℓ₃}} → (T₁ → T₂ → T₃) → (T₂ → T₁ → T₃)
-swap(f)(x₂)(x₁) = f(x₁)(x₂)
+
 
 -- 🔁(f ∘ 2)
 
@@ -72,14 +81,14 @@ infix 1 [↦]
 syntax [↦](λ x → y) = x ↦ y
 
 -- Returns the domain of a function
-⊷_ : ∀{ℓ₁ ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → Type{ℓ₁}
-⊷_ {_}{_} {A}{_} _ = A
+Domain : ∀{ℓ₁ ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → Type{ℓ₁}
+Domain {_}{_} {A}{_} _ = A
 
--- Returns the codomain/image of a function
-⊶_ : ∀{ℓ₁ ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → Type{ℓ₂}
-⊶_ {_}{_} {_}{B} _ = B
+-- Returns the codomain of a function
+Codomain : ∀{ℓ₁ ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → Type{ℓ₂}
+Codomain {_}{_} {_}{B} _ = B
 
--- Functions with two paramters as an infix binary operator
+-- Functions with two parameters as an infix binary operator
 _〔_〕_ : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} → A → (A → B → C) → B → C
 a 〔 op 〕 b = op a b
 

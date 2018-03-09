@@ -18,33 +18,35 @@ module _ {ℓₗ}{ℓₒ} where
   open Type{ℓₒ}
 
   -- A set
+  -- Note: It is only within a certain type, so everything Pred{T} is actually a subset of T if T were a set.
   PredSet : Type → Set(Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ))
   PredSet(T) = (T → Stmt)
 
   -- The statement of whether an element is in a set
   _∈_ : ∀{T} → T → PredSet(T) → Stmt
-  _∈_ = apply
+  _∈_ = apply -- (x ∈ S) = S(x)
 
   _∉_ : ∀{T} → T → PredSet(T) → Stmt
-  _∉_ x S = ¬(x ∈ S)
+  _∉_ = (¬_) ∘₂ (_∈_) -- (x ∉ S) = ¬(x ∈ S)
 
   _∋_ : ∀{T} → PredSet(T) → T → Stmt
-  _∋_ S x = (x ∈ S)
+  _∋_ = swap(_∈_) -- (S ∋ x) = (x ∈ S)
 
   _∌_ : ∀{T} → PredSet(T) → T → Stmt
-  _∌_ S x = ¬(S ∋ x)
+  _∌_ = (¬_) ∘₂ (_∋_) -- (S ∌ x) = ¬(S ∋ x)
 
   -- An empty set
   ∅ : ∀{T} → PredSet(T)
   ∅ = const(⊥)
 
   -- An universal set
+  -- Note: It is only within a certain type, so 𝐔{T} is actually a subset of everything. It is the subset containing only T if T were a set.
   𝐔 : ∀{T} → PredSet(T)
   𝐔 = const(⊤)
 
   -- A singleton set (a set with only one element)
   singleton : ∀{T} → T → PredSet(T)
-  singleton = _≡_
+  singleton = (_≡_)
 
   -- An union of two sets
   _∪_ : ∀{T} → PredSet(T) → PredSet(T) → PredSet(T)
@@ -56,7 +58,7 @@ module _ {ℓₗ}{ℓₒ} where
 
   -- A complement of a set
   ∁_ : ∀{T} → PredSet(T) → PredSet(T)
-  ∁_ S x = (¬ S(x))
+  ∁_ = (¬_) ∘_ -- ∁_ S x = (¬ S(x))
 
   _∖_ : ∀{T} → PredSet(T) → PredSet(T) → PredSet(T)
   _∖_ S₁ S₂ = (S₁ ∩ (∁ S₂))
