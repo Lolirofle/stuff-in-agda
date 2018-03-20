@@ -1,5 +1,6 @@
 module Numeral.Natural.Oper.Modulo{ℓ} where
 
+-- Difference between the value before and after the floored division operation.
 _mod_ : ℕ → ℕ → ℕ
 _mod_ a b = a −₀ ((a / b) ⋅ b)
 

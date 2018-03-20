@@ -29,3 +29,6 @@ postulate Coprime-of-[1]ₗ : ∀{n} → Coprime(1)(n)
 postulate Coprime-with-[+] : ∀{x y} → Coprime(x)(y) → Coprime(x)(x + y)
 
 postulate Coprime-of-Prime : ∀{y} → Prime(y) → ∀{x} → (𝐒(x) < y) → Coprime(𝐒(x))(y)
+
+-- coprime : ℕ → ℕ → (ℕ ⨯ ℕ)
+-- coprime(x)(y) = (x / gcd(x)(y) , y / gcd(x)(y))

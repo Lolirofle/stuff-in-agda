@@ -37,6 +37,7 @@ import Logic.Classical.Mere
 import Logic.Classical.NaturalDeduction
 import Logic.Classical.DoubleNegated
 import Logic.Classical.SetTheory.ZFC
+import Logic.Computability
 import Logic.Convenience
 import Logic.DiagonalProof
 import Logic.LambdaCalculus
@@ -44,6 +45,7 @@ import Logic.Propositional
 import Logic.Propositional.Theorems
 import Logic.Predicate
 import Logic.Predicate.Theorems
+import Logic.Properties
 import Graph
 import Numeral.Integer
 import Numeral.Integer.Function
@@ -68,6 +70,7 @@ import Numeral.Natural.Relation.Properties
 import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
 import Numeral.Matrix
+import Numeral.Rational.AlterAdd
 import Numeral.Real
 import Numeral.Real.Properties
 import Numeral.Sign

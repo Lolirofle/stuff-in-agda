@@ -7,7 +7,7 @@ open import Logic.Propositional{ℓ}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Proof{ℓ}
-open import Numeral.Natural.Relation
+open import Numeral.Natural.Relation{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Uniqueness{ℓ}{Lvl.𝟎}{Lvl.𝟎}
@@ -315,9 +315,22 @@ instance
   [+][−₀]-nullify : ∀{x y} → ((x + y) −₀ y ≡ x)
   [+][−₀]-nullify{𝟎}   {𝟎}    = [≡]-intro
   [+][−₀]-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([+][−₀]-nullify{x}{y})
-  [+][−₀]-nullify{𝐒(x)}{y}    = z where postulate z : ∀{z} → z
+  [+][−₀]-nullify{𝐒(x)}{y}    = TODO where postulate TODO : ∀{z} → z
   -- [+][−₀]-nullify{𝐒(x)}{y}    = [𝐒]-of-[−₀] {x + y}{y}{𝐒(x)} ([≡]-with(𝐒) ([+][−₀]-nullify{x}{y}))
     -- (𝐒(x) + y) −₀ y
     -- (x + 𝐒(y)) −₀ y
     -- 𝐒(x + y) −₀ y
 {-# REWRITE [+][−₀]-nullify #-}
+
+{-
+instance
+  [+][−₀]-commutativity : ∀{x y} → ⦃ _ : y ≥ z ⦄ → (x + (y −₀ z) ≡ (x −₀ z) + y)
+-}
+
+instance
+  postulate [+][−₀]-nullify2 : ∀{x y} → ⦃ _ : (y ≥ x) ⦄ → (x + (y −₀ x) ≡ y)
+-- {-# REWRITE [+][−₀]-nullify2 #-}
+-- x + (y −₀ x) ≡ y
+-- ∃z. x + ((x + z) −₀ x) ≡ y
+-- ∃z. x + z ≡ y
+-- y ≡ y
