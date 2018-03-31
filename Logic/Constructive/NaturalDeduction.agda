@@ -4,68 +4,160 @@ open import Functional
 import      Lvl
 open import Type
 
--- Theory of constructive propositional logic expressed using natural deduction rules
-record Propositional {ℓ} (Stmt : Type{ℓ}) : Type{Lvl.𝐒(ℓ)} where
-  infixl 10000 •_
-  infixl 1010 ¬_
-  infixl 1005 _∧_
-  infixl 1004 _∨_
-  infixl 1000 _⟵_ _⟷_ _⟶_
+module Propositional {ℓ} (Stmt : Type{ℓ}) where
+  record Proposition : Type{Lvl.𝐒(ℓ)} where
+    infixl 10000 •_
 
-  field
-    •_ : Stmt → Type{ℓ}
+    field
+      •_ : Stmt → Type{ℓ}
 
-  field
-    _∧_  : Stmt → Stmt → Stmt
-    _⟶_ : Stmt → Stmt → Stmt
-    _⟵_ : Stmt → Stmt → Stmt
-    _⟷_ : Stmt → Stmt → Stmt
-    _∨_  : Stmt → Stmt → Stmt
-    ¬_   : Stmt → Stmt
-    ⊥    : Stmt
-    ⊤    : Stmt
+  record Bottom ⦃ _ : Proposition ⦄ : Type{Lvl.𝐒(ℓ)} where
+    open Proposition ⦃ ... ⦄ public
 
-  field
-    [∧]-intro : ∀{X Y} → •(X) → •(Y) → •(X ∧ Y)
-    [∧]-elimₗ  : ∀{X Y} → •(X ∧ Y) → •(X)
-    [∧]-elimᵣ  : ∀{X Y} → •(X ∧ Y) → •(Y)
+    field
+      ⊥    : Stmt
 
-    [→]-intro : ∀{X Y} → •(Y) → •(X ⟶ Y)
-    [→]-elim  : ∀{X Y} → •(X) → •(X ⟶ Y) → •(Y)
+    field
+      intro : ∀{X} → •(X) → (•(X) → •(⊥)) → •(⊥)
+      elim  : ∀{X} → •(⊥) → •(X)
 
-    [←]-intro : ∀{X Y} → •(Y) → •(Y ⟵ X)
-    [←]-elim  : ∀{X Y} → •(X) → •(Y ⟵ X) → •(Y)
+  record Top ⦃ _ : Proposition ⦄ : Type{Lvl.𝐒(ℓ)} where
+    open Proposition ⦃ ... ⦄ public
 
-    [↔]-intro : ∀{X Y} → (•(X) ← •(Y)) → (•(X) → •(Y)) → •(X ⟷ Y)
-    [↔]-elimₗ  : ∀{X Y} → •(X ⟷ Y) → •(X ⟵ Y)
-    [↔]-elimᵣ  : ∀{X Y} → •(X ⟷ Y) → •(X ⟶ Y)
+    field
+      ⊤    : Stmt
 
-    [∨]-introₗ : ∀{X Y} → •(X) → •(X ∨ Y)
-    [∨]-introᵣ : ∀{X Y} → •(Y) → •(X ∨ Y)
-    [∨]-elim  : ∀{X Y Z} → (•(X) → •(Z)) → (•(Y) → •(Z)) → •(X ∨ Y) → •(Z)
+    field
+      intro : •(⊤)
 
-    [¬]-intro : ∀{X} → (•(X) → •(⊥)) → •(¬ X)
-    [¬]-elim  : ∀{X} → •(¬ X) → •(X) → •(⊥)
+  record Conjunction ⦃ _ : Proposition ⦄ : Type{Lvl.𝐒(ℓ)} where
+    open Proposition ⦃ ... ⦄ public
 
-    [⊥]-intro : ∀{X} → •(X) → (•(X) → •(⊥)) → •(⊥)
-    [⊥]-elim  : ∀{X} → •(⊥) → •(X)
+    infixl 1005 _∧_
 
-    [⊤]-intro : •(⊤)
-open Propositional ⦃ ... ⦄ public
+    field
+      _∧_  : Stmt → Stmt → Stmt
 
--- Theory of constructive predicate/(first-order) logic expressed using natural deduction rules
-record Predicate {ℓₗ ℓₒ} (Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}) : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
-  field
-   ⦃ propositional ⦄ : Propositional{ℓₗ Lvl.⊔ ℓₒ}(Stmt)
+    field
+      intro : ∀{X Y} → •(X) → •(Y) → •(X ∧ Y)
+      elimₗ  : ∀{X Y} → •(X ∧ Y) → •(X)
+      elimᵣ  : ∀{X Y} → •(X ∧ Y) → •(Y)
 
-  field
-    ∀ₗ : ∀{X : Type{ℓₒ}} → (X → Stmt) → Stmt
-    ∃ₗ : ∀{X : Type{ℓₒ}} → (X → Stmt) → Stmt
+  record Implication ⦃ _ : Proposition ⦄ : Type{Lvl.𝐒(ℓ)} where
+    open Proposition ⦃ ... ⦄ public
 
-  field
-    [∃]-intro : ∀{X}{P : X → Stmt}{a} → •(P(a)) → •(∃ₗ P)
-    [∃]-elim  : ∀{X}{P : X → Stmt}{Z : Stmt} → (∀{x : X} → •(P(x)) → •(Z)) → •(∃ₗ P) → •(Z)
+    infixl 1000 _⟶_
 
-    [∀]-intro : ∀{X}{P : X → Stmt} → (∀{x : X} → •(P(x))) → •(∀ₗ P)
-    [∀]-elim  : ∀{X}{P : X → Stmt} → •(∀ₗ P) → (∀{x : X} → •(P(x)))
-open Predicate ⦃ ... ⦄ public
+    field
+      _⟶_ : Stmt → Stmt → Stmt
+
+    field
+      intro : ∀{X Y} → •(Y) → •(X ⟶ Y)
+      elim  : ∀{X Y} → •(X ⟶ Y) → •(X) → •(Y)
+
+  record ReversedImplication ⦃ _ : Proposition ⦄ : Type{Lvl.𝐒(ℓ)} where
+    open Proposition ⦃ ... ⦄ public
+
+    infixl 1000 _⟵_
+
+    field
+      _⟵_ : Stmt → Stmt → Stmt
+
+    field
+      intro : ∀{X Y} → •(Y) → •(Y ⟵ X)
+      elim  : ∀{X Y} → •(Y ⟵ X) → •(X) → •(Y)
+
+  record Equivalence ⦃ _ : Proposition ⦄ : Type{Lvl.𝐒(ℓ)} where
+    open Proposition ⦃ ... ⦄ public
+
+    infixl 1000 _⟷_
+
+    field
+      _⟷_ : Stmt → Stmt → Stmt
+
+    field
+      intro : ∀{X Y} → (•(X) ← •(Y)) → (•(X) → •(Y)) → •(X ⟷ Y)
+      elimₗ  : ∀{X Y} → •(X ⟷ Y) → •(Y) → •(X)
+      elimᵣ  : ∀{X Y} → •(X ⟷ Y) → •(X) → •(Y)
+
+  record Disjunction ⦃ _ : Proposition ⦄ : Type{Lvl.𝐒(ℓ)} where
+    open Proposition ⦃ ... ⦄ public
+
+    infixl 1004 _∨_
+
+    field
+      _∨_  : Stmt → Stmt → Stmt
+
+    field
+      introₗ : ∀{X Y} → •(X) → •(X ∨ Y)
+      introᵣ : ∀{X Y} → •(Y) → •(X ∨ Y)
+      elim  : ∀{X Y Z} → •(X ∨ Y) → (•(X) → •(Z)) → (•(Y) → •(Z)) → •(Z)
+
+  record Negation ⦃ _ : Proposition ⦄ ⦃ _ : Bottom ⦄ : Type{Lvl.𝐒(ℓ)} where
+    open Proposition ⦃ ... ⦄ public
+    open Bottom      ⦃ ... ⦄ hiding (•_) public
+
+    infixl 1010 ¬_
+
+    field
+      ¬_   : Stmt → Stmt
+
+    field
+      intro : ∀{X} → (•(X) → •(⊥)) → •(¬ X)
+      elim  : ∀{X} → •(¬ X) → •(X) → •(⊥)
+
+  -- A theory of constructive propositional logic expressed using natural deduction rules
+  record Theory : Type{Lvl.𝐒(ℓ)} where
+    open Proposition ⦃ ... ⦄ public
+    open Conjunction ⦃ ... ⦄ hiding (•_) renaming (intro to [∧]-intro ; elimₗ to [∧]-elimₗ ; elimᵣ to [∧]-elimᵣ) public
+    open Disjunction ⦃ ... ⦄ hiding (•_) renaming (introₗ to [∨]-introₗ ; introᵣ to [∨]-introᵣ ; elim to [∨]-elim) public
+    open Implication ⦃ ... ⦄ hiding (•_) renaming (intro to [→]-intro ; elim to [→]-elim) public
+    open Equivalence ⦃ ... ⦄ hiding (•_) renaming (intro to [↔]-intro ; elimₗ to [↔]-elimₗ ; elimᵣ to [↔]-elimᵣ) public
+    open Negation    ⦃ ... ⦄ hiding (•_) renaming (intro to [¬]-intro ; elim to [¬]-elim) public
+    open Bottom      ⦃ ... ⦄ hiding (•_) renaming (intro to [⊥]-intro ; elim to [⊥]-elim) public
+    open Top         ⦃ ... ⦄ hiding (•_) renaming (intro to [⊤]-intro) public
+
+    field
+      ⦃ proposition ⦄ : Proposition
+      ⦃ bottom ⦄      : Bottom
+      ⦃ top ⦄         : Top
+      ⦃ conjunction ⦄ : Conjunction
+      ⦃ disjunction ⦄ : Disjunction
+      ⦃ implication ⦄ : Implication
+      ⦃ equivalence ⦄ : Equivalence
+      ⦃ negation ⦄    : Negation
+
+module Predicate {ℓₗ ℓₒ} (Obj : Type{ℓₒ}) (Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}) ⦃ _ : Propositional.Proposition(Stmt) ⦄ where
+  open Propositional(Stmt) renaming (Theory to PropositionalTheory)
+  open Proposition ⦃ ... ⦄
+
+  record Object : Type{Lvl.𝐒(ℓₒ)} where
+    field
+      obj : Obj → Type{ℓₒ}
+
+  record UniversalQuantification : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
+    field
+      ∀ₗ : (Obj → Stmt) → Stmt
+
+    field
+      intro : ∀{P : Obj → Stmt} → (∀{x : Obj} → •(P(x))) → •(∀ₗ P)
+      elim  : ∀{P : Obj → Stmt} → •(∀ₗ P) → (∀{x : Obj} → •(P(x)))
+
+  record ExistentialQuantification : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
+    field
+      ∃ₗ : (Obj → Stmt) → Stmt
+
+    field
+      intro : ∀{P : Obj → Stmt}{a} → •(P(a)) → •(∃ₗ P)
+      elim  : ∀{P : Obj → Stmt}{Z : Stmt} → (∀{x : Obj} → •(P(x)) → •(Z)) → •(∃ₗ P) → •(Z)
+
+  -- A theory of constructive predicate/(first-order) logic expressed using natural deduction rules
+  record Theory  : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
+    open Propositional.Theory      ⦃ ... ⦄ public
+    open UniversalQuantification   ⦃ ... ⦄ renaming (intro to [∀]-intro ; elim to [∀]-elim) public
+    open ExistentialQuantification ⦃ ... ⦄ renaming (intro to [∃]-intro ; elim to [∃]-elim) public
+
+    field
+      ⦃ propositional ⦄             : PropositionalTheory
+      ⦃ universalQuantification ⦄   : UniversalQuantification
+      ⦃ existentialQuantification ⦄ : ExistentialQuantification

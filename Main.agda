@@ -37,6 +37,7 @@ import Logic.Classical.Mere
 import Logic.Classical.NaturalDeduction
 import Logic.Classical.DoubleNegated
 import Logic.Classical.SetTheory.ZFC
+import Logic.Constructive.NaturalDeduction
 import Logic.Computability
 import Logic.Convenience
 import Logic.DiagonalProof
