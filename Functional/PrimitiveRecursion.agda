@@ -40,7 +40,7 @@ Primitive : Type
 Primitive = ℕ
 
 -- The semantics
-{-# TERMINATING #-}
+{-# TERMINATING #-} -- TODO: The case of Composition is non-terminating?
 evaluate : ∀{n} → Function(n) → (Primitive ^ n) → Primitive
 evaluate {𝟎}       (Base)                       <> = 𝟎
 evaluate {𝐒(𝟎)}    (Successor)                  x  = 𝐒(x)

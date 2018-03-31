@@ -392,7 +392,7 @@ non-contradiction(x , nx) = nx x
 [¬¬]-elim-from-excluded-middle ([∨]-introₗ x)  (nnx) = x
 [¬¬]-elim-from-excluded-middle ([∨]-introᵣ nx) (nnx) = [⊥]-elim(nnx(nx))
 
-[[¬¬]-elim]-[excluded-middle]-eqₗ : (∀{X} → (¬¬ X) → X) ←ᶠ (∀{X} → X ∨ (¬ X))
+[[¬¬]-elim]-[excluded-middle]-eqₗ : (∀{X} → (¬¬ X) → X) ←ᶠ (∀{X} → (X ∨ (¬ X)))
 [[¬¬]-elim]-[excluded-middle]-eqₗ or {X} (nnx) with or
 ... | ([∨]-introₗ x ) = x
 ... | ([∨]-introᵣ nx) = [⊥]-elim(nnx(nx))
@@ -401,3 +401,20 @@ non-contradiction(x , nx) = nx x
 [[¬¬]-elim]-[excluded-middle]-eqᵣ (nnxx) = nnxx([¬¬]-excluded-middle)
 
 -- TODO: https://math.stackexchange.com/questions/910240/equivalence-between-middle-excluded-law-and-double-negation-elimination-in-heyti
+
+[callcc]-[[¬¬]-elim]-eqₗ : (∀{X Y : Stmt} → (((X → Y) → X) → X)) → (∀{X} → (¬¬ X) → X)
+[callcc]-[[¬¬]-elim]-eqₗ (callcc) {X} (nnx) = callcc{X}{⊥} (nx ↦ [⊥]-elim(nnx(nx)))
+
+{-
+[callcc]-[[¬¬]-elim]-eqᵣ : (∀{X} → (¬¬ X) → X) → (∀{X Y : Stmt} → (((X → Y) → X) → X))
+[callcc]-[[¬¬]-elim]-eqᵣ (nnxx) {X}{Y} (xyx) = xyx(xy) where
+  postulate xy : X → Y
+-}
+
+[callcc]-[excluded-middle]-eqₗ : (∀{X} → (X ∨ (¬ X))) → (∀{X Y : Stmt} → (((X → Y) → X) → X))
+[callcc]-[excluded-middle]-eqₗ or {X}{Y} (xyx) with or
+... | ([∨]-introₗ x ) = x
+... | ([∨]-introᵣ nx) = xyx([⊥]-elim ∘ nx)
+
+[[¬¬]-elim]-[callcc]-eqᵣ : (∀{X Y : Stmt} → (((X → Y) → X) → X)) → (∀{X} → (X ∨ (¬ X)))
+[[¬¬]-elim]-[callcc]-eqᵣ (callcc) {X} = callcc{X ∨ (¬ X)}{⊥} (nor ↦ [⊥]-elim ([¬¬]-excluded-middle (nor)))

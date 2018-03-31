@@ -4,8 +4,8 @@ import      Lvl
 open import Boolean
 open import Numeral.Natural
 open import Numeral.Natural.BooleanOper
-open import Numeral.Finite
-  renaming (𝟎fin to 𝟎ᶠ ; 𝐒fin to 𝐒ᶠ)
+open import Numeral.FiniteStrict
+  renaming (𝟎 to 𝟎ᶠ ; 𝐒 to 𝐒ᶠ)
 open import Numeral.Natural.Function
 open import Numeral.Natural.Oper
 
@@ -14,7 +14,7 @@ open import Numeral.Natural.Oper
 data Term : ℕ → Set where
   Application : ∀{d} → Term(d) → Term(d) → Term(d)
   Abstract    : ∀{d} → Term(𝐒(d)) → Term(d)
-  Var         : ∀{d} → ℕfin(d) → Term(𝐒(d))
+  Var         : ∀{d} → 𝕟(d) → Term(d)
 
 Expression : Set
 Expression = Term(0)
@@ -51,7 +51,7 @@ module Functions where
     )
 
 module Transformations where
-  open        Numeral.Finite.Theorems{Lvl.𝟎}
+  open        Numeral.FiniteStrict.Theorems{Lvl.𝟎}
   open import Numeral.Natural.Oper.Properties{Lvl.𝟎}
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
@@ -73,34 +73,31 @@ module Transformations where
         (depth-[+] {𝐒(d₁)}{d₂} (body))
       )
     )
-  depth-[+] {𝐒(d₁)}{d₂} (Var(n)) =
-    ([≡]-elimₗ
-      ([+1]-commutativity {d₁}{d₂})
-      {Term}
-      (Var(upscale-[+] {d₁}{d₂} (n)))
-    )
+  depth-[+] {d₁}{d₂} (Var(n)) = Var(upscale-[+] {d₁}{d₂} (n))
 
   -- TODO
   -- Apply : ∀{d₂ d₁} → Term(d₁ + d₂) → Term(d₁) → Term(d₁ + d₂)
   -- Apply {d₁}{d₂} (f)(x) = Application(f)(depth-[+] {d₁}{d₂} (x))
 
-  substitute : ∀{d} → ℕfin(d) → Term(d) → Term(d) → Term(d)
+  {-
+  substitute : ∀{d} → 𝕟(d) → Term(d) → Term(d) → Term(d)
   substitute (var) (val) (Application(f)(x)) = Application (substitute (var) (val) (f)) (substitute (var) (val) (x))
   substitute (var) (val) (Var(n)) =
-    if([ℕfin]-to-[ℕ] (var) ≡? [ℕfin]-to-[ℕ] (n)) then
+    if([𝕟]-to-[ℕ] (var) ≡? [𝕟]-to-[ℕ] (n)) then
       (val)
     else
       (Var(n))
   substitute (var) (val) (Abstract(body)) = Abstract (substitute (upscale-𝐒(var)) (depth-𝐒 val) (body))
+  -}
 
   {-
-  β-reduce : ∀{d₁ d₂} → ℕfin(d₁ + 𝐒(d₂)) → Term(d₁ + 𝐒(d₂)) → Term(𝐒(d₂)) → Term(d₂)
+  β-reduce : ∀{d₁ d₂} → 𝕟(d₁ + 𝐒(d₂)) → Term(d₁ + 𝐒(d₂)) → Term(𝐒(d₂)) → Term(d₂)
   β-reduce{d₁}   {d₂}    (var) (val) (Application(f)(x))    = Application{d₂} (β-reduce{d₁}{d₂} (var)(val) (f)) (β-reduce (var)(val) (x))
   β-reduce{d₁}   {d₂}    (var) (val) (Abstract(body)) = Abstract (β-reduce{d₁}{𝐒(d₂)} (upscale-𝐒 var)(val) (body))
   β-reduce{𝟎}    {𝐒(d₂)} (𝟎ᶠ)      (val) (Var(n)) = Var{d₂}(𝟎ᶠ)
   β-reduce{𝟎}    {𝐒(d₂)} (𝐒ᶠ(var)) (val) (Var(n)) = Var{d₂}(var)
   β-reduce{𝐒(d₁)}{𝐒(d₂)} (var)     (val) (Var(n)) = Var{d₂}(n)
-    if([ℕfin]-to-[ℕ](var) ≡? [ℕfin]-to-[ℕ](n)) then
+    if([𝕟]-to-[ℕ](var) ≡? [𝕟]-to-[ℕ](n)) then
       (val)
     else
       (val) -- (Var{max (𝐒 d₁) (𝐒 d₂)} (upscale-maxᵣ n))
@@ -153,8 +150,8 @@ module Test where
   test7 : Expression
   test7 = Abstract(Abstract(Application (Var(𝐒ᶠ(𝟎ᶠ))) (depth-𝐒(depth-𝐒(Functions.id)))))
 
-  test1-subst : substitute (𝐒ᶠ(𝟎ᶠ)) (Var(𝟎ᶠ)) (depth-𝐒(test1)) ≡ Abstract(Abstract(Application (Var(𝟎ᶠ)) (Var(𝟎ᶠ))))
-  test1-subst = [≡]-intro
+  -- test1-subst : substitute (𝐒ᶠ(𝟎ᶠ)) (Var(𝟎ᶠ)) (depth-𝐒(test1)) ≡ Abstract(Abstract(Application (Var(𝟎ᶠ)) (Var(𝟎ᶠ))))
+  -- test1-subst = [≡]-intro
 
   -- test2-subst : substitute(𝐒ᶠ(𝟎ᶠ)) (depth-𝐒(Functions.id)) (depth-𝐒(test1)) ≡ Abstract(Abstract(Application (Functions.id) (Var(𝟎ᶠ))))
   -- test2-subst = [≡]-intro

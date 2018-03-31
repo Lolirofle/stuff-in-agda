@@ -12,5 +12,5 @@ record Equals(T : Type) : Type where
   field
     _==_ : T → T → Bool
   field
-    {completeness} : ∀{a b : T} → (a ≡ b) → (a == b ≡ 𝑇)
+    ⦃ completeness ⦄ : ∀{a b : T} → (a ≡ b) → (a == b ≡ 𝑇)
 open Equals ⦃ ... ⦄ using (_==_) public

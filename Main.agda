@@ -111,6 +111,7 @@ import Structure.Relator.Ordering
 import Structure.Relator.Ordering.Subsets
 import Structure.Relator.Properties
 import String
+import Syntax.Method
 import Syntax.Number
 import Type
 
