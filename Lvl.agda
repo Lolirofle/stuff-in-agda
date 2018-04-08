@@ -6,4 +6,4 @@ open import Agda.Primitive public
 
 -- Wraps a lower level set in a higher level wrapper set.
 data Up {ℓ₁ ℓ₂} (T : Set(ℓ₁)) : Set(ℓ₁ ⊔ ℓ₂) where
-  up : T → Up(T)
+  instance up : T → Up(T)

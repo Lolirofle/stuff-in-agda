@@ -45,8 +45,8 @@ module _ {ℓₗ}{ℓₒ} where
   𝐔 = const(⊤)
 
   -- A singleton set (a set with only one element)
-  singleton : ∀{T} → T → PredSet(T)
-  singleton = (_≡_)
+  •_ : ∀{T} → T → PredSet(T)
+  •_ = (_≡_)
 
   -- An union of two sets
   _∪_ : ∀{T} → PredSet(T) → PredSet(T) → PredSet(T)
@@ -94,21 +94,16 @@ module _ {ℓₗ₁}{ℓₗ₂} {ℓₒ} where
   _≡_ S₁ S₂ = ((S₁ ⊇ S₂)∧(S₁ ⊆ S₂))
 
 module _ {ℓₗ}{ℓₒ} where
-  {- TODO: Levels
-  ℘_ : ∀{T} → PredSet{ℓₗ}{ℓₒ}(T) → PredSet{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}(PredSet{ℓₗ}{ℓₒ}(T))
-  ℘_ S x = (x ⊆' S) where
-    _⊆'_ = _⊆_ {ℓₗ Lvl.⊔ ℓₒ}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}{ℓₒ}
-  -}
+  ℘_ : ∀{T} → PredSet{ℓₗ}{ℓₒ}(T) → PredSet{ℓₗ}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}(PredSet{ℓₗ}{ℓₒ}(T))
+  ℘_ S x = Lvl.Up(x ⊆' S) where
+    _⊆'_ = _⊆_ {ℓₗ}{ℓₗ}{ℓₒ}
 
-  {- TODO: Levels on logic
   _⋃_ : ∀{T} → PredSet{ℓₗ}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}(PredSet{ℓₗ}{ℓₒ}(T)) → PredSet{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}{ℓₒ}(T)
-  _⋃_ S x = ∃(s ↦ (s ∈₁ S) ∧ (x ∈₂ s)) where
-    open Logic.Propositional
-    open Logic.Predicate
+  _⋃_ S x = Logic.Predicate.∃{Lvl.𝐒(ℓₗ)}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}(s ↦ (s ∈₁ S) ⨯ (x ∈₂ s)) where
+    open import Data
 
     _∈₁_ = _∈_ {Lvl.𝐒(ℓₗ)}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}
     _∈₂_ = _∈_ {ℓₗ}{ℓₒ}
-  -}
 
   _⋂_ : ∀{T} → PredSet{ℓₗ}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}(PredSet{ℓₗ}{ℓₒ}(T)) → PredSet{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}{ℓₒ}(T)
   _⋂_ {T} S x = (∀{s : PredSet{ℓₗ}{ℓₒ}(T)} → (s ∈₁ S) → (x ∈₂ s)) where

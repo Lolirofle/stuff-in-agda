@@ -17,7 +17,7 @@ module _ {ℓ₂ ℓ₃} where
 module _ {ℓ₂} where
   open Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}
 
-  -- Definition of surjectivity for a function
+  -- Definition of surjectivity for a function (TODO: Different levels would be okay if the existential allowed it)
   Surjective : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₂}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
   Surjective {X}{Y} f = ∀{y : Y} → ∃{_}{X}(x ↦ (f(x) ≡ y))
 

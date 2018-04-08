@@ -93,6 +93,8 @@ import Sets.IZF
 import Sets.ListSet
 import Sets.TypeSet
 import Sets.PredicateSet
+-- import Sets.PredicateSet.Finite
+-- import Sets.PredicateSet.Properties
 import Structure.Arithmetic
 import Structure.Category
 import Structure.Function

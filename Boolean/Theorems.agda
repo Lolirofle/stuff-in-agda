@@ -4,6 +4,7 @@ import      Lvl
 open import Boolean
 import      Boolean.Operators
 open        Boolean.Operators.Programming
+open import Functional
 open import Logic.Propositional{ℓ₁}
 open import Relator.Equals{ℓ₁}{Lvl.𝟎}
 open import Relator.Equals.Theorems{ℓ₁}{Lvl.𝟎}
@@ -71,10 +72,22 @@ disjointness {𝐹} ([∧]-intro () [≡]-intro)
 
 
 
-[≢][𝑇]-is-[𝐹] : ∀{a} → (a ≢ 𝑇) → (a ≡ 𝐹)
-[≢][𝑇]-is-[𝐹] {𝑇} (a≢𝑇) = [⊥]-elim ((a≢𝑇) ([≡]-intro))
-[≢][𝑇]-is-[𝐹] {𝐹} (a≢𝑇) = [≡]-intro
+[≢][𝑇]-is-[𝐹] : ∀{a} → (a ≢ 𝑇) ↔ (a ≡ 𝐹)
+[≢][𝑇]-is-[𝐹] {a} = [↔]-intro (l{a}) (r{a}) where
+  r : ∀{a} → (a ≢ 𝑇) → (a ≡ 𝐹)
+  r {𝑇} (a≢𝑇) = [⊥]-elim ((a≢𝑇) ([≡]-intro))
+  r {𝐹} (a≢𝑇) = [≡]-intro
 
-[≢][𝐹]-is-[𝑇] : ∀{a} → (a ≢ 𝐹) → (a ≡ 𝑇)
-[≢][𝐹]-is-[𝑇] {𝑇} (a≢𝐹) = [≡]-intro
-[≢][𝐹]-is-[𝑇] {𝐹} (a≢𝐹) = [⊥]-elim ((a≢𝐹) ([≡]-intro))
+  l : ∀{a} → (a ≢ 𝑇) ← (a ≡ 𝐹)
+  l {𝑇} ()
+  l {𝐹} (a≡𝐹) ()
+
+[≢][𝐹]-is-[𝑇] : ∀{a} → (a ≢ 𝐹) ↔ (a ≡ 𝑇)
+[≢][𝐹]-is-[𝑇] {a} = [↔]-intro (l{a}) (r{a}) where
+  r : ∀{a} → (a ≢ 𝐹) → (a ≡ 𝑇)
+  r {𝑇} (a≢𝐹) = [≡]-intro
+  r {𝐹} (a≢𝐹) = [⊥]-elim ((a≢𝐹) ([≡]-intro))
+
+  l : ∀{a} → (a ≢ 𝐹) ← (a ≡ 𝑇)
+  l {𝑇} (a≡𝑇) ()
+  l {𝐹} ()

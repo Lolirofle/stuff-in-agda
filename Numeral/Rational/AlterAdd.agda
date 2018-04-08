@@ -3,6 +3,7 @@
 module Numeral.Rational.AlterAdd where
 
 open import Boolean
+open import Logic.Propositional
 open import Numeral.Natural             as ℕ
 import      Numeral.Natural.Oper        as ℕ
 import      Numeral.Natural.BooleanOper as ℕ
@@ -15,8 +16,8 @@ data Tree : ℕ → ℕ → Set where
   Tree-right : ∀{x y} → Tree(x)(y) → Tree(x ℕ.+ y) (y)
 {-# INJECTIVE Tree #-}
 
--- Tree-zeroₗ : ∀{x} → ¬(Tree(0)(x))
--- Tree-zeroᵣ : ∀{x} → ¬(Tree(x)(0))
+postulate Tree-zeroₗ : ∀{x} → ¬(Tree(0)(x))
+postulate Tree-zeroᵣ : ∀{x} → ¬(Tree(x)(0))
 
 -- TODO: Is there an algorithm that determines the path to every rational in this tree?
 {-
@@ -32,7 +33,7 @@ L5 (1,6) 19-6⋅3 = 1
 In (1,1) 6−1⋅5 = 1
 f(R$R$R$R$R$R $ L$L$L$L $ R$R$R $ L$L $ R$R $ L $ R$R$R $ L$L$L$L$L $ Init)
 -}
-{-
+
 postulate TODO : ∀{a} → a
 Tree-construction-algorithm : (x : ℕ) → (y : ℕ) → Tree(x)(y)
 Tree-construction-algorithm(0)(_) = TODO
@@ -41,7 +42,6 @@ Tree-construction-algorithm(1)(1) = Tree-intro
 Tree-construction-algorithm(x)(y) with (x ℕ.≤? y) -- TODO: Prove that ℕ.≤? is both ComputablyDecidable and Decidable
 ... | 𝑇 = Tree-left (Tree-construction-algorithm(x)(y ℕ.−₀ x))
 ... | 𝐹 = Tree-right(Tree-construction-algorithm(x ℕ.−₀ y)(y))
--}
 
 -- _+_ : Tree(a₁)(b₁) → Tree(a₂)(b₂) → 
 -- _⋅_ : Tree(a₁)(b₁) → Tree(a₂)(b₂) → 

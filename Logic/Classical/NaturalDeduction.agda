@@ -3,56 +3,76 @@ module Logic.Classical.NaturalDeduction where
 open import Functional hiding (Domain)
 import      Lvl
 open import Type
+import      Logic.Constructive.NaturalDeduction as Constructive
 
 -- TODO: Maybe it is worth to try and take a more minimal approach? (Less axioms? Is this more practical/impractical?)
 
--- Theory of classical propositional logic expressed using natural deduction rules
-record Propositional {ℓ} : Type{Lvl.𝐒(ℓ)} where
-  infixl 1010 ¬_
-  infixl 1005 _∧_
-  infixl 1004 _∨_
-  infixl 1000 _⟵_ _⟷_ _⟶_
+module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓₘ}) where
+  open Constructive.Propositional {ℓ}{ℓₘ} {Stmt} (Proof) using
+    (
+      Conjunction ;
+      Disjunction ;
+      Implication ;
+      Consequence ;
+      Equivalence ;
+      Bottom      ;
+      Top
+    )
+    public
 
-  Stmt : Type{Lvl.𝐒(ℓ)}
-  Stmt = Type{ℓ}
+  -- Rules of negation
+  record Negation ⦃ _ : Bottom ⦄ : Type{ℓₘ Lvl.⊔ ℓ} where
+    open Bottom ⦃ ... ⦄
 
-  field
-    Proof : Stmt → Stmt
-    _∧_   : Stmt → Stmt → Stmt
-    _⟶_  : Stmt → Stmt → Stmt
-    _⟵_  : Stmt → Stmt → Stmt
-    _⟷_  : Stmt → Stmt → Stmt
-    _∨_   : Stmt → Stmt → Stmt
-    ¬_    : Stmt → Stmt
-    ⊥     : Stmt
-    ⊤     : Stmt
+    infixl 1010 ¬_
 
-  field
-    [∧]-intro : ∀{X Y} → Proof(X) → Proof(Y) → Proof(X ∧ Y)
-    [∧]-elimₗ  : ∀{X Y} → Proof(X ∧ Y) → Proof(X)
-    [∧]-elimᵣ  : ∀{X Y} → Proof(X ∧ Y) → Proof(Y)
+    field
+      ¬_   : Stmt → Stmt
 
-    [→]-intro : ∀{X Y} → Proof(Y) → Proof(X ⟶ Y)
-    [→]-elim  : ∀{X Y} → Proof(X) → Proof(X ⟶ Y) → Proof(Y)
+    field
+      intro : ∀{X} → (Proof(X) → Proof(⊥)) → Proof(¬ X)
+      elim  : ∀{X} → (Proof(¬ X) → Proof(⊥)) → Proof(X)
 
-    [←]-intro : ∀{X Y} → Proof(Y) → Proof(Y ⟵ X)
-    [←]-elim  : ∀{X Y} → Proof(X) → Proof(Y ⟵ X) → Proof(Y)
+  -- A theory of classical propositional logic expressed using natural deduction rules
+  record Theory : Type{ℓₘ Lvl.⊔ ℓ} where
+    open Conjunction ⦃ ... ⦄ renaming (intro to [∧]-intro ; elimₗ to [∧]-elimₗ ; elimᵣ to [∧]-elimᵣ) public
+    open Disjunction ⦃ ... ⦄ renaming (introₗ to [∨]-introₗ ; introᵣ to [∨]-introᵣ ; elim to [∨]-elim) public
+    open Implication ⦃ ... ⦄ renaming (intro to [→]-intro ; elim to [→]-elim) public
+    open Consequence ⦃ ... ⦄ renaming (intro to [←]-intro ; elim to [←]-elim) public
+    open Equivalence ⦃ ... ⦄ renaming (intro to [↔]-intro ; elimₗ to [↔]-elimₗ ; elimᵣ to [↔]-elimᵣ) public
+    open Negation    ⦃ ... ⦄ renaming (intro to [¬]-intro ; elim to [¬]-elim) public
+    open Bottom      ⦃ ... ⦄ renaming (intro to [⊥]-intro ; elim to [⊥]-elim) public
+    open Top         ⦃ ... ⦄ renaming (intro to [⊤]-intro) public
 
-    [↔]-intro : ∀{X Y} → Proof(X ← Y) → Proof(X → Y) → Proof(X ⟷ Y)
-    [↔]-elimₗ  : ∀{X Y} → Proof(X ⟷ Y) → Proof(X ⟵ Y)
-    [↔]-elimᵣ  : ∀{X Y} → Proof(X ⟷ Y) → Proof(X ⟶ Y)
+    field
+      ⦃ bottom ⦄      : Bottom
+      ⦃ top ⦄         : Top
+      ⦃ conjunction ⦄ : Conjunction
+      ⦃ disjunction ⦄ : Disjunction
+      ⦃ implication ⦄ : Implication
+      ⦃ consequence ⦄ : Consequence
+      ⦃ equivalence ⦄ : Equivalence
+      ⦃ negation ⦄    : Negation
 
-    [∨]-introₗ : ∀{X Y} → Proof(X) → Proof(X ∨ Y)
-    [∨]-introᵣ : ∀{X Y} → Proof(Y) → Proof(X ∨ Y)
-    [∨]-elim  : ∀{X Y Z : Stmt} → Proof(X → Z) → Proof(Y → Z) → Proof(X ∨ Y) → Proof(Z)
+module Predicate {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}} {Domain : Type{ℓₒ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) (Construct : Domain → Type{ℓₘₒ}) where
+  open Propositional(Proof) renaming (Theory to PropositionalTheory)
 
-    [¬]-intro : ∀{X} → Proof(X → ⊥) → Proof(¬ X)
-    [¬]-elim  : ∀{X} → (Proof(¬ X) → Proof(⊥)) → Proof(X)
+  open Constructive.Predicate {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) (Construct) using
+    (
+      UniversalQuantification ;
+      ExistentialQuantification
+    ) public
 
-    [⊥]-intro : ∀{X : Stmt} → Proof(X) → Proof(X → ⊥) → Proof(⊥)
-    [⊥]-elim  : ∀{X : Stmt} → Proof(⊥) → Proof(X)
+  -- A theory of classical predicate/(first-order) logic expressed using natural deduction rules
+  record Theory  : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+    open PropositionalTheory       ⦃ ... ⦄ public
+    open UniversalQuantification   ⦃ ... ⦄ renaming (intro to [∀]-intro ; elim to [∀]-elim) public
+    open ExistentialQuantification ⦃ ... ⦄ renaming (intro to [∃]-intro ; elim to [∃]-elim) public
 
-    [⊤]-intro : Proof(⊤)
+    field
+      ⦃ propositional ⦄             : PropositionalTheory
+      ⦃ universalQuantification ⦄   : UniversalQuantification
+      ⦃ existentialQuantification ⦄ : ExistentialQuantification
 
 {-
 Propositional-from-[∧][∨][⊥] : ∀{ℓ} → (_∧_ _∨_ : Stmt → Stmt → Stmt) → (⊥ : Stmt) →
@@ -86,53 +106,37 @@ Propositional-from-[∧][∨][⊥]
     ⊤    = ¬ ⊥
   }
 -}
-open Propositional ⦃ ... ⦄ public
 
--- Theory of classical predicate/(first-order) logic expressed using natural deduction rules
-record Predicate {ℓₗ ℓₒ} : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
-  field
-    ⦃ propositional ⦄ : Propositional{ℓₗ Lvl.⊔ ℓₒ}
-    Metadomain : Type{ℓₒ}
-    Domain     : Type{ℓₒ}
-    obj : Metadomain → Domain
+module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}} {Domain : Type{ℓₒ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) (Construct : Domain → Type{ℓₘₒ}) where
+  open Predicate {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof)(Construct) renaming (Theory to PredicateTheory)
 
-  field
-    ∀ₗ : (Domain → Stmt) → Stmt
-    ∃ₗ : (Domain → Stmt) → Stmt
+  -- Rules of equality
+  record Equality : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+    infixl 2000 _≡_
 
-  field
-    [∃]-intro : ∀{P : Domain → Stmt}{a} → P(a) → (∃ₗ P)
-    [∃]-elim  : ∀{P : Domain → Stmt}{Z : Stmt} → (∀{x : Metadomain} → P(obj(x)) → Z) → (∃ₗ P) → Z
+    field
+      _≡_ : Domain → Domain → Stmt
 
-    -- TODO: These are convenient, but it may not actually be possible to construct it constructively? Maybe wrap it inside something?
-    {-[∃]-elem  : ∀{P : Domain → Stmt} → (∃ₗ P) → Domain
-    [∃]-proof : ∀{P : Domain → Stmt} → (e : ∃ₗ P) → P([∃]-elem(e))-}
+    field
+      intro : ∀{x} → Proof(x ≡ x)
+      elimₗ  : ∀{P : Domain → Stmt}{a b} → Proof(a ≡ b) → Proof(P(a)) ← Proof(P(b))
+      elimᵣ  : ∀{P : Domain → Stmt}{a b} → Proof(a ≡ b) → Proof(P(a)) → Proof(P(b))
 
-    -- TODO: Are these really correct?
-    [∀]-intro : ∀{P : Domain → Stmt} → (∀{x : Metadomain} → P(obj(x))) → (∀ₗ P)
-    [∀]-elim  : ∀{P : Domain → Stmt} → (∀ₗ P) → (∀{x : Metadomain} → P(obj(x)))
-open Predicate ⦃ ... ⦄ public
+  record Theory : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+    open PredicateTheory ⦃ ... ⦄ public
+    open Equality        ⦃ ... ⦄ renaming (intro to [≡]-intro ; elimₗ to [≡]-elimₗ ; elimᵣ to [≡]-elimᵣ) public
 
-record PredicateEq {ℓₗ ℓₒ} : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
-  field
-    ⦃ predicate ⦄ : Predicate{ℓₗ}{ℓₒ}
+    field
+      ⦃ predicate ⦄ : PredicateTheory
+      ⦃ equality ⦄  : Equality
 
-  field
-    _≡_ : Domain → Domain → Stmt
+    -- Definition of uniqueness of a property.
+    -- This means that there is at most one element that satisfies this property.
+    -- This is similiar to "Injective" for functions, but this is for statements.
+    Unique : (Domain → Stmt) → Stmt
+    Unique(P) = ∀ₗ(x ↦ ∀ₗ(y ↦ (P(x) ∧ P(y)) ⟶ (x ≡ y)))
 
-  field
-    [≡]-intro : ∀{x} → (x ≡ x)
-    [≡]-elim  : ∀{P : Domain → Stmt}{a b} → (a ≡ b) → P(a) → P(b)
-
-  -- Definition of uniqueness of a property.
-  -- This means that there is at most one element that satisfies this property.
-  -- This is similiar to "Injective" for functions, but this is for statements.
-  Unique : (Domain → Stmt) → Stmt
-  Unique(P) = ∀ₗ(x ↦ ∀ₗ(y ↦ (P(x) ∧ P(y)) ⟶ (x ≡ y)))
-
-  -- Definition of existence of an unique element satisfying a property.
-  -- This means that there is one and only one element that satisfies this property.
-  ∃ₗ! : (Domain → Stmt) → Stmt
-  ∃ₗ!(P) = ((∃ₗ P) ∧ Unique(P))
-
-open PredicateEq ⦃ ... ⦄ public
+    -- Definition of existence of an unique element satisfying a property.
+    -- This means that there is one and only one element that satisfies this property.
+    ∃ₗ! : (Domain → Stmt) → Stmt
+    ∃ₗ! P = ((∃ₗ P) ∧ Unique(P))
