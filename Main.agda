@@ -5,6 +5,7 @@ import Automaton.NonDeterministicFinite
 import Automaton.Pushdown
 import Automaton.TuringMachine
 import Boolean
+import Boolean.AsSet
 import Boolean.Theorems
 import Boolean.Operators
 import Cardinal
@@ -59,6 +60,7 @@ import Numeral.Natural.Coprime
 import Numeral.Natural.Divisibility
 import Numeral.Finite
 import Numeral.FiniteStrict
+import Numeral.FiniteStrict.BooleanOper
 import Numeral.Natural.Function
 import Numeral.Natural.BooleanOper
 import Numeral.Natural.Oper
@@ -113,6 +115,7 @@ import Structure.Relator.Equivalence as Eq
 import Structure.Relator.Ordering
 import Structure.Relator.Ordering.Subsets
 import Structure.Relator.Properties
+import Stream
 import String
 import Syntax.Method
 import Syntax.Number

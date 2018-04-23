@@ -58,6 +58,11 @@ module Oper {Σ} where
   Language.accepts-ε   ε = 𝑇
   Language.suffix-lang ε = const(∅)
 
+  -- The filtered language
+  filter : ∀{s} → (Σ → Bool) → Language(Σ){s}
+  Language.accepts-ε   (filter f) = 𝐹
+  Language.suffix-lang (filter f) c = if f(c) then (filter f) else ∅
+
   -- Union
   -- The language that includes any words that the two languages have.
   _∪_ : ∀{s} → Language(Σ){s} → Language(Σ){s} → Language(Σ){s}
@@ -87,7 +92,7 @@ module Oper {Σ} where
   Language.accepts-ε   (L *) = 𝑇
   Language.suffix-lang (L *) =
     (c ↦
-      Language.suffix-lang(L)(c) *
+      (Language.suffix-lang(L)(c) 𝁼 L) * -- TODO: Not Language.suffix-lang(L)(c) 𝁼 (L *) ?
     )
 
   -- Complement
@@ -110,7 +115,7 @@ module Oper {Σ} where
   -- Containment check
   -- Checks whether a word is in the language.
   _is-in_ : Word(Σ) → Language(Σ){ω} → Bool
-  _is-in_ ([])    (L) = Language.accepts-ε(L)
+  _is-in_ []      (L) = Language.accepts-ε(L)
   _is-in_ (c ⊰ w) (L) = w is-in (Language.suffix-lang(L)(c))
 
   -- Containment
@@ -126,4 +131,4 @@ module Oper {Σ} where
   -- The language of length 1 words that only accepts some symbols of its alphabet
   alphabet-filter : ∀{s} → (Σ → Bool) → Language(Σ){s}
   Language.accepts-ε   (alphabet-filter f) = 𝐹
-  Language.suffix-lang (alphabet-filter f) = (c ↦ if f(c) then (ε) else (∅))
+  Language.suffix-lang (alphabet-filter f) = (c ↦ if f(c) then ε else ∅)

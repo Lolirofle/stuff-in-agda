@@ -5,7 +5,7 @@ open import Syntax.Number
 open import Functional
 open import Logic.Propositional
 open import Logic.Predicate
-open import Numeral.Natural
+open import Numeral.Natural hiding (𝐏)
 import      Numeral.Natural.Relation
 open import Structure.Function.Domain
 open import Type
@@ -47,6 +47,10 @@ instance
     open Numeral.Natural.Relation
   from-ℕsubset ⦃ 𝕟-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = [ℕ]-to-[𝕟] (n) {N} ⦃ proof ⦄ where
 
+𝐏 : ∀{n} → 𝕟(ℕ.𝐒(ℕ.𝐒(n))) → 𝕟(𝐒(n))
+𝐏(𝟎)    = 𝟎
+𝐏(𝐒(n)) = n
+
 module Theorems{ℓ} where
   open import Numeral.Natural.Function
   open import Numeral.Natural.Oper
@@ -64,7 +68,7 @@ module Theorems{ℓ} where
   upscale-[+] {ℕ.𝐒(n₁)}{n₂}(𝐒(n)) = 𝐒(upscale-[+] {n₁}{n₂} (n))
 
   upscale-maxₗ : ∀{n₁ n₂} → 𝕟(n₁) → 𝕟(max n₁ n₂)
-  upscale-maxₗ {n₁}{n₂} = upscale-[+] {n₁}{n₂ −₀ n₁}
+  upscale-maxₗ {n₁}{n₂} (n) = [≡]-substitutionₗ (Theorems.max-elementary{ℓ}{n₁}{n₂}) {𝕟} (upscale-[+] {n₁}{n₂ −₀ n₁} (n))
 
   upscale-maxᵣ : ∀{n₁ n₂} → 𝕟(n₂) → 𝕟(max n₁ n₂)
   upscale-maxᵣ {n₁}{n₂} (n) = [≡]-substitutionᵣ (Theorems.max-commutativity{ℓ}{n₂}{n₁}) {𝕟} (upscale-maxₗ {n₂}{n₁} (n))
@@ -72,6 +76,7 @@ module Theorems{ℓ} where
   instance
     upscale-instance : ∀{n} → ⦃ _ : 𝕟(n) ⦄ → 𝕟(ℕ.𝐒(n))
     upscale-instance {n} ⦃ proof ⦄ = upscale-𝐒 {n} (proof)
+
 
   {-instance
     postulate downscale-instance : ∀{n} → ⦃ nfin : 𝕟(ℕ.𝐒(n)) ⦄ → ⦃ _ : [𝕟]-to-[ℕ]{ℕ.𝐒(n)}(nfin) lteq2 n ⦄ → 𝕟(n)

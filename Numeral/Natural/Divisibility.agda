@@ -50,7 +50,6 @@ data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where -- TODO: Make 
   instance
     DivRem𝟎 : ∀{x r : ℕ}   → ⦃ _ : r < x ⦄ → x divides r withRemainder r
     DivRem𝐒 : ∀{x y r : ℕ} → (x divides y withRemainder r) → (x divides (x + y) withRemainder r)
-{-# INJECTIVE _divides_withRemainder_ #-}
 
 {-
 _divides_ : ℕ → ℕ → Stmt
@@ -67,7 +66,7 @@ DivN {y}(𝐒(n)) = Div𝐒(DivN{y}(n))
 Div𝐏 : ∀{x y : ℕ} → (y divides x) → (y divides (x −₀ y))
 Div𝐏 {x}   {𝟎}    (0-div-x) = 0-div-x
 Div𝐏 {𝟎}   {y}    (y-div-0) = [≡]-substitutionₗ ([−₀]-negative{y}) {expr ↦ (y divides expr)} (Div𝟎)
-Div𝐏 {_}{y} (Div𝐒{x} (y-div-x)) = [≡]-substitutionᵣ [+][−₀]-nullify {expr ↦ (y divides expr)} y-div-x
+Div𝐏 {_}{y} (Div𝐒{x} (y-div-x)) = [≡]-substitutionᵣ [−₀]ₗ[+]ᵣ-nullify {expr ↦ (y divides expr)} y-div-x
 -}
 
 divides-intro : ∀{x y} → (∃ \(n : ℕ) → (y ⋅ n ≡ x)) → (y divides x)
@@ -135,6 +134,30 @@ divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , 
     )
   )
 
+divides-with-[−₀] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b −₀ c))
+divides-with-[−₀] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
+... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
+  (divides-intro
+    ([∃]-intro
+      (n₁ −₀ n₂)
+     ⦃
+        ([⋅][−₀]-distributivityₗ {a}{n₁}{n₂})
+        🝖 ([≡]-with-op(_−₀_)
+          (a⋅n₁≡b)
+          (a⋅n₂≡c)
+        )
+      ⦄
+    )
+  )
+
+divides-without-[+]ₗ : ∀{a b c} → (a divides (b + c)) → (a divides c) → (a divides b)
+divides-without-[+]ₗ {a}{b}{c} = divides-with-[−₀] {a}{b + c}{c}
+
+divides-without-[+]ᵣ : ∀{a b c} → (a divides (b + c)) → (a divides b) → (a divides c)
+divides-without-[+]ᵣ {a}{b}{c} abc ab = divides-without-[+]ₗ {a}{c}{b} ([≡]-elimᵣ ([+]-commutativity{b}{c}) {expr ↦ a divides expr} abc) ab
+
+-- divides-[⋅] : ∀{a b c} → Coprime(b)(c) → (a divides (b ⋅ c)) → ((a divides b) ∨ (a divides c))
+
 -- instance
 --   divides-with-fn : ∀{a b} → (a divides b) → ∀{f : ℕ → ℕ} → {_ : ∀{x y : ℕ} → ∃{ℕ → ℕ}(\g → f(x ⋅ y) ≡ f(x) ⋅ g(y))} → ((f(a)) divides (f(b)))
 --   divides-with-fn {a}{b} (a-div-b) {f} ⦃ f-prop ⦄ 
@@ -154,8 +177,8 @@ instance
       (Div𝐒([1]-divides{n}))
 
 instance
-  divides-id : ∀{n} → (n divides n)
-  divides-id = Div𝐒(Div𝟎)
+  divides-reflexivity : ∀{n} → (n divides n)
+  divides-reflexivity = Div𝐒(Div𝟎)
 
 instance
   [0]-divides-[0] : (0 divides 0)
@@ -172,11 +195,16 @@ instance
 divides-not-[1] : ∀{n} → ¬((n + 2) divides 1)
 divides-not-[1] ()
 
+[1]-only-divides-[1] : ∀{n} → (n divides 1) → (n ≡ 1)
+[1]-only-divides-[1] {𝟎}       (ndiv1) = [⊥]-elim ([0]-divides-not (ndiv1))
+[1]-only-divides-[1] {𝐒(𝟎)}    (ndiv1) = [≡]-intro
+[1]-only-divides-[1] {𝐒(𝐒(n))} ()
+
 postulate divides-upper-limit : ∀{a b} → (a divides b) → (a ≤ b)
 
 postulate divides-not-lower-limit : ∀{a b} → (a > b) → ¬(a divides b)
 
--- Div𝐏 : ∀{x y : ℕ} → (y divides (y + x)) → (y divides x)
--- Div𝐏 {x}   {𝟎}    (0-div-x) = 0-div-x
--- Div𝐏 {𝟎}   {y}    (y-div-y) = Div𝟎
--- Div𝐏 {x₁}{y} (Div𝐒{x₂} y-div-x) =
+Div𝐏 : ∀{x y : ℕ} → (y divides (y + x)) → (y divides x)
+Div𝐏 {x}{y} proof = divides-without-[+]ᵣ {y}{y}{x} (proof) (divides-reflexivity)
+
+-- divides-factorial : ∀{n x} → (𝐒(x) < n) → (𝐒(x) divides n !)

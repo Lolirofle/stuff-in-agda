@@ -197,7 +197,7 @@ instance
   [+]-injectivityₗ {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
   [+]-injectivityₗ {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]-injectivityₗ {n} ([≡]-with(𝐏) x₁+𝐒n≡x₂+𝐒n)
 
--- TODO: Rename and generalize this (How?)
+-- TODO: Rename and generalize this (See commuteBoth in Structure.Operator.Properties)
 commuteBothTemp : ∀{a₁ a₂ b₁ b₂} → (a₁ + a₂ ≡ b₁ + b₂) → (a₂ + a₁ ≡ b₂ + b₁)
 commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
     (symmetry ([+]-commutativity {a₁} {a₂}))
@@ -275,6 +275,12 @@ instance
     )
 
 instance
+  postulate [⋅][−₀]-distributivityₗ : ∀{x y z : ℕ} → (x ⋅ (y −₀ z)) ≡ (x ⋅ y) −₀ (x ⋅ z)
+
+instance
+  postulate [⋅][−₀]-distributivityᵣ : ∀{x y z : ℕ} → ((x −₀ y) ⋅ z) ≡ (x ⋅ z) −₀ (y ⋅ z)
+
+instance
   [−₀]-negative : ∀{x} → ((𝟎 −₀ x) ≡ 𝟎)
   [−₀]-negative {𝟎}    = [≡]-intro
   [−₀]-negative {𝐒(n)} = [≡]-intro
@@ -310,17 +316,23 @@ instance
   [−₀]-self-[𝐒] {𝐒(n)} = [−₀]-self-[𝐒] {n}
 {-# REWRITE [−₀]-self-[𝐒] #-}
 
--- TODO: Could [−₀]-self-[𝐒] be used to prove this?
 instance
-  [+][−₀]-nullify : ∀{x y} → ((x + y) −₀ y ≡ x)
-  [+][−₀]-nullify{𝟎}   {𝟎}    = [≡]-intro
-  [+][−₀]-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([+][−₀]-nullify{x}{y})
-  [+][−₀]-nullify{𝐒(x)}{y}    = TODO where postulate TODO : ∀{z} → z
-  -- [+][−₀]-nullify{𝐒(x)}{y}    = [𝐒]-of-[−₀] {x + y}{y}{𝐒(x)} ([≡]-with(𝐒) ([+][−₀]-nullify{x}{y}))
-    -- (𝐒(x) + y) −₀ y
-    -- (x + 𝐒(y)) −₀ y
-    -- 𝐒(x + y) −₀ y
-{-# REWRITE [+][−₀]-nullify #-}
+  [−₀]ₗ[+]ᵣ-nullify : ∀{x y} → ((x + y) −₀ y ≡ x)
+  [−₀]ₗ[+]ᵣ-nullify{𝟎}   {𝟎}    = [≡]-intro
+  [−₀]ₗ[+]ᵣ-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([−₀]ₗ[+]ᵣ-nullify{x}{y})
+  [−₀]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
+{-# REWRITE [−₀]ₗ[+]ᵣ-nullify #-}
+
+instance
+  [−₀]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) −₀ x ≡ y)
+  [−₀]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity {y}{x}) {expr ↦ (expr −₀ x ≡ y)} ([−₀]ₗ[+]ᵣ-nullify {y}{x})
+{-# REWRITE [−₀]ₗ[+]ₗ-nullify #-}
+
+instance
+  [−₀][+]ᵣ-nullify : ∀{x₁ x₂ y} → ((x₁ + y) −₀ (x₂ + y) ≡ x₁ −₀ x₂)
+  [−₀][+]ᵣ-nullify {_} {_} {𝟎}    = [≡]-intro
+  [−₀][+]ᵣ-nullify {x₁}{x₂}{𝐒(y)} = [−₀][+]ᵣ-nullify {x₁}{x₂}{y}
+{-# REWRITE [−₀][+]ᵣ-nullify #-}
 
 {-
 instance
@@ -328,8 +340,8 @@ instance
 -}
 
 instance
-  postulate [+][−₀]-nullify2 : ∀{x y} → ⦃ _ : (y ≥ x) ⦄ → (x + (y −₀ x) ≡ y)
--- {-# REWRITE [+][−₀]-nullify2 #-}
+  postulate [−₀][+]-nullify2 : ∀{x y} → ⦃ _ : (y ≥ x) ⦄ → (x + (y −₀ x) ≡ y)
+-- {-# REWRITE [−₀][+]-nullify2 #-}
 -- x + (y −₀ x) ≡ y
 -- ∃z. x + ((x + z) −₀ x) ≡ y
 -- ∃z. x + z ≡ y

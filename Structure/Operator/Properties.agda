@@ -99,3 +99,13 @@ commuteₗ ⦃ comm ⦄ stmt = comm 🝖 stmt
 -- Returns a commuted RHS of an equality
 commuteᵣ : ∀{T}{_▫_}{x y z} → ⦃ _ : Commutativity {T} {T} (_▫_) ⦄ → (z ≡ (x ▫ y)) → (z ≡ (y ▫ x))
 commuteᵣ ⦃ comm ⦄ stmt = stmt 🝖 comm
+
+{-commuteBoth : ∀{T₁ T₂}{_▫_}{a₁ a₂ b₁ b₂} → Commutativity{T₁}{T₂}(_▫_) → (a₁ ▫ a₂ ≡ b₁ ▫ b₂) → (a₂ ▫ a₁ ≡ b₂ ▫ b₁)
+commuteBoth {_}{_} {a₁} {a₂} {b₁} {b₂} commutativity (a₁▫a₂≡b₁▫b₂) =
+    (symmetry ⦃ [≡]-symmetry ⦄ (commutativity {a₁} {a₂}))
+    🝖' (a₁▫a₂≡b₁▫b₂)
+    🝖' (commutativity {b₁} {b₂})
+    where
+      _🝖'_ = _🝖_ ⦃ [≡]-transitivity ⦄
+      infixl 1000 _🝖'_
+-}

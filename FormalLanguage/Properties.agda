@@ -1,8 +1,9 @@
 module FormalLanguage.Properties where
 
 open import Agda.Builtin.Size
-open import Boolean
 import      Lvl
+open import Boolean
+open import Boolean.Theorems{Lvl.𝟎}
 open import FormalLanguage
 open        FormalLanguage.Oper using (_is-in_)
 open import Functional
@@ -49,11 +50,44 @@ module _ {Σ} where
   private _∈_ = Oper._∈_ {Σ}
   private _∉_ = Oper._∉_ {Σ}
 
-  postulate [∪]-containment : ∀{x}{A B : Language(Σ){ω}} → (x ∈ (A ∪ B)) ↔ ((x ∈ A)∨(x ∈ B))
-  postulate [∩]-containment : ∀{x}{A B : Language(Σ){ω}} → (x ∈ (A ∩ B)) ↔ ((x ∈ A)∧(x ∈ B))
+  postulate suffix-lang-containment : ∀{x}{c}{L : Language(Σ){ω}} → (x ∈ Language.suffix-lang(L)(c)) → ((c ⊰ x) ∈ L)
+
+  [∪]-containment : ∀{x}{A B : Language(Σ){ω}} → (x ∈ (A ∪ B)) ↔ ((x ∈ A)∨(x ∈ B))
+  [∪]-containment {x}{A}{B} = [↔]-intro (l{x}) (r{x}) where
+    postulate l : ∀{x} → (x ∈ (A ∪ B)) ← ((x ∈ A)∨(x ∈ B))
+    -- l {[]} ([∨]-introₗ [≡]-intro) = [≡]-intro
+    -- l {[]} ([∨]-introᵣ [≡]-intro) = [≡]-intro
+
+    postulate r : ∀{x} → (x ∈ (A ∪ B)) → ((x ∈ A)∨(x ∈ B))
+    -- r ([≡]-intro) = [∨]-introₗ [≡]-intro
+
+  [∩]-containment : ∀{x}{A B : Language(Σ){ω}} → (x ∈ (A ∩ B)) ↔ ((x ∈ A)∧(x ∈ B))
+  [∩]-containment {x}{A}{B} = [↔]-intro (l{x}) (r{x}) where
+    postulate l : ∀{x} → (x ∈ (A ∩ B)) ← ((x ∈ A)∧(x ∈ B))
+    -- l {[]}    ([∧]-intro xa xb) = [∧]-intro-[𝑇] xa xb
+    -- l {a ⊰ L} ([∧]-intro xa xb) = [∧]-intro-[𝑇] (l {a ⊰ L} xa) (l {a ⊰ L} xb)?
+
+    postulate r : ∀{x} → (x ∈ (A ∩ B)) → ((x ∈ A)∧(x ∈ B))
+
   postulate [∁]-containment : ∀{x}{A : Language(Σ){ω}} → (x ∈ (∁ A)) ↔ (x ∉ A)
-  postulate [∅]-containment : ∀{x}{A : Language(Σ){ω}} → (x ∈ ∅) ↔ ⊥
-  postulate [ε]-containment : ∀{x}{A : Language(Σ){ω}} → (x ∈ ε) ↔ (x ≡ [])
+
+  [∅]-containment : ∀{x} → (x ∈ ∅) ↔ ⊥
+  [∅]-containment {x} = [↔]-intro (l{x}) (r{x}) where
+    l : ∀{x} → (x ∈ ∅) ← ⊥
+    l()
+
+    r : ∀{x} → (x ∈ ∅) → ⊥
+    r {[]}    ()
+    r {a ⊰ l} (proof) = r {l} (proof)
+
+  [ε]-containment : ∀{x} → (x ∈ ε) ↔ (x ≡ [])
+  [ε]-containment {x} = [↔]-intro (l{x}) (r{x}) where
+    l : ∀{x} → (x ∈ ε) ← (x ≡ [])
+    l [≡]-intro = [≡]-intro
+
+    r : ∀{x} → (x ∈ ε) → (x ≡ [])
+    r {[]}    [≡]-intro = [≡]-intro
+    r {a ⊰ l} (proof) = [⊥]-elim (([↔]-elimᵣ ([∅]-containment {l})) (proof))
 
   -- Language-[≡]-intro : ∀{A B : Language(Σ){ω}} → (∀{w} → (w is-in A) ≡ (w is-in B)) ↔ (A ≡ B)
   -- Language-[≡]-intro = [↔]-intro Language-[≡]-introₗ Language-[≡]-introᵣ where

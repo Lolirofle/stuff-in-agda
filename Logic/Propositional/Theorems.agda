@@ -339,12 +339,21 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 [→][∧]-assumption = [↔]-intro Tuple.uncurry Tuple.curry
 
 [→][∧]-distributivityₗ : ∀{X Y Z : Stmt} → (X → (Y ∧ Z)) ↔ ((X → Y) ∧ (X → Z))
-[→][∧]-distributivityₗ = [↔]-intro [→][∧]-distributivityₗ₁ [→][∧]-distributivityₗ₂
-  where [→][∧]-distributivityₗ₁ : ∀{X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) → (X → (Y ∧ Z))
-        [→][∧]-distributivityₗ₁ ([∧]-intro xy xz) x = [∧]-intro (xy(x)) (xz(x))
+[→][∧]-distributivityₗ = [↔]-intro l r
+  where l : ∀{X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) → (X → (Y ∧ Z))
+        l ([∧]-intro xy xz) x = [∧]-intro (xy(x)) (xz(x))
 
-        [→][∧]-distributivityₗ₂ : ∀{X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) ← (X → (Y ∧ Z))
-        [→][∧]-distributivityₗ₂ both = [∧]-intro ([∧]-elimₗ ∘ both) ([∧]-elimᵣ ∘ both)
+        r : ∀{X Y Z : Stmt} → ((X → Y) ∧ (X → Z)) ← (X → (Y ∧ Z))
+        r both = [∧]-intro ([∧]-elimₗ ∘ both) ([∧]-elimᵣ ∘ both)
+
+[→][∨]-distributivityₗ : ∀{X Y Z : Stmt} → (X → (Y ∨ Z)) ← ((X → Y) ∨ (X → Z))
+[→][∨]-distributivityₗ = l -- [↔]-intro l r
+  where l : ∀{X Y Z : Stmt} → ((X → Y) ∨ (X → Z)) → (X → (Y ∨ Z))
+        l ([∨]-introₗ xy) x = [∨]-introₗ (xy(x))
+        l ([∨]-introᵣ xz) x = [∨]-introᵣ (xz(x))
+
+        -- r : ∀{X Y Z : Stmt} → ((X → Y) ∨ (X → Z)) ← (X → (Y ∨ Z))
+        -- r both = [∨]-introₗ (x ↦ both x)
 
 -- (X ∧ Y) ∨ (X ∧ Z)
 -- X → (Y ∨ Z)
@@ -405,11 +414,8 @@ non-contradiction(x , nx) = nx x
 [callcc]-[[¬¬]-elim]-eqₗ : (∀{X Y : Stmt} → (((X → Y) → X) → X)) → (∀{X} → (¬¬ X) → X)
 [callcc]-[[¬¬]-elim]-eqₗ (callcc) {X} (nnx) = callcc{X}{⊥} (nx ↦ [⊥]-elim(nnx(nx)))
 
-{-
 [callcc]-[[¬¬]-elim]-eqᵣ : (∀{X} → (¬¬ X) → X) → (∀{X Y : Stmt} → (((X → Y) → X) → X))
-[callcc]-[[¬¬]-elim]-eqᵣ (nnxx) {X}{Y} (xyx) = xyx(xy) where
-  postulate xy : X → Y
--}
+[callcc]-[[¬¬]-elim]-eqᵣ (nnxx) {X}{Y} (xyx) = nnxx([¬]-intro(nx ↦ nx(xyx(x ↦ [⊥]-elim(nx x)))))
 
 [callcc]-[excluded-middle]-eqₗ : (∀{X} → (X ∨ (¬ X))) → (∀{X Y : Stmt} → (((X → Y) → X) → X))
 [callcc]-[excluded-middle]-eqₗ or {X}{Y} (xyx) with or

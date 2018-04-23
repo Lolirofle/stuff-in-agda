@@ -91,3 +91,29 @@ disjointness {𝐹} ([∧]-intro () [≡]-intro)
   l : ∀{a} → (a ≢ 𝐹) ← (a ≡ 𝑇)
   l {𝑇} (a≡𝑇) ()
   l {𝐹} ()
+
+
+
+if-and : ∀{B₁ B₂}{T}{x y : T} → (if (B₁ && B₂) then x else y ≡ if B₁ then (if B₂ then x else y) else y)
+if-and {𝐹}{𝐹} = [≡]-intro
+if-and {𝐹}{𝑇} = [≡]-intro
+if-and {𝑇}{𝐹} = [≡]-intro
+if-and {𝑇}{𝑇} = [≡]-intro
+
+if-or : ∀{B₁ B₂}{T}{x y : T} → (if (B₁ || B₂) then x else y ≡ if B₁ then x else if B₂ then x else y)
+if-or {𝐹}{𝐹} = [≡]-intro
+if-or {𝐹}{𝑇} = [≡]-intro
+if-or {𝑇}{𝐹} = [≡]-intro
+if-or {𝑇}{𝑇} = [≡]-intro
+
+if-not : ∀{B}{T}{x y : T} → (if (! B) then x else y ≡ if B then y else x)
+if-not {𝐹} = [≡]-intro
+if-not {𝑇} = [≡]-intro
+
+if-elim-true : ∀{B}{T}{x y : T} → ⦃ _ : B ≡ 𝑇 ⦄ → (if B then x else y ≡ x)
+if-elim-true {𝐹} ⦃ ⦄
+if-elim-true {𝑇} = [≡]-intro
+
+if-elim-false : ∀{B}{T}{x y : T} → ⦃ _ : B ≡ 𝐹 ⦄ → (if B then x else y ≡ y)
+if-elim-false {𝐹} = [≡]-intro
+if-elim-false {𝑇} ⦃ ⦄

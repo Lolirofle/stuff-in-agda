@@ -65,7 +65,7 @@ module Theorems{ℓ} where
     [≡]-substitutionₗ ([+1]-commutativity{n₁}{n₂}) {ℕfin} (𝐒fin{n₁ + n₂}(upscale-[+] {n₁}{n₂} (n)))
 
   upscale-maxₗ : ∀{n₁ n₂} → ℕfin(n₁) → ℕfin(max n₁ n₂)
-  upscale-maxₗ {n₁}{n₂} = upscale-[+] {n₁}{n₂ −₀ n₁}
+  upscale-maxₗ {n₁}{n₂} (n) = [≡]-substitutionₗ (Theorems.max-elementary{ℓ}{n₁}{n₂}) {ℕfin} (upscale-[+] {n₁}{n₂ −₀ n₁} (n))
 
   upscale-maxᵣ : ∀{n₁ n₂} → ℕfin(n₂) → ℕfin(max n₁ n₂)
   upscale-maxᵣ {n₁}{n₂} (n) = [≡]-substitutionᵣ (Theorems.max-commutativity{ℓ}{n₂}{n₁}) {ℕfin} (upscale-maxₗ {n₂}{n₁} (n))

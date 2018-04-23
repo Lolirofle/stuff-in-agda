@@ -39,7 +39,7 @@ x ⌊/₀⌋ y with (x −? y)
 ... | Option.None     = 𝟎
 
 -- Unclosed total subtraction from natural numbers to an optional natural number.
--- When dividing 0, this operation gives Option.None.
+-- When dividing by 0, this operation gives Option.None.
 {-# TERMINATING #-}
 _⌊/⌋?_ : ℕ → ℕ → Option(ℕ)
 𝟎 ⌊/⌋? y = Option.Some(𝟎)
@@ -49,7 +49,7 @@ x ⌊/⌋? y with (x −? y)
 ... | Option.None     = Option.Some(𝟎)
 
 -- Unclosed total subtraction from natural numbers to an optional natural number.
--- When dividing 0 or the division gives a rational number semantically, this operation gives Option.None.
+-- When dividing by 0 or the division gives a rational number semantically, this operation gives Option.None.
 {-# TERMINATING #-}
 _/?_ : ℕ → ℕ → Option(ℕ)
 𝟎 /? y = Option.Some(𝟎)

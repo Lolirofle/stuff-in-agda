@@ -6,12 +6,17 @@ open import Numeral.Natural.Oper
 -- Maximum function
 -- Returns the greatest number
 max : ℕ → ℕ → ℕ
-max a b = a + (b −₀ a)
+max a      𝟎      = a
+max 𝟎      b      = b
+max (𝐒(a)) (𝐒(b)) = 𝐒(max a b)
 
 -- Minimum function
 -- Returns the smallest number
 min : ℕ → ℕ → ℕ
-min a b = (a + b) −₀ max(a)(b)
+min a      𝟎      = 𝟎
+min 𝟎      b      = 𝟎
+min (𝐒(a)) (𝐒(b)) = 𝐒(min a b)
+-- min a b = (a + b) −₀ max(a)(b)
 
 -- min and max as binary operators
 infixl 100 _[max]_ _[min]_
@@ -24,10 +29,33 @@ _[min]_ = min
 
 module Theorems{ℓ} where
   import      Lvl
+  open import Functional
   open import Logic.Propositional{ℓ}
   open import Numeral.Natural.Relation{ℓ}
+  open import Numeral.Natural.Oper.Properties{ℓ}
   open import Relator.Equals{ℓ}
+  open import Relator.Equals.Theorems{ℓ}
   open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
+
+  max-elementary : ∀{a b} → (max(a)(b) ≡ a + (b −₀ a))
+  max-elementary {𝟎}    {𝟎}    = [≡]-intro
+  max-elementary {𝟎}    {𝐒(b)} = [≡]-intro
+  max-elementary {𝐒(a)} {𝟎}    = [≡]-intro
+  max-elementary {𝐒(a)} {𝐒(b)} = [≡]-with(𝐒) (max-elementary {a} {b})
+
+  postulate min-elementary : ∀{a b} → (min(a)(b) ≡ b −₀ (b −₀ a))
+  -- min-elementary {𝟎}    {𝟎}    = [≡]-intro
+  -- min-elementary {𝟎}    {𝐒(b)} = [≡]-intro
+  -- min-elementary {𝐒(a)} {𝟎}    = [≡]-intro
+  -- min-elementary {𝐒(a)} {𝐒(b)} = [≡]-with(𝐒) (min-elementary {a} {b})
+  -- 𝐒(b) −₀ (𝐒(b) −₀ 𝐒(a))
+  -- 𝐒(b) −₀ (b −₀ a)
+
+  -- min-with-max : ∀{a b} → (min(a)(b) ≡ (a + b) −₀ max(a)(b))
+  -- min-with-max {a}{b} = [≡]-elimᵣ (max-elementary{a}{b}) {expr ↦ (min(a)(b) ≡ (a + b) −₀ expr)} (min-elementary{a}{b})
+  -- (a + b) −₀ max(a)(b)
+  -- (a + b) −₀ (a + (b −₀ a))
+  -- b −₀ (b −₀ a)
 
   postulate min-commutativity : Commutativity(min)
   postulate min-associativity : Associativity(min)

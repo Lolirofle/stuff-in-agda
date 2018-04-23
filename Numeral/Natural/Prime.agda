@@ -20,9 +20,15 @@ record Prime(n : ℕ) : Stmt where
   field
     ⦃ non-zero ⦄ : (n ≢ 0)
     ⦃ non-one  ⦄ : (n ≢ 1)
-    proof        : ∀{x} → (x divides n) → (x ≡ 1)∨(x ≡ n)
--- ∀{x y : ℕ} → (n divides (x ⋅ y)) → (n divides x) ∨ (n divides y)
+    proof        : ∀{x} → (x ∣ n) → (x ≡ 1)∨(x ≡ n)
+-- ∀{x y : ℕ} → (n ∣ (x ⋅ y)) → (n ∣ x) ∨ (n ∣ y)
 -- ∀{x y} → (x ≢ 0)∧(x ≢ 1) → (y ≢ 0)∧(y ≢ 1) → ¬(x ⋅ y ≡ n)
+
+-- PrimeFactor(n)(p) means that `p` is a prime factor of `n`.
+record PrimeFactor(n : ℕ) (p : ℕ) : Stmt where
+  field
+    ⦃ prime ⦄  : Prime(p)
+    ⦃ factor ⦄ : (p ∣ n)
 
 instance
   [0]-nonprime : ¬(Prime(0))
@@ -37,7 +43,7 @@ instance
 instance
   [2]-prime : Prime(2)
   [2]-prime = Prime-intro ⦃ [𝐒]-not-0 ⦄ ⦃ [𝐒]-not-0 ∘ [𝐒]-injectivity ⦄ (divisor-proof) where
-    divisor-proof : ∀{x} → (x divides 2) → (x ≡ 1)∨(x ≡ 2)
+    divisor-proof : ∀{x} → (x ∣ 2) → (x ≡ 1)∨(x ≡ 2)
     divisor-proof{0} (0div2) = [⊥]-elim([0]-divides-not(0div2))
     divisor-proof{1} (1div2) = [∨]-introₗ ([≡]-intro)
     divisor-proof{2} (2div2) = [∨]-introᵣ ([≡]-intro)
@@ -46,7 +52,7 @@ instance
 instance
   [3]-prime : Prime(3)
   [3]-prime = Prime-intro ⦃ [𝐒]-not-0 ⦄ ⦃ [𝐒]-not-0 ∘ [𝐒]-injectivity ⦄ (divisor-proof) where
-    divisor-proof : ∀{x} → (x divides 3) → (x ≡ 1)∨(x ≡ 3)
+    divisor-proof : ∀{x} → (x ∣ 3) → (x ≡ 1)∨(x ≡ 3)
     divisor-proof{0} (0div3) = [⊥]-elim([0]-divides-not(0div3))
     divisor-proof{1} (1div3) = [∨]-introₗ ([≡]-intro)
     divisor-proof{2} (Div𝐒())
@@ -60,7 +66,7 @@ instance
 instance
   [5]-prime : Prime(5)
   [5]-prime = Prime-intro ⦃ [𝐒]-not-0 ⦄ ⦃ [𝐒]-not-0 ∘ [𝐒]-injectivity ⦄ (divisor-proof) where
-    divisor-proof : ∀{x} → (x divides 5) → (x ≡ 1)∨(x ≡ 5)
+    divisor-proof : ∀{x} → (x ∣ 5) → (x ≡ 1)∨(x ≡ 5)
     divisor-proof{0} (0div5) = [⊥]-elim([0]-divides-not(0div5))
     divisor-proof{1} (1div5) = [∨]-introₗ ([≡]-intro)
     divisor-proof{2} (Div𝐒(Div𝐒()))
@@ -76,7 +82,7 @@ instance
 instance
   [7]-prime : Prime(7)
   [7]-prime = Prime-intro ⦃ [𝐒]-not-0 ⦄ ⦃ [𝐒]-not-0 ∘ [𝐒]-injectivity ⦄ (divisor-proof) where
-    divisor-proof : ∀{x} → (x divides 7) → (x ≡ 1)∨(x ≡ 7)
+    divisor-proof : ∀{x} → (x ∣ 7) → (x ≡ 1)∨(x ≡ 7)
     divisor-proof{0} (0div7) = [⊥]-elim([0]-divides-not(0div7))
     divisor-proof{1} (1div7) = [∨]-introₗ ([≡]-intro)
     divisor-proof{2} (Div𝐒(Div𝐒(Div𝐒())))

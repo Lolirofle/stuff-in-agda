@@ -17,6 +17,13 @@ open import Type
 [∃]-irrelevant : ∀{X}{P : Stmt} → ∃{X}(x ↦ P) → P
 [∃]-irrelevant([∃]-intro(_) ⦃ proof ⦄) = proof
 
+-- Note:
+--   The following is unprovable:
+--   [∀]-irrelevant : ∀{X}{P : Stmt} → ∀ₗ{X}(x ↦ P) → P
+--   X is not guaranteed to not be the empty type, and even if it was, the ∀ function requires a constructed value. It seems to need a non-empty domain to quantify over.
+[∀ₑ]-irrelevant : ∀{X}{P : Stmt} → ∀ₑ{X}(x ↦ P) → P
+[∀ₑ]-irrelevant = [∀ₑ]-elimₑ
+
 [∀][∃¬]-contradiction : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ P(x)) → ∃(x ↦ ¬(P(x))) → ⊥
 [∀][∃¬]-contradiction{X}{P} (ap)(enp) =
   ([∃]-elim(\{a} → np ↦ (
@@ -101,26 +108,19 @@ open import Type
 [∀ₑ]-to-[∃] (apx) =
   [∃]-intro(_) ⦃ [∀ₑ]-elimₑ(apx) ⦄
 
--- Note:
---   The following is unprovable:
---   [∀]-irrelevant : ∀{X}{P : Stmt} → ∀ₗ{X}(x ↦ P) → P
---   X is not guaranteed to not be the empty type, and even if it was, the ∀ function requires a constructed value. It seems to need a non-empty domain to quantify over.
-[∀ₑ]-irrelevant : ∀{X}{P : Stmt} → ∀ₑ{X}(x ↦ P) → P
-[∀ₑ]-irrelevant = [∀ₑ]-elimₑ
+[∀][→]-distributivity : ∀{X}{P Q : X → Stmt} → ∀ₗ(x ↦ (P(x) → Q(x))) → ∀ₗ(x ↦ P(x)) → ∀ₗ(x ↦ Q(x))
+[∀][→]-distributivity (PxQx) (Px) = PxQx(Px)
 
-[∀][→]-elim : ∀{X}{P Q : X → Stmt} → ∀ₗ(x ↦ (P(x) → Q(x))) → ∀ₗ(x ↦ P(x)) → ∀ₗ(x ↦ Q(x))
-[∀][→]-elim (PxQx) (Px) = PxQx(Px)
-
-[∀][∧]-combine : ∀{X}{P Q : X → Stmt} → (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x))) ↔ ∀ₗ(x ↦ (P(x) ∧ Q(x)))
-[∀][∧]-combine {X}{P}{Q} = [↔]-intro l r where
+[∀][∧]-distributivity : ∀{X}{P Q : X → Stmt} → (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x))) ↔ ∀ₗ(x ↦ (P(x) ∧ Q(x)))
+[∀][∧]-distributivity {X}{P}{Q} = [↔]-intro l r where
   l : (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x))) ← ∀ₗ(x ↦ (P(x) ∧ Q(x)))
   l(apxqx) = [∧]-intro (\{x} → [∧]-elimₗ(apxqx{x})) (\{x} → [∧]-elimᵣ(apxqx{x}))
 
   r : (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x))) → ∀ₗ(x ↦ (P(x) ∧ Q(x)))
   r ([∧]-intro (axPx) (axQx)) {x} = [∧]-intro (axPx{x}) (axQx{x})
 
-[∃][∨]-combine : ∀{X}{P Q : X → Stmt} → (∃(x ↦ P(x)) ∨ ∃(x ↦ Q(x))) ↔ ∃(x ↦ (P(x) ∨ Q(x)))
-[∃][∨]-combine {X}{P}{Q} = [↔]-intro l r where
+[∃][∨]-distributivity : ∀{X}{P Q : X → Stmt} → (∃(x ↦ P(x)) ∨ ∃(x ↦ Q(x))) ↔ ∃(x ↦ (P(x) ∨ Q(x)))
+[∃][∨]-distributivity {X}{P}{Q} = [↔]-intro l r where
   l : (∃(x ↦ P(x)) ∨ ∃(x ↦ Q(x))) ← ∃(x ↦ (P(x) ∨ Q(x)))
   l ([∃]-intro x ⦃ [∨]-introₗ px ⦄) = [∨]-introₗ ([∃]-intro x ⦃ px ⦄)
   l ([∃]-intro x ⦃ [∨]-introᵣ qx ⦄) = [∨]-introᵣ ([∃]-intro x ⦃ qx ⦄)
@@ -181,10 +181,37 @@ open import Type
   r : ∃(x ↦ (P ∧ Q(x))) → (P ∧ ∃(x ↦ Q(x)))
   r ([∃]-intro x ⦃ [∧]-intro p qx ⦄) = [∧]-intro p ([∃]-intro x ⦃ qx ⦄)
 
-[∃][∧]-distributivity : ∀{X}{P : X → Stmt}{Q : X → Stmt} → ∃(x ↦ ∃(y ↦ (P(x) ∧ Q(y)))) ↔ (∃(x ↦ P(x)) ∧ ∃(x ↦ Q(x)))
-[∃][∧]-distributivity {X}{P}{Q} = [↔]-intro l r where
+[∃][∧]-semidistributivity : ∀{X}{P : X → Stmt}{Q : X → Stmt} → ∃(x ↦ ∃(y ↦ (P(x) ∧ Q(y)))) ↔ (∃(x ↦ P(x)) ∧ ∃(x ↦ Q(x)))
+[∃][∧]-semidistributivity {X}{P}{Q} = [↔]-intro l r where
   l : ∃(x ↦ ∃(y ↦ (P(x) ∧ Q(y)))) ← (∃(x ↦ P(x)) ∧ ∃(x ↦ Q(x)))
   l ([∧]-intro ([∃]-intro x ⦃ px ⦄) ([∃]-intro y ⦃ qy ⦄)) = [∃]-intro x ⦃ [∃]-intro y ⦃ [∧]-intro px qy ⦄ ⦄
 
   r : ∃(x ↦ ∃(y ↦ (P(x) ∧ Q(y)))) → (∃(x ↦ P(x)) ∧ ∃(x ↦ Q(x)))
   r ([∃]-intro x ⦃ [∃]-intro y ⦃ [∧]-intro px qy ⦄ ⦄) = [∧]-intro ([∃]-intro x ⦃ px ⦄) ([∃]-intro y ⦃ qy ⦄)
+
+[∃][∧]-distributivity : ∀{X}{P : X → Stmt}{Q : X → Stmt} → ∃(x ↦ (P(x) ∧ Q(x))) → (∃(x ↦ P(x)) ∧ ∃(x ↦ Q(x)))
+[∃][∧]-distributivity {X}{P}{Q} ([∃]-intro x ⦃ [∧]-intro px qx ⦄ ) = [∧]-intro l r where
+  l = [∃]-intro x ⦃ px ⦄
+  r = [∃]-intro x ⦃ qx ⦄
+
+[∀][↔]-distributivity : ∀{X}{P Q : X → Stmt} → ∀ₗ(x ↦ (P(x) ↔ Q(x))) → (∀ₗ(x ↦ P(x)) ↔ ∀ₗ(x ↦ Q(x)))
+[∀][↔]-distributivity {X}{P}{Q} = r where -- [↔]-intro l r where
+  -- l : ∀ₗ(x ↦ (P(x) ↔ Q(x))) ← (∀ₗ(x ↦ P(x)) ↔ ∀ₗ(x ↦ Q(x)))
+  -- l([↔]-intro aqxapx apxaqx) {x} = [↔]-intro (\qx → aqxpx(qx{x})) (apxqx{x})
+
+  r : ∀ₗ(x ↦ (P(x) ↔ Q(x))) → (∀ₗ(x ↦ P(x)) ↔ ∀ₗ(x ↦ Q(x)))
+  r apxqx = [↔]-intro ([∀][→]-distributivity rl) ([∀][→]-distributivity rr) where
+    rl : ∀ₗ(x ↦ (P(x) ← Q(x)))
+    rl{x} = [↔]-elimₗ(apxqx{x})
+
+    rr : ∀ₗ(x ↦ (P(x) → Q(x)))
+    rr{x} = [↔]-elimᵣ(apxqx{x})
+
+[∀][→]-add-[∃] : ∀{X}{P Q : X → Stmt} → ∀ₗ(x ↦ (P(x) → Q(x))) → ∀ₗ(x ↦ (P(x) → ∃(x ↦ Q(x))))
+[∀][→]-add-[∃] (proof) {x} px = [∃]-intro(x) ⦃ proof{x} px ⦄
+
+[∀][→]-to-[∃] : ∀{X}{P Q : X → Stmt} → ∀ₗ(x ↦ (P(x) → Q(x))) → (∃(x ↦ P(x)) → ∃(x ↦ Q(x)))
+[∀][→]-to-[∃] {X} {P}{Q} (proof) = ([↔]-elimᵣ ([∀]-unrelatedₗ-[→] {X} {P})) ([∀][→]-add-[∃] (proof))
+
+[∀][∃]-swap : ∀{X Y}{P : X → Y → Stmt} → ∃(x ↦ ∀ₗ(y ↦ P(x)(y))) → ∀ₗ(y ↦ ∃(x ↦ P(x)(y)))
+[∀][∃]-swap ([∃]-intro x ⦃ aypxy ⦄) {y} = [∃]-intro x ⦃ aypxy{y} ⦄
