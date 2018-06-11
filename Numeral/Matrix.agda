@@ -3,8 +3,9 @@ module Numeral.Matrix {ℓ} where
 
 import      Lvl
 open import Syntax.Number
-open import Data.Boolean
 open import Data
+open import Data.Boolean
+open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional using (const)
 open import Numeral.FiniteStrict
 open import Numeral.FiniteStrict.Bound

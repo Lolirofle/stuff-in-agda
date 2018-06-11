@@ -28,7 +28,7 @@ module _ {ℓ₂}{T : Type{ℓ₂}} where
   singleton(t) = record{inclusion-fn = (x ↦ x == t)}
 
   enumeration : ⦃ _ : Equals(T) ⦄ → List.List(T) → BoolSet(T)
-  enumeration(l) = record{inclusion-fn = (x ↦ (List.any(t ↦ x == t)(l)))}
+  enumeration(l) = record{inclusion-fn = (x ↦ (List.satisfiesAny(t ↦ x == t)(l)))}
 
   _∈_ : T → BoolSet(T) → Stmt
   _∈_ a set = ((BoolSet.inclusion-fn set a) ≡ 𝑇)

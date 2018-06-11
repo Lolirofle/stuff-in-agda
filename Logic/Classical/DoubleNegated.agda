@@ -1,7 +1,7 @@
 module Logic.Classical.DoubleNegated where
 
 module Propositional{ℓ} where
-  open import Data
+  open import Data.Tuple as Tuple using (_⨯_ ; _,_)
   open import Functional
   import      Logic.Propositional{ℓ}          as Constructive
   import      Logic.Propositional.Theorems{ℓ} as ConstructiveTheorems

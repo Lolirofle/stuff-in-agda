@@ -1,6 +1,8 @@
 module Logic.Propositional {ℓ} where
 
 open import Data
+open import Data.Either as Either using (_‖_)
+open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 import      Lvl
 open import Type

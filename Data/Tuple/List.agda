@@ -2,7 +2,7 @@ module Data.Tuple.List{ℓ} where
 
 import      Lvl
 open import Data using (Unit ; <>)
-open        Data.Tuple
+open import Data.Tuple using (_⨯_ ; _,_)
 import      Data.List
 open        Data.List using (List)
 open import Type{ℓ}

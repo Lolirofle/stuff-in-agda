@@ -1,6 +1,7 @@
 module Data.Tuple.Raiseᵣ where
 
 open import Data
+open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Numeral.Natural
 open import Type
 

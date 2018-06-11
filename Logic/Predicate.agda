@@ -1,6 +1,5 @@
 module Logic.Predicate {ℓ₁} {ℓ₂} where
 
-open import Data
 open import Functional
 import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}

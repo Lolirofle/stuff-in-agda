@@ -1,7 +1,6 @@
 module Numeral.Natural.Coprime{ℓ} where
 
 import Lvl
-open import Data
 open import Functional
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}

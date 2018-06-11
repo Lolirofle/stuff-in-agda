@@ -1,6 +1,6 @@
 module Numeral.Natural.UnclosedOper where
 
-open import Data
+open import Data.Option as Option using (Option)
 open import Numeral.Integer as ℤ
   using (ℤ)
 open import Numeral.Natural

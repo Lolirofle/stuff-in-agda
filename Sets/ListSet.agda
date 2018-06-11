@@ -30,7 +30,6 @@ _∌_ L x = ¬(L ∋ x)
 
 -- General proofs about the containment relation
 module [∈]-proof where
-  open import Data
   open import Logic.Propositional.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
   open import Numeral.Natural.Oper.Properties
 

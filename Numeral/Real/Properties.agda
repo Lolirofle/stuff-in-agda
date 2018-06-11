@@ -1,7 +1,6 @@
 module Numeral.Real.Properties where
 
 import Lvl
-open import Data
 open import Functional
 open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}

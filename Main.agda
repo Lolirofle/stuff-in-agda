@@ -10,6 +10,9 @@ import Data.Boolean.Theorems
 import Data.Boolean.Operators
 import Cardinal
 import Data
+import Data.Either
+import Data.Option
+import Data.Tuple
 import Data.Tuple.List
 import Data.Tuple.Raise
 import Data.Tuple.Raiseₗ
@@ -31,6 +34,7 @@ import Data.List
 import Data.List.Properties
 import Data.List.Relation
 import Data.List.Theorems
+import Data.ListNonEmpty
 import Logic.Classical.Mere
 import Logic.Classical.NaturalDeduction
 import Logic.Classical.DoubleNegated

@@ -1,7 +1,7 @@
 module Structure.Relator.Properties {ℓ₁} {ℓ₂} where
 
 import      Lvl
-open import Data
+open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Numeral.Natural

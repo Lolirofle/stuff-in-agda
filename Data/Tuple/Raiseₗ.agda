@@ -1,6 +1,7 @@
 module Data.Tuple.Raiseₗ where
 
 open import Data
+open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Numeral.Natural
 open import Numeral.Natural.Oper using (_−₀_)
 open import Type

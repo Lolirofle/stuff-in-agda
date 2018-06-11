@@ -1,6 +1,8 @@
 module Logic.Propositional.Theorems {ℓ} where
 
 open import Data
+open import Data.Either as Either using (_‖_)
+open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Functional.ComposeRaise
 open import Logic.Propositional{ℓ}

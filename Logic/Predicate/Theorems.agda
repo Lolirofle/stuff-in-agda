@@ -1,7 +1,6 @@
 module Logic.Predicate.Theorems {ℓ₁} {ℓ₂} where
 
 import      Lvl
-open import Data
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Propositional.Theorems{ℓ₁ Lvl.⊔ ℓ₂}

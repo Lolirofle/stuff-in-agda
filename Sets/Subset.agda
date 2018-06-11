@@ -1,7 +1,6 @@
 module Sets.Subset {ℓₒ} {ℓₒₗ} where -- {ℓₗ}
 
 import      Lvl
-open import Data
 open import Functional
 open import Logic.Propositional
 open import Type{ℓₒ Lvl.⊔ ℓₒₗ}

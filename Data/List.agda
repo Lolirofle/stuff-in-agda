@@ -3,7 +3,7 @@ module Data.List where
 open import Data.Boolean
 import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
-open import Data hiding (empty)
+open import Data.Option as Option using (Option)
 open import Functional
 open import Numeral.Natural
 open import Type
@@ -23,8 +23,7 @@ data List {ℓ} (T : Type{ℓ}) : Type{ℓ} where
 {-# BUILTIN CONS _⊰_ #-}
 
 _⊱_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → T → List(T)
-_⊱_ ∅ b = b ⊰ ∅
-_⊱_ (elem ⊰ rest) b = elem ⊰ (rest ⊱ elem)
+_⊱_ = swap _⊰_
 
 -- List concatenation
 _++_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T) → List(T)
@@ -153,9 +152,9 @@ firstElem (x ⊰ _) = Option.Some(x)
 lastElem : ∀{ℓ}{T : Type{ℓ}} → List(T) → Option(T)
 lastElem l = foldᵣ (elem ↦ _ ↦ Option.Some(elem)) Option.None l -- TODO: Is this wrong?
 
-_or_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T) → List(T)
-_or_ ∅ default = default
-_or_ l _ = l
+_orₗ_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T) → List(T)
+_orₗ_ ∅ default = default
+_orₗ_ l _ = l
 
 -- Reverse the order of the elements in the list
 reverse : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T)
@@ -168,20 +167,20 @@ repeat _ 𝟎      = ∅
 repeat x (𝐒(n)) = x ⊰ (repeat x n)
 
 -- The list with a list concatenated (repeated) n times
-multiply : ∀{ℓ}{T : Type{ℓ}} → List(T) → ℕ → List(T)
-multiply _ 𝟎      = ∅
-multiply l (𝐒(n)) = l ++ (multiply l n)
+_++^_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → ℕ → List(T)
+_++^_ _ 𝟎      = ∅
+_++^_ l (𝐒(n)) = l ++ (l ++^ n)
 
 pattern [_ l = l
 pattern _] x = x ⊰ ∅
 
-any : ∀{ℓ}{T : Type{ℓ}} → (T → Bool) → List(T) → Bool
-any pred ∅       = 𝐹
-any pred (x ⊰ l) = pred(x) || any(pred)(l)
+satisfiesAny : ∀{ℓ}{T : Type{ℓ}} → (T → Bool) → List(T) → Bool
+satisfiesAny pred ∅       = 𝐹
+satisfiesAny pred (x ⊰ l) = pred(x) || satisfiesAny(pred)(l)
 
-all : ∀{ℓ}{T : Type{ℓ}} → (T → Bool) → List(T) → Bool
-all pred ∅       = 𝑇
-all pred (x ⊰ l) = pred(x) && any(pred)(l)
+satisfiesAll : ∀{ℓ}{T : Type{ℓ}} → (T → Bool) → List(T) → Bool
+satisfiesAll pred ∅       = 𝑇
+satisfiesAll pred (x ⊰ l) = pred(x) && satisfiesAll(pred)(l)
 
 -- TODO
 -- List-apply : ∀{ℓ}{L : List(Type{ℓ})} → (foldᵣ (_⨯_) (Out) (L)) → ∀{Out : Type{ℓ}} → (foldᵣ (_→ᶠ_) (Out) (L)) → Out

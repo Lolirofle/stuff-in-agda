@@ -1,6 +1,5 @@
 module Functional.DomainRaise where
 
-open import Data
 open import Functional
 import      Lvl
 open import Numeral.FiniteStrict

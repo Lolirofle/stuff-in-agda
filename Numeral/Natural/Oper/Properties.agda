@@ -1,7 +1,7 @@
 module Numeral.Natural.Oper.Properties{ℓ} where
 
 import Lvl
-open import Data
+open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Propositional{ℓ}
 open import Numeral.Natural

@@ -4,7 +4,7 @@ import      Lvl
 open import Data.Boolean
 import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
-open import Data renaming(_⨯_ to _⨯'_)
+open import Data.Tuple as Tuple using (_,_) renaming (_⨯_ to _⨯'_)
 open import Functional
 open import Data.List renaming (∅ to [])
 

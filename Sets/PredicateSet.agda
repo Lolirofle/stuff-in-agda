@@ -100,7 +100,7 @@ module _ {ℓₗ}{ℓₒ} where
 
   _⋃_ : ∀{T} → PredSet{ℓₗ}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}(PredSet{ℓₗ}{ℓₒ}(T)) → PredSet{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}{ℓₒ}(T)
   _⋃_ S x = Logic.Predicate.∃{Lvl.𝐒(ℓₗ)}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}(s ↦ (s ∈₁ S) ⨯ (x ∈₂ s)) where
-    open import Data
+    open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 
     _∈₁_ = _∈_ {Lvl.𝐒(ℓₗ)}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}
     _∈₂_ = _∈_ {ℓₗ}{ℓₒ}

@@ -1,7 +1,7 @@
 module Logic.Convenience {ℓ} where
 
 import      Lvl
-open import Data
+open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Propositional{ℓ}
 open import Type
@@ -28,3 +28,5 @@ instance
 instance
   [⇒]-proof-unrelated : [⇒]-proof (X ↦ Y ↦ Y)
   _⇒_ ⦃ [⇒]-proof-unrelated ⦄ = swap(const)
+
+-- TODO: ⇔ probably means using transitivity
