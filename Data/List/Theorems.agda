@@ -1,9 +1,9 @@
-module List.Theorems {ℓ₁} {ℓ₂} where
+module Data.List.Theorems {ℓ₁} {ℓ₂} where
 
 import Lvl
 open import Functional
-open import List
-open import List.Properties
+open import Data.List
+open import Data.List.Properties
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}

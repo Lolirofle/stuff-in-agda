@@ -1,11 +1,11 @@
-module List1 where
+module Data.List1 where
 
-open import Boolean
-import      Boolean.Operators
-open        Boolean.Operators.Programming
+open import Data.Boolean
+import      Data.Boolean.Operators
+open        Data.Boolean.Operators.Programming
 open import Data hiding (empty)
 open import Functional
-open import List
+open import Data.List
 open import Numeral.Natural
 open import Type
 

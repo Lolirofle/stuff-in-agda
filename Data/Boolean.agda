@@ -1,4 +1,4 @@
-module Boolean where
+module Data.Boolean where
 
 import Lvl
 open import Type

@@ -3,11 +3,8 @@ module Numeral.FiniteStrict where
 import Lvl
 open import Syntax.Number
 open import Functional
-open import Logic.Propositional
-open import Logic.Predicate
 open import Numeral.Natural hiding (𝐏)
 import      Numeral.Natural.Relation
-open import Structure.Function.Domain
 open import Type
 
 -- A structure corresponding to a finite set of natural numbers (0,..,n−1).
@@ -50,34 +47,3 @@ instance
 𝐏 : ∀{n} → 𝕟(ℕ.𝐒(ℕ.𝐒(n))) → 𝕟(𝐒(n))
 𝐏(𝟎)    = 𝟎
 𝐏(𝐒(n)) = n
-
-module Theorems{ℓ} where
-  open import Numeral.Natural.Function
-  open import Numeral.Natural.Oper
-  open import Numeral.Natural.Oper.Properties{ℓ}
-  open        Numeral.Natural.Relation{ℓ}
-  open import Relator.Equals{ℓ}{0}
-  open import Relator.Equals.Theorems{ℓ}{0}
-
-  upscale-𝐒 : ∀{n} → 𝕟(n) → 𝕟(ℕ.𝐒(n))
-  upscale-𝐒 (𝟎)    = 𝟎
-  upscale-𝐒 (𝐒(n)) = 𝐒(upscale-𝐒 (n))
-
-  upscale-[+] : ∀{n₁ n₂} → 𝕟(n₁) → 𝕟(n₁ + n₂)
-  upscale-[+] (𝟎) = 𝟎
-  upscale-[+] {ℕ.𝐒(n₁)}{n₂}(𝐒(n)) = 𝐒(upscale-[+] {n₁}{n₂} (n))
-
-  upscale-maxₗ : ∀{n₁ n₂} → 𝕟(n₁) → 𝕟(max n₁ n₂)
-  upscale-maxₗ {n₁}{n₂} (n) = [≡]-substitutionₗ (Theorems.max-elementary{ℓ}{n₁}{n₂}) {𝕟} (upscale-[+] {n₁}{n₂ −₀ n₁} (n))
-
-  upscale-maxᵣ : ∀{n₁ n₂} → 𝕟(n₂) → 𝕟(max n₁ n₂)
-  upscale-maxᵣ {n₁}{n₂} (n) = [≡]-substitutionᵣ (Theorems.max-commutativity{ℓ}{n₂}{n₁}) {𝕟} (upscale-maxₗ {n₂}{n₁} (n))
-
-  instance
-    upscale-instance : ∀{n} → ⦃ _ : 𝕟(n) ⦄ → 𝕟(ℕ.𝐒(n))
-    upscale-instance {n} ⦃ proof ⦄ = upscale-𝐒 {n} (proof)
-
-
-  {-instance
-    postulate downscale-instance : ∀{n} → ⦃ nfin : 𝕟(ℕ.𝐒(n)) ⦄ → ⦃ _ : [𝕟]-to-[ℕ]{ℕ.𝐒(n)}(nfin) lteq2 n ⦄ → 𝕟(n)
--}

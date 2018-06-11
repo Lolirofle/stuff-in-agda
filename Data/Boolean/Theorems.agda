@@ -1,9 +1,9 @@
-module Boolean.Theorems {ℓ₁} where -- TODO: Move
+module Data.Boolean.Theorems {ℓ₁} where -- TODO: Move
 
 import      Lvl
-open import Boolean
-import      Boolean.Operators
-open        Boolean.Operators.Programming
+open import Data.Boolean
+import      Data.Boolean.Operators
+open        Data.Boolean.Operators.Programming
 open import Functional
 open import Logic.Propositional{ℓ₁}
 open import Relator.Equals{ℓ₁}{Lvl.𝟎}

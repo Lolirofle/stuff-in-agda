@@ -3,8 +3,8 @@ module Data.Tuple.List{ℓ} where
 import      Lvl
 open import Data using (Unit ; <>)
 open        Data.Tuple
-import      List
-open        List using (List)
+import      Data.List
+open        Data.List using (List)
 open import Type{ℓ}
 
 -- Tuple type described with lists
@@ -30,21 +30,21 @@ tail{_}{List.∅}    (_ ⊰∅)   = ∅
 tail{_}{_ List.⊰ _}(_ ⊰+ l) = l
 
 module _ where
-  open import List.Properties
+  open import Data.List.Properties
   open import Relator.Equals
   open import Relator.Equals.Theorems
 
-  _++_ : ∀{L₁ L₂} → Tuple(L₁) → Tuple(L₂) → Tuple(L₁ List.++ L₂)
+  _++_ : ∀{L₁ L₂} → Tuple(L₁) → Tuple(L₂) → Tuple(L₁ Data.List.++ L₂)
   _++_{L}                   {List.∅} (l)(_)         = [≡]-substitutionₗ {Lvl.𝟎}{_}{_}{_}{_}{L} ([++]-identityᵣ{ℓ}) {Tuple} (l)
   _++_{List.∅}              {_}      (_)(l)         = l
   _++_{A List.⊰ List.∅}     {L₂}     (a ⊰∅)   (l₂) = _⊰_ {A}{L₂} (a) (l₂)
-  _++_{A List.⊰ B List.⊰ L₁}{L₂}     (a ⊰+ l₁)(l₂) = _⊰_ {A}{(B List.⊰ L₁) List.++ L₂} (a) (_++_ {B List.⊰ L₁}{L₂} l₁ l₂)
+  _++_{A List.⊰ B List.⊰ L₁}{L₂}     (a ⊰+ l₁)(l₂) = _⊰_ {A}{(B Data.List.⊰ L₁) Data.List.++ L₂} (a) (_++_ {B Data.List.⊰ L₁}{L₂} l₁ l₂)
 
 module _ where
   open import Numeral.Natural
 
   length : ∀{L} → Tuple(L) → ℕ
-  length{L} (_) = List.length(L)
+  length{L} (_) = Data.List.length(L)
 
 module Theorems where
   -- TupleRaise : Tuple(repeat(n)(T)) ≡ T ^ n

@@ -55,24 +55,24 @@ module Theorems{ℓ} where
   open import Relator.Equals{ℓ}{Lvl.𝟎}
   open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
 
-  upscale-𝐒 : ∀{n} → ℕfin(n) → ℕfin(𝐒(n))
-  upscale-𝐒 (𝟎fin)    = 𝟎fin
-  upscale-𝐒 (𝐒fin(n)) = 𝐒fin(upscale-𝐒 (n))
+  bound-𝐒 : ∀{n} → ℕfin(n) → ℕfin(𝐒(n))
+  bound-𝐒 (𝟎fin)    = 𝟎fin
+  bound-𝐒 (𝐒fin(n)) = 𝐒fin(bound-𝐒 (n))
 
-  upscale-[+] : ∀{n₁ n₂} → ℕfin(n₁) → ℕfin(n₁ + n₂)
-  upscale-[+] (𝟎fin) = 𝟎fin
-  upscale-[+] {𝐒(n₁)}{n₂}(𝐒fin(n)) =
-    [≡]-substitutionₗ ([+1]-commutativity{n₁}{n₂}) {ℕfin} (𝐒fin{n₁ + n₂}(upscale-[+] {n₁}{n₂} (n)))
+  bound-[+] : ∀{n₁ n₂} → ℕfin(n₁) → ℕfin(n₁ + n₂)
+  bound-[+] (𝟎fin) = 𝟎fin
+  bound-[+] {𝐒(n₁)}{n₂}(𝐒fin(n)) =
+    [≡]-substitutionₗ ([+1]-commutativity{n₁}{n₂}) {ℕfin} (𝐒fin{n₁ + n₂}(bound-[+] {n₁}{n₂} (n)))
 
-  upscale-maxₗ : ∀{n₁ n₂} → ℕfin(n₁) → ℕfin(max n₁ n₂)
-  upscale-maxₗ {n₁}{n₂} (n) = [≡]-substitutionₗ (Theorems.max-elementary{ℓ}{n₁}{n₂}) {ℕfin} (upscale-[+] {n₁}{n₂ −₀ n₁} (n))
+  bound-maxₗ : ∀{n₁ n₂} → ℕfin(n₁) → ℕfin(max n₁ n₂)
+  bound-maxₗ {n₁}{n₂} (n) = [≡]-substitutionₗ (Theorems.max-elementary{ℓ}{n₁}{n₂}) {ℕfin} (bound-[+] {n₁}{n₂ −₀ n₁} (n))
 
-  upscale-maxᵣ : ∀{n₁ n₂} → ℕfin(n₂) → ℕfin(max n₁ n₂)
-  upscale-maxᵣ {n₁}{n₂} (n) = [≡]-substitutionᵣ (Theorems.max-commutativity{ℓ}{n₂}{n₁}) {ℕfin} (upscale-maxₗ {n₂}{n₁} (n))
+  bound-maxᵣ : ∀{n₁ n₂} → ℕfin(n₂) → ℕfin(max n₁ n₂)
+  bound-maxᵣ {n₁}{n₂} (n) = [≡]-substitutionᵣ (Theorems.max-commutativity{ℓ}{n₂}{n₁}) {ℕfin} (bound-maxₗ {n₂}{n₁} (n))
 
   instance
-    upscale-instance : ∀{n} → ⦃ _ : ℕfin(n) ⦄ → ℕfin(𝐒(n))
-    upscale-instance {n} ⦃ proof ⦄ = upscale-𝐒 {n} (proof)
+    bound-instance : ∀{n} → ⦃ _ : ℕfin(n) ⦄ → ℕfin(𝐒(n))
+    bound-instance {n} ⦃ proof ⦄ = bound-𝐒 {n} (proof)
 
   instance
     postulate downscale-instance : ∀{n} → ⦃ nfin : ℕfin(𝐒(n)) ⦄ → ⦃ _ : [ℕfin]-to-[ℕ]{𝐒(n)}(nfin) lteq2 n ⦄ → ℕfin(n)

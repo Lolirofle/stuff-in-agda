@@ -1,8 +1,8 @@
-module List where
+module Data.List where
 
-open import Boolean
-import      Boolean.Operators
-open        Boolean.Operators.Programming
+open import Data.Boolean
+import      Data.Boolean.Operators
+open        Data.Boolean.Operators.Programming
 open import Data hiding (empty)
 open import Functional
 open import Numeral.Natural

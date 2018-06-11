@@ -1,8 +1,8 @@
-module List.Properties{ℓ₁}{ℓ₂} where
+module Data.List.Properties{ℓ₁}{ℓ₂} where
 
 import Lvl
 open import Functional
-open import List
+open import Data.List
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Numeral.Natural
 open import Numeral.Natural.Oper

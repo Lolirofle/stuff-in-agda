@@ -2,12 +2,12 @@ module FormalLanguage.Properties where
 
 open import Agda.Builtin.Size
 import      Lvl
-open import Boolean
-open import Boolean.Theorems{Lvl.𝟎}
+open import Data.Boolean
+open import Data.Boolean.Theorems{Lvl.𝟎}
 open import FormalLanguage
 open        FormalLanguage.Oper using (_is-in_)
 open import Functional
-open import List renaming (∅ to [])
+open import Data.List renaming (∅ to [])
 open import Logic.Propositional{Lvl.𝟎}
 open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}

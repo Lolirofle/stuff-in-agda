@@ -4,7 +4,7 @@ open import Data
 open import Functional
 import      Lvl
 open import Numeral.FiniteStrict
-open        Numeral.FiniteStrict.Theorems
+open import Numeral.FiniteStrict.Bound
 open import Numeral.Natural
 open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Properties
@@ -42,7 +42,7 @@ module _ {ℓ₁ ℓ₂} where
   --   applyFn f g = f (g(2)) (g(1)) (g(0))
   applyFn : ∀{n}{T₁}{T₂} → (T₁ →̂ T₂)(n) → (𝕟(n) → T₁) → T₂
   applyFn{𝟎}    f g = f
-  applyFn{𝐒(n)} f g = applyFn{n} (f(g([ℕ]-to-[𝕟] (n) {n} ⦃ lteq2-𝐒 {ℓ₁ Lvl.⊔ ℓ₂} {n} ⦄))) (g ∘ (upscale-𝐒{ℓ₁ Lvl.⊔ ℓ₂}{n}))
+  applyFn{𝐒(n)} f g = applyFn{n} (f(g([ℕ]-to-[𝕟] (n) {n} ⦃ lteq2-𝐒 {ℓ₁ Lvl.⊔ ℓ₂} {n} ⦄))) (g ∘ (bound-𝐒{ℓ₁ Lvl.⊔ ℓ₂}{n}))
 
   -- TODO: Examples:
   --   swapReverse {3} f (y₂) (y₁) (y₀)

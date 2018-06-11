@@ -1,6 +1,6 @@
-module Boolean.AsSet where
+module Data.Boolean.AsSet where
 
-open import Boolean
+open import Data.Boolean
 open import Functional
 open import Functional.DomainRaise
 open import Logic.Propositional

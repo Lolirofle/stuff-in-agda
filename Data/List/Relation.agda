@@ -1,7 +1,7 @@
-module List.Relation {ℓ₁} {ℓ₂} where
+module Data.List.Relation {ℓ₁} {ℓ₂} where
 
 import Lvl
-open import List
+open import Data.List
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}

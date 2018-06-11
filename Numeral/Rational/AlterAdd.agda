@@ -2,7 +2,7 @@
 -- One bijective representation of ℚ. That is, every rational number is appearing exactly once in this representation (TODO: Some proof would be nice).
 module Numeral.Rational.AlterAdd where
 
-open import Boolean
+open import Data.Boolean
 open import Logic.Propositional
 open import Numeral.Natural             as ℕ
 import      Numeral.Natural.Oper        as ℕ

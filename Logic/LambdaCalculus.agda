@@ -1,7 +1,7 @@
 module Logic.LambdaCalculus where
 
 import      Lvl
-open import Boolean
+open import Data.Boolean
 open import Numeral.Natural
 open import Numeral.Natural.BooleanOper
 open import Numeral.FiniteStrict
@@ -51,7 +51,7 @@ module Functions where
     )
 
 module Transformations where
-  open        Numeral.FiniteStrict.Theorems{Lvl.𝟎}
+  open import Numeral.FiniteStrict.Bound{Lvl.𝟎}
   open import Numeral.Natural.Oper.Properties{Lvl.𝟎}
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
@@ -60,7 +60,7 @@ module Transformations where
   depth-𝐒 : ∀{d} → Term(d) → Term(𝐒(d))
   depth-𝐒 (Application(f)(x)) = Application (depth-𝐒(f)) (depth-𝐒(x))
   depth-𝐒 (Abstract(body))    = Abstract(depth-𝐒(body))
-  depth-𝐒 (Var(n))            = Var(upscale-𝐒 (n))
+  depth-𝐒 (Var(n))            = Var(bound-𝐒 (n))
 
   -- Add to the depth level of the given term
   depth-[+] : ∀{d₁ d₂} → Term(d₁) → Term(d₁ + d₂)
@@ -73,7 +73,7 @@ module Transformations where
         (depth-[+] {𝐒(d₁)}{d₂} (body))
       )
     )
-  depth-[+] {d₁}{d₂} (Var(n)) = Var(upscale-[+] {d₁}{d₂} (n))
+  depth-[+] {d₁}{d₂} (Var(n)) = Var(bound-[+] {d₁}{d₂} (n))
 
   -- TODO
   -- Apply : ∀{d₂ d₁} → Term(d₁ + d₂) → Term(d₁) → Term(d₁ + d₂)
@@ -87,20 +87,20 @@ module Transformations where
       (val)
     else
       (Var(n))
-  substitute (var) (val) (Abstract(body)) = Abstract (substitute (upscale-𝐒(var)) (depth-𝐒 val) (body))
+  substitute (var) (val) (Abstract(body)) = Abstract (substitute (bound-𝐒(var)) (depth-𝐒 val) (body))
   -}
 
   {-
   β-reduce : ∀{d₁ d₂} → 𝕟(d₁ + 𝐒(d₂)) → Term(d₁ + 𝐒(d₂)) → Term(𝐒(d₂)) → Term(d₂)
   β-reduce{d₁}   {d₂}    (var) (val) (Application(f)(x))    = Application{d₂} (β-reduce{d₁}{d₂} (var)(val) (f)) (β-reduce (var)(val) (x))
-  β-reduce{d₁}   {d₂}    (var) (val) (Abstract(body)) = Abstract (β-reduce{d₁}{𝐒(d₂)} (upscale-𝐒 var)(val) (body))
+  β-reduce{d₁}   {d₂}    (var) (val) (Abstract(body)) = Abstract (β-reduce{d₁}{𝐒(d₂)} (bound-𝐒 var)(val) (body))
   β-reduce{𝟎}    {𝐒(d₂)} (𝟎ᶠ)      (val) (Var(n)) = Var{d₂}(𝟎ᶠ)
   β-reduce{𝟎}    {𝐒(d₂)} (𝐒ᶠ(var)) (val) (Var(n)) = Var{d₂}(var)
   β-reduce{𝐒(d₁)}{𝐒(d₂)} (var)     (val) (Var(n)) = Var{d₂}(n)
     if([𝕟]-to-[ℕ](var) ≡? [𝕟]-to-[ℕ](n)) then
       (val)
     else
-      (val) -- (Var{max (𝐒 d₁) (𝐒 d₂)} (upscale-maxᵣ n))
+      (val) -- (Var{max (𝐒 d₁) (𝐒 d₂)} (bound-maxᵣ n))
   -}
 
 -- Reducible (Reduction relation)

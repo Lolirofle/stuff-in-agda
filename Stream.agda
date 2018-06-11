@@ -3,7 +3,7 @@ module Stream where
 import      Lvl
 open import Functional
 open import Functional.ComposeRaise
-open import List using (List)
+open import Data.List using (List)
 open import Logic.Propositional
 open import Numeral.Natural
 open import Relator.Equals{Lvl.𝟎}

@@ -1,0 +1,3 @@
+T: Type
+∀{A : Type}{_≡_ : A → A → Stmt} → {f : A → T}{x : A}{y : A} → (x ≡₁ y) → (f(x) ≡₂ f(y))
+Impossible?

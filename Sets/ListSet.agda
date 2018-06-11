@@ -3,8 +3,8 @@ module Sets.ListSet {ℓ₁} {ℓ₂} {T : Set(ℓ₂)} where
 
 import Lvl
 open import Functional
-open import List
-open import List.Properties{ℓ₁ Lvl.⊔ ℓ₂}
+open import Data.List
+open import Data.List.Properties{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Propositional.Theorems{ℓ₁ Lvl.⊔ ℓ₂} using ([↔]-transitivity)
 open import Logic.Predicate{ℓ₁}{ℓ₂}

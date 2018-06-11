@@ -64,7 +64,7 @@ module _ {ℓₗ}{ℓₒ} where
   _∖_ S₁ S₂ = (S₁ ∩ (∁ S₂))
 
   module _ where
-    open import Boolean
+    open import Data.Boolean
     open import Functional.Properties
     open import Structure.Function.Domain{ℓₗ}
 

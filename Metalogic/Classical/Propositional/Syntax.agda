@@ -1,4 +1,4 @@
-module Logic.Meta.Classical.Propositional.Syntax {ℓₚ} (Prop : Set(ℓₚ)) where
+module Metalogic.Classical.Propositional.Syntax {ℓₚ} (Prop : Set(ℓₚ)) where
 
 import Lvl
 

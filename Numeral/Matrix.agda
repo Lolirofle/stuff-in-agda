@@ -3,11 +3,11 @@ module Numeral.Matrix {ℓ} where
 
 import      Lvl
 open import Syntax.Number
-open import Boolean
+open import Data.Boolean
 open import Data
 open import Functional using (const)
 open import Numeral.FiniteStrict
-open        Numeral.FiniteStrict.Theorems
+open import Numeral.FiniteStrict.Bound
 open import Numeral.Natural
 open import Numeral.FiniteStrict.BooleanOper
 open import Numeral.Vector as Vector using (Vector)

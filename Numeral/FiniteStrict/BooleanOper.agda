@@ -1,9 +1,9 @@
 module Numeral.FiniteStrict.BooleanOper where
 
 import      Lvl
-open import Boolean
-import      Boolean.Operators
-open        Boolean.Operators.Programming
+open import Data.Boolean
+import      Data.Boolean.Operators
+open        Data.Boolean.Operators.Programming
 open import Numeral.FiniteStrict
 
 -- Equality check

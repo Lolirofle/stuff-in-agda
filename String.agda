@@ -1,7 +1,7 @@
 module String where
 
 import      Lvl
-open import List
+open import Data.List
 open import Type{Lvl.𝟎}
 
 postulate Char : Set

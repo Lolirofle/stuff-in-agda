@@ -1,6 +1,6 @@
-module Boolean.Operators where
+module Data.Boolean.Operators where
 
-open import Boolean
+open import Data.Boolean
 
 -- Definition of boolean operators with conventions from logic
 module Logic where

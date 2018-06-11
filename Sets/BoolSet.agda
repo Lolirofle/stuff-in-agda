@@ -1,11 +1,11 @@
 module Sets.BoolSet {ℓ₁} where
 
 import      Lvl
-import      List
-open import Boolean
-import      Boolean.Operators
-open        Boolean.Operators.Programming
-open import Boolean.Theorems
+open import Data.Boolean
+import      Data.Boolean.Operators
+open        Data.Boolean.Operators.Programming
+open import Data.Boolean.Theorems
+import      Data.List as List
 open import Logic.Propositional
 open import Functional
 open import Operator.Equals

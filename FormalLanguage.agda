@@ -1,11 +1,11 @@
 module FormalLanguage where
 
 import      Lvl
-open import List renaming (∅ to [])
+open import Data.List renaming (∅ to [])
 open import Agda.Builtin.Size
-open import Boolean
-open import Boolean.Operators
-open        Boolean.Operators.Programming
+open import Data.Boolean
+open import Data.Boolean.Operators
+open        Data.Boolean.Operators.Programming
 open import Functional
 open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
 open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}

@@ -1,12 +1,12 @@
 module Automaton.DeterministicFinite where
 
 import      Lvl
-open import Boolean
-import      Boolean.Operators
-open        Boolean.Operators.Programming
+open import Data.Boolean
+import      Data.Boolean.Operators
+open        Data.Boolean.Operators.Programming
 open import Data renaming(_⨯_ to _⨯'_)
 open import Functional
-open import List renaming (∅ to [])
+open import Data.List renaming (∅ to [])
 
 -- According to http://www.cse.chalmers.se/edu/course/TMV027/lec5.pdf
 

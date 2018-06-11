@@ -269,7 +269,7 @@ module testDiv where
   -- test1 ()
 
 module testList where
-  open import List
+  open import Data.List
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
   open import Numeral.Natural
@@ -325,7 +325,7 @@ module testTransitivity where
 module testListSublist where
   open import Functional
   open import Numeral.Natural
-  open import List
+  open import Data.List
   import      List.Theorems
   open        List.Theorems{Lvl.𝟎}{Lvl.𝟎}
   open        List.Theorems.Sublist hiding (_⊑_)
@@ -432,8 +432,8 @@ module testExistential where
 module testCantor where
   import      Boolean
   open        Boolean
-  import      Boolean.Operators
-  open        Boolean.Operators.Programming
+  import      Data.Boolean.Operators
+  open        Data.Boolean.Operators.Programming
   open import Functional
   open import Logic.Propositional{Lvl.𝟎}
   open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
@@ -465,7 +465,7 @@ module testCantor where
 
 module testListSets where
   open import Functional
-  open import List
+  open import Data.List
   import      Sets.ListSet
   open        Sets.ListSet{Lvl.𝟎}
   open        Sets.ListSet.[∈]-proof
@@ -506,7 +506,7 @@ module testFinite where
 
 module testResolveInstance where
   open import Functional
-  open import List
+  open import Data.List
   open import Numeral.Natural
   open import Type
 
@@ -571,7 +571,7 @@ module inferAbstract where
 
 module testDomainRaise where
   open import Functional.DomainRaise
-  open import List
+  open import Data.List
   open import Numeral.Natural
   open import Numeral.FiniteStrict
   open import Numeral.Natural.Oper

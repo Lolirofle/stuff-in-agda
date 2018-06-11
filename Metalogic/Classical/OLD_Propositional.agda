@@ -62,7 +62,7 @@ module ProofSystems {ℓ₁} {ℓ₂} {Prop : Set(ℓ₁)} {Formula : Set(ℓ₁
       [⊥]-elim bottom = [¬]-elim(_ ↦ bottom)
 
     module Meta(rules : Rules) (meta-symbols : Syntax.Symbols (Set(ℓ₁ Lvl.⊔ ℓ₂)) id) where
-      open import List
+      open import Data.List
       open        Rules(rules)
       open        Syntax.Symbols(meta-symbols)
         renaming (
@@ -75,7 +75,7 @@ module ProofSystems {ℓ₁} {ℓ₂} {Prop : Set(ℓ₁)} {Formula : Set(ℓ₁
           _⇒_ to _⇒ₘ_ )
 
       module Theorems where
-        open import List.Properties{ℓ₁}{ℓ₂}
+        open import Data.List.Properties{ℓ₁}{ℓ₂}
         import      List.Theorems
         open        Sets.ListSet
         open        Sets.ListSet.Relators

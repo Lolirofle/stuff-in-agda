@@ -3,7 +3,7 @@ module Numeral.Vector {ℓ} where
 import      Lvl
 open import Functional
 open import Numeral.FiniteStrict
-open        Numeral.FiniteStrict.Theorems
+open import Numeral.FiniteStrict.Bound
 open import Numeral.Natural
 open import Type{ℓ}
 
@@ -24,20 +24,25 @@ record Vector (d : ℕ) (T : Type) : Type where
   dim : ℕ
   dim = d
 
+-- The first element of a non-empty vector
 head : ∀{T}{d} → Vector(𝐒(d))(T) → T
 head(v) = Vector.proj(v)(𝟎)
 
+-- The list without the first element of a non-empty vector
 tail : ∀{T}{d} → Vector(𝐒(d))(T) → Vector(d)(T)
 Vector.proj(tail{_}{𝟎}   (v))()
 Vector.proj(tail{_}{𝐒(_)}(v))(i) = Vector.proj(v)(𝐒(i))
 
+-- The list without the first element if there were any
 tail₀ : ∀{T}{d} → Vector(d)(T) → Vector(Numeral.Natural.𝐏(d))(T)
 tail₀{_}{𝟎}    = id
 tail₀{_}{𝐒(_)} = tail
 
+-- Applies a function on every value of the vector
 map : ∀{A B} → (A → B) → ∀{d} → Vector(d)(A) → Vector(d)(B)
 Vector.proj(map f(v))(i) = f(Vector.proj(v)(i))
 
+-- Applies a binary operation on every pair of values, each from 2 vectors
 lift-binOp : ∀{A B C}{d} → (A → B → C) → Vector(d)(A) → Vector(d)(B) → Vector(d)(C)
 Vector.proj(lift-binOp(_▫_) (v₁)(v₂))(i) = Vector.proj(v₁)(i) ▫ Vector.proj(v₂)(i)
 
@@ -53,9 +58,11 @@ reduce₀ᵣ : ∀{X : Type} → (X → X → X) → ∀{d} → Vector(𝐒(d))(
 reduce₀ᵣ (_▫_) {𝟎}    (v) = head v
 reduce₀ᵣ (_▫_) {𝐒(d)} (v) = (head v) ▫ (reduce₀ᵣ (_▫_) (tail v))
 
+-- A vector filled with multiple copies of a single element
 fill : ∀{T}{d} → T → Vector(d)(T)
 Vector.proj(fill(elem)) = const(elem)
 
+-- A vector with an additional element at the beginning
 prepend : ∀{T}{d} → T → Vector(d)(T) → Vector(𝐒(d))(T)
 Vector.proj(prepend(x)(_)) (𝟎)    = x
 Vector.proj(prepend(_)(v)) (𝐒(n)) = Vector.proj(v) (n)

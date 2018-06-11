@@ -4,10 +4,10 @@ import Automaton.DeterministicFinite
 import Automaton.NonDeterministicFinite
 import Automaton.Pushdown
 import Automaton.TuringMachine
-import Boolean
-import Boolean.AsSet
-import Boolean.Theorems
-import Boolean.Operators
+import Data.Boolean
+import Data.Boolean.AsSet
+import Data.Boolean.Theorems
+import Data.Boolean.Operators
 import Cardinal
 import Data
 import Data.Tuple.List
@@ -27,13 +27,10 @@ import Functional.PrimitiveRecursion
 import Functional.Properties
 import Functional.DomainRaise
 import Lvl
-import List
-import List.Properties
-import List.Relation
-import List.Theorems
-import Logic.Meta.Classical.Propositional.ProofSystem
-import Logic.Meta.Classical.Propositional.Semantics
-import Logic.Meta.Classical.Propositional.Syntax
+import Data.List
+import Data.List.Properties
+import Data.List.Relation
+import Data.List.Theorems
 import Logic.Classical.Mere
 import Logic.Classical.NaturalDeduction
 import Logic.Classical.DoubleNegated
@@ -50,6 +47,9 @@ import Logic.Predicate.Theorems
 import Logic.Properties
 -- import Geometry.Test
 import Graph
+import Metalogic.Classical.Propositional.ProofSystem
+import Metalogic.Classical.Propositional.Semantics
+import Metalogic.Classical.Propositional.Syntax
 import Numeral.Integer
 import Numeral.Integer.Function
 import Numeral.Integer.Oper

@@ -1,7 +1,7 @@
 module Operator.Equals {ℓ} where
 
 import      Lvl
-open import Boolean
+open import Data.Boolean
 open import Functional
 open import Relator.Equals{ℓ}
 open import Type{ℓ}
