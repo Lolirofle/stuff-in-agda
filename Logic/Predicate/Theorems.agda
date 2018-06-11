@@ -215,3 +215,11 @@ open import Type
 
 [∀][∃]-swap : ∀{X Y}{P : X → Y → Stmt} → ∃(x ↦ ∀ₗ(y ↦ P(x)(y))) → ∀ₗ(y ↦ ∃(x ↦ P(x)(y)))
 [∀][∃]-swap ([∃]-intro x ⦃ aypxy ⦄) {y} = [∃]-intro x ⦃ aypxy{y} ⦄
+
+{-
+no-intermediate : ∀{X : Stmt} → ¬(¬(X ↔ ⊤) ∧ ¬(X ↔ ⊥))
+no-intermediate = [¬][∨] [¬¬]-excluded-middle
+
+¬((¬ X) ∧ (¬ Y)) ↔ ¬(¬ (X ∨ Y))
+∀{X} → ¬¬(X ∨ (¬ X))
+-}

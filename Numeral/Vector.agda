@@ -56,6 +56,19 @@ reduce₀ᵣ (_▫_) {𝐒(d)} (v) = (head v) ▫ (reduce₀ᵣ (_▫_) (tail v)
 fill : ∀{T}{d} → T → Vector(d)(T)
 Vector.proj(fill(elem)) = const(elem)
 
+prepend : ∀{T}{d} → T → Vector(d)(T) → Vector(𝐒(d))(T)
+Vector.proj(prepend(x)(_)) (𝟎)    = x
+Vector.proj(prepend(_)(v)) (𝐒(n)) = Vector.proj(v) (n)
+
+-- postpend : ∀{T}{d} → T → Vector(d)(T) → Vector(𝐒(d))(T)
+-- Vector.proj(postpend(x)(_)) (𝟎)    = Vector.proj(v) (n)
+-- Vector.proj(postpend(_)(v)) (𝐒(n)) = x
+
+-- concat : ∀{T}{d₁ d₂} → Vector(d₁)(T) → Vector(d₂)(T) → Vector(d₁ + d₂)(T)
+-- Vector.proj(concat(v₁)(v₂)) (n) with (n < d₁ ≡ 𝑇)
+-- ... () = Vector.proj(v₁) (n)
+-- ... () = Vector.proj(v₂) (n)
+
 {-
 record Vector (T : Type{ℓ}) (d : ℕ) : Type{𝐒(ℓ)} where
   constructor vec

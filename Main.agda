@@ -48,6 +48,7 @@ import Logic.Propositional.Theorems
 import Logic.Predicate
 import Logic.Predicate.Theorems
 import Logic.Properties
+-- import Geometry.Test
 import Graph
 import Numeral.Integer
 import Numeral.Integer.Function

@@ -172,7 +172,7 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
       postulate linear-map-const-zero : LinearMap₁₂(const(𝟎ᵥ ⦃ lang₂ ⦄ ⦃ VSP₂ ⦄))
 
       -- The inverse of an invertible linear mapping is a linear mapping
-      postulate linear-inverse : ∀{f} → ⦃ _ : Bijective(f) ⦄ → LinearMap₁₂(f) → LinearMap₂₁(inv-fnᵣ(f))
+      postulate linear-inverse : ∀{f} → ⦃ _ : Bijective(f) ⦄ → LinearMap₁₂(f) → LinearMap₂₁(inv-fn(f))
 
       -- Injectivity for only the zero vector implies injectivity
       postulate injective-zero : ∀{f} → ⦃ _ : LinearMap₁₂(f) ⦄ → (∀{v} → (f(v) ≡ 𝟎ᵥ ⦃ lang₂ ⦄ ⦃ VSP₂ ⦄) → (v ≡ 𝟎ᵥ ⦃ lang ⦄ ⦃ VSP ⦄)) → Injective(f)

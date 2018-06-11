@@ -6,30 +6,80 @@ open import Logic.Predicate{ℓₗ}
 open import Functional
 import      Relator.Equals
 open import Relator.Equals.Theorems{ℓₗ}
-open import Structure.Function.Domain {ℓₗ}
+open import Structure.Function{ℓₗ}
+open import Structure.Function.Domain{ℓₗ}
 open import Type
 
-module _ {ℓ₂ ℓ₃} where
-  open Relator.Equals{ℓₗ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+module _ {ℓₒ₁ ℓₒ₂} where
+  open Relator.Equals{ℓₗ Lvl.⊔ ℓₒ₁ Lvl.⊔ ℓₒ₂}
 
-  -- The image/range of a function
-  data Image {X : Type{ℓ₂}} {Y : Type{ℓ₃}} (f : X → Y) : Type{ℓₗ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
-    image-intro : (x : X) → (y : Y) → ⦃ _ : f(x) ≡ y ⦄ → Image(f)
-    -- TODO: image-intro : (x : X) → (y : Y) → .⦃ _ : ∃(x ↦ f(x) ≡ y) ⦄ → Image(f)
+  -- There is a function for a binary relation that is total and function-like.
+  function-existence : ∀{A : Type{ℓₒ₁}}{B : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂}} → (φ : A → B → Stmt) → ⦃ _ : Totality(φ)⦄ → ⦃ _ : FunctionLike(φ)⦄ → ∃(f ↦ ∀{x}{y} → (f(x) ≡ y) ↔ φ(x)(y))
+  function-existence{A}{B} (φ) ⦃ totality ⦄ ⦃ function ⦄ = [∃]-intro(f) ⦃ \{x y} → proof{x}{y} ⦄ where
+    -- The function
+    f : A → B
+    f(x) = [∃]-witness(totality{x})
 
-  image-apply : ∀{X}{Y}{f : X → Y} → X → (Image(f) → Y) → Y
-  image-apply{X}{Y}{f} (x) (fimg) = fimg(image-intro (x) (f(x)) ⦃ [≡]-intro ⦄)
+    -- Proof that the function returns the value that the binary relation defines the element from Y that an element from X is associated with.
+    proof : ∀{x}{y} → (f(x) ≡ y) ↔ φ(x)(y)
+    proof{x}{y} = [↔]-intro l r where
+      l : (f(x) ≡ y) ← φ(x)(y)
+      l(φxy) = function([∃]-proof(totality{x})) (φxy)
+        -- [∃]-proof(totality{x}) ∧ φ(x)(y)
+        -- φ(x)([∃]-witness(totality{x})) ∧ φ(x)(y)
+        -- [∃]-witness(totality{x}) = y
+        -- f(x) = y
 
-  -- Could also be interpreted as an identity function with a larger codomain.
-  image-value : ∀{X}{Y}{f : X → Y} → Image(f) → Y
-  image-value(image-intro _ y) = y
+      r : (f(x) ≡ y) → φ(x)(y)
+      r([≡]-intro) = [∃]-proof(totality{x})
+        -- φ(x)(y)
+        -- φ(x)([∃]-witness(totality{x}))
 
+  -- Constructing a total function from a a binary operation with conditions.
+  function : ∀{A : Type{ℓₒ₁}}{B : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂}} → (φ : A → B → Stmt) → ⦃ _ : Totality(φ)⦄ → ⦃ _ : FunctionLike(φ)⦄ → (A → B)
+  function(φ) ⦃ totality ⦄ ⦃ function ⦄ = [∃]-witness(function-existence(φ) ⦃ totality ⦄ ⦃ function ⦄)
+
+module _ {ℓₒ : Lvl.Level} {X : Type{ℓₒ}} {Y : Type{ℓₒ}} where
+  open Relator.Equals {ℓₗ Lvl.⊔ ℓₒ}
+
+  -- The image/range of a function.
+  -- Represents the "set" of values of a function.
+  -- Note: An element of Y and a proof that this element is the value of the function f is included so that Image(f) does not become injective when f is not.
+  -- Note: A construction of this implies that X is non-empty.
+  data Image (f : X → Y) : Type{ℓₗ Lvl.⊔ ℓₒ} where
+    image-intro : (x : X) → (y : Y) → .⦃ _ : f(x) ≡ y ⦄ → Image(f)
+
+  -- Enlargement of domain of a function (X → Image(f)) to (X → Y).
+  image-enlarge : ∀{f : X → Y} → (Image(f) → Y) → (X → Y)
+  image-enlarge{f} _ = f
+
+  -- Applies an argument of type X to a function of type (Image(f) → Y) according to the bijection of {X,Image(f)} by f.
+  image-apply : ∀{f : X → Y} → X → (Image(f) → Y) → Y
+  image-apply{f} (x) (fimg) = fimg(image-intro (x) (f(x)) ⦃ [≡]-intro ⦄)
+
+  image-arg : ∀{f : X → Y} → Image(f) → X
+  image-arg{f} (image-intro x _) = x
+
+  -- Could be interpreted as an identity function with an enlarged codomain.
+  -- The value of Image(f) interpreted as contained in the "set" Y.
+  image-value : ∀{f : X → Y} → Image(f) → Y
+  image-value{f} (image-intro _ y) = y
+
+  -- TODO: Why is this useful to prove?
   -- TODO: https://www.iis.sinica.edu.tw/~scm/2009/no-inverses-for-injective-but-non-surjective-functions/
-  image-value-identity : ∀{X}{Y} → (f : X → Y) → ∀{x} → (f(x) ≡ image-apply(x) (image-value{X}{Y}{f}))
-  image-value-identity{X}{Y} (f) = [≡]-intro
+  image-value-identity : (f : X → Y) → ∀{x} → (f(x) ≡ image-apply(x) (image-value{f}))
+  image-value-identity(f) = [≡]-intro
 
-  -- image-function-surjective : ∀{X}{Y}{f : X → Y} → (fimg : X → Image(f)) → Surjective(fimg)
-  -- image-function-injective : ∀{X}{Y}{f : X → Y} → (fimg : X → Image(f)) → ⦃ _ : Injective(f) ⦄ → Injective(fimg)
+  -- The function which shrinks the given function's codomain to its image.
+  image-function : (f : X → Y) → (X → Image(f))
+  image-function f(x) = image-intro(x)(f(x))
+
+  -- TODO: image-function-surjective : ∀{f : X → Y} → Surjective(image-function(f))
+  -- image-function-surjective : ∀{f : X → Y}{y} → ∃{_}{X}(x ↦ ((image-function(f))(x) ≡ y))
+  -- image-function-surjective {f} {image-intro x _} = [∃]-intro(x) ⦃ [≡]-intro ⦄ (TODO: Maybe make all proofs irrelevant? All as in in the whole project?)
+
+  -- image-function-injective : ∀{X}{Y}{f : X → Y} → Injective(f) → Injective(image-function(f))
+  -- image-function-injective{_}{_}{f} {x₁}{x₂} [≡]-intro = [≡]-intro
 
   {-
   -- Image-in(f)(y) means whether the image of `f` contains `y`.
@@ -40,8 +90,9 @@ module _ {ℓ₂ ℓ₃} where
 -- Every binary predicate that have its first argument defined for all values
 -- have at least one choice function that can determine the second argument from the first.
 -- Proposition: ∀(X: Type)∀(Y: Type)∀(φ: X → Y → Stmt). (∀(x: X)∃(y: Y). φ(x)(y)) → (∃(choice: X → Y)∀(x: X). φ(x)(choice(x)))
---   ∀(x: X)∃(y: Y). φ(x)(y) means that the predicate φ holds for every x and some y (which depends on x).
---   ∃(choice: X → Y)∀(x: X). φ(x)(choice(x)) means that there is a function that picks out this y (which depends on x).
+--   ∀(x: X)∃(y: Y). φ(x)(y) means that the predicate φ holds for every x and some y (which may depend on x). In other words: it associates every element in X with a subset of Y, a function (X → ℘(Y)).
+--   ∃(choice: X → Y)∀(x: X). φ(x)(choice(x)) means that there is a function that picks out a particular y.
+-- Note: Some may recognise this as an equivalent variant of "Axiom of Choice" from set theory.
 surjective-choice : ∀{ℓₒ₁ ℓₒ₂}{X : Type{ℓₒ₁}}{Y : X → Type{ℓₒ₂}}{φ : (x : X) → Y(x) → Stmt} → (∀{x : X} → ∃{_}{Y(x)}(y ↦ φ(x)(y))) → ∃{_}{(x : X) → Y(x)}(choice ↦ ∀{x : X} → φ(x)(choice(x)))
 surjective-choice{_}{_} {X}{Y}{φ} (surjective) = [∃]-intro (choice) ⦃ \{x} → proof{x} ⦄ where
   choice : ∀(x : X) → Y(x)
@@ -53,30 +104,39 @@ surjective-choice{_}{_} {X}{Y}{φ} (surjective) = [∃]-intro (choice) ⦃ \{x} 
 module _ {ℓₒ} where
   open Relator.Equals{ℓₒ Lvl.⊔ ℓₗ}
 
-  Function-totality : ∀{A B : Type{ℓₒ}}{f : A → B} → ∀{x} → ∃(y ↦ f(x) ≡ y)
+  -- A function is total
+  -- ∀{x} → ∃(y ↦ f(x) ≡ y)
+  Function-totality : ∀{A B : Type{ℓₒ}}{f : A → B} → Totality(x ↦ y ↦ f(x) ≡ y)
   Function-totality{_}{_} {f}{x} = [∃]-intro(f(x)) ⦃ [≡]-intro ⦄
 
-  Function-function : ∀{A B : Type{ℓₒ}}{f : A → B} → ∀{x₁ x₂} → (x₁ ≡ x₂) → (f(x₁) ≡ f(x₂))
-  Function-function{_}{_} {f}{x} [≡]-intro = [≡]-intro
+  -- A function is function-like.
+  Function-functionlike : ∀{A B : Type{ℓₒ}}{f : A → B} → ∀{x₁ x₂} → (x₁ ≡ x₂) → (f(x₁) ≡ f(x₂))
+  Function-functionlike{_}{_} {f}{x} [≡]-intro = [≡]-intro
 
   instance
+    -- Identity function is injective.
     id-injective : ∀{T} → Injective(id{ℓₒ}{T})
     id-injective [≡]-intro = [≡]-intro
 
   instance
+    -- Identity function is surjective.
     id-surjective : ∀{T : Type{ℓₒ}} → Surjective(id{_}{T})
     id-surjective {_}{y} = [∃]-intro (y) ⦃ [≡]-intro ⦄
 
   instance
+    -- Identity function is bijective.
     id-bijective : ∀{T} → Bijective(id{_}{T})
     id-bijective = [∧]-intro(id-injective)(id-surjective)
 
+  -- Function composition is associative.
   [∘]-associativity : ∀{a b c d : Type{ℓₒ}}{f : a → b}{g : b → c}{h : c → d} → ((h ∘ (g ∘ f)) ≡ ((h ∘ g) ∘ f))
   [∘]-associativity = [≡]-intro
 
+  -- Function composition has left identity element.
   [∘]-identityₗ : ∀{a b : Type{ℓₒ}}{f : a → b} → (id ∘ f ≡ f)
   [∘]-identityₗ = [≡]-intro
 
+  -- Function composition has right identity element.
   [∘]-identityᵣ : ∀{a b : Type{ℓₒ}}{f : a → b} → (f ∘ id ≡ f)
   [∘]-identityᵣ = [≡]-intro
 
@@ -91,14 +151,17 @@ module _ {ℓₒ} where
     f⁻¹-proof{y} = [∃]-proof(f-injective{y})
   -}
 
+  -- Composition of injective functions are injective.
   -- TODO: https://math.stackexchange.com/questions/2049511/is-the-composition-of-two-injective-functions-injective/2049521
+  -- Alternative proof: [∘]-associativity {f⁻¹}{g⁻¹}{g}{f} becomes id by inverseₗ-value injective equivalence
   [∘]-injective : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Injective(f) → Injective(g) → Injective(f ∘ g)
   [∘]-injective{_}{_}{_} {f}{g} (injective-f) (injective-g) {x₁}{x₂} = (injective-g {x₁} {x₂}) ∘ (injective-f {g(x₁)} {g(x₂)})
-  -- Alternative proof: [∘]-associativity {f⁻¹}{g⁻¹}{g}{f} becomes id by inverseₗ-value injective equivalence
 
+  -- RHS of composition is injective if the composition is injective.
   [∘]-injective-elim : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Injective(f ∘ g) → Injective(g)
   [∘]-injective-elim{_}{_}{_} {f}{g} (injective-fg) {x₁}{x₂} (gx₁gx₂) = injective-fg {x₁} {x₂} ([≡]-with(f) (gx₁gx₂))
 
+  -- Composition of surjective functions are surjective.
   [∘]-surjective : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Surjective(f) → Surjective(g) → Surjective(f ∘ g)
   [∘]-surjective{_}{_}{_} {f}{g} (surjective-f) (surjective-g) {y}
     with (surjective-f {y})
@@ -107,9 +170,20 @@ module _ {ℓₒ} where
   ... | [∃]-intro (x) ⦃ [≡]-intro ⦄
     = [∃]-intro (x) ⦃ [≡]-intro ⦄
 
+  -- LHS of composition is surjective if the composition is surjective.
   [∘]-surjective-elim : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Surjective(f ∘ g) → Surjective(f)
   [∘]-surjective-elim{_}{_}{_} {f}{g} (surjective-fg) {y} with (surjective-fg {y})
   ... | [∃]-intro (x) ⦃ [≡]-intro ⦄ = [∃]-intro (g(x)) ⦃ [≡]-intro ⦄
+
+  -- Every injective function has a left inverse with respect to function composition.
+  {-[∘]-inverseₗ-value : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
+  [∘]-inverseₗ-value {a}{b} {f} ⦃ f-injective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
+    f⁻¹ : b → a
+    f⁻¹(y) = 
+
+    f⁻¹-proof : ∀{y} → ((f ∘ f⁻¹)(y) ≡ id(y))
+    f⁻¹-proof{y} = 
+  -}
 
   -- Every surjective function has a right inverse with respect to function composition.
   -- Note: Equivalent to axiom of choice from set theory.
@@ -122,14 +196,15 @@ module _ {ℓₒ} where
     f⁻¹-proof{y} = [∃]-proof(f-surjective{y})
 
   -- TODO: Are these really provable?
-  postulate [∘]-inverseₗ : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Bijective(f) ⦄ → ∃(g ↦ g ∘ f ≡ id)
-  postulate [∘]-inverseᵣ : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Bijective(f) ⦄ → ∃(g ↦ f ∘ g ≡ id)
+  -- postulate [∘]-inverseₗ : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Bijective(f) ⦄ → ∃(g ↦ g ∘ f ≡ id)
+  -- postulate [∘]-inverseᵣ : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Bijective(f) ⦄ → ∃(g ↦ f ∘ g ≡ id)
 
-  inv-fnₗ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
-  inv-fnₗ (f) = [∃]-witness([∘]-inverseₗ{_}{_}{f})
+  -- TODO: 
+  -- inv-fnₗ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
+  -- inv-fnₗ (f) = [∃]-witness([∘]-inverseₗ{_}{_}{f})
 
-  inv-fnᵣ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
-  inv-fnᵣ (f) = [∃]-witness([∘]-inverseᵣ{_}{_}{f})
+  inv-fnᵣ : ∀{a b} → (f : a → b) → ⦃ _ : Surjective(f) ⦄ → (b → a)
+  inv-fnᵣ (f) = [∃]-witness([∘]-inverseᵣ-value{_}{_}{f})
 
   inv-fn : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
-  inv-fn = inv-fnₗ
+  inv-fn (f) ⦃ [∧]-intro inj surj ⦄ = inv-fnᵣ (f) ⦃ surj ⦄

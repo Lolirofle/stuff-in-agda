@@ -47,7 +47,7 @@ open Irreflexivity ⦃ ... ⦄ public
 -- Definition of a total binary operation
 record Total {T : Type} (_▫_ : T → T → Stmt) : Stmt where
   field
-    total : ∀{x y : T} → (x ▫ y)∨(y ▫ x)
+    total : ∀{x y : T} → (x ▫ y) ∨ (y ▫ x)
 open Total ⦃ ... ⦄ public
 
 -- Dichotomy : {T : Type}} → (T → T → Stmt) → Stmt

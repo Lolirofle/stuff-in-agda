@@ -78,6 +78,18 @@ module From-[<][≡] {T : Type} (_<_ : T → T → Stmt) (_≡_ : T → T → St
   _≤_≤_ : T → T → T → Stmt
   x ≤ y ≤ z = (x ≤ y) ∧ (y ≤ z)
 
+  _≮_ : T → T → Stmt
+  x ≮ y = ¬(x < y)
+
+  _≯_ : T → T → Stmt
+  x ≯ y = ¬(x > y)
+
+  _≰_ : T → T → Stmt
+  x ≰ y = ¬(x ≤ y)
+
+  _≱_ : T → T → Stmt
+  x ≱ y = ¬(x ≥ y)
+
 module From-[≤] {T : Type} (_≤_ : T → T → Stmt) where
   -- Greater than
   _>_ : T → T → Stmt
@@ -98,3 +110,16 @@ module From-[≤] {T : Type} (_≤_ : T → T → Stmt) where
   -- In an closed interval
   _≤_≤_ : T → T → T → Stmt
   x ≤ y ≤ z = (x ≤ y) ∧ (y ≤ z)
+
+  _≮_ : T → T → Stmt
+  x ≮ y = ¬(x < y)
+
+  _≯_ : T → T → Stmt
+  x ≯ y = ¬(x > y)
+
+  _≰_ : T → T → Stmt
+  x ≰ y = ¬(x ≤ y)
+
+  _≱_ : T → T → Stmt
+  x ≱ y = ¬(x ≥ y)
+
