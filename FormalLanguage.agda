@@ -8,7 +8,7 @@ open import Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Functional
 open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
+open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
 
 -- Definitions:
 --   A language is a set of words.

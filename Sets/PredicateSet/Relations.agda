@@ -1,4 +1,4 @@
-module Sets.PredicateSet.Properties{ℓₗ}{ℓₒ} where
+module Sets.PredicateSet.Relations{ℓₗ}{ℓₒ} where
 
 import      Lvl
 open import Functional
@@ -11,7 +11,9 @@ open import Sets.PredicateSet
 open import Structure.Function.Domain
 
 Empty : ∀{T} → PredSet{ℓₗ}{ℓₒ}(T) → Stmt
-Empty(S) = (∀{x} → (x ∉ S))
+Empty(S) = (∀{x} → (x ∉' S)) where
+  _∉'_ = _∉_ {ℓₗ}{ℓₒ}
 
 NonEmpty : ∀{T} → PredSet{ℓₗ}{ℓₒ}(T) → Stmt
-NonEmpty(S) = ∃(x ↦ (x ∈ S))
+NonEmpty(S) = ∃(x ↦ (x ∈' S)) where
+  _∈'_ = _∈_ {ℓₗ}{ℓₒ}

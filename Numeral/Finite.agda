@@ -53,7 +53,7 @@ module Theorems{ℓ} where
   open import Numeral.Natural.Oper.Properties{ℓ}
   open        Numeral.Natural.Relation{ℓ}
   open import Relator.Equals{ℓ}{Lvl.𝟎}
-  open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
+  open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 
   bound-𝐒 : ∀{n} → ℕfin(n) → ℕfin(𝐒(n))
   bound-𝐒 (𝟎fin)    = 𝟎fin

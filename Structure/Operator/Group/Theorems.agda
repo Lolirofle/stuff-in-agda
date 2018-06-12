@@ -1,4 +1,6 @@
-module Structure.Operator.Group.Theorems {ℓ₁} {ℓ₂} where
+module Structure.Operator.Group.Theorems where -- {ℓ₁} {ℓ₂} where
 
+{-
 unique-identity : Unique()
 unique-inverse : Unique()
+-}

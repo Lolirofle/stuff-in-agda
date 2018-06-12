@@ -9,7 +9,7 @@ open import Numeral.Natural as ℕ using (ℕ)
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
-open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
+open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 
 -- TODO: Prove the usual strcutures for ℤ

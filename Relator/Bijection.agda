@@ -2,14 +2,16 @@ module Relator.Bijection {ℓ₁} {ℓ₂} where
 
 import      Lvl
 open import Functional
-open import Functional.Properties
+open import Functional.Proofs
 open import Logic.Propositional
 open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}
-open import Relator.Equals.Theorems{ℓ₁}
+open import Relator.Equals.Proofs{ℓ₁}
 open import Structure.Function.Domain{ℓ₁}
 open import Structure.Relator.Properties{ℓ₁}
 open import Type{ℓ₂}
+
+-- TODO: Merge with Cardinality, Functional.Domains, and Functional.Proofs
 
 -- A bijection between the types {A,B} means that (∃(f: A → B). Bijective(f)) is satisfied.
 data Bijection (T₁ : Type) (T₂ : Type) : Stmt{ℓ₁ Lvl.⊔ Lvl.𝐒(ℓ₂)} where

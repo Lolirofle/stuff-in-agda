@@ -4,13 +4,13 @@ import      Lvl
 open import Data.Boolean
 import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
-open import Data.Boolean.Theorems
+open import Data.Boolean.Proofs
 import      Data.List as List
 open import Logic.Propositional
 open import Functional
 open import Operator.Equals
 open import Relator.Equals{ℓ₁}{Lvl.𝟎}
-open import Relator.Equals.Theorems{ℓ₁}{Lvl.𝟎}
+open import Relator.Equals.Proofs{ℓ₁}{Lvl.𝟎}
 open import Type
 
 record BoolSet{ℓ₂}(T : Type{ℓ₂}) : Type{ℓ₂} where

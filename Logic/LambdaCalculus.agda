@@ -54,7 +54,7 @@ module Transformations where
   open import Numeral.FiniteStrict.Bound{Lvl.𝟎}
   open import Numeral.Natural.Oper.Properties{Lvl.𝟎}
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
 
   -- Increment the depth level of the given term
   depth-𝐒 : ∀{d} → Term(d) → Term(𝐒(d))
@@ -110,7 +110,7 @@ module Transformations where
 module Test where
   open        Transformations
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
 
   test1 : Expression
   test1 = Abstract(Abstract(Application (Var(𝐒ᶠ(𝟎ᶠ))) (Var(𝟎ᶠ))))

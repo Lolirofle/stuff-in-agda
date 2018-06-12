@@ -6,7 +6,8 @@ open import Data
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Data.List
-open import Sets.ListSet{ℓ}{ℓ}
+import      Data.List.Relation.Membership
+import      Data.List.Proofs.Membership
 open import Metalogic.Classical.Propositional.Syntax{ℓ} (Prop)
   renaming (
     ⊤   to ⊤ₗ ;
@@ -16,7 +17,10 @@ open import Metalogic.Classical.Propositional.Syntax{ℓ} (Prop)
     _∨_ to _∨ₗ_ ;
     _⇒_ to _⇒ₗ_ )
 open import Relator.Equals{ℓ}
-open import Relator.Equals.Theorems{ℓ}
+open import Relator.Equals.Proofs{ℓ}
+
+open        Data.List.Relation.Membership{ℓ}{ℓ} {Formula} hiding (_≡_)
+open        Data.List.Proofs.Membership{ℓ}{ℓ} {Formula}
 
 -- A model decides whether a proposition is true or false
 -- Also known as Interpretation, Structure, Model

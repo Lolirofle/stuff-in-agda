@@ -75,12 +75,12 @@ module ProofSystems {ℓ₁} {ℓ₂} {Prop : Set(ℓ₁)} {Formula : Set(ℓ₁
           _⇒_ to _⇒ₘ_ )
 
       module Theorems where
-        open import Data.List.Properties{ℓ₁}{ℓ₂}
+        open import Data.List.Proofs{ℓ₁}{ℓ₂}
         import      List.Theorems
-        open        Sets.ListSet
-        open        Sets.ListSet.Relators
+        open        Data.List.Relation.Membership
+        open        Data.List.Relation.Membership.Relators
         open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
-open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
+open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
 
         -- [⊢]-subset : (Γ₁ ⊆ Γ₂) → (Γ₁ ⊢ φ) → (Γ₂ ⊢ φ)
         -- [⊢]-subset proof = 

@@ -2,7 +2,7 @@ module Data.Boolean.Operators where
 
 open import Data.Boolean
 
--- Definition of boolean operators with conventions from logic
+-- Definition of boolean operators with conventions from logic (TODO: Just use a predefined theory from Logic._ or Metalogic._)
 module Logic where
   infixl 1010 ¬_
   infixl 1005 _∧_

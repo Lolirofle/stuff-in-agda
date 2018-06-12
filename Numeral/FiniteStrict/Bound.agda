@@ -11,7 +11,7 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Relation{ℓ}
 open import Relator.Equals{ℓ}{0}
-open import Relator.Equals.Theorems{ℓ}{0}
+open import Relator.Equals.Proofs{ℓ}{0}
 
 bound-𝐒 : ∀{n} → 𝕟(n) → 𝕟(ℕ.𝐒(n))
 bound-𝐒 (𝟎)    = 𝟎

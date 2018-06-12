@@ -4,7 +4,7 @@ open import Functional hiding (id)
 import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
-open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
+open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
 open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
@@ -57,10 +57,10 @@ record Group {T : Type} (_▫_ : T → T → T) : Stmt where
 
 -- Multiplicative Group
 record MultGroup {T : Type} (_▫_ : T → T → T) (𝟎 : T) : Stmt where
-  open Monoid ⦃ ... ⦄ 
+  open Monoid ⦃ ... ⦄
 
   field
-    inv : (x : T) → ⦃ _ : x ≢ 𝟎 ⦄ → T
+    inv : (x : T) → ⦃ _ : (x ≢ 𝟎) ⦄ → T
   field
     ⦃ monoid ⦄ : Monoid{T} (_▫_)
     inverseₗ        : ∀{x} → ⦃ nonzero : (x ≢ 𝟎) ⦄ → ((inv x ⦃ nonzero ⦄) ▫ x) ≡ id ⦃ monoid ⦄
@@ -70,8 +70,8 @@ record MultGroup {T : Type} (_▫_ : T → T → T) (𝟎 : T) : Stmt where
   inverse = inverseₗ
 
 record AbelianGroup {T : Type} (_▫_ : T → T → T) : Stmt where
-  open Group ⦃ ... ⦄ 
-  open Monoid ⦃ ... ⦄ 
+  open Group ⦃ ... ⦄
+  open Monoid ⦃ ... ⦄
 
   field
     commutativity  : Commutativity (_▫_)

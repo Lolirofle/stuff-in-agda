@@ -2,7 +2,7 @@ module Relator.Finite {ℓ₁} where
 
 import      Lvl
 open import Functional
-open import Functional.Properties
+open import Functional.Proofs
 open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.FiniteStrict

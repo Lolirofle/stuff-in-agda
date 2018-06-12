@@ -1,7 +1,8 @@
-module Relator.Equals.Theorems {ℓ₁}{ℓ₂} where
+module Relator.Equals.Proofs {ℓ₁}{ℓ₂} where
 
 import      Lvl
 open import Functional
+open import Lang.Instance
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
 open import Structure.Relator.Equivalence{ℓ₁}{ℓ₂}

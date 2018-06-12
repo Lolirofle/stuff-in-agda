@@ -30,9 +30,9 @@ tail{_}{List.∅}    (_ ⊰∅)   = ∅
 tail{_}{_ List.⊰ _}(_ ⊰+ l) = l
 
 module _ where
-  open import Data.List.Properties
+  open import Data.List.Proofs
   open import Relator.Equals
-  open import Relator.Equals.Theorems
+  open import Relator.Equals.Proofs
 
   _++_ : ∀{L₁ L₂} → Tuple(L₁) → Tuple(L₂) → Tuple(L₁ Data.List.++ L₂)
   _++_{L}                   {List.∅} (l)(_)         = [≡]-substitutionₗ {Lvl.𝟎}{_}{_}{_}{_}{L} ([++]-identityᵣ{ℓ}) {Tuple} (l)

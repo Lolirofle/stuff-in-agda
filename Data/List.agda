@@ -189,3 +189,23 @@ satisfiesAll pred (x ⊰ l) = pred(x) && satisfiesAll(pred)(l)
 
 -- fn-to-list : ∀{ℓ}{L : List(Type{ℓ})}{Out : Type{ℓ}} → (foldᵣ (_→ᶠ_) (Out) (L)) → (List(Type{ℓ}) → Out)
 -- fn-to-list{∅} = 
+
+-- Replacing the nth element in the list
+replaceAt : ∀{ℓ}{T : Type{ℓ}} → ℕ → T → List(T) → List(T)
+replaceAt _      elem ∅       = ∅
+replaceAt 𝟎      elem (_ ⊰ l) = elem ⊰ l
+replaceAt (𝐒(n)) elem (_ ⊰ l) = replaceAt n elem l
+
+-- The list without the nth element in the list
+withoutIndex : ∀{ℓ}{T : Type{ℓ}} → ℕ → List(T) → List(T)
+withoutIndex _       ∅       = ∅
+withoutIndex 𝟎       (_ ⊰ l) = l
+withoutIndex (𝐒(n))  (x ⊰ l) = x ⊰ withoutIndex(n)(l)
+
+{- TODO swapIndex : ∀{ℓ}{T : Type{ℓ}} → ℕ → ℕ → List(T) → List(T)
+swapIndex _      _  ∅       = ∅
+swapIndex 𝟎      b (_ ⊰ l) = l
+swapIndex (𝐒(a)) _  (x ⊰ l) = x ⊰ withoutIndex(a)(l)
+-}
+
+-- TODO: filter

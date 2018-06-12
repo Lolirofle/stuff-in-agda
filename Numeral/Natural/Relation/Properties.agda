@@ -12,7 +12,7 @@ open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Proof{ℓ}
 open import Numeral.Natural.Relation{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
-open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
+open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Ordering{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}

@@ -1,8 +1,8 @@
-module Cardinal {ℓₗ} {ℓₒ} where
+module Cardinal{ℓₗ}{ℓₒ} where
 
 import      Lvl
 open import Functional
-open import Functional.Properties
+open import Functional.Proofs
 open import Logic.Propositional{ℓₗ Lvl.⊔ (Lvl.𝐒(ℓₒ))}
 open import Logic.Predicate
 open import Relator.Equals
@@ -29,6 +29,3 @@ _≺_ A B = (A ≼ B) ∧ (A ≭ B)
 
 _≻_ : Type → Type → Stmt
 _≻_ A B = (A ≽ B) ∧ (A ≭ B)
-
-[≍]-reflexivity : Reflexivity(_≍_)
-reflexivity ⦃ [≍]-reflexivity ⦄ = [∃]-intro(id)

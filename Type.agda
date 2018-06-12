@@ -4,12 +4,12 @@ Type : _
 Type = Set(ℓ)
 
 -- Assures that a value has a certain type
-type-ascription : (T : Type) → T → T
-type-ascription T x = x
+typeAscript : (T : Type) → T → T
+typeAscript T x = x
 
-syntax type-ascription T x = x :of: T
+syntax typeAscript T x = x :of: T
 
 -- Returns the type of a certain value
-type-of : ∀{T : Type} → T → Type
-type-of {T} _ = T
+typeOf : ∀{T : Type} → T → Type
+typeOf {T} _ = T
 

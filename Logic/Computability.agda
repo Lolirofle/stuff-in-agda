@@ -1,7 +1,7 @@
 module Logic.Computability {ℓ} where
 
 open import Data.Boolean
-open import Data.Boolean.Theorems{ℓ}
+open import Data.Boolean.Proofs{ℓ}
 open import Functional
 open import Logic.Properties{ℓ}
 open import Logic.Propositional{ℓ}

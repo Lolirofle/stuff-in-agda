@@ -10,13 +10,13 @@ CallCC = (∀{X Y : Stmt} → (((X → Y) → X) → X))
 
 DoubleNegation = (∀{X : Stmt} → (¬(¬ X)) → X)
 
-Contrapositive = (∀{X Y : Stmt} → (X → Y) → ((¬ X) ← (¬ Y)))
+Contrapositive = (∀{X Y : Stmt} → (X → Y) → ((¬ Y) → (¬ X)))
 
-DisjunctiveSyllogismₗ = (∀{X Y : Stmt} → ((X ∨ Y) ∧ (¬ Y)) → X
+DisjunctiveSyllogismₗ = (∀{X Y : Stmt} → ((X ∨ Y) ∧ (¬ Y)) → X)
 
-DisjunctiveSyllogismᵣ = (∀{X Y : Stmt} → ((X ∨ Y) ∧ (¬ X)) → Y
+DisjunctiveSyllogismᵣ = (∀{X Y : Stmt} → ((X ∨ Y) ∧ (¬ X)) → Y)
 
-ConstructiveDilemma = (∀{X Y : Stmt} → ((X₁ → X₂) ∧ (Y₁ → Y₂) ∧ (X₁ ∨ Y₁)) → (X₂ ∨ Y₂)
+ConstructiveDilemma = (∀{X₁ X₂ Y₁ Y₂ : Stmt} → ((X₁ → X₂) ∧ (Y₁ → Y₂) ∧ (X₁ ∨ Y₁)) → (X₂ ∨ Y₂))
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- Classical names

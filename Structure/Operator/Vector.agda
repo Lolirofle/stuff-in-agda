@@ -3,7 +3,7 @@ module Structure.Operator.Vector {ℓ₁} {ℓ₂} where
 import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
-open import Relator.Equals.Theorems{ℓ₁}{ℓ₂}
+open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
 open import Structure.Operator.Field{ℓ₁}{ℓ₂}
 open import Structure.Operator.Group{ℓ₁}{ℓ₂}
 open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}
@@ -24,11 +24,11 @@ record VectorSpace (V S : Type) ⦃ lang : Language(V)(S) ⦄ : Stmt where
    ⦃ scalarField ⦄       : Field(_+ₛ_)(_⋅ₛ_)
    ⦃ vectorAbelianGroup ⦄ : AbelianGroup(_+ᵥ_)
 
-  open AbelianGroup ⦃ ... ⦄ 
-  open Field ⦃ ... ⦄ 
-  open Group ⦃ ... ⦄ 
-  open Monoid ⦃ ... ⦄ 
-  open MultGroup ⦃ ... ⦄ 
+  open AbelianGroup ⦃ ... ⦄
+  open Field ⦃ ... ⦄
+  open Group ⦃ ... ⦄
+  open Monoid ⦃ ... ⦄
+  open MultGroup ⦃ ... ⦄
 
   -- Scalar zero
   𝟎ₛ : S

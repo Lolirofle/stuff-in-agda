@@ -1,4 +1,4 @@
-module Data.Boolean.Theorems {ℓ₁} where -- TODO: Move
+module Data.Boolean.Proofs {ℓ₁} where -- TODO: Move
 
 import      Lvl
 open import Data.Boolean
@@ -7,7 +7,7 @@ open        Data.Boolean.Operators.Programming
 open import Functional
 open import Logic.Propositional{ℓ₁}
 open import Relator.Equals{ℓ₁}{Lvl.𝟎}
-open import Relator.Equals.Theorems{ℓ₁}{Lvl.𝟎}
+open import Relator.Equals.Proofs{ℓ₁}{Lvl.𝟎}
 
 -- A boolean operation is either true or false
 bivalence : ∀{a} → ((a ≡ 𝑇) ∨ (a ≡ 𝐹))

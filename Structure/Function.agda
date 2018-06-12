@@ -5,7 +5,7 @@ open import Logic.Propositional
 open import Logic.Predicate{ℓₗ}
 open import Functional
 open import Relator.EqualsOld{ℓₗ}
-open import Relator.Equals.Theorems{ℓₗ}
+open import Relator.Equals.Proofs{ℓₗ}
 open import Relator.Equals.Uniqueness{ℓₗ}
 open import Structure.Function.Domain{ℓₗ}
 open import Type

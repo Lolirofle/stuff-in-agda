@@ -65,7 +65,7 @@ module _ {ℓₗ}{ℓₒ} where
 
   module _ where
     open import Data.Boolean
-    open import Functional.Properties
+    open import Functional.Proofs
     open import Structure.Function.Domain{ℓₗ}
 
     map : ∀{A B} → (f : A → B) → ⦃ _ : Bijective{ℓₒ}(f) ⦄ → PredSet(A) → PredSet(B)

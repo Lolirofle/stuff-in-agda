@@ -12,7 +12,7 @@ module NumAndDivisionProofs where
   open import Numeral.Natural.Relation
   open import Numeral.Natural.Divisibility
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
 
   ℕ4IsEven : Even((𝐒 ∘ 𝐒 ∘ 𝐒 ∘ 𝐒)(𝟎))
@@ -200,7 +200,7 @@ module Test2 where
   open import Functional.ComposeRaise
   open import Numeral.Natural
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
 
   f : ℕ
@@ -237,7 +237,7 @@ module testEqProof where
   open import Logic.Propositional{Lvl.𝟎}
   open import Numeral.Natural.Oper
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
   open import Structure.Operator.Properties{Lvl.𝟎}
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
   open import Type{Lvl.𝟎}
@@ -253,7 +253,7 @@ module testDiv where
   open import Numeral.Natural.Oper
   open import Numeral.Natural.UnclosedOper
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
 
   testDiv1 : 4 ⌈/₀⌉ 2 ≡ 2
@@ -271,7 +271,7 @@ module testDiv where
 module testList where
   open import Data.List
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
   open import Numeral.Natural
 
   -- rev1 : (4 ⊰ 3 ⊰ 2 ⊰ 1 ⊰ ∅) → reverse(1 ⊰ 2 ⊰ 3 ⊰ 4 ⊰ ∅)
@@ -296,7 +296,7 @@ module testTransitivity where
   open import Numeral.Natural
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-  open import Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
+  open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
   open import Type
 
   test1 : (0 :of: ℕ ≡ 1) → (1 ≡ 2) → (0 ≡ 2)
@@ -311,7 +311,7 @@ module testTransitivity where
 --   symbols : ∀{T : Set(Lvl.𝟎)} → Propositional.Syntax.Symbols T (const (Set(Lvl.𝟎)))
 --   symbols =
 --     record {
---       •_ = type-of ;
+--       •_ = typeOf ;
 --       ⊤   = ⊤ ;
 --       ⊥   = ⊥ ;
 --       ¬_  = ¬_ ;
@@ -358,7 +358,7 @@ module testPrimitiveRecursiveDefinitions where
   import Numeral.Natural.Oper     as Nat
   import Numeral.Natural.Function as Nat
   open import   Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-  open import   Relator.Equals.Theorems{Lvl.𝟎}{Lvl.𝟎}
+  open import   Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
 
   plus   = Rec(2) (P(1)(0)) (Comp(1)(3) (Succ) (P(3)(1)))
   pred   = Rec(1) (Zero) (P(2)(0))
@@ -466,9 +466,9 @@ module testCantor where
 module testListSets where
   open import Functional
   open import Data.List
-  import      Sets.ListSet
-  open        Sets.ListSet{Lvl.𝟎}
-  open        Sets.ListSet.[∈]-proof
+  import      Data.List.Relation.Membership
+  open        Data.List.Relation.Membership{Lvl.𝟎}
+  open        Data.List.Relation.Membership.[∈]-proof
   open import Logic.Propositional
   open import Type{Lvl.𝟎}
 

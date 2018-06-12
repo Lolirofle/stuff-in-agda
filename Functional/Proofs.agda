@@ -1,11 +1,11 @@
-module Functional.Properties {ℓₗ} where
+module Functional.Proofs {ℓₗ} where
 
 import      Lvl
 open import Logic.Propositional
 open import Logic.Predicate{ℓₗ}
 open import Functional
 import      Relator.Equals
-open import Relator.Equals.Theorems{ℓₗ}
+open import Relator.Equals.Proofs{ℓₗ}
 open import Structure.Function{ℓₗ}
 open import Structure.Function.Domain{ℓₗ}
 open import Type
@@ -42,6 +42,7 @@ module _ {ℓₒ₁ ℓₒ₂} where
 module _ {ℓₒ : Lvl.Level} {X : Type{ℓₒ}} {Y : Type{ℓₒ}} where
   open Relator.Equals {ℓₗ Lvl.⊔ ℓₒ}
 
+  -- TODO: Move to Functional.Domains
   -- The image/range of a function.
   -- Represents the "set" of values of a function.
   -- Note: An element of Y and a proof that this element is the value of the function f is included so that Image(f) does not become injective when f is not.

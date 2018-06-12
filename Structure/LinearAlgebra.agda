@@ -2,14 +2,14 @@ module Structure.LinearAlgebra {ℓ} where
 
 import      Lvl
 open import Functional hiding (id)
-open import Functional.Properties
+open import Functional.Proofs
 open import Logic.Propositional{ℓ Lvl.⊔ ℓ}
 open import Logic.Propositional.Theorems{ℓ}
 open import Logic.Predicate{ℓ}
 open import Numeral.Natural
 open import Numeral.Natural.Relation{ℓ}
 open import Relator.Equals{ℓ}
-open import Relator.Equals.Theorems{ℓ}
+open import Relator.Equals.Proofs{ℓ}
 open import Relator.Equals.Uniqueness{ℓ}{ℓ}{ℓ}
 open import Structure.Function.Domain{ℓ}
 import      Structure.Function.Linear{ℓ}{ℓ} as Linear

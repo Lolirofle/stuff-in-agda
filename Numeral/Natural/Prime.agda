@@ -11,7 +11,7 @@ open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Relation{ℓ}
 open import Numeral.Natural.Relation.Properties{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
-open import Relator.Equals.Theorems{ℓ}{Lvl.𝟎}
+open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 
 record Prime(n : ℕ) : Stmt where

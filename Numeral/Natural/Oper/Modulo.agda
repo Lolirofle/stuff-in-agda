@@ -1,10 +1,16 @@
-module Numeral.Natural.Oper.Modulo{ℓ} where
+module Numeral.Natural.Oper.Modulo where
+
+open import Numeral.Natural
+open import Numeral.Natural.Oper
+open import Numeral.Natural.UnclosedOper
+
+infixl 10100 _mod_
 
 -- Difference between the value before and after the floored division operation.
 _mod_ : ℕ → ℕ → ℕ
 _mod_ a b = a −₀ ((a ⌊/₀⌋ b) ⋅ b)
 
-postulate _ : (a + b) mod b ≡ a mod b
+-- postulate _ : (a + b) mod b ≡ a mod b
 {-
 6 mod 3
 3 mod 3

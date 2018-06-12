@@ -6,7 +6,7 @@ open import Functional using (const ; [↦] ; _→ᶠ_) renaming (id to idf ; _�
 open import Logic.Propositional
 open import Logic.Predicate{Lvl.𝟎}
 import      Relator.Equals
-open import Relator.Equals.Theorems{Lvl.𝟎}
+open import Relator.Equals.Proofs{Lvl.𝟎}
 open import Structure.Relator.Properties{Lvl.𝟎}
 
 {- TODO:

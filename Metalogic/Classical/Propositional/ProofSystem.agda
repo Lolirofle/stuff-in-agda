@@ -4,11 +4,13 @@ import      Lvl
 open import Data hiding (empty)
 import      Data.List
 open        Data.List using (List ; ∅ ; _⊰_ ; _++_ ; [_ ; _])
-import      Sets.ListSet
-open        Sets.ListSet{ℓₚ}{ℓₚ}
-open        Sets.ListSet.Relators{ℓₚ}{ℓₚ}
+import      Data.List.Relation.Membership
+import      Data.List.Proofs.Membership
 open import Metalogic.Classical.Propositional.Syntax(Prop)
 open import Functional
+
+open        Data.List.Relation.Membership{ℓₚ}{ℓₚ} {Formula}
+open        Data.List.Proofs.Membership{ℓₚ}{ℓₚ} {Formula}
 
 module Meta where
   data _⊢_ : List(Formula) → Formula → Set(ℓₚ) where -- TODO: Reduce the number of rules
@@ -104,8 +106,6 @@ module NaturalDeduction where
   Trees(Γ) = (∀{γ} → (γ ∈ Γ) → Tree(γ))
 
   module Trees where
-    open [∈]-proof {Formula}
-
     tree : ∀{Γ}{φ} → Trees(Γ) → (φ ∈ Γ) → Tree(φ)
     tree f(x) = f(x)
 
@@ -171,8 +171,6 @@ module NaturalDeduction where
     [⊢]-construct : (Trees(Γ) → Tree(φ)) → (Γ ⊢ φ)
 
   module Theorems where
-    open [∈]-proof {Formula}
-
     [⊢]-from-trees : ∀{Γ₁ Γ₂}{φ} → (Trees(Γ₂) → Trees(Γ₁)) → (Γ₁ ⊢ φ) → (Γ₂ ⊢ φ)
     [⊢]-from-trees (trees-fn) ([⊢]-construct (Γ₁⊢φ)) = [⊢]-construct ((Γ₁⊢φ) ∘ (trees-fn))
 

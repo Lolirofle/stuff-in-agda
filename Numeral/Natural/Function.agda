@@ -34,7 +34,7 @@ module Theorems{ℓ} where
   open import Numeral.Natural.Relation{ℓ}
   open import Numeral.Natural.Oper.Properties{ℓ}
   open import Relator.Equals{ℓ}
-  open import Relator.Equals.Theorems{ℓ}
+  open import Relator.Equals.Proofs{ℓ}
   open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
 
   max-elementary : ∀{a b} → (max(a)(b) ≡ a + (b −₀ a))

@@ -19,6 +19,3 @@ Uniqueness {T} property = ∀{x y : T} → property(x) → property(y) → (x �
 ∃! {T} property = ∃(a ↦ property(a)) ∧ Uniqueness{T}(property)
 
 -- TODO: [∃!]-equivalence {T} property = ∃(a ↦ ∃{property(a)}(pa ↦ pa ∧ Uniqueness{T}(property){a}(pa)))
-
-module Theorems where
-  -- TODO: Injectivity-Uniqueness : ∀{T} → (∀(z : T) → Uniqueness{T} (a ↦ f(a) ≡ f(z))) ↔ (∀{x y : T} → (f(x) ≡ f(y)) → (x ≡ y))

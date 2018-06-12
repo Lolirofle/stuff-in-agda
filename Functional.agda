@@ -39,6 +39,8 @@ swap f(x₂)(x₁) = f(x₁)(x₂)
 _∘_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y → Z) → (X → Y) → (X → Z)
 (f ∘ g)(x) = f(g(x))
 
+-- Swapped function composition on a binary operator
+-- A function is composed on the arguments of the binary operator.
 _on₂_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → (Y → Y → Z) → (X → X → Z)
 (f on₂ (_▫_))(y₁)(y₂) = f(y₁) ▫ f(y₂)
 
@@ -75,27 +77,16 @@ liftᵣ = swap _∘_ -- liftᵣ(f) = _∘ f
 --   T₄ = (T₁ ⨯ T₂)
 --   (T₅ → T₆) = T₃
 
--- Custom syntax for anonymous functions/mappings
-[↦] = id
-infix 1 [↦]
-syntax [↦](λ x → y) = x ↦ y
+open import Syntax.Function public
 
--- Returns the domain of a function
+-- Returns the domain type of a function
 Domain : ∀{ℓ₁ ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → Type{ℓ₁}
 Domain {_}{_} {A}{_} _ = A
 
--- Returns the codomain of a function
+-- Returns the codomain type of a function
 Codomain : ∀{ℓ₁ ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → Type{ℓ₂}
 Codomain {_}{_} {_}{B} _ = B
 
 -- Functions with two parameters as an infix binary operator
 _〔_〕_ : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} → A → (A → B → C) → B → C
 a 〔 op 〕 b = op a b
-
--- Infers/resolves/(searches for) an instance/proof of the specified type/statement
-resolve : ∀{ℓ}(T : Type{ℓ}) ⦃ _ : T ⦄ → T
-resolve (_) ⦃ x ⦄ = x
-
--- Infers/resolves/(searches for) an instance/proof of an inferred type/statement
-infer : ∀{ℓ}{T : Type{ℓ}} ⦃ _ : T ⦄ → T
-infer ⦃ x ⦄ = x

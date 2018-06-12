@@ -53,3 +53,6 @@ record ∀ₑ {X : Type} (Pred : X → Stmt) : Stmt where
 
 [∀ₑ]-elimₑ : ∀{X : Type}{Pred : X → Stmt} → (apx : ∀ₑ(x ↦ Pred(x))) → Pred(∀ₑ.element(apx))
 [∀ₑ]-elimₑ apx = [∀ₑ]-elim apx(∀ₑ.element(apx))
+
+syntax ∃{T}(λ x → y) = ∃❪ x ꞉ T ❫․ y
+syntax ∀ₗ{T}(λ x → y) = ∀❪ x ꞉ T ❫․ y
