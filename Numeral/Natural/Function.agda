@@ -23,10 +23,6 @@ infixl 100 _[max]_ _[min]_
 _[max]_ = max
 _[min]_ = min
 
--- gcd : (a : ℕ) → (b : ℕ) → ⦃ _ : a ≥ b ⦄ → ℕ
--- gcd(a)(𝟎) = a
--- gcd(a)(b) = gcd(b)(a mod b)
-
 module Theorems{ℓ} where
   import      Lvl
   open import Functional

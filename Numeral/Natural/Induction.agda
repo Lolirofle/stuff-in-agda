@@ -1,4 +1,4 @@
-module Numeral.Natural.Proof{ℓ} where
+module Numeral.Natural.Induction{ℓ} where
 
 open import Logic.Propositional{ℓ}
 open import Functional

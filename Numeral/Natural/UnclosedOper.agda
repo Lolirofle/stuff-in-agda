@@ -1,6 +1,10 @@
 module Numeral.Natural.UnclosedOper where
 
+import Lvl
 open import Data.Option as Option using (Option)
+open import Numeral.FiniteStrict as 𝕟
+  using (𝕟)
+import      Numeral.FiniteStrict.Bound{Lvl.𝟎} as 𝕟bound
 open import Numeral.Integer as ℤ
   using (ℤ)
 open import Numeral.Natural
@@ -57,3 +61,9 @@ x /? 𝟎 = Option.None
 x /? y with (x −? y)
 ... | Option.Some(xy) = Option.map 𝐒(xy /? y)
 ... | Option.None     = Option.None
+
+-- Unclosed total subtraction from natural numbers to finite natural numbers
+_−₀fin_ : (x : ℕ) → ℕ → 𝕟(𝐒(x))
+𝟎    −₀fin _    = 𝕟.𝟎
+𝐒(x) −₀fin 𝟎    = 𝕟.𝐒(x −₀fin 𝟎)
+𝐒(x) −₀fin 𝐒(y) = 𝕟bound.bound-𝐒 (x −₀fin y)

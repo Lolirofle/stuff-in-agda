@@ -11,7 +11,7 @@ open import Numeral.FiniteStrict
 open import Numeral.FiniteStrict.Bound
 open import Numeral.Natural
 open import Numeral.FiniteStrict.BooleanOper
-open import Numeral.Vector as Vector using (Vector)
+open import Numeral.CoordinateVector as Vector using (Vector)
 open import Type{ℓ}
 
 -- Data in 2-dimensional finite space (Implies bounded).

@@ -6,7 +6,7 @@ open import Functional
 open import Logic.Propositional{ℓ}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Proof{ℓ}
+open import Numeral.Natural.Induction{ℓ}
 open import Numeral.Natural.Relation{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
@@ -249,9 +249,11 @@ instance
   -- ⊥ //∀n. 𝐒(n) ≠ 0
   -- (a = 0) ∨ (b = 0) //[⊥]-elim
 
+-- [⋅]-product-is-coprime : ∀{a b} → Coprime(a ⋅ b) → ((a ≡ 1)∧(b ≡ a ⋅ b)) ∨ ((a ≡ a ⋅ b)∧(b ≡ 1))
+
 -- Also called "The Division Algorithm" or "Euclides Algorithm"
 -- TODO: Prove
-postulate [/]-uniqueness : ∀{a b} → ⦃ _ : b ≢ 0 ⦄ → ∃!{ℕ ⨯ ℕ}(\{(q , r) → ((a ≡ (b ⋅ q) + r)∧(0 ≤ r)∧(r < b))})
+-- [/]-uniqueness : ∀{a b} → ⦃ _ : b ≢ 0 ⦄ → ∃!{ℕ ⨯ ℕ}(\{(q , r) → ((a ≡ (b ⋅ q) + r) ∧ (0 ≤ r) ∧ (r < b))})
 
 instance
   [+]-cancellationᵣ : Cancellationᵣ(_+_)
@@ -273,6 +275,13 @@ instance
         🝖 ([+1]-commutativity {x}{b})
       ))
     )
+
+{-instance
+  postulate [⋅]-cancellationₗ : ∀{x} → ⦃ _ : x ≢ 0 ⦄ → (Cancellationₗ(_⋅_)){x}
+
+instance
+  postulate [⋅]-cancellationᵣ : ∀{x} → ⦃ _ : x ≢ 0 ⦄ → (Cancellationᵣ(_⋅_)){x}
+-}
 
 instance
   postulate [⋅][−₀]-distributivityₗ : ∀{x y z : ℕ} → (x ⋅ (y −₀ z)) ≡ (x ⋅ y) −₀ (x ⋅ z)

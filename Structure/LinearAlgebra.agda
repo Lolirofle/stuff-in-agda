@@ -26,7 +26,7 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
 
     -- A list of scalars
     Scalars : ℕ → Stmt
-    Scalars(n) = ((i : ℕ) → ⦃ _ : i < n ⦄ → S)
+    Scalars(n) = ((i : ℕ) → ⦃ _ : i < n ⦄ → S) -- TODO: Maybe use 𝕟 instead?
 
     -- A list of vectors
     Vectors : ℕ → Stmt

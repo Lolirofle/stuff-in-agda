@@ -10,7 +10,8 @@ open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 
 -- Inequalities/Comparisons
--- TODO: Consider defining (_≤_) in the same way as (_divides_)
+-- TODO: Consider defining (_≤_) in the same way as (_∣_)
+-- TODO: Move to Numeral.Natural.Relation.Order
 
 data _lteq_ : ℕ → ℕ → Stmt where
   instance

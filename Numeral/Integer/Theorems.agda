@@ -4,7 +4,7 @@ import      Lvl
 open import Functional
 open import Numeral.Integer
 open import Numeral.Integer.Oper
-open import Numeral.Natural.Proof
+open import Numeral.Natural.Induction
 open import Numeral.Natural as ℕ using (ℕ)
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}

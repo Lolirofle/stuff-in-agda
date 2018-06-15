@@ -23,7 +23,7 @@ open import Type
 --       This limits how many successors (𝐒) that can "fit".
 data 𝕟 : ℕ → Set where
   𝟎 : ∀{n} → 𝕟(ℕ.𝐒(n))                   -- Zero
-  𝐒 : ∀{n} → 𝕟(ℕ.𝐒(n)) → 𝕟(ℕ.𝐒(ℕ.𝐒(n))) -- Successor function
+  𝐒 : ∀{n} → 𝕟(ℕ.𝐒(n)) → 𝕟(ℕ.𝐒(ℕ.𝐒(n))) -- Successor function (TODO: The type could be 𝕟(n) → 𝕟(ℕ.𝐒(n))? 𝕟(𝟎) is impossible after all)
 {-# INJECTIVE 𝕟 #-}
 
 [𝕟]-to-[ℕ] : ∀{n} → 𝕟(ℕ.𝐒(n)) → ℕ
@@ -34,16 +34,14 @@ module _ {ℓ} where
   open Numeral.Natural.Relation{ℓ}
 
   [ℕ]-to-[𝕟] : (x : ℕ) → ∀{n} → ⦃ _ : (x lteq2 n) ⦄ → 𝕟(ℕ.𝐒(n))
-  [ℕ]-to-[𝕟] (ℕ.𝟎)    {_}    ⦃ _ ⦄ = 𝟎
+  [ℕ]-to-[𝕟] (ℕ.𝟎)    {_}      ⦃ _ ⦄ = 𝟎
   [ℕ]-to-[𝕟] (ℕ.𝐒(_)) {ℕ.𝟎}    ⦃ ⦄
   [ℕ]-to-[𝕟] (ℕ.𝐒(x)) {ℕ.𝐒(n)} ⦃ p ⦄ = 𝐒([ℕ]-to-[𝕟] (x) {n} ⦃ p ⦄)
 
-instance
-  𝕟-from-ℕ : ∀{N} → From-ℕsubset(𝕟(ℕ.𝐒(N)))
-  From-ℕsubset.restriction ( 𝕟-from-ℕ {N} ) (n) = (n lteq2 N) where
-    open Numeral.Natural.Relation
-  from-ℕsubset ⦃ 𝕟-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = [ℕ]-to-[𝕟] (n) {N} ⦃ proof ⦄ where
+module _ where
+  open Numeral.Natural.Relation{Lvl.𝟎}
 
-𝐏 : ∀{n} → 𝕟(ℕ.𝐒(ℕ.𝐒(n))) → 𝕟(𝐒(n))
-𝐏(𝟎)    = 𝟎
-𝐏(𝐒(n)) = n
+  instance
+    𝕟-from-ℕ : ∀{N} → From-ℕsubset(𝕟(ℕ.𝐒(N)))
+    From-ℕsubset.restriction ( 𝕟-from-ℕ {N} ) (n) = (n lteq2 N)
+    from-ℕsubset ⦃ 𝕟-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = [ℕ]-to-[𝕟] (n) {N} ⦃ proof ⦄

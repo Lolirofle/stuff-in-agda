@@ -1,4 +1,4 @@
-module Numeral.Vector {ℓ} where
+module Numeral.CoordinateVector {ℓ} where
 
 import      Lvl
 open import Functional
@@ -8,7 +8,7 @@ open import Numeral.Natural
 open import Type{ℓ}
 
 -- Data in 1-dimensional finite space (Implies bounded).
--- Like a data list.
+-- Like a homogenous tuple or a fixed-size list.
 record Vector (d : ℕ) (T : Type) : Type where
   constructor vec
   field

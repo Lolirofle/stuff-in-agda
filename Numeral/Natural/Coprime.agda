@@ -46,5 +46,7 @@ Coprime-with-[+] {x}{y} proof {n} nx nxy = proof {n} nx (divides-without-[+]ᵣ 
 
 postulate Coprime-of-Prime : ∀{y} → Prime(y) → ∀{x} → (𝐒(x) < y) → Coprime(𝐒(x))(y)
 
+-- _ : Coprime(x)(y) ↔ (gcd(x)(y) ≡ 1)
+
 -- coprime : ℕ → ℕ → (ℕ ⨯ ℕ)
 -- coprime(x)(y) = (x / gcd(x)(y) , y / gcd(x)(y))

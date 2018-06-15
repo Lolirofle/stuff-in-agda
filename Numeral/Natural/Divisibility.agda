@@ -35,50 +35,52 @@ data Odd : ℕ → Stmt where
 --   The order (y + x) works and depends on rewriting rules of ℕ at the moment (Specifically on the commuted identity and successor rules, I think).
 --   Without rewriting rules, deconstruction of Div𝐒 seems not working.
 --   Example:
---     div23 : ¬(2 divides 3)
+--     div23 : ¬(2 ∣ 3)
 --     div23(Div𝐒())
---     This is a "valid" proof, but would not type-check because deconstruction from (2 divides 3) to (2 divides 1) is impossible.
+--     This is a "valid" proof, but would not type-check because deconstruction from (2 ∣ 3) to (2 ∣ 1) is impossible.
 --     Seems like the compiler would see (3 = 2+x), but because of definition of (_+_), only (3 = x+2) can be found.
 --   Defining Div𝐒 with (x + y) inside would work, but then the definition of DivN becomes more complicated because (_⋅_) is defined in this order.
-data _divides_ (y : ℕ) : ℕ → Stmt where
+data _∣_ (y : ℕ) : ℕ → Stmt where
   instance
-    Div𝟎 : (y divides 𝟎)
-    Div𝐒 : ∀{x : ℕ} → (y divides x) → (y divides (y + x))
-_∣_ = _divides_
+    Div𝟎 : (y ∣ 𝟎)
+    Div𝐒 : ∀{x : ℕ} → (y ∣ x) → (y ∣ (y + x))
 
-data _divides_withRemainder_ : ℕ → ℕ → ℕ → Stmt where -- TODO: Make _divides_ a special case of this. Tries (See below), but noticed that r<x would guarantee x≠0, which is good but not the same as the current definition of _divides_.
+_∤_ : ℕ → ℕ → Stmt
+y ∤ x = ¬(y ∣ x)
+
+data _∣_withRemainder_ : ℕ → ℕ → ℕ → Stmt where -- TODO: Make _∣_ a special case of this. Tries (See below), but noticed that r<x would guarantee x≠0, which is good but not the same as the current definition of _∣_. This is also the same as the congruence relation with mod?
   instance
-    DivRem𝟎 : ∀{x r : ℕ}   → ⦃ _ : r < x ⦄ → x divides r withRemainder r
-    DivRem𝐒 : ∀{x y r : ℕ} → (x divides y withRemainder r) → (x divides (x + y) withRemainder r)
+    DivRem𝟎 : ∀{x r : ℕ}   → ⦃ _ : r < x ⦄ → x ∣ r withRemainder r
+    DivRem𝐒 : ∀{x y r : ℕ} → (x ∣ y withRemainder r) → (x ∣ (x + y) withRemainder r)
 
 {-
-_divides_ : ℕ → ℕ → Stmt
-_divides_ y x = _divides_withRemainder_ y x 𝟎
+_∣_ : ℕ → ℕ → Stmt
+_∣_ y x = _∣_withRemainder_ y x 𝟎
 pattern Div𝟎 {x}    = DivRem𝟎 {x}
 pattern Div𝐒 {x}{y} = DivRem𝐒 {x}{y}
 -}
 
-DivN : ∀{y : ℕ} → (n : ℕ) → y divides (y ⋅ n)
+DivN : ∀{y : ℕ} → (n : ℕ) → y ∣ (y ⋅ n)
 DivN {y}(𝟎)    = Div𝟎
 DivN {y}(𝐒(n)) = Div𝐒(DivN{y}(n))
 
 {-
-Div𝐏 : ∀{x y : ℕ} → (y divides x) → (y divides (x −₀ y))
+Div𝐏 : ∀{x y : ℕ} → (y ∣ x) → (y ∣ (x −₀ y))
 Div𝐏 {x}   {𝟎}    (0-div-x) = 0-div-x
-Div𝐏 {𝟎}   {y}    (y-div-0) = [≡]-substitutionₗ ([−₀]-negative{y}) {expr ↦ (y divides expr)} (Div𝟎)
-Div𝐏 {_}{y} (Div𝐒{x} (y-div-x)) = [≡]-substitutionᵣ [−₀]ₗ[+]ᵣ-nullify {expr ↦ (y divides expr)} y-div-x
+Div𝐏 {𝟎}   {y}    (y-div-0) = [≡]-substitutionₗ ([−₀]-negative{y}) {expr ↦ (y ∣ expr)} (Div𝟎)
+Div𝐏 {_}{y} (Div𝐒{x} (y-div-x)) = [≡]-substitutionᵣ [−₀]ₗ[+]ᵣ-nullify {expr ↦ (y ∣ expr)} y-div-x
 -}
 
-divides-intro : ∀{x y} → (∃ \(n : ℕ) → (y ⋅ n ≡ x)) → (y divides x)
-divides-intro {x}{y} ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [≡]-elimᵣ (y⋅n≡x) {expr ↦ (y divides expr)} (DivN{y}(n))
+divides-intro : ∀{x y} → (∃ \(n : ℕ) → (y ⋅ n ≡ x)) → (y ∣ x)
+divides-intro {x}{y} ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [≡]-elimᵣ (y⋅n≡x) {expr ↦ (y ∣ expr)} (DivN{y}(n))
 
-divides-elim : ∀{x y} → (y divides x) → (∃ \(n : ℕ) → (y ⋅ n ≡ x))
+divides-elim : ∀{x y} → (y ∣ x) → (∃ \(n : ℕ) → (y ⋅ n ≡ x))
 divides-elim {_}{_} (Div𝟎) = [∃]-intro (0) ⦃ [≡]-intro ⦄
 divides-elim {_}{y} (Div𝐒{x} (y-div-x)) with divides-elim(y-div-x)
 ... | ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with(expr ↦ y + expr) (y⋅n≡x) ⦄
 
 {-
-Div𝐏 : ∀{x y : ℕ} → (y divides (y + x)) → (y divides x)
+Div𝐏 : ∀{x y : ℕ} → (y ∣ (y + x)) → (y ∣ x)
 Div𝐏 {x}{y} (proof) with divides-elim(proof)
 ... | [∃]-intro (𝟎)   ⦃ y0≡yx ⦄ = divides-intro(y0≡yx) TODO
 ... | [∃]-intro (𝐒(n)) ⦃ ySn≡yx ⦄ = divides-intro([∃]-intro (n) ⦃ [+]-injectivityᵣ {y} ySn≡yx ⦄)
@@ -88,7 +90,7 @@ Div𝐏 {x}{y} (proof) with divides-elim(proof)
 test ()
 -}
 instance
-  divides-transitivity : Transitivity (_divides_)
+  divides-transitivity : Transitivity (_∣_)
   transitivity ⦃ divides-transitivity ⦄ {a}{b}{c} (a-div-b) (b-div-c) with (divides-elim (a-div-b) , divides-elim (b-div-c))
   ... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ b⋅n₂≡c ⦄)) =
     (divides-intro
@@ -102,7 +104,7 @@ instance
       )
     )
 
-divides-with-[+] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b + c))
+divides-with-[+] : ∀{a b c} → (a ∣ b) → (a ∣ c) → (a ∣ (b + c))
 divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
 ... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
   (divides-intro
@@ -118,7 +120,7 @@ divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , di
     )
   )
 
-divides-with-[⋅] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b ⋅ c))
+divides-with-[⋅] : ∀{a b c} → (a ∣ b) → (a ∣ c) → (a ∣ (b ⋅ c))
 divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
 ... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
   (divides-intro
@@ -134,7 +136,7 @@ divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , 
     )
   )
 
-divides-with-[−₀] : ∀{a b c} → (a divides b) → (a divides c) → (a divides (b −₀ c))
+divides-with-[−₀] : ∀{a b c} → (a ∣ b) → (a ∣ c) → (a ∣ (b −₀ c))
 divides-with-[−₀] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
 ... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
   (divides-intro
@@ -150,61 +152,61 @@ divides-with-[−₀] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b)
     )
   )
 
-divides-without-[+]ₗ : ∀{a b c} → (a divides (b + c)) → (a divides c) → (a divides b)
+divides-without-[+]ₗ : ∀{a b c} → (a ∣ (b + c)) → (a ∣ c) → (a ∣ b)
 divides-without-[+]ₗ {a}{b}{c} = divides-with-[−₀] {a}{b + c}{c}
 
-divides-without-[+]ᵣ : ∀{a b c} → (a divides (b + c)) → (a divides b) → (a divides c)
-divides-without-[+]ᵣ {a}{b}{c} abc ab = divides-without-[+]ₗ {a}{c}{b} ([≡]-elimᵣ ([+]-commutativity{b}{c}) {expr ↦ a divides expr} abc) ab
+divides-without-[+]ᵣ : ∀{a b c} → (a ∣ (b + c)) → (a ∣ b) → (a ∣ c)
+divides-without-[+]ᵣ {a}{b}{c} abc ab = divides-without-[+]ₗ {a}{c}{b} ([≡]-elimᵣ ([+]-commutativity{b}{c}) {expr ↦ a ∣ expr} abc) ab
 
--- divides-[⋅] : ∀{a b c} → Coprime(b)(c) → (a divides (b ⋅ c)) → ((a divides b) ∨ (a divides c))
+-- divides-[⋅] : ∀{a b c} → Coprime(b)(c) → (a ∣ (b ⋅ c)) → ((a ∣ b) ∨ (a ∣ c))
 
 -- instance
---   divides-with-fn : ∀{a b} → (a divides b) → ∀{f : ℕ → ℕ} → {_ : ∀{x y : ℕ} → ∃{ℕ → ℕ}(\g → f(x ⋅ y) ≡ f(x) ⋅ g(y))} → ((f(a)) divides (f(b)))
+--   divides-with-fn : ∀{a b} → (a ∣ b) → ∀{f : ℕ → ℕ} → {_ : ∀{x y : ℕ} → ∃{ℕ → ℕ}(\g → f(x ⋅ y) ≡ f(x) ⋅ g(y))} → ((f(a)) ∣ (f(b)))
 --   divides-with-fn {a}{b} (a-div-b) {f} ⦃ f-prop ⦄ 
 
 -- instance
---   divides-[≡] : ∀{a b} → (a divides b) → (b divides a) → (a ≡ b)
+--   divides-[≡] : ∀{a b} → (a ∣ b) → (b ∣ a) → (a ≡ b)
 --   divides-[≡] {a}{b}{c} ((a-div-b),(b-div-c)) with (divides-elim (a-div-b) , divides-elim (b-div-c))
 --   ... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ b⋅n₂≡c ⦄)) =
 
 instance
-  [1]-divides : ∀{n} → (1 divides n)
+  [1]-divides : ∀{n} → (1 ∣ n)
   [1]-divides {𝟎}    = Div𝟎
   [1]-divides {𝐒(n)} =
     [≡]-elimₗ
       ([+]-commutativity {n}{1})
-      {expr ↦ (1 divides expr)}
+      {expr ↦ (1 ∣ expr)}
       (Div𝐒([1]-divides{n}))
 
 instance
-  divides-reflexivity : ∀{n} → (n divides n)
+  divides-reflexivity : ∀{n} → (n ∣ n)
   divides-reflexivity = Div𝐒(Div𝟎)
 
 instance
-  [0]-divides-[0] : (0 divides 0)
+  [0]-divides-[0] : (0 ∣ 0)
   [0]-divides-[0] = Div𝟎
 
-[0]-only-divides-[0] : ∀{n} → (0 divides n) → (n ≡ 0)
+[0]-only-divides-[0] : ∀{n} → (0 ∣ n) → (n ≡ 0)
 [0]-only-divides-[0] {𝟎} _ = [≡]-intro
 [0]-only-divides-[0] {𝐒(n)} (proof) = [⊥]-elim(([𝐒]-not-0 ∘ symmetry) ([∃]-proof(divides-elim(proof)))) -- ∃(i ↦ 0 ⋅ i ≡ 𝐒(n))
 
-[0]-divides-not : ∀{n} → ¬(0 divides 𝐒(n))
+[0]-divides-not : ∀{n} → ¬(0 ∣ 𝐒(n))
 [0]-divides-not (0divSn) = [𝐒]-not-0([0]-only-divides-[0] (0divSn))
 -- [0]-divides-not {n} (Div𝐒(proof)) =  -- TODO: This makes Div𝐒(proof)≡proof ? Is Div𝐒(proof)≢proof provable?
 
-divides-not-[1] : ∀{n} → ¬((n + 2) divides 1)
+divides-not-[1] : ∀{n} → ¬((n + 2) ∣ 1)
 divides-not-[1] ()
 
-[1]-only-divides-[1] : ∀{n} → (n divides 1) → (n ≡ 1)
+[1]-only-divides-[1] : ∀{n} → (n ∣ 1) → (n ≡ 1)
 [1]-only-divides-[1] {𝟎}       (ndiv1) = [⊥]-elim ([0]-divides-not (ndiv1))
 [1]-only-divides-[1] {𝐒(𝟎)}    (ndiv1) = [≡]-intro
 [1]-only-divides-[1] {𝐒(𝐒(n))} ()
 
-postulate divides-upper-limit : ∀{a b} → (a divides b) → (a ≤ b)
+postulate divides-upper-limit : ∀{a b} → (a ∣ b) → (a ≤ b)
 
-postulate divides-not-lower-limit : ∀{a b} → (a > b) → ¬(a divides b)
+postulate divides-not-lower-limit : ∀{a b} → (a > b) → ¬(a ∣ b)
 
-Div𝐏 : ∀{x y : ℕ} → (y divides (y + x)) → (y divides x)
+Div𝐏 : ∀{x y : ℕ} → (y ∣ (y + x)) → (y ∣ x)
 Div𝐏 {x}{y} proof = divides-without-[+]ᵣ {y}{y}{x} (proof) (divides-reflexivity)
 
--- divides-factorial : ∀{n x} → (𝐒(x) < n) → (𝐒(x) divides n !)
+-- divides-factorial : ∀{n x} → (𝐒(x) < n) → (𝐒(x) ∣ n !)

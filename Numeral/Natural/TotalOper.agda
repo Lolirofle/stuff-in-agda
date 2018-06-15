@@ -24,6 +24,6 @@ _−_ 𝟎 (𝐒(b)) ⦃ 0≥𝐒b ⦄ with ([<]-is-[≱] ([<][0]-minimum{b})) (
 _−_ (𝐒(a)) (𝐒(b)) ⦃ 𝐒b≤𝐒a ⦄ = _−_ a b ⦃ [≤]-without-[𝐒] {b} (𝐒b≤𝐒a) ⦄ 
 
 -- Total division (Positive whole number division)
-_/_ : (a : ℕ) → (b : ℕ) → ⦃ _ : b divides a ⦄ → ⦃ _ : b ≢ 0 ⦄ → ℕ
+_/_ : (a : ℕ) → (b : ℕ) → ⦃ _ : b ∣ a ⦄ → ⦃ _ : b ≢ 0 ⦄ → ℕ
 _/_ _ _ ⦃ b-div-a ⦄ ⦃ _ ⦄ with divides-elim (b-div-a)
 ... | [∃]-intro (n) ⦃ b⋅n≡a ⦄ = n

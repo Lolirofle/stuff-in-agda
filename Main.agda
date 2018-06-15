@@ -66,6 +66,7 @@ import Numeral.Finite
 import Numeral.FiniteStrict
 import Numeral.FiniteStrict.BooleanOper
 import Numeral.FiniteStrict.Bound
+import Numeral.FiniteStrict.Oper
 import Numeral.Integer
 import Numeral.Integer.Function
 import Numeral.Integer.Oper
@@ -78,12 +79,15 @@ import Numeral.Natural.BooleanOper
 import Numeral.Natural.Coprime
 import Numeral.Natural.Divisibility
 import Numeral.Natural.Function
+import Numeral.Natural.GreatestCommonDivisor
 import Numeral.Natural.Oper
 import Numeral.Natural.Oper.Modulo
+import Numeral.Natural.Oper.Modulo.Proofs
 import Numeral.Natural.Oper.Properties
 import Numeral.Natural.Order
 import Numeral.Natural.Prime
-import Numeral.Natural.Proof
+import Numeral.Natural.Induction
+import Numeral.Natural.Inductions
 import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Countable
 import Numeral.Natural.Relation.Properties
@@ -96,7 +100,7 @@ import Numeral.Real.Properties
 import Numeral.Sign
 import Numeral.Sign.Oper
 import Numeral.Sign.Oper0
-import Numeral.Vector
+import Numeral.CoordinateVector
 import Operator.Equals
 import Relator.Bijection
 import Relator.Congruence
