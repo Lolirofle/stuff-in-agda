@@ -1,4 +1,4 @@
-module Numeral.Natural.BooleanOper where
+module Numeral.Natural.Oper.Comparisons where
 
 import      Lvl
 open import Data.Boolean

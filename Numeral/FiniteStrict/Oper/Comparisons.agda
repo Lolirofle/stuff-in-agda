@@ -1,4 +1,4 @@
-module Numeral.FiniteStrict.BooleanOper where
+module Numeral.FiniteStrict.Oper.Comparisons where
 
 import      Lvl
 open import Data.Boolean

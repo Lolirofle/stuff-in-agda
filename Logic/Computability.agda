@@ -10,43 +10,45 @@ open import Relator.Equals{ℓ}
 open import Type{ℓ}
 
 record SemiComputablyDecidable {X : Type} (φ : X → Stmt) : Stmt where
+  constructor SemiComputablyDecidable-intro
   field
-    predicate : X → Bool
-    ⦃ completeness-𝑇 ⦄ : ∀{x} → φ(x)     → (predicate(x) ≡ 𝑇)
-    ⦃ completeness-𝐹 ⦄ : ∀{x} → (¬ φ(x)) → (predicate(x) ≡ 𝐹)
+    decide : X → Bool
+    ⦃ completeness-𝑇 ⦄ : ∀{x} → φ(x)     → (decide(x) ≡ 𝑇)
+    ⦃ completeness-𝐹 ⦄ : ∀{x} → (¬ φ(x)) → (decide(x) ≡ 𝐹)
 
 -- Existence of a computable function which mirrors the result of whether a proposition is provable or not.
 record ComputablyDecidable {X : Type} (φ : X → Stmt) : Stmt where -- TODO: Is this the correct definition?
+  constructor ComputablyDecidable-intro
   field
-    predicate : X → Bool
-    ⦃ proof ⦄ : ∀{x} → φ(x) ↔ (predicate(x) ≡ 𝑇)
+    decide : X → Bool
+    ⦃ proof ⦄ : ∀{x} → φ(x) ↔ (decide(x) ≡ 𝑇)
 
-  soundness-𝑇 : ∀{x} → φ(x) ← (predicate(x) ≡ 𝑇)
+  soundness-𝑇 : ∀{x} → φ(x) ← (decide(x) ≡ 𝑇)
   soundness-𝑇 = [↔]-elimₗ (proof)
 
-  completeness-𝑇 : ∀{x} → φ(x) → (predicate(x) ≡ 𝑇)
+  completeness-𝑇 : ∀{x} → φ(x) → (decide(x) ≡ 𝑇)
   completeness-𝑇 = [↔]-elimᵣ (proof)
 
-  soundness-𝐹 : ∀{x} → (¬ φ(x)) ← (predicate(x) ≡ 𝐹)
+  soundness-𝐹 : ∀{x} → (¬ φ(x)) ← (decide(x) ≡ 𝐹)
   soundness-𝐹 = (contrapositiveᵣ(completeness-𝑇)) ∘ ([↔]-elimₗ [≢][𝑇]-is-[𝐹])
 
-  completeness-𝐹 : ∀{x} → (¬ φ(x)) → (predicate(x) ≡ 𝐹)
+  completeness-𝐹 : ∀{x} → (¬ φ(x)) → (decide(x) ≡ 𝐹)
   completeness-𝐹 = ([↔]-elimᵣ [≢][𝑇]-is-[𝐹]) ∘ (contrapositiveᵣ(soundness-𝑇))
 
   semi : SemiComputablyDecidable(φ)
   semi =
     record{
-      predicate      = predicate ;
+      decide      = decide ;
       completeness-𝑇 = completeness-𝑇 ;
       completeness-𝐹 = completeness-𝐹
     }
 
 -- Existence of a computable function which yields whether a relation between two arguments is provable or not.
+-- TODO: Is this neccessary to have? Compare with Functional.Proofs.function
 record Computable {X Y : Type} (φ : X → Y → Stmt) : Stmt where
   field
     function : X → Y
     ⦃ proof ⦄ : ∀{x}{y} → φ(x)(y) → (function(x) ≡ y)
-
 
 classicalIsComputablyDecidable : ∀{X}{φ : X → Stmt} → (∀{x} → Classical(φ(x))) ↔ ComputablyDecidable(φ)
 classicalIsComputablyDecidable {X}{φ} = [↔]-intro l r where
@@ -61,7 +63,7 @@ classicalIsComputablyDecidable {X}{φ} = [↔]-intro l r where
   ... | [∨]-introᵣ _ = 𝐹
 
   r : (∀{x} → Classical(φ(x))) → ComputablyDecidable(φ)
-  ComputablyDecidable.predicate (r(classic)) = decider(classic)
+  ComputablyDecidable.decide (r(classic)) = decider(classic)
   ComputablyDecidable.proof (r(classic)) {x} = [↔]-intro rl rr where
     postulate a : ∀{a} → a -- TODO
 

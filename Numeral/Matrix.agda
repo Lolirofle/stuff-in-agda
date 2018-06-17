@@ -10,7 +10,7 @@ open import Functional using (const)
 open import Numeral.FiniteStrict
 open import Numeral.FiniteStrict.Bound
 open import Numeral.Natural
-open import Numeral.FiniteStrict.BooleanOper
+open import Numeral.FiniteStrict.Oper.Comparisons
 open import Numeral.CoordinateVector as Vector using (Vector)
 open import Type{ℓ}
 

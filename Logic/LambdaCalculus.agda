@@ -3,7 +3,7 @@ module Logic.LambdaCalculus where
 import      Lvl
 open import Data.Boolean
 open import Numeral.Natural
-open import Numeral.Natural.BooleanOper
+open import Numeral.Natural.Oper.Comparisons
 open import Numeral.FiniteStrict
   renaming (𝟎 to 𝟎ᶠ ; 𝐒 to 𝐒ᶠ)
 open import Numeral.Natural.Function

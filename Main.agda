@@ -48,6 +48,7 @@ import Logic.Classical.Mere
 import Logic.Classical.NaturalDeduction
 import Logic.Classical.SetTheory.ZFC
 import Logic.Computability
+import Logic.Computability.Binary
 import Logic.Constructive.NaturalDeduction
 import Logic.Convenience
 import Logic.DiagonalProof
@@ -64,7 +65,7 @@ import Metalogic.Classical.Propositional.Semantics
 import Metalogic.Classical.Propositional.Syntax
 import Numeral.Finite
 import Numeral.FiniteStrict
-import Numeral.FiniteStrict.BooleanOper
+import Numeral.FiniteStrict.Oper.Comparisons
 import Numeral.FiniteStrict.Bound
 import Numeral.FiniteStrict.Oper
 import Numeral.Integer
@@ -75,7 +76,7 @@ import Numeral.Integer.Sign
 import Numeral.Integer.Theorems
 import Numeral.Matrix
 import Numeral.Natural
-import Numeral.Natural.BooleanOper
+import Numeral.Natural.Oper.Comparisons
 import Numeral.Natural.Coprime
 import Numeral.Natural.Divisibility
 import Numeral.Natural.Function
@@ -89,6 +90,7 @@ import Numeral.Natural.Prime
 import Numeral.Natural.Induction
 import Numeral.Natural.Inductions
 import Numeral.Natural.Relation
+import Numeral.Natural.Relation.Computability
 import Numeral.Natural.Relation.Countable
 import Numeral.Natural.Relation.Properties
 import Numeral.Natural.TotalOper

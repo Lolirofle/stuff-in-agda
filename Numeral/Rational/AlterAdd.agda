@@ -6,7 +6,7 @@ open import Data.Boolean
 open import Logic.Propositional
 open import Numeral.Natural             as ℕ
 import      Numeral.Natural.Oper        as ℕ
-import      Numeral.Natural.BooleanOper as ℕ
+import      Numeral.Natural.Oper.Comparisons as ℕ
 import      Numeral.Integer
 open        Numeral.Integer             using (ℤ)
 
