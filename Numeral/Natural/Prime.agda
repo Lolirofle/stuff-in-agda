@@ -8,12 +8,13 @@ open import Numeral.Natural
 open import Numeral.Natural.Divisibility{ℓ}
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ}
-open import Numeral.Natural.Relation{ℓ}
-open import Numeral.Natural.Relation.Properties{ℓ}
+open import Numeral.Natural.Relation.Order{ℓ}
+open import Numeral.Natural.Relation.Order.Theorems{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 
+-- A prime number is a number `n` in which its divisors are only `{1,n}`.
 record Prime(n : ℕ) : Stmt where
   constructor Prime-intro
   field
@@ -39,6 +40,7 @@ instance
   [1]-nonprime (Prime-intro ⦃ _ ⦄ ⦃ n≢1 ⦄ _) = (n≢1)([≡]-intro)
   -- [1]-nonprime (Prime-intro _) = infer
 
+{-
 instance
   [2]-prime : Prime(2)
   [2]-prime = Prime-intro ⦃ [𝐒]-not-0 ⦄ ⦃ [𝐒]-not-0 ∘ [𝐒]-injectivity ⦄ (divisor-proof) where
@@ -91,3 +93,4 @@ instance
     divisor-proof{6} (Div𝐒())
     divisor-proof{7} (7div7) = [∨]-introᵣ ([≡]-intro)
     divisor-proof{𝐒(𝐒(𝐒(𝐒(𝐒(𝐒(𝐒(𝐒(n))))))))} (xdiv7) = [⊥]-elim(divides-not-lower-limit([∃]-intro(n) ⦃ [+]-commutativity{8}{n} ⦄) (xdiv7))
+-}

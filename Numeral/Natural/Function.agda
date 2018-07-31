@@ -27,7 +27,7 @@ module Theorems{ℓ} where
   import      Lvl
   open import Functional
   open import Logic.Propositional{ℓ}
-  open import Numeral.Natural.Relation{ℓ}
+  open import Numeral.Natural.Relation.Order{ℓ}
   open import Numeral.Natural.Oper.Properties{ℓ}
   open import Relator.Equals{ℓ}
   open import Relator.Equals.Proofs{ℓ}

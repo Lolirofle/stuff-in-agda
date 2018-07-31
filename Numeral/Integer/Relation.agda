@@ -1,9 +1,11 @@
 module Numeral.Integer.Relation{ℓ} where
 
+import      Lvl
 open import Logic.Propositional{ℓ}
 open import Numeral.Integer
 open import Numeral.Integer.Oper
-import      Numeral.Natural.Relation as ℕ
+import      Numeral.Natural.Relation.Order as ℕ
+open import Structure.Relator.Ordering{ℓ}{Lvl.𝟎}
 
 -- Inequalities/Comparisons
 data _≤_ : ℤ → ℤ → Stmt where
@@ -14,20 +16,4 @@ data _≤_ : ℤ → ℤ → Stmt where
 _<_ : ℤ → ℤ → Stmt
 _<_ a b = (𝐒(a) ≤ b)
 
-_≥_ : ℤ → ℤ → Stmt
-_≥_ a b = (b ≤ a)
-
-_>_ : ℤ → ℤ → Stmt
-_>_ a b = (b < a)
-
-_≰_ : ℤ → ℤ → Stmt
-_≰_ a b = (a > b)
-
-_≮_ : ℤ → ℤ → Stmt
-_≮_ a b = (a ≥ b)
-
-_≱_ : ℤ → ℤ → Stmt
-_≱_ a b = (a < b)
-
-_≯_ : ℤ → ℤ → Stmt
-_≯_ a b = (a ≤ b)
+open From-[≤][<] (_≤_) (_<_) public

@@ -21,8 +21,13 @@ x − 𝟎       = ℤ.+ₙ x
 
 -- Construction of an integer with the sign and numeral components
 signed : (Sign.+|−) → ℕ → ℤ
-signed (Sign.+) n = ℤ.+ₙ n
-signed (Sign.−) n = ℤ.−ₙ n
+signed (Sign.➕) (n) = ℤ.+ₙ n
+signed (Sign.➖) (n) = ℤ.−ₙ n
+
+signed0 : (Sign.+|0|−) → ℕ → ℤ
+signed0(Sign.➕) (ℕ.𝐒(n)) = ℤ.+𝐒ₙ(n)
+signed0(Sign.➖) (ℕ.𝐒(n)) = ℤ.−𝐒ₙ(n)
+signed0(_)      (_)      = ℤ.𝟎
 
 -- TODO _/_ : ℕ → ℕ → ℚ
 

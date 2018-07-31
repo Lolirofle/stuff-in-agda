@@ -7,6 +7,7 @@ import Automaton.TuringMachine
 import Cardinal
 import Cardinal.Finite.Count
 import Data
+import Data.Any
 import Data.Boolean
 import Data.Boolean.AsSet
 import Data.Boolean.Operators
@@ -68,6 +69,7 @@ import Numeral.FiniteStrict
 import Numeral.FiniteStrict.Oper.Comparisons
 import Numeral.FiniteStrict.Bound
 import Numeral.FiniteStrict.Oper
+import Numeral.FiniteStrict.Theorems
 import Numeral.Integer
 import Numeral.Integer.Function
 import Numeral.Integer.Oper
@@ -80,10 +82,10 @@ import Numeral.Natural.Oper.Comparisons
 import Numeral.Natural.Coprime
 import Numeral.Natural.Divisibility
 import Numeral.Natural.Function
-import Numeral.Natural.GreatestCommonDivisor
+-- import Numeral.Natural.GreatestCommonDivisor
 import Numeral.Natural.Oper
-import Numeral.Natural.Oper.Modulo
-import Numeral.Natural.Oper.Modulo.Proofs
+-- import Numeral.Natural.Oper.Modulo
+-- import Numeral.Natural.Oper.Modulo.Proofs
 import Numeral.Natural.Oper.Properties
 import Numeral.Natural.Order
 import Numeral.Natural.Prime
@@ -92,6 +94,10 @@ import Numeral.Natural.Inductions
 import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Computability
 import Numeral.Natural.Relation.Countable
+import Numeral.Natural.Relation.Order
+import Numeral.Natural.Relation.Order.Existence
+import Numeral.Natural.Relation.Order.Existence.Theorems
+import Numeral.Natural.Relation.Order.Theorems
 import Numeral.Natural.Relation.Properties
 import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper

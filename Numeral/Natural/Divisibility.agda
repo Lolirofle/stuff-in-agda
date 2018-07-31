@@ -5,10 +5,11 @@ open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}
+open import Numeral.FiniteStrict
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ}
-open import Numeral.Natural.Relation{ℓ}
+open import Numeral.Natural.Relation.Order{ℓ}
 open import Relator.Equals{ℓ}
 open import Relator.Equals.Proofs{ℓ}
 open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
@@ -31,6 +32,9 @@ data Odd : ℕ → Stmt where
     Odd𝐒 : ∀{x : ℕ} → Odd(x) → Odd(𝐒(𝐒(x)))
 {-# INJECTIVE Odd #-}
 
+-- `(y ∣ x)` means that `y` is divisible by `x`.
+-- In other words: `x/y` is an integer.
+-- Or expressed in more elementary logic: `∃(c: ℕ). x = c⋅y`.
 -- Note on the definition of Div𝐒:
 --   The order (y + x) works and depends on rewriting rules of ℕ at the moment (Specifically on the commuted identity and successor rules, I think).
 --   Without rewriting rules, deconstruction of Div𝐒 seems not working.
@@ -40,6 +44,8 @@ data Odd : ℕ → Stmt where
 --     This is a "valid" proof, but would not type-check because deconstruction from (2 ∣ 3) to (2 ∣ 1) is impossible.
 --     Seems like the compiler would see (3 = 2+x), but because of definition of (_+_), only (3 = x+2) can be found.
 --   Defining Div𝐒 with (x + y) inside would work, but then the definition of DivN becomes more complicated because (_⋅_) is defined in this order.
+-- Note 2:
+--   (0 ∣ 0) is true, and it is the only number divisible by 0.
 data _∣_ (y : ℕ) : ℕ → Stmt where
   instance
     Div𝟎 : (y ∣ 𝟎)
@@ -48,17 +54,25 @@ data _∣_ (y : ℕ) : ℕ → Stmt where
 _∤_ : ℕ → ℕ → Stmt
 y ∤ x = ¬(y ∣ x)
 
-data _∣_withRemainder_ : ℕ → ℕ → ℕ → Stmt where -- TODO: Make _∣_ a special case of this. Tries (See below), but noticed that r<x would guarantee x≠0, which is good but not the same as the current definition of _∣_. This is also the same as the congruence relation with mod?
-  instance
-    DivRem𝟎 : ∀{x r : ℕ}   → ⦃ _ : r < x ⦄ → x ∣ r withRemainder r
-    DivRem𝐒 : ∀{x y r : ℕ} → (x ∣ y withRemainder r) → (x ∣ (x + y) withRemainder r)
+-- `Divisor(n)(d)` means that `d` is a divisor of `n`.
+Divisor = swap _∣_
 
-{-
-_∣_ : ℕ → ℕ → Stmt
-_∣_ y x = _∣_withRemainder_ y x 𝟎
-pattern Div𝟎 {x}    = DivRem𝟎 {x}
-pattern Div𝐒 {x}{y} = DivRem𝐒 {x}{y}
--}
+-- Note: `(0 ∣ᵣₑₘ _)(_)` is impossible to construct.
+data _∣ᵣₑₘ_ : (y : ℕ) → ℕ → 𝕟(y) → Stmt where
+  instance
+    DivRem𝟎 : ∀{y : ℕ}  {r : 𝕟(𝐒(y))} → (𝐒(y) ∣ᵣₑₘ [𝕟]-to-[ℕ](r))(r)
+    DivRem𝐒 : ∀{y x : ℕ}{r : 𝕟(𝐒(y))} → (𝐒(y) ∣ᵣₑₘ x)(r) → (𝐒(y) ∣ᵣₑₘ (𝐒(y) + x))(r)
+
+_∣₊_ : ℕ → ℕ → Stmt
+_∣₊_ 𝟎      x = ⊥
+_∣₊_ (𝐒(y)) x = _∣ᵣₑₘ_ (𝐒(y)) x 𝟎
+pattern Div₊𝟎 {x}    = DivRem𝟎 {x}
+pattern Div₊𝐒 {x}{y} = DivRem𝐒 {x}{y}
+
+data _[≡]_[mod]_ : ℕ → ℕ → ℕ → Stmt where
+  [≡mod]-i : ∀{x m   : ℕ} → (x [≡] x [mod] m)
+  [≡mod]-l : ∀{x y m : ℕ} → (x [≡] y [mod] m) → ((x + m) [≡] y       [mod] m)
+  [≡mod]-r : ∀{x y m : ℕ} → (x [≡] y [mod] m) → (x       [≡] (y + m) [mod] m)
 
 DivN : ∀{y : ℕ} → (n : ℕ) → y ∣ (y ⋅ n)
 DivN {y}(𝟎)    = Div𝟎

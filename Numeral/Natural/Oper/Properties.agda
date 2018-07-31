@@ -7,7 +7,7 @@ open import Logic.Propositional{ℓ}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Induction{ℓ}
-open import Numeral.Natural.Relation{ℓ}
+open import Numeral.Natural.Relation.Order{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Uniqueness{ℓ}{Lvl.𝟎}{Lvl.𝟎}

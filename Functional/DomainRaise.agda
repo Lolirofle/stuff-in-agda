@@ -5,8 +5,8 @@ import      Lvl
 open import Numeral.FiniteStrict
 open import Numeral.FiniteStrict.Bound
 open import Numeral.Natural
-open import Numeral.Natural.Relation
-open import Numeral.Natural.Relation.Properties
+open import Numeral.Natural.Relation.Order
+open import Numeral.Natural.Relation.Order.Theorems
 open import Syntax.Number
 open import Type
 

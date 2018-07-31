@@ -9,8 +9,9 @@ open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional using (const)
 open import Numeral.FiniteStrict
 open import Numeral.FiniteStrict.Bound
-open import Numeral.Natural
+open import Numeral.FiniteStrict.Oper
 open import Numeral.FiniteStrict.Oper.Comparisons
+open import Numeral.Natural
 open import Numeral.CoordinateVector as Vector using (Vector)
 open import Type{ℓ}
 
@@ -49,20 +50,54 @@ record Matrix (s : ℕ ⨯ ℕ) (T : Type) : Type where
   proj(⬔_)(x , y) = proj(y , x)
 
 module Rows where
+  -- A matrix with two rows swapped.
   swap : ∀{w h}{T} → 𝕟(h) → 𝕟(h) → Matrix(w , h)(T) → Matrix(w , h)(T)
   Matrix.proj(swap(y₁)(y₂)(M))(x , y) =
     if      (y ≡? y₁) then Matrix.proj(M)(x , y₂)
     else if (y ≡? y₂) then Matrix.proj(M)(x , y₁)
     else                   Matrix.proj(M)(x , y)
 
-  -- TODO: swap, map
+  -- A matrix where a function has been applied to every row.
+  map : ∀{w₁ w₂ h}{A B} → (Vector(w₁)(A) → Vector(w₂)(B)) → Matrix(w₁ , h)(A) → Matrix(w₂ , h)(B)
+  Matrix.proj(map f(M))(x , y) = Vector.proj(f(Matrix.row(M)(y)))(x)
+
+  -- A matrix where a function has been applied to every element of the specified row.
+  mapSingle : ∀{w h}{T} → 𝕟(h) → (T → T) → Matrix(w , h)(T) → Matrix(w , h)(T)
+  Matrix.proj(mapSingle target f(M))(x , y) =
+    if      (y ≡? target) then f(Matrix.proj(M)(x , y))
+    else                       Matrix.proj(M)(x , y)
+
+  -- A matrix where a function has been applied to the specified row.
+  applyOn : ∀{w h}{T} → 𝕟(h) → (Vector(w)(T) → Vector(w)(T)) → Matrix(w , h)(T) → Matrix(w , h)(T)
+  Matrix.proj(applyOn target f(M))(x , y) =
+    if      (y ≡? target) then Vector.proj(f(Matrix.row(M)(y)))(x)
+    else                       Matrix.proj(M)(x , y)
+
 module Cols where
+  -- A matrix with two columns swapped.
   swap : ∀{w h}{T} → 𝕟(w) → 𝕟(w) → Matrix(w , h)(T) → Matrix(w , h)(T)
   Matrix.proj(swap(x₁)(x₂)(M))(x , y) =
     if      (x ≡? x₁) then Matrix.proj(M)(x₂ , y)
     else if (x ≡? x₂) then Matrix.proj(M)(x₁ , y)
     else                   Matrix.proj(M)(x , y)
 
+  -- A matrix where a function has been applied to every column.
+  map : ∀{w h₁ h₂}{A B} → (Vector(h₁)(A) → Vector(h₂)(B)) → Matrix(w , h₁)(A) → Matrix(w , h₂)(B)
+  Matrix.proj(map f(M))(x , y) = Vector.proj(f(Matrix.col(M)(x)))(y)
+
+  -- A matrix where a function has been applied to every element of the specified column.
+  mapSingle : ∀{w h}{T} → 𝕟(w) → (T → T) → Matrix(w , h)(T) → Matrix(w , h)(T)
+  Matrix.proj(mapSingle target f(M))(x , y) =
+    if      (y ≡? target) then f(Matrix.proj(M)(x , y))
+    else                       Matrix.proj(M)(x , y)
+
+  -- A matrix where a function has been applied to the specified column.
+  applyOn : ∀{w h}{T} → 𝕟(w) → (Vector(h)(T) → Vector(h)(T)) → Matrix(w , h)(T) → Matrix(w , h)(T)
+  Matrix.proj(applyOn target f(M))(x , y) =
+    if      (x ≡? target) then Vector.proj(f(Matrix.col(M)(x)))(y)
+    else                       Matrix.proj(M)(x , y)
+
+-- A matrix where a function has been applied to every element.
 map : ∀{s}{A B} → (A → B) → Matrix(s)(A) → Matrix(s)(B) -- TODO: Same implementation in Vector.agda. Generalize. Maybe like in Haskell? With Applicative, Functor and stuff?
 Matrix.proj(map f(m))(x , y) = f(Matrix.proj(m)(x , y))
 
@@ -77,9 +112,19 @@ Matrix.proj(rowMat(vs))(x , y) = Vector.proj(Vector.proj(vs)(y))(x)
 colMat : ∀{w h}{T} → Vector(w)(Vector(h)(T)) → Matrix(w , h)(T)
 Matrix.proj(colMat(vs))(x , y) = Vector.proj(Vector.proj(vs)(x))(y)
 
+-- Matrix represented as a vector of vectors where the inner vectors are the rows of the matrix.
+rows : ∀{w h}{T} → Matrix(w , h)(T) → Vector(h)(Vector(w)(T))
+Vector.proj(Vector.proj(rows(M))(y))(x) = Matrix.proj(M)(x , y)
+
+-- Matrix represented as a vector of vectors where the inner vectors are the columns of the matrix.
+cols : ∀{w h}{T} → Matrix(w , h)(T) → Vector(w)(Vector(h)(T))
+Vector.proj(Vector.proj(cols(M))(x))(y) = Matrix.proj(M)(x , y)
+
 -- Matrix with one row and one column removed
-minor : ∀{w h}{T} → Matrix(𝐒(w) , 𝐒(h))(T) → (𝕟(𝐒(w)) ⨯ 𝕟(𝐒(h))) → Matrix(w , h)(T) → Unit{0}
-minor(m)(x , y) _ = <>
+-- minor : ∀{w h}{T} → Matrix(𝐒(w) , 𝐒(h))(T) → (𝕟(𝐒(w)) ⨯ 𝕟(𝐒(h))) → Matrix(w , h)(T)
+-- Matrix.proj(minor(M)(X , Y))(x , y) = Matrix.proj(M)(newX , newY) where
+--   newX = if (x ≤? X) then x else 𝐏₀(x)
+--   newY = if (y ≤? Y) then y else 𝐏₀(y)
 
 -- Matrix filled with a single element
 fill : ∀{w h}{T} → T → Matrix(w , h)(T)

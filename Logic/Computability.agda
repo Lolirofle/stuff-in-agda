@@ -1,13 +1,16 @@
-module Logic.Computability {ℓ} where
+module Logic.Computability {ℓₗ}{ℓₒ} where
 
+import      Lvl
 open import Data.Boolean
-open import Data.Boolean.Proofs{ℓ}
+open import Data.Boolean.Proofs{ℓₗ Lvl.⊔ ℓₒ}
 open import Functional
-open import Logic.Properties{ℓ}
-open import Logic.Propositional{ℓ}
-open import Logic.Propositional.Theorems{ℓ}
-open import Relator.Equals{ℓ}
-open import Type{ℓ}
+open import Logic.Properties{ℓₗ Lvl.⊔ ℓₒ}
+open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
+open import Logic.Propositional.Theorems{ℓₗ Lvl.⊔ ℓₒ}
+open import Relator.Equals{ℓₗ Lvl.⊔ ℓₒ}
+open import Type{ℓₒ}
+
+-- TODO: Maybe instead define (decide computablyDecides φ)?
 
 record SemiComputablyDecidable {X : Type} (φ : X → Stmt) : Stmt where
   constructor SemiComputablyDecidable-intro
@@ -15,6 +18,9 @@ record SemiComputablyDecidable {X : Type} (φ : X → Stmt) : Stmt where
     decide : X → Bool
     ⦃ completeness-𝑇 ⦄ : ∀{x} → φ(x)     → (decide(x) ≡ 𝑇)
     ⦃ completeness-𝐹 ⦄ : ∀{x} → (¬ φ(x)) → (decide(x) ≡ 𝐹)
+
+  soundness-𝐹 : ∀{x} → (¬ φ(x)) ← (decide(x) ≡ 𝐹)
+  soundness-𝐹 = (contrapositiveᵣ(completeness-𝑇)) ∘ ([↔]-elimₗ [≢][𝑇]-is-[𝐹])
 
 -- Existence of a computable function which mirrors the result of whether a proposition is provable or not.
 record ComputablyDecidable {X : Type} (φ : X → Stmt) : Stmt where -- TODO: Is this the correct definition?

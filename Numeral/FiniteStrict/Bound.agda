@@ -30,3 +30,8 @@ bound-maxᵣ {n₁}{n₂} (n) = [≡]-substitutionᵣ (Theorems.max-commutativit
 {-instance
   postulate downscale-instance : ∀{n} → ⦃ nfin : 𝕟(ℕ.𝐒(n)) ⦄ → ⦃ _ : [𝕟]-to-[ℕ]{ℕ.𝐒(n)}(nfin) lteq2 n ⦄ → 𝕟(n)
 -}
+
+-- TODO: bound-shrink : ∀{n} → (i : 𝕟(n)) → 𝕟(ℕ.𝐒([𝕟]-to-[ℕ](i)))
+
+-- TODO: bound-𝐏 : ∀{n} → 𝕟(n) → 𝕟(ℕ.𝐏(n)). How to prove stuff inside if-statements? if(P) then (in here, how to prove that (P ≡ 𝑇)?)
+-- or maybe instead: bound-𝐏 : ∀{n} → (nfin : 𝕟(𝐒(n))) → ⦃ _ : [𝕟]-to-[ℕ](nfin) < n ⦄ → 𝕟(n)

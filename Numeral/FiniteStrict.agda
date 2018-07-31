@@ -4,7 +4,7 @@ import Lvl
 open import Syntax.Number
 open import Functional
 open import Numeral.Natural hiding (𝐏)
-import      Numeral.Natural.Relation
+import      Numeral.Natural.Relation.Order
 open import Type
 
 -- A structure corresponding to a finite set of natural numbers (0,..,n−1).
@@ -31,7 +31,7 @@ data 𝕟 : ℕ → Set where
 [𝕟]-to-[ℕ] (𝐒(n)) = ℕ.𝐒([𝕟]-to-[ℕ] (n))
 
 module _ {ℓ} where
-  open Numeral.Natural.Relation{ℓ}
+  open Numeral.Natural.Relation.Order{ℓ}
 
   [ℕ]-to-[𝕟] : (x : ℕ) → ∀{n} → ⦃ _ : (x lteq2 n) ⦄ → 𝕟(ℕ.𝐒(n))
   [ℕ]-to-[𝕟] (ℕ.𝟎)    {_}      ⦃ _ ⦄ = 𝟎
@@ -39,7 +39,7 @@ module _ {ℓ} where
   [ℕ]-to-[𝕟] (ℕ.𝐒(x)) {ℕ.𝐒(n)} ⦃ p ⦄ = 𝐒([ℕ]-to-[𝕟] (x) {n} ⦃ p ⦄)
 
 module _ where
-  open Numeral.Natural.Relation{Lvl.𝟎}
+  open Numeral.Natural.Relation.Order{Lvl.𝟎}
 
   instance
     𝕟-from-ℕ : ∀{N} → From-ℕsubset(𝕟(ℕ.𝐒(N)))

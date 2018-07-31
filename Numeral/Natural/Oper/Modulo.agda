@@ -66,3 +66,5 @@ infixl 10100 _mod_
 _mod_ : ℕ → (m : ℕ) → ∀{ℓ} → ⦃ _ : BoolIsTrue{ℓ}(m ≢? 𝟎)⦄ → ℕ
 _mod_ a 𝟎 ⦃ ⦄
 _mod_ a (𝐒(b)) = [ 0 , b ] a mod' b
+
+-- TODO: A finite version: _mod_ : ℕ → (y : ℕ) → 𝕟(y)

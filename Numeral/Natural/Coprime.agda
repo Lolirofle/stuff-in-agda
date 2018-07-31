@@ -9,7 +9,7 @@ open import Numeral.Natural.Divisibility{ℓ}
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Prime{ℓ}
-open import Numeral.Natural.Relation{ℓ}
+open import Numeral.Natural.Relation.Order{ℓ}
 open import Relator.Equals{ℓ}
 open import Relator.Equals.Proofs{ℓ}
 open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}

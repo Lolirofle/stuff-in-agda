@@ -1,9 +1,12 @@
 module Numeral.CoordinateVector {ℓ} where
 
 import      Lvl
+open import Data.Boolean
 open import Functional
 open import Numeral.FiniteStrict
 open import Numeral.FiniteStrict.Bound
+open import Numeral.FiniteStrict.Oper
+open import Numeral.FiniteStrict.Oper.Comparisons
 open import Numeral.Natural
 open import Type{ℓ}
 
@@ -67,19 +70,16 @@ prepend : ∀{T}{d} → T → Vector(d)(T) → Vector(𝐒(d))(T)
 Vector.proj(prepend(x)(_)) (𝟎)    = x
 Vector.proj(prepend(_)(v)) (𝐒(n)) = Vector.proj(v) (n)
 
+-- A vector without the element at the specified index
+-- TODO: Implement Numeral.FiniteStrict.Bound.bound-𝐏
+-- without : ∀{T}{d} → 𝕟(𝐒(d)) → Vector(𝐒(d))(T) → Vector(d)(T)
+-- Vector.proj (without {_}{𝐒(_)} (𝟎)   (v)) (i) = Vector.proj(v)(𝐒(i))
+-- Vector.proj (without {_}{𝐒(_)} (𝐒(n))(v)) (i) = if(i ≤? n) then Vector.proj(v)(𝐒(i)) else Vector.proj(v)(bound-𝐏(i))
+
 -- postpend : ∀{T}{d} → T → Vector(d)(T) → Vector(𝐒(d))(T)
--- Vector.proj(postpend(x)(_)) (𝟎)    = Vector.proj(v) (n)
--- Vector.proj(postpend(_)(v)) (𝐒(n)) = x
+-- Vector.proj(postpend{_}{d} (x)(_)) (n) = if (n ≡? d) then x else Vector.proj(v)(n)
 
 -- concat : ∀{T}{d₁ d₂} → Vector(d₁)(T) → Vector(d₂)(T) → Vector(d₁ + d₂)(T)
 -- Vector.proj(concat(v₁)(v₂)) (n) with (n < d₁ ≡ 𝑇)
 -- ... () = Vector.proj(v₁) (n)
 -- ... () = Vector.proj(v₂) (n)
-
-{-
-record Vector (T : Type{ℓ}) (d : ℕ) : Type{𝐒(ℓ)} where
-  constructor vec
-  field
-    Element : Type{ℓ}
-    proj : ℕfin(d) → Element
--}

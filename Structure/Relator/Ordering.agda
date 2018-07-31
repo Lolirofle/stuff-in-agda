@@ -14,7 +14,7 @@ module Weak {T : Type} (_≤_ : T → T → Stmt) where
     field
      ⦃ antisymmetry ⦄ : Antisymmetry (_≤_) (_≡_)
      ⦃ transitivity ⦄ : Transitivity (_≤_)
-     ⦃ reflexivity ⦄ : Reflexivity  (_≤_)
+     ⦃ reflexivity ⦄  : Reflexivity  (_≤_)
 
   record TotalOrder (_≡_ : T → T → Stmt) : Stmt where
     field
@@ -47,8 +47,8 @@ module Weak {T : Type} (_≤_ : T → T → Stmt) where
 module Strict {T : Type} (_<_ : T → T → Stmt) where
   record Order : Stmt where
     field
-     ⦃ transitivity ⦄ : Transitivity  (_<_)
-     ⦃ asymmetry ⦄    : Asymmetry     (_<_)
+     ⦃ transitivity ⦄  : Transitivity  (_<_)
+     ⦃ asymmetry ⦄     : Asymmetry     (_<_)
      ⦃ irreflexivity ⦄ : Irreflexivity (_<_)
 
   module Properties where
@@ -122,3 +122,32 @@ module From-[≤] {T : Type} (_≤_ : T → T → Stmt) where
   _≱_ : T → T → Stmt
   x ≱ y = ¬(x ≥ y)
 
+
+module From-[≤][<] {T : Type} (_≤_ : T → T → Stmt) (_<_ : T → T → Stmt) where
+  -- Greater than
+  _>_ : T → T → Stmt
+  x > y = (y < x)
+
+  -- Greater than or equals
+  _≥_ : T → T → Stmt
+  x ≥ y = (y ≤ x)
+
+  -- In an open interval
+  _<_<_ : T → T → T → Stmt
+  x < y < z = (x < y) ∧ (y < z)
+
+  -- In an closed interval
+  _≤_≤_ : T → T → T → Stmt
+  x ≤ y ≤ z = (x ≤ y) ∧ (y ≤ z)
+
+  _≮_ : T → T → Stmt
+  x ≮ y = ¬(x < y)
+
+  _≯_ : T → T → Stmt
+  x ≯ y = ¬(x > y)
+
+  _≰_ : T → T → Stmt
+  x ≰ y = ¬(x ≤ y)
+
+  _≱_ : T → T → Stmt
+  x ≱ y = ¬(x ≥ y)

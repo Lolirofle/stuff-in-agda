@@ -8,8 +8,8 @@ open import Numeral.FiniteStrict
 open import Numeral.FiniteStrict.Bound{0}
 open import Numeral.Natural hiding (𝐏)
 import      Numeral.Natural.Oper as ℕ
-open import Numeral.Natural.Relation{0}
-open import Numeral.Natural.Relation.Properties{0}
+open import Numeral.Natural.Relation.Order{0}
+open import Numeral.Natural.Relation.Order.Theorems{0}
 open import Relator.Equals{0}{0}
 open import Relator.Equals.Proofs{0}{0}
 

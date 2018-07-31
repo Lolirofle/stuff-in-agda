@@ -6,7 +6,7 @@ open import Functional
 open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Natural
-import      Numeral.Natural.Relation
+import      Numeral.Natural.Relation.Order
 open import Structure.Function.Domain
 open import Type
 
@@ -34,7 +34,7 @@ data ℕfin : ℕ → Set where
 [ℕfin]-to-[ℕ] (𝐒fin(n)) = 𝐒([ℕfin]-to-[ℕ] (n))
 
 module _ {ℓ} where
-  open Numeral.Natural.Relation{ℓ}
+  open Numeral.Natural.Relation.Order{ℓ}
 
   [ℕ]-to-[ℕfin] : (x : ℕ) → ∀{n} → ⦃ _ : (x lteq2 n) ⦄ → ℕfin(n)
   [ℕ]-to-[ℕfin] (𝟎)    {_}    ⦃ _ ⦄ = 𝟎fin
@@ -44,14 +44,14 @@ module _ {ℓ} where
 instance
   ℕfin-from-ℕ : ∀{N} → From-ℕsubset(ℕfin(N))
   From-ℕsubset.restriction ( ℕfin-from-ℕ {N} ) (n) = (n lteq2 N) where
-    open Numeral.Natural.Relation
+    open Numeral.Natural.Relation.Order
   from-ℕsubset ⦃ ℕfin-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = [ℕ]-to-[ℕfin] (n) {N} ⦃ proof ⦄ where
 
 module Theorems{ℓ} where
   open import Numeral.Natural.Function
   open import Numeral.Natural.Oper
   open import Numeral.Natural.Oper.Properties{ℓ}
-  open        Numeral.Natural.Relation{ℓ}
+  open        Numeral.Natural.Relation.Order{ℓ}
   open import Relator.Equals{ℓ}{Lvl.𝟎}
   open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 

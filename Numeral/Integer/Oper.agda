@@ -57,4 +57,4 @@ x − y = x + (− y)
 
 -- Multiplication
 _⋅_ : ℤ → ℤ → ℤ
-x ⋅ y = ℕ.signed ((sign x) Sign.⋅ (sign y)) ((absₙ x) ℕ.⋅ (absₙ y))
+x ⋅ y = ℕ.signed ((sign x) Sign.⨯ (sign y)) ((absₙ x) ℕ.⋅ (absₙ y))
