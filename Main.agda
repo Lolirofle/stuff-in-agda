@@ -80,7 +80,7 @@ import Numeral.Matrix
 import Numeral.Natural
 import Numeral.Natural.Oper.Comparisons
 import Numeral.Natural.Coprime
-import Numeral.Natural.Divisibility
+import Numeral.Natural.Relation.Divisibility
 import Numeral.Natural.Function
 -- import Numeral.Natural.GreatestCommonDivisor
 import Numeral.Natural.Oper

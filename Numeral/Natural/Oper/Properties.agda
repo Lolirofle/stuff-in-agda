@@ -345,6 +345,7 @@ instance
 
 instance
   postulate [−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0)
+  -- [−₀]-positive
 
 {-
 instance

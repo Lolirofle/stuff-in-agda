@@ -5,7 +5,7 @@ open import Functional
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}
 open import Numeral.Natural
-open import Numeral.Natural.Divisibility{ℓ}
+open import Numeral.Natural.Relation.Divisibility{ℓ}
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Relation.Order{ℓ}

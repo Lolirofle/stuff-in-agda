@@ -10,7 +10,7 @@ module NumAndDivisionProofs where
   open import Numeral.Natural
   open import Numeral.Natural.Oper
   open import Numeral.Natural.Relation
-  open import Numeral.Natural.Divisibility
+  open import Numeral.Natural.Relation.Divisibility
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
   open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎}

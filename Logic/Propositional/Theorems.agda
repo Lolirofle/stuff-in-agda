@@ -177,8 +177,8 @@ contrapositiveᵣ : ∀{X Y : Stmt} → (X → Y) → ((¬ X) ← (¬ Y))
 contrapositiveᵣ = [→]-syllogism
 -- contrapositiveᵣ f ny = ny ∘ f
 
-contrapositive-variant : ∀{X Y : Stmt} → (X → (¬ Y)) → ((¬ X) ← Y)
-contrapositive-variant {X}{Y} = swap
+contrapositive-variantᵣ : ∀{X Y : Stmt} → (X → (¬ Y)) → ((¬ X) ← Y)
+contrapositive-variantᵣ {X}{Y} = swap
 
 modus-tollens : ∀{X Y : Stmt} → (X → Y) → (¬ Y) → (¬ X)
 modus-tollens = contrapositiveᵣ
@@ -235,7 +235,10 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 [→][∧]ᵣ : ∀{X Y : Stmt} → (X → Y) → ¬(X ∧ (¬ Y))
 [→][∧]ᵣ f = Tuple.uncurry([¬¬]-intro ∘ f)
 
--- [→][∧]₂ : ∀{X Y : Stmt} → (X → ¬ Y) ↔ ¬(X ∧ Y) -- TODO
+[¬→][∧]ₗ : ∀{X Y : Stmt} → ¬(X → Y) ← (X ∧ (¬ Y))
+[¬→][∧]ₗ (xny) = contrapositiveᵣ([→][∧]ᵣ)([¬¬]-intro xny)
+
+-- [→][¬∧] : ∀{X Y : Stmt} → (X → ¬ Y) ↔ ¬(X ∧ Y) -- TODO: Probably needs [¬¬]-elim
 
 [↔]-of-[∧] : ∀{X Y Z} → ((X ∧ Z) ↔ (Y ∧ Z)) → (Z → (X ↔ Y))
 [↔]-of-[∧] ([↔]-intro yzxz xzyz) z =
