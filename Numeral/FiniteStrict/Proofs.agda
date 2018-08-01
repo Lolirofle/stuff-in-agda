@@ -1,4 +1,4 @@
-module Numeral.FiniteStrict.Theorems{ℓ} where
+module Numeral.FiniteStrict.Proofs{ℓ} where
 
 import Lvl
 open import Syntax.Number
@@ -10,7 +10,7 @@ open import Numeral.Natural.Function
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Relation.Order{ℓ}
-open import Numeral.Natural.Relation.Order.Theorems{ℓ}
+open import Numeral.Natural.Relation.Order.Proofs{ℓ}
 open import Relator.Equals{ℓ}{0}
 open import Relator.Equals.Proofs{ℓ}{0}
 

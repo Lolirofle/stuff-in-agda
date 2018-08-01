@@ -7,7 +7,7 @@ open import Functional
 open import Numeral.Natural
 open import Numeral.Natural.Induction{ℓ}
 open import Numeral.Natural.Relation.Order{ℓ}
-open import Numeral.Natural.Relation.Order.Theorems{ℓ}
+open import Numeral.Natural.Relation.Order.Proofs{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 open import Type

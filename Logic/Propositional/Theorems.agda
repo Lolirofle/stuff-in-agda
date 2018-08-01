@@ -167,17 +167,6 @@ material-implₗ = [∨]-elim ([→]-lift [⊥]-elim) ([→]-intro)
 -- ((X → Y) ∨ (X → Y))
 -- (X → Y)
 
--- This seems to be unprovable in constructive logic
--- material-implᵣ : ∀{X Y : Stmt} → (X → Y) → ((¬ X) ∨ Y)
--- material-implᵣ xy = 
--- (X → Y)
--- ?
-
--- ??? : ∀{X Y : Stmt} → (X → Y) → (¬ (X ∧ (¬ Y))) -- TODO: This does not work either?
--- (¬ (X ∧ (¬ Y)))
--- ((X ∧ (Y → ⊥)) → ⊥)
--- ?
-
 constructive-dilemma : ∀{A B C D : Stmt} → (A → B) → (C → D) → (A ∨ C) → (B ∨ D)
 constructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
 
@@ -187,17 +176,6 @@ constructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘
 contrapositiveᵣ : ∀{X Y : Stmt} → (X → Y) → ((¬ X) ← (¬ Y))
 contrapositiveᵣ = [→]-syllogism
 -- contrapositiveᵣ f ny = ny ∘ f
-
-contrapositive₂ : ∀{X Y : Stmt} → (X → (¬¬ Y)) ← ((¬ X) ← (¬ Y)) -- TODO: At least this works? Or am I missing something?
-contrapositive₂ nf x = (swap nf) x
--- (¬ X) ← (¬ Y)
--- (¬ Y) → (¬ X)
--- (Y → ⊥) → (X → ⊥)
--- (Y → ⊥) → X → ⊥
--- X → (Y → ⊥) → ⊥
--- X → ((Y → ⊥) → ⊥)
--- X → (¬ (Y → ⊥))
--- X → (¬ (¬ Y))
 
 contrapositive-variant : ∀{X Y : Stmt} → (X → (¬ Y)) → ((¬ X) ← Y)
 contrapositive-variant {X}{Y} = swap
@@ -210,22 +188,22 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 
 [¬¬]-intro : ∀{X : Stmt} → X → (¬¬ X)
 [¬¬]-intro = apply
--- X → (X → ⊥) → ⊥
+  -- X → (X → ⊥) → ⊥
 
 [¬¬¬]-elim : ∀{X : Stmt} → (¬ (¬ (¬ X))) → (¬ X)
 [¬¬¬]-elim = contrapositiveᵣ [¬¬]-intro
--- (((X → ⊥) → ⊥) → ⊥) → (X → ⊥)
--- (((X → ⊥) → ⊥) → ⊥) → X → ⊥
---   (A → B) → ((B → ⊥) → (A → ⊥)) //contrapositiveᵣ
---   (A → B) → (B → ⊥) → (A → ⊥)
---   (A → B) → (B → ⊥) → A → ⊥
---   (X → ((X → ⊥) → ⊥)) → (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //A≔X , B≔((X → ⊥) → ⊥)
+  -- (((X → ⊥) → ⊥) → ⊥) → (X → ⊥)
+  -- (((X → ⊥) → ⊥) → ⊥) → X → ⊥
+  --   (A → B) → ((B → ⊥) → (A → ⊥)) //contrapositiveᵣ
+  --   (A → B) → (B → ⊥) → (A → ⊥)
+  --   (A → B) → (B → ⊥) → A → ⊥
+  --   (X → ((X → ⊥) → ⊥)) → (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //A≔X , B≔((X → ⊥) → ⊥)
 
---   X → (¬ (¬ X)) //[¬¬]-intro
---   X → ((X → ⊥) → ⊥)
+  --   X → (¬ (¬ X)) //[¬¬]-intro
+  --   X → ((X → ⊥) → ⊥)
 
---   (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //[→]-elim (Combining those two)
---   (((X → ⊥) → ⊥) → ⊥) → (X → ⊥)
+  --   (((X → ⊥) → ⊥) → ⊥) → X → ⊥ //[→]-elim (Combining those two)
+  --   (((X → ⊥) → ⊥) → ⊥) → (X → ⊥)
 
 [→]ₗ-[¬¬]-elim : ∀{X Y : Stmt} → ((¬¬ X) → Y) → (X → Y)
 [→]ₗ-[¬¬]-elim = liftᵣ([¬¬]-intro)
@@ -254,27 +232,10 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 [¬¬]-double-contrapositiveₗ : ∀{X Y : Stmt} → ¬¬(X → Y) ← ((¬¬ X) → (¬¬ Y))
 [¬¬]-double-contrapositiveₗ {X}{Y} p = [→]ᵣ-[¬¬]-move-out {X}{Y} ([→]ₗ-[¬¬]-elim {X}{¬¬ Y} p)
 
-[→][∧]ₗ : ∀{X Y : Stmt} → (X → (¬¬ Y)) ← ¬(X ∧ (¬ Y))
-[→][∧]ₗ = Tuple.curry
--- ¬(A ∧ ¬B) → (A → ¬¬B)
---   ¬(A ∧ (¬ B)) //assumption
---   ((A ∧ (B → ⊥)) → ⊥) //Definition: (¬)
---   (A → (B → ⊥) → ⊥) //Tuple.curry
---   (A → ¬(B → ⊥)) //Definition: (¬)
---   (A → ¬(¬ B)) //Definition: (¬)
-
 [→][∧]ᵣ : ∀{X Y : Stmt} → (X → Y) → ¬(X ∧ (¬ Y))
 [→][∧]ᵣ f = Tuple.uncurry([¬¬]-intro ∘ f)
 
 -- [→][∧]₂ : ∀{X Y : Stmt} → (X → ¬ Y) ↔ ¬(X ∧ Y) -- TODO
-
-[→][∨]ₗ : ∀{X Y : Stmt} → (X → Y) ← ((¬ X) ∨ Y)
-[→][∨]ₗ ([∨]-introₗ nx) x = [⊥]-elim(nx x)
-[→][∨]ₗ ([∨]-introᵣ y)  x = y
-
--- TODO: Probably unprovable. (X ∨ ¬X) and [∨]-intro would be enough
--- [→][∨]ᵣ : ∀{X Y : Stmt} → (X → Y) → ((¬ X) ∨ Y)
--- [→][∨]ᵣ f =
 
 [↔]-of-[∧] : ∀{X Y Z} → ((X ∧ Z) ↔ (Y ∧ Z)) → (Z → (X ↔ Y))
 [↔]-of-[∧] ([↔]-intro yzxz xzyz) z =
@@ -308,11 +269,6 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 
 ------------------------------------------
 -- Almost-distributivity with duals (De-morgan's laws)
-
--- [¬][∧]ₗ : ∀{X Y : Stmt} → ((¬ X) ∨ (¬ Y)) ← (¬ (X ∧ Y))
--- [¬][∧]ₗ n = -- TODO: Not possible in constructive logic? Seems to require ¬¬X=X?
--- ((X ∧ Y) → ⊥) → ((X → ⊥) ∨ (Y → ⊥))
--- ¬((X ∧ Y) → ⊥) ← ¬((X → ⊥) ∨ (Y → ⊥))
 
 [¬][∧]ᵣ : ∀{X Y : Stmt} → ((¬ X) ∨ (¬ Y)) → (¬ (X ∧ Y))
 [¬][∧]ᵣ ([∨]-introₗ nx) = nx ∘ [∧]-elimₗ

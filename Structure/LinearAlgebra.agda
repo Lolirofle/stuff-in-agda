@@ -8,7 +8,7 @@ open import Logic.Propositional.Theorems{ℓ}
 open import Logic.Predicate{ℓ}
 open import Numeral.Natural
 open import Numeral.Natural.Relation.Order{ℓ}
-open import Numeral.Natural.Relation.Order.Theorems{ℓ}
+open import Numeral.Natural.Relation.Order.Proofs{ℓ}
 open import Relator.Equals{ℓ}
 open import Relator.Equals.Proofs{ℓ}
 open import Relator.Equals.Uniqueness{ℓ}{ℓ}{ℓ}

@@ -1,6 +1,7 @@
 module Data.Either where
 
 import      Lvl
+open import Functional using (id)
 open import Type
 
 infixl 100 _‖_
@@ -23,3 +24,9 @@ map1 _ fb (Right b) = fb(b)
 map2 : ∀{ℓ₁ ℓ₂ ℓ₃ ℓ₄}{A₁ : Type{ℓ₁}}{A₂ : Type{ℓ₂}}{B₁ : Type{ℓ₃}}{B₂ : Type{ℓ₄}} → (A₁ → A₂) → (B₁ → B₂) → (A₁ ‖ B₁) → (A₂ ‖ B₂)
 map2 fa _ (Left  a) = Left (fa(a))
 map2 _ fb (Right b) = Right(fb(b))
+
+mapLeft : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} → (A → C) → (A ‖ B) → (C ‖ B)
+mapLeft f = map2 f id
+
+mapRight : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} → (B → C) → (A ‖ B) → (A ‖ C)
+mapRight f = map2 id f

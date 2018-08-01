@@ -1,4 +1,4 @@
-module Numeral.Natural.Relation.Order.Existence.Theorems{ℓ} where
+module Numeral.Natural.Relation.Order.Existence.Proofs{ℓ} where
 
 import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)

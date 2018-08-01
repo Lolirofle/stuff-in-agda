@@ -56,7 +56,7 @@ import Logic.DiagonalProof
 import Logic.LambdaCalculus
 import Logic.Predicate
 import Logic.Predicate.Theorems
-import Logic.Properties
+import Logic.Classical
 import Logic.Propositional
 import Logic.Propositional.Names
 import Logic.Propositional.Theorems
@@ -69,13 +69,13 @@ import Numeral.FiniteStrict
 import Numeral.FiniteStrict.Oper.Comparisons
 import Numeral.FiniteStrict.Bound
 import Numeral.FiniteStrict.Oper
-import Numeral.FiniteStrict.Theorems
+import Numeral.FiniteStrict.Proofs
 import Numeral.Integer
 import Numeral.Integer.Function
 import Numeral.Integer.Oper
 import Numeral.Integer.Relation
 import Numeral.Integer.Sign
-import Numeral.Integer.Theorems
+import Numeral.Integer.Proofs
 import Numeral.Matrix
 import Numeral.Natural
 import Numeral.Natural.Oper.Comparisons
@@ -95,9 +95,10 @@ import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Computability
 import Numeral.Natural.Relation.Countable
 import Numeral.Natural.Relation.Order
+import Numeral.Natural.Relation.Order.Computability
 import Numeral.Natural.Relation.Order.Existence
-import Numeral.Natural.Relation.Order.Existence.Theorems
-import Numeral.Natural.Relation.Order.Theorems
+import Numeral.Natural.Relation.Order.Existence.Proofs
+import Numeral.Natural.Relation.Order.Proofs
 import Numeral.Natural.Relation.Properties
 import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
@@ -138,7 +139,7 @@ import Structure.Function.Ordering
 import Structure.LinearAlgebra
 import Structure.Operator.Field
 import Structure.Operator.Group
-import Structure.Operator.Group.Theorems
+import Structure.Operator.Group.Proofs
 import Structure.Operator.Monoid
 import Structure.Operator.Properties
 import Structure.Operator.SetAlgebra

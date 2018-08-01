@@ -22,6 +22,12 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T�
   uncurry : (T₁ → T₂ → T₃) → ((T₁ ⨯ T₂) → T₃)
   uncurry f (x₁ , x₂) = f x₁ x₂
 
+  mapLeft : (T₁ → T₃) → (T₁ ⨯ T₂) → (T₃ ⨯ T₂)
+  mapLeft f(x , y) = (f(x) , y)
+
+  mapRight : (T₂ → T₃) → (T₁ ⨯ T₂) → (T₁ ⨯ T₃)
+  mapRight f(x , y) = (x , f(y))
+
 module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} where
   -- Swaps the left and right elements of a 2-tuple
   swap : (T₁ ⨯ T₂) → (T₂ ⨯ T₁)

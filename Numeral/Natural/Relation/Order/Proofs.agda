@@ -1,4 +1,4 @@
-module Numeral.Natural.Relation.Order.Theorems{ℓ} where
+module Numeral.Natural.Relation.Order.Proofs{ℓ} where
 
 import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
@@ -12,13 +12,15 @@ open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Induction{ℓ}
 open import Numeral.Natural.Relation.Order{ℓ}
 import      Numeral.Natural.Relation.Order.Existence         {ℓ} as [≤∃]
-open import Numeral.Natural.Relation.Order.Existence.Theorems{ℓ} using () renaming ([≤]-with-[𝐒] to [≤∃]-with-[𝐒])
+open import Numeral.Natural.Relation.Order.Existence.Proofs{ℓ} using () renaming ([≤]-with-[𝐒] to [≤∃]-with-[𝐒])
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Ordering{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 open import Type
+
+-- TODO: The instance declarations probably do nothing for functions with arguments. Either make all the args implicit or remove the instance decls.
 
 [≤]-equivalence : ∀{x y} → (x [≤∃].≤ y) ↔ (x ≤ y)
 [≤]-equivalence{x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
@@ -153,15 +155,19 @@ instance
   [<]-of-[𝐒] : ∀{x : ℕ} → (x < 𝐒(x))
   [<]-of-[𝐒] = reflexivity ⦃ [≤]-reflexivity ⦄
 
+instance
+  [<][≢]-equivalence : ∀{x} → (x > 0) ↔ (x ≢ 0)
+  [<][≢]-equivalence {x} = [↔]-intro (l{x}) (r{x}) where
+    l : ∀{x} → (x > 0) ← (x ≢ 0)
+    l{𝟎}    (x≢𝟎)  = [⊥]-elim((x≢𝟎)([≡]-intro))
+    l{𝐒(x)} (𝐒x≢𝟎) = [≤]-with-[𝐒] ([≤][0]ᵣ-minimum)
 
--- instance
---  [≤][ℕ]-excluded-middle : ∀{a b} → (a ≤ b)∨(a ≰ b)
---  [≤][ℕ]-excluded-middle = [∨]-elim ([∨]-introₗ ∘ ([∃]-intro(0))) ([∨]-introᵣ ∘ f) ([≡][ℕ]-excluded-middle) where
---    f : (a ≢ b) → (a ≰ b)
---    f = 
-    -- (a≢b) → (a≰b)
-    -- ((a≡b)→⊥) → ((a≤b)→⊥)
-    -- ((a≡b)→⊥) → (a≤b) → ⊥
+    r : ∀{x} → (x > 0) → (x ≢ 0)
+    r{𝟎}    ()
+    r{𝐒(x)} (𝟏≤𝐒x) (𝐒x≡𝟎) with [≡]-substitutionᵣ (𝐒x≡𝟎) {expr ↦ 1 ≤ expr} (𝟏≤𝐒x)
+    ... | ()
+
+
 
 instance
   lteq2-𝟎 : ∀{n} → (𝟎 lteq2 n)
@@ -171,3 +177,29 @@ instance
   lteq2-𝐒 : ∀{n} → (n lteq2 n)
   lteq2-𝐒 {𝟎}    = [⊤]-intro
   lteq2-𝐒 {𝐒(n)} = lteq2-𝐒 {n}
+
+
+
+instance
+  [≤]-to-[<][≡] : ∀{a b : ℕ} → (a ≤ b) → (a < b)∨(a ≡ b)
+  [≤]-to-[<][≡] {𝟎}   {𝟎}    ([≤][0]ᵣ-minimum)    = [∨]-introᵣ([≡]-intro)
+  [≤]-to-[<][≡] {𝟎}   {𝐒(b)} ([≤][0]ᵣ-minimum)    = [∨]-introₗ([<][0]-minimum)
+  [≤]-to-[<][≡] {𝐒(a)}{𝐒(b)} ([≤]-with-[𝐒] (a≤b)) with [≤]-to-[<][≡] {a}{b} (a≤b)
+  ... | [∨]-introₗ(a<b) = [∨]-introₗ([≤]-with-[𝐒] (a<b))
+  ... | [∨]-introᵣ(a≡b) = [∨]-introᵣ([≡]-with(𝐒) (a≡b))
+
+instance
+  [<][≡]-to-[≤] : ∀{a b : ℕ} → (a < b)∨(a ≡ b) → (a ≤ b)
+  [<][≡]-to-[≤] {a}   {.a}   ([∨]-introᵣ([≡]-intro)) = [≤]-from-[≡] ([≡]-intro)
+  [<][≡]-to-[≤] {a}   {b}    ([∨]-introₗ(a<b))       = [≤]-predecessor (a<b)
+
+instance
+  [≥]-to-[>][≡] : ∀{a b : ℕ} → (a ≥ b) → (a > b)∨(a ≡ b)
+  [≥]-to-[>][≡] {a}{b} (proof) with [≤]-to-[<][≡] {b}{a} (proof)
+  ... | [∨]-introₗ(a<b) = [∨]-introₗ(a<b)
+  ... | [∨]-introᵣ(b≡a) = [∨]-introᵣ(symmetry(b≡a))
+
+instance
+  [>][≡]-to-[≥] : ∀{a b : ℕ} → (a > b)∨(a ≡ b) → (a ≥ b)
+  [>][≡]-to-[≥] {a}{b} ([∨]-introₗ(a<b)) = [<][≡]-to-[≤] {b}{a} ([∨]-introₗ(a<b))
+  [>][≡]-to-[≥] {a}{b} ([∨]-introᵣ(b≡a)) = [<][≡]-to-[≤] {b}{a} ([∨]-introᵣ(symmetry(b≡a)))

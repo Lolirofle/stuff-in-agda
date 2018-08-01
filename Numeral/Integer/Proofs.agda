@@ -1,4 +1,4 @@
-module Numeral.Integer.Theorems{ℓ} where
+module Numeral.Integer.Proofs{ℓ} where
 
 import      Lvl
 open import Functional

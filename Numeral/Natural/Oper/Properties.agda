@@ -343,6 +343,9 @@ instance
   [−₀][+]ᵣ-nullify {x₁}{x₂}{𝐒(y)} = [−₀][+]ᵣ-nullify {x₁}{x₂}{y}
 {-# REWRITE [−₀][+]ᵣ-nullify #-}
 
+instance
+  postulate [−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0)
+
 {-
 instance
   [+][−₀]-commutativity : ∀{x y} → ⦃ _ : y ≥ z ⦄ → (x + (y −₀ z) ≡ (x −₀ z) + y)

@@ -25,13 +25,13 @@ _    <? _    = 𝐹
 -- Lesser-than or equals check
 _≤?_ : ℕ → ℕ → Bool
 𝟎    ≤? _    = 𝑇
-𝐒(a) ≤? 𝐒(b) = (a <? b)
+𝐒(a) ≤? 𝐒(b) = (a ≤? b)
 _    ≤? _    = 𝐹
 
 -- Greater-than check
 _>?_ : ℕ → ℕ → Bool
-x >? y = !(x ≤? y)
+x >? y = y <? x
 
 -- Greater-than or equals check
 _≥?_ : ℕ → ℕ → Bool
-x ≥? y = !(x <? y)
+x ≥? y = y ≤? x

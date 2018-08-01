@@ -216,7 +216,8 @@ divides-not-[1] ()
 [1]-only-divides-[1] {𝐒(𝟎)}    (ndiv1) = [≡]-intro
 [1]-only-divides-[1] {𝐒(𝐒(n))} ()
 
-postulate divides-upper-limit : ∀{a b} → (a ∣ b) → (a ≤ b)
+postulate divides-upper-limit : ∀{a b} → (a ∣ 𝐒(b)) → (a ≤ 𝐒(b))
+-- divides-upper-limit {𝐒(a)}{b} (Div𝐒) 
 
 postulate divides-not-lower-limit : ∀{a b} → (a > b) → ¬(a ∣ b)
 

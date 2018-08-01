@@ -6,7 +6,7 @@ open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Numeral.Natural hiding (𝐏)
 open import Numeral.Natural.Divisibility{ℓ}
 open import Numeral.Natural.Relation.Order{ℓ}
-open import Numeral.Natural.Relation.Order.Theorems{ℓ}
+open import Numeral.Natural.Relation.Order.Proofs{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 
@@ -21,7 +21,7 @@ _−_ : (a : ℕ) → (b : ℕ) → ⦃ _ : a ≥ b ⦄ → ℕ
 _−_ a 𝟎 = a
 _−_ 𝟎 (𝐒(b)) ⦃ 0≥𝐒b ⦄ with ([<]-to-[≱] ([<][0]-minimum{b})) (0≥𝐒b)
 ... | ()
-_−_ (𝐒(a)) (𝐒(b)) ⦃ 𝐒b≤𝐒a ⦄ = _−_ a b ⦃ [≤]-without-[𝐒] {b} (𝐒b≤𝐒a) ⦄ 
+_−_ (𝐒(a)) (𝐒(b)) ⦃ 𝐒b≤𝐒a ⦄ = _−_ a b ⦃ [≤]-without-[𝐒] {b} (𝐒b≤𝐒a) ⦄
 
 -- Total division (Positive whole number division)
 _/_ : (a : ℕ) → (b : ℕ) → ⦃ _ : b ∣ a ⦄ → ⦃ _ : b ≢ 0 ⦄ → ℕ

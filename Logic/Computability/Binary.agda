@@ -5,7 +5,7 @@ open import Data.Boolean
 open import Data.Tuple
 open import Functional
 import      Logic.Computability{ℓₗ}{ℓₒ} as C
-open import Logic.Properties{ℓₗ Lvl.⊔ ℓₒ}
+open import Logic.Classical{ℓₗ Lvl.⊔ ℓₒ}
 open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
 open import Logic.Propositional.Theorems{ℓₗ Lvl.⊔ ℓₒ}
 open import Relator.Equals{ℓₗ Lvl.⊔ ℓₒ}
