@@ -1,5 +1,5 @@
 -- Sets represented by unary predicates (Like restricted comprehension)
--- Similiar to BoolSet, but using the builtin constructive logic instead.
+-- Similiar to BoolSet, but instead using the builtin constructive logic with levels.
 module Sets.PredicateSet where
 
 import      Lvl

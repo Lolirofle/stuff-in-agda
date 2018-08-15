@@ -67,4 +67,6 @@ _mod_ : ℕ → (m : ℕ) → ∀{ℓ} → ⦃ _ : BoolIsTrue{ℓ}(m ≢? 𝟎)�
 _mod_ a 𝟎 ⦃ ⦄
 _mod_ a (𝐒(b)) = [ 0 , b ] a mod' b
 
--- TODO: A finite version: _mod_ : ℕ → (y : ℕ) → 𝕟(y)
+_mod₀_ : ℕ → ℕ → ℕ
+_mod₀_ a 𝟎      = 0
+_mod₀_ a (𝐒(b)) = [ 0 , b ] a mod' b

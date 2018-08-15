@@ -76,3 +76,17 @@ instance
 --   https://www.reddit.com/r/agda/comments/4te0rg/functors_extensional_equality_and_function/
 --   https://mathoverflow.net/questions/156238/function-extensionality-does-it-make-a-difference-why-would-one-keep-it-out-of
 -- [≡]-function : ∀{T₁ T₂ : Type}{f₁ f₂ : T₁ → T₂) → (∀{x} → (f₁(x) ≡ f₂(x))) → (f₁ ≡ f₂)
+
+-- Elimination rule for identity types.
+-- Also called J.
+-- This is interpreted as saying that all proofs of an equality are equal to each other. (TODO: Is it?)
+-- Explanation:
+--   P{x}{y} (eq-proof) is an arbitrary predicate with possible mentions of an equality proof.
+--   A value of type (∀{x : T} → P{x}{x}([≡]-intro)) means:
+--     [≡]-intro satisfies P for every pair with equal elements.
+--   The conclusion of type (∀{x y : T} → (eq : (x ≡ y)) → P{x}{y}(eq)) means:
+--     Every equality proof satisfies P for every pair there is.
+-- TODO: https://homotopytypetheory.org/2011/04/10/just-kidding-understanding-identity-elimination-in-homotopy-type-theory/
+-- TODO: Usage: https://stackoverflow.com/questions/22580842/non-trivial-negation-in-agda
+[≡]-identity-eliminator : ∀{T : Type} → (P : ∀{x y : T} → (x ≡ y) → Stmt) → (∀{x : T} → P{x}{x}([≡]-intro)) → (∀{x y : T} → (eq : (x ≡ y)) → P{x}{y}(eq))
+[≡]-identity-eliminator _ proof {x}{.x} [≡]-intro = proof{x}

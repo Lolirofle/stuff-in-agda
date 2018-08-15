@@ -8,7 +8,7 @@ open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
 open import Numeral.Integer hiding (𝟎)
 open import Numeral.Natural
-open import Sets.Subset{Lvl.𝟎}{Lvl.𝟎}
+open import Sets.PredicateSet.Filter{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Field{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Group{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Properties{Lvl.𝟎}{Lvl.𝟎}
@@ -58,19 +58,19 @@ instance
 -- [Subsets]
 
 instance
-  subset-to-[ℝ] : ∀{P} → [ℝ]-conversion(Subset{ℝ}(P))
+  subset-to-[ℝ] : ∀{P} → [ℝ]-conversion(Filter{ℝ}(P))
   subset-to-[ℝ] {P} = record{#_ = f} where
-    f : Subset{ℝ}(P) → ℝ
+    f : Filter{ℝ}(P) → ℝ
     f(subelem x) = x
 
 -- Positive real numbers
-ℝ₊ = Subset{ℝ}(x ↦ (x > 0))
+ℝ₊ = Filter{ℝ}(x ↦ (x > 0))
 
 -- Negative real numbers
-ℝ₋ = Subset{ℝ}(x ↦ (x < 0))
+ℝ₋ = Filter{ℝ}(x ↦ (x < 0))
 
 -- Non-zero real numbers
-ℝ₊₋ = Subset{ℝ}(x ↦ (x ≢ 0))
+ℝ₊₋ = Filter{ℝ}(x ↦ (x ≢ 0))
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Elements]

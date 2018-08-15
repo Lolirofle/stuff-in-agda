@@ -209,3 +209,7 @@ swapIndex (𝐒(a)) _  (x ⊰ l) = x ⊰ withoutIndex(a)(l)
 -}
 
 -- TODO: filter
+
+isEmpty : ∀{ℓ}{T : Type{ℓ}} → List(T) → Bool
+isEmpty(∅)     = 𝑇
+isEmpty(_ ⊰ _) = 𝐹

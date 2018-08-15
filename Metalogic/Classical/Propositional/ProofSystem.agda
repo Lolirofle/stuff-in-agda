@@ -69,7 +69,7 @@ module NaturalDeduction where
   --   This represents that the formula φ₂ is provable if one can assume the formula φ₁.
   -- The constructors of `Tree` are all the possible ways to construct a natural deduction proof tree.
   -- If a tree with a certain formula cannot be constructed, then it means that the formula is not provable.
-  {-# NO_POSITIVITY_CHECK #-} -- TODO: Could this be a problem?
+  {-# NO_POSITIVITY_CHECK #-} -- TODO: Could this be a problem? Maybe not? Classical logic is supposed to be consistent, but maybe it is not together with Agda's constructive logic?
   data Tree : Formula → Set(ℓₚ) where
     [⊤]-intro : Tree(⊤)
 

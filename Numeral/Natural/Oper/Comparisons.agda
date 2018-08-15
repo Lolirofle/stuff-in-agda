@@ -16,6 +16,11 @@ _    ≡? _    = 𝐹
 _≢?_ : ℕ → ℕ → Bool
 x ≢? y = !(x ≡? y)
 
+-- Positivity check
+positive? : ℕ → Bool
+positive? (𝟎)    = 𝐹
+positive? (𝐒(_)) = 𝑇
+
 -- Lesser-than check
 _<?_ : ℕ → ℕ → Bool
 𝟎    <? 𝐒(_) = 𝑇

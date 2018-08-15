@@ -21,9 +21,3 @@ _<_ : ℕ → ℕ → Stmt
 _<_ a b = (𝐒(a) ≤ b)
 
 open From-[≤][<] (_≤_) (_<_) public
-
--- TODO: Replace with BoolIfTrue(≤?)
-_lteq2_ : ℕ → ℕ → Stmt
-𝟎    lteq2 n    = ⊤
-𝐒(_) lteq2 𝟎    = ⊥
-𝐒(a) lteq2 𝐒(b) = a lteq2 b

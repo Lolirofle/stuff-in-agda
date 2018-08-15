@@ -2,7 +2,9 @@ module Numeral.FiniteStrict where
 
 import Lvl
 open import Syntax.Number
+open import Data.Boolean.AsSet
 open import Functional
+open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Natural hiding (𝐏)
 import      Numeral.Natural.Relation.Order
 open import Type
@@ -33,7 +35,7 @@ data 𝕟 : ℕ → Set where
 module _ {ℓ} where
   open Numeral.Natural.Relation.Order{ℓ}
 
-  [ℕ]-to-[𝕟] : (x : ℕ) → ∀{n} → ⦃ _ : (x lteq2 n) ⦄ → 𝕟(ℕ.𝐒(n))
+  [ℕ]-to-[𝕟] : (x : ℕ) → ∀{n} → ⦃ _ : BoolIsTrue{ℓ}(x ≤? n) ⦄ → 𝕟(ℕ.𝐒(n))
   [ℕ]-to-[𝕟] (ℕ.𝟎)    {_}      ⦃ _ ⦄ = 𝟎
   [ℕ]-to-[𝕟] (ℕ.𝐒(_)) {ℕ.𝟎}    ⦃ ⦄
   [ℕ]-to-[𝕟] (ℕ.𝐒(x)) {ℕ.𝐒(n)} ⦃ p ⦄ = 𝐒([ℕ]-to-[𝕟] (x) {n} ⦃ p ⦄)
@@ -43,5 +45,5 @@ module _ where
 
   instance
     𝕟-from-ℕ : ∀{N} → From-ℕsubset(𝕟(ℕ.𝐒(N)))
-    From-ℕsubset.restriction ( 𝕟-from-ℕ {N} ) (n) = (n lteq2 N)
+    From-ℕsubset.restriction ( 𝕟-from-ℕ {N} ) (n) = BoolIsTrue{Lvl.𝟎}(n ≤? N)
     from-ℕsubset ⦃ 𝕟-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = [ℕ]-to-[𝕟] (n) {N} ⦃ proof ⦄

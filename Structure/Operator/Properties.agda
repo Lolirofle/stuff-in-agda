@@ -19,6 +19,10 @@ Identityₗ {_} {T₂} (_▫_) id = ∀{x : T₂} → (id ▫ x) ≡ x
 Identityᵣ : {T₁ T₂ : Type} → (T₁ → T₂ → T₁) → T₂ → Stmt
 Identityᵣ {T₁} {_} (_▫_) id = ∀{x : T₁} → (x ▫ id) ≡ x
 
+-- Definition of an identity element
+Identity : {T : Type} → (T → T → T) → T → Stmt
+Identity (_▫_) id = (Identityₗ (_▫_) id) ∧ (Identityᵣ (_▫_) id)
+
 -- Definition of a left inverse function
 InverseFunctionₗ : {T₊ T₋ Tᵣ : Type} → (T₋ → T₊ → Tᵣ) → Tᵣ → (T₊ → T₋) → Stmt
 InverseFunctionₗ {T₊} (_▫_) id inv = ∀{x : T₊} → ((inv x) ▫ x) ≡ id
@@ -44,11 +48,11 @@ Absorberᵣ : {T₁ T₂ : Type} → (T₁ → T₂ → T₂) → T₂ → Stmt
 Absorberᵣ {T₁} {_} (_▫_) null = ∀{x : T₁} → (x ▫ null) ≡ null
 
 -- Definition of left cancellation (Injectivity for the right param)
-Cancellationₗ : {T₁ T₂ : Type} → (T₁ → T₂ → T₁) → Stmt
+Cancellationₗ : {T₁ T₂ T₃ : Type} → (T₁ → T₂ → T₃) → Stmt
 Cancellationₗ {T₁}{T₂} (_▫_) = ∀{x : T₁}{a b : T₂} → ((x ▫ a) ≡ (x ▫ b)) → (a ≡ b)
 
 -- Definition of right cancellation (Injectivity for the left param)
-Cancellationᵣ : {T₁ T₂ : Type} → (T₁ → T₂ → T₁) → Stmt
+Cancellationᵣ : {T₁ T₂ T₃ : Type} → (T₁ → T₂ → T₃) → Stmt
 Cancellationᵣ {T₁}{T₂} (_▫_) = ∀{x : T₂}{a b : T₁} → ((a ▫ x) ≡ (b ▫ x)) → (a ≡ b)
 
 ---------------------------------------------------------

@@ -9,6 +9,9 @@ open import Numeral.FiniteStrict
 open import Numeral.Natural.Function
 open import Numeral.Natural.Oper
 
+-- TODO: Someone else did something similiar apparently: https://gist.github.com/gallais/303cfcfe053fbc63eb61
+-- TODO: Execution is possible, but limited? https://stackoverflow.com/questions/2583337/strictly-positive-in-agda#
+
 -- A lambda term (A term in the language of lambda calculus).
 -- This is encoded with an abstraction depth which ensures that every term is well-formed.
 data Term : ℕ → Set where

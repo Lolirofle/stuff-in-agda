@@ -4,7 +4,7 @@ open import Data
 open import Data.Either as Either using (_‖_)
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
-open import Functional.ComposeRaise
+open import Functional.Repeat
 open import Logic.Propositional{ℓ}
 open import Type
 
@@ -57,6 +57,16 @@ open import Type
 [∧]-implies-[∨] : ∀{X Y : Stmt} → (X ∧ Y) → (X ∨ Y)
 [∧]-implies-[∨] ([∧]-intro x y) = [∨]-introₗ x
 
+[∨]-implies-[←][→] : ∀{X Y : Stmt} → (X ∨ Y) → (X ← Y)∨(X → Y)
+[∨]-implies-[←][→] ([∨]-introₗ x) = [∨]-introₗ (const x)
+[∨]-implies-[←][→] ([∨]-introᵣ y) = [∨]-introᵣ (const y)
+
+-- [↔]-implies-[] : ∀{X Y : Stmt} → (X ↔ Y) ← (X ∧ Y) ∨ ((¬ X) ∧ (¬ Y))
+
+-- TODO: Probably unprovable
+-- [↔]-implies-[] : ∀{X Y : Stmt} → (X ↔ Y) → (X ∧ Y) ∨ ((¬ X) ∧ (¬ Y))
+-- [↔]-implies-[] ([∧]-intro yx xy) = ?
+
 ------------------------------------------
 -- Associativity (with respect to ↔)
 
@@ -83,7 +93,8 @@ open import Type
         -- [∨]-associativity₂ : ∀{X Y Z : Stmt} → ((X ∨ Y) ∨ Z) ← (X ∨ (Y ∨ Z))
         -- [∨]-associativity₂ {X} {Y} {Z} stmt = [∨]-associativity₁ {Y} {Z} {X} ([∨]-symmetry {X} {Y ∨ Z} stmt)
 
-[↔]-associativity : ∀{X Y Z : Stmt} → ((X ↔ Y) ↔ Z) ↔ (X ↔ (Y ↔ Z))
+-- TODO: According to https://math.stackexchange.com/questions/440261/associativity-of-iff , this is unprovable
+{-[↔]-associativity : ∀{X Y Z : Stmt} → ((X ↔ Y) ↔ Z) ↔ (X ↔ (Y ↔ Z))
 [↔]-associativity {X}{Y}{Z} = [↔]-intro [↔]-associativityₗ [↔]-associativityᵣ where
   [↔]-associativityₗ : ((X ↔ Y) ↔ Z) ← (X ↔ (Y ↔ Z))
   [↔]-associativityₗ ([↔]-intro yz2x x2yz) = [↔]-intro z2xy xy2z where
@@ -95,13 +106,13 @@ open import Type
       x2y : X → Y
       x2y x = [↔]-elimₗ (x2yz(x)) (z)
 
-    postulate xy2z : (X ↔ Y) → Z -- TODO: How?
-    -- xy2z ([↔]-intro y2x x2y) = ([↔]-elimᵣ (x2yz(x))) (y)
+    xy2z : (X ↔ Y) → Z -- TODO: How?
+    xy2z ([↔]-intro y2x x2y) = ?
 
   [↔]-associativityᵣ : ((X ↔ Y) ↔ Z) → (X ↔ (Y ↔ Z))
   [↔]-associativityᵣ ([↔]-intro z2xy xy2z) = [↔]-intro yz2x x2yz where
-    postulate yz2x : X ← (Y ↔ Z)
-    -- yz2x ([↔]-intro z2y y2z) = 
+    yz2x : X ← (Y ↔ Z)
+    yz2x ([↔]-intro z2y y2z) = ?
 
     x2yz : X → (Y ↔ Z)
     x2yz x = [↔]-intro z2y y2z where
@@ -110,6 +121,54 @@ open import Type
 
       y2z : Y → Z
       y2z y = xy2z([∧]-implies-[↔]([∧]-intro x y))
+-}
+
+------------------------------------------
+-- Distributivity
+
+[∧][∨]-distributivityₗ : ∀{X Y Z : Stmt} → (X ∧ (Y ∨ Z)) ↔ (X ∧ Y)∨(X ∧ Z)
+[∧][∨]-distributivityₗ {X}{Y}{Z} = [↔]-intro l r where
+  l : (X ∧ (Y ∨ Z)) ← (X ∧ Y)∨(X ∧ Z)
+  l([∨]-introₗ ([∧]-intro x y)) = [∧]-intro x ([∨]-introₗ y)
+  l([∨]-introᵣ ([∧]-intro x z)) = [∧]-intro x ([∨]-introᵣ z)
+
+  r : (X ∧ (Y ∨ Z)) → (X ∧ Y)∨(X ∧ Z)
+  r([∧]-intro x ([∨]-introₗ y)) = [∨]-introₗ([∧]-intro x y)
+  r([∧]-intro x ([∨]-introᵣ z)) = [∨]-introᵣ([∧]-intro x z)
+
+[∧][∨]-distributivityᵣ : ∀{X Y Z : Stmt} → ((X ∨ Y) ∧ Z) ↔ (X ∧ Z)∨(Y ∧ Z)
+[∧][∨]-distributivityᵣ {X}{Y}{Z} = [↔]-intro l r where
+  l : ((X ∨ Y) ∧ Z) ← (X ∧ Z)∨(Y ∧ Z)
+  l([∨]-introₗ ([∧]-intro x z)) = [∧]-intro ([∨]-introₗ x) z
+  l([∨]-introᵣ ([∧]-intro y z)) = [∧]-intro ([∨]-introᵣ y) z
+
+  r : ((X ∨ Y) ∧ Z) → (X ∧ Z)∨(Y ∧ Z)
+  r([∧]-intro ([∨]-introₗ x) z) = [∨]-introₗ([∧]-intro x z)
+  r([∧]-intro ([∨]-introᵣ y) z) = [∨]-introᵣ([∧]-intro y z)
+
+[∨][∧]-distributivityₗ : ∀{X Y Z : Stmt} → (X ∨ (Y ∧ Z)) ↔ (X ∨ Y)∧(X ∨ Z)
+[∨][∧]-distributivityₗ {X}{Y}{Z} = [↔]-intro l r where
+  l : (X ∨ (Y ∧ Z)) ← (X ∨ Y)∧(X ∨ Z)
+  l([∧]-intro ([∨]-introₗ x) ([∨]-introₗ _)) = [∨]-introₗ(x)
+  l([∧]-intro ([∨]-introₗ x) ([∨]-introᵣ z)) = [∨]-introₗ(x)
+  l([∧]-intro ([∨]-introᵣ y) ([∨]-introₗ x)) = [∨]-introₗ(x)
+  l([∧]-intro ([∨]-introᵣ y) ([∨]-introᵣ z)) = [∨]-introᵣ([∧]-intro y z)
+
+  r : (X ∨ (Y ∧ Z)) → (X ∨ Y)∧(X ∨ Z)
+  r([∨]-introₗ x)               = [∧]-intro ([∨]-introₗ x) ([∨]-introₗ x)
+  r([∨]-introᵣ ([∧]-intro y z)) = [∧]-intro ([∨]-introᵣ y) ([∨]-introᵣ z)
+
+[∨][∧]-distributivityᵣ : ∀{X Y Z : Stmt} → ((X ∧ Y) ∨ Z) ↔ (X ∨ Z)∧(Y ∨ Z)
+[∨][∧]-distributivityᵣ {X}{Y}{Z} = [↔]-intro l r where
+  l : ((X ∧ Y) ∨ Z) ← (X ∨ Z)∧(Y ∨ Z)
+  l([∧]-intro ([∨]-introₗ x) ([∨]-introₗ y)) = [∨]-introₗ([∧]-intro x y)
+  l([∧]-intro ([∨]-introₗ x) ([∨]-introᵣ z)) = [∨]-introᵣ(z)
+  l([∧]-intro ([∨]-introᵣ z) ([∨]-introₗ y)) = [∨]-introᵣ(z)
+  l([∧]-intro ([∨]-introᵣ z) ([∨]-introᵣ _)) = [∨]-introᵣ(z)
+
+  r : ((X ∧ Y) ∨ Z) → (X ∨ Z)∧(Y ∨ Z)
+  r([∨]-introₗ ([∧]-intro x y)) = [∧]-intro ([∨]-introₗ x) ([∨]-introₗ y)
+  r([∨]-introᵣ z)               = [∧]-intro ([∨]-introᵣ z) ([∨]-introᵣ z)
 
 ------------------------------------------
 -- Identity (with respect to ↔)
@@ -240,14 +299,14 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 
 -- [→][¬∧] : ∀{X Y : Stmt} → (X → ¬ Y) ↔ ¬(X ∧ Y) -- TODO: Probably needs [¬¬]-elim
 
-[↔]-of-[∧] : ∀{X Y Z} → ((X ∧ Z) ↔ (Y ∧ Z)) → (Z → (X ↔ Y))
+[↔]-of-[∧] : ∀{X}{Y}{Z} → ((X ∧ Z) ↔ (Y ∧ Z)) → (Z → (X ↔ Y))
 [↔]-of-[∧] ([↔]-intro yzxz xzyz) z =
   ([↔]-intro
     (y ↦ [∧]-elimₗ(yzxz([∧]-intro y z)))
     (x ↦ [∧]-elimₗ(xzyz([∧]-intro x z)))
   )
 
-[↔]-adding-[∧] : ∀{X Y Z} → (X ↔ Y) → ((X ∧ Z) ↔ (Y ∧ Z))
+[↔]-adding-[∧] : ∀{X}{Y}{Z} → (X ↔ Y) → ((X ∧ Z) ↔ (Y ∧ Z))
 [↔]-adding-[∧] ([↔]-intro yx xy) =
   ([↔]-intro
     (yz ↦ [∧]-intro (yx([∧]-elimₗ yz)) ([∧]-elimᵣ yz))

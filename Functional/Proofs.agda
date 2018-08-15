@@ -209,3 +209,9 @@ module _ {ℓₒ} where
 
   inv-fn : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
   inv-fn (f) ⦃ [∧]-intro inj surj ⦄ = inv-fnᵣ (f) ⦃ surj ⦄
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{ℓ₃}} where
+  open Relator.Equals{ℓₗ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+
+  double-swap : ∀{f : X → Y → Z} → (swap(swap(f)) ≡ f)
+  double-swap = [≡]-intro

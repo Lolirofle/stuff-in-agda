@@ -9,3 +9,6 @@ record Any {ℓ} : Type{Lvl.𝐒(ℓ)} where
   field
     {type} : Type{ℓ}
     value  : type
+
+  map : (type → type) → Any{ℓ}
+  map f = record{type = type ; value = f(value)}

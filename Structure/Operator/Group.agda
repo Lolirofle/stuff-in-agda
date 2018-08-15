@@ -14,14 +14,14 @@ open import Type{ℓ₂}
 -- • It is a monoid.
 -- • The operator have an inverse in both directions.
 record Group {T : Type} (_▫_ : T → T → T) : Stmt where
-  open Monoid ⦃ ... ⦄ 
+  open Monoid ⦃ ... ⦄
 
   field
     inv : T → T
   field
-    ⦃ monoid ⦄ : Monoid{T} (_▫_)
-    inverseₗ     : InverseFunctionₗ (_▫_) (id ⦃ monoid ⦄) inv
-    inverseᵣ     : InverseFunctionᵣ (_▫_) (id ⦃ monoid ⦄) inv
+    instance ⦃ monoid ⦄ : Monoid{T} (_▫_)
+    inverseₗ : InverseFunctionₗ (_▫_) (id ⦃ monoid ⦄) inv
+    inverseᵣ : InverseFunctionᵣ (_▫_) (id ⦃ monoid ⦄) inv
 
   commutationₗ : ∀{x y} → (x ▫ y ≡ y ▫ x) ← ((x ▫ y) ▫ inv(x) ≡ y)
   commutationₗ {x}{y} (comm) =
@@ -62,9 +62,9 @@ record MultGroup {T : Type} (_▫_ : T → T → T) (𝟎 : T) : Stmt where
   field
     inv : (x : T) → ⦃ _ : (x ≢ 𝟎) ⦄ → T
   field
-    ⦃ monoid ⦄ : Monoid{T} (_▫_)
-    inverseₗ        : ∀{x} → ⦃ nonzero : (x ≢ 𝟎) ⦄ → ((inv x ⦃ nonzero ⦄) ▫ x) ≡ id ⦃ monoid ⦄
-    inverseᵣ        : ∀{x} → ⦃ nonzero : (x ≢ 𝟎) ⦄ → (x ▫ (inv x ⦃ nonzero ⦄)) ≡ id ⦃ monoid ⦄
+    instance ⦃ monoid ⦄ : Monoid{T} (_▫_)
+    inverseₗ : ∀{x} → ⦃ nonzero : (x ≢ 𝟎) ⦄ → ((inv x ⦃ nonzero ⦄) ▫ x) ≡ id ⦃ monoid ⦄
+    inverseᵣ : ∀{x} → ⦃ nonzero : (x ≢ 𝟎) ⦄ → (x ▫ (inv x ⦃ nonzero ⦄)) ≡ id ⦃ monoid ⦄
 
   identity = identityₗ
   inverse = inverseₗ
@@ -74,8 +74,8 @@ record AbelianGroup {T : Type} (_▫_ : T → T → T) : Stmt where
   open Monoid ⦃ ... ⦄
 
   field
-    commutativity  : Commutativity (_▫_)
-    ⦃ group ⦄    : Group (_▫_)
+    instance ⦃ group ⦄ : Group (_▫_)
+    commutativity : Commutativity (_▫_)
 
   identity = identityₗ
   inverse = inverseₗ

@@ -21,6 +21,7 @@ open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 open import Type
 
 -- TODO: The instance declarations probably do nothing for functions with arguments. Either make all the args implicit or remove the instance decls.
+-- TODO: A method for pattern matching: https://stackoverflow.com/questions/20682013/agda-why-am-i-unable-to-pattern-match-on-refl
 
 [≤]-equivalence : ∀{x y} → (x [≤∃].≤ y) ↔ (x ≤ y)
 [≤]-equivalence{x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
@@ -166,17 +167,6 @@ instance
     r{𝟎}    ()
     r{𝐒(x)} (𝟏≤𝐒x) (𝐒x≡𝟎) with [≡]-substitutionᵣ (𝐒x≡𝟎) {expr ↦ 1 ≤ expr} (𝟏≤𝐒x)
     ... | ()
-
-
-
-instance
-  lteq2-𝟎 : ∀{n} → (𝟎 lteq2 n)
-  lteq2-𝟎 = [⊤]-intro
-
-instance
-  lteq2-𝐒 : ∀{n} → (n lteq2 n)
-  lteq2-𝐒 {𝟎}    = [⊤]-intro
-  lteq2-𝐒 {𝐒(n)} = lteq2-𝐒 {n}
 
 
 

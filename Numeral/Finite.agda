@@ -2,10 +2,12 @@ module Numeral.Finite where
 
 import Lvl
 open import Syntax.Number
+open import Data.Boolean.AsSet
 open import Functional
 open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Natural
+open import Numeral.Natural.Oper.Comparisons
 import      Numeral.Natural.Relation.Order
 open import Structure.Function.Domain
 open import Type
@@ -36,14 +38,14 @@ data ℕfin : ℕ → Set where
 module _ {ℓ} where
   open Numeral.Natural.Relation.Order{ℓ}
 
-  [ℕ]-to-[ℕfin] : (x : ℕ) → ∀{n} → ⦃ _ : (x lteq2 n) ⦄ → ℕfin(n)
+  [ℕ]-to-[ℕfin] : (x : ℕ) → ∀{n} → ⦃ _ : BoolIsTrue{ℓ}(x ≤? n) ⦄ → ℕfin(n)
   [ℕ]-to-[ℕfin] (𝟎)    {_}    ⦃ _ ⦄ = 𝟎fin
   [ℕ]-to-[ℕfin] (𝐒(_)) {𝟎}    ⦃ ⦄
   [ℕ]-to-[ℕfin] (𝐒(x)) {𝐒(n)} ⦃ p ⦄ = 𝐒fin([ℕ]-to-[ℕfin] (x) {n} ⦃ p ⦄)
 
 instance
   ℕfin-from-ℕ : ∀{N} → From-ℕsubset(ℕfin(N))
-  From-ℕsubset.restriction ( ℕfin-from-ℕ {N} ) (n) = (n lteq2 N) where
+  From-ℕsubset.restriction ( ℕfin-from-ℕ {N} ) (n) = BoolIsTrue{Lvl.𝟎}(n ≤? N) where
     open Numeral.Natural.Relation.Order
   from-ℕsubset ⦃ ℕfin-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = [ℕ]-to-[ℕfin] (n) {N} ⦃ proof ⦄ where
 
@@ -75,4 +77,4 @@ module Theorems{ℓ} where
     bound-instance {n} ⦃ proof ⦄ = bound-𝐒 {n} (proof)
 
   instance
-    postulate downscale-instance : ∀{n} → ⦃ nfin : ℕfin(𝐒(n)) ⦄ → ⦃ _ : [ℕfin]-to-[ℕ]{𝐒(n)}(nfin) lteq2 n ⦄ → ℕfin(n)
+    postulate downscale-instance : ∀{n} → ⦃ nfin : ℕfin(𝐒(n)) ⦄ → ⦃ _ : BoolIsTrue{ℓ}([ℕfin]-to-[ℕ]{𝐒(n)}(nfin) ≤? n) ⦄ → ℕfin(n)

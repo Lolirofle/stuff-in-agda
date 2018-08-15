@@ -33,7 +33,8 @@ import FormalLanguage.ContextFreeGrammar
 import FormalLanguage.Proofs
 import FormalLanguage.RegularExpression
 import Functional
-import Functional.ComposeRaise
+import Functional.Repeat
+import Functional.Repeat.Proofs
 import Functional.DomainRaise
 import Functional.Domains
 import Functional.Equals
@@ -64,6 +65,8 @@ import Lvl
 import Metalogic.Classical.Propositional.ProofSystem
 import Metalogic.Classical.Propositional.Semantics
 import Metalogic.Classical.Propositional.Syntax
+import Metalogic.Linear.SequentCalculus
+import Metalogic.Linear.Syntax
 import Numeral.Finite
 import Numeral.FiniteStrict
 import Numeral.FiniteStrict.Oper.Comparisons
@@ -79,18 +82,20 @@ import Numeral.Integer.Proofs
 import Numeral.Matrix
 import Numeral.Natural
 import Numeral.Natural.Oper.Comparisons
+import Numeral.Natural.Oper.Comparisons.Proofs
+import Numeral.Natural.Oper.Divisibility
 import Numeral.Natural.Coprime
 import Numeral.Natural.Relation.Divisibility
 import Numeral.Natural.Function
 -- import Numeral.Natural.GreatestCommonDivisor
+import Numeral.Natural.Induction
+import Numeral.Natural.Inductions
 import Numeral.Natural.Oper
--- import Numeral.Natural.Oper.Modulo
--- import Numeral.Natural.Oper.Modulo.Proofs
+import Numeral.Natural.Oper.Modulo
+import Numeral.Natural.Oper.Modulo.Proofs
 import Numeral.Natural.Oper.Properties
 import Numeral.Natural.Order
 import Numeral.Natural.Prime
-import Numeral.Natural.Induction
-import Numeral.Natural.Inductions
 import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Computability
 import Numeral.Natural.Relation.Countable
@@ -102,6 +107,8 @@ import Numeral.Natural.Relation.Order.Proofs
 import Numeral.Natural.Relation.Properties
 import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
+import Numeral.PositiveInteger
+import Numeral.PositiveInteger.Oper
 import Numeral.Rational.AlterAdd
 -- import Numeral.Rational.SternBrocot
 import Numeral.Real
@@ -124,9 +131,10 @@ import Sets.BoolSet
 import Sets.ETCS
 import Sets.IZF
 import Sets.PredicateSet
+import Sets.PredicateSet.Filter
 import Sets.PredicateSet.Finite
+import Sets.PredicateSet.Proofs
 import Sets.PredicateSet.Relations
-import Sets.Subset
 import Sets.TypeSet
 import Stream
 import String

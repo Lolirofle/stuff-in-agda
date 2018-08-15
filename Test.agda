@@ -187,7 +187,7 @@ module TestRepeatingStuff where
 --   F : (ℕ ⨯ ℕ) → ℕ
 --   F(x , y) = x + y
 --   f : ℕ → ℕ → ℕ
---   f = (Functional.ComposeRaise.repeatᵣ 1 Tuple.curry (_∘_) id) F
+--   f = (Functional.Repeat.repeatᵣ 1 Tuple.curry (_∘_) id) F
 -- 
 --   testf₁ : F(1 , 2) ≡ 1 + 2
 --   testf₁ = [≡]-reflexivity
@@ -197,7 +197,7 @@ module TestRepeatingStuff where
 
 module Test2 where
   open import Functional
-  open import Functional.ComposeRaise
+  open import Functional.Repeat
   open import Numeral.Natural
   open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
@@ -210,7 +210,7 @@ module Test2 where
   testf₁ = reflexivity
 
 -- f₂ : ∀{n}{A B C D : TypeN n} → (((A ⨯ B) ⨯ C) -> D) -> (A -> B -> C -> D)
--- f₂ = Functional.ComposeRaise.repeatᵣ 2 id (_∘_) Tuple.curry
+-- f₂ = Functional.Repeat.repeatᵣ 2 id (_∘_) Tuple.curry
 
 module TestTypeAscription where
   open import Numeral.Natural
