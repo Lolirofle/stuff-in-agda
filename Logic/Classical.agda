@@ -103,12 +103,34 @@ instance
     ... | ([∨]-introᵣ(nx) , [∨]-introₗ(y))  = [∨]-introₗ(const(y))
     ... | ([∨]-introᵣ(nx) , [∨]-introᵣ(ny)) = [∨]-introₗ([⊥]-elim ∘ nx)
 
+instance
+  [↔]-classical-intro : ∀{X Y} → ⦃ _ : Classical(X) ⦄ → ⦃ _ : Classical(Y) ⦄ → Classical(X ↔ Y)
+  [↔]-classical-intro {X}{Y} ⦃ classical-x ⦄ ⦃ classical-y ⦄ = classical-intro ⦃ proof ⦄ where
+    proof : (X ↔ Y) ∨ (¬ (X ↔ Y))
+    proof with (excluded-middle ⦃ classical-x ⦄ , excluded-middle ⦃ classical-y ⦄)
+    ... | ([∨]-introₗ(x)  , [∨]-introₗ(y))  = [∨]-introₗ([↔]-intro (const(x)) (const(y)))
+    ... | ([∨]-introₗ(x)  , [∨]-introᵣ(ny)) = [∨]-introᵣ(([¬→][∧]ₗ ([∧]-intro x ny)) ∘ [↔]-elimᵣ)
+    ... | ([∨]-introᵣ(nx) , [∨]-introₗ(y))  = [∨]-introᵣ(([¬→][∧]ₗ ([∧]-intro y nx)) ∘ [↔]-elimₗ)
+    ... | ([∨]-introᵣ(nx) , [∨]-introᵣ(ny)) = [∨]-introₗ([↔]-intro ([⊥]-elim ∘ ny) ([⊥]-elim ∘ nx))
+
+instance
+  [⊤]-classical : Classical(⊤)
+  [⊤]-classical = classical-intro ⦃ proof ⦄ where
+    proof : ⊤ ∨ (¬ ⊤)
+    proof = [∨]-introₗ ([⊤]-intro)
+
+instance
+  [⊥]-classical : Classical(⊥)
+  [⊥]-classical = classical-intro ⦃ proof ⦄ where
+    proof : ⊥ ∨ (¬ ⊥)
+    proof = [∨]-introᵣ (id)
+
 [¬][∧]ₗ : ∀{X Y : Stmt} → ⦃ _ : Classical(X) ⦄ → ⦃ _ : Classical(Y) ⦄ → ((¬ X) ∨ (¬ Y)) ← (¬ (X ∧ Y))
 [¬][∧]ₗ {X}{Y} ⦃ classic-x ⦄ ⦃ classic-y ⦄ (nxy) =
   material-implᵣ {X} ⦃ classic-x ⦄ {¬ Y} ([→][∧]ₗ ⦃ [¬]-classical-intro ⦃ classic-y ⦄ ⦄ (nxy ∘ (Tuple.mapRight ([¬¬]-elim ⦃ classic-y ⦄))))
   -- ((X ∧ Y) → ⊥) → ((X → ⊥) ∨ (Y → ⊥))
   -- ¬((X ∧ Y) → ⊥) ← ¬((X → ⊥) ∨ (Y → ⊥))
 
--- TODO: This really is non-constructive?
+-- TODO: Is this provable constructively? Doesn't seem like it?
 [¬→][∧]ᵣ : ∀{X Y : Stmt} → ⦃ _ : Classical(X) ⦄ → ⦃ _ : Classical(Y) ⦄ → ¬(X → Y) → (X ∧ (¬ Y))
 [¬→][∧]ᵣ ⦃ classic-x ⦄ ⦃ classic-y ⦄ = contrapositive-variantₗ ⦃ [∧]-classical-intro ⦃ classic-x ⦄ ⦃ [¬]-classical-intro ⦃ classic-y ⦄ ⦄ ⦄ ([→][∧]ₗ ⦃ classic-y ⦄)

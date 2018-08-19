@@ -24,16 +24,16 @@ instance
   [∉]-empty ()
 
 instance
-  [∈]-singleton : ∀{a} → (a ∈ ([ a ]))
+  [∈]-singleton : ∀{a} → (a ∈ singleton(a))
   [∈]-singleton = [∈]-id
 
 instance
-  [∈]-singleton-[≡] : ∀{a b} → (a ∈ ([ b ])) → (a [≡] b)
+  [∈]-singleton-[≡] : ∀{a b} → (a ∈ singleton(b)) → (a [≡] b)
   [∈]-singleton-[≡] ([∈]-id)  = [≡]-intro
   [∈]-singleton-[≡] ([∈][⊰]-expand ())
 
 instance
-  [∉]-singleton-[≢] : ∀{a b} → (a [≢] b) → (a ∉ ([ b ]))
+  [∉]-singleton-[≢] : ∀{a b} → (a [≢] b) → (a ∉ singleton(b))
   [∉]-singleton-[≢] = contrapositiveᵣ [∈]-singleton-[≡]
 
 instance

@@ -18,11 +18,11 @@ module _ {ℓ₂} where
   open Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
   open Type{ℓ₂}
 
-  [++]-identityₗ : ∀{T} → Identityₗ {ℓ₂}{List(T)} (_++_) ∅
+  [++]-identityₗ : ∀{T : Type} → Identityₗ {ℓ₂}{List(T)} (_++_) ∅
   [++]-identityₗ = [≡]-intro
 
-  [++]-identityᵣ : ∀{T} → Identityᵣ {ℓ₂}{List(T)} (_++_) ∅
-  [++]-identityᵣ {T} = List-induction{ℓ₁}{ℓ₂} base next where
+  [++]-identityᵣ : ∀{T : Type} → Identityᵣ {ℓ₂}{List(T)} (_++_) ∅
+  [++]-identityᵣ {T} = List-induction{ℓ₁}{ℓ₂}{ℓ₂} base next where
     base : (∅ ++ ∅) ≡ ∅
     base = [≡]-intro
 
@@ -34,7 +34,7 @@ module _ {ℓ₂} where
   {-# REWRITE [++]-identityᵣ #-}
 
   [++]-associativity : ∀{T} → Associativity {ℓ₂} {List(T)} (_++_)
-  [++]-associativity {T} {l₀} {l₁} {l₂} = List-induction{ℓ₁}{ℓ₂} base next {l₀} where
+  [++]-associativity {T} {l₀} {l₁} {l₂} = List-induction{ℓ₁}{ℓ₂}{ℓ₂} base next {l₀} where
     base : ((∅ ++ l₁) ++ l₂) ≡ (∅ ++ (l₁ ++ l₂))
     base = [≡]-intro
     -- l₁++l₂ = l₁++l₂
@@ -50,7 +50,7 @@ module _ {ℓ₂} where
   {-# REWRITE [++]-associativity #-}
 
   reverse-[++] : ∀{T}{l₁ l₂ : List(T)} → (reverse(l₁ ++ l₂) ≡ reverse(l₂) ++ reverse(l₁))
-  reverse-[++] {T} {l₁} {l₂} = List-induction{ℓ₁}{ℓ₂} base next {l₁} where
+  reverse-[++] {T} {l₁} {l₂} = List-induction{ℓ₁}{ℓ₂}{ℓ₂} base next {l₁} where
     base : reverse(∅ ++ l₂) ≡ reverse(l₂) ++ reverse(∅)
     base =
       ([≡]-with(reverse) {l₂} ([≡]-intro))
@@ -88,9 +88,9 @@ module _ {ℓ₂} where
   length-singleton : ∀{T : Type}{a : T} → (length(singleton(a)) ≡ 1)
   length-singleton = [≡]-intro
 
-  length-[++] : ∀{T}{l₁ l₂ : List(T)} → (length(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
-  length-[++] {T} {l₁} {l₂} = List-induction{ℓ₁}{Lvl.𝟎} base next {l₁} where
-    base : length(∅ ++ l₂) ≡ length{_}{T}(∅) + length(l₂)
+  length-[++] : ∀{T : Type}{l₁ l₂ : List(T)} → (length(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
+  length-[++] {T} {l₁} {l₂} = List-induction{ℓ₁}{ℓ₂}{Lvl.𝟎} base next {l₁} where
+    base : length(∅ ++ l₂) ≡ length{ℓ₂}{T}(∅) + length(l₂)
     base = symmetry [+]-identityₗ
 
     next : ∀(x : T)(l : List(T)) → (length(l ++ l₂) ≡ length(l) + length(l₂)) → (length((x ⊰ l) ++ l₂) ≡ length(x ⊰ l) + length(l₂))
@@ -104,8 +104,8 @@ module _ {ℓ₂} where
     -- 𝐒(length(l++l₂)) = 𝐒(length(l))+length(l₂)
     -- length(x ⊰ (l++l₂)) = length(x ⊰ l)+length(l₂) //TODO: Is this step really okay? 𝐒 cannot uniquely identify that x was the precedant
 
-  length-reverse : ∀{T}{l : List(T)} → length(reverse(l)) ≡ length(l)
-  length-reverse {T} = List-induction base next where
+  length-reverse : ∀{T : Type}{l : List(T)} → length(reverse(l)) ≡ length(l)
+  length-reverse {T} = List-induction{ℓ₁}{ℓ₂}{Lvl.𝟎} base next where
     base : length{_}{T}(reverse(∅)) ≡ length{_}{T}(∅)
     base = [≡]-intro
 
@@ -169,6 +169,12 @@ module _ {ℓ₂} where
     -- x₁ ⊰ (a ++ l) ≡ x₂ ⊰ (b ++ l)
     -- This is getting nowhere...
 
+  length-multiply : ∀{T : Type}{l : List(T)}{n : ℕ} → (length(multiply(l)(n)) ≡ length(l) ⋅ n)
+  length-multiply{T}{l}{𝟎}    = [≡]-intro
+  length-multiply{T}{l}{𝐒(n)} =
+    length-[++] {T} {l}{multiply l n}
+    🝖 [≡]-with(expr ↦ length(l) + expr) (length-multiply{T}{l}{n})
+
 module _ {ℓ₂} where
   open Logic.Propositional
   open Type{ℓ₂}
@@ -184,6 +190,5 @@ module _ {ℓ₂} where
 
 -- TODO: Empty list is prefix and suffix of everything
 -- TODO: Whole list is prefix and suffix of everything
--- TODO: length(multiply(l)(n)) = n ⋅ length(l)
 -- TODO: multiply(singleton(l))(n) = repeat(l)(n)
 -- TODO: reverse(reverse(l)) = l

@@ -23,6 +23,7 @@ module _ {ℓₗ}{ℓₒ} where
   PredSet(T) = (T → Stmt)
 
   -- The statement of whether an element is in a set
+  -- TODO: Maybe define this using a equivalence relation instead? (Alternatively a Setoid: x ∈ S = ∃(y ↦ (x ≡_T y) ∧ S(y)))
   _∈_ : ∀{T} → T → PredSet(T) → Stmt
   _∈_ = apply -- (x ∈ S) = S(x)
 

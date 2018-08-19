@@ -11,9 +11,9 @@ open import Numeral.Natural.UnclosedOper
 
 -- Divisibility check
 {-# TERMINATING #-}
-_∣?_ : ℕ → ℕ → Bool
+_∣?_ : ℕ → ℕ → Bool -- TODO: An alternative definition would be (a mod b ≡? 0)
 _    ∣? 𝟎    = 𝑇
 𝟎    ∣? 𝐒(_) = 𝐹
-x    ∣? y with (x −? y)
-... | Option.Some(xy) = xy ∣? y
+𝐒(x) ∣? 𝐒(y) with (x −? y)
+... | Option.Some(xy) = xy ∣? 𝐒(y)
 ... | Option.None     = 𝐹

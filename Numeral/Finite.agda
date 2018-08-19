@@ -51,6 +51,7 @@ instance
 
 module Theorems{ℓ} where
   open import Numeral.Natural.Function
+  open import Numeral.Natural.Function.Proofs{ℓ}
   open import Numeral.Natural.Oper
   open import Numeral.Natural.Oper.Properties{ℓ}
   open        Numeral.Natural.Relation.Order{ℓ}
@@ -67,10 +68,10 @@ module Theorems{ℓ} where
     [≡]-substitutionₗ ([+1]-commutativity{n₁}{n₂}) {ℕfin} (𝐒fin{n₁ + n₂}(bound-[+] {n₁}{n₂} (n)))
 
   bound-maxₗ : ∀{n₁ n₂} → ℕfin(n₁) → ℕfin(max n₁ n₂)
-  bound-maxₗ {n₁}{n₂} (n) = [≡]-substitutionₗ (Theorems.max-elementary{ℓ}{n₁}{n₂}) {ℕfin} (bound-[+] {n₁}{n₂ −₀ n₁} (n))
+  bound-maxₗ {n₁}{n₂} (n) = [≡]-substitutionₗ (max-elementary{n₁}{n₂}) {ℕfin} (bound-[+] {n₁}{n₂ −₀ n₁} (n))
 
   bound-maxᵣ : ∀{n₁ n₂} → ℕfin(n₂) → ℕfin(max n₁ n₂)
-  bound-maxᵣ {n₁}{n₂} (n) = [≡]-substitutionᵣ (Theorems.max-commutativity{ℓ}{n₂}{n₁}) {ℕfin} (bound-maxₗ {n₂}{n₁} (n))
+  bound-maxᵣ {n₁}{n₂} (n) = [≡]-substitutionᵣ (max-commutativity{n₂}{n₁}) {ℕfin} (bound-maxₗ {n₂}{n₁} (n))
 
   instance
     bound-instance : ∀{n} → ⦃ _ : ℕfin(n) ⦄ → ℕfin(𝐒(n))

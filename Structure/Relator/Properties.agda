@@ -1,4 +1,4 @@
-module Structure.Relator.Properties {ℓ₁} {ℓ₂} where
+module Structure.Relator.Properties {ℓ₁}{ℓ₂} where
 
 import      Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
@@ -10,7 +10,7 @@ open import Type{ℓ₂}
 -- infixl 1000 _🝖_
 
 FlipPattern : {T₁ T₂ : Type} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
-FlipPattern {T₁} {T₂} (_▫₁_) (_▫₂_) = {x : T₁}{y : T₂} → (x ▫₁ y) → (y ▫₂ x)
+FlipPattern {T₁} {T₂} (_▫₁_) (_▫₂_) = (∀{x : T₁}{y : T₂} → (x ▫₁ y) → (y ▫₂ x))
 
 -- TODO: Maybe use `abstract` blocks instead of `records`? The reason for having records is after all to get ⦃⦄-implicits working.
 
@@ -138,30 +138,3 @@ open Asymmetry ⦃ ... ⦄ public
 -- (_ ≡ a + ((a + 1) + 1)) [Trans: ([≡]-with[_] ∘ [+]-commutativity) with [≡]-transitivity]
 -- (_ ≡ a + (a + (1 + 1))) [Trans: ([≡]-with[_] ∘ [+]-associativity) with [≡]-transitivity]
 -- (_ ≡ (a + a) + (1 + 1)) [Trans: [+]-associativity                 with [≡]-transitivity]
-
-module Theorems where
-  open import Logic.Propositional.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
-
-  [asymmetry]-to-irreflexivity : ∀{T}{_<_} → ⦃ _ : Asymmetry{T}(_<_) ⦄ → Irreflexivity{T}(_<_)
-  irreflexivity ⦃ [asymmetry]-to-irreflexivity ⦄ = [→]-redundancy(asymmetry)
-    -- ∀x∀y. (x<y) → ¬(y<x)
-    -- ∀x. (x<x) → ¬(x<x)
-    -- ∀x. (x<x) → (x<x) → ⊥
-    -- ∀x. (x<x) → ⊥
-
-  [irreflexivity,transitivity]-to-asymmetry : ∀{T}{_<_} → ⦃ _ : Irreflexivity{T}(_<_) ⦄ → ⦃ _ : Transitivity{T}(_<_) ⦄ → Asymmetry{T}(_<_)
-  asymmetry ⦃ [irreflexivity,transitivity]-to-asymmetry ⦄ = Tuple.curry(irreflexivity ∘ (Tuple.uncurry transitivity))
-    -- ∀x. ¬(x<x)
-    -- ∀x. (x<x) → ⊥
-    --   ∀x∀y∀z. (x<y)∧(y<z) → (x<z)
-    --   ∀x∀y. (x<y)∧(y<x) → (x<x)
-    --   ∀y. (x<y)∧(y<x) → (x<x)
-    -- ∀x∀y. (x<y)∧(y<x) → ⊥
-    -- ∀x∀y. (x<y) → (y<x) → ⊥
-    -- ∀x∀y. (x<y) → ¬(y<x)
-
-  -- Definition of a total binary operation
-  [total]-to-reflexivity : ∀{T}{_<_} → ⦃ _ : Total{T}(_<_) ⦄ → Reflexivity{T}(_<_)
-  reflexivity ⦃ [total]-to-reflexivity ⦄ = [∨]-elim id id total
-
--- TODO: https://proofwiki.org/wiki/Definition%3aRelation_Compatible_with_Operation and substitution. Special case for (≡) and function application: ∀(x∊T)∀(y∊T). (x ≡ y) → (∀(f: T→T). f(x) ≡ f(y))

@@ -26,11 +26,11 @@ instance
       l : ∀{x}{y} → (x ≤ y) ← ((x ≤? y) ≡ 𝑇)
       l{𝟎}   {_}   ([≡]-intro) = [≤][0]ᵣ-minimum
       l{𝐒(x)}{𝟎}   ()
-      l{𝐒(x)}{𝐒(y)}(proof)     = [≤]-with-[𝐒] (l{x}{y}(proof))
+      l{𝐒(x)}{𝐒(y)}(proof)     = [≤]-with-[𝐒] ⦃ l{x}{y}(proof) ⦄
 
       r : ∀{x}{y} → (x ≤ y) → ((x ≤? y) ≡ 𝑇)
       r{𝟎}   {y}    ([≤][0]ᵣ-minimum)      = [≡]-intro
-      r{𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] (proof)) = r{x}{y} (proof)
+      r{𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = r{x}{y} (proof)
 
 instance -- TODO: Is it possible to reuse the proof of [≤]-computable?
   [≥]-computable : ComputablyDecidable{ℕ}(_≥_)
@@ -42,11 +42,11 @@ instance -- TODO: Is it possible to reuse the proof of [≤]-computable?
       l : ∀{x}{y} → (x ≥ y) ← ((x ≥? y) ≡ 𝑇)
       l{_}   {𝟎}   ([≡]-intro) = [≤][0]ᵣ-minimum
       l{𝟎}   {𝐒(y)}()
-      l{𝐒(x)}{𝐒(y)}(proof)     = [≤]-with-[𝐒] (l{x}{y}(proof))
+      l{𝐒(x)}{𝐒(y)}(proof)     = [≤]-with-[𝐒] ⦃ l{x}{y}(proof) ⦄
 
       r : ∀{x}{y} → (x ≥ y) → ((x ≥? y) ≡ 𝑇)
       r{x}   {𝟎}    ([≤][0]ᵣ-minimum)      = [≡]-intro
-      r{𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] (proof)) = r{x}{y} (proof)
+      r{𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = r{x}{y} (proof)
 
 -- TODO: [<]-computable
 -- TODO: [>]-computable

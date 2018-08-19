@@ -5,6 +5,7 @@ open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Propositional{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}
+open import Logic.Predicate.Theorems{ℓ}{Lvl.𝟎}
 open import Numeral.FiniteStrict
 open import Numeral.Natural
 open import Numeral.Natural.Oper
@@ -33,13 +34,16 @@ Div𝐏 {𝟎}   {y}    (y-div-0) = [≡]-substitutionₗ ([−₀]-negative{y})
 Div𝐏 {_}{y} (Div𝐒{x} (y-div-x)) = [≡]-substitutionᵣ [−₀]ₗ[+]ᵣ-nullify {expr ↦ (y ∣ expr)} y-div-x
 -}
 
-divides-intro : ∀{x y} → (∃ \(n : ℕ) → (y ⋅ n ≡ x)) → (y ∣ x)
+divides-intro : ∀{x y} → (∃(n ↦ y ⋅ n ≡ x)) → (y ∣ x)
 divides-intro {x}{y} ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [≡]-elimᵣ (y⋅n≡x) {expr ↦ (y ∣ expr)} (DivN{y}(n))
 
-divides-elim : ∀{x y} → (y ∣ x) → (∃ \(n : ℕ) → (y ⋅ n ≡ x))
+divides-elim : ∀{x y} → (y ∣ x) → (∃(n ↦ y ⋅ n ≡ x))
 divides-elim {_}{_} (Div𝟎) = [∃]-intro (0) ⦃ [≡]-intro ⦄
 divides-elim {_}{y} (Div𝐒{x} (y-div-x)) with divides-elim(y-div-x)
 ... | ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with(expr ↦ y + expr) (y⋅n≡x) ⦄
+
+divides-intro-alt : ∀{n x y} → ⦃ _ : y ⋅ n ≡ x ⦄ → (y ∣ x)
+divides-intro-alt {n}{x}{y} ⦃ proof ⦄ = ([↔]-elimₗ ([∀]-unrelatedₗ-[→] {ℕ} {n ↦ y ⋅ n ≡ x} {y ∣ x})) divides-intro {n} (proof)
 
 {-
 Div𝐏 : ∀{x y : ℕ} → (y ∣ (y + x)) → (y ∣ x)

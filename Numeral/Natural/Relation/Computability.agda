@@ -33,4 +33,8 @@ instance
       r{𝐒(x)}{𝐒(.x)}([≡]-intro) = r{x}{x}([≡]-intro)
 
 instance
-  postulate [≢]-computable : ComputablyDecidable{ℕ}(_≢_)
+  [≢]-computable : ComputablyDecidable{ℕ}(_≢_)
+  [≢]-computable = ComputablyDecidable-intro decide ⦃ proof ⦄ where
+    decide = (_≢?_)
+
+    postulate proof : ∀{x}{y} → (x ≢ y) ↔ ((x ≢? y) ≡ 𝑇)

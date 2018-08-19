@@ -24,20 +24,29 @@ module _ {ℓₗ}{ℓₒ} {T : Set(ℓₒ)} where
     _⊆'_ : PredSet' → PredSet' → Stmt
     _⊆'_ = _⊆_ {ℓₗ}{ℓₗ} {ℓₒ} {T}
 
+    _⊇'_ : PredSet' → PredSet' → Stmt
+    _⊇'_ = _⊇_ {ℓₗ}{ℓₗ} {ℓₒ} {T}
+
+    _≡'_ : PredSet' → PredSet' → Stmt
+    _≡'_ = _≡_ {ℓₗ}{ℓₗ} {ℓₒ} {T}
+
     -- TODO: PredSet' has a greater level than Stmt? Not possible with Reflexivity or even Logic.Predicate
     -- Refl : (PredSet' → PredSet' → Stmt) → Stmt
     -- Refl(_▫_) = Reflexivity{_}{_} {PredSet'} (_▫_)
 
-    -- TODO: This is alright though
+    -- TODO: This is alright...
     -- Refl : (T → T → Stmt) → Stmt
     -- Refl(_▫_) = (∀{x : T} → (x ▫ x))
 
-  -- [⊆]-reflexivity : Refl(_⊆'_)
-  -- reflexivity ⦃ [⊆]-reflexivity ⦄ = id
-{-
-  [⊆]-transitivity : ∀{A : PredSet'(T)} → (A ⊆' A)
-  [⊆]-transitivity = id
+    -- ...but not this
+    -- Refl : (PredSet' → PredSet' → Stmt) → Stmt
+    -- Refl(_▫_) = (∀{x : PredSet'} → (x ▫ x))
 
-  [⊆]-antisymmetry : ∀{A : PredSet'(T)} → (A ⊆' A)
-  [⊆]-antisymmetry = id
--}
+  [⊆]-reflexivity : ∀{A} → (A ⊆' A)
+  [⊆]-reflexivity = id
+
+  [⊆]-transitivity : ∀{A B C} → (A ⊆' B) → (B ⊆' C) → (A ⊆' C)
+  [⊆]-transitivity ab bc = bc ∘ ab
+
+  [⊆]-antisymmetry : ∀{A B} → (A ⊇' B) → (A ⊆' B) → (A ≡' B)
+  [⊆]-antisymmetry = Logic.[∧]-intro

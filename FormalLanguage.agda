@@ -1,7 +1,7 @@
 module FormalLanguage where
 
 import      Lvl
-open import Data.List renaming (∅ to [])
+open import Data.List renaming (∅ to []) hiding (filter)
 open import Agda.Builtin.Size
 open import Data.Boolean
 open import Data.Boolean.Operators

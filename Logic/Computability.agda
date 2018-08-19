@@ -66,15 +66,15 @@ classicalIsComputablyDecidable {X}{φ} = [↔]-intro (ComputablyDecidable.classi
   r : (∀{x} → Classical(φ(x))) → ComputablyDecidable(φ)
   ComputablyDecidable.decide (r(classic)) = decider(classic)
   ComputablyDecidable.proof (r(classic)) {x} = [↔]-intro rl rr where
-    postulate a : ∀{a} → a -- TODO
-
     rl : ∀{x} → φ(x) ← (decider(classic)(x) ≡ 𝑇)
-    rl {x} _ with Classical.excluded-middle(classic{x})
+    rl {x} decider𝑇 with Classical.excluded-middle(classic{x})
     ... | [∨]-introₗ (φx)  = φx
-    ... | [∨]-introᵣ (¬φx) = a
+    ... | [∨]-introᵣ (¬φx) = [⊥]-elim(disjointness([∧]-intro decider𝑇 [≡]-intro))
 
     rr : ∀{x} → φ(x) → (decider(classic)(x) ≡ 𝑇)
-    rr {x} (φx) = a
+    rr {x} (φx₂) with Classical.excluded-middle(classic{x})
+    ... | [∨]-introₗ (φx)  = [≡]-intro
+    ... | [∨]-introᵣ (¬φx) = [⊥]-elim(¬φx φx₂)
 
 
 

@@ -28,6 +28,13 @@ data 𝕟 : ℕ → Set where
   𝐒 : ∀{n} → 𝕟(ℕ.𝐒(n)) → 𝕟(ℕ.𝐒(ℕ.𝐒(n))) -- Successor function (TODO: The type could be 𝕟(n) → 𝕟(ℕ.𝐒(n))? 𝕟(𝟎) is impossible after all)
 {-# INJECTIVE 𝕟 #-}
 
+minimum : ∀{n} → 𝕟(ℕ.𝐒(n))
+minimum{_} = 𝟎
+
+maximum : ∀{n} → 𝕟(ℕ.𝐒(n))
+maximum{𝟎}    = 𝟎
+maximum{𝐒(n)} = 𝐒(maximum{n})
+
 [𝕟]-to-[ℕ] : ∀{n} → 𝕟(ℕ.𝐒(n)) → ℕ
 [𝕟]-to-[ℕ] (𝟎)    = ℕ.𝟎
 [𝕟]-to-[ℕ] (𝐒(n)) = ℕ.𝐒([𝕟]-to-[ℕ] (n))

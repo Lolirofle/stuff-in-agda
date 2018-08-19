@@ -46,5 +46,4 @@ module _ where
   length : ∀{L} → Tuple(L) → ℕ
   length{L} (_) = Data.List.length(L)
 
-module Theorems where
-  -- TupleRaise : Tuple(repeat(n)(T)) ≡ T ^ n
+-- TODO: TupleRaise : Tuple(repeat(n)(T)) ≡ T ^ n

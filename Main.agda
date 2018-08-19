@@ -14,6 +14,7 @@ import Data.Boolean.Operators
 import Data.Boolean.Proofs
 import Data.Either
 import Data.List
+import Data.List.Computability
 import Data.List.Proofs
 import Data.List.Proofs.Membership
 import Data.List.Proofs.Sublist
@@ -85,8 +86,8 @@ import Numeral.Natural.Oper.Comparisons
 import Numeral.Natural.Oper.Comparisons.Proofs
 import Numeral.Natural.Oper.Divisibility
 import Numeral.Natural.Coprime
-import Numeral.Natural.Relation.Divisibility
 import Numeral.Natural.Function
+import Numeral.Natural.Function.Proofs
 -- import Numeral.Natural.GreatestCommonDivisor
 import Numeral.Natural.Induction
 import Numeral.Natural.Inductions
@@ -99,6 +100,7 @@ import Numeral.Natural.Prime
 import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Computability
 import Numeral.Natural.Relation.Countable
+import Numeral.Natural.Relation.Divisibility
 import Numeral.Natural.Relation.Order
 import Numeral.Natural.Relation.Order.Computability
 import Numeral.Natural.Relation.Order.Existence
@@ -135,6 +137,7 @@ import Sets.PredicateSet.Filter
 import Sets.PredicateSet.Finite
 import Sets.PredicateSet.Proofs
 import Sets.PredicateSet.Relations
+import Sets.Setoid
 import Sets.TypeSet
 import Stream
 import String
@@ -157,6 +160,7 @@ import Structure.Relator.Equivalence as Eq
 import Structure.Relator.Ordering
 import Structure.Relator.Ordering.Subsets
 import Structure.Relator.Properties
+import Structure.Relator.Properties.Proofs
 import Syntax.Function
 import Syntax.Method
 import Syntax.Number

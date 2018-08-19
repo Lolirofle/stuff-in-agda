@@ -344,8 +344,12 @@ instance
 {-# REWRITE [−₀][+]ᵣ-nullify #-}
 
 instance
-  postulate [−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0)
-  -- [−₀]-positive
+  [−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0)
+  [−₀]-positive {𝟎}   {𝟎}    ()
+  [−₀]-positive {𝐒(x)}{𝟎}    ()
+  [−₀]-positive {𝟎}   {𝐒(y)} (_) = [≤]-with-[𝐒] ⦃ [≤][0]ᵣ-minimum ⦄
+  [−₀]-positive {𝐒(x)}{𝐒(y)} (_) = a where postulate a : ∀{a} → a
+   -- [≤]-with-[𝐒]
 
 {-
 instance

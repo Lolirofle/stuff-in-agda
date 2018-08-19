@@ -15,8 +15,8 @@ open import Relator.Equals{ℓ}{0}
 open import Relator.Equals.Proofs{ℓ}{0}
 
 bounded : ∀{n : ℕ}{x : 𝕟(𝐒(n))} → ([𝕟]-to-[ℕ](x) < 𝐒(n))
-bounded{_}   {𝟎}    = [≤]-with-[𝐒]([≤][0]ᵣ-minimum)
-bounded{𝐒(n)}{𝐒(x)} = [≤]-with-[𝐒] (bounded{n}{x})
+bounded{_}   {𝟎}    = [≤]-with-[𝐒] ⦃ [≤][0]ᵣ-minimum ⦄
+bounded{𝐒(n)}{𝐒(x)} = [≤]-with-[𝐒] ⦃ bounded{n}{x} ⦄
 
 -- TODO: inverse1 : ∀{n}{x} → (x ≤ n) → ([𝕟]-to-[ℕ] ∘ [ℕ]-to-[𝕟])(x) ≡ x
 -- TODO: inverse2 : ∀{n x} → ([ℕ]-to-[𝕟] ∘ [𝕟]-to-[ℕ])(x) ≡ x
