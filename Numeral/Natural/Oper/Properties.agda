@@ -81,13 +81,11 @@ instance
     --   ∀x∀i. i+𝐒(x) = 𝐒(i)+x //[≡]-symmetry [2]
     -- ∀x∀i. x+𝐒(i) = 𝐒(i)+x //[≡]-transitivity [1] [2]
 
-instance
-  [+1]-and-[𝐒] : ∀{x : ℕ} → x + 1 ≡ 𝐒(x)
-  [+1]-and-[𝐒] {x} = [≡]-intro
+[+1]-and-[𝐒] : ∀{x : ℕ} → x + 1 ≡ 𝐒(x)
+[+1]-and-[𝐒] {x} = [≡]-intro
 
-instance
-  [1+]-and-[𝐒] : ∀{x : ℕ} → 1 + x ≡ 𝐒(x)
-  [1+]-and-[𝐒] {x} = ([+1]-and-[𝐒] {x}) 🝖 ([+]-commutativity{x}{1})
+[1+]-and-[𝐒] : ∀{x : ℕ} → 1 + x ≡ 𝐒(x)
+[1+]-and-[𝐒] {x} = ([+1]-and-[𝐒] {x}) 🝖 ([+]-commutativity{x}{1})
 
 instance
   [⋅]-absorberₗ : Absorberₗ (_⋅_) (0)
@@ -126,45 +124,42 @@ instance
   [⋅]-identityᵣ : Identityᵣ (_⋅_) (1)
   [⋅]-identityᵣ = [≡]-intro
 
-instance
-  [⋅][+]-distributivityᵣ : ∀{x y z : ℕ} → ((x + y) ⋅ z) ≡ (x ⋅ z) + (y ⋅ z)
-  [⋅][+]-distributivityᵣ {x}{y}{z} = [ℕ]-induction (base x y) (next x y) {z} where
-    base : (x y : ℕ) → ((x + y) ⋅ 0) ≡ ((x ⋅ 0) + (y ⋅ 0))
-    base _ _ = [≡]-intro
+[⋅][+]-distributivityᵣ : ∀{x y z : ℕ} → ((x + y) ⋅ z) ≡ (x ⋅ z) + (y ⋅ z)
+[⋅][+]-distributivityᵣ {x}{y}{z} = [ℕ]-induction (base x y) (next x y) {z} where
+  base : (x y : ℕ) → ((x + y) ⋅ 0) ≡ ((x ⋅ 0) + (y ⋅ 0))
+  base _ _ = [≡]-intro
 
-    next : ∀(x y z : ℕ) → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z)) → ((x + y) ⋅ 𝐒(z)) ≡ ((x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)))
-    next(x)(y)(z) (proof) = ([≡]-with(expr ↦ ((x + y) + expr)) proof) 🝖 (swap-stuff-around{x}{y}{x ⋅ z}{y ⋅ z}) where
-      swap-stuff-around : ∀{a b c d} → (a + b) + (c + d) ≡ (a + c) + (b + d)
-      swap-stuff-around {a}{b}{c}{d} =
-        [+]-associativity{a}{b}{c + d}
-        🝖 ([≡]-with(expr ↦ a + expr) ([+]-commutativity{b}{c + d}))
-        🝖 ([≡]-with(expr ↦ a + expr) ([+]-associativity{c}{d}{b}))
-        🝖 ([≡]-with(expr ↦ a + (c + expr)) ([+]-commutativity{d}{b}))
-        🝖 (symmetry([+]-associativity{a}{c}{b + d}))
-    -- (x+y)⋅𝐒(z)
-    -- = (x+y) + (x+y)⋅z //Definition: (⋅)
-    -- = (x+y) + (x⋅z + y⋅z) //proof
-    -- = x + (y + (x⋅z + y⋅z))
-    -- = x + ((x⋅z + y⋅z) + y)
-    -- = x + (x⋅z + (y⋅z + y))
-    -- = (x + x⋅z) + (y⋅z + y)
-    -- = (x + x⋅z) + (y + y⋅z)
-    -- = x⋅𝐒(z) + y⋅𝐒(z)
+  next : ∀(x y z : ℕ) → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z)) → ((x + y) ⋅ 𝐒(z)) ≡ ((x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)))
+  next(x)(y)(z) (proof) = ([≡]-with(expr ↦ ((x + y) + expr)) proof) 🝖 (swap-stuff-around{x}{y}{x ⋅ z}{y ⋅ z}) where
+    swap-stuff-around : ∀{a b c d} → (a + b) + (c + d) ≡ (a + c) + (b + d)
+    swap-stuff-around {a}{b}{c}{d} =
+      [+]-associativity{a}{b}{c + d}
+      🝖 ([≡]-with(expr ↦ a + expr) ([+]-commutativity{b}{c + d}))
+      🝖 ([≡]-with(expr ↦ a + expr) ([+]-associativity{c}{d}{b}))
+      🝖 ([≡]-with(expr ↦ a + (c + expr)) ([+]-commutativity{d}{b}))
+      🝖 (symmetry([+]-associativity{a}{c}{b + d}))
+  -- (x+y)⋅𝐒(z)
+  -- = (x+y) + (x+y)⋅z //Definition: (⋅)
+  -- = (x+y) + (x⋅z + y⋅z) //proof
+  -- = x + (y + (x⋅z + y⋅z))
+  -- = x + ((x⋅z + y⋅z) + y)
+  -- = x + (x⋅z + (y⋅z + y))
+  -- = (x + x⋅z) + (y⋅z + y)
+  -- = (x + x⋅z) + (y + y⋅z)
+  -- = x⋅𝐒(z) + y⋅𝐒(z)
 
-instance
-  [⋅]-with-[𝐒]ₗ : ∀{x y} → 𝐒(x) ⋅ y ≡ (x ⋅ y) + y
-  [⋅]-with-[𝐒]ₗ {x}{y} =
-    ([⋅][+]-distributivityᵣ{x}{1}{y})
-    🝖 ([≡]-with(expr ↦ (x ⋅ y) + expr) ([⋅]-identityₗ {y}))
-  -- 𝐒(x)⋅y
-  -- = (x+1)⋅y
-  -- = x⋅y + 1⋅y
-  -- = x⋅y + y
+[⋅]-with-[𝐒]ₗ : ∀{x y} → 𝐒(x) ⋅ y ≡ (x ⋅ y) + y
+[⋅]-with-[𝐒]ₗ {x}{y} =
+  ([⋅][+]-distributivityᵣ{x}{1}{y})
+  🝖 ([≡]-with(expr ↦ (x ⋅ y) + expr) ([⋅]-identityₗ {y}))
+-- 𝐒(x)⋅y
+-- = (x+1)⋅y
+-- = x⋅y + 1⋅y
+-- = x⋅y + y
 {-# REWRITE [⋅]-with-[𝐒]ₗ #-}
 
-instance
-  [⋅]-with-[𝐒]ᵣ : ∀{x y} → x ⋅ 𝐒(y) ≡ x + (x ⋅ y)
-  [⋅]-with-[𝐒]ᵣ = [≡]-intro
+[⋅]-with-[𝐒]ᵣ : ∀{x y} → x ⋅ 𝐒(y) ≡ x + (x ⋅ y)
+[⋅]-with-[𝐒]ᵣ = [≡]-intro
 
 instance postulate [⋅][+]-distributivityₗ : ∀{x y z : ℕ} → (x ⋅ (y + z)) ≡ (x ⋅ y) + (x ⋅ z)
 
@@ -283,22 +278,18 @@ instance
   postulate [⋅]-cancellationᵣ : ∀{x} → ⦃ _ : x ≢ 0 ⦄ → (Cancellationᵣ(_⋅_)){x}
 -}
 
-instance
-  postulate [⋅][−₀]-distributivityₗ : ∀{x y z : ℕ} → (x ⋅ (y −₀ z)) ≡ (x ⋅ y) −₀ (x ⋅ z)
+postulate [⋅][−₀]-distributivityₗ : ∀{x y z : ℕ} → (x ⋅ (y −₀ z)) ≡ (x ⋅ y) −₀ (x ⋅ z)
 
-instance
-  postulate [⋅][−₀]-distributivityᵣ : ∀{x y z : ℕ} → ((x −₀ y) ⋅ z) ≡ (x ⋅ z) −₀ (y ⋅ z)
+postulate [⋅][−₀]-distributivityᵣ : ∀{x y z : ℕ} → ((x −₀ y) ⋅ z) ≡ (x ⋅ z) −₀ (y ⋅ z)
 
-instance
-  [−₀]-negative : ∀{x} → ((𝟎 −₀ x) ≡ 𝟎)
-  [−₀]-negative {𝟎}    = [≡]-intro
-  [−₀]-negative {𝐒(n)} = [≡]-intro
+[−₀]-negative : ∀{x} → ((𝟎 −₀ x) ≡ 𝟎)
+[−₀]-negative {𝟎}    = [≡]-intro
+[−₀]-negative {𝐒(n)} = [≡]-intro
 {-# REWRITE [−₀]-negative #-}
 
-instance
-  [−₀]-self : ∀{x} → ((x −₀ x) ≡ 𝟎)
-  [−₀]-self {𝟎}    = [≡]-intro
-  [−₀]-self {𝐒(n)} = [≡]-intro 🝖 ([−₀]-self{n})
+[−₀]-self : ∀{x} → ((x −₀ x) ≡ 𝟎)
+[−₀]-self {𝟎}    = [≡]-intro
+[−₀]-self {𝐒(n)} = [≡]-intro 🝖 ([−₀]-self{n})
 {-# REWRITE [−₀]-self #-}
 
 -- TODO: Is any of the directions true? Does not seem like
@@ -319,45 +310,38 @@ instance
   -- ⇔ 𝐒(𝟎) −₀ 𝐒(y) ≡ 𝐒(z)
 -}
 
-instance
-  [−₀]-self-[𝐒] : ∀{x} → ((𝐒(x) −₀ x) ≡ 𝐒(x −₀ x))
-  [−₀]-self-[𝐒] {𝟎}    = [≡]-intro
-  [−₀]-self-[𝐒] {𝐒(n)} = [−₀]-self-[𝐒] {n}
+[−₀]-self-[𝐒] : ∀{x} → ((𝐒(x) −₀ x) ≡ 𝐒(x −₀ x))
+[−₀]-self-[𝐒] {𝟎}    = [≡]-intro
+[−₀]-self-[𝐒] {𝐒(n)} = [−₀]-self-[𝐒] {n}
 {-# REWRITE [−₀]-self-[𝐒] #-}
 
-instance
-  [−₀]ₗ[+]ᵣ-nullify : ∀{x y} → ((x + y) −₀ y ≡ x)
-  [−₀]ₗ[+]ᵣ-nullify{𝟎}   {𝟎}    = [≡]-intro
-  [−₀]ₗ[+]ᵣ-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([−₀]ₗ[+]ᵣ-nullify{x}{y})
-  [−₀]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
+[−₀]ₗ[+]ᵣ-nullify : ∀{x y} → ((x + y) −₀ y ≡ x)
+[−₀]ₗ[+]ᵣ-nullify{𝟎}   {𝟎}    = [≡]-intro
+[−₀]ₗ[+]ᵣ-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([−₀]ₗ[+]ᵣ-nullify{x}{y})
+[−₀]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
 {-# REWRITE [−₀]ₗ[+]ᵣ-nullify #-}
 
-instance
-  [−₀]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) −₀ x ≡ y)
-  [−₀]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity {y}{x}) {expr ↦ (expr −₀ x ≡ y)} ([−₀]ₗ[+]ᵣ-nullify {y}{x})
+[−₀]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) −₀ x ≡ y)
+[−₀]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity {y}{x}) {expr ↦ (expr −₀ x ≡ y)} ([−₀]ₗ[+]ᵣ-nullify {y}{x})
 {-# REWRITE [−₀]ₗ[+]ₗ-nullify #-}
 
-instance
-  [−₀][+]ᵣ-nullify : ∀{x₁ x₂ y} → ((x₁ + y) −₀ (x₂ + y) ≡ x₁ −₀ x₂)
-  [−₀][+]ᵣ-nullify {_} {_} {𝟎}    = [≡]-intro
-  [−₀][+]ᵣ-nullify {x₁}{x₂}{𝐒(y)} = [−₀][+]ᵣ-nullify {x₁}{x₂}{y}
+[−₀][+]ᵣ-nullify : ∀{x₁ x₂ y} → ((x₁ + y) −₀ (x₂ + y) ≡ x₁ −₀ x₂)
+[−₀][+]ᵣ-nullify {_} {_} {𝟎}    = [≡]-intro
+[−₀][+]ᵣ-nullify {x₁}{x₂}{𝐒(y)} = [−₀][+]ᵣ-nullify {x₁}{x₂}{y}
 {-# REWRITE [−₀][+]ᵣ-nullify #-}
 
-instance
-  [−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0)
-  [−₀]-positive {𝟎}   {𝟎}    ()
-  [−₀]-positive {𝐒(x)}{𝟎}    ()
-  [−₀]-positive {𝟎}   {𝐒(y)} (_) = [≤]-with-[𝐒] ⦃ [≤][0]ᵣ-minimum ⦄
-  [−₀]-positive {𝐒(x)}{𝐒(y)} (_) = a where postulate a : ∀{a} → a
-   -- [≤]-with-[𝐒]
+[−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0)
+[−₀]-positive {𝟎}   {𝟎}    ()
+[−₀]-positive {𝐒(x)}{𝟎}    ()
+[−₀]-positive {𝟎}   {𝐒(y)} (_) = [≤]-with-[𝐒] ⦃ [≤][0]ᵣ-minimum ⦄
+[−₀]-positive {𝐒(x)}{𝐒(y)} (_) = a where postulate a : ∀{a} → a
+ -- [≤]-with-[𝐒]
 
 {-
-instance
-  [+][−₀]-commutativity : ∀{x y} → ⦃ _ : y ≥ z ⦄ → (x + (y −₀ z) ≡ (x −₀ z) + y)
+[+][−₀]-commutativity : ∀{x y} → ⦃ _ : y ≥ z ⦄ → (x + (y −₀ z) ≡ (x −₀ z) + y)
 -}
 
-instance
-  postulate [−₀][+]-nullify2 : ∀{x y} → ⦃ _ : (y ≥ x) ⦄ → (x + (y −₀ x) ≡ y)
+postulate [−₀][+]-nullify2 : ∀{x y} → ⦃ _ : (y ≥ x) ⦄ → (x + (y −₀ x) ≡ y)
 -- {-# REWRITE [−₀][+]-nullify2 #-}
 -- x + (y −₀ x) ≡ y
 -- ∃z. x + ((x + z) −₀ x) ≡ y
