@@ -213,5 +213,5 @@ module _ {ℓₒ} where
 module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{ℓ₃}} where
   open Relator.Equals{ℓₗ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
 
-  double-swap : ∀{f : X → Y → Z} → (swap(swap(f)) ≡ f)
-  double-swap = [≡]-intro
+  swap-involution : ∀{f : X → Y → Z} → (swap(swap(f)) ≡ f)
+  swap-involution = [≡]-intro

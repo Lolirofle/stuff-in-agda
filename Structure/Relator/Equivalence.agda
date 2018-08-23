@@ -1,9 +1,7 @@
-module Structure.Relator.Equivalence {ℓ₁} {ℓ₂} where
+module Structure.Relator.Equivalence{ℓ₁}{ℓ₂} where
 
 import      Lvl
-open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
   hiding (reflexivity ; symmetry ; transitivity)
 open import Type{ℓ₂}

@@ -17,7 +17,7 @@ infix  10010 _−_
 _−_ : ℕ → ℕ → ℤ
 x − 𝟎       = ℤ.+ₙ x
 𝟎 − 𝐒(x)    = ℤ.−𝐒ₙ(x)
-𝐒(x) − 𝐒(y) = ℤ.+ₙ(x −₀ y)
+𝐒(x) − 𝐒(y) = x − y
 
 -- Construction of an integer with the sign and numeral components
 signed : (Sign.+|−) → ℕ → ℤ
@@ -72,3 +72,9 @@ _−₀fin_ : (x : ℕ) → ℕ → 𝕟(𝐒(x))
 𝟎    −₀fin _    = 𝕟.𝟎
 𝐒(x) −₀fin 𝟎    = 𝕟.𝐒(x −₀fin 𝟎)
 𝐒(x) −₀fin 𝐒(y) = 𝕟bound.bound-𝐒 (x −₀fin y)
+
+-- Unclosed total subtraction from a natural number and a finite natural number to a finite natural number
+_−fin_ : (x : ℕ) → 𝕟(𝐒(x)) → 𝕟(𝐒(x))
+𝟎    −fin 𝕟.𝟎    = 𝕟.𝟎
+𝐒(x) −fin 𝕟.𝟎    = 𝕟.𝐒(x −fin 𝕟.𝟎)
+𝐒(x) −fin 𝕟.𝐒(y) = 𝕟bound.bound-𝐒 (x −fin y)

@@ -1,4 +1,5 @@
 OPTIONS=--rewriting
+#--exact-split
 
 all: typecheck
 

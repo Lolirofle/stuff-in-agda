@@ -152,6 +152,7 @@ import Structure.Operator.Field
 import Structure.Operator.Group
 import Structure.Operator.Group.Proofs
 import Structure.Operator.Monoid
+import Structure.Operator.Proofs
 import Structure.Operator.Properties
 import Structure.Operator.SetAlgebra
 import Structure.Operator.Vector

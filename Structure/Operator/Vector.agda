@@ -1,9 +1,8 @@
-module Structure.Operator.Vector {ℓ₁} {ℓ₂} where
+module Structure.Operator.Vector{ℓ₁}{ℓ₂} where
 
 import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
-open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
+open import Sets.Setoid{ℓ₁}{ℓ₂}
 open import Structure.Operator.Field{ℓ₁}{ℓ₂}
 open import Structure.Operator.Group{ℓ₁}{ℓ₂}
 open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}
@@ -17,14 +16,14 @@ record Language (V S : Type) : Stmt where
     _+ₛ_ : S → S → S
     _⋅ₛ_ : S → S → S
 
-record VectorSpace (V S : Type) ⦃ lang : Language(V)(S) ⦄ : Stmt where
+record VectorSpace (V S : Type) ⦃ lang : Language(V)(S) ⦄ ⦃ _ : Equiv(V) ⦄ ⦃ _ : Equiv(S) ⦄ : Stmt where
   open Language(lang)
 
   field
    ⦃ scalarField ⦄       : Field(_+ₛ_)(_⋅ₛ_)
-   ⦃ vectorAbelianGroup ⦄ : AbelianGroup(_+ᵥ_)
+   ⦃ vectorCommutativeGroup ⦄ : CommutativeGroup(_+ᵥ_)
 
-  open AbelianGroup ⦃ ... ⦄
+  open CommutativeGroup ⦃ ... ⦄
   open Field ⦃ ... ⦄
   open Group ⦃ ... ⦄
   open Monoid ⦃ ... ⦄
@@ -32,17 +31,17 @@ record VectorSpace (V S : Type) ⦃ lang : Language(V)(S) ⦄ : Stmt where
 
   -- Scalar zero
   𝟎ₛ : S
-  𝟎ₛ = id ⦃ Group.monoid ([+]-group ⦃ scalarField ⦄) ⦄
+  𝟎ₛ = id ⦃ _ ⦄ ⦃ Group.monoid ([+]-group ⦃ _ ⦄ ⦃ scalarField ⦄) ⦄
 
   -- Scalar one
   𝟏ₛ : S
-  𝟏ₛ = id ⦃ MultGroup.monoid ([⋅]-group ⦃ scalarField ⦄) ⦄
+  𝟏ₛ = id ⦃ _ ⦄ ⦃ MultGroup.monoid ([⋅]-group ⦃ _ ⦄ ⦃ scalarField ⦄) ⦄
 
   [⋅ₛᵥ]-id = 𝟏ₛ
 
   -- Scalar negation
   −₁ₛ_ : S → S
-  −₁ₛ_ = Group.inv ([+]-group ⦃ scalarField ⦄)
+  −₁ₛ_ = Group.inv ([+]-group ⦃ _ ⦄ ⦃ scalarField ⦄)
 
   -- Scalar subtraction
   _−ₛ_ : S → S → S
@@ -50,7 +49,7 @@ record VectorSpace (V S : Type) ⦃ lang : Language(V)(S) ⦄ : Stmt where
 
   -- Scalar reciprocal
   ⅟ₛ_ : (x : S) → ⦃ _ : (x ≢ 𝟎ₛ) ⦄ → S
-  ⅟ₛ_ = MultGroup.inv ([⋅]-group ⦃ scalarField ⦄)
+  ⅟ₛ_ = MultGroup.inv ([⋅]-group ⦃ _ ⦄ ⦃ scalarField ⦄)
 
   -- Scalar division
   _/ₛ_ : S → (b : S) → ⦃ _ : (b ≢ 𝟎ₛ) ⦄ → S
@@ -58,11 +57,11 @@ record VectorSpace (V S : Type) ⦃ lang : Language(V)(S) ⦄ : Stmt where
 
   -- Vector zero
   𝟎ᵥ : V
-  𝟎ᵥ = id ⦃ Group.monoid(group ⦃ vectorAbelianGroup ⦄) ⦄
+  𝟎ᵥ = id ⦃ _ ⦄ ⦃ Group.monoid(group ⦃ _ ⦄ ⦃ vectorCommutativeGroup ⦄) ⦄
 
   -- Vector negation
   −₁ᵥ_ : V → V
-  −₁ᵥ_ = Group.inv(group ⦃ vectorAbelianGroup ⦄)
+  −₁ᵥ_ = Group.inv(group ⦃ _ ⦄ ⦃ vectorCommutativeGroup ⦄)
 
   -- Vector subtraction
   _−ᵥ_ : V → V → V

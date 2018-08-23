@@ -4,6 +4,7 @@ import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Propositional{ℓ}
+open import Logic.Propositional.Theorems{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Logic.Predicate.Theorems{ℓ}{Lvl.𝟎}
 open import Numeral.FiniteStrict
@@ -86,7 +87,7 @@ divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , di
     )
   )
 
-divides-with-[⋅] : ∀{a b c} → (a ∣ b) → (a ∣ c) → (a ∣ (b ⋅ c))
+divides-with-[⋅] : ∀{a b c} → (a ∣ b) → (a ∣ c) → (a ∣ (b ⋅ c)) -- TODO: Does it really need both? One of them should be enough?
 divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
 ... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
   (divides-intro
@@ -183,10 +184,10 @@ divides-upper-limit {𝐒(a)}{b} (proof) = ([↔]-elimᵣ [≤]-equivalence) (ex
   existence2 : ∃(n ↦ 𝐒(a) + n ≡ 𝐒(b))
   existence2 = [∃]-intro(𝐒(a) ⋅ [∃]-witness(existence1)) ⦃ [∃]-proof(existence1) ⦄
 
--- TODO: Use contrapositive and [¬¬]-elim on divides-upper-limit
-postulate divides-not-lower-limit : ∀{a b} → (a > 𝐒(b)) → (a ∤ 𝐒(b))
+divides-not-lower-limit : ∀{a b} → (a > 𝐒(b)) → (a ∤ 𝐒(b))
+divides-not-lower-limit {a}{b} = (contrapositiveᵣ (divides-upper-limit {a}{b})) ∘ [>]-to-[≰]
 
 Div𝐏 : ∀{x y : ℕ} → (y ∣ (y + x)) → (y ∣ x)
 Div𝐏 {x}{y} proof = divides-without-[+]ᵣ {y}{y}{x} (proof) (divides-reflexivity)
 
--- divides-factorial : ∀{n x} → (𝐒(x) ≤ n) → (𝐒(x) ∣ n !)
+-- TODO: divides-factorial : ∀{n x} → (𝐒(x) ≤ n) → (𝐒(x) ∣ n !)

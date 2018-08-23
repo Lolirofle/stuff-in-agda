@@ -4,6 +4,8 @@ import      Lvl
 open import Functional
 open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
 open import Logic.Predicate{ℓₗ}{ℓₒ}
+open import Sets.PredicateSet.Filter{ℓₗ}{ℓₒ}
+open import Sets.Setoid{ℓₗ}{ℓₒ}
 open import Structure.Operator.Field{ℓₗ}{ℓₒ}
 open import Structure.Operator.Monoid{ℓₗ}{ℓₒ}
 open import Structure.Operator.Group{ℓₗ}{ℓₒ}
@@ -12,12 +14,11 @@ open        Structure.Relator.Ordering{ℓₗ}{ℓₒ}
 -- import      Structure.Relator.Ordering.Subsets
 -- open        Structure.Relator.Ordering.Subsets.Weak{ℓₗ}{ℓₒ}{ℓₗₒ}
 open        Structure.Relator.Ordering.Weak.Properties{ℓₗ}{ℓₒ}
-open import Sets.PredicateSet.Filter{ℓₗ}{ℓₒ}
 open import Type{ℓₒ}
 open import Type using () renaming (Type to TypeN)
 
 -- Theory defining the axioms of ℝ
-record RealTheory {R : Type} (_+_ _⋅_ : R → R → R) (_≤_ _≡_ : R → R → Stmt) : TypeN{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
+record RealTheory {R : Type} (_+_ _⋅_ : R → R → R) (_≤_ : R → R → Stmt) ⦃ _ : Equiv(R) ⦄ : TypeN{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
   field
     [+][⋅]-field : Field(_+_)(_⋅_)
 

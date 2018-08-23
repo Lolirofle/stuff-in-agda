@@ -8,6 +8,7 @@ open import Numeral.Real
 open        Numeral.Real.Continuity
 open        Numeral.Real.Derivative
 open        Numeral.Real.Limit
+open import Sets.Setoid{Lvl.𝟎}{Lvl.𝟎}
 
 module Limits where
   instance postulate [+]-limit : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → Lim(x ↦ f(x) + g(x))(p)

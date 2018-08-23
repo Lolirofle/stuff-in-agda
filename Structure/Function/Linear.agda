@@ -1,4 +1,4 @@
-module Structure.Function.Linear {ℓ₁} {ℓ₂} where
+module Structure.Function.Linear{ℓ₁}{ℓ₂} where
 
 import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}

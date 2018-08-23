@@ -32,9 +32,17 @@ module _ {ℓ₂} where
 module _ {ℓ₂ ℓ₃} where
   open Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
 
+  -- Definition of a left inverse function for a function
+  Inverseₗ : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (Y → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+  Inverseₗ f f⁻¹ = (∀{x}{y} → (f(x) ≡ y) ← (x ≡ f⁻¹(y)))
+
+  -- Definition of a right inverse function for a function
+  Inverseᵣ : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (Y → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+  Inverseᵣ f f⁻¹ = (∀{x}{y} → (f(x) ≡ y) → (x ≡ f⁻¹(y)))
+
   -- Definition of an inverse function for a function
   Inverse : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (Y → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
-  Inverse f f⁻¹ = (∀{x}{y} → (f(x) ≡ y) → (f⁻¹(y) ≡ x))
+  Inverse f f⁻¹ = (∀{x}{y} → (f(x) ≡ y) ↔ (x ≡ f⁻¹(y)))
 
   Invertible : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
   Invertible f = ∃(Inverse f)
@@ -46,12 +54,23 @@ module _ {ℓ₂ ℓ₃} where
   Preserving {X}{Y} (f)(x)(y) = (∀{a : X} → (f(x(a)) ≡ y(f(a)))) -- TODO: Is it possible to make this more general? So that multiple function applications are allowed?
   -- ∀{a : X} → ((f ∘ x)(a) ≡ (y ∘ f)(a))
 
+  Preserving2 : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (X → X → X) → (Y → Y → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+  Preserving2 (f)(_▫₁_)(_▫₂_) = (∀{x y} → (f(x ▫₁ y) ≡ f(x) ▫₂ f(y)))
+
+  -- Definition of an left inverse for a function
+  InverseIdₗ : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (Y → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+  InverseIdₗ f f⁻¹ = (∀{x} → (f⁻¹ ∘ f)(x) ≡ x) -- TODO: Prove equivalence of this and above
+
+  -- Definition of a right inverse for a function
+  InverseIdᵣ : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (Y → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+  InverseIdᵣ f f⁻¹ = (∀{x} → (f ∘ f⁻¹)(x) ≡ x)
+
 module _ {ℓ₂} where
   open Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
 
-  -- Definition of an inverse function for a function
-  InverseId : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₂}} → (X → Y) → (Y → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
-  InverseId f f⁻¹ = ((f ∘ f⁻¹) ≡ id) -- TODO: Prove equivalence of this and above
+  -- Definition of a function with itself as its inverse (inverse function of function composition (∘))
+  Involution : ∀{X : Type{ℓ₂}} → (X → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+  Involution f = (∀{x} → (f ∘ f)(x) ≡ x)
 
   -- Definition of a constant function
   Constant : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₂}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}

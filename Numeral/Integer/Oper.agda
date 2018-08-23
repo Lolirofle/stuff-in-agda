@@ -2,7 +2,7 @@ module Numeral.Integer.Oper where
 
 open import Numeral.Natural              as ℕ using (ℕ)
 import      Numeral.Natural.Oper         as ℕ
-import      Numeral.Natural.UnclosedOper as ℕ
+open import Numeral.Natural.UnclosedOper using () renaming (_−_ to _−ₙ_ ; signed to signedℕ)
 open import Numeral.Integer
 open import Numeral.Integer.Sign
 import      Numeral.Sign      as Sign
@@ -36,7 +36,7 @@ import      Numeral.Sign.Oper as Sign
 -- Absolute value
 abs : ℤ → ℤ
 abs(+ₙ x)  = +ₙ x
-abs(−𝐒ₙ x) = 𝐒(+ₙ x)
+abs(−𝐒ₙ x) = +𝐒ₙ x
 
 ------------------------------------------
 -- Binary operations
@@ -47,9 +47,9 @@ infixl 10020 _⋅_
 -- Addition
 _+_ : ℤ → ℤ → ℤ
 (+ₙ x) + (+ₙ y) = +ₙ (x ℕ.+ y)
-(−𝐒ₙ x) + (−𝐒ₙ y) = −𝐒ₙ(x ℕ.+ (ℕ.𝐒(y)))
-(+ₙ x) + (−𝐒ₙ(y)) = x ℕ.− ℕ.𝐒(y)
-(−𝐒ₙ(x)) + (+ₙ y) = y ℕ.− ℕ.𝐒(x)
+(−𝐒ₙ x) + (−𝐒ₙ y) = −𝐒ₙ(ℕ.𝐒(x ℕ.+ y))
+(+ₙ x) + (−𝐒ₙ(y)) = x −ₙ ℕ.𝐒(y)
+(−𝐒ₙ(x)) + (+ₙ y) = y −ₙ ℕ.𝐒(x)
 
 -- Subtraction
 _−_ : ℤ → ℤ → ℤ
@@ -57,4 +57,4 @@ x − y = x + (− y)
 
 -- Multiplication
 _⋅_ : ℤ → ℤ → ℤ
-x ⋅ y = ℕ.signed ((sign x) Sign.⨯ (sign y)) ((absₙ x) ℕ.⋅ (absₙ y))
+x ⋅ y = signedℕ ((sign x) Sign.⨯ (sign y)) ((absₙ x) ℕ.⋅ (absₙ y))

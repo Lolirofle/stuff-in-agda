@@ -5,6 +5,7 @@ open import Functional
 open import Lang.Instance
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
+open import Sets.Setoid{ℓ₁}{ℓ₂} using (Equiv)
 open import Structure.Relator.Equivalence{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
 open import Type
@@ -90,3 +91,7 @@ instance
 -- TODO: Usage: https://stackoverflow.com/questions/22580842/non-trivial-negation-in-agda
 [≡]-identity-eliminator : ∀{T : Type} → (P : ∀{x y : T} → (x ≡ y) → Stmt) → (∀{x : T} → P{x}{x}([≡]-intro)) → (∀{x y : T} → (eq : (x ≡ y)) → P{x}{y}(eq))
 [≡]-identity-eliminator _ proof {x}{.x} [≡]-intro = proof{x}
+
+instance
+  [≡]-equiv : ∀{T} → Equiv(T)
+  [≡]-equiv{T} = Equiv.equiv-inst(_≡_ {T})

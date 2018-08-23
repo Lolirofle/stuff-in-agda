@@ -15,3 +15,5 @@ gcd(a)(𝐒(b)) = gcd(𝐒(b))(_mod_ a (𝐒(b)) ⦃ [𝐒]-not-0 ⦄)
 
 -- lcm : ℕ → ℕ → ℕ
 -- lcm(a)(b) = (a ⋅ b) / gcd(a)(b)
+
+-- TODO: Prove (gcd(a)(b) ∣ a) and (gcd(a)(b) ∣ b)

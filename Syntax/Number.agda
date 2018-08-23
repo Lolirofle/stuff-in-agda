@@ -30,3 +30,22 @@ instance
   Level-From-ℕ : From-ℕ (Lvl.Level)
   from-ℕ ⦃ Level-From-ℕ ⦄ (ℕ.𝟎)    = Lvl.𝟎
   from-ℕ ⦃ Level-From-ℕ ⦄ (ℕ.𝐒(n)) = Lvl.𝐒(from-ℕ(n))
+
+
+
+record From-negative-ℕsubset {ℓ} (T : Set(ℓ)) : Set(Lvl.𝐒(ℓ)) where
+  field
+    restriction  : ℕ → Set(ℓ)
+    from-negative-ℕsubset : (n : ℕ) → ⦃ _ : restriction(n) ⦄ → T
+open From-negative-ℕsubset ⦃ ... ⦄ public using (from-negative-ℕsubset)
+{-# BUILTIN FROMNEG from-negative-ℕsubset #-}
+
+record From-negative-ℕ {ℓ} (T : Set(ℓ)) : Set(ℓ) where
+  field
+    from-negative-ℕ : ℕ → T
+open From-negative-ℕ ⦃ ... ⦄ public
+
+instance
+  From-negative-ℕsubset-from-From-negative-ℕ : ∀{ℓ}{T} → ⦃ _ : From-negative-ℕ{ℓ}(T) ⦄ → From-negative-ℕsubset{ℓ}(T)
+  From-negative-ℕsubset.restriction ( From-negative-ℕsubset-from-From-negative-ℕ ) (_) = ⊤
+  from-negative-ℕsubset ⦃ From-negative-ℕsubset-from-From-negative-ℕ ⦄ (n) ⦃ _ ⦄ = from-negative-ℕ (n)

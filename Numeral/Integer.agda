@@ -2,6 +2,7 @@ module Numeral.Integer where
 
 open import Numeral.Natural      as ℕ using (ℕ)
 import      Numeral.Natural.Oper as ℕ
+open import Syntax.Number
 
 -- Integers
 data ℤ : Set where
@@ -21,7 +22,7 @@ data ℤ : Set where
 −ₙ (ℕ.𝐒(x)) = −𝐒ₙ(x)
 
 -- Intuitive constructor patterns
-pattern 𝟎    = +ₙ (ℕ.𝟎) -- Zero
+pattern 𝟎     = +ₙ (ℕ.𝟎)    -- Zero
 pattern +𝐒ₙ n = +ₙ (ℕ.𝐒(n)) -- Positive integers (1,..)
 
 -- Absolute value
@@ -30,11 +31,10 @@ absₙ(+ₙ x)   = x
 absₙ(−𝐒ₙ(x)) = ℕ.𝐒(x)
 
 -- Syntax
-record From-negative-ℕ (T : Set) : Set where
-  field from-negative-ℕ : ℕ → T
-open From-negative-ℕ ⦃ ... ⦄ public
-{-# BUILTIN FROMNEG from-negative-ℕ #-}
-
 instance
   ℤ-From-negative-ℕ : From-negative-ℕ (ℤ)
   from-negative-ℕ ⦃ ℤ-From-negative-ℕ ⦄ = −ₙ_
+
+instance
+  ℤ-From-ℕ : From-ℕ (ℤ)
+  from-ℕ ⦃ ℤ-From-ℕ ⦄ = +ₙ_

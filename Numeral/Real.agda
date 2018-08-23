@@ -9,6 +9,7 @@ open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
 open import Numeral.Integer hiding (𝟎)
 open import Numeral.Natural
 open import Sets.PredicateSet.Filter{Lvl.𝟎}{Lvl.𝟎}
+open import Sets.Setoid{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Field{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Group{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Properties{Lvl.𝟎}{Lvl.𝟎}
@@ -28,14 +29,10 @@ postulate ℝ : Set
 -- infixr 100 _≡_ _≢_ _<_ _>_ _≤_ _≥_ _<_<_
 
 -- Equals
-postulate _≡_ : ℝ → ℝ → Stmt
+instance postulate [≡]-equiv : Equiv(ℝ)
 
 -- Lesser than
 postulate _<_ : ℝ → ℝ → Stmt
-
--- Not equals
-_≢_ : ℝ → ℝ → Stmt
-x ≢ y = ¬(x ≡ y)
 
 open From-[<][≡] (_<_) (_≡_) public
 
@@ -114,7 +111,7 @@ postulate atan : ℝ → ℝ
 -- [Stuctures]
 
 instance
-  postulate [ℝ]-realTheory : RealTheory(_+_)(_⋅_)(_≤_)(_≡_)
+  postulate [ℝ]-realTheory : RealTheory(_+_)(_⋅_)(_≤_)
 
 instance
   postulate [ℝ][<]-strictPartialOrder : Strict.Order {ℝ} (_<_)
