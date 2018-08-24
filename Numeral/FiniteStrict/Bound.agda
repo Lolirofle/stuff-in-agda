@@ -28,6 +28,12 @@ bound-maxₗ {n₁}{n₂} (n) = [≡]-substitutionₗ (max-elementary{n₁}{n₂
 bound-maxᵣ : ∀{n₁ n₂} → 𝕟(n₂) → 𝕟(max n₁ n₂)
 bound-maxᵣ {n₁}{n₂} (n) = [≡]-substitutionᵣ (max-commutativity{n₂}{n₁}) {𝕟} (bound-maxₗ {n₂}{n₁} (n))
 
+postulate bound-minₗ : ∀{n₁ n₂} → 𝕟(min n₁ n₂) → 𝕟(n₁)
+-- bound-minₗ {n₁}{n₂} (n) = TODO: Use the proof that min always is one of its args
+
+postulate bound-minᵣ : ∀{n₁ n₂} → 𝕟(min n₁ n₂) → 𝕟(n₂)
+-- bound-minᵣ {n₁}{n₂} (n) = 
+
 {-instance
   postulate downscale-instance : ∀{n} → ⦃ nfin : 𝕟(ℕ.𝐒(n)) ⦄ → ⦃ _ : [𝕟]-to-[ℕ]{ℕ.𝐒(n)}(nfin) lteq2 n ⦄ → 𝕟(n)
 -}

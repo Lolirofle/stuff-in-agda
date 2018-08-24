@@ -36,7 +36,7 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
     module _ where
       LinearCombination : ∀{n} → Scalars(n) → Vectors(n) → V
       LinearCombination {0}       _ _ = 𝟎ᵥ
-      LinearCombination {1}       sf vf = (sf(0) ⦃ [<][0]-minimum ⦄) ⋅ₛᵥ (vf(0) ⦃ [<][0]-minimum ⦄)
+      LinearCombination {1}       sf vf = (sf(0) ⦃ [<]-minimum ⦄) ⋅ₛᵥ (vf(0) ⦃ [<]-minimum ⦄)
       LinearCombination {𝐒(𝐒(n))} sf vf = (LinearCombination {𝐒(n)} sf₋ vf₋) +ᵥ ((sf(𝐒(n)) ⦃ [<]-of-[𝐒] {𝐒(n)} ⦄) ⋅ₛᵥ (vf(𝐒(n)) ⦃ [<]-of-[𝐒] {𝐒(n)} ⦄)) where
         postulate sf₋ : (i : ℕ) → ⦃ _ : i < 𝐒(n) ⦄ → S
         postulate vf₋ : (i : ℕ) → ⦃ _ : i < 𝐒(n) ⦄ → V

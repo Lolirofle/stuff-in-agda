@@ -13,10 +13,10 @@ open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 open import Type
 
 [ℕ]-unnecessary-induction : ∀{b : ℕ}{φ : ℕ → Stmt} → (∀(i : ℕ) → (i ≤ b) → φ(i)) → (∀(i : ℕ) → φ(i) → φ(𝐒(i))) → (∀{n} → φ(n))
-[ℕ]-unnecessary-induction {𝟎}   {φ} (base) (next) = [ℕ]-induction {φ} (base(𝟎) ([≤][0]ᵣ-minimum)) (next)
+[ℕ]-unnecessary-induction {𝟎}   {φ} (base) (next) = [ℕ]-induction {φ} (base(𝟎) ([≤]-minimum)) (next)
 [ℕ]-unnecessary-induction {𝐒(b)}{φ} (base) (next) = [ℕ]-unnecessary-induction {b}{φ} (base-prev) (next) where
   base-prev : ∀(i : ℕ) → (i ≤ b) → φ(i)
-  base-prev(𝟎)    (proof) = base(𝟎) ([≤][0]ᵣ-minimum)
+  base-prev(𝟎)    (proof) = base(𝟎) ([≤]-minimum)
   base-prev(𝐒(i)) (proof) = next(i) (base-prev(i) ([≤]-predecessor {i}{b} proof))
 
 -- TODO: Can this proof be made more simple?

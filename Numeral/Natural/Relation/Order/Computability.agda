@@ -24,12 +24,12 @@ instance
     proof : ∀{x}{y} → (x ≤ y) ↔ ((x ≤? y) ≡ 𝑇)
     proof{x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
       l : ∀{x}{y} → (x ≤ y) ← ((x ≤? y) ≡ 𝑇)
-      l{𝟎}   {_}   ([≡]-intro) = [≤][0]ᵣ-minimum
+      l{𝟎}   {_}   ([≡]-intro) = [≤]-minimum
       l{𝐒(x)}{𝟎}   ()
       l{𝐒(x)}{𝐒(y)}(proof)     = [≤]-with-[𝐒] ⦃ l{x}{y}(proof) ⦄
 
       r : ∀{x}{y} → (x ≤ y) → ((x ≤? y) ≡ 𝑇)
-      r{𝟎}   {y}    ([≤][0]ᵣ-minimum)      = [≡]-intro
+      r{𝟎}   {y}    ([≤]-minimum)      = [≡]-intro
       r{𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = r{x}{y} (proof)
 
 instance -- TODO: Is it possible to reuse the proof of [≤]-computable?
@@ -40,12 +40,12 @@ instance -- TODO: Is it possible to reuse the proof of [≤]-computable?
     proof : ∀{x}{y} → (x ≥ y) ↔ ((x ≥? y) ≡ 𝑇)
     proof{x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
       l : ∀{x}{y} → (x ≥ y) ← ((x ≥? y) ≡ 𝑇)
-      l{_}   {𝟎}   ([≡]-intro) = [≤][0]ᵣ-minimum
+      l{_}   {𝟎}   ([≡]-intro) = [≤]-minimum
       l{𝟎}   {𝐒(y)}()
       l{𝐒(x)}{𝐒(y)}(proof)     = [≤]-with-[𝐒] ⦃ l{x}{y}(proof) ⦄
 
       r : ∀{x}{y} → (x ≥ y) → ((x ≥? y) ≡ 𝑇)
-      r{x}   {𝟎}    ([≤][0]ᵣ-minimum)      = [≡]-intro
+      r{x}   {𝟎}    ([≤]-minimum)      = [≡]-intro
       r{𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = r{x}{y} (proof)
 
 -- TODO: [<]-computable

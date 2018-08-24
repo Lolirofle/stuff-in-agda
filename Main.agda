@@ -72,6 +72,7 @@ import Numeral.Finite
 import Numeral.FiniteStrict
 import Numeral.FiniteStrict.Oper.Comparisons
 import Numeral.FiniteStrict.Bound
+import Numeral.FiniteStrict.Functions
 import Numeral.FiniteStrict.Oper
 import Numeral.FiniteStrict.Proofs
 import Numeral.Integer
@@ -138,12 +139,10 @@ import Sets.PredicateSet.Finite
 import Sets.PredicateSet.Proofs
 import Sets.PredicateSet.Relations
 import Sets.Setoid
-import Sets.TypeSet
 import Stream
 import String
 import Structure.Arithmetic
 import Structure.Category
-import Structure.Function
 import Structure.Function.Domain
 import Structure.Function.Linear
 import Structure.Function.Ordering
@@ -158,6 +157,7 @@ import Structure.Operator.SetAlgebra
 import Structure.Operator.Vector
 import Structure.Real
 import Structure.Relator.Equivalence as Eq
+import Structure.Relator.Function
 import Structure.Relator.Ordering
 import Structure.Relator.Ordering.Subsets
 import Structure.Relator.Properties

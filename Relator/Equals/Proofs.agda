@@ -5,7 +5,7 @@ open import Functional
 open import Lang.Instance
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
-open import Sets.Setoid{ℓ₁}{ℓ₂} using (Equiv)
+open import Sets.Setoid{ℓ₁} using (Equiv)
 open import Structure.Relator.Equivalence{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
 open import Type
@@ -94,4 +94,4 @@ instance
 
 instance
   [≡]-equiv : ∀{T} → Equiv(T)
-  [≡]-equiv{T} = Equiv.equiv-inst(_≡_ {T})
+  [≡]-equiv{T} = Equiv.intro(_≡_ {T})

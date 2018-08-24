@@ -6,7 +6,7 @@ open import Logic.Predicate{ℓₗ}
 open import Functional
 import      Relator.Equals
 open import Relator.Equals.Proofs{ℓₗ}
-open import Structure.Function{ℓₗ}
+open import Structure.Relator.Function{ℓₗ}
 open import Structure.Function.Domain{ℓₗ}
 open import Type
 
@@ -14,7 +14,7 @@ module _ {ℓₒ₁ ℓₒ₂} where
   open Relator.Equals{ℓₗ Lvl.⊔ ℓₒ₁ Lvl.⊔ ℓₒ₂}
 
   -- There is a function for a binary relation that is total and function-like.
-  function-existence : ∀{A : Type{ℓₒ₁}}{B : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂}} → (φ : A → B → Stmt) → ⦃ _ : Totality(φ)⦄ → ⦃ _ : FunctionLike(φ)⦄ → ∃(f ↦ ∀{x}{y} → (f(x) ≡ y) ↔ φ(x)(y))
+  function-existence : ∀{A : Type{ℓₒ₁}}{B : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂}} → (φ : A → B → Stmt) → ⦃ _ : FunctionTotal(φ)⦄ → ⦃ _ : Function(φ)⦄ → ∃(f ↦ ∀{x}{y} → (f(x) ≡ y) ↔ φ(x)(y))
   function-existence{A}{B} (φ) ⦃ totality ⦄ ⦃ function ⦄ = [∃]-intro(f) ⦃ \{x y} → proof{x}{y} ⦄ where
     -- The function
     f : A → B
@@ -36,7 +36,7 @@ module _ {ℓₒ₁ ℓₒ₂} where
         -- φ(x)([∃]-witness(totality{x}))
 
   -- Constructing a total function from a a binary operation with conditions.
-  function : ∀{A : Type{ℓₒ₁}}{B : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂}} → (φ : A → B → Stmt) → ⦃ _ : Totality(φ)⦄ → ⦃ _ : FunctionLike(φ)⦄ → (A → B)
+  function : ∀{A : Type{ℓₒ₁}}{B : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂}} → (φ : A → B → Stmt) → ⦃ _ : FunctionTotal(φ)⦄ → ⦃ _ : Function(φ)⦄ → (A → B)
   function(φ) ⦃ totality ⦄ ⦃ function ⦄ = [∃]-witness(function-existence(φ) ⦃ totality ⦄ ⦃ function ⦄)
 
 module _ {ℓₒ : Lvl.Level} {X : Type{ℓₒ}} {Y : Type{ℓₒ}} where
@@ -107,7 +107,7 @@ module _ {ℓₒ} where
 
   -- A function is total
   -- ∀{x} → ∃(y ↦ f(x) ≡ y)
-  Function-totality : ∀{A B : Type{ℓₒ}}{f : A → B} → Totality(x ↦ y ↦ f(x) ≡ y)
+  Function-totality : ∀{A B : Type{ℓₒ}}{f : A → B} → FunctionTotal(x ↦ y ↦ f(x) ≡ y)
   Function-totality{_}{_} {f}{x} = [∃]-intro(f(x)) ⦃ [≡]-intro ⦄
 
   -- A function is function-like.

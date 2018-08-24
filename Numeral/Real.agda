@@ -9,7 +9,7 @@ open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
 open import Numeral.Integer hiding (𝟎)
 open import Numeral.Natural
 open import Sets.PredicateSet.Filter{Lvl.𝟎}{Lvl.𝟎}
-open import Sets.Setoid{Lvl.𝟎}{Lvl.𝟎}
+open import Sets.Setoid{Lvl.𝟎}
 open import Structure.Operator.Field{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Group{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Operator.Properties{Lvl.𝟎}{Lvl.𝟎}

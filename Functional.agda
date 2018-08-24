@@ -31,6 +31,14 @@ const(x)(_) = x
 apply : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₂) → T₂
 apply(x)(f) = f(x)
 
+-- Function application as an operator. Function to the left, value to the right.
+_⩹_ : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (T₁ → T₂) → T₁ → T₂
+f ⩹ x = f(x)
+
+-- Function application as an operator. Value to the left, function to the right.
+_⩺_ : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₂) → T₂
+x ⩺ f = f(x)
+
 -- Swapping the arguments of a binary operation
 swap : ∀{ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}}{T₃ : Type{ℓ₃}} → (T₁ → T₂ → T₃) → (T₂ → T₁ → T₃)
 swap f(x₂)(x₁) = f(x₁)(x₂)

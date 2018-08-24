@@ -3,7 +3,7 @@ module Structure.Operator.Group {ℓ₁} {ℓ₂} where
 open import Functional hiding (id)
 import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Sets.Setoid{ℓ₁}{ℓ₂}
+open import Sets.Setoid{ℓ₁}
 open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}

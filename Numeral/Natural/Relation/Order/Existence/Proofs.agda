@@ -21,8 +21,8 @@ open import Type
 [≤]-from-[≡] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
 [≤]-from-[≡] x≡y = [∃]-intro 0 ⦃ x≡y ⦄
 
-[≤][0]ᵣ-minimum : ∀{x : ℕ} → (0 ≤ x)
-[≤][0]ᵣ-minimum {x} = [∃]-intro x ⦃ [+]-identityₗ ⦄
+[≤]-minimum : ∀{x : ℕ} → (0 ≤ x)
+[≤]-minimum {x} = [∃]-intro x ⦃ [+]-identityₗ ⦄
 -- [∃]-intro {ℕ} {\n → 0 + n ≡ x} (x) ⦃ [+]-identityₗ ⦄
 
 [≤][0]ᵣ : ∀{x : ℕ} → (x ≤ 0) ↔ (x ≡ 0)
@@ -62,7 +62,7 @@ open import Type
     ⦄
 
 [≤]-without-[𝐒] : ∀{a b : ℕ} → (a ≤ b) ← (𝐒(a) ≤ 𝐒(b))
-[≤]-without-[𝐒] {𝟎}   {b}    (_)                    = [≤][0]ᵣ-minimum
+[≤]-without-[𝐒] {𝟎}   {b}    (_)                    = [≤]-minimum
 [≤]-without-[𝐒] {𝐒(a)}{𝟎}    ()
 [≤]-without-[𝐒] {𝐒(a)}{𝐒(b)} ([∃]-intro(n) ⦃ proof ⦄) = [≤]-with-[𝐒] {a}{b} ([≤]-without-[𝐒] {a}{b} ([∃]-intro(n) ⦃ [𝐒]-injectivity proof ⦄))
 
@@ -87,7 +87,7 @@ instance
 
 instance
   [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
-  antisymmetry ⦃ [≤]-antisymmetry ⦄ {a} {b} (([∃]-intro(n₁) ⦃ a+n₁≡b ⦄) , ([∃]-intro(n₂) ⦃ b+n₂≡a ⦄)) = [≡]-elimᵣ (n₁≡0) {n ↦ (a + n ≡ b)} (a+n₁≡b) where
+  antisymmetry ⦃ [≤]-antisymmetry ⦄ {a} {b} ([∃]-intro(n₁) ⦃ a+n₁≡b ⦄) ([∃]-intro(n₂) ⦃ b+n₂≡a ⦄) = [≡]-elimᵣ (n₁≡0) {n ↦ (a + n ≡ b)} (a+n₁≡b) where
     n₁+n₂≡0 : ((n₁ + n₂) ≡ 0)
     n₁+n₂≡0 =
       [+]-injectivityᵣ(
@@ -113,8 +113,8 @@ instance
       reflexivity  = [≤]-reflexivity
     }
 
-[<][0]-minimum : ∀{x : ℕ} → (0 < 𝐒(x))
-[<][0]-minimum {x} = [≤]-with-[𝐒] {0} ([≤][0]ᵣ-minimum)
+[<]-minimum : ∀{x : ℕ} → (0 < 𝐒(x))
+[<]-minimum {x} = [≤]-with-[𝐒] {0} ([≤]-minimum)
 
 [≥]-is-[≮] : ∀{a b : ℕ} → ¬(a < b) ← (a ≥ b)
 [≥]-is-[≮] {a}{b} (b≤a) (Sa≤b) = [≤][𝐒]ₗ (transitivity {_}{_}{𝐒(a)}{b}{a} (Sa≤b) (b≤a))
@@ -129,8 +129,8 @@ instance
 -- [<]-is-[≱] {a}{b} = [>]-is-[≰] {b}{a}
 
 instance
-  [≤]-totality : Total(_≤_)
-  total ⦃ [≤]-totality ⦄ {𝟎}   {𝟎}    = [∨]-introₗ ([≤]-from-[≡] [≡]-intro)
-  total ⦃ [≤]-totality ⦄ {𝐒(a)}{𝟎}    = [∨]-introᵣ ([≤][0]ᵣ-minimum)
-  total ⦃ [≤]-totality ⦄ {𝟎}   {𝐒(b)} = [∨]-introₗ ([≤][0]ᵣ-minimum)
-  total ⦃ [≤]-totality ⦄ {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ ([≤]-with-[𝐒] {a}{b})) ([∨]-introᵣ ∘ ([≤]-with-[𝐒] {b}{a})) (total ⦃ [≤]-totality ⦄ {a}{b})
+  [≤]-totality : ConverseTotal(_≤_)
+  converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝟎}    = [∨]-introₗ ([≤]-from-[≡] [≡]-intro)
+  converseTotal ⦃ [≤]-totality ⦄ {𝐒(a)}{𝟎}    = [∨]-introᵣ ([≤]-minimum)
+  converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝐒(b)} = [∨]-introₗ ([≤]-minimum)
+  converseTotal ⦃ [≤]-totality ⦄ {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ ([≤]-with-[𝐒] {a}{b})) ([∨]-introᵣ ∘ ([≤]-with-[𝐒] {b}{a})) (converseTotal ⦃ [≤]-totality ⦄ {a}{b})

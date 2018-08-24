@@ -5,7 +5,7 @@ open import Functional
 open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
 open import Logic.Predicate{ℓₗ}{ℓₒ}
 open import Sets.PredicateSet.Filter{ℓₗ}{ℓₒ}
-open import Sets.Setoid{ℓₗ}{ℓₒ}
+open import Sets.Setoid{ℓₗ}
 open import Structure.Operator.Field{ℓₗ}{ℓₒ}
 open import Structure.Operator.Monoid{ℓₗ}{ℓₒ}
 open import Structure.Operator.Group{ℓₗ}{ℓₒ}

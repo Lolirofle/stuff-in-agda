@@ -19,7 +19,7 @@ module Weak {T : Type} (_≤_ : T → T → Stmt) where
   record TotalOrder (_≡_ : T → T → Stmt) : Stmt where
     field
      ⦃ partialOrder ⦄ : PartialOrder (_≡_)
-     ⦃ totality ⦄    : Total (_≤_)
+     ⦃ totality ⦄    : ConverseTotal (_≤_)
 
   module Properties where
     record Minimum : Stmt where

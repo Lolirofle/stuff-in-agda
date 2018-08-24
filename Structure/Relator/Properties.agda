@@ -7,21 +7,23 @@ open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Numeral.Natural
 open import Type{ℓ₂}
 
--- infixl 1000 _🝖_
-
-FlipPattern : {T₁ T₂ : Type} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
-FlipPattern {T₁} {T₂} (_▫₁_) (_▫₂_) = (∀{x : T₁}{y : T₂} → (x ▫₁ y) → (y ▫₂ x))
+ConversePattern : {T₁ T₂ : Type} → (T₁ → T₂ → Stmt) → (T₂ → T₁ → Stmt) → Stmt
+ConversePattern {T₁} {T₂} (_▫₁_) (_▫₂_) = (∀{x : T₁}{y : T₂} → (x ▫₁ y) → (y ▫₂ x))
 
 -- TODO: Maybe use `abstract` blocks instead of `records`? The reason for having records is after all to get ⦃⦄-implicits working.
 
--- Definition of a reflexive binary operation
+-- Definition of a reflexive binary relation
 record Reflexivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  constructor intro
+
   field
     reflexivity : ∀{x : T} → (x ▫ x)
 open Reflexivity ⦃ ... ⦄ public
 
--- Definition of a transitive binary operation
+-- Definition of a transitive binary relation
 record Transitivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  constructor intro
+
   field
     transitivity : ∀{x y z : T} → (x ▫ y) → (y ▫ z) → (x ▫ z)
 
@@ -32,23 +34,30 @@ record Transitivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
 
 open Transitivity ⦃ ... ⦄ public
 
--- Definition of a antisymmetric binary operation
+-- Definition of a antisymmetric binary relation
 record Antisymmetry {T : Type} (_▫₁_ _▫₂_ : T → T → Stmt) : Stmt where
+  constructor intro
+
   field
-    antisymmetry : ∀{a b : T} → ((a ▫₁ b) ∧ (b ▫₁ a)) → (a ▫₂ b)
+    antisymmetry : ∀{a b : T} → (a ▫₁ b) → (b ▫₁ a) → (a ▫₂ b)
 open Antisymmetry ⦃ ... ⦄ public
 
--- Definition of a irreflexive binary operation
+-- Definition of a irreflexive binary relation
 record Irreflexivity {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  constructor intro
+
   field
     irreflexivity : ∀{x : T} → ¬(x ▫ x)
 open Irreflexivity ⦃ ... ⦄ public
 
--- Definition of a total binary operation
-record Total {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+-- Definition of a total binary relation.
+-- Total in the sense that it, or its converse, holds.
+record ConverseTotal {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  constructor intro
+
   field
-    total : ∀{x y : T} → (x ▫ y) ∨ (y ▫ x)
-open Total ⦃ ... ⦄ public
+    converseTotal : ∀{x y : T} → (x ▫ y) ∨ (y ▫ x)
+open ConverseTotal ⦃ ... ⦄ public
 
 -- Dichotomy : {T : Type}} → (T → T → Stmt) → Stmt
 -- Dichotomy {T} (_▫_) = {x y : T} → (x ▫ y) ⊕ (y ▫ x)
@@ -65,22 +74,29 @@ open Total ⦃ ... ⦄ public
 
 -- Definition of a converse binary operation for a binary operation
 record Converse {T₁ T₂ : Type} (_▫₁_ : T₁ → T₂ → Stmt) (_▫₂_ : T₂ → T₁ → Stmt) : Stmt where
+  constructor intro
+
   field
-    converse : FlipPattern (_▫₁_) (_▫₂_) ∧ FlipPattern (_▫₂_) (_▫₁_)
+    converseₗ : ConversePattern (_▫₂_) (_▫₁_)
+    converseᵣ : ConversePattern (_▫₁_) (_▫₂_)
 open Converse ⦃ ... ⦄ public
 -- {x : T₁}{y : T₂} → (x ▫₁ y) ↔ (y ▫₂ x)
 
 -- Definition of a symmetric binary operation
 record Symmetry {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  constructor intro
+
   field
-    symmetry : FlipPattern (_▫_) (_▫_)
+    symmetry : ConversePattern (_▫_) (_▫_)
 open Symmetry ⦃ ... ⦄ public
 -- {x y : T} → (x ▫ y) → (y ▫ x)
 
--- Definition of a asymmetric binary operation
+-- Definition of an asymmetric binary operation
 record Asymmetry {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+  constructor intro
+
   field
-    asymmetry : FlipPattern (_▫_) (x ↦ y ↦ ¬(x ▫ y))
+    asymmetry : ConversePattern (_▫_) (x ↦ y ↦ ¬(x ▫ y))
 open Asymmetry ⦃ ... ⦄ public
 -- {x y : T} → (x ▫ y) → ¬(y ▫ x)
 
