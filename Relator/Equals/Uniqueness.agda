@@ -18,4 +18,7 @@ Unique {T} property = ∀{x y : T} → property(x) → property(y) → (x ≡ y)
 ∃! : ∀{T} → (T → Stmt) → Stmt
 ∃! {T} property = ∃(a ↦ property(a)) ∧ Unique{T}(property)
 
+[∃!]-existence  = [∧]-elimₗ
+[∃!]-uniqueness = [∧]-elimᵣ
+
 -- TODO: [∃!]-equivalence {T} property = ∃(a ↦ ∃{property(a)}(pa ↦ pa ∧ Uniqueness{T}(property){a}(pa)))

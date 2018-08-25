@@ -148,6 +148,7 @@ import Structure.Function.Linear
 import Structure.Function.Ordering
 import Structure.LinearAlgebra
 import Structure.Operator.Field
+import Structure.Operator.Functions
 import Structure.Operator.Group
 import Structure.Operator.Group.Proofs
 import Structure.Operator.Monoid

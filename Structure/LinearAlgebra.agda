@@ -1,11 +1,15 @@
 module Structure.LinearAlgebra {ℓ} where
 
 import      Lvl
+open import Data.Tuple
 open import Functional hiding (id)
+open import Functional.Equals
 open import Functional.Proofs
 open import Logic.Propositional{ℓ Lvl.⊔ ℓ}
 open import Logic.Propositional.Theorems{ℓ}
 open import Logic.Predicate{ℓ}
+open import Numeral.CoordinateVector{ℓ} as Vec renaming (Vector to Vec)
+open import Numeral.FiniteStrict
 open import Numeral.Natural
 open import Numeral.Natural.Relation.Order{ℓ}
 open import Numeral.Natural.Relation.Order.Proofs{ℓ}
@@ -18,6 +22,7 @@ open import Structure.Operator.Field{ℓ}{ℓ}
 open import Structure.Operator.Group{ℓ}{ℓ}
 open import Structure.Operator.Properties{ℓ}{ℓ}
 open import Structure.Operator.Vector{ℓ}{ℓ}
+open import Syntax.Number
 open import Type{ℓ}
 
 module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
@@ -26,128 +31,140 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
     open VectorSpace(VSP)
 
     -- A list of scalars
-    Scalars : ℕ → Stmt
-    Scalars(n) = ((i : ℕ) → ⦃ _ : i < n ⦄ → S) -- TODO: Maybe use 𝕟 instead? Or just use CoordinateVector
+    Scalars : ℕ → Type
+    Scalars(n) = Vec(n)(S) -- TODO: Prove that this type is a group if its underlying type (S) is a group. THen proceed to prove that injective-kernelᵣ holds with LinearCombination(_) being a homomorphism, which one can deduce that LinearlyIndependent is equivalent to Injective.
 
     -- A list of vectors
-    Vectors : ℕ → Stmt
-    Vectors(n) = ((i : ℕ) → ⦃ _ : i < n ⦄ → V)
+    Vectors : ℕ → Type
+    Vectors(n) = Vec(n)(V)
 
     module _ where
-      LinearCombination : ∀{n} → Scalars(n) → Vectors(n) → V
+      -- A specific linear combination of vectors (specific as specified by scalars).
+      -- Linear combination of 0 scalars and vectors are the zero vector.
+      -- Linear combination of 1 scalar and vector is just scalar on vector multiplication.
+      -- Example: LinearCombination {4} sf vf = (sf[0] ⋅ₛᵥ vf[0]) +ᵥ (sf[1] ⋅ₛᵥ vf[1]) +ᵥ (sf[2] ⋅ₛᵥ vf[2]) +ᵥ (sf[3] ⋅ₛᵥ vf[3])
+      LinearCombination : ∀{n} → Vectors(n) → Scalars(n) → V
       LinearCombination {0}       _ _ = 𝟎ᵥ
-      LinearCombination {1}       sf vf = (sf(0) ⦃ [<]-minimum ⦄) ⋅ₛᵥ (vf(0) ⦃ [<]-minimum ⦄)
-      LinearCombination {𝐒(𝐒(n))} sf vf = (LinearCombination {𝐒(n)} sf₋ vf₋) +ᵥ ((sf(𝐒(n)) ⦃ [<]-of-[𝐒] {𝐒(n)} ⦄) ⋅ₛᵥ (vf(𝐒(n)) ⦃ [<]-of-[𝐒] {𝐒(n)} ⦄)) where
-        postulate sf₋ : (i : ℕ) → ⦃ _ : i < 𝐒(n) ⦄ → S
-        postulate vf₋ : (i : ℕ) → ⦃ _ : i < 𝐒(n) ⦄ → V
+      LinearCombination {1}       vf sf = Vec.proj(sf)(0) ⋅ₛᵥ Vec.proj(vf)(0)
+      LinearCombination {𝐒(𝐒(n))} vf sf = (Vec.proj(sf)(0) ⋅ₛᵥ Vec.proj(vf)(0)) +ᵥ (LinearCombination {𝐒(n)} (Vec.tail vf) (Vec.tail sf))
+
+      postulate LinearCombination-addition    : ∀{n}{sf₁ sf₂}{vf} → (LinearCombination{n}(vf)(sf₁) +ᵥ LinearCombination{n}(vf)(sf₂) ≡ LinearCombination{n}(vf)(sf₁ 〔 lift-binOp (_+ₛ_) 〕 sf₂))
+      postulate LinearCombination-subtraction : ∀{n}{sf₁ sf₂}{vf} → (LinearCombination{n}(vf)(sf₁) −ᵥ LinearCombination{n}(vf)(sf₂) ≡ LinearCombination{n}(vf)(sf₁ 〔 lift-binOp (_−ₛ_) 〕 sf₂))
 
       -- Spanning(vf) ⇔ (VSP = Span(vf))
       -- A set of vectors is spanning the vector space when every vector in the vector space can be represented as a linear combination of the set of vectors.
       Spanning : ∀{n} → Vectors(n) → Stmt
-      Spanning(vf) = (∀{v} → ∃(sf ↦ v ≡ LinearCombination(sf)(vf)))
+      Spanning(vf) = (∀{v} → ∃(sf ↦ LinearCombination(vf)(sf) ≡ v))
 
       -- Basis(vf) ⇔ (vf is a basis)
       -- A set of vectors is a basis when every vector in the vector space can be represented as a unique linear combination of the set of vectors.
       -- A set of vectors is a basis when they span the vector space and is linearly independent.
       Basis : ∀{n} → Vectors(n) → Stmt
-      Basis(vf) = ∀{v} → ∃!(sf ↦ LinearCombination(sf)(vf) ≡ v)
+      Basis(vf) = (∀{v} → ∃!(sf ↦ LinearCombination(vf)(sf) ≡ v))
 
--- TODO: Something with (<) and its instances are making this freeze
---      -- A set of vectors is linearly independent when there is no vector that can be represented as a linear combination by the others.
---      LinearlyIndependent : ∀{n} → Vectors(n) → Stmt
---      LinearlyIndependent{n}(vf) = ∀{sf} → (LinearCombination(sf)(vf) ≡ 𝟎ᵥ) → (∀{i} → ⦃ _ : i < n ⦄ → sf(i) ≡ 𝟎ₛ)
---
---      postulate basis-span-independent : ∀{n}{vf : Vectors(n)} → LinearlyIndependent(vf) ↔ (Basis(vf) ∧ LinearlyIndependent(vf))
---
---      -- Existence of a subset of spanning vectors which is a basis
---      -- TODO: postulate basis-from-spanning : ∀{n}{vf} → ⦃ _ : Spanning{n}(vf) ⦄ → ∃(m ↦ (m ≤ n) ∧ ∃(f ↦ Basis{n}(vf ∘ f) ∧ Injective(f)))
---
---      -- Existence of a basis
---      postulate basis-existence : ∃(n ↦ ∃(vf ↦ Basis{n}(vf)))
---
---      -- A set of linearly independent vectors is smaller than a set of basis vectors
---      postulate independent-lesser-than-basis-number : ∀{m n} → {vfₘ : Vectors(m)} → LinearlyIndependent(vfₘ) → {vfₙ : Vectors(n)} → Basis(vfₙ) → (m ≤ n)
---
---      -- Every set of basis vectors are equal in size
---      postulate basis-equal-number : ∀{m n} → {vfₘ : Vectors(m)} → Basis(vfₘ) → {vfₙ : Vectors(n)} → Basis(vfₙ) → (m ≡ n)
---
---      -- The dimension of the vector space
---      dim :  ℕ
---      dim = [∃]-witness(basis-existence)
---
---      -- Existence of a superset of linearly independent vectors which is a basis
---      -- TODO: basis-from-linearly-independent : ∀{n}{vf} → ⦃ _ : Spanning{n}(vf) ⦄ → ∃(m ↦ (m ≥ n) ∧ ∃(f ↦ Basis{n}(vf ∘ f) ∧ Injective(f)))
---
---      postulate basis-from-dim-spanning : ∀{vf} → Spanning{dim}(vf) → Basis{dim}(vf)
---
---      postulate basis-from-dim-independent : ∀{vf} → LinearlyIndependent{dim}(vf) → Basis{dim}(vf)
---
---      -- TODO: Move to some algebraic structure?
---      -- Nilpotent(f) = ∃(n ↦ ∀{v} → (f ^ n ≡ 𝟎ᵥ))
---
---    module _ where
---      private LinearMap = Linear.LinearMap(_+ᵥ_)(_⋅ₛᵥ_)(_+ᵥ_)(_⋅ₛᵥ_)
---
---      postulate linear-map-id : LinearMap(Functional.id)
---
---      -- v is a eigenvector for the eigenvalue 𝜆 of the linear transformation f
---      Eigenvector : (V → V) → S → V → Stmt
---      Eigenvector(f)(𝜆)(v) = ((v ≢ 𝟎ᵥ) → (f(v) ≡ 𝜆 ⋅ₛᵥ v))
---
---      -- 𝜆 is a eigenvalue of the linear transformation f
---      -- Multiplication by an eigenvalue can replace a linear transformation for certain vectors.
---      Eigenvalue : (V → V) → S → Stmt
---      Eigenvalue(f)(𝜆) = (∀{v : V} → Eigenvector(f)(𝜆)(v))
---
---      -- Two linear mappings are similiar when there is a basis in which they are equal.
---      -- Similiar : (f : V → V) → ⦃ _ : LinearMap(f) ⦄ → (g : V → V) → ⦃ _ : LinearMap(g) ⦄ → Stmt
---      -- Similiar(f)(g) = (∀{v} → ∃(b ↦ Bijective(b) ∧ (f(v) ≡ (b ∘ g ∘ (inv-fn(b)))(v))))
---
---    record DotProductSpace (_∙_ : V → V → S) (_≤_ : S → S → Stmt) : Stmt where
---      field
---        commutativity     : Commutativity(_∙_)
---        linearmapₗ        : ∀{v₂} → Linear.LinearMap(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) (_∙ v₂)
---        positive          : ∀{v} → (𝟎ₛ ≤ (v ∙ v))
---        injective-zero    : ∀{v} → ((v ∙ v) ≡ 𝟎ₛ) → (v ≡ 𝟎ᵥ)
---
---      postulate [⋅ₛᵥ]-commuting : ∀{s}{v₁ v₂} → ((s ⋅ₛᵥ v₁) ∙ v₂) ≡ (v₁ ∙ (s ⋅ₛᵥ v₂))
---      postulate almost-injectivity-zeroₗ : ∀{v₁} → (∀{v₂} → ((v₁ ∙ v₂) ≡ 𝟎ₛ)) → (v₁ ≡ 𝟎ᵥ)
---      postulate injectivityₗ : ∀{v₁ v₂} → (∀{v₃} → ((v₁ ∙ v₃) ≡ (v₂ ∙ v₃))) → (v₁ ≡ v₂)
---
---      module Norm (√ : S → S) where
---        -- The length of a vector
---        norm : V → S
---        norm(v) = √(v ∙ v)
---
---        -- The positive part of a scalar
---        abs : S → S
---        abs(s) = √(s ⋅ₛ s)
---
---        postulate homogeneity : ∀{s}{v} → norm(s ⋅ₛᵥ v) ≡ abs(s) ⋅ₛ norm(v)
---        postulate triangle-inequality : ∀{v₁ v₂} → (norm(v₁ +ᵥ v₂) ≤ (norm(v₁) +ₛ norm(v₂)))
---        postulate positivity : ∀{v} → (𝟎ₛ ≤ norm(v))
---        postulate injectivity-zero : ∀{v} → (norm(v) ≡ 𝟎ₛ) → (v ≡ 𝟎ᵥ)
---        postulate mult-inequality : ∀{v₁ v₂} → (abs(v₁ ∙ v₂) ≤ (norm(v₁) ⋅ₛ norm(v₂)))
---
---        -- Two vectors are orthogonal when they are perpendicular.
---        Orthogonal : V → V → Stmt
---        Orthogonal(v₁)(v₂) = (v₁ ∙ v₂ ≡ 𝟎ₛ)
---
---        {-
---        OrthogonalAll : ∀{n} → Vectors(n) → Stmt
---        OrthogonalAll{0}       (vf) = ⊤
---        OrthogonalAll{1}       (vf) = Orthogonal(vf(0))(vf(1))
---        OrthogonalAll{𝐒(𝐒(n))} (vf) = (OrthogonalAll{n} (vf)) ∧ Orthogonal(vf(n))(vf(𝐒(n)))
---        -}
---
---        postulate hypotenuse-length : ∀{v₁ v₂} → ⦃ _ : Orthogonal(v₁)(v₂) ⦄ → ((v₁ +ᵥ v₂) ∙ (v₁ +ᵥ v₂) ≡ (v₁ ∙ v₁) +ₛ (v₂ ∙ v₂))
---
---        -- Transforms a vector to an unit vector in the same direction.
---        normalize : (v : V) → ⦃ _ : v ≢ 𝟎ᵥ ⦄ → V
---        normalize(v) ⦃ proof ⦄ = (⅟ₛ_ (norm(v)) ⦃ contrapositiveᵣ (injectivity-zero) (proof) ⦄) ⋅ₛᵥ v
---
---        postulate norm-of-normalize : ∀{v} → ⦃ nonzero : (v ≢ 𝟎ᵥ) ⦄ → (norm(normalize(v) ⦃ nonzero ⦄) ≡ 𝟏ₛ)
---
+      -- A set of vectors is linearly independent when there is no vector that can be represented as a linear combination by the others.
+      LinearlyIndependent : ∀{n} → Vectors(n) → Stmt
+      LinearlyIndependent{n}(vf) = ∀{sf} → (LinearCombination(vf)(sf) ≡ 𝟎ᵥ) → (∀{i} → Vec.proj(sf)(i) ≡ 𝟎ₛ) -- sf ⊜ fill(𝟎ₛ)
+      -- TODO: This should be equivalent to Injective(LinearCombination(vf)). Prove it. Is there some axioms that make this happen? I remember this pattern from somewhere, that injectivity is equivalent to stuff being the identity of something
+
+      basis-span-independent : ∀{n}{vf : Vectors(n)} → Basis(vf) ↔ (Spanning(vf) ∧ LinearlyIndependent(vf))
+      basis-span-independent{n}{vf} = [↔]-intro (uncurry l) (([↔]-elimₗ [→][∧]-distributivityₗ) ([∧]-intro r₁ r₂)) where
+        postulate l : Spanning(vf) → LinearlyIndependent(vf) → Basis(vf)
+
+        r₁ : Basis(vf) → Spanning(vf)
+        r₁(proof) {v} = [∃!]-existence(proof{v})
+
+        postulate r₂ : Basis(vf) → LinearlyIndependent(vf)
+
+      -- Existence of a subset of spanning vectors which is a basis
+      -- TODO: postulate basis-from-spanning : ∀{n}{vf} → ⦃ _ : Spanning{n}(vf) ⦄ → ∃(m ↦ (m ≤ n) ∧ ∃(f ↦ Basis{n}(vf ∘ f) ∧ Injective(f)))
+
+      -- Existence of a basis
+      postulate basis-existence : ∃(n ↦ ∃(vf ↦ Basis{n}(vf)))
+
+      -- A set of linearly independent vectors is smaller than a set of basis vectors
+      postulate independent-lesser-than-basis-number : ∀{m n} → {vfₘ : Vectors(m)} → LinearlyIndependent(vfₘ) → {vfₙ : Vectors(n)} → Basis(vfₙ) → (m ≤ n)
+
+      -- Every set of basis vectors are equal in size
+      postulate basis-equal-number : ∀{m n} → {vfₘ : Vectors(m)} → Basis(vfₘ) → {vfₙ : Vectors(n)} → Basis(vfₙ) → (m ≡ n)
+
+      -- The dimension of the vector space
+      dim :  ℕ
+      dim = [∃]-witness(basis-existence)
+
+      -- Existence of a superset of linearly independent vectors which is a basis
+      -- TODO: basis-from-linearly-independent : ∀{n}{vf} → ⦃ _ : Spanning{n}(vf) ⦄ → ∃(m ↦ (m ≥ n) ∧ ∃(f ↦ Basis{n}(vf ∘ f) ∧ Injective(f)))
+
+      postulate basis-from-dim-spanning : ∀{vf} → Spanning{dim}(vf) → Basis{dim}(vf)
+
+      postulate basis-from-dim-independent : ∀{vf} → LinearlyIndependent{dim}(vf) → Basis{dim}(vf)
+
+      -- TODO: Move to some algebraic structure?
+      -- Nilpotent(f) = ∃(n ↦ ∀{v} → (f ^ n ≡ 𝟎ᵥ))
+
+    module _ where
+      private LinearMap = Linear.LinearMap(_+ᵥ_)(_⋅ₛᵥ_)(_+ᵥ_)(_⋅ₛᵥ_)
+
+      postulate linear-map-id : LinearMap(Functional.id)
+
+      -- v is a eigenvector for the eigenvalue 𝜆 of the linear transformation f
+      Eigenvector : (V → V) → S → V → Stmt
+      Eigenvector(f)(𝜆)(v) = ((v ≢ 𝟎ᵥ) → (f(v) ≡ 𝜆 ⋅ₛᵥ v))
+
+      -- 𝜆 is a eigenvalue of the linear transformation f
+      -- Multiplication by an eigenvalue can replace a linear transformation for certain vectors.
+      Eigenvalue : (V → V) → S → Stmt
+      Eigenvalue(f)(𝜆) = (∀{v : V} → Eigenvector(f)(𝜆)(v))
+
+      -- Two linear mappings are similiar when there is a basis in which they are equal.
+      -- Similiar : (f : V → V) → ⦃ _ : LinearMap(f) ⦄ → (g : V → V) → ⦃ _ : LinearMap(g) ⦄ → Stmt
+      -- Similiar(f)(g) = (∀{v} → ∃(b ↦ Bijective(b) ∧ (f(v) ≡ (b ∘ g ∘ (inv-fn(b)))(v))))
+
+    record DotProductSpace (_∙_ : V → V → S) (_≤_ : S → S → Stmt) : Stmt where
+      field
+        commutativity     : Commutativity(_∙_)
+        linearmapₗ        : ∀{v₂} → Linear.LinearMap(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) (_∙ v₂)
+        positive          : ∀{v} → (𝟎ₛ ≤ (v ∙ v))
+        injective-zero    : ∀{v} → ((v ∙ v) ≡ 𝟎ₛ) → (v ≡ 𝟎ᵥ)
+
+      postulate [⋅ₛᵥ]-commuting : ∀{s}{v₁ v₂} → ((s ⋅ₛᵥ v₁) ∙ v₂) ≡ (v₁ ∙ (s ⋅ₛᵥ v₂))
+      postulate almost-injectivity-zeroₗ : ∀{v₁} → (∀{v₂} → ((v₁ ∙ v₂) ≡ 𝟎ₛ)) → (v₁ ≡ 𝟎ᵥ)
+      postulate injectivityₗ : ∀{v₁ v₂} → (∀{v₃} → ((v₁ ∙ v₃) ≡ (v₂ ∙ v₃))) → (v₁ ≡ v₂)
+
+      module Norm (√ : S → S) where
+        -- The length of a vector
+        norm : V → S
+        norm(v) = √(v ∙ v)
+
+        -- The positive part of a scalar
+        abs : S → S
+        abs(s) = √(s ⋅ₛ s)
+
+        postulate homogeneity : ∀{s}{v} → norm(s ⋅ₛᵥ v) ≡ abs(s) ⋅ₛ norm(v)
+        postulate triangle-inequality : ∀{v₁ v₂} → (norm(v₁ +ᵥ v₂) ≤ (norm(v₁) +ₛ norm(v₂)))
+        postulate positivity : ∀{v} → (𝟎ₛ ≤ norm(v))
+        postulate injectivity-zero : ∀{v} → (norm(v) ≡ 𝟎ₛ) → (v ≡ 𝟎ᵥ)
+        postulate mult-inequality : ∀{v₁ v₂} → (abs(v₁ ∙ v₂) ≤ (norm(v₁) ⋅ₛ norm(v₂)))
+
+        -- Two vectors are orthogonal when they are perpendicular.
+        Orthogonal : V → V → Stmt
+        Orthogonal(v₁)(v₂) = (v₁ ∙ v₂ ≡ 𝟎ₛ)
+
+        {-
+        OrthogonalAll : ∀{n} → Vectors(n) → Stmt
+        OrthogonalAll{0}       (vf) = ⊤
+        OrthogonalAll{1}       (vf) = Orthogonal(vf(0))(vf(1))
+        OrthogonalAll{𝐒(𝐒(n))} (vf) = (OrthogonalAll{n} (vf)) ∧ Orthogonal(vf(n))(vf(𝐒(n)))
+        -}
+
+        postulate hypotenuse-length : ∀{v₁ v₂} → ⦃ _ : Orthogonal(v₁)(v₂) ⦄ → ((v₁ +ᵥ v₂) ∙ (v₁ +ᵥ v₂) ≡ (v₁ ∙ v₁) +ₛ (v₂ ∙ v₂))
+
+        -- Transforms a vector to an unit vector in the same direction.
+        normalize : (v : V) → ⦃ _ : v ≢ 𝟎ᵥ ⦄ → V
+        normalize(v) ⦃ proof ⦄ = (⅟ₛ_ (norm(v)) ⦃ contrapositiveᵣ (injectivity-zero) (proof) ⦄) ⋅ₛᵥ v
+
+        postulate norm-of-normalize : ∀{v} → ⦃ nonzero : (v ≢ 𝟎ᵥ) ⦄ → (norm(normalize(v) ⦃ nonzero ⦄) ≡ 𝟏ₛ)
+
 --  -- TODO: Is it okay for VSP₂ to have a different scalar field compared to VSP? Some stuff will not be compatible (like addition for the same scalar type)?
 --  module _ {V₂} ⦃ lang₂ ⦄ (VSP₂ : VectorSpace(V₂)(S) ⦃ lang₂ ⦄) where
 --    open Language ⦃ ... ⦄

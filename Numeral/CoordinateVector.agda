@@ -4,7 +4,7 @@ import      Lvl
 open import Data.Boolean
 open import Functional
 open import Numeral.FiniteStrict
-open import Numeral.FiniteStrict.Bound
+open import Numeral.FiniteStrict.Bound{ℓ}
 open import Numeral.FiniteStrict.Oper
 open import Numeral.FiniteStrict.Oper.Comparisons
 open import Numeral.Natural
@@ -40,6 +40,10 @@ Vector.proj(tail{_}{𝐒(_)}(v))(i) = Vector.proj(v)(𝐒(i))
 tail₀ : ∀{T}{d} → Vector(d)(T) → Vector(Numeral.Natural.𝐏(d))(T)
 tail₀{_}{𝟎}    = id
 tail₀{_}{𝐒(_)} = tail
+
+-- The list without the last element if there were any
+withoutLast : ∀{T}{d} → Vector(𝐒(d))(T) → Vector(d)(T)
+Vector.proj(withoutLast v)(i) = Vector.proj(v)(bound-𝐒(i))
 
 -- Applies a function on every value of the vector
 map : ∀{A B} → (A → B) → ∀{d} → Vector(d)(A) → Vector(d)(B)
@@ -100,4 +104,5 @@ count {_}{𝐒(n)} (f)(v) = if f(head v) then 𝐒(next) else next where
 -- ... () = Vector.proj(v₁) (n)
 -- ... () = Vector.proj(v₂) (n)
 
--- take / truncate
+-- TODO: take / truncate
+-- TODO: Equality by function equality
