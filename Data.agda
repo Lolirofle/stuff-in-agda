@@ -2,15 +2,19 @@ module Data where
 
 import      Lvl
 open import Type
+open import Type.Empty using (IsEmpty)
 
--- The empty type which cannot be constructed
+-- An empty type which cannot be constructed.
+-- By default, this should be used to represent _the_ empty type.
 data Empty {ℓ} : Type{ℓ} where
 
--- Empty function
+-- Empty functions.
+-- Any type can be constructed from the empty type.
 empty : ∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}} → Empty{ℓ₂} → T
 empty ()
 
--- The unit type which can only be constructed in one way
+-- An unit type which can only be constructed in one way.
+-- By default, this should be used to represent _the_ unit type.
 record Unit {ℓ} : Type{ℓ} where
   instance constructor <>
 open Unit public

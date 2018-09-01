@@ -23,6 +23,7 @@ import Data.List.Relation.Membership
 import Data.List.Relation.Sublist
 import Data.ListNonEmpty
 import Data.Option
+import Data.Proofs
 import Data.Tuple
 import Data.Tuple.List
 import Data.Tuple.Raise
@@ -168,6 +169,7 @@ import Syntax.Method
 import Syntax.Number
 import Cardinal.Proofs
 import Type
+import Type.Empty
 
 main : FFI.IO Data.Unit
 main = FFI.printStrLn("Okay")
