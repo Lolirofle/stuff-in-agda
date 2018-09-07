@@ -7,11 +7,13 @@ open import Numeral.Natural.Oper.Comparisons
 open import Numeral.FiniteStrict
   renaming (𝟎 to 𝟎ᶠ ; 𝐒 to 𝐒ᶠ)
 import      Numeral.FiniteStrict.Bound
+import      Numeral.FiniteStrict.Oper
 open import Numeral.Natural.Function
 open import Numeral.Natural.Oper
 import      Numeral.Natural.Oper.Properties
 import      Relator.Equals
 import      Relator.Equals.Proofs
+open import Syntax.Number
 
 -- TODO: Someone else did something similiar apparently: https://gist.github.com/gallais/303cfcfe053fbc63eb61
 -- TODO: Execution is possible, but limited? https://stackoverflow.com/questions/2583337/strictly-positive-in-agda#
@@ -39,6 +41,7 @@ Expression = Term(0)
 
 module Transformations where
   open Numeral.FiniteStrict.Bound{Lvl.𝟎}
+  open Numeral.FiniteStrict.Oper using () renaming (_+_ to _+ᶠ_)
   open Numeral.Natural.Oper.Properties{Lvl.𝟎}
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
@@ -62,11 +65,28 @@ module Transformations where
     )
   depth-[+] {d₁}{d₂} (Var(n)) = Var(bound-[+] {d₁}{d₂} (n))
 
-  -- TODO: depth-max
+  -- TODO: depth-max, if it is useful?
 
   Apply₊ : ∀{d₁ d₂} → Term(d₁ + d₂) → Term(d₁) → Term(d₁ + d₂)
   Apply₊ {d₁}{d₂} f(x) = Apply f(depth-[+] {d₁}{d₂} (x))
 
+  -- Increment all variables of the given term
+  var-𝐒 : ∀{d} → Term(d) → Term(𝐒(d))
+  var-𝐒 (Apply(f)(x))       = Apply (var-𝐒(f)) (var-𝐒(x))
+  var-𝐒 (Abstract{d}(body)) = Abstract{𝐒(d)}(var-𝐒(body))
+  var-𝐒 (Var{𝟎}())
+  var-𝐒 (Var{𝐒(d)}(n))      = Var{𝐒(𝐒(d))}(𝐒ᶠ(n))
+
+  -- Add to all variables of the given term
+  var-[+] : ∀{d₁ d₂} → 𝕟(d₂) → Term(d₁) → Term(d₁ + d₂)
+  var-[+] {d₁}{𝟎}     ()
+  var-[+] {d₁}{𝐒(d₂)} (n) (Apply (f) (x))        = Apply (var-[+] (n)(f)) (var-[+] (n)(x))
+  var-[+] {d₁}{𝐒(d₂)} (n) (Abstract{.d₁} (body)) = Abstract (var-[+] (n)(body))
+  var-[+] {d₁}{𝐒(d₂)} (n) (Var{𝟎} ())
+  var-[+] {d₁}{𝐒(d₂)} (n) (Var{𝐒(_)} (v))        = Var{d₁ + 𝐒(d₂)} (v +ᶠ n)
+
+-- This module assumes that the semantics is the following:
+-- • Var(0) is the variable that was first/furthest/(least recently) bounded.
 module IndexZeroFurthest where
   open Numeral.FiniteStrict.Bound{Lvl.𝟎}
   open Numeral.Natural.Oper.Properties{Lvl.𝟎}
@@ -75,9 +95,20 @@ module IndexZeroFurthest where
 
   open Transformations
 
+  module OperSyntax where
+    infixr 100 _↦_
+    infixl 101 _←_
+
+    _←_ : ∀{d} → Term(d) → Term(d) → Term(d)
+    _←_ a b = Apply a b
+
+    _↦_ : (d : ℕ) → Term(𝐒(d)) → Term(d)
+    _↦_ d expr = Abstract{d}(expr)
+
+    [_] : ∀{d} → 𝕟(d) → Term(d)
+    [_] n = Var n
+
   -- Substitutes a variable with a term.
-  -- This substitution assumes that the semantics is the following:
-  --   • Var(0) is the variable that was first/furthest/(least recently) bounded.
   -- Example:
   --   `substitute (var) (val) (term)`
   --   means that all occurences of the variable `var` is replaced with the term `val` in the term `term`.
@@ -91,7 +122,13 @@ module IndexZeroFurthest where
       (Var(n))
   substitute       (var) (val) (Abstract(body)) = Abstract (substitute (bound-𝐒(var)) (depth-𝐒 val) (body))
   -}
-  -- TODO: This is incorrect. It just replaces all occurrences of Var(n), which is incorrect in any index order
+
+  -- Substitutes a variable with a term.
+  -- Example:
+  --   `substitute (var) (val) (term)`
+  --   means that all occurences of the variable `var` is replaced with the term `val` in the term `term`.
+  -- Note: It just replaces all occurrences of Var(n), which could result in an unexpected result. For example in the following case:
+  --       • `substitute 1 (val) "(λ1. 1) (λ1. 1)" = "(λ1. val) (λ1. val)"`
   substitute : ∀{d} → 𝕟(d) → Term(d) → Term(d) → Term(d)
   substitute       (var) (val) (Apply(f)(x)) = Apply (substitute (var) (val) (f)) (substitute (var) (val) (x))
   substitute{𝟎}    (var) (val) (Var())
@@ -102,6 +139,62 @@ module IndexZeroFurthest where
       (Var(n))
   substitute       (var) (val) (Abstract(body)) = Abstract (substitute (bound-𝐒(var)) (depth-𝐒 val) (body))
 
+  substituteOuter : ∀{d} → Term(𝟎) → Term(𝐒(d)) → Term(d)
+  substituteOuter (val) (Apply(f)(x)) = Apply (substituteOuter (val) (f)) (substituteOuter (val) (x))
+  substituteOuter (val) (Var(𝟎ᶠ))    = depth-[+] (val)
+  substituteOuter (val) (Var(𝐒ᶠ(n))) = Var(n)
+  substituteOuter (val) (Abstract(body)) = Abstract (substituteOuter (val) (body))
+
+  {-
+  substituteMap : ∀{d₁ d₂} → (𝕟(d₁) → Term(d₂)) → Term(d₁) → Term(d₂)
+  substituteMap F (Apply(f)(x))    = Apply (substituteMap F (f)) (substituteMap F (x))
+  substituteMap F (Var(v))         = F(v)
+  substituteMap F (Abstract(body)) = Abstract (substituteMap F (body)) -- TODO: Probably incorrect
+
+  data _⇴_ : ∀{a b} → Term(𝐒(a)) → Term(𝐒(b)) → Set₁ where
+    -- Reduces f(x) to f[0 ≔ x]
+    β-reduction : ∀{n}{f : Term(𝐒(𝐒(n)))}{x : Term(𝐒(n))} → (Apply(Abstract(f))(x) ⇴ substituteOuter(depth-𝐒(x))(f))
+    η-reduction : ∀{n}{f : Term(𝐒(𝐒(n)))} → (Abstract(Apply(f)(Var(𝟎ᶠ))) ⇴ f)
+    -- reduce-arg  : ∀{n}{f : Term(𝐒(𝐒(n)))} → (Abstract(Apply(f)(Var(𝟎ᶠ))) ⇴ f)
+  -}
+
+  module Test where
+    open OperSyntax
+
+    test1Expr1 : Term(1)
+    test1Expr1 = 1 ↦ (2 ↦ [ 2 ] ← [ 2 ]) ← [ 0 ] ← [ 1 ] ← [ 0 ]
+
+    test1Expr2 : Term(2)
+    test1Expr2 = 2 ↦ (3 ↦ [ 3 ] ← [ 3 ]) ← [ 1 ] ← [ 2 ] ← [ 1 ]
+
+    test1Expr3 : Term(3)
+    test1Expr3 = 3 ↦ (4 ↦ [ 4 ] ← [ 4 ]) ← [ 2 ] ← [ 3 ] ← [ 2 ]
+
+    test1-1 : (var-𝐒 test1Expr1 ≡ test1Expr2)
+    test1-1 = [≡]-intro
+
+    test1-2 : (var-𝐒(var-𝐒 test1Expr1) ≡ test1Expr3)
+    test1-2 = [≡]-intro
+
+  {-
+    test1-3 : (var-[+] 0 test1Expr1 ≡ test1Expr1)
+    test1-3 = [≡]-intro
+
+    test1-4 : (var-[+] 1 test1Expr1 ≡ test1Expr2)
+    test1-4 = [≡]-intro
+
+    test1-5 : (var-[+] 2 test1Expr1 ≡ test1Expr3)
+    test1-5 = [≡]-intro
+
+    test1Expr : Term(1)
+    test1Expr = 1 ↦ (2 ↦ [ 2 ] ← [ 2 ]) ← [ 0 ] ← [ 1 ] ← [ 0 ]
+
+    test1 : ((test1Expr) ≡ substituteOuter(0 ↦ [ 0 ])(0 ↦ test1Expr))
+    test1 = [≡]-intro
+  -}
+
+-- This module assumes that the semantics is the following:
+-- • Var(0) is the variable that was last/nearest/(most recently) bounded.
 module IndexZeroNearest where
   open Numeral.FiniteStrict.Bound{Lvl.𝟎}
   open Numeral.Natural.Oper.Properties{Lvl.𝟎}
@@ -111,19 +204,14 @@ module IndexZeroNearest where
   open Transformations
 
   {-
-  substituteOuter : ∀{d} → 𝕟(𝐒(d)) → Term(𝐒(d)) → Term(𝐒(d)) → Term(d)
-  substituteOuter       (𝐒ᶠ(var)) (val) (Apply(f)(x)) = Apply (substitute (var) (val) (f)) (substitute (var) (val) (x))
-  substituteOuter{𝟎}    (var)    (val) (Var())
-  substituteOuter{𝐒(_)} (var)    (val) (Var(n)) =
-    if([𝕟]-to-[ℕ] (var) ≡? [𝕟]-to-[ℕ] (n)) then
-      (val)
-    else
-      (Var(n))
-  substituteOuter       (𝐒ᶠ(var)) (val) (Abstract(body)) = Abstract (substitute (bound-𝐒(var)) (depth-𝐒 val) (body))
+  substitute : ∀{d} → (n : 𝕟(𝐒(d))) → Term([𝕟]-to-[ℕ] (n)) → Term(𝐒(d)) → Term(d)
+  substitute       (var) (val) (Apply(f)(x))     = Apply (substitute (var) (val) (f)) (substitute (var) (val) (x))
+  substitute       (var)  (val) (Abstract(body)) = Abstract (substitute (𝐒ᶠ(var)) (depth-𝐒 val) (body))
+  substitute{𝐒(_)} (𝟎ᶠ)    (val) (Var(𝟎ᶠ))       = depth-[+] (val)
+  substitute{𝐒(_)} (𝐒ᶠ(n)) (val) (Var(𝐒ᶠ(v)))    = substitute (𝐒ᶠ(n)) (val) (depth-𝐒(Var(v)))
+  substitute{𝐒(_)} (_)    (val) (Var(𝐒ᶠ(v)))    = Var(v)
 
   -- Substitutes a variable with a term.
-  -- This substitution assumes that the semantics is the following:
-  --   • Var(0) is the variable that was last/nearest/(most recently) bounded.
   -- Example:
   --   `substitute (var) (val) (term)`
   --   means that all o ccurences of the variable `var` is replaced with the term `val` in the term `term`.
