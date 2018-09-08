@@ -20,7 +20,8 @@ open import Type
 [⊜]-unitₗ : ∀{ℓ ℓₑ}{T : Type{ℓ}}{f g : T → Unit{ℓₑ}} → (f ⊜ g)
 [⊜]-unitₗ{_}{_} {_} {_}{_} = [⊜]-intro(reflexivity)
 
--- [⊜]-compose TODO: When does (f₁∘g₁ ⊜ f₂∘g₂) hold?
+-- [⊜]-compose TODO: When does (f₁∘g₁ ⊜ f₂∘g₂) hold? When f₁⊜f₂, g₁⊜g₂?
+-- [⊜]-with TODO: When does ((x⊜y) → (f(x) ⊜ f(y))) hold? Does it need some assumptions about the setoid?
 
 -- TODO: Is this correct?
 -- [⊜]-not-all : ∀{ℓ₁ ℓ₂}{T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (∀{f g : T₁ → T₂} → (f ⊜ g)) → IsEmpty(T₁)

@@ -127,6 +127,8 @@ postulate [≡]-included-in : ∀{L : List{ℓ₂}(T)}{x} → (x ∈ L) → ((x 
 
 postulate [≡]-included-subset : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ((L₁ ++ L₂) ≡ L₂)
 
+postulate [≡]-subset-[++] : ∀{L L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L) → (L₂ ⊆ L) → (L₁ ++ L₂ ⊆ L)
+
 instance
   [⊆]-reflexivity : ∀{L} → (L ⊆ L)
   [⊆]-reflexivity = id

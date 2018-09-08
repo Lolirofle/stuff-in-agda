@@ -219,7 +219,7 @@ module Propositional{ℓ} where
     [¬]-elim₂ : ∀{X} → Classic((¬ X) → ⊥) → Classic(X)
     [¬]-elim₂ = [¬¬]-elim ∘ [¬]-intro ∘ [→]-elim
 
-    postulate material-implᵣ : ∀{X Y : Stmt} → Classic(X → Y) → Classic((¬ X) ∨ Y)
+    postulate [→]-disjunctive-formᵣ : ∀{X Y : Stmt} → Classic(X → Y) → Classic((¬ X) ∨ Y)
 
     postulate contrapositiveₗ : ∀{X Y : Stmt} → Classic(X → Y) ← Classic((¬ X) ← (¬ Y))
 
@@ -229,7 +229,7 @@ module Propositional{ℓ} where
     postulate callcc : ∀{X Y : Stmt} → Classic(((X → Y) → X) → X)
     {-callcc =
       ([→]-intro(xyx ↦
-        (material-implᵣ
+        ([→]-disjunctive-formᵣ
         )
       ))
     -}

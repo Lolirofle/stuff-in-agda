@@ -28,8 +28,8 @@ record Classical (P : Stmt) : Stmt where
     -- X → (¬ (Y → ⊥))
     -- X → (¬ (¬ Y))
 
-  material-implᵣ : ∀{Q : Stmt} → (P → Q) → ((¬ P) ∨ Q)
-  material-implᵣ (pq) with excluded-middle
+  [→]-disjunctive-formᵣ : ∀{Q : Stmt} → (P → Q) → ((¬ P) ∨ Q)
+  [→]-disjunctive-formᵣ (pq) with excluded-middle
   ... | [∨]-introₗ(p)  = [∨]-introᵣ(pq(p))
   ... | [∨]-introᵣ(np) = [∨]-introₗ(np)
 
@@ -127,10 +127,18 @@ instance
 
 [¬][∧]ₗ : ∀{X Y : Stmt} → ⦃ _ : Classical(X) ⦄ → ⦃ _ : Classical(Y) ⦄ → ((¬ X) ∨ (¬ Y)) ← (¬ (X ∧ Y))
 [¬][∧]ₗ {X}{Y} ⦃ classic-x ⦄ ⦃ classic-y ⦄ (nxy) =
-  material-implᵣ {X} ⦃ classic-x ⦄ {¬ Y} ([→][∧]ₗ ⦃ [¬]-classical-intro ⦃ classic-y ⦄ ⦄ (nxy ∘ (Tuple.mapRight ([¬¬]-elim ⦃ classic-y ⦄))))
+  [→]-disjunctive-formᵣ {X} ⦃ classic-x ⦄ {¬ Y} ([→][∧]ₗ ⦃ [¬]-classical-intro ⦃ classic-y ⦄ ⦄ (nxy ∘ (Tuple.mapRight ([¬¬]-elim ⦃ classic-y ⦄))))
   -- ((X ∧ Y) → ⊥) → ((X → ⊥) ∨ (Y → ⊥))
   -- ¬((X ∧ Y) → ⊥) ← ¬((X → ⊥) ∨ (Y → ⊥))
 
 -- TODO: Is this provable constructively? Doesn't seem like it?
 [¬→][∧]ᵣ : ∀{X Y : Stmt} → ⦃ _ : Classical(X) ⦄ → ⦃ _ : Classical(Y) ⦄ → ¬(X → Y) → (X ∧ (¬ Y))
 [¬→][∧]ᵣ ⦃ classic-x ⦄ ⦃ classic-y ⦄ = contrapositive-variantₗ ⦃ [∧]-classical-intro ⦃ classic-x ⦄ ⦃ [¬]-classical-intro ⦃ classic-y ⦄ ⦄ ⦄ ([→][∧]ₗ ⦃ classic-y ⦄)
+
+[↔]-negationₗ : ∀{X Y} → ⦃ _ : Classical(X) ⦄ → ⦃ _ : Classical(Y) ⦄ → (X ↔ Y) ← ((¬ X) ↔ (¬ Y))
+[↔]-negationₗ {X}{Y} ⦃ classic-x ⦄ ⦃ classic-y ⦄ ([↔]-intro nynx nxny) = [↔]-intro yx xy where
+  yx : Y → X
+  yx = contrapositiveₗ ⦃ classic-x ⦄ nxny
+
+  xy : X → Y
+  xy = contrapositiveₗ ⦃ classic-y ⦄ nynx

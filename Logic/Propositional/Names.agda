@@ -18,6 +18,8 @@ DisjunctiveSyllogismᵣ = (∀{X Y : Stmt} → ((X ∨ Y) ∧ (¬ X)) → Y)
 
 ConstructiveDilemma = (∀{X₁ X₂ Y₁ Y₂ : Stmt} → ((X₁ → X₂) ∧ (Y₁ → Y₂) ∧ (X₁ ∨ Y₁)) → (X₂ ∨ Y₂))
 
+MaterialImplication = (∀{X Y : Stmt} → (X → Y) ↔ ((¬ X) ∨ Y))
+
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- Classical names
 

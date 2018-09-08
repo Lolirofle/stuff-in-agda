@@ -171,7 +171,7 @@ open import Type
   r([∨]-introᵣ z)               = [∧]-intro ([∨]-introᵣ z) ([∨]-introᵣ z)
 
 ------------------------------------------
--- Identity (with respect to ↔)
+-- Identity (with respect to ↔) (TODO: Looks like → rather than ↔)
 
 [∧]-identityₗ : ∀{X : Stmt} → (⊤ ∧ X) → X
 [∧]-identityₗ ([∧]-intro _ x) = x
@@ -205,9 +205,13 @@ open import Type
 ------------------------------------------
 -- Syllogism
 
-[∨]-syllogism : ∀{X Y : Stmt} → (X ∨ Y) → (¬ X) → Y
-[∨]-syllogism ([∨]-introₗ x) nx = [⊥]-elim(nx x)
-[∨]-syllogism ([∨]-introᵣ y) = [→]-intro y
+[∨]-syllogismₗ : ∀{X Y : Stmt} → (X ∨ Y) → (¬ X) → Y
+[∨]-syllogismₗ ([∨]-introₗ x) nx = [⊥]-elim(nx x)
+[∨]-syllogismₗ ([∨]-introᵣ y) = [→]-intro y
+
+[∨]-syllogismᵣ : ∀{X Y : Stmt} → (X ∨ Y) → (¬ Y) → X
+[∨]-syllogismᵣ ([∨]-introₗ x) = [→]-intro x
+[∨]-syllogismᵣ ([∨]-introᵣ y) ny = [⊥]-elim(ny y)
 
 [→]-syllogism : ∀{X Y Z : Stmt} → (X → Y) → (Y → Z) → (X → Z)
 [→]-syllogism = liftᵣ
@@ -217,14 +221,6 @@ open import Type
 
 [→]-lift : ∀{T X Y : Stmt} → (X → Y) → ((T → X) → (T → Y))
 [→]-lift = liftₗ
-
-material-implₗ : ∀{X Y : Stmt} → (X → Y) ← ((¬ X) ∨ Y)
-material-implₗ = [∨]-elim ([→]-lift [⊥]-elim) ([→]-intro)
--- ((¬ X) ∨ Y)
--- ((X → ⊥) ∨ Y)
--- ((X → ⊥) ∨ (X → Y))
--- ((X → Y) ∨ (X → Y))
--- (X → Y)
 
 constructive-dilemma : ∀{A B C D : Stmt} → (A → B) → (C → D) → (A ∨ C) → (B ∨ D)
 constructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
@@ -319,8 +315,8 @@ double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
 [↔]-elimᵣ-[¬] : ∀{X Y} → (X ↔ Y) → (¬ Y) → (¬ X)
 [↔]-elimᵣ-[¬] xy ny x = ny([↔]-elimᵣ(xy)(x))
 
-[↔]-negative : ∀{X Y} → (X ↔ Y) → ((¬ X) ↔ (¬ Y)) -- TODO: Is the other direction also valid? Probably not
-[↔]-negative xy = [↔]-intro ([↔]-elimᵣ-[¬] (xy)) ([↔]-elimₗ-[¬] (xy))
+[↔]-negationᵣ : ∀{X Y} → (X ↔ Y) → ((¬ X) ↔ (¬ Y)) -- TODO: Is the other direction also valid? Probably not
+[↔]-negationᵣ xy = [↔]-intro ([↔]-elimᵣ-[¬] (xy)) ([↔]-elimₗ-[¬] (xy))
 
 [↔]-elim-[∨] : ∀{X Y} → (X ↔ Y) → (X ∨ Y) → (X ∧ Y)
 [↔]-elim-[∨] (x↔y) ([∨]-introₗ x) = [∧]-intro x (([↔]-elimᵣ x↔y)(x))
@@ -395,6 +391,33 @@ non-contradiction(x , nx) = nx x
 [∨]-redundancy = [↔]-intro [∨]-introₗ (x ↦ [∨]-elim id id x)
 
 ------------------------------------------
+-- Disjunctive normal form conversions in classical logic
+
+-- Also called: Material implication
+[→]-disjunctive-formₗ : ∀{X Y : Stmt} → (X → Y) ← ((¬ X) ∨ Y)
+[→]-disjunctive-formₗ = [∨]-elim ([→]-lift [⊥]-elim) ([→]-intro)
+-- ((¬ X) ∨ Y)
+-- ((X → ⊥) ∨ Y)
+-- ((X → ⊥) ∨ (X → Y))
+-- ((X → Y) ∨ (X → Y))
+-- (X → Y)
+
+[↔]-disjunctive-formₗ : ∀{X Y : Stmt} → (X ↔ Y) ← ((X ∧ Y) ∨ ((¬ X) ∧ (¬ Y)))
+[↔]-disjunctive-formₗ ([∨]-introₗ ([∧]-intro x y))   = [↔]-intro (const x) (const y)
+[↔]-disjunctive-formₗ ([∨]-introᵣ ([∧]-intro nx ny)) = [↔]-intro ([⊥]-elim ∘ ny) ([⊥]-elim ∘ nx)
+
+-- TODO: Probably unprovable
+-- [↔]-disjunctive-formᵣ : ∀{X Y : Stmt} → (X ↔ Y) → ((X ∧ Y) ∨ ((¬ X) ∧ (¬ Y)))
+-- [↔]-disjunctive-formᵣ ([↔]-intro yx xy) = 
+
+------------------------------------------
+-- Conjuctive normal form conversions in classical logic
+
+-- TODO: None of them are provable?
+-- [↔]-conjunctive-form : ∀{X Y : Stmt} → (X ↔ Y) ↔ ((X ∨ Y) ∧ ((¬ X) ∨ (¬ Y)))
+-- [↔]-conjunctive-form ([↔]-intro yx xy) = [∨]-elim ([→]-lift [⊥]-elim) ([→]-intro)
+
+------------------------------------------
 -- Stuff related to classical logic
 
 [¬¬]-excluded-middle : ∀{X} → ¬¬(X ∨ (¬ X))
@@ -421,6 +444,9 @@ non-contradiction(x , nx) = nx x
 [¬¬]-elim-from-excluded-middle ([∨]-introₗ x)  (nnx) = x
 [¬¬]-elim-from-excluded-middle ([∨]-introᵣ nx) (nnx) = [⊥]-elim(nnx(nx))
 
+[¬¬]-elim-from-callcc : ∀{X} → (∀{Y} → (((X → Y) → X) → X)) → ((¬¬ X) → X)
+[¬¬]-elim-from-callcc (callcc) (nnx) = callcc{⊥} ([⊥]-elim ∘ nnx)
+
 [[¬¬]-elim]-[excluded-middle]-eqₗ : (∀{X} → (¬¬ X) → X) ←ᶠ (∀{X} → (X ∨ (¬ X)))
 [[¬¬]-elim]-[excluded-middle]-eqₗ or {X} (nnx) with or
 ... | ([∨]-introₗ x ) = x
@@ -442,5 +468,5 @@ non-contradiction(x , nx) = nx x
 ... | ([∨]-introₗ x ) = x
 ... | ([∨]-introᵣ nx) = xyx([⊥]-elim ∘ nx)
 
-[[¬¬]-elim]-[callcc]-eqᵣ : (∀{X Y : Stmt} → (((X → Y) → X) → X)) → (∀{X} → (X ∨ (¬ X)))
-[[¬¬]-elim]-[callcc]-eqᵣ (callcc) {X} = callcc{X ∨ (¬ X)}{⊥} (nor ↦ [⊥]-elim ([¬¬]-excluded-middle (nor)))
+[callcc]-[excluded-middle]-eqᵣ : (∀{X Y : Stmt} → (((X → Y) → X) → X)) → (∀{X} → (X ∨ (¬ X)))
+[callcc]-[excluded-middle]-eqᵣ (callcc) {X} = callcc{X ∨ (¬ X)}{⊥} (nor ↦ [⊥]-elim ([¬¬]-excluded-middle (nor)))
