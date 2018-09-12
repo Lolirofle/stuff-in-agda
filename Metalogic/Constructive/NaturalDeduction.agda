@@ -1,14 +1,14 @@
-module Logic.Constructive.NaturalDeduction where
+module Metalogic.Constructive.NaturalDeduction where
 
 open import Functional
 import      Lvl
 open import Type
 
-module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓₘ}) where
+module Propositional {ℓ ℓₘ} {Formula : Type{ℓ}} (Proof : Formula → Type{ℓₘ}) where
   -- Rules of bottom
   record Bottom : Type{ℓₘ Lvl.⊔ ℓ} where
     field
-      ⊥    : Stmt
+      ⊥    : Formula
 
     field
       intro : ∀{X} → Proof(X) → (Proof(X) → Proof(⊥)) → Proof(⊥)
@@ -17,7 +17,7 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
   -- Rules of top
   record Top : Type{ℓₘ Lvl.⊔ ℓ} where
     field
-      ⊤    : Stmt
+      ⊤    : Formula
 
     field
       intro : Proof(⊤)
@@ -27,7 +27,7 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
     infixl 1005 _∧_
 
     field
-      _∧_  : Stmt → Stmt → Stmt
+      _∧_  : Formula → Formula → Formula
 
     field
       intro : ∀{X Y} → Proof(X) → Proof(Y) → Proof(X ∧ Y)
@@ -39,10 +39,10 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
     infixl 1000 _⟶_
 
     field
-      _⟶_ : Stmt → Stmt → Stmt
+      _⟶_ : Formula → Formula → Formula
 
     field
-      intro : ∀{X Y} → Proof(Y) → Proof(X ⟶ Y)
+      intro : ∀{X Y} → (Proof(X) → Proof(Y)) → Proof(X ⟶ Y)
       elim  : ∀{X Y} → Proof(X ⟶ Y) → Proof(X) → Proof(Y)
 
   -- Rules of reversed implication
@@ -50,10 +50,10 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
     infixl 1000 _⟵_
 
     field
-      _⟵_ : Stmt → Stmt → Stmt
+      _⟵_ : Formula → Formula → Formula
 
     field
-      intro : ∀{X Y} → Proof(Y) → Proof(Y ⟵ X)
+      intro : ∀{X Y} → (Proof(X) → Proof(Y)) → Proof(Y ⟵ X)
       elim  : ∀{X Y} → Proof(Y ⟵ X) → Proof(X) → Proof(Y)
 
   -- Rules of equivalence
@@ -61,7 +61,7 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
     infixl 1000 _⟷_
 
     field
-      _⟷_ : Stmt → Stmt → Stmt
+      _⟷_ : Formula → Formula → Formula
 
     field
       intro : ∀{X Y} → (Proof(X) ← Proof(Y)) → (Proof(X) → Proof(Y)) → Proof(X ⟷ Y)
@@ -73,7 +73,7 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
     infixl 1004 _∨_
 
     field
-      _∨_  : Stmt → Stmt → Stmt
+      _∨_  : Formula → Formula → Formula
 
     field
       introₗ : ∀{X Y} → Proof(X) → Proof(X ∨ Y)
@@ -87,7 +87,7 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
     infixl 1010 ¬_
 
     field
-      ¬_   : Stmt → Stmt
+      ¬_   : Formula → Formula
 
     field
       intro : ∀{X} → (Proof(X) → Proof(⊥)) → Proof(¬ X)
@@ -114,24 +114,24 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
       ⦃ equivalence ⦄ : Equivalence
       ⦃ negation ⦄    : Negation
 
-module Predicate {ℓₘₗₛ ℓₘₒₛ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₘₗₛ Lvl.⊔ ℓₘₒₛ}} {Domain : Type{ℓₘₒₛ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) (Construct : Domain → Type{ℓₘₒ}) where
+module Predicate {ℓₘₗₛ ℓₘₒₛ ℓₘₗ ℓₘₒ} {Formula : Type{ℓₘₗₛ Lvl.⊔ ℓₘₒₛ}} {Domain : Type{ℓₘₒₛ}} (Proof : Formula → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) (Construct : Domain → Type{ℓₘₒ}) where
   open Propositional(Proof) renaming (Theory to PropositionalTheory)
 
   record UniversalQuantification : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₘₗₛ Lvl.⊔ ℓₘₒₛ)} where
     field
-      ∀ₗ : (Domain → Stmt) → Stmt
+      ∀ₗ : (Domain → Formula) → Formula
 
     field
-      intro : ∀{P : Domain → Stmt} → (∀{x : Domain} → Proof(P(x))) → Proof(∀ₗ P)
-      elim  : ∀{P : Domain → Stmt} → Proof(∀ₗ P) → (∀{x : Domain} → Proof(P(x)))
+      intro : ∀{P : Domain → Formula} → (∀{x : Domain} → Proof(P(x))) → Proof(∀ₗ P)
+      elim  : ∀{P : Domain → Formula} → Proof(∀ₗ P) → (∀{x : Domain} → Proof(P(x)))
 
   record ExistentialQuantification : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₘₗₛ Lvl.⊔ ℓₘₒₛ)} where
     field
-      ∃ₗ : (Domain → Stmt) → Stmt
+      ∃ₗ : (Domain → Formula) → Formula
 
     field
-      intro : ∀{P : Domain → Stmt}{a} → Proof(P(a)) → Proof(∃ₗ P)
-      elim  : ∀{P : Domain → Stmt}{Z : Stmt} → (∀{x : Domain} → Proof(P(x)) → Proof(Z)) → Proof(∃ₗ P) → Proof(Z)
+      intro : ∀{P : Domain → Formula}{a} → Proof(P(a)) → Proof(∃ₗ P)
+      elim  : ∀{P : Domain → Formula}{Z : Formula} → (∀{x : Domain} → Proof(P(x)) → Proof(Z)) → Proof(∃ₗ P) → Proof(Z)
 
   -- A theory of constructive predicate/(first-order) logic expressed using natural deduction rules
   record Theory  : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₘₗₛ Lvl.⊔ ℓₘₒₛ)} where

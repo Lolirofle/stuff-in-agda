@@ -1,11 +1,11 @@
-open import Logic.Classical.NaturalDeduction
+open import Metalogic.Classical.NaturalDeduction
 
 module Logic.Classical.SetTheory.ZFC {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} {Proof} {Construct} ⦃ _ : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) (Construct) ⦄ (_∈_ : Domain → Domain → Stmt) where
 
 open import Functional hiding (Domain)
 import      Lvl
 open import Type
-open        Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) (Construct) using () renaming (Theory to PredicateEqTheory)
+open        Metalogic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) (Construct) using () renaming (Theory to PredicateEqTheory)
 open        PredicateEqTheory ⦃ ... ⦄
 
 -- The statement that the set s is empty

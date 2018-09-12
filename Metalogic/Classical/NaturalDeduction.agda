@@ -1,9 +1,9 @@
-module Logic.Classical.NaturalDeduction where
+module Metalogic.Classical.NaturalDeduction where
 
 open import Functional hiding (Domain)
 import      Lvl
 open import Type
-import      Logic.Constructive.NaturalDeduction as Constructive
+import      Metalogic.Constructive.NaturalDeduction as Constructive
 
 -- TODO: Maybe it is worth to try and take a more minimal approach? (Less axioms? Is this more practical/impractical?)
 
