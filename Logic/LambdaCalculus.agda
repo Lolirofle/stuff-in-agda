@@ -78,13 +78,13 @@ module Transformations where
   var-𝐒 (Var{𝐒(d)}(n))      = Var{𝐒(𝐒(d))}(𝐒ᶠ(n))
 
   -- Add to all variables of the given term
-  var-[+] : ∀{d₁ d₂} → 𝕟(d₂) → Term(d₁) → Term(d₁ + d₂)
+  {-TODO: It worked before! Maybe an automatic merge failure? var-[+] : ∀{d₁ d₂} → 𝕟(d₂) → Term(d₁) → Term(d₁ + d₂)
   var-[+] {d₁}{𝟎}     ()
   var-[+] {d₁}{𝐒(d₂)} (n) (Apply (f) (x))        = Apply (var-[+] (n)(f)) (var-[+] (n)(x))
   var-[+] {d₁}{𝐒(d₂)} (n) (Abstract{.d₁} (body)) = Abstract (var-[+] (n)(body))
   var-[+] {d₁}{𝐒(d₂)} (n) (Var{𝟎} ())
   var-[+] {d₁}{𝐒(d₂)} (n) (Var{𝐒(_)} (v))        = Var{d₁ + 𝐒(d₂)} (v +ᶠ n)
-
+-}
 -- This module assumes that the semantics is the following:
 -- • Var(0) is the variable that was first/furthest/(least recently) bounded.
 module IndexZeroFurthest where

@@ -64,9 +64,10 @@ import Logic.Propositional.Theorems
 import Lvl
 import Metalogic.Classical.NaturalDeduction
 import Metalogic.Classical.Propositional.ProofSystem
-import Metalogic.Classical.Propositional.Semantics
+import Metalogic.Classical.Propositional.TruthSemanticsModel
 import Metalogic.Classical.Propositional.Syntax
-import Metalogic.Constructive.NaturalDeduction
+import Metalogic.Constructive.NaturalDeduction.Structure
+import Metalogic.Constructive.NaturalDeduction.TreeModel
 import Metalogic.Linear.SequentCalculus
 import Metalogic.Linear.Syntax
 import Numeral.Finite
@@ -132,6 +133,7 @@ import Relator.Equals.Proofs.Uniqueness
 import Relator.Equals.Uniqueness
 import Relator.Finite
 import Sets.BoolSet
+import Sets.BoolSet.Proofs
 import Sets.ETCS
 import Sets.IZF
 import Sets.PredicateSet

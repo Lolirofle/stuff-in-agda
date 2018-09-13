@@ -65,16 +65,3 @@ module _ {ℓ₂}{T : Type{ℓ₂}} where
     record{
       inclusion-fn = (elem ↦ ! BoolSet.inclusion-fn(A)(elem))
     }
-
-  module Theorems where
-    [∈]-in-[∪] : ∀{a : T}{S₁ S₂ : BoolSet(T)} → (a ∈ S₁) → (a ∈ (S₁ ∪ S₂))
-    [∈]-in-[∪] proof-a = [∨]-introₗ-[𝑇] proof-a
-
-    [∈]-in-[∩] : ∀{a : T}{S₁ S₂ : BoolSet(T)} → (a ∈ S₁) → (a ∈ S₂) → (a ∈ (S₁ ∩ S₂))
-    [∈]-in-[∩] proof-a₁ proof-a₂ = [∧]-intro-[𝑇] proof-a₁ proof-a₂
-
-    [∈]-in-[∖] : ∀{a : T}{S₁ S₂ : BoolSet(T)} → (a ∈ S₁) → (a ∉ S₂) → (a ∈ (S₁ ∖ S₂))
-    [∈]-in-[∖] proof-a₁ proof-a₂ = [∧]-intro-[𝑇] proof-a₁ proof-a₂
-
-    [∈]-in-[∁] : ∀{a : T}{S : BoolSet(T)} → (a ∉ S) → (a ∈ (∁ S))
-    [∈]-in-[∁] = id

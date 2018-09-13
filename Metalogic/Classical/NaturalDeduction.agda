@@ -3,7 +3,7 @@ module Metalogic.Classical.NaturalDeduction where
 open import Functional hiding (Domain)
 import      Lvl
 open import Type
-import      Metalogic.Constructive.NaturalDeduction as Constructive
+import      Metalogic.Constructive.NaturalDeduction.Structure as Constructive
 
 -- TODO: Maybe it is worth to try and take a more minimal approach? (Less axioms? Is this more practical/impractical?)
 

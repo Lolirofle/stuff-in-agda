@@ -1,4 +1,4 @@
-module Metalogic.Constructive.NaturalDeduction where
+module Metalogic.Constructive.NaturalDeduction.Structure where
 
 open import Functional
 import      Lvl
