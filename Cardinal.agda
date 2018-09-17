@@ -13,7 +13,7 @@ open import Structure.Relator.Properties{ℓₗ Lvl.⊔ (Lvl.𝐒(ℓₒ))}
 open import Type
 
 _≍_ : Type{ℓₒ} → Type{ℓₒ} → Stmt
-_≍_ A B = ∃{_}{_}{A → B}(Bijective)
+_≍_ A B = ∃{_}{_}{A → B}(Bijective{_}{ℓₒ}{ℓₒ})
 
 _≼_ : Type{ℓₒ} → Type{ℓₒ} → Stmt
 _≼_ A B = ∃{_}{_}{A → B}(Injective)

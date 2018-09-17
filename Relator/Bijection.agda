@@ -15,7 +15,7 @@ open import Type{ℓ₂}
 
 -- A bijection between the types {A,B} means that (∃(f: A → B). Bijective(f)) is satisfied.
 data Bijection (T₁ : Type) (T₂ : Type) : Stmt{ℓ₁ Lvl.⊔ Lvl.𝐒(ℓ₂)} where
-  bijection-intro : (f : T₁ → T₂) → Bijective(f) → Bijection(T₁)(T₂)
+  bijection-intro : (f : T₁ → T₂) → Bijective{ℓ₂}{ℓ₂}(f) → Bijection(T₁)(T₂)
 
 module _ (T₁ : Type) (T₂ : Type) where
   Bijection-fn : ⦃ _ : Bijection(T₁)(T₂) ⦄ → T₁ → T₂
@@ -42,7 +42,7 @@ inverse{T₁}{T₂} (bijection @ (bijection-intro f ([∧]-intro inj-f surj-f)))
         x₁ = f⁻¹(y₁)
         x₂ = f⁻¹(y₂)
 
-    postulate surj-f⁻¹ : Surjective(f⁻¹)
+    postulate surj-f⁻¹ : Surjective{ℓ₂}{ℓ₂}(f⁻¹)
     -- (\{x} → [∃]-intro(f(x)))
 
 instance

@@ -69,7 +69,7 @@ module _ {ℓₗ}{ℓₒ} where
     open import Functional.Proofs
     open import Structure.Function.Domain{ℓₗ}
 
-    map : ∀{A B} → (f : A → B) → ⦃ _ : Bijective{ℓₒ}(f) ⦄ → PredSet(A) → PredSet(B)
+    map : ∀{A B} → (f : A → B) → ⦃ _ : Bijective{ℓₒ}{ℓₒ}(f) ⦄ → PredSet(A) → PredSet(B)
     map f S x = S(inv-fn(f)(x))
 
     filter : ∀{T} → (T → Bool) → PredSet(T) → PredSet(T)

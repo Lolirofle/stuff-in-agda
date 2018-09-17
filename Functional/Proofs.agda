@@ -121,12 +121,12 @@ module _ {ℓₒ} where
 
   instance
     -- Identity function is surjective.
-    id-surjective : ∀{T : Type{ℓₒ}} → Surjective(id{_}{T})
+    id-surjective : ∀{T : Type{ℓₒ}} → Surjective{ℓₒ}{ℓₒ}(id{_}{T})
     id-surjective {_}{y} = [∃]-intro (y) ⦃ [≡]-intro ⦄
 
   instance
     -- Identity function is bijective.
-    id-bijective : ∀{T} → Bijective(id{_}{T})
+    id-bijective : ∀{T} → Bijective{ℓₒ}{ℓₒ}(id{_}{T})
     id-bijective = [∧]-intro(id-injective)(id-surjective)
 
   -- Function composition is associative.
@@ -163,7 +163,7 @@ module _ {ℓₒ} where
   [∘]-injective-elim{_}{_}{_} {f}{g} (injective-fg) {x₁}{x₂} (gx₁gx₂) = injective-fg {x₁} {x₂} ([≡]-with(f) (gx₁gx₂))
 
   -- Composition of surjective functions are surjective.
-  [∘]-surjective : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Surjective(f) → Surjective(g) → Surjective(f ∘ g)
+  [∘]-surjective : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Surjective{ℓₒ}{ℓₒ}(f) → Surjective{ℓₒ}{ℓₒ}(g) → Surjective{ℓₒ}{ℓₒ}(f ∘ g)
   [∘]-surjective{_}{_}{_} {f}{g} (surjective-f) (surjective-g) {y}
     with (surjective-f {y})
   ... | [∃]-intro (gx) ⦃ [≡]-intro ⦄
@@ -172,7 +172,7 @@ module _ {ℓₒ} where
     = [∃]-intro (x) ⦃ [≡]-intro ⦄
 
   -- LHS of composition is surjective if the composition is surjective.
-  [∘]-surjective-elim : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Surjective(f ∘ g) → Surjective(f)
+  [∘]-surjective-elim : ∀{a b c : Type{ℓₒ}}{f : b → c}{g : a → b} → Surjective{ℓₒ}{ℓₒ}(f ∘ g) → Surjective{ℓₒ}{ℓₒ}(f)
   [∘]-surjective-elim{_}{_}{_} {f}{g} (surjective-fg) {y} with (surjective-fg {y})
   ... | [∃]-intro (x) ⦃ [≡]-intro ⦄ = [∃]-intro (g(x)) ⦃ [≡]-intro ⦄
 
@@ -188,7 +188,7 @@ module _ {ℓₒ} where
 
   -- Every surjective function has a right inverse with respect to function composition.
   -- Note: Equivalent to axiom of choice from set theory.
-  [∘]-inverseᵣ-value : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Surjective(f) ⦄ → ∃(g ↦ ∀{x} → ((f ∘ g)(x) ≡ id(x)))
+  [∘]-inverseᵣ-value : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Surjective{ℓₒ}{ℓₒ}(f) ⦄ → ∃(g ↦ ∀{x} → ((f ∘ g)(x) ≡ id(x)))
   [∘]-inverseᵣ-value {a}{b} {f} ⦃ f-surjective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
     f⁻¹ : b → a
     f⁻¹(y) = [∃]-witness(f-surjective{y})
@@ -204,10 +204,10 @@ module _ {ℓₒ} where
   -- inv-fnₗ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
   -- inv-fnₗ (f) = [∃]-witness([∘]-inverseₗ{_}{_}{f})
 
-  inv-fnᵣ : ∀{a b} → (f : a → b) → ⦃ _ : Surjective(f) ⦄ → (b → a)
+  inv-fnᵣ : ∀{a b} → (f : a → b) → ⦃ _ : Surjective{ℓₒ}{ℓₒ}(f) ⦄ → (b → a)
   inv-fnᵣ (f) = [∃]-witness([∘]-inverseᵣ-value{_}{_}{f})
 
-  inv-fn : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
+  inv-fn : ∀{a b} → (f : a → b) → ⦃ _ : Bijective{ℓₒ}{ℓₒ}(f) ⦄ → (b → a)
   inv-fn (f) ⦃ [∧]-intro inj surj ⦄ = inv-fnᵣ (f) ⦃ surj ⦄
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{ℓ₃}} where

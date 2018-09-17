@@ -14,20 +14,16 @@ module _ {ℓ₂ ℓ₃} where
   Injective : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
   Injective {X} f = ∀{x₁ x₂ : X} → (f(x₁) ≡ f(x₂)) → (x₁ ≡ x₂)
 
-module _ {ℓ₂} where
-  open Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}
+module _ {ℓ₂ ℓ₃} where
+  open Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
 
   -- Definition of surjectivity for a function (TODO: Different levels would be okay if the existential allowed it)
-  Surjective : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₂}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+  Surjective : ∀{X : Type{ℓ₂ Lvl.⊔ ℓ₃}}{Y : Type{ℓ₂}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
   Surjective {X}{Y} f = ∀{y : Y} → ∃{_}{X}(x ↦ (f(x) ≡ y))
 
   -- Definition of bijectivity for a function
-  Bijective : ∀{X Y : Type{ℓ₂}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+  Bijective : ∀{X : Type{ℓ₂ Lvl.⊔ ℓ₃}}{Y : Type{ℓ₂}} → (X → Y) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
   Bijective f = (Injective f) ∧ (Surjective f)
-
-  -- Definition of a fixed point for a function
-  FixPoint : ∀{T : Type{ℓ₂}} → (T → T) → T → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
-  FixPoint f(x) = (f(x) ≡ x)
 
 module _ {ℓ₂ ℓ₃} where
   open Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
@@ -67,6 +63,10 @@ module _ {ℓ₂ ℓ₃} where
 
 module _ {ℓ₂} where
   open Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
+
+  -- Definition of a fixed point for a function
+  FixPoint : ∀{T : Type{ℓ₂}} → (T → T) → T → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+  FixPoint f(x) = (f(x) ≡ x)
 
   -- Definition of a function with itself as its inverse (inverse function of function composition (∘))
   Involution : ∀{X : Type{ℓ₂}} → (X → X) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
