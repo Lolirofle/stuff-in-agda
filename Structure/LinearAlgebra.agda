@@ -16,6 +16,7 @@ open import Numeral.Natural.Relation.Order.Proofs{ℓ}
 open import Relator.Equals{ℓ}
 open import Relator.Equals.Proofs{ℓ}
 open import Relator.Equals.Uniqueness{ℓ}{ℓ}{ℓ}
+open import Relator.Equals.Proofs.Uniqueness{ℓ}{ℓ}{ℓ}
 open import Structure.Function.Domain{ℓ}
 import      Structure.Function.Linear{ℓ}{ℓ} as Linear
 open import Structure.Operator.Field{ℓ}{ℓ}
@@ -25,6 +26,8 @@ open import Structure.Operator.Vector{ℓ}{ℓ}
 open import Syntax.Number
 open import Type{ℓ}
 
+-- Finite dimensional linear algebra
+-- TODO: Apparently, most of linear algebra will not work in constructive logic
 module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
   module _ where
     open Language(lang)
@@ -60,24 +63,43 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
       -- A set of vectors is a basis when every vector in the vector space can be represented as a unique linear combination of the set of vectors.
       -- A set of vectors is a basis when they span the vector space and is linearly independent.
       Basis : ∀{n} → Vectors(n) → Stmt
-      Basis(vf) = (∀{v} → ∃!(sf ↦ LinearCombination(vf)(sf) ≡ v))
+      Basis(vf) = (∀{v} → ∃!(sf ↦ LinearCombination(vf)(sf) ≡ v)) -- TODO: Should be some kind of set equality. Could be impossible to prove the uniqueness otherwise because one can just permute for commutative scalars
 
       -- A set of vectors is linearly independent when there is no vector that can be represented as a linear combination by the others.
       LinearlyIndependent : ∀{n} → Vectors(n) → Stmt
       LinearlyIndependent{n}(vf) = ∀{sf} → (LinearCombination(vf)(sf) ≡ 𝟎ᵥ) → (∀{i} → Vec.proj(sf)(i) ≡ 𝟎ₛ) -- sf ⊜ fill(𝟎ₛ)
-      -- TODO: This should be equivalent to Injective(LinearCombination(vf)). Prove it. Is there some axioms that make this happen? I remember this pattern from somewhere, that injectivity is equivalent to stuff being the identity of something
+
+      postulate independent-injective : ∀{n}{vf} → LinearlyIndependent{n}(vf) ↔ (∀{sf₁ sf₂} → (LinearCombination(vf)(sf₁) ≡ LinearCombination(vf)(sf₂)) → (∀{i}→ Vec.proj(sf₁)(i) ≡ Vec.proj(sf₂)(i))) -- TODO: Vec.proj(sf₁) ⊜ Vec.proj(sf₂)
+      -- TODO: Is there some axioms that make this happen? I remember this pattern from somewhere, that injectivity is equivalent to stuff being the identity of something. Maybe it is usually expressed using a kernel? See the note written above
+      -- TODO: Express this as injectivity when `Injective` is general over setoids
 
       basis-span-independent : ∀{n}{vf : Vectors(n)} → Basis(vf) ↔ (Spanning(vf) ∧ LinearlyIndependent(vf))
       basis-span-independent{n}{vf} = [↔]-intro (uncurry l) (([↔]-elimₗ [→][∧]-distributivityₗ) ([∧]-intro r₁ r₂)) where
-        postulate l : Spanning(vf) → LinearlyIndependent(vf) → Basis(vf)
+        l : Spanning(vf) → LinearlyIndependent(vf) → Basis(vf)
+        l spanning indep {v} = [∃!]-intro existence uniqueness where
+          existence : ∃(sf ↦ LinearCombination(vf)(sf) ≡ v)
+          existence = spanning
+
+          postulate uniqueness : Unique(sf ↦ LinearCombination(vf)(sf) ≡ v)
+          -- uniqueness = ([↔]-elimₗ Uniqueness-Injectivity) (([↔]-elimᵣ independent-injective) indep)
+          -- TODO: `Injective` over setoids is blocking this proof. It is at the moment proving something incorrect
 
         r₁ : Basis(vf) → Spanning(vf)
         r₁(proof) {v} = [∃!]-existence(proof{v})
 
         postulate r₂ : Basis(vf) → LinearlyIndependent(vf)
+        -- TODO: `Injective` over setoids is blocking this proof. It is at the moment proving something incorrect
+
+      -- Cardinality of a set of linearly independent vectors is always less than the cardinality of a set of spanning vectors
+      postulate independent-less-than-spanning : ∀{n₁ n₂} → ∀{vf₁} → LinearlyIndependent{n₁}(vf₁) → ∀{vf₂} → Spanning{n₂}(vf₂) → (n₁ ≤ n₂)
 
       -- Existence of a subset of spanning vectors which is a basis
       -- TODO: postulate basis-from-spanning : ∀{n}{vf} → ⦃ _ : Spanning{n}(vf) ⦄ → ∃(m ↦ (m ≤ n) ∧ ∃(f ↦ Basis{n}(vf ∘ f) ∧ Injective(f)))
+
+      -- Existence of a finite set of vectors which spans the vector space
+      -- A "finite dimensional vector space" is sometimes defined as a vector space which satisfies this proposition.
+      postulate span-existence : ∃(n ↦ ∃(vf ↦ Spanning{n}(vf)))
+      -- TODO: Usually, this exists because one can take the whole set
 
       -- Existence of a basis
       postulate basis-existence : ∃(n ↦ ∃(vf ↦ Basis{n}(vf)))

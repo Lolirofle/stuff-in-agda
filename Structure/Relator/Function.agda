@@ -5,6 +5,7 @@ open import Logic.Propositional
 open import Logic.Predicate{ℓₗ}
 open import Functional
 open import Relator.Equals.Uniqueness{ℓₗ}
+open import Relator.Equals.Proofs{ℓₗ}
 open import Type
 
 module _ {ℓₒ₁ ℓₒ₂} where

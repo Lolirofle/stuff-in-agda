@@ -1,4 +1,4 @@
-module Relator.Equals.Proofs.Uniqueness {ℓ₁}{ℓ₂}{ℓ₃} where -- TODO: _≡_ as a parameter
+module Relator.Equals.Proofs.Uniqueness {ℓ₁}{ℓ₂}{ℓ₃} where
 
 import      Lvl
 open import Functional
@@ -11,6 +11,7 @@ open import Structure.Function.Domain{ℓ₁ Lvl.⊔ ℓ₃}
 open import Structure.Relator.Properties{ℓ₁ Lvl.⊔ ℓ₃}{ℓ₂}
 open import Type
 
+-- TODO: This proof should work more generally for setoids when `Injective` is working for setoids
 Uniqueness-Injectivity : ∀{A : Type{ℓ₂}}{B : Type{ℓ₂}}{f : A → B} → (∀{y : B} → Unique{A} (x ↦ y ≡ f(x))) ↔ Injective(f)
 Uniqueness-Injectivity {A}{B} {f} = [↔]-intro l r where
   l : (∀{y : B} → Unique{A} (x ↦ y ≡ f(x))) ← Injective(f)
@@ -18,4 +19,3 @@ Uniqueness-Injectivity {A}{B} {f} = [↔]-intro l r where
 
   r : (∀{y : B} → Unique{A} (x ↦ y ≡ f(x))) → Injective(f)
   r (unique) {x₁}{x₂} (fx₁≡fx₂) = unique {f(x₁)}{x₁}{x₂} ([≡]-intro) (fx₁≡fx₂)
-

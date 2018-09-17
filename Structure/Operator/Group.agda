@@ -19,8 +19,13 @@ record Group {T : Type} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt wher
     inv : T → T
   field
     instance ⦃ monoid ⦄ : Monoid{T} (_▫_)
-    inverseₗ : InverseFunctionₗ (_▫_) (id ⦃ _ ⦄ ⦃ monoid ⦄) inv
-    inverseᵣ : InverseFunctionᵣ (_▫_) (id ⦃ _ ⦄ ⦃ monoid ⦄) inv
+    inverse : InverseFunction (_▫_) (id ⦃ _ ⦄ ⦃ monoid ⦄) inv
+
+  inverseₗ : InverseFunctionₗ (_▫_) (id ⦃ _ ⦄ ⦃ monoid ⦄) inv
+  inverseₗ = [∧]-elimₗ inverse
+
+  inverseᵣ : InverseFunctionᵣ (_▫_) (id ⦃ _ ⦄ ⦃ monoid ⦄) inv
+  inverseᵣ = [∧]-elimᵣ inverse
 
 -- Multiplicative Group
 record MultGroup {T : Type} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) (𝟎 : T) : Stmt where
@@ -33,9 +38,6 @@ record MultGroup {T : Type} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) (𝟎 :
     inverseₗ : ∀{x} → ⦃ nonzero : (x ≢ 𝟎) ⦄ → ((inv x ⦃ nonzero ⦄) ▫ x) ≡ id ⦃ _ ⦄ ⦃ monoid ⦄
     inverseᵣ : ∀{x} → ⦃ nonzero : (x ≢ 𝟎) ⦄ → (x ▫ (inv x ⦃ nonzero ⦄)) ≡ id ⦃ _ ⦄ ⦃ monoid ⦄
 
-  identity = identityₗ
-  inverse = inverseₗ
-
 record CommutativeGroup {T : Type} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt where
   open Group ⦃ ... ⦄
   open Monoid ⦃ ... ⦄
@@ -43,6 +45,3 @@ record CommutativeGroup {T : Type} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) 
   field
     instance ⦃ group ⦄ : Group (_▫_)
     commutativity : Commutativity (_▫_)
-
-  identity = identityₗ
-  inverse = inverseₗ

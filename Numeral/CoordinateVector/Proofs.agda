@@ -55,7 +55,6 @@ module _ {T : Type} ⦃ _ : Equiv(T) ⦄ {_▫_ : T → T → T} where
   transfer-preserves{𝐒(n)} {x}{y} = [≡]-with() (transfer-preserves{n} {tail x}{tail y})
   -- ∀{x y} → (fill(x ▫ y) ≡ fill(x) 〔 lift-binOp (_▫_) {n} 〕 fill(y))
 
-
   transfer-opposite-elem : ∀{n} → 𝕟(n) → Vector(n)(T) → T
   transfer-opposite-elem {n}(i)(x) = Vector.proj(n)(i)
 

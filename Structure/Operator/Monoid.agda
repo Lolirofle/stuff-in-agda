@@ -15,5 +15,10 @@ record Monoid {T : Type} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt whe
     id : T
   field
     associativity  : Associativity (_▫_)
-    identityₗ       : Identityₗ     (_▫_) id
-    identityᵣ       : Identityᵣ     (_▫_) id
+    identity       : Identity     (_▫_) id
+
+  identityₗ : Identityₗ (_▫_) id
+  identityₗ = [∧]-elimₗ identity
+
+  identityᵣ : Identityᵣ (_▫_) id
+  identityᵣ = [∧]-elimᵣ identity
