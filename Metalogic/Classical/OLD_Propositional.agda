@@ -9,7 +9,7 @@ import      Lvl
 
 
 
-module ProofSystems {ℓ₁} {ℓ₂} {Prop : Set(ℓ₁)} {Formula : Set(ℓ₁) → Set(ℓ₂)} (symbols : Syntax.Symbols Prop Formula) where
+module ProofSystems {ℓ₁} {ℓ₂} {Proposition : Set(ℓ₁)} {Formula : Set(ℓ₁) → Set(ℓ₂)} (symbols : Syntax.Symbols Proposition Formula) where
   open Syntax.Symbols(symbols)
 
   module TruthTables where
@@ -26,39 +26,39 @@ module ProofSystems {ℓ₁} {ℓ₂} {Prop : Set(ℓ₁)} {Formula : Set(ℓ₁
     -- Elimination rules are like deconstructors of formulas
     record Rules : Set(Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂)) where
       field
-        {Node} : Formula(Prop) → Set(ℓ₁ Lvl.⊔ ℓ₂)
+        {Node} : Formula(Proposition) → Set(ℓ₁ Lvl.⊔ ℓ₂)
 
       field
         [⊤]-intro : Node(⊤)
 
-        [⊥]-intro : ∀{φ : Formula(Prop)} → Node(φ) → Node(¬ φ) → Node(⊥)
+        [⊥]-intro : ∀{φ : Formula(Proposition)} → Node(φ) → Node(¬ φ) → Node(⊥)
 
-        [¬]-intro : ∀{φ : Formula(Prop)} → (Node(φ) → Node(⊥)) → Node(¬ φ)
-        [¬]-elim  : ∀{φ : Formula(Prop)} → (Node(¬ φ) → Node(⊥)) → Node(φ)
+        [¬]-intro : ∀{φ : Formula(Proposition)} → (Node(φ) → Node(⊥)) → Node(¬ φ)
+        [¬]-elim  : ∀{φ : Formula(Proposition)} → (Node(¬ φ) → Node(⊥)) → Node(φ)
 
-        [∧]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁) → Node(φ₂) → Node(φ₁ ∧ φ₂)
-        [∧]-elimₗ  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ∧ φ₂) → Node(φ₁)
-        [∧]-elimᵣ  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ∧ φ₂) → Node(φ₂)
+        [∧]-intro : ∀{φ₁ φ₂ : Formula(Proposition)} → Node(φ₁) → Node(φ₂) → Node(φ₁ ∧ φ₂)
+        [∧]-elimₗ  : ∀{φ₁ φ₂ : Formula(Proposition)} → Node(φ₁ ∧ φ₂) → Node(φ₁)
+        [∧]-elimᵣ  : ∀{φ₁ φ₂ : Formula(Proposition)} → Node(φ₁ ∧ φ₂) → Node(φ₂)
 
-        [∨]-introₗ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁) → Node(φ₁ ∨ φ₂)
-        [∨]-introᵣ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₂) → Node(φ₁ ∨ φ₂)
-        [∨]-elim  : ∀{φ₁ φ₂ φ₃ : Formula(Prop)} → (Node(φ₁) → Node(φ₃)) → (Node(φ₂) → Node(φ₃)) → Node(φ₁ ∨ φ₂) → Node(φ₃)
+        [∨]-introₗ : ∀{φ₁ φ₂ : Formula(Proposition)} → Node(φ₁) → Node(φ₁ ∨ φ₂)
+        [∨]-introᵣ : ∀{φ₁ φ₂ : Formula(Proposition)} → Node(φ₂) → Node(φ₁ ∨ φ₂)
+        [∨]-elim  : ∀{φ₁ φ₂ φ₃ : Formula(Proposition)} → (Node(φ₁) → Node(φ₃)) → (Node(φ₂) → Node(φ₃)) → Node(φ₁ ∨ φ₂) → Node(φ₃)
 
-        [⇒]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₁) → Node(φ₂)) → Node(φ₁ ⇒ φ₂)
-        [⇒]-elim  : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇒ φ₂) → Node(φ₁) → Node(φ₂)
+        [⇒]-intro : ∀{φ₁ φ₂ : Formula(Proposition)} → (Node(φ₁) → Node(φ₂)) → Node(φ₁ ⇒ φ₂)
+        [⇒]-elim  : ∀{φ₁ φ₂ : Formula(Proposition)} → Node(φ₁ ⇒ φ₂) → Node(φ₁) → Node(φ₂)
 
-        [⇐]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₂) → Node(φ₁)) → Node(φ₁ ⇐ φ₂)
-        [⇐]-elim : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇐ φ₂) → Node(φ₂) → Node(φ₁)
+        [⇐]-intro : ∀{φ₁ φ₂ : Formula(Proposition)} → (Node(φ₂) → Node(φ₁)) → Node(φ₁ ⇐ φ₂)
+        [⇐]-elim : ∀{φ₁ φ₂ : Formula(Proposition)} → Node(φ₁ ⇐ φ₂) → Node(φ₂) → Node(φ₁)
 
-        [⇔]-intro : ∀{φ₁ φ₂ : Formula(Prop)} → (Node(φ₂) → Node(φ₁)) → (Node(φ₁) → Node(φ₂)) → Node(φ₁ ⇔ φ₂)
-        [⇔]-elimₗ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇔ φ₂) → Node(φ₂) → Node(φ₁)
-        [⇔]-elimᵣ : ∀{φ₁ φ₂ : Formula(Prop)} → Node(φ₁ ⇔ φ₂) → Node(φ₁) → Node(φ₂)
+        [⇔]-intro : ∀{φ₁ φ₂ : Formula(Proposition)} → (Node(φ₂) → Node(φ₁)) → (Node(φ₁) → Node(φ₂)) → Node(φ₁ ⇔ φ₂)
+        [⇔]-elimₗ : ∀{φ₁ φ₂ : Formula(Proposition)} → Node(φ₁ ⇔ φ₂) → Node(φ₂) → Node(φ₁)
+        [⇔]-elimᵣ : ∀{φ₁ φ₂ : Formula(Proposition)} → Node(φ₁ ⇔ φ₂) → Node(φ₁) → Node(φ₂)
 
       -- Double negated proposition is positive
-      [¬¬]-elim : ∀{φ : Formula(Prop)} → Node(¬ (¬ φ)) → Node(φ)
+      [¬¬]-elim : ∀{φ : Formula(Proposition)} → Node(¬ (¬ φ)) → Node(φ)
       [¬¬]-elim nna = [¬]-elim(na ↦ [⊥]-intro na nna)
 
-      [⊥]-elim : ∀{φ : Formula(Prop)} → Node(⊥) → Node(φ)
+      [⊥]-elim : ∀{φ : Formula(Proposition)} → Node(⊥) → Node(φ)
       [⊥]-elim bottom = [¬]-elim(_ ↦ bottom)
 
     module Meta(rules : Rules) (meta-symbols : Syntax.Symbols (Set(ℓ₁ Lvl.⊔ ℓ₂)) id) where
@@ -132,22 +132,22 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
       -- Example:
       --   (A :with: a) where a : Node(A)
       --   ((A ∧ B) :with: [∧]-intro a b) where a : Node(A), b : Node(B)
-      _:with:_ : ∀(φ : Formula(Prop)) → Node(φ) → Node(φ)
+      _:with:_ : ∀(φ : Formula(Proposition)) → Node(φ) → Node(φ)
       _:with:_ _ x = x
       infixl 100 _:with:_
 
       -- The ability to derive anything from a contradiction
-      ex-falso-quodlibet : ∀{A : Formula(Prop)} → Node(⊥) → Node(A)
+      ex-falso-quodlibet : ∀{A : Formula(Proposition)} → Node(⊥) → Node(A)
       ex-falso-quodlibet = [⊥]-elim
 
-      [∧]-symmetry : ∀{A B : Formula(Prop)} → Node(A ∧ B) → Node(B ∧ A)
+      [∧]-symmetry : ∀{A B : Formula(Proposition)} → Node(A ∧ B) → Node(B ∧ A)
       [∧]-symmetry {A} {B} A∧B =
         ((B ∧ A) :with: [∧]-intro
           (B :with: [∧]-elimᵣ(A∧B))
           (A :with: [∧]-elimₗ(A∧B))
         )
 
-      [∨]-symmetry : ∀{A B : Formula(Prop)} → Node(A ∨ B) → Node(B ∨ A)
+      [∨]-symmetry : ∀{A B : Formula(Proposition)} → Node(A ∨ B) → Node(B ∨ A)
       [∨]-symmetry {A} {B} A∨B =
         ((B ∨ A) :with: [∨]-elim
           [∨]-introᵣ
@@ -155,7 +155,7 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
           A∨B
         )
 
-      contrapositive : ∀{A B : Formula(Prop)} → Node(A ⇒ B) → Node((¬ B) ⇒ (¬ A))
+      contrapositive : ∀{A B : Formula(Proposition)} → Node(A ⇒ B) → Node((¬ B) ⇒ (¬ A))
       contrapositive {A} {B} A→B =
         ((¬ B) ⇒ (¬ A)) :with: [⇒]-intro(nb ↦
           (¬ A) :with: [¬]-intro(a ↦
@@ -165,7 +165,7 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
           )
         )
 
-      [⇒]-syllogism : ∀{A B C : Formula(Prop)} → Node(A ⇒ B) → Node(B ⇒ C) → Node(A ⇒ C)
+      [⇒]-syllogism : ∀{A B C : Formula(Proposition)} → Node(A ⇒ B) → Node(B ⇒ C) → Node(A ⇒ C)
       [⇒]-syllogism {A} {B} {C} A→B B→C =
         ([⇒]-intro(a ↦
           ([⇒]-elim
@@ -174,7 +174,7 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
           )
         ))
 
-      [∨]-syllogism : ∀{A B : Formula(Prop)} → Node(A ∨ B) → Node((¬ A) ⇒ B)
+      [∨]-syllogism : ∀{A B : Formula(Proposition)} → Node(A ∨ B) → Node((¬ A) ⇒ B)
       [∨]-syllogism {A} {B} A∨B =
         ([∨]-elim
           (a ↦ ((¬ A) ⇒ B) :with: [⇒]-syllogism
@@ -188,7 +188,7 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
         )
 
       -- Currying
-      [∧]→[⇒]-in-assumption : {X Y Z : Formula(Prop)} → Node((X ∧ Y) ⇒ Z) → Node(X ⇒ (Y ⇒ Z))
+      [∧]→[⇒]-in-assumption : {X Y Z : Formula(Proposition)} → Node((X ∧ Y) ⇒ Z) → Node(X ⇒ (Y ⇒ Z))
       [∧]→[⇒]-in-assumption x∧y→z =
         ([⇒]-intro(x ↦
           ([⇒]-intro(y ↦
@@ -200,7 +200,7 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
         ))
 
       -- Uncurrying
-      [∧]←[⇒]-in-assumption : {X Y Z : Formula(Prop)} → Node(X ⇒ (Y ⇒ Z)) → Node((X ∧ Y) ⇒ Z)
+      [∧]←[⇒]-in-assumption : {X Y Z : Formula(Proposition)} → Node(X ⇒ (Y ⇒ Z)) → Node((X ∧ Y) ⇒ Z)
       [∧]←[⇒]-in-assumption x→y→z =
         ([⇒]-intro(x∧y ↦
           ([⇒]-elim
@@ -215,7 +215,7 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
       -- It is either that a proposition is true or its negation is true.
       -- A proposition is either true or false.
       -- There is no other truth values than true and false.
-      excluded-middle : ∀{A : Formula(Prop)} → Node(A ∨ (¬ A))
+      excluded-middle : ∀{A : Formula(Proposition)} → Node(A ∨ (¬ A))
       excluded-middle {A} =
         ([¬]-elim(¬[a∨¬a] ↦
           (⊥ :with: [⊥]-intro
@@ -233,7 +233,7 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
 
       -- It cannot be that a proposition is true and its negation is true at the same time.
       -- A proposition cannot be true and false at the same time.
-      non-contradiction : ∀{A : Formula(Prop)} → Node(¬ (A ∧ (¬ A)))
+      non-contradiction : ∀{A : Formula(Proposition)} → Node(¬ (A ∧ (¬ A)))
       non-contradiction {A} =
         ([¬]-intro(a∧¬a ↦
           (⊥ :with: [⊥]-intro
@@ -245,7 +245,7 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
       -- TODO: Mix of excluded middle and non-contradiction: (A ⊕ (¬ A))
 
       -- The standard proof technic: Assume the opposite of the conclusion and prove that it leads to a contradiction
-      proof-by-contradiction : ∀{A B : Formula(Prop)} → (Node(¬ A) → Node(B)) → (Node(¬ A) → Node(¬ B)) → Node(A)
+      proof-by-contradiction : ∀{A B : Formula(Proposition)} → (Node(¬ A) → Node(B)) → (Node(¬ A) → Node(¬ B)) → Node(A)
       proof-by-contradiction {A} {B} ¬a→b ¬a→¬b =
         (A :with: [¬]-elim(¬a ↦
           (⊥ :with: [⊥]-intro
@@ -254,7 +254,7 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
           )
         ))
 
-      peirce : ∀{A B : Formula(Prop)} → Node((A ⇒ B) ⇒ A) → Node(A)
+      peirce : ∀{A B : Formula(Proposition)} → Node((A ⇒ B) ⇒ A) → Node(A)
       peirce {A} {B} [A→B]→A =
         (A :with: [¬]-elim(¬a ↦
           ([⊥]-intro
@@ -273,7 +273,7 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
           )
         ))
 
-      skip-[⇒]-assumption : ∀{A B : Formula(Prop)} → (Node(A ⇒ B) → Node(A)) → Node(A)
+      skip-[⇒]-assumption : ∀{A B : Formula(Proposition)} → (Node(A ⇒ B) → Node(A)) → Node(A)
       skip-[⇒]-assumption A⇒B→A =
         (peirce
           ([⇒]-intro
@@ -282,7 +282,7 @@ open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
         )
 
 {-
-data □ : Formula(Prop) → Set where
+data □ : Formula(Proposition) → Set where
   Initial   : ∀{φ} → □(φ)
   [∧]-intro : ∀{φ₁ φ₂} → □(φ₁) → □(φ₂) → □(φ₁ ∧ φ₂)
   [∧]-elimₗ  : ∀{φ₁ φ₂} → □(φ₁ ∧ φ₂) → □(φ₁)
@@ -295,7 +295,7 @@ data □ : Formula(Prop) → Set where
   [¬]-intro : ∀{φ} → (□(φ) → □(⊥)) → □(¬ φ)
   [¬]-elim  : ∀{φ} → (□(¬ φ) → □(⊥)) → □(φ)
 
-data □ : Formula(Prop) → Set where
+data □ : Formula(Proposition) → Set where
   Initial   : ∀{φ} → □(φ)
   [∧]-intro : ∀{φ₁ φ₂} → □(φ₁) → □(φ₂) → □(φ₁ ∧ φ₂)
   [∧]-elimₗ  : ∀{φ₁ φ₂} → □(φ₁ ∧ φ₂) → □(φ₁)

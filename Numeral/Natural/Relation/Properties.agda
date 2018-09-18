@@ -18,11 +18,11 @@ open import Structure.Relator.Ordering{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 open import Type
 
-[ℕ]-zero-or-nonzero : ∀{n} → (n ≡ 𝟎)∨(n ≢ 𝟎)
+[ℕ]-zero-or-nonzero : ∀{n : ℕ} → (n ≡ 𝟎)∨(n ≢ 𝟎)
 [ℕ]-zero-or-nonzero {𝟎}    = [∨]-introₗ [≡]-intro
 [ℕ]-zero-or-nonzero {𝐒(_)} = [∨]-introᵣ \()
 
-[≡][ℕ]-excluded-middle : ∀{a b} → (a ≡ b)∨(a ≢ b)
+[≡][ℕ]-excluded-middle : ∀{a b : ℕ} → (a ≡ b)∨(a ≢ b)
 [≡][ℕ]-excluded-middle {𝟎}   {𝟎}    = [∨]-introₗ [≡]-intro
 [≡][ℕ]-excluded-middle {𝟎}   {𝐒(_)} = [∨]-introᵣ \()
 [≡][ℕ]-excluded-middle {𝐒(_)}{𝟎}    = [∨]-introᵣ \()

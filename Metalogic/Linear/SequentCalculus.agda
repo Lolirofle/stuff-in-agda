@@ -1,1 +1,1 @@
-module Metalogic.Linear.SequentCalculus {ℓₚ} (Prop : Set(ℓₚ)) where
+module Metalogic.Linear.SequentCalculus {ℓₚ} (Proposition : Set(ℓₚ)) where

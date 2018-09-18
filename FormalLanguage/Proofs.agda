@@ -40,19 +40,19 @@ module _ {Σ}{s} where
   -- postulate [𝁼]-set-algebra : SetAlgebra -- TODO: Complement is missing
 
 module _ {Σ} where
-  private _𝁼_ = Oper._𝁼_ {Σ}{ω}
-  private _∪_ = Oper._∪_ {Σ}{ω}
-  private _∩_ = Oper._∩_ {Σ}{ω}
-  private ε   = Oper.ε {Σ}{ω}
-  private ∅   = Oper.∅ {Σ}{ω}
-  private _*   = Oper._* {Σ}{ω}
-  private ∁_   = Oper.∁_ {Σ}{ω}
+  private _𝁼_ = Oper._𝁼_ {Σ}
+  private _∪_ = Oper._∪_ {Σ}
+  private _∩_ = Oper._∩_ {Σ}
+  private ε   = Oper.ε {Σ}
+  private ∅   = Oper.∅ {Σ}
+  private _*   = Oper._* {Σ}
+  private ∁_   = Oper.∁_ {Σ}
   private _∈_ = Oper._∈_ {Σ}
   private _∉_ = Oper._∉_ {Σ}
 
-  postulate suffix-lang-containment : ∀{x}{c}{L : Language(Σ){ω}} → (x ∈ Language.suffix-lang(L)(c)) → ((c ⊰ x) ∈ L)
+  postulate suffix-lang-containment : ∀{x}{c}{L : Language(Σ)} → (x ∈ Language.suffix-lang(L)(c)) → ((c ⊰ x) ∈ L)
 
-  [∪]-containment : ∀{x}{A B : Language(Σ){ω}} → (x ∈ (A ∪ B)) ↔ ((x ∈ A)∨(x ∈ B))
+  [∪]-containment : ∀{x}{A B : Language(Σ)} → (x ∈ (A ∪ B)) ↔ ((x ∈ A)∨(x ∈ B))
   [∪]-containment {x}{A}{B} = [↔]-intro (l{x}) (r{x}) where
     postulate l : ∀{x} → (x ∈ (A ∪ B)) ← ((x ∈ A)∨(x ∈ B))
     -- l {[]} ([∨]-introₗ [≡]-intro) = [≡]-intro
@@ -61,7 +61,7 @@ module _ {Σ} where
     postulate r : ∀{x} → (x ∈ (A ∪ B)) → ((x ∈ A)∨(x ∈ B))
     -- r ([≡]-intro) = [∨]-introₗ [≡]-intro
 
-  [∩]-containment : ∀{x}{A B : Language(Σ){ω}} → (x ∈ (A ∩ B)) ↔ ((x ∈ A)∧(x ∈ B))
+  [∩]-containment : ∀{x}{A B : Language(Σ)} → (x ∈ (A ∩ B)) ↔ ((x ∈ A)∧(x ∈ B))
   [∩]-containment {x}{A}{B} = [↔]-intro (l{x}) (r{x}) where
     postulate l : ∀{x} → (x ∈ (A ∩ B)) ← ((x ∈ A)∧(x ∈ B))
     -- l {[]}    ([∧]-intro xa xb) = [∧]-intro-[𝑇] xa xb
@@ -69,7 +69,7 @@ module _ {Σ} where
 
     postulate r : ∀{x} → (x ∈ (A ∩ B)) → ((x ∈ A)∧(x ∈ B))
 
-  postulate [∁]-containment : ∀{x}{A : Language(Σ){ω}} → (x ∈ (∁ A)) ↔ (x ∉ A)
+  postulate [∁]-containment : ∀{x}{A : Language(Σ)} → (x ∈ (∁ A)) ↔ (x ∉ A)
 
   [∅]-containment : ∀{x} → (x ∈ ∅) ↔ ⊥
   [∅]-containment {x} = [↔]-intro (l{x}) (r{x}) where
@@ -89,7 +89,7 @@ module _ {Σ} where
     r {[]}    [≡]-intro = [≡]-intro
     r {a ⊰ l} (proof) = [⊥]-elim (([↔]-elimᵣ ([∅]-containment {l})) (proof))
 
-  -- Language-[≡]-intro : ∀{A B : Language(Σ){ω}} → (∀{w} → (w is-in A) ≡ (w is-in B)) ↔ (A ≡ B)
+  -- Language-[≡]-intro : ∀{A B : Language(Σ)} → (∀{w} → (w is-in A) ≡ (w is-in B)) ↔ (A ≡ B)
   -- Language-[≡]-intro = [↔]-intro Language-[≡]-introₗ Language-[≡]-introᵣ where
   --   Language-[≡]-introₗ : ∀{A B} → (∀{w} → (w is-in A) ≡ (w is-in B)) ← (A ≡ B)
   --   Language-[≡]-introₗ [≡]-intro = [≡]-intro
@@ -100,7 +100,7 @@ module _ {Σ} where
     --   f{∅}     = [≡]-intro
     --   f{c ⊰ w} = [≡]-intro
 
-  -- postulate Language-[≡]-intro : {A B : Language(Σ){ω}} → (∀{w} → (w ∈ A) ↔ (w ∈ B)) ↔ (A ≡ B)
+  -- postulate Language-[≡]-intro : {A B : Language(Σ)} → (∀{w} → (w ∈ A) ↔ (w ∈ B)) ↔ (A ≡ B)
 
 -- TODO: Set properties
 -- TODO: Connection with logic (from sets) in relations

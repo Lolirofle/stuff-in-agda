@@ -1,4 +1,4 @@
-module Metalogic.Classical.Propositional.Syntax {ℓₚ} (Prop : Set(ℓₚ)) where
+module Metalogic.Classical.Propositional.Syntax {ℓₚ} (Proposition : Set(ℓₚ)) where
 
 import Lvl
 
@@ -9,7 +9,7 @@ infixl 1004 _∨_
 infixl 1000 _⇐_ _⇔_ _⇒_
 
 data Formula : Set(ℓₚ) where
-  •_ : Prop → Formula
+  •_ : Proposition → Formula
 
   ⊤ : Formula
   ⊥ : Formula

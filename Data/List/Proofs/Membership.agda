@@ -104,7 +104,7 @@ instance
 
 instance
   [∈]-in-middle : ∀{L₁ L₂} → ∀{a} → (a ∈ (L₁ ++ singleton(a) ++ L₂))
-  [∈]-in-middle{L₁}{L₂}{a} = [∈]-of-[++]ₗ {a}{_}{L₂} ([∨]-introₗ ([∈]-at-last{L₁}))
+  [∈]-in-middle{L₁}{L₂}{a} = [∈]-of-[++]ₗ {a}{L₁ ++ singleton(a)}{L₂} ([∨]-introₗ ([∈]-at-last{L₁}))
 
 [⊆]-substitution : ∀{L₁ L₂ : List{ℓ₂}(T)} → (L₁ ⊆ L₂) → ∀{P : T → Stmt} → (∀{a} → (a ∈ L₂) → P(a)) → (∀{a} → (a ∈ L₁) → P(a))
 [⊆]-substitution (L₁⊆L₂) proof = proof ∘ (L₁⊆L₂)

@@ -80,7 +80,7 @@ instance
 
 -- Elimination rule for identity types.
 -- Also called J.
--- This is interpreted as saying that all proofs of an equality are equal to each other. (TODO: Is it?)
+-- This is interpreted as saying that all proofs of an equality are equal to each other. (TODO: Are they?)
 -- Explanation:
 --   P{x}{y} (eq-proof) is an arbitrary predicate with possible mentions of an equality proof.
 --   A value of type (∀{x : T} → P{x}{x}([≡]-intro)) means:

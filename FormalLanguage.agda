@@ -114,18 +114,18 @@ module Oper {Σ} where
 
   -- Containment check
   -- Checks whether a word is in the language.
-  _is-in_ : Word(Σ) → Language(Σ){ω} → Bool
+  _is-in_ : Word(Σ) → Language(Σ) → Bool
   _is-in_ []      (L) = Language.accepts-ε(L)
   _is-in_ (c ⊰ w) (L) = w is-in (Language.suffix-lang(L)(c))
 
   -- Containment
   -- The relation of whether a word is in the language or not.
-  _∈_ : Word(Σ) → Language(Σ){ω} → Set
+  _∈_ : Word(Σ) → Language(Σ) → Set
   _∈_ a b = (a is-in b) ≡ 𝑇
 
   -- Uncontainment
   -- The relation of whether a word is not in the language or not.
-  _∉_ : Word(Σ) → Language(Σ){ω} → Set
+  _∉_ : Word(Σ) → Language(Σ) → Set
   _∉_ a b = (a is-in b) ≡ 𝐹
 
   -- The language of length 1 words that only accepts some symbols of its alphabet

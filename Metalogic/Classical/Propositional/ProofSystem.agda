@@ -1,4 +1,4 @@
-module Metalogic.Classical.Propositional.ProofSystem {ℓₚ} (Prop : Set(ℓₚ)) where
+module Metalogic.Classical.Propositional.ProofSystem {ℓₚ} (Proposition : Set(ℓₚ)) where
 
 import      Lvl
 open import Data hiding (empty)
@@ -6,7 +6,7 @@ import      Data.List
 open        Data.List using (List ; ∅ ; _⊰_ ; _++_ ; [_ ; _])
 import      Data.List.Relation.Membership
 import      Data.List.Proofs.Membership
-open import Metalogic.Classical.Propositional.Syntax(Prop)
+open import Metalogic.Classical.Propositional.Syntax(Proposition)
 open import Functional
 
 open        Data.List.Relation.Membership{ℓₚ}{ℓₚ} {Formula}

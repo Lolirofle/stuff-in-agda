@@ -179,7 +179,10 @@ record [ℤ]-induction-data (P : ℤ → Stmt) : Set(ℓ) where
 {-# REWRITE [−]-involution #-}
 
 [−]-injectivity : Injective(−_)
-[−]-injectivity(−a≡−b) = [≡]-with(−_) (−a≡−b)
+[−]-injectivity {a}{b} (−a≡−b) =
+  symmetry [−]-involution
+  🝖 [≡]-with(−_) (−a≡−b)
+  🝖 [−]-involution
 
 [−][−ₙ] : ∀{x} → (−(+ₙ x) ≡ −ₙ x)
 [−][−ₙ] {ℕ.𝟎}    = [≡]-intro

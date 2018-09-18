@@ -189,8 +189,8 @@ module _ {ℓₒ₁ ℓₘ₁ ℓₒ₂ ℓₘ₂ : Lvl.Level} where
       map : ∀{x y} → (x ⟶₁ y) → (F(x) ⟶₂ F(y))
 
     field
-     ⦃ .[∘]-preserving ⦄ : ∀{x y z}{f : y ⟶₁ z}{g : x ⟶₁ y} → (map(f ∘₁ g) ≡ map(f) ∘₂ map(g))
-     ⦃ .id-preserving  ⦄ : ∀{x} → (map(id₁{x}) ≡ id₂)
+     ⦃ [∘]-preserving ⦄ : ∀{x y z}{f : y ⟶₁ z}{g : x ⟶₁ y} → (map(f ∘₁ g) ≡ map(f) ∘₂ map(g))
+     ⦃ id-preserving  ⦄ : ∀{x} → (map(id₁{x}) ≡ id₂)
 
     -- Morphs/Transforms objects from category 1 to category 2
     functor = F

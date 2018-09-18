@@ -31,7 +31,7 @@ instance
     decideT-reflexivity : ∀{x} → (decideT(x)(x) ≡ 𝑇)
     decideT-reflexivity = [↔]-elimᵣ(proofT) ([≡]-intro)
 
-    decide-reflexivity : ∀{l} → (decide(l)(l) ≡ 𝑇)
+    decide-reflexivity : ∀{l} → (_≡_ {ℓ₁ Lvl.⊔ ℓ₂} (decide(l)(l)) 𝑇)
     decide-reflexivity {∅}     = [≡]-intro
     decide-reflexivity {x ⊰ l} = [∧]-intro-[𝑇] (decideT-reflexivity) (decide-reflexivity {l})
 

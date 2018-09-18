@@ -1,5 +1,5 @@
 OPTIONS=--rewriting
-#--exact-split --without-K
+#--exact-split --without-K --proof-irrelevance --verbose=5
 
 all: typecheck
 

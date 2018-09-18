@@ -4,6 +4,7 @@ import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Propositional{ℓ}
+open import Logic.Predicate{ℓ}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Induction{ℓ}
@@ -81,10 +82,10 @@ instance
     --   ∀x∀i. i+𝐒(x) = 𝐒(i)+x //[≡]-symmetry [2]
     -- ∀x∀i. x+𝐒(i) = 𝐒(i)+x //[≡]-transitivity [1] [2]
 
-[+1]-and-[𝐒] : ∀{x : ℕ} → x + 1 ≡ 𝐒(x)
+[+1]-and-[𝐒] : ∀{x : ℕ} → (x + 1 ≡ 𝐒(x))
 [+1]-and-[𝐒] {x} = [≡]-intro
 
-[1+]-and-[𝐒] : ∀{x : ℕ} → 1 + x ≡ 𝐒(x)
+[1+]-and-[𝐒] : ∀{x : ℕ} → (1 + x ≡ 𝐒(x))
 [1+]-and-[𝐒] {x} = ([+1]-and-[𝐒] {x}) 🝖 ([+]-commutativity{x}{1})
 
 instance
@@ -148,7 +149,7 @@ instance
   -- = (x + x⋅z) + (y + y⋅z)
   -- = x⋅𝐒(z) + y⋅𝐒(z)
 
-[⋅]-with-[𝐒]ₗ : ∀{x y} → 𝐒(x) ⋅ y ≡ (x ⋅ y) + y
+[⋅]-with-[𝐒]ₗ : ∀{x y} → (𝐒(x) ⋅ y ≡ (x ⋅ y) + y)
 [⋅]-with-[𝐒]ₗ {x}{y} =
   ([⋅][+]-distributivityᵣ{x}{1}{y})
   🝖 ([≡]-with(expr ↦ (x ⋅ y) + expr) ([⋅]-identityₗ {y}))
@@ -156,7 +157,7 @@ instance
 -- = (x+1)⋅y
 -- = x⋅y + 1⋅y
 -- = x⋅y + y
-{-# REWRITE [⋅]-with-[𝐒]ₗ #-}
+-- TODO: Maybe this is the cause of a compiler error in Divisibility.Proof? {-# REWRITE [⋅]-with-[𝐒]ₗ #-}
 
 [⋅]-with-[𝐒]ᵣ : ∀{x y} → x ⋅ 𝐒(y) ≡ x + (x ⋅ y)
 [⋅]-with-[𝐒]ᵣ = [≡]-intro
@@ -227,6 +228,9 @@ instance
     ([+]-sum-is-0ᵣ {a}{b} (proof))
   )
 
+postulate [+]-product-is-1ₗ : ∀{a b} → (a ⋅ b ≡ 1) → (a ≡ 1)
+postulate [+]-product-is-1ᵣ : ∀{a b} → (a ⋅ b ≡ 1) → (b ≡ 1)
+
 [⋅]-product-is-0 : ∀{a b} → (a ⋅ b ≡ 0) → ((a ≡ 0)∨(b ≡ 0))
 [⋅]-product-is-0 {a}{0} (_) = [∨]-introᵣ ([≡]-intro)
 [⋅]-product-is-0 {0}{b} (_) = [∨]-introₗ ([≡]-intro)
@@ -243,6 +247,15 @@ instance
   -- 𝐒((𝐒a⋅b)+a) = 0 //Definition: (+)
   -- ⊥ //∀n. 𝐒(n) ≠ 0
   -- (a = 0) ∨ (b = 0) //[⊥]-elim
+
+-- [⋅]-divide : ∀{a b} → ((a ⌈/₀⌉ b) ⋅ b ≡ a)
+-- [⋅]-divide : ∀{a b c} → (a ⋅ b ≡ c) → (a = c ⌈/₀⌉ b)
+
+-- [⋅]-product-is-not-0 : ∀{a b n} → (a ⋅ b ≡ 𝐒(n)) → (∃(n₁ ↦ a ≡ 𝐒(n₁)) ∧ ∃(n₂ ↦ b ≡ 𝐒(n₂)))
+-- [⋅]-product-is-not-0 {a}{0} (proof) = [⊥]-elim ([𝐒]-not-0 (symmetry proof))
+-- [⋅]-product-is-not-0 {0}{b} (proof) = [⊥]-elim ([𝐒]-not-0 (symmetry proof))
+-- [⋅]-product-is-not-0 {𝐒(a)}{𝐒(b)}{𝟎}    (𝐒a⋅𝐒b≡𝐒n) =
+-- [⋅]-product-is-not-0 {𝐒(a)}{𝐒(b)}{𝐒(n)} (𝐒a⋅𝐒b≡𝐒n) =
 
 -- [⋅]-product-is-coprime : ∀{a b} → Coprime(a ⋅ b) → ((a ≡ 1)∧(b ≡ a ⋅ b)) ∨ ((a ≡ a ⋅ b)∧(b ≡ 1))
 
@@ -322,18 +335,21 @@ postulate [−₀]-move-[𝐒] : ∀{x y} → ⦃ _ : (x ≥ y) ⦄ → ((𝐒(x
 [−₀]ₗ[+]ᵣ-nullify{𝟎}   {𝟎}    = [≡]-intro
 [−₀]ₗ[+]ᵣ-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([−₀]ₗ[+]ᵣ-nullify{x}{y})
 [−₀]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
-{-# REWRITE [−₀]ₗ[+]ᵣ-nullify #-}
+-- TODO: This gives an error 20180917? Maybe not? {-# REWRITE [−₀]ₗ[+]ᵣ-nullify #-}
 
 [−₀]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) −₀ x ≡ y)
 [−₀]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity {y}{x}) {expr ↦ (expr −₀ x ≡ y)} ([−₀]ₗ[+]ᵣ-nullify {y}{x})
-{-# REWRITE [−₀]ₗ[+]ₗ-nullify #-}
+-- TODO: Does this also give an error? Not tested {-# REWRITE [−₀]ₗ[+]ₗ-nullify #-}
 
 [−₀][+]ᵣ-nullify : ∀{x₁ x₂ y} → ((x₁ + y) −₀ (x₂ + y) ≡ x₁ −₀ x₂)
 [−₀][+]ᵣ-nullify {_} {_} {𝟎}    = [≡]-intro
 [−₀][+]ᵣ-nullify {x₁}{x₂}{𝐒(y)} = [−₀][+]ᵣ-nullify {x₁}{x₂}{y}
-{-# REWRITE [−₀][+]ᵣ-nullify #-}
+-- {-# REWRITE [−₀][+]ᵣ-nullify #-}
 
-postulate [−₀][+]ₗ-nullify : ∀{x y₁ y₂} → ((x + y₁) −₀ (x + y₂) ≡ y₁ −₀ y₂)
+[−₀][+]ₗ-nullify : ∀{x y₁ y₂} → ((x + y₁) −₀ (x + y₂) ≡ y₁ −₀ y₂)
+[−₀][+]ₗ-nullify {x}{y₁}{y₂} =
+  [≡]-with-op(_−₀_) ([+]-commutativity{x}{y₁}) ([+]-commutativity{x}{y₂})
+  🝖 [−₀][+]ᵣ-nullify{y₁}{y₂}{x}
 {-# REWRITE [−₀][+]ₗ-nullify #-}
 
 
@@ -342,7 +358,6 @@ postulate [−₀][+]ₗ-nullify : ∀{x y₁ y₂} → ((x + y₁) −₀ (x + 
 -}
 
 postulate [−₀][+]-nullify2 : ∀{x y} → ⦃ _ : (y ≥ x) ⦄ → (x + (y −₀ x) ≡ y)
--- {-# REWRITE [−₀][+]-nullify2 #-}
 -- x + (y −₀ x) ≡ y
 -- ∃z. x + ((x + z) −₀ x) ≡ y
 -- ∃z. x + z ≡ y

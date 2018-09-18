@@ -1,4 +1,4 @@
-module Metalogic.Linear.Syntax {ℓₚ} (Prop : Set(ℓₚ)) where
+module Metalogic.Linear.Syntax {ℓₚ} (Proposition : Set(ℓₚ)) where
 
 import Lvl
 
@@ -6,7 +6,7 @@ import Lvl
 -- https://plato.stanford.edu/entries/logic-linear/#ProSys
 
 data Formula : Set(ℓₚ) where
-  •_ : Prop → Formula
+  •_ : Proposition → Formula
 
   -- Top
   ⊤ : Formula

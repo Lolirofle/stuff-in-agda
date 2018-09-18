@@ -120,7 +120,7 @@ divides-with-[−₀] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b)
   )
 
 divides-without-[+]ₗ : ∀{a b c} → (a ∣ (b + c)) → (a ∣ c) → (a ∣ b)
-divides-without-[+]ₗ {a}{b}{c} = divides-with-[−₀] {a}{b + c}{c}
+divides-without-[+]ₗ {a}{b}{c} abc ac = [≡]-substitutionᵣ ([−₀]ₗ[+]ᵣ-nullify{b}{c}) {expr ↦ (a ∣ expr)} (divides-with-[−₀] {a}{b + c}{c} abc ac)
 
 divides-without-[+]ᵣ : ∀{a b c} → (a ∣ (b + c)) → (a ∣ b) → (a ∣ c)
 divides-without-[+]ᵣ {a}{b}{c} abc ab = divides-without-[+]ₗ {a}{c}{b} ([≡]-elimᵣ ([+]-commutativity{b}{c}) {expr ↦ a ∣ expr} abc) ab
@@ -170,10 +170,20 @@ divides-not-[1] ()
 [1]-only-divides-[1] {𝐒(𝐒(n))} ()
 
 divides-elim₊ : ∀{x y} → (y ∣ 𝐒(x)) → ∃(n ↦ y ⋅ 𝐒(n) ≡ 𝐒(x))
-divides-elim₊ {_}{𝟎}    (proof)                 = [⊥]-elim ([0]-divides-not (proof))
-divides-elim₊ {_}{𝐒(y)} (Div𝐒{𝟎}    (𝐒y-div-𝟎)) = [∃]-intro(𝟎) ⦃ [≡]-intro ⦄ -- Proof of: ∃(n ↦ 𝐒(y) ⋅ 𝐒(n) ≡ 𝐒(y))
-divides-elim₊ {_}{𝐒(y)} (Div𝐒{𝐒(x)} (𝐒y-div-𝐒x)) with divides-elim₊{x}{𝐒(y)}(𝐒y-div-𝐒x)
-... | ([∃]-intro (n) ⦃ 𝐒y⋅n≡𝐒x ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with(expr ↦ 𝐒(y) + expr) (𝐒y⋅n≡𝐒x) ⦄
+divides-elim₊ {x}{y} (proof) with divides-elim{𝐒(x)}{y} (proof)
+...                             | [∃]-intro (𝟎)    ⦃ y𝟎≡𝐒x ⦄  = [⊥]-elim (([𝐒]-not-0 ∘ symmetry) (symmetry ([⋅]-absorberᵣ {y}) 🝖 y𝟎≡𝐒x))
+...                             | [∃]-intro (𝐒(n)) ⦃ y𝐒n≡𝐒x ⦄ = [∃]-intro (n) ⦃ y𝐒n≡𝐒x ⦄
+-- divides-elim₊ {_}   {𝟎}       (proof)                 = [⊥]-elim ([0]-divides-not (proof))
+-- divides-elim₊ {𝟎}   {𝐒(𝟎)}    (_) = [∃]-intro(𝟎) ⦃ [≡]-intro ⦄
+-- divides-elim₊ {𝟎}   {𝐒(𝐒(y))} ()
+-- divides-elim₊ {.(𝐒(y + x))}{𝐒(y)}    (Div𝐒{𝐒(x)} (𝐒ydivx)) with divides-elim₊{x}{𝐒(y)}(𝐒ydivx)
+-- ... | ([∃]-intro (n) ⦃ 𝐒y⋅n≡𝐒x ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with(expr ↦ 𝐒(y) + expr) (𝐒y⋅n≡𝐒x) ⦄ -- a where postulate a : ∀{a} → a
+-- TODO: Below worked in previous versions of the compiler. Maybe some changes in the rewriting system? The compiler complains about a bug regarding "Rewriting.hs (line 360)"
+-- divides-elim₊ {_}{𝐒(y)} (Div𝐒{𝟎}    (𝐒y-div-𝟎)) = [∃]-intro(𝟎) ⦃ [⋅]-identityᵣ {𝐒(y)} ⦄ -- Proof of: ∃(n ↦ 𝐒(y) ⋅ 𝐒(n) ≡ 𝐒(y))
+-- divides-elim₊ {_}{𝐒(y)} (Div𝐒{𝐒(x)} (𝐒y-div-𝐒x)) with divides-elim₊{x}{𝐒(y)}(𝐒y-div-𝐒x)
+-- ... | ([∃]-intro (n) ⦃ 𝐒y⋅n≡𝐒x ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with(expr ↦ 𝐒(y) + expr) (𝐒y⋅n≡𝐒x) ⦄
+
+-- Reference material: divides-elim : ∀{x y} → (y ∣ 𝐒(x)) → (∃(n ↦ y ⋅ n ≡ 𝐒(x)))
 
 divides-upper-limit : ∀{a b} → (a ∣ 𝐒(b)) → (a ≤ 𝐒(b))
 divides-upper-limit {𝟎}   {_} (proof) = [⊥]-elim ([0]-divides-not (proof))

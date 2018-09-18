@@ -1,4 +1,4 @@
-module Metalogic.Classical.Propositional.Semantics {ℓ} (Prop : Set(ℓ)) where
+module Metalogic.Classical.Propositional.Semantics {ℓ} (Proposition : Set(ℓ)) where
 
 import      Lvl
 open import Data.Boolean
@@ -8,7 +8,7 @@ open import Functional
 open import Data.List
 import      Data.List.Relation.Membership
 import      Data.List.Proofs.Membership
-open import Metalogic.Classical.Propositional.Syntax{ℓ} (Prop)
+open import Metalogic.Classical.Propositional.Syntax{ℓ} (Proposition)
   renaming (
     ⊤   to ⊤ₗ ;
     ⊥   to ⊥ₗ ;
@@ -26,7 +26,7 @@ open        Data.List.Proofs.Membership{ℓ}{ℓ} {Formula}
 -- Also known as Interpretation, Structure, Model
 record Model{ℓₘ} : Set(ℓ Lvl.⊔ ℓₘ) where
   field
-    interpretProp : Prop → Bool
+    interpretProp : Proposition → Bool
 
 -- TODO: Can this be called a "theory" of propositional logic? So that instances of the type Semantics is the "models" of logic?
 -- TODO: Now, all the metalogic depends on booleans, which may not be satisfactory
