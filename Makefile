@@ -14,3 +14,6 @@ typecheck:
 
 test:
 	agda ${OPTIONS} Test.agda
+
+classic:
+	agda ${OPTIONS} MainClassic.agda

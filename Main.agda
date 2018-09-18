@@ -6,7 +6,6 @@ import Automaton.Pushdown
 import Automaton.TuringMachine
 import Cardinal
 import Cardinal.Finite.Count
-import ClassicMath.Logic
 import Data
 import Data.Any
 import Data.Boolean
