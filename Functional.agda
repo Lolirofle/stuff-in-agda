@@ -97,3 +97,9 @@ Codomain {_}{_} {_}{B} _ = B
 -- Functions with two parameters as an infix binary operator
 _〔_〕_ : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} → A → (A → B → C) → B → C
 a 〔 op 〕 b = op a b
+
+infixl 10000 _〔ₗ_〕_
+infixr 10000 _〔ᵣ_〕_
+
+_〔ₗ_〕_ = _〔_〕_
+_〔ᵣ_〕_ = _〔_〕_

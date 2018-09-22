@@ -21,7 +21,7 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
     public
 
   -- Rules of negation
-  record Negation ⦃ _ : Bottom ⦄ : Type{ℓₘ Lvl.⊔ ℓ} where
+  record Negation ⦃ bottom : Bottom ⦄ : Type{ℓₘ Lvl.⊔ ℓ} where
     open Bottom ⦃ ... ⦄
 
     infixl 1010 ¬_
@@ -30,29 +30,39 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
       ¬_   : Stmt → Stmt
 
     field
-      intro : ∀{X} → (Proof(X) → Proof(⊥)) → Proof(¬ X)
-      elim  : ∀{X} → (Proof(¬ X) → Proof(⊥)) → Proof(X)
+      intro : ∀{X} → (Proof(X) → Proof(⊥ ⦃ bottom ⦄)) → Proof(¬ X)
+      elim  : ∀{X} → (Proof(¬ X) → Proof(⊥ ⦃ bottom ⦄)) → Proof(X)
+      [⊥]-intro : ∀{X} → Proof(¬ X) → (Proof(X) → Proof(⊥ ⦃ bottom ⦄))
 
   -- A theory of classical propositional logic expressed using natural deduction rules
   record Theory : Type{ℓₘ Lvl.⊔ ℓ} where
-    open Conjunction ⦃ ... ⦄ renaming (intro to [∧]-intro ; elimₗ to [∧]-elimₗ ; elimᵣ to [∧]-elimᵣ) public
-    open Disjunction ⦃ ... ⦄ renaming (introₗ to [∨]-introₗ ; introᵣ to [∨]-introᵣ ; elim to [∨]-elim) public
-    open Implication ⦃ ... ⦄ renaming (intro to [→]-intro ; elim to [→]-elim) public
-    open Consequence ⦃ ... ⦄ renaming (intro to [←]-intro ; elim to [←]-elim) public
-    open Equivalence ⦃ ... ⦄ renaming (intro to [↔]-intro ; elimₗ to [↔]-elimₗ ; elimᵣ to [↔]-elimᵣ) public
-    open Negation    ⦃ ... ⦄ renaming (intro to [¬]-intro ; elim to [¬]-elim) public
-    open Bottom      ⦃ ... ⦄ renaming (intro to [⊥]-intro ; elim to [⊥]-elim) public
-    open Top         ⦃ ... ⦄ renaming (intro to [⊤]-intro) public
-
     field
-      ⦃ bottom ⦄      : Bottom
-      ⦃ top ⦄         : Top
-      ⦃ conjunction ⦄ : Conjunction
-      ⦃ disjunction ⦄ : Disjunction
-      ⦃ implication ⦄ : Implication
-      ⦃ consequence ⦄ : Consequence
-      ⦃ equivalence ⦄ : Equivalence
-      ⦃ negation ⦄    : Negation
+      instance ⦃ bottom ⦄      : Bottom
+      instance ⦃ top ⦄         : Top
+      instance ⦃ conjunction ⦄ : Conjunction
+      instance ⦃ disjunction ⦄ : Disjunction
+      instance ⦃ implication ⦄ : Implication
+      instance ⦃ consequence ⦄ : Consequence
+      instance ⦃ equivalence ⦄ : Equivalence
+      instance ⦃ negation ⦄    : Negation ⦃ bottom ⦄
+
+    open Bottom      (bottom)      using (⊥)   renaming (elim to [⊥]-elim) public
+    open Top         (top)         using (⊤)   renaming (intro to [⊤]-intro) public
+    open Conjunction (conjunction) using (_∧_) renaming (intro to [∧]-intro ; elimₗ to [∧]-elimₗ ; elimᵣ to [∧]-elimᵣ) public
+    open Disjunction (disjunction) using (_∨_) renaming (introₗ to [∨]-introₗ ; introᵣ to [∨]-introᵣ ; elim to [∨]-elim) public
+    open Implication (implication) using (_⟶_) renaming (intro to [→]-intro ; elim to [→]-elim) public
+    open Consequence (consequence) using (_⟵_) renaming (intro to [←]-intro ; elim to [←]-elim) public
+    open Equivalence (equivalence) using (_⟷_) renaming (intro to [↔]-intro ; elimₗ to [↔]-elimₗ ; elimᵣ to [↔]-elimᵣ) public
+    open Negation    (negation)    using (¬_ ; [⊥]-intro)  renaming (intro to [¬]-intro ; elim to [¬]-elim) public
+
+    module [⊥] = Bottom      (bottom)
+    module [⊤] = Top         (top)
+    module [∧] = Conjunction (conjunction)
+    module [∨] = Disjunction (disjunction)
+    module [→] = Implication (implication)
+    module [←] = Consequence (consequence)
+    module [↔] = Equivalence (equivalence)
+    module [¬] = Negation    (negation)
 
 module Predicate {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}} {Domain : Type{ℓₒ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) (Construct : Domain → Type{ℓₘₒ}) where
   open Propositional(Proof) renaming (Theory to PropositionalTheory)
@@ -65,15 +75,35 @@ module Predicate {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.⊔
 
   -- A theory of classical predicate/(first-order) logic expressed using natural deduction rules
   record Theory  : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
-    open PropositionalTheory       ⦃ ... ⦄ public
-    open UniversalQuantification   ⦃ ... ⦄ renaming (intro to [∀]-intro ; elim to [∀]-elim) public
-    open ExistentialQuantification ⦃ ... ⦄ renaming (intro to [∃]-intro ; elim to [∃]-elim) public
+    field
+      instance ⦃ propositional ⦄             : PropositionalTheory
+      instance ⦃ universalQuantification ⦄   : UniversalQuantification
+      instance ⦃ existentialQuantification ⦄ : ExistentialQuantification
+
+    open PropositionalTheory       (propositional)             public
+    open UniversalQuantification   (universalQuantification)   renaming (intro to [∀]-intro ; elim to [∀]-elim) public
+    open ExistentialQuantification (existentialQuantification) renaming (intro to [∃]-intro ; elim to [∃]-elim) public
 
     field
-      ⦃ propositional ⦄             : PropositionalTheory
-      ⦃ universalQuantification ⦄   : UniversalQuantification
-      ⦃ existentialQuantification ⦄ : ExistentialQuantification
+      ⦃ nonEmptyDomain ⦄ : Proof(∃ₗ(const ⊤))
 
+    module [∀] where
+      redundancyₗ : ∀{φ} → Proof(∀ₗ(const φ)) ← Proof(φ)
+      redundancyₗ (proof) = [∀]-intro(\{_} → proof)
+
+      redundancyᵣ : ∀{φ} → Proof(∀ₗ(const φ)) → Proof(φ)
+      redundancyᵣ (proof) = [∃]-elim(\{x} → _ ↦ [∀]-elim(proof){x}) (nonEmptyDomain)
+
+      open UniversalQuantification(universalQuantification) public
+
+    module [∃] where
+      redundancyₗ : ∀{φ} → Proof(∃ₗ(const φ)) ← Proof(φ)
+      redundancyₗ (proof) = [∃]-elim(\{x} → _ ↦ [∃]-intro{_}{x}(proof)) (nonEmptyDomain)
+
+      redundancyᵣ : ∀{φ} → Proof(∃ₗ(const φ)) → Proof(φ)
+      redundancyᵣ = [∃]-elim(\{_} → id)
+
+      open ExistentialQuantification(existentialQuantification) public
 {-
 Propositional-from-[∧][∨][⊥] : ∀{ℓ} → (_∧_ _∨_ : Stmt → Stmt → Stmt) → (⊥ : Stmt) →
   ([∧]-intro : ∀{X Y} → X → Y → (X ∧ Y)) →
@@ -123,12 +153,12 @@ module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.�
       elimᵣ  : ∀{P : Domain → Stmt}{a b} → Proof(a ≡ b) → Proof(P(a)) → Proof(P(b))
 
   record Theory : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
-    open PredicateTheory ⦃ ... ⦄ public
-    open Equality        ⦃ ... ⦄ renaming (intro to [≡]-intro ; elimₗ to [≡]-elimₗ ; elimᵣ to [≡]-elimᵣ) public
-
     field
-      ⦃ predicate ⦄ : PredicateTheory
-      ⦃ equality ⦄  : Equality
+      instance ⦃ predicate ⦄ : PredicateTheory
+      instance ⦃ equality ⦄  : Equality
+
+    open PredicateTheory (predicate) public
+    open Equality        (equality)  renaming (intro to [≡]-intro ; elimₗ to [≡]-elimₗ ; elimᵣ to [≡]-elimᵣ) public
 
     -- Definition of uniqueness of a property.
     -- This means that there is at most one element that satisfies this property.

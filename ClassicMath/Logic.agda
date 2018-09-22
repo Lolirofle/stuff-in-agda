@@ -114,17 +114,22 @@ module _ {ℓ} where
       [¬]-elim : X → ⊥
   open ¬_ public
 
-  {-
   ------------------------------------------
   -- Universal quantification (FORALL)
 
-  record ∀ₗ {ℓ}{X : Type{ℓ}} (Pred : X → Prop(ℓ)) : Prop(ℓ) where
+  record ∀ₗ {X : Type{ℓ}} (Pred : X → Prop(ℓ)) : Prop(ℓ) where
     instance constructor [∀]-intro
     field
       [∀]-elim : ∀{x : X} → Pred(x)
 
   ------------------------------------------
   -- Existential quantification (EXISTS)
+  {-
+  record ∃ {ℓ}{X : Type{ℓ}} (Pred : X → Prop(ℓ)) : Prop(Lvl.𝐒(ℓ)) where
+    inductive
+    instance constructor [∃]-intro
+    field
+      [∃]-elim : ∀{P : X → Prop(ℓ)} → (∀{x : X} → Pred(x) → P(x)) → ∃(P)
 
   record ∃ {ℓ}{X : Type{ℓ}} (Pred : X → Prop(ℓ)) : Prop(ℓ) where
     instance constructor [∃]-intro

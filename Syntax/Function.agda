@@ -7,3 +7,4 @@ import Lvl
 [↦] x = x
 infix 1 [↦]
 syntax [↦](λ x → y) = x ↦ y
+{-# DISPLAY [↦] x = x #-}
