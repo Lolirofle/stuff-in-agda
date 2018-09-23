@@ -176,7 +176,7 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
     module [↔] = Equivalence (equivalence)
     module [¬] = Negation    (negation)
 
-module Predicate {ℓₘₗₛ ℓₘₒₛ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₘₗₛ Lvl.⊔ ℓₘₒₛ}} {Domain : Type{ℓₘₒₛ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) (Construct : Domain → Type{ℓₘₒ}) where
+module Predicate {ℓₘₗₛ ℓₘₒₛ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₘₗₛ Lvl.⊔ ℓₘₒₛ}} {Domain : Type{ℓₘₒₛ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) where
   open Propositional(Proof) renaming (Theory to PropositionalTheory)
 
   record UniversalQuantification : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₘₗₛ Lvl.⊔ ℓₘₒₛ)} where

@@ -1,91 +1,197 @@
 open import Logic.Classical.NaturalDeduction
 
-module Logic.Classical.SetTheory.ZFC {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} {Proof} {Construct} ⦃ predicateEqTheory : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) (Construct) ⦄ (_∈_ : Domain → Domain → Stmt) where
+module Logic.Classical.SetTheory.ZFC {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} {Proof} ⦃ predicateEqTheory : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) ⦄ (_∈_ : Domain → Domain → Stmt) where
 
 open import Functional hiding (Domain)
 open import Lang.Instance
 import      Lvl
--- open        Logic.Classical.NaturalDeduction.Propositional {ℓₗ Lvl.⊔ ℓₒ}{ℓₘₗ Lvl.⊔ ℓₘₒ}{Stmt}          (Proof)             hiding (Theory)
--- open        Logic.Classical.NaturalDeduction.Predicate     {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ}           {Stmt} {Domain} (Proof) (Construct) hiding (Theory)
-open        Logic.Classical.NaturalDeduction.PredicateEq   {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ}           {Stmt} {Domain} (Proof) (Construct) renaming (Theory to PredicateEqTheory)
-open        PredicateEqTheory (predicateEqTheory)
+open        Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) renaming (Theory to PredicateEqTheory)
+open import Logic.Classical.SetTheory.BoundedQuantification ⦃ predicateEqTheory ⦄ (_∈_)
+open import Logic.Classical.SetTheory.Relation ⦃ predicateEqTheory ⦄ (_∈_)
 
--- The statement that the set s is empty
-Empty : Domain → Stmt
-Empty(s) = ∀ₗ(x ↦ ¬(x ∈ s))
+open PredicateEqTheory (predicateEqTheory)
+private
+  module Meta where
+    open import Numeral.FiniteStrict           public
+    open import Numeral.FiniteStrict.Bound{ℓₗ} public
+    open import Numeral.Natural                public
 
--- The statement that the set s is non-empty
-NonEmpty : Domain → Stmt
-NonEmpty(s) = ∃ₗ(x ↦ (x ∈ s))
+Function : Set(_)
+Function = (Domain → Domain)
 
--- The statement that the sets s₁ and s₂ are disjoint
-Disjoint : Domain → Domain → Stmt
-Disjoint(s₁)(s₂) = ¬ ∃ₗ(x ↦ (x ∈ s₁)∧(x ∈ s₂))
+FiniteIndexedFamily : Meta.ℕ → Set(_)
+FiniteIndexedFamily(n) = Meta.𝕟(n) → Domain
 
--- The statement that the predicate F is a partial function
-PartialFunction : (Domain → Domain → Stmt) → Domain → Stmt
-PartialFunction(F) (dom) = ∀ₗ(x ↦ (x ∈ dom) ⟶ Unique(y ↦ F(x)(y)))
+InfiniteIndexedFamily : Set(_)
+InfiniteIndexedFamily = Meta.ℕ → Domain
 
--- The statement that the predicate F is a total function
-TotalFunction : (Domain → Domain → Stmt) → Domain → Stmt
-TotalFunction(F) (dom) = ∀ₗ(x ↦ (x ∈ dom) ⟶ ∃ₗ!(y ↦ F(x)(y)))
-
--- The statement that the set s is a function
--- FunctionSet : Domain → Stmt
--- FunctionSet(s) = ∀ₗ(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s))
-
-_∋_ : Domain → Domain → Stmt
-_∋_ a x = (x ∈ a)
-
-_∌_ : Domain → Domain → Stmt
-_∌_ a x = ¬(x ∈ a)
-
-_∉_ : Domain → Domain → Stmt
-_∉_ x a = ¬(x ∈ a)
-
-_⊆_ : Domain → Domain → Stmt
-_⊆_ a b = ∀ₗ(x ↦ (x ∈ a) ⟶ (x ∈ b))
-
-_⊇_ : Domain → Domain → Stmt
-_⊇_ a b = ∀ₗ(x ↦ (x ∈ a) ⟵ (x ∈ b))
-
+-- The symbols/signature of ZFC set theory.
 record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
   field
+    -- Empty set
+    -- The set consisting of no elements.
     ∅ : Domain
+
+    -- Pair set.
+    -- The set consisting of only two elements.
     pair : Domain → Domain → Domain
+
+    -- Subset filtering.
+    -- The subset of the specified set where all elements satisfy the specified formula.
     filter : Domain → (Domain → Stmt) → Domain
+
+    -- Power set.
+    -- The set of all subsets of the specified set.
     ℘ : Domain → Domain
+
+    -- Union over arbitrary sets.
+    -- Constructs a set which consists of elements which are in any of the specified sets.
     ⋃ : Domain → Domain
+
+    -- An inductive set.
+    -- A set which has the `Inductive`-property. Also infinite.
     inductiveSet : Domain
 
+  -- Singleton set.
+  -- A set consisting of only a single element.
   singleton : Domain → Domain
   singleton(s) = pair(s)(s)
 
+  -- Union operator.
+  -- Constructs a set which consists of both elements from LHS and RHS.
   _∪_ : Domain → Domain → Domain
   a ∪ b = ⋃(pair a b)
 
+  -- Intersection operator.
+  -- Constructs a set which consists of elements which are in both LHS and RHS.
   _∩_ : Domain → Domain → Domain
   a ∩ b = filter(a)(_∈ b)
 
+  -- "Without"-operator.
+  -- Constructs a set which consists of elements which are in LHS, but not RHS.
   _∖_ : Domain → Domain → Domain
   a ∖ b = filter(a)(_∉ b)
 
+  -- Intersection over arbitrary sets.
+  -- Constructs a set which consists of elements which are in all of the specified sets.
   ⋂ : Domain → Domain
   ⋂(a) = filter(⋃(a)) (a₁ ↦ ∀ₗ(a₂ ↦ (a₂ ∈ a) ⟶ (a₁ ∈ a₂)))
 
-  𝟎 : Domain
-  𝟎 = ∅
-
-  𝐒 : Domain → Domain
-  𝐒(n) = n ∪ singleton(n)
-
+  -- Tuple value.
+  -- An ordered pair of values.
   _,_ : Domain → Domain → Domain
   a , b = pair(singleton(a)) (pair(a)(b))
 
+  -- Set product (Set of tuples) (Cartesian product).
   _⨯_ : Domain → Domain → Domain
   a ⨯ b = filter(℘(℘(a ∪ b))) (t ↦ ∃ₗ(x ↦ (x ∈ a) ∧ ∃ₗ(y ↦ (y ∈ b) ∧ t ≡ (x , y))))
 
+  -- Set product over a finite indexed family (Cartesian product).
+  -- TODO: Not really like this. See definition of (_⨯_) and (_,_), and try to express the same here
+  -- TODO: Also, make it possible to take the set product of infinite indexed families
+  ∏_ : ∀{n} → FiniteIndexedFamily(n) → Domain
+  ∏_ {Meta.𝟎}            _ = singleton(∅)
+  ∏_ {Meta.𝐒(Meta.𝟎)}    I = I(Meta.𝟎)
+  ∏_ {Meta.𝐒(Meta.𝐒(n))} I = I(Meta.maximum) ⨯ (∏_ {Meta.𝐒(n)} (I ∘ Meta.bound-𝐒))
+
+  -- Quotient set.
+  -- The set of equivalence classes.
+  _/_ : Domain → BinaryRelator → Domain
+  a / (_▫_) = filter(℘(a))(aₛ ↦ ∀ₛ(aₛ)(x ↦ ∀ₛ(aₛ)(y ↦ x ▫ y)))
+
+  -- Equivalence class
+  -- The set of elements which are equivalent to the specified one.
+  [_of_,_] : Domain → Domain → BinaryRelator → Domain
+  [ x of a , (_▫_) ] = filter(a)(y ↦ x ▫ y)
+
+module Function ⦃ signature : Signature ⦄ where
+  open Signature ⦃ ... ⦄
+
+  record Type (f : Function) : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
+    constructor intro
+    field
+      domain   : Domain
+      codomain : Domain
+
+    field
+      closure : Proof(∀ₛ(domain)(x ↦ f(x) ∈ codomain))
+
+    map : Domain → Domain
+    map a = filter(codomain)(y ↦ ∃ₛ(a)(x ↦ y ≡ f(x)))
+
+    ⊶ : Domain
+    ⊶ = map(domain)
+  open Type ⦃ ... ⦄ public
+
+  -- The statement that the set s could be interpreted as a function
+  -- FunctionSet : Domain → Stmt
+  -- FunctionSet(s) = ∀ₗ(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s))
+
+module Structure where
+  module Function' where -- TODO: Temporary naming fix with tick
+    module Properties ⦃ signature : Signature ⦄ where
+      open Function
+
+      Injective : (f : Function) → ⦃ _ : Type(f) ⦄ → Stmt
+      Injective(f) = ∀ₛ(domain{f})(x ↦ ∀ₛ(domain{f})(y ↦ (f(x) ≡ f(y)) ⟶ (x ≡ y)))
+
+      Surjective : (f : Function) → ⦃ _ : Type(f) ⦄ → Stmt
+      Surjective(f) = ∀ₛ(codomain{f})(y ↦ ∃ₛ(domain{f})(x ↦ y ≡ f(x)))
+
+      Bijective : (f : Function) → ⦃ _ : Type(f) ⦄ → Stmt
+      Bijective(f) = Injective(f) ∧ Surjective(f)
+
+  module Relator where
+    module Properties where
+      Reflexivity : Domain → BinaryRelator → Stmt
+      Reflexivity(S)(_▫_) = ∀ₛ(S)(x ↦ x ▫ x)
+
+      Irreflexivity : Domain → BinaryRelator → Stmt
+      Irreflexivity(S)(_▫_) = ∀ₛ(S)(x ↦ ¬(x ▫ x))
+
+      Symmetry : Domain → BinaryRelator → Stmt
+      Symmetry(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x ▫ y) ⟶ (y ▫ x)))
+
+      Asymmetry : Domain → BinaryRelator → Stmt
+      Asymmetry(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x ▫ y) ⟶ ¬(y ▫ x)))
+
+      Antisymmetry : Domain → BinaryRelator → Stmt
+      Antisymmetry(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x ▫ y)∧(y ▫ x) ⟶ (x ≡ y)))
+
+      Transitivity : Domain → BinaryRelator → Stmt
+      Transitivity(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ (x ▫ y)∧(y ▫ z) ⟶ (x ▫ z))))
+
+      Equivalence  : Domain → BinaryRelator → Stmt
+      Equivalence(S)(_▫_) = Reflexivity(S)(_▫_) ∧ Symmetry(S)(_▫_) ∧ Transitivity(S)(_▫_)
+
+module NumeralNatural ⦃ signature : Signature ⦄ where
+  open Signature ⦃ ... ⦄
+
+  -- Zero constant from the standard inductive set definition of ℕ
+  𝟎 : Domain
+  𝟎 = ∅
+
+  -- Successor function from the standard inductive set definition of ℕ
+  𝐒 : Domain → Domain
+  𝐒(n) = n ∪ singleton(n)
+
+  Inductive : Domain → Stmt
+  Inductive(I) = (𝟎 ∈ I) ∧ (∀ₗ(x ↦ (x ∈ I) ⟶ (𝐒(x) ∈ I)))
+
+  _<_ : BinaryRelator
+  a < b = a ∈ b
+
+  _≤_ : BinaryRelator
+  a ≤ b = (a < b) ∨ (a ≡ b)
+
+  _>_ : BinaryRelator
+  a > b = b < a
+
+  _≥_ : BinaryRelator
+  a ≥ b = b ≤ a
+
 module Axioms ⦃ signature : Signature ⦄ where
+  open NumeralNatural using () renaming (Inductive to [ℕ]-Inductive)
   open Signature ⦃ ... ⦄
 
   -- A set which is empty exists.
@@ -108,7 +214,7 @@ module Axioms ⦃ signature : Signature ⦄ where
   Union = Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s)))))
 
   -- An infinite set (specifically, a ℕ-inductive set (which just happens to be infinite)) exists.
-  Infinity = Proof((𝟎 ∈ inductiveSet) ∧ ∀ₗ(n ↦ (n ∈ inductiveSet) ⟶ (𝐒(n) ∈ inductiveSet)))
+  Infinity = Proof([ℕ]-Inductive(inductiveSet))
 
   -- Set equality is determined by its contents.
   -- • Guarantees the definition of equality for sets.
@@ -121,7 +227,10 @@ module Axioms ⦃ signature : Signature ⦄ where
 
   Replacement = ∀{φ : Domain → Domain → Stmt} → Proof(∀ₗ(A ↦ TotalFunction(φ)(A) ⟶ ∃ₗ(B ↦ ∀ₗ(y ↦ (y ∈ B) ⟷ ∃ₗ(x ↦ (x ∈ A) ∧ φ(x)(y))))))
 
-  Choice = Proof(⊤)
+  -- The set product of non-empty finite indexed family of sets where all the sets are non-empty is non-empty.
+  -- TODO: Should the indexed family really be finite? https://en.wikipedia.org/wiki/Cartesian_product#Infinite_Cartesian_products
+  Choice = ∀{n : Meta.ℕ}{F : FiniteIndexedFamily(Meta.𝐒(n))} → (∀{i : Meta.𝕟(Meta.𝐒(n))} → Proof(NonEmpty(F(i)))) → Proof(NonEmpty(∏ F))
+  -- ∀{s} → Proof(∅ ∉ s) → ∃(s → (⋃ s))(f ↦ ) Proof(∀ₛ(s)(x ↦ f(x) ∈ x))
 
 record ZF ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
   open Axioms
@@ -301,187 +410,99 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
 
   -- [⋃][℘]-inverse : Proof(∀ₗ(s ↦ ⋃(℘(s)) ≡ s))
 
-  ∀ₛ : Domain → (Domain → Stmt) → Stmt
-  ∀ₛ(S)(φ) = ∀ₗ(x ↦ (x ∈ S) ⟶ φ(x))
+  module NumeralNaturalProofs where
+    open NumeralNatural
+    open Structure
+    open Structure.Function'.Properties
+    open Structure.Relator
+    open Structure.Relator.Properties
 
-  ∃ₛ : Domain → (Domain → Stmt) → Stmt
-  ∃ₛ(S)(φ) = ∃ₗ(x ↦ (x ∈ S) ∧ φ(x))
-
-  module Structure where
-    module Function where
-      Function : Set(_)
-      Function = (Domain → Domain)
-
-      record Type (f : Function) : Set(ℓₒ) where
-        constructor intro
-        field
-          domain   : Domain
-          codomain : Domain
-
-        map : Domain → Domain
-        map a = filter(codomain)(y ↦ ∃ₛ(a)(x ↦ y ≡ f(x)))
-
-        ⊶ : Domain
-        ⊶ = map(domain)
-      open Type ⦃ ... ⦄ public
-
-      module Properties where
-        Closed : (f : Function) → ⦃ _ : Type(f) ⦄ → Stmt
-        Closed(f) = ∀ₛ(domain{f})(x ↦ f(x) ∈ codomain{f})
-
-        Injective : (f : Function) → ⦃ _ : Type(f) ⦄ → Stmt
-        Injective(f) = ∀ₛ(domain{f})(x ↦ ∀ₛ(domain{f})(y ↦ (f(x) ≡ f(y)) ⟶ (x ≡ y)))
-
-        Surjective : (f : Function) → ⦃ _ : Type(f) ⦄ → Stmt
-        Surjective(f) = ∀ₛ(codomain{f})(y ↦ ∃ₛ(domain{f})(x ↦ y ≡ f(x)))
-
-        Bijective : (f : Function) → ⦃ _ : Type(f) ⦄ → Stmt
-        Bijective(f) = Injective(f) ∧ Surjective(f)
-
-    module Relator where
-      UnaryRelator : Set(_)
-      UnaryRelator = (Domain → Stmt)
-
-      BinaryRelator : Set(_)
-      BinaryRelator = (Domain → Domain → Stmt)
-
-      -- Quotient set
-      _/_ : Domain → BinaryRelator → Domain
-      a / (_▫_) = filter(℘(a))(aₛ ↦ ∀ₛ(aₛ)(x ↦ ∀ₛ(aₛ)(y ↦ x ▫ y)))
-
-      -- Equivalence class
-      [_of_,_] : Domain → Domain → BinaryRelator → Domain
-      [ x of a , (_▫_) ] = filter(a)(y ↦ x ▫ y)
-
-      module Properties where
-        Reflexivity : Domain → BinaryRelator → Stmt
-        Reflexivity(S)(_▫_) = ∀ₛ(S)(x ↦ x ▫ x)
-
-        Irreflexivity : Domain → BinaryRelator → Stmt
-        Irreflexivity(S)(_▫_) = ∀ₛ(S)(x ↦ ¬(x ▫ x))
-
-        Symmetry : Domain → BinaryRelator → Stmt
-        Symmetry(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x ▫ y) ⟶ (y ▫ x)))
-
-        Asymmetry : Domain → BinaryRelator → Stmt
-        Asymmetry(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x ▫ y) ⟶ ¬(y ▫ x)))
-
-        Antisymmetry : Domain → BinaryRelator → Stmt
-        Antisymmetry(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (y ▫ x)∧(x ▫ y) ⟶ (x ≡ y)))
-
-        Transitivity : Domain → BinaryRelator → Stmt
-        Transitivity(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ (x ▫ y)∧(y ▫ z) ⟶ (x ▫ z))))
-
-        Equivalence  : Domain → BinaryRelator → Stmt
-        Equivalence(S)(_▫_) = Reflexivity(S)(_▫_) ∧ Symmetry(S)(_▫_) ∧ Transitivity(S)(_▫_)
-
-  module Numeral where
-    module Natural where
-      open Structure
-      open Structure.Function.Properties
-      open Structure.Relator
-      open Structure.Relator.Properties
-
-      Inductive : Domain → Stmt
-      Inductive(I) = (∅ ∈ I) ∧ (∀ₗ(x ↦ (x ∈ I) ⟶ (𝐒(x) ∈ I)))
-
-      [∩]-inductive : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (Inductive(a) ∧ Inductive(b)) ⟶ Inductive(a ∩ b))))
-      [∩]-inductive =
-        ([∀]-intro (\{a} →
-          ([∀]-intro (\{b} →
-            ([→]-intro(indaindb ↦
-              ([∧]-intro
-                -- ∅ is in
-                ([↔]-elimₗ
-                  ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){∅})
-                  ([∧]-intro
-                    ([∧]-elimₗ([∧]-elimₗ indaindb))
-                    ([∧]-elimₗ([∧]-elimᵣ indaindb))
-                  )
+    [∩]-inductive : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (Inductive(a) ∧ Inductive(b)) ⟶ Inductive(a ∩ b))))
+    [∩]-inductive =
+      ([∀]-intro (\{a} →
+        ([∀]-intro (\{b} →
+          ([→]-intro(indaindb ↦
+            ([∧]-intro
+              -- ∅ is in
+              ([↔]-elimₗ
+                ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){∅})
+                ([∧]-intro
+                  ([∧]-elimₗ([∧]-elimₗ indaindb))
+                  ([∧]-elimₗ([∧]-elimᵣ indaindb))
                 )
-
-                -- 𝐒 is in
-                ([∀]-intro (\{x} →
-                  ([→]-intro(x∈a∩b ↦
-                    ([↔]-elimₗ
-                      ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){𝐒(x)})
-                      ([∧]-intro
-                        -- 𝐒(x) ∈ a
-                        ([→]-elim([∀]-elim([∧]-elimᵣ([∧]-elimₗ indaindb)){x})(
-                          -- x ∈ a
-                          [∧]-elimₗ([↔]-elimᵣ
-                            ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){x})
-                            (x∈a∩b)
-                          )
-                        ))
-
-                        -- 𝐒(x) ∈ b
-                        ([→]-elim([∀]-elim([∧]-elimᵣ([∧]-elimᵣ indaindb)){x})(
-                          -- x ∈ b
-                          [∧]-elimᵣ([↔]-elimᵣ
-                            ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){x})
-                            (x∈a∩b)
-                          )
-                        ))
-                      )
-                    )
-                  ))
-                ))
               )
-            ))
+
+              -- 𝐒 is in
+              ([∀]-intro (\{x} →
+                ([→]-intro(x∈a∩b ↦
+                  ([↔]-elimₗ
+                    ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){𝐒(x)})
+                    ([∧]-intro
+                      -- 𝐒(x) ∈ a
+                      ([→]-elim([∀]-elim([∧]-elimᵣ([∧]-elimₗ indaindb)){x})(
+                        -- x ∈ a
+                        [∧]-elimₗ([↔]-elimᵣ
+                          ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){x})
+                          (x∈a∩b)
+                        )
+                      ))
+
+                      -- 𝐒(x) ∈ b
+                      ([→]-elim([∀]-elim([∧]-elimᵣ([∧]-elimᵣ indaindb)){x})(
+                        -- x ∈ b
+                        [∧]-elimᵣ([↔]-elimᵣ
+                          ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){x})
+                          (x∈a∩b)
+                        )
+                      ))
+                    )
+                  )
+                ))
+              ))
+            )
           ))
         ))
+      ))
 
-      -- postulate [⋂]-property : ∀{φ} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ s) ⟶ φ(x)) ⟶ φ(⋂ s))) TODO: MAybe not true
-      postulate [⋂]-inductive : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ s) ⟶ Inductive(x)) ⟶ Inductive(⋂ s)))
+    -- postulate [⋂]-property : ∀{φ} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ s) ⟶ φ(x)) ⟶ φ(⋂ s))) TODO: MAybe not true
+    postulate [⋂]-inductive : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ s) ⟶ Inductive(x)) ⟶ Inductive(⋂ s)))
 
-      ℕ : Domain
-      ℕ = ⋂(filter(℘(inductiveSet)) Inductive) -- TODO: This pattern seems useful
+    ℕ : Domain
+    ℕ = ⋂(filter(℘(inductiveSet)) Inductive) -- TODO: This pattern seems useful
 
-      [ℕ]-inductive : Proof(Inductive(ℕ))
-      [ℕ]-inductive =
-        ([→]-elim
-          ([∀]-elim
-            [⋂]-inductive
-            {filter(℘(inductiveSet)) Inductive}
-          )
-          ([∀]-intro(\{x} →
-            ([→]-intro(x∈filter ↦
-              [∧]-elimᵣ(([↔]-elimᵣ([∀]-elim([∀]-elim filter-containment{℘(inductiveSet)}){x})) (x∈filter))
-            ))
-          ))
+    [ℕ]-inductive : Proof(Inductive(ℕ))
+    [ℕ]-inductive =
+      ([→]-elim
+        ([∀]-elim
+          [⋂]-inductive
+          {filter(℘(inductiveSet)) Inductive}
         )
+        ([∀]-intro(\{x} →
+          ([→]-intro(x∈filter ↦
+            [∧]-elimᵣ(([↔]-elimᵣ([∀]-elim([∀]-elim filter-containment{℘(inductiveSet)}){x})) (x∈filter))
+          ))
+        ))
+      )
 
-      -- postulate any : ∀{l}{a : Set(l)} → a
+    -- postulate any : ∀{l}{a : Set(l)} → a
 
-      postulate [ℕ]-elements : Proof(∀ₛ(ℕ)(n ↦ (n ≡ 𝟎) ∨ ∃ₛ(ℕ)(p ↦ n ≡ 𝐒(p))))
+    postulate [ℕ]-elements : Proof(∀ₛ(ℕ)(n ↦ (n ≡ 𝟎) ∨ ∃ₛ(ℕ)(p ↦ n ≡ 𝐒(p))))
 
-      _<_ : BinaryRelator
-      a < b = a ∈ b
+    postulate [<]-irreflexivity : Proof(Irreflexivity(ℕ)(_<_))
+    postulate [<]-asymmetry     : Proof(Antisymmetry(ℕ)(_<_))
+    postulate [<]-transitivity  : Proof(Transitivity(ℕ)(_<_))
 
-      _≤_ : BinaryRelator
-      a ≤ b = (a < b) ∨ (a ≡ b)
+    postulate [≤]-reflexivity  : Proof(Irreflexivity(ℕ)(_≤_))
+    postulate [≤]-antisymmetry : Proof(Antisymmetry(ℕ)(_≤_))
+    postulate [≤]-transitivity : Proof(Transitivity(ℕ)(_≤_))
 
-      _>_ : BinaryRelator
-      a > b = b < a
+    instance
+      [𝐒]-type : Function.Type(𝐒)
+      [𝐒]-type = Function.Type.intro ℕ ℕ proof where
+        postulate proof : ∀{a} → a
 
-      _≥_ : BinaryRelator
-      a ≥ b = b ≤ a
+    postulate [𝐒]-injective : Proof(Injective(𝐒))
 
-      postulate [<]-irreflexivity : Proof(Irreflexivity(ℕ)(_<_))
-      postulate [<]-asymmetry     : Proof(Antisymmetry(ℕ)(_<_))
-      postulate [<]-transitivity  : Proof(Transitivity(ℕ)(_<_))
-
-      postulate [≤]-reflexivity  : Proof(Irreflexivity(ℕ)(_≤_))
-      postulate [≤]-antisymmetry : Proof(Antisymmetry(ℕ)(_≤_))
-      postulate [≤]-transitivity : Proof(Transitivity(ℕ)(_≤_))
-
-      instance
-        [𝐒]-type : Function.Type(𝐒)
-        [𝐒]-type = Function.Type.intro ℕ ℕ
-
-      postulate [𝐒]-injective : Proof(Injective(𝐒))
-
-      -- ∀ₛ(ℕ)(a ↦ ∀ₛ(ℕ)(b ↦ (a < b) ⟶ (𝐒(a) < 𝐒(b))))
-      -- ∀ₛ(ℕ)(a ↦ ∀ₛ(ℕ)(b ↦ (a < b) ⟶ (𝐒(a) < 𝐒(b))))
-      -- ∀ₛ(ℕ)(n ↦ 𝟎 ≢ 𝐒(n))
+    -- ∀ₛ(ℕ)(a ↦ ∀ₛ(ℕ)(b ↦ (a < b) ⟶ (𝐒(a) < 𝐒(b))))
+    -- ∀ₛ(ℕ)(a ↦ ∀ₛ(ℕ)(b ↦ (a < b) ⟶ (𝐒(a) < 𝐒(b))))
+    -- ∀ₛ(ℕ)(n ↦ 𝟎 ≢ 𝐒(n))

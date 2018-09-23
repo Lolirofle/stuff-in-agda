@@ -64,10 +64,10 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
     module [↔] = Equivalence (equivalence)
     module [¬] = Negation    (negation)
 
-module Predicate {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}} {Domain : Type{ℓₒ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) (Construct : Domain → Type{ℓₘₒ}) where
+module Predicate {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}} {Domain : Type{ℓₒ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) where
   open Propositional(Proof) renaming (Theory to PropositionalTheory)
 
-  open Constructive.Predicate {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) (Construct) using
+  open Constructive.Predicate {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) using
     (
       UniversalQuantification ;
       ExistentialQuantification
@@ -137,8 +137,8 @@ Propositional-from-[∧][∨][⊥]
   }
 -}
 
-module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}} {Domain : Type{ℓₒ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) (Construct : Domain → Type{ℓₘₒ}) where
-  open Predicate {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof)(Construct) renaming (Theory to PredicateTheory)
+module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}} {Domain : Type{ℓₒ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) where
+  open Predicate {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) renaming (Theory to PredicateTheory)
 
   -- Rules of equality
   record Equality : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
@@ -170,3 +170,7 @@ module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.�
     -- This means that there is one and only one element that satisfies this property.
     ∃ₗ! : (Domain → Stmt) → Stmt
     ∃ₗ! P = ((∃ₗ P) ∧ Unique(P))
+
+    field
+      [∃!]-witness : ∀{P : Domain → Stmt} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain
+      [∃!]-proof   : ∀{P : Domain → Stmt} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain

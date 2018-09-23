@@ -20,8 +20,6 @@ data List {ℓ} (T : Type{ℓ}) : Type{ℓ} where
   _⊰_ : T → List(T) → List(T) -- Cons
 
 {-# BUILTIN LIST List #-}
-{-# BUILTIN NIL  ∅  #-}
-{-# BUILTIN CONS _⊰_ #-}
 
 pattern [_ l = l
 pattern _] x = x ⊰ ∅
