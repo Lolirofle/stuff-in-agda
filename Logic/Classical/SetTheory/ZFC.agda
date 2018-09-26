@@ -16,6 +16,7 @@ private
     open import Numeral.FiniteStrict.Bound{ℓₗ} public
     open import Numeral.Natural                public
 
+-- The type of a meta-function. Functions on the domain in the meta-logic.
 Function : Set(_)
 Function = (Domain → Domain)
 
@@ -123,11 +124,26 @@ module Function ⦃ signature : Signature ⦄ where
     ⊶ = map(domain)
   open Type ⦃ ... ⦄ public
 
-  -- The statement that the set s could be interpreted as a function
-  -- FunctionSet : Domain → Stmt
-  -- FunctionSet(s) = ∀ₗ(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s))
+  -- The statement that the set s can be interpreted as a function.
+  -- The following describes the relation in an inexact notation:
+  -- • ∀x∀y. ((x,y) ∈ S) ⇔ (S(x) = y)
+  FunctionSet : Domain → Stmt
+  FunctionSet(s) = ∀ₗ(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s))
+
+  -- The statement that the set s can be interpreted as a function with a specified domain and codomain.
+  -- The following describes the relation in an inexact notation:
+  -- • ∀(x∊A)∀(y∊B). ((x,y) ∈ S) ⇔ (S(x) = y)
+  BoundedFunctionSet : Domain → Domain → Domain → Stmt
+  BoundedFunctionSet(s)(A)(B) = ∀ₛ(A)(x ↦ ∃ₛ!(B)(y ↦ (x , y) ∈ s))
+
+  -- The set of function sets, all sets which can be interpreted as a function.
+  _^_ : Domain → Domain → Domain
+  B ^ A = filter(℘(A ⨯ B)) FunctionSet
+
+  _→ₛₑₜ_ = swap _^_
 
 module Structure where
+  -- Structures in meta-functions.
   module Function' where -- TODO: Temporary naming fix with tick
     module Properties ⦃ signature : Signature ⦄ where
       open Function
@@ -164,20 +180,35 @@ module Structure where
       Equivalence  : Domain → BinaryRelator → Stmt
       Equivalence(S)(_▫_) = Reflexivity(S)(_▫_) ∧ Symmetry(S)(_▫_) ∧ Transitivity(S)(_▫_)
 
+-- A model of natural numbers expressed in set theory (using only sets).
 module NumeralNatural ⦃ signature : Signature ⦄ where
   open Signature ⦃ ... ⦄
 
-  -- Zero constant from the standard inductive set definition of ℕ
+  -- The zero constant from the standard inductive set definition of ℕ in ZFC set theory.
   𝟎 : Domain
   𝟎 = ∅
 
-  -- Successor function from the standard inductive set definition of ℕ
+  -- The successor function from the standard inductive set definition of ℕ in ZFC set theory.
+  -- This means that all lesser numbers are contained in every number.
+  -- Examples:
+  -- • 0: {}
+  -- • 1: 0∪{0} = {{},{{}}}
+  -- • 2: 1∪{1} = 0∪{0}∪{1} = {{{},{{}}},{{{},{{}}}}}
   𝐒 : Domain → Domain
   𝐒(n) = n ∪ singleton(n)
 
+  -- A set is ℕ-inductive when has zero and all its successors.
+  -- In loose terms: Inductive(I) means (I ⊆ ℕ)
   Inductive : Domain → Stmt
   Inductive(I) = (𝟎 ∈ I) ∧ (∀ₗ(x ↦ (x ∈ I) ⟶ (𝐒(x) ∈ I)))
 
+  -- The "smallest" inductive set is the set of natural numbers.
+  -- All elements which can be expressed using only 𝟎 and 𝐒.
+  ℕ : Domain
+  ℕ = ⋂(filter(℘(inductiveSet)) Inductive) -- TODO: This pattern seems useful
+
+  -- The relation "lesser than" in this model of ℕ.
+  -- This works for all elements in ℕ by the definition of 𝟎 and 𝐒.
   _<_ : BinaryRelator
   a < b = a ∈ b
 
@@ -268,6 +299,8 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   open Signature ⦃ ... ⦄
   open ZF ⦃ ... ⦄
 
+  postulate Empty-excluded-middle : ∀{s} → Proof(Empty(s) ∨ NonEmpty(s))
+
   [∅]-containment : Proof(∀ₗ(x ↦ (x ∈ ∅) ⟷ ⊥))
   [∅]-containment =
     ([∀]-intro (\{x} →
@@ -288,7 +321,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   [℘]-containment : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s))))
   [℘]-containment = power
 
-  [⋃]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s)))))
+  [⋃]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₛ(ss)(s ↦ x ∈ s))))
   [⋃]-containment = union
 
   singleton-containment : Proof(∀ₗ(a ↦ ∀ₗ(x ↦ (x ∈ singleton(a)) ⟷ (x ≡ a))))
@@ -400,8 +433,89 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       ))
     ))
 
-  -- [⋂]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋂(ss)) ⟷ ∀ₗ(s ↦ (s ∈ ss) ⟶ (x ∈ s)))))
-  -- [⋂]-containment = union
+  [⋂]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋂(ss)) ⟷ ∀ₛ(ss)(s ↦ x ∈ s))))
+  [⋂]-containment =
+    ([∀]-intro (\{ss} →
+      ([∀]-intro (\{x} →
+        ([↔]-intro
+          -- (⟵)-case
+          (allssinssxins ↦
+            ([↔]-elimₗ
+              ([∀]-elim([∀]-elim filter-containment{⋃(ss)}){x})
+              ([∧]-intro
+                -- x ∈ ⋃(ss)
+                ([∨]-elim
+                  -- Empty(ss) ⇒ _
+                  (allyyninss ↦
+                    proof -- TODO: Is this really provable? Maybe. filter(∅)(..) = ∅ is an idea?
+                  )
+
+                  -- NonEmpty(ss) ⇒ _
+                  (existsyinss ↦
+                    ([∃]-elim
+                      (\{y} → yinss ↦ (
+                        ([↔]-elimₗ([∀]-elim([∀]-elim([⋃]-containment){ss}){x}))
+                        ([∃]-intro{_}
+                          {y}
+                          ([∧]-intro
+                            -- y ∈ ss
+                            (yinss)
+
+                            -- x ∈ y
+                            ([→]-elim
+                              ([∀]-elim(allssinssxins){y})
+                              (yinss)
+                            )
+                          )
+                        )
+                      ))
+                      (existsyinss)
+                    )
+                  )
+                  (Empty-excluded-middle{ss})
+                )
+
+                -- ∀(s∊ss). x∈s
+                (allssinssxins)
+              )
+            )
+          )
+
+          -- (⟶)-case
+          (xinintersectss ↦
+            ([∀]-intro (\{s} →
+              ([→]-intro (sinss ↦
+                ([→]-elim
+                  ([∀]-elim
+                    ([∧]-elimᵣ
+                      ([↔]-elimᵣ
+                        ([∀]-elim
+                          ([∀]-elim
+                            filter-containment
+                            {⋃(ss)}
+                          )
+                          {x}
+                        )
+                        (xinintersectss)
+                      )
+                    )
+                    {s}
+                  )
+                  (sinss)
+                )
+              ))
+            ))
+          )
+        )
+      ))
+    ))
+    where postulate proof : ∀{a} → a
+
+  -- TODO: Just used for reference. Remove these lines later
+  -- ⋂(a) = filter(⋃(ss)) (x ↦ ∀ₗ(a₂ ↦ (a₂ ∈ ss) ⟶ (x ∈ a₂)))
+  -- filter-containment : ∀{φ : Domain → Stmt} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
+  -- [⋃]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s)))))
+
 
   -- [⨯]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ⨯ b)) ⟷ ∃ₗ(x₁ ↦ ∃ₗ(x₂ ↦ x ≡ (x₁ , x₂)))))))
   -- [⨯]-containment =
@@ -465,10 +579,20 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       ))
 
     -- postulate [⋂]-property : ∀{φ} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ s) ⟶ φ(x)) ⟶ φ(⋂ s))) TODO: MAybe not true
-    postulate [⋂]-inductive : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ s) ⟶ Inductive(x)) ⟶ Inductive(⋂ s)))
+    [⋂]-inductive : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ s) ⟶ Inductive(x)) ⟶ Inductive(⋂ s)))
+    [⋂]-inductive =
+      ([∀]-intro (\{s} →
+        ([→]-intro(allxxsindx ↦
+          ([∧]-intro
+            -- ∅ is in
+            proof
 
-    ℕ : Domain
-    ℕ = ⋂(filter(℘(inductiveSet)) Inductive) -- TODO: This pattern seems useful
+            -- 𝐒 is in
+            proof
+          )
+        ))
+      ))
+      where postulate proof : ∀{a} → a
 
     [ℕ]-inductive : Proof(Inductive(ℕ))
     [ℕ]-inductive =
@@ -506,3 +630,13 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
     -- ∀ₛ(ℕ)(a ↦ ∀ₛ(ℕ)(b ↦ (a < b) ⟶ (𝐒(a) < 𝐒(b))))
     -- ∀ₛ(ℕ)(a ↦ ∀ₛ(ℕ)(b ↦ (a < b) ⟶ (𝐒(a) < 𝐒(b))))
     -- ∀ₛ(ℕ)(n ↦ 𝟎 ≢ 𝐒(n))
+
+  module FunctionProofs where
+    open Function ⦃ signature ⦄
+
+    -- The construction of a meta-function in the meta-logic from a function in the set theory
+    fnset-witness : (f : Domain) → ⦃ _ : Proof(FunctionSet(f)) ⦄ → Function
+    fnset-witness f ⦃ proof ⦄ (x) = [∃!]-witness ⦃ [∀]-elim(proof){x} ⦄
+
+    -- [→ₛₑₜ]-witness : ∀{A B} → (f : Domain) → ⦃ _ : Proof(f ∈ (A →ₛₑₜ B)) ⦄ → (x : Domain) → ⦃ _ : Proof(x ∈ A) ⦄ → Domain
+    -- [→ₛₑₜ]-witness f ⦃ proof ⦄ (x) = (TODO: Maybe prove an equivalence of BoundedFunctionSet for all f in B^A? Would it work?)

@@ -1,4 +1,4 @@
-module Logic.Classical.NaturalDeduction where
+module Logic.Classical.NaturalDeduction where -- TODO: MAybe move these to Structure.Logic?
 
 open import Functional hiding (Domain)
 import      Lvl
@@ -171,6 +171,9 @@ module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.�
     ∃ₗ! : (Domain → Stmt) → Stmt
     ∃ₗ! P = ((∃ₗ P) ∧ Unique(P))
 
+    -- These allows the creation of new symbols which points to something which exists and is unique.
+    -- TODO: Does this make this theory have no models? For functions, the functions in the meta-theory here (Agda-functions) represent computable things, and all unique existances are not computable. Normally in set theory, one could interpret every (f(x) = y)-formula as ((x,y) ∈ f), so normally it probably works out in the end of the day?
+    -- TODO: Maybe these should be separated from the theory?
     field
       [∃!]-witness : ∀{P : Domain → Stmt} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain
       [∃!]-proof   : ∀{P : Domain → Stmt} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain
