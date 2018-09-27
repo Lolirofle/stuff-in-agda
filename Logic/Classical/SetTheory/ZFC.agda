@@ -6,6 +6,7 @@ open import Functional hiding (Domain)
 open import Lang.Instance
 import      Lvl
 open        Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) renaming (Theory to PredicateEqTheory)
+open import Logic.Classical.NaturalDeduction.Proofs {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} {Proof} ⦃ predicateEqTheory ⦄
 open import Logic.Classical.SetTheory.BoundedQuantification ⦃ predicateEqTheory ⦄ (_∈_)
 open import Logic.Classical.SetTheory.Relation ⦃ predicateEqTheory ⦄ (_∈_)
 
@@ -108,6 +109,7 @@ record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘ
 module Function ⦃ signature : Signature ⦄ where
   open Signature ⦃ ... ⦄
 
+  -- An instance of Type(f) means that the function f has a default domain and codomain, and a proof that the function actually are closed inside this domain/codomain pair.
   record Type (f : Function) : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
     constructor intro
     field
@@ -117,9 +119,13 @@ module Function ⦃ signature : Signature ⦄ where
     field
       closure : Proof(∀ₛ(domain)(x ↦ f(x) ∈ codomain))
 
+    -- The image of the function f on the set a.
+    -- Applies this function on every element in the set a, yielding a new set.
     map : Domain → Domain
     map a = filter(codomain)(y ↦ ∃ₛ(a)(x ↦ y ≡ f(x)))
 
+    -- The image of the function.
+    -- The set of all elements that the function can yield/points to.
     ⊶ : Domain
     ⊶ = map(domain)
   open Type ⦃ ... ⦄ public
@@ -192,8 +198,10 @@ module NumeralNatural ⦃ signature : Signature ⦄ where
   -- This means that all lesser numbers are contained in every number.
   -- Examples:
   -- • 0: {}
-  -- • 1: 0∪{0} = {{},{{}}}
-  -- • 2: 1∪{1} = 0∪{0}∪{1} = {{{},{{}}},{{{},{{}}}}}
+  -- • 1: 0∪{0} = {0} = {{},{{}}}
+  -- • 2: 1∪{1} = {0}∪{1} = {0,1} = {{},{{},{{}}}}
+  -- • 3: 2∪{2} = {0,1}∪{2} = {0,1,2} = {{{},{{},{{}}}},{{{},{{},{{}}}}}}
+  -- • 4: 3∪{3} = {0,1,2}∪{3} = {0,1,2,3} = {{{{},{{},{{}}}},{{{},{{},{{}}}}}},{{{{},{{},{{}}}},{{{},{{},{{}}}}}}}}
   𝐒 : Domain → Domain
   𝐒(n) = n ∪ singleton(n)
 
@@ -299,7 +307,15 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   open Signature ⦃ ... ⦄
   open ZF ⦃ ... ⦄
 
+  -- All sets are either empty or non-empty.
   postulate Empty-excluded-middle : ∀{s} → Proof(Empty(s) ∨ NonEmpty(s))
+
+  -- TODO: Prove by transitivity of (↔). This means that all sets that are defined in this way are unique
+  postulate unique-definition : ∀{φ : Domain → Stmt} → Proof(Unique(S ↦ ∀ₗ(x ↦ (x ∈ S) ⟷ φ(x))))
+
+  postulate [⊆]-minimum : Proof(∀ₗ(s ↦ ∅ ⊆ s))
+
+  postulate [⊆]-unique-minimum : Proof(∀ₗ(e ↦ ∀ₗ(s ↦ (e ⊆ s) ⟶ (e ≡ ∅))))
 
   [∅]-containment : Proof(∀ₗ(x ↦ (x ∈ ∅) ⟷ ⊥))
   [∅]-containment =
@@ -333,68 +349,6 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
           ([↔]-intro ([∨].redundancyₗ) ([∨].redundancyᵣ))
       ))
     ))
-
-  [↔]-with-[∧]ₗ : ∀{a₁ a₂ b} → Proof(a₁ ⟷ a₂) → Proof((a₁ ∧ b) ⟷ (a₂ ∧ b))
-  [↔]-with-[∧]ₗ (proof) =
-    ([↔]-intro
-      (a₂b ↦ [∧]-intro (([↔]-elimₗ proof) ([∧]-elimₗ a₂b)) ([∧]-elimᵣ a₂b))
-      (a₁b ↦ [∧]-intro (([↔]-elimᵣ proof) ([∧]-elimₗ a₁b)) ([∧]-elimᵣ a₁b))
-    )
-
-  [↔]-with-[∧]ᵣ : ∀{a b₁ b₂} → Proof(b₁ ⟷ b₂) → Proof((a ∧ b₁) ⟷ (a ∧ b₂))
-  [↔]-with-[∧]ᵣ (proof) =
-    ([↔]-intro
-      (ab₂ ↦ [∧]-intro ([∧]-elimₗ ab₂) (([↔]-elimₗ proof) ([∧]-elimᵣ ab₂)))
-      (ab₁ ↦ [∧]-intro ([∧]-elimₗ ab₁) (([↔]-elimᵣ proof) ([∧]-elimᵣ ab₁)))
-    )
-
-  [↔]-with-[∧] : ∀{a₁ a₂ b₁ b₂} → Proof(a₁ ⟷ a₂) → Proof(b₁ ⟷ b₂) → Proof((a₁ ∧ b₁) ⟷ (a₂ ∧ b₂))
-  [↔]-with-[∧] (a₁a₂) (b₁b₂) =
-    ([↔]-intro
-      (a₂b₂ ↦ [∧]-intro (([↔]-elimₗ a₁a₂) ([∧]-elimₗ a₂b₂)) (([↔]-elimₗ b₁b₂) ([∧]-elimᵣ a₂b₂)))
-      (a₁b₁ ↦ [∧]-intro (([↔]-elimᵣ a₁a₂) ([∧]-elimₗ a₁b₁)) (([↔]-elimᵣ b₁b₂) ([∧]-elimᵣ a₁b₁)))
-    )
-
-  [↔]-with-[∨]ₗ : ∀{a₁ a₂ b} → Proof(a₁ ⟷ a₂) → Proof((a₁ ∨ b) ⟷ (a₂ ∨ b))
-  [↔]-with-[∨]ₗ (proof) =
-    ([↔]-intro
-      ([∨]-elim([∨]-introₗ ∘ ([↔]-elimₗ proof)) [∨]-introᵣ)
-      ([∨]-elim([∨]-introₗ ∘ ([↔]-elimᵣ proof)) [∨]-introᵣ)
-    )
-
-  [↔]-with-[∨]ᵣ : ∀{a b₁ b₂} → Proof(b₁ ⟷ b₂) → Proof((a ∨ b₁) ⟷ (a ∨ b₂))
-  [↔]-with-[∨]ᵣ (proof) =
-    ([↔]-intro
-      ([∨]-elim [∨]-introₗ ([∨]-introᵣ ∘ ([↔]-elimₗ proof)))
-      ([∨]-elim [∨]-introₗ ([∨]-introᵣ ∘ ([↔]-elimᵣ proof)))
-    )
-
-  [↔]-with-[∨] : ∀{a₁ a₂ b₁ b₂} → Proof(a₁ ⟷ a₂) → Proof(b₁ ⟷ b₂) → Proof((a₁ ∨ b₁) ⟷ (a₂ ∨ b₂))
-  [↔]-with-[∨] (a₁a₂) (b₁b₂) =
-    ([↔]-intro
-      ([∨]-elim ([∨]-introₗ ∘ ([↔]-elimₗ a₁a₂)) ([∨]-introᵣ ∘ ([↔]-elimₗ b₁b₂)))
-      ([∨]-elim ([∨]-introₗ ∘ ([↔]-elimᵣ a₁a₂)) ([∨]-introᵣ ∘ ([↔]-elimᵣ b₁b₂)))
-    )
-
-  [↔]-with-[∀] : ∀{f g} → (∀{x} → Proof(f(x) ⟷ g(x))) → Proof((∀ₗ f) ⟷ (∀ₗ g))
-  [↔]-with-[∀] (proof) =
-    ([↔]-intro
-      (allg ↦ [∀]-intro(\{x} → [↔]-elimₗ (proof{x}) ([∀]-elim(allg){x})))
-      (allf ↦ [∀]-intro(\{x} → [↔]-elimᵣ (proof{x}) ([∀]-elim(allf){x})))
-    )
-
-  [↔]-with-[∃] : ∀{f g} → (∀{x} → Proof(f(x) ⟷ g(x))) → Proof((∃ₗ f) ⟷ (∃ₗ g))
-  [↔]-with-[∃] (proof) =
-    ([↔]-intro
-      ([∃]-elim(\{x} → gx ↦ [∃]-intro{_}{x}([↔]-elimₗ (proof{x}) (gx))))
-      ([∃]-elim(\{x} → fx ↦ [∃]-intro{_}{x}([↔]-elimᵣ (proof{x}) (fx))))
-    )
-
-  postulate [∨][∧]-distributivityₗ : ∀{a b c} → Proof((a ∨ (b ∧ c)) ⟷ (a ∨ b)∧(a ∨ c))
-  postulate [∨][∧]-distributivityᵣ : ∀{a b c} → Proof(((a ∧ b) ∨ c) ⟷ (a ∨ c)∧(b ∨ c))
-  postulate [∧][∨]-distributivityₗ : ∀{a b c} → Proof((a ∧ (b ∨ c)) ⟷ (a ∧ b)∨(a ∧ c))
-  postulate [∧][∨]-distributivityᵣ : ∀{a b c} → Proof(((a ∨ b) ∧ c) ⟷ (a ∧ c)∨(b ∧ c))
-  postulate [≡]-substitute-this-is-almost-trivial : ∀{φ : Domain → Stmt}{a b} → Proof(((a ≡ b) ∧ φ(a)) ⟷ φ(b))
 
   [∪]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∪ b)) ⟷ (x ∈ a)∨(x ∈ b)))))
   [∪]-containment =
