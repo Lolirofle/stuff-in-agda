@@ -310,8 +310,26 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   -- All sets are either empty or non-empty.
   postulate Empty-excluded-middle : ∀{s} → Proof(Empty(s) ∨ NonEmpty(s))
 
-  -- TODO: Prove by transitivity of (↔). This means that all sets that are defined in this way are unique
-  postulate unique-definition : ∀{φ : Domain → Stmt} → Proof(Unique(S ↦ ∀ₗ(x ↦ (x ∈ S) ⟷ φ(x))))
+  -- postulate any : ∀{l}{a : Set(l)} → a
+
+  -- All sets that are defined using an equivalence of contained elements are unique
+  unique-definition : ∀{φ : Domain → Stmt} → Proof(Unique(S ↦ ∀ₗ(x ↦ (x ∈ S) ⟷ φ(x))))
+  unique-definition{_} =
+    ([∀]-intro(\{S₁} →
+      ([∀]-intro(\{S₂} →
+        ([→]-intro(proof ↦
+          ([↔]-elimᵣ
+            ([∀]-elim([∀]-elim extensional{S₁}){S₂})
+            ([∀]-intro(\{x} →
+              ([↔].transitivity
+                ([∀]-elim([∧]-elimₗ(proof)){x})
+                ([↔].commutativity([∀]-elim([∧]-elimᵣ(proof)){x}))
+              )
+            ))
+          )
+        ))
+      ))
+    ))
 
   postulate [⊆]-minimum : Proof(∀ₗ(s ↦ ∅ ⊆ s))
 
@@ -334,11 +352,20 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   filter-containment : ∀{φ : Domain → Stmt} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
   filter-containment = comprehension
 
+  postulate filter-of-[∅] : ∀{φ} → Proof(filter(∅)(φ) ≡ ∅)
+  postulate filter-subset : ∀{φ} → Proof(∀ₗ(s ↦ filter(s)(φ) ⊆ s))
+
   [℘]-containment : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s))))
   [℘]-containment = power
 
+  postulate [℘]-of-[∅] : Proof(℘(∅) ≡ singleton(∅))
+  postulate [℘]-contains-empty : Proof(∀ₗ(s ↦ ∅ ∈ ℘(s)))
+  postulate [℘]-contains-self  : Proof(∀ₗ(s ↦ s ∈ ℘(s)))
+
   [⋃]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₛ(ss)(s ↦ x ∈ s))))
   [⋃]-containment = union
+
+  postulate [℘]-containing-max : Proof(∀ₗ(s ↦ ∀ₛ(s)(max ↦ ∀ₛ(s)(x ↦ x ⊆ max) ⟶ (⋃(s) ≡ max))))
 
   singleton-containment : Proof(∀ₗ(a ↦ ∀ₗ(x ↦ (x ∈ singleton(a)) ⟷ (x ≡ a))))
   singleton-containment =
@@ -349,6 +376,8 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
           ([↔]-intro ([∨].redundancyₗ) ([∨].redundancyᵣ))
       ))
     ))
+
+  postulate singleton-contains-self : Proof(∀ₗ(s ↦ s ∈ singleton(s)))
 
   [∪]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∪ b)) ⟷ (x ∈ a)∨(x ∈ b)))))
   [∪]-containment =
@@ -370,6 +399,15 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       ))
     ))
 
+  postulate [∪]-commutativity : Proof(∀ₗ(a ↦ a ∪ b ≡ b ∪ a))
+  postulate [∪]-associativity : Proof(∀ₗ(a ↦ (a ∪ b) ∪ c ≡ a ∪ (b ∪ c)))
+  postulate [∪]-identityₗ : Proof(∀ₗ(s ↦ ∅ ∪ s ≡ s))
+  postulate [∪]-identityᵣ : Proof(∀ₗ(s ↦ s ∪ ∅ ≡ s))
+  postulate [∪]-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ⊆ a ∪ b)))
+  postulate [∪]-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ b ⊆ a ∪ b)))
+  postulate [∪]-of-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (b ⊆ a) ⟶ (a ∪ b ≡ a)))))
+  postulate [∪]-of-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (a ⊆ b) ⟶ (a ∪ b ≡ b)))))
+
   [∩]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∩ b)) ⟷ (x ∈ a)∧(x ∈ b)))))
   [∩]-containment =
     ([∀]-intro (\{a} →
@@ -378,6 +416,14 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       ))
     ))
 
+  postulate [∩]-commutativity : Proof(∀ₗ(a ↦ a ∩ b ≡ b ∩ a))
+  postulate [∩]-associativity : Proof(∀ₗ(a ↦ (a ∩ b) ∩ c ≡ a ∩ (b ∩ c)))
+  postulate [∩]-annihilatorₗ : Proof(∀ₗ(s ↦ ∅ ∩ s ≡ ∅))
+  postulate [∩]-annihilatorᵣ : Proof(∀ₗ(s ↦ s ∩ ∅ ≡ s))
+  postulate [∩]-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ⊆ a)))
+  postulate [∩]-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ⊆ b)))
+  postulate [∩]-of-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (b ⊆ a) ⟶ (a ∩ b ≡ b)))))
+  postulate [∩]-of-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (a ⊆ b) ⟶ (a ∩ b ≡ a)))))
 
   [∖]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∖ b)) ⟷ (x ∈ a)∧(x ∉ b)))))
   [∖]-containment =
@@ -561,8 +607,6 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
           ))
         ))
       )
-
-    -- postulate any : ∀{l}{a : Set(l)} → a
 
     postulate [ℕ]-elements : Proof(∀ₛ(ℕ)(n ↦ (n ≡ 𝟎) ∨ ∃ₛ(ℕ)(p ↦ n ≡ 𝐒(p))))
 

@@ -4,8 +4,10 @@ import      Lvl
 open import Data.List
 open import Type{Lvl.𝟎}
 
+postulate Char : Type
 {-# BUILTIN CHAR Char #-}
 
+postulate String : Type
 {-# BUILTIN STRING String #-}
 
 primitive
