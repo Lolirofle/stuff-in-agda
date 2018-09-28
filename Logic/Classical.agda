@@ -5,6 +5,7 @@ open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Propositional{ℓ}
 open import Logic.Propositional.Theorems{ℓ}
+open import Logic.Predicate{ℓ}{ℓ}
 
 -- A proposition which is either provable or unprovable.
 -- This could then be interpreted as true or false.
@@ -142,3 +143,12 @@ instance
 
   xy : X → Y
   xy = contrapositiveₗ ⦃ classic-y ⦄ nynx
+
+[∃]-unrelatedᵣ-[→]ₗ : ∀{X}{P : Stmt}{Q : X → Stmt} → ⦃ _ : Classical(P) ⦄ → ⦃ _ : ∃{X}(const ⊤) ⦄ → ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
+[∃]-unrelatedᵣ-[→]ₗ {X}{P}{Q} ⦃ classical-p ⦄ ⦃ [∃]-intro(x) ⦄ = l where
+  l : ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
+  l(pexqx) with excluded-middle ⦃ classical-p ⦄
+  ... | ([∨]-introₗ p)  = [∃]-intro([∃]-witness(pexqx(p))) ⦃ _ ↦ [∃]-proof(pexqx(p)) ⦄
+  ... | ([∨]-introᵣ np) = [∃]-intro(x) ⦃ ([⊥]-elim{Q(x)}) ∘ np ⦄
+
+postulate drinker-ambiguity : ∀{X}{P : X → Stmt} → ⦃ _ : Classical(∀{x} → P(x)) ⦄ → ∃(x ↦ (P(x) → ∀{y} → P(y)))

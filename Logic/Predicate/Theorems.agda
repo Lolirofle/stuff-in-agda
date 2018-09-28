@@ -38,20 +38,16 @@ open import Type
 [∃¬]-to-[¬∀] : ∀{X}{P : X → Stmt} → (∃(x ↦ ¬(P(x)))) → (¬ ∀{x} → P(x))
 [∃¬]-to-[¬∀] = swap [∀][∃¬]-contradiction
 
-{- TODO: Not sure?
-[¬∀]-to-[∃¬] : ∀{X}{P : X → Stmt} → (∃(x ↦ ¬(P(x)))) ← (¬ ∀{x} → P(x))
-[¬∀]-to-[∃¬] {X} (napx) = test where
-  postulate a : X
-
-  test =
-    ([∃]-intro(a)
-      ([¬]-intro
-        ([⊥]-intro(pa ↦
-          ([∀]-intro(pa))
-          (napx)
-        ))
+{-TODO
+[¬∀ₑ]-to-[∃¬] : ∀{X}{P : X → Stmt} → (∃(x ↦ ¬(P(x)))) ← (¬ ∀ₑ(x → P(x)))
+[¬∀ₑ]-to-[∃¬] {X}{_} (a) (napx) =
+  ([∃]-intro(a)
+    ⦃ [¬]-intro(pa ↦
+        ([∀]-intro(pa))
+        (napx)
       )
-    )
+    ⦄
+  )
 -}
 
 [∀¬¬][∃¬]-contradiction : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬¬(P(x))) → (∃(x ↦ ¬(P(x)))) → ⊥
@@ -144,8 +140,8 @@ open import Type
   r : ∀ₗ(x ↦ (P → Q(x))) → (P → ∀ₗ(x ↦ Q(x)))
   r(axpqx)(p){x} = axpqx{x}(p)
 
-[∃]-unrelatedₗ-[→] : ∀{X}{P : X → Stmt}{Q : Stmt} → ∃(x ↦ (P(x) → Q)) → (∀ₗ(x ↦ P(x)) → Q)
-[∃]-unrelatedₗ-[→] {X}{P}{Q} = r where -- [↔]-intro l r where
+[∃]-unrelatedₗ-[→]ᵣ : ∀{X}{P : X → Stmt}{Q : Stmt} → ∃(x ↦ (P(x) → Q)) → (∀ₗ(x ↦ P(x)) → Q)
+[∃]-unrelatedₗ-[→]ᵣ {X}{P}{Q} = r where -- [↔]-intro l r where
   -- TODO: Would this work with ∀ₑ?
   -- l : ∃(x ↦ (P(x) → Q)) ← (∀ₗ(x ↦ P(x)) → Q)
   -- l(axpxq) = [∃]-intro(_) ⦃ px ↦ axpxq(px) ⦄
@@ -153,8 +149,8 @@ open import Type
   r : ∃(x ↦ (P(x) → Q)) → (∀ₗ(x ↦ P(x)) → Q)
   r(expxq)(axpx) = [∃]-proof(expxq) (axpx{[∃]-witness(expxq)})
 
-[∃]-unrelatedᵣ-[→] : ∀{X}{P : Stmt}{Q : X → Stmt} → ∃(x ↦ (P → Q(x))) → (P → ∃(x ↦ Q(x)))
-[∃]-unrelatedᵣ-[→] {X}{P}{Q} = r where -- [↔]-intro l r where
+[∃]-unrelatedᵣ-[→]ᵣ : ∀{X}{P : Stmt}{Q : X → Stmt} → ∃(x ↦ (P → Q(x))) → (P → ∃(x ↦ Q(x)))
+[∃]-unrelatedᵣ-[→]ᵣ {X}{P}{Q} = r where -- [↔]-intro l r where
   -- TODO: Where should the p come from when applying [∃]-intro?
   -- l : ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
   -- l(pexqx) = [∃]-intro([∃]-witness(pexqx(p))) ⦃ _ ↦ [∃]-proof(pexqx(p)) ⦄ where
