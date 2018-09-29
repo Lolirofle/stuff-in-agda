@@ -1,14 +1,14 @@
-module Logic.Classical.NaturalDeduction where -- TODO: MAybe move these to Structure.Logic?
+module Structure.Logic.Classical.NaturalDeduction where -- TODO: MAybe move these to Structure.Logic?
 
 open import Functional hiding (Domain)
 import      Lvl
 open import Type
-import      Logic.Constructive.NaturalDeduction as Constructive
+import      Structure.Logic.Constructive.NaturalDeduction as Constructive
 
 -- TODO: Maybe it is worth to try and take a more minimal approach? (Less axioms? Is this more practical/impractical?)
 
-module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓₘ}) where
-  open Constructive.Propositional {ℓ}{ℓₘ} {Stmt} (Proof) using
+module Propositional {ℓ ℓₘ} {Formula : Type{ℓ}} (Proof : Formula → Type{ℓₘ}) where
+  open Constructive.Propositional {ℓ}{ℓₘ} {Formula} (Proof) using
     (
       Conjunction ;
       Disjunction ;
@@ -27,7 +27,7 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
     infixl 1010 ¬_
 
     field
-      ¬_   : Stmt → Stmt
+      ¬_   : Formula → Formula
 
     field
       intro : ∀{X} → (Proof(X) → Proof(⊥ ⦃ bottom ⦄)) → Proof(¬ X)
@@ -64,10 +64,10 @@ module Propositional {ℓ ℓₘ} {Stmt : Type{ℓ}} (Proof : Stmt → Type{ℓ�
     module [↔] = Equivalence (equivalence)
     module [¬] = Negation    (negation)
 
-module Predicate {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}} {Domain : Type{ℓₒ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) where
+module Predicate {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Formula : Type{ℓₗ Lvl.⊔ ℓₒ}} {Domain : Type{ℓₒ}} (Proof : Formula → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) where
   open Propositional(Proof) renaming (Theory to PropositionalTheory)
 
-  open Constructive.Predicate {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) using
+  open Constructive.Predicate {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) using
     (
       UniversalQuantification ;
       ExistentialQuantification
@@ -105,15 +105,15 @@ module Predicate {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.⊔
 
       open ExistentialQuantification(existentialQuantification) public
 {-
-Propositional-from-[∧][∨][⊥] : ∀{ℓ} → (_∧_ _∨_ : Stmt → Stmt → Stmt) → (⊥ : Stmt) →
+Propositional-from-[∧][∨][⊥] : ∀{ℓ} → (_∧_ _∨_ : Formula → Formula → Formula) → (⊥ : Formula) →
   ([∧]-intro : ∀{X Y} → X → Y → (X ∧ Y)) →
   ([∧]-elimₗ  : ∀{X Y} → (X ∧ Y) → X) →
   ([∧]-elimᵣ  : ∀{X Y} → (X ∧ Y) → Y) →
   ([∨]-introₗ : ∀{X Y} → X → (X ∨ Y)) →
   ([∨]-introᵣ : ∀{X Y} → Y → (X ∨ Y)) →
-  ([∨]-elim  : ∀{X Y Z : Stmt} → (X → Z) → (Y → Z) → (X ∨ Y) → Z) →
-  ([⊥]-intro : ∀{X : Stmt} → X → (X → ⊥) → ⊥) →
-  ([⊥]-elim  : ∀{X : Stmt} → ⊥ → X) →
+  ([∨]-elim  : ∀{X Y Z : Formula} → (X → Z) → (Y → Z) → (X ∨ Y) → Z) →
+  ([⊥]-intro : ∀{X : Formula} → X → (X → ⊥) → ⊥) →
+  ([⊥]-elim  : ∀{X : Formula} → ⊥ → X) →
   Propositional{ℓ}
 Propositional-from-[∧][∨][⊥]
   (_∧_) (_∨_) (⊥)
@@ -137,20 +137,20 @@ Propositional-from-[∧][∨][⊥]
   }
 -}
 
-module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.⊔ ℓₒ}} {Domain : Type{ℓₒ}} (Proof : Stmt → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) where
-  open Predicate {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) renaming (Theory to PredicateTheory)
+module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Formula : Type{ℓₗ Lvl.⊔ ℓₒ}} {Domain : Type{ℓₒ}} (Proof : Formula → Type{ℓₘₗ Lvl.⊔ ℓₘₒ}) where
+  open Predicate {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) renaming (Theory to PredicateTheory)
 
   -- Rules of equality
   record Equality : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
     infixl 2000 _≡_
 
     field
-      _≡_ : Domain → Domain → Stmt
+      _≡_ : Domain → Domain → Formula
 
     field
       intro : ∀{x} → Proof(x ≡ x)
-      elimₗ  : ∀{P : Domain → Stmt}{a b} → Proof(a ≡ b) → Proof(P(a)) ← Proof(P(b))
-      elimᵣ  : ∀{P : Domain → Stmt}{a b} → Proof(a ≡ b) → Proof(P(a)) → Proof(P(b))
+      elimₗ  : ∀{P : Domain → Formula}{a b} → Proof(a ≡ b) → Proof(P(a)) ← Proof(P(b))
+      elimᵣ  : ∀{P : Domain → Formula}{a b} → Proof(a ≡ b) → Proof(P(a)) → Proof(P(b))
 
   record Theory : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
     field
@@ -163,17 +163,17 @@ module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Stmt : Type{ℓₗ Lvl.�
     -- Definition of uniqueness of a property.
     -- This means that there is at most one element that satisfies this property.
     -- This is similiar to "Injective" for functions, but this is for statements.
-    Unique : (Domain → Stmt) → Stmt
+    Unique : (Domain → Formula) → Formula
     Unique(P) = ∀ₗ(x ↦ ∀ₗ(y ↦ (P(x) ∧ P(y)) ⟶ (x ≡ y)))
 
     -- Definition of existence of an unique element satisfying a property.
     -- This means that there is one and only one element that satisfies this property.
-    ∃ₗ! : (Domain → Stmt) → Stmt
+    ∃ₗ! : (Domain → Formula) → Formula
     ∃ₗ! P = ((∃ₗ P) ∧ Unique(P))
 
     -- These allows the creation of new symbols which points to something which exists and is unique.
     -- TODO: Does this make this theory have no models? For functions, the functions in the meta-theory here (Agda-functions) represent computable things, and all unique existances are not computable. Normally in set theory, one could interpret every (f(x) = y)-formula as ((x,y) ∈ f), so normally it probably works out in the end of the day?
     -- TODO: Maybe these should be separated from the theory?
     field
-      [∃!]-witness : ∀{P : Domain → Stmt} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain
-      [∃!]-proof   : ∀{P : Domain → Stmt} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain
+      [∃!]-witness : ∀{P : Domain → Formula} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain
+      [∃!]-proof   : ∀{P : Domain → Formula} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain

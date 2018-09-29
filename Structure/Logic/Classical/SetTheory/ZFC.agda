@@ -1,14 +1,14 @@
-open import Logic.Classical.NaturalDeduction
+open import Structure.Logic.Classical.NaturalDeduction
 
-module Logic.Classical.SetTheory.ZFC {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} {Proof} ⦃ predicateEqTheory : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) ⦄ (_∈_ : Domain → Domain → Stmt) where
+module Structure.Logic.Classical.SetTheory.ZFC {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} {Proof} ⦃ predicateEqTheory : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) ⦄ (_∈_ : Domain → Domain → Formula) where
 
 open import Functional hiding (Domain)
 open import Lang.Instance
 import      Lvl
-open        Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) renaming (Theory to PredicateEqTheory)
-open import Logic.Classical.NaturalDeduction.Proofs {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} {Proof} ⦃ predicateEqTheory ⦄
-open import Logic.Classical.SetTheory.BoundedQuantification ⦃ predicateEqTheory ⦄ (_∈_)
-open import Logic.Classical.SetTheory.Relation ⦃ predicateEqTheory ⦄ (_∈_)
+open        Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) renaming (Theory to PredicateEqTheory)
+open import Structure.Logic.Classical.NaturalDeduction.Proofs {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} {Proof} ⦃ predicateEqTheory ⦄
+open import Structure.Logic.Classical.SetTheory.BoundedQuantification ⦃ predicateEqTheory ⦄ (_∈_)
+open import Structure.Logic.Classical.SetTheory.Relation ⦃ predicateEqTheory ⦄ (_∈_)
 
 open PredicateEqTheory (predicateEqTheory)
 private
@@ -29,6 +29,10 @@ InfiniteIndexedFamily = Meta.ℕ → Domain
 
 -- The symbols/signature of ZFC set theory.
 record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
+  infixl 3000 _∪_
+  infixl 3001 _∩_
+  infixl 3002 _⨯_ _∖_
+
   field
     -- Empty set
     -- The set consisting of no elements.
@@ -40,7 +44,7 @@ record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘ
 
     -- Subset filtering.
     -- The subset of the specified set where all elements satisfy the specified formula.
-    filter : Domain → (Domain → Stmt) → Domain
+    filter : Domain → (Domain → Formula) → Domain
 
     -- Power set.
     -- The set of all subsets of the specified set.
@@ -86,7 +90,7 @@ record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘ
 
   -- Set product (Set of tuples) (Cartesian product).
   _⨯_ : Domain → Domain → Domain
-  a ⨯ b = filter(℘(℘(a ∪ b))) (t ↦ ∃ₗ(x ↦ (x ∈ a) ∧ ∃ₗ(y ↦ (y ∈ b) ∧ t ≡ (x , y))))
+  a ⨯ b = filter(℘(℘(a ∪ b))) (t ↦ ∃ₗ(x ↦ (x ∈ a) ∧ ∃ₗ(y ↦ (y ∈ b) ∧ (t ≡ (x , y)))))
 
   -- Set product over a finite indexed family (Cartesian product).
   -- TODO: Not really like this. See definition of (_⨯_) and (_,_), and try to express the same here
@@ -133,13 +137,13 @@ module Function ⦃ signature : Signature ⦄ where
   -- The statement that the set s can be interpreted as a function.
   -- The following describes the relation in an inexact notation:
   -- • ∀x∀y. ((x,y) ∈ S) ⇔ (S(x) = y)
-  FunctionSet : Domain → Stmt
+  FunctionSet : Domain → Formula
   FunctionSet(s) = ∀ₗ(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s))
 
   -- The statement that the set s can be interpreted as a function with a specified domain and codomain.
   -- The following describes the relation in an inexact notation:
   -- • ∀(x∊A)∀(y∊B). ((x,y) ∈ S) ⇔ (S(x) = y)
-  BoundedFunctionSet : Domain → Domain → Domain → Stmt
+  BoundedFunctionSet : Domain → Domain → Domain → Formula
   BoundedFunctionSet(s)(A)(B) = ∀ₛ(A)(x ↦ ∃ₛ!(B)(y ↦ (x , y) ∈ s))
 
   -- The set of function sets, all sets which can be interpreted as a function.
@@ -154,36 +158,36 @@ module Structure where
     module Properties ⦃ signature : Signature ⦄ where
       open Function
 
-      Injective : (f : Function) → ⦃ _ : Type(f) ⦄ → Stmt
+      Injective : (f : Function) → ⦃ _ : Type(f) ⦄ → Formula
       Injective(f) = ∀ₛ(domain{f})(x ↦ ∀ₛ(domain{f})(y ↦ (f(x) ≡ f(y)) ⟶ (x ≡ y)))
 
-      Surjective : (f : Function) → ⦃ _ : Type(f) ⦄ → Stmt
+      Surjective : (f : Function) → ⦃ _ : Type(f) ⦄ → Formula
       Surjective(f) = ∀ₛ(codomain{f})(y ↦ ∃ₛ(domain{f})(x ↦ y ≡ f(x)))
 
-      Bijective : (f : Function) → ⦃ _ : Type(f) ⦄ → Stmt
+      Bijective : (f : Function) → ⦃ _ : Type(f) ⦄ → Formula
       Bijective(f) = Injective(f) ∧ Surjective(f)
 
   module Relator where
     module Properties where
-      Reflexivity : Domain → BinaryRelator → Stmt
+      Reflexivity : Domain → BinaryRelator → Formula
       Reflexivity(S)(_▫_) = ∀ₛ(S)(x ↦ x ▫ x)
 
-      Irreflexivity : Domain → BinaryRelator → Stmt
+      Irreflexivity : Domain → BinaryRelator → Formula
       Irreflexivity(S)(_▫_) = ∀ₛ(S)(x ↦ ¬(x ▫ x))
 
-      Symmetry : Domain → BinaryRelator → Stmt
+      Symmetry : Domain → BinaryRelator → Formula
       Symmetry(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x ▫ y) ⟶ (y ▫ x)))
 
-      Asymmetry : Domain → BinaryRelator → Stmt
+      Asymmetry : Domain → BinaryRelator → Formula
       Asymmetry(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x ▫ y) ⟶ ¬(y ▫ x)))
 
-      Antisymmetry : Domain → BinaryRelator → Stmt
+      Antisymmetry : Domain → BinaryRelator → Formula
       Antisymmetry(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x ▫ y)∧(y ▫ x) ⟶ (x ≡ y)))
 
-      Transitivity : Domain → BinaryRelator → Stmt
+      Transitivity : Domain → BinaryRelator → Formula
       Transitivity(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ (x ▫ y)∧(y ▫ z) ⟶ (x ▫ z))))
 
-      Equivalence  : Domain → BinaryRelator → Stmt
+      Equivalence  : Domain → BinaryRelator → Formula
       Equivalence(S)(_▫_) = Reflexivity(S)(_▫_) ∧ Symmetry(S)(_▫_) ∧ Transitivity(S)(_▫_)
 
 -- A model of natural numbers expressed in set theory (using only sets).
@@ -207,7 +211,7 @@ module NumeralNatural ⦃ signature : Signature ⦄ where
 
   -- A set is ℕ-inductive when has zero and all its successors.
   -- In loose terms: Inductive(I) means (I ⊆ ℕ)
-  Inductive : Domain → Stmt
+  Inductive : Domain → Formula
   Inductive(I) = (𝟎 ∈ I) ∧ (∀ₗ(x ↦ (x ∈ I) ⟶ (𝐒(x) ∈ I)))
 
   -- The "smallest" inductive set is the set of natural numbers.
@@ -229,6 +233,8 @@ module NumeralNatural ⦃ signature : Signature ⦄ where
   _≥_ : BinaryRelator
   a ≥ b = b ≤ a
 
+  infixl 2000 _<_ _≤_ _>_ _≥_
+
 module Axioms ⦃ signature : Signature ⦄ where
   open NumeralNatural using () renaming (Inductive to [ℕ]-Inductive)
   open Signature ⦃ ... ⦄
@@ -242,7 +248,7 @@ module Axioms ⦃ signature : Signature ⦄ where
   Pairing = Proof(∀ₗ(x₁ ↦ ∀ₗ(x₂ ↦ (∀ₗ(x ↦ (x ∈ pair(x₁)(x₂)) ⟷ (x ≡ x₁)∨(x ≡ x₂))))))
 
   -- A set which is the subset of a set where all elements satisfies a predicate exists.
-  RestrictedComprehension = ∀{φ : Domain → Stmt} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
+  RestrictedComprehension = ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
 
   -- A set which contains all the subsets of a set exists.
   -- • Allows a construction of a set that is the powerset of a set.
@@ -264,7 +270,7 @@ module Axioms ⦃ signature : Signature ⦄ where
   -- • Making every set have an ordinal rank.
   Regularity = Proof(∀ₗ(s₁ ↦ (NonEmpty(s₁) ⟶ ∃ₗ(s₂ ↦ (s₂ ∈ s₁) ∧ Disjoint(s₁)(s₂)))))
 
-  Replacement = ∀{φ : Domain → Domain → Stmt} → Proof(∀ₗ(A ↦ TotalFunction(φ)(A) ⟶ ∃ₗ(B ↦ ∀ₗ(y ↦ (y ∈ B) ⟷ ∃ₗ(x ↦ (x ∈ A) ∧ φ(x)(y))))))
+  Replacement = ∀{φ : Domain → Domain → Formula} → Proof(∀ₗ(A ↦ TotalFunction(φ)(A) ⟶ ∃ₗ(B ↦ ∀ₗ(y ↦ (y ∈ B) ⟷ ∃ₗ(x ↦ (x ∈ A) ∧ φ(x)(y))))))
 
   -- The set product of non-empty finite indexed family of sets where all the sets are non-empty is non-empty.
   -- TODO: Should the indexed family really be finite? https://en.wikipedia.org/wiki/Cartesian_product#Infinite_Cartesian_products
@@ -313,7 +319,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   -- postulate any : ∀{l}{a : Set(l)} → a
 
   -- All sets that are defined using an equivalence of contained elements are unique
-  unique-definition : ∀{φ : Domain → Stmt} → Proof(Unique(S ↦ ∀ₗ(x ↦ (x ∈ S) ⟷ φ(x))))
+  unique-definition : ∀{φ : Domain → Formula} → Proof(Unique(S ↦ ∀ₗ(x ↦ (x ∈ S) ⟷ φ(x))))
   unique-definition{_} =
     ([∀]-intro(\{S₁} →
       ([∀]-intro(\{S₂} →
@@ -349,7 +355,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   pair-containment : Proof(∀ₗ(a₁ ↦ ∀ₗ(a₂ ↦ (∀ₗ(x ↦ (x ∈ pair(a₁)(a₂)) ⟷ (x ≡ a₁)∨(x ≡ a₂))))))
   pair-containment = pairing
 
-  filter-containment : ∀{φ : Domain → Stmt} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
+  filter-containment : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
   filter-containment = comprehension
 
   postulate filter-of-[∅] : ∀{φ} → Proof(filter(∅)(φ) ≡ ∅)
@@ -399,8 +405,8 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       ))
     ))
 
-  postulate [∪]-commutativity : Proof(∀ₗ(a ↦ a ∪ b ≡ b ∪ a))
-  postulate [∪]-associativity : Proof(∀ₗ(a ↦ (a ∪ b) ∪ c ≡ a ∪ (b ∪ c)))
+  postulate [∪]-commutativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∪ b ≡ b ∪ a)))
+  postulate [∪]-associativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ∪ b) ∪ c ≡ a ∪ (b ∪ c)))))
   postulate [∪]-identityₗ : Proof(∀ₗ(s ↦ ∅ ∪ s ≡ s))
   postulate [∪]-identityᵣ : Proof(∀ₗ(s ↦ s ∪ ∅ ≡ s))
   postulate [∪]-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ⊆ a ∪ b)))
@@ -416,8 +422,8 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       ))
     ))
 
-  postulate [∩]-commutativity : Proof(∀ₗ(a ↦ a ∩ b ≡ b ∩ a))
-  postulate [∩]-associativity : Proof(∀ₗ(a ↦ (a ∩ b) ∩ c ≡ a ∩ (b ∩ c)))
+  postulate [∩]-commutativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ≡ b ∩ a)))
+  postulate [∩]-associativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ∩ b) ∩ c ≡ a ∩ (b ∩ c)))))
   postulate [∩]-annihilatorₗ : Proof(∀ₗ(s ↦ ∅ ∩ s ≡ ∅))
   postulate [∩]-annihilatorᵣ : Proof(∀ₗ(s ↦ s ∩ ∅ ≡ s))
   postulate [∩]-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ⊆ a)))
@@ -513,7 +519,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
 
   -- TODO: Just used for reference. Remove these lines later
   -- ⋂(a) = filter(⋃(ss)) (x ↦ ∀ₗ(a₂ ↦ (a₂ ∈ ss) ⟶ (x ∈ a₂)))
-  -- filter-containment : ∀{φ : Domain → Stmt} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
+  -- filter-containment : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
   -- [⋃]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s)))))
 
 

@@ -1,13 +1,10 @@
-module Metalogic.Classical.Propositional.Semantics {ℓ} (Proposition : Set(ℓ)) where
+module Metalogic.Classical.Propositional.TruthSemanticsModel {ℓ} (Proposition : Set(ℓ)) where
 
 import      Lvl
 open import Data.Boolean
 open import Data
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
-open import Data.List
-import      Data.List.Relation.Membership
-import      Data.List.Proofs.Membership
 open import Metalogic.Classical.Propositional.Syntax{ℓ} (Proposition)
   renaming (
     ⊤   to ⊤ₗ ;
@@ -18,9 +15,7 @@ open import Metalogic.Classical.Propositional.Syntax{ℓ} (Proposition)
     _⇒_ to _⇒ₗ_ )
 open import Relator.Equals{ℓ}
 open import Relator.Equals.Proofs{ℓ}
-
-open        Data.List.Relation.Membership{ℓ}{ℓ} {Formula} hiding (_≡_)
-open        Data.List.Proofs.Membership{ℓ}{ℓ} {Formula}
+open import Sets.BoolSet{ℓ}
 
 -- A model decides whether a proposition is true or false
 -- Also known as Interpretation, Structure, Model
@@ -56,18 +51,14 @@ module _ where
 
   instance
     -- Satisfaction for a list of formulas
-    list-satisfaction-relation : SatisfactionRelation(List)
+    list-satisfaction-relation : SatisfactionRelation(BoolSet)
     list-satisfaction-relation = record{_⊧_ = \𝔐 Γ → (∀{γ} → (γ ∈ Γ) → satisfaction(𝔐)(γ) ≡ 𝑇)}
 
   -- Entailment
-  data _⊨_ (Γ : List(Formula)) (φ : Formula) : Set(ℓ) where
-    [⊨]-construct : (∀{𝔐} → (𝔐 ⊧ Γ) → (𝔐 ⊧ φ)) → (Γ ⊨ φ)
+  data _⊨_ (Γ : BoolSet(Formula)) (φ : Formula) : Set(ℓ) where
+    [⊨]-intro : (∀{𝔐} → (𝔐 ⊧ Γ) → (𝔐 ⊧ φ)) → (Γ ⊨ φ)
 
-  [⊨]-elim : ∀{Γ}{φ} → (Γ ⊨ φ) → Set(ℓ)
-  [⊨]-elim {∅}     {φ} ([⊨]-construct proof) = ∀{𝔐 : Model} → (𝔐 ⊧ φ)
-  [⊨]-elim {γ ⊰ Γ} {φ} ([⊨]-construct proof) = ∀{𝔐 : Model} → (foldᵣ-init (_⨯_) (𝔐 ⊧ γ) (map (γ ↦ (𝔐 ⊧ γ)) Γ)) → (𝔐 ⊧ φ)
-
-  _⊭_ : List(Formula) → Formula → Set(ℓ)
+  _⊭_ : BoolSet(Formula) → Formula → Set(ℓ)
   _⊭_ Γ φ = (_⊨_ Γ φ) → Empty{ℓ}
 
   -- Validity
@@ -76,14 +67,14 @@ module _ where
 
   module Theorems where
     [⊤]-entailment : (∅ ⊨ ⊤ₗ)
-    [⊤]-entailment = [⊨]-construct(const [≡]-intro)
+    [⊤]-entailment = [⊨]-intro(const [≡]-intro)
     -- ∅ ⊨ ⊤ₗ
     -- ∀{𝔐} → (𝔐 ⊧ ∅) → (𝔐 ⊧ ⊤ₗ)
     -- ∀{𝔐} → (𝔐 ⊧ ∅) → (satisfaction(𝔐)(⊤ₗ) ≡ 𝑇)
     -- ∀{𝔐} → (∀{γ} → (γ ∈ ∅) → satisfaction(𝔐)(γ) ≡ 𝑇) → (satisfaction(𝔐)(⊤ₗ) ≡ 𝑇)
 
-    [∧]-entailment : ∀{φ₁ φ₂} → ([ φ₁ ⊰ φ₂ ] ⊨ (φ₁ ∧ₗ φ₂))
-    [∧]-entailment{φ₁}{φ₂} = [⊨]-construct ([∈]-proof ↦ [≡]-with-op(_∧_) ([∈]-proof ([∈]-use)) ([∈]-proof ([∈]-skip [∈]-use)))
+    -- [∧]-entailment : ∀{φ₁ φ₂} → ([ φ₁ ⊰ φ₂ ] ⊨ (φ₁ ∧ₗ φ₂))
+    -- [∧]-entailment{φ₁}{φ₂} = [⊨]-intro ([∈]-proof ↦ [≡]-with-op(_∧_) ([∈]-proof ([∈]-use)) ([∈]-proof ([∈]-skip [∈]-use)))
     -- [ φ₁ ⊰ φ₂ ] ⊨ (φ₁ ∧ φ₂)
     -- ∀{𝔐} → (𝔐 ⊧ [ φ₁ ⊰ φ₂ ]) → (𝔐 ⊧ (φ₁ ∧ φ₂))
     -- ∀{𝔐} → (𝔐 ⊧ [ φ₁ ⊰ φ₂ ]) → (satisfaction(𝔐)(φ₁ ∧ₗ φ₂) ≡ 𝑇)

@@ -1,18 +1,18 @@
-open import Logic.Classical.NaturalDeduction
+open import Structure.Logic.Classical.NaturalDeduction
 
-module Logic.Classical.SetTheory.Relation {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} {Proof} ⦃ predicateEqTheory : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) ⦄ (_∈_ : Domain → Domain → Stmt) where
+module Structure.Logic.Classical.SetTheory.Relation {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} {Proof} ⦃ predicateEqTheory : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) ⦄ (_∈_ : Domain → Domain → Formula) where
 
 open import Syntax.Function
-open        Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) renaming (Theory to PredicateEqTheory)
-open import Logic.Classical.SetTheory.BoundedQuantification ⦃ predicateEqTheory ⦄ (_∈_)
+open        Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) renaming (Theory to PredicateEqTheory)
+open import Structure.Logic.Classical.SetTheory.BoundedQuantification ⦃ predicateEqTheory ⦄ (_∈_)
 
 open        PredicateEqTheory (predicateEqTheory)
 
 UnaryRelator : Set(_)
-UnaryRelator = (Domain → Stmt)
+UnaryRelator = (Domain → Formula)
 
 BinaryRelator : Set(_)
-BinaryRelator = (Domain → Domain → Stmt)
+BinaryRelator = (Domain → Domain → Formula)
 
 -- Containment
 -- (a ∋ x) means that the set a contains the set x.
@@ -54,9 +54,9 @@ PairwiseDisjoint(ss) = ∀ₛ(ss)(s₁ ↦ ∀ₛ(ss)(s₂ ↦ ∀ₗ(x ↦ (x �
 -- ∀ₛ(ss)(s₁ ↦ ∀ₛ(ss)(s₂ ↦ (s₁ ≢ s₂) → Disjoint(s₁)(s₂)))
 
 -- The statement that the relation predicate F is a partial function
-PartialFunction : BinaryRelator → Domain → Stmt
+PartialFunction : BinaryRelator → Domain → Formula
 PartialFunction(F) (dom) = ∀ₛ(dom)(x ↦ Unique(y ↦ F(x)(y)))
 
 -- The statement that the relation predicate F is a total function
-TotalFunction : BinaryRelator → Domain → Stmt
+TotalFunction : BinaryRelator → Domain → Formula
 TotalFunction(F) (dom) = ∀ₛ(dom)(x ↦ ∃ₗ!(y ↦ F(x)(y)))

@@ -1,16 +1,16 @@
-open import Logic.Classical.NaturalDeduction
+open import Structure.Logic.Classical.NaturalDeduction
 
-module Logic.Classical.SetTheory.BoundedQuantification {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} {Proof} ⦃ predicateEqTheory : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) ⦄ (_∈_ : Domain → Domain → Stmt) where
+module Structure.Logic.Classical.SetTheory.BoundedQuantification {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} {Proof} ⦃ predicateEqTheory : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) ⦄ (_∈_ : Domain → Domain → Formula) where
 
 open import Functional hiding (Domain)
 open import Lang.Instance
 import      Lvl
-open        Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Stmt} {Domain} (Proof) renaming (Theory to PredicateEqTheory)
+open        Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) renaming (Theory to PredicateEqTheory)
 
 open        PredicateEqTheory (predicateEqTheory)
 
 -- Bounded universal quantifier
-∀ₛ : Domain → (Domain → Stmt) → Stmt
+∀ₛ : Domain → (Domain → Formula) → Formula
 ∀ₛ(S)(φ) = ∀ₗ(x ↦ (x ∈ S) ⟶ φ(x))
 
 [∀ₛ]-intro : ∀{S}{φ} → (∀{x} → Proof(x ∈ S) → Proof(φ(x))) → Proof(∀ₛ(S)(φ))
@@ -29,7 +29,7 @@ open        PredicateEqTheory (predicateEqTheory)
   )
 
 -- Bounded existential quantifier
-∃ₛ : Domain → (Domain → Stmt) → Stmt
+∃ₛ : Domain → (Domain → Formula) → Formula
 ∃ₛ(S)(φ) = ∃ₗ(x ↦ (x ∈ S) ∧ φ(x))
 
 [∃ₛ]-intro : ∀{S}{φ}{x} → Proof(x ∈ S) → Proof(φ(x)) → Proof(∃ₛ(S)(φ))
@@ -56,5 +56,5 @@ open        PredicateEqTheory (predicateEqTheory)
   )
 
 -- Bounded unique existential quantifier
-∃ₛ! : Domain → (Domain → Stmt) → Stmt
+∃ₛ! : Domain → (Domain → Formula) → Formula
 ∃ₛ!(S)(φ) = ∃ₗ!(x ↦ (x ∈ S) ∧ φ(x))
