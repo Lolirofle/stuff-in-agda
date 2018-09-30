@@ -55,6 +55,14 @@ open        PredicateEqTheory (predicateEqTheory)
     (existence)
   )
 
+Uniqueₛ : Domain → (Domain → Formula) → Formula
+Uniqueₛ(S)(P) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (P(x) ∧ P(y)) ⟶ (x ≡ y)))
+
 -- Bounded unique existential quantifier
 ∃ₛ! : Domain → (Domain → Formula) → Formula
-∃ₛ!(S)(φ) = ∃ₗ!(x ↦ (x ∈ S) ∧ φ(x))
+∃ₛ!(S)(P) = ((∃ₛ(S) P) ∧ Uniqueₛ(S)(P))
+
+postulate [∃ₛ!]-witness : ∀{P : Domain → Formula}{S : Domain} → ⦃ _ : Proof(∃ₛ! S P) ⦄ → Domain
+postulate [∃ₛ!]-domain  : ∀{P : Domain → Formula}{S : Domain} → ⦃ p : Proof(∃ₛ! S P) ⦄ → Proof([∃ₛ!]-witness{P}{S} ⦃ p ⦄ ∈ S)
+postulate [∃ₛ!]-proof   : ∀{P : Domain → Formula}{S : Domain} → ⦃ p : Proof(∃ₛ! S P) ⦄ → Proof(P([∃ₛ!]-witness{P}{S} ⦃ p ⦄ ))
+postulate [∃ₛ!]-unique  : ∀{P : Domain → Formula}{S : Domain} → ⦃ p : Proof(∃ₛ! S P) ⦄ → Proof(∀ₗ(x ↦ P(x) ⟶ (x ≡ [∃ₛ!]-witness{P}{S} ⦃ p ⦄)))

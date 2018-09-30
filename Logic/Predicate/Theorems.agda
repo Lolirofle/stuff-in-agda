@@ -38,8 +38,8 @@ open import Type
 [∃¬]-to-[¬∀] : ∀{X}{P : X → Stmt} → (∃(x ↦ ¬(P(x)))) → (¬ ∀{x} → P(x))
 [∃¬]-to-[¬∀] = swap [∀][∃¬]-contradiction
 
-{-TODO
-[¬∀ₑ]-to-[∃¬] : ∀{X}{P : X → Stmt} → (∃(x ↦ ¬(P(x)))) ← (¬ ∀ₑ(x → P(x)))
+{- TODO: Probably unprovable?
+[¬∀ₑ]-to-[∃¬] : ∀{X}{P : X → Stmt} → X → (∃(x ↦ ¬(P(x)))) ← (¬ ∀ₗ(x ↦ P(x)))
 [¬∀ₑ]-to-[∃¬] {X}{_} (a) (napx) =
   ([∃]-intro(a)
     ⦃ [¬]-intro(pa ↦

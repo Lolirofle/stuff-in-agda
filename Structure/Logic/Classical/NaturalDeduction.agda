@@ -176,4 +176,6 @@ module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Formula : Type{ℓₗ Lv
     -- TODO: Maybe these should be separated from the theory?
     field
       [∃!]-witness : ∀{P : Domain → Formula} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain
-      [∃!]-proof   : ∀{P : Domain → Formula} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain
+      [∃!]-proof   : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ! P) ⦄ → Proof(P([∃!]-witness{P} ⦃ p ⦄ ))
+
+    postulate [∃!]-unique   : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ! P) ⦄ → Proof(∀ₗ(x ↦ P(x) ⟶ (x ≡ [∃!]-witness{P} ⦃ p ⦄)))

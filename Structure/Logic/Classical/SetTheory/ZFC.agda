@@ -138,17 +138,17 @@ module Function ⦃ signature : Signature ⦄ where
   -- The following describes the relation in an inexact notation:
   -- • ∀x∀y. ((x,y) ∈ S) ⇔ (S(x) = y)
   FunctionSet : Domain → Formula
-  FunctionSet(s) = ∀ₗ(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s))
+  FunctionSet(s) = ∀ₗ(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s)) -- TODO: Does this really describe a set? Let x be s? The function also maps itself to something? But this would be interpreted as a function from all sets to something?
 
   -- The statement that the set s can be interpreted as a function with a specified domain and codomain.
   -- The following describes the relation in an inexact notation:
   -- • ∀(x∊A)∀(y∊B). ((x,y) ∈ S) ⇔ (S(x) = y)
   BoundedFunctionSet : Domain → Domain → Domain → Formula
-  BoundedFunctionSet(s)(A)(B) = ∀ₛ(A)(x ↦ ∃ₛ!(B)(y ↦ (x , y) ∈ s))
+  BoundedFunctionSet(A)(B)(s) = ∀ₛ(A)(x ↦ ∃ₛ!(B)(y ↦ (x , y) ∈ s))
 
   -- The set of function sets, all sets which can be interpreted as a function.
   _^_ : Domain → Domain → Domain
-  B ^ A = filter(℘(A ⨯ B)) FunctionSet
+  B ^ A = filter(℘(A ⨯ B)) (BoundedFunctionSet(A)(B))
 
   _→ₛₑₜ_ = swap _^_
 
@@ -233,7 +233,16 @@ module NumeralNatural ⦃ signature : Signature ⦄ where
   _≥_ : BinaryRelator
   a ≥ b = b ≤ a
 
+  -- _+_ : Domain → Domain → Domain
+  -- a + b = 
+
   infixl 2000 _<_ _≤_ _>_ _≥_
+
+-- A model of integers expressed in set theory (using only sets).
+module NumeralInteger ⦃ signature : Signature ⦄ where
+  open NumeralNatural
+
+  -- a
 
 module Axioms ⦃ signature : Signature ⦄ where
   open NumeralNatural using () renaming (Inductive to [ℕ]-Inductive)
@@ -337,10 +346,6 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       ))
     ))
 
-  postulate [⊆]-minimum : Proof(∀ₗ(s ↦ ∅ ⊆ s))
-
-  postulate [⊆]-unique-minimum : Proof(∀ₗ(e ↦ ∀ₗ(s ↦ (e ⊆ s) ⟶ (e ≡ ∅))))
-
   [∅]-containment : Proof(∀ₗ(x ↦ (x ∈ ∅) ⟷ ⊥))
   [∅]-containment =
     ([∀]-intro (\{x} →
@@ -352,6 +357,56 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       )
     ))
 
+  [∅]-subset : Proof(∀ₗ(s ↦ ∅ ⊆ s))
+  [∅]-subset =
+    ([∀]-intro(\{s} →
+      ([∀]-intro(\{x} →
+        ([→]-intro(xin∅ ↦
+          [⊥]-elim ([↔]-elimᵣ([∀]-elim [∅]-containment {x}) (xin∅))
+        ))
+      ))
+    ))
+
+  postulate [∅]-subset-is-equal : Proof(∀ₗ(s ↦ (s ⊆ ∅) ⟶ (s ≡ ∅)))
+
+  postulate [⊆]-minimum : Proof(∀ₗ(min ↦ ∀ₗ(s ↦ min ⊆ s) ⟷ (min ≡ ∅)))
+
+  [⊆]-reflexivity : Proof(∀ₗ(s ↦ s ⊆ s))
+  [⊆]-reflexivity = [∀]-intro(\{_} → [∀]-intro(\{_} → [→].reflexivity))
+
+  [⊆]-antisymmetry : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ⊆ b)∧(b ⊆ a) ⟶ (a ≡ b))))
+  [⊆]-antisymmetry =
+    ([∀]-intro(\{a} →
+      ([∀]-intro(\{b} →
+        ([→]-intro(abba ↦
+          ([↔]-elimᵣ([∀]-elim([∀]-elim extensional{a}){b}))
+          ([∀]-intro(\{x} →
+            ([↔]-intro
+              ([→]-elim([∀]-elim([∧]-elimᵣ abba){x}))
+              ([→]-elim([∀]-elim([∧]-elimₗ abba){x}))
+            )
+          ))
+        ))
+      ))
+    ))
+
+  [⊆]-transitivity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ⊆ b)∧(b ⊆ c) ⟶ (a ⊆ c)))))
+  [⊆]-transitivity =
+    ([∀]-intro(\{a} →
+      ([∀]-intro(\{b} →
+        ([∀]-intro(\{c} →
+          ([→]-intro(abbc ↦
+            ([∀]-intro(\{x} →
+              ([→].transitivity
+                ([∀]-elim([∧]-elimₗ abbc){x})
+                ([∀]-elim([∧]-elimᵣ abbc){x})
+              )
+            ))
+          ))
+        ))
+      ))
+    ))
+
   pair-containment : Proof(∀ₗ(a₁ ↦ ∀ₗ(a₂ ↦ (∀ₗ(x ↦ (x ∈ pair(a₁)(a₂)) ⟷ (x ≡ a₁)∨(x ≡ a₂))))))
   pair-containment = pairing
 
@@ -359,7 +414,26 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   filter-containment = comprehension
 
   postulate filter-of-[∅] : ∀{φ} → Proof(filter(∅)(φ) ≡ ∅)
-  postulate filter-subset : ∀{φ} → Proof(∀ₗ(s ↦ filter(s)(φ) ⊆ s))
+
+  filter-subset : ∀{φ} → Proof(∀ₗ(s ↦ filter(s)(φ) ⊆ s))
+  filter-subset =
+    ([∀]-intro(\{s} →
+      ([∀]-intro(\{x} →
+        ([→]-intro(xinfilter ↦
+          [∧]-elimₗ([↔]-elimᵣ([∀]-elim([∀]-elim filter-containment{s}){x}) (xinfilter))
+        ))
+      ))
+    ))
+
+  filter-property : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₛ(filter(s)(φ)) φ))
+  filter-property =
+    ([∀]-intro(\{s} →
+      ([∀]-intro(\{x} →
+        ([→]-intro(xinfilter ↦
+          [∧]-elimᵣ([↔]-elimᵣ([∀]-elim([∀]-elim filter-containment{s}){x}) (xinfilter))
+        ))
+      ))
+    ))
 
   [℘]-containment : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s))))
   [℘]-containment = power
@@ -371,7 +445,8 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   [⋃]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₛ(ss)(s ↦ x ∈ s))))
   [⋃]-containment = union
 
-  postulate [℘]-containing-max : Proof(∀ₗ(s ↦ ∀ₛ(s)(max ↦ ∀ₛ(s)(x ↦ x ⊆ max) ⟶ (⋃(s) ≡ max))))
+  postulate [⋃]-containing-max : Proof(∀ₗ(s ↦ ∀ₛ(s)(max ↦ ∀ₛ(s)(x ↦ x ⊆ max) ⟶ (⋃(s) ≡ max))))
+  postulate [⋃]-subset : Proof(∀ₗ(s ↦ ∀ₛ(s)(x ↦ x ⊆ ⋃(s))))
 
   singleton-containment : Proof(∀ₗ(a ↦ ∀ₗ(x ↦ (x ∈ singleton(a)) ⟷ (x ≡ a))))
   singleton-containment =
@@ -413,6 +488,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   postulate [∪]-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ b ⊆ a ∪ b)))
   postulate [∪]-of-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (b ⊆ a) ⟶ (a ∪ b ≡ a)))))
   postulate [∪]-of-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (a ⊆ b) ⟶ (a ∪ b ≡ b)))))
+  postulate [∪]-of-self : Proof(∀ₗ(s ↦ s ∪ s ≡ s))
 
   [∩]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∩ b)) ⟷ (x ∈ a)∧(x ∈ b)))))
   [∩]-containment =
@@ -428,8 +504,9 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   postulate [∩]-annihilatorᵣ : Proof(∀ₗ(s ↦ s ∩ ∅ ≡ s))
   postulate [∩]-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ⊆ a)))
   postulate [∩]-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ⊆ b)))
-  postulate [∩]-of-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (b ⊆ a) ⟶ (a ∩ b ≡ b)))))
-  postulate [∩]-of-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (a ⊆ b) ⟶ (a ∩ b ≡ a)))))
+  postulate [∩]-of-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (b ⊆ a) ⟶ (a ∩ b ≡ b))))
+  postulate [∩]-of-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ⊆ b) ⟶ (a ∩ b ≡ a))))
+  postulate [∩]-of-self : Proof(∀ₗ(s ↦ s ∩ s ≡ s))
 
   [∖]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∖ b)) ⟷ (x ∈ a)∧(x ∉ b)))))
   [∖]-containment =
@@ -517,18 +594,46 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
     ))
     where postulate proof : ∀{a} → a
 
+  postulate [⋂]-containing-min : Proof(∀ₗ(s ↦ ∀ₛ(s)(min ↦ ∀ₛ(s)(x ↦ min ⊆ x) ⟶ (⋂(s) ≡ min))))
+  postulate [⋂]-containing-[∅] : Proof(∀ₗ(s ↦ (∅ ∈ s) ⟶ (⋂(s) ≡ ∅)))
+  postulate [⋂]-containing-disjoint : Proof(∀ₗ(s ↦ ∃ₛ(s)(a ↦ ∃ₛ(s)(b ↦ Disjoint(a)(b))) ⟶ (⋂(s) ≡ ∅)))
+  postulate [⋂]-subset : Proof(∀ₗ(s ↦ ∀ₛ(s)(x ↦ ⋂(s) ⊆ x)))
+
   -- TODO: Just used for reference. Remove these lines later
   -- ⋂(a) = filter(⋃(ss)) (x ↦ ∀ₗ(a₂ ↦ (a₂ ∈ ss) ⟶ (x ∈ a₂)))
   -- filter-containment : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
   -- [⋃]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s)))))
 
 
-  -- [⨯]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ⨯ b)) ⟷ ∃ₗ(x₁ ↦ ∃ₗ(x₂ ↦ x ≡ (x₁ , x₂)))))))
+  -- [⨯]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ⨯ b)) ⟷ ∃ₛ(a)(x₁ ↦ ∃ₛ(b)(x₂ ↦ x ≡ (x₁ , x₂)))))))
   -- [⨯]-containment =
 
-  -- [⋃]-max : Proof(∀ₗ(s ↦ ∀ₗ(max ↦ ∀ₗ(x ↦ (x ∈ (⋃ s)) ⟶ (x ⊆ max)) ⟶ ((⋃ s) ≡ max))))
-
   -- [⋃][℘]-inverse : Proof(∀ₗ(s ↦ ⋃(℘(s)) ≡ s))
+
+  module Quotient {T : Domain} {_≅_ : BinaryRelator} ⦃ equivalence : Proof(Structure.Relator.Properties.Equivalence(T)(_≅_)) ⦄ where
+    open Structure.Relator.Properties
+
+    postulate [/]-containment : Proof(∀ₗ(x ↦ (x ∈ (T / (_≅_))) ⟷ (∃ₗ(y ↦ x ≡ [ y of T , (_≅_) ]))))
+    postulate [/]-pairwise-disjoint : Proof(∀ₗ(x ↦ (x ∈ (T / (_≅_))) ⟷ (∃ₗ(y ↦ x ≡ [ y of T , (_≅_) ]))))
+    postulate [/]-not-containing-[∅] : Proof(∀ₗ(x ↦ ∅ ∉ (T / (_≅_))))
+    postulate [/]-cover : Proof(⋃(T / (_≅_)) ≡ T)
+    postulate eqClass-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ∈ [ b of T , (_≅_) ]) ⟷ (a ≅ b))))
+    postulate eqClass-containing-self : Proof(∀ₗ(a ↦ a ∈ [ a of T , (_≅_) ]))
+    postulate eqClass-nonempty : Proof(∀ₗ(a ↦ NonEmpty([ a of T , (_≅_) ])))
+    postulate eqClass-equal-disjoint : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ([ a of T , (_≅_) ] ≡ [ b of T , (_≅_) ]) ⟷ ¬ Disjoint([ a of T , (_≅_) ])([ b of T , (_≅_) ]))))
+    postulate eqClass-equal-equivalent : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ([ a of T , (_≅_) ] ≡ [ b of T , (_≅_) ]) ⟷ (a ≅ b))))
+    postulate eqClass-equal-containingₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ([ a of T , (_≅_) ] ≡ [ b of T , (_≅_) ]) ⟷ (b ∈ [ a of T , (_≅_) ]))))
+    postulate eqClass-equal-containingᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ([ a of T , (_≅_) ] ≡ [ b of T , (_≅_) ]) ⟷ (a ∈ [ b of T , (_≅_) ]))))
+
+  module FunctionProofs where
+    open Function ⦃ signature ⦄
+
+    -- The construction of a meta-function in the meta-logic from a function in the set theory
+    fnset-witness : (f : Domain) → ⦃ _ : Proof(FunctionSet(f)) ⦄ → Function
+    fnset-witness f ⦃ proof ⦄ (x) = [∃!]-witness ⦃ [∀]-elim(proof){x} ⦄
+
+    -- [→ₛₑₜ]-witness : ∀{A B} → (f : Domain) → ⦃ _ : Proof(f ∈ (A →ₛₑₜ B)) ⦄ → (x : Domain) → ⦃ _ : Proof(x ∈ A) ⦄ → Domain
+    -- [→ₛₑₜ]-witness f ⦃ proof ⦄ (x) = (TODO: Maybe prove an equivalence of BoundedFunctionSet for all f in B^A? Would it work?)
 
   module NumeralNaturalProofs where
     open NumeralNatural
@@ -614,6 +719,42 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
         ))
       )
 
+    module _ where
+      open Function
+      open FunctionProofs
+
+      {- TODO: Something is amiss here? This should only guarantee the existence of a function when the arguments are in ℕ. The problem is probably that FunctionSet may not actually describe a set? See the TODO for FunctionSet. Maybe one should use BoundedFunctionSet instead? But FunctionSet defines a set by using filter, so maybe it is the unique existence to metaobject function that makes this weird?
+      postulate [ℕ]-recursive-function : ∀{z : Domain}{s : Domain → Domain → Domain} → Proof(∃ₛ!(ℕ →ₛₑₜ ℕ)(f ↦ ((𝟎 , z) ∈ f) ∧ (∀ₗ(n ↦ ∀ₗ(fn ↦ ((n , fn) ∈ f) ⟶ ((𝐒(n) , s(n)(fn)) ∈ f))))))
+
+      [ℕ]-recursive-function-witness : Domain → (Domain → Domain → Domain) → Function
+      [ℕ]-recursive-function-witness z s = fnset-witness([∃ₛ!]-witness ⦃ f ⦄ ) ⦃ [∀ₛ]-elim ([∀]-elim filter-property) ([∃ₛ!]-domain ⦃ f ⦄) ⦄ where
+        f = [ℕ]-recursive-function{z}{s}
+
+      _+_ : Domain → Domain → Domain
+      _+_ a b = [ℕ]-recursive-function-witness z s b where
+        z : Domain
+        z = a
+
+        s : Domain → Domain → Domain
+        s(n)(sn) = 𝐒(sn)
+
+      _⋅_ : Domain → Domain → Domain
+      _⋅_ a b = [ℕ]-recursive-function-witness z s b where
+        z : Domain
+        z = 𝟎
+
+        s : Domain → Domain → Domain
+        s(n)(sn) = sn + a
+
+      _^'_ : Domain → Domain → Domain -- TODO: Temporary name collision fix
+      _^'_ a b = [ℕ]-recursive-function-witness z s b where
+        z : Domain
+        z = 𝐒(𝟎)
+
+        s : Domain → Domain → Domain
+        s(n)(sn) = sn ⋅ a
+      -}
+
     postulate [ℕ]-elements : Proof(∀ₛ(ℕ)(n ↦ (n ≡ 𝟎) ∨ ∃ₛ(ℕ)(p ↦ n ≡ 𝐒(p))))
 
     postulate [<]-irreflexivity : Proof(Irreflexivity(ℕ)(_<_))
@@ -632,15 +773,4 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
     postulate [𝐒]-injective : Proof(Injective(𝐒))
 
     -- ∀ₛ(ℕ)(a ↦ ∀ₛ(ℕ)(b ↦ (a < b) ⟶ (𝐒(a) < 𝐒(b))))
-    -- ∀ₛ(ℕ)(a ↦ ∀ₛ(ℕ)(b ↦ (a < b) ⟶ (𝐒(a) < 𝐒(b))))
     -- ∀ₛ(ℕ)(n ↦ 𝟎 ≢ 𝐒(n))
-
-  module FunctionProofs where
-    open Function ⦃ signature ⦄
-
-    -- The construction of a meta-function in the meta-logic from a function in the set theory
-    fnset-witness : (f : Domain) → ⦃ _ : Proof(FunctionSet(f)) ⦄ → Function
-    fnset-witness f ⦃ proof ⦄ (x) = [∃!]-witness ⦃ [∀]-elim(proof){x} ⦄
-
-    -- [→ₛₑₜ]-witness : ∀{A B} → (f : Domain) → ⦃ _ : Proof(f ∈ (A →ₛₑₜ B)) ⦄ → (x : Domain) → ⦃ _ : Proof(x ∈ A) ⦄ → Domain
-    -- [→ₛₑₜ]-witness f ⦃ proof ⦄ (x) = (TODO: Maybe prove an equivalence of BoundedFunctionSet for all f in B^A? Would it work?)
