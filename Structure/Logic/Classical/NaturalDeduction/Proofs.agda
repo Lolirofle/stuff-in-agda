@@ -9,6 +9,8 @@ open PredicateEqTheory (predicateEqTheory)
 
 -- TODO: Move the ones which is constructive
 
+postulate excluded-middle : ∀{a} → Proof(a ∨ (¬ a))
+
 [↔]-with-[∧]ₗ : ∀{a₁ a₂ b} → Proof(a₁ ⟷ a₂) → Proof((a₁ ∧ b) ⟷ (a₂ ∧ b))
 [↔]-with-[∧]ₗ (proof) =
   ([↔]-intro
@@ -70,3 +72,24 @@ postulate [∨][∧]-distributivityᵣ : ∀{a b c} → Proof(((a ∧ b) ∨ c) 
 postulate [∧][∨]-distributivityₗ : ∀{a b c} → Proof((a ∧ (b ∨ c)) ⟷ (a ∧ b)∨(a ∧ c))
 postulate [∧][∨]-distributivityᵣ : ∀{a b c} → Proof(((a ∨ b) ∧ c) ⟷ (a ∧ c)∨(b ∧ c))
 postulate [≡]-substitute-this-is-almost-trivial : ∀{φ : Domain → Formula}{a b} → Proof(((a ≡ b) ∧ φ(a)) ⟷ φ(b))
+
+postulate [∀]-unrelatedₗ-[→] : ∀{P : Domain → Formula}{Q : Formula} → Proof(∀ₗ(x ↦ (P(x) ⟶ Q)) ⟷ (∃ₗ(x ↦ P(x)) ⟶ Q))
+
+postulate [∀]-unrelatedᵣ-[→] : ∀{P : Formula}{Q : Domain → Formula} → Proof(∀ₗ(x ↦ (P ⟶ Q(x))) ⟷ (P ⟶ ∀ₗ(x ↦ Q(x))))
+
+postulate [∃]-unrelatedₗ-[→]ᵣ : ∀{P : Domain → Formula}{Q : Formula} → Proof(∃ₗ(x ↦ (P(x) ⟶ Q)) ⟷ (∀ₗ(x ↦ P(x)) ⟶ Q))
+
+postulate [∃]-unrelatedᵣ-[→]ᵣ : ∀{P : Formula}{Q : Domain → Formula} → Proof(∃ₗ(x ↦ (P ⟶ Q(x))) ⟷ (P ⟶ ∃ₗ(x ↦ Q(x))))
+
+-- TODO: Is this provable? I hope so
+postulate [∃!]-unrelatedᵣ-[→]ᵣ : ∀{P : Formula}{Q : Domain → Formula} → Proof(∃ₗ!(x ↦ (P ⟶ Q(x))) ⟷ (P ⟶ ∃ₗ!(x ↦ Q(x))))
+
+-- TODO: I think this is similar to the skolemization process of going from ∀∃ to ∃function∀
+[∃!]-fn-witness : ∀{P : Domain → Domain → Formula} → ⦃ _ : Proof(∀ₗ(x ↦ ∃ₗ!(y ↦ P(x)(y)))) ⦄ → Domain → Domain
+[∃!]-fn-witness{P} ⦃ proof ⦄ (x) = [∃!]-witness ⦃ [∀]-elim(proof){x} ⦄
+
+[∃!]-fn-proof : ∀{P : Domain → Domain → Formula} → ⦃ p : Proof(∀ₗ(x ↦ ∃ₗ!(y ↦ P(x)(y)))) ⦄ → Proof(∀ₗ(x ↦ P(x)([∃!]-fn-witness{P} ⦃ p ⦄ (x))))
+[∃!]-fn-proof{P} ⦃ proof ⦄ =
+  ([∀]-intro(\{x} →
+    [∃!]-proof {P(x)} ⦃ [∀]-elim proof{x} ⦄
+  ))

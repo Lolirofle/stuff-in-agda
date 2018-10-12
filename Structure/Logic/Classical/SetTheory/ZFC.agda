@@ -134,11 +134,14 @@ module Function ⦃ signature : Signature ⦄ where
     ⊶ = map(domain)
   open Type ⦃ ... ⦄ public
 
-  -- The statement that the set s can be interpreted as a function.
+  PartialFunctionSet : Domain → Domain → Formula
+  PartialFunctionSet(D)(s) = ∀ₛ(D)(x ↦ Unique(y ↦ (x , y) ∈ s))
+
+  -- The statement that the set s can be interpreted as a function with a specified domain.
   -- The following describes the relation in an inexact notation:
-  -- • ∀x∀y. ((x,y) ∈ S) ⇔ (S(x) = y)
-  FunctionSet : Domain → Formula
-  FunctionSet(s) = ∀ₗ(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s)) -- TODO: Does this really describe a set? Let x be s? The function also maps itself to something? But this would be interpreted as a function from all sets to something?
+  -- • ∀(x∊A)∀y. ((x,y) ∈ S) ⇔ (S(x) = y)
+  FunctionSet : Domain → Domain → Formula
+  FunctionSet(D)(s) = ∀ₛ(D)(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s))
 
   -- The statement that the set s can be interpreted as a function with a specified domain and codomain.
   -- The following describes the relation in an inexact notation:
@@ -629,8 +632,10 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
     open Function ⦃ signature ⦄
 
     -- The construction of a meta-function in the meta-logic from a function in the set theory
-    fnset-witness : (f : Domain) → ⦃ _ : Proof(FunctionSet(f)) ⦄ → Function
-    fnset-witness f ⦃ proof ⦄ (x) = [∃!]-witness ⦃ [∀]-elim(proof){x} ⦄
+    fnset-witness : ∀{D} → (f : Domain) → ⦃ _ : Proof(FunctionSet(D)(f)) ⦄ → Function
+    fnset-witness f ⦃ proof ⦄ = [∃!]-fn-witness ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] proof ⦄ where
+      [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] : ∀{D : Domain}{P : BinaryRelator} → Proof(∀ₗ(x ↦ ∃ₗ!(y ↦ (x ∈ D) ⟶ P(x)(y))) ⟷ ∀ₛ(D)(x ↦ ∃ₗ!(y ↦ P(x)(y))))
+      [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] {D}{P} = [↔]-with-[∀] ([∃!]-unrelatedᵣ-[→]ᵣ)
 
     -- [→ₛₑₜ]-witness : ∀{A B} → (f : Domain) → ⦃ _ : Proof(f ∈ (A →ₛₑₜ B)) ⦄ → (x : Domain) → ⦃ _ : Proof(x ∈ A) ⦄ → Domain
     -- [→ₛₑₜ]-witness f ⦃ proof ⦄ (x) = (TODO: Maybe prove an equivalence of BoundedFunctionSet for all f in B^A? Would it work?)
