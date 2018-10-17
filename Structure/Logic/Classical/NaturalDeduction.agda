@@ -149,8 +149,16 @@ module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Formula : Type{ℓₗ Lv
 
     field
       intro : ∀{x} → Proof(x ≡ x)
-      elimₗ  : ∀{P : Domain → Formula}{a b} → Proof(a ≡ b) → Proof(P(a)) ← Proof(P(b))
       elimᵣ  : ∀{P : Domain → Formula}{a b} → Proof(a ≡ b) → Proof(P(a)) → Proof(P(b))
+
+    symmetry : ∀{a b} → Proof(a ≡ b) → Proof(b ≡ a)
+    symmetry{a} (proof) = elimᵣ{x ↦ x ≡ a} (proof) (intro{a})
+
+    elimₗ : ∀{P : Domain → Formula}{a b} → Proof(a ≡ b) → Proof(P(a)) ← Proof(P(b))
+    elimₗ (proof) (pb) = elimᵣ (symmetry proof) (pb)
+
+    transitivity : ∀{a b c} → Proof(a ≡ b) → Proof(b ≡ c) → Proof(a ≡ c)
+    transitivity (ab) (bc) = elimᵣ bc ab
 
   record Theory : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
     field
@@ -175,7 +183,25 @@ module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Formula : Type{ℓₗ Lv
     -- TODO: Does this make this theory have no models? For functions, the functions in the meta-theory here (Agda-functions) represent computable things, and all unique existances are not computable. Normally in set theory, one could interpret every (f(x) = y)-formula as ((x,y) ∈ f), so normally it probably works out in the end of the day?
     -- TODO: Maybe these should be separated from the theory?
     field
-      [∃!]-witness : ∀{P : Domain → Formula} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain
-      [∃!]-proof   : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ! P) ⦄ → Proof(P([∃!]-witness{P} ⦃ p ⦄ ))
+      [∃]-witness : ∀{P : Domain → Formula} → ⦃ _ : Proof(∃ₗ P) ⦄ → Domain
+      [∃]-proof   : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ P) ⦄ → Proof(P([∃]-witness{P} ⦃ p ⦄ ))
 
-    postulate [∃!]-unique   : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ! P) ⦄ → Proof(∀ₗ(x ↦ P(x) ⟶ (x ≡ [∃!]-witness{P} ⦃ p ⦄)))
+    [∃!]-witness : ∀{P : Domain → Formula} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain
+    [∃!]-witness{P} ⦃ proof ⦄ = [∃]-witness{P} ⦃ [∧]-elimₗ proof ⦄
+
+    [∃!]-proof : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ! P) ⦄ → Proof(P([∃!]-witness{P} ⦃ p ⦄ ))
+    [∃!]-proof{P} ⦃ proof ⦄ = [∃]-proof{P} ⦃ [∧]-elimₗ proof ⦄
+
+    [∃!]-unique : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ! P) ⦄ → Proof(∀ₗ(x ↦ P(x) ⟶ (x ≡ [∃!]-witness{P} ⦃ p ⦄)))
+    [∃!]-unique{P} ⦃ proof ⦄ =
+      ([∀]-intro(\{x} →
+        ([→]-intro(px ↦
+          ([→]-elim
+            ([∀]-elim([∀]-elim([∧]-elimᵣ proof) {x}) {[∃!]-witness{P} ⦃ proof ⦄})
+            ([∧]-intro
+              (px)
+              ([∃!]-proof{P} ⦃ proof ⦄)
+            )
+          )
+        ))
+      ))

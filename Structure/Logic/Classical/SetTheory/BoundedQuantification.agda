@@ -55,6 +55,15 @@ open        PredicateEqTheory (predicateEqTheory)
     (existence)
   )
 
+[∃ₛ]-witness : ∀{P : Domain → Formula}{S : Domain} → ⦃ _ : Proof(∃ₛ S P) ⦄ → Domain
+[∃ₛ]-witness ⦃ proof ⦄ = [∃]-witness ⦃ proof ⦄
+
+[∃ₛ]-domain : ∀{P : Domain → Formula}{S : Domain} → ⦃ p : Proof(∃ₛ S P) ⦄ → Proof([∃ₛ]-witness{P}{S} ⦃ p ⦄ ∈ S)
+[∃ₛ]-domain ⦃ proof ⦄ = [∧]-elimₗ([∃]-proof ⦃ proof ⦄)
+
+[∃ₛ]-proof : ∀{P : Domain → Formula}{S : Domain} → ⦃ p : Proof(∃ₛ S P) ⦄ → Proof(P([∃ₛ]-witness{P}{S} ⦃ p ⦄ ))
+[∃ₛ]-proof ⦃ proof ⦄ = [∧]-elimᵣ([∃]-proof ⦃ proof ⦄)
+
 Uniqueₛ : Domain → (Domain → Formula) → Formula
 Uniqueₛ(S)(P) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (P(x) ∧ P(y)) ⟶ (x ≡ y)))
 
@@ -62,7 +71,13 @@ Uniqueₛ(S)(P) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (P(x) ∧ P(y)) ⟶ (x ≡ y))
 ∃ₛ! : Domain → (Domain → Formula) → Formula
 ∃ₛ!(S)(P) = ((∃ₛ(S) P) ∧ Uniqueₛ(S)(P))
 
-postulate [∃ₛ!]-witness : ∀{P : Domain → Formula}{S : Domain} → ⦃ _ : Proof(∃ₛ! S P) ⦄ → Domain
-postulate [∃ₛ!]-domain  : ∀{P : Domain → Formula}{S : Domain} → ⦃ p : Proof(∃ₛ! S P) ⦄ → Proof([∃ₛ!]-witness{P}{S} ⦃ p ⦄ ∈ S)
-postulate [∃ₛ!]-proof   : ∀{P : Domain → Formula}{S : Domain} → ⦃ p : Proof(∃ₛ! S P) ⦄ → Proof(P([∃ₛ!]-witness{P}{S} ⦃ p ⦄ ))
+[∃ₛ!]-witness : ∀{P : Domain → Formula}{S : Domain} → ⦃ _ : Proof(∃ₛ! S P) ⦄ → Domain
+[∃ₛ!]-witness ⦃ proof ⦄ = [∃ₛ]-witness ⦃ [∧]-elimₗ proof ⦄
+
+[∃ₛ!]-domain : ∀{P : Domain → Formula}{S : Domain} → ⦃ p : Proof(∃ₛ! S P) ⦄ → Proof([∃ₛ!]-witness{P}{S} ⦃ p ⦄ ∈ S)
+[∃ₛ!]-domain ⦃ proof ⦄ = [∃ₛ]-domain ⦃ [∧]-elimₗ proof ⦄
+
+[∃ₛ!]-proof : ∀{P : Domain → Formula}{S : Domain} → ⦃ p : Proof(∃ₛ! S P) ⦄ → Proof(P([∃ₛ!]-witness{P}{S} ⦃ p ⦄ ))
+[∃ₛ!]-proof ⦃ proof ⦄ = [∃ₛ]-proof ⦃ [∧]-elimₗ proof ⦄
+
 postulate [∃ₛ!]-unique  : ∀{P : Domain → Formula}{S : Domain} → ⦃ p : Proof(∃ₛ! S P) ⦄ → Proof(∀ₗ(x ↦ P(x) ⟶ (x ≡ [∃ₛ!]-witness{P}{S} ⦃ p ⦄)))

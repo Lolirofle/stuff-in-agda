@@ -26,7 +26,7 @@ asymmetry ⦃ [irreflexivity,transitivity]-to-asymmetry ⦄ = Tuple.curry(irrefl
   -- ∀x∀y. (x<y) → ¬(y<x)
 
 -- Definition of a total binary operation
-[total]-to-reflexivity : ∀{T}{_<_} → ⦃ _ : ConverseTotal{T}(_<_) ⦄ → Reflexivity{T}(_<_)
+[total]-to-reflexivity : ∀{T}{_<_} → ⦃ _ : SymmetricallyTotal{T}(_<_) ⦄ → Reflexivity{T}(_<_)
 reflexivity ⦃ [total]-to-reflexivity ⦄ = [∨]-elim id id converseTotal
 
 -- TODO: https://proofwiki.org/wiki/Definition%3aRelation_Compatible_with_Operation and substitution. Special case for (≡) and function application: ∀(x∊T)∀(y∊T). (x ≡ y) → (∀(f: T→T). f(x) ≡ f(y))

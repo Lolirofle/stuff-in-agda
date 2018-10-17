@@ -151,6 +151,7 @@ import Structure.Function.Ordering
 import Structure.LinearAlgebra
 import Structure.Logic.Classical.NaturalDeduction
 import Structure.Logic.Classical.NaturalDeduction.Proofs
+import Structure.Logic.Classical.SetTheory
 import Structure.Logic.Classical.SetTheory.BoundedQuantification
 import Structure.Logic.Classical.SetTheory.Relation
 import Structure.Logic.Classical.SetTheory.ZFC

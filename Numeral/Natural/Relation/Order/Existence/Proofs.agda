@@ -129,7 +129,7 @@ instance
 -- [<]-is-[≱] {a}{b} = [>]-is-[≰] {b}{a}
 
 instance
-  [≤]-totality : ConverseTotal(_≤_)
+  [≤]-totality : SymmetricallyTotal(_≤_)
   converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝟎}    = [∨]-introₗ ([≤]-from-[≡] [≡]-intro)
   converseTotal ⦃ [≤]-totality ⦄ {𝐒(a)}{𝟎}    = [∨]-introᵣ ([≤]-minimum)
   converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝐒(b)} = [∨]-introₗ ([≤]-minimum)

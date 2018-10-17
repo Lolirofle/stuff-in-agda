@@ -52,12 +52,12 @@ open Irreflexivity ⦃ ... ⦄ public
 
 -- Definition of a total binary relation.
 -- Total in the sense that it, or its converse, holds.
-record ConverseTotal {T : Type} (_▫_ : T → T → Stmt) : Stmt where
+record SymmetricallyTotal {T : Type} (_▫_ : T → T → Stmt) : Stmt where
   constructor intro
 
   field
     converseTotal : ∀{x y : T} → (x ▫ y) ∨ (y ▫ x)
-open ConverseTotal ⦃ ... ⦄ public
+open SymmetricallyTotal ⦃ ... ⦄ public
 
 -- Dichotomy : {T : Type}} → (T → T → Stmt) → Stmt
 -- Dichotomy {T} (_▫_) = {x y : T} → (x ▫ y) ⊕ (y ▫ x)

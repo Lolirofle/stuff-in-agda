@@ -113,6 +113,15 @@ record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘ
 module Function ⦃ signature : Signature ⦄ where
   open Signature ⦃ ... ⦄
 
+  record SetRepresentable (f : Function) : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
+    constructor intro
+
+    field
+      set : Domain
+
+    field
+      proof : Proof(∀ₗ(x ↦ ∀ₗ(y ↦ (f(x) ≡ y) ⟷ ((x , y) ∈ set))))
+
   -- An instance of Type(f) means that the function f has a default domain and codomain, and a proof that the function actually are closed inside this domain/codomain pair.
   record Type (f : Function) : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
     constructor intro
@@ -143,15 +152,9 @@ module Function ⦃ signature : Signature ⦄ where
   FunctionSet : Domain → Domain → Formula
   FunctionSet(D)(s) = ∀ₛ(D)(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s))
 
-  -- The statement that the set s can be interpreted as a function with a specified domain and codomain.
-  -- The following describes the relation in an inexact notation:
-  -- • ∀(x∊A)∀(y∊B). ((x,y) ∈ S) ⇔ (S(x) = y)
-  BoundedFunctionSet : Domain → Domain → Domain → Formula
-  BoundedFunctionSet(A)(B)(s) = ∀ₛ(A)(x ↦ ∃ₛ!(B)(y ↦ (x , y) ∈ s))
-
   -- The set of function sets, all sets which can be interpreted as a function.
   _^_ : Domain → Domain → Domain
-  B ^ A = filter(℘(A ⨯ B)) (BoundedFunctionSet(A)(B))
+  B ^ A = filter(℘(A ⨯ B)) (FunctionSet(A))
 
   _→ₛₑₜ_ = swap _^_
 
@@ -159,15 +162,21 @@ module Structure where
   -- Structures in meta-functions.
   module Function' where -- TODO: Temporary naming fix with tick
     module Properties ⦃ signature : Signature ⦄ where
-      open Function
+      open Function renaming (Type to Metatype)
 
-      Injective : (f : Function) → ⦃ _ : Type(f) ⦄ → Formula
+      Type : Function → Domain → Domain → Formula
+      Type(f)(X)(Y) = ∀ₛ(X)(x ↦ f(x) ∈ Y)
+
+      Closed : Domain → Function → Formula
+      Closed(S)(f) = Type(f)(S)(S)
+
+      Injective : (f : Function) → ⦃ _ : Metatype(f) ⦄ → Formula
       Injective(f) = ∀ₛ(domain{f})(x ↦ ∀ₛ(domain{f})(y ↦ (f(x) ≡ f(y)) ⟶ (x ≡ y)))
 
-      Surjective : (f : Function) → ⦃ _ : Type(f) ⦄ → Formula
-      Surjective(f) = ∀ₛ(codomain{f})(y ↦ ∃ₛ(domain{f})(x ↦ y ≡ f(x)))
+      Surjective : (f : Function) → ⦃ _ : Metatype(f) ⦄ → Formula
+      Surjective(f) = ∀ₛ(codomain{f})(y ↦ ∃ₛ(domain{f})(x ↦ f(x) ≡ y))
 
-      Bijective : (f : Function) → ⦃ _ : Type(f) ⦄ → Formula
+      Bijective : (f : Function) → ⦃ _ : Metatype(f) ⦄ → Formula
       Bijective(f) = Injective(f) ∧ Surjective(f)
 
   module Relator where
@@ -190,8 +199,143 @@ module Structure where
       Transitivity : Domain → BinaryRelator → Formula
       Transitivity(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ (x ▫ y)∧(y ▫ z) ⟶ (x ▫ z))))
 
-      Equivalence  : Domain → BinaryRelator → Formula
+      Equivalence : Domain → BinaryRelator → Formula
       Equivalence(S)(_▫_) = Reflexivity(S)(_▫_) ∧ Symmetry(S)(_▫_) ∧ Transitivity(S)(_▫_)
+
+      SymmetricallyTotal : Domain → BinaryRelator → Formula
+      SymmetricallyTotal(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x ▫ y) ∨ (y ▫ x)))
+
+  module Ordering where
+    open Relator.Properties
+
+    Minima : Domain → BinaryRelator → Domain → Formula
+    Minima(S)(_≤_)(min) = ∀ₛ(S)(x ↦ min ≤ x)
+
+    Maxima : Domain → BinaryRelator → Domain → Formula
+    Maxima(S)(_≤_)(max) = ∀ₛ(S)(x ↦ x ≤ max)
+
+    module _  ⦃ signature : Signature ⦄ where
+      open Signature ⦃ ... ⦄
+
+      lowerBounds : Domain → BinaryRelator → Domain → Domain
+      lowerBounds(S)(_≤_)(Sₛ) = filter(S)(Minima(S)(_≤_))
+
+      upperBounds : Domain → BinaryRelator → Domain → Domain
+      upperBounds(S)(_≤_)(Sₛ) = filter(S)(Maxima(S)(_≤_))
+
+      interval : Domain → BinaryRelator → Domain → Domain → Domain
+      interval(S)(_≤_) (a)(b) = filter(S)(s ↦ (a ≤ s) ∧ (s ≤ b))
+
+      Bounded : Domain → BinaryRelator → Domain → Domain → Formula
+      Bounded(S)(_≤_) (a)(b) = ∀ₛ(S)(s ↦ (a ≤ s) ∧ (s ≤ b))
+
+      Infima : Domain → BinaryRelator → Domain → Domain → Formula
+      Infima(S)(_≤_)(Sₛ)(inf) = Maxima(lowerBounds(S)(_≤_)(Sₛ))(_≤_)(inf)
+
+      Suprema : Domain → BinaryRelator → Domain → Domain → Formula
+      Suprema(S)(_≤_)(Sₛ)(sup) = Minima(upperBounds(S)(_≤_)(Sₛ))(_≤_)(sup)
+
+    module Weak where
+      PartialOrder : Domain → BinaryRelator → Formula
+      PartialOrder(S)(_≤_) = Reflexivity(S)(_≤_) ∧ Antisymmetry(S)(_≤_) ∧ Transitivity(S)(_≤_)
+
+      TotalOrder : Domain → BinaryRelator → Formula
+      TotalOrder(S)(_≤_) = PartialOrder(S)(_≤_) ∧ SymmetricallyTotal(S)(_≤_)
+
+    module Strict where
+      Order : Domain → BinaryRelator → Formula
+      Order(S)(_<_) = Irreflexivity(S)(_<_) ∧ Asymmetry(S)(_<_) ∧ Transitivity(S)(_<_)
+
+      Dense : Domain → BinaryRelator → Formula
+      Dense(S)(_<_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x < y) ⟶ ∃ₛ(S)(z ↦ (x < z)∧(z < y))))
+
+  module Operator where
+    BinaryOperator : Set(_)
+    BinaryOperator = (Domain → Domain → Domain)
+
+    module Properties where
+      AssociativityPattern : Domain → Domain → Domain → BinaryOperator → BinaryOperator → BinaryOperator → BinaryOperator → Formula
+      AssociativityPattern(x)(y)(z)(_▫₁_)(_▫₂_)(_▫₃_)(_▫₄_) = (((x ▫₁ y) ▫₂ z) ≡ (x ▫₃ (y ▫₄ z)))
+
+      Type : BinaryOperator → Domain → Domain → Domain → Formula
+      Type(_▫_)(X)(Y)(Z) = ∀ₛ(X)(x ↦ ∀ₛ(Y)(y ↦ (x ▫ y) ∈ Z))
+
+      Closed : Domain → BinaryOperator → Formula
+      Closed(S)(_▫_) = Type(_▫_)(S)(S)(S)
+
+      Commutativity : Domain → BinaryOperator → Formula
+      Commutativity(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x ▫ y) ≡ (y ▫ x)))
+
+      Associativity : Domain → BinaryOperator → Formula
+      Associativity(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ AssociativityPattern(x)(y)(z)(_▫_)(_▫_)(_▫_)(_▫_))))
+
+      Identityₗ : Domain → BinaryOperator → Domain → Formula
+      Identityₗ(S)(_▫_)(id) = ∀ₛ(S)(x ↦ (id ▫ x) ≡ x)
+
+      Identityᵣ : Domain → BinaryOperator → Domain → Formula
+      Identityᵣ(S)(_▫_)(id) = ∀ₛ(S)(x ↦ (x ▫ id) ≡ x)
+
+      Identity : Domain → BinaryOperator → Domain → Formula
+      Identity(S)(_▫_)(id) = Identityₗ(S)(_▫_)(id) ∧ Identityᵣ(S)(_▫_)(id)
+
+      Invertibleₗ : Domain → BinaryOperator → Domain → Formula
+      Invertibleₗ(S)(_▫_)(id) = ∀ₛ(S)(x ↦ ∃ₛ(S)(x⁻¹ ↦ (x⁻¹ ▫ x) ≡ id))
+
+      Invertibleᵣ : Domain → BinaryOperator → Domain → Formula
+      Invertibleᵣ(S)(_▫_)(id) = ∀ₛ(S)(x ↦ ∃ₛ(S)(x⁻¹ ↦ (x ▫ x⁻¹) ≡ id))
+
+      Invertible : Domain → BinaryOperator → Domain → Formula
+      Invertible(S)(_▫_)(id) = ∀ₛ(S)(x ↦ ∃ₛ(S)(x⁻¹ ↦ ((x⁻¹ ▫ x) ≡ id) ∧ ((x ▫ x⁻¹) ≡ id)))
+
+      Distributivityₗ : Domain → BinaryOperator → BinaryOperator → Formula
+      Distributivityₗ(S)(_▫₁_)(_▫₂_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ (x ▫₁ (y ▫₂ z)) ≡ ((x ▫₁ y) ▫₂ (x ▫₁ z)))))
+
+      Distributivityᵣ : Domain → BinaryOperator → BinaryOperator → Formula
+      Distributivityᵣ(S)(_▫₁_)(_▫₂_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ ((x ▫₂ y) ▫₁ z) ≡ ((x ▫₁ z) ▫₂ (y ▫₁ z)))))
+
+      Distributivity : Domain → BinaryOperator → BinaryOperator → Formula
+      Distributivity(S)(_▫₁_)(_▫₂_) = Distributivityₗ(S)(_▫₁_)(_▫₂_) ∧ Distributivityᵣ(S)(_▫₁_)(_▫₂_)
+
+      Compatibility : Domain → Domain → BinaryOperator → BinaryOperator → Formula
+      Compatibility(A)(B)(_▫₁_)(_▫₂_) = ∀ₛ(A)(a₁ ↦ ∀ₛ(A)(a₂ ↦ ∀ₛ(B)(b ↦ AssociativityPattern(a₁)(a₂)(b)(_▫₁_)(_▫₁_)(_▫₂_)(_▫₁_))))
+
+      Semigroup : Domain → BinaryOperator → Formula
+      Semigroup(S)(_▫_) = Closed(S)(_▫_) ∧ Associativity(S)(_▫_)
+
+      Monoid : Domain → BinaryOperator → Formula
+      Monoid(S)(_▫_) = Semigroup(S)(_▫_) ∧ ∃ₛ(S)(Identity(S)(_▫_))
+
+      Group : Domain → BinaryOperator → Formula
+      Group(S)(_▫_) = Monoid(S)(_▫_) ∧ ∀ₛ(S)(id ↦ Identity(S)(_▫_)(id) ⟶ Invertible(S)(_▫_)(id))
+
+      CommutativeGroup : Domain → BinaryOperator → Formula
+      CommutativeGroup(S)(_▫_) = Group(S)(_▫_) ∧ Commutativity(S)(_▫_)
+
+      Rng : Domain → BinaryOperator → BinaryOperator → Formula
+      Rng(S)(_▫₁_)(_▫₂_) = CommutativeGroup(S)(_▫₁_) ∧ Semigroup(S)(_▫₂_) ∧ Distributivity(S)(_▫₂_)(_▫₁_)
+
+      Ring : Domain → BinaryOperator → BinaryOperator → Formula
+      Ring(S)(_▫₁_)(_▫₂_) = CommutativeGroup(S)(_▫₁_) ∧ Monoid(S)(_▫₂_) ∧ Distributivity(S)(_▫₂_)(_▫₁_)
+
+      module _  ⦃ signature : Signature ⦄ where
+        open Signature ⦃ ... ⦄
+
+        Field : Domain → BinaryOperator → BinaryOperator → Formula
+        Field(S)(_▫₁_)(_▫₂_) = CommutativeGroup(S)(_▫₁_) ∧ ∀ₛ(S)(id₁ ↦ Identity(S)(_▫₁_)(id₁) ⟶ CommutativeGroup(S ∖ singleton(id₁))(_▫₂_)) ∧ Distributivity(S)(_▫₂_)(_▫₁_)
+
+        -- TODO: Not finished
+        VectorSpace : Domain → Domain → BinaryOperator → BinaryOperator → BinaryOperator → BinaryOperator → Formula
+        VectorSpace(V)(S)(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) = CommutativeGroup(V)(_+ᵥ_) ∧ Field(S)(_+ₛ_)(_⋅ₛ_) ∧ ∀ₛ(S)(id ↦ Identity(S)(_⋅ₛ_)(id) ⟶ Identityₗ(V)(_⋅ₛᵥ_)(id)) ∧ Compatibility(S)(V)(_⋅ₛᵥ_)(_⋅ₛ_) -- ∧ Distributivityₗ() ∧ Distributivityᵣ()
+
+  module Numeral where
+    module Natural ⦃ signature : Signature ⦄ where
+      open Signature ⦃ ... ⦄
+
+      Induction : Domain → Domain → (Domain → Domain) → (Domain → Formula) → Formula
+      Induction(ℕ)(𝟎)(𝐒) (φ) = (φ(𝟎) ∧ ∀ₛ(ℕ)(n ↦ φ(n) ⟶ φ(𝐒(n)))) ⟶ ∀ₛ(ℕ)(φ)
+
+      -- Peano : Domain → Domain → (Domain → Domain) → Formula
+      -- Peano(ℕ)(𝟎)(𝐒) = (𝟎 ∈ ℕ) ∧ Function'.Properties.Closed(ℕ)(𝐒) ∧ Function'.Properties.Injective(ℕ)(𝐒) ∧ ∀ₛ(S)(n ↦ 𝐒(n) ≢ 𝟎) ∧ Induction(ℕ)(𝟎)(𝐒)
 
 -- A model of natural numbers expressed in set theory (using only sets).
 module NumeralNatural ⦃ signature : Signature ⦄ where
@@ -349,6 +493,8 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       ))
     ))
 
+  postulate [≡]-from-subset : Proof(∀ₗ(x ↦ ∀ₗ(y ↦ ((x ⊇ y) ∧ (x ⊆ y)) ⟷ (x ≡ y))))
+
   [∅]-containment : Proof(∀ₗ(x ↦ (x ∈ ∅) ⟷ ⊥))
   [∅]-containment =
     ([∀]-intro (\{x} →
@@ -371,13 +517,28 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
     ))
 
   postulate [∅]-subset-is-equal : Proof(∀ₗ(s ↦ (s ⊆ ∅) ⟶ (s ≡ ∅)))
+  -- [∅]-subset-is-equal =
+  --   ([∀]-intro(\{s} →
+  --     ([→]-intro(s⊆∅ ↦
+  --       
+  --     ))
+  --   ))
+
+  [∃ₛ]-of-[∅] : ∀{P : Domain → Formula} → Proof(¬(∃ₛ ∅ P))
+  [∃ₛ]-of-[∅] =
+    ([¬]-intro(ep ↦
+      [∃ₛ]-elim(\{x} → x∈∅ ↦ _ ↦ [⊥]-elim([⊥]-intro ([∀]-elim empty) x∈∅)) ep
+    ))
 
   postulate [⊆]-minimum : Proof(∀ₗ(min ↦ ∀ₗ(s ↦ min ⊆ s) ⟷ (min ≡ ∅)))
+
+  [⊆]-minima : Proof(∀ₗ(s ↦ ∅ ⊆ s))
+  [⊆]-minima = [∅]-subset
 
   [⊆]-reflexivity : Proof(∀ₗ(s ↦ s ⊆ s))
   [⊆]-reflexivity = [∀]-intro(\{_} → [∀]-intro(\{_} → [→].reflexivity))
 
-  [⊆]-antisymmetry : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ⊆ b)∧(b ⊆ a) ⟶ (a ≡ b))))
+  [⊆]-antisymmetry : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (b ⊆ a)∧(a ⊆ b) ⟶ (a ≡ b))))
   [⊆]-antisymmetry =
     ([∀]-intro(\{a} →
       ([∀]-intro(\{b} →
@@ -385,8 +546,8 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
           ([↔]-elimᵣ([∀]-elim([∀]-elim extensional{a}){b}))
           ([∀]-intro(\{x} →
             ([↔]-intro
-              ([→]-elim([∀]-elim([∧]-elimᵣ abba){x}))
               ([→]-elim([∀]-elim([∧]-elimₗ abba){x}))
+              ([→]-elim([∀]-elim([∧]-elimᵣ abba){x}))
             )
           ))
         ))
@@ -416,8 +577,6 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   filter-containment : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
   filter-containment = comprehension
 
-  postulate filter-of-[∅] : ∀{φ} → Proof(filter(∅)(φ) ≡ ∅)
-
   filter-subset : ∀{φ} → Proof(∀ₗ(s ↦ filter(s)(φ) ⊆ s))
   filter-subset =
     ([∀]-intro(\{s} →
@@ -427,6 +586,16 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
         ))
       ))
     ))
+
+  filter-of-[∅] : ∀{φ} → Proof(filter(∅)(φ) ≡ ∅)
+  filter-of-[∅] =
+    ([→]-elim
+      ([∀]-elim([∀]-elim [⊆]-antisymmetry))
+      ([∧]-intro
+        ([∀]-elim [∅]-subset)
+        ([∀]-elim filter-subset)
+      )
+    )
 
   filter-property : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₛ(filter(s)(φ)) φ))
   filter-property =
@@ -450,6 +619,12 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
 
   postulate [⋃]-containing-max : Proof(∀ₗ(s ↦ ∀ₛ(s)(max ↦ ∀ₛ(s)(x ↦ x ⊆ max) ⟶ (⋃(s) ≡ max))))
   postulate [⋃]-subset : Proof(∀ₗ(s ↦ ∀ₛ(s)(x ↦ x ⊆ ⋃(s))))
+
+  postulate [⋃]-of-[∅] : Proof(⋃(∅) ≡ ∅)
+  -- [⋃]-of-empty =
+  --   ([⋃]-containment
+  --   )
+  --   [∃ₛ]-of-[∅]
 
   singleton-containment : Proof(∀ₗ(a ↦ ∀ₗ(x ↦ (x ∈ singleton(a)) ⟷ (x ≡ a))))
   singleton-containment =
@@ -533,7 +708,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
                 ([∨]-elim
                   -- Empty(ss) ⇒ _
                   (allyyninss ↦
-                    proof -- TODO: Is this really provable? Maybe. filter(∅)(..) = ∅ is an idea?
+                    proof -- TODO: But: Empty(ss) ⇒ (ss ≡ ∅) ⇒ ⋃(ss) ≡ ∅ ⇒ (x ∉ ⋃(ss)) ? Maybe use this argument further up instead to prove something like: (⋂(ss) ≡ ∅) ⇒ (x ∉ ∅)
                   )
 
                   -- NonEmpty(ss) ⇒ _
@@ -631,14 +806,53 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   module FunctionProofs where
     open Function ⦃ signature ⦄
 
+    [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] : ∀{D : Domain}{P : BinaryRelator} → Proof(∀ₗ(x ↦ ∃ₗ(y ↦ (x ∈ D) ⟶ P(x)(y))) ⟷ ∀ₛ(D)(x ↦ ∃ₗ(y ↦ P(x)(y))))
+    [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] {D}{P} = [↔]-with-[∀] ([∃]-unrelatedᵣ-[→])
+
+    [∀ₛ∃!]-to[∀ₛ∃] : ∀{P : BinaryRelator}{D : Domain} → Proof(∀ₛ(D)(x ↦ ∃ₗ!(y ↦ P(x)(y)))) → Proof(∀ₛ(D)(x ↦ ∃ₗ(y ↦ P(x)(y))))
+    [∀ₛ∃!]-to[∀ₛ∃] proof =
+      ([∀ₛ]-intro(\{x} → xinD ↦
+        [∧]-elimₗ([∀ₛ]-elim proof {x} xinD)
+      ))
+
     -- The construction of a meta-function in the meta-logic from a function in the set theory
     fnset-witness : ∀{D} → (f : Domain) → ⦃ _ : Proof(FunctionSet(D)(f)) ⦄ → Function
-    fnset-witness f ⦃ proof ⦄ = [∃!]-fn-witness ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] proof ⦄ where
-      [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] : ∀{D : Domain}{P : BinaryRelator} → Proof(∀ₗ(x ↦ ∃ₗ!(y ↦ (x ∈ D) ⟶ P(x)(y))) ⟷ ∀ₛ(D)(x ↦ ∃ₗ!(y ↦ P(x)(y))))
-      [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] {D}{P} = [↔]-with-[∀] ([∃!]-unrelatedᵣ-[→]ᵣ)
+    fnset-witness f ⦃ proof ⦄ = [∃]-fn-witness ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] ([∀ₛ∃!]-to[∀ₛ∃] proof) ⦄
 
-    -- [→ₛₑₜ]-witness : ∀{A B} → (f : Domain) → ⦃ _ : Proof(f ∈ (A →ₛₑₜ B)) ⦄ → (x : Domain) → ⦃ _ : Proof(x ∈ A) ⦄ → Domain
-    -- [→ₛₑₜ]-witness f ⦃ proof ⦄ (x) = (TODO: Maybe prove an equivalence of BoundedFunctionSet for all f in B^A? Would it work?)
+    fnset-value : ∀{D} → (f : Domain) → ⦃ proof : Proof(FunctionSet(D)(f)) ⦄ → Proof(∀ₛ(D)(x ↦ (x , fnset-witness f(x)) ∈ f))
+    fnset-value{D} f ⦃ proof ⦄ = [∃]-fn-proof ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] ([∀ₛ∃!]-to[∀ₛ∃] proof) ⦄
+
+    fnset-proof : ∀{D} → (f : Domain) → ⦃ proof : Proof(FunctionSet(D)(f)) ⦄ → Proof(∀ₛ(D)(x ↦ ∀ₗ(y ↦ (fnset-witness{D} f ⦃ proof ⦄ x ≡ y) ⟷ ((x , y) ∈ f))))
+    fnset-proof{D} f ⦃ proof ⦄ =
+      ([∀ₛ]-intro(\{x} → x∈D ↦
+        ([∀]-intro(\{y} →
+          ([↔]-intro
+            (xy∈f ↦
+              ([→]-elim
+                ([∀]-elim([∀]-elim([∧]-elimᵣ([∀ₛ]-elim proof{x} (x∈D))) {fnset-witness f(x)}) {y})
+                ([∧]-intro
+                  ([∀ₛ]-elim(fnset-value f) {x} (x∈D))
+                  (xy∈f)
+                )
+              )
+            )
+
+            (fx≡y ↦
+              [≡]-elimᵣ (fx≡y) ([∀ₛ]-elim (fnset-value(f)) {x} (x∈D))
+            )
+          )
+        ))
+      ))
+
+    [→ₛₑₜ]-witness : ∀{A B} → (f : Domain) → ⦃ _ : Proof(f ∈ (A →ₛₑₜ B)) ⦄ → Function
+    [→ₛₑₜ]-witness f ⦃ proof ⦄ (x) =
+      (fnset-witness f
+        ⦃ [∧]-elimᵣ([↔]-elimᵣ
+          ([∀]-elim([∀]-elim filter-containment))
+          (proof)
+        ) ⦄
+        (x)
+      )
 
   module NumeralNaturalProofs where
     open NumeralNatural
@@ -731,7 +945,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       {- TODO: Something is amiss here? This should only guarantee the existence of a function when the arguments are in ℕ. The problem is probably that FunctionSet may not actually describe a set? See the TODO for FunctionSet. Maybe one should use BoundedFunctionSet instead? But FunctionSet defines a set by using filter, so maybe it is the unique existence to metaobject function that makes this weird?
       postulate [ℕ]-recursive-function : ∀{z : Domain}{s : Domain → Domain → Domain} → Proof(∃ₛ!(ℕ →ₛₑₜ ℕ)(f ↦ ((𝟎 , z) ∈ f) ∧ (∀ₗ(n ↦ ∀ₗ(fn ↦ ((n , fn) ∈ f) ⟶ ((𝐒(n) , s(n)(fn)) ∈ f))))))
 
-      [ℕ]-recursive-function-witness : Domain → (Domain → Domain → Domain) → Function
+      [ℕ]-recursive-function-witness : Domain → BinaryOperator → Function
       [ℕ]-recursive-function-witness z s = fnset-witness([∃ₛ!]-witness ⦃ f ⦄ ) ⦃ [∀ₛ]-elim ([∀]-elim filter-property) ([∃ₛ!]-domain ⦃ f ⦄) ⦄ where
         f = [ℕ]-recursive-function{z}{s}
 
