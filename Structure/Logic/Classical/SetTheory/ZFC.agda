@@ -27,6 +27,9 @@ FiniteIndexedFamily(n) = Meta.𝕟(n) → Domain
 InfiniteIndexedFamily : Set(_)
 InfiniteIndexedFamily = Meta.ℕ → Domain
 
+BinaryOperator : Set(_)
+BinaryOperator = (Domain → Domain → Domain)
+
 -- The symbols/signature of ZFC set theory.
 record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
   infixl 3000 _∪_
@@ -95,6 +98,7 @@ record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘ
   -- Set product over a finite indexed family (Cartesian product).
   -- TODO: Not really like this. See definition of (_⨯_) and (_,_), and try to express the same here
   -- TODO: Also, make it possible to take the set product of infinite indexed families
+  -- TODO: Maybe just use functions like (𝕟(n) →ₛₑₜ _) for finite and (ℕ → _) for infinite
   ∏_ : ∀{n} → FiniteIndexedFamily(n) → Domain
   ∏_ {Meta.𝟎}            _ = singleton(∅)
   ∏_ {Meta.𝐒(Meta.𝟎)}    I = I(Meta.𝟎)
@@ -143,41 +147,114 @@ module Function ⦃ signature : Signature ⦄ where
     ⊶ = map(domain)
   open Type ⦃ ... ⦄ public
 
-  PartialFunctionSet : Domain → Domain → Formula
-  PartialFunctionSet(D)(s) = ∀ₛ(D)(x ↦ Unique(y ↦ (x , y) ∈ s))
+  PartialFunctionSet : Domain → Formula
+  PartialFunctionSet(s) = ∀ₗ(x ↦ Unique(y ↦ (x , y) ∈ s))
 
   -- The statement that the set s can be interpreted as a function with a specified domain.
   -- The following describes the relation in an inexact notation:
   -- • ∀(x∊A)∀y. ((x,y) ∈ S) ⇔ (S(x) = y)
-  FunctionSet : Domain → Domain → Formula
-  FunctionSet(D)(s) = ∀ₛ(D)(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s))
+  Total : Domain → Domain → Formula
+  Total(D)(s) = ∀ₛ(D)(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s))
+
+  Injective : Domain → Formula
+  Injective(f) = ∀ₗ(y ↦ Unique(x ↦ (x , y) ∈ f))
+
+  Surjective : Domain → Domain → Formula
+  Surjective(B)(f) = ∀ₛ(B)(y ↦ ∃ₗ(x ↦ (x , y) ∈ f))
+
+  Bijective : Domain → Domain → Formula
+  Bijective(B)(f) =
+    Injective(f)
+    ∧ Surjective(B)(f)
 
   -- The set of function sets, all sets which can be interpreted as a function.
   _^_ : Domain → Domain → Domain
-  B ^ A = filter(℘(A ⨯ B)) (FunctionSet(A))
+  B ^ A = filter(℘(A ⨯ B)) (Total(A))
 
   _→ₛₑₜ_ = swap _^_
+
+
+  -- TODO: Maybe this works?
+  -- Like:
+  --   (x,f(x)) = (x , y)
+  --   f = {(x , y)}
+  --   = {{{x},{x,y}}}
+  --   ⋃f = {{x},{x,y}}
+  --   ⋃²f = {x,y}
+  ⊷' : Domain → Domain
+  ⊷' f = filter(⋃(⋃ f)) (x ↦ ∃ₗ(y ↦ (x , y) ∈ f))
+
+  -- TODO: Maybe this works?
+  ⊶' : Domain → Domain
+  ⊶' f = filter(⋃(⋃ f)) (y ↦ ∃ₗ(x ↦ (x , y) ∈ f))
+
+  map' : Domain → Domain → Domain
+  map' f(S) = filter(⋃(⋃ f)) (a ↦ ∃ₛ(S)(x ↦ (x , a) ∈ f))
+
+  unmap' : Domain → Domain → Domain
+  unmap' f(S) = filter(⋃(⋃ f)) (a ↦ ∃ₛ(S)(y ↦ (a , y) ∈ f))
+
+  apply-set : Domain → Domain → Domain
+  apply-set f(x) = map' f(singleton(x))
+
+  unapply-set : Domain → Domain → Domain
+  unapply-set f(y) = unmap' f(singleton(y))
+
+  _∘'_ : Domain → Domain → Domain
+  _∘'_ f g = filter((⊷' f) ⨯ (⊶' g)) (a ↦ ∃ₗ(x ↦ ∃ₗ(y ↦ ∃ₗ(a₁ ↦ ((a₁ , y) ∈ f) ∧ ((x , a₁) ∈ g)) ∧ (a ≡ (x , y)))))
+
+  module Cardinality where
+    -- Injection
+    _≼_ : Domain → Domain → Formula
+    _≼_ (a)(b) = ∃ₛ(a →ₛₑₜ b)(Injective)
+
+    -- Surjection
+    _≽_ : Domain → Domain → Formula
+    _≽_ (a)(b) = ∃ₛ(a →ₛₑₜ b)(Surjective(b))
+
+    -- Bijection
+    _≍_ : Domain → Domain → Formula
+    _≍_ (a)(b) = ∃ₛ(a →ₛₑₜ b)(Bijective(b))
+
+    -- Strict injection
+    _≺_ : Domain → Domain → Formula
+    _≺_ A B = (A ≼ B) ∧ ¬(A ≍ B)
+
+    -- Strict surjection
+    _≻_ : Domain → Domain → Formula
+    _≻_ A B = (A ≽ B) ∧ ¬(A ≍ B)
+
+    -- TODO: Definition of a "cardinality object" requires ordinals, which requires axiom of choice
+    -- # : Domain → Domain
 
 module Structure where
   -- Structures in meta-functions.
   module Function' where -- TODO: Temporary naming fix with tick
     module Properties ⦃ signature : Signature ⦄ where
-      open Function renaming (Type to Metatype)
+      open Function renaming (Type to Metatype) hiding (Injective ; Surjective ; Bijective)
 
-      Type : Function → Domain → Domain → Formula
-      Type(f)(X)(Y) = ∀ₛ(X)(x ↦ f(x) ∈ Y)
+      Type : Domain → Domain → Function → Formula
+      Type(X)(Y)(f) = ∀ₛ(X)(x ↦ f(x) ∈ Y)
 
       Closed : Domain → Function → Formula
-      Closed(S)(f) = Type(f)(S)(S)
+      Closed(S)(f) = Type(S)(S)(f)
 
-      Injective : (f : Function) → ⦃ _ : Metatype(f) ⦄ → Formula
-      Injective(f) = ∀ₛ(domain{f})(x ↦ ∀ₛ(domain{f})(y ↦ (f(x) ≡ f(y)) ⟶ (x ≡ y)))
+      Injective : Domain → Function → Formula
+      Injective(A)(f) = ∀ₛ(A)(x ↦ ∀ₛ(A)(y ↦ (f(x) ≡ f(y)) ⟶ (x ≡ y)))
 
-      Surjective : (f : Function) → ⦃ _ : Metatype(f) ⦄ → Formula
-      Surjective(f) = ∀ₛ(codomain{f})(y ↦ ∃ₛ(domain{f})(x ↦ f(x) ≡ y))
+      Surjective : Domain → Domain → Function → Formula
+      Surjective(A)(B)(f) = ∀ₛ(B)(y ↦ ∃ₛ(A)(x ↦ f(x) ≡ y))
 
-      Bijective : (f : Function) → ⦃ _ : Metatype(f) ⦄ → Formula
-      Bijective(f) = Injective(f) ∧ Surjective(f)
+      Bijective : Domain → Domain → Function → Formula
+      Bijective(A)(B)(f) =
+        Injective(A)(f)
+        ∧ Surjective(A)(B)(f)
+
+      Preserving₁ : Domain → Function → Function → Function → Formula
+      Preserving₁(A)(f)(g₁)(g₂) = ∀ₛ(A)(x ↦ f(g₁(x)) ≡ g₂(f(x)))
+
+      Preserving₂ : Domain → Domain → Function → BinaryOperator → BinaryOperator → Formula
+      Preserving₂(A)(B)(f)(_▫₁_)(_▫₂_) = ∀ₛ(A)(x ↦ ∀ₛ(B)(y ↦ f(x ▫₁ y) ≡ (f(x) ▫₂ f(y))))
 
   module Relator where
     module Properties where
@@ -200,7 +277,10 @@ module Structure where
       Transitivity(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ (x ▫ y)∧(y ▫ z) ⟶ (x ▫ z))))
 
       Equivalence : Domain → BinaryRelator → Formula
-      Equivalence(S)(_▫_) = Reflexivity(S)(_▫_) ∧ Symmetry(S)(_▫_) ∧ Transitivity(S)(_▫_)
+      Equivalence(S)(_▫_) =
+        Reflexivity(S)(_▫_)
+        ∧ Symmetry(S)(_▫_)
+        ∧ Transitivity(S)(_▫_)
 
       SymmetricallyTotal : Domain → BinaryRelator → Formula
       SymmetricallyTotal(S)(_▫_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x ▫ y) ∨ (y ▫ x)))
@@ -237,25 +317,36 @@ module Structure where
 
     module Weak where
       PartialOrder : Domain → BinaryRelator → Formula
-      PartialOrder(S)(_≤_) = Reflexivity(S)(_≤_) ∧ Antisymmetry(S)(_≤_) ∧ Transitivity(S)(_≤_)
+      PartialOrder(S)(_≤_) =
+        Reflexivity(S)(_≤_)
+        ∧ Antisymmetry(S)(_≤_)
+        ∧ Transitivity(S)(_≤_)
 
       TotalOrder : Domain → BinaryRelator → Formula
-      TotalOrder(S)(_≤_) = PartialOrder(S)(_≤_) ∧ SymmetricallyTotal(S)(_≤_)
+      TotalOrder(S)(_≤_) =
+        PartialOrder(S)(_≤_)
+        ∧ SymmetricallyTotal(S)(_≤_)
 
     module Strict where
       Order : Domain → BinaryRelator → Formula
-      Order(S)(_<_) = Irreflexivity(S)(_<_) ∧ Asymmetry(S)(_<_) ∧ Transitivity(S)(_<_)
+      Order(S)(_<_) =
+        Irreflexivity(S)(_<_)
+        ∧ Asymmetry(S)(_<_)
+        ∧ Transitivity(S)(_<_)
 
       Dense : Domain → BinaryRelator → Formula
       Dense(S)(_<_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ (x < y) ⟶ ∃ₛ(S)(z ↦ (x < z)∧(z < y))))
 
   module Operator where
-    BinaryOperator : Set(_)
-    BinaryOperator = (Domain → Domain → Domain)
-
     module Properties where
       AssociativityPattern : Domain → Domain → Domain → BinaryOperator → BinaryOperator → BinaryOperator → BinaryOperator → Formula
       AssociativityPattern(x)(y)(z)(_▫₁_)(_▫₂_)(_▫₃_)(_▫₄_) = (((x ▫₁ y) ▫₂ z) ≡ (x ▫₃ (y ▫₄ z)))
+
+      DistributivityₗPattern : Domain → Domain → Domain → BinaryOperator → BinaryOperator → BinaryOperator → BinaryOperator → BinaryOperator → Formula
+      DistributivityₗPattern(x)(y)(z)(_▫₁_)(_▫₂_)(_▫₃_)(_▫₄_)(_▫₅_) = (x ▫₁ (y ▫₂ z)) ≡ ((x ▫₃ y) ▫₄ (x ▫₅ z))
+
+      DistributivityᵣPattern : Domain → Domain → Domain → BinaryOperator → BinaryOperator → BinaryOperator → BinaryOperator → BinaryOperator → Formula
+      DistributivityᵣPattern(x)(y)(z)(_▫₁_)(_▫₂_)(_▫₃_)(_▫₄_)(_▫₅_) = ((x ▫₂ y) ▫₁ z) ≡ ((x ▫₃ z) ▫₄  (y ▫₅ z))
 
       Type : BinaryOperator → Domain → Domain → Domain → Formula
       Type(_▫_)(X)(Y)(Z) = ∀ₛ(X)(x ↦ ∀ₛ(Y)(y ↦ (x ▫ y) ∈ Z))
@@ -288,10 +379,10 @@ module Structure where
       Invertible(S)(_▫_)(id) = ∀ₛ(S)(x ↦ ∃ₛ(S)(x⁻¹ ↦ ((x⁻¹ ▫ x) ≡ id) ∧ ((x ▫ x⁻¹) ≡ id)))
 
       Distributivityₗ : Domain → BinaryOperator → BinaryOperator → Formula
-      Distributivityₗ(S)(_▫₁_)(_▫₂_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ (x ▫₁ (y ▫₂ z)) ≡ ((x ▫₁ y) ▫₂ (x ▫₁ z)))))
+      Distributivityₗ(S)(_▫₁_)(_▫₂_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ DistributivityₗPattern(x)(y)(z)(_▫₁_)(_▫₂_)(_▫₁_)(_▫₂_)(_▫₁_))))
 
       Distributivityᵣ : Domain → BinaryOperator → BinaryOperator → Formula
-      Distributivityᵣ(S)(_▫₁_)(_▫₂_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ ((x ▫₂ y) ▫₁ z) ≡ ((x ▫₁ z) ▫₂ (y ▫₁ z)))))
+      Distributivityᵣ(S)(_▫₁_)(_▫₂_) = ∀ₛ(S)(x ↦ ∀ₛ(S)(y ↦ ∀ₛ(S)(z ↦ DistributivityᵣPattern(x)(y)(z)(_▫₁_)(_▫₂_)(_▫₁_)(_▫₂_)(_▫₁_))))
 
       Distributivity : Domain → BinaryOperator → BinaryOperator → Formula
       Distributivity(S)(_▫₁_)(_▫₂_) = Distributivityₗ(S)(_▫₁_)(_▫₂_) ∧ Distributivityᵣ(S)(_▫₁_)(_▫₂_)
@@ -300,46 +391,79 @@ module Structure where
       Compatibility(A)(B)(_▫₁_)(_▫₂_) = ∀ₛ(A)(a₁ ↦ ∀ₛ(A)(a₂ ↦ ∀ₛ(B)(b ↦ AssociativityPattern(a₁)(a₂)(b)(_▫₁_)(_▫₁_)(_▫₂_)(_▫₁_))))
 
       Semigroup : Domain → BinaryOperator → Formula
-      Semigroup(S)(_▫_) = Closed(S)(_▫_) ∧ Associativity(S)(_▫_)
+      Semigroup(S)(_▫_) =
+        Closed(S)(_▫_)
+        ∧ Associativity(S)(_▫_)
 
       Monoid : Domain → BinaryOperator → Formula
-      Monoid(S)(_▫_) = Semigroup(S)(_▫_) ∧ ∃ₛ(S)(Identity(S)(_▫_))
+      Monoid(S)(_▫_) =
+        Semigroup(S)(_▫_)
+        ∧ ∃ₛ(S)(Identity(S)(_▫_))
 
       Group : Domain → BinaryOperator → Formula
-      Group(S)(_▫_) = Monoid(S)(_▫_) ∧ ∀ₛ(S)(id ↦ Identity(S)(_▫_)(id) ⟶ Invertible(S)(_▫_)(id))
+      Group(S)(_▫_) =
+        Monoid(S)(_▫_)
+        ∧ ∀ₛ(S)(id ↦ Identity(S)(_▫_)(id) ⟶ Invertible(S)(_▫_)(id))
 
       CommutativeGroup : Domain → BinaryOperator → Formula
-      CommutativeGroup(S)(_▫_) = Group(S)(_▫_) ∧ Commutativity(S)(_▫_)
+      CommutativeGroup(S)(_▫_) =
+        Group(S)(_▫_)
+        ∧ Commutativity(S)(_▫_)
 
       Rng : Domain → BinaryOperator → BinaryOperator → Formula
-      Rng(S)(_▫₁_)(_▫₂_) = CommutativeGroup(S)(_▫₁_) ∧ Semigroup(S)(_▫₂_) ∧ Distributivity(S)(_▫₂_)(_▫₁_)
+      Rng(S)(_▫₁_)(_▫₂_) =
+        CommutativeGroup(S)(_▫₁_)
+        ∧ Semigroup(S)(_▫₂_)
+        ∧ Distributivity(S)(_▫₂_)(_▫₁_)
 
       Ring : Domain → BinaryOperator → BinaryOperator → Formula
-      Ring(S)(_▫₁_)(_▫₂_) = CommutativeGroup(S)(_▫₁_) ∧ Monoid(S)(_▫₂_) ∧ Distributivity(S)(_▫₂_)(_▫₁_)
+      Ring(S)(_▫₁_)(_▫₂_) =
+        CommutativeGroup(S)(_▫₁_)
+        ∧ Monoid(S)(_▫₂_)
+        ∧ Distributivity(S)(_▫₂_)(_▫₁_)
 
       module _  ⦃ signature : Signature ⦄ where
         open Signature ⦃ ... ⦄
 
         Field : Domain → BinaryOperator → BinaryOperator → Formula
-        Field(S)(_▫₁_)(_▫₂_) = CommutativeGroup(S)(_▫₁_) ∧ ∀ₛ(S)(id₁ ↦ Identity(S)(_▫₁_)(id₁) ⟶ CommutativeGroup(S ∖ singleton(id₁))(_▫₂_)) ∧ Distributivity(S)(_▫₂_)(_▫₁_)
+        Field(S)(_▫₁_)(_▫₂_) =
+          CommutativeGroup(S)(_▫₁_)
+          ∧ ∀ₛ(S)(id₁ ↦ Identity(S)(_▫₁_)(id₁) ⟶ CommutativeGroup(S ∖ singleton(id₁))(_▫₂_))
+          ∧ Distributivity(S)(_▫₂_)(_▫₁_)
 
-        -- TODO: Not finished
         VectorSpace : Domain → Domain → BinaryOperator → BinaryOperator → BinaryOperator → BinaryOperator → Formula
-        VectorSpace(V)(S)(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) = CommutativeGroup(V)(_+ᵥ_) ∧ Field(S)(_+ₛ_)(_⋅ₛ_) ∧ ∀ₛ(S)(id ↦ Identity(S)(_⋅ₛ_)(id) ⟶ Identityₗ(V)(_⋅ₛᵥ_)(id)) ∧ Compatibility(S)(V)(_⋅ₛᵥ_)(_⋅ₛ_) -- ∧ Distributivityₗ() ∧ Distributivityᵣ()
+        VectorSpace(V)(S)(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) =
+          CommutativeGroup(V)(_+ᵥ_)
+          ∧ Field(S)(_+ₛ_)(_⋅ₛ_)
+          ∧ ∀ₛ(S)(id ↦ Identity(S)(_⋅ₛ_)(id) ⟶ Identityₗ(V)(_⋅ₛᵥ_)(id))
+          ∧ Compatibility(S)(V)(_⋅ₛᵥ_)(_⋅ₛ_)
+          ∧ ∀ₛ(S)(s ↦ ∀ₛ(V)(v₁ ↦ ∀ₛ(V)(v₂ ↦ DistributivityₗPattern(s)(v₁)(v₂)(_⋅ₛᵥ_)(_+ᵥ_)(_⋅ₛᵥ_)(_+ᵥ_)(_⋅ₛᵥ_))))
+          ∧ ∀ₛ(S)(s₁ ↦ ∀ₛ(S)(s₂ ↦ ∀ₛ(V)(v ↦ DistributivityᵣPattern(s₁)(s₂)(v)(_⋅ₛᵥ_)(_+ᵥ_)(_⋅ₛᵥ_)(_+ᵥ_)(_⋅ₛᵥ_))))
 
   module Numeral where
     module Natural ⦃ signature : Signature ⦄ where
       open Signature ⦃ ... ⦄
 
-      Induction : Domain → Domain → (Domain → Domain) → (Domain → Formula) → Formula
-      Induction(ℕ)(𝟎)(𝐒) (φ) = (φ(𝟎) ∧ ∀ₛ(ℕ)(n ↦ φ(n) ⟶ φ(𝐒(n)))) ⟶ ∀ₛ(ℕ)(φ)
+      FormulaInduction : Domain → Domain → Function → (Domain → Formula) → Formula
+      FormulaInduction(ℕ)(𝟎)(𝐒) (φ) = (φ(𝟎) ∧ ∀ₛ(ℕ)(n ↦ φ(n) ⟶ φ(𝐒(n)))) ⟶ ∀ₛ(ℕ)(φ)
 
-      -- Peano : Domain → Domain → (Domain → Domain) → Formula
-      -- Peano(ℕ)(𝟎)(𝐒) = (𝟎 ∈ ℕ) ∧ Function'.Properties.Closed(ℕ)(𝐒) ∧ Function'.Properties.Injective(ℕ)(𝐒) ∧ ∀ₛ(S)(n ↦ 𝐒(n) ≢ 𝟎) ∧ Induction(ℕ)(𝟎)(𝐒)
+      SetInduction : Domain → Domain → Function → Formula
+      SetInduction(ℕ)(𝟎)(𝐒) = ∀ₗ(X ↦ ((𝟎 ∈ X) ∧ ∀ₛ(ℕ)(n ↦ (n ∈ X) ⟶ (𝐒(n) ∈ X))) ⟶ (ℕ ⊆ X))
+      -- TODO: Can be expressed as ∀ₗ(X ↦ Inductive(X) ⟶ (ℕ ⊆ X))
+
+      -- A set ℕ which can be constructed ℕ-inductively.
+      Peano : Domain → Domain → Function → Formula
+      Peano(ℕ)(𝟎)(𝐒) =
+        (𝟎 ∈ ℕ)
+        ∧ Function'.Properties.Closed(ℕ)(𝐒)
+        ∧ Function'.Properties.Injective(ℕ)(𝐒)
+        ∧ ∀ₛ(ℕ)(n ↦ 𝐒(n) ≢ 𝟎)
+        ∧ SetInduction(ℕ)(𝟎)(𝐒)
 
 -- A model of natural numbers expressed in set theory (using only sets).
 module NumeralNatural ⦃ signature : Signature ⦄ where
   open Signature ⦃ ... ⦄
+  open Function.Cardinality
 
   -- The zero constant from the standard inductive set definition of ℕ in ZFC set theory.
   𝟎 : Domain
@@ -385,6 +509,12 @@ module NumeralNatural ⦃ signature : Signature ⦄ where
 
   infixl 2000 _<_ _≤_ _>_ _≥_
 
+  𝕟 : Domain → Domain
+  𝕟(n) = filter(ℕ) (_< n)
+
+  Finite : Domain → Formula
+  Finite(s) = ∃ₛ(ℕ)(n ↦ s ≼ 𝕟(n))
+
 -- A model of integers expressed in set theory (using only sets).
 module NumeralInteger ⦃ signature : Signature ⦄ where
   open NumeralNatural
@@ -393,6 +523,7 @@ module NumeralInteger ⦃ signature : Signature ⦄ where
 
 module Axioms ⦃ signature : Signature ⦄ where
   open NumeralNatural using () renaming (Inductive to [ℕ]-Inductive)
+  open Function ⦃ ... ⦄
   open Signature ⦃ ... ⦄
 
   -- A set which is empty exists.
@@ -430,8 +561,21 @@ module Axioms ⦃ signature : Signature ⦄ where
 
   -- The set product of non-empty finite indexed family of sets where all the sets are non-empty is non-empty.
   -- TODO: Should the indexed family really be finite? https://en.wikipedia.org/wiki/Cartesian_product#Infinite_Cartesian_products
-  Choice = ∀{n : Meta.ℕ}{F : FiniteIndexedFamily(Meta.𝐒(n))} → (∀{i : Meta.𝕟(Meta.𝐒(n))} → Proof(NonEmpty(F(i)))) → Proof(NonEmpty(∏ F))
-  -- ∀{s} → Proof(∅ ∉ s) → ∃(s → (⋃ s))(f ↦ ) Proof(∀ₛ(s)(x ↦ f(x) ∈ x))
+  -- Choice = ∀{n : Meta.ℕ}{F : FiniteIndexedFamily(Meta.𝐒(n))} → (∀{i : Meta.𝕟(Meta.𝐒(n))} → Proof(NonEmpty(F(i)))) → Proof(NonEmpty(∏ F))
+  Choice = Proof(∀ₗ(s ↦ (∅ ∉ s) ⟶ ∃ₛ(s →ₛₑₜ (⋃ s))(f ↦ ∀ₛ(s)(x ↦ ∀ₛ(⋃ s)(y ↦ ((x , y) ∈ f) ⟶ (y ∈ x))))))
+
+record Z ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
+  open Axioms
+  open Signature ⦃ ... ⦄
+
+  field
+    extensional   : Extensionality
+    empty         : EmptySet
+    pairing       : Pairing
+    comprehension : RestrictedComprehension
+    union         : Union
+    power         : PowerSet
+    infinity      : Infinity
 
 record ZF ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
   open Axioms
@@ -440,13 +584,13 @@ record ZF ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (�
   field
     extensional   : Extensionality
     empty         : EmptySet
-    regular       : Regularity
-    comprehension : RestrictedComprehension
     pairing       : Pairing
+    comprehension : RestrictedComprehension
     union         : Union
-    replacement   : Replacement
-    infinity      : Infinity
     power         : PowerSet
+    infinity      : Infinity
+    regular       : Regularity
+    replacement   : Replacement
 
 record ZFC ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
   open Axioms
@@ -455,13 +599,13 @@ record ZFC ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (
   field
     extensional   : Extensionality
     empty         : EmptySet
-    regular       : Regularity
-    comprehension : RestrictedComprehension
     pairing       : Pairing
+    comprehension : RestrictedComprehension
     union         : Union
-    replacement   : Replacement
-    infinity      : Infinity
     power         : PowerSet
+    infinity      : Infinity
+    regular       : Regularity
+    replacement   : Replacement
     choice        : Choice
 
 module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
@@ -816,13 +960,13 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       ))
 
     -- The construction of a meta-function in the meta-logic from a function in the set theory
-    fnset-witness : ∀{D} → (f : Domain) → ⦃ _ : Proof(FunctionSet(D)(f)) ⦄ → Function
+    fnset-witness : ∀{D} → (f : Domain) → ⦃ _ : Proof(Total(D)(f)) ⦄ → Function
     fnset-witness f ⦃ proof ⦄ = [∃]-fn-witness ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] ([∀ₛ∃!]-to[∀ₛ∃] proof) ⦄
 
-    fnset-value : ∀{D} → (f : Domain) → ⦃ proof : Proof(FunctionSet(D)(f)) ⦄ → Proof(∀ₛ(D)(x ↦ (x , fnset-witness f(x)) ∈ f))
+    fnset-value : ∀{D} → (f : Domain) → ⦃ proof : Proof(Total(D)(f)) ⦄ → Proof(∀ₛ(D)(x ↦ (x , fnset-witness f(x)) ∈ f))
     fnset-value{D} f ⦃ proof ⦄ = [∃]-fn-proof ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] ([∀ₛ∃!]-to[∀ₛ∃] proof) ⦄
 
-    fnset-proof : ∀{D} → (f : Domain) → ⦃ proof : Proof(FunctionSet(D)(f)) ⦄ → Proof(∀ₛ(D)(x ↦ ∀ₗ(y ↦ (fnset-witness{D} f ⦃ proof ⦄ x ≡ y) ⟷ ((x , y) ∈ f))))
+    fnset-proof : ∀{D} → (f : Domain) → ⦃ proof : Proof(Total(D)(f)) ⦄ → Proof(∀ₛ(D)(x ↦ ∀ₗ(y ↦ (fnset-witness{D} f ⦃ proof ⦄ x ≡ y) ⟷ ((x , y) ∈ f))))
     fnset-proof{D} f ⦃ proof ⦄ =
       ([∀ₛ]-intro(\{x} → x∈D ↦
         ([∀]-intro(\{y} →
@@ -942,7 +1086,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       open Function
       open FunctionProofs
 
-      {- TODO: Something is amiss here? This should only guarantee the existence of a function when the arguments are in ℕ. The problem is probably that FunctionSet may not actually describe a set? See the TODO for FunctionSet. Maybe one should use BoundedFunctionSet instead? But FunctionSet defines a set by using filter, so maybe it is the unique existence to metaobject function that makes this weird?
+      {- TODO: Something is amiss here? This should only guarantee the existence of a function when the arguments are in ℕ. The problem is probably that Total may not actually describe a set? See the TODO for Total. Maybe one should use BoundedFunctionSet instead? But Total defines a set by using filter, so maybe it is the unique existence to metaobject function that makes this weird?
       postulate [ℕ]-recursive-function : ∀{z : Domain}{s : Domain → Domain → Domain} → Proof(∃ₛ!(ℕ →ₛₑₜ ℕ)(f ↦ ((𝟎 , z) ∈ f) ∧ (∀ₗ(n ↦ ∀ₗ(fn ↦ ((n , fn) ∈ f) ⟶ ((𝐒(n) , s(n)(fn)) ∈ f))))))
 
       [ℕ]-recursive-function-witness : Domain → BinaryOperator → Function
@@ -989,7 +1133,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       [𝐒]-type = Function.Type.intro ℕ ℕ proof where
         postulate proof : ∀{a} → a
 
-    postulate [𝐒]-injective : Proof(Injective(𝐒))
+    postulate [𝐒]-injective : Proof(Injective(ℕ)(𝐒))
 
     -- ∀ₛ(ℕ)(a ↦ ∀ₛ(ℕ)(b ↦ (a < b) ⟶ (𝐒(a) < 𝐒(b))))
     -- ∀ₛ(ℕ)(n ↦ 𝟎 ≢ 𝐒(n))

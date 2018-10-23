@@ -168,6 +168,9 @@ module PredicateEq {ℓₗ ℓₒ ℓₘₗ ℓₘₒ} {Formula : Type{ℓₗ Lv
     open PredicateTheory (predicate) public
     open Equality        (equality)  renaming (intro to [≡]-intro ; elimₗ to [≡]-elimₗ ; elimᵣ to [≡]-elimᵣ) public
 
+    _≢_ : Domain → Domain → Formula
+    _≢_ a b = ¬(_≡_ a b)
+
     -- Definition of uniqueness of a property.
     -- This means that there is at most one element that satisfies this property.
     -- This is similiar to "Injective" for functions, but this is for statements.
