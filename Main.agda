@@ -149,12 +149,15 @@ import Structure.Function.Domain
 import Structure.Function.Linear
 import Structure.Function.Ordering
 import Structure.LinearAlgebra
+import Structure.Logic.Classical.BoundedQuantification
 import Structure.Logic.Classical.NaturalDeduction
 import Structure.Logic.Classical.NaturalDeduction.Proofs
 import Structure.Logic.Classical.SetTheory
 import Structure.Logic.Classical.SetTheory.BoundedQuantification
+import Structure.Logic.Classical.SetTheory.Function
 import Structure.Logic.Classical.SetTheory.Relation
 import Structure.Logic.Classical.SetTheory.ZFC
+import Structure.Logic.Constructive.Functions.Properties
 import Structure.Logic.Constructive.NaturalDeduction
 import Structure.Operator.Field
 import Structure.Operator.Functions
@@ -176,6 +179,7 @@ import Syntax.Function
 import Syntax.Method
 import Syntax.Number
 import Type
+import Type.Dependent
 import Type.Empty
 
 main : FFI.IO Data.Unit

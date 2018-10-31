@@ -1,11 +1,11 @@
-open import Structure.Logic.Classical.NaturalDeduction
+import Structure.Logic.Classical.NaturalDeduction
 
-module Structure.Logic.Classical.NaturalDeduction.Proofs {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} {Proof} ⦃ predicateEqTheory : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) ⦄ where
+module Structure.Logic.Classical.NaturalDeduction.Proofs {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} {ℓₘₒ} {Object} {obj} ⦃ sign : _ ⦄ ⦃ theory : _ ⦄ where
+private module PredicateEq = Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ} (Domain) {ℓₘₒ} {Object} (obj)
+open PredicateEq.Signature(sign)
+open PredicateEq.Theory(theory)
 
 open import Functional hiding (Domain)
-open        Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) renaming (Theory to PredicateEqTheory)
-
-open PredicateEqTheory (predicateEqTheory)
 
 -- TODO: Move the ones which are constructive
 
@@ -53,14 +53,14 @@ postulate excluded-middle : ∀{a} → Proof(a ∨ (¬ a))
     ([∨]-elim ([∨]-introₗ ∘ ([↔]-elimᵣ a₁a₂)) ([∨]-introᵣ ∘ ([↔]-elimᵣ b₁b₂)))
   )
 
-[↔]-with-[∀] : ∀{f g} → (∀{x} → Proof(f(x) ⟷ g(x))) → Proof((∀ₗ f) ⟷ (∀ₗ g))
+[↔]-with-[∀] : ∀{f g} → (∀{x} → Proof(f(obj x) ⟷ g(obj x))) → Proof((∀ₗ f) ⟷ (∀ₗ g))
 [↔]-with-[∀] (proof) =
   ([↔]-intro
     (allg ↦ [∀]-intro(\{x} → [↔]-elimₗ (proof{x}) ([∀]-elim(allg){x})))
     (allf ↦ [∀]-intro(\{x} → [↔]-elimᵣ (proof{x}) ([∀]-elim(allf){x})))
   )
 
-[↔]-with-[∃] : ∀{f g} → (∀{x} → Proof(f(x) ⟷ g(x))) → Proof((∃ₗ f) ⟷ (∃ₗ g))
+[↔]-with-[∃] : ∀{f g} → (∀{x} → Proof(f(obj x) ⟷ g(obj x))) → Proof((∃ₗ f) ⟷ (∃ₗ g))
 [↔]-with-[∃] (proof) =
   ([↔]-intro
     ([∃]-elim(\{x} → gx ↦ [∃]-intro{_}{x}([↔]-elimₗ (proof{x}) (gx))))
@@ -110,22 +110,35 @@ Unique-unrelatedᵣ-[→]ᵣ {P}{Q} =
   ))
 
 -- TODO: I think this is similar to the skolemization process of going from ∀∃ to ∃function∀
-[∃]-fn-witness : ∀{P : Domain → Domain → Formula} → ⦃ _ : Proof(∀ₗ(x ↦ ∃ₗ(y ↦ P(x)(y)))) ⦄ → Domain → Domain
+[∃]-fn-witness : ∀{P : Domain → Domain → Formula} → ⦃ _ : Proof(∀ₗ(x ↦ ∃ₗ(y ↦ P(x)(y)))) ⦄ → Object → Object
 [∃]-fn-witness{P} ⦃ proof ⦄ (x) = [∃]-witness ⦃ [∀]-elim(proof){x} ⦄
 
+-- TODO: But this works with axiom of choice, so it is alright. Just assume that (Object → Domain) is surjective, which it should be!. For boundedPredEqSignature to work, one needs to prove that the composition of surjective functions is surjective, and then that Σ.elem is surjective, which it should be because (Σ.elem: ΣA B → A), and it gives one such A for every A and every proof there is of B
+{-
 [∃]-fn-proof : ∀{P : Domain → Domain → Formula} → ⦃ p : Proof(∀ₗ(x ↦ ∃ₗ(y ↦ P(x)(y)))) ⦄ → Proof(∀ₗ(x ↦ P(x)([∃]-fn-witness{P} ⦃ p ⦄ (x))))
 [∃]-fn-proof{P} ⦃ proof ⦄ =
   ([∀]-intro(\{x} →
     [∃]-proof {P(x)} ⦃ [∀]-elim proof{x} ⦄
   ))
+-}
 
-[∃!]-fn-witness : ∀{P : Domain → Domain → Formula} → ⦃ _ : Proof(∀ₗ(x ↦ ∃ₗ!(y ↦ P(x)(y)))) ⦄ → Domain → Domain
+[∃]-fn-proof : ∀{P : Domain → Domain → Formula} → ⦃ p : Proof(∀ₗ(x ↦ ∃ₗ(y ↦ P(x)(y)))) ⦄ → ∀{x} → Proof(P(obj x)(obj([∃]-fn-witness{P} ⦃ p ⦄ (x))))
+[∃]-fn-proof{P} ⦃ proof ⦄ {x} =
+  [∃]-proof {P(obj x)} ⦃ [∀]-elim proof{x} ⦄
+
+[∃!]-fn-witness : ∀{P : Domain → Domain → Formula} → ⦃ _ : Proof(∀ₗ(x ↦ ∃ₗ!(y ↦ P(x)(y)))) ⦄ → Object → Object
 [∃!]-fn-witness{P} ⦃ proof ⦄ (x) = [∃!]-witness ⦃ [∀]-elim(proof){x} ⦄
 
+{-
 [∃!]-fn-proof : ∀{P : Domain → Domain → Formula} → ⦃ p : Proof(∀ₗ(x ↦ ∃ₗ!(y ↦ P(x)(y)))) ⦄ → Proof(∀ₗ(x ↦ P(x)([∃!]-fn-witness{P} ⦃ p ⦄ (x))))
 [∃!]-fn-proof{P} ⦃ proof ⦄ =
   ([∀]-intro(\{x} →
     [∃!]-proof {P(x)} ⦃ [∀]-elim proof{x} ⦄
   ))
+-}
 
-postulate [∃!]-fn-unique : ∀{P : Domain → Domain → Formula} → ⦃ p : Proof(∀ₗ(x ↦ ∃ₗ!(y ↦ P(x)(y)))) ⦄ → Proof(∀ₗ(x ↦ ∀ₗ(y ↦ P(x)(y) ⟶ (y ≡ [∃!]-fn-witness{P} ⦃ p ⦄ (x)))))
+[∃!]-fn-proof : ∀{P : Domain → Domain → Formula} → ⦃ p : Proof(∀ₗ(x ↦ ∃ₗ!(y ↦ P(x)(y)))) ⦄ → ∀{x} → Proof(P(obj x)(obj([∃!]-fn-witness{P} ⦃ p ⦄ (x))))
+[∃!]-fn-proof{P} ⦃ proof ⦄ {x} =
+  [∃!]-proof {P(obj x)} ⦃ [∀]-elim proof{x} ⦄
+
+postulate [∃!]-fn-unique : ∀{P : Domain → Domain → Formula} → ⦃ p : Proof(∀ₗ(x ↦ ∃ₗ!(y ↦ P(x)(y)))) ⦄ → ∀{x} → Proof(∀ₗ(y ↦ P(obj x)(y) ⟶ (y ≡ obj([∃!]-fn-witness{P} ⦃ p ⦄ (x)))))

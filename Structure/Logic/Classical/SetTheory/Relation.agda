@@ -1,12 +1,12 @@
-open import Structure.Logic.Classical.NaturalDeduction
+import Structure.Logic.Classical.NaturalDeduction
 
-module Structure.Logic.Classical.SetTheory.Relation {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} {Proof} ⦃ predicateEqTheory : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) ⦄ (_∈_ : Domain → Domain → Formula) where
+module Structure.Logic.Classical.SetTheory.Relation {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} {ℓₘₒ} {Object} {obj} ⦃ sign : _ ⦄ ⦃ theory : _ ⦄ (_∈_ : Domain → Domain → Formula) where
+private module PredicateEq = Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ} (Domain) {ℓₘₒ} {Object} (obj)
+open PredicateEq.Signature(sign) renaming (propositional to propositionalSign)
+open PredicateEq.Theory(theory) renaming (propositional to propositionalTheory)
 
 open import Syntax.Function
-open        Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) renaming (Theory to PredicateEqTheory)
-open import Structure.Logic.Classical.SetTheory.BoundedQuantification ⦃ predicateEqTheory ⦄ (_∈_)
-
-open        PredicateEqTheory (predicateEqTheory)
+open import Structure.Logic.Classical.SetTheory.BoundedQuantification {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} {ℓₘₒ} {Object} {obj} ⦃ sign ⦄ ⦃ theory ⦄ (_∈_)
 
 UnaryRelator : Set(_)
 UnaryRelator = (Domain → Formula)

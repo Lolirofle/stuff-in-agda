@@ -1,34 +1,36 @@
-open import Structure.Logic.Classical.NaturalDeduction
+import Structure.Logic.Classical.NaturalDeduction
 
-module Structure.Logic.Classical.SetTheory.ZFC {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} {Proof} ⦃ predicateEqTheory : PredicateEq.Theory{ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) ⦄ (_∈_ : Domain → Domain → Formula) where
+module Structure.Logic.Classical.SetTheory.ZFC {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} {ℓₘₒ} {Object} {obj} ⦃ sign : _ ⦄ ⦃ theory : _ ⦄ (_∈_ : Domain → Domain → Formula) where
+private module PredicateEq = Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ} (Domain) {ℓₘₒ} {Object} (obj)
+open PredicateEq.Signature(sign)
+open PredicateEq.Theory(theory)
 
 open import Functional hiding (Domain)
 open import Lang.Instance
 import      Lvl
-open        Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} (Proof) renaming (Theory to PredicateEqTheory)
-open import Structure.Logic.Classical.NaturalDeduction.Proofs {ℓₗ}{ℓₒ}{ℓₘₗ}{ℓₘₒ} {Formula} {Domain} {Proof} ⦃ predicateEqTheory ⦄
-open import Structure.Logic.Classical.SetTheory.BoundedQuantification ⦃ predicateEqTheory ⦄ (_∈_)
-open import Structure.Logic.Classical.SetTheory.Relation ⦃ predicateEqTheory ⦄ (_∈_)
+open import Structure.Logic.Classical.NaturalDeduction.Proofs         ⦃ sign ⦄ ⦃ theory ⦄
+open import Structure.Logic.Classical.SetTheory.BoundedQuantification ⦃ sign ⦄ ⦃ theory ⦄ (_∈_)
+open import Structure.Logic.Classical.SetTheory.Relation              ⦃ sign ⦄ ⦃ theory ⦄ (_∈_)
+open import Structure.Logic.Classical.SetTheory                       ⦃ sign ⦄ ⦃ theory ⦄ (_∈_)
 
-open PredicateEqTheory (predicateEqTheory)
 private
   module Meta where
     open import Numeral.FiniteStrict           public
     open import Numeral.FiniteStrict.Bound{ℓₗ} public
     open import Numeral.Natural                public
 
--- The type of a meta-function. Functions on the domain in the meta-logic.
+-- The type of a function. Functions on the domain in the meta-logic.
 Function : Set(_)
 Function = (Domain → Domain)
+
+BinaryOperator : Set(_)
+BinaryOperator = (Domain → Domain → Domain)
 
 FiniteIndexedFamily : Meta.ℕ → Set(_)
 FiniteIndexedFamily(n) = Meta.𝕟(n) → Domain
 
 InfiniteIndexedFamily : Set(_)
 InfiniteIndexedFamily = Meta.ℕ → Domain
-
-BinaryOperator : Set(_)
-BinaryOperator = (Domain → Domain → Domain)
 
 -- The symbols/signature of ZFC set theory.
 record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
@@ -60,6 +62,15 @@ record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘ
     -- An inductive set.
     -- A set which has the `Inductive`-property. Also infinite.
     inductiveSet : Domain
+
+    -- The map of a set.
+    -- The set of values when a function is applied to every element of a set.
+    -- Or: The image of the function on the set.
+    -- Or: The image of the function.
+    map : (Domain → Domain) → Domain → Domain
+
+    -- An inverse function of a function from its domain to its image.
+    inv : (Domain → Domain) → Domain → Domain
 
   -- Singleton set.
   -- A set consisting of only a single element.
@@ -94,6 +105,12 @@ record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘ
   -- Set product (Set of tuples) (Cartesian product).
   _⨯_ : Domain → Domain → Domain
   a ⨯ b = filter(℘(℘(a ∪ b))) (t ↦ ∃ₗ(x ↦ (x ∈ a) ∧ ∃ₗ(y ↦ (y ∈ b) ∧ (t ≡ (x , y)))))
+
+  identityPairing : Domain → Domain
+  identityPairing(D) = filter(D ⨯ D) (xy ↦ ∃ₗ(a ↦ xy ≡ (a , a)))
+
+  -- swappedPairing : Domain → Domain
+  -- swappedPairing() = 
 
   -- Set product over a finite indexed family (Cartesian product).
   -- TODO: Not really like this. See definition of (_⨯_) and (_,_), and try to express the same here
@@ -135,26 +152,51 @@ module Function ⦃ signature : Signature ⦄ where
 
     field
       closure : Proof(∀ₛ(domain)(x ↦ f(x) ∈ codomain))
-
-    -- The image of the function f on the set a.
-    -- Applies this function on every element in the set a, yielding a new set.
-    map : Domain → Domain
-    map a = filter(codomain)(y ↦ ∃ₛ(a)(x ↦ y ≡ f(x)))
-
-    -- The image of the function.
-    -- The set of all elements that the function can yield/points to.
-    ⊶ : Domain
-    ⊶ = map(domain)
   open Type ⦃ ... ⦄ public
 
-  PartialFunctionSet : Domain → Formula
-  PartialFunctionSet(s) = ∀ₗ(x ↦ Unique(y ↦ (x , y) ∈ s))
+module BinaryRelatorSet ⦃ signature : Signature ⦄ where
+  open Signature ⦃ ... ⦄
 
-  -- The statement that the set s can be interpreted as a function with a specified domain.
-  -- The following describes the relation in an inexact notation:
+  -- Like:
+  --   (x,f(x)) = (x , y)
+  --   f = {(x , y)}
+  --   = {{{x},{x,y}}}
+  --   ⋃f = {{x},{x,y}}
+  --   ⋃²f = {x,y}
+  lefts : Domain → Domain
+  lefts(s) = filter(⋃(⋃ s)) (x ↦ ∃ₗ(y ↦ (x , y) ∈ s))
+
+  rights : Domain → Domain
+  rights(s) = filter(⋃(⋃ s)) (y ↦ ∃ₗ(x ↦ (x , y) ∈ s))
+
+  leftsOfMany : Domain → Domain → Domain
+  leftsOfMany f(S) = filter(⋃(⋃ f)) (a ↦ ∃ₛ(S)(y ↦ (a , y) ∈ f))
+
+  rightsOfMany : Domain → Domain → Domain
+  rightsOfMany f(S) = filter(⋃(⋃ f)) (a ↦ ∃ₛ(S)(x ↦ (x , a) ∈ f))
+
+  leftsOf : Domain → Domain → Domain
+  leftsOf f(y) = leftsOfMany f(singleton(y))
+
+  rightsOf : Domain → Domain → Domain
+  rightsOf f(x) = rightsOfMany f(singleton(x))
+
+  -- swap : Domain → Domain
+  -- swap(s) = filter(rights(s) ⨯ left(s)) (xy ↦ )
+
+module FunctionSet ⦃ signature : Signature ⦄ where
+  open Signature ⦃ ... ⦄
+  open BinaryRelatorSet ⦃ ... ⦄
+
+  -- The set s can be interpreted as a function.
+  FunctionSet : Domain → Formula
+  FunctionSet(s) = ∀ₗ(x ↦ Unique(y ↦ (x , y) ∈ s))
+
+  -- The set s can be interpreted as a function with a specified domain.
+  -- The following describes the relation to the standard notation of functions:
   -- • ∀(x∊A)∀y. ((x,y) ∈ S) ⇔ (S(x) = y)
   Total : Domain → Domain → Formula
-  Total(D)(s) = ∀ₛ(D)(x ↦ ∃ₗ!(y ↦ (x , y) ∈ s))
+  Total(A)(s) = ∀ₛ(A)(x ↦ ∃ₗ(y ↦ (x , y) ∈ s))
 
   Injective : Domain → Formula
   Injective(f) = ∀ₗ(y ↦ Unique(x ↦ (x , y) ∈ f))
@@ -167,41 +209,35 @@ module Function ⦃ signature : Signature ⦄ where
     Injective(f)
     ∧ Surjective(B)(f)
 
-  -- The set of function sets, all sets which can be interpreted as a function.
+  -- The set of total function sets. All sets which can be interpreted as a total function.
   _^_ : Domain → Domain → Domain
-  B ^ A = filter(℘(A ⨯ B)) (Total(A))
+  B ^ A = filter(℘(A ⨯ B)) (f ↦ FunctionSet(f) ∧ Total(A)(f))
 
   _→ₛₑₜ_ = swap _^_
 
+  ⊷ : Domain → Domain
+  ⊷ = lefts
 
-  -- TODO: Maybe this works?
-  -- Like:
-  --   (x,f(x)) = (x , y)
-  --   f = {(x , y)}
-  --   = {{{x},{x,y}}}
-  --   ⋃f = {{x},{x,y}}
-  --   ⋃²f = {x,y}
-  ⊷' : Domain → Domain
-  ⊷' f = filter(⋃(⋃ f)) (x ↦ ∃ₗ(y ↦ (x , y) ∈ f))
+  ⊶ : Domain → Domain
+  ⊶ = rights
 
-  -- TODO: Maybe this works?
-  ⊶' : Domain → Domain
-  ⊶' f = filter(⋃(⋃ f)) (y ↦ ∃ₗ(x ↦ (x , y) ∈ f))
+  map : Domain → Domain → Domain
+  map = rightsOfMany
 
-  map' : Domain → Domain → Domain
-  map' f(S) = filter(⋃(⋃ f)) (a ↦ ∃ₛ(S)(x ↦ (x , a) ∈ f))
-
-  unmap' : Domain → Domain → Domain
-  unmap' f(S) = filter(⋃(⋃ f)) (a ↦ ∃ₛ(S)(y ↦ (a , y) ∈ f))
+  unmap : Domain → Domain → Domain
+  unmap = leftsOfMany
 
   apply-set : Domain → Domain → Domain
-  apply-set f(x) = map' f(singleton(x))
+  apply-set = rightsOf
 
   unapply-set : Domain → Domain → Domain
-  unapply-set f(y) = unmap' f(singleton(y))
+  unapply-set = leftsOf
 
   _∘'_ : Domain → Domain → Domain
-  _∘'_ f g = filter((⊷' f) ⨯ (⊶' g)) (a ↦ ∃ₗ(x ↦ ∃ₗ(y ↦ ∃ₗ(a₁ ↦ ((a₁ , y) ∈ f) ∧ ((x , a₁) ∈ g)) ∧ (a ≡ (x , y)))))
+  _∘'_ f g = filter((⊷ f) ⨯ (⊶ g)) (a ↦ ∃ₗ(x ↦ ∃ₗ(y ↦ ∃ₗ(a₁ ↦ ((a₁ , y) ∈ f) ∧ ((x , a₁) ∈ g)) ∧ (a ≡ (x , y)))))
+
+  -- inv : Domain → Domain
+  -- inv f = filter(?) (yx ↦ ∃ₗ(x ↦ ∃ₗ(y ↦ ((x , y) ∈ f) ∧ (yx ≡ (y , x)))))
 
   module Cardinality where
     -- Injection
@@ -231,7 +267,7 @@ module Structure where
   -- Structures in meta-functions.
   module Function' where -- TODO: Temporary naming fix with tick
     module Properties ⦃ signature : Signature ⦄ where
-      open Function renaming (Type to Metatype) hiding (Injective ; Surjective ; Bijective)
+      open Function renaming (Type to Metatype)
 
       Type : Domain → Domain → Function → Formula
       Type(X)(Y)(f) = ∀ₛ(X)(x ↦ f(x) ∈ Y)
@@ -463,7 +499,7 @@ module Structure where
 -- A model of natural numbers expressed in set theory (using only sets).
 module NumeralNatural ⦃ signature : Signature ⦄ where
   open Signature ⦃ ... ⦄
-  open Function.Cardinality
+  open FunctionSet.Cardinality
 
   -- The zero constant from the standard inductive set definition of ℕ in ZFC set theory.
   𝟎 : Domain
@@ -504,16 +540,13 @@ module NumeralNatural ⦃ signature : Signature ⦄ where
   _≥_ : BinaryRelator
   a ≥ b = b ≤ a
 
-  -- _+_ : Domain → Domain → Domain
-  -- a + b = 
-
   infixl 2000 _<_ _≤_ _>_ _≥_
 
   𝕟 : Domain → Domain
   𝕟(n) = filter(ℕ) (_< n)
 
   Finite : Domain → Formula
-  Finite(s) = ∃ₛ(ℕ)(n ↦ s ≼ 𝕟(n))
+  Finite(s) = ∃ₛ(ℕ)(n ↦ s ≼ 𝕟(n)) -- TODO: Now this means that there is an injection (s → 𝕟(n)), which is equivalent to the existance of an surjection (𝕟(n) → s) because stuff that follows from excluded middle (more specifically ((s ≼ 𝕟(n)) ↔ (𝕟(n) ≽ s))). Define ∑ (summation over finite sets) by using the existance of a finite sequence
 
 -- A model of integers expressed in set theory (using only sets).
 module NumeralInteger ⦃ signature : Signature ⦄ where
@@ -524,431 +557,293 @@ module NumeralInteger ⦃ signature : Signature ⦄ where
 module Axioms ⦃ signature : Signature ⦄ where
   open NumeralNatural using () renaming (Inductive to [ℕ]-Inductive)
   open Function ⦃ ... ⦄
+  open FunctionSet ⦃ ... ⦄
   open Signature ⦃ ... ⦄
 
   -- A set which is empty exists.
   -- • Allows a construction of the empty set.
-  EmptySet = Proof(Empty(∅))
+  EmptySetInclusion : Formula
+  EmptySetInclusion = Empty(∅)
 
   -- A set with two elements exists.
   -- • Allows a construction of a set with two elements.
-  Pairing = Proof(∀ₗ(x₁ ↦ ∀ₗ(x₂ ↦ (∀ₗ(x ↦ (x ∈ pair(x₁)(x₂)) ⟷ (x ≡ x₁)∨(x ≡ x₂))))))
+  PairingInclusion : Formula
+  PairingInclusion = ∀ₗ(x₁ ↦ ∀ₗ(x₂ ↦ (∀ₗ(x ↦ (x ∈ pair(x₁)(x₂)) ⟷ (x ≡ x₁)∨(x ≡ x₂)))))
 
   -- A set which is the subset of a set where all elements satisfies a predicate exists.
-  RestrictedComprehension = ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
+  RestrictedComprehension : (Domain → Formula) → Formula
+  RestrictedComprehension(φ) = ∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x)))))
 
   -- A set which contains all the subsets of a set exists.
   -- • Allows a construction of a set that is the powerset of a set.
-  PowerSet = Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s))))
+  PowerSetInclusion : Formula
+  PowerSetInclusion = ∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s)))
 
   -- A set which contains all the elements of a group of sets exists.
   -- • Allows a construction of a set that is the union of some sets.
-  Union = Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s)))))
+  UnionInclusion : Formula
+  UnionInclusion = ∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s))))
 
-  -- An infinite set (specifically, a ℕ-inductive set (which just happens to be infinite)) exists.
-  Infinity = Proof([ℕ]-Inductive(inductiveSet))
+  -- A ℕ-inductive set exists.
+  -- • An inductive set is infinite, so this implies that an infinite set exists.
+  -- • Makes it possible to construct the set of natural numbers (ℕ).
+  Infinity : Formula
+  Infinity = [ℕ]-Inductive(inductiveSet)
 
   -- Set equality is determined by its contents.
   -- • Guarantees the definition of equality for sets.
-  Extensionality = Proof(∀ₗ(s₁ ↦ ∀ₗ(s₂ ↦ ∀ₗ(x ↦ (x ∈ s₁)⟷(x ∈ s₂)) ⟷ (s₁ ≡ s₂))))
+  Extensionality : Formula
+  Extensionality = ∀ₗ(s₁ ↦ ∀ₗ(s₂ ↦ ∀ₗ(x ↦ (x ∈ s₁)⟷(x ∈ s₂)) ⟷ (s₁ ≡ s₂)))
 
   -- A non-empty set contain sets that are disjoint to it.
   -- • Prevents sets containing themselves.
   -- • Making every set have an ordinal rank.
-  Regularity = Proof(∀ₗ(s₁ ↦ (NonEmpty(s₁) ⟶ ∃ₗ(s₂ ↦ (s₂ ∈ s₁) ∧ Disjoint(s₁)(s₂)))))
+  Regularity : Formula
+  Regularity = ∀ₗ(s₁ ↦ (NonEmpty(s₁) ⟶ ∃ₗ(s₂ ↦ (s₂ ∈ s₁) ∧ Disjoint(s₁)(s₂))))
 
-  Replacement = ∀{φ : Domain → Domain → Formula} → Proof(∀ₗ(A ↦ TotalFunction(φ)(A) ⟶ ∃ₗ(B ↦ ∀ₗ(y ↦ (y ∈ B) ⟷ ∃ₗ(x ↦ (x ∈ A) ∧ φ(x)(y))))))
+  -- The `map`-function on sets yields/returns sets.
+  -- • The `map`-function on a function is a function from sets to sets.
+  Replacement : (Domain → Domain) → Formula
+  Replacement(f) = ∀ₗ(A ↦ ∀ₗ(y ↦ (y ∈ map f(A)) ⟷ (∃ₛ(A)(x ↦ y ≡ f(x)))))
+  -- ReplacementTraditional = ∀{φ : Domain → Domain → Formula} → Proof(∀ₗ(A ↦ TotalFunction(φ)(A) ⟶ ∃ₗ(B ↦ ∀ₗ(y ↦ (y ∈ B) ⟷ ∃ₗ(x ↦ (x ∈ A) ∧ φ(x)(y))))))
 
   -- The set product of non-empty finite indexed family of sets where all the sets are non-empty is non-empty.
   -- TODO: Should the indexed family really be finite? https://en.wikipedia.org/wiki/Cartesian_product#Infinite_Cartesian_products
   -- Choice = ∀{n : Meta.ℕ}{F : FiniteIndexedFamily(Meta.𝐒(n))} → (∀{i : Meta.𝕟(Meta.𝐒(n))} → Proof(NonEmpty(F(i)))) → Proof(NonEmpty(∏ F))
-  Choice = Proof(∀ₗ(s ↦ (∅ ∉ s) ⟶ ∃ₛ(s →ₛₑₜ (⋃ s))(f ↦ ∀ₛ(s)(x ↦ ∀ₛ(⋃ s)(y ↦ ((x , y) ∈ f) ⟶ (y ∈ x))))))
+  Choice : (Domain → Domain) → Formula
+  Choice = ∀ₗ(y ↦ (Value f(y)) ⟶ ((f ∘ (inv f))(y) ≡ y))
+  -- ChoiceTraditional = Proof(∀ₗ(s ↦ (∅ ∉ s) ⟶ ∃ₛ(s →ₛₑₜ (⋃ s))(f ↦ ∀ₛ(s)(x ↦ ∀ₛ(⋃ s)(y ↦ ((x , y) ∈ f) ⟶ (y ∈ x))))))
 
 record Z ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
   open Axioms
   open Signature ⦃ ... ⦄
 
   field
-    extensional   : Extensionality
-    empty         : EmptySet
-    pairing       : Pairing
-    comprehension : RestrictedComprehension
-    union         : Union
-    power         : PowerSet
-    infinity      : Infinity
+    extensional   : Proof(Extensionality)
+    empty         : Proof(EmptySetInclusion)
+    pairing       : Proof(PairingInclusion)
+    comprehension : ∀{φ} → Proof(RestrictedComprehension(φ))
+    union         : Proof(UnionInclusion)
+    power         : Proof(PowerSetInclusion)
+    infinity      : Proof(Infinity)
 
 record ZF ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
   open Axioms
   open Signature ⦃ ... ⦄
 
   field
-    extensional   : Extensionality
-    empty         : EmptySet
-    pairing       : Pairing
-    comprehension : RestrictedComprehension
-    union         : Union
-    power         : PowerSet
-    infinity      : Infinity
-    regular       : Regularity
-    replacement   : Replacement
+    extensional   : Proof(Extensionality)
+    empty         : Proof(EmptySetInclusion)
+    pairing       : Proof(PairingInclusion)
+    comprehension : ∀{φ} → Proof(RestrictedComprehension(φ))
+    union         : Proof(UnionInclusion)
+    power         : Proof(PowerSetInclusion)
+    infinity      : Proof(Infinity)
+    regular       : Proof(Regularity)
+    replacement   : ∀{f} → Proof(Replacement(f))
 
 record ZFC ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
   open Axioms
   open Signature ⦃ ... ⦄
 
   field
-    extensional   : Extensionality
-    empty         : EmptySet
-    pairing       : Pairing
-    comprehension : RestrictedComprehension
-    union         : Union
-    power         : PowerSet
-    infinity      : Infinity
-    regular       : Regularity
-    replacement   : Replacement
-    choice        : Choice
+    extensional   : Proof(Extensionality)
+    empty         : Proof(EmptySetInclusion)
+    pairing       : Proof(PairingInclusion)
+    comprehension : ∀{φ} → Proof(RestrictedComprehension(φ))
+    union         : Proof(UnionInclusion)
+    power         : Proof(PowerSetInclusion)
+    infinity      : Proof(Infinity)
+    regular       : Proof(Regularity)
+    replacement   : ∀{f} → Proof(Replacement(f))
+    choice        : ∀{f} → Proof(Choice(f))
 
 module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   open Axioms
   open Signature ⦃ ... ⦄
   open ZF ⦃ ... ⦄
 
+  open SetEquality ⦃ ... ⦄        hiding (extensional)
+  open SingletonSet ⦃ ... ⦄       hiding (singleton)
+  open FilterSet ⦃ ... ⦄          hiding (filter)
+  open PowerSet ⦃ ... ⦄           hiding (℘)
+  open SetUnionSet ⦃ ... ⦄        hiding (⋃)
+  open UnionSet ⦃ ... ⦄           hiding (_∪_)
+  open IntersectionSet ⦃ ... ⦄    hiding (_∩_)
+  open WithoutSet ⦃ ... ⦄         hiding (_∖_)
+  open SetIntersectionSet ⦃ ... ⦄ hiding (⋂)
+
   -- All sets are either empty or non-empty.
   postulate Empty-excluded-middle : ∀{s} → Proof(Empty(s) ∨ NonEmpty(s))
 
-  -- postulate any : ∀{l}{a : Set(l)} → a
+  pair-inclusion : Proof(∀ₗ(a₁ ↦ ∀ₗ(a₂ ↦ (∀ₗ(x ↦ (x ∈ pair(a₁)(a₂)) ⟷ (x ≡ a₁)∨(x ≡ a₂))))))
+  pair-inclusion = pairing
 
-  -- All sets that are defined using an equivalence of contained elements are unique
-  unique-definition : ∀{φ : Domain → Formula} → Proof(Unique(S ↦ ∀ₗ(x ↦ (x ∈ S) ⟷ φ(x))))
-  unique-definition{_} =
-    ([∀]-intro(\{S₁} →
-      ([∀]-intro(\{S₂} →
-        ([→]-intro(proof ↦
-          ([↔]-elimᵣ
-            ([∀]-elim([∀]-elim extensional{S₁}){S₂})
-            ([∀]-intro(\{x} →
-              ([↔].transitivity
-                ([∀]-elim([∧]-elimₗ(proof)){x})
-                ([↔].commutativity([∀]-elim([∧]-elimᵣ(proof)){x}))
-              )
-            ))
-          )
-        ))
-      ))
-    ))
+  instance
+    setEqualityInstance : SetEquality
+    setEqualityInstance = SetEquality.intro extensional
 
-  postulate [≡]-from-subset : Proof(∀ₗ(x ↦ ∀ₗ(y ↦ ((x ⊇ y) ∧ (x ⊆ y)) ⟷ (x ≡ y))))
+  instance
+    emptySetInstance : EmptySet
+    emptySetInstance = EmptySet.intro ∅ empty
 
-  [∅]-containment : Proof(∀ₗ(x ↦ (x ∈ ∅) ⟷ ⊥))
-  [∅]-containment =
-    ([∀]-intro (\{x} →
-      ([↔]-intro
-        ([⊥]-elim)
-        ([⊥]-intro
-          ([∀]-elim empty{x})
-        )
-      )
-    ))
-
-  [∅]-subset : Proof(∀ₗ(s ↦ ∅ ⊆ s))
-  [∅]-subset =
-    ([∀]-intro(\{s} →
-      ([∀]-intro(\{x} →
-        ([→]-intro(xin∅ ↦
-          [⊥]-elim ([↔]-elimᵣ([∀]-elim [∅]-containment {x}) (xin∅))
-        ))
-      ))
-    ))
-
-  postulate [∅]-subset-is-equal : Proof(∀ₗ(s ↦ (s ⊆ ∅) ⟶ (s ≡ ∅)))
-  -- [∅]-subset-is-equal =
-  --   ([∀]-intro(\{s} →
-  --     ([→]-intro(s⊆∅ ↦
-  --       
-  --     ))
-  --   ))
-
-  [∃ₛ]-of-[∅] : ∀{P : Domain → Formula} → Proof(¬(∃ₛ ∅ P))
-  [∃ₛ]-of-[∅] =
-    ([¬]-intro(ep ↦
-      [∃ₛ]-elim(\{x} → x∈∅ ↦ _ ↦ [⊥]-elim([⊥]-intro ([∀]-elim empty) x∈∅)) ep
-    ))
-
-  postulate [⊆]-minimum : Proof(∀ₗ(min ↦ ∀ₗ(s ↦ min ⊆ s) ⟷ (min ≡ ∅)))
-
-  [⊆]-minima : Proof(∀ₗ(s ↦ ∅ ⊆ s))
-  [⊆]-minima = [∅]-subset
-
-  [⊆]-reflexivity : Proof(∀ₗ(s ↦ s ⊆ s))
-  [⊆]-reflexivity = [∀]-intro(\{_} → [∀]-intro(\{_} → [→].reflexivity))
-
-  [⊆]-antisymmetry : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (b ⊆ a)∧(a ⊆ b) ⟶ (a ≡ b))))
-  [⊆]-antisymmetry =
-    ([∀]-intro(\{a} →
-      ([∀]-intro(\{b} →
-        ([→]-intro(abba ↦
-          ([↔]-elimᵣ([∀]-elim([∀]-elim extensional{a}){b}))
-          ([∀]-intro(\{x} →
-            ([↔]-intro
-              ([→]-elim([∀]-elim([∧]-elimₗ abba){x}))
-              ([→]-elim([∀]-elim([∧]-elimᵣ abba){x}))
-            )
-          ))
-        ))
-      ))
-    ))
-
-  [⊆]-transitivity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ⊆ b)∧(b ⊆ c) ⟶ (a ⊆ c)))))
-  [⊆]-transitivity =
-    ([∀]-intro(\{a} →
-      ([∀]-intro(\{b} →
-        ([∀]-intro(\{c} →
-          ([→]-intro(abbc ↦
-            ([∀]-intro(\{x} →
-              ([→].transitivity
-                ([∀]-elim([∧]-elimₗ abbc){x})
-                ([∀]-elim([∧]-elimᵣ abbc){x})
-              )
-            ))
-          ))
-        ))
-      ))
-    ))
-
-  pair-containment : Proof(∀ₗ(a₁ ↦ ∀ₗ(a₂ ↦ (∀ₗ(x ↦ (x ∈ pair(a₁)(a₂)) ⟷ (x ≡ a₁)∨(x ≡ a₂))))))
-  pair-containment = pairing
-
-  filter-containment : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
-  filter-containment = comprehension
-
-  filter-subset : ∀{φ} → Proof(∀ₗ(s ↦ filter(s)(φ) ⊆ s))
-  filter-subset =
-    ([∀]-intro(\{s} →
-      ([∀]-intro(\{x} →
-        ([→]-intro(xinfilter ↦
-          [∧]-elimₗ([↔]-elimᵣ([∀]-elim([∀]-elim filter-containment{s}){x}) (xinfilter))
-        ))
-      ))
-    ))
-
-  filter-of-[∅] : ∀{φ} → Proof(filter(∅)(φ) ≡ ∅)
-  filter-of-[∅] =
-    ([→]-elim
-      ([∀]-elim([∀]-elim [⊆]-antisymmetry))
-      ([∧]-intro
-        ([∀]-elim [∅]-subset)
-        ([∀]-elim filter-subset)
-      )
-    )
-
-  filter-property : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₛ(filter(s)(φ)) φ))
-  filter-property =
-    ([∀]-intro(\{s} →
-      ([∀]-intro(\{x} →
-        ([→]-intro(xinfilter ↦
-          [∧]-elimᵣ([↔]-elimᵣ([∀]-elim([∀]-elim filter-containment{s}){x}) (xinfilter))
-        ))
-      ))
-    ))
-
-  [℘]-containment : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s))))
-  [℘]-containment = power
-
-  postulate [℘]-of-[∅] : Proof(℘(∅) ≡ singleton(∅))
-  postulate [℘]-contains-empty : Proof(∀ₗ(s ↦ ∅ ∈ ℘(s)))
-  postulate [℘]-contains-self  : Proof(∀ₗ(s ↦ s ∈ ℘(s)))
-
-  [⋃]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₛ(ss)(s ↦ x ∈ s))))
-  [⋃]-containment = union
-
-  postulate [⋃]-containing-max : Proof(∀ₗ(s ↦ ∀ₛ(s)(max ↦ ∀ₛ(s)(x ↦ x ⊆ max) ⟶ (⋃(s) ≡ max))))
-  postulate [⋃]-subset : Proof(∀ₗ(s ↦ ∀ₛ(s)(x ↦ x ⊆ ⋃(s))))
-
-  postulate [⋃]-of-[∅] : Proof(⋃(∅) ≡ ∅)
-  -- [⋃]-of-empty =
-  --   ([⋃]-containment
-  --   )
-  --   [∃ₛ]-of-[∅]
-
-  singleton-containment : Proof(∀ₗ(a ↦ ∀ₗ(x ↦ (x ∈ singleton(a)) ⟷ (x ≡ a))))
-  singleton-containment =
-    ([∀]-intro (\{a} →
-      ([∀]-intro (\{x} →
-        [↔].transitivity
-          ([∀]-elim([∀]-elim([∀]-elim(pair-containment){a}){a}){x})
-          ([↔]-intro ([∨].redundancyₗ) ([∨].redundancyᵣ))
-      ))
-    ))
-
-  postulate singleton-contains-self : Proof(∀ₗ(s ↦ s ∈ singleton(s)))
-
-  [∪]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∪ b)) ⟷ (x ∈ a)∨(x ∈ b)))))
-  [∪]-containment =
-    ([∀]-intro (\{a} →
-      ([∀]-intro (\{b} →
+  instance
+    singletonSetInstance : SingletonSet
+    singletonSetInstance = SingletonSet.intro singleton
+      ([∀]-intro (\{a} →
         ([∀]-intro (\{x} →
-          ([∀]-elim([∀]-elim [⋃]-containment{pair(a)(b)}){x})
-          〔ₗ [↔].transitivity 〕
-          ([↔]-with-[∃] (\{s} →
-            ([↔]-with-[∧]ₗ ([∀]-elim([∀]-elim([∀]-elim pair-containment{a}){b}){s}))
-            〔ₗ [↔].transitivity 〕
-            ([∧][∨]-distributivityᵣ)
-            〔ₗ [↔].transitivity 〕
-            [↔]-with-[∨] ([≡]-substitute-this-is-almost-trivial) ([≡]-substitute-this-is-almost-trivial)
-          ))
-          〔ₗ [↔].transitivity 〕
-          ([↔]-intro ([∃].redundancyₗ) ([∃].redundancyᵣ))
+          [↔].transitivity
+            ([∀]-elim([∀]-elim([∀]-elim(pair-inclusion){a}){a}){x})
+            ([↔]-intro ([∨].redundancyₗ) ([∨].redundancyᵣ))
         ))
       ))
-    ))
 
-  postulate [∪]-commutativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∪ b ≡ b ∪ a)))
-  postulate [∪]-associativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ∪ b) ∪ c ≡ a ∪ (b ∪ c)))))
-  postulate [∪]-identityₗ : Proof(∀ₗ(s ↦ ∅ ∪ s ≡ s))
-  postulate [∪]-identityᵣ : Proof(∀ₗ(s ↦ s ∪ ∅ ≡ s))
-  postulate [∪]-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ⊆ a ∪ b)))
-  postulate [∪]-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ b ⊆ a ∪ b)))
-  postulate [∪]-of-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (b ⊆ a) ⟶ (a ∪ b ≡ a)))))
-  postulate [∪]-of-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (a ⊆ b) ⟶ (a ∪ b ≡ b)))))
-  postulate [∪]-of-self : Proof(∀ₗ(s ↦ s ∪ s ≡ s))
+  instance
+    filterSetInstance : FilterSet
+    filterSetInstance = FilterSet.intro filter comprehension
 
-  [∩]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∩ b)) ⟷ (x ∈ a)∧(x ∈ b)))))
-  [∩]-containment =
-    ([∀]-intro (\{a} →
-      ([∀]-intro (\{b} →
-        ([∀]-elim(filter-containment){a})
+  instance
+    powerSetInstance : PowerSet
+    powerSetInstance = PowerSet.intro ℘ power
+
+  instance
+    setUnionSetInstance : SetUnionSet
+    setUnionSetInstance = SetUnionSet.intro ⋃ union
+
+  instance
+    unionSetInstance : UnionSet
+    unionSetInstance = UnionSet.intro _∪_
+      ([∀]-intro (\{a} →
+        ([∀]-intro (\{b} →
+          ([∀]-intro (\{x} →
+            ([∀]-elim([∀]-elim [⋃]-inclusion{pair(a)(b)}){x})
+            〔ₗ [↔].transitivity 〕
+            ([↔]-with-[∃] (\{s} →
+              ([↔]-with-[∧]ₗ ([∀]-elim([∀]-elim([∀]-elim pair-inclusion{a}){b}){s}))
+              〔ₗ [↔].transitivity 〕
+              ([∧][∨]-distributivityᵣ)
+              〔ₗ [↔].transitivity 〕
+              [↔]-with-[∨] ([≡]-substitute-this-is-almost-trivial) ([≡]-substitute-this-is-almost-trivial)
+            ))
+            〔ₗ [↔].transitivity 〕
+            ([↔]-intro ([∃].redundancyₗ) ([∃].redundancyᵣ))
+          ))
+        ))
       ))
-    ))
 
-  postulate [∩]-commutativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ≡ b ∩ a)))
-  postulate [∩]-associativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ∩ b) ∩ c ≡ a ∩ (b ∩ c)))))
-  postulate [∩]-annihilatorₗ : Proof(∀ₗ(s ↦ ∅ ∩ s ≡ ∅))
-  postulate [∩]-annihilatorᵣ : Proof(∀ₗ(s ↦ s ∩ ∅ ≡ s))
-  postulate [∩]-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ⊆ a)))
-  postulate [∩]-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ⊆ b)))
-  postulate [∩]-of-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (b ⊆ a) ⟶ (a ∩ b ≡ b))))
-  postulate [∩]-of-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ⊆ b) ⟶ (a ∩ b ≡ a))))
-  postulate [∩]-of-self : Proof(∀ₗ(s ↦ s ∩ s ≡ s))
-
-  [∖]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∖ b)) ⟷ (x ∈ a)∧(x ∉ b)))))
-  [∖]-containment =
-    ([∀]-intro (\{a} →
-      ([∀]-intro (\{b} →
-        ([∀]-elim(filter-containment){a})
+  instance
+    intersectionSetInstance : IntersectionSet
+    intersectionSetInstance = IntersectionSet.intro _∩_
+      ([∀]-intro (\{a} →
+        ([∀]-intro (\{b} →
+          ([∀]-elim(filter-inclusion){a})
+        ))
       ))
-    ))
 
-  [⋂]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋂(ss)) ⟷ ∀ₛ(ss)(s ↦ x ∈ s))))
-  [⋂]-containment =
-    ([∀]-intro (\{ss} →
-      ([∀]-intro (\{x} →
-        ([↔]-intro
-          -- (⟵)-case
-          (allssinssxins ↦
-            ([↔]-elimₗ
-              ([∀]-elim([∀]-elim filter-containment{⋃(ss)}){x})
-              ([∧]-intro
-                -- x ∈ ⋃(ss)
-                ([∨]-elim
-                  -- Empty(ss) ⇒ _
-                  (allyyninss ↦
-                    proof -- TODO: But: Empty(ss) ⇒ (ss ≡ ∅) ⇒ ⋃(ss) ≡ ∅ ⇒ (x ∉ ⋃(ss)) ? Maybe use this argument further up instead to prove something like: (⋂(ss) ≡ ∅) ⇒ (x ∉ ∅)
-                  )
+  instance
+    withoutSetInstance : WithoutSet
+    withoutSetInstance = WithoutSet.intro _∖_
+      ([∀]-intro (\{a} →
+        ([∀]-intro (\{b} →
+          ([∀]-elim(filter-inclusion){a})
+        ))
+      ))
 
-                  -- NonEmpty(ss) ⇒ _
-                  (existsyinss ↦
-                    ([∃]-elim
-                      (\{y} → yinss ↦ (
-                        ([↔]-elimₗ([∀]-elim([∀]-elim([⋃]-containment){ss}){x}))
-                        ([∃]-intro{_}
-                          {y}
-                          ([∧]-intro
-                            -- y ∈ ss
-                            (yinss)
+  instance
+    setIntersectionSetInstance : SetIntersectionSet
+    setIntersectionSetInstance = SetIntersectionSet.intro ⋂
+      ([∀]-intro (\{ss} →
+        ([∀]-intro (\{x} →
+          ([↔]-intro
+            -- (⟵)-case
+            (allssinssxins ↦
+              ([↔]-elimₗ
+                ([∀]-elim([∀]-elim filter-inclusion{⋃(ss)}){x})
+                ([∧]-intro
+                  -- x ∈ ⋃(ss)
+                  ([∨]-elim
+                    -- Empty(ss) ⇒ _
+                    (allyyninss ↦
+                      proof -- TODO: But: Empty(ss) ⇒ (ss ≡ ∅) ⇒ ⋃(ss) ≡ ∅ ⇒ (x ∉ ⋃(ss)) ? Maybe use this argument further up instead to prove something like: (⋂(ss) ≡ ∅) ⇒ (x ∉ ∅)
+                    )
 
-                            -- x ∈ y
-                            ([→]-elim
-                              ([∀]-elim(allssinssxins){y})
+                    -- NonEmpty(ss) ⇒ _
+                    (existsyinss ↦
+                      ([∃]-elim
+                        (\{y} → yinss ↦ (
+                          ([↔]-elimₗ([∀]-elim([∀]-elim([⋃]-inclusion){ss}){x}))
+                          ([∃]-intro{_}
+                            {y}
+                            ([∧]-intro
+                              -- y ∈ ss
                               (yinss)
+
+                              -- x ∈ y
+                              ([→]-elim
+                                ([∀]-elim(allssinssxins){y})
+                                (yinss)
+                              )
                             )
                           )
-                        )
-                      ))
-                      (existsyinss)
-                    )
-                  )
-                  (Empty-excluded-middle{ss})
-                )
-
-                -- ∀(s∊ss). x∈s
-                (allssinssxins)
-              )
-            )
-          )
-
-          -- (⟶)-case
-          (xinintersectss ↦
-            ([∀]-intro (\{s} →
-              ([→]-intro (sinss ↦
-                ([→]-elim
-                  ([∀]-elim
-                    ([∧]-elimᵣ
-                      ([↔]-elimᵣ
-                        ([∀]-elim
-                          ([∀]-elim
-                            filter-containment
-                            {⋃(ss)}
-                          )
-                          {x}
-                        )
-                        (xinintersectss)
+                        ))
+                        (existsyinss)
                       )
                     )
-                    {s}
+                    (Empty-excluded-middle{ss})
                   )
-                  (sinss)
-                )
-              ))
-            ))
-          )
-        )
-      ))
-    ))
-    where postulate proof : ∀{a} → a
 
-  postulate [⋂]-containing-min : Proof(∀ₗ(s ↦ ∀ₛ(s)(min ↦ ∀ₛ(s)(x ↦ min ⊆ x) ⟶ (⋂(s) ≡ min))))
-  postulate [⋂]-containing-[∅] : Proof(∀ₗ(s ↦ (∅ ∈ s) ⟶ (⋂(s) ≡ ∅)))
-  postulate [⋂]-containing-disjoint : Proof(∀ₗ(s ↦ ∃ₛ(s)(a ↦ ∃ₛ(s)(b ↦ Disjoint(a)(b))) ⟶ (⋂(s) ≡ ∅)))
-  postulate [⋂]-subset : Proof(∀ₗ(s ↦ ∀ₛ(s)(x ↦ ⋂(s) ⊆ x)))
+                  -- ∀(s∊ss). x∈s
+                  (allssinssxins)
+                )
+              )
+            )
+
+            -- (⟶)-case
+            (xinintersectss ↦
+              ([∀]-intro (\{s} →
+                ([→]-intro (sinss ↦
+                  ([→]-elim
+                    ([∀]-elim
+                      ([∧]-elimᵣ
+                        ([↔]-elimᵣ
+                          ([∀]-elim
+                            ([∀]-elim
+                              filter-inclusion
+                              {⋃(ss)}
+                            )
+                            {x}
+                          )
+                          (xinintersectss)
+                        )
+                      )
+                      {s}
+                    )
+                    (sinss)
+                  )
+                ))
+              ))
+            )
+          )
+        ))
+      ))
+      where postulate proof : ∀{a} → a
+
+  -- postulate any : ∀{l}{a : Set(l)} → a
 
   -- TODO: Just used for reference. Remove these lines later
   -- ⋂(a) = filter(⋃(ss)) (x ↦ ∀ₗ(a₂ ↦ (a₂ ∈ ss) ⟶ (x ∈ a₂)))
-  -- filter-containment : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
-  -- [⋃]-containment : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s)))))
+  -- filter-inclusion : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
+  -- [⋃]-inclusion : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s)))))
 
 
-  -- [⨯]-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ⨯ b)) ⟷ ∃ₛ(a)(x₁ ↦ ∃ₛ(b)(x₂ ↦ x ≡ (x₁ , x₂)))))))
-  -- [⨯]-containment =
+  -- [⨯]-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ⨯ b)) ⟷ ∃ₛ(a)(x₁ ↦ ∃ₛ(b)(x₂ ↦ x ≡ (x₁ , x₂)))))))
+  -- [⨯]-inclusion =
 
   -- [⋃][℘]-inverse : Proof(∀ₗ(s ↦ ⋃(℘(s)) ≡ s))
 
-  module Quotient {T : Domain} {_≅_ : BinaryRelator} ⦃ equivalence : Proof(Structure.Relator.Properties.Equivalence(T)(_≅_)) ⦄ where
-    open Structure.Relator.Properties
-
-    postulate [/]-containment : Proof(∀ₗ(x ↦ (x ∈ (T / (_≅_))) ⟷ (∃ₗ(y ↦ x ≡ [ y of T , (_≅_) ]))))
-    postulate [/]-pairwise-disjoint : Proof(∀ₗ(x ↦ (x ∈ (T / (_≅_))) ⟷ (∃ₗ(y ↦ x ≡ [ y of T , (_≅_) ]))))
-    postulate [/]-not-containing-[∅] : Proof(∀ₗ(x ↦ ∅ ∉ (T / (_≅_))))
-    postulate [/]-cover : Proof(⋃(T / (_≅_)) ≡ T)
-    postulate eqClass-containment : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ∈ [ b of T , (_≅_) ]) ⟷ (a ≅ b))))
-    postulate eqClass-containing-self : Proof(∀ₗ(a ↦ a ∈ [ a of T , (_≅_) ]))
-    postulate eqClass-nonempty : Proof(∀ₗ(a ↦ NonEmpty([ a of T , (_≅_) ])))
-    postulate eqClass-equal-disjoint : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ([ a of T , (_≅_) ] ≡ [ b of T , (_≅_) ]) ⟷ ¬ Disjoint([ a of T , (_≅_) ])([ b of T , (_≅_) ]))))
-    postulate eqClass-equal-equivalent : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ([ a of T , (_≅_) ] ≡ [ b of T , (_≅_) ]) ⟷ (a ≅ b))))
-    postulate eqClass-equal-containingₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ([ a of T , (_≅_) ] ≡ [ b of T , (_≅_) ]) ⟷ (b ∈ [ a of T , (_≅_) ]))))
-    postulate eqClass-equal-containingᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ([ a of T , (_≅_) ] ≡ [ b of T , (_≅_) ]) ⟷ (a ∈ [ b of T , (_≅_) ]))))
-
   module FunctionProofs where
     open Function ⦃ signature ⦄
+    open FunctionSet ⦃ signature ⦄
 
     [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] : ∀{D : Domain}{P : BinaryRelator} → Proof(∀ₗ(x ↦ ∃ₗ(y ↦ (x ∈ D) ⟶ P(x)(y))) ⟷ ∀ₛ(D)(x ↦ ∃ₗ(y ↦ P(x)(y))))
     [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] {D}{P} = [↔]-with-[∀] ([∃]-unrelatedᵣ-[→])
@@ -961,19 +856,19 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
 
     -- The construction of a meta-function in the meta-logic from a function in the set theory
     fnset-witness : ∀{D} → (f : Domain) → ⦃ _ : Proof(Total(D)(f)) ⦄ → Function
-    fnset-witness f ⦃ proof ⦄ = [∃]-fn-witness ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] ([∀ₛ∃!]-to[∀ₛ∃] proof) ⦄
+    fnset-witness f ⦃ proof ⦄ = [∃]-fn-witness ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] (proof) ⦄
 
     fnset-value : ∀{D} → (f : Domain) → ⦃ proof : Proof(Total(D)(f)) ⦄ → Proof(∀ₛ(D)(x ↦ (x , fnset-witness f(x)) ∈ f))
-    fnset-value{D} f ⦃ proof ⦄ = [∃]-fn-proof ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] ([∀ₛ∃!]-to[∀ₛ∃] proof) ⦄
+    fnset-value{D} f ⦃ proof ⦄ = [∃]-fn-proof ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] (proof) ⦄
 
-    fnset-proof : ∀{D} → (f : Domain) → ⦃ proof : Proof(Total(D)(f)) ⦄ → Proof(∀ₛ(D)(x ↦ ∀ₗ(y ↦ (fnset-witness{D} f ⦃ proof ⦄ x ≡ y) ⟷ ((x , y) ∈ f))))
-    fnset-proof{D} f ⦃ proof ⦄ =
+    fnset-proof : ∀{D} → (f : Domain) → ⦃ _ : Proof(FunctionSet(f)) ⦄ → ⦃ total : Proof(Total(D)(f)) ⦄ → Proof(∀ₛ(D)(x ↦ ∀ₗ(y ↦ (fnset-witness{D} f ⦃ total ⦄ x ≡ y) ⟷ ((x , y) ∈ f))))
+    fnset-proof{D} f ⦃ function ⦄ ⦃ total ⦄ =
       ([∀ₛ]-intro(\{x} → x∈D ↦
         ([∀]-intro(\{y} →
           ([↔]-intro
             (xy∈f ↦
               ([→]-elim
-                ([∀]-elim([∀]-elim([∧]-elimᵣ([∀ₛ]-elim proof{x} (x∈D))) {fnset-witness f(x)}) {y})
+                ([∀]-elim([∀]-elim([∀]-elim function{x}) {fnset-witness f(x)}) {y})
                 ([∧]-intro
                   ([∀ₛ]-elim(fnset-value f) {x} (x∈D))
                   (xy∈f)
@@ -991,10 +886,10 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
     [→ₛₑₜ]-witness : ∀{A B} → (f : Domain) → ⦃ _ : Proof(f ∈ (A →ₛₑₜ B)) ⦄ → Function
     [→ₛₑₜ]-witness f ⦃ proof ⦄ (x) =
       (fnset-witness f
-        ⦃ [∧]-elimᵣ([↔]-elimᵣ
-          ([∀]-elim([∀]-elim filter-containment))
+        ⦃ [∧]-elimᵣ([∧]-elimᵣ([↔]-elimᵣ
+          ([∀]-elim([∀]-elim filter-inclusion))
           (proof)
-        ) ⦄
+        )) ⦄
         (x)
       )
 
@@ -1013,7 +908,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
             ([∧]-intro
               -- ∅ is in
               ([↔]-elimₗ
-                ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){∅})
+                ([∀]-elim([∀]-elim([∀]-elim([∩]-inclusion){a}){b}){∅})
                 ([∧]-intro
                   ([∧]-elimₗ([∧]-elimₗ indaindb))
                   ([∧]-elimₗ([∧]-elimᵣ indaindb))
@@ -1024,13 +919,13 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
               ([∀]-intro (\{x} →
                 ([→]-intro(x∈a∩b ↦
                   ([↔]-elimₗ
-                    ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){𝐒(x)})
+                    ([∀]-elim([∀]-elim([∀]-elim([∩]-inclusion){a}){b}){𝐒(x)})
                     ([∧]-intro
                       -- 𝐒(x) ∈ a
                       ([→]-elim([∀]-elim([∧]-elimᵣ([∧]-elimₗ indaindb)){x})(
                         -- x ∈ a
                         [∧]-elimₗ([↔]-elimᵣ
-                          ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){x})
+                          ([∀]-elim([∀]-elim([∀]-elim([∩]-inclusion){a}){b}){x})
                           (x∈a∩b)
                         )
                       ))
@@ -1039,7 +934,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
                       ([→]-elim([∀]-elim([∧]-elimᵣ([∧]-elimᵣ indaindb)){x})(
                         -- x ∈ b
                         [∧]-elimᵣ([↔]-elimᵣ
-                          ([∀]-elim([∀]-elim([∀]-elim([∩]-containment){a}){b}){x})
+                          ([∀]-elim([∀]-elim([∀]-elim([∩]-inclusion){a}){b}){x})
                           (x∈a∩b)
                         )
                       ))
@@ -1077,7 +972,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
         )
         ([∀]-intro(\{x} →
           ([→]-intro(x∈filter ↦
-            [∧]-elimᵣ(([↔]-elimᵣ([∀]-elim([∀]-elim filter-containment{℘(inductiveSet)}){x})) (x∈filter))
+            [∧]-elimᵣ(([↔]-elimᵣ([∀]-elim([∀]-elim filter-inclusion{℘(inductiveSet)}){x})) (x∈filter))
           ))
         ))
       )
