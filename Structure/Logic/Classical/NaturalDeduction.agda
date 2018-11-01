@@ -10,101 +10,24 @@ private module Constructive = Structure.Logic.Constructive.NaturalDeduction(Proo
 -- TODO: Maybe it is worth to try and take a more minimal approach? (Less axioms? Is this more practical/impractical?)
 
 module Propositional where
-  open Constructive.Propositional using
-    (
-      Conjunction ;
-      Disjunction ;
-      Implication ;
-      Consequence ;
-      Equivalence ;
-      Bottom      ;
-      Top         ;
-      Signature
-    )
-    public
-
-  -- Rules of negation
-  record Negation(¬_ : Formula → Formula) {⊥} ⦃ bottom : Bottom(⊥) ⦄ : Type{ℓₘₗ Lvl.⊔ ℓₗ} where
-    open Bottom ⦃ ... ⦄
-    field
-      intro : ∀{X} → (Proof(X) → Proof(⊥)) → Proof(¬ X)
-      elim  : ∀{X} → (Proof(¬ X) → Proof(⊥)) → Proof(X)
-      [⊥]-intro : ∀{X} → Proof(¬ X) → (Proof(X) → Proof(⊥))
+  open Constructive.Propositional hiding (Theory) public
 
   -- A theory of classical propositional logic expressed using natural deduction rules
   record Theory ⦃ sign : Signature ⦄ : Type{ℓₘₗ Lvl.⊔ ℓₗ} where
     open Signature(sign)
 
     field
-      instance ⦃ bottom ⦄      : Bottom(⊥)
-      instance ⦃ top ⦄         : Top(⊤)
-      instance ⦃ conjunction ⦄ : Conjunction(_∧_)
-      instance ⦃ disjunction ⦄ : Disjunction(_∨_)
-      instance ⦃ implication ⦄ : Implication(_⟶_)
-      instance ⦃ consequence ⦄ : Consequence(_⟵_)
-      instance ⦃ equivalence ⦄ : Equivalence(_⟷_)
-      instance ⦃ negation ⦄    : Negation(¬_) ⦃ bottom ⦄
+      instance ⦃ constructive ⦄ : Constructive.Propositional.Theory ⦃ sign ⦄
 
-    open Bottom      (bottom)      using ()          renaming (elim to [⊥]-elim) public
-    open Top         (top)         using ()          renaming (intro to [⊤]-intro) public
-    open Conjunction (conjunction) using ()          renaming (intro to [∧]-intro ; elimₗ to [∧]-elimₗ ; elimᵣ to [∧]-elimᵣ) public
-    open Disjunction (disjunction) using ()          renaming (introₗ to [∨]-introₗ ; introᵣ to [∨]-introᵣ ; elim to [∨]-elim) public
-    open Implication (implication) using ()          renaming (intro to [→]-intro ; elim to [→]-elim) public
-    open Consequence (consequence) using ()          renaming (intro to [←]-intro ; elim to [←]-elim) public
-    open Equivalence (equivalence) using ()          renaming (intro to [↔]-intro ; elimₗ to [↔]-elimₗ ; elimᵣ to [↔]-elimᵣ) public
-    open Negation    (negation)    using ([⊥]-intro) renaming (intro to [¬]-intro ; elim to [¬]-elim) public
+    open Constructive.Propositional.Theory (constructive) public
 
-    module [⊥] = Bottom      (bottom)
-    module [⊤] = Top         (top)
-    module [∧] = Conjunction (conjunction)
-    module [∨] = Disjunction (disjunction)
-    module [→] = Implication (implication)
-    module [←] = Consequence (consequence)
-    module [↔] = Equivalence (equivalence)
-    module [¬] = Negation    (negation)
+    field
+      excluded-middle : ∀{P} → Proof(P ∨ (¬ P))
 
-module _  {ℓₒ} (Domain : Type{ℓₒ}) {ℓₘₒ} {Object : Type{ℓₘₒ}} (obj : Object → Domain) where
-  module Predicate where
-    open Constructive.Predicate(Domain) (obj) using
-      (
-        UniversalQuantification ;
-        ExistentialQuantification ;
-        Signature
-      ) public
+module Domained = Constructive.Domained
 
-    -- A theory of classical predicate/(first-order) logic expressed using natural deduction rules
-    record Theory ⦃ sign : Signature ⦄ : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
-      open Signature(sign) hiding (propositional)
+module MultiSorted = Constructive.MultiSorted
 
-      field
-        instance ⦃ propositional ⦄             : Propositional.Theory ⦃ Signature.propositional(sign) ⦄
-        instance ⦃ universalQuantification ⦄   : UniversalQuantification(∀ₗ)
-        instance ⦃ existentialQuantification ⦄ : ExistentialQuantification(∃ₗ)
-      open Propositional.Theory(propositional) public
-
-      open UniversalQuantification   (universalQuantification)   renaming (intro to [∀]-intro ; elim to [∀]-elim) public
-      open ExistentialQuantification (existentialQuantification) renaming (intro to [∃]-intro ; elim to [∃]-elim) public
-
-      field
-        ⦃ nonEmptyDomain ⦄ : Proof(∃ₗ(const ⊤))
-
-      module [∀] where
-        redundancyₗ : ∀{φ} → Proof(∀ₗ(const φ)) ← Proof(φ)
-        redundancyₗ (proof) = [∀]-intro(\{_} → proof)
-
-        redundancyᵣ : ∀{φ} → Proof(∀ₗ(const φ)) → Proof(φ)
-        redundancyᵣ (proof) = [∃]-elim(\{x} → _ ↦ [∀]-elim(proof){x}) (nonEmptyDomain)
-
-        open UniversalQuantification(universalQuantification) public
-
-      module [∃] where
-        redundancyₗ : ∀{φ} → Proof(∃ₗ(const φ)) ← Proof(φ)
-        redundancyₗ (proof) = [∃]-elim(\{x} → _ ↦ [∃]-intro{_}{x}(proof)) (nonEmptyDomain)
-
-        redundancyᵣ : ∀{φ} → Proof(∃ₗ(const φ)) → Proof(φ)
-        redundancyᵣ = [∃]-elim(\{_} → id)
-
-        open ExistentialQuantification(existentialQuantification) public
   {-
   Propositional-from-[∧][∨][⊥] : ∀{ℓₗ} → (_∧_ _∨_ : Formula → Formula → Formula) → (⊥ : Formula) →
     ([∧]-intro : ∀{X Y} → X → Y → (X ∧ Y)) →
@@ -138,77 +61,58 @@ module _  {ℓₒ} (Domain : Type{ℓₒ}) {ℓₘₒ} {Object : Type{ℓₘₒ}
     }
   -}
 
-  module PredicateEq where
-    -- Rules of equality
-    record Equality(_≡_ : Domain → Domain → Formula) : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
-      field
-        intro : ∀{x} → Proof(x ≡ x)
-        elimᵣ  : ∀{P : Domain → Formula}{a b} → Proof(a ≡ b) → Proof(P(a)) → Proof(P(b))
+module _ {ℓₒ} (Domain : Type{ℓₒ}) where
+  record ClassicalLogicSignature : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+    open Domained(Domain)
 
-      symmetry : ∀{a b} → Proof(a ≡ b) → Proof(b ≡ a)
-      symmetry{a} (proof) = elimᵣ{x ↦ x ≡ a} (proof) (intro{a})
+    field
+      instance ⦃ propositionalSignature ⦄ : Propositional.Signature
+      instance ⦃ predicateSignature ⦄     : Predicate.Signature
+      instance ⦃ equalitySignature ⦄      : Equality.Signature
 
-      elimₗ : ∀{P : Domain → Formula}{a b} → Proof(a ≡ b) → Proof(P(a)) ← Proof(P(b))
-      elimₗ (proof) (pb) = elimᵣ (symmetry proof) (pb)
+    constructiveLogicSignature : Constructive.ConstructiveLogicSignature(Domain)
+    constructiveLogicSignature =
+      record{
+        propositionalSignature = propositionalSignature ;
+        predicateSignature     = predicateSignature ;
+        equalitySignature      = equalitySignature
+      }
 
-      transitivity : ∀{a b c} → Proof(a ≡ b) → Proof(b ≡ c) → Proof(a ≡ c)
-      transitivity (ab) (bc) = elimᵣ bc ab
+    open Propositional.Signature(propositionalSignature) public
+    open Predicate.Signature(predicateSignature) public
+    open Equality.Signature(equalitySignature) public
+    open Equality.PropositionallyDerivedSignature ⦃ propositionalSignature ⦄ ⦃ equalitySignature ⦄ public
+    open Uniqueness.Signature ⦃ propositionalSignature ⦄ ⦃ predicateSignature ⦄ ⦃ equalitySignature ⦄ public
 
-    record Signature : Type{ℓₗ Lvl.⊔ ℓₒ} where
-      infixl 2000 _≡_
-      field
-        instance ⦃ predicate ⦄ : Predicate.Signature
-        _≡_ : Domain → Domain → Formula
-      open Predicate.Signature(predicate) public
+  -- A theory of classical predicate/(first-order) logic expressed using natural deduction rules
+  record ClassicalLogic : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+    open Domained(Domain)
 
+    field
+      instance ⦃ classicalLogicSignature ⦄ : ClassicalLogicSignature
+    open ClassicalLogicSignature(classicalLogicSignature) public
 
-    record Theory ⦃ sign : Signature ⦄ : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
-      open Signature(sign) hiding (predicate)
+    field
+      instance ⦃ propositionalTheory ⦄ : Propositional.Theory ⦃ propositionalSignature ⦄
+      instance ⦃ predicateTheory ⦄     : Predicate.Theory
+      instance ⦃ equalityTheory ⦄      : Equality.Theory
+      instance ⦃ existentialWitness ⦄  : Predicate.ExistentialWitness(∃ₗ)
+      ⦃ nonEmptyDomain ⦄               : NonEmptyDomain
 
-      field
-        instance ⦃ predicate ⦄ : Predicate.Theory
-        instance ⦃ equality ⦄  : Equality(_≡_)
-      open Predicate.Theory(predicate) public
+    constructivePropositionalTheory = Propositional.Theory.constructive(propositionalTheory)
 
-      open Equality(equality) using () renaming (intro to [≡]-intro ; elimₗ to [≡]-elimₗ ; elimᵣ to [≡]-elimᵣ) public
+    constructiveLogic : Constructive.ConstructiveLogic(Domain)
+    constructiveLogic =
+      record{
+        constructiveLogicSignature = constructiveLogicSignature ;
+        propositionalTheory        = constructivePropositionalTheory ;
+        predicateTheory            = predicateTheory ;
+        equalityTheory             = equalityTheory
+      }
 
-      _≢_ : Domain → Domain → Formula
-      _≢_ a b = ¬(_≡_ a b)
-
-      -- Definition of uniqueness of a property.
-      -- This means that there is at most one element that satisfies this property.
-      -- This is similiar to "Injective" for functions, but this is for statements.
-      Unique : (Domain → Formula) → Formula
-      Unique(P) = ∀ₗ(x ↦ ∀ₗ(y ↦ (P(x) ∧ P(y)) ⟶ (x ≡ y)))
-
-      -- Definition of existence of an unique element satisfying a property.
-      -- This means that there is one and only one element that satisfies this property.
-      ∃ₗ! : (Domain → Formula) → Formula
-      ∃ₗ! P = ((∃ₗ P) ∧ Unique(P))
-
-      -- These allows the creation of new symbols which points to something which exists and is unique.
-      -- TODO: Does this make this theory have no models? For functions, the functions in the meta-theory here (Agda-functions) represent computable things, and all unique existances are not computable. Normally in set theory, one could interpret every (f(x) = y)-formula as ((x,y) ∈ f), so normally it probably works out in the end of the day?
-      -- TODO: Maybe these should be separated from the theory?
-      field
-        [∃]-witness : ∀{P : Domain → Formula} → ⦃ _ : Proof(∃ₗ P) ⦄ → Object
-        [∃]-proof   : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ P) ⦄ → Proof(P(obj([∃]-witness{P} ⦃ p ⦄)))
-
-      [∃!]-witness : ∀{P : Domain → Formula} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Object
-      [∃!]-witness{P} ⦃ proof ⦄ = [∃]-witness{P} ⦃ [∧]-elimₗ proof ⦄
-
-      [∃!]-proof : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ! P) ⦄ → Proof(P(obj([∃!]-witness{P} ⦃ p ⦄)))
-      [∃!]-proof{P} ⦃ proof ⦄ = [∃]-proof{P} ⦃ [∧]-elimₗ proof ⦄
-
-      [∃!]-unique : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ! P) ⦄ → Proof(∀ₗ(x ↦ P(x) ⟶ (x ≡ obj([∃!]-witness{P} ⦃ p ⦄))))
-      [∃!]-unique{P} ⦃ proof ⦄ =
-        ([∀]-intro(\{x} →
-          ([→]-intro(px ↦
-            ([→]-elim
-              ([∀]-elim([∀]-elim([∧]-elimᵣ proof) {x}) {[∃!]-witness{P} ⦃ proof ⦄})
-              ([∧]-intro
-                (px)
-                ([∃!]-proof{P} ⦃ proof ⦄)
-              )
-            )
-          ))
-        ))
+    open Propositional.Theory(propositionalTheory) public
+    open Predicate.Theory(predicateTheory) public
+    open Equality.Theory(equalityTheory) public
+    open Predicate.ExistentialWitness(existentialWitness) public
+    open Uniqueness.WitnessTheory ⦃ propositionalSignature ⦄ ⦃ predicateSignature ⦄ ⦃ equalitySignature ⦄ ⦃ constructivePropositionalTheory ⦄ ⦃ predicateTheory ⦄ ⦃ equalityTheory ⦄ ⦃ existentialWitness ⦄ public
+    open NonEmptyDomain ⦃ nonEmptyDomain ⦄ public

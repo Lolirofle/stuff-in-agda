@@ -1,13 +1,14 @@
-import Structure.Logic.Classical.NaturalDeduction
+open import Functional using (id)
+import      Structure.Logic.Classical.NaturalDeduction
 
-module Structure.Logic.Classical.SetTheory.Function {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} {ℓₘₒ} {Object} {obj} ⦃ sign : _ ⦄ ⦃ theory : _ ⦄ (_∈_ : Domain → Domain → Formula) where
-private module PredicateEq = Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ} (Domain) {ℓₘₒ} {Object} (obj)
-open PredicateEq.Signature(sign)
-open PredicateEq.Theory(theory)
+module Structure.Logic.Classical.SetTheory.Function {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic : _ ⦄ (_∈_ : Domain → Domain → Formula) where
+open Structure.Logic.Classical.NaturalDeduction.ClassicalLogic {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} (classicLogic)
 
 open import Syntax.Function
-open import Structure.Logic.Classical.SetTheory.BoundedQuantification {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} {ℓₘₒ} {Object} {obj} ⦃ sign ⦄ ⦃ theory ⦄ (_∈_)
+open import Structure.Logic.Classical.SetTheory.BoundedQuantification ⦃ classicLogic ⦄ (_∈_)
+open import Structure.Logic.Constructive.Functions(Domain)
+open import Structure.Logic.Constructive.Functions.Properties ⦃ constructiveLogicSignature ⦄
 
 -- States whether the function f is defined for all elements in the set X.
 Map : Function → Domain → Formula
-Map f(X) = ∀ₛ(X) (Defined(f))
+Map f(X) = ∀ₛ(X) (x ↦ Defined f(x))

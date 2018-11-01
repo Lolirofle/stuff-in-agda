@@ -142,15 +142,6 @@ module Propositional where
       instance ⦃ equivalence ⦄ : Equivalence(_⟷_)
       instance ⦃ negation ⦄    : Negation(¬_) ⦃ bottom ⦄
 
-    open Bottom      (bottom)      using () renaming (elim to [⊥]-elim) public
-    open Top         (top)         using () renaming (intro to [⊤]-intro) public
-    open Conjunction (conjunction) using () renaming (intro to [∧]-intro ; elimₗ to [∧]-elimₗ ; elimᵣ to [∧]-elimᵣ) public
-    open Disjunction (disjunction) using () renaming (introₗ to [∨]-introₗ ; introᵣ to [∨]-introᵣ ; elim to [∨]-elim) public
-    open Implication (implication) using () renaming (intro to [→]-intro ; elim to [→]-elim) public
-    open Consequence (consequence) using () renaming (intro to [←]-intro ; elim to [←]-elim) public
-    open Equivalence (equivalence) using () renaming (intro to [↔]-intro ; elimₗ to [↔]-elimₗ ; elimᵣ to [↔]-elimᵣ) public
-    open Negation    (negation)    using () renaming (intro to [¬]-intro ; elim to [¬]-elim) public
-
     module [⊥] = Bottom      (bottom)
     module [⊤] = Top         (top)
     module [∧] = Conjunction (conjunction)
@@ -160,74 +151,197 @@ module Propositional where
     module [↔] = Equivalence (equivalence)
     module [¬] = Negation    (negation)
 
-module Predicate {ℓₒ} (Domain : Type{ℓₒ}) {ℓₘₒ} {Object : Type{ℓₘₒ}} (obj : Object → Domain) where
-  record UniversalQuantification(∀ₗ : (Domain → Formula) → Formula) : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+module Domained {ℓₒ} (Domain : Type{ℓₒ}) where
+  module Predicate where
+    record UniversalQuantification(∀ₗ : (Domain → Formula) → Formula) : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+      field
+        intro : ∀{P : Domain → Formula} → (∀{x : Domain} → Proof(P(x))) → Proof(∀ₗ P)
+        elim  : ∀{P : Domain → Formula} → Proof(∀ₗ P) → (∀{x : Domain} → Proof(P(x)))
+
+    record ExistentialQuantification(∃ₗ : (Domain → Formula) → Formula) : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+      field
+        intro : ∀{P : Domain → Formula}{a} → Proof(P(a)) → Proof(∃ₗ P)
+        elim  : ∀{P : Domain → Formula}{Z : Formula} → (∀{x : Domain} → Proof(P(x)) → Proof(Z)) → Proof(∃ₗ P) → Proof(Z)
+
+    -- These allows the creation of new symbols which points to something which exists and is unique.
+    -- TODO: Does this make this theory have no models? For functions, the functions in the meta-theory here (Agda-functions) represent computable things, and all unique existances are not computable. Normally in set theory, one could interpret every (f(x) = y)-formula as ((x,y) ∈ f), so normally it probably works out in the end of the day?
+    record ExistentialWitness(∃ₗ : (Domain → Formula) → Formula) : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+      field
+        [∃]-witness : ∀{P : Domain → Formula} → ⦃ _ : Proof(∃ₗ P) ⦄ → Domain
+        [∃]-proof   : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ P) ⦄ → Proof(P([∃]-witness{P} ⦃ p ⦄))
+
+
+
+    record Signature : Type{ℓₗ Lvl.⊔ ℓₒ} where
+      field
+        ∀ₗ : (Domain → Formula) → Formula
+        ∃ₗ : (Domain → Formula) → Formula
+
+      NonEmptyDomain = ∀{P} → Proof(P) → Proof(∃ₗ(const P))
+
+    -- A theory of constructive predicate/(first-order) logic expressed using natural deduction rules
+    record Theory ⦃ sign : Signature ⦄ : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+      open Signature(sign)
+
+      field
+        instance ⦃ universalQuantification ⦄   : UniversalQuantification(∀ₗ)
+        instance ⦃ existentialQuantification ⦄ : ExistentialQuantification(∃ₗ)
+
+      module [∀] = UniversalQuantification   (universalQuantification)
+      module [∃] = ExistentialQuantification (existentialQuantification)
+
+      module NonEmptyDomain ⦃ nonEmptyDomain : NonEmptyDomain ⦄ where
+        [∀]-redundancyₗ : ∀{φ} → Proof(∀ₗ(const φ)) ← Proof(φ)
+        [∀]-redundancyₗ (proof) = [∀].intro(\{_} → proof)
+
+        [∀]-redundancyᵣ : ∀{φ} → Proof(∀ₗ(const φ)) → Proof(φ)
+        [∀]-redundancyᵣ (proof) = [∃].elim(\{x} → _ ↦ [∀].elim(proof){x}) (nonEmptyDomain proof)
+
+        [∃]-redundancyₗ : ∀{φ} → Proof(∃ₗ(const φ)) ← Proof(φ)
+        [∃]-redundancyₗ (proof) = [∃].elim(\{x} → _ ↦ [∃].intro{_}{x}(proof)) (nonEmptyDomain proof)
+
+        [∃]-redundancyᵣ : ∀{φ} → Proof(∃ₗ(const φ)) → Proof(φ)
+        [∃]-redundancyᵣ = [∃].elim(\{_} → id)
+
+  module Equality where
+    -- Rules of equality
+    record Equality(_≡_ : Domain → Domain → Formula) : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+      field
+        intro : ∀{x} → Proof(x ≡ x)
+        elimᵣ  : ∀{P : Domain → Formula}{a b} → Proof(a ≡ b) → Proof(P(a)) → Proof(P(b))
+
+      symmetry : ∀{a b} → Proof(a ≡ b) → Proof(b ≡ a)
+      symmetry{a} (proof) = elimᵣ{x ↦ x ≡ a} (proof) (intro{a})
+
+      elimₗ : ∀{P : Domain → Formula}{a b} → Proof(a ≡ b) → Proof(P(a)) ← Proof(P(b))
+      elimₗ (proof) (pb) = elimᵣ (symmetry proof) (pb)
+
+      transitivity : ∀{a b c} → Proof(a ≡ b) → Proof(b ≡ c) → Proof(a ≡ c)
+      transitivity (ab) (bc) = elimᵣ bc ab
+
+
+
+    record Signature : Type{ℓₗ Lvl.⊔ ℓₒ} where
+      infixl 2000 _≡_
+      field
+        _≡_ : Domain → Domain → Formula
+
+    module PropositionallyDerivedSignature ⦃ propositional : Propositional.Signature ⦄ ⦃ sign : Signature ⦄ where
+      open Propositional.Signature(propositional)
+      open Signature(sign)
+
+      _≢_ : Domain → Domain → Formula
+      _≢_ a b = ¬(_≡_ a b)
+
+    record Theory ⦃ sign : Signature ⦄ : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+      open Signature(sign)
+
+      field
+        instance ⦃ equality ⦄ : Equality(_≡_)
+
+      module [≡] = Equality(equality)
+
+  module Uniqueness ⦃ propositionalSign : Propositional.Signature ⦄ ⦃ predicateSign : Predicate.Signature ⦄ ⦃ equalitySign : Equality.Signature ⦄ where
+    open Propositional.Signature(propositionalSign)
+    open Predicate.Signature(predicateSign)
+    open Equality.Signature(equalitySign)
+
+    module Signature where
+      -- Definition of uniqueness of a property.
+      -- This means that there is at most one element that satisfies this property.
+      -- This is similiar to "Injective" for functions, but this is for statements.
+      Unique : (Domain → Formula) → Formula
+      Unique(P) = ∀ₗ(x ↦ ∀ₗ(y ↦ (P(x) ∧ P(y)) ⟶ (x ≡ y)))
+
+      -- Definition of existence of an unique element satisfying a property.
+      -- This means that there is one and only one element that satisfies this property.
+      ∃ₗ! : (Domain → Formula) → Formula
+      ∃ₗ! P = ((∃ₗ P) ∧ Unique(P))
+
+    module _ ⦃ propositional : Propositional.Theory ⦄ ⦃ predicate : Predicate.Theory ⦄ ⦃ equality : Equality.Theory ⦄ where
+      open Signature
+      open Propositional.Theory(propositional)
+      open Predicate.Theory(predicate)
+      open Equality.Theory(equality)
+
+      module WitnessTheory ⦃ existentialWitness : Predicate.ExistentialWitness(∃ₗ) ⦄ where
+        open Predicate.ExistentialWitness(existentialWitness)
+
+        [∃!]-witness : ∀{P : Domain → Formula} → ⦃ _ : Proof(∃ₗ! P) ⦄ → Domain
+        [∃!]-witness{P} ⦃ proof ⦄ = [∃]-witness{P} ⦃ [∧].elimₗ proof ⦄
+
+        [∃!]-proof : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ! P) ⦄ → Proof(P([∃!]-witness{P} ⦃ p ⦄))
+        [∃!]-proof{P} ⦃ proof ⦄ = [∃]-proof{P} ⦃ [∧].elimₗ proof ⦄
+
+        [∃!]-unique : ∀{P : Domain → Formula} → ⦃ p : Proof(∃ₗ! P) ⦄ → Proof(∀ₗ(x ↦ P(x) ⟶ (x ≡ [∃!]-witness{P} ⦃ p ⦄)))
+        [∃!]-unique{P} ⦃ proof ⦄ =
+          ([∀].intro(\{x} →
+            ([→].intro(px ↦
+              ([→].elim
+                ([∀].elim([∀].elim([∧].elimᵣ proof) {x}) {[∃!]-witness{P} ⦃ proof ⦄})
+                ([∧].intro
+                  (px)
+                  ([∃!]-proof{P} ⦃ proof ⦄)
+                )
+              )
+            ))
+          ))
+
+module _ {ℓₒ} (Domain : Type{ℓₒ}) where
+  record ConstructiveLogicSignature : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+    open Domained(Domain)
+
     field
-      intro : ∀{P : Domain → Formula} → (∀{x : Object} → Proof(P(obj x))) → Proof(∀ₗ P)
-      elim  : ∀{P : Domain → Formula} → Proof(∀ₗ P) → (∀{x : Object} → Proof(P(obj x)))
+      instance ⦃ propositionalSignature ⦄ : Propositional.Signature
+      instance ⦃ predicateSignature ⦄     : Predicate.Signature
+      instance ⦃ equalitySignature ⦄      : Equality.Signature
+    open Propositional.Signature(propositionalSignature) public
+    open Predicate.Signature(predicateSignature) public
+    open Equality.Signature(equalitySignature) public
+    open Equality.PropositionallyDerivedSignature ⦃ propositionalSignature ⦄ ⦃ equalitySignature ⦄ public
+    open Uniqueness.Signature ⦃ propositionalSignature ⦄ ⦃ predicateSignature ⦄ ⦃ equalitySignature ⦄ public
 
-  record ExistentialQuantification(∃ₗ : (Domain → Formula) → Formula) : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
-    field
-      intro : ∀{P : Domain → Formula}{a} → Proof(P(obj a)) → Proof(∃ₗ P)
-      elim  : ∀{P : Domain → Formula}{Z : Formula} → (∀{x : Object} → Proof(P(obj x)) → Proof(Z)) → Proof(∃ₗ P) → Proof(Z)
-
-
-
-  record Signature : Type{ℓₗ Lvl.⊔ ℓₒ} where
-    field
-      instance ⦃ propositional ⦄ : Propositional.Signature
-      ∀ₗ : (Domain → Formula) → Formula
-      ∃ₗ : (Domain → Formula) → Formula
-    open Propositional.Signature(propositional) public
-
-  -- A theory of constructive predicate/(first-order) logic expressed using natural deduction rules
-  record Theory ⦃ sign : Signature ⦄ : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
-    open Signature(sign) hiding (propositional)
+  record ConstructiveLogic : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+    open Domained(Domain)
 
     field
-      instance ⦃ propositional ⦄             : Propositional.Theory
-      instance ⦃ universalQuantification ⦄   : UniversalQuantification(∀ₗ)
-      instance ⦃ existentialQuantification ⦄ : ExistentialQuantification(∃ₗ)
-    open Propositional.Theory(propositional) public
-
-    module [∀] = UniversalQuantification   (universalQuantification)
-    module [∃] = ExistentialQuantification (existentialQuantification)
-
-    open UniversalQuantification   (universalQuantification)   using () renaming (intro to [∀]-intro ; elim to [∀]-elim) public
-    open ExistentialQuantification (existentialQuantification) using () renaming (intro to [∃]-intro ; elim to [∃]-elim) public
-
-module MultiSortedPredicate {ℓₒ} {Sorts : Type{ℓₒ}} (Domain : Sorts → Type{ℓₒ}) {ℓₘₒ} {Object : Sorts → Type{ℓₘₒ}} (obj : ∀{Sort} → Object(Sort) → Domain(Sort)) where
-  record UniversalQuantification(∀ₗ : ∀{Sort} → (Domain(Sort) → Formula) → Formula) : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
-    field
-      intro : ∀{Sort}{P : Domain(Sort) → Formula} → (∀{x : Object(Sort)} → Proof(P(obj x))) → Proof(∀ₗ P)
-      elim  : ∀{Sort}{P : Domain(Sort) → Formula} → Proof(∀ₗ P) → (∀{x : Object(Sort)} → Proof(P(obj x)))
-
-  record ExistentialQuantification(∃ₗ : ∀{Sort} → (Domain(Sort) → Formula) → Formula) : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
-    field
-      intro : ∀{Sort}{P : Domain(Sort) → Formula}{a} → Proof(P(obj a)) → Proof(∃ₗ P)
-      elim  : ∀{Sort}{P : Domain(Sort) → Formula}{Z : Formula} → (∀{x : Object(Sort)} → Proof(P(obj x)) → Proof(Z)) → Proof(∃ₗ P) → Proof(Z)
-
-
-
-  record Signature : Type{ℓₗ Lvl.⊔ ℓₒ} where
-    field
-      instance ⦃ propositional ⦄ : Propositional.Signature
-      ∀ₗ : ∀{Sort} → (Domain(Sort) → Formula) → Formula
-      ∃ₗ : ∀{Sort} → (Domain(Sort) → Formula) → Formula
-    open Propositional.Signature(propositional) public
-
-  -- A theory of constructive predicate/(first-order) multi-sorted logic expressed using natural deduction rules
-  record Theory ⦃ sign : Signature ⦄ : Type{(ℓₘₗ Lvl.⊔ ℓₘₒ) Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
-    open Signature(sign) hiding (propositional)
+      instance ⦃ constructiveLogicSignature ⦄ : ConstructiveLogicSignature
+    open ConstructiveLogicSignature public
 
     field
-      instance ⦃ propositional ⦄             : Propositional.Theory ⦃ Signature.propositional(sign) ⦄
-      instance ⦃ universalQuantification ⦄   : UniversalQuantification(∀ₗ)
-      instance ⦃ existentialQuantification ⦄ : ExistentialQuantification(∃ₗ)
-    open Propositional.Theory(propositional) public
+      instance ⦃ propositionalTheory ⦄ : Propositional.Theory
+      instance ⦃ predicateTheory ⦄     : Predicate.Theory
+      instance ⦃ equalityTheory ⦄      : Equality.Theory
+    open Propositional.Theory(propositionalTheory) public
+    open Predicate.Theory(predicateTheory) public
+    open Equality.Theory(equalityTheory) public
 
-    module [∀] = UniversalQuantification   (universalQuantification)
-    module [∃] = ExistentialQuantification (existentialQuantification)
+module MultiSorted {ℓₒ} {Sorts : Type{ℓₒ}} (Domain : Sorts → Type{ℓₒ}) where
+  module Predicate where
+    record UniversalQuantification(∀ₗ : ∀{Sort} → (Domain(Sort) → Formula) → Formula) : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+      field
+        intro : ∀{Sort}{P : Domain(Sort) → Formula} → (∀{x : Domain(Sort)} → Proof(P(x))) → Proof(∀ₗ P)
+        elim  : ∀{Sort}{P : Domain(Sort) → Formula} → Proof(∀ₗ P) → (∀{x : Domain(Sort)} → Proof(P(x)))
 
-    open UniversalQuantification   (universalQuantification)   using () renaming (intro to [∀]-intro ; elim to [∀]-elim) public
-    open ExistentialQuantification (existentialQuantification) using () renaming (intro to [∃]-intro ; elim to [∃]-elim) public
+    record ExistentialQuantification(∃ₗ : ∀{Sort} → (Domain(Sort) → Formula) → Formula) : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+      field
+        intro : ∀{Sort}{P : Domain(Sort) → Formula}{a} → Proof(P(a)) → Proof(∃ₗ P)
+        elim  : ∀{Sort}{P : Domain(Sort) → Formula}{Z : Formula} → (∀{x : Domain(Sort)} → Proof(P(x)) → Proof(Z)) → Proof(∃ₗ P) → Proof(Z)
+
+
+
+    record Signature : Type{ℓₗ Lvl.⊔ ℓₒ} where
+      field
+        ∀ₗ : ∀{Sort} → (Domain(Sort) → Formula) → Formula
+        ∃ₗ : ∀{Sort} → (Domain(Sort) → Formula) → Formula
+
+    -- A theory of constructive predicate/(first-order) multi-sorted logic expressed using natural deduction rules
+    record Theory ⦃ sign : Signature ⦄ : Type{ℓₘₗ Lvl.⊔ (ℓₗ Lvl.⊔ ℓₒ)} where
+      open Signature(sign)
+
+      field
+        instance ⦃ universalQuantification ⦄   : UniversalQuantification(∀ₗ)
+        instance ⦃ existentialQuantification ⦄ : ExistentialQuantification(∃ₗ)
+
+      module [∀] = UniversalQuantification   (universalQuantification)
+      module [∃] = ExistentialQuantification (existentialQuantification)

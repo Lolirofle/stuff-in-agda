@@ -1,17 +1,17 @@
-import Structure.Logic.Classical.NaturalDeduction
-
-module Structure.Logic.Classical.SetTheory.ZFC {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} {ℓₘₒ} {Object} {obj} ⦃ sign : _ ⦄ ⦃ theory : _ ⦄ (_∈_ : Domain → Domain → Formula) where
-private module PredicateEq = Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ} (Domain) {ℓₘₒ} {Object} (obj)
-open PredicateEq.Signature(sign)
-open PredicateEq.Theory(theory)
-
 open import Functional hiding (Domain)
+import      Structure.Logic.Classical.NaturalDeduction
+
+module Structure.Logic.Classical.SetTheory.ZFC {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic : _ ⦄ (_∈_ : Domain → Domain → Formula) where
+open Structure.Logic.Classical.NaturalDeduction.ClassicalLogic {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} (classicLogic)
+
 open import Lang.Instance
 import      Lvl
-open import Structure.Logic.Classical.NaturalDeduction.Proofs         ⦃ sign ⦄ ⦃ theory ⦄
-open import Structure.Logic.Classical.SetTheory.BoundedQuantification ⦃ sign ⦄ ⦃ theory ⦄ (_∈_)
-open import Structure.Logic.Classical.SetTheory.Relation              ⦃ sign ⦄ ⦃ theory ⦄ (_∈_)
-open import Structure.Logic.Classical.SetTheory                       ⦃ sign ⦄ ⦃ theory ⦄ (_∈_)
+open import Structure.Logic.Classical.NaturalDeduction.Proofs         ⦃ classicLogic ⦄
+open import Structure.Logic.Classical.SetTheory.BoundedQuantification ⦃ classicLogic ⦄ (_∈_)
+open import Structure.Logic.Classical.SetTheory.Relation              ⦃ classicLogic ⦄ (_∈_)
+open import Structure.Logic.Classical.SetTheory                       ⦃ classicLogic ⦄ (_∈_)
+open import Structure.Logic.Constructive.Functions(Domain)
+open import Structure.Logic.Constructive.Functions.Properties ⦃ constructiveLogicSignature ⦄
 
 private
   module Meta where
@@ -19,21 +19,8 @@ private
     open import Numeral.FiniteStrict.Bound{ℓₗ} public
     open import Numeral.Natural                public
 
--- The type of a function. Functions on the domain in the meta-logic.
-Function : Set(_)
-Function = (Domain → Domain)
-
-BinaryOperator : Set(_)
-BinaryOperator = (Domain → Domain → Domain)
-
-FiniteIndexedFamily : Meta.ℕ → Set(_)
-FiniteIndexedFamily(n) = Meta.𝕟(n) → Domain
-
-InfiniteIndexedFamily : Set(_)
-InfiniteIndexedFamily = Meta.ℕ → Domain
-
 -- The symbols/signature of ZFC set theory.
-record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
+record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ ℓₘₗ) where
   infixl 3000 _∪_
   infixl 3001 _∩_
   infixl 3002 _⨯_ _∖_
@@ -116,10 +103,10 @@ record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘ
   -- TODO: Not really like this. See definition of (_⨯_) and (_,_), and try to express the same here
   -- TODO: Also, make it possible to take the set product of infinite indexed families
   -- TODO: Maybe just use functions like (𝕟(n) →ₛₑₜ _) for finite and (ℕ → _) for infinite
-  ∏_ : ∀{n} → FiniteIndexedFamily(n) → Domain
-  ∏_ {Meta.𝟎}            _ = singleton(∅)
-  ∏_ {Meta.𝐒(Meta.𝟎)}    I = I(Meta.𝟎)
-  ∏_ {Meta.𝐒(Meta.𝐒(n))} I = I(Meta.maximum) ⨯ (∏_ {Meta.𝐒(n)} (I ∘ Meta.bound-𝐒))
+  -- ∏_ : ∀{n} → FiniteIndexedFamily(n) → Domain
+  -- ∏_ {Meta.𝟎}            _ = singleton(∅)
+  -- ∏_ {Meta.𝐒(Meta.𝟎)}    I = I(Meta.𝟎)
+  -- ∏_ {Meta.𝐒(Meta.𝐒(n))} I = I(Meta.maximum) ⨯ (∏_ {Meta.𝐒(n)} (I ∘ Meta.bound-𝐒))
 
   -- Quotient set.
   -- The set of equivalence classes.
@@ -134,7 +121,7 @@ record Signature : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘ
 module Function ⦃ signature : Signature ⦄ where
   open Signature ⦃ ... ⦄
 
-  record SetRepresentable (f : Function) : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
+  record SetRepresentable (f : Function) : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ ℓₘₗ) where
     constructor intro
 
     field
@@ -144,7 +131,7 @@ module Function ⦃ signature : Signature ⦄ where
       proof : Proof(∀ₗ(x ↦ ∀ₗ(y ↦ (f(x) ≡ y) ⟷ ((x , y) ∈ set))))
 
   -- An instance of Type(f) means that the function f has a default domain and codomain, and a proof that the function actually are closed inside this domain/codomain pair.
-  record Type (f : Function) : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
+  record Type (f : Function) : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ ℓₘₗ) where
     constructor intro
     field
       domain   : Domain
@@ -198,16 +185,16 @@ module FunctionSet ⦃ signature : Signature ⦄ where
   Total : Domain → Domain → Formula
   Total(A)(s) = ∀ₛ(A)(x ↦ ∃ₗ(y ↦ (x , y) ∈ s))
 
-  Injective : Domain → Formula
-  Injective(f) = ∀ₗ(y ↦ Unique(x ↦ (x , y) ∈ f))
+  Injective' : Domain → Formula
+  Injective'(f) = ∀ₗ(y ↦ Unique(x ↦ (x , y) ∈ f))
 
-  Surjective : Domain → Domain → Formula
-  Surjective(B)(f) = ∀ₛ(B)(y ↦ ∃ₗ(x ↦ (x , y) ∈ f))
+  Surjective' : Domain → Domain → Formula
+  Surjective'(B)(f) = ∀ₛ(B)(y ↦ ∃ₗ(x ↦ (x , y) ∈ f))
 
-  Bijective : Domain → Domain → Formula
-  Bijective(B)(f) =
-    Injective(f)
-    ∧ Surjective(B)(f)
+  Bijective' : Domain → Domain → Formula
+  Bijective'(B)(f) =
+    Injective'(f)
+    ∧ Surjective'(B)(f)
 
   -- The set of total function sets. All sets which can be interpreted as a total function.
   _^_ : Domain → Domain → Domain
@@ -221,8 +208,8 @@ module FunctionSet ⦃ signature : Signature ⦄ where
   ⊶ : Domain → Domain
   ⊶ = rights
 
-  map : Domain → Domain → Domain
-  map = rightsOfMany
+  map' : Domain → Domain → Domain
+  map' = rightsOfMany
 
   unmap : Domain → Domain → Domain
   unmap = leftsOfMany
@@ -242,15 +229,15 @@ module FunctionSet ⦃ signature : Signature ⦄ where
   module Cardinality where
     -- Injection
     _≼_ : Domain → Domain → Formula
-    _≼_ (a)(b) = ∃ₛ(a →ₛₑₜ b)(Injective)
+    _≼_ (a)(b) = ∃ₛ(a →ₛₑₜ b)(Injective')
 
     -- Surjection
     _≽_ : Domain → Domain → Formula
-    _≽_ (a)(b) = ∃ₛ(a →ₛₑₜ b)(Surjective(b))
+    _≽_ (a)(b) = ∃ₛ(a →ₛₑₜ b)(Surjective'(b))
 
     -- Bijection
     _≍_ : Domain → Domain → Formula
-    _≍_ (a)(b) = ∃ₛ(a →ₛₑₜ b)(Bijective(b))
+    _≍_ (a)(b) = ∃ₛ(a →ₛₑₜ b)(Bijective'(b))
 
     -- Strict injection
     _≺_ : Domain → Domain → Formula
@@ -275,22 +262,22 @@ module Structure where
       Closed : Domain → Function → Formula
       Closed(S)(f) = Type(S)(S)(f)
 
-      Injective : Domain → Function → Formula
-      Injective(A)(f) = ∀ₛ(A)(x ↦ ∀ₛ(A)(y ↦ (f(x) ≡ f(y)) ⟶ (x ≡ y)))
+      Injective'' : Domain → Function → Formula
+      Injective''(A)(f) = ∀ₛ(A)(x ↦ ∀ₛ(A)(y ↦ (f(x) ≡ f(y)) ⟶ (x ≡ y)))
 
-      Surjective : Domain → Domain → Function → Formula
-      Surjective(A)(B)(f) = ∀ₛ(B)(y ↦ ∃ₛ(A)(x ↦ f(x) ≡ y))
+      Surjective'' : Domain → Domain → Function → Formula
+      Surjective''(A)(B)(f) = ∀ₛ(B)(y ↦ ∃ₛ(A)(x ↦ f(x) ≡ y))
 
-      Bijective : Domain → Domain → Function → Formula
-      Bijective(A)(B)(f) =
-        Injective(A)(f)
-        ∧ Surjective(A)(B)(f)
+      Bijective'' : Domain → Domain → Function → Formula
+      Bijective''(A)(B)(f) =
+        Injective''(A)(f)
+        ∧ Surjective''(A)(B)(f)
 
-      Preserving₁ : Domain → Function → Function → Function → Formula
-      Preserving₁(A)(f)(g₁)(g₂) = ∀ₛ(A)(x ↦ f(g₁(x)) ≡ g₂(f(x)))
+      Preserving₁'' : Domain → Function → Function → Function → Formula
+      Preserving₁''(A)(f)(g₁)(g₂) = ∀ₛ(A)(x ↦ f(g₁(x)) ≡ g₂(f(x)))
 
-      Preserving₂ : Domain → Domain → Function → BinaryOperator → BinaryOperator → Formula
-      Preserving₂(A)(B)(f)(_▫₁_)(_▫₂_) = ∀ₛ(A)(x ↦ ∀ₛ(B)(y ↦ f(x ▫₁ y) ≡ (f(x) ▫₂ f(y))))
+      Preserving₂'' : Domain → Domain → Function → BinaryOperator → BinaryOperator → Formula
+      Preserving₂''(A)(B)(f)(_▫₁_)(_▫₂_) = ∀ₛ(A)(x ↦ ∀ₛ(B)(y ↦ f(x ▫₁ y) ≡ (f(x) ▫₂ f(y))))
 
   module Relator where
     module Properties where
@@ -492,7 +479,7 @@ module Structure where
       Peano(ℕ)(𝟎)(𝐒) =
         (𝟎 ∈ ℕ)
         ∧ Function'.Properties.Closed(ℕ)(𝐒)
-        ∧ Function'.Properties.Injective(ℕ)(𝐒)
+        ∧ Function'.Properties.Injective''(ℕ)(𝐒)
         ∧ ∀ₛ(ℕ)(n ↦ 𝐒(n) ≢ 𝟎)
         ∧ SetInduction(ℕ)(𝟎)(𝐒)
 
@@ -611,10 +598,10 @@ module Axioms ⦃ signature : Signature ⦄ where
   -- TODO: Should the indexed family really be finite? https://en.wikipedia.org/wiki/Cartesian_product#Infinite_Cartesian_products
   -- Choice = ∀{n : Meta.ℕ}{F : FiniteIndexedFamily(Meta.𝐒(n))} → (∀{i : Meta.𝕟(Meta.𝐒(n))} → Proof(NonEmpty(F(i)))) → Proof(NonEmpty(∏ F))
   Choice : (Domain → Domain) → Formula
-  Choice = ∀ₗ(y ↦ (Value f(y)) ⟶ ((f ∘ (inv f))(y) ≡ y))
+  Choice(f) = ∀ₗ(y ↦ (Value f(y)) ⟶ ((f ∘ (inv f))(y) ≡ y))
   -- ChoiceTraditional = Proof(∀ₗ(s ↦ (∅ ∉ s) ⟶ ∃ₛ(s →ₛₑₜ (⋃ s))(f ↦ ∀ₛ(s)(x ↦ ∀ₛ(⋃ s)(y ↦ ((x , y) ∈ f) ⟶ (y ∈ x))))))
 
-record Z ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
+record Z ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ ℓₘₗ) where
   open Axioms
   open Signature ⦃ ... ⦄
 
@@ -627,7 +614,7 @@ record Z ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (�
     power         : Proof(PowerSetInclusion)
     infinity      : Proof(Infinity)
 
-record ZF ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
+record ZF ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ ℓₘₗ) where
   open Axioms
   open Signature ⦃ ... ⦄
 
@@ -642,7 +629,7 @@ record ZF ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (�
     regular       : Proof(Regularity)
     replacement   : ∀{f} → Proof(Replacement(f))
 
-record ZFC ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ (ℓₘₗ Lvl.⊔ ℓₘₒ)) where
+record ZFC ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ ℓₘₗ) where
   open Axioms
   open Signature ⦃ ... ⦄
 
@@ -690,11 +677,11 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   instance
     singletonSetInstance : SingletonSet
     singletonSetInstance = SingletonSet.intro singleton
-      ([∀]-intro (\{a} →
-        ([∀]-intro (\{x} →
+      ([∀].intro (\{a} →
+        ([∀].intro (\{x} →
           [↔].transitivity
-            ([∀]-elim([∀]-elim([∀]-elim(pair-inclusion){a}){a}){x})
-            ([↔]-intro ([∨].redundancyₗ) ([∨].redundancyᵣ))
+            ([∀].elim([∀].elim([∀].elim(pair-inclusion){a}){a}){x})
+            ([↔].intro ([∨].redundancyₗ) ([∨].redundancyᵣ))
         ))
       ))
 
@@ -713,20 +700,20 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   instance
     unionSetInstance : UnionSet
     unionSetInstance = UnionSet.intro _∪_
-      ([∀]-intro (\{a} →
-        ([∀]-intro (\{b} →
-          ([∀]-intro (\{x} →
-            ([∀]-elim([∀]-elim [⋃]-inclusion{pair(a)(b)}){x})
+      ([∀].intro (\{a} →
+        ([∀].intro (\{b} →
+          ([∀].intro (\{x} →
+            ([∀].elim([∀].elim [⋃]-inclusion{pair(a)(b)}){x})
             〔ₗ [↔].transitivity 〕
             ([↔]-with-[∃] (\{s} →
-              ([↔]-with-[∧]ₗ ([∀]-elim([∀]-elim([∀]-elim pair-inclusion{a}){b}){s}))
+              ([↔]-with-[∧]ₗ ([∀].elim([∀].elim([∀].elim pair-inclusion{a}){b}){s}))
               〔ₗ [↔].transitivity 〕
               ([∧][∨]-distributivityᵣ)
               〔ₗ [↔].transitivity 〕
               [↔]-with-[∨] ([≡]-substitute-this-is-almost-trivial) ([≡]-substitute-this-is-almost-trivial)
             ))
             〔ₗ [↔].transitivity 〕
-            ([↔]-intro ([∃].redundancyₗ) ([∃].redundancyᵣ))
+            ([↔].intro ([∃]-redundancyₗ) ([∃]-redundancyᵣ))
           ))
         ))
       ))
@@ -734,34 +721,34 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
   instance
     intersectionSetInstance : IntersectionSet
     intersectionSetInstance = IntersectionSet.intro _∩_
-      ([∀]-intro (\{a} →
-        ([∀]-intro (\{b} →
-          ([∀]-elim(filter-inclusion){a})
+      ([∀].intro (\{a} →
+        ([∀].intro (\{b} →
+          ([∀].elim(filter-inclusion){a})
         ))
       ))
 
   instance
     withoutSetInstance : WithoutSet
     withoutSetInstance = WithoutSet.intro _∖_
-      ([∀]-intro (\{a} →
-        ([∀]-intro (\{b} →
-          ([∀]-elim(filter-inclusion){a})
+      ([∀].intro (\{a} →
+        ([∀].intro (\{b} →
+          ([∀].elim(filter-inclusion){a})
         ))
       ))
 
   instance
     setIntersectionSetInstance : SetIntersectionSet
     setIntersectionSetInstance = SetIntersectionSet.intro ⋂
-      ([∀]-intro (\{ss} →
-        ([∀]-intro (\{x} →
-          ([↔]-intro
+      ([∀].intro (\{ss} →
+        ([∀].intro (\{x} →
+          ([↔].intro
             -- (⟵)-case
             (allssinssxins ↦
-              ([↔]-elimₗ
-                ([∀]-elim([∀]-elim filter-inclusion{⋃(ss)}){x})
-                ([∧]-intro
+              ([↔].elimₗ
+                ([∀].elim([∀].elim filter-inclusion{⋃(ss)}){x})
+                ([∧].intro
                   -- x ∈ ⋃(ss)
-                  ([∨]-elim
+                  ([∨].elim
                     -- Empty(ss) ⇒ _
                     (allyyninss ↦
                       proof -- TODO: But: Empty(ss) ⇒ (ss ≡ ∅) ⇒ ⋃(ss) ≡ ∅ ⇒ (x ∉ ⋃(ss)) ? Maybe use this argument further up instead to prove something like: (⋂(ss) ≡ ∅) ⇒ (x ∉ ∅)
@@ -769,18 +756,18 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
 
                     -- NonEmpty(ss) ⇒ _
                     (existsyinss ↦
-                      ([∃]-elim
+                      ([∃].elim
                         (\{y} → yinss ↦ (
-                          ([↔]-elimₗ([∀]-elim([∀]-elim([⋃]-inclusion){ss}){x}))
-                          ([∃]-intro{_}
+                          ([↔].elimₗ([∀].elim([∀].elim([⋃]-inclusion){ss}){x}))
+                          ([∃].intro{_}
                             {y}
-                            ([∧]-intro
+                            ([∧].intro
                               -- y ∈ ss
                               (yinss)
 
                               -- x ∈ y
-                              ([→]-elim
-                                ([∀]-elim(allssinssxins){y})
+                              ([→].elim
+                                ([∀].elim(allssinssxins){y})
                                 (yinss)
                               )
                             )
@@ -800,14 +787,14 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
 
             -- (⟶)-case
             (xinintersectss ↦
-              ([∀]-intro (\{s} →
-                ([→]-intro (sinss ↦
-                  ([→]-elim
-                    ([∀]-elim
-                      ([∧]-elimᵣ
-                        ([↔]-elimᵣ
-                          ([∀]-elim
-                            ([∀]-elim
+              ([∀].intro (\{s} →
+                ([→].intro (sinss ↦
+                  ([→].elim
+                    ([∀].elim
+                      ([∧].elimᵣ
+                        ([↔].elimᵣ
+                          ([∀].elim
+                            ([∀].elim
                               filter-inclusion
                               {⋃(ss)}
                             )
@@ -851,25 +838,25 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
     [∀ₛ∃!]-to[∀ₛ∃] : ∀{P : BinaryRelator}{D : Domain} → Proof(∀ₛ(D)(x ↦ ∃ₗ!(y ↦ P(x)(y)))) → Proof(∀ₛ(D)(x ↦ ∃ₗ(y ↦ P(x)(y))))
     [∀ₛ∃!]-to[∀ₛ∃] proof =
       ([∀ₛ]-intro(\{x} → xinD ↦
-        [∧]-elimₗ([∀ₛ]-elim proof {x} xinD)
+        [∧].elimₗ([∀ₛ]-elim proof {x} xinD)
       ))
 
     -- The construction of a meta-function in the meta-logic from a function in the set theory
     fnset-witness : ∀{D} → (f : Domain) → ⦃ _ : Proof(Total(D)(f)) ⦄ → Function
-    fnset-witness f ⦃ proof ⦄ = [∃]-fn-witness ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] (proof) ⦄
+    fnset-witness f ⦃ proof ⦄ = [∃]-fn-witness ⦃ [↔].elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] (proof) ⦄
 
     fnset-value : ∀{D} → (f : Domain) → ⦃ proof : Proof(Total(D)(f)) ⦄ → Proof(∀ₛ(D)(x ↦ (x , fnset-witness f(x)) ∈ f))
-    fnset-value{D} f ⦃ proof ⦄ = [∃]-fn-proof ⦃ [↔]-elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] (proof) ⦄
+    fnset-value{D} f ⦃ proof ⦄ = [∃]-fn-proof ⦃ [↔].elimₗ [∃]-unrelatedᵣ-[→]ᵣ-inside-[∀ₛ] (proof) ⦄
 
     fnset-proof : ∀{D} → (f : Domain) → ⦃ _ : Proof(FunctionSet(f)) ⦄ → ⦃ total : Proof(Total(D)(f)) ⦄ → Proof(∀ₛ(D)(x ↦ ∀ₗ(y ↦ (fnset-witness{D} f ⦃ total ⦄ x ≡ y) ⟷ ((x , y) ∈ f))))
     fnset-proof{D} f ⦃ function ⦄ ⦃ total ⦄ =
       ([∀ₛ]-intro(\{x} → x∈D ↦
-        ([∀]-intro(\{y} →
-          ([↔]-intro
+        ([∀].intro(\{y} →
+          ([↔].intro
             (xy∈f ↦
-              ([→]-elim
-                ([∀]-elim([∀]-elim([∀]-elim function{x}) {fnset-witness f(x)}) {y})
-                ([∧]-intro
+              ([→].elim
+                ([∀].elim([∀].elim([∀].elim function{x}) {fnset-witness f(x)}) {y})
+                ([∧].intro
                   ([∀ₛ]-elim(fnset-value f) {x} (x∈D))
                   (xy∈f)
                 )
@@ -877,7 +864,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
             )
 
             (fx≡y ↦
-              [≡]-elimᵣ (fx≡y) ([∀ₛ]-elim (fnset-value(f)) {x} (x∈D))
+              [≡].elimᵣ (fx≡y) ([∀ₛ]-elim (fnset-value(f)) {x} (x∈D))
             )
           )
         ))
@@ -886,8 +873,8 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
     [→ₛₑₜ]-witness : ∀{A B} → (f : Domain) → ⦃ _ : Proof(f ∈ (A →ₛₑₜ B)) ⦄ → Function
     [→ₛₑₜ]-witness f ⦃ proof ⦄ (x) =
       (fnset-witness f
-        ⦃ [∧]-elimᵣ([∧]-elimᵣ([↔]-elimᵣ
-          ([∀]-elim([∀]-elim filter-inclusion))
+        ⦃ [∧].elimᵣ([∧].elimᵣ([↔].elimᵣ
+          ([∀].elim([∀].elim filter-inclusion))
           (proof)
         )) ⦄
         (x)
@@ -902,39 +889,39 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
 
     [∩]-inductive : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (Inductive(a) ∧ Inductive(b)) ⟶ Inductive(a ∩ b))))
     [∩]-inductive =
-      ([∀]-intro (\{a} →
-        ([∀]-intro (\{b} →
-          ([→]-intro(indaindb ↦
-            ([∧]-intro
+      ([∀].intro (\{a} →
+        ([∀].intro (\{b} →
+          ([→].intro(indaindb ↦
+            ([∧].intro
               -- ∅ is in
-              ([↔]-elimₗ
-                ([∀]-elim([∀]-elim([∀]-elim([∩]-inclusion){a}){b}){∅})
-                ([∧]-intro
-                  ([∧]-elimₗ([∧]-elimₗ indaindb))
-                  ([∧]-elimₗ([∧]-elimᵣ indaindb))
+              ([↔].elimₗ
+                ([∀].elim([∀].elim([∀].elim([∩]-inclusion){a}){b}){∅})
+                ([∧].intro
+                  ([∧].elimₗ([∧].elimₗ indaindb))
+                  ([∧].elimₗ([∧].elimᵣ indaindb))
                 )
               )
 
               -- 𝐒 is in
-              ([∀]-intro (\{x} →
-                ([→]-intro(x∈a∩b ↦
-                  ([↔]-elimₗ
-                    ([∀]-elim([∀]-elim([∀]-elim([∩]-inclusion){a}){b}){𝐒(x)})
-                    ([∧]-intro
+              ([∀].intro (\{x} →
+                ([→].intro(x∈a∩b ↦
+                  ([↔].elimₗ
+                    ([∀].elim([∀].elim([∀].elim([∩]-inclusion){a}){b}){𝐒(x)})
+                    ([∧].intro
                       -- 𝐒(x) ∈ a
-                      ([→]-elim([∀]-elim([∧]-elimᵣ([∧]-elimₗ indaindb)){x})(
+                      ([→].elim([∀].elim([∧].elimᵣ([∧].elimₗ indaindb)){x})(
                         -- x ∈ a
-                        [∧]-elimₗ([↔]-elimᵣ
-                          ([∀]-elim([∀]-elim([∀]-elim([∩]-inclusion){a}){b}){x})
+                        [∧].elimₗ([↔].elimᵣ
+                          ([∀].elim([∀].elim([∀].elim([∩]-inclusion){a}){b}){x})
                           (x∈a∩b)
                         )
                       ))
 
                       -- 𝐒(x) ∈ b
-                      ([→]-elim([∀]-elim([∧]-elimᵣ([∧]-elimᵣ indaindb)){x})(
+                      ([→].elim([∀].elim([∧].elimᵣ([∧].elimᵣ indaindb)){x})(
                         -- x ∈ b
-                        [∧]-elimᵣ([↔]-elimᵣ
-                          ([∀]-elim([∀]-elim([∀]-elim([∩]-inclusion){a}){b}){x})
+                        [∧].elimᵣ([↔].elimᵣ
+                          ([∀].elim([∀].elim([∀].elim([∩]-inclusion){a}){b}){x})
                           (x∈a∩b)
                         )
                       ))
@@ -950,9 +937,9 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
     -- postulate [⋂]-property : ∀{φ} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ s) ⟶ φ(x)) ⟶ φ(⋂ s))) TODO: MAybe not true
     [⋂]-inductive : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ s) ⟶ Inductive(x)) ⟶ Inductive(⋂ s)))
     [⋂]-inductive =
-      ([∀]-intro (\{s} →
-        ([→]-intro(allxxsindx ↦
-          ([∧]-intro
+      ([∀].intro (\{s} →
+        ([→].intro(allxxsindx ↦
+          ([∧].intro
             -- ∅ is in
             proof
 
@@ -965,14 +952,14 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
 
     [ℕ]-inductive : Proof(Inductive(ℕ))
     [ℕ]-inductive =
-      ([→]-elim
-        ([∀]-elim
+      ([→].elim
+        ([∀].elim
           [⋂]-inductive
           {filter(℘(inductiveSet)) Inductive}
         )
-        ([∀]-intro(\{x} →
-          ([→]-intro(x∈filter ↦
-            [∧]-elimᵣ(([↔]-elimᵣ([∀]-elim([∀]-elim filter-inclusion{℘(inductiveSet)}){x})) (x∈filter))
+        ([∀].intro(\{x} →
+          ([→].intro(x∈filter ↦
+            [∧].elimᵣ(([↔].elimᵣ([∀].elim([∀].elim filter-inclusion{℘(inductiveSet)}){x})) (x∈filter))
           ))
         ))
       )
@@ -985,7 +972,7 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
       postulate [ℕ]-recursive-function : ∀{z : Domain}{s : Domain → Domain → Domain} → Proof(∃ₛ!(ℕ →ₛₑₜ ℕ)(f ↦ ((𝟎 , z) ∈ f) ∧ (∀ₗ(n ↦ ∀ₗ(fn ↦ ((n , fn) ∈ f) ⟶ ((𝐒(n) , s(n)(fn)) ∈ f))))))
 
       [ℕ]-recursive-function-witness : Domain → BinaryOperator → Function
-      [ℕ]-recursive-function-witness z s = fnset-witness([∃ₛ!]-witness ⦃ f ⦄ ) ⦃ [∀ₛ]-elim ([∀]-elim filter-property) ([∃ₛ!]-domain ⦃ f ⦄) ⦄ where
+      [ℕ]-recursive-function-witness z s = fnset-witness([∃ₛ!]-witness ⦃ f ⦄ ) ⦃ [∀ₛ]-elim ([∀].elim filter-property) ([∃ₛ!]-domain ⦃ f ⦄) ⦄ where
         f = [ℕ]-recursive-function{z}{s}
 
       _+_ : Domain → Domain → Domain
@@ -1023,12 +1010,12 @@ module Proofs ⦃ signature : Signature ⦄ ⦃ axioms : ZF ⦄ where
     postulate [≤]-antisymmetry : Proof(Antisymmetry(ℕ)(_≤_))
     postulate [≤]-transitivity : Proof(Transitivity(ℕ)(_≤_))
 
-    instance
-      [𝐒]-type : Function.Type(𝐒)
-      [𝐒]-type = Function.Type.intro ℕ ℕ proof where
-        postulate proof : ∀{a} → a
+    -- instance
+    --   [𝐒]-type : Function.Type(𝐒)
+    --   [𝐒]-type = Function.Type.intro ℕ ℕ proof where
+    --     postulate proof : ∀{a} → a
 
-    postulate [𝐒]-injective : Proof(Injective(ℕ)(𝐒))
+    -- postulate [𝐒]-injective : Proof(Injective(ℕ)(𝐒))
 
     -- ∀ₛ(ℕ)(a ↦ ∀ₛ(ℕ)(b ↦ (a < b) ⟶ (𝐒(a) < 𝐒(b))))
     -- ∀ₛ(ℕ)(n ↦ 𝟎 ≢ 𝐒(n))

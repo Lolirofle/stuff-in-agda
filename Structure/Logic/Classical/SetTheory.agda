@@ -1,29 +1,28 @@
-import Structure.Logic.Classical.NaturalDeduction
+open import Functional using (id)
+import      Structure.Logic.Classical.NaturalDeduction
 
-module Structure.Logic.Classical.SetTheory {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} {ℓₘₒ} {Object} {obj} ⦃ sign : _ ⦄ ⦃ theory : _ ⦄ (_∈_ : Domain → Domain → Formula) where
-private module PredicateEq = Structure.Logic.Classical.NaturalDeduction.PredicateEq {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ} (Domain) {ℓₘₒ} {Object} (obj)
-open PredicateEq.Signature(sign)
-open PredicateEq.Theory(theory)
+module Structure.Logic.Classical.SetTheory {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic : _ ⦄ (_∈_ : Domain → Domain → Formula) where
+open Structure.Logic.Classical.NaturalDeduction.ClassicalLogic {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} (classicLogic)
 
 import      Lvl
 open import Syntax.Function
-open import Structure.Logic.Classical.SetTheory.BoundedQuantification ⦃ sign ⦄ ⦃ theory ⦄ (_∈_)
-open import Structure.Logic.Classical.SetTheory.Relation              ⦃ sign ⦄ ⦃ theory ⦄ (_∈_)
+open import Structure.Logic.Classical.SetTheory.BoundedQuantification ⦃ classicLogic ⦄ (_∈_)
+open import Structure.Logic.Classical.SetTheory.Relation              ⦃ classicLogic ⦄ (_∈_)
 open import Type
 
 [⊆]-reflexivity : Proof(∀ₗ(s ↦ s ⊆ s))
-[⊆]-reflexivity = [∀]-intro(\{_} → [∀]-intro(\{_} → [→].reflexivity))
+[⊆]-reflexivity = [∀].intro(\{_} → [∀].intro(\{_} → [→].reflexivity))
 
 [⊆]-transitivity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ⊆ b)∧(b ⊆ c) ⟶ (a ⊆ c)))))
 [⊆]-transitivity =
-  ([∀]-intro(\{a} →
-    ([∀]-intro(\{b} →
-      ([∀]-intro(\{c} →
-        ([→]-intro(abbc ↦
-          ([∀]-intro(\{x} →
+  ([∀].intro(\{a} →
+    ([∀].intro(\{b} →
+      ([∀].intro(\{c} →
+        ([→].intro(abbc ↦
+          ([∀].intro(\{x} →
             ([→].transitivity
-              ([∀]-elim([∧]-elimₗ abbc){x})
-              ([∀]-elim([∧]-elimᵣ abbc){x})
+              ([∀].elim([∧].elimₗ abbc){x})
+              ([∀].elim([∧].elimᵣ abbc){x})
             )
           ))
         ))
@@ -31,7 +30,7 @@ open import Type
     ))
   ))
 
-record SetEquality : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record SetEquality : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   field
     extensional : Proof(∀ₗ(s₁ ↦ ∀ₗ(s₂ ↦ ∀ₗ(x ↦ (x ∈ s₁) ⟷ (x ∈ s₂)) ⟷ (s₁ ≡ s₂))))
@@ -41,15 +40,15 @@ record SetEquality : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓ
   -- All sets that are defined using an equivalence of contained elements are unique
   unique-definition : ∀{φ : Domain → Formula} → Proof(Unique(S ↦ ∀ₗ(x ↦ (x ∈ S) ⟷ φ(x))))
   unique-definition{_} =
-    ([∀]-intro(\{S₁} →
-      ([∀]-intro(\{S₂} →
-        ([→]-intro(proof ↦
-          ([↔]-elimᵣ
-            ([∀]-elim([∀]-elim extensional{S₁}){S₂})
-            ([∀]-intro(\{x} →
+    ([∀].intro(\{S₁} →
+      ([∀].intro(\{S₂} →
+        ([→].intro(proof ↦
+          ([↔].elimᵣ
+            ([∀].elim([∀].elim extensional{S₁}){S₂})
+            ([∀].intro(\{x} →
               ([↔].transitivity
-                ([∀]-elim([∧]-elimₗ(proof)){x})
-                ([↔].commutativity([∀]-elim([∧]-elimᵣ(proof)){x}))
+                ([∀].elim([∧].elimₗ(proof)){x})
+                ([↔].commutativity([∀].elim([∧].elimᵣ(proof)){x}))
               )
             ))
           )
@@ -59,14 +58,14 @@ record SetEquality : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓ
 
   [⊆]-antisymmetry : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (b ⊆ a)∧(a ⊆ b) ⟶ (a ≡ b))))
   [⊆]-antisymmetry =
-    ([∀]-intro(\{a} →
-      ([∀]-intro(\{b} →
-        ([→]-intro(abba ↦
-          ([↔]-elimᵣ([∀]-elim([∀]-elim extensional{a}){b}))
-          ([∀]-intro(\{x} →
-            ([↔]-intro
-              ([→]-elim([∀]-elim([∧]-elimₗ abba){x}))
-              ([→]-elim([∀]-elim([∧]-elimᵣ abba){x}))
+    ([∀].intro(\{a} →
+      ([∀].intro(\{b} →
+        ([→].intro(abba ↦
+          ([↔].elimᵣ([∀].elim([∀].elim extensional{a}){b}))
+          ([∀].intro(\{x} →
+            ([↔].intro
+              ([→].elim([∀].elim([∧].elimₗ abba){x}))
+              ([→].elim([∀].elim([∧].elimᵣ abba){x}))
             )
           ))
         ))
@@ -75,7 +74,7 @@ record SetEquality : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓ
 
 -- Empty set
 -- The set consisting of no elements.
-record EmptySet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record EmptySet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   field
     ∅ : Domain
@@ -87,29 +86,29 @@ record EmptySet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ
 
   [∅]-inclusion-equiv : Proof(∀ₗ(x ↦ (x ∈ ∅) ⟷ ⊥))
   [∅]-inclusion-equiv =
-    ([∀]-intro (\{x} →
-      ([↔]-intro
-        ([⊥]-elim)
-        ([⊥]-intro
-          ([∀]-elim [∅]-inclusion{x})
+    ([∀].intro (\{x} →
+      ([↔].intro
+        ([⊥].elim)
+        ([¬].elim
+          ([∀].elim [∅]-inclusion{x})
         )
       )
     ))
 
   [∅]-subset : Proof(∀ₗ(s ↦ ∅ ⊆ s))
   [∅]-subset =
-    ([∀]-intro(\{s} →
-      ([∀]-intro(\{x} →
-        ([→]-intro(xin∅ ↦
-          [⊥]-elim ([↔]-elimᵣ([∀]-elim [∅]-inclusion-equiv {x}) (xin∅))
+    ([∀].intro(\{s} →
+      ([∀].intro(\{x} →
+        ([→].intro(xin∅ ↦
+          [⊥].elim ([↔].elimᵣ([∀].elim [∅]-inclusion-equiv {x}) (xin∅))
         ))
       ))
     ))
 
   postulate [∅]-subset-is-equal : Proof(∀ₗ(s ↦ (s ⊆ ∅) ⟶ (s ≡ ∅)))
   -- [∅]-subset-is-equal =
-  --   ([∀]-intro(\{s} →
-  --     ([→]-intro(s⊆∅ ↦
+  --   ([∀].intro(\{s} →
+  --     ([→].intro(s⊆∅ ↦
   --       
   --     ))
   --   ))
@@ -119,13 +118,13 @@ record EmptySet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ
 
   [∃ₛ]-of-[∅] : ∀{P : Domain → Formula} → Proof(¬(∃ₛ ∅ P))
   [∃ₛ]-of-[∅] =
-    ([¬]-intro(ep ↦
-      [∃ₛ]-elim(\{x} → x∈∅ ↦ _ ↦ [⊥]-elim([⊥]-intro ([∀]-elim [∅]-inclusion) x∈∅)) ep
+    ([¬].intro(ep ↦
+      [∃ₛ]-elim(\{x} → x∈∅ ↦ _ ↦ [⊥].elim([¬].elim ([∀].elim [∅]-inclusion) x∈∅)) ep
     ))
 
 -- Singleton set.
 -- A set consisting of only a single element.
-record SingletonSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record SingletonSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   field
     singleton : Domain → Domain
@@ -135,16 +134,16 @@ record SingletonSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ �
 
   singleton-contains-self : Proof(∀ₗ(s ↦ s ∈ singleton(s)))
   singleton-contains-self =
-    ([∀]-intro(\{s} →
-      ([↔]-elimₗ
-        ([∀]-elim([∀]-elim singleton-inclusion{s}){s})
-        ([≡]-intro)
+    ([∀].intro(\{s} →
+      ([↔].elimₗ
+        ([∀].elim([∀].elim singleton-inclusion{s}){s})
+        ([≡].intro)
       )
     ))
 
 -- Subset filtering.
 -- The subset of the specified set where all elements satisfy the specified formula.
-record FilterSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record FilterSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   field
     filter : Domain → (Domain → Formula) → Domain
@@ -154,10 +153,10 @@ record FilterSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓ�
 
   filter-subset : ∀{φ} → Proof(∀ₗ(s ↦ filter(s)(φ) ⊆ s))
   filter-subset =
-    ([∀]-intro(\{s} →
-      ([∀]-intro(\{x} →
-        ([→]-intro(xinfilter ↦
-          [∧]-elimₗ([↔]-elimᵣ([∀]-elim([∀]-elim filter-inclusion{s}){x}) (xinfilter))
+    ([∀].intro(\{s} →
+      ([∀].intro(\{x} →
+        ([→].intro(xinfilter ↦
+          [∧].elimₗ([↔].elimᵣ([∀].elim([∀].elim filter-inclusion{s}){x}) (xinfilter))
         ))
       ))
     ))
@@ -168,27 +167,27 @@ record FilterSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓ�
 
     filter-of-[∅] : ∀{φ} → Proof(filter(∅)(φ) ≡ ∅)
     filter-of-[∅] =
-      ([→]-elim
-        ([∀]-elim([∀]-elim [⊆]-antisymmetry))
-        ([∧]-intro
-          ([∀]-elim [∅]-subset)
-          ([∀]-elim filter-subset)
+      ([→].elim
+        ([∀].elim([∀].elim [⊆]-antisymmetry))
+        ([∧].intro
+          ([∀].elim [∅]-subset)
+          ([∀].elim filter-subset)
         )
       )
 
   filter-property : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₛ(filter(s)(φ)) φ))
   filter-property =
-    ([∀]-intro(\{s} →
-      ([∀]-intro(\{x} →
-        ([→]-intro(xinfilter ↦
-          [∧]-elimᵣ([↔]-elimᵣ([∀]-elim([∀]-elim filter-inclusion{s}){x}) (xinfilter))
+    ([∀].intro(\{s} →
+      ([∀].intro(\{x} →
+        ([→].intro(xinfilter ↦
+          [∧].elimᵣ([↔].elimᵣ([∀].elim([∀].elim filter-inclusion{s}){x}) (xinfilter))
         ))
       ))
     ))
 
 -- Power set.
 -- The set of all subsets of the specified set.
-record PowerSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record PowerSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   field
     ℘ : Domain → Domain
@@ -203,10 +202,10 @@ record PowerSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ
 
     [℘]-contains-empty : Proof(∀ₗ(s ↦ ∅ ∈ ℘(s)))
     [℘]-contains-empty =
-      ([∀]-intro(\{s} →
-        ([↔]-elimₗ
-          ([∀]-elim([∀]-elim [℘]-inclusion{s}){∅})
-          ([∀]-elim [∅]-subset{s})
+      ([∀].intro(\{s} →
+        ([↔].elimₗ
+          ([∀].elim([∀].elim [℘]-inclusion{s}){∅})
+          ([∀].elim [∅]-subset{s})
         )
       ))
 
@@ -217,16 +216,16 @@ record PowerSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ
 
   [℘]-contains-self : Proof(∀ₗ(s ↦ s ∈ ℘(s)))
   [℘]-contains-self =
-    ([∀]-intro(\{s} →
-      ([↔]-elimₗ
-        ([∀]-elim([∀]-elim [℘]-inclusion{s}){s})
-        ([∀]-elim [⊆]-reflexivity{s})
+    ([∀].intro(\{s} →
+      ([↔].elimₗ
+        ([∀].elim([∀].elim [℘]-inclusion{s}){s})
+        ([∀].elim [⊆]-reflexivity{s})
       )
     ))
 
 -- Union over arbitrary sets.
 -- Constructs a set which consists of elements which are in any of the specified sets.
-record SetUnionSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record SetUnionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   field
     ⋃ : Domain → Domain
@@ -252,7 +251,7 @@ record SetUnionSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓ
 
 -- Union operator.
 -- Constructs a set which consists of both elements from LHS and RHS.
-record UnionSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record UnionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   infixl 3000 _∪_
   field
@@ -286,7 +285,7 @@ record UnionSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ
 
 -- Intersection operator.
 -- Constructs a set which consists of elements which are in both LHS and RHS.
-record IntersectionSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record IntersectionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   infixl 3001 _∩_
   field
@@ -319,7 +318,7 @@ record IntersectionSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔
 
 -- "Without"-operator.
 -- Constructs a set which consists of elements which are in LHS, but not RHS.
-record WithoutSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record WithoutSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   infixl 3002 _∖_
   field
@@ -330,7 +329,7 @@ record WithoutSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓ�
 
 -- Intersection over arbitrary sets.
 -- Constructs a set which consists of elements which are in all of the specified sets.
-record SetIntersectionSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record SetIntersectionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   field
     ⋂ : Domain → Domain
@@ -351,7 +350,7 @@ record SetIntersectionSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.
 
   postulate [⋂]-subset : Proof(∀ₗ(s ↦ ∀ₛ(s)(x ↦ ⋂(s) ⊆ x)))
 
-record TupleSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record TupleSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   infixl 3002 _⨯_
   field
@@ -372,7 +371,7 @@ record TupleSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ
 
     swap : Domain → Domain
 
-record QuotientSet : Type{ℓₘₗ Lvl.⊔ ℓₘₒ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+record QuotientSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   field
     -- Quotient set.

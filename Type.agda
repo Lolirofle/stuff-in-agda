@@ -12,3 +12,7 @@ syntax typeAscript T x = x :of: T
 -- Returns the type of a certain value
 typeOf : ∀{T : Type} → T → Type
 typeOf {T} _ = T
+
+open import Agda.Primitive public
+  renaming (Setω to Typeω)
+
