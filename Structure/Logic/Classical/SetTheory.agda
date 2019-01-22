@@ -5,9 +5,12 @@ module Structure.Logic.Classical.SetTheory {ℓₗ} {Formula} {ℓₘₗ} {Proof
 open Structure.Logic.Classical.NaturalDeduction.ClassicalLogic {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} (classicLogic)
 
 import      Lvl
+open import Data.Tuple using () renaming (_⨯_ to _⨯ₘ_ ; _,_ to _,ₘ_)
+open import Functional using (_∘_)
 open import Syntax.Function
-open import Structure.Logic.Classical.SetTheory.BoundedQuantification ⦃ classicLogic ⦄ (_∈_)
-open import Structure.Logic.Classical.SetTheory.Relation              ⦃ classicLogic ⦄ (_∈_)
+open import Structure.Logic.Classical.SetTheory.SetBoundedQuantification ⦃ classicLogic ⦄ (_∈_)
+open import Structure.Logic.Classical.SetTheory.Relation                 ⦃ classicLogic ⦄ (_∈_)
+open import Structure.Logic.Constructive.Syntax.Algebra                  ⦃ classicLogic ⦄
 open import Type
 
 [⊆]-reflexivity : Proof(∀ₗ(s ↦ s ⊆ s))
@@ -30,12 +33,156 @@ open import Type
     ))
   ))
 
+[⊆]-transitivable : Transitivable(_⊆_)
+[⊆]-transitivable = Transitivity-to-Transitivable [⊆]-transitivity
+
+[⊆][≡ₛ]-antisymmetry : Proof(∀ₗ(x ↦ ∀ₗ(y ↦ ((x ⊇ y) ∧ (x ⊆ y)) ⟶ (x ≡ₛ y))))
+[⊆][≡ₛ]-antisymmetry =
+  ([∀].intro(\{a} →
+    ([∀].intro(\{b} →
+      ([→].intro(abba ↦
+        ([∀].intro(\{x} →
+          ([↔].intro
+            ([→].elim([∀].elim([∧].elimₗ abba){x}))
+            ([→].elim([∀].elim([∧].elimᵣ abba){x}))
+          )
+        ))
+      ))
+    ))
+  ))
+
+[≡ₛ]-to-[⊆] : Proof(∀ₗ(x ↦ ∀ₗ(y ↦ (x ≡ₛ y) ⟶ (x ⊆ y))))
+[≡ₛ]-to-[⊆] =
+  ([∀].intro(\{x} →
+    ([∀].intro(\{y} →
+      ([→].intro(x≡y ↦
+        ([∀].intro(\{a} →
+          [→].intro([↔].elimᵣ([∀].elim x≡y {a}))
+        ))
+      ))
+    ))
+  ))
+
+[≡ₛ]-to-[⊇] : Proof(∀ₗ(x ↦ ∀ₗ(y ↦ (x ≡ₛ y) ⟶ (x ⊇ y))))
+[≡ₛ]-to-[⊇] =
+  ([∀].intro(\{x} →
+    ([∀].intro(\{y} →
+      ([→].intro(x≡y ↦
+        ([∀].intro(\{a} →
+          [→].intro([↔].elimₗ([∀].elim x≡y {a}))
+        ))
+      ))
+    ))
+  ))
+
+[⊆][≡ₛ]-equivalence : Proof(∀ₗ(x ↦ ∀ₗ(y ↦ ((x ⊇ y) ∧ (x ⊆ y)) ⟷ (x ≡ₛ y))))
+[⊆][≡ₛ]-equivalence =
+  ([∀].intro(\{x} →
+    ([∀].intro(\{y} →
+      ([↔].intro
+        (x≡y ↦
+          ([∧].intro
+            ([→].elim([∀].elim([∀].elim [≡ₛ]-to-[⊇] {x}){y}) (x≡y))
+            ([→].elim([∀].elim([∀].elim [≡ₛ]-to-[⊆] {x}){y}) (x≡y))
+          )
+        )
+
+        ([→].elim([∀].elim([∀].elim [⊆][≡ₛ]-antisymmetry{x}){y}))
+      )
+    ))
+  ))
+
+[≡ₛ]-reflexivity : Proof(∀ₗ(s ↦ s ≡ₛ s))
+[≡ₛ]-reflexivity = [∀].intro(\{_} → [∀].intro(\{_} → [↔].reflexivity))
+
+[≡ₛ]-transitivity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ≡ₛ b)∧(b ≡ₛ c) ⟶ (a ≡ₛ c)))))
+[≡ₛ]-transitivity =
+  ([∀].intro(\{a} →
+    ([∀].intro(\{b} →
+      ([∀].intro(\{c} →
+        ([→].intro(abbc ↦
+          ([∀].intro(\{x} →
+            (
+              ([∀].elim([∧].elimₗ abbc){x})
+              🝖 ([∀].elim([∧].elimᵣ abbc){x})
+            )
+          ))
+        ))
+      ))
+    ))
+  ))
+
+[≡ₛ]-transitivable : Transitivable(_≡ₛ_)
+[≡ₛ]-transitivable = Transitivity-to-Transitivable [≡ₛ]-transitivity
+
+[≡ₛ]-symmetry : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ≡ₛ b) ⟶ (b ≡ₛ a))))
+[≡ₛ]-symmetry =
+  ([∀].intro(\{a} →
+    ([∀].intro(\{b} →
+      ([→].intro(ab ↦
+        ([∀].intro(\{x} →
+          ([↔].commutativity
+            ([∀].elim ab{x})
+          )
+        ))
+      ))
+    ))
+  ))
+
+[≡ₛ]-from-equiv : ∀{A B : Domain}{Af Bf : Domain → Formula} → Proof(∀ₗ(x ↦ (x ∈ A) ⟷ Af(x))) → Proof(∀ₗ(x ↦ (x ∈ B) ⟷ Bf(x))) → Proof(∀ₗ(x ↦ Af(x) ⟷ Bf(x))) → Proof(A ≡ₛ B)
+[≡ₛ]-from-equiv aeq beq afbf =
+  ([∀].intro(\{x} →
+    ([↔].transitivity
+      ([↔].transitivity
+        ([∀].elim aeq)
+        ([∀].elim afbf)
+      )
+      ([↔].commutativity ([∀].elim beq))
+    )
+  ))
+
 record SetEquality : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
   field
-    extensional : Proof(∀ₗ(s₁ ↦ ∀ₗ(s₂ ↦ ∀ₗ(x ↦ (x ∈ s₁) ⟷ (x ∈ s₂)) ⟷ (s₁ ≡ s₂))))
+    extensional : Proof(∀ₗ(s₁ ↦ ∀ₗ(s₂ ↦ (s₁ ≡ₛ s₂) ⟷ (s₁ ≡ s₂))))
 
-  postulate [≡]-from-subset : Proof(∀ₗ(x ↦ ∀ₗ(y ↦ ((x ⊇ y) ∧ (x ⊆ y)) ⟷ (x ≡ y))))
+  extensionalᵣ : ∀{s₁ s₂} → Proof(s₁ ≡ₛ s₂) → Proof(s₁ ≡ s₂)
+  extensionalᵣ{s₁}{s₂} (proof) = [↔].elimᵣ ([∀].elim([∀].elim extensional{s₁}){s₂}) (proof)
+
+  -- TODO: Use [⊆][≡ₛ]-equivalence
+  [≡]-from-subset : Proof(∀ₗ(x ↦ ∀ₗ(y ↦ ((x ⊇ y) ∧ (x ⊆ y)) ⟷ (x ≡ y))))
+  [≡]-from-subset =
+    ([∀].intro(\{x} →
+      ([∀].intro(\{y} →
+        ([↔].intro
+          (x≡y ↦ [∧].intro
+            ([→].elim ([∀].elim ([∀].elim ([≡]-implies-when-reflexive [⊆]-reflexivity) {x}) {y}) (x≡y))
+            ([→].elim ([∀].elim ([∀].elim ([≡]-implies-when-reflexive [⊆]-reflexivity) {x}) {y}) (x≡y))
+          )
+
+          (lr ↦
+            ([↔].elimᵣ
+              ([∀].elim([∀].elim extensional{x}){y})
+              ([∀].intro(\{a} →
+                ([↔].intro
+                  ([→].elim([∀].elim([∧].elimₗ(lr)){a}))
+                  ([→].elim([∀].elim([∧].elimᵣ(lr)){a}))
+                )
+              ))
+            )
+          )
+        )
+      ))
+    )) where
+      [≡]-implies-when-reflexive : ∀{_▫_ : Domain → Domain → Formula} → Proof(∀ₗ(x ↦ x ▫ x)) → Proof(∀ₗ(x ↦ ∀ₗ(y ↦ (x ≡ y) ⟶ (x ▫ y))))
+      [≡]-implies-when-reflexive {_▫_} ([▫]-reflexivity) =
+        ([∀].intro(\{x} →
+          ([∀].intro(\{y} →
+            ([→].intro(x≡y ↦
+              [≡].elimᵣ{x ▫_} (x≡y) ([∀].elim [▫]-reflexivity{x})
+            ))
+          ))
+        ))
 
   -- All sets that are defined using an equivalence of contained elements are unique
   unique-definition : ∀{φ : Domain → Formula} → Proof(Unique(S ↦ ∀ₗ(x ↦ (x ∈ S) ⟷ φ(x))))
@@ -56,6 +203,7 @@ record SetEquality : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
       ))
     ))
 
+  -- TODO: Use [⊆][≡ₛ]-antisymmetry
   [⊆]-antisymmetry : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (b ⊆ a)∧(a ⊆ b) ⟶ (a ≡ b))))
   [⊆]-antisymmetry =
     ([∀].intro(\{a} →
@@ -82,8 +230,6 @@ record EmptySet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   field
     [∅]-inclusion : Proof(∀ₗ(x ↦ x ∉ ∅))
 
-  postulate [⊆]-minimum : Proof(∀ₗ(min ↦ ∀ₗ(s ↦ min ⊆ s) ⟷ (min ≡ ∅)))
-
   [∅]-inclusion-equiv : Proof(∀ₗ(x ↦ (x ∈ ∅) ⟷ ⊥))
   [∅]-inclusion-equiv =
     ([∀].intro (\{x} →
@@ -105,13 +251,44 @@ record EmptySet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
       ))
     ))
 
-  postulate [∅]-subset-is-equal : Proof(∀ₗ(s ↦ (s ⊆ ∅) ⟶ (s ≡ ∅)))
-  -- [∅]-subset-is-equal =
-  --   ([∀].intro(\{s} →
-  --     ([→].intro(s⊆∅ ↦
-  --       
-  --     ))
-  --   ))
+  [∅]-subset-is-equal : Proof(∀ₗ(s ↦ (s ⊆ ∅) ⟶ (s ≡ₛ ∅)))
+  [∅]-subset-is-equal =
+    ([∀].intro(\{s} →
+      ([→].intro(s⊆∅ ↦
+        ([→].elim
+          ([∀].elim([∀].elim [⊆][≡ₛ]-antisymmetry{s}){∅})
+          ([∧].intro
+            ([∀].elim [∅]-subset{s})
+            (s⊆∅)
+          )
+        )
+      ))
+    ))
+
+  [⊆]-minimum : Proof(∀ₗ(min ↦ ∀ₗ(s ↦ min ⊆ s) ⟷ (min ≡ₛ ∅)))
+  [⊆]-minimum =
+    ([∀].intro(\{min} →
+      ([↔].intro
+        (min≡∅ ↦
+          ([∀].intro(\{s} →
+            ([→].elim
+              ([∀].elim([∀].elim([∀].elim [⊆]-transitivity {min}){∅}){s})
+              ([∧].intro
+                ([→].elim ([∀].elim([∀].elim [≡ₛ]-to-[⊆] {min}){∅}) (min≡∅))
+                ([∀].elim [∅]-subset {s})
+              )
+            )
+          ))
+        )
+
+        (asmin⊆s ↦
+          ([→].elim
+            ([∀].elim [∅]-subset-is-equal{min})
+            ([∀].elim asmin⊆s{∅})
+          )
+        )
+      )
+    ))
 
   [⊆]-minima : Proof(∀ₗ(s ↦ ∅ ⊆ s))
   [⊆]-minima = [∅]-subset
@@ -130,14 +307,14 @@ record SingletonSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     singleton : Domain → Domain
 
   field
-    singleton-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(x ↦ (x ∈ singleton(a)) ⟷ (x ≡ a))))
+    singleton-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(x ↦ (x ∈ singleton(a)) ⟷ (x ≡ₛ a))))
 
   singleton-contains-self : Proof(∀ₗ(s ↦ s ∈ singleton(s)))
   singleton-contains-self =
     ([∀].intro(\{s} →
       ([↔].elimₗ
         ([∀].elim([∀].elim singleton-inclusion{s}){s})
-        ([≡].intro)
+        ([∀].elim [≡ₛ]-reflexivity{s})
       )
     ))
 
@@ -161,14 +338,13 @@ record FilterSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
       ))
     ))
 
-  module _ ⦃ _ : EmptySet ⦄ ⦃ _ : SetEquality ⦄ where
+  module _ ⦃ _ : EmptySet ⦄ where
     open EmptySet ⦃ ... ⦄
-    open SetEquality ⦃ ... ⦄
 
-    filter-of-[∅] : ∀{φ} → Proof(filter(∅)(φ) ≡ ∅)
+    filter-of-[∅] : ∀{φ} → Proof(filter(∅)(φ) ≡ₛ ∅)
     filter-of-[∅] =
       ([→].elim
-        ([∀].elim([∀].elim [⊆]-antisymmetry))
+        ([∀].elim([∀].elim [⊆][≡ₛ]-antisymmetry))
         ([∧].intro
           ([∀].elim [∅]-subset)
           ([∀].elim filter-subset)
@@ -195,10 +371,8 @@ record PowerSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   field
     [℘]-inclusion : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s))))
 
-
-  module _ ⦃ _ : SetEquality ⦄ ⦃ _ : EmptySet ⦄ where
+  module _ ⦃ _ : EmptySet ⦄ where
     open EmptySet ⦃ ... ⦄
-    open SetEquality ⦃ ... ⦄
 
     [℘]-contains-empty : Proof(∀ₗ(s ↦ ∅ ∈ ℘(s)))
     [℘]-contains-empty =
@@ -212,7 +386,7 @@ record PowerSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     module _ ⦃ _ : SingletonSet ⦄ where
       open SingletonSet ⦃ ... ⦄
 
-      postulate [℘]-of-[∅] : Proof(℘(∅) ≡ singleton(∅))
+      postulate [℘]-of-[∅] : Proof(℘(∅) ≡ₛ singleton(∅))
 
   [℘]-contains-self : Proof(∀ₗ(s ↦ s ∈ ℘(s)))
   [℘]-contains-self =
@@ -233,19 +407,16 @@ record SetUnionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   field
     [⋃]-inclusion : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₛ(ss)(s ↦ x ∈ s))))
 
-  module _ ⦃ _ : SetEquality ⦄ where
-    open SetEquality ⦃ ... ⦄
+  postulate [⋃]-containing-max : Proof(∀ₗ(s ↦ ∀ₛ(s)(max ↦ ∀ₛ(s)(x ↦ x ⊆ max) ⟶ (⋃(s) ≡ₛ max))))
 
-    postulate [⋃]-containing-max : Proof(∀ₗ(s ↦ ∀ₛ(s)(max ↦ ∀ₛ(s)(x ↦ x ⊆ max) ⟶ (⋃(s) ≡ max))))
+  module _ ⦃ _ : EmptySet ⦄ where
+    open EmptySet ⦃ ... ⦄
 
-    module _ ⦃ _ : EmptySet ⦄ where
-      open EmptySet ⦃ ... ⦄
-
-      postulate [⋃]-of-[∅] : Proof(⋃(∅) ≡ ∅)
-      -- [⋃]-of-[∅] =
-      --   ([⋃]-inclusion
-      --   )
-      --   [∃ₛ]-of-[∅]
+    postulate [⋃]-of-[∅] : Proof(⋃(∅) ≡ₛ ∅)
+    -- [⋃]-of-[∅] =
+    --   ([⋃]-inclusion
+    --   )
+    --   [∃ₛ]-of-[∅]
 
   postulate [⋃]-subset : Proof(∀ₗ(s ↦ ∀ₛ(s)(x ↦ x ⊆ ⋃(s))))
 
@@ -260,28 +431,32 @@ record UnionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   field
     [∪]-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∪ b)) ⟷ (x ∈ a)∨(x ∈ b)))))
 
-  module _ ⦃ _ : SetEquality ⦄ where
-    open SetEquality ⦃ ... ⦄
+  [∪]-commutativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∪ b ≡ₛ b ∪ a)))
+  [∪]-commutativity =
+    ([∀].intro(\{a} →
+      ([∀].intro(\{b} →
+        ([∀].intro(\{x} →
+          ([↔].intro
+            (([↔].elimₗ ([∀].elim ([∀].elim ([∀].elim [∪]-inclusion)))) ∘ [∨].commutativity ∘ ([↔].elimᵣ ([∀].elim ([∀].elim ([∀].elim [∪]-inclusion)))))
+            (([↔].elimₗ ([∀].elim ([∀].elim ([∀].elim [∪]-inclusion)))) ∘ [∨].commutativity ∘ ([↔].elimᵣ ([∀].elim ([∀].elim ([∀].elim [∪]-inclusion)))))
+          )
+        ))
+      ))
+    ))
 
-    postulate [∪]-commutativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∪ b ≡ b ∪ a)))
-    postulate [∪]-associativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ∪ b) ∪ c ≡ a ∪ (b ∪ c)))))
+  postulate [∪]-associativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ∪ b) ∪ c ≡ₛ a ∪ (b ∪ c)))))
 
-    module _ ⦃ _ : EmptySet ⦄ where
-      open EmptySet ⦃ ... ⦄
+  module _ ⦃ _ : EmptySet ⦄ where
+    open EmptySet ⦃ ... ⦄
 
-      postulate [∪]-identityₗ : Proof(∀ₗ(s ↦ ∅ ∪ s ≡ s))
-      postulate [∪]-identityᵣ : Proof(∀ₗ(s ↦ s ∪ ∅ ≡ s))
+    postulate [∪]-identityₗ : Proof(∀ₗ(s ↦ ∅ ∪ s ≡ₛ s))
+    postulate [∪]-identityᵣ : Proof(∀ₗ(s ↦ s ∪ ∅ ≡ₛ s))
 
   postulate [∪]-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ⊆ a ∪ b)))
   postulate [∪]-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ b ⊆ a ∪ b)))
-
-  module _ ⦃ _ : SetEquality ⦄ where
-    open SetEquality ⦃ ... ⦄
-
-    postulate [∪]-of-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (b ⊆ a) ⟶ (a ∪ b ≡ a)))))
-    postulate [∪]-of-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(b ↦ (a ⊆ b) ⟶ (a ∪ b ≡ b)))))
-    postulate [∪]-of-self : Proof(∀ₗ(s ↦ s ∪ s ≡ s))
-
+  postulate [∪]-of-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (b ⊆ a) ⟶ (a ∪ b ≡ₛ a))))
+  postulate [∪]-of-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ⊆ b) ⟶ (a ∪ b ≡ₛ b))))
+  postulate [∪]-of-self : Proof(∀ₗ(s ↦ s ∪ s ≡ₛ s))
 
 -- Intersection operator.
 -- Constructs a set which consists of elements which are in both LHS and RHS.
@@ -294,27 +469,21 @@ record IntersectionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   field
     [∩]-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∩ b)) ⟷ (x ∈ a)∧(x ∈ b)))))
 
-  module _ ⦃ _ : SetEquality ⦄ where
-    open SetEquality ⦃ ... ⦄
+  postulate [∩]-commutativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ≡ₛ b ∩ a)))
+  postulate [∩]-associativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ∩ b) ∩ c ≡ₛ a ∩ (b ∩ c)))))
 
-    postulate [∩]-commutativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ≡ b ∩ a)))
-    postulate [∩]-associativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ∩ b) ∩ c ≡ a ∩ (b ∩ c)))))
+  module _ ⦃ _ : EmptySet ⦄ where
+    open EmptySet ⦃ ... ⦄
 
-    module _ ⦃ _ : EmptySet ⦄ where
-      open EmptySet ⦃ ... ⦄
-
-      postulate [∩]-annihilatorₗ : Proof(∀ₗ(s ↦ ∅ ∩ s ≡ ∅))
-      postulate [∩]-annihilatorᵣ : Proof(∀ₗ(s ↦ s ∩ ∅ ≡ s))
+    postulate [∩]-annihilatorₗ : Proof(∀ₗ(s ↦ ∅ ∩ s ≡ₛ ∅))
+    postulate [∩]-annihilatorᵣ : Proof(∀ₗ(s ↦ s ∩ ∅ ≡ₛ s))
 
   postulate [∩]-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ⊆ a)))
   postulate [∩]-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ⊆ b)))
 
-  module _ ⦃ _ : SetEquality ⦄ where
-    open SetEquality ⦃ ... ⦄
-
-    postulate [∩]-of-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (b ⊆ a) ⟶ (a ∩ b ≡ b))))
-    postulate [∩]-of-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ⊆ b) ⟶ (a ∩ b ≡ a))))
-    postulate [∩]-of-self : Proof(∀ₗ(s ↦ s ∩ s ≡ s))
+  postulate [∩]-of-subsetₗ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (b ⊆ a) ⟶ (a ∩ b ≡ₛ b))))
+  postulate [∩]-of-subsetᵣ : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ⊆ b) ⟶ (a ∩ b ≡ₛ a))))
+  postulate [∩]-of-self : Proof(∀ₗ(s ↦ s ∩ s ≡ₛ s))
 
 -- "Without"-operator.
 -- Constructs a set which consists of elements which are in LHS, but not RHS.
@@ -327,6 +496,26 @@ record WithoutSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   field
     [∖]-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∖ b)) ⟷ (x ∈ a)∧(x ∉ b)))))
 
+  postulate [∖]-of-disjoint : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ Disjoint(a)(b) ⟶ (a ∖ b ≡ₛ a)))))
+
+  module _ ⦃ _ : IntersectionSet ⦄ where
+    open IntersectionSet ⦃ ... ⦄
+
+    postulate [∖]-of-intersection : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ a ∖ (a ∩ b) ≡ₛ a ∖ b))))
+
+  module _ ⦃ _ : EmptySet ⦄ where
+    open EmptySet ⦃ ... ⦄
+
+    postulate [∖]-annihilatorₗ : Proof(∀ₗ(s ↦ ∅ ∖ s ≡ₛ ∅))
+    postulate [∖]-identityᵣ : Proof(∀ₗ(s ↦ s ∖ ∅ ≡ₛ s))
+    postulate [∖]-subset : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (a ⊆ b) ⟶ (a ∖ b ≡ₛ ∅)))))
+    postulate [∖]-of-self : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ a ∖ a ≡ₛ ∅))))
+
+  module _ ⦃ _ : SingletonSet ⦄ where
+    open SingletonSet ⦃ ... ⦄
+
+    postulate [∖]-of-singleton : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∖ singleton(b))) ⟷ (x ∈ a)∧(x ≢ b)))))
+
 -- Intersection over arbitrary sets.
 -- Constructs a set which consists of elements which are in all of the specified sets.
 record SetIntersectionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
@@ -337,18 +526,97 @@ record SetIntersectionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   field
     [⋂]-inclusion : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋂(ss)) ⟷ ∀ₛ(ss)(s ↦ x ∈ s))))
 
-  module _ ⦃ _ : SetEquality ⦄ where
-    open SetEquality ⦃ ... ⦄
+  postulate [⋂]-containing-min : Proof(∀ₗ(s ↦ ∀ₛ(s)(min ↦ ∀ₛ(s)(x ↦ min ⊆ x) ⟶ (⋂(s) ≡ₛ min))))
 
-    postulate [⋂]-containing-min : Proof(∀ₗ(s ↦ ∀ₛ(s)(min ↦ ∀ₛ(s)(x ↦ min ⊆ x) ⟶ (⋂(s) ≡ min))))
+  module _ ⦃ _ : EmptySet ⦄ where
+    open EmptySet ⦃ ... ⦄
 
-    module _ ⦃ _ : EmptySet ⦄ where
-      open EmptySet ⦃ ... ⦄
-
-      postulate [⋂]-containing-disjoint : Proof(∀ₗ(s ↦ ∃ₛ(s)(a ↦ ∃ₛ(s)(b ↦ Disjoint(a)(b))) ⟶ (⋂(s) ≡ ∅)))
-      postulate [⋂]-containing-[∅] : Proof(∀ₗ(s ↦ (∅ ∈ s) ⟶ (⋂(s) ≡ ∅)))
+    postulate [⋂]-containing-disjoint : Proof(∀ₗ(s ↦ ∃ₛ(s)(a ↦ ∃ₛ(s)(b ↦ Disjoint(a)(b))) ⟶ (⋂(s) ≡ₛ ∅)))
+    postulate [⋂]-containing-[∅] : Proof(∀ₗ(s ↦ (∅ ∈ s) ⟶ (⋂(s) ≡ₛ ∅)))
 
   postulate [⋂]-subset : Proof(∀ₗ(s ↦ ∀ₛ(s)(x ↦ ⋂(s) ⊆ x)))
+
+-- Set of all sets.
+record UniversalSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
+  constructor intro
+  field
+    𝐔 : Domain
+
+  field
+    [𝐔]-inclusion : Proof(∀ₗ(x ↦ (x ∈ 𝐔)))
+
+  [𝐔]-inclusion-equiv : Proof(∀ₗ(x ↦ (x ∈ 𝐔) ⟷ ⊤))
+  [𝐔]-inclusion-equiv =
+    ([∀].intro(\{x} →
+      ([↔].intro
+        (_ ↦ [∀].elim [𝐔]-inclusion)
+        (_ ↦ [⊤].intro)
+      )
+    ))
+
+  [𝐔]-subset : Proof(∀ₗ(x ↦ x ⊆ 𝐔))
+  [𝐔]-subset =
+    ([∀].intro(\{x} →
+      ([∀].intro(\{a} →
+        ([→].intro(_ ↦
+          [∀].elim [𝐔]-inclusion
+        ))
+      ))
+    ))
+
+  [𝐔]-superset : Proof(∀ₗ(x ↦ (x ⊇ 𝐔) ⟶ (x ≡ₛ 𝐔)))
+  [𝐔]-superset =
+    ([∀].intro(\{x} →
+      ([→].intro(superset ↦
+        ([→].elim
+          ([∀].elim ([∀].elim [⊆][≡ₛ]-antisymmetry))
+          ([∧].intro
+            superset
+            ([∀].elim [𝐔]-subset)
+          )
+        )
+      ))
+    ))
+
+  [𝐔]-contains-self : Proof(𝐔 ∈ 𝐔)
+  [𝐔]-contains-self = [∀].elim [𝐔]-inclusion
+
+  [𝐔]-nonempty : Proof(∃ₗ(x ↦ (x ∈ 𝐔)))
+  [𝐔]-nonempty = [∃].intro [𝐔]-contains-self
+
+  module _ ⦃ _ : FilterSet ⦄ where
+    open FilterSet ⦃ ... ⦄
+
+    unrestricted-comprehension-contradiction : Proof(⊥)
+    unrestricted-comprehension-contradiction =
+      ([∨].elim
+        (contains ↦
+          ([¬].elim
+            ([∧].elimᵣ([↔].elimᵣ
+              ([∀].elim([∀].elim filter-inclusion{𝐔}){not-in-self})
+              contains
+            ))
+            contains
+          )
+        )
+
+        (contains-not ↦
+          ([¬].elim
+            (contains-not)
+            ([↔].elimₗ
+              ([∀].elim([∀].elim filter-inclusion{𝐔}){not-in-self})
+              ([∧].intro
+                ([∀].elim [𝐔]-inclusion {not-in-self})
+                (contains-not)
+              )
+            )
+          )
+        )
+
+        (excluded-middle{not-in-self ∈ not-in-self})
+      ) where
+        not-in-self : Domain
+        not-in-self = filter(𝐔) (x ↦ (x ∉ x))
 
 record TupleSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
@@ -361,15 +629,21 @@ record TupleSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     -- An ordered pair of values.
     _,_ : Domain → Domain → Domain
 
-    -- TODO: Does this help? Maybe not
-    -- ∀l∀r∃!x∃!(a∊(l,r)). x ∈ a
-    -- ∀l∀r∃!y∀(a∊(l,r)). y ∈ a
-
-    left  : Domain → Domain
+    left : Domain → Domain
 
     right : Domain → Domain
 
-    swap : Domain → Domain
+  swap : Domain → Domain
+  swap(x) = (right(x) , left(x))
+
+  field
+    [⨯]-inclusion : Proof(∀ₗ(A ↦ ∀ₗ(B ↦ ∀ₗ(x ↦ (x ∈ (A ⨯ B)) ⟷ ∃ₛ(A)(a ↦ ∃ₛ(B)(b ↦ x ≡ (a , b))))))) -- TODO: Maybe left and right is not neccessary because one can just take the witnesses of this
+    left-equality : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ left(a , b) ≡ a)))
+    right-equality : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ right(a , b) ≡ b)))
+
+  postulate [⨯]-tuples : Proof(∀ₗ(A ↦ ∀ₗ(B ↦ ∀ₛ(A)(a ↦ ∀ₛ(B)(b ↦ (a , b) ∈ (A ⨯ B))))))
+  postulate swap-equality : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ swap(a , b) ≡ (b , a))))
+  postulate left-right-identity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (left(a , b) , right(a , b)) ≡ (a , b))))
 
 record QuotientSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   constructor intro
@@ -380,11 +654,11 @@ record QuotientSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
 
     -- Equivalence class
     -- The set of elements which are equivalent to the specified one.
-    [_of_,_] : Domain → Domain → BinaryRelator → Domain
+    [_of_] : Domain → (Domain ⨯ₘ BinaryRelator) → Domain
 
-  -- field
-    -- [/]-inclusion : Proof(∀ₗ(x ↦ (x ∈ (T / (_≅_))) ⟷ (∃ₗ(y ↦ x ≡ [ y of T , (_≅_) ]))))
-    -- eqClass-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ∈ [ b of T , (_≅_) ]) ⟷ (a ≅ b))))
+  field
+    [/]-inclusion : ∀{T}{_≅_} → Proof(∀ₗ(x ↦ (x ∈ (T / (_≅_))) ⟷ (∃ₗ(y ↦ x ≡ [ y of (T ,ₘ (_≅_)) ]))))
+    eqClass-inclusion : ∀{T}{_≅_} → Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ∈ [ b of (T ,ₘ (_≅_)) ]) ⟷ (a ≅ b))))
 
   -- module Quotient {T : Domain} {_≅_ : BinaryRelator} ⦃ equivalence : Proof(Structure.Relator.Properties.Equivalence(T)(_≅_)) ⦄ where
   --   open Structure.Relator.Properties

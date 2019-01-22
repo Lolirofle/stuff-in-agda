@@ -123,10 +123,12 @@ module Propositional where
       ⊤    : Formula
       _∧_  : Formula → Formula → Formula
       _⟶_ : Formula → Formula → Formula
-      _⟵_ : Formula → Formula → Formula
       _⟷_ : Formula → Formula → Formula
       _∨_  : Formula → Formula → Formula
       ¬_   : Formula → Formula
+
+    _⟵_ : Formula → Formula → Formula
+    _⟵_ = swap _⟶_
 
   -- A theory of constructive propositional logic expressed using natural deduction rules
   record Theory ⦃ sign : Signature ⦄ : Type{ℓₘₗ Lvl.⊔ ℓₗ} where

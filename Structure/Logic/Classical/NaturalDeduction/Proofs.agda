@@ -63,10 +63,104 @@ open import Functional hiding (Domain)
     ([∃].elim(\{x} → fx ↦ [∃].intro{_}{x}([↔].elimᵣ (proof{x}) (fx))))
   )
 
-postulate [∨][∧]-distributivityₗ : ∀{a b c} → Proof((a ∨ (b ∧ c)) ⟷ (a ∨ b)∧(a ∨ c))
-postulate [∨][∧]-distributivityᵣ : ∀{a b c} → Proof(((a ∧ b) ∨ c) ⟷ (a ∨ c)∧(b ∨ c))
-postulate [∧][∨]-distributivityₗ : ∀{a b c} → Proof((a ∧ (b ∨ c)) ⟷ (a ∧ b)∨(a ∧ c))
-postulate [∧][∨]-distributivityᵣ : ∀{a b c} → Proof(((a ∨ b) ∧ c) ⟷ (a ∧ c)∨(b ∧ c))
+-- [→]-with-[∀] : ∀{p f g} → (∀{x} → Proof(f(x) ⟶ g(x))) → Proof((∀ₗ f) ⟶ (∀ₗ g))
+-- [→]-with-[∀] (proof) =
+
+-- [→]-with-[∀] : ∀{p f g} → (∀{x} → Proof(f(x) ⟶ g(x))) → Proof(∀ₗ(x ↦ p(x) ⟶ f(x))) → Proof(∀ₗ(x ↦ p(x) ⟶ g(x)))
+-- [→]-with-[∀] (proof) =
+
+[∨][∧]-distributivityₗ : ∀{a b c} → Proof((a ∨ (b ∧ c)) ⟷ (a ∨ b)∧(a ∨ c))
+[∨][∧]-distributivityₗ =
+  ([↔].intro
+    (a∨b∧a∨c ↦
+      ([∨].elim
+        (a ↦ [∨].introₗ a)
+        (b ↦
+          ([∨].elim
+            (a ↦ [∨].introₗ a)
+            (c ↦ [∨].introᵣ([∧].intro b c))
+            ([∧].elimᵣ a∨b∧a∨c)
+          )
+        )
+        ([∧].elimₗ a∨b∧a∨c)
+      )
+    )
+
+    (a∨b∧c ↦
+      ([∨].elim
+        (a   ↦ [∧].intro([∨].introₗ a)([∨].introₗ a))
+        (b∧c ↦ [∧].intro([∨].introᵣ([∧].elimₗ b∧c))([∨].introᵣ([∧].elimᵣ b∧c)))
+        (a∨b∧c)
+      )
+    )
+  )
+
+[∨][∧]-distributivityᵣ : ∀{a b c} → Proof(((a ∧ b) ∨ c) ⟷ (a ∨ c)∧(b ∨ c))
+[∨][∧]-distributivityᵣ =
+  ([↔].intro
+    (a∨c∧b∨c ↦
+      ([∨].elim
+        (a ↦
+          ([∨].elim
+            (b ↦ [∨].introₗ([∧].intro a b))
+            (c ↦ [∨].introᵣ c)
+            ([∧].elimᵣ a∨c∧b∨c)
+          )
+        )
+        (c ↦ [∨].introᵣ c)
+        ([∧].elimₗ a∨c∧b∨c)
+      )
+    )
+
+    (a∧b∨c ↦
+      ([∨].elim
+        (a∧b ↦ [∧].intro([∨].introₗ([∧].elimₗ a∧b))([∨].introₗ([∧].elimᵣ a∧b)))
+        (c   ↦ [∧].intro([∨].introᵣ c)([∨].introᵣ c))
+        (a∧b∨c)
+      )
+    )
+  )
+
+[∧][∨]-distributivityₗ : ∀{a b c} → Proof((a ∧ (b ∨ c)) ⟷ (a ∧ b)∨(a ∧ c))
+[∧][∨]-distributivityₗ =
+  ([↔].intro
+    (a∧b∨a∧c ↦
+      ([∨].elim
+        (a∧b ↦ [∧].intro([∧].elimₗ a∧b)([∨].introₗ([∧].elimᵣ a∧b)))
+        (a∧c ↦ [∧].intro([∧].elimₗ a∧c)([∨].introᵣ([∧].elimᵣ a∧c)))
+        (a∧b∨a∧c)
+      )
+    )
+
+    (a∧b∨c ↦
+      ([∨].elim
+        (b ↦ [∨].introₗ([∧].intro([∧].elimₗ a∧b∨c)(b)))
+        (c ↦ [∨].introᵣ([∧].intro([∧].elimₗ a∧b∨c)(c)))
+        ([∧].elimᵣ a∧b∨c)
+      )
+    )
+  )
+
+[∧][∨]-distributivityᵣ : ∀{a b c} → Proof(((a ∨ b) ∧ c) ⟷ (a ∧ c)∨(b ∧ c))
+[∧][∨]-distributivityᵣ =
+  ([↔].intro
+    (a∧c∨b∧c ↦
+      ([∨].elim
+        (a∧c ↦ [∧].intro([∨].introₗ([∧].elimₗ a∧c))([∧].elimᵣ a∧c))
+        (b∧c ↦ [∧].intro([∨].introᵣ([∧].elimₗ b∧c))([∧].elimᵣ b∧c))
+        (a∧c∨b∧c)
+      )
+    )
+
+    (a∨b∧c ↦
+      ([∨].elim
+        (a ↦ [∨].introₗ([∧].intro(a)([∧].elimᵣ a∨b∧c)))
+        (b ↦ [∨].introᵣ([∧].intro(b)([∧].elimᵣ a∨b∧c)))
+        ([∧].elimₗ a∨b∧c)
+      )
+    )
+  )
+
 postulate [≡]-substitute-this-is-almost-trivial : ∀{φ : Domain → Formula}{a b} → Proof(((a ≡ b) ∧ φ(a)) ⟷ φ(b))
 
 postulate [→][∧]-distributivityₗ : ∀{X Y Z} → Proof((X ⟶ (Y ∧ Z)) ⟷ ((X ⟶ Y) ∧ (X ⟶ Z)))

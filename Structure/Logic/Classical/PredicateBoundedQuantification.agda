@@ -1,7 +1,6 @@
 import Structure.Logic.Classical.NaturalDeduction
 
--- TODO: MAybe rename to PredicateBoundedQuantification
-module Structure.Logic.Classical.BoundedQuantification {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic : _ ⦄ where
+module Structure.Logic.Classical.PredicateBoundedQuantification {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic : _ ⦄ where
 open Structure.Logic.Classical.NaturalDeduction.ClassicalLogic {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} (classicLogic)
 
 open import Functional hiding (Domain)
@@ -85,7 +84,12 @@ Uniqueₚ(B)(P) = ∀ₚ(B)(x ↦ ∀ₚ(B)(y ↦ (P(x) ∧ P(y)) ⟶ (x ≡ y))
 
 postulate [∃ₚ!]-unique : ∀{B P} → ⦃ p : Proof(∃ₚ! B P) ⦄ → Proof(∀ₗ(x ↦ P(x) ⟶ (x ≡ [∃ₚ!]-witness{B}{P} ⦃ p ⦄)))
 
--- boundedClassicalLogicSignature : 
+boundedClassicalLogicSignature : (Domain → Formula) → Structure.Logic.Classical.NaturalDeduction.Domained.Predicate.Signature {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ} (Domain)
+boundedClassicalLogicSignature(B) =
+  record{
+    ∀ₗ = ∀ₚ(B) ;
+    ∃ₗ = ∃ₚ(B)
+  }
 
 -- TODO: This should make it possible to embed a theory inside of another theory (e.g. group theory in set theory), but does not work. How should I formulate something like this for it to work?
 {-
@@ -94,7 +98,7 @@ module _ (B : Domain → Formula) {ℓₒ₂} {Domain₂} (dom : Domain₂ → D
     boundedPredEqSignature : Structure.Logic.Classical.NaturalDeduction.Domained.Predicate.Signature {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ₂} (Domain₂)
     boundedPredEqSignature =
       record{
-        ∀ₗ = P ↦ ∀ₚ(B) (x ↦ P(dom⁻¹ x)) ;
+        ∀ₗ = P ↦ ∀ₗ(x ↦ B(x) ⟶ P(x)) ;
         ∃ₗ = P ↦ ∃ₚ(B) (x ↦ P(dom⁻¹ x))
       }
 

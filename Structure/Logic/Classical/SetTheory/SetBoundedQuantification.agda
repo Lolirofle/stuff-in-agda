@@ -1,14 +1,14 @@
 import Structure.Logic.Classical.NaturalDeduction
 
 -- TODO: MAybe rename to SetBoundedQuantification
-module Structure.Logic.Classical.SetTheory.BoundedQuantification {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic : _ ⦄ (_∈_ : Domain → Domain → Formula) where
+module Structure.Logic.Classical.SetTheory.SetBoundedQuantification {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic : _ ⦄ (_∈_ : Domain → Domain → Formula) where
 open Structure.Logic.Classical.NaturalDeduction.ClassicalLogic {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} (classicLogic)
 
 open import Functional hiding (Domain)
 open import Lang.Instance
 import      Lvl
 open import Type.Dependent
-open import Structure.Logic.Classical.BoundedQuantification {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic ⦄
+open import Structure.Logic.Classical.PredicateBoundedQuantification {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic ⦄
 
 -- Bounded universal quantifier
 ∀ₛ : Domain → (Domain → Formula) → Formula

@@ -124,13 +124,13 @@ module _ {ℓ} where
 
   ------------------------------------------
   -- Existential quantification (EXISTS)
-  {-
   record ∃ {ℓ}{X : Type{ℓ}} (Pred : X → Prop(ℓ)) : Prop(Lvl.𝐒(ℓ)) where
     inductive
     instance constructor [∃]-intro
     field
       [∃]-elim : ∀{P : X → Prop(ℓ)} → (∀{x : X} → Pred(x) → P(x)) → ∃(P)
 
+  {-
   record ∃ {ℓ}{X : Type{ℓ}} (Pred : X → Prop(ℓ)) : Prop(ℓ) where
     instance constructor [∃]-intro
     field
