@@ -9,6 +9,7 @@ open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
 open import Relator.Equals{Lvl.𝟎}
 open import Data.List.Relation.Membership{Lvl.𝟎} using (_∈_)
 
+-- EdgeClass(V)(E) means that E is a type which can represent an edge between vertices of type V.
 record EdgeClass (V : Set) (Self : Set) : Set where
   constructor edgeInstance
   field

@@ -14,8 +14,8 @@ open import Structure.Relator.Ordering{ℓ}{Lvl.𝟎}
 
 data _≤_ : ℕ → ℕ → Stmt where
   instance
-    [≤]-minimum : ∀{y}   → (𝟎 ≤ y)
-    [≤]-with-[𝐒]   : ∀{x y} → ⦃ _ : x ≤ y ⦄ → (𝐒(x) ≤ 𝐒(y))
+    [≤]-minimum  : ∀{y}   → (𝟎 ≤ y)
+    [≤]-with-[𝐒] : ∀{x y} → ⦃ _ : x ≤ y ⦄ → (𝐒(x) ≤ 𝐒(y))
 
 _<_ : ℕ → ℕ → Stmt
 _<_ a b = (𝐒(a) ≤ b)

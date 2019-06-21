@@ -10,6 +10,7 @@ open import Functional
 open import Logic.Propositional{ℓ}
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
+open import Numeral.Natural.Oper.Comparisons.Proofs{ℓ}
 open import Numeral.Natural.Relation.Order{ℓ}
 open import Numeral.Natural.Relation.Order.Proofs{ℓ}
 open import Relator.Equals
@@ -32,21 +33,42 @@ instance
       r{𝟎}   {y}    ([≤]-minimum)      = [≡]-intro
       r{𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = r{x}{y} (proof)
 
-instance -- TODO: Is it possible to reuse the proof of [≤]-computable?
+instance
   [≥]-computable : ComputablyDecidable{ℕ}(_≥_)
   [≥]-computable = ComputablyDecidable-intro decide ⦃ proof ⦄ where
     decide = (_≥?_)
 
     proof : ∀{x}{y} → (x ≥ y) ↔ ((x ≥? y) ≡ 𝑇)
-    proof{x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
-      l : ∀{x}{y} → (x ≥ y) ← ((x ≥? y) ≡ 𝑇)
-      l{_}   {𝟎}   ([≡]-intro) = [≤]-minimum
-      l{𝟎}   {𝐒(y)}()
-      l{𝐒(x)}{𝐒(y)}(proof)     = [≤]-with-[𝐒] ⦃ l{x}{y}(proof) ⦄
+    proof{x}{y} = ComputablyDecidable.proof (_≤_) {y}{x}
 
-      r : ∀{x}{y} → (x ≥ y) → ((x ≥? y) ≡ 𝑇)
-      r{x}   {𝟎}    ([≤]-minimum)      = [≡]-intro
-      r{𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = r{x}{y} (proof)
+instance
+  [<]-computable : ComputablyDecidable{ℕ}(_<_)
+  [<]-computable = ComputablyDecidable-intro decide ⦃ proof ⦄ where
+    decide = (_<?_)
 
--- TODO: [<]-computable
--- TODO: [>]-computable
+    proof : ∀{x}{y} → (x < y) ↔ ((x <? y) ≡ 𝑇)
+    proof{x}{y} rewrite [<?]-to-[≤?] {x}{y} = ComputablyDecidable.proof (_≤_) {𝐒(x)}{y}
+
+instance
+  [>]-computable : ComputablyDecidable{ℕ}(_>_)
+  [>]-computable = ComputablyDecidable-intro decide ⦃ proof ⦄ where
+    decide = (_>?_)
+
+    proof : ∀{x}{y} → (x > y) ↔ ((x >? y) ≡ 𝑇)
+    proof{x}{y} = ComputablyDecidable.proof (_<_) {y}{x}
+
+instance
+  [≰]-computable : ComputablyDecidable{ℕ}(_≰_)
+  [≰]-computable = ComputablyDecidable.negation (_≤_)
+
+instance
+  [≱]-computable : ComputablyDecidable{ℕ}(_≱_)
+  [≱]-computable = ComputablyDecidable.negation (_≥_)
+
+instance
+  [≮]-computable : ComputablyDecidable{ℕ}(_≮_)
+  [≮]-computable = ComputablyDecidable.negation (_<_)
+
+instance
+  [≯]-computable : ComputablyDecidable{ℕ}(_≯_)
+  [≯]-computable = ComputablyDecidable.negation (_>_)

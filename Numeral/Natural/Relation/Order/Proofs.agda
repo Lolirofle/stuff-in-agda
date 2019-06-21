@@ -8,11 +8,8 @@ open import Logic.Propositional.Theorems{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Induction{ℓ}
 open import Numeral.Natural.Relation.Order{ℓ}
-import      Numeral.Natural.Relation.Order.Existence         {ℓ} as [≤∃]
-open import Numeral.Natural.Relation.Order.Existence.Proofs{ℓ} using () renaming ([≤]-with-[𝐒] to [≤∃]-with-[𝐒])
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
@@ -23,21 +20,21 @@ open import Type
 -- TODO: The instance declarations probably do nothing for functions with arguments. Either make all the args implicit or remove the instance decls.
 -- TODO: A method for pattern matching: https://stackoverflow.com/questions/20682013/agda-why-am-i-unable-to-pattern-match-on-refl
 
-[≤]-equivalence : ∀{x y} → (x [≤∃].≤ y) ↔ (x ≤ y)
-[≤]-equivalence{x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
-  l : ∀{x y} → (x [≤∃].≤ y) ← (x ≤ y)
-  l{𝟎}   {y}    ([≤]-minimum)      = [∃]-intro(y) ⦃ [≡]-intro ⦄
-  l{𝐒(x)}{𝟎}    ()
-  l{𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [≤∃]-with-[𝐒] {x}{y} (l{x}{y} (proof))
+[<]-minimum : ∀{x : ℕ} → (0 < 𝐒(x))
+[<]-minimum {x} = [≤]-with-[𝐒] {0} ⦃ [≤]-minimum ⦄
 
-  r : ∀{x y} → (x [≤∃].≤ y) → (x ≤ y)
-  r{𝟎}   {y}    ([∃]-intro(z) ⦃ 𝟎+z≡y   ⦄) = [≤]-minimum
-  r{𝐒(x)}{𝟎}    ([∃]-intro(z) ⦃ ⦄)
-  r{𝐒(x)}{𝐒(y)} ([∃]-intro(z) ⦃ 𝐒x+z≡𝐒y ⦄) = [≤]-with-[𝐒] ⦃ r{x}{y} ([∃]-intro(z) ⦃ [𝐒]-injectivity(𝐒x+z≡𝐒y) ⦄ ) ⦄
+[≡]-to-[≤] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
+[≡]-to-[≤] {𝟎}   {_}    ([≡]-intro) = [≤]-minimum
+[≡]-to-[≤] {𝐒(x)}{𝐒(y)} ([≡]-intro) = [≤]-with-[𝐒] ⦃ [≡]-to-[≤] {x}{y} ([≡]-intro) ⦄
 
-[≤]-from-[≡] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
-[≤]-from-[≡] {𝟎}   {_}    ([≡]-intro) = [≤]-minimum
-[≤]-from-[≡] {𝐒(x)}{𝐒(y)} ([≡]-intro) = [≤]-with-[𝐒] ⦃ [≤]-from-[≡] {x}{y} ([≡]-intro) ⦄
+[≡]-to-[≥] : ∀{x y : ℕ} → (x ≡ y) → (x ≥ y)
+[≡]-to-[≥] = [≡]-to-[≤] ∘ symmetry
+
+[≰]-to-[≢] : ∀{x y : ℕ} → (x ≰ y) → (x ≢ y)
+[≰]-to-[≢] = contrapositiveᵣ [≡]-to-[≤]
+
+[≱]-to-[≢] : ∀{x y : ℕ} → (x ≱ y) → (x ≢ y)
+[≱]-to-[≢] = contrapositiveᵣ [≡]-to-[≥]
 
 [≤][0]ᵣ : ∀{x : ℕ} → (x ≤ 0) → (x ≡ 0)
 [≤][0]ᵣ {𝟎}    (_) = [≡]-intro
@@ -70,13 +67,9 @@ open import Type
 -- [≤]-with-[+]ₗ : ∀{x y z : ℕ} → (x ≤ y) → (z + x ≤ z + y)
 -- TODO: [≤]-with-[+] : ∀{x₁ y₁ : ℕ} → (x₁ ≤ y₁) → ∀{x₂ y₂ : ℕ} → (x₂ ≤ y₂) → (x₁ + x₂ ≤ y₁ + y₂)
 
-[≤]ₗ[+] : ∀{x y : ℕ} → (x + y ≤ x) → (y ≡ 𝟎)
-[≤]ₗ[+] {𝟎}               = [≤][0]ᵣ
-[≤]ₗ[+] {𝐒(x)}{y} (proof) = [≤]ₗ[+] {x} ([≤]-without-[𝐒] {x + y} {x} (proof))
-
 instance
   [≤]-reflexivity : Reflexivity (_≤_)
-  reflexivity ⦃ [≤]-reflexivity ⦄ = [≤]-from-[≡] [≡]-intro
+  reflexivity ⦃ [≤]-reflexivity ⦄ = [≡]-to-[≤] [≡]-intro
 
 instance
   [≤]-transitivity : Transitivity (_≤_)
@@ -94,7 +87,7 @@ instance
 
 instance
   [≤]-totality : SymmetricallyTotal(_≤_)
-  converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝟎}    = [∨]-introₗ ([≤]-from-[≡] [≡]-intro)
+  converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝟎}    = [∨]-introₗ ([≡]-to-[≤] [≡]-intro)
   converseTotal ⦃ [≤]-totality ⦄ {𝐒(a)}{𝟎}    = [∨]-introᵣ ([≤]-minimum)
   converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝐒(b)} = [∨]-introₗ ([≤]-minimum)
   converseTotal ⦃ [≤]-totality ⦄ {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ (proof ↦ [≤]-with-[𝐒] {a}{b} ⦃ proof ⦄)) ([∨]-introᵣ ∘ (proof ↦ [≤]-with-[𝐒] {b}{a} ⦃ proof ⦄)) (converseTotal ⦃ [≤]-totality ⦄ {a}{b})
@@ -122,8 +115,6 @@ instance
 [<]-to-[≱] : ∀{a b : ℕ} → (a ≱ b) ← (a < b)
 [<]-to-[≱] {a}{b} (𝐒a≤b) (b≤a) = [≥]-to-[≮] (b≤a) (𝐒a≤b)
 
-
-
 [<][0]ᵣ : ∀{x : ℕ} → (x ≮ 0)
 [<][0]ᵣ = [≤][0]ᵣ-negation
 
@@ -147,9 +138,6 @@ instance
       irreflexivity = [<]-irreflexivity
     }
 
-[<]-minimum : ∀{x : ℕ} → (0 < 𝐒(x))
-[<]-minimum {x} = [≤]-with-[𝐒] {0} ⦃ [≤]-minimum ⦄
-
 [<]-of-[𝐒] : ∀{x : ℕ} → (x < 𝐒(x))
 [<]-of-[𝐒] = reflexivity ⦃ [≤]-reflexivity ⦄
 
@@ -167,7 +155,7 @@ instance
   r{𝐒(x)} (𝟏≤𝐒x) (𝐒x≡𝟎) with [≡]-substitutionᵣ (𝐒x≡𝟎) {expr ↦ 1 ≤ expr} (𝟏≤𝐒x)
   ... | ()
 
-
+ -- [≤]-with-[𝐒]
 
 [≤]-to-[<][≡] : ∀{a b : ℕ} → (a ≤ b) → (a < b)∨(a ≡ b)
 [≤]-to-[<][≡] {𝟎}   {𝟎}    ([≤]-minimum)    = [∨]-introᵣ([≡]-intro)
@@ -176,54 +164,65 @@ instance
 ... | [∨]-introₗ(a<b) = [∨]-introₗ([≤]-with-[𝐒] ⦃ a<b ⦄)
 ... | [∨]-introᵣ(a≡b) = [∨]-introᵣ([≡]-with(𝐒) (a≡b))
 
+[≮][≢]-to-[≰] : ∀{a b : ℕ} → (a ≮ b) → (a ≢ b) → (a ≰ b)
+[≮][≢]-to-[≰] (a≮b) (a≢b) (a≤b) with [≤]-to-[<][≡] (a≤b)
+... | [∨]-introₗ (a<b) = a≮b a<b
+... | [∨]-introᵣ (a≡b) = a≢b a≡b
+
 [<][≡]-to-[≤] : ∀{a b : ℕ} → (a < b)∨(a ≡ b) → (a ≤ b)
-[<][≡]-to-[≤] {a}   {.a}   ([∨]-introᵣ([≡]-intro)) = [≤]-from-[≡] ([≡]-intro)
+[<][≡]-to-[≤] {a}   {.a}   ([∨]-introᵣ([≡]-intro)) = [≡]-to-[≤] ([≡]-intro)
 [<][≡]-to-[≤] {a}   {b}    ([∨]-introₗ(a<b))       = [≤]-predecessor (a<b)
+
+[<]-to-[≤] : ∀{a b : ℕ} → (a < b) → (a ≤ b)
+[<]-to-[≤] = [≤]-predecessor
+
+[≰]-to-[≮] : ∀{x y : ℕ} → (x ≰ y) → (x ≮ y)
+[≰]-to-[≮] = contrapositiveᵣ [<]-to-[≤]
 
 [≥]-to-[>][≡] : ∀{a b : ℕ} → (a ≥ b) → (a > b)∨(a ≡ b)
 [≥]-to-[>][≡] {a}{b} (proof) with [≤]-to-[<][≡] {b}{a} (proof)
 ... | [∨]-introₗ(a<b) = [∨]-introₗ(a<b)
 ... | [∨]-introᵣ(b≡a) = [∨]-introᵣ(symmetry(b≡a))
 
+[<]-trichotomy : ∀{x y} → (x < y) ∨ (x ≡ y) ∨ (x > y)
+[<]-trichotomy {x}{y} with converseTotal ⦃ [≤]-totality ⦄
+[<]-trichotomy {x}{y} | [∨]-introₗ x≤y with [≤]-to-[<][≡] {x}{y} x≤y
+[<]-trichotomy {x}{y} | [∨]-introₗ x≤y | [∨]-introₗ x<y = [∨]-introₗ ([∨]-introₗ x<y)
+[<]-trichotomy {x}{y} | [∨]-introₗ x≤y | [∨]-introᵣ x≡y = [∨]-introₗ ([∨]-introᵣ x≡y)
+[<]-trichotomy {x}{y} | [∨]-introᵣ y≤x with [≥]-to-[>][≡] {x}{y} y≤x
+[<]-trichotomy {x}{y} | [∨]-introᵣ y≤x | [∨]-introₗ y<x = [∨]-introᵣ y<x
+[<]-trichotomy {x}{y} | [∨]-introᵣ y≤x | [∨]-introᵣ y≡x = [∨]-introₗ ([∨]-introᵣ y≡x)
+
+
+[≯][≢]-to-[≱] : ∀{a b : ℕ} → (a ≯ b) → (a ≢ b) → (a ≱ b)
+[≯][≢]-to-[≱] (a≯b) (a≢b) (a≥b) with [≥]-to-[>][≡] (a≥b)
+... | [∨]-introₗ (a>b) = a≯b a>b
+... | [∨]-introᵣ (a≡b) = a≢b a≡b
+
 [>][≡]-to-[≥] : ∀{a b : ℕ} → (a > b)∨(a ≡ b) → (a ≥ b)
 [>][≡]-to-[≥] {a}{b} ([∨]-introₗ(a<b)) = [<][≡]-to-[≤] {b}{a} ([∨]-introₗ(a<b))
 [>][≡]-to-[≥] {a}{b} ([∨]-introᵣ(b≡a)) = [<][≡]-to-[≤] {b}{a} ([∨]-introᵣ(symmetry(b≡a)))
 
-[−₀]-lesser-[𝐒]ₗ : ∀{x y} → ((x −₀ 𝐒(y)) ≤ (x −₀ y))
-[−₀]-lesser-[𝐒]ᵣ : ∀{x y} → ((x −₀ y) ≤ (𝐒(x) −₀ y))
+[>]-to-[≥] : ∀{a b : ℕ} → (a > b) → (a ≥ b)
+[>]-to-[≥] {a}{b} (a<b) = [<][≡]-to-[≤] {b}{a} ([∨]-introₗ(a<b))
 
-[−₀]-lesser-[𝐒]ₗ {𝟎}   {_}    = [≤]-minimum
-[−₀]-lesser-[𝐒]ₗ {𝐒(_)}{𝟎}    = [≤]-of-[𝐒]
-[−₀]-lesser-[𝐒]ₗ {𝐒(x)}{𝐒(y)} = [−₀]-lesser-[𝐒]ᵣ {x}{𝐒(y)}
+[≱]-to-[≯] : ∀{x y : ℕ} → (x ≱ y) → (x ≯ y)
+[≱]-to-[≯] = contrapositiveᵣ [>]-to-[≥]
 
-[−₀]-lesser-[𝐒]ᵣ {𝟎}   {_}    = [≤]-minimum
-[−₀]-lesser-[𝐒]ᵣ {𝐒(x)}{𝟎}    = [≤]-of-[𝐒]
-[−₀]-lesser-[𝐒]ᵣ {𝐒(x)}{𝐒(y)} = [−₀]-lesser-[𝐒]ₗ {𝐒(x)}{y}
+[≮][≯]-to-[≡] : ∀{a b : ℕ} → (a ≮ b) → (a ≯ b) → (a ≡ b)
+[≮][≯]-to-[≡] {a}{b} (a≮b) (a≯b) with [<]-trichotomy {a}{b}
+... | [∨]-introₗ ([∨]-introₗ a<b) = [⊥]-elim(a≮b a<b)
+... | [∨]-introₗ ([∨]-introᵣ a≡b) = a≡b
+... | [∨]-introᵣ b<a              = [⊥]-elim(a≯b b<a)
 
-[≤][−₀][𝐒]ₗ : ∀{x y} → ((𝐒(x) −₀ y) ≤ 𝐒(x −₀ y))
-[≤][−₀][𝐒]ₗ {x}   {𝟎}    = reflexivity
-[≤][−₀][𝐒]ₗ {𝟎}   {𝐒(y)} = [≤]-minimum
-[≤][−₀][𝐒]ₗ {𝐒(x)}{𝐒(y)} = [≤][−₀][𝐒]ₗ {x}{y}
+[≮][≢][≯]-not : ∀{a b : ℕ} → (a ≮ b) → (a ≢ b) → (a ≯ b) → ⊥
+[≮][≢][≯]-not {a}{b} (a≮b) (a≢b) (a≯b) with [<]-trichotomy {a}{b}
+... | [∨]-introₗ ([∨]-introₗ a<b) = a≮b a<b
+... | [∨]-introₗ ([∨]-introᵣ a≡b) = a≢b a≡b
+... | [∨]-introᵣ b<a              = a≯b b<a
 
-[−₀]-lesser : ∀{x y} → ((x −₀ y) ≤ x)
-[−₀]-lesser {𝟎}   {_}    = [≤]-minimum
-[−₀]-lesser {𝐒(x)}{𝟎}    = reflexivity
-[−₀]-lesser {𝐒(x)}{𝐒(y)} = ([−₀]-lesser-[𝐒]ₗ {𝐒(x)}{y}) 🝖 ([−₀]-lesser {𝐒(x)}{y})
+[≰][≯]-not : ∀{a b : ℕ} → (a ≰ b) → (a ≯ b) → ⊥
+[≰][≯]-not {a}{b} (a≰b) (a≯b) = [≮][≢][≯]-not ([≰]-to-[≮] a≰b) ([≰]-to-[≢] a≰b) (a≯b)
 
-[−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0) -- TODO: Converse is probably true too
-[−₀]-positive {𝟎}   {𝟎}    ()
-[−₀]-positive {𝐒(x)}{𝟎}    ()
-[−₀]-positive {𝟎}   {𝐒(y)} (_) = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
-[−₀]-positive {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [−₀]-positive {x}{y} (proof)
-  -- (𝐒y > 𝐒x) → (𝐒y −₀ 𝐒x > 0)
-  -- (𝐒x < 𝐒y) → (0 < 𝐒y −₀ 𝐒x)
-  -- (𝐒𝐒x ≤ 𝐒y) → (𝐒0 ≤ 𝐒y −₀ 𝐒x)
-  -- (𝐒x ≤ y) → (𝐒0 ≤ 𝐒y −₀ 𝐒x)
-  -- (𝐒x ≤ y) → (𝐒0 ≤ y −₀ x)
-  -- (x < y) → (0 < y −₀ x)
-  -- (y > x) → (y −₀ x > 0)
-
- -- [≤]-with-[𝐒]
-
--- TODO: Prove using contraposition of [−₀]-positive. Negation of (>) is to be proven to be (≤), and then (≤0) is (≡0) by [≤][0]ᵣ
--- [−₀]-is-zero : ∀{x y} → (y −₀ x ≡ 0) → (y ≤ x)
+[≮][≱]-not : ∀{a b : ℕ} → (a ≮ b) → (a ≱ b) → ⊥
+[≮][≱]-not {a}{b} (a≮b) (a≱b) = [≮][≢][≯]-not (a≮b) ([≱]-to-[≢] a≱b) ([≱]-to-[≯] a≱b)

@@ -3,6 +3,7 @@ module Structure.Operator.Group {ℓ₁} {ℓ₂} where
 open import Functional hiding (id)
 import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Sets.Setoid{ℓ₁}
 open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
@@ -45,3 +46,17 @@ record CommutativeGroup {T : Type} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) 
   field
     instance ⦃ group ⦄ : Group (_▫_)
     commutativity : Commutativity (_▫_)
+
+{-
+record Subgroup {T : Type} ⦃ _ : Equiv(T) ⦄ (S : T → Stmt) (_▫_ : T → T → T) : Stmt where
+  open Monoid ⦃ ... ⦄
+
+  field
+    instance ⦃ group ⦄ : Group {T} (_▫_)
+  open Group(group)
+
+  field
+    non-empty  : ∃(S)
+    closed     : ∀{x y} → S(x) → S(y) → S(x ▫ y)
+    inv-closed : ∀{x} → S(x) → S(inv x)
+-}

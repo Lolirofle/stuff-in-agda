@@ -36,10 +36,11 @@ data Odd : ℕ → Stmt where
 --   Defining Div𝐒 with (x + y) inside would work, but then the definition of DivN becomes more complicated because (_⋅_) is defined in this order.
 -- Note 2:
 --   (0 ∣ 0) is true, and it is the only number divisible by 0.
-data _∣_ (y : ℕ) : ℕ → Stmt where
+-- TODO: Consider defining it like this instead: (Div𝟎 : ∀{y} → (𝐒(y) ∣ 𝟎))
+data _∣_ : ℕ → ℕ → Stmt where
   instance
-    Div𝟎 : (y ∣ 𝟎)
-    Div𝐒 : ∀{x : ℕ} → (y ∣ x) → (y ∣ (y + x))
+    Div𝟎 : ∀{y}   → (y ∣ 𝟎)
+    Div𝐒 : ∀{y x} → (y ∣ x) → (y ∣ (y + x))
 
 _∤_ : ℕ → ℕ → Stmt
 y ∤ x = ¬(y ∣ x)
@@ -55,9 +56,9 @@ data _∣ᵣₑₘ_ : (y : ℕ) → ℕ → 𝕟(y) → Stmt where
 
 _∣₊_ : ℕ → ℕ → Stmt
 _∣₊_ 𝟎      x = ⊥
-_∣₊_ (𝐒(y)) x = _∣ᵣₑₘ_ (𝐒(y)) x 𝟎
-pattern Div₊𝟎 {x}    = DivRem𝟎 {x}
-pattern Div₊𝐒 {x}{y} = DivRem𝐒 {x}{y}
+_∣₊_ (𝐒(y)) x = _∣_ (𝐒(y)) x
+pattern Div₊𝟎 {x}    = Div𝟎 {x}
+pattern Div₊𝐒 {x}{y} = Div𝐒 {x}{y}
 
 data _[≡]_[mod]_ : ℕ → ℕ → ℕ → Stmt where
   [≡mod]-i : ∀{x m   : ℕ} → (x [≡] x [mod] m)

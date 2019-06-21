@@ -10,6 +10,7 @@ open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Induction{ℓ}
+import      Numeral.Natural.Relation.Order{ℓ} as [≤def]
 open import Numeral.Natural.Relation.Order.Existence{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
@@ -18,8 +19,8 @@ open import Structure.Relator.Ordering{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 open import Type
 
-[≤]-from-[≡] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
-[≤]-from-[≡] x≡y = [∃]-intro 0 ⦃ x≡y ⦄
+[≡]-to-[≤] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
+[≡]-to-[≤] x≡y = [∃]-intro 0 ⦃ x≡y ⦄
 
 [≤]-minimum : ∀{x : ℕ} → (0 ≤ x)
 [≤]-minimum {x} = [∃]-intro x ⦃ [+]-identityₗ ⦄
@@ -28,7 +29,7 @@ open import Type
 [≤][0]ᵣ : ∀{x : ℕ} → (x ≤ 0) ↔ (x ≡ 0)
 [≤][0]ᵣ {𝟎} = [↔]-intro l r where
   l : (𝟎 ≤ 0) ← (𝟎 ≡ 0)
-  l refl = [≤]-from-[≡] refl
+  l refl = [≡]-to-[≤] refl
 
   r : (𝟎 ≤ 0) → (𝟎 ≡ 0)
   r _ = [≡]-intro
@@ -83,7 +84,7 @@ instance
 
 instance
   [≤]-reflexivity : Reflexivity (_≤_)
-  reflexivity ⦃ [≤]-reflexivity ⦄ = [≤]-from-[≡] [≡]-intro
+  reflexivity ⦃ [≤]-reflexivity ⦄ = [≡]-to-[≤] [≡]-intro
 
 instance
   [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
@@ -130,7 +131,19 @@ instance
 
 instance
   [≤]-totality : SymmetricallyTotal(_≤_)
-  converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝟎}    = [∨]-introₗ ([≤]-from-[≡] [≡]-intro)
+  converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝟎}    = [∨]-introₗ ([≡]-to-[≤] [≡]-intro)
   converseTotal ⦃ [≤]-totality ⦄ {𝐒(a)}{𝟎}    = [∨]-introᵣ ([≤]-minimum)
   converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝐒(b)} = [∨]-introₗ ([≤]-minimum)
   converseTotal ⦃ [≤]-totality ⦄ {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ ([≤]-with-[𝐒] {a}{b})) ([∨]-introᵣ ∘ ([≤]-with-[𝐒] {b}{a})) (converseTotal ⦃ [≤]-totality ⦄ {a}{b})
+
+[≤]-equivalence : ∀{x y} → (x ≤ y) ↔ (x [≤def].≤ y)
+[≤]-equivalence{x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
+  l : ∀{x y} → (x ≤ y) ← (x [≤def].≤ y)
+  l{𝟎}   {y}    ([≤def].[≤]-minimum)      = [∃]-intro(y) ⦃ [≡]-intro ⦄
+  l{𝐒(x)}{𝟎}    ()
+  l{𝐒(x)}{𝐒(y)} ([≤def].[≤]-with-[𝐒] ⦃ proof ⦄) = [≤]-with-[𝐒] {x}{y} (l{x}{y} (proof))
+
+  r : ∀{x y} → (x ≤ y) → (x [≤def].≤ y)
+  r{𝟎}   {y}    ([∃]-intro(z) ⦃ 𝟎+z≡y   ⦄) = [≤def].[≤]-minimum
+  r{𝐒(x)}{𝟎}    ([∃]-intro(z) ⦃ ⦄)
+  r{𝐒(x)}{𝐒(y)} ([∃]-intro(z) ⦃ 𝐒x+z≡𝐒y ⦄) = [≤def].[≤]-with-[𝐒] ⦃ r{x}{y} ([∃]-intro(z) ⦃ [𝐒]-injectivity(𝐒x+z≡𝐒y) ⦄ ) ⦄

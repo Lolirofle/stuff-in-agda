@@ -1,11 +1,12 @@
 module Numeral.Natural.Oper.Modulo where
 
 import Lvl
-open import Data.Boolean.AsSet
+open import Logic.Propositional.Theorems
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Natural.Oper
 open import Numeral.Natural.UnclosedOper
+open import Relator.Equals
 
 infixl 10100 _mod_
 
@@ -56,6 +57,7 @@ infixl 10100 _mod_
 --   [ r , _ ] 𝟎     mod' _     = r
 --   [ _ , b ] 𝐒(a') mod' 𝟎     = [ 𝟎 , b ] a' mod' b
 --   [ r , b ] 𝐒(a') mod' 𝐒(b') = [ 𝐒(r) , b ] a' mod' b'
+-- TODO: If it is possible together with the BUILTIN pragma, swap b and b' to avoid confusion. b' is actually a state (like r) and is not the actual base
 [_,_]_mod'_ : ℕ → ℕ → ℕ → ℕ → ℕ
 [ r , _ ] 𝟎     mod' _     = r
 [ _ , b ] 𝐒(a') mod' 𝟎     = [ 𝟎    , b ] a' mod' b
@@ -63,8 +65,9 @@ infixl 10100 _mod_
 {-# BUILTIN NATMODSUCAUX [_,_]_mod'_ #-}
 
 -- Difference between the value before and after the floored division operation.
-_mod_ : ℕ → (m : ℕ) → ∀{ℓ} → ⦃ _ : BoolIsTrue{ℓ}(m ≢? 𝟎)⦄ → ℕ
-_mod_ a 𝟎 ⦃ ⦄
+_mod_ : ℕ → (m : ℕ) → ∀{ℓ} → ⦃ _ : (_≢_ {ℓ} m 𝟎)⦄ → ℕ
+_mod_ a 𝟎 ⦃ proof ⦄ with proof [≡]-intro
+...                    | ()
 _mod_ a (𝐒(b)) = [ 0 , b ] a mod' b
 
 _mod₀_ : ℕ → ℕ → ℕ

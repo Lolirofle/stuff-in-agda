@@ -2,12 +2,16 @@ module Logic.Computability {ℓₗ}{ℓₒ} where
 
 import      Lvl
 open import Data.Boolean
+import      Data.Boolean.Operators
+open        Data.Boolean.Operators.Programming
 open import Data.Boolean.Proofs{ℓₗ Lvl.⊔ ℓₒ}
 open import Functional
 open import Logic.Classical{ℓₗ Lvl.⊔ ℓₒ}
 open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
 open import Logic.Propositional.Theorems{ℓₗ Lvl.⊔ ℓₒ}
 open import Relator.Equals{ℓₗ Lvl.⊔ ℓₒ}
+open import Relator.Equals.Proofs
+open import Structure.Relator.Properties
 open import Type{ℓₒ}
 
 -- TODO: Maybe instead define (decide computablyDecides φ)?
@@ -55,6 +59,60 @@ record ComputablyDecidable {X : Type} (φ : X → Stmt) : Stmt where -- TODO: Is
     classical {x} with bivalence
     ... | [∨]-introₗ(≡𝑇) = classical-intro ⦃ [∨]-introₗ (soundness-𝑇 {x} (≡𝑇)) ⦄
     ... | [∨]-introᵣ(≡𝐹) = classical-intro ⦃ [∨]-introᵣ (soundness-𝐹 {x} (≡𝐹)) ⦄
+
+  instance
+    negation : ComputablyDecidable(¬_ ∘ φ)
+    decide (negation) (x) = ! decide(x)
+    proof  (negation) {x} = [↔]-intro (soundness-𝐹{_} ∘ l{_}) (r{_} ∘ completeness-𝐹{_}) where
+      l : ∀{b} → (b ≡ 𝐹) ← (! b ≡ 𝑇)
+      l proof = (symmetry ⦃ [≡]-symmetry ⦄ ([¬]-double {_})) 🝖 [≡]-with(!_) (proof)
+
+      r : ∀{b} → (b ≡ 𝐹) → (! b ≡ 𝑇)
+      r = [≡]-with(!_)
+
+module _ {X : Type} where
+  open ComputablyDecidable{X}
+
+  instance
+    ComputablyDecidable-conjunction : ∀{φ₁ φ₂ : X → Stmt} → ⦃ _ : ComputablyDecidable(φ₁) ⦄ → ⦃ _ : ComputablyDecidable(φ₂) ⦄ → ComputablyDecidable(x ↦ φ₁(x) ∧ φ₂(x))
+    decide (ComputablyDecidable-conjunction {φ₁}{φ₂} ⦃ comp₁ ⦄ ⦃ comp₂ ⦄) (x) = decide(comp₁)(x) && decide(comp₂)(x)
+    proof  (ComputablyDecidable-conjunction {φ₁}{φ₂} ⦃ comp₁ ⦄ ⦃ comp₂ ⦄) {x} = [↔]-intro (l) (r) where
+      l : (φ₁(x) ∧ φ₂(x)) ← (decide(comp₁)(x) && decide(comp₂)(x) ≡ 𝑇)
+      l(truth) =
+        ([∧]-intro
+          ([↔]-elimₗ(proof(comp₁))([∧]-elimₗ-[𝑇] truth))
+          ([↔]-elimₗ(proof(comp₂))([∧]-elimᵣ-[𝑇] truth))
+        )
+
+      r : (φ₁(x) ∧ φ₂(x)) → (decide(comp₁)(x) && decide(comp₂)(x) ≡ 𝑇)
+      r([∧]-intro φ₁x φ₂x) =
+        ([∧]-intro-[𝑇]
+          ([↔]-elimᵣ(proof(comp₁))(φ₁x))
+          ([↔]-elimᵣ(proof(comp₂))(φ₂x))
+        )
+
+  instance
+    ComputablyDecidable-disjunction : ∀{φ₁ φ₂ : X → Stmt} → ⦃ _ : ComputablyDecidable(φ₁) ⦄ → ⦃ _ : ComputablyDecidable(φ₂) ⦄ → ComputablyDecidable(x ↦ φ₁(x) ∨ φ₂(x))
+    decide (ComputablyDecidable-disjunction {φ₁}{φ₂} ⦃ comp₁ ⦄ ⦃ comp₂ ⦄) (x) = decide(comp₁)(x) || decide(comp₂)(x)
+    proof  (ComputablyDecidable-disjunction {φ₁}{φ₂} ⦃ comp₁ ⦄ ⦃ comp₂ ⦄) {x} = [↔]-intro (l) (r) where
+      l : (φ₁(x) ∨ φ₂(x)) ← (decide(comp₁)(x) || decide(comp₂)(x) ≡ 𝑇)
+      l(truth) =
+        ([∨]-elim-proof-[𝑇]
+          (truthpart ↦ [∨]-introₗ ([↔]-elimₗ(proof(comp₁))(truthpart)))
+          (truthpart ↦ [∨]-introᵣ ([↔]-elimₗ(proof(comp₂))(truthpart)))
+          (truth)
+        )
+
+      r : (φ₁(x) ∨ φ₂(x)) → (decide(comp₁)(x) || decide(comp₂)(x) ≡ 𝑇)
+      r(truth) =
+        ([∨]-elim
+          (truthpart ↦ [∨]-introₗ-[𝑇] ([↔]-elimᵣ(proof(comp₁))(truthpart)))
+          (truthpart ↦ [∨]-introᵣ-[𝑇] ([↔]-elimᵣ(proof(comp₂))(truthpart)))
+          (truth)
+        )
+
+    -- ComputablyDecidable-implication : ComputablyDecidable(φ₁) → ComputablyDecidable(φ₂) → ComputablyDecidable(φ₁ → φ₂)
+    -- ComputablyDecidable-equivalence : ComputablyDecidable(φ₁) → ComputablyDecidable(φ₂) → ComputablyDecidable(φ₁ ↔ φ₂)
 
 classicalIsComputablyDecidable : ∀{X}{φ : X → Stmt} → (∀{x} → Classical(φ(x))) ↔ ComputablyDecidable(φ)
 classicalIsComputablyDecidable {X}{φ} = [↔]-intro (ComputablyDecidable.classical) r where

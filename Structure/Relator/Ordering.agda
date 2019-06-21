@@ -11,41 +11,38 @@ open import Type{ℓ₂}
 
 module Weak {T : Type} (_≤_ : T → T → Stmt) where
   record PartialOrder (_≡_ : T → T → Stmt) : Stmt where
+    instance constructor intro
     field
      ⦃ antisymmetry ⦄ : Antisymmetry (_≤_) (_≡_)
      ⦃ transitivity ⦄ : Transitivity (_≤_)
      ⦃ reflexivity ⦄  : Reflexivity  (_≤_)
 
   record TotalOrder (_≡_ : T → T → Stmt) : Stmt where
+    instance constructor intro
     field
      ⦃ partialOrder ⦄ : PartialOrder (_≡_)
-     ⦃ totality ⦄    : SymmetricallyTotal (_≤_)
+     ⦃ totality ⦄     : SymmetricallyTotal (_≤_)
 
   module Properties where
-    record Minimum : Stmt where
+    record Minimum (min : T) : Stmt where
+      constructor intro
       field
-        min : T
-        minimum : ∀{x : T} → (min ≤ x)
-    open Minimum ⦃ ... ⦄ using (min) public
+        proof : ∀{x : T} → (min ≤ x)
 
-    record Maximum : Stmt where
+    record Maximum (max : T) : Stmt where
+      constructor intro
       field
-        max : T
-        maximum : ∀{x : T} → (x ≤ max)
-    open Maximum ⦃ ... ⦄ using (max) public
+        proof : ∀{x : T} → (x ≤ max)
 
-    -- LowerBound(P)(x) represents that x is a lower bound of the set {x. P(x)}
-    record LowerBound (P : T → Stmt) (l : T) : Stmt where
-      field
-        lowerBound : ∀{x} → P(x) → (l ≤ x)
+  min : ⦃ _ : ∃(Properties.Minimum) ⦄ → T
+  min ⦃ e ⦄ = [∃]-witness e
 
-    -- UpperBound(P)(x) represents that x is an upper bound of the set {x. P(x)}
-    record UpperBound (P : T → Stmt) (u : T) : Stmt where
-      field
-        upperBound : ∀{x} → P(x) → (x ≤ u)
+  max : ⦃ _ : ∃(Properties.Maximum) ⦄ → T
+  max ⦃ e ⦄ = [∃]-witness e
 
 module Strict {T : Type} (_<_ : T → T → Stmt) where
   record Order : Stmt where
+    instance constructor intro
     field
      ⦃ transitivity ⦄  : Transitivity  (_<_)
      ⦃ asymmetry ⦄     : Asymmetry     (_<_)
@@ -54,7 +51,9 @@ module Strict {T : Type} (_<_ : T → T → Stmt) where
   module Properties where
     record Dense : Stmt where
       field
-        dense : ∀{x y : T} → (x < y) → ∃(z ↦ (x < z)∧(z < y))
+        between : T → T → T
+        left    : ∀{x y : T} → (x < y) → (x < between(x)(y))
+        right   : ∀{x y : T} → (x < y) → (between(x)(y) < y)
 
 module From-[<][≡] {T : Type} (_<_ : T → T → Stmt) (_≡_ : T → T → Stmt) where
   -- Greater than
@@ -114,7 +113,7 @@ module From-[≤] {T : Type} (_≤_ : T → T → Stmt) where
   x ≮ y = ¬(x < y)
 
   _≯_ : T → T → Stmt
-  x ≯ y = ¬(x > y)
+  x ≯ y = (x ≤ y)
 
   _≰_ : T → T → Stmt
   x ≰ y = ¬(x ≤ y)

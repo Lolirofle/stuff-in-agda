@@ -8,6 +8,7 @@ open import Type{ℓ₂}
 
 -- Definition of an equivalence class
 record Equivalence {T : Type} (_≡_ : T → T → Stmt) : Stmt where
+  instance constructor intro
   field
    ⦃ reflexivity ⦄ : Reflexivity  (_≡_)
    ⦃ symmetry ⦄    : Symmetry     (_≡_)

@@ -8,7 +8,7 @@ import Lvl
 -- · Types are not equal to each other extentionally (unlike sets, type equality is not based on their inhabitants (set equality is based on which elements that the set contains)).
 -- An alternative explanation:
 -- · Type equality is nominal (loosely: based on its name (assuming no other type could be named the same)), and not representional.
--- Or more simply:
+-- Or more simply by an example:
 -- · `data Empty : Type where` defines an empty type.
 --   `data Empty2 : Type where` also defines an empty type.
 --   Now, `Empty` is not type equal to `Empty2` because the terms does not normalize further (by the rules of the language).
@@ -16,6 +16,6 @@ import Lvl
 record IsEmpty {ℓ₁ ℓ₂} (T : Set(ℓ₁)) : Set(Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂)) where
   constructor intro
   field
-    -- Empty functions for the empty type
+    -- Empty functions for an empty type
+    -- For any type U, it is always possible to construct a function from T to U if T is empty
     empty : ∀{U : Set(ℓ₂)} → T → U
-open IsEmpty ⦃ ... ⦄

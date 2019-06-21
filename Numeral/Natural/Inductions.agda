@@ -6,9 +6,12 @@ open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Functional
 open import Numeral.Natural
 open import Numeral.Natural.Induction{ℓ}
+open import Numeral.Natural.Oper
+open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Relation.Order{ℓ}
 open import Numeral.Natural.Relation.Order.Proofs{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
+open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 open import Type
 
@@ -37,3 +40,31 @@ open import Type
 
     qn : Q(n)
     qn{a} (a≤n) = qk{a} (transitivity{_}{_}{a} (a≤n) (n≤k))
+
+[ℕ]-induction-with-monus : ∀{φ : ℕ → Stmt} → φ(𝟎) → (∀{i : ℕ} → (∀{j : ℕ} → φ(i −₀ j)) → φ(𝐒(i))) → (∀{n} → φ(n))
+[ℕ]-induction-with-monus {φ} (base) (next) {n} = [ℕ]-strong-induction {φ} (base) (next2) {n} where
+  -- convert-assumption : ∀{i} → (∀{j} → φ(i −₀ j)) → (∀{j} → (j ≤ i) → φ(j))
+  -- convert-assumption {i} a {j} (j≤i) =
+  --   [≡]-elimᵣ ([↔]-elimᵣ [−₀]-nested-sameₗ (j≤i)) {φ} (a{i −₀ j})
+
+  convert-assumption : ∀{i} → (∀{j} → (j ≤ i) → φ(j)) → (∀{j} → φ(i −₀ j))
+  convert-assumption {i} assumption {j} = assumption{i −₀ j} ([−₀]-lesser {i}{j})
+
+  next2 : ∀{i} → (∀{j} → (j ≤ i) → φ(j)) → φ(𝐒(i))
+  next2{i} assumption = next{i} (\{j} → convert-assumption{i} assumption {j})
+
+-- TODO: This is just a generalisation of [ℕ]-induction-with-monus. If a function (T → 𝕟(i)) is surjective for every i∊ℕ, then f could be used in the induction step
+-- [ℕ]-induction-with-surjection : ∀{φ : ℕ → Stmt}{ℓT}{T : Type{ℓT}}{f : ℕ → T → ℕ}{f⁻¹ : (i : ℕ) → (n : ℕ) → ⦃ _ : n ≤ i ⦄ → T}
+--                               → (∀{i n} → (proof : (n ≤ i)) → (f(i)(f⁻¹(i)(n) ⦃ proof ⦄) ≡ n))
+--                               → φ(𝟎)
+--                               → (∀{i : ℕ}
+--                                 → (∀{t : T} → (φ ∘ f(i))(t))
+--                                 → φ(𝐒(i))
+--                               )
+--                               → (∀{n} → φ(n))
+-- [ℕ]-induction-with-surjection {φ}{ℓT}{T}{f}{f⁻¹} surj base next {n} = [ℕ]-strong-induction {φ} (base) (next2) {n} where
+--   postulate convert-assumption : ∀{i} → (∀{j} → (j ≤ i) → φ(j)) → (∀{t} → φ(f(i)(t)))
+--   -- convert-assumption {i} assumption {j} = assumption{i −₀ j} ([−₀]-lesser {i}{j})
+-- 
+--   next2 : ∀{i} → (∀{j} → (j ≤ i) → φ(j)) → φ(𝐒(i))
+--   next2{i} assumption = next{i} (\{j} → convert-assumption{i} assumption {j})

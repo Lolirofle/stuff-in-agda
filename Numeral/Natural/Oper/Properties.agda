@@ -9,6 +9,8 @@ open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Induction{ℓ}
 open import Numeral.Natural.Relation.Order{ℓ}
+open import Numeral.Natural.Relation.Order.Proofs{ℓ}
+open import Numeral.Natural.Relation.Order.Classical{ℓ}
 open import Relator.Equals{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
 open import Relator.Equals.Uniqueness{ℓ}{Lvl.𝟎}{Lvl.𝟎}
@@ -228,8 +230,8 @@ instance
     ([+]-sum-is-0ᵣ {a}{b} (proof))
   )
 
-postulate [+]-product-is-1ₗ : ∀{a b} → (a ⋅ b ≡ 1) → (a ≡ 1)
-postulate [+]-product-is-1ᵣ : ∀{a b} → (a ⋅ b ≡ 1) → (b ≡ 1)
+postulate [⋅]-product-is-1ₗ : ∀{a b} → (a ⋅ b ≡ 1) → (a ≡ 1)
+postulate [⋅]-product-is-1ᵣ : ∀{a b} → (a ⋅ b ≡ 1) → (b ≡ 1)
 
 [⋅]-product-is-0 : ∀{a b} → (a ⋅ b ≡ 0) → ((a ≡ 0)∨(b ≡ 0))
 [⋅]-product-is-0 {a}{0} (_) = [∨]-introᵣ ([≡]-intro)
@@ -295,6 +297,10 @@ postulate [⋅][−₀]-distributivityₗ : ∀{x y z : ℕ} → (x ⋅ (y −�
 
 postulate [⋅][−₀]-distributivityᵣ : ∀{x y z : ℕ} → ((x −₀ y) ⋅ z) ≡ (x ⋅ z) −₀ (y ⋅ z)
 
+[≤]ₗ[+] : ∀{x y : ℕ} → (x + y ≤ x) → (y ≡ 𝟎)
+[≤]ₗ[+] {𝟎}               = [≤][0]ᵣ
+[≤]ₗ[+] {𝐒(x)}{y} (proof) = [≤]ₗ[+] {x} ([≤]-without-[𝐒] {x + y} {x} (proof))
+
 [−₀]-negative : ∀{x} → ((𝟎 −₀ x) ≡ 𝟎)
 [−₀]-negative {𝟎}    = [≡]-intro
 [−₀]-negative {𝐒(n)} = [≡]-intro
@@ -328,23 +334,25 @@ postulate [⋅][−₀]-distributivityᵣ : ∀{x y z : ℕ} → ((x −₀ y) �
 [−₀]-self-[𝐒] {𝐒(n)} = [−₀]-self-[𝐒] {n}
 {-# REWRITE [−₀]-self-[𝐒] #-}
 
-postulate [−₀]-move-[𝐒] : ∀{x y} → ⦃ _ : (x ≥ y) ⦄ → ((𝐒(x) −₀ y) ≡ 𝐒(x −₀ y))
--- [−₀]-move-[𝐒] TODO: Maybe use [≤][−₀][𝐒]ₗ ?
+[−₀]-move-[𝐒] : ∀{x y} → (x ≥ y) → ((𝐒(x) −₀ y) ≡ 𝐒(x −₀ y))
+[−₀]-move-[𝐒] {𝟎}   {𝟎}    _ = [≡]-intro
+[−₀]-move-[𝐒] {𝟎}   {𝐒(_)} ()
+[−₀]-move-[𝐒] {𝐒(_)}{𝟎}    _ = [≡]-intro
+[−₀]-move-[𝐒] {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [−₀]-move-[𝐒] {x}{y} proof
+  -- 𝐒𝐒x −₀ 𝐒y ≡ 𝐒(𝐒x −₀ 𝐒y)
+  -- 𝐒x −₀ y ≡ 𝐒(x −₀ y)
 
 [−₀]ₗ[+]ᵣ-nullify : ∀{x y} → ((x + y) −₀ y ≡ x)
 [−₀]ₗ[+]ᵣ-nullify{𝟎}   {𝟎}    = [≡]-intro
 [−₀]ₗ[+]ᵣ-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([−₀]ₗ[+]ᵣ-nullify{x}{y})
 [−₀]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
--- TODO: This gives an error 20180917? Maybe not? {-# REWRITE [−₀]ₗ[+]ᵣ-nullify #-}
 
 [−₀]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) −₀ x ≡ y)
 [−₀]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity {y}{x}) {expr ↦ (expr −₀ x ≡ y)} ([−₀]ₗ[+]ᵣ-nullify {y}{x})
--- TODO: Does this also give an error? Not tested {-# REWRITE [−₀]ₗ[+]ₗ-nullify #-}
 
 [−₀][+]ᵣ-nullify : ∀{x₁ x₂ y} → ((x₁ + y) −₀ (x₂ + y) ≡ x₁ −₀ x₂)
 [−₀][+]ᵣ-nullify {_} {_} {𝟎}    = [≡]-intro
 [−₀][+]ᵣ-nullify {x₁}{x₂}{𝐒(y)} = [−₀][+]ᵣ-nullify {x₁}{x₂}{y}
--- {-# REWRITE [−₀][+]ᵣ-nullify #-}
 
 [−₀][+]ₗ-nullify : ∀{x y₁ y₂} → ((x + y₁) −₀ (x + y₂) ≡ y₁ −₀ y₂)
 [−₀][+]ₗ-nullify {x}{y₁}{y₂} =
@@ -352,13 +360,163 @@ postulate [−₀]-move-[𝐒] : ∀{x y} → ⦃ _ : (x ≥ y) ⦄ → ((𝐒(x
   🝖 [−₀][+]ᵣ-nullify{y₁}{y₂}{x}
 {-# REWRITE [−₀][+]ₗ-nullify #-}
 
+[−₀]-cases : ∀{x y} → ((x −₀ y) + y ≡ x) ∨ (x −₀ y ≡ 𝟎)
+[−₀]-cases {𝟎}   {𝟎}    = [∨]-introᵣ [≡]-intro
+[−₀]-cases {𝟎}   {𝐒(_)} = [∨]-introᵣ [≡]-intro
+[−₀]-cases {𝐒(_)}{𝟎}    = [∨]-introₗ [≡]-intro
+[−₀]-cases {𝐒(x)}{𝐒(y)} with [−₀]-cases {x}{y}
+... | [∨]-introₗ proof = [∨]-introₗ ([≡]-with(𝐒) (proof))
+... | [∨]-introᵣ proof = [∨]-introᵣ proof
 
+[−₀]-cases-commuted : ∀{x y} → (y + (x −₀ y) ≡ x) ∨ (x −₀ y ≡ 𝟎)
+[−₀]-cases-commuted {x}{y} with [−₀]-cases{x}{y}
+... | [∨]-introₗ proof = [∨]-introₗ ([+]-commutativity {y}{x −₀ y} 🝖 proof)
+... | [∨]-introᵣ proof = [∨]-introᵣ proof
 {-
 [+][−₀]-commutativity : ∀{x y} → ⦃ _ : y ≥ z ⦄ → (x + (y −₀ z) ≡ (x −₀ z) + y)
 -}
 
-postulate [−₀][+]-nullify2 : ∀{x y} → ⦃ _ : (y ≥ x) ⦄ → (x + (y −₀ x) ≡ y)
--- x + (y −₀ x) ≡ y
--- ∃z. x + ((x + z) −₀ x) ≡ y
--- ∃z. x + z ≡ y
--- y ≡ y
+[−₀][+]-nullify2 : ∀{x y} → (x ≤ y) ↔ (x + (y −₀ x) ≡ y)
+[−₀][+]-nullify2 {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
+  l : ∀{x y} → (x ≤ y) ← (x + (y −₀ x) ≡ y)
+  l {𝟎}   {_}    _     = [≤]-minimum
+  l {𝐒(_)}{𝟎}    ()
+  l {𝐒(x)}{𝐒(y)} proof = [≤]-with-[𝐒] ⦃ l{x}{y} ([𝐒]-injectivity proof) ⦄
+
+  r : ∀{x y} → (x ≤ y) → (x + (y −₀ x) ≡ y)
+  r {𝟎}   {𝟎}    proof = [≡]-intro
+  r {𝟎}   {𝐒(_)} proof = [≡]-intro
+  r {𝐒(_)}{𝟎}    ()
+  r {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [≡]-with(𝐒) (r{x}{y} (proof))
+  -- x + (y −₀ x) ≡ y
+  -- ∃z. x + ((x + z) −₀ x) ≡ y
+  -- ∃z. x + z ≡ y
+  -- y ≡ y
+
+[−₀]-comparison : ∀{x y} → (x ≤ y) ↔ (x −₀ y ≡ 𝟎)
+[−₀]-comparison {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
+  l : ∀{x y} → (x ≤ y) ← (x −₀ y ≡ 𝟎)
+  l {𝟎}   {_}    _     = [≤]-minimum
+  l {𝐒(_)}{𝟎}    ()
+  l {𝐒(x)}{𝐒(y)} proof = [≤]-with-[𝐒] ⦃ l{x}{y} proof ⦄
+
+  r : ∀{x y} → (x ≤ y) → (x −₀ y ≡ 𝟎)
+  r {𝟎}   {_}    proof = [≡]-intro
+  r {𝐒(_)}{𝟎}    ()
+  r {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = r{x}{y} (proof)
+
+-- TODO: One way to prove this is contraposition of [−₀]-comparison. Another is by [≤]-with-[+]ᵣ and some other stuff, but it seems to require more work
+postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
+
+[−₀]-lesser-[𝐒]ₗ : ∀{x y} → ((x −₀ 𝐒(y)) ≤ (x −₀ y))
+[−₀]-lesser-[𝐒]ᵣ : ∀{x y} → ((x −₀ y) ≤ (𝐒(x) −₀ y))
+
+[−₀]-lesser-[𝐒]ₗ {𝟎}   {_}    = [≤]-minimum
+[−₀]-lesser-[𝐒]ₗ {𝐒(_)}{𝟎}    = [≤]-of-[𝐒]
+[−₀]-lesser-[𝐒]ₗ {𝐒(x)}{𝐒(y)} = [−₀]-lesser-[𝐒]ᵣ {x}{𝐒(y)}
+
+[−₀]-lesser-[𝐒]ᵣ {𝟎}   {_}    = [≤]-minimum
+[−₀]-lesser-[𝐒]ᵣ {𝐒(x)}{𝟎}    = [≤]-of-[𝐒]
+[−₀]-lesser-[𝐒]ᵣ {𝐒(x)}{𝐒(y)} = [−₀]-lesser-[𝐒]ₗ {𝐒(x)}{y}
+
+[≤][−₀][𝐒]ₗ : ∀{x y} → ((𝐒(x) −₀ y) ≤ 𝐒(x −₀ y))
+[≤][−₀][𝐒]ₗ {x}   {𝟎}    = reflexivity
+[≤][−₀][𝐒]ₗ {𝟎}   {𝐒(y)} = [≤]-minimum
+[≤][−₀][𝐒]ₗ {𝐒(x)}{𝐒(y)} = [≤][−₀][𝐒]ₗ {x}{y}
+
+[−₀]-lesser : ∀{x y} → ((x −₀ y) ≤ x)
+[−₀]-lesser {𝟎}   {_}    = [≤]-minimum
+[−₀]-lesser {𝐒(x)}{𝟎}    = reflexivity
+[−₀]-lesser {𝐒(x)}{𝐒(y)} = ([−₀]-lesser-[𝐒]ₗ {𝐒(x)}{y}) 🝖 ([−₀]-lesser {𝐒(x)}{y})
+
+[−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0) -- TODO: Converse is probably also true
+[−₀]-positive {𝟎}   {𝟎}    ()
+[−₀]-positive {𝐒(x)}{𝟎}    ()
+[−₀]-positive {𝟎}   {𝐒(y)} (_) = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
+[−₀]-positive {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [−₀]-positive {x}{y} (proof)
+  -- (𝐒y > 𝐒x) → (𝐒y −₀ 𝐒x > 0)
+  -- (𝐒x < 𝐒y) → (0 < 𝐒y −₀ 𝐒x)
+  -- (𝐒𝐒x ≤ 𝐒y) → (𝐒0 ≤ 𝐒y −₀ 𝐒x)
+  -- (𝐒x ≤ y) → (𝐒0 ≤ 𝐒y −₀ 𝐒x)
+  -- (𝐒x ≤ y) → (𝐒0 ≤ y −₀ x)
+  -- (x < y) → (0 < y −₀ x)
+  -- (y > x) → (y −₀ x > 0)
+
+[−₀]-nested-sameₗ : ∀{x y} → (x ≥ y) ↔ (x −₀ (x −₀ y) ≡ y)
+[−₀]-nested-sameₗ {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
+  l : ∀{x y} → (x ≥ y) ← (x −₀ (x −₀ y) ≡ y)
+  l {x}{y} proof =
+    [≡]-to-[≤] (symmetry proof)
+    🝖 [−₀]-lesser {x}{x −₀ y}
+
+  r : ∀{x y} → (x ≥ y) → (x −₀ (x −₀ y) ≡ y)
+  r{x}{y} x≥y =
+    [≡]-with(_−₀ (x −₀ y)) (symmetry ([↔]-elimᵣ ([−₀][+]-nullify2 {y}{x}) (x≥y)) 🝖 [+]-commutativity{y}{x −₀ y})
+    🝖 [−₀]ₗ[+]ₗ-nullify {x −₀ y}{y}
+      -- x −₀ (x −₀ y)
+      -- ((x −₀ y) + y) −₀ (x −₀ y)
+      -- y
+
+[𝄩]-identityₗ : Identityₗ (_𝄩_) (0)
+[𝄩]-identityₗ {𝟎}    = [≡]-intro
+[𝄩]-identityₗ {𝐒(_)} = [≡]-intro
+{-# REWRITE [𝄩]-identityₗ #-}
+
+[𝄩]-identityᵣ : Identityᵣ (_𝄩_) (0)
+[𝄩]-identityᵣ {x} = [≡]-intro
+
+[𝄩]-self : ∀{x} → (x 𝄩 x ≡ 𝟎)
+[𝄩]-self {𝟎}    = [≡]-intro
+[𝄩]-self {𝐒(x)} = [𝄩]-self {x}
+{-# REWRITE [𝄩]-self #-}
+
+[𝄩]-commutativity : Commutativity (_𝄩_)
+[𝄩]-commutativity{𝟎}   {𝟎}    = [≡]-intro
+[𝄩]-commutativity{𝟎}   {𝐒(y)} = [≡]-intro
+[𝄩]-commutativity{𝐒(x)}{𝟎}    = [≡]-intro
+[𝄩]-commutativity{𝐒(x)}{𝐒(y)} = [𝄩]-commutativity{x}{y}
+
+[𝄩]ₗ[+]ᵣ-nullify : ∀{x y} → ((x + y) 𝄩 y ≡ x)
+[𝄩]ₗ[+]ᵣ-nullify{𝟎}   {𝟎}    = [≡]-intro
+[𝄩]ₗ[+]ᵣ-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([𝄩]ₗ[+]ᵣ-nullify{x}{y})
+[𝄩]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
+
+[𝄩]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) 𝄩 x ≡ y)
+[𝄩]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity {y}{x}) {expr ↦ (expr 𝄩 x ≡ y)} ([𝄩]ₗ[+]ᵣ-nullify {y}{x})
+
+[𝄩]ᵣ[+]ᵣ-nullify : ∀{x y} → (y 𝄩 (x + y) ≡ x)
+[𝄩]ᵣ[+]ᵣ-nullify {x}{y} = transitivity ([𝄩]-commutativity {y}{x + y}) ([𝄩]ₗ[+]ᵣ-nullify {x}{y})
+
+[𝄩]ᵣ[+]ₗ-nullify : ∀{x y} → (x 𝄩 (x + y) ≡ y)
+[𝄩]ᵣ[+]ₗ-nullify {x}{y} = transitivity ([𝄩]-commutativity {x}{x + y}) ([𝄩]ₗ[+]ₗ-nullify {x}{y})
+
+[𝄩]-with-[+]ᵣ : ∀{x y z} → ((x + z) 𝄩 (y + z) ≡ x 𝄩 y)
+[𝄩]-with-[+]ᵣ {𝟎}   {𝟎}   {𝟎}    = [≡]-intro
+[𝄩]-with-[+]ᵣ {𝟎}   {𝐒(y)}{𝟎}    = [≡]-intro
+[𝄩]-with-[+]ᵣ {𝟎}   {𝟎}   {𝐒(z)} = [≡]-intro
+[𝄩]-with-[+]ᵣ {𝟎}   {𝐒(y)}{𝐒(z)} = [𝄩]ᵣ[+]ᵣ-nullify {_}{z}
+[𝄩]-with-[+]ᵣ {𝐒(x)}{𝟎}   {𝟎}    = [≡]-intro
+[𝄩]-with-[+]ᵣ {𝐒(x)}{𝐒(y)}{𝟎}    = [≡]-intro
+[𝄩]-with-[+]ᵣ {𝐒(x)}{𝟎}   {𝐒(z)} = [𝄩]ₗ[+]ᵣ-nullify {𝐒(x)}{𝐒(z)}
+[𝄩]-with-[+]ᵣ {𝐒(x)}{𝐒(y)}{𝐒(z)} = [𝄩]-with-[+]ᵣ {𝐒(x)}{𝐒(y)}{z}
+
+[𝄩]-with-[+]ₗ : ∀{x y z} → ((z + x) 𝄩 (z + y) ≡ x 𝄩 y)
+[𝄩]-with-[+]ₗ {𝟎}   {𝟎}   {𝟎}    = [≡]-intro
+[𝄩]-with-[+]ₗ {𝟎}   {𝐒(y)}{𝟎}    = [≡]-intro
+[𝄩]-with-[+]ₗ {𝟎}   {𝟎}   {𝐒(z)} = [≡]-intro
+[𝄩]-with-[+]ₗ {𝟎}   {𝐒(y)}{𝐒(z)} = [𝄩]ᵣ[+]ₗ-nullify {z}{𝐒(y)}
+[𝄩]-with-[+]ₗ {𝐒(x)}{𝟎}   {𝟎}    = [≡]-intro
+[𝄩]-with-[+]ₗ {𝐒(x)}{𝐒(y)}{𝟎}    = [≡]-intro
+[𝄩]-with-[+]ₗ {𝐒(x)}{𝟎}   {𝐒(z)} = [𝄩]ₗ[+]ₗ-nullify {𝐒(z)}{𝐒(x)}
+[𝄩]-with-[+]ₗ {𝐒(x)}{𝐒(y)}{𝐒(z)} = [𝄩]-with-[+]ₗ {𝐒(x)}{𝐒(y)}{z}
+
+[𝄩]-equality : ∀{x y} → (x 𝄩 y ≡ 𝟎) → (x ≡ y)
+[𝄩]-equality {𝟎}   {𝟎}    [≡]-intro = [≡]-intro
+[𝄩]-equality {𝟎}   {𝐒(y)} ()
+[𝄩]-equality {𝐒(x)}{𝟎}    ()
+[𝄩]-equality {𝐒(x)}{𝐒(y)} proof     = [≡]-with(𝐒) ([𝄩]-equality {x}{y} proof)
+
+{-
+[𝄩]-associativity : Associativity (_𝄩_)
+[𝄩]-associativity {x}{y}{z} = 
+-}

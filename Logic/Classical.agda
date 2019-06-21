@@ -9,6 +9,7 @@ open import Logic.Predicate{ℓ}{ℓ}
 
 -- A proposition which is either provable or unprovable.
 -- This could then be interpreted as true or false.
+-- In classical logic, this is always the case for any proposition.
 -- Also called: Decidable
 record Classical (P : Stmt) : Stmt where
   instance constructor classical-intro
@@ -151,4 +152,15 @@ instance
   ... | ([∨]-introₗ p)  = [∃]-intro([∃]-witness(pexqx(p))) ⦃ _ ↦ [∃]-proof(pexqx(p)) ⦄
   ... | ([∨]-introᵣ np) = [∃]-intro(x) ⦃ ([⊥]-elim{Q(x)}) ∘ np ⦄
 
-postulate drinker-ambiguity : ∀{X}{P : X → Stmt} → ⦃ _ : Classical(∀{x} → P(x)) ⦄ → ∃(x ↦ (P(x) → ∀{y} → P(y)))
+{-
+drinker-ambiguity : ∀{X}{P : X → Stmt} → ⦃ _ : Classical(∀{x} → P(x)) ⦄ → (∃(const ⊤) ↔ ∃(x ↦ (P(x) → ∀{y} → P(y))))
+
+∀{y} → P(y)
+P(x) → (∀{y} → P(y)) -- TODO: Which x?
+
+¬∀{y} → P(y)
+∃{y} → ¬P(y)
+¬P(y)
+P(y) → ⊥
+P(y) → (∀{y} → P(y))
+-}

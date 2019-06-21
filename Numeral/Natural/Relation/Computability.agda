@@ -34,7 +34,4 @@ instance
 
 instance
   [≢]-computable : ComputablyDecidable{ℕ}(_≢_)
-  [≢]-computable = ComputablyDecidable-intro decide ⦃ proof ⦄ where
-    decide = (_≢?_)
-
-    postulate proof : ∀{x}{y} → (x ≢ y) ↔ ((x ≢? y) ≡ 𝑇)
+  [≢]-computable = ComputablyDecidable.negation (_≡_)

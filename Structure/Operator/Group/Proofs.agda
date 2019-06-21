@@ -11,14 +11,14 @@ open import Structure.Operator.Group{ℓ₁}{ℓ₂}
 open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
-open import Type{ℓ₂}
+open import Type
 
 {-
 unique-identity : Unique()
 unique-inverse : Unique()
 -}
 
-module _ {T : Type} {_▫_ : T → T → T} ⦃ group : Group(_▫_) ⦄ where
+module _ {T : Type{ℓ₂}} {_▫_ : T → T → T} ⦃ group : Group(_▫_) ⦄ where
   open Group  {T} ⦃ [≡]-equiv ⦄ {_▫_} (group)
   open Monoid {T} ⦃ [≡]-equiv ⦄ {_▫_} (monoid)
 
@@ -61,3 +61,13 @@ module _ {T : Type} {_▫_ : T → T → T} ⦃ commGroup : CommutativeGroup(_�
 
   commutation : ∀{x y} → ((x ▫ y) ▫ inv(x) ≡ y)
   commutation = commutationᵣ(commutativity)
+
+module _ {T : Type} {_▫_ : T → T → T} ⦃ associativity : Associativity(_▫_) ⦄ where
+  associate4-123-321 : ∀{a b c d} → (((a ▫ b) ▫ c) ▫ d ≡ a ▫ (b ▫ (c ▫ d)))
+  associate4-123-321 {a}{b}{c}{d} = associativity 🝖 associativity
+
+  associate4-123-213 : ∀{a b c d} → (((a ▫ b) ▫ c) ▫ d ≡ (a ▫ (b ▫ c)) ▫ d)
+  associate4-123-213 {a}{b}{c}{d} = [≡]-with(_▫ d) associativity
+
+  associate4-321-231 : ∀{a b c d} → (a ▫ (b ▫ (c ▫ d)) ≡ a ▫ ((b ▫ c) ▫ d))
+  associate4-321-231 {a}{b}{c}{d} = [≡]-with(a ▫_) (symmetry associativity)

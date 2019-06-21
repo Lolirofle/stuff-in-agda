@@ -33,3 +33,16 @@ module ComputablyDecidable {X Y : Type} (_▫_ : X → Y → Stmt) ⦃ decidable
 
   proof : ∀{x y} → (x ▫ y) ↔ (decide(x)(y) ≡ 𝑇)
   proof{x}{y} = C.ComputablyDecidable.proof (decidable) {x , y}
+
+  negation : ComputablyDecidable {X}{Y} (a ↦ b ↦ ¬(a ▫ b))
+  negation = C.ComputablyDecidable.negation (decidable)
+
+  classical : ∀{x}{y} → Classical(x ▫ y)
+  classical = C.ComputablyDecidable.classical (decidable)
+
+  module BinaryConnectives (_▫₂_ : X → Y → Stmt) ⦃ decidable₂ : ComputablyDecidable{X}{Y}(_▫₂_) ⦄ where
+    conjunction : ComputablyDecidable {X}{Y} (a ↦ b ↦ (a ▫ b) ∧ (a ▫₂ b))
+    conjunction = C.ComputablyDecidable-conjunction
+
+    disjunction : ComputablyDecidable {X}{Y} (a ↦ b ↦ (a ▫ b) ∨ (a ▫₂ b))
+    disjunction = C.ComputablyDecidable-disjunction

@@ -6,15 +6,17 @@ open import Numeral.Natural.Oper
 -- Maximum function
 -- Returns the greatest number
 max : ℕ → ℕ → ℕ
-max a      𝟎      = a
-max 𝟎      b      = b
+max 𝟎      𝟎      = 𝟎
+max (𝐒(a)) 𝟎      = 𝐒(a)
+max 𝟎      (𝐒(b)) = 𝐒(b)
 max (𝐒(a)) (𝐒(b)) = 𝐒(max a b)
 
 -- Minimum function
 -- Returns the smallest number
 min : ℕ → ℕ → ℕ
-min a      𝟎      = 𝟎
-min 𝟎      b      = 𝟎
+min 𝟎      𝟎      = 𝟎
+min (𝐒(_)) 𝟎      = 𝟎
+min 𝟎      (𝐒(_)) = 𝟎
 min (𝐒(a)) (𝐒(b)) = 𝐒(min a b)
 -- min a b = (a + b) −₀ max(a)(b)
 

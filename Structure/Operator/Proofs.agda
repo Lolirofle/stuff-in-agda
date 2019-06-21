@@ -62,10 +62,47 @@ module One {T} {_▫_ : T → T → T} where
     equality-zeroₗ : ∀{x y} → (x ≡ y) ← (x ▫ inv(y) ≡ id)
     equality-zeroₗ {x}{y} (proof) =
       (symmetry ([∧]-elimᵣ identity)                  :of: (x ≡ x ▫ id))
-      🝖 (symmetry([≡]-with(x ▫_) ([∧]-elimₗ inverse)) :of: (x ▫ id ≡ x ▫ (inv(y) ▫ y)))
-      🝖 (symmetry(associativity)                      :of: (x ▫ (inv(y) ▫ y) ≡ (x ▫ inv(y)) ▫ y))
-      🝖 ([≡]-with(_▫ y) (proof)                       :of: ((x ▫ inv(y)) ▫ y ≡ id ▫ y))
-      🝖 ([∧]-elimₗ identity                           :of: (id ▫ y ≡ y))
+      🝖 (symmetry([≡]-with(x ▫_) ([∧]-elimₗ inverse)) :of: (_ ≡ x ▫ (inv(y) ▫ y)))
+      🝖 (symmetry(associativity)                      :of: (_ ≡ (x ▫ inv(y)) ▫ y))
+      🝖 ([≡]-with(_▫ y) (proof)                       :of: (_ ≡ id ▫ y))
+      🝖 ([∧]-elimₗ identity                           :of: (_ ≡ y))
+
+    double-inverse : ∀{x} → (inv(inv x) ≡ x)
+    double-inverse {x} =
+      (cancellationᵣ
+        ((
+          ([∧]-elimₗ inverse                      :of: (inv(inv x) ▫ inv(x) ≡ id))
+          🝖 (symmetry([∧]-elimᵣ inverse)          :of: (id ≡ x ▫ inv(x)))
+        ) :of: (inv(inv x) ▫ inv(x) ≡ x ▫ inv(x)))
+      ) :of: (inv(inv x) ≡ x)
+      where
+        postulate cancellationᵣ : Cancellationᵣ(_▫_) -- TODO
+
+    {- TODO
+    inverse-distribution : ∀{x y} → (inv(x ▫ y) ≡ inv(y) ▫ inv(x))
+    inverse-distribution {x} =
+      (cancellationᵣ
+        ((
+          ([∧]-elimₗ inverse                      :of: (inv(x ▫ y) ▫ (x ▫ y) ≡ id))
+          🝖 ([≡]-intro                            :of: (id ≡ id))
+          🝖 (symmetry([∧]-elimᵣ inverse)          :of: (id ≡ (inv(y) ▫ inv(x)) ▫ (x ▫ y)))
+          🝖 (associativity                        :of: ((inv(y) ▫ inv(x)) ▫ (x ▫ y) ≡ inv(y) ▫ (inv(x) ▫ (x ▫ y))))
+          🝖 ([≡]-with(_) associativity            :of: (inv(y) ▫ (inv(x) ▫ (x ▫ y)) ≡ inv(y) ▫ ((inv(x) ▫ x) ▫ y)))
+          🝖 ([≡]-with(_) associativity            :of: (inv(y) ▫ ((inv(x) ▫ x) ▫ y) ≡ inv(y) ▫ (id ▫ y)))
+        ) :of: (inv(x ▫ y) ▫ (x ▫ y) ≡ (inv(y) ▫ inv(x)) ▫ (x ▫ y)))
+      ) :of: (inv(x ▫ y) ≡ inv(y) ▫ inv(x))
+      where
+        postulate cancellationᵣ : Cancellationᵣ(_▫_) -- TODO
+
+      y ▫ inv(y)
+      ≡ id
+      ≡ inv(x) ▫ x
+      y ≡ (inv(x) ▫ x) ▫ y
+      y ▫ id ≡ (inv(x) ▫ x) ▫ y
+      id ≡ inv(y) ▫ ((inv(x) ▫ x) ▫ y)
+      id ≡ (inv(y) ▫ inv(x)) ▫ (x ▫ y)
+      inv(x ▫ y) ≡ inv(y) ▫ inv(x)
+    -}
 
   {-
   module MonoidLikeₗ (associativity : Associativity(_▫_)) {id} (identity : Identityₗ(_▫_)(id)) where
