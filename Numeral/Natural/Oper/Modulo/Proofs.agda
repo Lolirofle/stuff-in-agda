@@ -316,6 +316,20 @@ mod₀-𝐒-equality {a}{b}{c} proof with mod₀-of-𝐒 {a}{c} | mod₀-of-𝐒
 -- mod₀-𝐒-equality {𝐒(_)}{𝟎}   {𝐒(𝐒(_))} ()
 -- mod₀-𝐒-equality {𝐒(_)}{𝐒(_)}{𝐒(𝐒(_))} _ = a where postulate a : ∀{a} → a
 
+
+postulate mod₀-[+]ₗ-equality : ∀{a b k c} → ((a mod₀ c) ≡ (b mod₀ c)) → (((k + a) mod₀ c) ≡ ((k + b) mod₀ c))
+postulate mod₀-[+]ᵣ-equality : ∀{a b k c} → ((a mod₀ c) ≡ (b mod₀ c)) → (((a + k) mod₀ c) ≡ ((b + k) mod₀ c))
+postulate mod₀-[+]-equality : ∀{a₁ b₁ a₂ b₂ c} → ((a₁ mod₀ c) ≡ (b₁ mod₀ c)) → ((a₂ mod₀ c) ≡ (b₂ mod₀ c)) → (((a₁ + a₂) mod₀ c) ≡ ((b₁ + b₂) mod₀ c))
+
+postulate mod₀-[⋅]ₗ-equality : ∀{a b k c} → ((a mod₀ c) ≡ (b mod₀ c)) → (((k ⋅ a) mod₀ c) ≡ ((k ⋅ b) mod₀ c))
+postulate mod₀-[⋅]ᵣ-equality : ∀{a b k c} → ((a mod₀ c) ≡ (b mod₀ c)) → (((a ⋅ k) mod₀ c) ≡ ((b ⋅ k) mod₀ c))
+postulate mod₀-[⋅]-equality : ∀{a₁ b₁ a₂ b₂ c} → ((a₁ mod₀ c) ≡ (b₁ mod₀ c)) → ((a₂ mod₀ c) ≡ (b₂ mod₀ c)) → (((a₁ ⋅ a₂) mod₀ c) ≡ ((b₁ ⋅ b₂) mod₀ c))
+
+-- postulate mod₀-[^]ᵣ-equality : ∀{a b k c} → ((a mod₀ c) ≡ (b mod₀ c)) → (((a ^ k) mod₀ c) ≡ ((b ^ k) mod₀ c))
+
+-- postulate mod₀-[/]ₗ-equality : ∀{a b k c} → ((a mod₀ c) ≡ (b mod₀ c)) → (k ∣ a) → (k ∣ b) → (((k / a) mod₀ c) ≡ ((k / b) mod₀ c))
+-- postulate mod₀-[/]ᵣ-equality : ∀{a b k c} → ((a mod₀ c) ≡ (b mod₀ c)) ∧ (k ∣ a) ∧ (k ∣ b) ← (((a / k) mod₀ c) ≡ ((b / k) mod₀ c))
+
 {-
 (𝐒(b) + 𝐒(a)) mod₀ 𝐒(b)
 [ 0 , b ] (𝐒(b) + 𝐒(a)) mod' b

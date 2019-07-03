@@ -118,3 +118,57 @@ module _ (B : Domain → Formula) {ℓₒ₂} {Domain₂} (dom : Domain₂ → D
           }
       }
 -}
+
+{-
+module _ (B : Domain → Formula) {ℓₒ₂} {Domain₂} (morph : (x : Domain) → Proof(B(x)) → Domain₂) (morph₂ : Domain₂ → Domain) (ident : ∀{x} → Proof(B(x)) → morph(morph₂(x))(proof) ≡ x) (proof : ∀{x} → Proof(B(morph₂(x)))) where
+  instance
+    boundedPredEqSignature : Structure.Logic.Classical.NaturalDeduction.Domained.Predicate.Signature {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ₂} (Domain₂)
+    boundedPredEqSignature =
+      record{
+        ∀ₗ = ∀ₚ(B) ;
+        ∃ₗ = ∃ₚ(B)
+      }
+
+  instance
+    boundedPredEqTheory : Structure.Logic.Classical.NaturalDeduction.Domained.Predicate.Theory {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ₂} (Domain₂) ⦃ boundedPredEqSignature ⦄
+    boundedPredEqTheory =
+      record{
+        universalQuantification =
+          record{
+            intro = \{P} → proof ↦ [∀ₚ]-intro{B}{P ∘ dom⁻¹} (\{x} → bx ↦ proof{dom⁻¹ x}) ;
+            elim  = \{P} → ap ↦ \{x} → [∀ₚ]-elim ap{dom x} (dom-proof{x})
+          } ;
+        existentialQuantification =
+          record{
+            intro = \{P}{a} → pa ↦ [∃ₚ]-intro{B}{P}{dom a} (dom-proof{a}) pa;
+            elim  = \{P}{Z} → axpxz ↦ ep ↦ [∃ₚ]-elim{B}{P} (\{x} → bx ↦ px ↦ axpxz{dom⁻¹ x}(px)) ep
+          }
+      }
+-}
+
+{-
+module _ (B : Domain → Formula) where
+  instance
+    boundedPredEqSignature2 : Structure.Logic.Classical.NaturalDeduction.Domained.Predicate.Signature {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ} (Σ B Domain)
+    boundedPredEqSignature2 =
+      record{
+        ∀ₗ = P ↦ ∀ₚ(B)(P) ;
+        ∃ₗ = P ↦ ∃ₚ(B)(P)
+      }
+
+  instance
+    boundedPredEqTheory2 : Structure.Logic.Classical.NaturalDeduction.Domained.Predicate.Theory {ℓₗ} {Formula} {ℓₘₗ} (Proof) {ℓₒ} (Σ B Domain) ⦃ boundedPredEqSignature2 ⦄
+    boundedPredEqTheory2 =
+      record{
+        universalQuantification =
+          record{
+            intro = \{P} → proof ↦ [∀ₚ]-intro{B}{P} (\{x} → bx ↦ proof{dom⁻¹ x}) ;
+            elim  = \{P} → ap ↦ \{x} → [∀ₚ]-elim ap{x} (dom-proof{x})
+          } ;
+        existentialQuantification =
+          record{
+            intro = \{P}{a} → pa ↦ [∃ₚ]-intro{B}{P}{dom a} (dom-proof{a}) pa;
+            elim  = \{P}{Z} → axpxz ↦ ep ↦ [∃ₚ]-elim{B}{P} (\{x} → bx ↦ px ↦ axpxz{dom⁻¹ x}(px)) ep
+          }
+      }
+-}

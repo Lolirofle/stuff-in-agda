@@ -9,8 +9,10 @@ open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Logic.Predicate.Theorems{ℓ}{Lvl.𝟎}
 open import Numeral.FiniteStrict
 open import Numeral.Natural
+open import Numeral.Natural.Function
 open import Numeral.Natural.GreatestCommonDivisor
 open import Numeral.Natural.Oper
+open import Numeral.Natural.Oper.Modulo
 open import Numeral.Natural.Oper.Properties{ℓ}
 open import Numeral.Natural.Relation.Order{ℓ}
 open import Numeral.Natural.Relation.Order.Proofs{ℓ}
@@ -205,7 +207,7 @@ Div𝐏 {x}{y} proof = divides-without-[+]ᵣ {y}{y}{x} (proof) (divides-reflexi
 -- TODO: divides-factorial : ∀{n x} → (𝐒(x) ≤ n) → (𝐒(x) ∣ n !)
 
 
--- gcd-identityₗ : ∀{b} → (gcd(𝟎)(b) ≡ b)
+postulate gcd-identityₗ : ∀{b} → (gcd(𝟎)(b) ≡ b)
 -- gcd-identityₗ {𝟎}    = [≡]-intro
 -- gcd-identityₗ {𝐒(b)} = gcd-identityₗ {b}
   -- gcd(𝟎)(𝐒(b))
@@ -215,14 +217,33 @@ Div𝐏 {x}{y} proof = divides-without-[+]ᵣ {y}{y}{x} (proof) (divides-reflexi
 gcd-identityᵣ : ∀{a} → (gcd(a)(𝟎) ≡ a)
 gcd-identityᵣ = [≡]-intro
 
--- gcd-of-mod : ∀{a b} → (gcd(𝐒(b))(a) ≡ gcd(𝐒(b))(_mod_ a (𝐒(b)) ⦃ [𝐒]-not-0 ⦄))
+postulate gcd-annihilatorₗ : ∀{b} → (gcd(1)(b) ≡ 1)
 
+postulate gcd-annihilatorᵣ : ∀{a} → (gcd(a)(1) ≡ 1)
 
--- gcd-commutativity : ∀{a b} → (gcd(a)(b) ≡ gcd(b)(a))
+postulate gcd-of-mod : ∀{a b} → (gcd(𝐒(b))(a) ≡ gcd(𝐒(b))(_mod_ a (𝐒(b)) ⦃ [𝐒]-not-0 ⦄))
+
+postulate gcd-commutativity : Commutativity(gcd)
 -- gcd-commutativity {𝟎}   {𝟎}    = [≡]-intro
 -- gcd-commutativity {𝟎}   {𝐒(b)} = [≡]-intro
 -- gcd-commutativity {𝐒(a)}{𝟎}    = [≡]-intro
 -- gcd-commutativity {𝐒(a)}{𝐒(b)} = [≡]-intro
 
--- gcd-dividesₗ : ∀{a b} → (gcd(a)(b) ∣ a)
+postulate gcd-associativity : Associativity(gcd)
+
+postulate gcd-same : ∀{a} → (gcd(a)(a) ≡ a)
+
+postulate gcd-dividesₗ : ∀{a b} → (gcd(a)(b) ∣ a)
 -- gcd-dividesₗ {a}{b} = 
+
+postulate gcd-dividesᵣ : ∀{a b} → (gcd(a)(b) ∣ b)
+
+postulate gcd-min : ∀{a b} → (gcd(a)(b) ≤ min(a)(b))
+
+postulate gcd-with-[+] : ∀{a b} → (gcd(a + b)(b) ≡ gcd(a)(b))
+
+postulate gcd-with-[⋅] : ∀{a b} → (gcd(a ⋅ b)(b) ≡ b)
+
+-- postulate gcd-coprime : ∀{a b} → CoPrime(a / gcd(a)(b))(b / gcd(a)(b))
+
+postulate gcd-divisors : ∀{a b d} → (d ∣ a) → (d ∣ b) → (d ∣ gcd(a)(b))
