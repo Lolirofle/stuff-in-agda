@@ -1,4 +1,4 @@
-OPTIONS=--rewriting
+OPTIONS=--rewriting --irrelevant-projections
 #--exact-split --without-K --proof-irrelevance --verbose=5
 
 all: typecheck

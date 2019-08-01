@@ -27,6 +27,7 @@ import Data.Option
 import Data.Proofs
 import Data.Tuple
 import Data.Tuple.List
+import Data.Tuple.Proofs
 import Data.Tuple.Raise
 import Data.Tuple.Raiseᵣ
 import Data.Tuple.Raiseₗ
