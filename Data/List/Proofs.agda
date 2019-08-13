@@ -1,3 +1,5 @@
+{-# OPTIONS --with-K #-}
+
 module Data.List.Proofs{ℓ₁} where
 
 import Lvl

@@ -9,8 +9,9 @@ open import Functional using (const ; [↦] ; _→ᶠ_) renaming (id to idf ; _�
 open import Logic.Propositional
 open import Logic.Predicate{Lvl.𝟎}
 import      Relator.Equals
-open import Relator.Equals.Proofs{Lvl.𝟎}
+import      Relator.Equals.Proofs
 import      Relator.Equals.Uniqueness
+import      Sets.Setoid
 open import Structure.Relator.Properties{Lvl.𝟎}
 open import Type
 
@@ -26,9 +27,12 @@ Is the following what usually is called a "homomorphism"?
   https://en.wikipedia.org/wiki/Natural_transformation
 -}
 
+-- Relator.Equals.Proofs{Lvl.𝟎}
+
 module _ {ℓₒ ℓₘ : Lvl.Level} where
-  open Relator.Equals{ℓₘ}
+  -- open Relator.Equals{ℓₘ}
   open Relator.Equals.Uniqueness{Lvl.𝟎}{ℓₘ}{ℓₘ} -- TODO: No ℓₒ?
+  open Sets.Setoid{ℓₘ}
 
   -- The type of collections of morphisms
   -- Could be seen as an generalization of functions.
@@ -50,7 +54,7 @@ module _ {ℓₒ ℓₘ : Lvl.Level} where
   --
   -- Obj is the collection of objects.
   -- _⟶_ is the collection of morphisms.
-  record Category {Obj : Set(ℓₒ)} (_⟶_ : Morphism(Obj)) : Set(ℓₒ Lvl.⊔ ℓₘ) where -- TODO: A category could also be seen as an algebraic structure, but one difference from e.g. groups is that this definition also tries to generalize the notion of functions as elements of the algebraic structure
+  record Category {Obj : Set(ℓₒ)} (_⟶_ : Morphism(Obj)) ⦃ _ : ∀{x y} → Equiv(x ⟶ y) ⦄ : Set(ℓₒ Lvl.⊔ ℓₘ) where -- TODO: A category could also be seen as an algebraic structure, but one difference from e.g. groups is that this definition also tries to generalize the notion of functions as elements of the algebraic structure
     field
       -- Existence of morphisms constructed by connecting two morphisms (The composition of two morphisms).
       -- Existence of a binary operator on morphisms connecting the ends of two morphisms.
@@ -94,6 +98,7 @@ module _ {ℓₒ ℓₘ : Lvl.Level} where
     Isomorphism(f) = ∃(g ↦ (g ∘ f ≡ id)∧(f ∘ g ≡ id))
 
     -- A morphism is an endomorphism when the domain and the codomain are equal.
+    -- Something which morphs itself (referring to the object).
     Endomorphism : ∀{x y} → (x ⟶ y) → Stmt
     Endomorphism{x}{y}(_) = (x ≡ y)
 
@@ -162,12 +167,13 @@ module _ {ℓₒ ℓₘ : Lvl.Level} where
   singleCategory : Category{Unit}(const(const Unit))
   Category._∘_           (singleCategory) <> <> = <>
   Category.id            (singleCategory) = <>
-  Category.identityₗ     (singleCategory) = [≡]-intro
-  Category.identityᵣ     (singleCategory) = [≡]-intro
-  Category.associativity (singleCategory) = [≡]-intro
+  Category.identityₗ     (singleCategory) = reflexivity
+  Category.identityᵣ     (singleCategory) = reflexivity
+  Category.associativity (singleCategory) = reflexivity
 
 module _ {ℓ} where
   open Relator.Equals{ℓ}
+  -- open Sets.Setoid{ℓ}
 
   -- The set category is a category containing all sets/types of a single level in the language.
   -- The objects are all sets/types.
@@ -175,9 +181,9 @@ module _ {ℓ} where
   setCategory : Category{_}{_}{Set(ℓ)}(_→ᶠ_)
   Category._∘_           (setCategory) = _∘f_
   Category.id            (setCategory) = idf
-  Category.identityₗ     (setCategory) = [≡]-intro
-  Category.identityᵣ     (setCategory) = [≡]-intro
-  Category.associativity (setCategory) = [≡]-intro
+  Category.identityₗ     (setCategory) = reflexivity
+  Category.identityᵣ     (setCategory) = reflexivity
+  Category.associativity (setCategory) = reflexivity
 
 module Product
   {ℓₒ ℓₘ : Lvl.Level}
@@ -213,13 +219,14 @@ module _
   where
 
   open Relator.Equals{ℓₘ₂}
+  open Relator.Equals.Proofs
 
   -- A covariant functor.
   -- A morphism between categories.
   -- "Preserves structure"
   record Functor
-      (Category₁ : Category {_}{_} {Obj₁} _⟶₁_)
-      (Category₂ : Category {_}{_} {Obj₂} _⟶₂_)
+      (Category₁ : Category {_}{_} {Obj₁} (_⟶₁_) ⦃ \{x}{y} → [≡]-equiv {_}{_} {x ⟶₁ y} ⦄)
+      (Category₂ : Category {_}{_} {Obj₂} (_⟶₂_) ⦃ \{x}{y} → [≡]-equiv {_}{_} {x ⟶₂ y} ⦄)
     : Set((ℓₒ₁ Lvl.⊔ ℓₘ₁) Lvl.⊔ (ℓₒ₂ Lvl.⊔ ℓₘ₂))
     where
 
@@ -270,6 +277,8 @@ module _ {ℓₒ ℓₘ : Lvl.Level} where -- TODO: Level problems. Probably in 
     ℓₒ₃ = ℓₒ
     ℓₘ₃ = ℓₘ
 
+  open Relator.Equals.Proofs{ℓₘ₂}
+
   compositionFunctor : ∀{Obj₁}{Obj₂}{Obj₃} {M₁}{M₂}{M₃} {cat₁}{cat₂}{cat₃}
                      → Functor{ℓₒ₂}{ℓₘ₂} {ℓₒ₃}{ℓₘ₃} {Obj₂}{Obj₃}{M₂}{M₃} (cat₂)(cat₃)
                      → Functor{ℓₒ₁}{ℓₘ₁} {ℓₒ₂}{ℓₘ₂} {Obj₁}{Obj₂}{M₁}{M₂} (cat₁)(cat₂)
@@ -308,6 +317,12 @@ module _ {ℓₒ ℓₘ} where
   Functor.id-preserving (identityFunctor(_)) = [≡]-intro
 
 {- TODO: May have to use an alternative equality definition for the proofs to work? When are two instances of Category equal?
+
+Can some of this be used:
+• https://en.wikipedia.org/wiki/Isomorphism_of_categories
+• https://en.wikipedia.org/wiki/Equivalence_of_categories
+?
+
 module _  where
   open Relator.Equals
 
@@ -325,11 +340,11 @@ module _
   {Obj₂ : Set(ℓₒ₂)}
   {_⟶₁_ : Obj₁ → Obj₁ → Set(ℓₘ₁)}
   {_⟶₂_ : Obj₂ → Obj₂ → Set(ℓₘ₂)}
-  {Category₁ : Category {_}{_} {Obj₁} _⟶₁_}
-  {Category₂ : Category {_}{_} {Obj₂} _⟶₂_}
+  {Category₁ : Category {_}{_} {Obj₁} _⟶₁_ ⦃ \{x}{y} → Relator.Equals.Proofs.[≡]-equiv {_}{_} {x ⟶₁ y} ⦄ }
+  {Category₂ : Category {_}{_} {Obj₂} _⟶₂_ ⦃ \{x}{y} → Relator.Equals.Proofs.[≡]-equiv {_}{_} {x ⟶₂ y} ⦄ }
   where
 
-  open Category
+  open module CategoryWithEquals {ℓₒ}{ℓₘ} {Obj} {_⟶_} = Category {ℓₒ}{ℓₘ} {Obj} {_⟶_} ⦃ \{x}{y} → Relator.Equals.Proofs.[≡]-equiv {_}{_} {x ⟶ y} ⦄
   open Functor
 
   private
@@ -341,6 +356,7 @@ module _
 
   module _ where
     open Relator.Equals{ℓₘ₂}
+    open Relator.Equals.Proofs{ℓₘ₂}
 
     record NaturalTransformation
         (F₁ : Functor Category₁ Category₂)
@@ -360,12 +376,53 @@ module _
 
       field
         ⦃ .proof ⦄ : ∀{x y : Obj₁}{f : x ⟶₁ y} → (component(y) ∘₂ map₁(f) ≡ map₂(f) ∘₂ component(x))
-
     open NaturalTransformation
 
-    NaturalTransformation-id : ∀{F : Functor Category₁ Category₂} → NaturalTransformation(F)(F)
-    component (NaturalTransformation-id{F}) (_) = id₂
-    proof     (NaturalTransformation-id{F}) {x}{y}{f} rewrite identityₗ (Category₂) {functor(F)(x)}{functor(F)(y)}{map(F)(f)}
+    {-
+    record Monad (T : EndoFunctor Category₁) : Set(ℓₒ₁ Lvl.⊔ ℓₘ₁) where
+      private
+        _⟹_ = NaturalTransformation
+        idNT = identityNaturalTransformation
+        _∘NT_ = compositionNaturalTransformation
+        _∘F_ = compositionFunctor
+        idF = identityFunctor
+
+      field
+        -- The ability to construct an endofunctored object from an object.
+        -- In Haskell, this is called "return"/"unit" and named "return".
+        --   idF ⟹ T
+        --   ∀(x: Obj). idF(x) ⟶ T(x)
+        --   ∀(x: Obj). x ⟶ T(x)
+        η : idF ⟹ T
+
+        -- TODO: ?
+        -- In Haskell, this is called "bind" and named "(>>=)". TODO: Not sure. This looks different?
+        --   (T ∘F T) ⟹ T
+        --   ∀(x: Obj). (T ∘F T)(x) ⟶ T(x)
+        --   ∀(x: Obj). T(T(x)) ⟶ T(x)
+        μ : (T ∘F T) ⟹ T
+
+      field
+        ⦃ .μ-commutativity ⦄ : μ ∘NT (T ∘F μ) ≡ μ ∘NT (μ ∘F T)
+
+        -- μ ∘NT (η ⋅₁ T) ≡ idNT
+        -- ∀(x: Obj). (μ ∘NT (η ⋅₁ T))(x) ≡ idNT(x)
+        -- ∀(x: Obj). (μ ∘NT (η ⋅₁ T))(x) ≡ idM
+        -- ∀(x: Obj). μ(x) ∘M (η ⋅₁ T)(x) ≡ idM
+        -- ∀(x: Obj). μ(x) ∘M η(T(x)) ≡ idM
+        ⦃ .μ-inverseₗ ⦄ : μ ∘NT (η ⋅₁ T) ≡ idNT
+
+        -- μ ∘NT (T ⋅₂ η) ≡ idNT
+        -- ∀(x: Obj). (μ ∘NT (T ⋅₂ η))(x) ≡ idNT(x)
+        -- ∀(x: Obj). (μ ∘NT (T ⋅₂ η))(x) ≡ idM
+        -- ∀(x: Obj). μ(x) ∘M (T ⋅₂ η)(x) ≡ idM
+        -- ∀(x: Obj). μ(x) ∘M map(T) (η(x)) ≡ idM
+        ⦃ .μ-inverseᵣ ⦄ : μ ∘NT (T ⋅₂ η) ≡ idNT
+    -}
+
+    identityNaturalTransformation : ∀{F : Functor Category₁ Category₂} → NaturalTransformation(F)(F)
+    component (identityNaturalTransformation{F}) (_) = id₂
+    proof     (identityNaturalTransformation{F}) {x}{y}{f} rewrite identityₗ (Category₂) {functor(F)(x)}{functor(F)(y)}{map(F)(f)}
                                                             | identityᵣ (Category₂) {functor(F)(x)}{functor(F)(y)}{map(F)(f)}
                                                             = [≡]-intro
       -- (component(y) ∘₂ map(f) ≡ map(f) ∘₂ component(x))
@@ -380,9 +437,9 @@ module _
         η₁ = component(N₁)
         η₂ = component(N₂)
 
-      NaturalTransformation-composition : NaturalTransformation(F)(H)
-      component (NaturalTransformation-composition) (x) = η₁(x) ∘₂ η₂(x)
-      proof     (NaturalTransformation-composition) {x}{y}{f} rewrite associativity (Category₂) {_}{_}{_}{_} {η₁(y)}     {η₂(y)}     {map(F)(f)}
+      compositionNaturalTransformation : NaturalTransformation(F)(H)
+      component (compositionNaturalTransformation) (x) = η₁(x) ∘₂ η₂(x)
+      proof     (compositionNaturalTransformation) {x}{y}{f} rewrite associativity (Category₂) {_}{_}{_}{_} {η₁(y)}     {η₂(y)}     {map(F)(f)}
                                                                     | proof(N₂) {x}{y}{f}
         = symmetry(associativity (Category₂) {_}{_}{_}{_} {η₁(y)}     {map(G)(f)} {η₂(x)})
           🝖 [≡]-with(_∘₂ η₂(x)) (proof(N₁) {x}{y}{f})
@@ -407,13 +464,13 @@ module _
     open NaturalTransformation
 
     functorCategory : Category{_}{_} {Functor Category₁ Category₂} (NaturalTransformation)
-    _∘_           (functorCategory) = NaturalTransformation-composition
-    id            (functorCategory) = NaturalTransformation-id
+    _∘_           (functorCategory) = compositionNaturalTransformation
+    id            (functorCategory) = identityNaturalTransformation
     identityₗ     (functorCategory) {F}{G} {N} rewrite identityₗ (Category₂) {_}{_} {id₂} = [≡]-intro
       -- For x: Functor(Category₁) (Category₂) , y: Functor(Category₁) (Category₂) , f: NaturalTransformation(x)(y)
       --
-      -- NaturalTransformation-id ∘ f
-      -- ≡ x ↦ component(NaturalTransformation-id)(x) ∘₂ component(f)(x)
+      -- identityNaturalTransformation ∘ f
+      -- ≡ x ↦ component(identityNaturalTransformation)(x) ∘₂ component(f)(x)
       -- ≡ x ↦ id₂ ∘₂ component(f)(x)
       -- ≡ x ↦ component(f)(x)
       -- ≡ f

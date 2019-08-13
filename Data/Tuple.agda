@@ -36,3 +36,6 @@ module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} where
   -- Swaps the left and right elements of a 2-tuple
   swap : (T₁ ⨯ T₂) → (T₂ ⨯ T₁)
   swap(x , y) = (y , x)
+
+  map1 : (T₁ → T₂) → (T₁ ⨯ T₁) → (T₂ ⨯ T₂)
+  map1 f = map f f

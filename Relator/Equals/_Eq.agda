@@ -1,3 +1,5 @@
+{-# OPTIONS --with-K #-}
+
 -- The purpose of this module is to allow the BUILTIN EQUALITY pragma while also having module parameters
 module Relator.Equals._Eq where
 

@@ -6,6 +6,16 @@ open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Propositional.Theorems{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}
 open import Type
+open import Type.Empty
+
+------------------------------------------
+-- Practical stuff
+
+[∃]-map : ∀{X}{P Q : X → Stmt} → (∀{x} → P(x) → Q(x)) → ((∃ P) → (∃ Q))
+[∃]-map (f) ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(x) ⦃ f(proof) ⦄
+
+------------------------------------------
+-- Swapping nested quantifiers
 
 [∀]-swap : ∀{X Y}{P : X → Y → Stmt} → ∀ₗ(x ↦ ∀ₗ(y ↦ P(x)(y))) → ∀ₗ(y ↦ ∀ₗ(x ↦ P(x)(y)))
 [∀]-swap(xypxy){y}{x} = xypxy{x}{y}
@@ -13,15 +23,27 @@ open import Type
 [∃]-swap : ∀{X Y}{P : X → Y → Stmt} → ∃(x ↦ ∃(y ↦ P(x)(y))) → ∃(y ↦ ∃(x ↦ P(x)(y)))
 [∃]-swap([∃]-intro(x) ⦃ [∃]-intro(y) ⦃ proof ⦄ ⦄) = [∃]-intro(y) ⦃ [∃]-intro(x) ⦃ proof ⦄ ⦄
 
-[∃]-irrelevant : ∀{X}{P : Stmt} → ∃{X}(x ↦ P) → P
-[∃]-irrelevant([∃]-intro(_) ⦃ proof ⦄) = proof
+------------------------------------------
+-- Introducing and eliminating unnecessary quantifiers when the predicate is constant
+
+[∃]-unnecessary-intro : ∀{X} → ⦃ _ : ◊ X ⦄ → ∀{P : Stmt} → P → ∃{X}(x ↦ P)
+[∃]-unnecessary-intro(p) = [∃]-intro([◊]-existence) ⦃ p ⦄
+
+[∀]-unnecessary-intro : ∀{X}{P : Stmt} → P → ∀ₗ{X}(x ↦ P)
+[∀]-unnecessary-intro(p){x} = p
+
+[∃]-unnecessary-elim : ∀{X}{P : Stmt} → ∃{X}(x ↦ P) → P
+[∃]-unnecessary-elim([∃]-intro(_) ⦃ proof ⦄) = proof
 
 -- Note:
 --   The following is unprovable:
---   [∀]-irrelevant : ∀{X}{P : Stmt} → ∀ₗ{X}(x ↦ P) → P
+--   [∀]-unnecessary : ∀{X}{P : Stmt} → ∀ₗ{X}(x ↦ P) → P
 --   X is not guaranteed to not be the empty type, and even if it was, the ∀ function requires a constructed value. It seems to need a non-empty domain to quantify over.
-[∀ₑ]-irrelevant : ∀{X}{P : Stmt} → ∀ₑ{X}(x ↦ P) → P
-[∀ₑ]-irrelevant = [∀ₑ]-elimₑ
+[∀ₑ]-unnecessary-elim : ∀{X} → ⦃ _ : ◊ X ⦄ → ∀{P : Stmt} → ∀ₗ{X}(x ↦ P) → P
+[∀ₑ]-unnecessary-elim {X}{P} = [∀ₑ]-elim{X}
+
+------------------------------------------
+-- When quantifiers contradict
 
 [∀][∃¬]-contradiction : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ P(x)) → ∃(x ↦ ¬(P(x))) → ⊥
 [∀][∃¬]-contradiction{X}{P} (ap)(enp) =
@@ -32,23 +54,59 @@ open import Type
     )
   )) (enp))
 
+[∀¬][∃]-contradiction : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬ P(x)) → ∃(x ↦ P(x)) → ⊥
+[∀¬][∃]-contradiction {X}{P} (axnpx) (expx) =
+  axnpx {[∃]-witness(expx)} ([∃]-proof(expx))
+
+------------------------------------------
+-- Moving in and out negation from quantifiers
+
+[∃¬]-to-[¬∀] : ∀{X}{P : X → Stmt} → (∃(x ↦ ¬(P(x)))) → ¬(∀ₗ(x ↦ P(x)))
+[∃¬]-to-[¬∀] = swap [∀][∃¬]-contradiction
+
+[∀¬]-to-[¬∃] : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬(P(x))) → ¬(∃(x ↦ P(x)))
+[∀¬]-to-[¬∃] = [∀¬][∃]-contradiction
+  -- [∀¬]-to-[¬∃] (anpx) =
+  --   ([¬]-intro(epx ↦
+  --     [∃]-elim(\{a} → pa ↦
+  --       ([⊥]-intro
+  --         pa
+  --         (anpx{a})
+  --       )
+  --     )(epx)
+  --   ))
+
+[¬∃]-to-[∀¬] : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬(P(x))) ← ¬(∃(x ↦ P(x)))
+[¬∃]-to-[∀¬] {X}{P} (nepx) =
+  ([∀]-intro(a ↦
+    (([¬]-intro(pa ↦
+      (([⊥]-intro
+        (([∃]-intro a ⦃ pa ⦄) :of: (∃(x ↦ P(x))))
+        (nepx :of: ¬(∃(x ↦ P(x))))
+      ) :of: ⊥)
+    )) :of: ¬(P(a)))
+  ))
+
+[¬∃]-to-[∃¬] : ∀{X} → ⦃ _ : ◊ X ⦄ → ∀{P : X → Stmt} → ¬(∃ P) → ∃(¬_ ∘ P)
+[¬∃]-to-[∃¬] (nexpx) = [∃]-intro ([◊]-existence) ⦃ [¬∃]-to-[∀¬] (nexpx) ⦄
+
+[¬∃]-to-[¬∀] : ∀{X} → ⦃ _ : ◊ X ⦄ → ∀{P : X → Stmt} → ¬(∃ P) → ¬(∀ₗ P)
+[¬∃]-to-[¬∀] = [∃¬]-to-[¬∀] ∘ [¬∃]-to-[∃¬]
+
+[∀¬]-to-[¬∀] : ∀{X} → ⦃ _ : ◊ X ⦄ → ∀{P : X → Stmt} → ∀ₗ(¬_ ∘ P) → ¬(∀ₗ P)
+[∀¬]-to-[¬∀] axnpx axpx = (axnpx{[◊]-existence}) (axpx{[◊]-existence})
+
+------------------------------------------
+-- Introducing negations to change quantifier
+
 [∀]-to-[¬∃¬] : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ P(x)) → (¬ ∃(x ↦ ¬(P(x))))
 [∀]-to-[¬∃¬] = [∀][∃¬]-contradiction -- [∃]-elim(\{a} → npa ↦ npa(p{a}))(ep)
 
-[∃¬]-to-[¬∀] : ∀{X}{P : X → Stmt} → (∃(x ↦ ¬(P(x)))) → (¬ ∀{x} → P(x))
-[∃¬]-to-[¬∀] = swap [∀][∃¬]-contradiction
+[∃]-to-[¬∀¬] : ∀{X}{P : X → Stmt} → ∃(x ↦ P(x)) → (¬ ∀ₗ(x ↦ ¬(P(x))))
+[∃]-to-[¬∀¬] = swap [∀¬][∃]-contradiction
 
-{- TODO: Probably unprovable?
-[¬∀ₑ]-to-[∃¬] : ∀{X}{P : X → Stmt} → X → (∃(x ↦ ¬(P(x)))) ← (¬ ∀ₗ(x ↦ P(x)))
-[¬∀ₑ]-to-[∃¬] {X}{_} (a) (napx) =
-  ([∃]-intro(a)
-    ⦃ [¬]-intro(pa ↦
-        ([∀]-intro(pa))
-        (napx)
-      )
-    ⦄
-  )
--}
+------------------------------------------
+-- Stuff using double negation
 
 [∀¬¬][∃¬]-contradiction : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬¬(P(x))) → (∃(x ↦ ¬(P(x)))) → ⊥
 [∀¬¬][∃¬]-contradiction{X}{P} (annp)([∃]-intro(a) ⦃ na ⦄) =
@@ -74,107 +132,37 @@ open import Type
 -- TODO: Probably unprovable because people said so. Not sure why. Maybe because (¬¬A is valid in constructive logic) ⇔ (A is valid in classical logic), and therefore this would not be possible because everything here is in constructive logic.
 -- [∀¬¬]-to-[¬¬∀] : ∀{X}{P : X → Stmt} → ¬¬∀ₗ(x ↦ (P(x))) ← ∀ₗ(x ↦ ¬¬(P(x)))
 
-[∀¬]-to-[¬∃] : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬(P(x))) → ¬(∃(x ↦ P(x)))
-[∀¬]-to-[¬∃] (anpx) =
-  ([¬]-intro(epx ↦
-    [∃]-elim(\{a} → pa ↦
-      ([⊥]-intro
-        pa
-        (anpx{a})
-      )
-    )(epx)
-  ))
+------------------------------------------
+-- Changing quantifier
 
-[¬∃]-to-[∀¬] : ∀{X}{P : X → Stmt} → ∀ₗ(x ↦ ¬(P(x))) ← ¬(∃(x ↦ P(x)))
-[¬∃]-to-[∀¬] {X}{P} (nepx) =
-  ([∀]-intro(a ↦
-    (([¬]-intro(pa ↦
-      (([⊥]-intro
-        (([∃]-intro a ⦃ pa ⦄) :of: (∃(x ↦ P(x))))
-        (nepx :of: ¬(∃(x ↦ P(x))))
-      ) :of: ⊥)
-    )) :of: ¬(P(a)))
-  ))
+-- Note: If X would be empty, then this would be unprovable because [∀]-elim needs a constructed element.
+[∀ₑ]-to-[∃] : ∀{X} → ⦃ _ : ◊ X ⦄ → ∀{P : X → Stmt} → ∀ₗ(x ↦ P(x)) → ∃(x ↦ P(x))
+[∀ₑ]-to-[∃] {X}{P} (apx) =
+  [∃]-intro _ ⦃ [∀ₑ]-elim{X}{P}(apx) ⦄
 
--- TODO: Probably unprovable because [∀]-elim seems to need a constructed element?
--- [∀]-to-[∃] : ∀{X}{P : X → Stmt} → ∀(x ↦ P(x)) → ∃(x ↦ P(x))
-
-[∀ₑ]-to-[∃] : ∀{X}{P : X → Stmt} → ∀ₑ(x ↦ P(x)) → ∃(x ↦ P(x))
-[∀ₑ]-to-[∃] (apx) =
-  [∃]-intro(_) ⦃ [∀ₑ]-elimₑ(apx) ⦄
+------------------------------------------
+-- "Distributing" quantifiers into logical operators
 
 [∀][→]-distributivity : ∀{X}{P Q : X → Stmt} → ∀ₗ(x ↦ (P(x) → Q(x))) → ∀ₗ(x ↦ P(x)) → ∀ₗ(x ↦ Q(x))
 [∀][→]-distributivity (PxQx) (Px) = PxQx(Px)
 
-[∀][∧]-distributivity : ∀{X}{P Q : X → Stmt} → (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x))) ↔ ∀ₗ(x ↦ (P(x) ∧ Q(x)))
+[∀][∧]-distributivity : ∀{X}{P Q : X → Stmt} → ∀ₗ(x ↦ (P(x) ∧ Q(x))) ↔ (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x)))
 [∀][∧]-distributivity {X}{P}{Q} = [↔]-intro l r where
-  l : (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x))) ← ∀ₗ(x ↦ (P(x) ∧ Q(x)))
-  l(apxqx) = [∧]-intro (\{x} → [∧]-elimₗ(apxqx{x})) (\{x} → [∧]-elimᵣ(apxqx{x}))
+  l : (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x))) → ∀ₗ(x ↦ (P(x) ∧ Q(x)))
+  l ([∧]-intro (axPx) (axQx)) {x} = [∧]-intro (axPx{x}) (axQx{x})
 
-  r : (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x))) → ∀ₗ(x ↦ (P(x) ∧ Q(x)))
-  r ([∧]-intro (axPx) (axQx)) {x} = [∧]-intro (axPx{x}) (axQx{x})
+  r : (∀ₗ(x ↦ P(x)) ∧ ∀ₗ(x ↦ Q(x))) ← ∀ₗ(x ↦ (P(x) ∧ Q(x)))
+  r(apxqx) = [∧]-intro (\{x} → [∧]-elimₗ(apxqx{x})) (\{x} → [∧]-elimᵣ(apxqx{x}))
 
-[∃][∨]-distributivity : ∀{X}{P Q : X → Stmt} → (∃(x ↦ P(x)) ∨ ∃(x ↦ Q(x))) ↔ ∃(x ↦ (P(x) ∨ Q(x)))
+[∃][∨]-distributivity : ∀{X}{P Q : X → Stmt} → ∃(x ↦ (P(x) ∨ Q(x))) ↔ (∃(x ↦ P(x)) ∨ ∃(x ↦ Q(x)))
 [∃][∨]-distributivity {X}{P}{Q} = [↔]-intro l r where
-  l : (∃(x ↦ P(x)) ∨ ∃(x ↦ Q(x))) ← ∃(x ↦ (P(x) ∨ Q(x)))
-  l ([∃]-intro x ⦃ [∨]-introₗ px ⦄) = [∨]-introₗ ([∃]-intro x ⦃ px ⦄)
-  l ([∃]-intro x ⦃ [∨]-introᵣ qx ⦄) = [∨]-introᵣ ([∃]-intro x ⦃ qx ⦄)
+  l : (∃(x ↦ P(x)) ∨ ∃(x ↦ Q(x))) → ∃(x ↦ (P(x) ∨ Q(x)))
+  l ([∨]-introₗ ([∃]-intro x ⦃ px ⦄)) = [∃]-intro x ⦃ [∨]-introₗ px ⦄
+  l ([∨]-introᵣ ([∃]-intro x ⦃ qx ⦄)) = [∃]-intro x ⦃ [∨]-introᵣ qx ⦄
 
-  r : (∃(x ↦ P(x)) ∨ ∃(x ↦ Q(x))) → ∃(x ↦ (P(x) ∨ Q(x)))
-  r ([∨]-introₗ ([∃]-intro x ⦃ px ⦄)) = [∃]-intro x ⦃ [∨]-introₗ px ⦄
-  r ([∨]-introᵣ ([∃]-intro x ⦃ qx ⦄)) = [∃]-intro x ⦃ [∨]-introᵣ qx ⦄
-
-[∀]-unrelatedₗ-[→] : ∀{X}{P : X → Stmt}{Q : Stmt} → ∀ₗ(x ↦ (P(x) → Q)) ↔ (∃(x ↦ P(x)) → Q)
-[∀]-unrelatedₗ-[→] {X}{P}{Q} = [↔]-intro l r where
-  l : ∀ₗ(x ↦ (P(x) → Q)) ← (∃(x ↦ P(x)) → Q)
-  l(expxq) {x} px = expxq([∃]-intro(x) ⦃ px ⦄)
-
-  r : ∀ₗ(x ↦ (P(x) → Q)) → (∃(x ↦ P(x)) → Q)
-  r(axpxq) = [∃]-elim(\{x} → px ↦ axpxq{x}(px))
-
-[∀]-unrelatedᵣ-[→] : ∀{X}{P : Stmt}{Q : X → Stmt} → ∀ₗ(x ↦ (P → Q(x))) ↔ (P → ∀ₗ(x ↦ Q(x)))
-[∀]-unrelatedᵣ-[→] {X}{P}{Q} = [↔]-intro l r where
-  l : ∀ₗ(x ↦ (P → Q(x))) ← (P → ∀ₗ(x ↦ Q(x)))
-  l(paxqx) {x} p = paxqx(p){x}
-
-  r : ∀ₗ(x ↦ (P → Q(x))) → (P → ∀ₗ(x ↦ Q(x)))
-  r(axpqx)(p){x} = axpqx{x}(p)
-
-[∃]-unrelatedₗ-[→]ᵣ : ∀{X}{P : X → Stmt}{Q : Stmt} → ∃(x ↦ (P(x) → Q)) → (∀ₗ(x ↦ P(x)) → Q)
-[∃]-unrelatedₗ-[→]ᵣ {X}{P}{Q} = r where -- [↔]-intro l r where
-  -- TODO: Would this work with ∀ₑ?
-  -- l : ∃(x ↦ (P(x) → Q)) ← (∀ₗ(x ↦ P(x)) → Q)
-  -- l(axpxq) = [∃]-intro(_) ⦃ px ↦ axpxq(px) ⦄
-
-  r : ∃(x ↦ (P(x) → Q)) → (∀ₗ(x ↦ P(x)) → Q)
-  r(expxq)(axpx) = [∃]-proof(expxq) (axpx{[∃]-witness(expxq)})
-
-[∃]-unrelatedᵣ-[→]ᵣ : ∀{X}{P : Stmt}{Q : X → Stmt} → ∃(x ↦ (P → Q(x))) → (P → ∃(x ↦ Q(x)))
-[∃]-unrelatedᵣ-[→]ᵣ {X}{P}{Q} = r where -- [↔]-intro l r where
-  -- TODO: Where should the p come from when applying [∃]-intro?
-  -- l : ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
-  -- l(pexqx) = [∃]-intro([∃]-witness(pexqx(p))) ⦃ _ ↦ [∃]-proof(pexqx(p)) ⦄ where
-  --   postulate p : P
-
-  r : ∃(x ↦ (P → Q(x))) → (P → ∃(x ↦ Q(x)))
-  r(expqx)(p) = [∃]-elim(\{x} → pqx ↦ [∃]-intro(x) ⦃ pqx(p) ⦄) (expqx)
-
-[∃]-unrelatedₗ-[∧] : ∀{X}{P : X → Stmt}{Q : Stmt} → ∃(x ↦ (P(x) ∧ Q)) ↔ (∃(x ↦ P(x)) ∧ Q)
-[∃]-unrelatedₗ-[∧] {X}{P}{Q} = [↔]-intro l r where
-  l : ∃(x ↦ (P(x) ∧ Q)) ← (∃(x ↦ P(x)) ∧ Q)
-  l ([∧]-intro ([∃]-intro x ⦃ px ⦄) q) = [∃]-intro x ⦃ [∧]-intro px q ⦄
-
-  r : ∃(x ↦ (P(x) ∧ Q)) → (∃(x ↦ P(x)) ∧ Q)
-  r ([∃]-intro x ⦃ [∧]-intro px q ⦄) = [∧]-intro ([∃]-intro x ⦃ px ⦄) q
-
-
-[∃]-unrelatedᵣ-[∧] : ∀{X}{P : Stmt}{Q : X → Stmt} → ∃(x ↦ (P ∧ Q(x))) ↔ (P ∧ ∃(x ↦ Q(x)))
-[∃]-unrelatedᵣ-[∧] {X}{P}{Q} = [↔]-intro l r where
-  l : ∃(x ↦ (P ∧ Q(x))) ← (P ∧ ∃(x ↦ Q(x)))
-  l ([∧]-intro p ([∃]-intro x ⦃ qx ⦄)) = [∃]-intro x ⦃ [∧]-intro p qx ⦄
-
-  r : ∃(x ↦ (P ∧ Q(x))) → (P ∧ ∃(x ↦ Q(x)))
-  r ([∃]-intro x ⦃ [∧]-intro p qx ⦄) = [∧]-intro p ([∃]-intro x ⦃ qx ⦄)
+  r : (∃(x ↦ P(x)) ∨ ∃(x ↦ Q(x))) ← ∃(x ↦ (P(x) ∨ Q(x)))
+  r ([∃]-intro x ⦃ [∨]-introₗ px ⦄) = [∨]-introₗ ([∃]-intro x ⦃ px ⦄)
+  r ([∃]-intro x ⦃ [∨]-introᵣ qx ⦄) = [∨]-introᵣ ([∃]-intro x ⦃ qx ⦄)
 
 [∃][∧]-semidistributivity : ∀{X}{P : X → Stmt}{Q : X → Stmt} → ∃(x ↦ ∃(y ↦ (P(x) ∧ Q(y)))) ↔ (∃(x ↦ P(x)) ∧ ∃(x ↦ Q(x)))
 [∃][∧]-semidistributivity {X}{P}{Q} = [↔]-intro l r where
@@ -201,6 +189,55 @@ open import Type
 
     rr : ∀ₗ(x ↦ (P(x) → Q(x)))
     rr{x} = [↔]-elimᵣ(apxqx{x})
+
+------------------------------------------
+-- Quantifiers with logical operators inside, but one of the predicates are constant
+
+[∀]-unrelatedₗ-[→] : ∀{X}{P : X → Stmt}{Q : Stmt} → ∀ₗ(x ↦ (P(x) → Q)) ↔ (∃(x ↦ P(x)) → Q)
+[∀]-unrelatedₗ-[→] {X}{P}{Q} = [↔]-intro l r where
+  l : ∀ₗ(x ↦ (P(x) → Q)) ← (∃(x ↦ P(x)) → Q)
+  l(expxq) {x} px = expxq([∃]-intro(x) ⦃ px ⦄)
+
+  r : ∀ₗ(x ↦ (P(x) → Q)) → (∃(x ↦ P(x)) → Q)
+  r(axpxq) = [∃]-elim(\{x} → px ↦ axpxq{x}(px))
+
+[∀]-unrelatedᵣ-[→] : ∀{X}{P : Stmt}{Q : X → Stmt} → ∀ₗ(x ↦ (P → Q(x))) ↔ (P → ∀ₗ(x ↦ Q(x)))
+[∀]-unrelatedᵣ-[→] {X}{P}{Q} = [↔]-intro l r where
+  l : ∀ₗ(x ↦ (P → Q(x))) ← (P → ∀ₗ(x ↦ Q(x)))
+  l(paxqx) {x} p = paxqx(p){x}
+
+  r : ∀ₗ(x ↦ (P → Q(x))) → (P → ∀ₗ(x ↦ Q(x)))
+  r(axpqx)(p){x} = axpqx{x}(p)
+
+[∃]-unrelatedₗ-[→]ᵣ : ∀{X}{P : X → Stmt}{Q : Stmt} → ∃(x ↦ (P(x) → Q)) → (∀ₗ(x ↦ P(x)) → Q)
+[∃]-unrelatedₗ-[→]ᵣ {X}{P}{Q} = r where -- [↔]-intro l r where
+  r : ∃(x ↦ (P(x) → Q)) → (∀ₗ(x ↦ P(x)) → Q)
+  r(expxq)(axpx) = [∃]-proof(expxq) (axpx{[∃]-witness(expxq)})
+
+[∃]-unrelatedᵣ-[→]ᵣ : ∀{X}{P : Stmt}{Q : X → Stmt} → ∃(x ↦ (P → Q(x))) → (P → ∃(x ↦ Q(x)))
+[∃]-unrelatedᵣ-[→]ᵣ {X}{P}{Q} = r where -- [↔]-intro l r where
+  r : ∃(x ↦ (P → Q(x))) → (P → ∃(x ↦ Q(x)))
+  r(expqx)(p) = [∃]-elim(\{x} → pqx ↦ [∃]-intro(x) ⦃ pqx(p) ⦄) (expqx)
+
+[∃]-unrelatedₗ-[∧] : ∀{X}{P : X → Stmt}{Q : Stmt} → ∃(x ↦ (P(x) ∧ Q)) ↔ (∃(x ↦ P(x)) ∧ Q)
+[∃]-unrelatedₗ-[∧] {X}{P}{Q} = [↔]-intro l r where
+  l : ∃(x ↦ (P(x) ∧ Q)) ← (∃(x ↦ P(x)) ∧ Q)
+  l ([∧]-intro ([∃]-intro x ⦃ px ⦄) q) = [∃]-intro x ⦃ [∧]-intro px q ⦄
+
+  r : ∃(x ↦ (P(x) ∧ Q)) → (∃(x ↦ P(x)) ∧ Q)
+  r ([∃]-intro x ⦃ [∧]-intro px q ⦄) = [∧]-intro ([∃]-intro x ⦃ px ⦄) q
+
+
+[∃]-unrelatedᵣ-[∧] : ∀{X}{P : Stmt}{Q : X → Stmt} → ∃(x ↦ (P ∧ Q(x))) ↔ (P ∧ ∃(x ↦ Q(x)))
+[∃]-unrelatedᵣ-[∧] {X}{P}{Q} = [↔]-intro l r where
+  l : ∃(x ↦ (P ∧ Q(x))) ← (P ∧ ∃(x ↦ Q(x)))
+  l ([∧]-intro p ([∃]-intro x ⦃ qx ⦄)) = [∃]-intro x ⦃ [∧]-intro p qx ⦄
+
+  r : ∃(x ↦ (P ∧ Q(x))) → (P ∧ ∃(x ↦ Q(x)))
+  r ([∃]-intro x ⦃ [∧]-intro p qx ⦄) = [∧]-intro p ([∃]-intro x ⦃ qx ⦄)
+
+------------------------------------------
+-- Other rules
 
 [∀][→]-add-[∃] : ∀{X}{P Q : X → Stmt} → ∀ₗ(x ↦ (P(x) → Q(x))) → ∀ₗ(x ↦ (P(x) → ∃(x ↦ Q(x))))
 [∀][→]-add-[∃] (proof) {x} px = [∃]-intro(x) ⦃ proof{x} px ⦄

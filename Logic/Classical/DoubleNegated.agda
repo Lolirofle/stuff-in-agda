@@ -5,6 +5,7 @@ module Propositional{ℓ} where
   open import Functional
   import      Logic.Propositional{ℓ}          as Constructive
   import      Logic.Propositional.Theorems{ℓ} as ConstructiveTheorems
+  import      Logic.Predicate{ℓ}              as Constructive1
   import      Lvl
   open import Type
 
@@ -67,9 +68,17 @@ module Propositional{ℓ} where
     ¬_ : Stmt → Stmt
     ¬_ A = Classic(Constructive.¬_ A)
 
+    ∀ₗ : ∀{X : Type{ℓ}} → (X → Stmt) → Stmt
+    ∀ₗ P = Classic(Constructive1.∀ₗ P)
+
+    ∃ : ∀{X : Type{ℓ}} → (X → Stmt) → Stmt
+    ∃ P = Classic(Constructive1.∃ P)
+
   module _ where
     open Constructive
       using(_∧_ ; _∨_ ; _↔_ ; ⊥ ; ⊤ ; ¬_ ; ¬¬_ )
+    open Constructive1 -- TODO: Should be somewhere else. This is the "Propositional" module
+      using(∀ₗ ; ∃)
 
     -- Also called: Double-negation shifts
     [¬¬][→]-preserving : ∀{X Y} → Classic(X → Y) ↔ (Classic(X) → Classic(Y))
@@ -206,6 +215,12 @@ module Propositional{ℓ} where
 
     -- postulate [∀]-elim : ∀{P} → Classic(∀{x} → P(x)) → ∀{x} → Classic(P(x))
     -- TODO: [→]ₗ-[¬¬]-elim
+
+    ------------------------------------------
+    -- Existential quantification
+
+    [∃]-intro : ∀{X : Type{ℓ}}{P : X → Stmt}{x} → Classic(P(x)) → Classic(∃ P)
+    [∃]-intro {X}{P}{x} = [→]₁-intro(proof ↦ Constructive1.[∃]-intro (x) ⦃ proof ⦄)
 
     ------------------------------------------
     -- Theorems exclusive to classic logic (compared to constructive logic)

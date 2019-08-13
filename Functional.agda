@@ -24,7 +24,7 @@ id : ∀{ℓ} {T : Type{ℓ}} → T → T
 id(x) = x
 
 -- Constant functions
-const : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₂ → T₁)
+const : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₂ → (T₁ → T₂)
 const(x)(_) = x
 
 -- Function application as a function

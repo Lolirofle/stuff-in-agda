@@ -1,3 +1,5 @@
+{-# OPTIONS --with-K #-}
+
 module Syntax.Number where
 
 import      Lvl

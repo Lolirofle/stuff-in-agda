@@ -15,7 +15,7 @@ ComputablyDecidable : ∀{X Y : Type} → (X → Y → Stmt) → Stmt
 ComputablyDecidable = C.ComputablyDecidable ∘ uncurry
 
 ComputablyDecidable-intro : ∀{X Y : Type}{_▫_ : X → Y → Stmt} → (decide : X → Y → Bool) → ⦃ _ : ∀{x}{y} → (x ▫ y) ↔ (decide(x)(y) ≡ 𝑇) ⦄ → ComputablyDecidable(_▫_)
-ComputablyDecidable-intro {X}{Y}{_▫_} (decide) ⦃ proof ⦄ = C.ComputablyDecidable-intro(uncurry decide) ⦃ lr ⦄ where
+ComputablyDecidable-intro {X}{Y}{_▫_} (decide) ⦃ proof ⦄ = C.ComputablyDecidable.intro(uncurry decide) ⦃ lr ⦄ where
    l : ∀{arg} → ((uncurry _▫_)(arg)) ← ((uncurry decide)(arg) ≡ 𝑇)
    l{x , y} = [↔]-elimₗ (proof{x}{y})
 

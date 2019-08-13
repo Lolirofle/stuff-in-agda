@@ -26,6 +26,7 @@ import Data.ListNonEmpty
 import Data.Option
 import Data.Proofs
 import Data.Tuple
+import Data.Tuple.Function
 import Data.Tuple.List
 import Data.Tuple.Proofs
 import Data.Tuple.Raise
@@ -39,6 +40,7 @@ import FormalLanguage.RegularExpression
 import Functional
 import Functional.DomainRaise
 import Functional.Domains
+import Functional.Domains.Proofs
 import Functional.Equals
 import Functional.Names
 import Functional.PrimitiveRecursion
@@ -49,6 +51,7 @@ import Functional.Repeat.Proofs
 -- import Geometry.Test2
 import Graph
 import Lang.Instance
+import Lang.Irrelevance
 import Logic.Classical
 import Logic.Classical.DoubleNegated
 import Logic.Classical.Mere
@@ -142,10 +145,11 @@ import Sets.PredicateSet.Finite
 import Sets.PredicateSet.Proofs
 import Sets.PredicateSet.Relations
 import Sets.Setoid
+import Sets.Setoid.Proofs
 import Stream
 import String
 import Structure.Arithmetic
-import Structure.Category
+-- import Structure.Category
 import Structure.Function.Domain
 import Structure.Function.Linear
 import Structure.Function.Ordering
@@ -184,8 +188,20 @@ import Syntax.Function
 import Syntax.Method
 import Syntax.Number
 import Type
+import Type.Cardinality
+import Type.Cardinality.Proofs
 import Type.Dependent
 import Type.Empty
+import Type.Empty.Proofs
+import Type.Functions
+import Type.Functions.Inverse
+import Type.Functions.Inverse.Proofs
+import Type.Functions.Proofs
+import Type.Singleton
+import Type.Singleton.Proofs
+import Type.Unit
+import Type.Unit.Proofs
+import Type.Univalence
 
 main : FFI.IO Data.Unit
 main = FFI.printStrLn("Okay")

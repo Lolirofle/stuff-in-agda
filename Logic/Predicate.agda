@@ -4,6 +4,7 @@ open import Functional
 import      Lvl
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Type{ℓ₂}
+open import Type.Empty
 
 ------------------------------------------
 -- Existential quantification (Existance, Exists)
@@ -38,21 +39,9 @@ record ∃ {X : Type} (Pred : X → Stmt) : Stmt where
 [∀]-elim : ∀{X : Type}{Pred : X → Stmt} → ∀ₗ(x ↦ Pred(x)) → (a : X) → Pred(a)
 [∀]-elim p(a) = p{a}
 
-------------------------------------------
--- Universal quantification with non-empty domain
--- This makes the following true: (∀ₑx. P(x)) → (∃x. P(x))
-
-record ∀ₑ {X : Type} (Pred : X → Stmt) : Stmt where
-  constructor [∀ₑ]-intro
-  field
-    element        : X
-    quantification : ∀ₗ Pred
-
-[∀ₑ]-elim : ∀{X : Type}{Pred : X → Stmt} → ∀ₑ(x ↦ Pred(x)) → (a : X) → Pred(a)
-[∀ₑ]-elim (apx) (a) = (∀ₑ.quantification apx){a}
-
-[∀ₑ]-elimₑ : ∀{X : Type}{Pred : X → Stmt} → (apx : ∀ₑ(x ↦ Pred(x))) → Pred(∀ₑ.element(apx))
-[∀ₑ]-elimₑ apx = [∀ₑ]-elim apx(∀ₑ.element(apx))
+-- Eliminates universal quantification for a non-empty domain using the witnessed existence which proves that the domain is non-empty.
+[∀ₑ]-elim : ∀{X : Type} → ⦃ _ : ◊ X ⦄ → ∀{P : X → Stmt} → ∀ₗ(x ↦ P(x)) → P([◊]-existence)
+[∀ₑ]-elim {X} ⦃ proof ⦄ {P} apx = [∀]-elim {X}{P} apx(◊.existence(proof))
 
 syntax ∃{T}(λ x → y) = ∃❪ x ꞉ T ❫․ y
 syntax ∀ₗ{T}(λ x → y) = ∀❪ x ꞉ T ❫․ y

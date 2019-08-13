@@ -62,7 +62,7 @@ module _ where
     Equivalence.symmetry    ([≡]-equivalence) = infer
     Equivalence.transitivity([≡]-equivalence) = infer
 
-  -- I think this is called "Extentional equality" and cannot be proved?
+  -- I think this is called "Extensional equality" and cannot be proved?
   -- See:
   --   https://www.reddit.com/r/agda/comments/4te0rg/functors_extensional_equality_and_function/
   --   https://mathoverflow.net/questions/156238/function-extensionality-does-it-make-a-difference-why-would-one-keep-it-out-of
@@ -108,6 +108,9 @@ module _ where
     [≡]-with : ∀{T₁ : Type{ℓ₂}}{T₂ : Type{ℓ₃}} → (f : T₁ → T₂) → ∀{x y : T₁} → (x ≡₂ y) → (f(x) ≡₃ f(y))
     [≡]-with f [≡]-intro = [≡]-intro
 
+    [≡]-with-specific : ∀{T₁ : Type{ℓ₂}}{T₂ : Type{ℓ₃}} → ∀{x y : T₁} → (f : (a : T₁) → ⦃ _ : (a ≡₂ x) ⦄ → ⦃ _ : (a ≡₂ y) ⦄ → T₂) → (p : (x ≡₂ y)) → (f(x) ⦃ [≡]-intro ⦄ ⦃ p ⦄ ≡₃ f(y) ⦃ symmetry p ⦄ ⦃ [≡]-intro ⦄)
+    [≡]-with-specific f [≡]-intro = [≡]-intro
+
     -- [≢]-without : ∀{T₁ : Type{ℓ₂}}{T₂ : Type{ℓ₃}} → (f : T₁ → T₂) → ∀{x y : T₁} → (f(x) ≢₃ f(y)) → (x ≢₂ y)
     -- [≢]-without f {_}{_} = liftᵣ([≡]-with f)
 
@@ -120,3 +123,17 @@ module _ where
       [≡]-with-op (_▫_) [≡]-intro [≡]-intro = [≡]-intro
       -- [≡]-with-op-[_] (_▫_) {a₁}{a₂} {b₁}{b₂} (a₁≡a₂) (b₁≡b₂) =
       --   [≡]-elimᵣ (b₁≡b₂) {\x → (a₁ ▫ b₁) ≡ (a₂ ▫ x)} ([≡]-with(x ↦ (x ▫ b₁)) (a₁≡a₂))
+
+module _ where
+  open Logic.Propositional
+  open Relator.Equals
+
+  private
+    _≡₂_ = _≡_ {ℓ₂}
+    _≡₁₂_ = _≡_ {ℓ₁ Lvl.⊔ ℓ₂}
+
+  -- Also called K.
+  -- There is also an axiom called "axiom K" which is a construction of the following type:
+  -- • ∀{T} → [≡]-ProofEquality(T)
+  [≡]-ProofIdentity : Type{ℓ₂} → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+  [≡]-ProofIdentity(T) = ∀{x y : T}{eq₁ eq₂ : (x ≡₂ y)} → (eq₁ ≡₁₂ eq₂)

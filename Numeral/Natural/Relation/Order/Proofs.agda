@@ -1,3 +1,5 @@
+{-# OPTIONS --with-K #-}
+
 module Numeral.Natural.Relation.Order.Proofs{ℓ} where
 
 import Lvl

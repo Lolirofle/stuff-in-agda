@@ -17,7 +17,7 @@ open import Type{ℓₒ}
 -- TODO: Maybe instead define (decide computablyDecides φ)?
 
 record SemiComputablyDecidable {X : Type} (φ : X → Stmt) : Stmt where
-  constructor SemiComputablyDecidable-intro
+  constructor intro
   field
     decide : X → Bool
     ⦃ completeness-𝑇 ⦄ : ∀{x} → φ(x)     → (decide(x) ≡ 𝑇)
@@ -28,7 +28,7 @@ record SemiComputablyDecidable {X : Type} (φ : X → Stmt) : Stmt where
 
 -- Existence of a computable function which mirrors the result of whether a proposition is provable or not.
 record ComputablyDecidable {X : Type} (φ : X → Stmt) : Stmt where -- TODO: Is this the correct definition?
-  constructor ComputablyDecidable-intro
+  constructor intro
   field
     decide : X → Bool
     ⦃ proof ⦄ : ∀{x} → φ(x) ↔ (decide(x) ≡ 𝑇)
@@ -57,8 +57,8 @@ record ComputablyDecidable {X : Type} (φ : X → Stmt) : Stmt where -- TODO: Is
   instance
     classical : ∀{x} → Classical(φ(x))
     classical {x} with bivalence
-    ... | [∨]-introₗ(≡𝑇) = classical-intro ⦃ [∨]-introₗ (soundness-𝑇 {x} (≡𝑇)) ⦄
-    ... | [∨]-introᵣ(≡𝐹) = classical-intro ⦃ [∨]-introᵣ (soundness-𝐹 {x} (≡𝐹)) ⦄
+    ... | [∨]-introₗ(≡𝑇) = Classical.intro ⦃ [∨]-introₗ (soundness-𝑇 {x} (≡𝑇)) ⦄
+    ... | [∨]-introᵣ(≡𝐹) = Classical.intro ⦃ [∨]-introᵣ (soundness-𝐹 {x} (≡𝐹)) ⦄
 
   instance
     negation : ComputablyDecidable(¬_ ∘ φ)
