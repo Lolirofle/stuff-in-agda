@@ -1,5 +1,3 @@
-{-# OPTIONS --with-K #-}
-
 -- The purpose of this module is to allow the BUILTIN EQUALITY pragma while also having module parameters
 module Relator.Equals._Eq where
 
@@ -12,7 +10,7 @@ open import Type
 -- TODO: Is this called "intensional equality"?
 module Internal {ℓ₁}{ℓ₂} where
   infixl 15 _≡_ _≢_
-  data _≡_ {T : Type{ℓ₂}} : T → T → Stmt{ℓ₁} where
+  data _≡_ {T : Type{ℓ₂}} : T → T → Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     instance [≡]-intro : ∀{x : T} → (x ≡ x)
     -- Interpretation:
     --   The only way to construct something of type _≡_ is to have both sides equal.
@@ -21,7 +19,7 @@ module Internal {ℓ₁}{ℓ₂} where
     --   This is how the builtin pattern matching by [≡]-intro works, //TODO: ...I think
     --   and therefore many propositions for equality becomes "trivial" textually.
 
-  _≢_ : ∀{T : Type{ℓ₂}} → T → T → Stmt{ℓ₁}
+  _≢_ : ∀{T : Type{ℓ₂}} → T → T → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
   _≢_ a b = ¬(a ≡ b)
 
 open Internal

@@ -79,7 +79,7 @@ module ProofSystems {ℓ₁} {ℓ₂} {Proposition : Set(ℓ₁)} {Formula : Set
         import      List.Theorems
         open        Data.List.Relation.Membership
         open        Data.List.Relation.Membership.Relators
-        open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
+        open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
 
         -- [⊢]-subset : (Γ₁ ⊆ Γ₂) → (Γ₁ ⊢ φ) → (Γ₂ ⊢ φ)

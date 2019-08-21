@@ -13,7 +13,7 @@ open import Type
 
 module _ where
   open Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-  open Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
+  open Relator.Equals{ℓ₁}{ℓ₂}
   open Structure.Relator.Equivalence{ℓ₁}{ℓ₂}
   open Structure.Relator.Properties{ℓ₁}{ℓ₂}
 

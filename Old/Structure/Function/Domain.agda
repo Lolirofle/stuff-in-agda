@@ -62,7 +62,7 @@ module _ {ℓ₂ ℓ₃} where
   InverseIdᵣ f f⁻¹ = (∀{x} → (f ∘ f⁻¹)(x) ≡ x)
 
 module _ {ℓ₂} where
-  open Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
+  open Relator.Equals{ℓ₁}{ℓ₂}
 
   -- Definition of a fixed point for a function
   FixPoint : ∀{T : Type{ℓ₂}} → (T → T) → T → Stmt{ℓ₁ Lvl.⊔ ℓ₂}

@@ -4,7 +4,7 @@ import Lvl
 open import Data.List
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Logic.Predicate{ℓ₁}{ℓ₂}
-open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
+open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}
 

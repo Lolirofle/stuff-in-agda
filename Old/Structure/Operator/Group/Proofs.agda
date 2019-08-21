@@ -5,7 +5,7 @@ import      Lvl
 open import Lang.Instance
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 -- open import Sets.Setoid{ℓ₁}
-open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
+open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
 open import Structure.Operator.Group{ℓ₁}{ℓ₂}
 open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}

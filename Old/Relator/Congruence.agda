@@ -3,7 +3,7 @@ module Relator.Congruence {ℓ₁} {ℓ₂} where
 import      Lvl
 open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
+open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Type{ℓ₂}
 
 infixl 15 _≅_of_

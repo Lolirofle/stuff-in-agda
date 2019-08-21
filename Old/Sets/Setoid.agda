@@ -68,10 +68,8 @@ module _ {ℓₒ₁}{ℓₒ₂}{ℓₒ₃} where
       right : ∀{x} → Function(x ▫_)
       right = intro(proof ↦ congruence reflexivity proof)
 
-  instance
-    [≡]-congruence2-left : ∀{T₁} → ⦃ _ : Equiv(T₁) ⦄ → ∀{T₂} → ⦃ _ : Equiv(T₂) ⦄ → ∀{T₃} → ⦃ _ : Equiv(T₃) ⦄ → (_▫_ : T₁ → T₂ → T₃) → ⦃ _ : BinaryOperator(_▫_) ⦄ → ∀{x} → Function(_▫ x)
-    [≡]-congruence2-left (_▫_) ⦃ inst ⦄ = BinaryOperator.left {_}{_}{_} {_▫_} (inst)
+  [≡]-congruence2-left : ∀{T₁} → ⦃ _ : Equiv(T₁) ⦄ → ∀{T₂} → ⦃ _ : Equiv(T₂) ⦄ → ∀{T₃} → ⦃ _ : Equiv(T₃) ⦄ → (_▫_ : T₁ → T₂ → T₃) → ⦃ _ : BinaryOperator(_▫_) ⦄ → ∀{x} → Function(_▫ x)
+  [≡]-congruence2-left (_▫_) ⦃ inst ⦄ = BinaryOperator.left {_}{_}{_} {_▫_} (inst)
 
-  instance
-    [≡]-congruence2-right : ∀{T₁} → ⦃ _ : Equiv(T₁) ⦄ → ∀{T₂} → ⦃ _ : Equiv(T₂) ⦄ → ∀{T₃} → ⦃ _ : Equiv(T₃) ⦄ → (_▫_ : T₁ → T₂ → T₃) → ⦃ _ : BinaryOperator(_▫_) ⦄ → ∀{x} → Function(x ▫_)
-    [≡]-congruence2-right (_▫_) ⦃ inst ⦄ = BinaryOperator.right {_}{_}{_} {_▫_} (inst)
+  [≡]-congruence2-right : ∀{T₁} → ⦃ _ : Equiv(T₁) ⦄ → ∀{T₂} → ⦃ _ : Equiv(T₂) ⦄ → ∀{T₃} → ⦃ _ : Equiv(T₃) ⦄ → (_▫_ : T₁ → T₂ → T₃) → ⦃ _ : BinaryOperator(_▫_) ⦄ → ∀{x} → Function(x ▫_)
+  [≡]-congruence2-right (_▫_) ⦃ inst ⦄ = BinaryOperator.right {_}{_}{_} {_▫_} (inst)

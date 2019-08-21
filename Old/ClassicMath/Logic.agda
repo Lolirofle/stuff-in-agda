@@ -122,12 +122,13 @@ module _ {ℓ₁ ℓ₂} where
   record ∀ₗ {X : Type{ℓ₁}} (Pred : X → Prop(ℓ₂)) : Prop(ℓ₁ Lvl.⊔ ℓ₂) where
     instance constructor [∀]-intro
     field
-      [∀]-elim : ∀{x : X} → Pred(x)
+      [∀]-elim : (x : X) → Pred(x)
+  open ∀ₗ public
 
   ------------------------------------------
   -- Existential quantification (EXISTS)
-  data ∃ {X : Type{ℓ₁}} : (X → Prop(ℓ₂)) → Prop(ℓ₁ Lvl.⊔ Lvl.𝐒(ℓ₂)) where
-    [∃]-intro : ∀{P} → (x : X) → ⦃ _ : P(x) ⦄ → ∃(P)
+  data ∃ {X : Type{ℓ₁}} (Pred : X → Prop(ℓ₂)) : Prop(ℓ₁ Lvl.⊔ Lvl.𝐒(ℓ₂)) where
+    [∃]-intro : (x : X) → ⦃ _ : Pred(x) ⦄ → ∃(Pred)
 
   record Subtype {X : Type{ℓ₁}} (P : X → Prop(ℓ₂)) : Type{ℓ₁ Lvl.⊔ ℓ₂} where
     instance constructor intro
@@ -137,6 +138,9 @@ module _ {ℓ₁ ℓ₂} where
 
   Subtype-to-[∃] : ∀{X : Type{ℓ₁}}{P : X → Prop(ℓ₂)} → Subtype(P) → ∃(P)
   Subtype-to-[∃] (intro obj ⦃ proof ⦄) = [∃]-intro obj ⦃ proof ⦄
+
+  -- .[∃]-witness : ∀{X : Type{ℓ₁}}{P : X → Prop(ℓ₂)} → ∃(P) → X
+  -- [∃]-witness ([∃]-intro x) = Lang.Irrelevance.axiom(x)
 
   -- [∃]-to-Subtype : ∀{X : Type{ℓ₁}}{P : X → Prop(ℓ₂)} → ∃(P) → Subtype(P)
   -- [∃]-to-Subtype ([∃]-intro obj ⦃ proof ⦄) = intro obj ⦃ proof ⦄
@@ -211,9 +215,10 @@ module _ {ℓ₁}{ℓ₂} where
   Bijective(f) = ∀ₗ(y ↦ IsUnit(Unmap f(y)))
 
   -- TODO: Because one cannot take out x in these situations, it becomes more tedious to work with Prop
-  -- inv : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}} → (f : X → Y) → ⦃ _ : Bijective(f) ⦄ → (Y → X)
+  -- .inv : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}} → (f : X → Y) → . ⦃ _ : Bijective(f) ⦄ → (Y → X)
+  -- inv f ⦃ all ⦄ (y) = Lang.Irrelevance.axiom([∀]-elim all y)
   -- inv f ⦃ [∀]-intro(proof) ⦄ (y) with proof{y}
-  -- ... | [∃]-intro (intro x) = x
+  -- ... | [∃]-intro (intro x) = Lang.Irrelevance.axiom x
 
 -- ∀{y : Y} → ∃(unit ↦ ∀{x : Subtype(obj ↦ f(obj) ≡ y)} → (x ≡ unit))
 

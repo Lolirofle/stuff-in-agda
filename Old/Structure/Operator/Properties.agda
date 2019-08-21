@@ -101,7 +101,7 @@ Distributivityᵣ {T₁} {T₂} (_▫₁_) (_▫₂_) = DistributivityPatternᵣ
 ---------------------------------------------------------
 -- Functions
 {-
-open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}{ℓ₂}
+open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
 
 -- Returns a commuted LHS of an equality
