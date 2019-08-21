@@ -59,6 +59,10 @@ module _ {ℓₗ ℓₒ₁ ℓₒ₂ : Lvl.Level} {univalence : UnivalenceAxiom 
                       → (xy : (X ≍ Y))
                       → (px : P(X))
                       → (subst(xy) (px) ≡₂ [≡]-substitutionᵣ {ℓₗ Lvl.⊔ Lvl.𝐒(ℓₒ₁)}{Lvl.𝐒(ℓₒ₁)} ([≍]-to-[≡] {ℓₗ Lvl.⊔ Lvl.𝐒(ℓₒ₁)}{ℓₒ₁} {univalence} (xy)) {P} px)
+  -- transport-theorem {P} (subst) (subst-id) ([∃]-intro bijection ⦃ bijective ⦄) px =
+    -- subst(xy) (px)
+    -- = subst(inv bijection (bijection xy)) (px)
+    -- = [≡]-substitutionᵣ (bijection xy) {P} (px)
 
   postulate substitution-is-bijective : ∀{P : Type{ℓₒ₁} → Type{ℓₒ₂}}
                       → (subst : (∀{X Y} → (X ≍ Y) → P(X) → P(Y)))

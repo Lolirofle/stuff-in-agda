@@ -49,6 +49,7 @@ import Functional.Repeat
 import Functional.Repeat.Proofs
 -- import Geometry.Test
 -- import Geometry.Test2
+import Geometry.Test3
 import Graph
 import Lang.Instance
 import Lang.Irrelevance

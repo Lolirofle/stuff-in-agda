@@ -216,37 +216,37 @@ module Axioms ⦃ signature : Signature ⦄ where
   open NumeralNatural using () renaming (Inductive to [ℕ]-Inductive)
   open Signature ⦃ ... ⦄
 
-  -- A set which is empty exists.
+  -- `∅` is a set which is empty.
   -- • Allows a construction of an empty set.
   EmptySetInclusion : Formula
   EmptySetInclusion = Empty(∅)
 
-  -- A set with two elements exists.
+  -- `pair` is the construction of a set with two elements.
   -- • Allows a construction of a set with two elements.
   PairingInclusion : Formula
   PairingInclusion = ∀ₗ(x₁ ↦ ∀ₗ(x₂ ↦ (∀ₗ(x ↦ (x ∈ pair(x₁)(x₂)) ⟷ (x ≡ x₁)∨(x ≡ x₂)))))
 
-  -- A set which is the subset of a set where all elements satisfies a predicate exists.
+  -- `filter` is the set which is the subset of a set where all elements satisfies a predicate.
   RestrictedComprehension : (Domain → Formula) → Formula
   RestrictedComprehension(φ) = ∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x)))))
 
-  -- A set which contains all the subsets of a set exists.
+  -- `℘` is the construction of a set which contains all the subsets of a set.
   -- • Allows a construction of a set that is the powerset of a set.
   PowerSetInclusion : Formula
   PowerSetInclusion = ∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s)))
 
-  -- A set which contains all the elements of a group of sets exists.
+  -- `⋃` is the construction of a set which contains all the elements of a collection of sets.
   -- • Allows a construction of a set that is the union of some sets.
   UnionInclusion : Formula
   UnionInclusion = ∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s))))
 
-  -- A ℕ-inductive set exists.
+  -- `inductiveSet` is ℕ-inductive.
   -- • An inductive set is infinite, so this implies that an infinite set exists.
   -- • Makes it possible to construct the set of natural numbers (ℕ).
   Infinity : Formula
   Infinity = [ℕ]-Inductive(inductiveSet)
 
-  -- Set identity is determined by its contents.
+  -- Set identity is extensionally determined. More specifically by its contents.
   -- • Guarantees the definition of equality for sets.
   Extensionality : Formula
   Extensionality = ∀ₗ(s₁ ↦ ∀ₗ(s₂ ↦ ∀ₗ(x ↦ (x ∈ s₁)⟷(x ∈ s₂)) ⟷ (s₁ ≡ s₂)))
@@ -257,7 +257,7 @@ module Axioms ⦃ signature : Signature ⦄ where
   Regularity : Formula
   Regularity = ∀ₗ(s₁ ↦ (NonEmpty(s₁) ⟶ ∃ₗ(s₂ ↦ (s₂ ∈ s₁) ∧ Disjoint(s₁)(s₂))))
 
-  -- The `map`-function on sets yields/returns sets.
+  -- `map` is the construction of the image of a function restricted to a set.
   -- • The `map`-function on a function is a function from sets to sets.
   Replacement : (Domain → Domain) → Formula
   Replacement(f) = ∀ₗ(A ↦ ∀ₗ(y ↦ (y ∈ map f(A)) ⟷ ∃ₛ(A)(x ↦ y ≡ f(x))))
@@ -267,7 +267,9 @@ module Axioms ⦃ signature : Signature ⦄ where
   -- TODO: Should the indexed family really be finite? https://en.wikipedia.org/wiki/Cartesian_product#Infinite_Cartesian_products
   -- Choice = ∀{n : Meta.ℕ}{F : FiniteIndexedFamily(Meta.𝐒(n))} → (∀{i : Meta.𝕟(Meta.𝐒(n))} → Proof(NonEmpty(F(i)))) → Proof(NonEmpty(∏ F))
 
-  -- All class functions have a right inverse when its codomain is restricted to its image.
+  -- `inv` constructs the right inverse for function composition.
+  -- • All surjective class functions have a right inverse.
+  -- • An element applied to the inverse function of a function yields/returns one of the arguments that yield/return this element as a value when it exists.
   -- TODO: MAybe this is too strong of a statement? Because the image is not neccessarily a set if the class function is defined for all objects (in the domain) in the theory? Is this really equivalent to `ChoiceTraditional`?
   Choice : (Domain → Domain) → Formula
   Choice(f) = ∀ₗ(y ↦ (Value f(y)) ⟶ ((f ∘ (inv f))(y) ≡ y))
