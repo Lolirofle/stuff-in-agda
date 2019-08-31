@@ -5,7 +5,7 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 open import Functional
-open import Relator.Equals.Uniqueness
+open import Sets.Setoid.Uniqueness
 open import Relator.Equals.Proofs
 open import Type
 

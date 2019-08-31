@@ -1,4 +1,4 @@
-module Relator.Equals.Uniqueness where -- TODO: Move to Relator.Equivalence.Uniqueness. Is ℓ₃ really neccessary?
+module Sets.Setoid.Uniqueness where -- TODO: Move to Relator.Equivalence.Uniqueness. Is ℓ₃ really neccessary?
 
 import      Lvl
 open import Functional

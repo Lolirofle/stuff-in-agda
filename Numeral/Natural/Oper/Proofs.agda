@@ -14,7 +14,7 @@ open import Numeral.Natural.Relation.Order.Proofs
 open import Numeral.Natural.Relation.Order.Classical
 open import Relator.Equals
 open import Relator.Equals.Proofs
-open import Relator.Equals.Uniqueness
+open import Sets.Setoid.Uniqueness
 open import Structure.Function.Domain
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties

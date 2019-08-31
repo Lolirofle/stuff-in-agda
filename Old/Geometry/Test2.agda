@@ -7,7 +7,7 @@ open import Functional
 open import Logic.Propositional{Lvl.𝟎}
 open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
 open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
--- open import Relator.Equals.Uniqueness{Lvl.𝟎}{Lvl.𝟎}{Lvl.𝟎} hiding (Theorems)
+-- open import Sets.Setoid.Uniqueness{Lvl.𝟎}{Lvl.𝟎}{Lvl.𝟎} hiding (Theorems)
 open import Structure.Relator.Equivalence{Lvl.𝟎}{Lvl.𝟎}
 open import Structure.Relator.Ordering{Lvl.𝟎}{Lvl.𝟎}
 -- open import Structure.Relator.Properties{Lvl.𝟎}{Lvl.𝟎} hiding (Theorems)

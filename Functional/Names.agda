@@ -6,7 +6,7 @@ open import Functional
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Relator.Equals.Uniqueness
+open import Sets.Setoid.Uniqueness
 open import Sets.Setoid hiding (Function)
 open import Type
 

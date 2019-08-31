@@ -10,7 +10,7 @@ open import Logic.Propositional
 open import Logic.Predicate{Lvl.𝟎}
 import      Relator.Equals
 import      Relator.Equals.Proofs
-import      Relator.Equals.Uniqueness
+import      Sets.Setoid.Uniqueness
 import      Sets.Setoid
 open import Structure.Relator.Properties{Lvl.𝟎}
 open import Type
@@ -31,7 +31,7 @@ Is the following what usually is called a "homomorphism"?
 
 module _ {ℓₒ ℓₘ : Lvl.Level} where
   -- open Relator.Equals{ℓₘ}
-  open Relator.Equals.Uniqueness{Lvl.𝟎}{ℓₘ}{ℓₘ} -- TODO: No ℓₒ?
+  open Sets.Setoid.Uniqueness{Lvl.𝟎}{ℓₘ}{ℓₘ} -- TODO: No ℓₒ?
   open Sets.Setoid{ℓₘ}
 
   -- The type of collections of morphisms

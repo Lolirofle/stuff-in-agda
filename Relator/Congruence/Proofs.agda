@@ -1,42 +1,44 @@
-module Relator.Congruence.Proofs {ℓ₁} {ℓ₂} where
+module Relator.Congruence.Proofs where
 
 import      Lvl
 open import Functional
-open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Logic.Predicate{ℓ₁}{ℓ₂}
-open import Structure.Function.Domain{ℓ₁}
-open import Structure.Relator.Equivalence{ℓ₁}{ℓ₂}
-open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
-open import Relator.Congruence{ℓ₁}{ℓ₂}
-open import Relator.Equals{ℓ₁}{ℓ₂}
-open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
-open import Type{ℓ₂}
+open import Logic.Propositional
+open import Logic.Predicate
+open import Structure.Function.Domain
+open import Structure.Relator.Equivalence
+open import Structure.Relator.Properties
+open import Relator.Congruence
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Type
 
-instance
-  [≅]-reflexivity : ∀{X Y}{f : X → Y} → Reflexivity {X} (_≅_of f)
-  reflexivity ⦃ [≅]-reflexivity ⦄ = [≅]-intro [≡]-intro
+module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}}{Y : Type{ℓ₂}} {f : X → Y} where
+  instance
+    [≅]-reflexivity : Reflexivity (_≅_of f)
+    Reflexivity.proof([≅]-reflexivity) = [≅]-intro [≡]-intro
 
-instance
-  [≅]-symmetry : ∀{X Y}{f : X → Y} → Symmetry {X} (_≅_of f)
-  symmetry ⦃ [≅]-symmetry ⦄ = ([≅]-intro ∘ symmetry ∘ [≅]-elim)
+  instance
+    [≅]-symmetry : Symmetry (_≅_of f)
+    Symmetry.proof([≅]-symmetry) = ([≅]-intro ∘ symmetry(_≡_) ∘ [≅]-elim)
 
-instance
-  [≅]-transitivity : ∀{X Y}{f : X → Y} → Transitivity {X} (_≅_of f)
-  transitivity ⦃ [≅]-transitivity ⦄ (eq1) (eq2) = [≅]-intro(([≅]-elim eq1) 🝖 ([≅]-elim eq2))
+  instance
+    [≅]-transitivity : Transitivity (_≅_of f)
+    Transitivity.proof([≅]-transitivity) (eq1) (eq2) = [≅]-intro(([≅]-elim eq1) 🝖 ([≅]-elim eq2))
 
-instance
-  [≅]-equivalence : ∀{X Y}{f : X → Y} → Equivalence {X} (_≅_of f)
-  [≅]-equivalence = record {
-      reflexivity  = [≅]-reflexivity ;
-      symmetry     = [≅]-symmetry    ;
-      transitivity = [≅]-transitivity
-    }
+  instance
+    [≅]-equivalence : Equivalence (_≅_of f)
+    [≅]-equivalence = record {
+        reflexivity  = [≅]-reflexivity ;
+        symmetry     = [≅]-symmetry    ;
+        transitivity = [≅]-transitivity
+      }
 
-[≅]-to-[≡] : ∀{X Y}{f : X → Y} → Injective(f) ↔ (∀{x₁ x₂ : X} → (x₁ ≅ x₂ of f) → (x₁ ≡ x₂))
-[≅]-to-[≡] {X}{Y}{f} = [↔]-intro (_∘ [≅]-intro) (_∘ [≅]-elim) where
+  [≅]-to-[≡] : Injective(f) ↔ (∀{x₁ x₂ : X} → (x₁ ≅ x₂ of f) → (x₁ ≡ x₂))
+  [≅]-to-[≡] = [↔]-intro (_∘ [≅]-intro) (_∘ [≅]-elim) where
 
-[≅]-composition : ∀{X₁ X₂ Y} → ∀{x₁ x₂ : X₁}{g : X₁ → X₂} → (x₁ ≅ x₂ of g) → ∀{f : X₂ → Y} → (g(x₁) ≅ g(x₂) of f)
-[≅]-composition ([≅]-intro (fx₁≡fx₂)) {f} = [≅]-intro ([≡]-with(f) (fx₁≡fx₂))
-  -- x₁ ≅ x₂
-  -- ⇔ g(x₁) = g(x₂)
-  -- ⇒ f(g(x₁)) = f(g(x₂))
+module _ {ℓ₁ ℓ₂ ℓ₃} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{Y : Type{ℓ₃}} where
+  [≅]-composition : ∀{x₁ x₂ : X₁}{g : X₁ → X₂} → (x₁ ≅ x₂ of g) → ∀{f : X₂ → Y} → (g(x₁) ≅ g(x₂) of f)
+  [≅]-composition ([≅]-intro (fx₁≡fx₂)) {f} = [≅]-intro ([≡]-with(f) (fx₁≡fx₂))
+    -- x₁ ≅ x₂
+    -- ⇔ g(x₁) = g(x₂)
+    -- ⇒ f(g(x₁)) = f(g(x₂))

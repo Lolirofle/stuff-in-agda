@@ -134,7 +134,7 @@ import Relator.Countable
 import Relator.Equals
 import Relator.Equals.Proofs
 import Relator.Equals.Proofs.Uniqueness
-import Relator.Equals.Uniqueness
+import Sets.Setoid.Uniqueness
 import Relator.Finite
 import Sets.BoolSet
 import Sets.BoolSet.Proofs

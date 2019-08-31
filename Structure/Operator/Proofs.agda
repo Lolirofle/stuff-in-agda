@@ -5,7 +5,7 @@ open import Functional
 open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
 open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
-open import Relator.Equals.Uniqueness{ℓ₁}{ℓ₂}{Lvl.𝟎}
+open import Sets.Setoid.Uniqueness{ℓ₁}{ℓ₂}{Lvl.𝟎}
 open import Structure.Function.Domain{ℓ₁}
 open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
 open import Structure.Relator.Properties{ℓ₁}{ℓ₂}

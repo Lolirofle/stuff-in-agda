@@ -15,7 +15,7 @@ open import Numeral.Natural.Relation.Order{ℓ}
 open import Numeral.Natural.Relation.Order.Proofs{ℓ}
 open import Relator.Equals{ℓ}
 open import Relator.Equals.Proofs{ℓ}
-open import Relator.Equals.Uniqueness{ℓ}{ℓ}{ℓ}
+open import Sets.Setoid.Uniqueness{ℓ}{ℓ}{ℓ}
 open import Relator.Equals.Proofs.Uniqueness{ℓ}{ℓ}{ℓ}
 open import Structure.Function.Domain{ℓ}
 import      Structure.Function.Linear{ℓ}{ℓ} as Linear
