@@ -1,0 +1,150 @@
+module Logic.Computability where
+
+import      Lvl
+open import Data.Boolean
+import      Data.Boolean.Operators
+open        Data.Boolean.Operators.Programming
+open import Data.Boolean.Proofs
+open import Functional
+open import Logic
+open import Logic.Classical
+open import Logic.Propositional
+open import Logic.Propositional.Theorems
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Structure.Relator.Properties
+open import Type
+
+-- TODO: Maybe instead define (decide computablyDecides P)?
+
+record SemiComputablyDecidable {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} (P : X → Stmt{ℓ₂}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+  constructor intro
+  field
+    decide : X → Bool
+
+  field
+    completeness-𝑇 : ∀{x} → P(x)     → (decide(x) ≡ 𝑇)
+    completeness-𝐹 : ∀{x} → (¬ P(x)) → (decide(x) ≡ 𝐹)
+
+  soundness-𝐹 : ∀{x} → (¬ P(x)) ← (decide(x) ≡ 𝐹)
+  soundness-𝐹 = (contrapositiveᵣ(completeness-𝑇)) ∘ ([↔]-to-[←] [≢][𝑇]-is-[𝐹])
+
+-- Existence of a computable function which mirrors the result of whether a proposition is provable or not.
+record ComputablyDecidable {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} (P : X → Stmt{ℓ₂}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where -- TODO: Is this the correct definition?
+  constructor intro
+  field
+    decide : X → Bool
+    ⦃ proof ⦄ : ∀{x} → P(x) ↔ (decide(x) ≡ 𝑇)
+
+  soundness-𝑇 : ∀{x} → P(x) ← (decide(x) ≡ 𝑇)
+  soundness-𝑇 = [↔]-to-[←] (proof)
+
+  completeness-𝑇 : ∀{x} → P(x) → (decide(x) ≡ 𝑇)
+  completeness-𝑇 = [↔]-to-[→] (proof)
+
+  soundness-𝐹 : ∀{x} → (¬ P(x)) ← (decide(x) ≡ 𝐹)
+  soundness-𝐹 = (contrapositiveᵣ(completeness-𝑇)) ∘ ([↔]-to-[←] [≢][𝑇]-is-[𝐹])
+
+  completeness-𝐹 : ∀{x} → (¬ P(x)) → (decide(x) ≡ 𝐹)
+  completeness-𝐹 = ([↔]-to-[→] [≢][𝑇]-is-[𝐹]) ∘ (contrapositiveᵣ(soundness-𝑇))
+
+  instance
+    semi : SemiComputablyDecidable(P)
+    semi =
+      record{
+        decide      = decide ;
+        completeness-𝑇 = completeness-𝑇 ;
+        completeness-𝐹 = completeness-𝐹
+      }
+
+  instance
+    classical : ∀{x} → Classical(P(x))
+    classical {x} with bivalence
+    ... | [∨]-introₗ(≡𝑇) = Classical.intro ⦃ [∨]-introₗ (soundness-𝑇 {x} (≡𝑇)) ⦄
+    ... | [∨]-introᵣ(≡𝐹) = Classical.intro ⦃ [∨]-introᵣ (soundness-𝐹 {x} (≡𝐹)) ⦄
+
+  instance
+    negation : ComputablyDecidable(¬_ ∘ P)
+    decide (negation) (x) = ! decide(x)
+    proof  (negation) {x} = [↔]-intro (soundness-𝐹{_} ∘ l{_}) (r{_} ∘ completeness-𝐹{_}) where
+      l : ∀{b} → (b ≡ 𝐹) ← (! b ≡ 𝑇)
+      l proof = (symmetry(_≡_) ([¬]-double {_})) 🝖 [≡]-with(!_) (proof)
+
+      r : ∀{b} → (b ≡ 𝐹) → (! b ≡ 𝑇)
+      r = [≡]-with(!_)
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {P₁ : X → Stmt{ℓ₂}} {P₂ : X → Stmt{ℓ₃}} where
+  open ComputablyDecidable
+
+  instance
+    ComputablyDecidable-conjunction : ⦃ _ : ComputablyDecidable(P₁) ⦄ → ⦃ _ : ComputablyDecidable(P₂) ⦄ → ComputablyDecidable(x ↦ P₁(x) ∧ P₂(x))
+    decide (ComputablyDecidable-conjunction ⦃ comp₁ ⦄ ⦃ comp₂ ⦄) (x) = decide(comp₁)(x) && decide(comp₂)(x)
+    proof  (ComputablyDecidable-conjunction ⦃ comp₁ ⦄ ⦃ comp₂ ⦄) {x} = [↔]-intro (l) (r) where
+      l : (P₁(x) ∧ P₂(x)) ← (decide(comp₁)(x) && decide(comp₂)(x) ≡ 𝑇)
+      l(truth) =
+        ([∧]-intro
+          ([↔]-to-[←] (proof(comp₁)) ([∧]-elimₗ-[𝑇] truth))
+          ([↔]-to-[←] (proof(comp₂)) ([∧]-elimᵣ-[𝑇] truth))
+        )
+
+      r : (P₁(x) ∧ P₂(x)) → (decide(comp₁)(x) && decide(comp₂)(x) ≡ 𝑇)
+      r([∧]-intro P₁x P₂x) =
+        ([∧]-intro-[𝑇]
+          ([↔]-to-[→] (proof(comp₁)) (P₁x))
+          ([↔]-to-[→] (proof(comp₂)) (P₂x))
+        )
+
+  instance
+    ComputablyDecidable-disjunction : ⦃ _ : ComputablyDecidable(P₁) ⦄ → ⦃ _ : ComputablyDecidable(P₂) ⦄ → ComputablyDecidable(x ↦ P₁(x) ∨ P₂(x))
+    decide (ComputablyDecidable-disjunction ⦃ comp₁ ⦄ ⦃ comp₂ ⦄) (x) = decide(comp₁)(x) || decide(comp₂)(x)
+    proof  (ComputablyDecidable-disjunction ⦃ comp₁ ⦄ ⦃ comp₂ ⦄) {x} = [↔]-intro (l) (r) where
+      l : (P₁(x) ∨ P₂(x)) ← (decide(comp₁)(x) || decide(comp₂)(x) ≡ 𝑇)
+      l(truth) =
+        ([∨]-elim-proof-[𝑇]
+          (truthpart ↦ [∨]-introₗ ([↔]-to-[←] (proof(comp₁))(truthpart)))
+          (truthpart ↦ [∨]-introᵣ ([↔]-to-[←] (proof(comp₂))(truthpart)))
+          (truth)
+        )
+
+      r : (P₁(x) ∨ P₂(x)) → (decide(comp₁)(x) || decide(comp₂)(x) ≡ 𝑇)
+      r(truth) =
+        ([∨]-elim
+          (truthpart ↦ [∨]-introₗ-[𝑇] ([↔]-to-[→] (proof(comp₁))(truthpart)))
+          (truthpart ↦ [∨]-introᵣ-[𝑇] ([↔]-to-[→] (proof(comp₂))(truthpart)))
+          (truth)
+        )
+
+    -- ComputablyDecidable-implication : ComputablyDecidable(P₁) → ComputablyDecidable(P₂) → ComputablyDecidable(P₁ → P₂)
+    -- ComputablyDecidable-equivalence : ComputablyDecidable(P₁) → ComputablyDecidable(P₂) → ComputablyDecidable(P₁ ↔ P₂)
+
+module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} {P : X → Stmt{ℓ₂}} where
+  classicalIsComputablyDecidable : (∀{x} → Classical(P(x))) ↔ ComputablyDecidable(P)
+  classicalIsComputablyDecidable = [↔]-intro (ComputablyDecidable.classical) r where
+    decider : (∀{x} → Classical(P(x))) → X → Bool
+    decider(classic)(x) with Classical.excluded-middle(classic{x})
+    ... | [∨]-introₗ _ = 𝑇
+    ... | [∨]-introᵣ _ = 𝐹
+
+    r : (∀{x} → Classical(P(x))) → ComputablyDecidable(P)
+    ComputablyDecidable.decide (r(classic)) = decider(classic)
+    ComputablyDecidable.proof (r(classic)) {x} = [↔]-intro rl rr where
+      rl : ∀{x} → P(x) ← (decider(classic)(x) ≡ 𝑇)
+      rl {x} decider𝑇 with Classical.excluded-middle(classic{x})
+      ... | [∨]-introₗ (Px)  = Px
+      ... | [∨]-introᵣ (¬Px) = [⊥]-elim(disjointness([∧]-intro decider𝑇 [≡]-intro))
+
+      rr : ∀{x} → P(x) → (decider(classic)(x) ≡ 𝑇)
+      rr {x} (Px₂) with Classical.excluded-middle(classic{x})
+      ... | [∨]-introₗ (Px)  = [≡]-intro
+      ... | [∨]-introᵣ (¬Px) = [⊥]-elim(¬Px Px₂)
+
+
+
+-- Existence of a computable function which yields whether a relation between two arguments is provable or not.
+-- TODO: Is this neccessary to have? Compare with Functional.Proofs.function
+record Computable {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}} (P : X → Y → Stmt{ℓ₃}) : Stmt{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃} where
+  field
+    function : X → Y
+
+  field
+    proof : ∀{x}{y} → P(x)(y) → (function(x) ≡ y)

@@ -18,15 +18,15 @@ private
 
 invᵣ-is-inverseᵣ : (f : X → Y) → ⦃ _ : Surjective(f) ⦄ → ∀{y} → (f(invᵣ f(y)) ≡ y)
 invᵣ-is-inverseᵣ f ⦃ Surjective.intro(proof) ⦄ {y} with proof{y}
-... | ◊.intro ⦃ Unmap.intro _ ⦃ out ⦄ ⦄ = out
+... | ◊.intro ⦃ Unapply.intro _ ⦃ out ⦄ ⦄ = out
 
 
 
 inv-is-inverseᵣ : (f : X → Y) → ⦃ _ : Bijective(f) ⦄ → ∀{y} → (f(inv f(y)) ≡ y)
 inv-is-inverseᵣ f ⦃ Bijective.intro(proof) ⦄ {y} with proof{y}
-... | IsUnit.intro (Unmap.intro _ ⦃ out ⦄) _ = out
+... | IsUnit.intro (Unapply.intro _ ⦃ out ⦄) _ = out
 
 inv-is-inverseₗ : (f : X → Y) → ⦃ _ : Bijective(f) ⦄ → ∀{x} → (inv f(f(x)) ≡₁ x)
 inv-is-inverseₗ f ⦃ Bijective.intro(proof) ⦄ {x} with proof{f(x)}
-... | IsUnit.intro _ uniqueness with uniqueness {Unmap.intro x ⦃ [≡]-intro ⦄}
+... | IsUnit.intro _ uniqueness with uniqueness {Unapply.intro x ⦃ [≡]-intro ⦄}
 ...   | [≡]-intro = [≡]-intro

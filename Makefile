@@ -1,4 +1,4 @@
-OPTIONS=--rewriting --irrelevant-projections --without-K
+OPTIONS=--rewriting --irrelevant-projections --without-K --no-default-libraries --show-implicit
 #--exact-split --without-K --proof-irrelevance --verbose=5
 
 all: typecheck
@@ -16,4 +16,10 @@ test:
 	agda ${OPTIONS} Test.agda
 
 classic:
-	agda ${OPTIONS} MainClassic.agda
+	agda ${OPTIONS} --prop MainClassic.agda
+
+docs:
+	agda ${OPTIONS} --html Main.agda
+
+clean:
+	find . -type f -name '*.agdai' -delete

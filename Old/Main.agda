@@ -10,7 +10,7 @@ import Cardinal.Proofs
 import Data
 import Data.Any
 import Data.Boolean
-import Data.Boolean.AsSet
+import Data.Boolean.Stmt
 import Data.Boolean.Operators
 import Data.Boolean.Proofs
 import Data.Either
@@ -102,7 +102,7 @@ import Numeral.Natural.Oper.Comparisons.Proofs
 import Numeral.Natural.Oper.Divisibility
 import Numeral.Natural.Oper.Modulo
 import Numeral.Natural.Oper.Modulo.Proofs
-import Numeral.Natural.Oper.Properties
+import Numeral.Natural.Oper.Proofs
 import Numeral.Natural.Order
 import Numeral.Natural.Prime
 import Numeral.Natural.Relation

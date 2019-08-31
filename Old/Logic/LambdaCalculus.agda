@@ -10,7 +10,7 @@ import      Numeral.FiniteStrict.Bound
 import      Numeral.FiniteStrict.Oper
 open import Numeral.Natural.Function
 open import Numeral.Natural.Oper
-import      Numeral.Natural.Oper.Properties
+import      Numeral.Natural.Oper.Proofs
 import      Relator.Equals
 import      Relator.Equals.Proofs
 open import Syntax.Number
@@ -42,7 +42,7 @@ Expression = Term(0)
 module Transformations where
   open Numeral.FiniteStrict.Bound{Lvl.𝟎}
   open Numeral.FiniteStrict.Oper using () renaming (_+_ to _+ᶠ_)
-  open Numeral.Natural.Oper.Properties{Lvl.𝟎}
+  open Numeral.Natural.Oper.Proofs{Lvl.𝟎}
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
 
@@ -89,7 +89,7 @@ module Transformations where
 -- • Var(0) is the variable that was first/furthest/(least recently) bounded.
 module IndexZeroFurthest where
   open Numeral.FiniteStrict.Bound{Lvl.𝟎}
-  open Numeral.Natural.Oper.Properties{Lvl.𝟎}
+  open Numeral.Natural.Oper.Proofs{Lvl.𝟎}
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
 
@@ -197,7 +197,7 @@ module IndexZeroFurthest where
 -- • Var(0) is the variable that was last/nearest/(most recently) bounded.
 module IndexZeroNearest where
   open Numeral.FiniteStrict.Bound{Lvl.𝟎}
-  open Numeral.Natural.Oper.Properties{Lvl.𝟎}
+  open Numeral.Natural.Oper.Proofs{Lvl.𝟎}
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
 

@@ -49,7 +49,7 @@ instance postulate [ℤ]-to-[ℝ] : [ℝ]-conversion(ℤ)
 instance postulate [ℕ]-to-[ℝ] : [ℝ]-conversion(ℕ)
 
 instance
-  postulate ℝ-From-ℕ : From-ℕ (ℝ)
+  postulate ℝ-InfiniteNumeral : InfiniteNumeral (ℝ)
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Subsets]

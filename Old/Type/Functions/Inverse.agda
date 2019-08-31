@@ -10,8 +10,8 @@ open import Type.Unit {ℓₒ₁}{ℓₒ₂}
 
 inv : (f : X → Y) → ⦃ _ : Bijective(f) ⦄ → (Y → X)
 inv f ⦃ Bijective.intro(proof) ⦄ (y) with proof{y}
-... | IsUnit.intro (Unmap.intro x) _ = x
+... | IsUnit.intro (Unapply.intro x) _ = x
 
 invᵣ : (f : X → Y) → ⦃ _ : Surjective(f) ⦄ → (Y → X)
 invᵣ f ⦃ Surjective.intro(proof) ⦄ (y) with proof{y}
-... | ◊.intro ⦃ Unmap.intro x ⦄ = x
+... | ◊.intro ⦃ Unapply.intro x ⦄ = x

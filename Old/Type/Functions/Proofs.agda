@@ -41,7 +41,7 @@ module _ {ℓₒ₁}{ℓₒ₂} {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} {f :
 
   Injective-apply : ⦃ _ : Injective(f) ⦄ → ∀{x y} → (f(x) ≡₁ f(y)) → (x ≡₁ y)
   Injective-apply ⦃ Injective.intro proof ⦄ {x}{y} (fxfy) with proof{f(y)}
-  ... | IsProp.intro uniqueness with uniqueness{Unmap.intro x ⦃ fxfy ⦄} {Unmap.intro y ⦃ [≡]-intro ⦄}
+  ... | IsProp.intro uniqueness with uniqueness{Unapply.intro x ⦃ fxfy ⦄} {Unapply.intro y ⦃ [≡]-intro ⦄}
   ...   | [≡]-intro = [≡]-intro
 
 module _ {ℓₒ : Lvl.Level} {X : Type{ℓₒ}} where
