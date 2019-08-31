@@ -1,11 +1,11 @@
-module Numeral.FiniteStrict.Functions{ℓ} where
+module Numeral.Finite.Functions{ℓ} where
 
 import Lvl
 open import Syntax.Number
 open import Logic.Propositional
 open import Logic.Predicate
-open import Numeral.FiniteStrict
-open import Numeral.FiniteStrict.Bound{ℓ}
+open import Numeral.Finite
+open import Numeral.Finite.Bound{ℓ}
 open import Numeral.Natural hiding (𝐏)
 open import Numeral.Natural.Function renaming (max to maxℕ ; min to minℕ)
 open import Numeral.Natural.Oper

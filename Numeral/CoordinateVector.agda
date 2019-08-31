@@ -3,10 +3,10 @@ module Numeral.CoordinateVector {ℓ} where
 import      Lvl
 open import Data.Boolean
 open import Functional
-open import Numeral.FiniteStrict
-open import Numeral.FiniteStrict.Bound{ℓ}
-open import Numeral.FiniteStrict.Oper
-open import Numeral.FiniteStrict.Oper.Comparisons
+open import Numeral.Finite
+open import Numeral.Finite.Bound{ℓ}
+open import Numeral.Finite.Oper
+open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Natural
 open import Type{ℓ}
 
@@ -91,7 +91,7 @@ count {_}{𝐒(n)} (f)(v) = if f(head v) then 𝐒(next) else next where
   next = count {_}{n} (f)(tail v)
 
 -- A vector without the element at the specified index
--- TODO: Implement Numeral.FiniteStrict.Bound.bound-𝐏
+-- TODO: Implement Numeral.Finite.Bound.bound-𝐏
 -- without : ∀{T}{d} → 𝕟(𝐒(d)) → Vector(𝐒(d))(T) → Vector(d)(T)
 -- Vector.proj (without {_}{𝐒(_)} (𝟎)   (v)) (i) = Vector.proj(v)(𝐒(i))
 -- Vector.proj (without {_}{𝐒(_)} (𝐒(n))(v)) (i) = if(i ≤? n) then Vector.proj(v)(𝐒(i)) else Vector.proj(v)(bound-𝐏(i))

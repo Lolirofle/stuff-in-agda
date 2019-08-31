@@ -9,7 +9,7 @@ open import Logic.Propositional{ℓ Lvl.⊔ ℓ}
 open import Logic.Propositional.Theorems{ℓ}
 open import Logic.Predicate{ℓ}
 open import Numeral.CoordinateVector{ℓ} as Vec renaming (Vector to Vec)
-open import Numeral.FiniteStrict
+open import Numeral.Finite
 open import Numeral.Natural
 open import Numeral.Natural.Relation.Order{ℓ}
 open import Numeral.Natural.Relation.Order.Proofs{ℓ}

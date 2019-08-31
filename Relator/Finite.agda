@@ -5,7 +5,7 @@ open import Functional
 open import Functional.Proofs
 open import Logic.Propositional
 open import Logic.Predicate
-open import Numeral.FiniteStrict
+open import Numeral.Finite
 open import Numeral.Natural
 open import Structure.Function.Domain{ℓ₁}
 open import Structure.Relator.Properties {ℓ₁}

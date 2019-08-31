@@ -4,7 +4,7 @@ import      Lvl
 open import Data
 open import Data.ListSized
 open import Functional
-open import Numeral.FiniteStrict
+open import Numeral.Finite
 open import Numeral.Natural
 open import Syntax.Number
 open import Type{Lvl.𝟎}

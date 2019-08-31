@@ -487,7 +487,7 @@ module testListSets where
 
 
 module testFinite where
-  open import Numeral.Finite
+  open import Numeral.FiniteInclusive
 
   test2-0 : ℕfin(2)
   test2-0 = 𝟎fin
@@ -573,7 +573,7 @@ module testDomainRaise where
   open import Functional.DomainRaise
   open import Data.List
   open import Numeral.Natural
-  open import Numeral.FiniteStrict
+  open import Numeral.Finite
   open import Numeral.Natural.Oper
   open import Syntax.Number
   open import Relator.Equals {Lvl.𝟎}{Lvl.𝟎}

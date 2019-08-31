@@ -2,8 +2,8 @@ module Functional.DomainRaise where
 
 open import Functional
 import      Lvl
-open import Numeral.FiniteStrict
-open import Numeral.FiniteStrict.Bound
+open import Numeral.Finite
+open import Numeral.Finite.Bound
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons.Proofs
 open import Numeral.Natural.Relation.Order

@@ -1,10 +1,10 @@
-module Numeral.FiniteStrict.Oper.Comparisons where
+module Numeral.Finite.Oper.Comparisons where
 
 import      Lvl
 open import Data.Boolean
 import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
-open import Numeral.FiniteStrict
+open import Numeral.Finite
 
 -- Equality check
 _≡?_ : ∀{a b} → 𝕟(a) → 𝕟(b) → Bool

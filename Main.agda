@@ -3,13 +3,12 @@ module Main where
 import Data
 import Data.Any
 import Data.Boolean
-import Data.Boolean.Stmt
 import Data.Boolean.Operators
--- import Data.Boolean.Proofs
+import Data.Boolean.Proofs
+import Data.Boolean.Stmt
 import Data.Either
 import Data.List
--- import Data.List
--- import Data.List.Computability
+import Data.List.Computability
 -- import Data.List.Proofs
 -- import Data.List.Proofs.Membership
 -- import Data.List.Proofs.Sublist
@@ -27,7 +26,7 @@ import Data.Tuple.Proofs
 import Data.Tuple.Raise
 import Data.Tuple.Raiseᵣ
 import Data.Tuple.Raiseₗ
--- import FFI.IO
+import FFI.IO as FFI
 import Functional
 -- import Functional.DomainRaise
 import Functional.Domains
@@ -41,6 +40,10 @@ import Functional.Repeat
 import Functional.Repeat.Proofs
 import Lang.Instance
 import Lang.Irrelevance
+import Logic
+import Logic.Classical
+import Logic.Computability
+import Logic.Computability.Binary
 import Logic.Names
 import Logic.Predicate
 import Logic.Predicate.Theorems
@@ -48,13 +51,16 @@ import Logic.Propositional
 import Logic.Propositional.Theorems
 import Lvl
 -- import Numeral.CoordinateVector
-import Numeral.FiniteStrict
--- import Numeral.FiniteStrict.Oper
--- import Numeral.Finite
+import Numeral.Finite
+-- import Numeral.Finite.Oper
+-- import Numeral.FiniteInclusive
 -- import Numeral.Matrix
-import Numeral.Natural
-import Numeral.Natural.Relation.Computability
 import Numeral.Integer
+import Numeral.Natural
+import Numeral.Natural.Oper
+import Numeral.Natural.Oper.Comparisons
+import Numeral.Natural.Relation.Computability
+import Numeral.Natural.Relation.Order
 -- import Relator.Bijection
 -- import Relator.Congruence
 -- import Relator.Congruence.Proofs
@@ -65,8 +71,9 @@ import Relator.Equals.Uniqueness
 -- import Relator.Equals.Uniqueness.Proofs
 -- import Relator.Finite
 import Relator.Ordering
+import Sets.Setoid
 -- import String
--- import Structure.Function.Domain
+import Structure.Function.Domain
 import Structure.Function.Linear
 import Structure.Function.Ordering
 import Structure.Relator.Equivalence
@@ -88,8 +95,9 @@ import Type.Singleton.Proofs
 import Type.Unit
 import Type.Unit.Proofs
 
--- main : FFI.IO Data.Unit
--- main = FFI.printStrLn("Okay")
+module _ where
+  main : FFI.IO Data.Unit
+  main = FFI.printStrLn("Okay")
 
 module _ where
   open Syntax.Function

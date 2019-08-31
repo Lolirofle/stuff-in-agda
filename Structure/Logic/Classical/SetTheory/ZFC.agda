@@ -13,8 +13,8 @@ open import Structure.Logic.Constructive.Functions.Properties            ⦃ con
 
 private
   module Meta where
-    open import Numeral.FiniteStrict           public
-    open import Numeral.FiniteStrict.Bound{ℓₗ} public
+    open import Numeral.Finite           public
+    open import Numeral.Finite.Bound{ℓₗ} public
     open import Numeral.Natural                public
 
 -- The symbols/signature of ZFC set theory.

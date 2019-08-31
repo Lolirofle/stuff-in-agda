@@ -4,10 +4,10 @@ import      Lvl
 open import Data.Boolean
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
-open import Numeral.FiniteStrict
+open import Numeral.Finite
   renaming (𝟎 to 𝟎ᶠ ; 𝐒 to 𝐒ᶠ)
-import      Numeral.FiniteStrict.Bound
-import      Numeral.FiniteStrict.Oper
+import      Numeral.Finite.Bound
+import      Numeral.Finite.Oper
 open import Numeral.Natural.Function
 open import Numeral.Natural.Oper
 import      Numeral.Natural.Oper.Proofs
@@ -40,8 +40,8 @@ Expression : Set
 Expression = Term(0)
 
 module Transformations where
-  open Numeral.FiniteStrict.Bound{Lvl.𝟎}
-  open Numeral.FiniteStrict.Oper using () renaming (_+_ to _+ᶠ_)
+  open Numeral.Finite.Bound{Lvl.𝟎}
+  open Numeral.Finite.Oper using () renaming (_+_ to _+ᶠ_)
   open Numeral.Natural.Oper.Proofs{Lvl.𝟎}
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
@@ -88,7 +88,7 @@ module Transformations where
 -- This module assumes that the semantics is the following:
 -- • Var(0) is the variable that was first/furthest/(least recently) bounded.
 module IndexZeroFurthest where
-  open Numeral.FiniteStrict.Bound{Lvl.𝟎}
+  open Numeral.Finite.Bound{Lvl.𝟎}
   open Numeral.Natural.Oper.Proofs{Lvl.𝟎}
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
@@ -196,7 +196,7 @@ module IndexZeroFurthest where
 -- This module assumes that the semantics is the following:
 -- • Var(0) is the variable that was last/nearest/(most recently) bounded.
 module IndexZeroNearest where
-  open Numeral.FiniteStrict.Bound{Lvl.𝟎}
+  open Numeral.Finite.Bound{Lvl.𝟎}
   open Numeral.Natural.Oper.Proofs{Lvl.𝟎}
   open Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
   open Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}

@@ -1,11 +1,11 @@
-module Numeral.FiniteStrict.Oper where
+module Numeral.Finite.Oper where
 
 import Lvl
 open import Syntax.Number
 open import Logic.Propositional
 open import Logic.Predicate
-open import Numeral.FiniteStrict
-open import Numeral.FiniteStrict.Bound{0}
+open import Numeral.Finite
+open import Numeral.Finite.Bound{0}
 open import Numeral.Natural hiding (𝐏)
 import      Numeral.Natural.Oper as ℕ
 open import Numeral.Natural.Relation.Order{0}

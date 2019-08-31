@@ -4,7 +4,7 @@ import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Propositional{ℓ}
-open import Numeral.FiniteStrict
+open import Numeral.Finite
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs{ℓ}

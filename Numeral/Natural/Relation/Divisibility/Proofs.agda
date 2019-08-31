@@ -7,7 +7,7 @@ open import Logic.Propositional{ℓ}
 open import Logic.Propositional.Theorems{ℓ}
 open import Logic.Predicate{ℓ}{Lvl.𝟎}
 open import Logic.Predicate.Theorems{ℓ}{Lvl.𝟎}
-open import Numeral.FiniteStrict
+open import Numeral.Finite
 open import Numeral.Natural
 open import Numeral.Natural.Function
 open import Numeral.Natural.GreatestCommonDivisor

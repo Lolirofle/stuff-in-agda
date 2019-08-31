@@ -7,10 +7,10 @@ open import Data
 open import Data.Boolean
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional using (const)
-open import Numeral.FiniteStrict
-open import Numeral.FiniteStrict.Bound
-open import Numeral.FiniteStrict.Oper
-open import Numeral.FiniteStrict.Oper.Comparisons
+open import Numeral.Finite
+open import Numeral.Finite.Bound
+open import Numeral.Finite.Oper
+open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Natural
 open import Numeral.CoordinateVector as Vector using (Vector)
 open import Type{ℓ}

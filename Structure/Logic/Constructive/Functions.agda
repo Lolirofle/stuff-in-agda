@@ -5,7 +5,7 @@ module Structure.Logic.Constructive.Functions {ℓₒ} (Domain : Type{ℓₒ}) w
 
 private
   module Meta where
-    open import Numeral.FiniteStrict           public
+    open import Numeral.Finite           public
     open import Numeral.Natural                public
 
 -- The type of a function. Functions on the domain in the meta-logic.

@@ -7,10 +7,10 @@ open import Functional.Equals
 open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
 open import Numeral.CoordinateVector{ℓₒ}
 open import Numeral.CoordinateVector.Equals
-open import Numeral.FiniteStrict
-open import Numeral.FiniteStrict.Bound{ℓₒ}
-open import Numeral.FiniteStrict.Oper
-open import Numeral.FiniteStrict.Oper.Comparisons
+open import Numeral.Finite
+open import Numeral.Finite.Bound{ℓₒ}
+open import Numeral.Finite.Oper
+open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Natural
 open import Sets.Setoid{ℓₗ}
 open import Structure.Function.Domain{ℓₗ}

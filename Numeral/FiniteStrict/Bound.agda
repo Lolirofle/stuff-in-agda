@@ -1,10 +1,10 @@
-module Numeral.FiniteStrict.Bound{ℓ} where
+module Numeral.Finite.Bound{ℓ} where
 
 import Lvl
 open import Syntax.Number
 open import Logic.Propositional
 open import Logic.Predicate
-open import Numeral.FiniteStrict
+open import Numeral.Finite
 open import Numeral.Natural hiding (𝐏)
 open import Numeral.Natural.Function
 open import Numeral.Natural.Function.Proofs{ℓ}

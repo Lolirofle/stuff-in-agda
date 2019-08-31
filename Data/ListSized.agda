@@ -6,7 +6,7 @@ import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.Option as Option using (Option)
 open import Functional
-open import Numeral.FiniteStrict
+open import Numeral.Finite
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 -- open import Numeral.Natural.Oper.Proofs

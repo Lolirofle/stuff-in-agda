@@ -4,7 +4,7 @@ import      Lvl
 open import Functional
 open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
 open import Logic.Predicate{ℓₗ}{ℓₒ}
-open import Numeral.FiniteStrict
+open import Numeral.Finite
 open import Numeral.Natural
 import      Relator.Equals
 open import Sets.PredicateSet

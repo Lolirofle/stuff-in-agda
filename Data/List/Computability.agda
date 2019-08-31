@@ -1,4 +1,4 @@
-module Data.List.Computability{ℓ₁}{ℓ₂} where
+module Data.List.Computability where
 
 import      Lvl
 open import Data.Boolean
@@ -7,15 +7,16 @@ import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.Boolean.Proofs
 open import Data.List
-open import Logic.Computability.Binary{ℓ₁}{ℓ₂}
+open import Logic.Computability.Binary
 open import Functional
-open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
+open import Logic.Propositional
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Type
 
 instance
-  [≡]-computable : ∀{T} → ⦃ _ : ComputablyDecidable{T}(_≡_) ⦄ → ComputablyDecidable{List(T)}(_≡_)
-  [≡]-computable {T} ⦃ decidableT ⦄ = ComputablyDecidable-intro decide ⦃ proof ⦄ where
+  [≡]-computable : ∀{ℓ}{T : Type{ℓ}} → ⦃ _ : ComputablyDecidable{X = T}(_≡_) ⦄ → ComputablyDecidable{X = List(T)}(_≡_)
+  [≡]-computable {T = T} ⦃ decidableT ⦄ = ComputablyDecidable-intro decide ⦃ proof ⦄ where
     decideT : T → T → Bool
     decideT = ComputablyDecidable.decide (_) ⦃ decidableT ⦄
 
@@ -29,9 +30,9 @@ instance
     decide (x₁ ⊰ l₁) (x₂ ⊰ l₂) = decideT(x₁)(x₂) && decide(l₁)(l₂)
 
     decideT-reflexivity : ∀{x} → (decideT(x)(x) ≡ 𝑇)
-    decideT-reflexivity = [↔]-elimᵣ(proofT) ([≡]-intro)
+    decideT-reflexivity = [↔]-elimᵣ([≡]-intro) (proofT)
 
-    decide-reflexivity : ∀{l} → (_≡_ {ℓ₁ Lvl.⊔ ℓ₂} (decide(l)(l)) 𝑇)
+    decide-reflexivity : ∀{l} → (_≡_ (decide(l)(l)) 𝑇)
     decide-reflexivity {∅}     = [≡]-intro
     decide-reflexivity {x ⊰ l} = [∧]-intro-[𝑇] (decideT-reflexivity) (decide-reflexivity {l})
 
@@ -41,8 +42,8 @@ instance
       l {∅}       {∅}       ([≡]-intro) = [≡]-intro
       l {_ ⊰ _}   {∅}       ()
       l {∅}       {_ ⊰ _}   ()
-      l {x₁ ⊰ l₁} {x₂ ⊰ l₂} (proof) with [↔]-elimₗ(proofT{_}{_}) ([∧]-elimₗ-[𝑇] {_} {decideT(x₁)(x₂)} {decide(l₁)(l₂)} proof)
-      ... | [≡]-intro = [≡]-with {ℓ₁} (x₁ ⊰_) (l{l₁}{l₂} ([∧]-elimᵣ-[𝑇] {_} {decideT(x₁)(x₂)} {decide(l₁)(l₂)} proof))
+      l {x₁ ⊰ l₁} {x₂ ⊰ l₂} (proof) with [↔]-elimₗ ([∧]-elimₗ-[𝑇] {decideT(x₁)(x₂)} {decide(l₁)(l₂)} proof) (proofT{_}{_})
+      ... | [≡]-intro = [≡]-with (x₁ ⊰_) (l ([∧]-elimᵣ-[𝑇] {decideT(x₁)(x₂)} {decide(l₁)(l₂)} proof))
 
       r : ∀{x}{y} → (x ≡ y) → (decide x y ≡ 𝑇)
       r {∅}       {∅}       ([≡]-intro) = [≡]-intro
