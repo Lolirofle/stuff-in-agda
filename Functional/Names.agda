@@ -56,9 +56,19 @@ module _ {ℓₒ} {A : Type{ℓₒ}} ⦃ _ : Equiv(A) ⦄ where
 
   InvolutionOn : (A → A) → A → Stmt{ℓₒ}
   InvolutionOn f(x) = InversesOn f f x
+  -- (f ∘ f)(x) ≡ x
+  -- f(f(x)) ≡ x
 
   Involution : (A → A) → Stmt{ℓₒ}
-  Involution (f) = Inverses f f
+  Involution(f) = Inverses f f
+
+  IdempotentOn : (A → A) → A → Stmt{ℓₒ}
+  IdempotentOn f(x) = Fixpoint f(f(x))
+  -- (f ∘ f)(x) ≡ f(x)
+  -- f(f(x)) ≡ f(x)
+
+  Idempotent : (A → A) → Stmt{ℓₒ}
+  Idempotent(f) = ∀ᶠ(IdempotentOn f)
 
 -- module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}}{Y : Type{ℓ₂}} (f : X → Y) where
 --   open import Functional.DomainRaise

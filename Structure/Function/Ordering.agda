@@ -6,6 +6,7 @@ module Structure.Function.Ordering where
 open import Logic
 open import Logic.Propositional
 
+-- TODO
 module _ {ℓₒ₁ ℓₒ₂} {T₁ : Type{ℓₒ₁}} {T₂ : Type{ℓₒ₂}} (_≤₁_ : T₁ → T₁ → Type{ℓₒ₁}) (_≤₂_ : T₂ → T₂ → Type{ℓₒ₂}) where
   Increasing : (T₁ → T₂) → Stmt
   Increasing(f) = (∀{a b : T₁} → (a ≤₁ b) → (f(a) ≤₂ f(b)))

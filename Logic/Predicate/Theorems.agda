@@ -10,13 +10,6 @@ open import Type
 open import Type.Empty using (◊)
 
 ------------------------------------------
--- Practical stuff
-
-module _ {ℓₒ}{ℓₗ₁}{ℓₗ₂} {X : Type{ℓₒ}}{P : X → Stmt{ℓₗ₁}}{Q : X → Stmt{ℓₗ₂}} where
-  [∃]-map : (∀{x} → P(x) → Q(x)) → ((∃ P) → (∃ Q))
-  [∃]-map (f) ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(x) ⦃ f(proof) ⦄
-
-------------------------------------------
 -- Swapping nested quantifiers
 
 module _ {ℓₒ₁}{ℓₒ₂}{ℓₗ} {X : Type{ℓₒ₁}}{Y : Type{ℓₒ₂}}{P : X → Y → Stmt{ℓₗ}} where

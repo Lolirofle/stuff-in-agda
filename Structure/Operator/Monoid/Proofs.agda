@@ -1,6 +1,12 @@
-module Structure.Operator.Monoid.Proofs where {ℓ₁} {ℓ₂} where
+module Structure.Operator.Monoid.Proofs where
 
-{-
-unique-identity : Unique()
-unique-inverse : Unique()
--}
+import      Lvl
+open import Logic
+open import Logic.Propositional
+open import Logic.Predicate
+open import Sets.Setoid
+open import Structure.Operator.Monoid
+open import Structure.Operator.Properties
+open import Structure.Operator.Proofs
+open import Type
+

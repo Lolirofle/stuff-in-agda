@@ -2,9 +2,10 @@ module Relator.Congruence.Proofs where
 
 import      Lvl
 open import Functional
+open import Functional.Names
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Function.Domain
+-- TODO: open import Structure.Function.Domain
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Relator.Congruence

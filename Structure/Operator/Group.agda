@@ -57,6 +57,5 @@ record Subgroup {S : Type} ⦃ _ : Equiv(S) ⦄ (_▫ₛ_ : S → S → S) {T : 
   field
     instance size : (S ≼ T)
 
-  private μ = [∃]-witness(size)
   field
-    preserve-op : ∀{x y : S} → (μ(x ▫ₛ y) ≡ μ(x) ▫ₜ μ(y))
+    preserve-op : ∀{x y : S} → let μ = [∃]-witness(size) in (μ(x ▫ₛ y) ≡ μ(x) ▫ₜ μ(y))

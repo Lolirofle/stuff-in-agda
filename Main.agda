@@ -109,6 +109,7 @@ import Relator.Congruence.Proofs
 import Relator.Equals
 import Relator.Equals.Proofs
 -- import Relator.Finite
+import Relator.Names
 import Relator.Ordering
 import Sets.Setoid
 import Sets.Setoid.Proofs
@@ -119,6 +120,7 @@ import String
 -- import Structure.Arithmetic
 -- import Structure.Category
 import Structure.Function.Domain
+import Structure.Function.Domain.Proofs
 import Structure.Function.Linear
 import Structure.Function.Ordering
 -- import Structure.LinearAlgebra
@@ -152,10 +154,11 @@ import Structure.Function.Ordering
 -- import Structure.Operator.Functions
 -- import Structure.Operator.Group
 -- import Structure.Operator.Group.Proofs
--- import Structure.Operator.Monoid
+import Structure.Operator.Monoid
 -- import Structure.Operator.Monoid.Proofs
+import Structure.Operator.Names
 -- import Structure.Operator.Proofs
--- import Structure.Operator.Properties
+import Structure.Operator.Properties
 -- import Structure.Operator.SetAlgebra
 -- import Structure.Operator.Vector
 -- import Structure.Real
@@ -173,9 +176,9 @@ import Type.Empty
 import Type.Empty.Proofs
 import Type.Singleton
 import Type.Singleton.Proofs
--- import Type.Size
--- import Type.Size.Finite.Count
--- import Type.Size.Proofs
+import Type.Size
+import Type.Size.Proofs
+import Type.Size.Setoid
 import Type.Unit
 import Type.Unit.Proofs
 

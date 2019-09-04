@@ -2,12 +2,13 @@ module Sets.Setoid.Uniqueness.Proofs where
 
 import      Lvl
 open import Functional
+open import Functional.Names
 open import Logic.Propositional
 open import Logic.Predicate
 open import Relator.Equals
 open import Sets.Setoid.Uniqueness
 open import Relator.Equals.Proofs
-open import Structure.Function.Domain
+-- TODO: open import Structure.Function.Domain
 open import Structure.Relator.Properties
 open import Type
 

@@ -33,6 +33,10 @@ module _ {ℓ₁}{ℓ₂} where
     infixl 1 ∃ₗ_
   -}
 
+module _ {ℓₒ}{ℓₗ₁}{ℓₗ₂} {X : Type{ℓₒ}}{P : X → Stmt{ℓₗ₁}}{Q : X → Stmt{ℓₗ₂}} where
+  [∃]-map : (∀{x} → P(x) → Q(x)) → ((∃ P) → (∃ Q))
+  [∃]-map (f) ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(x) ⦃ f(proof) ⦄
+
 ------------------------------------------
 -- Universal quantification (Forall, All)
 

@@ -222,7 +222,7 @@ module _
   open Relator.Equals.Proofs
 
   -- A covariant functor.
-  -- A morphism between categories.
+  -- A homomorphism between categories.
   -- "Preserves structure"
   record Functor
       (Category₁ : Category {_}{_} {Obj₁} (_⟶₁_) ⦃ \{x}{y} → [≡]-equiv {_}{_} {x ⟶₁ y} ⦄)
