@@ -37,10 +37,6 @@ module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ equiv-B : Eq
     [⊜]-equiv : Equiv(A → B)
     [⊜]-equiv = Equiv.intro(_⊜_) ⦃ [⊜]-equivalence ⦄
 
-  module _ ⦃ func : ∀{x} → Function(apply(x)) ⦄ where
-    [⊜]-from-[≡] : ∀{f g : A → B} → (f ≡ g) → (f ⊜ g)
-    [⊜]-from-[≡] {f}{g} (proof) = [⊜]-intro (\{x} → [≡]-with (apply(x)) ⦃ func ⦄ (proof))
-
 -- TODO: Probably incorrect?
 -- [≡]-inherit-property : ∀{ℓ₁}{ℓ₂} → (∀{X : Type{ℓ₂}}{Y : Type{ℓ₂}} {a₁ b₁ : X}{a₂ b₂ : Y} → (a₁ ≡ᵥ b₁) → (a₂ ≡ᵥ b₂)) → (∀{X₁ X₂ : Type{ℓ₁}}{Y₁ Y₂ : Type{ℓ₂}}{f₁ g₁ : X₁ → Y₁}{f₂ g₂ : X₂ → Y₂} → (f₁ ≡ g₁) → (f₂ ≡ g₂))
 -- [≡]-inherit-property(prop) {X₁}{X₂} {Y₁}{Y₂} {f₁}{g₁} {f₂}{g₂} =

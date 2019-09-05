@@ -1,4 +1,4 @@
-module Type.Size.Setoid where
+module Sets.Setoid.Size where
 
 import      Lvl
 open import Logic

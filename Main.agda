@@ -107,12 +107,15 @@ import Relator.Congruence
 import Relator.Congruence.Proofs
 -- import Relator.Countable
 import Relator.Equals
+import Relator.Equals.Names
 import Relator.Equals.Proofs
 -- import Relator.Finite
 import Relator.Names
 import Relator.Ordering
 import Sets.Setoid
 import Sets.Setoid.Proofs
+import Sets.Setoid.Size
+import Sets.Setoid.Size.Proofs
 import Sets.Setoid.Uniqueness
 import Sets.Setoid.Uniqueness.Proofs
 import Stream
@@ -178,7 +181,6 @@ import Type.Singleton
 import Type.Singleton.Proofs
 import Type.Size
 import Type.Size.Proofs
-import Type.Size.Setoid
 import Type.Unit
 import Type.Unit.Proofs
 

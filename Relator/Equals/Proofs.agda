@@ -6,7 +6,7 @@ open import Lang.Instance
 open import Logic
 open import Logic.Propositional
 open import Relator.Equals
-open import Sets.Setoid using (Equiv)
+open import Sets.Setoid using (Equiv ; intro)
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type
@@ -79,6 +79,9 @@ module _ {ℓ} {T : Type{ℓ}} where
     [≡]-equiv : Equiv(T)
     [≡]-equiv = Equiv.intro(_≡_ {T = T}) ⦃ [≡]-equivalence ⦄
 
+  [≡]-to-equivalence : ∀{x y : T} → (x ≡ y) → ⦃ eq : Equiv(T) ⦄ → let Equiv.intro(_≡ₛ_) = eq in (x ≡ₛ y)
+  [≡]-to-equivalence([≡]-intro) ⦃ intro(_≡ₛ_) ⦄ = reflexivity(_≡ₛ_)
+
 module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} where
   [≡]-function-application : ∀{f₁ f₂ : A → B} → (f₁ ≡ f₂) → (∀{x} → (f₁(x) ≡ f₂(x)))
   [≡]-function-application [≡]-intro = [≡]-intro
@@ -99,10 +102,3 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{
     [≡]-with-op (_▫_) [≡]-intro [≡]-intro = [≡]-intro
     -- [≡]-with-op-[_] (_▫_) {a₁}{a₂} {b₁}{b₂} (a₁≡a₂) (b₁≡b₂) =
     --   [≡]-elimᵣ (b₁≡b₂) {\x → (a₁ ▫ b₁) ≡ (a₂ ▫ x)} ([≡]-with(x ↦ (x ▫ b₁)) (a₁≡a₂))
-
-module _ {ℓ} where
-  -- Also called K.
-  -- There is also an axiom called "axiom K" which is a construction of the following type:
-  -- • ∀{T} → [≡]-ProofEquality(T)
-  [≡]-ProofIdentity : Type{ℓ} → Stmt
-  [≡]-ProofIdentity(T) = ∀{x y : T}{eq₁ eq₂ : (x ≡ y)} → (eq₁ ≡ eq₂)
