@@ -36,7 +36,6 @@ apply(x)(f) = f(x)
 -- Function application as an operator. Function to the left, value to the right.
 _⩹_ : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (T₁ → T₂) → T₁ → T₂
 f ⩹ x = f(x)
-
 -- Function application as an operator. Value to the left, function to the right.
 _⩺_ : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₂) → T₂
 x ⩺ f = f(x)

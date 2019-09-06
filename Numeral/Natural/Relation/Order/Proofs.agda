@@ -1,22 +1,20 @@
-{-# OPTIONS --with-K #-}
-
-module Numeral.Natural.Relation.Order.Proofs{ℓ} where
+module Numeral.Natural.Relation.Order.Proofs where
 
 import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
-open import Logic.Propositional{ℓ}
-open import Logic.Propositional.Theorems{ℓ}
-open import Logic.Predicate{ℓ}{Lvl.𝟎}
+open import Logic.Propositional
+open import Logic.Propositional.Theorems
+open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Induction{ℓ}
-open import Numeral.Natural.Relation.Order{ℓ}
-open import Relator.Equals{ℓ}{Lvl.𝟎}
-open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
-open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
-open import Structure.Relator.Ordering{ℓ}{Lvl.𝟎}
-open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
+open import Numeral.Natural.Induction
+open import Numeral.Natural.Relation.Order
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Structure.Operator.Properties
+open import Structure.Relator.Ordering
+open import Structure.Relator.Properties
 open import Type
 
 -- TODO: The instance declarations probably do nothing for functions with arguments. Either make all the args implicit or remove the instance decls.
@@ -30,7 +28,7 @@ open import Type
 [≡]-to-[≤] {𝐒(x)}{𝐒(y)} ([≡]-intro) = [≤]-with-[𝐒] ⦃ [≡]-to-[≤] {x}{y} ([≡]-intro) ⦄
 
 [≡]-to-[≥] : ∀{x y : ℕ} → (x ≡ y) → (x ≥ y)
-[≡]-to-[≥] = [≡]-to-[≤] ∘ symmetry
+[≡]-to-[≥] = [≡]-to-[≤] ∘ symmetry(_≡_)
 
 [≰]-to-[≢] : ∀{x y : ℕ} → (x ≰ y) → (x ≢ y)
 [≰]-to-[≢] = contrapositiveᵣ [≡]-to-[≤]
@@ -71,28 +69,31 @@ open import Type
 
 instance
   [≤]-reflexivity : Reflexivity (_≤_)
-  reflexivity ⦃ [≤]-reflexivity ⦄ = [≡]-to-[≤] [≡]-intro
+  Reflexivity.proof([≤]-reflexivity) = [≡]-to-[≤] [≡]-intro
 
 instance
+  {-# TERMINATING #-}
   [≤]-transitivity : Transitivity (_≤_)
-  transitivity ⦃ [≤]-transitivity ⦄ {𝟎}   {_}   {_} (_)(_) = [≤]-minimum
-  transitivity ⦃ [≤]-transitivity ⦄ {𝐒(a)}{𝐒(b)}{𝐒(c)} ([≤]-with-[𝐒] ⦃ proofₗ ⦄) ([≤]-with-[𝐒] ⦃ proofᵣ ⦄ ) =
-    [≤]-with-[𝐒] ⦃ transitivity ⦃ [≤]-transitivity ⦄ {a}{b}{c} (proofₗ) (proofᵣ) ⦄
+  Transitivity.proof([≤]-transitivity) {𝟎}   {_}   {_} (_)(_) = [≤]-minimum
+  Transitivity.proof([≤]-transitivity) {𝐒(a)}{𝐒(b)}{𝐒(c)} ([≤]-with-[𝐒] ⦃ proofₗ ⦄) ([≤]-with-[𝐒] ⦃ proofᵣ ⦄ ) =
+    [≤]-with-[𝐒] ⦃ Transitivity.proof([≤]-transitivity) {a}{b}{c} (proofₗ) (proofᵣ) ⦄
 
 instance
+  {-# TERMINATING #-}
   [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
-  antisymmetry ⦃ [≤]-antisymmetry ⦄ {𝟎}    {𝟎}    (_) (_) = [≡]-intro
-  antisymmetry ⦃ [≤]-antisymmetry ⦄ {𝐒(_)} {𝟎}    ()
-  antisymmetry ⦃ [≤]-antisymmetry ⦄ {𝟎}    {𝐒(_)} (_) ()
-  antisymmetry ⦃ [≤]-antisymmetry ⦄ {𝐒(a)} {𝐒(b)} ([≤]-with-[𝐒] ⦃ proofₗ ⦄) ([≤]-with-[𝐒] ⦃ proofᵣ ⦄) =
-    [≡]-with(𝐒) (antisymmetry ⦃ [≤]-antisymmetry ⦄ {a}{b} proofₗ proofᵣ)
+  Antisymmetry.proof([≤]-antisymmetry) {𝟎}    {𝟎}    (_) (_) = [≡]-intro
+  Antisymmetry.proof([≤]-antisymmetry) {𝐒(_)} {𝟎}    ()
+  Antisymmetry.proof([≤]-antisymmetry) {𝟎}    {𝐒(_)} (_) ()
+  Antisymmetry.proof([≤]-antisymmetry) {𝐒(a)} {𝐒(b)} ([≤]-with-[𝐒] ⦃ proofₗ ⦄) ([≤]-with-[𝐒] ⦃ proofᵣ ⦄) =
+    [≡]-with(𝐒) (Antisymmetry.proof([≤]-antisymmetry) {a}{b} proofₗ proofᵣ)
 
 instance
-  [≤]-totality : SymmetricallyTotal(_≤_)
-  converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝟎}    = [∨]-introₗ ([≡]-to-[≤] [≡]-intro)
-  converseTotal ⦃ [≤]-totality ⦄ {𝐒(a)}{𝟎}    = [∨]-introᵣ ([≤]-minimum)
-  converseTotal ⦃ [≤]-totality ⦄ {𝟎}   {𝐒(b)} = [∨]-introₗ ([≤]-minimum)
-  converseTotal ⦃ [≤]-totality ⦄ {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ (proof ↦ [≤]-with-[𝐒] {a}{b} ⦃ proof ⦄)) ([∨]-introᵣ ∘ (proof ↦ [≤]-with-[𝐒] {b}{a} ⦃ proof ⦄)) (converseTotal ⦃ [≤]-totality ⦄ {a}{b})
+  {-# TERMINATING #-}
+  [≤]-totality : ConverseTotal(_≤_)
+  ConverseTotal.proof([≤]-totality) {𝟎}   {𝟎}    = [∨]-introₗ ([≡]-to-[≤] [≡]-intro)
+  ConverseTotal.proof([≤]-totality) {𝐒(a)}{𝟎}    = [∨]-introᵣ ([≤]-minimum)
+  ConverseTotal.proof([≤]-totality) {𝟎}   {𝐒(b)} = [∨]-introₗ ([≤]-minimum)
+  ConverseTotal.proof([≤]-totality) {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ (proof ↦ [≤]-with-[𝐒] {a}{b} ⦃ proof ⦄)) ([∨]-introᵣ ∘ (proof ↦ [≤]-with-[𝐒] {b}{a} ⦃ proof ⦄)) (converseTotal(_≤_) ⦃ [≤]-totality ⦄ {a}{b})
 
 instance
   [≤]-weakOrder : Weak.TotalOrder (_≤_) (_≡_)
@@ -106,7 +107,7 @@ instance
     }
 
 [≥]-to-[≮] : ∀{a b : ℕ} → (a ≮ b) ← (a ≥ b)
-[≥]-to-[≮] {a}{b} (b≤a) (𝐒a≤b) = [≤][𝐒]ₗ (transitivity {_}{_}{𝐒(a)}{b}{a} (𝐒a≤b) (b≤a))
+[≥]-to-[≮] {a}{b} (b≤a) (𝐒a≤b) = [≤][𝐒]ₗ (transitivity(_≤_) {𝐒(a)}{b}{a} (𝐒a≤b) (b≤a))
 
 [≤]-to-[≯] : ∀{a b : ℕ} → (a ≯ b) ← (a ≤ b)
 [≤]-to-[≯] {a}{b} (a≤b) (𝐒b≤a) = [≥]-to-[≮] {b}{a} (a≤b) (𝐒b≤a)
@@ -122,15 +123,15 @@ instance
 
 instance
   [<]-irreflexivity : Irreflexivity (_<_)
-  irreflexivity ⦃ [<]-irreflexivity ⦄ = [≤][𝐒]ₗ
+  Irreflexivity.proof([<]-irreflexivity) = [≤][𝐒]ₗ
 
 instance
   [<]-transitivity : Transitivity (_<_)
-  transitivity ⦃ [<]-transitivity ⦄ {x}{y}{z} (l) (r) = transitivity ⦃ [≤]-transitivity ⦄ {𝐒(x)} {𝐒(y)} {z} ([≤]-successor (l)) (r)
+  Transitivity.proof([<]-transitivity) {x}{y}{z} (l) (r) = Transitivity.proof([≤]-transitivity) {𝐒(x)} {𝐒(y)} {z} ([≤]-successor (l)) (r)
 
 instance
   [<]-asymmetry : Asymmetry (_<_)
-  asymmetry ⦃ [<]-asymmetry ⦄ (l) (r) = irreflexivity ⦃ [<]-irreflexivity ⦄ (transitivity ⦃ [<]-transitivity ⦄ (l) (r))
+  Asymmetry.proof([<]-asymmetry) (l) (r) = Irreflexivity.proof([<]-irreflexivity) (Transitivity.proof([<]-transitivity) (l) (r))
 
 instance
   [<]-strictOrder : Strict.Order (_<_)
@@ -141,10 +142,10 @@ instance
     }
 
 [<]-of-[𝐒] : ∀{x : ℕ} → (x < 𝐒(x))
-[<]-of-[𝐒] = reflexivity ⦃ [≤]-reflexivity ⦄
+[<]-of-[𝐒] = reflexivity(_≤_)
 
 [≤]-of-[𝐒] : ∀{x : ℕ} → (x ≤ 𝐒(x))
-[≤]-of-[𝐒] = [≤]-successor(reflexivity)
+[≤]-of-[𝐒] = [≤]-successor(reflexivity(_≤_))
 
 [<][≢]-equivalence : ∀{x} → (x > 0) ↔ (x ≢ 0)
 [<][≢]-equivalence {x} = [↔]-intro (l{x}) (r{x}) where
@@ -184,10 +185,10 @@ instance
 [≥]-to-[>][≡] : ∀{a b : ℕ} → (a ≥ b) → (a > b)∨(a ≡ b)
 [≥]-to-[>][≡] {a}{b} (proof) with [≤]-to-[<][≡] {b}{a} (proof)
 ... | [∨]-introₗ(a<b) = [∨]-introₗ(a<b)
-... | [∨]-introᵣ(b≡a) = [∨]-introᵣ(symmetry(b≡a))
+... | [∨]-introᵣ(b≡a) = [∨]-introᵣ(symmetry(_≡_) (b≡a))
 
 [<]-trichotomy : ∀{x y} → (x < y) ∨ (x ≡ y) ∨ (x > y)
-[<]-trichotomy {x}{y} with converseTotal ⦃ [≤]-totality ⦄
+[<]-trichotomy {x}{y} with converseTotal(_≤_) ⦃ [≤]-totality ⦄
 [<]-trichotomy {x}{y} | [∨]-introₗ x≤y with [≤]-to-[<][≡] {x}{y} x≤y
 [<]-trichotomy {x}{y} | [∨]-introₗ x≤y | [∨]-introₗ x<y = [∨]-introₗ ([∨]-introₗ x<y)
 [<]-trichotomy {x}{y} | [∨]-introₗ x≤y | [∨]-introᵣ x≡y = [∨]-introₗ ([∨]-introᵣ x≡y)
@@ -203,7 +204,7 @@ instance
 
 [>][≡]-to-[≥] : ∀{a b : ℕ} → (a > b)∨(a ≡ b) → (a ≥ b)
 [>][≡]-to-[≥] {a}{b} ([∨]-introₗ(a<b)) = [<][≡]-to-[≤] {b}{a} ([∨]-introₗ(a<b))
-[>][≡]-to-[≥] {a}{b} ([∨]-introᵣ(b≡a)) = [<][≡]-to-[≤] {b}{a} ([∨]-introᵣ(symmetry(b≡a)))
+[>][≡]-to-[≥] {a}{b} ([∨]-introᵣ(b≡a)) = [<][≡]-to-[≤] {b}{a} ([∨]-introᵣ(symmetry(_≡_)(b≡a)))
 
 [>]-to-[≥] : ∀{a b : ℕ} → (a > b) → (a ≥ b)
 [>]-to-[≥] {a}{b} (a<b) = [<][≡]-to-[≤] {b}{a} ([∨]-introₗ(a<b))

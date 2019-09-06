@@ -1,18 +1,18 @@
-module Numeral.Natural.Oper.Comparisons.Proofs{ℓ} where
+module Numeral.Natural.Oper.Comparisons.Proofs where
 
 open import Data.Boolean.Stmt
 open import Data.Boolean
 open import Logic.Propositional
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
-open import Relator.Equals{ℓ}
+open import Relator.Equals
 
 instance
-  [≤?]-𝟎 : ∀{n} → IsTrue{ℓ}(𝟎 ≤? n)
+  [≤?]-𝟎 : ∀{n} → IsTrue(𝟎 ≤? n)
   [≤?]-𝟎 = [⊤]-intro
 
 instance
-  [≤?]-𝐒 : ∀{n} → IsTrue{ℓ}(n ≤? n)
+  [≤?]-𝐒 : ∀{n} → IsTrue(n ≤? n)
   [≤?]-𝐒 {𝟎}    = [⊤]-intro
   [≤?]-𝐒 {𝐒(n)} = [≤?]-𝐒 {n}
 

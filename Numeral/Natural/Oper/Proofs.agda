@@ -3,6 +3,7 @@ module Numeral.Natural.Oper.Proofs where
 import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
+open import Functional.Names
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
@@ -15,8 +16,9 @@ open import Numeral.Natural.Relation.Order.Classical
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Sets.Setoid.Uniqueness
-open import Structure.Function.Domain
-open import Structure.Operator.Properties
+-- open import Structure.Function.Domain
+-- open import Structure.Operator.Properties
+open import Structure.Operator.Names
 open import Structure.Relator.Properties
 
 instance
@@ -64,7 +66,7 @@ instance
     base _ =
       symmetry(
         [+]-identityₗ
-        🝖 (symmetry [+]-identityᵣ)
+        🝖 (symmetry(_≡_) [+]-identityᵣ)
       )
     -- (∀x. 0+x = x) ∧ (∀x. x = x+0) // [∧]-intro [1] [2]
     --   ∀x. 0+x = x //[+]-identityₗ [1]

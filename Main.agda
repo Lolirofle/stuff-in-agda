@@ -69,19 +69,19 @@ import Numeral.Integer
 -- import Numeral.Matrix
 import Numeral.Natural
 -- import Numeral.Natural.Coprime
--- import Numeral.Natural.Function
+import Numeral.Natural.Function
 -- import Numeral.Natural.Function.Proofs
 -- import Numeral.Natural.GreatestCommonDivisor
 -- import Numeral.Natural.Induction
 -- import Numeral.Natural.Inductions
 import Numeral.Natural.Oper
 import Numeral.Natural.Oper.Comparisons
--- import Numeral.Natural.Oper.Comparisons.Proofs
+import Numeral.Natural.Oper.Comparisons.Proofs
 -- import Numeral.Natural.Oper.Divisibility
--- import Numeral.Natural.Oper.Modulo
+import Numeral.Natural.Oper.Modulo
 -- import Numeral.Natural.Oper.Modulo.Proofs
--- import Numeral.Natural.Oper.Proofs
--- import Numeral.Natural.Order
+import Numeral.Natural.Oper.Proofs
+import Numeral.Natural.Order
 -- import Numeral.Natural.Prime
 import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Computability

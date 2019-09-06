@@ -1,24 +1,24 @@
-module Numeral.Natural.Relation.Order.Computability{ℓ} where
+module Numeral.Natural.Relation.Order.Computability where
 
 import      Lvl
 open import Data.Boolean
 open import Data.Boolean.Stmt
 import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
-open import Logic.Computability.Binary{ℓ}{Lvl.𝟎}
+open import Logic.Computability.Binary
 open import Functional
-open import Logic.Propositional{ℓ}
+open import Logic.Propositional
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
-open import Numeral.Natural.Oper.Comparisons.Proofs{ℓ}
-open import Numeral.Natural.Relation.Order{ℓ}
-open import Numeral.Natural.Relation.Order.Proofs{ℓ}
+open import Numeral.Natural.Oper.Comparisons.Proofs
+open import Numeral.Natural.Relation.Order
+open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Structure.Relator.Properties
 
 instance
-  [≤]-computable : ComputablyDecidable{ℕ}(_≤_)
+  [≤]-computable : ComputablyDecidable{X = ℕ}(_≤_)
   [≤]-computable = ComputablyDecidable-intro decide ⦃ proof ⦄ where
     decide = (_≤?_)
 
@@ -34,7 +34,7 @@ instance
       r{𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = r{x}{y} (proof)
 
 instance
-  [≥]-computable : ComputablyDecidable{ℕ}(_≥_)
+  [≥]-computable : ComputablyDecidable{X = ℕ}(_≥_)
   [≥]-computable = ComputablyDecidable-intro decide ⦃ proof ⦄ where
     decide = (_≥?_)
 
@@ -42,7 +42,7 @@ instance
     proof{x}{y} = ComputablyDecidable.proof (_≤_) {y}{x}
 
 instance
-  [<]-computable : ComputablyDecidable{ℕ}(_<_)
+  [<]-computable : ComputablyDecidable{X = ℕ}(_<_)
   [<]-computable = ComputablyDecidable-intro decide ⦃ proof ⦄ where
     decide = (_<?_)
 
@@ -50,7 +50,7 @@ instance
     proof{x}{y} rewrite [<?]-to-[≤?] {x}{y} = ComputablyDecidable.proof (_≤_) {𝐒(x)}{y}
 
 instance
-  [>]-computable : ComputablyDecidable{ℕ}(_>_)
+  [>]-computable : ComputablyDecidable{X = ℕ}(_>_)
   [>]-computable = ComputablyDecidable-intro decide ⦃ proof ⦄ where
     decide = (_>?_)
 
@@ -58,17 +58,17 @@ instance
     proof{x}{y} = ComputablyDecidable.proof (_<_) {y}{x}
 
 instance
-  [≰]-computable : ComputablyDecidable{ℕ}(_≰_)
+  [≰]-computable : ComputablyDecidable{X = ℕ}(_≰_)
   [≰]-computable = ComputablyDecidable.negation (_≤_)
 
 instance
-  [≱]-computable : ComputablyDecidable{ℕ}(_≱_)
+  [≱]-computable : ComputablyDecidable{X = ℕ}(_≱_)
   [≱]-computable = ComputablyDecidable.negation (_≥_)
 
 instance
-  [≮]-computable : ComputablyDecidable{ℕ}(_≮_)
+  [≮]-computable : ComputablyDecidable{X = ℕ}(_≮_)
   [≮]-computable = ComputablyDecidable.negation (_<_)
 
 instance
-  [≯]-computable : ComputablyDecidable{ℕ}(_≯_)
+  [≯]-computable : ComputablyDecidable{X = ℕ}(_≯_)
   [≯]-computable = ComputablyDecidable.negation (_>_)

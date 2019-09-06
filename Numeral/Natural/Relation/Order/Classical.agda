@@ -1,22 +1,22 @@
-module Numeral.Natural.Relation.Order.Classical{ℓ} where
+module Numeral.Natural.Relation.Order.Classical where
 
 import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
-open import Logic.Classical{ℓ}
-open import Logic.Computability.Binary{ℓ}{Lvl.𝟎}
-open import Logic.Propositional{ℓ}
-open import Logic.Propositional.Theorems{ℓ}
-open import Logic.Predicate{ℓ}{Lvl.𝟎}
+open import Logic.Classical
+open import Logic.Computability.Binary
+open import Logic.Propositional
+open import Logic.Propositional.Theorems
+open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Relation.Order{ℓ}
-open import Numeral.Natural.Relation.Order.Proofs{ℓ}
-open import Numeral.Natural.Relation.Order.Computability{ℓ}
-open import Relator.Equals{ℓ}{Lvl.𝟎}
-open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
-open import Structure.Relator.Ordering{ℓ}{Lvl.𝟎}
-open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
+open import Numeral.Natural.Relation.Order
+open import Numeral.Natural.Relation.Order.Proofs
+open import Numeral.Natural.Relation.Order.Computability
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Structure.Relator.Ordering
+open import Structure.Relator.Properties
 open import Type
 
 [≰]-to-[>] : ∀{a b : ℕ} → (a ≰ b) → (a > b)

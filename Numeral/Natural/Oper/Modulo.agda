@@ -3,9 +3,6 @@ module Numeral.Natural.Oper.Modulo where
 import Lvl
 open import Logic.Propositional.Theorems
 open import Numeral.Natural
-open import Numeral.Natural.Oper.Comparisons
-open import Numeral.Natural.Oper
-open import Numeral.Natural.UnclosedOper
 open import Relator.Equals
 
 infixl 10100 _mod_
@@ -65,7 +62,7 @@ infixl 10100 _mod_
 {-# BUILTIN NATMODSUCAUX [_,_]_mod'_ #-}
 
 -- Difference between the value before and after the floored division operation.
-_mod_ : ℕ → (m : ℕ) → ∀{ℓ} → ⦃ _ : (_≢_ {ℓ} m 𝟎)⦄ → ℕ
+_mod_ : ℕ → (m : ℕ) → ⦃ _ : (m ≢ 𝟎)⦄ → ℕ
 _mod_ a 𝟎 ⦃ proof ⦄ with proof [≡]-intro
 ...                    | ()
 _mod_ a (𝐒(b)) = [ 0 , b ] a mod' b
