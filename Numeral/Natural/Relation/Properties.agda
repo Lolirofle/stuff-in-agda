@@ -1,21 +1,21 @@
-module Numeral.Natural.Relation.Properties{ℓ} where
+module Numeral.Natural.Relation.Properties where
 
 import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
-open import Logic.Propositional{ℓ}
-open import Logic.Propositional.Theorems{ℓ}
-open import Logic.Predicate{ℓ}{Lvl.𝟎}
+open import Logic.Propositional
+open import Logic.Propositional.Theorems
+open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Oper.Proofs{ℓ}
-open import Numeral.Natural.Induction{ℓ}
-open import Numeral.Natural.Relation{ℓ}
-open import Relator.Equals{ℓ}{Lvl.𝟎}
-open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
-open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
-open import Structure.Relator.Ordering{ℓ}{Lvl.𝟎}
-open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
+open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Induction
+open import Numeral.Natural.Relation
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Structure.Operator.Properties
+open import Structure.Relator.Ordering
+open import Structure.Relator.Properties
 open import Type
 
 [ℕ]-zero-or-nonzero : ∀{n : ℕ} → (n ≡ 𝟎)∨(n ≢ 𝟎)

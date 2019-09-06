@@ -64,7 +64,7 @@ instance
   [+]-commutativity {x}{y} = [ℕ]-induction (base x) (next x) {y} where
     base : ∀(x : ℕ) → (x + 0) ≡ (0 + x)
     base _ =
-      symmetry(
+      symmetry(_≡_)(
         [+]-identityₗ
         🝖 (symmetry(_≡_) [+]-identityᵣ)
       )
@@ -78,7 +78,7 @@ instance
     next : ∀(x i : ℕ) → ((x + i) ≡ (i + x)) → ((x + 𝐒(i)) ≡ (𝐒(i) + x))
     next (x) (i) (eq) =
       ([≡]-with(𝐒) eq)
-      🝖 (symmetry([+1]-commutativity {i} {x}))
+      🝖 (symmetry(_≡_)([+1]-commutativity {i} {x}))
     --   ∀x∀i. x+i = i+x //eq
     --   ∀x∀i. 𝐒(x+i) = 𝐒(i+x) //[≡]-with(𝐒)(..)
     --   ∀x∀i. x+𝐒(i) = i+𝐒(x) //x + 𝐒(y) = 𝐒(x + y) (Definition of _+_) [1]
@@ -97,7 +97,7 @@ instance
   [⋅]-absorberₗ : Absorberₗ (_⋅_) (0)
   [⋅]-absorberₗ {x} = [ℕ]-induction base next {x} where
     base : (0 ⋅ 0) ≡ 0
-    base = reflexivity
+    base = reflexivity(_≡_)
 
     next : ∀(x : ℕ) → ((0 ⋅ x) ≡ 0) → ((0 ⋅ 𝐒(x)) ≡ 0)
     next(_)(eq) = [≡]-with(x ↦ 0 + x) eq
@@ -111,7 +111,7 @@ instance
   [⋅]-identityₗ : Identityₗ (_⋅_) (1)
   [⋅]-identityₗ {x} = [ℕ]-induction base next {x} where
     base : ((1 ⋅ 0) ≡ 0)
-    base = reflexivity
+    base = reflexivity(_≡_)
 
     next : ∀(i : ℕ) → ((1 ⋅ i) ≡ i) → ((1 ⋅ 𝐒(i)) ≡ 𝐒(i))
     next(i)(eq) =
@@ -143,7 +143,7 @@ instance
       🝖 ([≡]-with(expr ↦ a + expr) ([+]-commutativity{b}{c + d}))
       🝖 ([≡]-with(expr ↦ a + expr) ([+]-associativity{c}{d}{b}))
       🝖 ([≡]-with(expr ↦ a + (c + expr)) ([+]-commutativity{d}{b}))
-      🝖 (symmetry([+]-associativity{a}{c}{b + d}))
+      🝖 (symmetry(_≡_)([+]-associativity{a}{c}{b + d}))
   -- (x+y)⋅𝐒(z)
   -- = (x+y) + (x+y)⋅z //Definition: (⋅)
   -- = (x+y) + (x⋅z + y⋅z) //proof
@@ -201,7 +201,7 @@ instance
 -- TODO: Rename and generalize this (See commuteBoth in Structure.Operator.Properties)
 commuteBothTemp : ∀{a₁ a₂ b₁ b₂} → (a₁ + a₂ ≡ b₁ + b₂) → (a₂ + a₁ ≡ b₂ + b₁)
 commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
-    (symmetry ([+]-commutativity {a₁} {a₂}))
+    (symmetry(_≡_) ([+]-commutativity {a₁} {a₂}))
     🝖 a₁+a₂≡b₁+b₂
     🝖 ([+]-commutativity {b₁} {b₂})
 
@@ -276,14 +276,14 @@ instance
 instance
   [+]-cancellationₗ : Cancellationₗ(_+_)
   [+]-cancellationₗ {𝟎}{a}{b} (rel) =
-    (symmetry [+]-identityₗ)
+    (symmetry(_≡_) [+]-identityₗ)
     🝖 (rel)
     🝖 ([+]-identityₗ)
 
   [+]-cancellationₗ {𝐒(x)}{a}{b} (rel) =
     ([+]-cancellationₗ {x}{a}{b}
       ([≡]-with(𝐏)(
-        (symmetry ([+1]-commutativity {x}{a}))
+        (symmetry(_≡_) ([+1]-commutativity {x}{a}))
         🝖 (rel)
         🝖 ([+1]-commutativity {x}{b})
       ))
@@ -423,13 +423,13 @@ postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
 [−₀]-lesser-[𝐒]ᵣ {𝐒(x)}{𝐒(y)} = [−₀]-lesser-[𝐒]ₗ {𝐒(x)}{y}
 
 [≤][−₀][𝐒]ₗ : ∀{x y} → ((𝐒(x) −₀ y) ≤ 𝐒(x −₀ y))
-[≤][−₀][𝐒]ₗ {x}   {𝟎}    = reflexivity
+[≤][−₀][𝐒]ₗ {x}   {𝟎}    = reflexivity(_≤_)
 [≤][−₀][𝐒]ₗ {𝟎}   {𝐒(y)} = [≤]-minimum
 [≤][−₀][𝐒]ₗ {𝐒(x)}{𝐒(y)} = [≤][−₀][𝐒]ₗ {x}{y}
 
 [−₀]-lesser : ∀{x y} → ((x −₀ y) ≤ x)
 [−₀]-lesser {𝟎}   {_}    = [≤]-minimum
-[−₀]-lesser {𝐒(x)}{𝟎}    = reflexivity
+[−₀]-lesser {𝐒(x)}{𝟎}    = reflexivity(_≤_)
 [−₀]-lesser {𝐒(x)}{𝐒(y)} = ([−₀]-lesser-[𝐒]ₗ {𝐒(x)}{y}) 🝖 ([−₀]-lesser {𝐒(x)}{y})
 
 [−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0) -- TODO: Converse is probably also true
@@ -449,12 +449,12 @@ postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
 [−₀]-nested-sameₗ {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
   l : ∀{x y} → (x ≥ y) ← (x −₀ (x −₀ y) ≡ y)
   l {x}{y} proof =
-    [≡]-to-[≤] (symmetry proof)
+    [≡]-to-[≤] (symmetry(_≡_) proof)
     🝖 [−₀]-lesser {x}{x −₀ y}
 
   r : ∀{x y} → (x ≥ y) → (x −₀ (x −₀ y) ≡ y)
   r{x}{y} x≥y =
-    [≡]-with(_−₀ (x −₀ y)) (symmetry ([↔]-elimᵣ ([−₀][+]-nullify2 {y}{x}) (x≥y)) 🝖 [+]-commutativity{y}{x −₀ y})
+    [≡]-with(_−₀ (x −₀ y)) (symmetry(_≡_) ([↔]-to-[→] ([−₀][+]-nullify2 {y}{x}) (x≥y)) 🝖 [+]-commutativity{y}{x −₀ y})
     🝖 [−₀]ₗ[+]ₗ-nullify {x −₀ y}{y}
       -- x −₀ (x −₀ y)
       -- ((x −₀ y) + y) −₀ (x −₀ y)
@@ -488,10 +488,10 @@ postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
 [𝄩]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity {y}{x}) {expr ↦ (expr 𝄩 x ≡ y)} ([𝄩]ₗ[+]ᵣ-nullify {y}{x})
 
 [𝄩]ᵣ[+]ᵣ-nullify : ∀{x y} → (y 𝄩 (x + y) ≡ x)
-[𝄩]ᵣ[+]ᵣ-nullify {x}{y} = transitivity ([𝄩]-commutativity {y}{x + y}) ([𝄩]ₗ[+]ᵣ-nullify {x}{y})
+[𝄩]ᵣ[+]ᵣ-nullify {x}{y} = transitivity(_≡_) ([𝄩]-commutativity {y}{x + y}) ([𝄩]ₗ[+]ᵣ-nullify {x}{y})
 
 [𝄩]ᵣ[+]ₗ-nullify : ∀{x y} → (x 𝄩 (x + y) ≡ y)
-[𝄩]ᵣ[+]ₗ-nullify {x}{y} = transitivity ([𝄩]-commutativity {x}{x + y}) ([𝄩]ₗ[+]ₗ-nullify {x}{y})
+[𝄩]ᵣ[+]ₗ-nullify {x}{y} = transitivity(_≡_) ([𝄩]-commutativity {x}{x + y}) ([𝄩]ₗ[+]ₗ-nullify {x}{y})
 
 [𝄩]-with-[+]ᵣ : ∀{x y z} → ((x + z) 𝄩 (y + z) ≡ x 𝄩 y)
 [𝄩]-with-[+]ᵣ {𝟎}   {𝟎}   {𝟎}    = [≡]-intro
