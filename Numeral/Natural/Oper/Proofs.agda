@@ -3,7 +3,7 @@ module Numeral.Natural.Oper.Proofs where
 import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
-open import Functional.Names
+import      Functional.Names as Names
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
@@ -16,39 +16,36 @@ open import Numeral.Natural.Relation.Order.Classical
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Sets.Setoid.Uniqueness
--- open import Structure.Function.Domain
--- open import Structure.Operator.Properties
-open import Structure.Operator.Names
+open import Structure.Function.Domain
+open import Structure.Operator.Properties
+import      Structure.Operator.Names as Names
 open import Structure.Relator.Properties
 
-instance
-  [+]-identityₗ : Identityₗ (_+_) (0)
-  [+]-identityₗ {x} = [ℕ]-induction base next {x} where
-    base : ((0 + 0) ≡ 0)
-    base = [≡]-intro
+[+]-identityₗ-raw : Names.Identityₗ (_+_) (0)
+[+]-identityₗ-raw {x} = [ℕ]-induction base next {x} where
+  base : ((0 + 0) ≡ 0)
+  base = [≡]-intro
 
-    next : ∀(i : ℕ) → ((0 + i) ≡ i) → ((0 + 𝐒(i)) ≡ 𝐒(i))
-    next _ = [≡]-with(𝐒)
-{-# REWRITE [+]-identityₗ #-}
+  next : ∀(i : ℕ) → ((0 + i) ≡ i) → ((0 + 𝐒(i)) ≡ 𝐒(i))
+  next _ = [≡]-with(𝐒)
+{-# REWRITE [+]-identityₗ-raw #-}
 
-instance
-  [+]-identityᵣ : Identityᵣ (_+_) (0)
-  [+]-identityᵣ {x} = [ℕ]-induction base next {x} where
-    base : ((0 + 0) ≡ 0)
-    base = [≡]-intro
+[+]-identityᵣ-raw : Names.Identityᵣ (_+_) (0)
+[+]-identityᵣ-raw {x} = [ℕ]-induction base next {x} where
+  base : ((0 + 0) ≡ 0)
+  base = [≡]-intro
 
-    next : ∀(i : ℕ) → ((i + 0) ≡ i) → ((𝐒(i) + 0) ≡ 𝐒(i))
-    next _ = [≡]-with(𝐒)
+  next : ∀(i : ℕ) → ((i + 0) ≡ i) → ((𝐒(i) + 0) ≡ 𝐒(i))
+  next _ = [≡]-with(𝐒)
 
-instance
-  [+]-associativity : Associativity (_+_)
-  [+]-associativity {x}{y}{z} = [ℕ]-induction (base x y) (next x y) {z} where
-    base : (x y : ℕ) → ((x + y) + 0) ≡ (x + (y + 0))
-    base _ _ = [≡]-intro
+[+]-associativity-raw : Names.Associativity (_+_)
+[+]-associativity-raw {x}{y}{z} = [ℕ]-induction (base x y) (next x y) {z} where
+  base : (x y : ℕ) → ((x + y) + 0) ≡ (x + (y + 0))
+  base _ _ = [≡]-intro
 
-    next : ∀(x y i : ℕ) → ((x + y) + i) ≡ (x + (y + i)) → ((x + y) + 𝐒(i)) ≡ (x + (y + 𝐒(i)))
-    next _ _ _ = [≡]-with(𝐒)
-{-# REWRITE [+]-associativity #-} -- TODO: I thought that rewriting only worked from left to right and that this would get the compiler stuck? Maybe not?
+  next : ∀(x y i : ℕ) → ((x + y) + i) ≡ (x + (y + i)) → ((x + y) + 𝐒(i)) ≡ (x + (y + 𝐒(i)))
+  next _ _ _ = [≡]-with(𝐒)
+{-# REWRITE [+]-associativity-raw #-}
 
 [+1]-commutativity : ∀{x y : ℕ} → (𝐒(x) + y) ≡ (x + 𝐒(y))
 [+1]-commutativity {x}{y} = [ℕ]-induction (base x) (next x) {y} where
@@ -59,79 +56,74 @@ instance
   next(x)(_) = [≡]-with(𝐒)
 {-# REWRITE [+1]-commutativity #-}
 
-instance
-  [+]-commutativity : Commutativity (_+_)
-  [+]-commutativity {x}{y} = [ℕ]-induction (base x) (next x) {y} where
-    base : ∀(x : ℕ) → (x + 0) ≡ (0 + x)
-    base _ =
-      symmetry(_≡_)(
-        [+]-identityₗ
-        🝖 (symmetry(_≡_) [+]-identityᵣ)
-      )
-    -- (∀x. 0+x = x) ∧ (∀x. x = x+0) // [∧]-intro [1] [2]
-    --   ∀x. 0+x = x //[+]-identityₗ [1]
+[+]-commutativity-raw : Names.Commutativity (_+_)
+[+]-commutativity-raw {x}{y} = [ℕ]-induction (base x) (next x) {y} where
+  base : ∀(x : ℕ) → (x + 0) ≡ (0 + x)
+  base _ =
+    symmetry(_≡_)(
+      [+]-identityₗ-raw
+      🝖 (symmetry(_≡_) [+]-identityᵣ-raw)
+    )
+  -- (∀x. 0+x = x) ∧ (∀x. x = x+0) // [∧]-intro [1] [2]
+  --   ∀x. 0+x = x //[+]-identityₗ [1]
 
-    --   ∀x. x+0 = x //[+]-identityᵣ
-    --   ∀x. x = x+0 //[≡]-symmetry(..) [2]
-    -- (∀x. 0+x = x+0) // [≡]-transitivity(..)
+  --   ∀x. x+0 = x //[+]-identityᵣ
+  --   ∀x. x = x+0 //[≡]-symmetry(..) [2]
+  -- (∀x. 0+x = x+0) // [≡]-transitivity(..)
 
-    next : ∀(x i : ℕ) → ((x + i) ≡ (i + x)) → ((x + 𝐒(i)) ≡ (𝐒(i) + x))
-    next (x) (i) (eq) =
-      ([≡]-with(𝐒) eq)
-      🝖 (symmetry(_≡_)([+1]-commutativity {i} {x}))
-    --   ∀x∀i. x+i = i+x //eq
-    --   ∀x∀i. 𝐒(x+i) = 𝐒(i+x) //[≡]-with(𝐒)(..)
-    --   ∀x∀i. x+𝐒(i) = i+𝐒(x) //x + 𝐒(y) = 𝐒(x + y) (Definition of _+_) [1]
+  next : ∀(x i : ℕ) → ((x + i) ≡ (i + x)) → ((x + 𝐒(i)) ≡ (𝐒(i) + x))
+  next (x) (i) (eq) =
+    ([≡]-with(𝐒) eq)
+    🝖 (symmetry(_≡_)([+1]-commutativity {i} {x}))
+  --   ∀x∀i. x+i = i+x //eq
+  --   ∀x∀i. 𝐒(x+i) = 𝐒(i+x) //[≡]-with(𝐒)(..)
+  --   ∀x∀i. x+𝐒(i) = i+𝐒(x) //x + 𝐒(y) = 𝐒(x + y) (Definition of _+_) [1]
 
-    --   ∀x∀i. 𝐒(i)+x = i+𝐒(x) //[+1]-commutativity
-    --   ∀x∀i. i+𝐒(x) = 𝐒(i)+x //[≡]-symmetry [2]
-    -- ∀x∀i. x+𝐒(i) = 𝐒(i)+x //[≡]-transitivity [1] [2]
+  --   ∀x∀i. 𝐒(i)+x = i+𝐒(x) //[+1]-commutativity
+  --   ∀x∀i. i+𝐒(x) = 𝐒(i)+x //[≡]-symmetry [2]
+  -- ∀x∀i. x+𝐒(i) = 𝐒(i)+x //[≡]-transitivity [1] [2]
 
 [+1]-and-[𝐒] : ∀{x : ℕ} → (x + 1 ≡ 𝐒(x))
 [+1]-and-[𝐒] {x} = [≡]-intro
 
 [1+]-and-[𝐒] : ∀{x : ℕ} → (1 + x ≡ 𝐒(x))
-[1+]-and-[𝐒] {x} = ([+1]-and-[𝐒] {x}) 🝖 ([+]-commutativity{x}{1})
+[1+]-and-[𝐒] {x} = ([+1]-and-[𝐒] {x}) 🝖 ([+]-commutativity-raw{x}{1})
 
-instance
-  [⋅]-absorberₗ : Absorberₗ (_⋅_) (0)
-  [⋅]-absorberₗ {x} = [ℕ]-induction base next {x} where
-    base : (0 ⋅ 0) ≡ 0
-    base = reflexivity(_≡_)
+[⋅]-absorberₗ-raw : Names.Absorberₗ (_⋅_) (0)
+[⋅]-absorberₗ-raw {x} = [ℕ]-induction base next {x} where
+  base : (0 ⋅ 0) ≡ 0
+  base = reflexivity(_≡_)
 
-    next : ∀(x : ℕ) → ((0 ⋅ x) ≡ 0) → ((0 ⋅ 𝐒(x)) ≡ 0)
-    next(_)(eq) = [≡]-with(x ↦ 0 + x) eq
-{-# REWRITE [⋅]-absorberₗ #-}
+  next : ∀(x : ℕ) → ((0 ⋅ x) ≡ 0) → ((0 ⋅ 𝐒(x)) ≡ 0)
+  next(_)(eq) = [≡]-with(x ↦ 0 + x) eq
+{-# REWRITE [⋅]-absorberₗ-raw #-}
 
-instance
-  [⋅]-absorberᵣ : Absorberᵣ (_⋅_) (0)
-  [⋅]-absorberᵣ = [≡]-intro
+[⋅]-absorberᵣ-raw : Names.Absorberᵣ (_⋅_) (0)
+[⋅]-absorberᵣ-raw = [≡]-intro
 
-instance
-  [⋅]-identityₗ : Identityₗ (_⋅_) (1)
-  [⋅]-identityₗ {x} = [ℕ]-induction base next {x} where
-    base : ((1 ⋅ 0) ≡ 0)
-    base = reflexivity(_≡_)
+[⋅]-identityₗ-raw : Names.Identityₗ (_⋅_) (1)
+[⋅]-identityₗ-raw {x} = [ℕ]-induction base next {x} where
+  base : ((1 ⋅ 0) ≡ 0)
+  base = reflexivity(_≡_)
 
-    next : ∀(i : ℕ) → ((1 ⋅ i) ≡ i) → ((1 ⋅ 𝐒(i)) ≡ 𝐒(i))
-    next(i)(eq) =
-      ([+]-commutativity {1} {1 ⋅ i})
-      🝖 ([≡]-with(𝐒) eq)
-  --   1 + 1⋅i = 1⋅i + 1 //[+]-commutativity
+  next : ∀(i : ℕ) → ((1 ⋅ i) ≡ i) → ((1 ⋅ 𝐒(i)) ≡ 𝐒(i))
+  next(i)(eq) =
+    ([+]-commutativity-raw {1} {1 ⋅ i})
+    🝖 ([≡]-with(𝐒) eq)
+--   1 + 1⋅i = 1⋅i + 1 //[+]-commutativity
 
-  --   1⋅i = i //eq
-  --   𝐒(1⋅i) = 𝐒(i) //[≡]-with[ 𝐒 ] (..)
-  --   1⋅i + 1 = 𝐒(i) //Definition: (+)
-  -- 1 + 1⋅i = 𝐒(i)
-  -- 1 ⋅ 𝐒(i) = 𝐒(i) //1 ⋅ 𝐒(y) = 1 + (1 ⋅ y) (Definition: (⋅))
-{-# REWRITE [⋅]-identityₗ #-}
+--   1⋅i = i //eq
+--   𝐒(1⋅i) = 𝐒(i) //[≡]-with[ 𝐒 ] (..)
+--   1⋅i + 1 = 𝐒(i) //Definition: (+)
+-- 1 + 1⋅i = 𝐒(i)
+-- 1 ⋅ 𝐒(i) = 𝐒(i) //1 ⋅ 𝐒(y) = 1 + (1 ⋅ y) (Definition: (⋅))
+{-# REWRITE [⋅]-identityₗ-raw #-}
 
-instance
-  [⋅]-identityᵣ : Identityᵣ (_⋅_) (1)
-  [⋅]-identityᵣ = [≡]-intro
+[⋅]-identityᵣ-raw : Names.Identityᵣ (_⋅_) (1)
+[⋅]-identityᵣ-raw = [≡]-intro
 
-[⋅][+]-distributivityᵣ : ∀{x y z : ℕ} → ((x + y) ⋅ z) ≡ (x ⋅ z) + (y ⋅ z)
-[⋅][+]-distributivityᵣ {x}{y}{z} = [ℕ]-induction (base x y) (next x y) {z} where
+[⋅][+]-distributivityᵣ-raw : Names.Distributivityᵣ(_⋅_)(_+_)
+[⋅][+]-distributivityᵣ-raw {x}{y}{z} = [ℕ]-induction (base x y) (next x y) {z} where
   base : (x y : ℕ) → ((x + y) ⋅ 0) ≡ ((x ⋅ 0) + (y ⋅ 0))
   base _ _ = [≡]-intro
 
@@ -139,11 +131,11 @@ instance
   next(x)(y)(z) (proof) = ([≡]-with(expr ↦ ((x + y) + expr)) proof) 🝖 (swap-stuff-around{x}{y}{x ⋅ z}{y ⋅ z}) where
     swap-stuff-around : ∀{a b c d} → (a + b) + (c + d) ≡ (a + c) + (b + d)
     swap-stuff-around {a}{b}{c}{d} =
-      [+]-associativity{a}{b}{c + d}
-      🝖 ([≡]-with(expr ↦ a + expr) ([+]-commutativity{b}{c + d}))
-      🝖 ([≡]-with(expr ↦ a + expr) ([+]-associativity{c}{d}{b}))
-      🝖 ([≡]-with(expr ↦ a + (c + expr)) ([+]-commutativity{d}{b}))
-      🝖 (symmetry(_≡_)([+]-associativity{a}{c}{b + d}))
+      [+]-associativity-raw{a}{b}{c + d}
+      🝖 ([≡]-with(expr ↦ a + expr) ([+]-commutativity-raw{b}{c + d}))
+      🝖 ([≡]-with(expr ↦ a + expr) ([+]-associativity-raw{c}{d}{b}))
+      🝖 ([≡]-with(expr ↦ a + (c + expr)) ([+]-commutativity-raw{d}{b}))
+      🝖 (symmetry(_≡_)([+]-associativity-raw{a}{c}{b + d}))
   -- (x+y)⋅𝐒(z)
   -- = (x+y) + (x+y)⋅z //Definition: (⋅)
   -- = (x+y) + (x⋅z + y⋅z) //proof
@@ -156,8 +148,8 @@ instance
 
 [⋅]-with-[𝐒]ₗ : ∀{x y} → (𝐒(x) ⋅ y ≡ (x ⋅ y) + y)
 [⋅]-with-[𝐒]ₗ {x}{y} =
-  ([⋅][+]-distributivityᵣ{x}{1}{y})
-  🝖 ([≡]-with(expr ↦ (x ⋅ y) + expr) ([⋅]-identityₗ {y}))
+  ([⋅][+]-distributivityᵣ-raw{x}{1}{y})
+  🝖 ([≡]-with(expr ↦ (x ⋅ y) + expr) ([⋅]-identityₗ-raw {y}))
 -- 𝐒(x)⋅y
 -- = (x+1)⋅y
 -- = x⋅y + 1⋅y
@@ -167,12 +159,12 @@ instance
 [⋅]-with-[𝐒]ᵣ : ∀{x y} → x ⋅ 𝐒(y) ≡ x + (x ⋅ y)
 [⋅]-with-[𝐒]ᵣ = [≡]-intro
 
-instance postulate [⋅][+]-distributivityₗ : ∀{x y z : ℕ} → (x ⋅ (y + z)) ≡ (x ⋅ y) + (x ⋅ z)
+postulate [⋅][+]-distributivityₗ-raw : Names.Distributivityₗ(_⋅_)(_+_)
 
-instance postulate [⋅]-associativity : Associativity (_⋅_)
-{-# REWRITE [⋅]-associativity #-}
+postulate [⋅]-associativity-raw : Names.Associativity (_⋅_)
+{-# REWRITE [⋅]-associativity-raw #-}
 
-instance postulate [⋅]-commutativity : Commutativity (_⋅_)
+postulate [⋅]-commutativity-raw : Names.Commutativity (_⋅_)
 
 -- testAssociativityOfSuccessor1 : ∀{x y} → ((x + 1) + y) ≡ (x + (1 + y))
 -- testAssociativityOfSuccessor1 {x} {y} = [+]-associativity {x} {1} {y}
@@ -180,38 +172,33 @@ instance postulate [⋅]-commutativity : Commutativity (_⋅_)
 -- testAssociativityOfSuccessor2 : ∀{x y} → (𝐒(x) + y) ≡ (x + (1 + y))
 -- testAssociativityOfSuccessor2 {x} {y} = [+]-associativity {x} {1} {y}
 
-instance
-  [𝐒]-injectivity : Injective(𝐒)
-  [𝐒]-injectivity {0}    ([≡]-intro) = [≡]-intro
-  [𝐒]-injectivity {𝐒(n)} (𝐒x≡𝐒y)     = [≡]-with(𝐏) 𝐒x≡𝐒y
+[𝐒]-injectivity-raw : Names.Injective(𝐒)
+[𝐒]-injectivity-raw {0}    ([≡]-intro) = [≡]-intro
+[𝐒]-injectivity-raw {𝐒(n)} (𝐒x≡𝐒y)     = [≡]-with(𝐏) 𝐒x≡𝐒y
 
-instance
-  [𝐒]-not-0 : ∀{n} → (𝐒(n) ≢ 𝟎)
-  [𝐒]-not-0 ()
+[𝐒]-not-0 : ∀{n} → (𝐒(n) ≢ 𝟎)
+[𝐒]-not-0 ()
 
-instance
-  [𝐏][𝐒]-identity : ∀{n} → (𝐏(𝐒(n)) ≡ n)
-  [𝐏][𝐒]-identity = [≡]-intro
+[𝐏][𝐒]-identity : ∀{n} → (𝐏(𝐒(n)) ≡ n)
+[𝐏][𝐒]-identity = [≡]-intro
 
-instance
-  [+]-injectivityₗ : ∀{a} → Injective (x ↦ x + a)
-  [+]-injectivityₗ {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
-  [+]-injectivityₗ {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]-injectivityₗ {n} ([≡]-with(𝐏) x₁+𝐒n≡x₂+𝐒n)
+[+]ₗ-injectivity-raw : ∀{a} → Names.Injective (_+ a)
+[+]ₗ-injectivity-raw {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
+[+]ₗ-injectivity-raw {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]ₗ-injectivity-raw {n} ([≡]-with(𝐏) x₁+𝐒n≡x₂+𝐒n)
 
 -- TODO: Rename and generalize this (See commuteBoth in Structure.Operator.Properties)
 commuteBothTemp : ∀{a₁ a₂ b₁ b₂} → (a₁ + a₂ ≡ b₁ + b₂) → (a₂ + a₁ ≡ b₂ + b₁)
 commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
-    (symmetry(_≡_) ([+]-commutativity {a₁} {a₂}))
+    (symmetry(_≡_) ([+]-commutativity-raw {a₁} {a₂}))
     🝖 a₁+a₂≡b₁+b₂
-    🝖 ([+]-commutativity {b₁} {b₂})
+    🝖 ([+]-commutativity-raw {b₁} {b₂})
 
-instance
-  [+]-injectivityᵣ : ∀{a} → Injective (x ↦ a + x)
-  [+]-injectivityᵣ {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = commuteBothTemp {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
-  [+]-injectivityᵣ {𝐒(n)} {x₁} {x₂} (𝐒n+x₁≡𝐒n+x₂) =
-    [+]-injectivityᵣ {n} (
-      commuteBothTemp {x₁} {n} {x₂} {n} ([≡]-with(𝐏) (commuteBothTemp {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
-    )
+[+]ᵣ-injectivity-raw : ∀{a} → Names.Injective (a +_)
+[+]ᵣ-injectivity-raw {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = commuteBothTemp {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
+[+]ᵣ-injectivity-raw {𝐒(n)} {x₁} {x₂} (𝐒n+x₁≡𝐒n+x₂) =
+  [+]ᵣ-injectivity-raw {n} (
+    commuteBothTemp {x₁} {n} {x₂} {n} ([≡]-with(𝐏) (commuteBothTemp {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
+  )
 
 [+]-sum-is-0ₗ : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)
 [+]-sum-is-0ₗ {a}{0}    a+0≡0 = a+0≡0
@@ -221,7 +208,7 @@ instance
 [+]-sum-is-0ᵣ {b}{a} (b+a≡0) =
   ([+]-sum-is-0ₗ {a}{b}
     (
-      ([+]-commutativity {a}{b})
+      ([+]-commutativity-raw {a}{b})
       🝖 (b+a≡0)
     )
   )
@@ -242,7 +229,7 @@ postulate [⋅]-product-is-1ᵣ : ∀{a b} → (a ⋅ b ≡ 1) → (b ≡ 1)
 [⋅]-product-is-0 {𝐒(a)}{𝐒(b)} (𝐒a⋅𝐒b≡0) =
   ([⊥]-elim
     ([𝐒]-not-0 {(𝐒(a) ⋅ b) + a}(
-      ([+]-commutativity {𝐒(a) ⋅ b}{𝐒(a)})
+      ([+]-commutativity-raw {𝐒(a) ⋅ b}{𝐒(a)})
       🝖 (𝐒a⋅𝐒b≡0)
     ))
   )
@@ -268,37 +255,34 @@ postulate [⋅]-product-is-1ᵣ : ∀{a b} → (a ⋅ b ≡ 1) → (b ≡ 1)
 -- TODO: Prove
 -- [/]-uniqueness : ∀{a b} → ⦃ _ : b ≢ 0 ⦄ → ∃!{ℕ ⨯ ℕ}(\{(q , r) → ((a ≡ (b ⋅ q) + r) ∧ (0 ≤ r) ∧ (r < b))})
 
-instance
-  [+]-cancellationᵣ : Cancellationᵣ(_+_)
-  [+]-cancellationᵣ {𝟎}    (rel) = rel
-  [+]-cancellationᵣ {𝐒(x)} (rel) = [+]-cancellationᵣ {x} ([≡]-with(𝐏) rel)
+[+]-cancellationᵣ-raw : Names.Cancellationᵣ(_+_)
+[+]-cancellationᵣ-raw {𝟎}    (rel) = rel
+[+]-cancellationᵣ-raw {𝐒(x)} (rel) = [+]-cancellationᵣ-raw {x} ([≡]-with(𝐏) rel)
 
-instance
-  [+]-cancellationₗ : Cancellationₗ(_+_)
-  [+]-cancellationₗ {𝟎}{a}{b} (rel) =
-    (symmetry(_≡_) [+]-identityₗ)
-    🝖 (rel)
-    🝖 ([+]-identityₗ)
+[+]-cancellationₗ-raw : Names.Cancellationₗ(_+_)
+[+]-cancellationₗ-raw {𝟎}{a}{b} (rel) =
+  (symmetry(_≡_) [+]-identityₗ-raw)
+  🝖 (rel)
+  🝖 ([+]-identityₗ-raw)
 
-  [+]-cancellationₗ {𝐒(x)}{a}{b} (rel) =
-    ([+]-cancellationₗ {x}{a}{b}
-      ([≡]-with(𝐏)(
-        (symmetry(_≡_) ([+1]-commutativity {x}{a}))
-        🝖 (rel)
-        🝖 ([+1]-commutativity {x}{b})
-      ))
-    )
+[+]-cancellationₗ-raw {𝐒(x)}{a}{b} (rel) =
+  ([+]-cancellationₗ-raw {x}{a}{b}
+    ([≡]-with(𝐏)(
+      (symmetry(_≡_) ([+1]-commutativity {x}{a}))
+      🝖 (rel)
+      🝖 ([+1]-commutativity {x}{b})
+    ))
+  )
 
-{-instance
-  postulate [⋅]-cancellationₗ : ∀{x} → ⦃ _ : x ≢ 0 ⦄ → (Cancellationₗ(_⋅_)){x}
+{-
+  postulate [⋅]-cancellationₗ : ∀{x} → ⦃ _ : x ≢ 0 ⦄ → (Names.Cancellationₗ(_⋅_)){x}
 
-instance
-  postulate [⋅]-cancellationᵣ : ∀{x} → ⦃ _ : x ≢ 0 ⦄ → (Cancellationᵣ(_⋅_)){x}
+  postulate [⋅]-cancellationᵣ : ∀{x} → ⦃ _ : x ≢ 0 ⦄ → (Names.Cancellationᵣ(_⋅_)){x}
 -}
 
-postulate [⋅][−₀]-distributivityₗ : ∀{x y z : ℕ} → (x ⋅ (y −₀ z)) ≡ (x ⋅ y) −₀ (x ⋅ z)
+postulate [⋅][−₀]-distributivityₗ-raw : ∀{x y z : ℕ} → (x ⋅ (y −₀ z)) ≡ (x ⋅ y) −₀ (x ⋅ z)
 
-postulate [⋅][−₀]-distributivityᵣ : ∀{x y z : ℕ} → ((x −₀ y) ⋅ z) ≡ (x ⋅ z) −₀ (y ⋅ z)
+postulate [⋅][−₀]-distributivityᵣ-raw : ∀{x y z : ℕ} → ((x −₀ y) ⋅ z) ≡ (x ⋅ z) −₀ (y ⋅ z)
 
 [≤]ₗ[+] : ∀{x y : ℕ} → (x + y ≤ x) → (y ≡ 𝟎)
 [≤]ₗ[+] {𝟎}               = [≤][0]ᵣ
@@ -351,7 +335,7 @@ postulate [⋅][−₀]-distributivityᵣ : ∀{x y z : ℕ} → ((x −₀ y) �
 [−₀]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
 
 [−₀]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) −₀ x ≡ y)
-[−₀]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity {y}{x}) {expr ↦ (expr −₀ x ≡ y)} ([−₀]ₗ[+]ᵣ-nullify {y}{x})
+[−₀]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity-raw {y}{x}) {expr ↦ (expr −₀ x ≡ y)} ([−₀]ₗ[+]ᵣ-nullify {y}{x})
 
 [−₀][+]ᵣ-nullify : ∀{x₁ x₂ y} → ((x₁ + y) −₀ (x₂ + y) ≡ x₁ −₀ x₂)
 [−₀][+]ᵣ-nullify {_} {_} {𝟎}    = [≡]-intro
@@ -359,7 +343,7 @@ postulate [⋅][−₀]-distributivityᵣ : ∀{x y z : ℕ} → ((x −₀ y) �
 
 [−₀][+]ₗ-nullify : ∀{x y₁ y₂} → ((x + y₁) −₀ (x + y₂) ≡ y₁ −₀ y₂)
 [−₀][+]ₗ-nullify {x}{y₁}{y₂} =
-  [≡]-with-op(_−₀_) ([+]-commutativity{x}{y₁}) ([+]-commutativity{x}{y₂})
+  [≡]-with-op(_−₀_) ([+]-commutativity-raw{x}{y₁}) ([+]-commutativity-raw{x}{y₂})
   🝖 [−₀][+]ᵣ-nullify{y₁}{y₂}{x}
 {-# REWRITE [−₀][+]ₗ-nullify #-}
 
@@ -373,7 +357,7 @@ postulate [⋅][−₀]-distributivityᵣ : ∀{x y z : ℕ} → ((x −₀ y) �
 
 [−₀]-cases-commuted : ∀{x y} → (y + (x −₀ y) ≡ x) ∨ (x −₀ y ≡ 𝟎)
 [−₀]-cases-commuted {x}{y} with [−₀]-cases{x}{y}
-... | [∨]-introₗ proof = [∨]-introₗ ([+]-commutativity {y}{x −₀ y} 🝖 proof)
+... | [∨]-introₗ proof = [∨]-introₗ ([+]-commutativity-raw {y}{x −₀ y} 🝖 proof)
 ... | [∨]-introᵣ proof = [∨]-introᵣ proof
 {-
 [+][−₀]-commutativity : ∀{x y} → ⦃ _ : y ≥ z ⦄ → (x + (y −₀ z) ≡ (x −₀ z) + y)
@@ -384,7 +368,7 @@ postulate [⋅][−₀]-distributivityᵣ : ∀{x y z : ℕ} → ((x −₀ y) �
   l : ∀{x y} → (x ≤ y) ← (x + (y −₀ x) ≡ y)
   l {𝟎}   {_}    _     = [≤]-minimum
   l {𝐒(_)}{𝟎}    ()
-  l {𝐒(x)}{𝐒(y)} proof = [≤]-with-[𝐒] ⦃ l{x}{y} ([𝐒]-injectivity proof) ⦄
+  l {𝐒(x)}{𝐒(y)} proof = [≤]-with-[𝐒] ⦃ l{x}{y} ([𝐒]-injectivity-raw proof) ⦄
 
   r : ∀{x y} → (x ≤ y) → (x + (y −₀ x) ≡ y)
   r {𝟎}   {𝟎}    proof = [≡]-intro
@@ -454,30 +438,30 @@ postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
 
   r : ∀{x y} → (x ≥ y) → (x −₀ (x −₀ y) ≡ y)
   r{x}{y} x≥y =
-    [≡]-with(_−₀ (x −₀ y)) (symmetry(_≡_) ([↔]-to-[→] ([−₀][+]-nullify2 {y}{x}) (x≥y)) 🝖 [+]-commutativity{y}{x −₀ y})
+    [≡]-with(_−₀ (x −₀ y)) (symmetry(_≡_) ([↔]-to-[→] ([−₀][+]-nullify2 {y}{x}) (x≥y)) 🝖 [+]-commutativity-raw{y}{x −₀ y})
     🝖 [−₀]ₗ[+]ₗ-nullify {x −₀ y}{y}
       -- x −₀ (x −₀ y)
       -- ((x −₀ y) + y) −₀ (x −₀ y)
       -- y
 
-[𝄩]-identityₗ : Identityₗ (_𝄩_) (0)
-[𝄩]-identityₗ {𝟎}    = [≡]-intro
-[𝄩]-identityₗ {𝐒(_)} = [≡]-intro
-{-# REWRITE [𝄩]-identityₗ #-}
+[𝄩]-identityₗ-raw : Names.Identityₗ (_𝄩_) (0)
+[𝄩]-identityₗ-raw {𝟎}    = [≡]-intro
+[𝄩]-identityₗ-raw {𝐒(_)} = [≡]-intro
+{-# REWRITE [𝄩]-identityₗ-raw #-}
 
-[𝄩]-identityᵣ : Identityᵣ (_𝄩_) (0)
-[𝄩]-identityᵣ {x} = [≡]-intro
+[𝄩]-identityᵣ-raw : Names.Identityᵣ (_𝄩_) (0)
+[𝄩]-identityᵣ-raw {x} = [≡]-intro
 
 [𝄩]-self : ∀{x} → (x 𝄩 x ≡ 𝟎)
 [𝄩]-self {𝟎}    = [≡]-intro
 [𝄩]-self {𝐒(x)} = [𝄩]-self {x}
 {-# REWRITE [𝄩]-self #-}
 
-[𝄩]-commutativity : Commutativity (_𝄩_)
-[𝄩]-commutativity{𝟎}   {𝟎}    = [≡]-intro
-[𝄩]-commutativity{𝟎}   {𝐒(y)} = [≡]-intro
-[𝄩]-commutativity{𝐒(x)}{𝟎}    = [≡]-intro
-[𝄩]-commutativity{𝐒(x)}{𝐒(y)} = [𝄩]-commutativity{x}{y}
+[𝄩]-commutativity-raw : Names.Commutativity (_𝄩_)
+[𝄩]-commutativity-raw{𝟎}   {𝟎}    = [≡]-intro
+[𝄩]-commutativity-raw{𝟎}   {𝐒(y)} = [≡]-intro
+[𝄩]-commutativity-raw{𝐒(x)}{𝟎}    = [≡]-intro
+[𝄩]-commutativity-raw{𝐒(x)}{𝐒(y)} = [𝄩]-commutativity-raw{x}{y}
 
 [𝄩]ₗ[+]ᵣ-nullify : ∀{x y} → ((x + y) 𝄩 y ≡ x)
 [𝄩]ₗ[+]ᵣ-nullify{𝟎}   {𝟎}    = [≡]-intro
@@ -485,13 +469,13 @@ postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
 [𝄩]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
 
 [𝄩]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) 𝄩 x ≡ y)
-[𝄩]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity {y}{x}) {expr ↦ (expr 𝄩 x ≡ y)} ([𝄩]ₗ[+]ᵣ-nullify {y}{x})
+[𝄩]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity-raw {y}{x}) {expr ↦ (expr 𝄩 x ≡ y)} ([𝄩]ₗ[+]ᵣ-nullify {y}{x})
 
 [𝄩]ᵣ[+]ᵣ-nullify : ∀{x y} → (y 𝄩 (x + y) ≡ x)
-[𝄩]ᵣ[+]ᵣ-nullify {x}{y} = transitivity(_≡_) ([𝄩]-commutativity {y}{x + y}) ([𝄩]ₗ[+]ᵣ-nullify {x}{y})
+[𝄩]ᵣ[+]ᵣ-nullify {x}{y} = transitivity(_≡_) ([𝄩]-commutativity-raw {y}{x + y}) ([𝄩]ₗ[+]ᵣ-nullify {x}{y})
 
 [𝄩]ᵣ[+]ₗ-nullify : ∀{x y} → (x 𝄩 (x + y) ≡ y)
-[𝄩]ᵣ[+]ₗ-nullify {x}{y} = transitivity(_≡_) ([𝄩]-commutativity {x}{x + y}) ([𝄩]ₗ[+]ₗ-nullify {x}{y})
+[𝄩]ᵣ[+]ₗ-nullify {x}{y} = transitivity(_≡_) ([𝄩]-commutativity-raw {x}{x + y}) ([𝄩]ₗ[+]ₗ-nullify {x}{y})
 
 [𝄩]-with-[+]ᵣ : ∀{x y z} → ((x + z) 𝄩 (y + z) ≡ x 𝄩 y)
 [𝄩]-with-[+]ᵣ {𝟎}   {𝟎}   {𝟎}    = [≡]-intro
@@ -523,3 +507,107 @@ postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
 [𝄩]-associativity : Associativity (_𝄩_)
 [𝄩]-associativity {x}{y}{z} = 
 -}
+
+instance
+  [+]-identityₗ : Identityₗ (_+_) (0)
+  Identityₗ.proof([+]-identityₗ) = [+]-identityₗ-raw
+
+instance
+  [+]-identityᵣ : Identityᵣ (_+_) (0)
+  Identityᵣ.proof([+]-identityᵣ) = [+]-identityᵣ-raw
+
+instance
+  [+]-identity : Identity (_+_) (0)
+  [+]-identity = intro
+
+instance
+  [+]-associativity : Associativity (_+_)
+  Associativity.proof([+]-associativity) {x}{y}{z} = [+]-associativity-raw {x}{y}{z}
+
+instance
+  [+]-commutativity : Commutativity (_+_)
+  Commutativity.proof([+]-commutativity) {x}{y} = [+]-commutativity-raw {x}{y}
+
+instance
+  [⋅]-absorberₗ : Absorberₗ (_⋅_) (0)
+  Absorberₗ.proof([⋅]-absorberₗ) {x} = [⋅]-absorberₗ-raw {x}
+
+instance
+  [⋅]-absorberᵣ : Absorberᵣ (_⋅_) (0)
+  Absorberᵣ.proof([⋅]-absorberᵣ) {x} = [⋅]-absorberᵣ-raw {x}
+
+instance
+  [⋅]-absorber : Absorber (_⋅_) (0)
+  [⋅]-absorber = intro
+
+instance
+  [⋅]-identityₗ : Identityₗ (_⋅_) (1)
+  Identityₗ.proof([⋅]-identityₗ) {x} = [⋅]-identityₗ-raw {x}
+
+instance
+  [⋅]-identityᵣ : Identityᵣ (_⋅_) (1)
+  Identityᵣ.proof([⋅]-identityᵣ) {x} = [⋅]-identityᵣ-raw {x}
+
+instance
+  [⋅]-identity : Identity (_⋅_) (1)
+  [⋅]-identity = intro
+
+instance
+  [⋅][+]-distributivityₗ : Distributivityₗ(_⋅_)(_+_)
+  Distributivityₗ.proof([⋅][+]-distributivityₗ) {x}{y}{z} = [⋅][+]-distributivityₗ-raw {x}{y}{z}
+
+instance
+  [⋅][+]-distributivityᵣ : Distributivityᵣ(_⋅_)(_+_)
+  Distributivityᵣ.proof([⋅][+]-distributivityᵣ) {x}{y}{z} = [⋅][+]-distributivityᵣ-raw {x}{y}{z}
+
+instance
+  [⋅]-associativity : Associativity (_⋅_)
+  Associativity.proof([⋅]-associativity) {x}{y}{z} = [⋅]-associativity-raw {x}{y}{z}
+
+instance
+  [⋅]-commutativity : Commutativity (_⋅_)
+  Commutativity.proof([⋅]-commutativity) {x}{y} = [⋅]-commutativity-raw {x}{y}
+
+instance
+  [𝄩]-commutativity : Commutativity (_𝄩_)
+  Commutativity.proof([𝄩]-commutativity) {x}{y} = [𝄩]-commutativity-raw {x}{y}
+
+instance
+  [𝄩]-identityₗ : Identityₗ (_𝄩_) (𝟎)
+  Identityₗ.proof([𝄩]-identityₗ) {x} = [𝄩]-identityₗ-raw {x}
+
+instance
+  [𝄩]-identityᵣ : Identityᵣ (_𝄩_) (𝟎)
+  Identityᵣ.proof([𝄩]-identityᵣ) {x} = [𝄩]-identityᵣ-raw {x}
+
+instance
+  [𝄩]-identity : Identity (_𝄩_) (𝟎)
+  [𝄩]-identity = intro
+
+instance
+  [⋅][−₀]-distributivityₗ : Distributivityₗ(_⋅_)(_−₀_)
+  Distributivityₗ.proof([⋅][−₀]-distributivityₗ) {x}{y}{z} = [⋅][−₀]-distributivityₗ-raw {x}{y}{z}
+
+instance
+  [⋅][−₀]-distributivityᵣ : Distributivityᵣ(_⋅_)(_−₀_)
+  Distributivityᵣ.proof([⋅][−₀]-distributivityᵣ) {x}{y}{z} = [⋅][−₀]-distributivityᵣ-raw {x}{y}{z}
+
+instance
+  [−₀]-absorberₗ : Absorberₗ (_−₀_) (𝟎)
+  Absorberₗ.proof([−₀]-absorberₗ) {x} = [−₀]-negative {x}
+
+instance
+  [−₀]-identityᵣ : Identityᵣ (_−₀_) (𝟎)
+  Identityᵣ.proof([−₀]-identityᵣ) {x} = [≡]-intro
+
+instance
+  [𝐒]-injectivity : Injective(𝐒)
+  Injective.proof([𝐒]-injectivity) {n} = [𝐒]-injectivity-raw {n}
+
+instance
+  [+]ₗ-injectivity : ∀{a} → Injective (_+ a)
+  Injective.proof([+]ₗ-injectivity {a}) = [+]ₗ-injectivity-raw {a}
+
+instance
+  [+]ᵣ-injectivity : ∀{a} → Injective (a +_)
+  Injective.proof([+]ᵣ-injectivity {a}) = [+]ᵣ-injectivity-raw {a}

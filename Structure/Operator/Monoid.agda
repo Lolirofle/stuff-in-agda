@@ -25,8 +25,6 @@ record Monoid {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T)
   identityᵣ = Identity.right([∃]-proof identity)
 
 record Homomorphism {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-  open Monoid ⦃ ... ⦄
-
   field
     instance ⦃ structureₗ ⦄ : Monoid(_▫X_)
     instance ⦃ structureᵣ ⦄ : Monoid(_▫Y_)
@@ -37,3 +35,7 @@ record Homomorphism {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_�
   field
     preserve-op : ∀{x y : X} → (f(x ▫X y) ≡ f(x) ▫Y f(y))
     preserve-id : (f(idₗ) ≡ idᵣ)
+
+  -- TODO: When f is a function and a homomorphism and only _▫X_ is a monoid, is it enough to prove that RHS is a monoid?
+  -- structureᵣ : ⦃ _ : Function(f) ⦄ → Monoid(_▫Y_)
+  -- Identityₗ.proof(Monoid.identityₗ(structureᵣ)) = function(f) (Identityₗ.proof(Monoid.identityₗ(structureₗ)))

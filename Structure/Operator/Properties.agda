@@ -48,6 +48,15 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) (id 
   identity-left = inst-fn Identity.left
   identity-right = inst-fn Identity.right
 
+module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) (id : T) where
+  record Absorber : Stmt{ℓ} where
+    instance constructor intro
+    field
+      ⦃ left ⦄  : Absorberₗ(_▫_)(id)
+      ⦃ right ⦄ : Absorberᵣ(_▫_)(id)
+  absorber-left = inst-fn Absorber.left
+  absorber-right = inst-fn Absorber.right
+
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ identityₗ : ∃(Identityₗ(_▫_)) ⦄ where
   module _ (inv : T → T) where
     record InverseFunctionₗ : Stmt{ℓ} where
