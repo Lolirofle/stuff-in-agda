@@ -53,6 +53,11 @@ _∘_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{
 _on₂_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → (Y → Y → Z) → (X → X → Z)
 (f on₂ (_▫_))(y₁)(y₂) = f(y₁) ▫ f(y₂)
 
+-- The S-combinator from combinatory logic.
+-- It is usually described as a generalized version of the application operator. (TODO: But I am not sure why it is described as such?)
+s-combinator : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y → Z) → (X → Y) → (X → Z)
+s-combinator f g x = (f x) (g x)
+
 
 
 _∘₂_ : ∀{ℓ₁ ℓ₂ ℓ₃ ℓ₄} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{Y : Type{ℓ₃}}{Z : Type{ℓ₄}} → (Y → Z) → (X₁ → X₂ → Y) → (X₁ → X₂ → Z)

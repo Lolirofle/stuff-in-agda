@@ -28,6 +28,8 @@ import Data.Tuple.Raiseᵣ
 import Data.Tuple.Raiseₗ
 import FFI.IO as FFI
 import Functional
+import FormalLanguage
+import FormalLanguage.Proofs
 -- import Functional.DomainRaise
 import Functional.Domains
 import Functional.Domains.Proofs

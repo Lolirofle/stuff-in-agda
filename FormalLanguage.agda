@@ -2,13 +2,13 @@ module FormalLanguage where
 
 import      Lvl
 open import Data.List renaming (∅ to []) hiding (filter)
-open import Agda.Builtin.Size
+open import Lang.Size
 open import Data.Boolean
 open import Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Functional
-open import Relator.Equals{Lvl.𝟎}{Lvl.𝟎}
-open import Relator.Equals.Proofs{Lvl.𝟎}{Lvl.𝟎}
+open import Relator.Equals
+open import Relator.Equals.Proofs
 
 -- Definitions:
 --   A language is a set of words.

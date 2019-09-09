@@ -1,32 +1,26 @@
-{-# OPTIONS --with-K #-}
-
-module Data.List.Proofs{ℓ₁} where
+module Data.List.Proofs where
 
 import Lvl
 open import Functional
 open import Data.Boolean
 open import Data.List
-import      Logic.Propositional
+open import Logic
+open import Logic.Propositional
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Oper.Proofs{ℓ₁}
-open import Relator.EqualsOld{ℓ₁}
-open import Relator.Equals.Proofs{ℓ₁}
-open import Structure.Operator.Properties{ℓ₁}
-open import Structure.Relator.Properties{ℓ₁}
-import      Type
+open import Numeral.Natural.Oper.Proofs
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Structure.Operator.Properties
+open import Structure.Relator.Properties
+open import Type
 
 module _ {ℓ₁ ℓ₂ ℓ₃ : Lvl.Level} where
-  open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₃}
-
   List-induction : ∀{T : Type{ℓ₂}}{P : List(T) → Stmt} → P(∅) → (∀(x : T)(l : List(T)) → P(l) → P(x ⊰ l)) → (∀{l : List(T)} → P(l))
   List-induction base next {∅} = base
   List-induction base next {x ⊰ l} = next(x)(l)(List-induction base next {l})
 
-module _ {ℓ₂} where
-  open Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-  open Type{ℓ₂}
-
+module _ {ℓ₁ ℓ₂} where
   [++]-identityₗ : ∀{T : Type} → Identityₗ {ℓ₂}{List(T)} (_++_) ∅
   [++]-identityₗ = [≡]-intro
 
