@@ -4,7 +4,7 @@ import Lvl
 open import Data.Option as Option using (Option)
 open import Numeral.Finite as 𝕟
   using (𝕟)
-import      Numeral.Finite.Bound{Lvl.𝟎} as 𝕟bound
+import      Numeral.Finite.Bound as 𝕟bound
 open import Numeral.Integer as ℤ
   using (ℤ)
 open import Numeral.Natural

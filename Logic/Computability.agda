@@ -68,7 +68,7 @@ record ComputablyDecidable {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} (P : X → Stmt{�
     decide (negation) (x) = ! decide(x)
     proof  (negation) {x} = [↔]-intro (soundness-𝐹{_} ∘ l{_}) (r{_} ∘ completeness-𝐹{_}) where
       l : ∀{b} → (b ≡ 𝐹) ← (! b ≡ 𝑇)
-      l proof = (symmetry(_≡_) ([¬]-double {_})) 🝖 [≡]-with(!_) (proof)
+      l proof = (symmetry(_≡_) (Data.Boolean.Proofs.[!!]-elim {_})) 🝖 [≡]-with(!_) (proof)
 
       r : ∀{b} → (b ≡ 𝐹) → (! b ≡ 𝑇)
       r = [≡]-with(!_)
@@ -83,13 +83,13 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {P₁ : X → Stmt{ℓ₂}} {
       l : (P₁(x) ∧ P₂(x)) ← (decide(comp₁)(x) && decide(comp₂)(x) ≡ 𝑇)
       l(truth) =
         ([∧]-intro
-          ([↔]-to-[←] (proof(comp₁)) ([∧]-elimₗ-[𝑇] truth))
-          ([↔]-to-[←] (proof(comp₂)) ([∧]-elimᵣ-[𝑇] truth))
+          ([↔]-to-[←] (proof(comp₁)) (𝑇.[∧]-elimₗ truth))
+          ([↔]-to-[←] (proof(comp₂)) (𝑇.[∧]-elimᵣ truth))
         )
 
       r : (P₁(x) ∧ P₂(x)) → (decide(comp₁)(x) && decide(comp₂)(x) ≡ 𝑇)
       r([∧]-intro P₁x P₂x) =
-        ([∧]-intro-[𝑇]
+        (𝑇.[∧]-intro
           ([↔]-to-[→] (proof(comp₁)) (P₁x))
           ([↔]-to-[→] (proof(comp₂)) (P₂x))
         )
@@ -100,7 +100,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {P₁ : X → Stmt{ℓ₂}} {
     proof  (ComputablyDecidable-disjunction ⦃ comp₁ ⦄ ⦃ comp₂ ⦄) {x} = [↔]-intro (l) (r) where
       l : (P₁(x) ∨ P₂(x)) ← (decide(comp₁)(x) || decide(comp₂)(x) ≡ 𝑇)
       l(truth) =
-        ([∨]-elim-proof-[𝑇]
+        (𝑇.[∨]-elim
           (truthpart ↦ [∨]-introₗ ([↔]-to-[←] (proof(comp₁))(truthpart)))
           (truthpart ↦ [∨]-introᵣ ([↔]-to-[←] (proof(comp₂))(truthpart)))
           (truth)
@@ -109,8 +109,8 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {P₁ : X → Stmt{ℓ₂}} {
       r : (P₁(x) ∨ P₂(x)) → (decide(comp₁)(x) || decide(comp₂)(x) ≡ 𝑇)
       r(truth) =
         ([∨]-elim
-          (truthpart ↦ [∨]-introₗ-[𝑇] ([↔]-to-[→] (proof(comp₁))(truthpart)))
-          (truthpart ↦ [∨]-introᵣ-[𝑇] ([↔]-to-[→] (proof(comp₂))(truthpart)))
+          (truthpart ↦ 𝑇.[∨]-introₗ ([↔]-to-[→] (proof(comp₁))(truthpart)))
+          (truthpart ↦ 𝑇.[∨]-introᵣ ([↔]-to-[→] (proof(comp₂))(truthpart)))
           (truth)
         )
 

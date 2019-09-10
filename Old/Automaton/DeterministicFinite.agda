@@ -102,13 +102,13 @@ module Theorems where
   -- step-isWordAccepted auto {c}{[]} = [≡]-intro
   -- step-isWordAccepted auto {c}{w} = [≡]-with(DFA.F(auto)) [≡]-intro
 
-  Language-isWordAccepted : ∀{Q}{Σ} → (auto : DFA(Q)(Σ)) → ∀{w} → DFA.isWordAccepted(auto)(w) ≡ w is-in (𝔏(auto))
+  Language-isWordAccepted : ∀{Q}{Σ} → (auto : DFA(Q)(Σ)) → ∀{w} → DFA.isWordAccepted(auto)(w) ≡ w ∈? (𝔏(auto))
   Language-isWordAccepted{_}{Σ}(auto){w} = List-induction base step {w} where
-    base : DFA.isWordAccepted(auto)[] ≡ [] is-in (𝔏(auto))
+    base : DFA.isWordAccepted(auto)[] ≡ [] ∈? (𝔏(auto))
     base = [≡]-intro
 
     -- TODO: Prove
-    postulate step : ∀(c : Σ)(w : List(Σ)) → (DFA.isWordAccepted(auto)(w) ≡ w is-in (𝔏(auto))) → (DFA.isWordAccepted(auto)(c ⊰ w) ≡ (c ⊰ w) is-in (𝔏(auto)))
+    postulate step : ∀(c : Σ)(w : List(Σ)) → (DFA.isWordAccepted(auto)(w) ≡ w ∈? (𝔏(auto))) → (DFA.isWordAccepted(auto)(c ⊰ w) ≡ (c ⊰ w) ∈? (𝔏(auto)))
     -- step(c)(w)(prev) =
   -- Language-isWordAccepted (_)          {[]}    = [≡]-intro
   -- Language-isWordAccepted (Dfa δ q₀ F) {c ⊰ w} = test(Dfa δ q₀ F){c ⊰ w} -- Language-isWordAccepted (Dfa δ (δ(q₀)(c)) F) {w}
@@ -117,10 +117,10 @@ module Theorems where
     -- F(δ̂(q₀)(c ⊰ w))
     -- F(δ̂(δ(q₀)(c))(w))
 
-    -- (c ⊰ w) is-in (𝔏(auto))
-    -- (c ⊰ w) is-in (𝔏(Dfa δ q₀ F))
-    -- w is-in (Language.suffix-lang(𝔏(Dfa δ q₀ F))(c))
-    -- w is-in (𝔏(Dfa δ (δ(q₀)(c)) F))
+    -- (c ⊰ w) ∈? (𝔏(auto))
+    -- (c ⊰ w) ∈? (𝔏(Dfa δ q₀ F))
+    -- w ∈? (Language.suffix-lang(𝔏(Dfa δ q₀ F))(c))
+    -- w ∈? (𝔏(Dfa δ (δ(q₀)(c)) F))
 
   module _ {Σ} {Q}(auto : DFA(Q)(Σ)) where
     δ̂-with-[++] : ∀{q : Q}{w₁ w₂ : Word(Σ)} → DFA.δ̂(auto)(q)(w₁ ++ w₂) ≡ DFA.δ̂(auto)(DFA.δ̂(auto)(q)(w₁))(w₂)

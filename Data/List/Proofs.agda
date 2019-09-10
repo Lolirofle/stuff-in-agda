@@ -21,10 +21,10 @@ module _ {ℓ₁ ℓ₂ ℓ₃ : Lvl.Level} where
   List-induction base next {x ⊰ l} = next(x)(l)(List-induction base next {l})
 
 module _ {ℓ₁ ℓ₂} where
-  [++]-identityₗ : ∀{T : Type} → Identityₗ {ℓ₂}{List(T)} (_++_) ∅
+  [++]-identityₗ : ∀{T : Type{ℓ₂}} → Identityₗ{T₁ = List(T)} (_++_) ∅
   [++]-identityₗ = [≡]-intro
 
-  [++]-identityᵣ : ∀{T : Type} → Identityᵣ {ℓ₂}{List(T)} (_++_) ∅
+  [++]-identityᵣ : ∀{T : Type{ℓ₂}} → Identityᵣ {ℓ₂}{List(T)} (_++_) ∅
   [++]-identityᵣ {T} = List-induction{ℓ₁}{ℓ₂}{ℓ₂} base next where
     base : (∅ ++ ∅) ≡ ∅
     base = [≡]-intro
@@ -172,16 +172,13 @@ module _ {ℓ₁ ℓ₂} where
     -- x₁ ⊰ (a ++ l) ≡ x₂ ⊰ (b ++ l)
     -- This is getting nowhere...
 
-  length-multiply : ∀{T : Type}{l : List(T)}{n : ℕ} → (length(multiply(l)(n)) ≡ length(l) ⋅ n)
-  length-multiply{T}{l}{𝟎}    = [≡]-intro
-  length-multiply{T}{l}{𝐒(n)} =
-    length-[++] {T} {l}{multiply l n}
-    🝖 [≡]-with(expr ↦ length(l) + expr) (length-multiply{T}{l}{n})
+  length-[++^] : ∀{T : Type}{l : List(T)}{n : ℕ} → (length(l ++^ n) ≡ length(l) ⋅ n)
+  length-[++^]{T}{l}{𝟎}    = [≡]-intro
+  length-[++^]{T}{l}{𝐒(n)} =
+    length-[++] {T} {l}{l ++^ n}
+    🝖 [≡]-with(expr ↦ length(l) + expr) (length-[++^]{T}{l}{n})
 
 module _ {ℓ₂} where
-  open Logic.Propositional
-  open Type{ℓ₂}
-
   length-isEmpty : ∀{T : Type}{L : List(T)} → (length(L) ≡ 0) ↔ (isEmpty(L) ≡ 𝑇)
   length-isEmpty{_}{∅} = [↔]-intro (const [≡]-intro) (const [≡]-intro)
   length-isEmpty{_}{x ⊰ L} = [↔]-intro l r where

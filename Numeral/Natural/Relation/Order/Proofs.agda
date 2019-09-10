@@ -12,6 +12,7 @@ open import Numeral.Natural.Induction
 open import Numeral.Natural.Relation.Order
 open import Relator.Equals
 open import Relator.Equals.Proofs
+import      Relator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
@@ -72,39 +73,55 @@ instance
   Reflexivity.proof([≤]-reflexivity) = [≡]-to-[≤] [≡]-intro
 
 instance
-  {-# TERMINATING #-}
   [≤]-transitivity : Transitivity (_≤_)
-  Transitivity.proof([≤]-transitivity) {𝟎}   {_}   {_} (_)(_) = [≤]-minimum
-  Transitivity.proof([≤]-transitivity) {𝐒(a)}{𝐒(b)}{𝐒(c)} ([≤]-with-[𝐒] ⦃ proofₗ ⦄) ([≤]-with-[𝐒] ⦃ proofᵣ ⦄ ) =
-    [≤]-with-[𝐒] ⦃ Transitivity.proof([≤]-transitivity) {a}{b}{c} (proofₗ) (proofᵣ) ⦄
+  Transitivity.proof([≤]-transitivity) = proof where
+    proof : Names.Transitivity (_≤_)
+    proof {𝟎}   {_}   {_} (_)(_) = [≤]-minimum
+    proof {𝐒(a)}{𝐒(b)}{𝐒(c)} ([≤]-with-[𝐒] ⦃ proofₗ ⦄) ([≤]-with-[𝐒] ⦃ proofᵣ ⦄ ) =
+      [≤]-with-[𝐒] ⦃ proof {a}{b}{c} (proofₗ) (proofᵣ) ⦄
 
 instance
-  {-# TERMINATING #-}
   [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
-  Antisymmetry.proof([≤]-antisymmetry) {𝟎}    {𝟎}    (_) (_) = [≡]-intro
-  Antisymmetry.proof([≤]-antisymmetry) {𝐒(_)} {𝟎}    ()
-  Antisymmetry.proof([≤]-antisymmetry) {𝟎}    {𝐒(_)} (_) ()
-  Antisymmetry.proof([≤]-antisymmetry) {𝐒(a)} {𝐒(b)} ([≤]-with-[𝐒] ⦃ proofₗ ⦄) ([≤]-with-[𝐒] ⦃ proofᵣ ⦄) =
-    [≡]-with(𝐒) (Antisymmetry.proof([≤]-antisymmetry) {a}{b} proofₗ proofᵣ)
+  Antisymmetry.proof([≤]-antisymmetry) = proof where
+    proof : Names.Antisymmetry (_≤_) (_≡_)
+    proof {𝟎}    {𝟎}    (_) (_) = [≡]-intro
+    proof {𝐒(_)} {𝟎}    ()
+    proof {𝟎}    {𝐒(_)} (_) ()
+    proof {𝐒(a)} {𝐒(b)} ([≤]-with-[𝐒] ⦃ proofₗ ⦄) ([≤]-with-[𝐒] ⦃ proofᵣ ⦄) =
+      [≡]-with(𝐒) (proof {a}{b} proofₗ proofᵣ)
 
 instance
-  {-# TERMINATING #-}
   [≤]-totality : ConverseTotal(_≤_)
-  ConverseTotal.proof([≤]-totality) {𝟎}   {𝟎}    = [∨]-introₗ ([≡]-to-[≤] [≡]-intro)
-  ConverseTotal.proof([≤]-totality) {𝐒(a)}{𝟎}    = [∨]-introᵣ ([≤]-minimum)
-  ConverseTotal.proof([≤]-totality) {𝟎}   {𝐒(b)} = [∨]-introₗ ([≤]-minimum)
-  ConverseTotal.proof([≤]-totality) {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ (proof ↦ [≤]-with-[𝐒] {a}{b} ⦃ proof ⦄)) ([∨]-introᵣ ∘ (proof ↦ [≤]-with-[𝐒] {b}{a} ⦃ proof ⦄)) (converseTotal(_≤_) ⦃ [≤]-totality ⦄ {a}{b})
+  ConverseTotal.proof([≤]-totality) = proof where
+    proof : Names.ConverseTotal(_≤_)
+    proof {𝟎}   {𝟎}    = [∨]-introₗ ([≡]-to-[≤] [≡]-intro)
+    proof {𝐒(a)}{𝟎}    = [∨]-introᵣ ([≤]-minimum)
+    proof {𝟎}   {𝐒(b)} = [∨]-introₗ ([≤]-minimum)
+    proof {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ (proof ↦ [≤]-with-[𝐒] {a}{b} ⦃ proof ⦄)) ([∨]-introᵣ ∘ (proof ↦ [≤]-with-[𝐒] {b}{a} ⦃ proof ⦄)) (proof {a}{b})
 
 instance
   [≤]-weakOrder : Weak.TotalOrder (_≤_) (_≡_)
-  [≤]-weakOrder = record{
-      partialOrder = record{
-          antisymmetry = [≤]-antisymmetry;
-          transitivity = [≤]-transitivity;
-          reflexivity  = [≤]-reflexivity
-        };
-      totality = [≤]-totality
-    }
+  [≤]-weakOrder = record{}
+
+instance
+  [≥]-reflexivity : Reflexivity (_≥_)
+  Reflexivity.proof([≥]-reflexivity) = Reflexivity.proof([≤]-reflexivity)
+
+instance
+  [≥]-transitivity : Transitivity (_≥_)
+  Transitivity.proof([≥]-transitivity) = swap(Transitivity.proof([≤]-transitivity))
+
+instance
+  [≥]-antisymmetry : Antisymmetry (_≥_) (_≡_)
+  Antisymmetry.proof([≥]-antisymmetry) = swap(Antisymmetry.proof([≤]-antisymmetry))
+
+instance
+  [≥]-totality : ConverseTotal(_≥_)
+  ConverseTotal.proof([≥]-totality) = ConverseTotal.proof([≤]-totality)
+
+instance
+  [≥]-weakOrder : Weak.TotalOrder (_≥_) (_≡_)
+  [≥]-weakOrder = record{}
 
 [≥]-to-[≮] : ∀{a b : ℕ} → (a ≮ b) ← (a ≥ b)
 [≥]-to-[≮] {a}{b} (b≤a) (𝐒a≤b) = [≤][𝐒]ₗ (transitivity(_≤_) {𝐒(a)}{b}{a} (𝐒a≤b) (b≤a))
@@ -135,11 +152,23 @@ instance
 
 instance
   [<]-strictOrder : Strict.Order (_<_)
-  [<]-strictOrder = record{
-      transitivity  = [<]-transitivity;
-      asymmetry     = [<]-asymmetry;
-      irreflexivity = [<]-irreflexivity
-    }
+  [<]-strictOrder = record{}
+
+instance
+  [>]-irreflexivity : Irreflexivity (_>_)
+  Irreflexivity.proof([>]-irreflexivity) = Irreflexivity.proof([<]-irreflexivity)
+
+instance
+  [>]-transitivity : Transitivity (_>_)
+  Transitivity.proof([>]-transitivity) = swap(Transitivity.proof([<]-transitivity))
+
+instance
+  [>]-asymmetry : Asymmetry (_>_)
+  Asymmetry.proof([>]-asymmetry) = swap(Asymmetry.proof([<]-asymmetry))
+
+instance
+  [>]-strictOrder : Strict.Order (_>_)
+  [>]-strictOrder = record{}
 
 [<]-of-[𝐒] : ∀{x : ℕ} → (x < 𝐒(x))
 [<]-of-[𝐒] = reflexivity(_≤_)

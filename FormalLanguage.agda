@@ -6,6 +6,7 @@ open import Lang.Size
 open import Data.Boolean
 open import Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
+open import Data.Boolean.Stmt
 open import Functional
 open import Relator.Equals
 open import Relator.Equals.Proofs
@@ -34,7 +35,7 @@ Word     = List
 -- Copied (with modifications) from: http://agda.readthedocs.io/en/v2.5.2/language/sized-types.html (2017-05-13)
 -- which links the following paper: "Formal Languages, Formally and Coinductively, Dmitriy Traytel, FSCD (2016)" [https://www21.in.tum.de/~traytel/papers/fscd16-coind_lang/paper.pdf]
 record Language (Σ : Alphabet) {s₁ : Size} : Set where
-  constructor Lang
+  constructor intro
   coinductive
   field
     accepts-ε : Bool
@@ -76,7 +77,7 @@ module Oper {Σ} where
   Language.suffix-lang (L₁ ∩ L₂) = (c ↦ Language.suffix-lang(L₁)(c) ∩ Language.suffix-lang(L₂)(c))
 
   -- Concatenation
-  -- The language that includes words that start with the first language and end in the second language.
+  -- The language that includes words that start with a word the first language and end in a word from the second language.
   _𝁼_ : ∀{s} → Language(Σ){s} → Language(Σ){s} → Language(Σ){s}
   Language.accepts-ε   (L₁ 𝁼 L₂) = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
   Language.suffix-lang (L₁ 𝁼 L₂) =
@@ -94,6 +95,9 @@ module Oper {Σ} where
     (c ↦
       (Language.suffix-lang(L)(c) 𝁼 L) * -- TODO: Not Language.suffix-lang(L)(c) 𝁼 (L *) ?
     )
+    -- L *
+    -- = (Language.suffix-lang(L)(c₁) 𝁼 L) *
+    -- = (Language.suffix-lang((Language.suffix-lang(L)(c₁) 𝁼 L) *)(c₂) 𝁼 (Language.suffix-lang(L)(c₁) 𝁼 L) *) *
 
   -- Complement
   -- The language that includes all words that a language does not have.
@@ -114,19 +118,19 @@ module Oper {Σ} where
 
   -- Containment check
   -- Checks whether a word is in the language.
-  _is-in_ : Word(Σ) → Language(Σ) → Bool
-  _is-in_ []      (L) = Language.accepts-ε(L)
-  _is-in_ (c ⊰ w) (L) = w is-in (Language.suffix-lang(L)(c))
+  _∈?_ : Word(Σ) → Language(Σ) → Bool
+  _∈?_ []      (L) = Language.accepts-ε(L)
+  _∈?_ (c ⊰ w) (L) = w ∈? (Language.suffix-lang(L)(c))
 
   -- Containment
   -- The relation of whether a word is in the language or not.
   _∈_ : Word(Σ) → Language(Σ) → Set
-  _∈_ a b = (a is-in b) ≡ 𝑇
+  _∈_ a b = IsTrue(a ∈? b)
 
   -- Uncontainment
   -- The relation of whether a word is not in the language or not.
   _∉_ : Word(Σ) → Language(Σ) → Set
-  _∉_ a b = (a is-in b) ≡ 𝐹
+  _∉_ a b = IsFalse(a ∈? b)
 
   -- The language of length 1 words that only accepts some symbols of its alphabet
   alphabet-filter : ∀{s} → (Σ → Bool) → Language(Σ){s}

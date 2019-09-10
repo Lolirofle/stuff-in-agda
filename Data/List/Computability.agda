@@ -34,7 +34,7 @@ instance
 
     decide-reflexivity : ∀{l} → (_≡_ (decide(l)(l)) 𝑇)
     decide-reflexivity {∅}     = [≡]-intro
-    decide-reflexivity {x ⊰ l} = [∧]-intro-[𝑇] (decideT-reflexivity) (decide-reflexivity {l})
+    decide-reflexivity {x ⊰ l} = 𝑇.[∧]-intro (decideT-reflexivity) (decide-reflexivity {l})
 
     proof : ∀{x}{y} → (x ≡ y) ↔ (decide x y ≡ 𝑇)
     proof{x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
@@ -42,11 +42,11 @@ instance
       l {∅}       {∅}       ([≡]-intro) = [≡]-intro
       l {_ ⊰ _}   {∅}       ()
       l {∅}       {_ ⊰ _}   ()
-      l {x₁ ⊰ l₁} {x₂ ⊰ l₂} (proof) with [↔]-elimₗ ([∧]-elimₗ-[𝑇] {decideT(x₁)(x₂)} {decide(l₁)(l₂)} proof) (proofT{_}{_})
-      ... | [≡]-intro = [≡]-with (x₁ ⊰_) (l ([∧]-elimᵣ-[𝑇] {decideT(x₁)(x₂)} {decide(l₁)(l₂)} proof))
+      l {x₁ ⊰ l₁} {x₂ ⊰ l₂} (proof) with [↔]-elimₗ (𝑇.[∧]-elimₗ {decideT(x₁)(x₂)} {decide(l₁)(l₂)} proof) (proofT{_}{_})
+      ... | [≡]-intro = [≡]-with (x₁ ⊰_) (l (𝑇.[∧]-elimᵣ {decideT(x₁)(x₂)} {decide(l₁)(l₂)} proof))
 
       r : ∀{x}{y} → (x ≡ y) → (decide x y ≡ 𝑇)
       r {∅}       {∅}       ([≡]-intro) = [≡]-intro
       r {_ ⊰ _}   {∅}       ()
       r {∅}       {_ ⊰ _}   ()
-      r {x ⊰ l₁} {.x ⊰ l₂} ([≡]-intro) = [∧]-intro-[𝑇] (decideT-reflexivity{x}) (r{l₁}{l₂}([≡]-intro))
+      r {x ⊰ l₁} {.x ⊰ l₂} ([≡]-intro) = 𝑇.[∧]-intro (decideT-reflexivity{x}) (r{l₁}{l₂}([≡]-intro))

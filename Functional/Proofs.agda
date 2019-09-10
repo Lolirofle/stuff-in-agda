@@ -270,6 +270,9 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{
   swap-involution : ∀{f : X → Y → Z} → (swap(swap(f)) ≡ f)
   swap-involution = [≡]-intro
 
+  s-combinator-const-id : (s-combinator{X = X}{Y → X}{X} const const ≡ id)
+  s-combinator-const-id = [≡]-intro
+
 {- TODO: Maybe this is unprovable because types. https://plato.stanford.edu/entries/axiom-choice/#AxiChoLog https://plato.stanford.edu/entries/axiom-choice/choice-and-type-theory.html https://en.wikipedia.org/wiki/Diaconescu%27s_theorem
 module _ {fn-ext : FunctionExtensionality} where
   open import Functional.Names

@@ -129,44 +129,9 @@ instance postulate circle : ∀{v} → (cos(v) ^ 2 + sin(v) ^ 2 ≡ 1)
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- [Properties on functions of ℝ]
 
-module Limit where
-  -- Statement that the limit of the function f at point l exists (and its value is L)
-  -- This is expressed by converting the standard (ε,δ)-limit definition to Skolem normal form (TODO: ...I think? Is this correct? I am just having a hunch)
-  record Lim (f : ℝ → ℝ) (p : ℝ) : Stmt where
-    field
-      L : ℝ -- The limit point
-      δ : ℝ₊ → ℝ₊ -- The delta function that is able to depend on epsilon
-      satisfaction : ∀{ε : ℝ₊}{x : ℝ} → (0 < abs(x − p) < #(δ(ε))) → (abs(f(x) − L) < #(ε))
 
-  -- Limit value function f (if the limit exists)
-  lim : (f : ℝ → ℝ) → (p : ℝ) → ⦃ _ : Lim f(p) ⦄ → ℝ
-  lim _ _ ⦃ l ⦄ = Lim.L(l)
 
-module Continuity where
-  open Limit
 
-  -- Statement that the point x of function f is a continous point
-  ContinuousPoint : (ℝ → ℝ) → ℝ → Stmt
-  ContinuousPoint f(x) = (⦃ limit : Lim f(x) ⦄ → (lim f(x)⦃ limit ⦄ ≡ f(x)))
-
-  -- Statement that the function f is continous
-  Continuous : (ℝ → ℝ) → Stmt
-  Continuous f = ∀{x} → ContinuousPoint f(x)
-
-module Derivative where
-  open Limit using (Lim ; lim)
-
-  -- Statement that the point x of function f is a differentiable point
-  DifferentiablePoint : (ℝ → ℝ) → ℝ → Stmt
-  DifferentiablePoint f(p) = Lim(x ↦ ((f(x) − f(p))/(x − p)))(p)
-
-  -- Statement that function f is differentiable
-  Differentiable : (ℝ → ℝ) → Stmt
-  Differentiable f = ∀{x} → DifferentiablePoint f(x)
-
-  -- Derivative value of function f at point x (if the point is differentiable)
-  𝐷 : (f : ℝ → ℝ) → (x : ℝ) → ⦃ _ : DifferentiablePoint f(x) ⦄ → ℝ
-  𝐷 _ _ ⦃ l ⦄ = Lim.L(l)
 
 -- postulate Axiom1 : {x y : ℝ} → (x < y) → ¬ (y < x)
 -- postulate Axiom2 : {x z : ℝ} → (x < z) → ∃(y ↦ (x < y) ∧ (y < z))

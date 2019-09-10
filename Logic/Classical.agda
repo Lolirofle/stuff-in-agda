@@ -17,7 +17,7 @@ open import Type.Empty
 -- In classical logic, this is always the case for any proposition.
 -- Sometimes (∀x. Classical(P(x))) is called: P is decidable
 record Classical {ℓ} (P : Stmt{ℓ}) : Stmt{ℓ} where
-  instance constructor intro
+  constructor intro
   field
     ⦃ excluded-middle ⦄ : P ∨ (¬ P)
 

@@ -1,31 +1,19 @@
-module Numeral.Real.Properties where
+module Derivative where
+  open Limit using (Lim ; lim)
 
-import Lvl
-open import Functional
-open import Logic.Propositional{Lvl.𝟎}
-open import Logic.Predicate{Lvl.𝟎}{Lvl.𝟎}
-open import Numeral.Real
-open        Numeral.Real.Continuity
-open        Numeral.Real.Derivative
-open        Numeral.Real.Limit
-open import Sets.Setoid{Lvl.𝟎}
+  -- Statement that the point x of function f is a differentiable point
+  DifferentiablePoint : (ℝ → ℝ) → ℝ → Stmt
+  DifferentiablePoint f(p) = Lim(x ↦ ((f(x) − f(p))/(x − p)))(p)
 
-module Limits where
-  instance postulate [+]-limit : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → Lim(x ↦ f(x) + g(x))(p)
-  instance postulate [−]-limit : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → Lim(x ↦ f(x) − g(x))(p)
-  instance postulate [⋅]-limit : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → Lim(x ↦ f(x) ⋅ g(x))(p)
-  instance postulate [/]-limit : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → Lim(x ↦ f(x) / g(x))(p)
+  -- Statement that function f is differentiable
+  Differentiable : (ℝ → ℝ) → Stmt
+  Differentiable f = ∀{x} → DifferentiablePoint f(x)
 
-  instance postulate [+]-lim : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → (lim(x ↦ f(x) + g(x))(p) ≡ lim f(p) + lim g(p))
-  instance postulate [−]-lim : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → (lim(x ↦ f(x) − g(x))(p) ≡ lim f(p) − lim g(p))
-  instance postulate [⋅]-lim : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → (lim(x ↦ f(x) ⋅ g(x))(p) ≡ lim f(p) ⋅ lim g(p))
-  instance postulate [/]-lim : ∀{f g p} → ⦃ _ : Lim f(p) ⦄ → ⦃ _ : Lim g(p) ⦄ → (lim(x ↦ f(x) / g(x))(p) ≡ lim f(p) / lim g(p))
+  -- Derivative value of function f at point x (if the point is differentiable)
+  𝐷 : (f : ℝ → ℝ) → (x : ℝ) → ⦃ _ : DifferentiablePoint f(x) ⦄ → ℝ
+  𝐷 _ _ ⦃ l ⦄ = Lim.L(l)
 
-module Continuities where
-  -- instance postulate DifferentiablePoint-to-ContinuousPoint : ∀{f}{x}{diff} → ⦃ _ : DifferentiablePoint f(x)⦃ diff ⦄ ⦄ → ContinuousPoint f(x)
-  -- instance postulate Differentiable-to-Continuous : ∀{f}{diff} → ⦃ _ : Differentiable(f)⦃ diff ⦄ ⦄ → Continuous(f)
-
-module Derivatives where
+module Proofs where
   instance postulate Differentiable-constant     : ∀{a} → Differentiable(const(a))
   instance postulate Differentiable-id           : Differentiable(id)
   instance postulate Differentiable-monomial     : ∀{a} → Differentiable(x ↦ x ^ a)

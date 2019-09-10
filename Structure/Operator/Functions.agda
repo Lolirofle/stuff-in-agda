@@ -1,12 +1,12 @@
-module Structure.Operator.Functions{ℓ₁}{ℓ₂} where
+module Structure.Operator.Functions where
 
 import      Lvl
-open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Sets.Setoid{ℓ₁}
-open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
-open import Type{ℓ₂}
+open import Logic
+open import Sets.Setoid
+open import Structure.Operator.Properties
+open import Type
 
-module _ {A : Type} {X : Type} ⦃ _ : Equiv(X) ⦄ {Y : Type} ⦃ _ : Equiv(Y) ⦄ where
+module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {X : Type{ℓ₂}} ⦃ _ : Equiv(X) ⦄ {Y : Type{ℓ₃}} ⦃ _ : Equiv(Y) ⦄ where
   -- `a` is a element which yields the left identity element in the function `f`.
   -- (a ∈ kernelₗ(f)) means (f(a) = id).
   kernelₗ : ∀{_▫_ : X → Y → Y}{id : X} → ⦃ _ : Identityₗ(_▫_)(id) ⦄ → (A → X) → A → Stmt

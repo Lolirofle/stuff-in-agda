@@ -43,8 +43,8 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) (id 
   record Identity : Stmt{ℓ} where
     instance constructor intro
     field
-      ⦃ left ⦄  : Identityₗ(_▫_)(id)
-      ⦃ right ⦄ : Identityᵣ(_▫_)(id)
+      instance ⦃ left ⦄  : Identityₗ(_▫_)(id)
+      instance ⦃ right ⦄ : Identityᵣ(_▫_)(id)
   identity-left = inst-fn Identity.left
   identity-right = inst-fn Identity.right
 
@@ -52,8 +52,8 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) (id 
   record Absorber : Stmt{ℓ} where
     instance constructor intro
     field
-      ⦃ left ⦄  : Absorberₗ(_▫_)(id)
-      ⦃ right ⦄ : Absorberᵣ(_▫_)(id)
+      instance ⦃ left ⦄  : Absorberₗ(_▫_)(id)
+      instance ⦃ right ⦄ : Absorberᵣ(_▫_)(id)
   absorber-left = inst-fn Absorber.left
   absorber-right = inst-fn Absorber.right
 
@@ -78,8 +78,8 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ 
     record InverseFunction : Stmt{ℓ} where
       instance constructor intro
       field
-        ⦃ left ⦄  : InverseFunctionₗ(_▫_) ⦃ [∃]-map(Identity.left) (identity) ⦄ (inv)
-        ⦃ right ⦄ : InverseFunctionᵣ(_▫_) ⦃ [∃]-map(Identity.right) (identity) ⦄ (inv)
+        instance ⦃ left ⦄  : InverseFunctionₗ(_▫_) ⦃ [∃]-map(Identity.left) (identity) ⦄ (inv)
+        instance ⦃ right ⦄ : InverseFunctionᵣ(_▫_) ⦃ [∃]-map(Identity.right) (identity) ⦄ (inv)
   Invertible = ∃(InverseFunction)
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) where
@@ -99,3 +99,15 @@ module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equ
     constructor intro
     field proof : Names.Distributivityᵣ(_▫₁_)(_▫₂_)
   distributivityᵣ = inst-fn Distributivityᵣ.proof
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ (_▫_ : T₁ → T₂ → T₃) where
+  record Cancellationₗ : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field proof : Names.Cancellationₗ(_▫_)
+  cancellationₗ = inst-fn Cancellationₗ.proof
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} ⦃ _ : Equiv(T₁) ⦄ {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ (_▫_ : T₁ → T₂ → T₃) where
+  record Cancellationᵣ : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field proof : Names.Cancellationᵣ(_▫_)
+  cancellationᵣ = inst-fn Cancellationᵣ.proof

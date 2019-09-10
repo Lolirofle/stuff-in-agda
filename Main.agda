@@ -6,13 +6,14 @@ import Data.Boolean
 import Data.Boolean.Operators
 import Data.Boolean.Proofs
 import Data.Boolean.Stmt
+import Data.Boolean.Stmt.Proofs
 import Data.Either
 import Data.List
 import Data.List.Computability
--- import Data.List.Proofs
+import Data.List.Proofs
 -- import Data.List.Proofs.Membership
 -- import Data.List.Proofs.Sublist
--- import Data.List.Relation
+import Data.List.Relation
 -- import Data.List.Relation.Membership
 -- import Data.List.Relation.Sublist
 -- import Data.ListNonEmpty
@@ -56,7 +57,7 @@ import Lvl
 -- import Numeral.CoordinateVector.Proofs
 -- import Numeral.CoordinateVector.Set
 import Numeral.Finite
--- import Numeral.Finite.Bound
+import Numeral.Finite.Bound
 -- import Numeral.Finite.Functions
 -- import Numeral.Finite.Oper
 -- import Numeral.Finite.Oper.Comparisons
@@ -72,14 +73,14 @@ import Numeral.Integer
 import Numeral.Natural
 -- import Numeral.Natural.Coprime
 import Numeral.Natural.Function
--- import Numeral.Natural.Function.Proofs
+import Numeral.Natural.Function.Proofs
 -- import Numeral.Natural.GreatestCommonDivisor
--- import Numeral.Natural.Induction
--- import Numeral.Natural.Inductions
+import Numeral.Natural.Induction
+import Numeral.Natural.Inductions
 import Numeral.Natural.Oper
 import Numeral.Natural.Oper.Comparisons
 import Numeral.Natural.Oper.Comparisons.Proofs
--- import Numeral.Natural.Oper.Divisibility
+import Numeral.Natural.Oper.Divisibility
 import Numeral.Natural.Oper.Modulo
 -- import Numeral.Natural.Oper.Modulo.Proofs
 import Numeral.Natural.Oper.Proofs
@@ -98,7 +99,7 @@ import Numeral.Natural.Relation.Order
 -- import Numeral.Natural.Relation.Order.Proofs
 -- import Numeral.Natural.Relation.Properties
 -- import Numeral.Natural.TotalOper
--- import Numeral.Natural.UnclosedOper
+import Numeral.Natural.UnclosedOper
 -- import Numeral.Rational.AlterAdd
 -- import Numeral.Rational.SternBrocot
 import Numeral.Sign
@@ -155,18 +156,19 @@ import Structure.Function.Ordering
 -- import Structure.Logic.Constructive.NaturalDeduction
 -- import Structure.Logic.Constructive.Relations.Properties
 -- import Structure.Logic.Constructive.Syntax.Algebra
--- import Structure.Operator.Field
--- import Structure.Operator.Functions
--- import Structure.Operator.Group
+import Structure.Operator.Field
+import Structure.Operator.Functions
+import Structure.Operator.Group
 -- import Structure.Operator.Group.Proofs
 import Structure.Operator.Monoid
--- import Structure.Operator.Monoid.Proofs
+import Structure.Operator.Monoid.Proofs
 import Structure.Operator.Names
 -- import Structure.Operator.Proofs
 import Structure.Operator.Properties
 -- import Structure.Operator.SetAlgebra
 -- import Structure.Operator.Vector
--- import Structure.Real
+import Structure.Real
+import Structure.Real.Abs
 import Structure.Relator.Equivalence
 import Structure.Relator.Function
 import Structure.Relator.Ordering

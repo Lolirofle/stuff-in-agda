@@ -1,4 +1,4 @@
-module Numeral.Finite.Bound{ℓ} where
+module Numeral.Finite.Bound where
 
 import Lvl
 open import Syntax.Number
@@ -7,12 +7,13 @@ open import Logic.Predicate
 open import Numeral.Finite
 open import Numeral.Natural hiding (𝐏)
 open import Numeral.Natural.Function
-open import Numeral.Natural.Function.Proofs{ℓ}
+open import Numeral.Natural.Function.Proofs
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Oper.Proofs{ℓ}
-open import Numeral.Natural.Relation{ℓ}
-open import Relator.Equals{ℓ}{0}
-open import Relator.Equals.Proofs{ℓ}{0}
+open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Relation
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Structure.Operator.Properties
 
 bound-𝐒 : ∀{n} → 𝕟(n) → 𝕟(ℕ.𝐒(n))
 bound-𝐒 (𝟎)    = 𝟎
@@ -26,7 +27,7 @@ bound-maxₗ : ∀{n₁ n₂} → 𝕟(n₁) → 𝕟(max n₁ n₂)
 bound-maxₗ {n₁}{n₂} (n) = [≡]-substitutionₗ (max-elementary{n₁}{n₂}) {𝕟} (bound-[+] {n₁}{n₂ −₀ n₁} (n))
 
 bound-maxᵣ : ∀{n₁ n₂} → 𝕟(n₂) → 𝕟(max n₁ n₂)
-bound-maxᵣ {n₁}{n₂} (n) = [≡]-substitutionᵣ (max-commutativity{n₂}{n₁}) {𝕟} (bound-maxₗ {n₂}{n₁} (n))
+bound-maxᵣ {n₁}{n₂} (n) = [≡]-substitutionᵣ (commutativity(max) {n₂}{n₁}) {𝕟} (bound-maxₗ {n₂}{n₁} (n))
 
 postulate bound-minₗ : ∀{n₁ n₂} → 𝕟(min n₁ n₂) → 𝕟(n₁)
 -- bound-minₗ {n₁}{n₂} (n) = TODO: Use the proof that min always is one of its args

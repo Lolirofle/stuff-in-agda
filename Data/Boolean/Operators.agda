@@ -69,17 +69,4 @@ module Logic where
 
 -- Definition of boolean operators with conventions from typical programming languages
 module Programming where
-  open Logic
-
-  infixl 1010 !_
-  infixl 1005 _&&_
-  infixl 1004 _||_
-
-  _&&_ : Bool → Bool → Bool
-  _&&_ = _∧_
-
-  _||_ : Bool → Bool → Bool
-  _||_ = _∨_
-
-  !_ : Bool → Bool
-  !_ = ¬_
+  open Logic using () renaming (_∧_ to _&&_ ; _∨_ to _||_ ; ¬_ to !_ ; _⟷_ to _==_ ; _⊼_ to _!=_) public

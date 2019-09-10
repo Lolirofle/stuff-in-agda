@@ -1,61 +1,90 @@
-module Structure.Operator.Group {ℓ₁} {ℓ₂} where
+module Structure.Operator.Group where
 
-open import Functional hiding (id)
 import      Lvl
-open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Logic.Predicate{ℓ₁}{ℓ₂}
-open import Sets.Setoid{ℓ₁}
-open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}
-open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
-open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
-open import Type{ℓ₂}
+open import Logic
+open import Logic.Predicate
+open import Sets.Setoid
+open import Structure.Operator.Monoid using (Monoid)
+open import Structure.Operator.Properties hiding (commutativity)
+open import Type
+open import Type.Size
 
 -- A type and a binary operator using this type is a group when:
 -- • It is a monoid.
 -- • The operator have an inverse in both directions.
-record Group {T : Type} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt where
-  open Monoid ⦃ ... ⦄
-
+record Group {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ} where
+  constructor intro
   field
-    inv : T → T
+    instance ⦃ monoid ⦄            : Monoid(_▫_)
+    instance ⦃ inverse-existence ⦄ : ∃(InverseFunction (_▫_))
+
+  open Monoid(monoid) public
+
+  inv = [∃]-witness inverse-existence
+
+  instance
+    inverse : InverseFunction (_▫_) inv
+    inverse = [∃]-proof inverse-existence
+
+  instance
+    inverseₗ : InverseFunctionₗ (_▫_) inv
+    inverseₗ = InverseFunction.left(inverse)
+
+  instance
+    inverseᵣ : InverseFunctionᵣ (_▫_) inv
+    inverseᵣ = InverseFunction.right(inverse)
+
+  instance
+    inverseₗ-existence : ∃(InverseFunctionₗ (_▫_))
+    inverseₗ-existence = [∃]-map InverseFunction.left inverse-existence
+
+  instance
+    inverseᵣ-existence : ∃(InverseFunctionᵣ (_▫_))
+    inverseᵣ-existence = [∃]-map InverseFunction.right inverse-existence
+
+record CommutativeGroup {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ} where
+  constructor intro
   field
-    instance ⦃ monoid ⦄ : Monoid{T} (_▫_)
-    inverse : InverseFunction (_▫_) (id ⦃ _ ⦄ ⦃ monoid ⦄) inv
+    instance ⦃ group ⦄         : Group (_▫_)
+    instance ⦃ commutativity ⦄ : Commutativity (_▫_)
 
-  inverseₗ : InverseFunctionₗ (_▫_) (id ⦃ _ ⦄ ⦃ monoid ⦄) inv
-  inverseₗ = [∧]-elimₗ inverse
+module Morphism where
+  -- Group homomorphism
+  record Homomorphism {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field
+      instance ⦃ structureₗ ⦄ : Group(_▫X_)
+      instance ⦃ structureᵣ ⦄ : Group(_▫Y_)
 
-  inverseᵣ : InverseFunctionᵣ (_▫_) (id ⦃ _ ⦄ ⦃ monoid ⦄) inv
-  inverseᵣ = [∧]-elimᵣ inverse
+    idₗ = Group.id(structureₗ)
+    idᵣ = Group.id(structureᵣ)
 
--- Multiplicative Group (TODO: Use setoids to express this instead)
-record MultGroup {T : Type} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) (𝟎 : T) : Stmt where
-  open Monoid ⦃ ... ⦄
+    invₗ = Group.inv(structureₗ)
+    invᵣ = Group.inv(structureᵣ)
 
-  field
-    inv : (x : T) → ⦃ _ : (x ≢ 𝟎) ⦄ → T
-  field
-    instance ⦃ monoid ⦄ : Monoid{T} (_▫_)
-    inverseₗ : ∀{x} → ⦃ nonzero : (x ≢ 𝟎) ⦄ → ((inv x ⦃ nonzero ⦄) ▫ x) ≡ id ⦃ _ ⦄ ⦃ monoid ⦄
-    inverseᵣ : ∀{x} → ⦃ nonzero : (x ≢ 𝟎) ⦄ → (x ▫ (inv x ⦃ nonzero ⦄)) ≡ id ⦃ _ ⦄ ⦃ monoid ⦄
+    field
+      preserve-op  : ∀{x y : X} → (f(x ▫X y) ≡ f(x) ▫Y f(y))
+      preserve-inv : ∀{x : X} → (f(invₗ x) ≡ invᵣ(f(x)))
+      preserve-id  : (f(idₗ) ≡ idᵣ)
 
-record CommutativeGroup {T : Type} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt where
-  open Group ⦃ ... ⦄
-  open Monoid ⦃ ... ⦄
+  -- Group monomorphism (Injective homomorphism)
+  record _↣_ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field
+      ⦃ homomorphism ⦄ : Homomorphism {_▫X_ = _▫X_} {_▫Y_ = _▫Y_} (f)
+      ⦃ size ⦄         : (X ≼ Y)
 
-  field
-    instance ⦃ group ⦄ : Group (_▫_)
-    commutativity : Commutativity (_▫_)
 
-record Subgroup {S : Type} ⦃ _ : Equiv(S) ⦄ (_▫ₛ_ : S → S → S) {T : Type} ⦃ _ : Equiv(T) ⦄ (_▫ₜ_ : T → T → T) : Stmt where
-  open Monoid ⦃ ... ⦄
+  -- Group epimorphism (Surjective homomorphism)
+  record _↠_ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field
+      ⦃ homomorphism ⦄ : Homomorphism {_▫X_ = _▫X_} {_▫Y_ = _▫Y_} (f)
+      ⦃ size ⦄         : (X ≽ Y)
 
-  field
-    instance ⦃ groupₗ ⦄ : Group{S}(_▫ₛ_)
-    instance ⦃ groupᵣ ⦄ : Group{T}(_▫ₜ_)
-
-  field
-    instance size : (S ≼ T)
-
-  field
-    preserve-op : ∀{x y : S} → let μ = [∃]-witness(size) in (μ(x ▫ₛ y) ≡ μ(x) ▫ₜ μ(y))
+  -- Group isomorphism (Bijective homomorphism)
+  record _⤖_ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field
+      ⦃ homomorphism ⦄ : Homomorphism {_▫X_ = _▫X_} {_▫Y_ = _▫Y_} (f)
+      ⦃ size ⦄         : (X ≍ Y)

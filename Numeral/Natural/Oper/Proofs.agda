@@ -604,10 +604,8 @@ instance
   [𝐒]-injectivity : Injective(𝐒)
   Injective.proof([𝐒]-injectivity) {n} = [𝐒]-injectivity-raw {n}
 
-instance
-  [+]ₗ-injectivity : ∀{a} → Injective (_+ a)
-  Injective.proof([+]ₗ-injectivity {a}) = [+]ₗ-injectivity-raw {a}
+[+]ₗ-injectivity : ∀{a} → Injective (_+ a)
+Injective.proof([+]ₗ-injectivity {a}) = [+]ₗ-injectivity-raw {a}
 
-instance
-  [+]ᵣ-injectivity : ∀{a} → Injective (a +_)
-  Injective.proof([+]ᵣ-injectivity {a}) = [+]ᵣ-injectivity-raw {a}
+[+]ᵣ-injectivity : ∀{a} → Injective (a +_)
+Injective.proof([+]ᵣ-injectivity {a}) = [+]ᵣ-injectivity-raw {a}
