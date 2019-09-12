@@ -16,29 +16,18 @@ record Monoid {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T)
   field
     instance ⦃ binary-operator ⦄    : BinaryOperator(_▫_)
     instance ⦃ associativity ⦄      : Associativity(_▫_)
-    instance ⦃ identity-existence ⦄ : ∃(Identity(_▫_))
+    ⦃ identity-existence ⦄          : ∃(Identity(_▫_))
 
   id = [∃]-witness identity-existence
 
-  instance
-    identity : Identity (_▫_) id
-    identity = [∃]-proof identity-existence
+  identity : Identity (_▫_) id
+  identity = [∃]-proof identity-existence
 
-  instance
-    identityₗ : Identityₗ (_▫_) id
-    identityₗ = Identity.left(identity)
+  identityₗ : Identityₗ (_▫_) id
+  identityₗ = Identity.left(identity)
 
-  instance
-    identityᵣ : Identityᵣ (_▫_) id
-    identityᵣ = Identity.right(identity)
-
-  instance
-    identityₗ-existence : ∃(Identityₗ (_▫_))
-    identityₗ-existence = [∃]-map Identity.left identity-existence
-
-  instance
-    identityᵣ-existence : ∃(Identityᵣ (_▫_))
-    identityᵣ-existence = [∃]-map Identity.right identity-existence
+  identityᵣ : Identityᵣ (_▫_) id
+  identityᵣ = Identity.right(identity)
 
 module Morphism where
   record Homomorphism {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where

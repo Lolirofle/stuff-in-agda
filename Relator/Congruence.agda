@@ -8,6 +8,7 @@ open import Logic
 open import Logic.Propositional
 open import Relator.Equals
 
+-- The congruence relation with respect to a relation
 infixl 15 _≅_of_
 data _≅_of_ (x₁ : X) (x₂ : X) (f : X → Y) : Stmt{ℓ₂} where
   instance [≅]-intro : (f(x₁) ≡ f(x₂)) → (x₁ ≅ x₂ of f)

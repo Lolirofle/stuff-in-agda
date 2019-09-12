@@ -32,6 +32,7 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{
 
 -- TODO: When does ((x⊜y) → (f(x) ⊜ f(y))) hold? Does it need some assumptions about the setoid?
 -- TODO: When is BinaryOperator(_∘_) satisfied?
+-- TODO: The instance resolutions here are preventing overlapping instances from working
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ {C : Type{ℓ₃}} ⦃ _ : Equiv(C) ⦄ ⦃ _ : BinaryOperator(_∘_) ⦄ where
   [⊜]-compose : ∀{f₁ f₂ : B → C}{g₁ g₂ : A → B} → (f₁ ⊜ f₂) → (g₁ ⊜ g₂) → (f₁ ∘ g₁ ⊜ f₂ ∘ g₂)
   [⊜]-compose {f₁}{f₂} feq geq =

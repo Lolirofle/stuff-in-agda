@@ -28,7 +28,7 @@ module _ {ℓ} where
 -- module _ {ℓ} where
 --   [≽]-to-[≼] : ∀{A B : Setoid{ℓ}} → (A ≽ B) → (B ≼ A)
 --   [≽]-to-[≼] ([∃]-intro(f) ⦃ [∧]-intro f-function f-surjective ⦄) =
---     ([∃]-intro(inv-fnᵣ f) ⦃ [∧]-intro (TODO: f-function) (invᵣ-injective ⦃ f-surjective ⦄) ⦄)
+--     ([∃]-intro(invᵣ f) ⦃ [∧]-intro (TODO: f-function) (invᵣ-injective ⦃ f-surjective ⦄) ⦄)
 -- TODO: This would need a proof of: inverse-existence-choice : (∀{y} → ∃(x ↦ y ≡ f(x))) → ∃{Obj = Y → X}(choice ↦ Function(choice) ∧ ∀{y} → y ≡ f(choice(y))). In other words, the "extensional axiom of choice"? Is it valid in Agda? https://plato.stanford.edu/entries/type-theory-intuitionistic/
 
 module _ {ℓ} where
@@ -40,7 +40,7 @@ module _ {ℓ} where
   instance
     [≍]-symmetry : Symmetry(_≍_ {ℓ})
     Symmetry.proof([≍]-symmetry) ([∃]-intro(f) ⦃ [∧]-intro f-function f-bijective ⦄)
-      = [∃]-intro(inv-fn f ⦃ f-bijective ⦄) ⦃ [∧]-intro
+      = [∃]-intro(inv f ⦃ f-bijective ⦄) ⦃ [∧]-intro
           (inv-function{f = f} ⦃ f-function ⦄ ⦃ f-bijective ⦄)
           (inv-bijective{f = f} ⦃ f-function ⦄ ⦃ f-bijective ⦄)
         ⦄

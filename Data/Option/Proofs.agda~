@@ -1,0 +1,11 @@
+module Data.Option.Proofs where
+
+import      Lvl
+open import Data.Option
+open import Data.Either.Proofs
+open import Relator.Equals
+open import Type
+
+module _ {ℓ} {T : Type{ℓ}} where
+  Some-injectivity : ∀{x y : T} → (Right(x) ≡ Right(y)) → (x ≡ y)
+  Some-injectivity = Right-injectivity

@@ -1,15 +1,16 @@
-module Structure.Operator.SetAlgebra {ℓ₁} {ℓ₂} where
+open import Type
+
+module Structure.Operator.SetAlgebra {ℓ} (S : Type{ℓ}) where
 
 import      Lvl
 open import Functional
-open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Relator.Equals{ℓ₁}{ℓ₂}
-open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
-open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
-open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
-open import Type{ℓ₂}
+open import Logic.Propositional
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Structure.Operator.Properties
+open import Structure.Relator.Properties
 
-record Fundamentals (S : Type) : Stmt where
+record Fundamentals : Stmt where
   infixl 1001 _∩_
   infixl 1000 _∪_
 
@@ -19,7 +20,7 @@ record Fundamentals (S : Type) : Stmt where
     ∅   : S         -- Empty set
     𝐔   : S         -- Universal set
 
-  field
+  field -- TODO: This is two commutative monoids with distributivity over each other
     [∪]-commutativity : Commutativity{S}(_∪_)
     [∩]-commutativity : Commutativity{S}(_∩_)
 
@@ -56,7 +57,7 @@ record Fundamentals (S : Type) : Stmt where
     ([∩]-commutativity)
     🝖 ([∩]-identityₗ)
 
-record Complement (S : Type) : Stmt where
+record Complement : Stmt where
   infixl 1002 ∁_
   infixl 1000 _∖_
 
@@ -67,7 +68,7 @@ record Complement (S : Type) : Stmt where
     ⦃ fundamentals ⦄ : Fundamentals(S)
   open Fundamentals(fundamentals)
 
-  field
+  field -- TODO: Not really inverses. These are using the absorbers
     [∪]-inverseᵣ : ∀{s : S} → (s ∪ ∁(s) ≡ 𝐔)
     [∩]-inverseᵣ : ∀{s : S} → (s ∩ ∁(s) ≡ ∅)
 
@@ -108,16 +109,16 @@ record Complement (S : Type) : Stmt where
     🝖 ([≡]-with(expr ↦ (s ∩ expr)) [∪]-inverseᵣ)
     🝖 ([∩]-identityᵣ)
 
-  [∪]-domination : ∀{s : S} → (s ∪ 𝐔) ≡ 𝐔
-  [∪]-domination{s} =
+  [∪]-absorber : ∀{s : S} → (s ∪ 𝐔) ≡ 𝐔
+  [∪]-absorber{s} =
     ([≡]-with(expr ↦ s ∪ expr) (symmetry [∪]-inverseᵣ))
     🝖 (symmetry [∪]-associativity)
     🝖 ([≡]-with(expr ↦ expr ∪ ∁(s)) [∪]-idempotence)
     🝖 ([∪]-inverseᵣ)
     -- s∪𝐔 = s∪(s ∪ ∁(s)) = (s∪s) ∪ ∁(s) = s ∪ ∁(s) = 𝐔
 
-  [∩]-domination : ∀{s : S} → (s ∩ ∅) ≡ ∅
-  [∩]-domination{s} =
+  [∩]-absorber : ∀{s : S} → (s ∩ ∅) ≡ ∅
+  [∩]-absorber{s} =
     ([≡]-with(expr ↦ s ∩ expr) (symmetry [∩]-inverseᵣ))
     🝖 (symmetry [∩]-associativity)
     🝖 ([≡]-with(expr ↦ expr ∩ ∁(s)) [∩]-idempotence)
@@ -243,7 +244,7 @@ record Complement (S : Type) : Stmt where
   postulate [∖]-of-[𝐔]ᵣ : ∀{s : S} → s ∖ 𝐔 ≡ ∅
 
 
-record Subset (S : Type) : Set(Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂)) where
+record Subset : Set(Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂)) where
   field
     _⊆_ : S → S → Stmt -- Subset
     ⦃ fundamentals ⦄ : Fundamentals(S)

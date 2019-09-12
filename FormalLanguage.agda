@@ -59,6 +59,13 @@ module Oper {Σ} where
   Language.accepts-ε   ε = 𝑇
   Language.suffix-lang ε = const(∅)
 
+  -- The single symbol language
+  -- The language consisting of a single word with a single letter
+  -- TODO: This is only possible when Alphabet has a computably decidable equality relation
+  -- single : ∀{s} → Alphabet → Language(Σ){s}
+  -- Language.accepts-ε   (single _)   = 𝐹
+  -- Language.suffix-lang (single a) c = if (a ≡? c) then ε else ∅
+
   -- The filtered language
   filter : ∀{s} → (Σ → Bool) → Language(Σ){s}
   Language.accepts-ε   (filter f) = 𝐹
@@ -67,47 +74,36 @@ module Oper {Σ} where
   -- Union
   -- The language that includes any words that the two languages have.
   _∪_ : ∀{s} → Language(Σ){s} → Language(Σ){s} → Language(Σ){s}
-  Language.accepts-ε   (L₁ ∪ L₂) = Language.accepts-ε(L₁) || Language.accepts-ε(L₂)
-  Language.suffix-lang (L₁ ∪ L₂) = (c ↦ Language.suffix-lang(L₁)(c) ∪ Language.suffix-lang(L₂)(c))
+  Language.accepts-ε   (L₁ ∪ L₂)   = Language.accepts-ε(L₁) || Language.accepts-ε(L₂)
+  Language.suffix-lang (L₁ ∪ L₂) c = Language.suffix-lang(L₁)(c) ∪ Language.suffix-lang(L₂)(c)
 
   -- Intersection
   -- The language that only includes the words that both languages have in common.
   _∩_ : ∀{s} → Language(Σ){s} → Language(Σ){s} → Language(Σ){s}
-  Language.accepts-ε   (L₁ ∩ L₂) = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
-  Language.suffix-lang (L₁ ∩ L₂) = (c ↦ Language.suffix-lang(L₁)(c) ∩ Language.suffix-lang(L₂)(c))
+  Language.accepts-ε   (L₁ ∩ L₂)   = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
+  Language.suffix-lang (L₁ ∩ L₂) c = Language.suffix-lang(L₁)(c) ∩ Language.suffix-lang(L₂)(c)
 
   -- Concatenation
   -- The language that includes words that start with a word the first language and end in a word from the second language.
   _𝁼_ : ∀{s} → Language(Σ){s} → Language(Σ){s} → Language(Σ){s}
-  Language.accepts-ε   (L₁ 𝁼 L₂) = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
-  Language.suffix-lang (L₁ 𝁼 L₂) =
-    (c ↦
-      if  Language.accepts-ε(L₁)
-      then((Language.suffix-lang(L₁)(c) 𝁼 L₂) ∪ Language.suffix-lang(L₂)(c))
-      else(Language.suffix-lang(L₁)(c) 𝁼 L₂)
-    )
+  Language.accepts-ε   (L₁ 𝁼 L₂)   = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
+  Language.suffix-lang (L₁ 𝁼 L₂) c =
+    if  Language.accepts-ε(L₁)
+    then((Language.suffix-lang(L₁)(c) 𝁼 L₂) ∪ Language.suffix-lang(L₂)(c))
+    else(Language.suffix-lang(L₁)(c) 𝁼 L₂)
 
   -- Star/Closure
   -- The language that includes words in any number of concatenations with itself.
   _* : ∀{s} → Language(Σ){s} → Language(Σ){s}
-  Language.accepts-ε   (L *) = 𝑇
-  Language.suffix-lang (L *) =
-    (c ↦
-      (Language.suffix-lang(L)(c) 𝁼 L) * -- TODO: Not Language.suffix-lang(L)(c) 𝁼 (L *) ?
-    )
-    -- L *
-    -- = (Language.suffix-lang(L)(c₁) 𝁼 L) *
-    -- = (Language.suffix-lang((Language.suffix-lang(L)(c₁) 𝁼 L) *)(c₂) 𝁼 (Language.suffix-lang(L)(c₁) 𝁼 L) *) *
+  Language.accepts-ε   (L *)   = 𝑇
+  Language.suffix-lang (L *) c = Language.suffix-lang(L)(c) 𝁼 (L *)
 
   -- Complement
   -- The language that includes all words that a language does not have.
   -- TODO: Is this correct?
   ∁_ : ∀{s} → Language(Σ){s} → Language(Σ){s}
-  Language.accepts-ε   (∁ L) = !(Language.accepts-ε(L))
-  Language.suffix-lang (∁ L) =
-    (c ↦
-      ∁(Language.suffix-lang(L)(c))
-    )
+  Language.accepts-ε   (∁ L)   = !(Language.accepts-ε(L))
+  Language.suffix-lang (∁ L) c = ∁(Language.suffix-lang(L)(c))
 
   -- All
   -- The language that includes all words in any combination of the alphabet.

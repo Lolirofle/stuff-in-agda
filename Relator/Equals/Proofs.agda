@@ -6,7 +6,7 @@ open import Lang.Instance
 open import Logic
 open import Logic.Propositional
 open import Relator.Equals
-open import Sets.Setoid using (Equiv ; intro)
+open import Sets.Setoid using (Equiv ; intro ; Function ; BinaryOperator)
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type
@@ -86,7 +86,7 @@ module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} where
   [≡]-function-application : ∀{f₁ f₂ : A → B} → (f₁ ≡ f₂) → (∀{x} → (f₁(x) ≡ f₂(x)))
   [≡]-function-application [≡]-intro = [≡]-intro
 
-  -- Applies a function to each side of the equality
+  -- Applies a function to each side of the equality (TODO: Make this an instance of Function instead)
   [≡]-with : (f : A → B) → ∀{x y : A} → (x ≡ y) → (f(x) ≡ f(y))
   [≡]-with f [≡]-intro = [≡]-intro
 
@@ -96,9 +96,17 @@ module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} where
   -- [≢]-without : ∀{A : Type{ℓ₂}}{B : Type{ℓ₃}} → (f : A → B) → ∀{x y : A} → (f(x) ≢₃ f(y)) → (x ≢₂ y)
   -- [≢]-without f {_}{_} = liftᵣ([≡]-with f)
 
+  instance
+    [≡]-function : ∀{f} → Function(f)
+    Function.congruence([≡]-function {f}) eq = [≡]-with(f) eq
+
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} where
-    -- Applies an operation to each side of the equality
-    [≡]-with-op : (_▫_ : A → B → C) → {a₁ a₂ : A}{b₁ b₂ : B} → (a₁ ≡ a₂) → (b₁ ≡ b₂) → ((a₁ ▫ b₁) ≡ (a₂ ▫ b₂))
-    [≡]-with-op (_▫_) [≡]-intro [≡]-intro = [≡]-intro
-    -- [≡]-with-op-[_] (_▫_) {a₁}{a₂} {b₁}{b₂} (a₁≡a₂) (b₁≡b₂) =
-    --   [≡]-elimᵣ (b₁≡b₂) {\x → (a₁ ▫ b₁) ≡ (a₂ ▫ x)} ([≡]-with(x ↦ (x ▫ b₁)) (a₁≡a₂))
+  -- Applies an operation to each side of the equality (TODO: Make this an instance of BinaryOperator instead)
+  [≡]-with-op : (_▫_ : A → B → C) → {a₁ a₂ : A}{b₁ b₂ : B} → (a₁ ≡ a₂) → (b₁ ≡ b₂) → ((a₁ ▫ b₁) ≡ (a₂ ▫ b₂))
+  [≡]-with-op (_▫_) [≡]-intro [≡]-intro = [≡]-intro
+  -- [≡]-with-op-[_] (_▫_) {a₁}{a₂} {b₁}{b₂} (a₁≡a₂) (b₁≡b₂) =
+  --   [≡]-elimᵣ (b₁≡b₂) {\x → (a₁ ▫ b₁) ≡ (a₂ ▫ x)} ([≡]-with(x ↦ (x ▫ b₁)) (a₁≡a₂))
+
+  instance
+    [≡]-binary-operator : ∀{_▫_} → BinaryOperator(_▫_)
+    BinaryOperator.congruence([≡]-binary-operator {_▫_}) aeq beq = [≡]-with-op(_▫_) aeq beq

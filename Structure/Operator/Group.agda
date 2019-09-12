@@ -14,11 +14,13 @@ open import Type.Size
 -- • The operator have an inverse in both directions.
 record Group {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ} where
   constructor intro
-  field
-    instance ⦃ monoid ⦄            : Monoid(_▫_)
-    instance ⦃ inverse-existence ⦄ : ∃(InverseFunction (_▫_))
 
+  field
+    instance ⦃ monoid ⦄ : Monoid(_▫_)
   open Monoid(monoid) public
+
+  field
+    ⦃ inverse-existence ⦄ : ∃(InverseFunction(_▫_) ⦃ identity-existence ⦄)
 
   inv = [∃]-witness inverse-existence
 
@@ -34,19 +36,12 @@ record Group {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) 
     inverseᵣ : InverseFunctionᵣ (_▫_) inv
     inverseᵣ = InverseFunction.right(inverse)
 
-  instance
-    inverseₗ-existence : ∃(InverseFunctionₗ (_▫_))
-    inverseₗ-existence = [∃]-map InverseFunction.left inverse-existence
-
-  instance
-    inverseᵣ-existence : ∃(InverseFunctionᵣ (_▫_))
-    inverseᵣ-existence = [∃]-map InverseFunction.right inverse-existence
-
 record CommutativeGroup {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ} where
   constructor intro
   field
     instance ⦃ group ⦄         : Group (_▫_)
     instance ⦃ commutativity ⦄ : Commutativity (_▫_)
+  open Group(group) public
 
 module Morphism where
   -- Group homomorphism

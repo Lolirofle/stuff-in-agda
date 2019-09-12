@@ -128,20 +128,20 @@ module _ {ℓ₁ ℓ₂} where
   data ∃ {X : Type{ℓ₁}} (Pred : X → Prop(ℓ₂)) : Prop(ℓ₁ Lvl.⊔ Lvl.𝐒(ℓ₂)) where
     [∃]-intro : (x : X) → ⦃ _ : Pred(x) ⦄ → ∃(Pred)
 
-  record Subtype {X : Type{ℓ₁}} (P : X → Prop(ℓ₂)) : Type{ℓ₁ Lvl.⊔ ℓ₂} where
+  record Filter {X : Type{ℓ₁}} (P : X → Prop(ℓ₂)) : Type{ℓ₁ Lvl.⊔ ℓ₂} where
     instance constructor intro
     field
       obj : X
       ⦃ proof ⦄ : P(obj)
 
-  Subtype-to-[∃] : ∀{X : Type{ℓ₁}}{P : X → Prop(ℓ₂)} → Subtype(P) → ∃(P)
-  Subtype-to-[∃] (intro obj ⦃ proof ⦄) = [∃]-intro obj ⦃ proof ⦄
+  Filter-to-[∃] : ∀{X : Type{ℓ₁}}{P : X → Prop(ℓ₂)} → Filter(P) → ∃(P)
+  Filter-to-[∃] (intro obj ⦃ proof ⦄) = [∃]-intro obj ⦃ proof ⦄
 
   -- .[∃]-witness : ∀{X : Type{ℓ₁}}{P : X → Prop(ℓ₂)} → ∃(P) → X
   -- [∃]-witness ([∃]-intro x) = Lang.Irrelevance.axiom(x)
 
-  -- [∃]-to-Subtype : ∀{X : Type{ℓ₁}}{P : X → Prop(ℓ₂)} → ∃(P) → Subtype(P)
-  -- [∃]-to-Subtype ([∃]-intro obj ⦃ proof ⦄) = intro obj ⦃ proof ⦄
+  -- [∃]-to-Filter : ∀{X : Type{ℓ₁}}{P : X → Prop(ℓ₂)} → ∃(P) → Filter(P)
+  -- [∃]-to-Filter ([∃]-intro obj ⦃ proof ⦄) = intro obj ⦃ proof ⦄
 
 module _ {ℓ₁ ℓ₂ ℓ₃} where
   [∃]-elim : ∀{X : Type{ℓ₁}}{P : X → Prop(ℓ₂)}{Q : Prop(ℓ₃)} → (∀{x : X} → P(x) → Q) → ∃(P) → Q
@@ -207,7 +207,7 @@ module _ {ℓ} where
 
 module _ {ℓ₁}{ℓ₂} where
   Unapply : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}} → (f : X → Y) → (y : Y) → Type{ℓ₁ Lvl.⊔ ℓ₂}
-  Unapply f(y) = Subtype(obj ↦ f(obj) ≡ y)
+  Unapply f(y) = Filter(obj ↦ f(obj) ≡ y)
 
   Bijective : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}} → (X → Y) → Prop(Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂))
   Bijective(f) = ∀ₗ(y ↦ IsUnit(Unapply f(y)))
@@ -218,14 +218,14 @@ module _ {ℓ₁}{ℓ₂} where
   -- inv f ⦃ [∀]-intro(proof) ⦄ (y) with proof{y}
   -- ... | [∃]-intro (intro x) = Lang.Irrelevance.axiom x
 
--- ∀{y : Y} → ∃(unit ↦ ∀{x : Subtype(obj ↦ f(obj) ≡ y)} → (x ≡ unit))
+-- ∀{y : Y} → ∃(unit ↦ ∀{x : Filter(obj ↦ f(obj) ≡ y)} → (x ≡ unit))
 
   _≍_ : Type{ℓ₁} → Type{ℓ₂} → Prop(Lvl.𝐒(Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂)))
   X ≍ Y = ∃(Bijective{X}{Y})
 
 
 
--- ∃((f : X → Y) ↦ ∀{y : Y} → ∃(unit ↦ ∀{x : Subtype(obj ↦ f(obj) ≡ y)} → (x ≡ unit)))
+-- ∃((f : X → Y) ↦ ∀{y : Y} → ∃(unit ↦ ∀{x : Filter(obj ↦ f(obj) ≡ y)} → (x ≡ unit)))
 
   -- [↔]-to-[≍] : ∀{P : Prop(ℓ₁)}{Q : Prop(ℓ₂)} → (P ↔ Q) → (P ≡ₚ Q)
   -- [↔]-to-[≍] (pq) = 

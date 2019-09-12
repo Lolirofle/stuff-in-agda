@@ -450,7 +450,9 @@ postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
 {-# REWRITE [𝄩]-identityₗ-raw #-}
 
 [𝄩]-identityᵣ-raw : Names.Identityᵣ (_𝄩_) (0)
-[𝄩]-identityᵣ-raw {x} = [≡]-intro
+[𝄩]-identityᵣ-raw {𝟎}    = [≡]-intro
+[𝄩]-identityᵣ-raw {𝐒(_)} = [≡]-intro
+{-# REWRITE [𝄩]-identityᵣ-raw #-}
 
 [𝄩]-self : ∀{x} → (x 𝄩 x ≡ 𝟎)
 [𝄩]-self {𝟎}    = [≡]-intro

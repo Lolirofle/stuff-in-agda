@@ -61,7 +61,7 @@ module _ where
 
     [≽]-to-[≼] : (A ≽ B) → (B ≼ A)
     [≽]-to-[≼] ([∃]-intro(f) ⦃ f-surjective ⦄) =
-      ([∃]-intro(inv-fnᵣ f) ⦃ invᵣ-injective{f = f} ⦃ Function-function ⦄ ⦃ f-surjective ⦄ ⦄)
+      ([∃]-intro(invᵣ f) ⦃ invᵣ-injective{f = f} ⦃ Function-function ⦄ ⦃ f-surjective ⦄ ⦄)
 
   module _ {ℓ} where
     instance
@@ -71,7 +71,7 @@ module _ where
     instance
       [≍]-symmetry : Symmetry(_≍_ {ℓ})
       Symmetry.proof([≍]-symmetry) ([∃]-intro(f) ⦃ f-bijective ⦄)
-        = [∃]-intro(inv-fn f ⦃ f-bijective ⦄) ⦃
+        = [∃]-intro(inv f ⦃ f-bijective ⦄) ⦃
             (inv-bijective{f = f} ⦃ Function-function ⦄ ⦃ f-bijective ⦄)
           ⦄
 

@@ -1,5 +1,5 @@
-OPTIONS=--rewriting --irrelevant-projections --without-K --no-default-libraries --show-implicit
-#--exact-split --without-K --proof-irrelevance --verbose=5
+OPTIONS=--rewriting --irrelevant-projections --without-K --no-default-libraries -W all --warning noUnknownFixityInMixfixDecl --show-implicit
+#--exact-split --without-K --proof-irrelevance --verbose=5 --experimental-irrelevance --instance-search-depth=10 --overlapping-instances
 
 all: typecheck
 

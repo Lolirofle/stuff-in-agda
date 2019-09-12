@@ -140,7 +140,7 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
 
       -- Two linear mappings are similiar when there is a basis in which they are equal.
       -- Similiar : (f : V → V) → ⦃ _ : LinearMap(f) ⦄ → (g : V → V) → ⦃ _ : LinearMap(g) ⦄ → Stmt
-      -- Similiar(f)(g) = (∀{v} → ∃(b ↦ Bijective(b) ∧ (f(v) ≡ (b ∘ g ∘ (inv-fn(b)))(v))))
+      -- Similiar(f)(g) = (∀{v} → ∃(b ↦ Bijective(b) ∧ (f(v) ≡ (b ∘ g ∘ (inv(b)))(v))))
 
     record DotProductSpace (_∙_ : V → V → S) (_≤_ : S → S → Stmt) : Stmt where
       field
@@ -213,7 +213,7 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
 --      postulate linear-map-const-zero : LinearMap₁₂(const(𝟎ᵥ ⦃ lang₂ ⦄ ⦃ VSP₂ ⦄))
 --
 --      -- The inverse of an invertible linear mapping is a linear mapping
---      postulate linear-inverse : ∀{f} → ⦃ _ : Bijective(f) ⦄ → LinearMap₁₂(f) → LinearMap₂₁(inv-fn(f))
+--      postulate linear-inverse : ∀{f} → ⦃ _ : Bijective(f) ⦄ → LinearMap₁₂(f) → LinearMap₂₁(inv(f))
 --
 --      -- Injectivity for only the zero vector implies injectivity
 --      postulate injective-zero : ∀{f} → ⦃ _ : LinearMap₁₂(f) ⦄ → (∀{v} → (f(v) ≡ 𝟎ᵥ ⦃ lang₂ ⦄ ⦃ VSP₂ ⦄) → (v ≡ 𝟎ᵥ ⦃ lang ⦄ ⦃ VSP ⦄)) → Injective(f)

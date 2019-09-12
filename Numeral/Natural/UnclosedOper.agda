@@ -27,6 +27,7 @@ signed (Sign.➖) (n) = ℤ.−ₙ n
 signed0 : (Sign.+|0|−) → ℕ → ℤ
 signed0(Sign.➕) (ℕ.𝐒(n)) = ℤ.+𝐒ₙ(n)
 signed0(Sign.➖) (ℕ.𝐒(n)) = ℤ.−𝐒ₙ(n)
+{-# CATCHALL #-}
 signed0(_)      (_)      = ℤ.𝟎
 
 -- TODO _/_ : ℕ → ℕ → ℚ
@@ -41,31 +42,31 @@ a    −? 𝟎    = Option.Some(a)
 -- Unclosed total floored division
 {-# TERMINATING #-}
 _⌊/₀⌋_ : ℕ → ℕ → ℕ
-𝟎 ⌊/₀⌋ y = 𝟎
-x ⌊/₀⌋ 𝟎 = 𝟎
-x ⌊/₀⌋ y with (x −? y)
-... | Option.Some(xy) = 𝐒(xy ⌊/₀⌋ y)
-... | Option.None     = 𝟎
+𝐒(x) ⌊/₀⌋ 𝐒(y) with (𝐒(x) −? 𝐒(y))
+... | Option.Some(𝐒x𝐒y) = 𝐒(𝐒x𝐒y ⌊/₀⌋ 𝐒(y))
+... | Option.None       = 𝟎
+{-# CATCHALL #-}
+_    ⌊/₀⌋ _    = 𝟎
 
 -- Unclosed total subtraction from natural numbers to an optional natural number.
 -- When dividing by 0, this operation gives Option.None.
 {-# TERMINATING #-}
 _⌊/⌋?_ : ℕ → ℕ → Option(ℕ)
-𝟎 ⌊/⌋? y = Option.Some(𝟎)
-x ⌊/⌋? 𝟎 = Option.None
-x ⌊/⌋? y with (x −? y)
-... | Option.Some(xy) = Option.map 𝐒(xy ⌊/⌋? y)
-... | Option.None     = Option.Some(𝟎)
+_    ⌊/⌋? 𝟎    = Option.None
+𝟎    ⌊/⌋? 𝐒(_) = Option.Some(𝟎)
+𝐒(x) ⌊/⌋? 𝐒(y) with (𝐒(x) −? 𝐒(y))
+... | Option.Some(𝐒x𝐒y) = Option.map 𝐒(𝐒x𝐒y ⌊/⌋? 𝐒(y))
+... | Option.None       = Option.Some(𝟎)
 
 -- Unclosed total subtraction from natural numbers to an optional natural number.
 -- When dividing by 0 or the division gives a rational number semantically, this operation gives Option.None.
 {-# TERMINATING #-}
 _/?_ : ℕ → ℕ → Option(ℕ)
-𝟎 /? y = Option.Some(𝟎)
-x /? 𝟎 = Option.None
-x /? y with (x −? y)
-... | Option.Some(xy) = Option.map 𝐒(xy /? y)
-... | Option.None     = Option.None
+_    /? 𝟎    = Option.None
+𝟎    /? 𝐒(_) = Option.Some(𝟎)
+𝐒(x) /? 𝐒(y) with (𝐒(x) −? 𝐒(y))
+... | Option.Some(𝐒x𝐒y) = Option.map 𝐒(𝐒x𝐒y /? 𝐒(y))
+... | Option.None       = Option.None
 
 -- Unclosed total subtraction from natural numbers to finite natural numbers
 _−₀fin_ : (x : ℕ) → ℕ → 𝕟(𝐒(x))

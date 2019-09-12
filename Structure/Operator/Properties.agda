@@ -48,6 +48,12 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) (id 
   identity-left = inst-fn Identity.left
   identity-right = inst-fn Identity.right
 
+module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) where
+  record Idempotence : Stmt{ℓ} where
+    constructor intro
+    field proof : Names.Idempotence(_▫_)
+  idempotence = inst-fn Idempotence.proof
+
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) (id : T) where
   record Absorber : Stmt{ℓ} where
     instance constructor intro
@@ -78,9 +84,31 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ 
     record InverseFunction : Stmt{ℓ} where
       instance constructor intro
       field
-        instance ⦃ left ⦄  : InverseFunctionₗ(_▫_) ⦃ [∃]-map(Identity.left) (identity) ⦄ (inv)
-        instance ⦃ right ⦄ : InverseFunctionᵣ(_▫_) ⦃ [∃]-map(Identity.right) (identity) ⦄ (inv)
+        instance ⦃ left ⦄  : InverseFunctionₗ(_▫_) ⦃ [∃]-map Identity.left  identity ⦄ (inv)
+        instance ⦃ right ⦄ : InverseFunctionᵣ(_▫_) ⦃ [∃]-map Identity.right identity ⦄ (inv)
   Invertible = ∃(InverseFunction)
+
+module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ absorberₗ : ∃(Absorberₗ(_▫_)) ⦄ where
+  module _ (opp : T → T) where
+    record OppositeFunctionₗ : Stmt{ℓ} where
+      constructor intro
+      field proof : Names.InverseFunctionₗ(_▫_)([∃]-witness absorberₗ)(opp)
+    oppositeFunctionₗ = inst-fn OppositeFunctionₗ.proof
+
+module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ absorberᵣ : ∃(Absorberᵣ(_▫_)) ⦄ where
+  module _ (opp : T → T) where
+    record OppositeFunctionᵣ : Stmt{ℓ} where
+      constructor intro
+      field proof : Names.InverseFunctionᵣ(_▫_)([∃]-witness absorberᵣ)(opp)
+    oppositeFunctionᵣ = inst-fn OppositeFunctionᵣ.proof
+
+module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ absorber : ∃(Absorber(_▫_)) ⦄ where
+  module _ (opp : T → T) where
+    record OppositeFunction : Stmt{ℓ} where
+      instance constructor intro
+      field
+        instance ⦃ left ⦄  : OppositeFunctionₗ(_▫_) ⦃ [∃]-map Absorber.left  absorber ⦄ (opp)
+        instance ⦃ right ⦄ : OppositeFunctionᵣ(_▫_) ⦃ [∃]-map Absorber.right absorber ⦄ (opp)
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) where
   record Associativity : Stmt{ℓ} where

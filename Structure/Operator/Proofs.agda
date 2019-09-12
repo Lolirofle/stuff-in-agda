@@ -1,17 +1,17 @@
-module Structure.Operator.Proofs{ℓ₁}{ℓ₂} where
+module Structure.Operator.Proofs where
 
 import Lvl
 open import Functional
-open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Relator.Equals{ℓ₁}{ℓ₂}
-open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
-open import Sets.Setoid.Uniqueness{ℓ₁}{ℓ₂}{Lvl.𝟎}
-open import Structure.Function.Domain{ℓ₁}
-open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
-open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
+open import Logic.Propositional
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Sets.Setoid.Uniqueness
+open import Structure.Function.Domain
+open import Structure.Operator.Properties hiding (cancellationₗ ; cancellationᵣ)
+open import Structure.Relator.Properties
 open import Type
 
-module One {T} {_▫_ : T → T → T} where
+module One {ℓ} {T : Type{ℓ}} {_▫_ : T → T → T} where
   -- When an identity element exists and is the same for both sides, it is unique.
   unique-identity : Unique(Identity(_▫_))
   unique-identity{x₁}{x₂} ([∧]-intro identityₗ₁ identityᵣ₁) ([∧]-intro identityₗ₂ identityᵣ₂) =
@@ -116,7 +116,7 @@ module One {T} {_▫_ : T → T → T} where
       ([≡]-with(_▫ inv(y)) (proof) :of: (x ▫ inv(y) ≡ y ▫ inv(y)))
       🝖 (inverse                   :of: (y ▫ inv(y) ≡ id))
 
-module Two {T₁}{T₂} {_▫₁_}{_▫₂_} {θ : T₁ → T₂} (preserving : Preserving2(θ)(_▫₁_)(_▫₂_)) where
+module Two {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {_▫₁_}{_▫₂_} {θ : T₁ → T₂} (preserving : Preserving2(θ)(_▫₁_)(_▫₂_)) where
   module Cancellableᵣ (cancellation : Cancellationᵣ(_▫₂_)) where
     module Identifiableₗ {id₁} (identity₁ : Identityₗ(_▫₁_)(id₁)) {id₂} (identity₂ : Identityₗ(_▫₂_)(id₂)) where
       preserving-identityₗ : (θ(id₁) ≡ id₂)

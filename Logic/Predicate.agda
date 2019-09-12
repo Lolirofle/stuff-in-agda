@@ -12,7 +12,7 @@ open import Type.Empty
 
 module _ {ℓ₁}{ℓ₂} where
   record ∃ {Obj : Type{ℓ₁}} (Pred : Obj → Stmt{ℓ₂}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    instance constructor [∃]-intro
+    constructor [∃]-intro
     field
       witness   : Obj
       ⦃ proof ⦄ : Pred(witness)
@@ -25,6 +25,10 @@ module _ {ℓ₁}{ℓ₂} where
 
   [∃]-elim : ∀{ℓ₃}{Obj}{Pred}{Z : Stmt{ℓ₃}} → (∀{x : Obj} → Pred(x) → Z) → (∃{Obj} Pred) → Z
   [∃]-elim (f) ([∃]-intro(_) ⦃ proof ⦄) = f(proof)
+
+  instance
+    [∃]-intro-instance : ∀{Obj}{P}{x : Obj} → ⦃ _ : P(x) ⦄ → ∃(P)
+    [∃]-intro-instance {x = x} ⦃ proof ⦄ = [∃]-intro (x) ⦃ proof ⦄
 
   syntax ∃{T}(λ x → y) = ∃❪ x ꞉ T ❫․ y
 

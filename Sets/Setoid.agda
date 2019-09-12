@@ -21,6 +21,8 @@ module _ {ℓₒ} where
     _≢_ : T → T → Set(ℓₒ)
     a ≢ b = ¬(a ≡ b)
   open Equiv ⦃ ... ⦄ public
+  {-# STATIC _≡_ #-} -- TODO: Not sure if these are doing anything, but it would be nice if (_≡_) would be replaced by the corresponding equivalence relation before everything (specifically before projection elimination so that when the relation is a record so that the following would work: record _▫_ A B where field a : _ ; b : _ ; [▫]-reflexivity : Names.reflexivity(_▫_) ; a([▫]-reflexivity) = _ ; b([▫]-reflexivity) = _)
+  {-# INLINE _≡_ #-}
 
   -- A set and an equivalence relation on it
   record Setoid : Set(Lvl.𝐒(ℓₒ)) where
@@ -28,6 +30,8 @@ module _ {ℓₒ} where
     field
       Type : Set(ℓₒ)
       instance ⦃ Eq ⦄ : Equiv(Type)
+
+-- TODO: Maybe these should be moved and renamed to function like all other properties in Structure.Operator and Structure.Function
 
 -- The function `f` "(behaves like)/is a function" in the context of `_≡_` from the Equiv instance.
 module _ {ℓₒ₁}{ℓₒ₂} {T₁ : Set(ℓₒ₁)} ⦃ _ : Equiv(T₁) ⦄ {T₂ : Set(ℓₒ₂)} ⦃ _ : Equiv(T₂) ⦄ where

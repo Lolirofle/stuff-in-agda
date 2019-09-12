@@ -8,9 +8,9 @@ open import Type
 
 -- A tuple with the same type of elements a specified number of times
 _^_ : ∀{ℓ} → Type{ℓ} → ℕ → Type{ℓ}
-_^_ type 0      = Unit
-_^_ type (𝐒(0)) = type
-_^_ type (𝐒(n)) = (type ^ n) ⨯ type
+_^_ type 0         = Unit
+_^_ type 1         = type
+_^_ type (𝐒(𝐒(n))) = (type ^ 𝐒(n)) ⨯ type
 
 -- Returns the nth element of a tuple
 index : ∀{n : ℕ}{ℓ}{T : Type{ℓ}} → ℕ → (T ^ (𝐒(n))) → T

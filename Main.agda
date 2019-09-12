@@ -8,6 +8,7 @@ import Data.Boolean.Proofs
 import Data.Boolean.Stmt
 import Data.Boolean.Stmt.Proofs
 import Data.Either
+import Data.Either.Proofs
 import Data.List
 import Data.List.Computability
 import Data.List.Proofs
@@ -19,6 +20,7 @@ import Data.List.Relation
 -- import Data.ListNonEmpty
 import Data.ListSized
 import Data.Option
+import Data.Option.Proofs
 import Data.Proofs
 import Data.Tuple
 import Data.Tuple.Function
@@ -30,6 +32,7 @@ import Data.Tuple.Raiseₗ
 import FFI.IO as FFI
 import Functional
 import FormalLanguage
+import FormalLanguage.Equals
 import FormalLanguage.Proofs
 -- import Functional.DomainRaise
 import Functional.Domains
@@ -161,7 +164,7 @@ import Structure.Operator.Functions
 import Structure.Operator.Group
 -- import Structure.Operator.Group.Proofs
 import Structure.Operator.Monoid
-import Structure.Operator.Monoid.Proofs
+-- import Structure.Operator.Monoid.Proofs
 import Structure.Operator.Names
 -- import Structure.Operator.Proofs
 import Structure.Operator.Properties

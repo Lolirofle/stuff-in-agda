@@ -52,4 +52,5 @@ module Different where
 
   _and_ : ∀{ℓ}{T : Type{ℓ}} → Option(T) → Option(T) → Option(T ⨯ T)
   _and_ (Some x) (Some y)  = Some(x , y)
+  {-# CATCHALL #-}
   _and_ _        _         = None

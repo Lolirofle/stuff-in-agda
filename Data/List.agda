@@ -26,7 +26,7 @@ pattern _] x = x ⊰ ∅
 
 -- List concatenation
 _++_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T) → List(T)
-_++_ ∅ b = b
+_++_ ∅             b = b
 _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
 
 module LongOper where
@@ -120,7 +120,7 @@ module _ {ℓ} where
   -- The sublist with the first n elements in the list
   first : ∀{T : Type{ℓ}} → ℕ → List(T) → List(T)
   first _      ∅       = ∅
-  first 𝟎      _       = ∅
+  first 𝟎      (_ ⊰ _) = ∅
   first (𝐒(n)) (x ⊰ l) = x ⊰ (first n l)
 
   -- The sublist without the first n elements in the list
@@ -141,11 +141,12 @@ module _ {ℓ} where
   -- TODO: Generalize
   mapWindow2ₗ : ∀{T : Type{ℓ}} → (T → T → T) → List(T) → List(T)
   mapWindow2ₗ f (x₁ ⊰ x₂ ⊰ l) = (f x₁ x₂) ⊰ (mapWindow2ₗ f (x₂ ⊰ l))
+  {-# CATCHALL #-}
   mapWindow2ₗ _ _ = ∅
 
   -- The first element of the list (head)
   firstElem : ∀{T : Type{ℓ}} → List(T) → Option(T)
-  firstElem ∅ = Option.None
+  firstElem ∅       = Option.None
   firstElem (x ⊰ _) = Option.Some(x)
 
   -- The last element of the list
@@ -153,8 +154,8 @@ module _ {ℓ} where
   lastElem l = foldᵣ (elem ↦ _ ↦ Option.Some(elem)) Option.None l -- TODO: Is this wrong?
 
   _orₗ_ : ∀{T : Type{ℓ}} → List(T) → List(T) → List(T)
-  _orₗ_ ∅ default = default
-  _orₗ_ l _ = l
+  _orₗ_ ∅ default      = default
+  _orₗ_ (l @(_ ⊰ _)) _ = l
 
   -- Reverse the order of the elements in the list
   reverse : ∀{T : Type{ℓ}} → List(T) → List(T)

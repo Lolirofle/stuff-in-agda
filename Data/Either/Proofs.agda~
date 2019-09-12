@@ -1,0 +1,14 @@
+module Data.Either.Proofs where
+
+import      Lvl
+open import Data.Either
+open import Type
+
+module _ where {ℓ₁}{ℓ₂} (T₁ : Type{ℓ₁}) (T₂ : Type{ℓ₂})
+  Left-injectivity : {x y : T₁} → (Left {T₁ = T₁} {T₂ = T₂} (x) ≡ Left(y)) → (x ≡ y)
+  Left-injectivity [≡]-intro = [≡]-intro
+  {-# REWRITE Left-injectivity #-}
+
+  Right-injectivity : {x y : T₂} → (Right {T₁ = T₁} {T₂ = T₂} (x) ≡ Right(y)) → (x ≡ y)
+  Right-injectivity [≡]-intro = [≡]-intro
+  {-# REWRITE Right-injectivity #-}

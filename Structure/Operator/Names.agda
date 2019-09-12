@@ -36,6 +36,10 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
   Identity : (T → T → T) → T → Stmt
   Identity (_▫_) id = (Identityₗ (_▫_) id) ∧ (Identityᵣ (_▫_) id)
 
+  -- Definition of idempotence
+  Idempotence : (T → T → T) → Stmt
+  Idempotence (_▫_) = ∀{x : T} → (x ▫ x ≡ x)
+
 module _ {ℓ₁ ℓ₂ ℓ₃} {T₊ : Type{ℓ₁}} {T₋ : Type{ℓ₂}} {Tᵣ : Type{ℓ₃}} ⦃ _ : Equiv(Tᵣ) ⦄ where
   -- Definition of a left inverse function
   InverseFunctionₗ : (T₋ → T₊ → Tᵣ) → Tᵣ → (T₊ → T₋) → Stmt

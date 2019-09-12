@@ -130,7 +130,7 @@ module _ {ℓₒ₁ ℓₒ₂} {a : Type{ℓₒ₁}}{b : Type{ℓₒ₂}} where
   [∘]-identityᵣ = [≡]-intro
 
 module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {a : Type{ℓₒ₁}} ⦃ _ : Equiv(a) ⦄ {b : Type{ℓₒ₂}} ⦃ _ : Equiv(b) ⦄ {c : Type{ℓₒ₃}} ⦃ _ : Equiv(c) ⦄ where
-  -- Composition of injective functions are injective.
+  -- The composition of injective functions is injective.
   -- TODO: https://math.stackexchange.com/questions/2049511/is-the-composition-of-two-injective-functions-injective/2049521
   -- Alternative proof: [∘]-associativity {f⁻¹}{g⁻¹}{g}{f} becomes id by inverseₗ-value injective equivalence
   [∘]-injective : ∀{f : b → c}{g : a → b} → ⦃ _ : Injective(f) ⦄ → ⦃ _ : Injective(g) ⦄ → Injective(f ∘ g)
@@ -141,7 +141,7 @@ module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {a : Type{ℓₒ₁}} ⦃ _ : Equiv(a) 
   Injective.proof([∘]-injective-elim {f = f}{g = g} ⦃ inj-fg ⦄) {x₁}{x₂} (gx₁gx₂) = injective(f ∘ g) ⦃ inj-fg ⦄ {x₁} {x₂} (function(f) (gx₁gx₂))
 
 module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {a : Type{ℓₒ₁}} {b : Type{ℓₒ₂}} ⦃ _ : Equiv(b) ⦄ {c : Type{ℓₒ₃}} ⦃ _ : Equiv(c) ⦄ where
-  -- Composition of surjective functions are surjective.
+  -- The composition of surjective functions is surjective.
   [∘]-surjective : ∀{f : b → c} → ⦃ _ : Function(f) ⦄ → ∀{g : a → b} → ⦃ _ : Surjective(f) ⦄ → ⦃ _ : Surjective(g) ⦄ → Surjective(f ∘ g)
   Surjective.proof([∘]-surjective {f = f}{g = g}) {y}
     with (surjective(f) {y})
@@ -156,8 +156,8 @@ module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {a : Type{ℓₒ₁}} {b : Type{ℓₒ�
   ... | [∃]-intro (x) ⦃ fgx≡y ⦄ = [∃]-intro (g(x)) ⦃ fgx≡y ⦄
 
   -- Every injective function has a left inverse with respect to function composition.
-  {-[∘]-inverseₗ-value : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
-  [∘]-inverseₗ-value {a}{b} {f} ⦃ f-injective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
+  {-[∘]-inverseₗ : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
+  [∘]-inverseₗ {a}{b} {f} ⦃ f-injective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
     f⁻¹ : b → a
     f⁻¹(y) = 
 
@@ -165,8 +165,8 @@ module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {a : Type{ℓₒ₁}} {b : Type{ℓₒ�
     f⁻¹-proof{y} = 
   -}
 
--- module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {a : Type{ℓₒ₁}}{b : Type{ℓₒ₂}}{c : Type{ℓₒ₃}} where
 module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {a : Type{ℓₒ₁}} ⦃ _ : Equiv(a) ⦄ {b : Type{ℓₒ₂}} ⦃ _ : Equiv(b) ⦄ {c : Type{ℓₒ₃}} ⦃ _ : Equiv(c) ⦄ where
+  -- The composition of bijective functions is bijective.
   [∘]-bijective : ∀{f : b → c} → ⦃ _ : Function(f) ⦄ → ∀{g : a → b} → ⦃ _ : Bijective(f) ⦄ → ⦃ _ : Bijective(g) ⦄ → Bijective(f ∘ g)
   [∘]-bijective {f = f} ⦃ func-f ⦄ {g} ⦃ bij-f ⦄ ⦃ bij-g ⦄ =
     injective-surjective-to-bijective(f ∘ g)
@@ -179,13 +179,14 @@ module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {a : Type{ℓₒ₁}} ⦃ _ : Equiv(a) 
         ⦃ bijective-to-surjective(g) ⦃ bij-g ⦄ ⦄
       ⦄
 
+  -- The composition of functions is a function.
   [∘]-function : ∀{f : b → c}{g : a → b} → ⦃ _ : Function(f) ⦄ → ⦃ _ : Function(g) ⦄ → Function(f ∘ g)
   Function.proof([∘]-function {f = f}{g = g} ⦃ func-f ⦄ ⦃ func-g ⦄ ) {x₁}{x₂} = (function(f) ⦃ func-f ⦄ {g(x₁)} {g(x₂)}) ∘ (function(g) ⦃ func-g ⦄ {x₁} {x₂})
 
   -- Every injective function has a left inverse with respect to function composition.
   -- TODO: Maybe also need to assume (∃x. x∈a)? That Inhabited(a). f: ∅→b is okay, but not g: b→∅. But that case should be impossible?
-  {- [∘]-inverseₗ-value : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ⦃ _ : Inhabited(a) ⦄ → ⦃ _ : ∀{y} → Decidable(Image-in(f)(y)) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
-  [∘]-inverseₗ-value {a}{b} {f} ⦃ f-injective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
+  {- [∘]-inverseₗ : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ⦃ _ : Inhabited(a) ⦄ → ⦃ _ : ∀{y} → Decidable(Image-in(f)(y)) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
+  [∘]-inverseₗ {a}{b} {f} ⦃ f-injective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
     f⁻¹ : b → a
     f⁻¹(y) = [∃]-witness(f-injective{y})
 
@@ -202,66 +203,72 @@ module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv(A) ⦄ {B : Type{ℓ
 
   -- Every surjective function has a right inverse with respect to function composition.
   -- Note: Equivalent to axiom of choice from set theory when formulated in classical logic.
-  [∘]-inverseᵣ-value : ∀{f : A → B} → ⦃ _ : Surjective(f) ⦄ → ∃{Obj = B → A}(g ↦ f ∘ g ⊜BB id)
-  [∘]-inverseᵣ-value {f} ⦃ f-surjective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
+  [∘]-inverseᵣ : ∀{f : A → B} → ⦃ _ : Surjective(f) ⦄ → ∃{Obj = B → A}(g ↦ f ∘ g ⊜BB id)
+  [∘]-inverseᵣ {f} ⦃ f-surjective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
     f⁻¹ : B → A
     f⁻¹(y) = [∃]-witness(surjective(f) {y})
 
     f⁻¹-proof : (f ∘ f⁻¹ ⊜ id)
     f⁻¹-proof{y} = [∃]-proof(surjective(f) {y})
 
-  -- TODO: Are these really provable?
-  -- postulate [∘]-inverseₗ : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Bijective(f) ⦄ → ∃(g ↦ g ∘ f ≡ id)
-  -- postulate [∘]-inverseᵣ : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Bijective(f) ⦄ → ∃(g ↦ f ∘ g ≡ id)
-
   -- TODO: 
-  -- inv-fnₗ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
-  -- inv-fnₗ (f) = [∃]-witness([∘]-inverseₗ{_}{_}{f})
+  -- invₗ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
+  -- invₗ (f) = [∃]-witness([∘]-inverseₗ{_}{_}{f})
 
-  inv-fnᵣ : (f : A → B) → ⦃ _ : Surjective(f) ⦄ → (B → A)
-  inv-fnᵣ(f) = [∃]-witness([∘]-inverseᵣ-value{f = f})
+  -- invᵣ(f) is one of the right inverse functions of a surjective function f.
+  invᵣ : (f : A → B) → ⦃ _ : Surjective(f) ⦄ → (B → A)
+  invᵣ(f) = [∃]-witness([∘]-inverseᵣ{f = f})
 
-  inv-fn : (f : A → B) → ⦃ _ : Bijective ⦃ eqA ⦄ ⦃ eqB ⦄ (f) ⦄ → (B → A)
-  inv-fn(f) ⦃ bij ⦄ = inv-fnᵣ(f) ⦃ bijective-to-surjective(f) ⦃ bij ⦄ ⦄
+  -- inv(f) is the inverse function of a bijective function f.
+  inv : (f : A → B) → ⦃ _ : Bijective ⦃ eqA ⦄ ⦃ eqB ⦄ (f) ⦄ → (B → A)
+  inv(f) ⦃ bij ⦄ = invᵣ(f) ⦃ bijective-to-surjective(f) ⦃ bij ⦄ ⦄
 
-  inv-fnᵣ-inverseᵣ : ∀{f} → ⦃ _ : Surjective(f) ⦄ → (f ∘ inv-fnᵣ(f) ⊜ id)
-  inv-fnᵣ-inverseᵣ{f} = [∃]-proof([∘]-inverseᵣ-value{f = f})
+  -- invᵣ is a right inverse function to a surjective f.
+  invᵣ-inverseᵣ : ∀{f} → ⦃ _ : Surjective(f) ⦄ → (f ∘ invᵣ(f) ⊜ id)
+  invᵣ-inverseᵣ{f} = [∃]-proof([∘]-inverseᵣ{f = f})
 
-  inv-fn-inverseᵣ : ∀{f} → ⦃ bij : Bijective ⦃ eqA ⦄ ⦃ eqB ⦄ (f) ⦄ → (f ∘ inv-fn(f) ⦃ bij ⦄ ⊜ id)
-  inv-fn-inverseᵣ{f} ⦃ bij ⦄ = inv-fnᵣ-inverseᵣ{f} ⦃ bijective-to-surjective(f) ⦃ bij ⦄ ⦄
+  -- inv is a right inverse function to a bijective f.
+  inv-inverseᵣ : ∀{f} → ⦃ bij : Bijective ⦃ eqA ⦄ ⦃ eqB ⦄ (f) ⦄ → (f ∘ inv(f) ⦃ bij ⦄ ⊜ id)
+  inv-inverseᵣ{f} ⦃ bij ⦄ = invᵣ-inverseᵣ{f} ⦃ bijective-to-surjective(f) ⦃ bij ⦄ ⦄
 
-  inv-fn-inverseₗ : ∀{f} → ⦃ bij : Bijective ⦃ eqA ⦄ ⦃ eqB ⦄ (f) ⦄ → (inv-fn(f) ⦃ bij ⦄ ∘ f ⊜AA id)
-  inv-fn-inverseₗ{f} ⦃ bij ⦄ = [∃!]-existence-eq-any (bijective(f) ⦃ bij ⦄) (reflexivity(_≡ₛ_))
+  -- inv is a left inverse function to a bijective f.
+  inv-inverseₗ : ∀{f} → ⦃ bij : Bijective ⦃ eqA ⦄ ⦃ eqB ⦄ (f) ⦄ → (inv(f) ⦃ bij ⦄ ∘ f ⊜AA id)
+  inv-inverseₗ{f} ⦃ bij ⦄ = [∃!]-existence-eq-any (bijective(f) ⦃ bij ⦄) (reflexivity(_≡ₛ_))
 
   module _ {f : A → B} ⦃ func : Function ⦃ eqA ⦄ ⦃ eqB ⦄ (f) ⦄ ⦃ surj : Surjective ⦃ eqB ⦄ (f) ⦄ where
-    invᵣ-injective : Injective(inv-fnᵣ f ⦃ surj ⦄)
+    -- invᵣ(f) is injective when f is a function and is surjective.
+    invᵣ-injective : Injective(invᵣ f ⦃ surj ⦄)
     Injective.proof(invᵣ-injective) {x₁}{x₂} (invᵣfx₁≡invᵣfx₂) =
-      symmetry(_≡ₛ_) (inv-fnᵣ-inverseᵣ{f} ⦃ surj ⦄ {x₁})
-      🝖 function(f) ⦃ func ⦄ {inv-fnᵣ f ⦃ surj ⦄ (x₁)} {inv-fnᵣ f ⦃ surj ⦄ (x₂)} (invᵣfx₁≡invᵣfx₂)
-      🝖 inv-fnᵣ-inverseᵣ{f} ⦃ surj ⦄ {x₂}
+      symmetry(_≡ₛ_) (invᵣ-inverseᵣ{f} ⦃ surj ⦄ {x₁})
+      🝖 function(f) ⦃ func ⦄ {invᵣ f ⦃ surj ⦄ (x₁)} {invᵣ f ⦃ surj ⦄ (x₂)} (invᵣfx₁≡invᵣfx₂)
+      🝖 invᵣ-inverseᵣ{f} ⦃ surj ⦄ {x₂}
 
   module _ {f : A → B} ⦃ bij : Bijective ⦃ eqA ⦄ ⦃ eqB ⦄ (f) ⦄ where
-    inv-surjective : Surjective ⦃ eqA ⦄ (inv-fn(f) ⦃ bij ⦄)
-    Surjective.proof(inv-surjective) {x} = [∃]-intro(f(x)) ⦃ inv-fn-inverseₗ {f} ⦃ bij ⦄ ⦄
+    -- inv(f) is surjective when f is bijective.
+    inv-surjective : Surjective ⦃ eqA ⦄ (inv(f) ⦃ bij ⦄)
+    Surjective.proof(inv-surjective) {x} = [∃]-intro(f(x)) ⦃ inv-inverseₗ {f} ⦃ bij ⦄ ⦄
 
   module _ {f : A → B} ⦃ func : Function ⦃ eqA ⦄ ⦃ eqB ⦄ (f) ⦄ ⦃ bij : Bijective ⦃ eqA ⦄ ⦃ eqB ⦄ (f) ⦄ where
-    inv-function : Function ⦃ eqB ⦄ ⦃ eqA ⦄ (inv-fn(f) ⦃ bij ⦄)
+    -- inv(f) is a function when f is a function and is bijective.
+    inv-function : Function ⦃ eqB ⦄ ⦃ eqA ⦄ (inv(f) ⦃ bij ⦄)
     Function.proof(inv-function) {x₁}{x₂} (x₁≡x₂) =
-      injective(f) ⦃ bijective-to-injective(f) ⦃ bij ⦄ ⦄ {inv-fn f ⦃ bij ⦄ (x₁)} {inv-fn f ⦃ bij ⦄ (x₂)}
+      injective(f) ⦃ bijective-to-injective(f) ⦃ bij ⦄ ⦄ {inv f ⦃ bij ⦄ (x₁)} {inv f ⦃ bij ⦄ (x₂)}
         (
-          inv-fn-inverseᵣ{f} ⦃ bij ⦄ {x₁}
+          inv-inverseᵣ{f} ⦃ bij ⦄ {x₁}
           🝖 x₁≡x₂
-          🝖 symmetry(_≡ₛ_) (inv-fn-inverseᵣ{f} ⦃ bij ⦄ {x₂})
+          🝖 symmetry(_≡ₛ_) (inv-inverseᵣ{f} ⦃ bij ⦄ {x₂})
         )
 
-    inv-injective : Injective(inv-fn f ⦃ bij ⦄)
+    -- inv(f) is injective when f is a function and is bijective.
+    inv-injective : Injective(inv f ⦃ bij ⦄)
     Injective.proof(inv-injective) {x₁}{x₂} (invfx₁≡invfx₂) =
-      symmetry(_≡ₛ_) (inv-fn-inverseᵣ{f} ⦃ bij ⦄ {x₁})
-      🝖 function(f) ⦃ func ⦄ {inv-fn f ⦃ bij ⦄ (x₁)} {inv-fn f ⦃ bij ⦄ (x₂)} (invfx₁≡invfx₂)
-      🝖 inv-fn-inverseᵣ{f} ⦃ bij ⦄ {x₂}
+      symmetry(_≡ₛ_) (inv-inverseᵣ{f} ⦃ bij ⦄ {x₁})
+      🝖 function(f) ⦃ func ⦄ {inv f ⦃ bij ⦄ (x₁)} {inv f ⦃ bij ⦄ (x₂)} (invfx₁≡invfx₂)
+      🝖 inv-inverseᵣ{f} ⦃ bij ⦄ {x₂}
 
-    inv-bijective : Bijective(inv-fn(f) ⦃ bij ⦄)
-    inv-bijective = injective-surjective-to-bijective(inv-fn(f) ⦃ bij ⦄) ⦃ inv-injective ⦄ ⦃ inv-surjective ⦃ bij ⦄ ⦄
+    -- inv(f) is bijective when f is a function and is bijective.
+    inv-bijective : Bijective(inv(f) ⦃ bij ⦄)
+    inv-bijective = injective-surjective-to-bijective(inv(f) ⦃ bij ⦄) ⦃ inv-injective ⦄ ⦃ inv-surjective ⦃ bij ⦄ ⦄
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{ℓ₃}} where
   open import Relator.Equals
