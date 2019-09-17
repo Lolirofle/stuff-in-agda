@@ -1,15 +1,15 @@
 import      Lvl
 open import Type
 
-module Data.List.Proofs.Sublist {ℓ₁ ℓ₂ : Lvl.Level} (T : Type{ℓ₂}) where
+module Data.List.Relation.Sublist.Proofs {ℓ} {T : Type{ℓ}} where
 
 open import Functional
-open import Data.List
+open import Data.List hiding (skip)
 open import Data.List.Proofs
-open import Data.List.Relation.Sublist{ℓ₁}{ℓ₂}(T)
-open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Logic.Predicate{ℓ₁}{ℓ₂}
-open import Relator.Equals{ℓ₁ Lvl.⊔ ℓ₂}
+open import Data.List.Relation.Sublist{ℓ}{T}
+open import Logic.Propositional
+open import Logic.Predicate
+open import Relator.Equals
 
 instance
   [⊑]-reflexivity : ∀{L} → (L ⊑ L)

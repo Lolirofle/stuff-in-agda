@@ -13,13 +13,13 @@ open import Metalogic.Classical.Propositional.Syntax{ℓ} (Proposition)
     _∧_ to _∧ₗ_ ;
     _∨_ to _∨ₗ_ ;
     _⇒_ to _⇒ₗ_ )
-open import Relator.Equals{ℓ}
-open import Relator.Equals.Proofs{ℓ}
-open import Sets.BoolSet{ℓ}
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Sets.BoolSet
 
 -- A model decides whether a proposition is true or false
 -- Also known as Interpretation, Structure, Model
-record Model{ℓₘ} : Set(ℓ Lvl.⊔ ℓₘ) where
+record Model : Set(ℓ) where
   field
     interpretProp : Proposition → Bool
 
@@ -29,7 +29,7 @@ module _ where
   import      Data.Boolean.Operators
   open        Data.Boolean.Operators.Logic
 
-  satisfaction : Model{ℓ} → Formula → Bool
+  satisfaction : Model → Formula → Bool
   satisfaction(𝔐)(• prop) = Model.interpretProp(𝔐) (prop)
   satisfaction(𝔐)(⊤ₗ) = 𝑇
   satisfaction(𝔐)(⊥ₗ) = 𝐹
@@ -39,9 +39,9 @@ module _ where
   satisfaction(𝔐)(φ₁ ⇒ₗ φ₂) = ¬(satisfaction(𝔐)(φ₁)) ∨ (satisfaction(𝔐)(φ₂))
 
   -- Syntactic details with the relation symbol
-  record SatisfactionRelation (Obj : Set(ℓ) → Set(ℓ)) : Set(Lvl.𝐒(ℓ)) where
+  record SatisfactionRelation {ℓ₁}{ℓ₂} (Obj : Set(ℓ) → Set(ℓ₁)) : Set(Lvl.𝐒(ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂)) where
     field
-      _⊧_ : Model{ℓ} → Obj(Formula) → Set(ℓ)
+      _⊧_ : Model → Obj(Formula) → Set(ℓ₂)
   open SatisfactionRelation ⦃ ... ⦄ public
 
   instance
@@ -51,14 +51,14 @@ module _ where
 
   instance
     -- Satisfaction for a list of formulas
-    list-satisfaction-relation : SatisfactionRelation(BoolSet)
+    list-satisfaction-relation : SatisfactionRelation(BoolSet{ℓ})
     list-satisfaction-relation = record{_⊧_ = \𝔐 Γ → (∀{γ} → (γ ∈ Γ) → satisfaction(𝔐)(γ) ≡ 𝑇)}
 
   -- Entailment
-  data _⊨_ (Γ : BoolSet(Formula)) (φ : Formula) : Set(ℓ) where
+  data _⊨_ (Γ : BoolSet{ℓ}(Formula)) (φ : Formula) : Set(ℓ) where
     [⊨]-intro : (∀{𝔐} → (𝔐 ⊧ Γ) → (𝔐 ⊧ φ)) → (Γ ⊨ φ)
 
-  _⊭_ : BoolSet(Formula) → Formula → Set(ℓ)
+  _⊭_ : BoolSet{ℓ}(Formula) → Formula → Set(ℓ)
   _⊭_ Γ φ = (_⊨_ Γ φ) → Empty{ℓ}
 
   -- Validity

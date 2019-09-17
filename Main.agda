@@ -12,11 +12,11 @@ import Data.Either.Proofs
 import Data.List
 import Data.List.Computability
 import Data.List.Proofs
--- import Data.List.Proofs.Membership
--- import Data.List.Proofs.Sublist
+import Data.List.Relation.Membership.Proofs
+import Data.List.Relation.Sublist.Proofs
 import Data.List.Relation
--- import Data.List.Relation.Membership
--- import Data.List.Relation.Sublist
+import Data.List.Relation.Membership
+import Data.List.Relation.Sublist
 -- import Data.ListNonEmpty
 import Data.ListSized
 import Data.Option
@@ -56,6 +56,9 @@ import Logic.Predicate.Theorems
 import Logic.Propositional
 import Logic.Propositional.Theorems
 import Lvl
+import Metalogic.Classical.Propositional.ProofSystem
+import Metalogic.Classical.Propositional.Syntax
+import Metalogic.Classical.Propositional.TruthSemanticsModel
 -- import Numeral.CoordinateVector
 -- import Numeral.CoordinateVector.Proofs
 -- import Numeral.CoordinateVector.Set
@@ -108,6 +111,7 @@ import Numeral.Natural.UnclosedOper
 import Numeral.Sign
 import Numeral.Sign.Oper
 import Numeral.Sign.Oper0
+import Operator.Equals
 -- import Relator.Bijection
 import Relator.Congruence
 import Relator.Congruence.Proofs
@@ -118,6 +122,7 @@ import Relator.Equals.Proofs
 -- import Relator.Finite
 import Relator.Names
 import Relator.Ordering
+import Sets.BoolSet
 import Sets.Setoid
 import Sets.Setoid.Proofs
 import Sets.Setoid.Size

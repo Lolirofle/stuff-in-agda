@@ -1,0 +1,1 @@
+../../Numeral/Natural.agda

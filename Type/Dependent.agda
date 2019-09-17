@@ -21,3 +21,5 @@ record Σ {ℓ₁ ℓ₂} (A : Type{ℓ₁}) (B : A → Type{ℓ₂}) : Type{ℓ
   field
     left  : A
     right : B(left)
+
+{-# BUILTIN SIGMA Σ #-}

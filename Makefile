@@ -16,7 +16,7 @@ test:
 	agda ${OPTIONS} Test.agda
 
 classic:
-	agda ${OPTIONS} --prop MainClassic.agda
+	cd Mathematical && agda ${OPTIONS} --cubical --prop Main.agda
 
 docs:
 	agda ${OPTIONS} --html Main.agda

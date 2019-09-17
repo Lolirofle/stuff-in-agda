@@ -8,7 +8,7 @@ infixl 100 _‖_
 
 data _‖_ {ℓ₁}{ℓ₂} (T₁ : Type{ℓ₁}) (T₂ : Type{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂} where
   instance
-    Left : T₁ → (T₁ ‖ T₂)
+    Left  : T₁ → (T₁ ‖ T₂)
     Right : T₂ → (T₁ ‖ T₂)
 {-# FOREIGN GHC type AgdaEither ℓ₁ ℓ₂ = Either #-}
 {-# COMPILE GHC _‖_ = data AgdaEither (Left | Right) #-}

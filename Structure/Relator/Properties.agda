@@ -1,12 +1,8 @@
 module Structure.Relator.Properties where
 
 import      Lvl
-open import Data.Tuple as Tuple using (_⨯_ ; _,_)
-open import Functional
 open import Lang.Instance
 open import Logic
-open import Logic.Propositional
-open import Numeral.Natural
 import      Relator.Names as Names
 open import Type
 

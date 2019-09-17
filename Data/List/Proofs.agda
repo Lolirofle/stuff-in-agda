@@ -152,7 +152,6 @@ module _ {ℓ} where
     -- = 𝐏(𝐒(length(l)))
     -- = length(l))
 
-  -- TODO
   instance
     [⊰]-cancellationₗ : ∀{T : Type{ℓ}} → Cancellationₗ {T₁ = T} (_⊰_)
     Cancellationₗ.proof([⊰]-cancellationₗ) = proof where
@@ -178,6 +177,20 @@ module _ {ℓ} where
   ...                                                                | ()
   [⊰]-general-cancellationₗ {_} {x1} {x2} {xl1 ⊰ l1} {xl2 ⊰ l2} p = Right-injectivity([≡]-with(firstElem) p)
 
+  [∅][⊰]-unequal : ∀{T : Type{ℓ}}{x : T}{l} → ¬(∅ ≡ x ⊰ l)
+  [∅][⊰]-unequal {_} {x} {l} ()
+
+  [⊰]-unequal : ∀{T : Type{ℓ}}{x : T}{l} → ¬(x ⊰ l ≡ l)
+  [⊰]-unequal {_} {x} {l} ()
+
+  {- TODO
+  postulate [⊰][++]-unequal : ∀{T : Type{ℓ}}{x : T}{a l} → ¬(a ++ (x ⊰ l) ≡ l)
+  -- [⊰][++]-unequal {T} {x} {x₁ ⊰ a} {x₂ ⊰ l} p = {!!}
+
+  [++]-cancellation-of-[∅]l : ∀{T : Type{ℓ}}{a b : List(T)} → (a ++ b ≡ b) → (a ≡ ∅)
+  [++]-cancellation-of-[∅]l {_} {∅}    {b}      _ = [≡]-intro
+  [++]-cancellation-of-[∅]l {_} {x ⊰ a} {y ⊰ b} p = [⊥]-elim([⊰][++]-unequal([⊰]-general-cancellationᵣ p))
+
   instance
     [++]-cancellationₗ : ∀{T : Type{ℓ}} → Cancellationₗ {T₁ = List(T)} (_++_)
     Cancellationₗ.proof([++]-cancellationₗ) = proof where
@@ -192,13 +205,15 @@ module _ {ℓ} where
       -- l ++ a ≡ l ++ b
       -- a ≡ b
 
-  [++]-cancellationᵣ : ∀{T : Type{ℓ}} → Cancellationᵣ {T₁ = List(T)} (_++_)
-  Cancellationᵣ.proof([++]-cancellationᵣ) = proof where
-    proof : Names.Cancellationᵣ(_++_)
-    proof {l}      {∅}     {∅}     p = [≡]-intro
-    proof {l} {∅}     {x ⊰ b} p = {!!}
-    proof {l} {x ⊰ a} {∅} ()
-    proof {l}      {x ⊰ a} {x₁ ⊰ b} p = [≡]-with-op(_⊰_) ([⊰]-general-cancellationₗ p) (proof{l}{a}{b} ([⊰]-general-cancellationᵣ p))
+  instance
+    [++]-cancellationᵣ : ∀{T : Type{ℓ}} → Cancellationᵣ {T₁ = List(T)} (_++_)
+    Cancellationᵣ.proof([++]-cancellationᵣ) {a}{b} = proof {a}{b} where
+      proof : Names.Cancellationᵣ(_++_)
+      proof {l}      {∅}     {∅}      p = [≡]-intro
+      proof {x₁ ⊰ l} {∅}     {x ⊰ b}  p = [⊥]-elim([⊰][++]-unequal(symmetry(_≡_) ([⊰]-general-cancellationᵣ p)))
+      proof {x₁ ⊰ l} {x ⊰ a}  {∅}     p = [⊥]-elim([⊰][++]-unequal([⊰]-general-cancellationᵣ p))
+      proof {l}      {x ⊰ a} {x₁ ⊰ b} p = [≡]-with-op(_⊰_) ([⊰]-general-cancellationₗ p) (proof{l}{a}{b} ([⊰]-general-cancellationᵣ p))
+  -}
 
   length-[++^] : ∀{T : Type{ℓ}}{l : List(T)}{n : ℕ} → (length(l ++^ n) ≡ length(l) ⋅ n)
   length-[++^]{T}{l}{𝟎}    = [≡]-intro

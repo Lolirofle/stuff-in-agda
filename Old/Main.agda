@@ -17,8 +17,8 @@ import Data.Either
 import Data.List
 import Data.List.Computability
 import Data.List.Proofs
-import Data.List.Proofs.Membership
-import Data.List.Proofs.Sublist
+import Data.List.Relation.Membership.Proofs
+import Data.List.Relation.Sublist.Proofs
 import Data.List.Relation
 import Data.List.Relation.Membership
 import Data.List.Relation.Sublist

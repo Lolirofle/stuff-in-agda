@@ -5,12 +5,12 @@ open import Data hiding (empty)
 import      Data.List
 open        Data.List using (List ; ∅ ; _⊰_ ; _++_ ; [_ ; _])
 import      Data.List.Relation.Membership
-import      Data.List.Proofs.Membership
+import      Data.List.Relation.Membership.Proofs
 open import Metalogic.Classical.Propositional.Syntax(Proposition)
 open import Functional
 
-open        Data.List.Relation.Membership{ℓₚ}{ℓₚ} {Formula}
-open        Data.List.Proofs.Membership{ℓₚ}{ℓₚ} {Formula}
+open        Data.List.Relation.Membership{ℓₚ} {Formula}
+open        Data.List.Relation.Membership.Proofs{ℓₚ} {Formula}
 
 module Meta where
   data _⊢_ : List(Formula) → Formula → Set(ℓₚ) where -- TODO: Reduce the number of rules
@@ -69,7 +69,7 @@ module NaturalDeduction where
   --   This represents that the formula φ₂ is provable if one can assume the formula φ₁.
   -- The constructors of `Tree` are all the possible ways to construct a natural deduction proof tree.
   -- If a tree with a certain formula cannot be constructed, then it means that the formula is not provable.
-  {-# NO_POSITIVITY_CHECK #-} -- TODO: Could this be a problem? Maybe not? Classical logic is supposed to be consistent, but maybe it is not together with Agda's constructive logic?
+  {-# NO_POSITIVITY_CHECK #-} -- TODO: Could this be a problem? Maybe not? Classical logic is supposed to be consistent, but maybe that does not have anything to do with this?
   data Tree : Formula → Set(ℓₚ) where
     [⊤]-intro : Tree(⊤)
 
