@@ -26,7 +26,7 @@ module _ {T : Type} ⦃ _ : Equiv(T) ⦄ {_▫_ : T → T → T} where
   transfer-fn{n}(f) = map(f){n}
 
   transfer-op : ∀{n} → (T → T → T) → (Vector(n)(T) → Vector(n)(T) → Vector(n)(T))
-  transfer-op {n}(_▫_) = lift-binOp(_▫_){n}
+  transfer-op {n}(_▫_) = map₂(_▫_){n}
 
   transfer-identityₗ : ∀{id} → Identityₗ(_▫_)(id) → ∀{n} → Identityₗ(transfer-op{n}(_▫_))(transfer-elem{n}(id))
   transfer-identityₗ {id} (identity) = [⊜]-intro(identity)
@@ -53,7 +53,7 @@ module _ {T : Type} ⦃ _ : Equiv(T) ⦄ {_▫_ : T → T → T} where
   transfer-preserves{𝟎}    {x}{y} with (Vector.proj(x) | Vector.proj(y))
   ... | ()
   transfer-preserves{𝐒(n)} {x}{y} = [≡]-with() (transfer-preserves{n} {tail x}{tail y})
-  -- ∀{x y} → (fill(x ▫ y) ≡ fill(x) 〔 lift-binOp (_▫_) {n} 〕 fill(y))
+  -- ∀{x y} → (fill(x ▫ y) ≡ fill(x) 〔 map₂ (_▫_) {n} 〕 fill(y))
 
   transfer-opposite-elem : ∀{n} → 𝕟(n) → Vector(n)(T) → T
   transfer-opposite-elem {n}(i)(x) = Vector.proj(n)(i)

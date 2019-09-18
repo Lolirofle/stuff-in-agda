@@ -3,7 +3,7 @@ module Numeral.Natural.Oper where
 open import Numeral.Natural
 
 infixl 10010 _+_
-infix  10010 _−₀_
+infix  10010 _−₀_ _𝄩_
 infixl 10020 _⋅_
 -- infix  10020 _/₀_
 infixl 10030 _^_

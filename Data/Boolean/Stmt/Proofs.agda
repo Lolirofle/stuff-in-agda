@@ -9,7 +9,6 @@ open import Data.Boolean.Stmt
 open import Functional
 open import Logic.Propositional as Logic using (_∨_ ; _∧_ ; ¬_ ; _↔_ ; [⊤]-intro ; [↔]-intro ; [⊥]-elim)
 open import Relator.Equals
-open import Relator.Equals.Proofs
 open import Type
 
 -- A boolean operation is either true or false

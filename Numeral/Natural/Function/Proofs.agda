@@ -79,17 +79,19 @@ instance
     -- = min(𝐒x)(𝐒min(y)(z))
     -- = min(𝐒x)(min(𝐒y)(𝐒z)
 
-min-orderₗ : ∀{a b} → (min(a)(b) ≤ a)
-min-orderₗ {𝟎}   {𝟎}    = [≤]-minimum {𝟎}
-min-orderₗ {𝐒(a)}{𝟎}    = [≤]-minimum {𝐒(a)}
-min-orderₗ {𝟎}   {𝐒(b)} = [≤]-minimum {𝟎}
-min-orderₗ {𝐒(a)}{𝐒(b)} = [≤]-with-[𝐒] ⦃ min-orderₗ {a}{b} ⦄
+instance
+  min-orderₗ : ∀{a b} → (min(a)(b) ≤ a)
+  min-orderₗ {𝟎}   {𝟎}    = [≤]-minimum {𝟎}
+  min-orderₗ {𝐒(a)}{𝟎}    = [≤]-minimum {𝐒(a)}
+  min-orderₗ {𝟎}   {𝐒(b)} = [≤]-minimum {𝟎}
+  min-orderₗ {𝐒(a)}{𝐒(b)} = [≤]-with-[𝐒] ⦃ min-orderₗ {a}{b} ⦄
 
-min-orderᵣ : ∀{a b} → (min(a)(b) ≤ b)
-min-orderᵣ {𝟎}   {𝟎}    = [≤]-minimum {𝟎}
-min-orderᵣ {𝐒(a)}{𝟎}    = [≤]-minimum {𝟎}
-min-orderᵣ {𝟎}   {𝐒(b)} = [≤]-minimum {𝐒(b)}
-min-orderᵣ {𝐒(a)}{𝐒(b)} = [≤]-with-[𝐒] ⦃ min-orderᵣ {a}{b} ⦄
+instance
+  min-orderᵣ : ∀{a b} → (min(a)(b) ≤ b)
+  min-orderᵣ {𝟎}   {𝟎}    = [≤]-minimum {𝟎}
+  min-orderᵣ {𝐒(a)}{𝟎}    = [≤]-minimum {𝟎}
+  min-orderᵣ {𝟎}   {𝐒(b)} = [≤]-minimum {𝐒(b)}
+  min-orderᵣ {𝐒(a)}{𝐒(b)} = [≤]-with-[𝐒] ⦃ min-orderᵣ {a}{b} ⦄
 
 min-arg : ∀{a b} → (min(a)(b) ≡ a) ∨ (min(a)(b) ≡ b)
 min-arg {𝟎}   {𝟎}    = [∨]-introₗ([≡]-intro)
@@ -140,17 +142,19 @@ instance
 -- max-[+]-distributivityₗ : Distributivityₗ(max)
 -- max-[+]-distributivityᵣ : Distributivityᵣ(max)
 
-max-orderₗ : ∀{a b} → (max(a)(b) ≥ a)
-max-orderₗ {𝟎}   {𝟎}    = [≤]-minimum {max(𝟎)(𝟎)}
-max-orderₗ {𝐒(a)}{𝟎}    = reflexivity(_≥_)
-max-orderₗ {𝟎}   {𝐒(b)} = [≤]-minimum {max(𝟎)(𝐒(b))}
-max-orderₗ {𝐒(a)}{𝐒(b)} = [≤]-with-[𝐒] ⦃ max-orderₗ {a}{b} ⦄
+instance
+  max-orderₗ : ∀{a b} → (max(a)(b) ≥ a)
+  max-orderₗ {𝟎}   {𝟎}    = [≤]-minimum {max(𝟎)(𝟎)}
+  max-orderₗ {𝐒(a)}{𝟎}    = reflexivity(_≥_)
+  max-orderₗ {𝟎}   {𝐒(b)} = [≤]-minimum {max(𝟎)(𝐒(b))}
+  max-orderₗ {𝐒(a)}{𝐒(b)} = [≤]-with-[𝐒] ⦃ max-orderₗ {a}{b} ⦄
 
-max-orderᵣ : ∀{a b} → (max(a)(b) ≥ b)
-max-orderᵣ {𝟎}   {𝟎}    = [≤]-minimum {max(𝟎)(𝟎)}
-max-orderᵣ {𝐒(a)}{𝟎}    = [≤]-minimum {max(𝐒(a))(𝟎)}
-max-orderᵣ {𝟎}   {𝐒(b)} = reflexivity(_≥_)
-max-orderᵣ {𝐒(a)}{𝐒(b)} = [≤]-with-[𝐒] ⦃ max-orderᵣ {a}{b} ⦄
+instance
+  max-orderᵣ : ∀{a b} → (max(a)(b) ≥ b)
+  max-orderᵣ {𝟎}   {𝟎}    = [≤]-minimum {max(𝟎)(𝟎)}
+  max-orderᵣ {𝐒(a)}{𝟎}    = [≤]-minimum {max(𝐒(a))(𝟎)}
+  max-orderᵣ {𝟎}   {𝐒(b)} = reflexivity(_≥_)
+  max-orderᵣ {𝐒(a)}{𝐒(b)} = [≤]-with-[𝐒] ⦃ max-orderᵣ {a}{b} ⦄
 
 max-arg : ∀{a b} → (max(a)(b) ≡ a)∨(max(a)(b) ≡ b)
 max-arg {𝟎}   {𝟎}    = [∨]-introₗ([≡]-intro)

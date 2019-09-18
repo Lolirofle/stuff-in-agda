@@ -8,7 +8,7 @@ open import Functional
 open import Logic.Propositional as Logic using (_∨_ ; _∧_ ; ¬_ ; _↔_ ; [⊤]-intro ; [↔]-intro ; [⊥]-elim)
 open import Logic.Predicate
 open import Relator.Equals
-open import Relator.Equals.Proofs
+open import Relator.Equals.Equivalence
 open import Structure.Operator.Monoid
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties

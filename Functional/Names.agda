@@ -20,7 +20,7 @@ module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ 
   FunctionExtensionalityOn(f)(g) = ((f ⊜ g) → (f ≡ g))
 
 module _ {ℓₒ₁}{ℓₒ₂} where
-  open import Relator.Equals.Proofs
+  open import Relator.Equals.Equivalence
 
   FunctionExtensionality : Stmt{Lvl.𝐒(ℓₒ₁ Lvl.⊔ ℓₒ₂)}
   FunctionExtensionality = ∀{A : Type{ℓₒ₁}}{B : Type{ℓₒ₂}} → ∀²ᶠ(FunctionExtensionalityOn{ℓₒ₁}{ℓₒ₂}{A}{B} ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄)

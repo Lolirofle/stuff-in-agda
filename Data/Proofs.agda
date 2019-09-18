@@ -11,7 +11,7 @@ open import Type.Empty
 
 module _ {ℓ} where
   open import Relator.Equals renaming (_≡_ to _≡ₑ_)
-  open import Relator.Equals.Proofs
+  open import Relator.Equals.Equivalence
 
   instance
     Empty-equiv : Equiv(Empty{ℓ})

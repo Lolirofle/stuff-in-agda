@@ -2,6 +2,8 @@ module Logic.Computability.Binary where
 
 import      Lvl
 open import Data.Boolean
+open import Data.Boolean.Stmt using (IsTrue)
+import      Data.Boolean.Stmt.Proofs as BooleanStmt
 open import Data.Tuple
 open import Functional
 open import Logic
@@ -35,6 +37,9 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
 
     proof : ∀{x y} → (x ▫ y) ↔ (decide(x)(y) ≡ 𝑇)
     proof{x}{y} = C.ComputablyDecidable.proof (decidable) {x , y}
+
+    proof-istrue : ∀{x y} → (x ▫ y) ↔ IsTrue(decide(x)(y))
+    proof-istrue = C.ComputablyDecidable.proof-istrue (decidable)
 
     negation : ComputablyDecidable(a ↦ b ↦ ¬(a ▫ b))
     negation = C.ComputablyDecidable.negation (decidable)

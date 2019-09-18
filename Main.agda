@@ -59,15 +59,14 @@ import Lvl
 import Metalogic.Classical.Propositional.ProofSystem
 import Metalogic.Classical.Propositional.Syntax
 import Metalogic.Classical.Propositional.TruthSemanticsModel
--- import Numeral.CoordinateVector
+import Numeral.CoordinateVector
 -- import Numeral.CoordinateVector.Proofs
--- import Numeral.CoordinateVector.Set
 import Numeral.Finite
 import Numeral.Finite.Bound
--- import Numeral.Finite.Functions
--- import Numeral.Finite.Oper
--- import Numeral.Finite.Oper.Comparisons
--- import Numeral.Finite.Proofs
+import Numeral.Finite.Functions
+import Numeral.Finite.Oper
+import Numeral.Finite.Oper.Comparisons
+import Numeral.Finite.Proofs
 -- import Numeral.FiniteInclusive
 import Numeral.Integer
 -- import Numeral.Integer.Function
@@ -75,7 +74,7 @@ import Numeral.Integer
 -- import Numeral.Integer.Proofs
 -- import Numeral.Integer.Relation
 -- import Numeral.Integer.Sign
--- import Numeral.Matrix
+import Numeral.Matrix
 import Numeral.Natural
 -- import Numeral.Natural.Coprime
 import Numeral.Natural.Function
@@ -90,11 +89,9 @@ import Numeral.Natural.Oper.Divisibility
 import Numeral.Natural.Oper.Modulo
 -- import Numeral.Natural.Oper.Modulo.Proofs
 import Numeral.Natural.Oper.Proofs
-import Numeral.Natural.Order
 -- import Numeral.Natural.Prime
 import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Computability
--- import Numeral.Natural.Relation.Countable
 -- import Numeral.Natural.Relation.Divisibility
 -- import Numeral.Natural.Relation.Divisibility.Proofs
 import Numeral.Natural.Relation.Order
@@ -102,7 +99,7 @@ import Numeral.Natural.Relation.Order
 -- import Numeral.Natural.Relation.Order.Computability
 -- import Numeral.Natural.Relation.Order.Existence
 -- import Numeral.Natural.Relation.Order.Existence.Proofs
--- import Numeral.Natural.Relation.Order.Proofs
+import Numeral.Natural.Relation.Order.Proofs
 -- import Numeral.Natural.Relation.Properties
 -- import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
@@ -112,14 +109,12 @@ import Numeral.Sign
 import Numeral.Sign.Oper
 import Numeral.Sign.Oper0
 import Operator.Equals
--- import Relator.Bijection
 import Relator.Congruence
 import Relator.Congruence.Proofs
--- import Relator.Countable
 import Relator.Equals
+import Relator.Equals.Equivalence
 import Relator.Equals.Names
 import Relator.Equals.Proofs
--- import Relator.Finite
 import Relator.Names
 import Relator.Ordering
 import Sets.BoolSet
@@ -192,7 +187,10 @@ import Type.Empty.Proofs
 import Type.Singleton
 import Type.Singleton.Proofs
 import Type.Size
+import Type.Size.Countable
+import Type.Size.Finite
 import Type.Size.Proofs
+
 import Type.Unit
 import Type.Unit.Proofs
 

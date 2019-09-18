@@ -2,6 +2,8 @@ module Logic.Computability where
 
 import      Lvl
 open import Data.Boolean
+open import Data.Boolean.Stmt using (IsTrue)
+import      Data.Boolean.Stmt.Proofs as BooleanStmt
 import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.Boolean.Proofs
@@ -35,6 +37,9 @@ record ComputablyDecidable {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} (P : X → Stmt{�
   field
     decide : X → Bool
     ⦃ proof ⦄ : ∀{x} → P(x) ↔ (decide(x) ≡ 𝑇)
+
+  proof-istrue : ∀{x} → P(x) ↔ IsTrue(decide(x))
+  proof-istrue = [↔]-transitivity proof ([↔]-symmetry BooleanStmt.IsTrue.is-[𝑇])
 
   soundness-𝑇 : ∀{x} → P(x) ← (decide(x) ≡ 𝑇)
   soundness-𝑇 = [↔]-to-[←] (proof)

@@ -12,9 +12,10 @@ open import Type
 -- A structure corresponding to a finite set of natural numbers (0,..,n−1).
 -- Specifically an upper bounded set of natural numbers, and the boundary is strictly lesser than the parameter.
 -- Positive integers including zero less than a specified integer (0≤_<n).
--- This structure works in the following way:
---   • 𝟎 can always be constructed, for any upper bound (n).
---   • 𝐒 can only be constructed from a smaller upper bounded 𝕟.
+-- Or represented using a set: {(i∊ℕ). 0≤i<n}.
+-- The structure works in the following way:
+--   • 𝟎 can be constructed for any non-zero upper bound (n).
+--   • 𝐒 can be constructed from only a smaller upper bounded 𝕟.
 --       Example: A 𝕟 constructed through 𝐒{3} can only be the following:
 --         0 ≡ 𝟎{3}
 --         1 ≡ 𝐒{3} (𝟎{2})
@@ -43,9 +44,9 @@ maximum{𝐒(n)} = 𝐒(maximum{n})
 𝕟-to-ℕ {ℕ.𝐒(_)} (𝐒(n)) = ℕ.𝐒(𝕟-to-ℕ (n))
 
 ℕ-to-𝕟 : (x : ℕ) → ∀{n} → ⦃ _ : IsTrue(x <? n) ⦄ → 𝕟(n)
-ℕ-to-𝕟 (ℕ.𝟎)    {ℕ.𝟎}         ⦃ ⦄
-ℕ-to-𝕟 (ℕ.𝐒(x)) {ℕ.𝟎}         ⦃ ⦄
-ℕ-to-𝕟 (ℕ.𝟎)    {ℕ.𝐒(_)}      ⦃ _ ⦄ = 𝟎
+ℕ-to-𝕟 (ℕ.𝟎)    {ℕ.𝟎}    ⦃ ⦄
+ℕ-to-𝕟 (ℕ.𝐒(x)) {ℕ.𝟎}    ⦃ ⦄
+ℕ-to-𝕟 (ℕ.𝟎)    {ℕ.𝐒(_)} ⦃ _ ⦄ = 𝟎
 ℕ-to-𝕟 (ℕ.𝐒(x)) {ℕ.𝐒(n)} ⦃ p ⦄ = 𝐒(ℕ-to-𝕟 (x) {n} ⦃ p ⦄)
 
 instance

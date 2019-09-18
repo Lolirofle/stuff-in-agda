@@ -116,3 +116,7 @@ module _ where
     -- instance
     --   [≽]-minimum : Weak.Properties.Maximum(_≽_ {ℓ})(Empty)
     --   Weak.Properties.Maximum.proof([≽]-minimum) {T} {}
+
+  module _ {ℓ} {A : Type{ℓ}} {B : Type{ℓ}} where
+    [≡]-to-[≍] : (A ≡ B) → (A ≍ B)
+    [≡]-to-[≍] [≡]-intro = reflexivity(_≍_)

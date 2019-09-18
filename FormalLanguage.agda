@@ -9,7 +9,6 @@ open        Data.Boolean.Operators.Programming
 open import Data.Boolean.Stmt
 open import Functional
 open import Relator.Equals
-open import Relator.Equals.Proofs
 
 -- Definitions:
 --   A language is a set of words.

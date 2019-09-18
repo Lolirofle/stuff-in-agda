@@ -1,5 +1,3 @@
-{-# OPTIONS --rewriting #-}
-
 module Relator.Equals where
 
 import      Lvl

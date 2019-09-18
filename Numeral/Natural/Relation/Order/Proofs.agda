@@ -61,13 +61,6 @@ open import Type
 [≤][𝐒]ₗ {𝟎}    (1≤0)    = [≤][0]ᵣ-negation{0}(1≤0)
 [≤][𝐒]ₗ {𝐒(n)} (SSn≤Sn) = [≤][𝐒]ₗ {n} ([≤]-without-[𝐒] {𝐒(n)}{n} (SSn≤Sn))
 
-[≤]-with-[+]ᵣ : ∀{x y z : ℕ} → (x ≤ y) → (x + z ≤ y + z)
-[≤]-with-[+]ᵣ {_}{_}{𝟎}    (proof)    = proof
-[≤]-with-[+]ᵣ {_}{_}{𝐒(z)} (proof) = [≤]-with-[𝐒] ⦃ [≤]-with-[+]ᵣ {_}{_}{z} (proof) ⦄
-
--- [≤]-with-[+]ₗ : ∀{x y z : ℕ} → (x ≤ y) → (z + x ≤ z + y)
--- TODO: [≤]-with-[+] : ∀{x₁ y₁ : ℕ} → (x₁ ≤ y₁) → ∀{x₂ y₂ : ℕ} → (x₂ ≤ y₂) → (x₁ + x₂ ≤ y₁ + y₂)
-
 instance
   [≤]-reflexivity : Reflexivity (_≤_)
   Reflexivity.proof([≤]-reflexivity) = [≡]-to-[≤] [≡]-intro
@@ -173,8 +166,9 @@ instance
 [<]-of-[𝐒] : ∀{x : ℕ} → (x < 𝐒(x))
 [<]-of-[𝐒] = reflexivity(_≤_)
 
-[≤]-of-[𝐒] : ∀{x : ℕ} → (x ≤ 𝐒(x))
-[≤]-of-[𝐒] = [≤]-successor(reflexivity(_≤_))
+instance
+  [≤]-of-[𝐒] : ∀{x : ℕ} → (x ≤ 𝐒(x))
+  [≤]-of-[𝐒] = [≤]-successor(reflexivity(_≤_))
 
 [<][≢]-equivalence : ∀{x} → (x > 0) ↔ (x ≢ 0)
 [<][≢]-equivalence {x} = [↔]-intro (l{x}) (r{x}) where

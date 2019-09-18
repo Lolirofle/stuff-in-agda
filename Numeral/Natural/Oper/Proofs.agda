@@ -220,8 +220,13 @@ commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
     ([+]-sum-is-0ᵣ {a}{b} (proof))
   )
 
-postulate [⋅]-product-is-1ₗ : ∀{a b} → (a ⋅ b ≡ 1) → (a ≡ 1)
-postulate [⋅]-product-is-1ᵣ : ∀{a b} → (a ⋅ b ≡ 1) → (b ≡ 1)
+[⋅]-product-is-1ₗ : ∀{a b} → (a ⋅ b ≡ 1) → (a ≡ 1)
+[⋅]-product-is-1ₗ {𝟎}   {_}   p = p
+[⋅]-product-is-1ₗ {𝐒 a} {𝟎}   ()
+[⋅]-product-is-1ₗ {𝐒 a} {𝐒 b} p = [≡]-with(𝐒) ([+]-sum-is-0ₗ ([𝐒]-injectivity-raw p))
+
+[⋅]-product-is-1ᵣ : ∀{a b} → (a ⋅ b ≡ 1) → (b ≡ 1)
+[⋅]-product-is-1ᵣ {a}{b} p = [⋅]-product-is-1ₗ {b}{a} ([⋅]-commutativity-raw{b}{a} 🝖 p)
 
 [⋅]-product-is-0 : ∀{a b} → (a ⋅ b ≡ 0) → ((a ≡ 0)∨(b ≡ 0))
 [⋅]-product-is-0 {a}{0} (_) = [∨]-introᵣ ([≡]-intro)
@@ -394,6 +399,7 @@ postulate [⋅][−₀]-distributivityᵣ-raw : ∀{x y z : ℕ} → ((x −₀ 
 
 -- TODO: One way to prove this is contraposition of [−₀]-comparison. Another is by [≤]-with-[+]ᵣ and some other stuff, but it seems to require more work
 postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
+-- [−₀]-when-non-zero {x}{y} 
 
 [−₀]-lesser-[𝐒]ₗ : ∀{x y} → ((x −₀ 𝐒(y)) ≤ (x −₀ y))
 [−₀]-lesser-[𝐒]ᵣ : ∀{x y} → ((x −₀ y) ≤ (𝐒(x) −₀ y))
@@ -611,3 +617,20 @@ Injective.proof([+]ₗ-injectivity {a}) = [+]ₗ-injectivity-raw {a}
 
 [+]ᵣ-injectivity : ∀{a} → Injective (a +_)
 Injective.proof([+]ᵣ-injectivity {a}) = [+]ᵣ-injectivity-raw {a}
+
+[≤]-with-[+]ᵣ : ∀{x y z : ℕ} → (x ≤ y) → (x + z ≤ y + z)
+[≤]-with-[+]ᵣ {_}{_}{𝟎}    (proof)    = proof
+[≤]-with-[+]ᵣ {_}{_}{𝐒(z)} (proof) = [≤]-with-[𝐒] ⦃ [≤]-with-[+]ᵣ {_}{_}{z} (proof) ⦄
+
+-- [≤]-with-[+]ₗ : ∀{x y z : ℕ} → (x ≤ y) → (z + x ≤ z + y)
+-- TODO: [≤]-with-[+] : ∀{x₁ y₁ : ℕ} → (x₁ ≤ y₁) → ∀{x₂ y₂ : ℕ} → (x₂ ≤ y₂) → (x₁ + x₂ ≤ y₁ + y₂)
+
+[≤]-of-[+]ᵣ : ∀{x y : ℕ} → (x ≤ y + x)
+[≤]-of-[+]ᵣ {𝟎} {y} = [≤]-minimum
+[≤]-of-[+]ᵣ {𝐒 x} {𝟎} = reflexivity(_≤_)
+[≤]-of-[+]ᵣ {𝐒 x} {𝐒 y} = [≤]-with-[𝐒] ⦃ [≤]-of-[+]ᵣ {x}{𝐒 y} ⦄
+
+[≤]-of-[+]ₗ : ∀{x y : ℕ} → (x ≤ x + y)
+[≤]-of-[+]ₗ {𝟎}   {y}   = [≤]-minimum
+[≤]-of-[+]ₗ {𝐒 x} {𝟎}   = reflexivity(_≤_)
+[≤]-of-[+]ₗ {𝐒 x} {𝐒 y} =  [≤]-with-[𝐒] ⦃ [≤]-of-[+]ₗ {x}{𝐒 y} ⦄
