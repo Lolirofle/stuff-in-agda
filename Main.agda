@@ -127,7 +127,7 @@ import Sets.Setoid.Uniqueness.Proofs
 import Stream
 import String
 -- import Structure.Arithmetic
--- import Structure.Category
+import Structure.Category
 import Structure.Function.Domain
 import Structure.Function.Domain.Proofs
 import Structure.Function.Linear

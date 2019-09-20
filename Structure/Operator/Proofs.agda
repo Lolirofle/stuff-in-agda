@@ -36,7 +36,7 @@ module One {ℓ} {T : Type{ℓ}} {_▫_ : T → T → T} where
       ) :of: (x₁ ≡ x₂)
 
   module Cancellableₗ (cancellation : Cancellationₗ(_▫_)) where
-    -- An existing left identity is inique when the operator is cancellable
+    -- An existing left identity is unique when the operator is cancellable
     unique-identityᵣ-by-cancellationₗ : Unique(Identityᵣ(_▫_))
     unique-identityᵣ-by-cancellationₗ {x₁}{x₂} (identity₁) (identity₂) =
       cancellation {x₂}{x₁}{x₂} (

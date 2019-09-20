@@ -11,8 +11,6 @@ open import Type
 
 infixl 1000 _++_
 infixr 1000 _⊰_
-infixl 1      [_
-infixl 100000 _]
 
 -- A list is a container/collection with elements in order and which allows multiples
 data List {ℓ} (T : Type{ℓ}) : Type{ℓ} where
@@ -21,8 +19,15 @@ data List {ℓ} (T : Type{ℓ}) : Type{ℓ} where
 
 {-# BUILTIN LIST List #-}
 
-pattern [_ l = l
-pattern _] x = x ⊰ ∅
+module Notation where
+  infixl 1      [_
+  infixr 1000   _,_
+  infixl 100000 _]
+
+  pattern []      = ∅
+  pattern [_ l    = l
+  pattern _,_ x l = x ⊰ l
+  pattern _] x    = x ⊰ ∅
 
 -- List concatenation
 _++_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T) → List(T)
@@ -168,6 +173,7 @@ module _ {ℓ} where
   repeat x (𝐒(n)) = x ⊰ (repeat x n)
 
   -- The list with a list concatenated (repeated) n times
+  -- TODO: Can be defined using Functional.Repeat
   _++^_ : ∀{T : Type{ℓ}} → List(T) → ℕ → List(T)
   _++^_ _ 𝟎      = ∅
   _++^_ l (𝐒(n)) = l ++ (l ++^ n)
@@ -200,10 +206,13 @@ module _ {ℓ} where
   withoutIndex 𝟎       (_ ⊰ l) = l
   withoutIndex (𝐒(n))  (x ⊰ l) = x ⊰ withoutIndex(n)(l)
 
-  {- TODO swapIndex : ∀{T : Type{ℓ}} → ℕ → ℕ → List(T) → List(T)
-  swapIndex _      _  ∅       = ∅
-  swapIndex 𝟎      b (_ ⊰ l) = l
-  swapIndex (𝐒(a)) _  (x ⊰ l) = x ⊰ withoutIndex(a)(l)
+  {- TODO
+  swapIndex : ∀{T : Type{ℓ}} → ℕ → ℕ → List(T) → List(T)
+  swapIndex _      _      ∅      = ∅
+  swapIndex 𝟎      𝟎      (x ⊰ l) = (x ⊰ l)
+  swapIndex (𝐒(a)) 𝟎      (x ⊰ l) = ? ⊰ swapIndex a 𝟎 l
+  swapIndex 𝟎      (𝐒(b)) (x ⊰ l) = ? ⊰ swapIndex 𝟎 b l
+  swapIndex (𝐒(a)) (𝐒(b)) (x ⊰ l) = x ⊰ swapIndex a b l
   -}
 
   filter : ∀{T : Type{ℓ}} → (T → Bool) → List(T) → List(T)

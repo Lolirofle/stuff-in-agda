@@ -4,6 +4,7 @@ import      Lvl
 open import Data hiding (empty)
 import      Data.List
 open        Data.List using (List ; ∅ ; _⊰_ ; _++_ ; [_ ; _])
+open        Data.List.Notation
 import      Data.List.Relation.Membership
 import      Data.List.Relation.Membership.Proofs
 open import Metalogic.Classical.Propositional.Syntax(Proposition)

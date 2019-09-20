@@ -1,13 +1,13 @@
 module Type.Unit {ℓ} where
 
 import      Lvl
-open import Relator.Equals
+open import Sets.Setoid
 open import Type
 
 -- A type is an unit type when it has exactly one inhabitant (there is only one object with this type).
 -- In other words: There is an unique inhabitant of type T.
 -- IsUnit(T) is sometimes also called "T is a singleton", or "T is contractible".
-record IsUnit (T : Type{ℓ}) : Type{ℓ} where
+record IsUnit (T : Type{ℓ}) ⦃ _ : Equiv(T) ⦄ : Type{ℓ} where
   constructor intro
   field
     unit : T
@@ -23,7 +23,7 @@ record IsUnit (T : Type{ℓ}) : Type{ℓ} where
 -- • "is of h-level 1"
 -- • "a mere proposition"
 -- Classically, when IsProp(T), T is either empty or a singleton (which in the context of proofs corresponds to ⊥ and ⊤).
-record IsProp (T : Type{ℓ}) : Type{ℓ} where
+record IsProp (T : Type{ℓ}) ⦃ _ : Equiv(T) ⦄ : Type{ℓ} where
   constructor intro
   field
     uniqueness : ∀{x y : T} → (x ≡ y)
