@@ -467,3 +467,10 @@ module IndexZeroNearest where
 
     -- test2-subst : substitute(𝐒ᶠ(𝟎ᶠ)) (depth-𝐒(Functions.id)) (depth-𝐒(test1)) ≡ Abstract(Abstract(Apply (Functions.id) (Var(𝟎ᶠ))))
     -- test2-subst = [≡]-intro
+
+-- COmputation rules:
+-- (e ⟶ e') → (λ x e → λ x e') partial evaluation
+-- (e₀ ⟶ e₀') → (e₀ e₁ ⟶ e₀' e₁)
+-- (e₁ ⟶ e₁') → (e₀ e₁ ⟶ e₀ e₁')
+-- Computation rule is confluent.
+-- (∀e∃e'. Normal(e') ∧ (e ⟶* e')) is undecidable. Example: e = δ δ and e = I I where I = λ x x and δ = λx (x x). This was historically the first known undecidable problem?

@@ -413,7 +413,7 @@ module 𝑇 where
 
   [∧]-transfer : ∀{a b} → ((a && b) ≡ 𝑇) ↔ (a ≡ 𝑇)∧(b ≡ 𝑇)
   [∧]-transfer = [↔]-intro
-    (\(Logic.[∧]-intro l r) → [∧]-intro l r)
+    (\{(Logic.[∧]-intro l r) → [∧]-intro l r})
     (proof ↦ Logic.[∧]-intro ([∧]-elimₗ proof) ([∧]-elimᵣ proof))
 
   [∨]-transfer : ∀{a b} → ((a || b) ≡ 𝑇) ↔ (a ≡ 𝑇)∨(b ≡ 𝑇)
