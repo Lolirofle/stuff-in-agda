@@ -25,6 +25,11 @@ infixl 1000 _🝖_
 _🝖_ : ∀{ℓ}{T : Type{ℓ}}{_▫_ : T → T → Stmt{ℓ}} → ⦃ _ : Transitivity(_▫_) ⦄ → Names.Transitivity(_▫_)
 _🝖_ {_}{T}{_▫_} = transitivity(_▫_)
 
+-- Allows "equational reasoning" for any transitive relation
+infixl 1000 _🝖[_]-by[_]_
+_🝖[_]-by[_]_ : ∀{ℓ}{T : Type{ℓ}} → (x : T) → ∀{y z : T} → (_▫_ : T → T → Stmt{ℓ}) → ⦃ _ : Transitivity(_▫_) ⦄ → (x ▫ y) → (y ▫ z) → (x ▫ z)
+_🝖[_]-by[_]_ (_)(_▫_) = transitivity(_▫_)
+
 -- Definition of a antisymmetric binary relation
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {T : Type{ℓ₁}} (_▫₁_ : T → T → Stmt{ℓ₂}) (_▫₂_ : T → T → Stmt{ℓ₃}) where
   record Antisymmetry : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where

@@ -6,6 +6,7 @@ open import Type
 infixl 10000 _∘_
 infixl 10000 _⩺_
 infixl 10000 _⩹_
+infixl 30 _→ᶠ_ _←_ _←ᶠ_
 
 -- Converse of a function type
 _←_ : ∀{ℓ₁ ℓ₂} → Type{ℓ₁} → Type{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}

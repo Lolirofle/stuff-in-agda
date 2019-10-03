@@ -116,6 +116,7 @@ import Relator.Congruence
 import Relator.Congruence.Proofs
 import Relator.Equals
 import Relator.Equals.Equivalence
+import Relator.Equals.Heterogenous
 import Relator.Equals.Names
 import Relator.Equals.Proofs
 import Structure.Relator.Names

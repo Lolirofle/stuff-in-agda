@@ -13,6 +13,8 @@ record IsUnit (T : Type{ℓ}) ⦃ _ : Equiv(T) ⦄ : Type{ℓ} where
     unit : T
     uniqueness : ∀{x : T} → (x ≡ unit)
 
+open IsUnit ⦃ ... ⦄ using (unit)
+
 -- A type is a mere proposition type when there is at most one inhabitant (there is at most one object with this type).
 -- In other words: If there is an inhabitant of type T, it is unique.
 -- In the context of proofs:

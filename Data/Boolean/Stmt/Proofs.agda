@@ -70,7 +70,7 @@ module IsTrue where
 
   [∧]-transfer : ∀{a b} → IsTrue(a && b) ↔ IsTrue(a) ∧ IsTrue(b)
   [∧]-transfer = [↔]-intro
-    (\(Logic.[∧]-intro l r) → [∧]-intro l r)
+    (\{(Logic.[∧]-intro l r) → [∧]-intro l r})
     (proof ↦ Logic.[∧]-intro ([∧]-elimₗ proof) ([∧]-elimᵣ proof))
 
   [∨]-transfer : ∀{a b} → IsTrue(a || b) ↔ IsTrue(a) ∨ IsTrue(b)
