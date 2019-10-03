@@ -11,6 +11,7 @@ import Data.Either
 import Data.Either.Proofs
 import Data.List
 import Data.List.Computability
+import Data.List.Functor
 import Data.List.Proofs
 import Data.List.Relation.Membership.Proofs
 import Data.List.Relation.Sublist.Proofs
@@ -23,6 +24,8 @@ import Data.Option
 import Data.Option.Proofs
 import Data.Proofs
 import Data.Tuple
+import Data.Tuple.Category
+import Data.Tuple.Equiv
 import Data.Tuple.Function
 -- import Data.Tuple.List
 import Data.Tuple.Proofs
@@ -115,7 +118,7 @@ import Relator.Equals
 import Relator.Equals.Equivalence
 import Relator.Equals.Names
 import Relator.Equals.Proofs
-import Relator.Names
+import Structure.Relator.Names
 import Relator.Ordering
 import Sets.BoolSet
 import Sets.Setoid
@@ -128,6 +131,11 @@ import Stream
 import String
 -- import Structure.Arithmetic
 import Structure.Category
+import Structure.Category.Categories
+import Structure.Category.Dual
+import Structure.Category.Functor
+import Structure.Category.Functor.Functors
+import Structure.Category.Functor.Proofs
 import Structure.Function.Domain
 import Structure.Function.Domain.Proofs
 import Structure.Function.Linear
@@ -164,6 +172,7 @@ import Structure.Operator.Functions
 import Structure.Operator.Group
 -- import Structure.Operator.Group.Proofs
 import Structure.Operator.Monoid
+import Structure.Operator.Monoid.Category
 -- import Structure.Operator.Monoid.Proofs
 import Structure.Operator.Names
 -- import Structure.Operator.Proofs
@@ -181,6 +190,7 @@ import Syntax.Function
 import Syntax.Method
 import Syntax.Number
 import Type
+import Type.Category
 import Type.Dependent
 import Type.Empty
 import Type.Empty.Proofs

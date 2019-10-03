@@ -48,10 +48,10 @@ swap f(x₂)(x₁) = f(x₁)(x₂)
 _∘_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y → Z) → (X → Y) → (X → Z)
 (f ∘ g)(x) = f(g(x))
 
--- Swapped function composition on a binary operator
--- A function is composed on the arguments of the binary operator.
-_on₂_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → (Y → Y → Z) → (X → X → Z)
-(f on₂ (_▫_))(y₁)(y₂) = f(y₁) ▫ f(y₂)
+-- Function composition on a binary operator
+-- A function is composed on every argument of the binary operator.
+_on₂_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y → Y → Z) → (X → Y) → (X → X → Z)
+((_▫_) on₂ f)(y₁)(y₂) = f(y₁) ▫ f(y₂)
 
 -- The S-combinator from combinatory logic.
 -- It is usually described as a generalized version of the application operator. (TODO: But I am not sure why it is described as such?)
@@ -61,12 +61,13 @@ s-combinator f g x = (f x) (g x)
 
 
 _∘₂_ : ∀{ℓ₁ ℓ₂ ℓ₃ ℓ₄} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{Y : Type{ℓ₃}}{Z : Type{ℓ₄}} → (Y → Z) → (X₁ → X₂ → Y) → (X₁ → X₂ → Z)
-(f ∘₂ g)(x₁) = f ∘ (g(x₁))
+_∘₂_ f = (f ∘_) ∘_
 -- (f ∘₂ g)(x₁)(x₂) = f(g(x₁)(x₂)) = curry(f ∘ (uncurry g))(x₁)(x₂) = (f ∘ (g(x₁)))(x₂)
 
 _∘₃_ : ∀{ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{X₃ : Type{ℓ₃}}{Y : Type{ℓ₄}}{Z : Type{ℓ₅}} → (Y → Z) → (X₁ → X₂ → X₃ → Y) → (X₁ → X₂ → X₃ → Z)
-(f ∘₃ g)(x₁) = f ∘₂ (g(x₁))
+_∘₃_ f = (f ∘₂_) ∘_
 -- (f ∘₃ g)(x)(y)(z) = f(g(x)(y)(z))
+-- (f ∘₃ g)(x₁) = f ∘₂ (g(x₁))
 
 -- Function lifting //TODO: Consider removing because it is the same as _∘_
 liftₗ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → ((Z → X) → (Z → Y))

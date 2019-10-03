@@ -95,6 +95,14 @@ module _ {ℓ} {T : Type{ℓ}} where
   Vector.proj(prepend(x)(_)) (𝟎)    = x
   Vector.proj(prepend(_)(v)) (𝐒(n)) = Vector.proj(v) (n)
 
+  -- A vector concatenated with another vector
+  {-
+  _++_ : ∀{a b} → Vector(a)(T) → Vector(b)(T) → Vector(a + b)(T)
+  Vector.proj(_++_ {𝟎}   {b} x y)        = Vector.proj(y)
+  Vector.proj(_++_ {𝐒(a)}{b} x y) (𝟎)    = Vector.proj(x) (𝐒(a))
+  Vector.proj(_++_ {𝐒(a)}{b} x y) (𝐒(n)) = Vector.proj(_++_ {a}{b} x y) (n)
+  -}
+
   count : ∀{d} → (T → Bool) → Vector(d)(T) → ℕ
   count {𝟎}    (f)(v) = 𝟎
   count {𝐒(n)} (f)(v) = if f(head v) then 𝐒(next) else next where

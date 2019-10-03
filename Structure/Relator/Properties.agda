@@ -3,7 +3,7 @@ module Structure.Relator.Properties where
 import      Lvl
 open import Lang.Instance
 open import Logic
-import      Relator.Names as Names
+import      Structure.Relator.Names as Names
 open import Type
 
 -- Definition of a reflexive binary relation

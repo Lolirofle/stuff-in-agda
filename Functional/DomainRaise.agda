@@ -42,7 +42,7 @@ module _ {ℓ₁ ℓ₂} where
   --   applyFn f g = f (g(2)) (g(1)) (g(0))
   applyFn : ∀{n}{T₁}{T₂} → (T₁ →̂ T₂)(n) → (𝕟(n) → T₁) → T₂
   applyFn{𝟎}    f g = f
-  applyFn{𝐒(n)} f g = applyFn{n} (f(g([ℕ]-to-[𝕟] (n) {n} ⦃ [≤?]-𝐒 {ℓ₁ Lvl.⊔ ℓ₂} {n} ⦄))) (g ∘ (bound-𝐒{ℓ₁ Lvl.⊔ ℓ₂}{n}))
+  applyFn{𝐒(n)} f g = applyFn{n} (f(g(ℕ-to-𝕟 (n) {n} ⦃ [≤?]-𝐒 {ℓ₁ Lvl.⊔ ℓ₂} {n} ⦄))) (g ∘ (bound-𝐒{ℓ₁ Lvl.⊔ ℓ₂}{n}))
 
   -- TODO: Examples:
   --   swapReverse {3} f (y₂) (y₁) (y₀)
@@ -60,6 +60,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃ : Lvl.Level} where
   private _→̂₁₂_ = _→̂_ {ℓ₁}{ℓ₂}
   private _→̂₁₃_ = _→̂_ {ℓ₁}{ℓ₃}
 
+  -- TODO: Make n explicit
   -- Function composition on a multi-argument function (Like PrimitiveRecursion.Composition).
   -- Examples:
   --   (f ∘₃ g)(x₂)(x₁)(x₀)
@@ -69,12 +70,14 @@ module _ {ℓ₁ ℓ₂ ℓ₃ : Lvl.Level} where
   --   f(g(x₂)(x₁)(x₀))
   _[∘]_ : ∀{n}{X}{Y}{Z} → (Y → Z) → (X →̂₁₂ Y)(n) → (X →̂₁₃ Z)(n)
   _[∘]_ {𝟎}    f = f
-  _[∘]_ {𝐒(n)} f g(xₙ) = _[∘]_ {n} f (g(xₙ))
+  _[∘]_ {𝐒(n)} f = (_[∘]_ {n} f) ∘_
+--  _[∘]_ {𝐒(n)} f g(xₙ) = _[∘]_ {n} f (g(xₙ))
 
 module _ {ℓ₁ ℓ₂ ℓ₃ : Lvl.Level} where
   private _→̂₁₃_ = _→̂_ {ℓ₁}{ℓ₂ Lvl.⊔ ℓ₃}
   private _→̂₂₃_ = _→̂_ {ℓ₂}{ℓ₁ Lvl.⊔ ℓ₃}
 
+  -- TODO: Flip the arguments and make n explicit
   -- Single function composition on every argument.
   -- (f on g)(y₁)(y₂).. = g (f(y₁)) (f(y₂)) ..
   -- Examples:

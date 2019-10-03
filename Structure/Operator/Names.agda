@@ -3,8 +3,10 @@ module Structure.Operator.Names where
 import      Lvl
 open import Logic
 open import Logic.Propositional
+open import Logic.Predicate
 open import Sets.Setoid
-open import Structure.Relator.Properties
+open import Syntax.Function
+open import Functional.Names
 open import Type
 
 module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ where
@@ -41,6 +43,14 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
   Idempotence (_▫_) = ∀{x : T} → (x ▫ x ≡ x)
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {T₊ : Type{ℓ₁}} {T₋ : Type{ℓ₂}} {Tᵣ : Type{ℓ₃}} ⦃ _ : Equiv(Tᵣ) ⦄ where
+  -- Definition of a left invertible element
+  Invertibleₗ : (T₋ → T₊ → Tᵣ) → Tᵣ → T₊ → Stmt
+  Invertibleₗ (_▫_) id x = ∃(inv ↦ (inv ▫ x) ≡ id)
+
+  -- Definition of a right invertible element
+  Invertibleᵣ : (T₋ → T₊ → Tᵣ) → Tᵣ → T₋ → Stmt
+  Invertibleᵣ (_▫_) id x = ∃(inv ↦ (x ▫ inv) ≡ id)
+
   -- Definition of a left inverse function
   InverseFunctionₗ : (T₋ → T₊ → Tᵣ) → Tᵣ → (T₊ → T₋) → Stmt
   InverseFunctionₗ (_▫_) id inv = ∀{x : T₊} → ((inv x) ▫ x) ≡ id
@@ -50,6 +60,10 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₊ : Type{ℓ₁}} {T₋ : Type{ℓ₂}} {T�
   InverseFunctionᵣ (_▫_) id inv = ∀{x : T₊} → (x ▫ (inv x)) ≡ id
 
 module _ {ℓ₁ ℓ₂} {T : Type{ℓ₁}} {Tᵣ : Type{ℓ₂}} ⦃ _ : Equiv(Tᵣ) ⦄ where
+  -- Definition of an invertible element
+  Invertible : (T → T → Tᵣ) → Tᵣ → T → Stmt
+  Invertible (_▫_) id x = ∃(inv ↦ ((inv ▫ x) ≡ id) ∧ ((x ▫ inv) ≡ id))
+
   -- Definition of a function which returns the inverse element of the other side of the operation
   InverseFunction : (T → T → Tᵣ) → Tᵣ → (T → T) → Stmt
   InverseFunction (_▫_) id inv = (InverseFunctionₗ (_▫_) id inv) ∧ (InverseFunctionᵣ (_▫_) id inv)
@@ -59,18 +73,30 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ 
   InverseOperatorₗ : (T₁ → T₂ → T₃) → (T₁ → T₃ → T₂) → Stmt
   InverseOperatorₗ (_▫₁_) (_▫₂_) = ∀{x}{y}{z} → ((x ▫₁ y) ≡ z) ↔ (y ≡ (x ▫₂ z)) -- TODO: Is this implied by InverseFunction?
 
+  -- Definition of right cancellation of a specific object
+  -- ∀{a b : T₂} → ((x ▫ a) ≡ (x ▫ b)) → (a ≡ b)
+  CancellationOnₗ : (T₁ → T₂ → T₃) → T₁ → Stmt
+  CancellationOnₗ (_▫_) (x) = Injective(x ▫_)
+
   -- Definition of left cancellation (Injectivity for the right param)
-  Cancellationₗ : (T₁ → T₂ → T₃) → Stmt -- TODO: Maybe define as Injective?
-  Cancellationₗ (_▫_) = ∀{x : T₁}{a b : T₂} → ((x ▫ a) ≡ (x ▫ b)) → (a ≡ b)
+  -- ∀{x : T₁}{a b : T₂} → ((x ▫ a) ≡ (x ▫ b)) → (a ≡ b)
+  Cancellationₗ : (T₁ → T₂ → T₃) → Stmt
+  Cancellationₗ (_▫_) = (∀{x : T₁} → CancellationOnₗ(_▫_)(x))
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} ⦃ _ : Equiv(T₁) ⦄ {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ where
   -- Definition of a right inverse operator
   InverseOperatorᵣ : (T₁ → T₂ → T₃) → (T₃ → T₂ → T₁) → Stmt
   InverseOperatorᵣ (_▫₁_) (_▫₂_) = ∀{x}{y}{z} → ((x ▫₁ y) ≡ z) ↔ (x ≡ (z ▫₂ y))
 
+  -- Definition of right cancellation of a specific object
+  -- ∀{a b : T₁} → ((a ▫ x) ≡ (b ▫ x)) → (a ≡ b)
+  CancellationOnᵣ : (T₁ → T₂ → T₃) → T₂ → Stmt
+  CancellationOnᵣ (_▫_) (x) = Injective(_▫ x)
+
   -- Definition of right cancellation (Injectivity for the left param)
+  -- ∀{x : T₂}{a b : T₁} → ((a ▫ x) ≡ (b ▫ x)) → (a ≡ b)
   Cancellationᵣ : (T₁ → T₂ → T₃) → Stmt
-  Cancellationᵣ (_▫_) = ∀{x : T₂}{a b : T₁} → ((a ▫ x) ≡ (b ▫ x)) → (a ≡ b)
+  Cancellationᵣ (_▫_) = (∀{x : T₂} → CancellationOnᵣ (_▫_)(x))
 
 ---------------------------------------------------------
 -- Patterns

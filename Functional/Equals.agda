@@ -14,20 +14,22 @@ module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ equiv-B : Eq
   infixl 15 _⊜_
 
   -- Function equivalence. When the types and all their values are shared/equivalent.
-  data _⊜_ (f : A → B) (g : A → B) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    [⊜]-intro : (f Names.⊜ g) → (f ⊜ g)
+  record _⊜_ (f : A → B) (g : A → B) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field
+      proof : (f Names.⊜ g)
 
   instance
     [⊜]-reflexivity : Reflexivity(_⊜_)
-    Reflexivity.proof([⊜]-reflexivity) = [⊜]-intro(reflexivity(_≡_))
+    Reflexivity.proof([⊜]-reflexivity) = intro(reflexivity(_≡_))
 
   instance
     [⊜]-symmetry : Symmetry(_⊜_)
-    Symmetry.proof([⊜]-symmetry) ([⊜]-intro f≡g) = [⊜]-intro(symmetry(_≡_)(f≡g))
+    Symmetry.proof([⊜]-symmetry) (intro f≡g) = intro(symmetry(_≡_)(f≡g))
 
   instance
     [⊜]-transitivity : Transitivity(_⊜_)
-    Transitivity.proof([⊜]-transitivity) ([⊜]-intro f≡g) ([⊜]-intro g≡h) = [⊜]-intro(transitivity(_≡_)(f≡g)(g≡h))
+    Transitivity.proof([⊜]-transitivity) (intro f≡g) (intro g≡h) = intro(transitivity(_≡_)(f≡g)(g≡h))
 
   instance
     [⊜]-equivalence : Equivalence(_⊜_)

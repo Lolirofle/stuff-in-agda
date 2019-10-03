@@ -29,25 +29,25 @@ module _ {T : Type} ⦃ _ : Equiv(T) ⦄ {_▫_ : T → T → T} where
   transfer-op {n}(_▫_) = map₂(_▫_){n}
 
   transfer-identityₗ : ∀{id} → Identityₗ(_▫_)(id) → ∀{n} → Identityₗ(transfer-op{n}(_▫_))(transfer-elem{n}(id))
-  transfer-identityₗ {id} (identity) = [⊜]-intro(identity)
+  transfer-identityₗ {id} (identity) = intro(identity)
 
   transfer-identityᵣ : ∀{id} → Identityᵣ(_▫_)(id) → ∀{n} → Identityᵣ(transfer-op{n}(_▫_))(transfer-elem{n}(id))
-  transfer-identityᵣ {id} (identity) = [⊜]-intro(identity)
+  transfer-identityᵣ {id} (identity) = intro(identity)
 
   transfer-identity : ∀{id} → Identity(_▫_)(id) → ∀{n} → Identity(transfer-op{n}(_▫_))(transfer-elem{n}(id))
-  transfer-identity {id} ([∧]-intro identityₗ identityᵣ) = [∧]-intro ([⊜]-intro(identityₗ)) ([⊜]-intro(identityᵣ))
+  transfer-identity {id} ([∧]-intro identityₗ identityᵣ) = [∧]-intro (intro(identityₗ)) (intro(identityᵣ))
 
   transfer-inverseₗ : ∀{id}{inv} → InverseFunctionₗ(_▫_)(id)(inv) → ∀{n} → InverseFunctionₗ(transfer-op{n}(_▫_))(transfer-elem{n}(id))(transfer-fn{n}(inv))
-  transfer-inverseₗ {id}{inv} (inverse) {n} = [⊜]-intro(inverse)
+  transfer-inverseₗ {id}{inv} (inverse) {n} = intro(inverse)
 
   transfer-inverseᵣ : ∀{id}{inv} → InverseFunctionᵣ(_▫_)(id)(inv) → ∀{n} → InverseFunctionᵣ(transfer-op{n}(_▫_))(transfer-elem{n}(id))(transfer-fn{n}(inv))
-  transfer-inverseᵣ {id}{inv} (inverse) {n} = [⊜]-intro(inverse)
+  transfer-inverseᵣ {id}{inv} (inverse) {n} = intro(inverse)
 
   transfer-inverse : ∀{id}{inv} → InverseFunction(_▫_)(id)(inv) → ∀{n} → InverseFunction(transfer-op{n}(_▫_))(transfer-elem{n}(id))(transfer-fn{n}(inv))
-  transfer-inverse {id}{inv} ([∧]-intro inverseₗ inverseᵣ) {n} = [∧]-intro ([⊜]-intro(inverseₗ)) ([⊜]-intro(inverseᵣ))
+  transfer-inverse {id}{inv} ([∧]-intro inverseₗ inverseᵣ) {n} = [∧]-intro (intro(inverseₗ)) (intro(inverseᵣ))
 
   transfer-associativity : Associativity(_▫_) → ∀{n} → Associativity(transfer-op{n}(_▫_))
-  transfer-associativity (associativity) {n} = [⊜]-intro(associativity)
+  transfer-associativity (associativity) {n} = intro(associativity)
 
   transfer-preserves : ∀{n} → Preserving2(transfer-elem{n}) (_▫_) (transfer-op{n}(_▫_))
   transfer-preserves{𝟎}    {x}{y} with (Vector.proj(x) | Vector.proj(y))

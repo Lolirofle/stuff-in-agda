@@ -12,7 +12,7 @@ open import Numeral.Natural.Induction
 open import Numeral.Natural.Relation.Order
 open import Relator.Equals
 open import Relator.Equals.Proofs
-import      Relator.Names as Names
+import      Structure.Relator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties

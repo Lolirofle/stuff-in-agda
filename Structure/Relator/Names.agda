@@ -1,4 +1,4 @@
-module Relator.Names where
+module Structure.Relator.Names where
 
 import      Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
@@ -25,6 +25,9 @@ module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) 
 
   Transitivity : Stmt
   Transitivity = ∀{x y z : T} → (x ▫ y) → (y ▫ z) → (x ▫ z)
+
+  SwappedTransitivity : Stmt
+  SwappedTransitivity = ∀{x y z : T} → (y ▫ z) → (x ▫ y) → (x ▫ z)
 
   Irreflexivity : Stmt
   Irreflexivity = ∀{x : T} → ¬(x ▫ x)

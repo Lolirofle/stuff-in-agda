@@ -25,7 +25,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Sets.Setoid.Equiv(T) ⦄ where
   [≼]-maximum : (_≼_ T (T → T) ⦃ [⊜]-equiv ⦄)
   [≼]-maximum = [∃]-intro(const) ⦃ Injective.intro(proof) ⦄ where
     proof : ∀{x y} → (const(x) ⊜ const(y)) → (x ≡ y)
-    proof{x}{y} ([⊜]-intro fneq) = fneq{x}
+    proof{x}{y} (intro fneq) = fneq{x}
 
 module _ where
   open import Relator.Equals

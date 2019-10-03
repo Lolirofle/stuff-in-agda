@@ -3,7 +3,7 @@ module Data.List.Proofs where
 import Lvl
 open import Functional
 open import Data.Boolean
-open import Data.Option
+open import Data.Option hiding (map)
 open import Data.Either.Proofs
 open import Data.List
 open import Logic
@@ -244,3 +244,13 @@ module _ {ℓ} {T : Type{ℓ}} where
   first-of-∅ : ∀{n} → (first(n)(∅ {T = T}) ≡ ∅)
   first-of-∅ {𝟎}   = [≡]-intro
   first-of-∅ {𝐒 n} = [≡]-intro
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{ℓ₃}} {f : B → C}{g : A → B} where
+  [∘]-preserving-map : ∀{l} → (map(f ∘ g)(l) ≡ ((map f) ∘ (map g))(l))
+  [∘]-preserving-map {∅}     = [≡]-intro
+  [∘]-preserving-map {x ⊰ l} = [≡]-with(f(g(x)) ⊰_) ([∘]-preserving-map {l})
+
+module _ {ℓ} {T : Type{ℓ}} where
+  [∘]-preserving-id : ∀{l : List(T)} → (map id(l) ≡ l)
+  [∘]-preserving-id {∅} = [≡]-intro
+  [∘]-preserving-id {x ⊰ l} = [≡]-with(x ⊰_) ([∘]-preserving-id {l})

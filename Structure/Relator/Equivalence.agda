@@ -11,6 +11,6 @@ open import Type
 record Equivalence {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_≡_ : T → T → Stmt{ℓ₂}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
   instance constructor intro
   field
-    ⦃ reflexivity ⦄ : Reflexivity  (_≡_)
-    ⦃ symmetry ⦄    : Symmetry     (_≡_)
-    ⦃ transitivity ⦄ : Transitivity (_≡_)
+    instance ⦃ reflexivity ⦄ : Reflexivity  (_≡_)
+    instance ⦃ symmetry ⦄    : Symmetry     (_≡_)
+    instance ⦃ transitivity ⦄ : Transitivity (_≡_)
