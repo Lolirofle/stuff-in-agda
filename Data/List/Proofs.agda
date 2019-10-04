@@ -245,11 +245,13 @@ module _ {ℓ} {T : Type{ℓ}} where
   first-of-∅ {𝟎}   = [≡]-intro
   first-of-∅ {𝐒 n} = [≡]-intro
 
+-- TODO: This should be renamed to map-preserves-[∘]
 module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{ℓ₃}} {f : B → C}{g : A → B} where
   [∘]-preserving-map : ∀{l} → (map(f ∘ g)(l) ≡ ((map f) ∘ (map g))(l))
   [∘]-preserving-map {∅}     = [≡]-intro
   [∘]-preserving-map {x ⊰ l} = [≡]-with(f(g(x)) ⊰_) ([∘]-preserving-map {l})
 
+-- TODO: This should be renamed to map-preserves-id
 module _ {ℓ} {T : Type{ℓ}} where
   [∘]-preserving-id : ∀{l : List(T)} → (map id(l) ≡ l)
   [∘]-preserving-id {∅} = [≡]-intro
