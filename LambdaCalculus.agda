@@ -446,7 +446,24 @@ module IndexZeroNearest where
       -- Representation in function notation:
       --   a ↦ b ↦ b(a)
 
-  open import ReductionSystems
+  module ReductionProofs where
+    open import Type.Dependent
+    open import Logic.Propositional
+    open import Logic.Predicate
+
+    TermAny = Σ ℕ Term
+
+    _⟶_ : TermAny → TermAny → Set₁
+    _⟶_ a b = (Σ.right a) ⇴ (Σ.right b)
+
+    open import ReductionSystem(_⟶_)
+
+    -- Lambda calculus are confluent.
+    -- Also called "Church-Rosser theorem".
+    lambda-calculus-confluent : ∀{a} → Confluent(a)
+    Σ.left  (∃.witness (lambda-calculus-confluent ab ac)) = {!!}
+    Σ.right (∃.witness (lambda-calculus-confluent ab ac)) = {!!}
+    ∃.proof (lambda-calculus-confluent ab ac) = [∧]-intro ? ?
 
   module Test where
     open Transformations

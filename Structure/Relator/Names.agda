@@ -13,6 +13,10 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃}{ℓ₄} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ
   ConversePattern : (T₁ → T₂ → Stmt{ℓ₃}) → (T₂ → T₁ → Stmt{ℓ₄}) → Stmt
   ConversePattern (_▫₁_) (_▫₂_) = (∀{x : T₁}{y : T₂} → (x ▫₁ y) → (y ▫₂ x))
 
+  module _ (_▫₁_ : T₁ → T₂ → Stmt{ℓ₃}) (_▫₂_ : T₁ → T₂ → Stmt{ℓ₄}) where
+    Subrelation : Stmt
+    Subrelation = ∀{a}{b} → (a ▫₁ b) → (a ▫₂ b)
+
 module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
   Symmetry : Stmt
   Symmetry = ConversePattern (_▫_) (_▫_)
