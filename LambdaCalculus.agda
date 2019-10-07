@@ -260,6 +260,12 @@ module IndexZeroNearest where
   substitute-recent-var        val (Var(𝟎))         = val
   substitute-recent-var {𝐒(_)} val (Var(𝐒(v)))      = Var v
 
+  substitute-vars : ∀{a b} → (𝕟(a) → Term(b)) → Term(𝐒(a)) → Term(b)
+  substitute-vars        map (Apply(f)(x))    = Apply (substitute-vars map f) (substitute-vars map x)
+  substitute-vars        map (Abstract(body)) = Abstract (substitute-vars (\x -> map(var-𝐒 x)) body)
+  substitute-vars        map (Var(n))         = map n
+
+
   -- β-reduction (beta).
   -- Reduces a term of form `f(x)` to `f[0 ≔ x]`.
   data _β⇴_ : ∀{a b} → Term(a) → Term(b) → Set₁ where
@@ -463,7 +469,7 @@ module IndexZeroNearest where
     lambda-calculus-confluent : ∀{a} → Confluent(a)
     Σ.left  (∃.witness (lambda-calculus-confluent ab ac)) = {!!}
     Σ.right (∃.witness (lambda-calculus-confluent ab ac)) = {!!}
-    ∃.proof (lambda-calculus-confluent ab ac) = [∧]-intro ? ?
+    ∃.proof (lambda-calculus-confluent ab ac) = [∧]-intro {!!} {!!}
 
   module Test where
     open Transformations
