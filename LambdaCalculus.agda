@@ -4,17 +4,21 @@ import      Lvl
 open import Data
 open import Data.Boolean
 open import Data.Boolean.Operators
+open import Logic.Propositional using (⊥ ; [⊥]-elim)
+open import Logic.Predicate
 open import Numeral.Natural
 -- open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Finite
 open import Numeral.Finite.Bound
 open import Numeral.Finite.Oper
 open import Numeral.Finite.Oper.Comparisons
+open import Numeral.Finite.Oper.Comparisons.Proofs
 open import Numeral.Natural.Function
 open import Numeral.Natural.Oper renaming (_+_ to _+ₙ_)
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
+open import Numeral.Sign
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Syntax.Number
@@ -241,16 +245,27 @@ module IndexZeroNearest where
   _ == _ = 𝐹
   -}
 
-  -- Substitutes a variable with a term in a term.
+  -- Substitutes a free variable with a term in a term, while also decrementing them.
   -- Example:
   --   `substitute-var var new term`
   --    is the term `term` but where the variable with the index `var` (counting starts from 0 on the outermost lambda binding) is replaced by `new`.
-  substitute-var : ∀{d} → 𝕟(d) → Term(d) → Term(d) → Term(d)
-  substitute-var var new (Apply f x)  = Apply (substitute-var var new f) (substitute-var var new x)
-  substitute-var var new (Abstract f) = Abstract (substitute-var (𝐒(var)) (var-𝐒 new) f)
-  substitute-var var new (Var n)      = if (var ≡? n) then new else (Var n)
+  substitute-var : ∀{d} → 𝕟(𝐒(d)) → Term(d) → Term(𝐒(d)) → Term(d)
+  substitute-var var      new (Apply f x)     = Apply (substitute-var var new f) (substitute-var var new x)
+  substitute-var var      new (Abstract body) = Abstract (substitute-var (𝐒(var)) (var-𝐒 new) body)
+  substitute-var var      new (Var v) with ⋚-surjective {a = var} {b = v}
+  substitute-var 𝟎        new (Var v)     | [∃]-intro ➕ ⦃ p ⦄ = [⊥]-elim(⋚-of-𝟎-not-+ {b = v})
+  substitute-var (𝐒(var)) new (Var v)     | [∃]-intro ➕ ⦃ p ⦄ = Var {!!}
+  substitute-var _        new (Var _)     | [∃]-intro 𝟎  ⦃ p ⦄ = new
+  substitute-var _        new (Var (𝐒 v)) | [∃]-intro ➖ ⦃ p ⦄ = Var v
+  {-
+  substitute-var 𝟎        new (Var 𝟎)         = new
+  substitute-var (𝐒(var)) new (Var 𝟎)         = Var 𝟎
+  substitute-var 𝟎        new (Var(𝐒(v)))     = Var(v)
+  substitute-var (𝐒(var)) new (Var(𝐒(v)))     = substitute-var (bound-𝐒 var)  new (Var(bound-𝐒 v))
+-}
 
-  -- Substitutes the most recent variable with a term in a term.
+  -- TODO: Does not work as intended
+  -- Substitutes the most recent free variable with a term in a term, while also decrementing them.
   -- Example:
   --   `substitute (val) (term)`
   --   means that all occurences of the outer-most variable is replaced with the term `val` in the term `term`.
@@ -260,11 +275,16 @@ module IndexZeroNearest where
   substitute-recent-var        val (Var(𝟎))         = val
   substitute-recent-var {𝐒(_)} val (Var(𝐒(v)))      = Var v
 
-  substitute-vars : ∀{a b} → (𝕟(a) → Term(b)) → Term(𝐒(a)) → Term(b)
+  -- Substitutes all free variables by mapping all of them to new terms.
+  substitute-vars : ∀{a b} → (𝕟(a) → Term(b)) → Term(a) → Term(b)
   substitute-vars        map (Apply(f)(x))    = Apply (substitute-vars map f) (substitute-vars map x)
-  substitute-vars        map (Abstract(body)) = Abstract (substitute-vars (\x -> map(var-𝐒 x)) body)
+  substitute-vars {a}{b} map (Abstract(body)) = Abstract (substitute-vars nextMap body) where
+    -- A map function which preserves the newly introduced variable from the lambda abstraction.
+    -- Specifically it maps the old ones (which are all variable index +1), and in the case where `map` introduces variables, it increments them too.
+    nextMap : 𝕟(𝐒(a)) → Term(𝐒(b))
+    nextMap(𝟎)    = Var(𝟎)
+    nextMap(𝐒(n)) = var-𝐒(map n)
   substitute-vars        map (Var(n))         = map n
-
 
   -- β-reduction (beta).
   -- Reduces a term of form `f(x)` to `f[0 ≔ x]`.
@@ -473,50 +493,31 @@ module IndexZeroNearest where
 
   module Test where
     open Transformations
+    open LambdaSyntax
 
-    test1 : Expression
-    test1 = Abstract(Abstract(Apply (Var(𝐒(𝟎))) (Var(𝟎))))
-    -- test1 = Abstract{0}(Abstract{1}(Apply{2} (Var{1}(𝟎ᶠ)) (Var{1}(𝐒ᶠ(𝟎ᶠ)))))
-    -- f ↦ x ↦ f(x)
-    -- λλ. 1 0
+    test1 : Term(1)
+    test1 = (𝜆 (1 ← 0)) ← 0
 
-    test2 : Expression
-    test2 = Abstract(Abstract(Apply (Var(𝐒(𝟎))) (Var(𝐒(𝟎)))))
-    -- f ↦ x ↦ f(f)
-    -- λλ. 1 1
+    test2 : Term(0)
+    test2 = (𝜆 ((𝜆 0) ← 0)) ← (𝜆 0)
+{-
+    test1-test2-subst1 : substitute-vars (\_ -> (𝜆 (0 ← 3)) ← 2) test1 ≡ test2
+    test1-test2-subst1 = {!!} --[≡]-intro
 
-    test3 : Expression
-    test3 = Abstract(Abstract(Apply (Var(𝟎)) (Var(𝟎))))
-    -- f ↦ x ↦ x(x)
-    -- λλ. 0 0
+    test1-test2-subst2 : substitute-recent-var ((𝜆 (0 ← 3)) ← 2) test1 ≡ test2
+    test1-test2-subst2 = {!!} -- [≡]-intro
+-}
 
-    -- test4 : Expression
-    -- test4 = Var(𝟎ᶠ)
+    test3 : Term(1)
+    test3 = 0 ← (𝜆 (0 ← (𝜆 0)))
+--    test3 = 0 ← (𝜆 (1 ← (𝜆 2)))
 
-    -- test5 : Expression
-    -- test5 = Abstract(Abstract(Apply (Var(𝐒(𝟎))) (Var(𝐒(𝐒(𝟎))))))
+    test4 : Term(0)
+    test4 = (𝜆 0) ← (𝜆 ((𝜆 0) ← (𝜆 (𝜆 0))))
+--          (𝜆 0) ← (𝜆 (0 ← (𝜆 1)))
 
-    test6 : Expression
-    test6 =
-      Abstract
-        (Apply
-          (Apply
-            (Abstract(Apply (Var(𝟎)) (Var(𝐒(𝟎)))))
-            (Abstract(Apply (Var(𝟎)) (Var(𝐒(𝟎)))))
-          )
-          (Var(𝟎))
-        )
-    -- x ↦ ((f ↦ f(x)) (g ↦ g(x))) (x)
-    -- λ. ((λ. 0 1) (λ. 0 1)) 0
-
-    test7 : Expression
-    test7 = Abstract(Abstract(Apply (Var(𝐒(𝟎))) (depth-𝐒(depth-𝐒(Functions.id)))))
-
-    -- test1-subst : substitute (𝐒ᶠ(𝟎ᶠ)) (Var(𝟎ᶠ)) (depth-𝐒(test1)) ≡ Abstract(Abstract(Apply (Var(𝟎ᶠ)) (Var(𝟎ᶠ))))
-    -- test1-subst = [≡]-intro
-
-    -- test2-subst : substitute(𝐒ᶠ(𝟎ᶠ)) (depth-𝐒(Functions.id)) (depth-𝐒(test1)) ≡ Abstract(Abstract(Apply (Functions.id) (Var(𝟎ᶠ))))
-    -- test2-subst = [≡]-intro
+    test3-test4-subst2 : substitute-recent-var (𝜆 0) test3 ≡ test4
+    test3-test4-subst2 = {!!} -- [≡]-intro
 
 -- COmputation rules:
 -- (e ⟶ e') → (λ x e → λ x e') partial evaluation
