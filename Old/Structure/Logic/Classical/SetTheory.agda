@@ -11,6 +11,7 @@ open import Syntax.Function
 open import Structure.Logic.Classical.SetTheory.SetBoundedQuantification ⦃ classicLogic ⦄ (_∈_)
 open import Structure.Logic.Classical.SetTheory.Relation                 ⦃ classicLogic ⦄ (_∈_)
 open import Structure.Logic.Constructive.Syntax.Algebra                  ⦃ classicLogic ⦄
+open import Syntax.Transitivity
 open import Type
 
 [⊆]-reflexivity : Proof(∀ₗ(s ↦ s ⊆ s))

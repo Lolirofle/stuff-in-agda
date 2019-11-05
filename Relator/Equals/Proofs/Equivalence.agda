@@ -1,4 +1,4 @@
-module Relator.Equals.Equivalence where
+module Relator.Equals.Proofs.Equivalence where
 
 import      Lvl
 open import Lang.Instance

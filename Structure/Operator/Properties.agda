@@ -1,6 +1,7 @@
 module Structure.Operator.Properties where
 
 import      Lvl
+open import Functional
 open import Lang.Instance
 open import Logic
 open import Logic.Predicate
@@ -41,12 +42,12 @@ module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} ⦃ _ : Equiv(T₁) ⦄ {T₂ : T
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) (id : T) where
   record Identity : Stmt{ℓ} where
-    instance constructor intro
+    constructor intro
     field
       instance ⦃ left ⦄  : Identityₗ(_▫_)(id)
       instance ⦃ right ⦄ : Identityᵣ(_▫_)(id)
-  identity-left = inst-fn Identity.left
-  identity-right = inst-fn Identity.right
+  identity-left = inst-fn (Identityₗ.proof ∘ Identity.left)
+  identity-right = inst-fn (Identityᵣ.proof ∘ Identity.right)
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) where
   record Idempotence : Stmt{ℓ} where
@@ -56,12 +57,12 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) wher
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) (id : T) where
   record Absorber : Stmt{ℓ} where
-    instance constructor intro
+    constructor intro
     field
       instance ⦃ left ⦄  : Absorberₗ(_▫_)(id)
       instance ⦃ right ⦄ : Absorberᵣ(_▫_)(id)
-  absorber-left = inst-fn Absorber.left
-  absorber-right = inst-fn Absorber.right
+  absorber-left = inst-fn (Absorberₗ.proof ∘ Absorber.left)
+  absorber-right = inst-fn (Absorberᵣ.proof ∘ Absorber.right)
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ identityₗ : ∃(Identityₗ(_▫_)) ⦄ where
   module _ (inv : T → T) where
@@ -82,10 +83,12 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ identity : ∃(Identity(_▫_)) ⦄ where
   module _ (inv : T → T) where
     record InverseFunction : Stmt{ℓ} where
-      instance constructor intro
+      constructor intro
       field
-        instance ⦃ left ⦄  : InverseFunctionₗ(_▫_) ⦃ [∃]-map Identity.left  identity ⦄ (inv)
-        instance ⦃ right ⦄ : InverseFunctionᵣ(_▫_) ⦃ [∃]-map Identity.right identity ⦄ (inv)
+        instance ⦃ left ⦄  : InverseFunctionₗ(_▫_) ⦃ [∃]-map-proof Identity.left  identity ⦄ (inv)
+        instance ⦃ right ⦄ : InverseFunctionᵣ(_▫_) ⦃ [∃]-map-proof Identity.right identity ⦄ (inv)
+    inverseFunction-left = inst-fn (InverseFunctionₗ.proof ∘ InverseFunction.left)
+    inverseFunction-right = inst-fn (InverseFunctionᵣ.proof ∘ InverseFunction.right)
   Invertible = ∃(InverseFunction)
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ absorberₗ : ∃(Absorberₗ(_▫_)) ⦄ where
@@ -105,10 +108,10 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ absorber : ∃(Absorber(_▫_)) ⦄ where
   module _ (opp : T → T) where
     record OppositeFunction : Stmt{ℓ} where
-      instance constructor intro
+      constructor intro
       field
-        instance ⦃ left ⦄  : OppositeFunctionₗ(_▫_) ⦃ [∃]-map Absorber.left  absorber ⦄ (opp)
-        instance ⦃ right ⦄ : OppositeFunctionᵣ(_▫_) ⦃ [∃]-map Absorber.right absorber ⦄ (opp)
+        instance ⦃ left ⦄  : OppositeFunctionₗ(_▫_) ⦃ [∃]-map-proof Absorber.left  absorber ⦄ (opp)
+        instance ⦃ right ⦄ : OppositeFunctionᵣ(_▫_) ⦃ [∃]-map-proof Absorber.right absorber ⦄ (opp)
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) where
   record Associativity : Stmt{ℓ} where
@@ -139,3 +142,15 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} ⦃ _ : Equiv(T₁) ⦄ {T
     constructor intro
     field proof : Names.Cancellationᵣ(_▫_)
   cancellationᵣ = inst-fn Cancellationᵣ.proof
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₁) ⦄ (_▫₁_ : T₁ → T₃ → T₁) (_▫₂_ : T₁ → T₂ → T₃) where
+  record Absorptionₗ : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field proof : Names.Absorptionₗ(_▫₁_)(_▫₂_)
+  absorptionₗ = inst-fn Absorptionₗ.proof
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₂) ⦄ (_▫₁_ : T₃ → T₂ → T₂) (_▫₂_ : T₁ → T₂ → T₃) where
+  record Absorptionᵣ : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field proof : Names.Absorptionᵣ(_▫₁_)(_▫₂_)
+  absorptionᵣ = inst-fn Absorptionᵣ.proof

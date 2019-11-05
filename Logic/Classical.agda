@@ -54,6 +54,9 @@ record Classical {ℓ} (P : Stmt{ℓ}) : Stmt{ℓ} where
       --   (A → ¬(B → ⊥)) //Definition: (¬)
       --   (A → ¬(¬ B)) //Definition: (¬)
 
+    [→]-from-contrary : ∀{Q : Stmt{ℓ₂}} → (Q → (¬ P) → ⊥) → (Q → P)
+    [→]-from-contrary = [¬¬]-elim ∘_
+
     -- The type signature of the "call/cc or "call-with-current-continuation" subroutine in the programming language Scheme
     -- Also known as: "Peirce's law"
     call-cc : ∀{Q : Stmt{ℓ₂}} → (((P → Q) → P) → P)
@@ -80,7 +83,7 @@ record Classical {ℓ} (P : Stmt{ℓ}) : Stmt{ℓ} where
     [∃]-unrelatedᵣ-[→]ₗ {X} ⦃ ◊.intro ⦃ x ⦄ ⦄ {Q} = l where
       l : ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
       l(pexqx) with excluded-middle
-      ... | ([∨]-introₗ p)  = [∃]-map (const) (pexqx(p))
+      ... | ([∨]-introₗ p)  = [∃]-map-proof (const) (pexqx(p))
       ... | ([∨]-introᵣ np) = [∃]-intro(x) ⦃ ([⊥]-elim{P = Q(x)}) ∘ np ⦄
 
 open Classical ⦃ ... ⦄ public
@@ -245,8 +248,8 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
 module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ _ : ◊ X ⦄ {P : X → Stmt{ℓ₂}} ⦃ classical-expx : Classical(∃ P) ⦄ {Q : X → Stmt{ℓ₃}} where
   [∃][←]-distributivity : ∃(x ↦ (P(x) → Q(x))) ← (∃(x ↦ P(x)) → ∃(x ↦ Q(x)))
   [∃][←]-distributivity (expx-exqx) =
-      (([∃]-map (\{x} → proof ↦ proof{x})
-        (([∃]-map (\{x} → [↔]-to-[←] ([∀]-unrelatedₗ-[→] {X = X}{P}{Q(x)}))
+      (([∃]-map-proof (\{x} → proof ↦ proof{x})
+        (([∃]-map-proof (\{x} → [↔]-to-[←] ([∀]-unrelatedₗ-[→] {X = X}{P}{Q(x)}))
           (([∃]-unrelatedᵣ-[→]ₗ ⦃ classical-expx ⦄
             (expx-exqx :of: (∃(x ↦ P(x)) → ∃(x ↦ Q(x))))
           )            :of: (∃(x ↦ (∃(x ↦ P(x)) → Q(x)))))
@@ -284,7 +287,7 @@ module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}}{P : X → Stmt{ℓ₂}} ⦃ classica
   drinker-ambiguity : ⦃ _ : ◊ X ⦄ → ⦃ _ : Classical(∀ₗ P) ⦄ → ∃(x ↦ (P(x) → ∀{y} → P(y)))
   drinker-ambiguity ⦃ pos-x ⦄ ⦃ classical-axpx ⦄ with excluded-middle ⦃ classical-axpx ⦄
   ... | ([∨]-introₗ axpx)  = [∃]-intro ([◊]-existence ⦃ pos-x ⦄) ⦃ const(\{x} → axpx{x}) ⦄
-  ... | ([∨]-introᵣ naxpx) = [∃]-map ([⊥]-elim ∘_) ([¬∀]-to-[∃¬] (naxpx))
+  ... | ([∨]-introᵣ naxpx) = [∃]-map-proof ([⊥]-elim ∘_) ([¬∀]-to-[∃¬] (naxpx))
 
   drinker-ambiguity-equiv : ⦃ _ : Classical(∀ₗ P) ⦄ → ((◊ X) ↔ ∃(x ↦ (P(x) → ∀{y} → P(y))))
   drinker-ambiguity-equiv ⦃ classical-axpx ⦄ =
@@ -299,7 +302,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{P : X → Stmt{ℓ₂}} ⦃ c
     l : ∃(x ↦ (P(x) → Q)) ← (∀ₗ(x ↦ P(x)) → Q)
     l(axpxq) with excluded-middle ⦃ classical-axpx ⦄
     ... | ([∨]-introₗ axpx)  = [∃]-intro([◊]-existence) ⦃ const(axpxq (axpx)) ⦄
-    ... | ([∨]-introᵣ naxpx) = [∃]-map ([⊥]-elim ∘_) ([¬∀]-to-[∃¬] ⦃ classical-proof1 ⦄ ⦃ classical-proof2 ⦄ (naxpx))
+    ... | ([∨]-introᵣ naxpx) = [∃]-map-proof ([⊥]-elim ∘_) ([¬∀]-to-[∃¬] ⦃ classical-proof1 ⦄ ⦃ classical-proof2 ⦄ (naxpx))
     -- (∀x. P(x)) → Q
     -- • ∀x. P(x)
     --   ∀x. P(x)

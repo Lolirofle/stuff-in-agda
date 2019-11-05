@@ -10,7 +10,7 @@ open import Type.Unit
 
 module _ {ℓ} where
   open import Relator.Equals
-  open import Relator.Equals.Equivalence
+  open import Relator.Equals.Proofs.Equivalence
 
   -- The set category is a category containing all sets/types of a single level in the language.
   -- The objects are all sets/types.
@@ -26,7 +26,7 @@ module _ {ℓ} where
   open import Functional.Equals
   open import Functional.Equals.Proofs
   import      Relator.Equals as Eq
-  open import Relator.Equals.Equivalence
+  open import Relator.Equals.Proofs.Equivalence
 
   -- The set category but the equality on the morphisms/functions is pointwise/extensional.
   typeExtensionalFnCategory : Category{Obj = Set(ℓ)}(_→ᶠ_) ⦃ [⊜]-equiv ⦃ [≡]-equiv ⦄ ⦄

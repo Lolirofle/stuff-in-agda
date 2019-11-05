@@ -106,16 +106,6 @@ module _ {ℓ₂ ℓ₃} where
   Invertible : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → Stmt{ℓ₂ Lvl.⊔ ℓ₃}
   Invertible f = ∃(Inverse f)
 
-  -- Definition of the relation between a function and an operation that says:
-  -- The function preserves the operation.
-  -- Also called: Homomorphism
-  Preserving : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (X → X) → (Y → Y) → Stmt{ℓ₂ Lvl.⊔ ℓ₃}
-  Preserving {X}{Y} (f)(x)(y) = (∀{a : X} → (f(x(a)) ≡ y(f(a)))) -- TODO: Is it possible to make this more general? So that multiple function applications are allowed?
-  -- ∀{a : X} → ((f ∘ x)(a) ≡ (y ∘ f)(a))
-
-  Preserving2 : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (X → X → X) → (Y → Y → Y) → Stmt{ℓ₂ Lvl.⊔ ℓ₃}
-  Preserving2 (f)(_▫₁_)(_▫₂_) = (∀{x y} → (f(x ▫₁ y) ≡ f(x) ▫₂ f(y)))
-
   -- Definition of an left inverse for a function
   InverseIdₗ : ∀{X : Type{ℓ₂}}{Y : Type{ℓ₃}} → (X → Y) → (Y → X) → Stmt{ℓ₂}
   InverseIdₗ f f⁻¹ = (∀{x} → (f⁻¹ ∘ f)(x) ≡ x) -- TODO: Prove equivalence of this and above

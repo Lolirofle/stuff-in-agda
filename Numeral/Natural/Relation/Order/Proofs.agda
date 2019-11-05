@@ -3,6 +3,7 @@ module Numeral.Natural.Relation.Order.Proofs where
 import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
+open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
@@ -166,6 +167,10 @@ instance
 [<]-of-[𝐒] : ∀{x : ℕ} → (x < 𝐒(x))
 [<]-of-[𝐒] = reflexivity(_≤_)
 
+[<]-of-[𝟎][𝐒] : ∀{x : ℕ} → (𝟎 < 𝐒(x))
+[<]-of-[𝟎][𝐒] {𝟎} = [<]-of-[𝐒]
+[<]-of-[𝟎][𝐒] {𝐒 x} = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
+
 instance
   [≤]-of-[𝐒] : ∀{x : ℕ} → (x ≤ 𝐒(x))
   [≤]-of-[𝐒] = [≤]-successor(reflexivity(_≤_))
@@ -219,6 +224,14 @@ instance
 [<]-trichotomy {x}{y} | [∨]-introᵣ y≤x | [∨]-introₗ y<x = [∨]-introᵣ y<x
 [<]-trichotomy {x}{y} | [∨]-introᵣ y≤x | [∨]-introᵣ y≡x = [∨]-introₗ ([∨]-introᵣ y≡x)
 
+[≤][>]-dichotomy : ∀{x y} → (x ≤ y) ∨ (x > y)
+[≤][>]-dichotomy {x}{y} with [<]-trichotomy {x}{y}
+[≤][>]-dichotomy {x} {y} | [∨]-introₗ ([∨]-introₗ x<y) = [∨]-introₗ([<]-to-[≤] x<y)
+[≤][>]-dichotomy {x} {y} | [∨]-introₗ ([∨]-introᵣ x≡y) = [∨]-introₗ([≡]-to-[≤] x≡y)
+[≤][>]-dichotomy {x} {y} | [∨]-introᵣ x>y              = [∨]-introᵣ(x>y)
+
+[<][≥]-dichotomy : ∀{x y} → (x < y) ∨ (x ≥ y)
+[<][≥]-dichotomy {x}{y} = [∨]-symmetry([≤][>]-dichotomy {y}{x})
 
 [≯][≢]-to-[≱] : ∀{a b : ℕ} → (a ≯ b) → (a ≢ b) → (a ≱ b)
 [≯][≢]-to-[≱] (a≯b) (a≢b) (a≥b) with [≥]-to-[>][≡] (a≥b)
@@ -252,3 +265,6 @@ instance
 
 [≮][≱]-not : ∀{a b : ℕ} → (a ≮ b) → (a ≱ b) → ⊥
 [≮][≱]-not {a}{b} (a≮b) (a≱b) = [≮][≢][≯]-not (a≮b) ([≱]-to-[≢] a≱b) ([≱]-to-[≯] a≱b)
+
+[<]-non-zero-existence : ∀{a b : ℕ} → (a < b) → (𝟎 < b)
+[<]-non-zero-existence [≤]-with-[𝐒] = [<]-of-[𝟎][𝐒]

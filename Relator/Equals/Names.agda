@@ -2,7 +2,7 @@ module Relator.Equals.Names where
 
 open import Logic
 open import Relator.Equals
-open import Relator.Equals.Equivalence
+open import Relator.Equals.Proofs.Equivalence
 open import Type
 open import Type.Size
 

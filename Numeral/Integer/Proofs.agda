@@ -17,6 +17,7 @@ open import Structure.Function.Domain{ℓ}
 open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 open import Syntax.Number
+open import Syntax.Transitivity
 
 -- TODO: Prove the usual strcutures for ℤ
 

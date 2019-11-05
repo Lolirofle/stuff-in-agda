@@ -34,6 +34,10 @@ _++_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T) → List(T)
 _++_ ∅             b = b
 _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
 
+postpend : ∀{ℓ}{T : Type{ℓ}} → List(T) → T → List(T)
+postpend ∅       a = a ⊰ ∅
+postpend (x ⊰ l) a = x ⊰ postpend l a
+
 module LongOper where
   pattern empty = ∅
   pattern prepend elem list = elem ⊰ list
@@ -52,6 +56,13 @@ tail (_ ⊰ l) = l
 map : ∀{ℓ₁ ℓ₂}{T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (T₁ → T₂) → List(T₁) → List(T₂)
 map _ ∅ = ∅
 map f (elem ⊰ l) = (f elem) ⊰ (map f l)
+
+-- Filters the list while mapping it
+mapFilter : ∀{ℓ₁ ℓ₂}{T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (T₁ → Option(T₂)) → List(T₁) → List(T₂)
+mapFilter _ ∅ = ∅
+mapFilter f (elem ⊰ l) with f(elem)
+... | Option.Some(x) = x ⊰ (mapFilter f l)
+... | Option.None    = mapFilter f l
 
 -- Applies a binary operator to each element in the list starting with the initial element.
 -- Example:

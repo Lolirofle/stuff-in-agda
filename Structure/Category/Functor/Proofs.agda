@@ -6,6 +6,7 @@ open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Syntax.Transitivity
 open import Type
 
 module _
@@ -18,12 +19,13 @@ module _
   ⦃ morphism-equivᵣ : ∀{x y} → Equiv(Morphismᵣ x y) ⦄
   {Categoryₗ : Category(Morphismₗ)}
   {Categoryᵣ : Category(Morphismᵣ)}
-  (F : Functor(Categoryₗ)(Categoryᵣ))
-  ⦃ map-function : ∀{x y} → Function(Functor.map(F) {x}{y}) ⦄
+  (F : Objₗ → Objᵣ)
+  ⦃ functor : Functor(Categoryₗ)(Categoryᵣ)(F) ⦄
+  ⦃ map-function : ∀{x y} → Function(Functor.map(functor) {x}{y}) ⦄
   where
 
   open SideNotation(Categoryₗ)(Categoryᵣ)
-  open Functor(F)
+  open Functor(functor)
   open module Equivₗ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equivₗ{x}{y} ⦄) using () renaming (transitivity to transitivityₗ ; symmetry to symmetryₗ ; reflexivity to reflexivityₗ)
   open module Equivᵣ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equivᵣ{x}{y} ⦄) using () renaming (transitivity to transitivityᵣ ; symmetry to symmetryᵣ ; reflexivity to reflexivityᵣ)
 

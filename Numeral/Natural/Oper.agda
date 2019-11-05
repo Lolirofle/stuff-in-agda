@@ -39,7 +39,7 @@ _𝄩_ : ℕ → ℕ → ℕ
 
 
 
--- Closed subtraction
+-- Closed total subtraction (monus)
 _−₀_ : ℕ → ℕ → ℕ
 x −₀ 𝟎 = x
 𝟎 −₀ x = 𝟎
@@ -48,7 +48,7 @@ x −₀ 𝟎 = x
 -- x −₀ 𝟎 = x
 -- x −₀ 𝐒(y) = 𝐏(x −₀ y)
 
--- Closed division (rounding up)
+-- Closed total ceiled division (rounding up)
 {-# TERMINATING #-}
 _⌈/₀⌉_ : ℕ → ℕ → ℕ
 𝟎 ⌈/₀⌉ y = 𝟎

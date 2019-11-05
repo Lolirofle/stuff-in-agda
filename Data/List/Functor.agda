@@ -18,5 +18,5 @@ open import Type.Category
 
 map-functor : ∀{ℓ} → TypeFunctor{ℓ}(List)
 Functor.map(map-functor) = map
-_⊜_.proof (Functor.op-preserving map-functor {A} {B} {C} {f} {g}) {l} = [∘]-preserving-map
-_⊜_.proof (Functor.id-preserving map-functor {x}) = [∘]-preserving-id
+_⊜_.proof (Functor.op-preserving map-functor {A} {B} {C} {f} {g}) {l} = map-preserves-[∘]
+_⊜_.proof (Functor.id-preserving map-functor {x}) = map-preserves-id

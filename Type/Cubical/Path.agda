@@ -8,7 +8,8 @@ postulate PathP : ∀{ℓ}(P : Interval → Stmt{ℓ}) → P(Interval.𝟎) → 
 {-# BUILTIN PATHP PathP #-}
 
 -- The type of paths.
--- A path in some space (TODO: What space? P?) is a continuous function from the closed unit interval to the space.
+-- Can be seen as a path in some space (TODO: What space? P?)
+-- (A continuous function from the closed unit interval to the space).
 Path : ∀{ℓ}{P : Type{ℓ}} → P → P → Type{ℓ}
 Path {P = P} = PathP(\i → P)
 {-# BUILTIN PATH Path #-}

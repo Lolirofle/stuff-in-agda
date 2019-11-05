@@ -16,6 +16,7 @@ open import Relator.Equals.Proofs
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties
+open import Syntax.Transitivity
 open import Type
 
 module _ {ℓ₁ ℓ₂ : Lvl.Level} where
@@ -245,14 +246,12 @@ module _ {ℓ} {T : Type{ℓ}} where
   first-of-∅ {𝟎}   = [≡]-intro
   first-of-∅ {𝐒 n} = [≡]-intro
 
--- TODO: This should be renamed to map-preserves-[∘]
 module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{ℓ₃}} {f : B → C}{g : A → B} where
-  [∘]-preserving-map : ∀{l} → (map(f ∘ g)(l) ≡ ((map f) ∘ (map g))(l))
-  [∘]-preserving-map {∅}     = [≡]-intro
-  [∘]-preserving-map {x ⊰ l} = [≡]-with(f(g(x)) ⊰_) ([∘]-preserving-map {l})
+  map-preserves-[∘] : ∀{l} → (map(f ∘ g)(l) ≡ ((map f) ∘ (map g))(l))
+  map-preserves-[∘] {∅}     = [≡]-intro
+  map-preserves-[∘] {x ⊰ l} = [≡]-with(f(g(x)) ⊰_) (map-preserves-[∘] {l})
 
--- TODO: This should be renamed to map-preserves-id
 module _ {ℓ} {T : Type{ℓ}} where
-  [∘]-preserving-id : ∀{l : List(T)} → (map id(l) ≡ l)
-  [∘]-preserving-id {∅} = [≡]-intro
-  [∘]-preserving-id {x ⊰ l} = [≡]-with(x ⊰_) ([∘]-preserving-id {l})
+  map-preserves-id : ∀{l : List(T)} → (map id(l) ≡ l)
+  map-preserves-id {∅} = [≡]-intro
+  map-preserves-id {x ⊰ l} = [≡]-with(x ⊰_) (map-preserves-id {l})

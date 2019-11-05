@@ -7,12 +7,17 @@ open import Logic.Predicate
 open import Sets.Setoid
 open import Syntax.Function
 open import Functional.Names
+open import Syntax.Transitivity
 open import Type
 
 module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ where
-  -- Definition of commutativity
+  -- Definition of commutativity of specific elements
+  Commuting : (T₁ → T₁ → T₂) → T₁ → T₁ → Stmt
+  Commuting (_▫_) x y = ((x ▫ y) ≡ (y ▫ x))
+
+-- Definition of commutativity
   Commutativity : (T₁ → T₁ → T₂) → Stmt
-  Commutativity (_▫_) = ∀{x y : T₁} → (x ▫ y) ≡ (y ▫ x)
+  Commutativity (_▫_) = ∀{x y : T₁} → Commuting(_▫_)(x)(y)
 
   -- Definition of an left identity element
   Identityₗ : (T₁ → T₂ → T₂) → T₁ → Stmt
@@ -139,6 +144,16 @@ module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equ
   Distributivityᵣ : (T₂ → T₁ → T₂) → (T₂ → T₂ → T₂) → Stmt
   Distributivityᵣ (_▫₁_) (_▫₂_) = DistributivityPatternᵣ (_▫₁_) (_▫₂_) (_▫₂_)
   -- ∀{x y : T₂} {z : T₁} → ((x ▫₂ y) ▫₁ z) ≡ (x ▫₁ z) ▫₂ (y ▫₁ z)
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₁) ⦄ where
+  -- Definition of left absorption for two binary operators
+  Absorptionₗ : (T₁ → T₃ → T₁) → (T₁ → T₂ → T₃) → Stmt
+  Absorptionₗ (_▫₁_)(_▫₂_) = ∀{x : T₁}{y : T₂} → (x ▫₁ (x ▫₂ y) ≡ x)
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₂) ⦄ where
+  -- Definition of right absorption for two binary operators
+  Absorptionᵣ : (T₃ → T₂ → T₂) → (T₁ → T₂ → T₃) → Stmt
+  Absorptionᵣ (_▫₁_)(_▫₂_) = ∀{x : T₁}{y : T₂} → ((x ▫₂ y) ▫₁ y ≡ y)
 
 ---------------------------------------------------------
 -- Functions

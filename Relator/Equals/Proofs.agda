@@ -7,7 +7,7 @@ open import Logic
 open import Logic.Propositional
 open import Relator.Equals
 open import Relator.Equals.Names
-open import Relator.Equals.Equivalence public
+open import Relator.Equals.Proofs.Equivalence public
 open import Sets.Setoid using (Equiv ; intro ; Function ; BinaryOperator)
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties

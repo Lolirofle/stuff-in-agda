@@ -8,7 +8,7 @@ open import Functional
 open import Logic.Propositional as Logic using (_∨_ ; _∧_ ; ¬_ ; _↔_ ; [⊤]-intro ; [↔]-intro ; [⊥]-elim)
 open import Logic.Predicate
 open import Relator.Equals
-open import Relator.Equals.Equivalence
+open import Relator.Equals.Proofs.Equivalence
 open import Structure.Operator.Monoid
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
@@ -157,6 +157,25 @@ instance
 instance
   [!=]-identityᵣ : Identityᵣ(_!=_)(𝐹)
   Identityᵣ.proof([!=]-identityᵣ) = [!=]-identityᵣ-raw
+
+---------------------------------------------
+-- Identities
+
+instance
+  [||]-identity : Identity(_||_)(𝐹)
+  [||]-identity = record{}
+
+instance
+  [&&]-identity : Identity(_&&_)(𝑇)
+  [&&]-identity = record{}
+
+instance
+  [==]-identity : Identity(_==_)(𝑇)
+  [==]-identity = record{}
+
+instance
+  [!=]-identity : Identity(_!=_)(𝐹)
+  [!=]-identity = record{}
 
 ---------------------------------------------
 -- Right absorbers

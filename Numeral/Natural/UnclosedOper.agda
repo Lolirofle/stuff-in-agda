@@ -1,7 +1,10 @@
 module Numeral.Natural.UnclosedOper where
 
 import Lvl
+open import Data.Boolean.Stmt
 open import Data.Option as Option using (Option)
+open import Logic.Propositional
+open import Logic.Computability.Binary
 open import Numeral.Finite as 𝕟
   using (𝕟)
 import      Numeral.Finite.Bound as 𝕟bound
@@ -9,6 +12,12 @@ open import Numeral.Integer as ℤ
   using (ℤ)
 open import Numeral.Natural
 open import Numeral.Natural.Oper
+open import Numeral.Natural.Oper.Comparisons
+open import Numeral.Natural.Oper.Modulo
+open import Numeral.Natural.Oper.Modulo.Proofs
+open import Numeral.Natural.Relation.Order
+open import Numeral.Natural.Relation.Order.Computability
+open import Numeral.Natural.Relation.Order.Proofs
 import Numeral.Sign as Sign
 
 infix  10010 _−_
@@ -79,3 +88,7 @@ _−fin_ : (x : ℕ) → 𝕟(𝐒(x)) → 𝕟(𝐒(x))
 𝟎    −fin 𝕟.𝟎    = 𝕟.𝟎
 𝐒(x) −fin 𝕟.𝟎    = 𝕟.𝐒(x −fin 𝕟.𝟎)
 𝐒(x) −fin 𝕟.𝐒(y) = 𝕟bound.bound-𝐒 (x −fin y)
+
+-- Modulo operation to upper bounded natural numbers.
+_modfin_ : ℕ → (b : ℕ) → ⦃ _ : IsTrue(b ≢? 𝟎) ⦄ → 𝕟(b)
+a modfin 𝐒 b = 𝕟.ℕ-to-𝕟 (a mod 𝐒(b)) ⦃ [↔]-to-[→] (ComputablyDecidable.proof-istrue(_<_)) (mod-maxᵣ{a}{b}) ⦄

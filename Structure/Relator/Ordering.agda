@@ -28,24 +28,32 @@ module Weak {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂
   module Properties where
     record Minimum (min : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       constructor intro
-      field
-        proof : ∀{x : T} → (min ≤ x)
+      field proof : ∀{x : T} → (min ≤ x)
 
     record Maximum (max : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       constructor intro
-      field
-        proof : ∀{x : T} → (x ≤ max)
+      field proof : ∀{x : T} → (x ≤ max)
 
     module _ {ℓ₃} where
-      record LowerBoundOf (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
+      record MinimumOf (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
         constructor intro
         field
-          proof : ∀{x : T} → P(x) → (b ≤ x)
+          ⦃ proof ⦄ : P(m)
+          minimum   : ∀{x : T} → ⦃ _ : P(x) ⦄ → (m ≤ x)
+
+      record MaximumOf (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
+        constructor intro
+        field
+          ⦃ proof ⦄ : P(m)
+          maximum   : ∀{x : T} → ⦃ _ : P(x) ⦄ → (x ≤ m)
+
+      record LowerBoundOf (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
+        constructor intro
+        field proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (b ≤ x)
 
       record UpperBoundOf (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
         constructor intro
-        field
-          proof : ∀{x : T} → P(x) → (x ≤ b)
+        field proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (x ≤ b)
 
     module _ {ℓ₃} where
       record SupremumOf (P : T → Stmt{ℓ₃}) (sup : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
@@ -59,6 +67,13 @@ module Weak {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂
         field
           bound : LowerBoundOf(P) (inf)
           extreme : UpperBoundOf(LowerBoundOf(P)) (inf)
+
+  module _ {ℓ₃} where
+    minOf : (P : T → Stmt{ℓ₃}) → ⦃ _ : ∃(Properties.MinimumOf(P)) ⦄ → T
+    minOf(P) ⦃ e ⦄ = [∃]-witness e
+
+    maxOf : (P : T → Stmt{ℓ₃}) → ⦃ _ : ∃(Properties.MaximumOf(P)) ⦄ → T
+    maxOf(P) ⦃ e ⦄ = [∃]-witness e
 
   min : ⦃ _ : ∃(Properties.Minimum) ⦄ → T
   min ⦃ e ⦄ = [∃]-witness e

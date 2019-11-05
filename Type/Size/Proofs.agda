@@ -63,6 +63,11 @@ module _ where
     [≽]-to-[≼] ([∃]-intro(f) ⦃ f-surjective ⦄) =
       ([∃]-intro(invᵣ f) ⦃ invᵣ-injective{f = f} ⦃ Function-function ⦄ ⦃ f-surjective ⦄ ⦄)
 
+    {-[≼]-to-[≽] : (A ≼ B) → (B ≽ A)
+    [≼]-to-[≽] ([∃]-intro(f) ⦃ f-injective ⦄) =
+      {![∃]-intro()!}
+    -}
+
   module _ {ℓ} where
     instance
       [≍]-reflexivity : Reflexivity(_≍_ {ℓ})

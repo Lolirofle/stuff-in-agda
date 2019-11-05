@@ -1,15 +1,15 @@
-module Numeral.Natural.TotalOper{ℓ} where
+module Numeral.Natural.TotalOper where
 
 import Lvl
-open import Logic.Propositional{ℓ}
-open import Logic.Predicate{ℓ}{Lvl.𝟎}
+open import Logic.Propositional
+open import Logic.Predicate
 open import Numeral.Natural hiding (𝐏)
-open import Numeral.Natural.Relation.Divisibility{ℓ}
-open import Numeral.Natural.Relation.Divisibility.Proofs{ℓ}
-open import Numeral.Natural.Relation.Order{ℓ}
-open import Numeral.Natural.Relation.Order.Proofs{ℓ}
-open import Relator.Equals{ℓ}{Lvl.𝟎}
-open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
+open import Numeral.Natural.Relation.Divisibility
+open import Numeral.Natural.Relation.Divisibility.Proofs
+open import Numeral.Natural.Relation.Order
+open import Numeral.Natural.Relation.Order.Proofs
+open import Relator.Equals
+open import Relator.Equals.Proofs
 
 -- Total predecessor function (Truncated predecessor)
 𝐏 : (n : ℕ) → ⦃ _ : n ≢ 𝟎 ⦄ → ℕ

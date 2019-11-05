@@ -1,23 +1,20 @@
-module Structure.Operator.Group.Proofs{ℓ₁}{ℓ₂} where
+module Structure.Operator.Group.Proofs where
 
 open import Functional hiding (id)
 import      Lvl
 open import Lang.Instance
-open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
--- open import Sets.Setoid{ℓ₁}
-open import Relator.Equals{ℓ₁}{ℓ₂}
-open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
-open import Structure.Operator.Group{ℓ₁}{ℓ₂}
-open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}
-open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
-open import Structure.Relator.Properties{ℓ₁}{ℓ₂}
+open import Logic.Propositional
+open import Sets.Setoid
+open import Structure.Operator.Group
+open import Structure.Operator.Monoid
+open import Structure.Operator.Properties
+open import Structure.Relator.Properties
+open import Syntax.Transitivity
 open import Type
 
-{-
-unique-identity : Unique()
-unique-inverse : Unique()
--}
 
+
+{-
 module _ {T : Type{ℓ₂}} {_▫_ : T → T → T} ⦃ group : Group(_▫_) ⦄ where
   open Group  {T} ⦃ [≡]-equiv ⦄ {_▫_} (group)
   open Monoid {T} ⦃ [≡]-equiv ⦄ {_▫_} (monoid)
@@ -71,3 +68,4 @@ module _ {T : Type} {_▫_ : T → T → T} ⦃ associativity : Associativity(_�
 
   associate4-321-231 : ∀{a b c d} → (a ▫ (b ▫ (c ▫ d)) ≡ a ▫ ((b ▫ c) ▫ d))
   associate4-321-231 {a}{b}{c}{d} = [≡]-with(a ▫_) (symmetry associativity)
+-}

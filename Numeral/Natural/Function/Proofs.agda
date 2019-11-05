@@ -1,6 +1,7 @@
 module Numeral.Natural.Function.Proofs where
 
 import      Lvl
+open import Data.Tuple
 open import Functional
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
@@ -16,6 +17,27 @@ open import Structure.Function.Domain
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties
+open import Syntax.Transitivity
+
+max-0ₗ : ∀{b} → (max 𝟎 b ≡ b)
+max-0ₗ {𝟎}   = [≡]-intro
+max-0ₗ {𝐒 b} = [≡]-intro
+{-# REWRITE max-0ₗ #-}
+
+max-0ᵣ : ∀{a} → (max a 𝟎 ≡ a)
+max-0ᵣ {𝟎}   = [≡]-intro
+max-0ᵣ {𝐒 a} = [≡]-intro
+{-# REWRITE max-0ᵣ #-}
+
+min-0ₗ : ∀{b} → (min 𝟎 b ≡ 𝟎)
+min-0ₗ {𝟎}   = [≡]-intro
+min-0ₗ {𝐒 b} = [≡]-intro
+{-# REWRITE min-0ₗ #-}
+
+min-0ᵣ : ∀{a} → (min a 𝟎 ≡ 𝟎)
+min-0ᵣ {𝟎}   = [≡]-intro
+min-0ᵣ {𝐒 a} = [≡]-intro
+{-# REWRITE min-0ᵣ #-}
 
 max-elementary : ∀{a b} → (max(a)(b) ≡ a + (b −₀ a))
 max-elementary {𝟎}    {𝟎}    = [≡]-intro
@@ -178,3 +200,40 @@ max-defₗ {a}{b} = [↔]-intro (l{a}{b}) (r{a}{b}) where
 
 max-defᵣ : ∀{a b} → (b ≥ a) ↔ (max(a)(b) ≡ b)
 max-defᵣ {a}{b} = [≡]-substitutionᵣ (commutativity(max)) {expr ↦ (b ≥ a) ↔ (expr ≡ b)} (max-defₗ{b}{a})
+
+[≤]-conjunction-min : ∀{a b c} → ((a ≤ b) ∧ (a ≤ c)) ↔ (a ≤ min b c)
+[≤]-conjunction-min {a}{b}{c} = [↔]-intro (a≤bc ↦ [∧]-intro (a≤bc 🝖 min-orderₗ) (a≤bc 🝖 min-orderᵣ)) (uncurry r) where
+  r : ∀{a b c} → (a ≤ b) → (a ≤ c) → (a ≤ min b c)
+  r {.0}     {b}      {c}     [≤]-minimum  [≤]-minimum = [≤]-minimum
+  r {.(𝐒 a)} {.(𝐒 b)} {.(𝐒 c)} ([≤]-with-[𝐒] {a} {b} ⦃ ab ⦄) ([≤]-with-[𝐒] {y = c} ⦃ ac ⦄) = [≤]-with-[𝐒] ⦃ r {a}{b}{c} ab ac ⦄
+
+[≤]-conjunction-max : ∀{a b c} → ((a ≤ c) ∧ (b ≤ c)) ↔ (max a b ≤ c)
+[≤]-conjunction-max {a}{b}{c} = [↔]-intro (ab≤c ↦ [∧]-intro (max-orderₗ 🝖 ab≤c) ((max-orderᵣ 🝖 ab≤c))) (uncurry r) where
+  r : ∀{a b c} → (a ≤ c) → (b ≤ c) → (max a b ≤ c)
+  r {.0}     {b}      {c}      [≤]-minimum  bc           = bc
+  r {a}      {.0}     {c}      ac           [≤]-minimum  = ac
+  r {𝐒 a} {𝐒 b} {𝐒 c} ([≤]-with-[𝐒] ⦃ ac ⦄) ([≤]-with-[𝐒] ⦃ bc ⦄) = [≤]-with-[𝐒] ⦃ r {a}{b}{c} ac bc ⦄
+
+[≤]-disjunction-min : ∀{a b c} → ((a ≤ c) ∨ (b ≤ c)) ↔ (min a b ≤ c)
+[≤]-disjunction-min = [↔]-intro
+  (ab≤c ↦ [∨]-map
+    ((_🝖 ab≤c) ∘ [≡]-to-[≤] ∘ symmetry(_≡_))
+    ((_🝖 ab≤c) ∘ [≡]-to-[≤] ∘ symmetry(_≡_))
+    min-arg
+  )
+  ([∨]-elim
+    (min-orderₗ 🝖_)
+    (min-orderᵣ 🝖_)
+  )
+
+[≤]-disjunction-max : ∀{a b c} → ((a ≤ b) ∨ (a ≤ c)) ↔ (a ≤ max b c)
+[≤]-disjunction-max = [↔]-intro
+  (a≤bc ↦ [∨]-map
+    ((_🝖 a≤bc) ∘ [≡]-to-[≤])
+    ((_🝖 a≤bc) ∘ [≡]-to-[≤])
+    max-arg
+  )
+  ([∨]-elim
+    (_🝖 max-orderₗ)
+    (_🝖 max-orderᵣ)
+  )

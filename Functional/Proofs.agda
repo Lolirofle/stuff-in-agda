@@ -2,17 +2,21 @@ module Functional.Proofs where
 
 import      Lvl
 open import Logic
+open import Logic.Classical
+open import Logic.Computability
 open import Logic.Propositional
 open import Logic.Predicate
 open import Functional
 open import Functional.Names using (_⊜_)
-open import Sets.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_)
+open import Sets.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_ ; [≡]-with to [≡ₛ]-with ; Function to Functionₛ)
 open import Sets.Setoid.Uniqueness
 open import Structure.Relator.Function renaming (Function to RelatorFunction ; function to relatorFunction)
 open import Structure.Relator.Properties
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
+open import Syntax.Transitivity
 open import Type
+open import Type.Empty
 
 module _ {ℓₗ ℓₒ₁ ℓₒ₂} {A : Type{ℓₒ₁}}{B : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂}} (φ : A → B → Stmt{ℓₗ}) ⦃ totality : FunctionTotal(φ)⦄ ⦃ func : RelatorFunction(φ)⦄ where
   open import Relator.Equals
@@ -183,23 +187,30 @@ module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {a : Type{ℓₒ₁}} ⦃ _ : Equiv(a) 
   [∘]-function : ∀{f : b → c}{g : a → b} → ⦃ _ : Function(f) ⦄ → ⦃ _ : Function(g) ⦄ → Function(f ∘ g)
   Function.proof([∘]-function {f = f}{g = g} ⦃ func-f ⦄ ⦃ func-g ⦄ ) {x₁}{x₂} = (function(f) ⦃ func-f ⦄ {g(x₁)} {g(x₂)}) ∘ (function(g) ⦃ func-g ⦄ {x₁} {x₂})
 
-  -- Every injective function has a left inverse with respect to function composition.
-  -- TODO: Maybe also need to assume (∃x. x∈a)? That Inhabited(a). f: ∅→b is okay, but not g: b→∅. But that case should be impossible?
-  {- [∘]-inverseₗ : ∀{a b : Type{ℓₒ}}{f : a → b} → ⦃ _ : Injective(f) ⦄ → ⦃ _ : Inhabited(a) ⦄ → ⦃ _ : ∀{y} → Decidable(Image-in(f)(y)) ⦄ → ∃(g ↦ ∀{x} → ((g ∘ f)(x) ≡ id(x)))
-  [∘]-inverseₗ {a}{b} {f} ⦃ f-injective ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
-    f⁻¹ : b → a
-    f⁻¹(y) = [∃]-witness(f-injective{y})
-
-    f⁻¹-proof : ∀{y} → ((f⁻¹ ∘ f)(y) ≡ id(y))
-    f⁻¹-proof{y} = [∃]-proof(f-injective{y})
-  -}
-
 module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv(A) ⦄ {B : Type{ℓ₂}} ⦃ eqB : Equiv(B) ⦄ where
   private
     _⊜AB_ = _⊜_ {A = A}{B} ⦃ eqB ⦄
     _⊜BA_ = _⊜_ {A = B}{A} ⦃ eqA ⦄
     _⊜AA_ = _⊜_ {A = A}{A} ⦃ eqA ⦄
     _⊜BB_ = _⊜_ {A = B}{B} ⦃ eqB ⦄
+
+{-
+  -- Every injective function has a left inverse with respect to function composition.
+  -- TODO: Maybe also need to assume (∃x. x∈a)? That Inhabited(a). f: ∅→b is okay, but not g: b→∅. But that case should be impossible?
+  [∘]-inverseₗ : ∀{f : A → B} → ⦃ _ : Injective(f) ⦄ → ⦃ (◊ A) ⦄ → ⦃ _ : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ → ∃(g ↦ g ∘ f ⊜AA id)
+  [∘]-inverseₗ {f} ⦃ f-injective ⦄ ⦃ intro ⦃ a ⦄ ⦄ ⦃ classical ⦄ = [∃]-intro (f⁻¹) ⦃ (\{x} → f⁻¹-proof{x}) ⦄ where
+    f⁻¹ : B → A
+    f⁻¹(y) with excluded-middle{P = ∃(x ↦ Equiv._≡_ eqB (f(x)) y)}
+    f⁻¹ y | [∨]-introₗ ([∃]-intro x) = x
+    f⁻¹ y | [∨]-introᵣ _             = a
+
+    test : ⦃ _ : Functionₛ(f⁻¹) ⦄ → ∀{y} → (([∃]-intro x) : ∃(x ↦ Equiv._≡_ eqB (f(x)) y)) → (Equiv._≡_ eqA (f⁻¹(y)) x)
+    test ⦃ func-f⁻¹ ⦄ {y} ([∃]-intro x ⦃ fxy ⦄) = {![≡ₛ]-with(f⁻¹) fxy!}
+
+    -- TODO: How to split the cases in the proof here?
+    f⁻¹-proof : (f⁻¹ ∘ f ⊜ id)
+    f⁻¹-proof{x} = {!!}
+-}
 
   -- Every surjective function has a right inverse with respect to function composition.
   -- Note: Equivalent to axiom of choice from set theory when formulated in classical logic.
@@ -210,10 +221,6 @@ module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv(A) ⦄ {B : Type{ℓ
 
     f⁻¹-proof : (f ∘ f⁻¹ ⊜ id)
     f⁻¹-proof{y} = [∃]-proof(surjective(f) {y})
-
-  -- TODO: 
-  -- invₗ : ∀{a b} → (f : a → b) → ⦃ _ : Bijective(f) ⦄ → (b → a)
-  -- invₗ (f) = [∃]-witness([∘]-inverseₗ{_}{_}{f})
 
   -- invᵣ(f) is one of the right inverse functions of a surjective function f.
   invᵣ : (f : A → B) → ⦃ _ : Surjective(f) ⦄ → (B → A)

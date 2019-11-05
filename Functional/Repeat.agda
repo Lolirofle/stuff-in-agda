@@ -1,3 +1,4 @@
+-- TODO: Maybe rename this to "function iteration"
 module Functional.Repeat where
 
 open import Functional
@@ -47,20 +48,35 @@ module _ {ℓ} {T : Type{ℓ}} where
   _^_ f (𝐒(n)) = f ∘ (f ^ n)
 
 module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
-  -- Repeat a binary operation n times for the same element and a initial element
-  --   Example: repeatₗ 3 id (_∘_) f = ((id ∘ f) ∘ f) ∘ f
-  --   Example in Haskell: (foldl (.) (id) (take 5 (repeat f)))
-  --   Implementation in Haskell: (\n null op elem -> foldl op null (take n (repeat elem))) :: Int -> a -> (b -> a -> b) -> b -> b
-  repeatₗ : ℕ → (Y → X → Y) → Y → X → Y
-  repeatₗ  𝟎     (_▫_) null elem = null
-  repeatₗ (𝐒(n)) (_▫_) null elem = (repeatₗ n (_▫_) null elem) ▫ elem
+  -- Repeat a binary operation n times for the same element and an initial element
+  -- Example: repeatₗ 3 id (_∘_) f = ((id ∘ f) ∘ f) ∘ f
+  -- Example in Haskell: (foldl (.) (id) (take 5 (repeat f)))
+  -- Implementation in Haskell: (\n null op elem -> foldl op null (take n (repeat elem))) :: Int -> a -> (b -> a -> b) -> b -> b
+  repeatₗ : ℕ → (Y → X → Y) → (Y → X → Y)
+  repeatₗ n (_▫_) null elem = ((_▫ elem) ^ n) (null)
 
-  -- Repeat a binary operation n times for the same element and a initial element
-  --   Example: repeatᵣ 3 id (_∘_) f = f ∘ (f ∘ (f ∘ id))
-  --   Implementation in Haskell: (\n elem op null -> foldr op null (take n (repeat elem))) :: Int -> a -> (a -> b -> b) -> b -> b
-  repeatᵣ : ℕ → (X → Y → Y) → X → Y → Y
-  repeatᵣ  𝟎     (_▫_) elem null = null
-  repeatᵣ (𝐒(n)) (_▫_) elem null = elem ▫ (repeatᵣ n (_▫_) elem null)
+  -- Repeat a binary operation n times for the same element and an initial element
+  -- Example: repeatᵣ 3 id (_∘_) f = f ∘ (f ∘ (f ∘ id))
+  -- Implementation in Haskell: (\n elem op null -> foldr op null (take n (repeat elem))) :: Int -> a -> (a -> b -> b) -> b -> b
+  repeatᵣ : ℕ → (X → Y → Y) → (X → Y → Y)
+  repeatᵣ n (_▫_) elem = (elem ▫_) ^ n
+
+module _ {ℓ} {X : Type{ℓ}} where
+  -- Repeat a binary operation n times for the same element and using the default element on zero.
+  -- Examples:
+  --   repeatₗ 0 def (_∘_) f = def
+  --   repeatₗ 4 def (_∘_) f = ((f ∘ f) ∘ f) ∘ f
+  repeatₗ-default : ℕ → (X → X → X) → (X → X → X)
+  repeatₗ-default 𝟎      _     def  _    = def
+  repeatₗ-default (𝐒(n)) (_▫_) _    elem = repeatₗ(n) (_▫_) elem elem
+
+  -- Repeat a binary operation n times for the same element and using the default element on zero.
+  -- Examples:
+  --   repeatᵣ 0 f (_∘_) def = def
+  --   repeatᵣ 4 f (_∘_) def = f ∘ (f ∘ (f ∘ f))
+  repeatᵣ-default : ℕ → (X → X → X) → (X → X → X)
+  repeatᵣ-default 𝟎      _     _    def  = def
+  repeatᵣ-default (𝐒(n)) (_▫_) elem _    = repeatᵣ(n) (_▫_) elem elem
 
   -- TODO: curry ∘ curry does not work with repeat because LHS≠RHS, but can this be fixed?
   -- curry             :: ((a, b) -> c) -> a -> b -> c
@@ -69,18 +85,3 @@ module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
 
   -- (b → c) → ((a → b) → (a → c))
   -- (((x , y) , z) → t) → (x → (y → (z → t)))
-
-
-  -- repeatᵣ₂ : ℕ → X → (X → Y → Y) → Y → Y
-  -- repeatᵣ₂  𝟎     elem _▫_ null = null
-  -- repeatᵣ₂ (𝐒(n)) elem _▫_ null = elem ▫ (repeatᵣ₂ n elem _▫_ null)
-
-  -- (T(a,b) → z) → U(a,U(b,U(c)))
-  -- (T(T(a,b),c) → z) → U(a,U(b,U(c,U(z))))
-
-  -- (T₁(a₁,b₁) → z₁) → U₁(a₁,U₁(b₁,U₁(c₁)))
-  -- (T₂(a₂,b₂) → z₂) → U₂(a₂,U₂(b₂,U₂(c₂)))
-  -- ((B → C) ⨯ (A → B)) → (A → C)
-  --   (T₁(a₁,b₁) → z₁) = U₂(a₂,U₂(b₂,U₂(c₂)))
-  --   (T₁(a₁,b₁) → z₁) = U₂(a₂,U₂(b₂,U₂(c₂))) -- U₂=
-  -- ((B → C) ⨯ (A → B)) → (A → C)

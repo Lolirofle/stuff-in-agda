@@ -17,9 +17,11 @@ open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Sets.Setoid.Uniqueness
 open import Structure.Function.Domain
+open import Structure.Operator.Proofs
 open import Structure.Operator.Properties
 import      Structure.Operator.Names as Names
 open import Structure.Relator.Properties
+open import Syntax.Transitivity
 
 [+]-identityₗ-raw : Names.Identityₗ (_+_) (0)
 [+]-identityₗ-raw {x} = [ℕ]-induction base next {x} where
@@ -30,6 +32,10 @@ open import Structure.Relator.Properties
   next _ = [≡]-with(𝐒)
 {-# REWRITE [+]-identityₗ-raw #-}
 
+instance
+  [+]-identityₗ : Identityₗ (_+_) (0)
+  Identityₗ.proof([+]-identityₗ) = [+]-identityₗ-raw
+
 [+]-identityᵣ-raw : Names.Identityᵣ (_+_) (0)
 [+]-identityᵣ-raw {x} = [ℕ]-induction base next {x} where
   base : ((0 + 0) ≡ 0)
@@ -38,6 +44,10 @@ open import Structure.Relator.Properties
   next : ∀(i : ℕ) → ((i + 0) ≡ i) → ((𝐒(i) + 0) ≡ 𝐒(i))
   next _ = [≡]-with(𝐒)
 
+instance
+  [+]-identityᵣ : Identityᵣ (_+_) (0)
+  Identityᵣ.proof([+]-identityᵣ) = [+]-identityᵣ-raw
+
 [+]-associativity-raw : Names.Associativity (_+_)
 [+]-associativity-raw {x}{y}{z} = [ℕ]-induction (base x y) (next x y) {z} where
   base : (x y : ℕ) → ((x + y) + 0) ≡ (x + (y + 0))
@@ -45,7 +55,11 @@ open import Structure.Relator.Properties
 
   next : ∀(x y i : ℕ) → ((x + y) + i) ≡ (x + (y + i)) → ((x + y) + 𝐒(i)) ≡ (x + (y + 𝐒(i)))
   next _ _ _ = [≡]-with(𝐒)
-{-# REWRITE [+]-associativity-raw #-}
+-- {-# REWRITE [+]-associativity-raw #-}
+
+instance
+  [+]-associativity : Associativity (_+_)
+  Associativity.proof([+]-associativity) {x}{y}{z} = [+]-associativity-raw {x}{y}{z}
 
 [+1]-commutativity : ∀{x y : ℕ} → (𝐒(x) + y) ≡ (x + 𝐒(y))
 [+1]-commutativity {x}{y} = [ℕ]-induction (base x) (next x) {y} where
@@ -128,23 +142,14 @@ open import Structure.Relator.Properties
   base _ _ = [≡]-intro
 
   next : ∀(x y z : ℕ) → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z)) → ((x + y) ⋅ 𝐒(z)) ≡ ((x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)))
-  next(x)(y)(z) (proof) = ([≡]-with(expr ↦ ((x + y) + expr)) proof) 🝖 (swap-stuff-around{x}{y}{x ⋅ z}{y ⋅ z}) where
-    swap-stuff-around : ∀{a b c d} → (a + b) + (c + d) ≡ (a + c) + (b + d)
-    swap-stuff-around {a}{b}{c}{d} =
-      [+]-associativity-raw{a}{b}{c + d}
-      🝖 ([≡]-with(expr ↦ a + expr) ([+]-commutativity-raw{b}{c + d}))
-      🝖 ([≡]-with(expr ↦ a + expr) ([+]-associativity-raw{c}{d}{b}))
-      🝖 ([≡]-with(expr ↦ a + (c + expr)) ([+]-commutativity-raw{d}{b}))
-      🝖 (symmetry(_≡_)([+]-associativity-raw{a}{c}{b + d}))
-  -- (x+y)⋅𝐒(z)
-  -- = (x+y) + (x+y)⋅z //Definition: (⋅)
-  -- = (x+y) + (x⋅z + y⋅z) //proof
-  -- = x + (y + (x⋅z + y⋅z))
-  -- = x + ((x⋅z + y⋅z) + y)
-  -- = x + (x⋅z + (y⋅z + y))
-  -- = (x + x⋅z) + (y⋅z + y)
-  -- = (x + x⋅z) + (y + y⋅z)
-  -- = x⋅𝐒(z) + y⋅𝐒(z)
+  next(x)(y)(z) (proof) = ([≡]-with((x + y) +_) proof) 🝖 (One.associate-commute4 {a = x}{y}{x ⋅ z}{y ⋅ z} ([+]-commutativity-raw{x = y})) where
+    {-
+    (x + y) ⋅ 𝐒(z)
+    ((x + y) ⋅ z) + (x + y)
+    ((x ⋅ z) + (y ⋅ z)) + (x + y)
+    ((x ⋅ z) + x) + ((y ⋅ z) + y)
+    (x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z))
+    -}
 
 [⋅]-with-[𝐒]ₗ : ∀{x y} → (𝐒(x) ⋅ y ≡ (x ⋅ y) + y)
 [⋅]-with-[𝐒]ₗ {x}{y} =
@@ -162,7 +167,6 @@ open import Structure.Relator.Properties
 postulate [⋅][+]-distributivityₗ-raw : Names.Distributivityₗ(_⋅_)(_+_)
 
 postulate [⋅]-associativity-raw : Names.Associativity (_⋅_)
-{-# REWRITE [⋅]-associativity-raw #-}
 
 postulate [⋅]-commutativity-raw : Names.Commutativity (_⋅_)
 
@@ -238,6 +242,7 @@ commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
       🝖 (𝐒a⋅𝐒b≡0)
     ))
   )
+
   -- 𝐒a⋅𝐒b = 0 //assumption
   -- 𝐒a+(𝐒a⋅b) = 0 //Definition: (⋅)
   -- (𝐒a⋅b)+𝐒a = 0 //Commutativity (+)
@@ -517,20 +522,8 @@ postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
 -}
 
 instance
-  [+]-identityₗ : Identityₗ (_+_) (0)
-  Identityₗ.proof([+]-identityₗ) = [+]-identityₗ-raw
-
-instance
-  [+]-identityᵣ : Identityᵣ (_+_) (0)
-  Identityᵣ.proof([+]-identityᵣ) = [+]-identityᵣ-raw
-
-instance
   [+]-identity : Identity (_+_) (0)
   [+]-identity = intro
-
-instance
-  [+]-associativity : Associativity (_+_)
-  Associativity.proof([+]-associativity) {x}{y}{z} = [+]-associativity-raw {x}{y}{z}
 
 instance
   [+]-commutativity : Commutativity (_+_)
@@ -622,8 +615,10 @@ Injective.proof([+]ᵣ-injectivity {a}) = [+]ᵣ-injectivity-raw {a}
 [≤]-with-[+]ᵣ {_}{_}{𝟎}    (proof)    = proof
 [≤]-with-[+]ᵣ {_}{_}{𝐒(z)} (proof) = [≤]-with-[𝐒] ⦃ [≤]-with-[+]ᵣ {_}{_}{z} (proof) ⦄
 
--- [≤]-with-[+]ₗ : ∀{x y z : ℕ} → (x ≤ y) → (z + x ≤ z + y)
--- TODO: [≤]-with-[+] : ∀{x₁ y₁ : ℕ} → (x₁ ≤ y₁) → ∀{x₂ y₂ : ℕ} → (x₂ ≤ y₂) → (x₁ + x₂ ≤ y₁ + y₂)
+[≤]-with-[+]ₗ : ∀{x y z : ℕ} → (x ≤ y) → (z + x ≤ z + y)
+[≤]-with-[+]ₗ {.0} {𝟎}   {z } [≤]-minimum            = reflexivity(_≤_)
+[≤]-with-[+]ₗ {.0} {𝐒 y} {z}  [≤]-minimum            = [≤]-successor([≤]-with-[+]ₗ {0}{y}{z} [≤]-minimum)
+[≤]-with-[+]ₗ {𝐒 x} {𝐒 y} {z} ([≤]-with-[𝐒] ⦃ xy ⦄ ) = [≤]-with-[𝐒] ⦃ [≤]-with-[+]ₗ {x} {y} {z} xy ⦄
 
 [≤]-of-[+]ᵣ : ∀{x y : ℕ} → (x ≤ y + x)
 [≤]-of-[+]ᵣ {𝟎} {y} = [≤]-minimum
@@ -634,3 +629,11 @@ Injective.proof([+]ᵣ-injectivity {a}) = [+]ᵣ-injectivity-raw {a}
 [≤]-of-[+]ₗ {𝟎}   {y}   = [≤]-minimum
 [≤]-of-[+]ₗ {𝐒 x} {𝟎}   = reflexivity(_≤_)
 [≤]-of-[+]ₗ {𝐒 x} {𝐒 y} =  [≤]-with-[𝐒] ⦃ [≤]-of-[+]ₗ {x}{𝐒 y} ⦄
+
+[≤]-with-[+] : ∀{x₁ y₁ : ℕ} → ⦃ _ : (x₁ ≤ y₁)⦄ → ∀{x₂ y₂ : ℕ} → ⦃ _ : (x₂ ≤ y₂)⦄ → (x₁ + x₂ ≤ y₁ + y₂)
+[≤]-with-[+] {x₁} {y₁} ⦃ x1y1 ⦄ {.0}     {y₂}     ⦃ [≤]-minimum ⦄ = transitivity(_≤_) x1y1 [≤]-of-[+]ₗ
+[≤]-with-[+] {x₁} {y₁} ⦃ x1y1 ⦄ {𝐒 x₂} {𝐒 y₂} ⦃ [≤]-with-[𝐒] ⦃ p ⦄ ⦄ = [≤]-with-[𝐒] ⦃ [≤]-with-[+] {x₁} {y₁} {x₂} {y₂} ⦄
+
+[≤]-from-[+] : ∀{ℓ}{P : ℕ → Stmt{ℓ}}{x} → (∀{n} → P(x + n)) → (∀{y} → ⦃ _ : (x ≤ y) ⦄ → P(y))
+[≤]-from-[+] {ℓ} {P} {𝟎}   anpxn {y}   ⦃ [≤]-minimum ⦄        = anpxn{y}
+[≤]-from-[+] {ℓ} {P} {𝐒 x} anpxn {𝐒 y} ⦃ [≤]-with-[𝐒] ⦃ xy ⦄ ⦄ = [≤]-from-[+] {ℓ} {P ∘ 𝐒} {x} anpxn {y} ⦃ xy ⦄

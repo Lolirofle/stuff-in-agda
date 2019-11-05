@@ -38,11 +38,11 @@ record Matrix {ℓ} (s : ℕ ⨯ ℕ) (T : Type{ℓ}) : Type{ℓ} where
 
   -- Vector of a row in the matrix
   row : 𝕟(height) → Vector(width)(T)
-  Vector.proj(row(y))(x) = proj(x , y)
+  (row(y))(x) = proj(x , y)
 
   -- Vector of a column in the matrix
   col : 𝕟(width) → Vector(height)(T)
-  Vector.proj(col(x))(y) = proj(x , y)
+  (col(x))(y) = proj(x , y)
 
   -- Transpose (Reflection on main diagonal)
   ⬔_ : Matrix(height , width)(T)
@@ -122,11 +122,11 @@ module _ {ℓ} {w}{h} {T : Type{ℓ}} where
 
   -- Matrix represented as a vector of vectors where the inner vectors are the rows of the matrix.
   rows : Matrix(w , h)(T) → Vector(h)(Vector(w)(T))
-  Vector.proj(Vector.proj(rows(M))(y))(x) = Matrix.proj(M)(x , y)
+  ((rows(M))(y))(x) = Matrix.proj(M)(x , y)
 
   -- Matrix represented as a vector of vectors where the inner vectors are the columns of the matrix.
   cols : Matrix(w , h)(T) → Vector(w)(Vector(h)(T))
-  Vector.proj(Vector.proj(cols(M))(x))(y) = Matrix.proj(M)(x , y)
+  ((cols(M))(x))(y) = Matrix.proj(M)(x , y)
 
   -- Matrix with one row and one column removed
   -- minor : Matrix(𝐒(w) , 𝐒(h))(T) → (𝕟(𝐒(w)) ⨯ 𝕟(𝐒(h))) → Matrix(w , h)(T)
@@ -147,7 +147,7 @@ module SquareMatrix {ℓ} {d} {T : Type{ℓ}} where
   module _ (m : SquareMatrix(d)(T)) where
     -- The diagonal vector
     diag : Vector(d)(T)
-    Vector.proj(diag)(i) = Matrix.proj(m)(i , i)
+    (diag)(i) = Matrix.proj(m)(i , i)
 
     -- The maximum number of dimensions of a space that the matrix can describe linear transformations in
     dim : ℕ
@@ -176,4 +176,4 @@ module _ {ℓ} where
 
 module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {T₁ : Type{ℓ₃}} {T₂ : Type{ℓ₄}} where
   multPattern : ∀{x y z} → (T₁ → T₂ → T₂) → (A → B → T₁) → T₂ → Matrix(z , y)(A) → Matrix(x , z)(B) → Matrix(x , y)(T₂)
-  Matrix.proj(multPattern (_+_) (_⋅_) (zero) M₁ M₂)(x , y) = Vector.reduceᵣ(_+_) zero (Vector.map₂ (_⋅_) (Matrix.row(M₁)(y)) (Matrix.col(M₂)(x)))
+  Matrix.proj(multPattern (_+_) (_⋅_) (zero) M₁ M₂)(x , y) = Vector.foldᵣ(_+_) zero (Vector.map₂ (_⋅_) (Matrix.row(M₁)(y)) (Matrix.col(M₂)(x)))

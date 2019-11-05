@@ -60,12 +60,20 @@ module _
         --   ∀(x: Obj). x ⟶ T(x)
         η : idF ⟹ T
 
-        -- TODO: ?
-        -- In Haskell, this is called "bind" and named "(>>=)". TODO: Not sure. This looks different?
+        -- In Haskell, this is called "join".
         --   (T ∘F T) ⟹ T
         --   ∀(x: Obj). (T ∘F T)(x) ⟶ T(x)
         --   ∀(x: Obj). T(T(x)) ⟶ T(x)
+        -- Note: μ = x >>= id (TODO: In some way, this is true?)
         μ : (T ∘F T) ⟹ T
+
+      -- In Haskell, this is called "bind"/"extend" and named "(>>=)". TODO: Not sure. This looks different?
+      -- (a → T(b)) → T(a) → T(b)
+
+      -- x >>= f = join (fmap f x)
+
+      -- join x = x >>= id
+      -- fmap f x = x >>= (return . f)
 
       field
         ⦃ .μ-commutativity ⦄ : μ ∘NT (T ∘F μ) ≡ μ ∘NT (μ ∘F T)

@@ -11,6 +11,7 @@ open import Structure.Relator.Properties
 open import Relator.Congruence
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Syntax.Transitivity
 open import Type
 
 module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}}{Y : Type{ℓ₂}} {f : X → Y} where

@@ -20,7 +20,7 @@ module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ 
   FunctionExtensionalityOn(f)(g) = ((f ⊜ g) → (f ≡ g))
 
 module _ {ℓₒ₁}{ℓₒ₂} where
-  open import Relator.Equals.Equivalence
+  open import Relator.Equals.Proofs.Equivalence
 
   FunctionExtensionality : Stmt{Lvl.𝐒(ℓₒ₁ Lvl.⊔ ℓₒ₂)}
   FunctionExtensionality = ∀{A : Type{ℓₒ₁}}{B : Type{ℓₒ₂}} → ∀²ᶠ(FunctionExtensionalityOn{ℓₒ₁}{ℓₒ₂}{A}{B} ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄)
@@ -69,6 +69,17 @@ module _ {ℓₒ} {A : Type{ℓₒ}} ⦃ _ : Equiv(A) ⦄ where
 
   Idempotent : (A → A) → Stmt{ℓₒ}
   Idempotent(f) = ∀ᶠ(IdempotentOn f)
+
+module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv(B) ⦄ where
+  -- Definition of the relation between a function and an operation that says:
+  -- The function preserves the operation.
+  -- Also called: Homomorphism
+  Preserving₁ : (A → B) → (A → A) → (B → B) → Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂}
+  Preserving₁ (f)(x)(y) = (∀{a : A} → (f(x(a)) ≡ y(f(a))))
+  -- ∀{a : A} → ((f ∘ x)(a) ≡ (y ∘ f)(a))
+
+  Preserving₂ : (A → B) → (A → A → A) → (B → B → B) → Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂}
+  Preserving₂ (f)(_▫₁_)(_▫₂_) = (∀{x y} → (f(x ▫₁ y) ≡ f(x) ▫₂ f(y)))
 
 -- module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}}{Y : Type{ℓ₂}} (f : X → Y) where
 --   open import Functional.DomainRaise

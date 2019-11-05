@@ -47,7 +47,7 @@ instance
     decide = (_<?_)
 
     proof : ∀{x}{y} → (x < y) ↔ ((x <? y) ≡ 𝑇)
-    proof{x}{y} rewrite [<?]-to-[≤?] {x}{y} = ComputablyDecidable.proof (_≤_) {𝐒(x)}{y}
+    proof{x}{y} = ComputablyDecidable.proof (_≤_) {𝐒(x)}{y}
 
 instance
   [>]-computable : ComputablyDecidable{X = ℕ}(_>_)

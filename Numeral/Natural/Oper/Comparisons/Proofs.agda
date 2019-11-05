@@ -24,7 +24,6 @@ instance
 [≤?]-positive : ∀{n} → (𝐒(𝟎) ≤? n) ≡ positive?(n)
 [≤?]-positive {𝟎}    = [≡]-intro
 [≤?]-positive {𝐒(_)} = [≡]-intro
-{-# REWRITE [≤?]-positive #-}
 
 [≢?]-positive : ∀{n} → (n ≢? 𝟎) ≡ positive?(n)
 [≢?]-positive {𝟎}    = [≡]-intro

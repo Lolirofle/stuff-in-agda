@@ -49,6 +49,14 @@ swap f(x₂)(x₁) = f(x₁)(x₂)
 _∘_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y → Z) → (X → Y) → (X → Z)
 (f ∘ g)(x) = f(g(x))
 
+-- Function composition on implicit argument
+_∘ᵢₘₚₗ_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y → Z) → ({X} → Y) → ({X} → Z)
+(f ∘ᵢₘₚₗ g){x} = f(g{x})
+
+-- Function composition on instance argument
+_∘ᵢₙₛₜ_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y → Z) → (⦃ X ⦄ → Y) → (⦃ X ⦄ → Z)
+(f ∘ᵢₙₛₜ g) ⦃ x ⦄ = f(g ⦃ x ⦄)
+
 -- Function composition on a binary operator
 -- A function is composed on every argument of the binary operator.
 _on₂_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y → Y → Z) → (X → Y) → (X → X → Z)

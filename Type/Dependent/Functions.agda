@@ -9,11 +9,9 @@ module _ {ℓ₁ ℓ₂ ℓ₃}
          {A : Type{ℓ₁}}
          {B : A → Type{ℓ₂}}
          {C : ∀{x} → B(x) → Type{ℓ₃}}
-         (f : ∀{x} → Π(B(x))(C))
-         (g : Π(A)(B))
          where
-  [Π]-∘ : Π(A)(\x → C(Π.apply g x))
-  Π.apply [Π]-∘ x = Π.apply f (Π.apply g x)
+  _[Π]-∘_ : (∀{x} → Π(B(x))(C)) → (g : Π(A)(B)) → Π(A)(\x → C(Π.apply g x))
+  Π.apply (f [Π]-∘ g) x = Π.apply f (Π.apply g x)
 
 module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄}
          {A₁ : Type{ℓ₁}}

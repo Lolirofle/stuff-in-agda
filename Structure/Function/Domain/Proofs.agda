@@ -11,6 +11,7 @@ open import Sets.Setoid hiding (Function)
 open import Sets.Setoid.Uniqueness
 open import Structure.Function.Domain
 open import Structure.Relator.Properties
+open import Syntax.Transitivity
 open import Type
 
 module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv(B) ⦄ (f : A → B) where

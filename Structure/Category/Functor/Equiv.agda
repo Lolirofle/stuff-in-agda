@@ -16,12 +16,9 @@ module _
   ⦃ morphism-equivₗ : ∀{x y} → Equiv(Morphismₗ x y) ⦄
   {Morphismᵣ : Objᵣ → Objᵣ → Set(ℓₘᵣ)}
   ⦃ morphism-equivᵣ : ∀{x y} → Equiv(Morphismᵣ x y) ⦄
-  (Categoryₗ : Category(Morphismₗ))
-  (Categoryᵣ : Category(Morphismᵣ))
+  {Categoryₗ : Category(Morphismₗ)}
+  {Categoryᵣ : Category(Morphismᵣ)}
   where
 
-  record _≡F_ (F₁ : Functor(Categoryₗ)(Categoryᵣ)) (F₂ : Functor(Categoryₗ)(Categoryᵣ)) : Stmt{ℓₒₗ Lvl.⊔ ℓₘₗ Lvl.⊔ ℓₒᵣ Lvl.⊔ ℓₘᵣ} where
-    constructor intro
-    field
-      functor : Functor.functor(F₁) ⊜ Functor.functor(F₂)
-      map     : ∀{x y} → Functor.map(F₁){x}{y} ⊜ Functor.map(F₂){x}{y} -- TODO: The type of the morphisms differs because of different `functor`, so (homogenous) equaliy does not work
+  data _≡F_ : ∀{F₁ F₂} → Functor(Categoryₗ)(Categoryᵣ)(F₁) → Functor(Categoryₗ)(Categoryᵣ)(F₂) → Stmt{ℓₒₗ Lvl.⊔ ℓₘₗ Lvl.⊔ ℓₒᵣ Lvl.⊔ ℓₘᵣ} where
+    intro : ∀{F : Objₗ → Objᵣ}{functor₁ functor₂ : Functor(Categoryₗ)(Categoryᵣ)(F)}{x y} → (Functor.map(functor₁){x}{y} ⊜ Functor.map(functor₂){x}{y}) → (functor₁ ≡F functor₂)

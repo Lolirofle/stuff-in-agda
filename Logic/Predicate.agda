@@ -38,8 +38,11 @@ module _ {ℓ₁}{ℓ₂} where
   -}
 
 module _ {ℓₒ}{ℓₗ₁}{ℓₗ₂} {X : Type{ℓₒ}}{P : X → Stmt{ℓₗ₁}}{Q : X → Stmt{ℓₗ₂}} where
-  [∃]-map : (∀{x} → P(x) → Q(x)) → ((∃ P) → (∃ Q))
-  [∃]-map (f) ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(x) ⦃ f(proof) ⦄
+  [∃]-map-proof : (∀{x} → P(x) → Q(x)) → ((∃ P) → (∃ Q))
+  [∃]-map-proof (f) ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(x) ⦃ f(proof) ⦄
+
+  [∃]-map : (f : X → X) → (∀{x} → P(x) → Q(f(x))) → ((∃ P) → (∃ Q))
+  [∃]-map f p ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(f(x)) ⦃ p(proof) ⦄
 
 ------------------------------------------
 -- Universal quantification (Forall, All)

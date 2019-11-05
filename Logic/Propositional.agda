@@ -27,6 +27,8 @@ pattern [∧]-intro p q = p , q
 [∧]-elimᵣ : ∀{ℓ₁ ℓ₂}{P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} → (P ∧ Q) → Q
 [∧]-elimᵣ = Tuple.right
 
+[∧]-map = Tuple.map
+
 ------------------------------------------
 -- Implication
 
@@ -79,6 +81,8 @@ pattern [∨]-introᵣ r = Either.Right r
 [∨]-elim : ∀{ℓ₁ ℓ₂ ℓ₃}{P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{ℓ₃}} → (P → R) → (Q → R) → (P ∨ Q) → R
 [∨]-elim(f₁) (_) (Either.Left p) = f₁ p
 [∨]-elim(_) (f₂) (Either.Right q) = f₂ q
+
+[∨]-map = Either.map2
 
 ------------------------------------------
 -- Bottom (false, absurdity, empty, contradiction)

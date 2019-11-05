@@ -10,6 +10,7 @@ open import Sets.Setoid.Uniqueness
 open import Relator.Equals.Proofs
 -- TODO: open import Structure.Function.Domain
 open import Structure.Relator.Properties
+open import Syntax.Transitivity
 open import Type
 
 module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {f : A → B} where

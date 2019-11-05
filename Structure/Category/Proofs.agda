@@ -13,6 +13,7 @@ import      Structure.Operator.Properties as Properties
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Syntax.Function
+open import Syntax.Transitivity
 open import Type
 
 module _
@@ -70,8 +71,8 @@ module _
   module _ ⦃ [∘]-op : ∀{x y z} → BinaryOperator(_∘_ {x}{y}{z}) ⦄ where
     instance
       Isomorphic-transitivity : Transitivity(Isomorphic)
-      ∃.witness (Transitivity.proof Isomorphic-transitivity iso-xy iso-yz) = ∃.witness iso-yz ∘ ∃.witness iso-xy
-      ∃.proof   (Transitivity.proof Isomorphic-transitivity iso-xy iso-yz) = op-closed-under-isomorphism (∃.witness iso-yz) (∃.witness iso-xy)
+      ∃.witness (Transitivity.proof Isomorphic-transitivity ([∃]-intro xy) ([∃]-intro yz)) = yz ∘ xy
+      ∃.proof   (Transitivity.proof Isomorphic-transitivity ([∃]-intro xy) ([∃]-intro yz)) = op-closed-under-isomorphism ⦃ [∘]-op ⦄ yz xy
 
     instance
       Isomorphic-equivalence : Equivalence(Isomorphic)

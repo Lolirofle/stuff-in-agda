@@ -1,4 +1,4 @@
-module SimplyTypedLambdaCalculus where
+module Formalization.SimplyTypedLambdaCalculus where
 
 open import Numeral.Natural
 

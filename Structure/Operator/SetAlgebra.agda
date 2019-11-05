@@ -4,13 +4,15 @@ module Structure.Operator.SetAlgebra {ℓ} (S : Type{ℓ}) where
 
 import      Lvl
 open import Functional
+open import Logic
 open import Logic.Propositional
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties
+open import Syntax.Transitivity
 
-record Fundamentals : Stmt where
+record Fundamentals : Stmt{ℓ} where
   infixl 1001 _∩_
   infixl 1000 _∪_
 
@@ -21,43 +23,47 @@ record Fundamentals : Stmt where
     𝐔   : S         -- Universal set
 
   field -- TODO: This is two commutative monoids with distributivity over each other
-    [∪]-commutativity : Commutativity{S}(_∪_)
-    [∩]-commutativity : Commutativity{S}(_∩_)
+    ⦃ [∪]-commutativity ⦄ : Commutativity(_∪_)
+    ⦃ [∩]-commutativity ⦄ : Commutativity(_∩_)
 
-    [∪]-associativity : Associativity{S}(_∪_)
-    [∩]-associativity : Associativity{S}(_∩_)
+    ⦃ [∪]-associativity ⦄ : Associativity(_∪_)
+    ⦃ [∩]-associativity ⦄ : Associativity(_∩_)
 
-    [∪][∩]-distributivityₗ : Distributivityₗ{S}(_∪_)(_∩_)
-    [∩][∪]-distributivityₗ : Distributivityₗ{S}(_∩_)(_∪_)
+    ⦃ [∪][∩]-distributivityₗ ⦄ : Distributivityₗ(_∪_)(_∩_)
+    ⦃ [∩][∪]-distributivityₗ ⦄ : Distributivityₗ(_∩_)(_∪_)
 
-    [∪]-identityₗ : Identityₗ{S}(_∪_)(∅)
-    [∩]-identityₗ : Identityₗ{S}(_∩_)(𝐔)
+    ⦃ [∪]-identityₗ ⦄ : Identityₗ(_∪_)(∅)
+    ⦃ [∩]-identityₗ ⦄ : Identityₗ(_∩_)(𝐔)
 
-  [∪][∩]-distributivityᵣ : Distributivityᵣ{S}(_∪_)(_∩_)
-  [∪][∩]-distributivityᵣ{a}{b}{c} =
-    [∪]-commutativity
-    🝖 [∪][∩]-distributivityₗ
-    🝖 ([≡]-with(expr ↦ (expr ∩ (c ∪ b))) [∪]-commutativity)
-    🝖 ([≡]-with(expr ↦ ((a ∪ c) ∩ expr)) [∪]-commutativity)
+  instance
+    [∪][∩]-distributivityᵣ : Distributivityᵣ(_∪_)(_∩_)
+    Distributivityᵣ.proof [∪][∩]-distributivityᵣ {a}{b}{c} =
+      commutativity(_∪_)
+      🝖 distributivityₗ(_∪_)(_∩_)
+      🝖 ([≡]-with(expr ↦ (expr ∩ (c ∪ b))) (commutativity(_∪_)))
+      🝖 ([≡]-with(expr ↦ ((a ∪ c) ∩ expr)) (commutativity(_∪_)))
 
-  [∩][∪]-distributivityᵣ : Distributivityᵣ{S}(_∩_)(_∪_)
-  [∩][∪]-distributivityᵣ{a}{b}{c} =
-    [∩]-commutativity
-    🝖 [∩][∪]-distributivityₗ
-    🝖 ([≡]-with(expr ↦ (expr ∪ (c ∩ b))) [∩]-commutativity)
-    🝖 ([≡]-with(expr ↦ ((a ∩ c) ∪ expr)) [∩]-commutativity)
+  instance
+    [∩][∪]-distributivityᵣ : Distributivityᵣ(_∩_)(_∪_)
+    Distributivityᵣ.proof [∩][∪]-distributivityᵣ {a}{b}{c} =
+      commutativity(_∩_)
+      🝖 distributivityₗ(_∩_)(_∪_)
+      🝖 ([≡]-with(expr ↦ (expr ∪ (c ∩ b))) (commutativity(_∩_)))
+      🝖 ([≡]-with(expr ↦ ((a ∩ c) ∪ expr)) (commutativity(_∩_)))
 
-  [∪]-identityᵣ : Identityᵣ{S}(_∪_)(∅)
-  [∪]-identityᵣ =
-    ([∪]-commutativity)
-    🝖 ([∪]-identityₗ)
+  instance
+    [∪]-identityᵣ : Identityᵣ(_∪_)(∅)
+    Identityᵣ.proof [∪]-identityᵣ =
+      commutativity(_∪_)
+      🝖 identityₗ(_∪_)(∅)
 
-  [∩]-identityᵣ : Identityᵣ{S}(_∩_)(𝐔)
-  [∩]-identityᵣ =
-    ([∩]-commutativity)
-    🝖 ([∩]-identityₗ)
+  instance
+    [∩]-identityᵣ : Identityᵣ(_∩_)(𝐔)
+    Identityᵣ.proof [∩]-identityᵣ =
+      commutativity(_∩_)
+      🝖 identityₗ(_∩_)(𝐔)
 
-record Complement : Stmt where
+record Complement : Stmt{ℓ} where
   infixl 1002 ∁_
   infixl 1000 _∖_
 
@@ -65,7 +71,7 @@ record Complement : Stmt where
     ∁_   : S → S -- Complement
 
   field
-    ⦃ fundamentals ⦄ : Fundamentals(S)
+    ⦃ fundamentals ⦄ : Fundamentals
   open Fundamentals(fundamentals)
 
   field -- TODO: Not really inverses. These are using the absorbers
@@ -76,51 +82,51 @@ record Complement : Stmt where
   _∖_ (s₁)(s₂) = s₁ ∩ ∁(s₂)
 
   [∪]-inverseₗ : ∀{s : S} → (∁(s) ∪ s ≡ 𝐔)
-  [∪]-inverseₗ = transitivity [∪]-commutativity [∪]-inverseᵣ
+  [∪]-inverseₗ = transitivity(_≡_) (commutativity(_∪_)) [∪]-inverseᵣ
 
   [∩]-inverseₗ : ∀{s : S} → (∁(s) ∩ s ≡ ∅)
-  [∩]-inverseₗ = transitivity [∩]-commutativity [∩]-inverseᵣ
+  [∩]-inverseₗ = transitivity(_≡_) (commutativity(_∩_)) [∩]-inverseᵣ
 
   [∁]-of-[∅] : (∁(∅) ≡ 𝐔)
   [∁]-of-[∅] =
-    (symmetry [∪]-identityₗ)
+    symmetry(_≡_) (identityₗ(_∪_)(∅))
     🝖 ([∪]-inverseᵣ)
 
   [∁]-of-[𝐔] : (∁(𝐔) ≡ ∅)
   [∁]-of-[𝐔] =
-    (symmetry [∩]-identityₗ)
+    symmetry(_≡_) (identityₗ(_∩_)(𝐔))
     🝖 ([∩]-inverseᵣ)
 
   [∪]-idempotence : ∀{s : S} → (s ∪ s) ≡ s
   [∪]-idempotence{s} =
     ([≡]-intro)
-    🝖 (symmetry [∩]-identityᵣ)
-    🝖 ([≡]-with(expr ↦ ((s ∪ s) ∩ expr)) (symmetry [∪]-inverseᵣ))
-    🝖 (symmetry [∪][∩]-distributivityₗ)
+    🝖 (symmetry(_≡_) (identityᵣ(_∩_)(𝐔)))
+    🝖 ([≡]-with(expr ↦ ((s ∪ s) ∩ expr)) (symmetry(_≡_) [∪]-inverseᵣ))
+    🝖 (symmetry(_≡_) (distributivityₗ(_∪_)(_∩_)))
     🝖 ([≡]-with(expr ↦ (s ∪ expr)) [∩]-inverseᵣ)
-    🝖 ([∪]-identityᵣ)
+    🝖 ((identityᵣ(_∪_)(∅)))
 
   [∩]-idempotence : ∀{s : S} → (s ∩ s) ≡ s
   [∩]-idempotence{s} =
     ([≡]-intro)
-    🝖 (symmetry [∪]-identityᵣ)
-    🝖 ([≡]-with(expr ↦ ((s ∩ s) ∪ expr)) (symmetry [∩]-inverseᵣ))
-    🝖 (symmetry [∩][∪]-distributivityₗ)
+    🝖 (symmetry(_≡_) (identityᵣ(_∪_)(∅)))
+    🝖 ([≡]-with(expr ↦ ((s ∩ s) ∪ expr)) (symmetry(_≡_) [∩]-inverseᵣ))
+    🝖 (symmetry(_≡_) (distributivityₗ(_∩_)(_∪_)))
     🝖 ([≡]-with(expr ↦ (s ∩ expr)) [∪]-inverseᵣ)
-    🝖 ([∩]-identityᵣ)
+    🝖 ((identityᵣ(_∩_)(𝐔)))
 
   [∪]-absorber : ∀{s : S} → (s ∪ 𝐔) ≡ 𝐔
   [∪]-absorber{s} =
-    ([≡]-with(expr ↦ s ∪ expr) (symmetry [∪]-inverseᵣ))
-    🝖 (symmetry [∪]-associativity)
+    ([≡]-with(expr ↦ s ∪ expr) (symmetry(_≡_) [∪]-inverseᵣ))
+    🝖 (symmetry(_≡_) (associativity(_∪_)))
     🝖 ([≡]-with(expr ↦ expr ∪ ∁(s)) [∪]-idempotence)
     🝖 ([∪]-inverseᵣ)
     -- s∪𝐔 = s∪(s ∪ ∁(s)) = (s∪s) ∪ ∁(s) = s ∪ ∁(s) = 𝐔
 
   [∩]-absorber : ∀{s : S} → (s ∩ ∅) ≡ ∅
   [∩]-absorber{s} =
-    ([≡]-with(expr ↦ s ∩ expr) (symmetry [∩]-inverseᵣ))
-    🝖 (symmetry [∩]-associativity)
+    ([≡]-with(expr ↦ s ∩ expr) (symmetry(_≡_) [∩]-inverseᵣ))
+    🝖 (symmetry(_≡_) (associativity(_∩_)))
     🝖 ([≡]-with(expr ↦ expr ∩ ∁(s)) [∩]-idempotence)
     🝖 ([∩]-inverseᵣ)
     -- s∩∅ = s∩(s ∩ ∁(s)) = (s∩s) ∩ ∁(s) = s ∩ ∁(s) = ∅
@@ -192,16 +198,16 @@ record Complement : Stmt where
   postulate [∁]-of-[∩] : ∀{s₁ s₂ : S} → ∁(s₁ ∩ s₂) ≡ ∁(s₁) ∪ ∁(s₂)
 
   [∁∁]-elim : ∀{s : S} → ∁(∁(s)) ≡ s
-  [∁∁]-elim {s} = transitivity proof2 (symmetry proof1) where
+  [∁∁]-elim {s} = transitivity(_≡_) proof2 (symmetry(_≡_) proof1) where
     proof1 : s ≡ s ∪ ∁(∁(s))
     proof1 =
       [∩]-inverseᵣ {∁(s)}
       ⩺ [≡]-with(s ∪_)
-      ⩺ (eq ↦ transitivity eq ([∪]-identityᵣ {s}))
-      ⩺ symmetry
-      ⩺ (eq ↦ transitivity eq ([∪][∩]-distributivityₗ))
-      ⩺ (eq ↦ transitivity eq ([≡]-with(_∩ (s ∪ ∁(∁(s)))) ([∪]-inverseᵣ)))
-      ⩺ (eq ↦ transitivity eq ([∩]-identityₗ))
+      ⩺ (eq ↦ transitivity(_≡_) eq ((identityᵣ(_∪_)(∅)) {s}))
+      ⩺ symmetry(_≡_)
+      ⩺ (eq ↦ transitivity(_≡_) eq ((distributivityₗ(_∪_)(_∩_))))
+      ⩺ (eq ↦ transitivity(_≡_) eq ([≡]-with(_∩ (s ∪ ∁(∁(s)))) ([∪]-inverseᵣ)))
+      ⩺ (eq ↦ transitivity(_≡_) eq (identityₗ(_∩_)(𝐔)))
       -- ∁(s) ∩ ∁(∁(s)) ≡ ∅
       -- s ∪ (∁(s) ∩ ∁(∁(s))) ≡ s ∪ ∅
       -- s ∪ (∁(s) ∩ ∁(∁(s))) ≡ s
@@ -214,11 +220,11 @@ record Complement : Stmt where
     proof2 =
       [∩]-inverseᵣ {s}
       ⩺ [≡]-with(_∪ ∁(∁(s)))
-      ⩺ (eq ↦ transitivity eq ([∪]-identityₗ))
-      ⩺ symmetry
-      ⩺ (eq ↦ transitivity eq ([∪][∩]-distributivityᵣ))
-      ⩺ (eq ↦ transitivity eq ([≡]-with((s ∪ ∁(∁(s))) ∩_) ([∪]-inverseᵣ)))
-      ⩺ (eq ↦ transitivity eq ([∩]-identityᵣ))
+      ⩺ (eq ↦ transitivity(_≡_) eq (identityₗ(_∪_)(∅)))
+      ⩺ symmetry(_≡_)
+      ⩺ (eq ↦ transitivity(_≡_) eq ((distributivityᵣ(_∪_)(_∩_))))
+      ⩺ (eq ↦ transitivity(_≡_) eq ([≡]-with((s ∪ ∁(∁(s))) ∩_) ([∪]-inverseᵣ)))
+      ⩺ (eq ↦ transitivity(_≡_) eq ((identityᵣ(_∩_)(𝐔))))
       -- (s ∩ ∁(s)) ∪ ∁(∁(s)) ≡ ∅ ∪ ∁(∁(s))
       -- (s ∩ ∁(s)) ∪ ∁(∁(s)) ≡ ∁(∁(s))
       -- ∁(∁(s)) ≡ (s ∩ ∁(s)) ∪ ∁(∁(s))
@@ -244,10 +250,10 @@ record Complement : Stmt where
   postulate [∖]-of-[𝐔]ᵣ : ∀{s : S} → s ∖ 𝐔 ≡ ∅
 
 
-record Subset : Set(Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂)) where
+record Subset : Set(Lvl.𝐒(ℓ)) where
   field
     _⊆_ : S → S → Stmt -- Subset
-    ⦃ fundamentals ⦄ : Fundamentals(S)
+    ⦃ fundamentals ⦄ : Fundamentals
   open Fundamentals(fundamentals)
 
   field
@@ -266,42 +272,42 @@ record Subset : Set(Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂)) where
   [⊆]ᵣ-of-[∪]ᵣ : ∀{a b} → (b ⊆ (a ∪ b))
   [⊆]ᵣ-of-[∪]ᵣ {a}{b} =
     [⊆]ᵣ-of-[∪]ₗ {b}{a}
-    🝖 [≡]-to-[⊆] [∪]-commutativity
+    🝖 [≡]-to-[⊆] (commutativity(_∪_))
 
   [⊆]ₗ-of-[∩]ᵣ : ∀{a b} → ((a ∩ b) ⊆ b)
   [⊆]ₗ-of-[∩]ᵣ {a}{b} =
-    [≡]-to-[⊆] [∩]-commutativity
+    [≡]-to-[⊆] (commutativity(_∩_))
     🝖 [⊆]ₗ-of-[∩]ₗ {b}{a}
 
   [⊆]-min : ∀{s} → (∅ ⊆ s)
   [⊆]-min {s} =
     [⊆]ᵣ-of-[∪]ₗ {∅}{s}
-    🝖 [≡]-to-[⊆] [∪]-identityₗ
+    🝖 [≡]-to-[⊆] (identityₗ(_∪_)(∅))
 
   [⊆]-max : ∀{s} → (s ⊆ 𝐔)
   [⊆]-max {s} =
-    [≡]-to-[⊆] (symmetry [∩]-identityₗ)
+    [≡]-to-[⊆] (symmetry(_≡_) (identityₗ(_∩_)(𝐔)))
     🝖 [⊆]ₗ-of-[∩]ₗ {𝐔}{s}
 
   [⊆][∩]-equiv : ∀{a b} → (a ⊆ b) ↔ (a ∩ b ≡ a)
   [⊆][∩]-equiv {a}{b} = [↔]-intro l r where
     l : (a ⊆ b) ← (a ∩ b ≡ a)
     l aba =
-      [≡]-to-[⊆] (symmetry aba)
+      [≡]-to-[⊆] (symmetry(_≡_) aba)
       🝖 [⊆]ₗ-of-[∩]ᵣ
 
     r : (a ⊆ b) → (a ∩ b ≡ a)
     r ab =
-      (antisymmetry
+      (antisymmetry(_⊆_)(_≡_)
         ([⊆]ₗ-of-[∩]ₗ)
-        ([⊆]ᵣ-of-[∩] {a}{b}{a} reflexivity ab)
+        ([⊆]ᵣ-of-[∩] {a}{b}{a} (reflexivity(_⊆_)) ab)
       )
 {-
   [⊆][∪]-equiv : ∀{a b} → (a ⊆ b) ↔ (a ∪ b ≡ b)
   [⊆][∪]-equiv {a}{b} = [↔]-intro l r where
     l : (a ⊆ b) ← (a ∪ b ≡ b)
     l aba =
-      [≡]-to-[⊆] (symmetry aba)
+      [≡]-to-[⊆] (symmetry(_≡_) aba)
       🝖 [⊆]ᵣ-of-[∪]ᵣ
 
     r : (a ⊆ b) → (a ∪ b ≡ b)

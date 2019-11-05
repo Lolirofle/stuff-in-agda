@@ -1,7 +1,7 @@
 module Functional.Multi{ℓ} where
 
 open import Data
-open import Functional using (_→ᶠ_ ; swap ; id) renaming (const to constᶠ ; _∘_ to _∘ᶠ_ ; apply to applyᶠ)
+open import Functional using (_→ᶠ_ ; id) renaming (const to constᶠ ; _∘_ to _∘ᶠ_ ; apply to applyᶠ ; swap to swapᶠ)
 import      Lvl
 open import Numeral.Finite
 open import Numeral.Finite.Bound
@@ -9,6 +9,8 @@ open import Numeral.Natural
 open import Syntax.Function
 open import Syntax.Number
 open import Type{ℓ}
+
+-- TODO: Take some ideas from https://github.com/agda/agda/commit/b6124012acf59d556f69a99c8fa03ec07b1ad1ff
 
 -- Essentially: (A,B,C,D,..) [→] R = A → (B → (C → (D → (.. → R)))) = (A → B → C → D → .. → R)
 _[→]_ : ∀{n : ℕ} → (𝕟(n) → Type) → Type → Type
@@ -31,11 +33,15 @@ curry {𝟎}   f    = f \()
 curry {𝐒 n} f x₁ = curry(x ↦ f(\{𝟎 -> x₁ ; (𝐒(i)) -> x(i)}))
 
 applyCoordVec : ∀{n}{As : 𝕟(n) → Type}{B : Type} → ((i : 𝕟(n)) → As(i)) → (As [→] B) → B
-applyCoordVec = swap uncurry
+applyCoordVec = swapᶠ uncurry
 
 const : ∀{n}{As : 𝕟(n) → Type}{B : Type} → B → (As [→] B)
 const{𝟎}    = id
 const{𝐒(n)} = constᶠ ∘ᶠ const{n}
+
+swap : ∀{a b}{As : 𝕟(a) → Type}{Bs : 𝕟(b) → Type}{C : Type} → (As [→] (Bs [→] C)) → (Bs [→] (As [→] C))
+swap {a} {𝟎} {As} {Bs} {C} bsasc = {!bsasc!}
+swap {a} {𝐒 b} {As} {Bs} {C} bsasc = {!!}
 
 apply : ∀{n}{As : 𝕟(n) → Type}{B : Type} → (As [→] ((As [→] B) → B))
 apply {𝟎}      = id
@@ -47,9 +53,6 @@ apply 1 x = \f -> f x = _$ x
 apply 2 x y = \f -> (f x) y = \f -> (($ x) f) y = 
 apply 3 x y z = \f -> ((f x) y) z = \f -> (($ x) f) y
 -}
-
--- swap : ∀{a b}{As : 𝕟(a) → Type}{Bs : 𝕟(b) → Type}{C : Type} → (As [→] (Bs [→] C)) → (Bs [→] (As [→] C))
--- swap = ?
 
 -- Essentially:
 --   f ∘ᵣ g = (((f ∘_) ∘_) ∘_) ..

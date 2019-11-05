@@ -6,7 +6,7 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 open import Relator.Equals
-open import Relator.Equals.Equivalence
+open import Relator.Equals.Proofs.Equivalence
 open import Sets.Setoid
 open import Sets.Setoid.Uniqueness
 import      Structure.Relator.Names as Names

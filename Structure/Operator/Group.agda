@@ -24,6 +24,9 @@ record Group {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) 
 
   inv = [∃]-witness inverse-existence
 
+  field
+    ⦃ inv-function ⦄ : Function(inv)
+
   instance
     inverse : InverseFunction (_▫_) inv
     inverse = [∃]-proof inverse-existence

@@ -14,6 +14,7 @@ open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Structure.Relator.Properties
+open import Syntax.Transitivity
 open import Type
 
 module _ {ℓ} where

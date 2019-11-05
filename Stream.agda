@@ -1,13 +1,16 @@
 module Stream where
 
 import      Lvl
+open import Data.Boolean
 open import Functional
 open import Functional.Repeat
-open import Data.List using (List)
+open import Functional.Repeat.Proofs
+open import Data.List as List using (List)
 open import Logic
 open import Logic.Propositional
 open import Numeral.Natural
 open import Relator.Equals
+open import Relator.Equals.Proofs
 open import Type
 
 -- A countably infinite list
@@ -27,6 +30,14 @@ module _ {ℓ} {T : Type{ℓ}} where
   repeat : T -> Stream(T)
   head(repeat(x)) = x
   tail(repeat(x)) = repeat(x)
+
+  {-
+  loop : (l : List(T)) → (l ≢ List.∅) → Stream(T)
+  loop (a List.⊰ l) p = loop-impl (a List.⊰ l) p where
+    loop-impl : (l : List(T)) → (l ≢ List.∅) → Stream(T)
+    head(loop-impl(a List.⊰ l) p) = a
+    tail(loop-impl(a List.⊰ l) p) = loop-impl l {!!}
+  -}
 
   interleave₂ : Stream(T) -> Stream(T) -> Stream(T)
   head(interleave₂(a)(b)) = head(a)
@@ -61,9 +72,18 @@ module _ {ℓ} {T : Type{ℓ}} where
 
 module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} where
   -- From the stream of (a,b,c,..), the stream of (f(a),f(b),f(c),..)
-  map : (A → B) → Stream(A) -> Stream(B)
+  map : (A → B) → Stream(A) → Stream(B)
   head(map f(l)) = f(head(l))
   tail(map f(l)) = map f(tail(l))
+
+{- TODO: May not terminate. For example when P = const 𝐹
+module _ {ℓ} {A : Type{ℓ}} where
+  filter : (A → Bool) → Stream(A) → Stream(A)
+  head(filter p(l)) with p(head(l))
+  ... | 𝑇 = head(l)
+  ... | 𝐹 = head(filter p(tail(l)))
+  tail(filter p(l)) = filter p(tail(l))
+-}
 
 module _ {ℓ} {T : Type{ℓ}} where
   data _∈_ : T → Stream(T) → Stmt{ℓ} where
@@ -71,12 +91,19 @@ module _ {ℓ} {T : Type{ℓ}} where
       [∈]-head : ∀{l}   → (head(l) ∈ l)
       [∈]-tail : ∀{a l} → (a ∈ tail(l)) → (a ∈ l)
 
+  _⊆_ : Stream(T) → Stream(T) → Stmt{ℓ}
+  _⊆_ l₁ l₂ = ∀{a} → (a ∈ l₁) → (a ∈ l₂)
+
+  [∈]-tails : ∀{l}{n} → ((tail ^ n)(l) ⊆ l)
+  [∈]-tails {l} {𝟎}   {a} tailn = tailn
+  [∈]-tails {l} {𝐒 n} {a} tailn = [∈]-tail ([∈]-tails {tail l} {n} {a} ([≡]-substitutionₗ ([^]-inner-value {f = tail}{x = l}{n}) {a ∈_} tailn))
+
   [∈]-head-tail : ∀{l} → (head(tail(l)) ∈ l)
   [∈]-head-tail = [∈]-tail ([∈]-head)
 
-  -- head-tails-inclusion : ∀{n}{l} → (head((tail ^ n)(l)) ∈ l)
-  -- head-tails-inclusion{𝟎}    = [∈]-head
-  -- head-tails-inclusion{𝐒(n)} = [∈]-tail (head-tails-inclusion{n})
+  [∈]-head-tails-inclusion : ∀{n}{l} → (head((tail ^ n)(l)) ∈ l)
+  [∈]-head-tails-inclusion{𝟎}       = [∈]-head
+  [∈]-head-tails-inclusion{𝐒(n)}{l} = [∈]-tails {n = n} ([∈]-head-tail)
 
   [∈]-disjunction : ∀{x}{l} → (x ∈ l) → ((x ≡ head(l)) ∨ (x ∈ tail(l)))
   [∈]-disjunction ([∈]-head)       = [∨]-introₗ [≡]-intro
@@ -142,3 +169,7 @@ module _ {ℓ} {T : Type{ℓ}} where
 [ℕ]-stream-[∈] : ∀{n : ℕ} → (n ∈ [ℕ]-stream)
 [ℕ]-stream-[∈]{𝟎}    = [∈]-head
 [ℕ]-stream-[∈]{𝐒(n)} = iterated-next-[∈]([ℕ]-stream-[∈]{n})
+
+-- Stream of (f(0),f(1),f(2),f(3),..)
+[ℕ]-function-stream : ∀{ℓ}{T : Type{ℓ}} → (ℕ → T) → Stream(T)
+[ℕ]-function-stream f = map f([ℕ]-stream)

@@ -13,7 +13,7 @@ open import Type
 
 module _ {ℓₒ ℓₘ} where
   open import Relator.Equals
-  open import Relator.Equals.Equivalence
+  open import Relator.Equals.Proofs.Equivalence
 
   -- The empty category is a category containing nothing.
   -- The objects are empty.
@@ -27,7 +27,7 @@ module _ {ℓₒ ℓₘ} where
 
 module _ {ℓₒ ℓₘ} where
   open import Relator.Equals
-  open import Relator.Equals.Equivalence
+  open import Relator.Equals.Proofs.Equivalence
 
   -- The single category is a category containing a single object.
   -- The objects consists of a single thing.

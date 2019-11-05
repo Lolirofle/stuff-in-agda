@@ -1,4 +1,4 @@
-module LambdaCalculus where
+module Formalization.LambdaCalculus where
 
 import      Lvl
 open import Data
@@ -254,7 +254,7 @@ module IndexZeroNearest where
   substitute-var var      new (Abstract body) = Abstract (substitute-var (𝐒(var)) (var-𝐒 new) body)
   substitute-var var      new (Var v) with ⋚-surjective {a = var} {b = v}
   substitute-var 𝟎        new (Var v)     | [∃]-intro ➕ ⦃ p ⦄ = [⊥]-elim(⋚-of-𝟎-not-+ {b = v})
-  substitute-var (𝐒(var)) new (Var v)     | [∃]-intro ➕ ⦃ p ⦄ = Var {!!}
+  substitute-var (𝐒(var)) new (Var v)     | [∃]-intro ➕ ⦃ p ⦄ = Var {!v!}
   substitute-var _        new (Var _)     | [∃]-intro 𝟎  ⦃ p ⦄ = new
   substitute-var _        new (Var (𝐒 v)) | [∃]-intro ➖ ⦃ p ⦄ = Var v
   {-
