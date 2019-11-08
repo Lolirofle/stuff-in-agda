@@ -1,41 +1,39 @@
-module Structure.Operator.Vector{ℓ₁}{ℓ₂} where
+module Structure.Operator.Vector where
 
 import      Lvl
-open import Logic.Propositional{ℓ₁ Lvl.⊔ ℓ₂}
-open import Sets.Setoid{ℓ₁}
-open import Structure.Operator.Field{ℓ₁}{ℓ₂}
-open import Structure.Operator.Group{ℓ₁}{ℓ₂}
-open import Structure.Operator.Monoid{ℓ₁}{ℓ₂}
-open import Structure.Operator.Properties{ℓ₁}{ℓ₂}
-open import Type{ℓ₂}
+open import Logic
+open import Logic.Propositional
+open import Sets.Setoid
+open import Structure.Operator.Field
+open import Structure.Operator.Group
+open import Structure.Operator.Monoid
+open import Structure.Operator.Properties
+open import Type
 
-record Language (V S : Type) : Stmt where
+record VectorSpace {ℓᵥ ℓₛ}
+                   {V : Type{ℓᵥ}} ⦃ _ : Equiv(V) ⦄
+                   {S : Type{ℓₛ}} ⦃ _ : Equiv(S) ⦄
+                   (_+ᵥ_ : V → V → V)
+                   (_⋅ₛᵥ_ : S → V → V)
+                   (_+ₛ_ : S → S → S)
+                   (_⋅ₛ_ : S → S → S)
+                   : Stmt where
+  constructor intro
   field
-    _+ᵥ_ : V → V → V
-    _⋅ₛᵥ_ : S → V → V
-    _+ₛ_ : S → S → S
-    _⋅ₛ_ : S → S → S
+    ⦃ scalarField ⦄            : Field(_+ₛ_)(_⋅ₛ_)
+    ⦃ vectorCommutativeGroup ⦄ : CommutativeGroup(_+ᵥ_)
 
-record VectorSpace (V S : Type) ⦃ lang : Language(V)(S) ⦄ ⦃ _ : Equiv(V) ⦄ ⦃ _ : Equiv(S) ⦄ : Stmt where
-  open Language(lang)
-
-  field
-   ⦃ scalarField ⦄       : Field(_+ₛ_)(_⋅ₛ_)
-   ⦃ vectorCommutativeGroup ⦄ : CommutativeGroup(_+ᵥ_)
-
-  open CommutativeGroup ⦃ ... ⦄
+  {-
   open Field ⦃ ... ⦄
   open Group ⦃ ... ⦄
-  open Monoid ⦃ ... ⦄
-  open MultGroup ⦃ ... ⦄
 
   -- Scalar zero
   𝟎ₛ : S
-  𝟎ₛ = id ⦃ _ ⦄ ⦃ Group.monoid ([+]-group ⦃ _ ⦄ ⦃ scalarField ⦄) ⦄
+  𝟎ₛ = id ⦃ _ ⦄ ⦃ Field.[⋅]-monoid ⦄
 
   -- Scalar one
   𝟏ₛ : S
-  𝟏ₛ = id ⦃ _ ⦄ ⦃ MultGroup.monoid ([⋅]-group ⦃ _ ⦄ ⦃ scalarField ⦄) ⦄
+  𝟏ₛ = id ⦃ _ ⦄ ⦃ Field.[⋅]-monoid ⦄
 
   [⋅ₛᵥ]-id = 𝟏ₛ
 
@@ -66,14 +64,16 @@ record VectorSpace (V S : Type) ⦃ lang : Language(V)(S) ⦄ ⦃ _ : Equiv(V) �
   -- Vector subtraction
   _−ᵥ_ : V → V → V
   _−ᵥ_ (a)(b) = a +ᵥ (−₁ᵥ_ b)
+  -}
 
   field
     [⋅ₛ][⋅ₛᵥ]-compatibility      : Compatibility(_⋅ₛ_)(_⋅ₛᵥ_)
     [⋅ₛᵥ]-identity               : Identityₗ(_⋅ₛᵥ_)([⋅ₛᵥ]-id)
     [⋅ₛᵥ][+ᵥ]-distributivity     : Distributivityₗ(_⋅ₛᵥ_)(_+ᵥ_)
-    [⋅ₛᵥ][+ₛ][+ᵥ]-distributivity : DistributivityPatternᵣ(_⋅ₛᵥ_)(_+ₛ_)(_+ᵥ_)
-
+    [⋅ₛᵥ][+ₛ][+ᵥ]-distributivity : DistributivityPatternᵣ(_⋅ₛᵥ_)(_+ₛ_)(_+ᵥ_) -- TODO: This is ∀? → Preserving₂
+  {-
   module Theorems where
     postulate [⋅ₛᵥ]-absorberₗ : ∀{v} → (𝟎ₛ ⋅ₛᵥ v ≡ 𝟎ᵥ)
     postulate [⋅ₛᵥ]-absorberᵣ : ∀{s} → (s ⋅ₛᵥ 𝟎ᵥ ≡ 𝟎ᵥ)
     postulate [⋅ₛᵥ]-negation : ∀{v} → ((−₁ₛ 𝟏ₛ) ⋅ₛᵥ v ≡ −₁ᵥ v)
+  -}

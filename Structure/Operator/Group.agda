@@ -60,7 +60,7 @@ module Morphism where
 
       field
         preserve-op  : ∀{x y : X} → (f(x ▫X y) ≡ f(x) ▫Y f(y))
-        -- TODO: These are actually unneccessary because they follow from preserve-op
+        -- TODO: These may be unneccessary because they follow from preserve-op when Function(f)
         preserve-inv : ∀{x : X} → (f(invₗ x) ≡ invᵣ(f(x)))
         preserve-id  : (f(idₗ) ≡ idᵣ)
 
@@ -85,11 +85,11 @@ module Morphism where
         ⦃ homomorphism ⦄ : Homomorphism
         ⦃ size ⦄         : (X ≍ Y)
 
-  _↣_ : ∀{ℓ₁ ℓ₂} → {X : Type{ℓ₁}} → ⦃ _ : Equiv(X) ⦄ → (_▫X_ : X → X → X) ⦃ structureₗ : Group(_▫X_) ⦄ {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ (_▫Y_ : Y → Y → Y) ⦃ structureᵣ : Group(_▫Y_) ⦄ → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+  _↣_ : ∀{ℓ₁ ℓ₂} → {X : Type{ℓ₁}} → ⦃ _ : Equiv(X) ⦄ → (_▫X_ : X → X → X) → ⦃ structureₗ : Group(_▫X_) ⦄ → {Y : Type{ℓ₂}} → ⦃ _ : Equiv(Y) ⦄ → (_▫Y_ : Y → Y → Y) → ⦃ structureᵣ : Group(_▫Y_) ⦄ → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
   (_▫X_) ↣ (_▫Y_) = ∃(Monomorphism{_▫X_ = _▫X_}{_▫Y_ = _▫Y_})
 
-  _↠_ : ∀{ℓ₁ ℓ₂} → {X : Type{ℓ₁}} → ⦃ _ : Equiv(X) ⦄ → (_▫X_ : X → X → X) ⦃ structureₗ : Group(_▫X_) ⦄ {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ (_▫Y_ : Y → Y → Y) ⦃ structureᵣ : Group(_▫Y_) ⦄ → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+  _↠_ : ∀{ℓ₁ ℓ₂} → {X : Type{ℓ₁}} → ⦃ _ : Equiv(X) ⦄ → (_▫X_ : X → X → X) → ⦃ structureₗ : Group(_▫X_) ⦄ → {Y : Type{ℓ₂}} → ⦃ _ : Equiv(Y) ⦄ → (_▫Y_ : Y → Y → Y) → ⦃ structureᵣ : Group(_▫Y_) ⦄ → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
   (_▫X_) ↠ (_▫Y_) = ∃(Epimorphism{_▫X_ = _▫X_}{_▫Y_ = _▫Y_})
 
-  _⤖_ : ∀{ℓ₁ ℓ₂} → {X : Type{ℓ₁}} → ⦃ _ : Equiv(X) ⦄ → (_▫X_ : X → X → X) ⦃ structureₗ : Group(_▫X_) ⦄ {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ (_▫Y_ : Y → Y → Y) ⦃ structureᵣ : Group(_▫Y_) ⦄ → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+  _⤖_ : ∀{ℓ₁ ℓ₂} → {X : Type{ℓ₁}} → ⦃ _ : Equiv(X) ⦄ → (_▫X_ : X → X → X) → ⦃ structureₗ : Group(_▫X_) ⦄ → {Y : Type{ℓ₂}} → ⦃ _ : Equiv(Y) ⦄ → (_▫Y_ : Y → Y → Y) → ⦃ structureᵣ : Group(_▫Y_) ⦄ → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
   (_▫X_) ⤖ (_▫Y_) = ∃(Isomorphism{_▫X_ = _▫X_}{_▫Y_ = _▫Y_})

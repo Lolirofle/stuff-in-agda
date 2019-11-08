@@ -1,32 +1,34 @@
-module Numeral.CoordinateVector.Proofs {ℓₗ}{ℓₒ} where
+module Numeral.CoordinateVector.Proofs where
 
 import      Lvl
 open import Data.Boolean
 open import Functional
 open import Functional.Equals
-open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
-open import Numeral.CoordinateVector{ℓₒ}
-open import Numeral.CoordinateVector.Equals
+open import Functional.Names
+open import Logic.Propositional
+open import Numeral.CoordinateVector
 open import Numeral.Finite
-open import Numeral.Finite.Bound{ℓₒ}
+open import Numeral.Finite.Bound
 open import Numeral.Finite.Oper
 open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Natural
-open import Sets.Setoid{ℓₗ}
-open import Structure.Function.Domain{ℓₗ}
-open import Structure.Operator.Properties{ℓₗ}{ℓₒ}
-open import Structure.Relator.Properties{ℓₗ}{ℓₒ}
-open import Type{ℓₒ}
+open import Sets.Setoid
+-- open import Structure.Function.Domain
+open import Structure.Operator.Names -- Properties
+open import Structure.Relator.Properties
+open import Type
 
-module _ {T : Type} ⦃ _ : Equiv(T) ⦄ {_▫_ : T → T → T} where
+module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
   transfer-elem : ∀{n} → T → Vector(n)(T)
-  transfer-elem {n}(x) = fill(x){n}
+  transfer-elem {n}(x) = fill(x)
 
   transfer-fn : ∀{n} → (T → T) → (Vector(n)(T) → Vector(n)(T))
   transfer-fn{n}(f) = map(f){n}
 
   transfer-op : ∀{n} → (T → T → T) → (Vector(n)(T) → Vector(n)(T) → Vector(n)(T))
-  transfer-op {n}(_▫_) = map₂(_▫_){n}
+  transfer-op {n}(_▫_) = map₂(_▫_)
+
+  private variable _▫_ : T → T → T
 
   transfer-identityₗ : ∀{id} → Identityₗ(_▫_)(id) → ∀{n} → Identityₗ(transfer-op{n}(_▫_))(transfer-elem{n}(id))
   transfer-identityₗ {id} (identity) = intro(identity)
@@ -49,13 +51,13 @@ module _ {T : Type} ⦃ _ : Equiv(T) ⦄ {_▫_ : T → T → T} where
   transfer-associativity : Associativity(_▫_) → ∀{n} → Associativity(transfer-op{n}(_▫_))
   transfer-associativity (associativity) {n} = intro(associativity)
 
-  transfer-preserves : ∀{n} → Preserving2(transfer-elem{n}) (_▫_) (transfer-op{n}(_▫_))
-  transfer-preserves{𝟎}    {x}{y} with (Vector.proj(x) | Vector.proj(y))
-  ... | ()
-  transfer-preserves{𝐒(n)} {x}{y} = [≡]-with() (transfer-preserves{n} {tail x}{tail y})
+  transfer-preserves : ∀{n} → Preserving₂(transfer-elem{n}) (_▫_) (transfer-op{n}(_▫_))
+  _⊜_.proof (transfer-preserves {n = n} {x} {y}) {i} = reflexivity(_≡_)
   -- ∀{x y} → (fill(x ▫ y) ≡ fill(x) 〔 map₂ (_▫_) {n} 〕 fill(y))
 
-  transfer-opposite-elem : ∀{n} → 𝕟(n) → Vector(n)(T) → T
-  transfer-opposite-elem {n}(i)(x) = Vector.proj(n)(i)
+  -- transfer-opposite-elem : ∀{n} → 𝕟(n) → Vector(n)(T) → T
+  -- transfer-opposite-elem {n}(i)(x) = Vector.proj(n)(i)
 
   -- transfer-opposite-preserves : ∀{n}{i} → Preserving2(transfer-opposite-elem{n}(i)) (transfer-op{n}(_▫_)) (_▫_)
+
+  -- record PositionVector :  where

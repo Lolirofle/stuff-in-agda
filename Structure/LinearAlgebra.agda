@@ -1,30 +1,30 @@
-module Structure.LinearAlgebra {ℓ} where
+module Structure.LinearAlgebra where
 
 import      Lvl
 open import Data.Tuple
 open import Functional hiding (id)
 open import Functional.Equals
 open import Functional.Proofs
-open import Logic.Propositional{ℓ Lvl.⊔ ℓ}
-open import Logic.Propositional.Theorems{ℓ}
-open import Logic.Predicate{ℓ}
-open import Numeral.CoordinateVector{ℓ} as Vec renaming (Vector to Vec)
+open import Logic.Propositional
+open import Logic.Propositional.Theorems
+open import Logic.Predicate
+open import Numeral.CoordinateVector as Vec renaming (Vector to Vec)
 open import Numeral.Finite
 open import Numeral.Natural
-open import Numeral.Natural.Relation.Order{ℓ}
-open import Numeral.Natural.Relation.Order.Proofs{ℓ}
-open import Relator.Equals{ℓ}
-open import Relator.Equals.Proofs{ℓ}
-open import Sets.Setoid.Uniqueness{ℓ}{ℓ}{ℓ}
-open import Relator.Equals.Proofs.Uniqueness{ℓ}{ℓ}{ℓ}
-open import Structure.Function.Domain{ℓ}
-import      Structure.Function.Linear{ℓ}{ℓ} as Linear
-open import Structure.Operator.Field{ℓ}{ℓ}
-open import Structure.Operator.Group{ℓ}{ℓ}
-open import Structure.Operator.Properties{ℓ}{ℓ}
-open import Structure.Operator.Vector{ℓ}{ℓ}
+open import Numeral.Natural.Relation.Order
+open import Numeral.Natural.Relation.Order.Proofs
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Sets.Setoid.Uniqueness
+open import Sets.Setoid.Uniqueness.Proofs
+open import Structure.Function.Domain
+import      Structure.Function.Linear as Linear
+open import Structure.Operator.Field
+open import Structure.Operator.Group
+open import Structure.Operator.Properties
+open import Structure.Operator.Vector
 open import Syntax.Number
-open import Type{ℓ}
+open import Type
 
 -- Finite dimensional linear algebra
 -- TODO: Apparently, most of linear algebra will not work in constructive logic

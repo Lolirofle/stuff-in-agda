@@ -8,27 +8,63 @@ open import Structure.Operator.Group using (Group ; CommutativeGroup)
 open import Structure.Operator.Monoid using (Monoid)
 open import Structure.Operator.Properties hiding (distributivityₗ ; distributivityᵣ)
 open import Type
--- open import Sets.PredicateSet.Filter
+
+
+private
+  module Impl {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (𝟎 : T) where
+    record NonZero (x : T) : Stmt{ℓ} where
+      constructor intro
+      field
+        proof : (x ≢ 𝟎)
 
 record Field {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ} where
-  -- TODO
-  -- _⋅ₙ_ : Filter() → Filter() → Filter()
-  -- _⋅ₙ_ = 
-
   field
     instance ⦃ [+]-commutative-group ⦄ : CommutativeGroup (_+_)
     instance ⦃ [⋅]-monoid ⦄            : Monoid (_⋅_)
-    -- instance ⦃ [⋅]-inverse-existence ⦄ : ∃(InverseFunction (_⋅ₙ_))
     instance ⦃ distributivityₗ ⦄       : Distributivityₗ (_⋅_) (_+_)
     instance ⦃ distributivityᵣ ⦄       : Distributivityᵣ (_⋅_) (_+_)
 
-  -- [⋅]-inv : (x : T) → ⦃ _ : (x ≢ id) ⦄ → T
-  -- [⋅]-inv = ... ([∃]-witness [⋅]-inverse-existence)
+  open CommutativeGroup([+]-commutative-group)
+    using ()
+    renaming(
+      group              to [+]-group ;
+      commutativity      to [+]-commutativity ;
+      monoid             to [+]-monoid ;
+      binary-operator    to [+]-binary-operator ;
+      associativity      to [+]-associativity ;
+      identity-existence to [+]-identity-existence ;
+      id                 to 𝟎 ;
+      identity           to [+]-identity ;
+      identityₗ          to [+]-identityₗ ;
+      identityᵣ          to [+]-identityᵣ ;
+      inverse-existence  to [+]-inverse-existence ;
+      inv                to −_ ;
+      inverse            to [+]-inverse ;
+      inverseₗ           to [+]-inverseₗ ;
+      inverseᵣ           to [+]-inverseᵣ
+    ) public
 
-  instance
-    [+]-group : Group(_+_)
-    [+]-group = CommutativeGroup.group([+]-commutative-group)
+  open Monoid([⋅]-monoid)
+    using ()
+    renaming(
+      binary-operator    to [⋅]-binary-operator ;
+      associativity      to [⋅]-associativity ;
+      identity-existence to [⋅]-identity-existence ;
+      id                 to 𝟏 ;
+      identity           to [⋅]-identity ;
+      identityₗ          to [⋅]-identityₗ ;
+      identityᵣ          to [⋅]-identityᵣ
+    ) public
 
-  instance
-    [+]-monoid : Monoid(_+_)
-    [+]-monoid = Group.monoid([+]-group)
+  open Impl(𝟎)
+
+  field
+    ⅟ : (x : T) → ⦃ NonZero(x) ⦄ → T
+    [⋅]-inverseₗ : ∀{x} → ⦃ non-zero : NonZero(x) ⦄ → (x ⋅ (⅟ x) ≡ 𝟏)
+    [⋅]-inverseᵣ : ∀{x} → ⦃ non-zero : NonZero(x) ⦄ → ((⅟ x) ⋅ x ≡ 𝟏)
+
+  _−_ : T → T → T
+  x − y = x + (− y)
+
+  _/_ : T → (y : T) → ⦃ NonZero(y) ⦄ → T
+  x / y = x ⋅ (⅟ y)
