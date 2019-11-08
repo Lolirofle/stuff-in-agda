@@ -47,42 +47,49 @@ record CommutativeGroup {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T �
   open Group(group) public
 
 module Morphism where
-  -- Group homomorphism
-  record Homomorphism {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    constructor intro
-    field
-      instance ⦃ structureₗ ⦄ : Group(_▫X_)
-      instance ⦃ structureᵣ ⦄ : Group(_▫Y_)
+  module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} ⦃ structureₗ : Group(_▫X_) ⦄ {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} ⦃ structureᵣ : Group(_▫Y_) ⦄ (f : X → Y) where
+    -- Group homomorphism
+    record Homomorphism : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+      constructor intro
 
-    idₗ = Group.id(structureₗ)
-    idᵣ = Group.id(structureᵣ)
+      idₗ = Group.id(structureₗ)
+      idᵣ = Group.id(structureᵣ)
 
-    invₗ = Group.inv(structureₗ)
-    invᵣ = Group.inv(structureᵣ)
+      invₗ = Group.inv(structureₗ)
+      invᵣ = Group.inv(structureᵣ)
 
-    field
-      preserve-op  : ∀{x y : X} → (f(x ▫X y) ≡ f(x) ▫Y f(y))
-      preserve-inv : ∀{x : X} → (f(invₗ x) ≡ invᵣ(f(x)))
-      preserve-id  : (f(idₗ) ≡ idᵣ)
+      field
+        preserve-op  : ∀{x y : X} → (f(x ▫X y) ≡ f(x) ▫Y f(y))
+        -- TODO: These are actually unneccessary because they follow from preserve-op
+        preserve-inv : ∀{x : X} → (f(invₗ x) ≡ invᵣ(f(x)))
+        preserve-id  : (f(idₗ) ≡ idᵣ)
 
-  -- Group monomorphism (Injective homomorphism)
-  record _↣_ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    constructor intro
-    field
-      ⦃ homomorphism ⦄ : Homomorphism {_▫X_ = _▫X_} {_▫Y_ = _▫Y_} (f)
-      ⦃ size ⦄         : (X ≼ Y)
+    -- Group monomorphism (Injective homomorphism)
+    record Monomorphism : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+      constructor intro
+      field
+        ⦃ homomorphism ⦄ : Homomorphism
+        ⦃ size ⦄         : (X ≼ Y)
 
+    -- Group epimorphism (Surjective homomorphism)
+    record Epimorphism : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+      constructor intro
+      field
+        ⦃ homomorphism ⦄ : Homomorphism
+        ⦃ size ⦄         : (X ≽ Y)
 
-  -- Group epimorphism (Surjective homomorphism)
-  record _↠_ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    constructor intro
-    field
-      ⦃ homomorphism ⦄ : Homomorphism {_▫X_ = _▫X_} {_▫Y_ = _▫Y_} (f)
-      ⦃ size ⦄         : (X ≽ Y)
+    -- Group isomorphism (Bijective homomorphism)
+    record Isomorphism : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+      constructor intro
+      field
+        ⦃ homomorphism ⦄ : Homomorphism
+        ⦃ size ⦄         : (X ≍ Y)
 
-  -- Group isomorphism (Bijective homomorphism)
-  record _⤖_ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    constructor intro
-    field
-      ⦃ homomorphism ⦄ : Homomorphism {_▫X_ = _▫X_} {_▫Y_ = _▫Y_} (f)
-      ⦃ size ⦄         : (X ≍ Y)
+  _↣_ : ∀{ℓ₁ ℓ₂} → {X : Type{ℓ₁}} → ⦃ _ : Equiv(X) ⦄ → (_▫X_ : X → X → X) ⦃ structureₗ : Group(_▫X_) ⦄ {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ (_▫Y_ : Y → Y → Y) ⦃ structureᵣ : Group(_▫Y_) ⦄ → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+  (_▫X_) ↣ (_▫Y_) = ∃(Monomorphism{_▫X_ = _▫X_}{_▫Y_ = _▫Y_})
+
+  _↠_ : ∀{ℓ₁ ℓ₂} → {X : Type{ℓ₁}} → ⦃ _ : Equiv(X) ⦄ → (_▫X_ : X → X → X) ⦃ structureₗ : Group(_▫X_) ⦄ {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ (_▫Y_ : Y → Y → Y) ⦃ structureᵣ : Group(_▫Y_) ⦄ → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+  (_▫X_) ↠ (_▫Y_) = ∃(Epimorphism{_▫X_ = _▫X_}{_▫Y_ = _▫Y_})
+
+  _⤖_ : ∀{ℓ₁ ℓ₂} → {X : Type{ℓ₁}} → ⦃ _ : Equiv(X) ⦄ → (_▫X_ : X → X → X) ⦃ structureₗ : Group(_▫X_) ⦄ {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ (_▫Y_ : Y → Y → Y) ⦃ structureᵣ : Group(_▫Y_) ⦄ → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
+  (_▫X_) ⤖ (_▫Y_) = ∃(Isomorphism{_▫X_ = _▫X_}{_▫Y_ = _▫Y_})

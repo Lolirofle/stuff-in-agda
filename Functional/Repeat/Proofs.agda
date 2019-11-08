@@ -8,7 +8,7 @@ open import Functional.Proofs
 open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Natural
-open import Numeral.Natural.Oper using (_+_ ; _⋅_)
+open import Numeral.Natural.Oper using (_+_ ; _⋅_ ; _𝄩_)
 open import Numeral.Natural.Oper.Proofs
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
@@ -94,6 +94,18 @@ module _ where
       (f ^ 𝐒(a)) ∘ (f ^ (𝐒(a) ⋅ b)) 🝖-[ [^]-add {f} {𝐒(a)} {𝐒(a) ⋅ b} ]
       f ^ (𝐒(a) + (𝐒(a) ⋅ b))       🝖-[ reflexivity(_≡_) ]
       f ^ (𝐒(a) ⋅ 𝐒(b))             🝖-end
+
+    [^]-distanceₗ : ⦃ [∘]-op : BinaryOperator(_∘_) ⦄ → ∀{f : X → X}{a b} → (f ^ a ≡ f ^ b) ← (f ^ (a 𝄩 b) ≡ id)
+    [^]-distanceₗ {f} {𝟎}   {𝟎}   = id
+    [^]-distanceₗ {f} {𝟎}   {𝐒 b} = symmetry(_≡_)
+    [^]-distanceₗ {f} {𝐒 a} {𝟎}   = id
+    [^]-distanceₗ {f} {𝐒 a} {𝐒 b} = [≡]-with2ᵣ(_∘_)(f) ∘ ([^]-distanceₗ {f} {a} {b})
+
+    [^]-distanceᵣ : ⦃ [∘]-op : BinaryOperator(_∘_) ⦄ → ⦃ [∘]-cancₗ : Cancellationₗ(_∘_) ⦄ → ∀{f : X → X}{a b} → (f ^ a ≡ f ^ b) → (f ^ (a 𝄩 b) ≡ id)
+    [^]-distanceᵣ {f} {𝟎}   {𝟎}   = id
+    [^]-distanceᵣ {f} {𝟎}   {𝐒 b} = symmetry(_≡_)
+    [^]-distanceᵣ {f} {𝐒 a} {𝟎}   = id
+    [^]-distanceᵣ {f} {𝐒 a} {𝐒 b} p = [^]-distanceᵣ {f} {a} {b} (cancellationₗ(_∘_) {f} p)
 
     module _ ⦃ op : BinaryOperator(_∘_) ⦄ ⦃ _ : Associativity(_∘_) ⦄ where
       [^]-commuting : ∀{f g : X → X} → Names.Commuting(_∘_)(f)(g) → ∀{a b} → Names.Commuting(_∘_)(f ^ a)(g ^ b)
@@ -200,3 +212,15 @@ module _ where
       repeatₗ (a ⋅ 𝐒(b)) (_▫_) id x                                          🝖-end
       where
         open import Relator.Equals.Proofs.Equivalence using ([≡]-to-equivalence)
+
+    repeatₗ-by-distanceₗ : ∀{_▫_ : X → X → X}{x id} → ⦃ _ : BinaryOperator(_▫_) ⦄ → ⦃ _ : Identityᵣ(_▫_)(id) ⦄ → ⦃ _ : Associativity(_▫_) ⦄ → ∀{a b} → (repeatₗ a (_▫_) id x ≡ repeatₗ b (_▫_) id x) ← (repeatₗ (a 𝄩 b) (_▫_) id x ≡ id)
+    repeatₗ-by-distanceₗ {_▫_} {x} {id} {𝟎}   {𝟎}   p = p
+    repeatₗ-by-distanceₗ {_▫_} {x} {id} {𝟎}   {𝐒 b} p = symmetry(_≡_) p
+    repeatₗ-by-distanceₗ {_▫_} {x} {id} {𝐒 a} {𝟎}   p = p
+    repeatₗ-by-distanceₗ {_▫_} {x} {id} {𝐒 a} {𝐒 b} p = [≡]-with2ₗ(_▫_)(_) (repeatₗ-by-distanceₗ {_▫_} {x} {id} {a} {b} p)
+
+    repeatₗ-by-distanceᵣ : ∀{_▫_ : X → X → X}{x id} → ⦃ _ : BinaryOperator(_▫_) ⦄ → ⦃ _ : Identityᵣ(_▫_)(id) ⦄ → ⦃ _ : Associativity(_▫_) ⦄ → ⦃ cancᵣ : Cancellationᵣ(_▫_) ⦄ → ∀{a b} → (repeatₗ a (_▫_) id x ≡ repeatₗ b (_▫_) id x) → (repeatₗ (a 𝄩 b) (_▫_) id x ≡ id)
+    repeatₗ-by-distanceᵣ {_▫_} {x} {id} {𝟎}   {𝟎}   p = p
+    repeatₗ-by-distanceᵣ {_▫_} {x} {id} {𝟎}   {𝐒 b} p = symmetry(_≡_) p
+    repeatₗ-by-distanceᵣ {_▫_} {x} {id} {𝐒 a} {𝟎}   p = p
+    repeatₗ-by-distanceᵣ {_▫_} {x} {id} {𝐒 a} {𝐒 b} p = repeatₗ-by-distanceᵣ {_▫_} {x} {id} {a} {b} (cancellationᵣ(_▫_) {x} p)

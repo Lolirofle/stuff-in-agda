@@ -1,6 +1,7 @@
 module Numeral.Natural.UnclosedOper where
 
 import Lvl
+open import Data
 open import Data.Boolean.Stmt
 open import Data.Option as Option using (Option)
 open import Logic.Propositional
@@ -91,4 +92,4 @@ _−fin_ : (x : ℕ) → 𝕟(𝐒(x)) → 𝕟(𝐒(x))
 
 -- Modulo operation to upper bounded natural numbers.
 _modfin_ : ℕ → (b : ℕ) → ⦃ _ : IsTrue(b ≢? 𝟎) ⦄ → 𝕟(b)
-a modfin 𝐒 b = 𝕟.ℕ-to-𝕟 (a mod 𝐒(b)) ⦃ [↔]-to-[→] (ComputablyDecidable.proof-istrue(_<_)) (mod-maxᵣ{a}{b}) ⦄
+a modfin 𝐒 b = 𝕟.ℕ-to-𝕟 (a mod 𝐒(b)) ⦃ [↔]-to-[→] (ComputablyDecidable.proof-istrue(_<_)) (mod-maxᵣ{a}{𝐒 b}) ⦄

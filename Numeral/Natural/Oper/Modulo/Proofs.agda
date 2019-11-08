@@ -2,11 +2,13 @@ module Numeral.Natural.Oper.Modulo.Proofs where
 
 import Lvl
 open import Data
+open import Data.Boolean.Stmt
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.Oper
+open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Natural.Oper.Modulo
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Relation
@@ -135,11 +137,11 @@ mod-of-1 {𝐒 a} = mod-of-1{a}
 mod-lesser-than-modulus : ∀{a b} → ⦃ _ : a ≤ b ⦄ → (a mod 𝐒(b) ≡ a)
 mod-lesser-than-modulus {a} {b} ⦃ ab ⦄ = mod'-result-lesser {0}
 
-mod-maxᵣ : ∀{a b} → (a mod 𝐒(b) < 𝐒(b))
-mod-maxᵣ {𝟎}   {𝟎}   = [≤]-with-[𝐒]
-mod-maxᵣ {𝟎}   {𝐒 b} = [≤]-with-[𝐒]
-mod-maxᵣ {𝐒 a} {𝟎}   = mod-maxᵣ {a}{𝟎}
-mod-maxᵣ {𝐒 a} {𝐒 b} = [≤]-with-[𝐒] ⦃ mod'-maxᵣ {1}{b}{a}{b} ⦃ reflexivity(_≤_)⦄ ⦄
+mod-maxᵣ : ∀{a b} → ⦃ _ : IsTrue(b ≢? 𝟎) ⦄ → (a mod b < b)
+mod-maxᵣ {𝟎}   {𝐒 𝟎}    = [≤]-with-[𝐒]
+mod-maxᵣ {𝟎}   {𝐒(𝐒 b)} = [≤]-with-[𝐒]
+mod-maxᵣ {𝐒 a} {𝐒 𝟎}    = mod-maxᵣ {a}{𝐒 𝟎}
+mod-maxᵣ {𝐒 a} {𝐒(𝐒 b)} = [≤]-with-[𝐒] ⦃ mod'-maxᵣ {1}{b}{a}{b} ⦃ reflexivity(_≤_)⦄ ⦄
 
 mod-of-modulus : ∀{b} → (𝐒(b) mod 𝐒(b) ≡ 𝟎)
 mod-of-modulus {b} = [mod₀]-2-1 {𝟎}{b}{b}
@@ -213,8 +215,8 @@ mod-zero-cases {.(𝐒 (b + p))} {b} ab0 | [∨]-introᵣ ba | [∃]-intro p ⦃
 -}
 
 {-# TERMINATING #-} -- TODO: Write a general induction proof function for the divisibility relation which terminates
-mod-divisibility : ∀{a b} → (a mod 𝐒(b) ≡ 𝟎) ↔ (𝐒(b) ∣ a)
-mod-divisibility {a}{b} = [↔]-intro l r where
+mod-divisibility : ∀{a b} → ⦃ _ : IsTrue(b ≢? 𝟎) ⦄ → (a mod b ≡ 𝟎) ↔ (b ∣ a)
+mod-divisibility {a}{𝐒(b)} = [↔]-intro l r where
   l : ∀{a b} → (a mod 𝐒(b) ≡ 𝟎) ← (𝐒(b) ∣ a)
   l {.0}           {b} Div𝟎              = [≡]-intro
   l {.(𝐒 (b + a))} {b} (Div𝐒 {x = a} ba) = mod-of-modulus-add {a}{b} 🝖 l ba

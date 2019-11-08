@@ -44,6 +44,9 @@ module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} where
     [≡]-function : ∀{f} → Function(f)
     Function.congruence([≡]-function {f}) eq = [≡]-with(f) eq
 
+  [≡]-to-function : ⦃ equiv-B : Equiv(B) ⦄ → ∀{f : A → B} → Function ⦃ [≡]-equiv ⦄ ⦃ equiv-B ⦄ (f)
+  Function.congruence ([≡]-to-function ⦃ Equiv.intro(_≡ₛ_) ⦄) [≡]-intro = reflexivity(_≡ₛ_)
+
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} where
   -- Applies an operation to each side of the equality (TODO: Make this an instance of BinaryOperator instead)
   [≡]-with-op : (_▫_ : A → B → C) → {a₁ a₂ : A}{b₁ b₂ : B} → (a₁ ≡ a₂) → (b₁ ≡ b₂) → ((a₁ ▫ b₁) ≡ (a₂ ▫ b₂))
