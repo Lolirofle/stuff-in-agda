@@ -1,6 +1,7 @@
 module Data.Either where
 
 import      Lvl
+open import Data.Boolean
 open import Functional using (id)
 open import Type
 
@@ -30,3 +31,7 @@ mapLeft f = map2 f id
 
 mapRight : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} → (B → C) → (A ‖ B) → (A ‖ C)
 mapRight f = map2 id f
+
+bool : ∀{ℓ₁ ℓ₂}{T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (T₁ ‖ T₂) → Bool
+bool(Left  _) = 𝐹
+bool(Right _) = 𝑇

@@ -1,5 +1,8 @@
 module Logic.Classical where
 
+open import Data
+open import Data.Boolean
+open import Data.Boolean.Proofs
 open import Data.Either as Either using (_‖_)
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
@@ -8,6 +11,7 @@ open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Logic.Predicate.Theorems
+open import Relator.Equals
 open import Type
 open import Type.Empty
 
@@ -20,6 +24,27 @@ record Classical {ℓ} (P : Stmt{ℓ}) : Stmt{ℓ} where
   constructor intro
   field
     ⦃ excluded-middle ⦄ : P ∨ (¬ P)
+
+  decide : Bool
+  decide = not(Either.bool(excluded-middle))
+
+  -- TODO: Maybe use the generalized functions in Data.Boolean.Proofs to implement these. The either-bool-* functions.
+  decide-true : P ↔ (decide ≡ 𝑇)
+  decide-true with excluded-middle | bivalence{decide}
+  decide-true | [∨]-introₗ p  | [∨]-introₗ t = [↔]-intro (const p) (const t)
+  decide-true | [∨]-introᵣ np | [∨]-introᵣ f = [↔]-intro (\()) (empty ∘ np)
+
+  decide-false : (¬ P) ↔ (decide ≡ 𝐹)
+  decide-false with excluded-middle | bivalence{decide}
+  decide-false | [∨]-introₗ p  | [∨]-introₗ t = [↔]-intro (\()) (np ↦ empty(np p))
+  decide-false | [∨]-introᵣ np | [∨]-introᵣ f = [↔]-intro (const np) (const f)
+
+  decide-excluded-middle : (P ∧ (decide ≡ 𝑇)) ∨ ((¬ P) ∧ (decide ≡ 𝐹))
+  decide-excluded-middle = [∨]-map (p ↦ [∧]-intro p ([↔]-to-[→] decide-true p)) (np ↦ [∧]-intro np ([↔]-to-[→] decide-false np)) excluded-middle
+
+  module _ {ℓ₁ ℓ₂} {T : Type{ℓ₁}} {x y : T} {Q : T → Type{ℓ₂}} where
+    decide-if-intro : (P → Q(x)) → ((¬ P) → Q(y)) → Q(if decide then x else y)
+    decide-if-intro pq npq = if-intro{x = x}{y = y}{P = Q}{B = decide} (pq ∘ [↔]-to-[←] decide-true) (npq ∘ [↔]-to-[←] decide-false)
 
   -- Double negation elimination
   [¬¬]-elim : (¬¬ P) → P
@@ -86,7 +111,7 @@ record Classical {ℓ} (P : Stmt{ℓ}) : Stmt{ℓ} where
       ... | ([∨]-introₗ p)  = [∃]-map-proof (const) (pexqx(p))
       ... | ([∨]-introᵣ np) = [∃]-intro(x) ⦃ ([⊥]-elim{P = Q(x)}) ∘ np ⦄
 
-open Classical ⦃ ... ⦄ public
+open Classical ⦃ ... ⦄ hiding (decide ; decide-true ; decide-false) public
 
 module _ {ℓ} {P : Stmt{ℓ}} where
   instance

@@ -87,6 +87,12 @@ module _ where
   _≡_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → Stmt
   _≡_ S₁ S₂ = (∀{x} → (x ∈ S₁) ↔ (x ∈ S₂))
 
+  Disjoint : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → Stmt
+  Disjoint S₁ S₂ = ((S₁ ∩ S₂) ⊆ (∅ {Lvl.𝟎}))
+
+  Overlapping : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → Stmt
+  Overlapping S₁ S₂ = ∃(S₁ ∩ S₂)
+
   module _ where -- TODO: These proofs should be generalized somewhere else?
     private variable S₁ : PredSet{ℓ₁}(T)
     private variable S₂ : PredSet{ℓ₂}(T)

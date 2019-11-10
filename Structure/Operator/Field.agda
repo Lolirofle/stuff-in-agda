@@ -14,8 +14,7 @@ private
   module Impl {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (𝟎 : T) where
     record NonZero (x : T) : Stmt{ℓ} where
       constructor intro
-      field
-        proof : (x ≢ 𝟎)
+      field proof : (x ≢ 𝟎)
 
 record Field {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ} where
   field
@@ -56,7 +55,7 @@ record Field {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_+_  : T → T → T) (
       identityᵣ          to [⋅]-identityᵣ
     ) public
 
-  open Impl(𝟎)
+  open Impl(𝟎) public
 
   field
     ⅟ : (x : T) → ⦃ NonZero(x) ⦄ → T

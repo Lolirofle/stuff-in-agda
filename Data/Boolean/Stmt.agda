@@ -17,7 +17,7 @@ FnIsTrue : ∀{ℓ}{X : Set(ℓ)} → (X → Bool) → (X → Set(Lvl.𝟎))
 FnIsTrue = IsTrue ∘_
 
 IsFalse : Bool → Set(Lvl.𝟎)
-IsFalse = IsTrue ∘ !_
+IsFalse = IsTrue ∘ !
 
 FnIsFalse : ∀{ℓ}{X : Set(ℓ)} → (X → Bool) → (X → Set(Lvl.𝟎))
 FnIsFalse = IsFalse ∘_

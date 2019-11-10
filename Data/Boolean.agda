@@ -12,6 +12,10 @@ data Bool : Type{Lvl.𝟎} where
 {-# BUILTIN TRUE  𝑇 #-}
 {-# BUILTIN FALSE 𝐹 #-}
 
+not : Bool → Bool
+not(𝑇) = 𝐹
+not(𝐹) = 𝑇
+
 -- Control-flow if-else expression
 if_then_else_ : ∀{ℓ}{T : Type{ℓ}} → Bool → T → T → T
 if_then_else_ 𝑇 expr _ = expr

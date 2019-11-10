@@ -70,13 +70,13 @@ record ComputablyDecidable {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} (P : X → Stmt{�
     ... | [∨]-introᵣ(≡𝐹) = Classical.intro ⦃ [∨]-introᵣ (soundness-𝐹 {x} (≡𝐹)) ⦄
 
   negation : ComputablyDecidable(¬_ ∘ P)
-  decide (negation) (x) = ! decide(x)
+  decide (negation) (x) = !(decide(x))
   proof  (negation) {x} = [↔]-intro (soundness-𝐹{_} ∘ l{_}) (r{_} ∘ completeness-𝐹{_}) where
     l : ∀{b} → (b ≡ 𝐹) ← (! b ≡ 𝑇)
-    l proof = (symmetry(_≡_) (Data.Boolean.Proofs.[!!]-elim {_})) 🝖 [≡]-with(!_) (proof)
+    l proof = (symmetry(_≡_) (Data.Boolean.Proofs.[!!]-elim {_})) 🝖 [≡]-with(!) (proof)
 
     r : ∀{b} → (b ≡ 𝐹) → (! b ≡ 𝑇)
-    r = [≡]-with(!_)
+    r = [≡]-with(!)
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {P₁ : X → Stmt{ℓ₂}} {P₂ : X → Stmt{ℓ₃}} where
   open ComputablyDecidable
@@ -124,9 +124,7 @@ module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} {P : X → Stmt{ℓ₂}} where
   classicalIsComputablyDecidable : (∀{x} → Classical(P(x))) ↔ ComputablyDecidable(P)
   classicalIsComputablyDecidable = [↔]-intro (ComputablyDecidable.classical) r where
     decider : (∀{x} → Classical(P(x))) → X → Bool
-    decider(classic)(x) with Classical.excluded-middle(classic{x})
-    ... | [∨]-introₗ _ = 𝑇
-    ... | [∨]-introᵣ _ = 𝐹
+    decider(classic)(x) = Classical.decide(classic{x})
 
     r : (∀{x} → Classical(P(x))) → ComputablyDecidable(P)
     ComputablyDecidable.decide (r(classic)) = decider(classic)
