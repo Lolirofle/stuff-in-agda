@@ -62,7 +62,7 @@ module From-[≤] {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{
   x ≮ y = ¬(x < y)
 
   _≯_ : T → T → Stmt
-  x ≯ y = (x ≤ y)
+  x ≯ y = ¬(x > y)
 
   _≰_ : T → T → Stmt
   x ≰ y = ¬(x ≤ y)

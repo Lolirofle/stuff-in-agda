@@ -3,12 +3,23 @@ module Data.Any where
 import      Lvl
 open import Type
 
--- A type that can hold a value of any type
+-- A type that can hold a value of any type.
 record Any {ℓ} : Type{Lvl.𝐒(ℓ)} where
-  instance constructor any
+  constructor intro
   field
     {type} : Type{ℓ}
     value  : type
 
-  map : (type → type) → Any{ℓ}
-  map f = record{type = type ; value = f(value)}
+  map : ∀{T : Type{ℓ}} → (type → T) → Any{ℓ}
+  map f = record{value = f(value)}
+
+-- A type that can hold a value of any type in any universe.
+record UniversalAny : Typeω where
+  constructor intro
+  field
+    {level} : Lvl.Level
+    {type} : Type{level}
+    value  : type
+
+  map : ∀{ℓ}{T : Type{ℓ}} → (type → T) → Any{ℓ}
+  map f = intro(f(value))

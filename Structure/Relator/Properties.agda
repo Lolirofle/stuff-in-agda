@@ -76,3 +76,9 @@ module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) 
     field proof : Names.Asymmetry(_▫_)
   asymmetry = inst-fn Asymmetry.proof
 -- {x y : T} → (x ▫ y) → ¬(y ▫ x)
+
+module _ {ℓ ℓ₁ ℓ₂} {T : Type{ℓ}} (_▫₁_ : T → T → Stmt{ℓ₁}) (_▫₂_ : T → T → Stmt{ℓ₂}) where
+  record _⊆₂_ : Stmt{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field proof : Names.Subrelation(_▫₁_)(_▫₂_)
+  subrelation = inst-fn _⊆₂_.proof

@@ -12,8 +12,9 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
-import      Relator.Equals as Equals
 open import Relator.Equals.Proofs.Equivalence
+open import Sets.Setoid using () renaming (_≡_ to _≡ₛ_)
+open import Data.Any
 open import Structure.Function.Domain
 open import Type
 
@@ -24,7 +25,7 @@ module _ where
   PredSet{ℓ}{ℓₒ} (T) = (T → Stmt{ℓ})
 
   private variable ℓ ℓ₁ ℓ₂ ℓₒ : Lvl.Level
-  private variable T : Type{ℓₒ}
+  private variable T A B : Type{ℓₒ}
 
   -- The statement of whether an element is in a set
   -- TODO: Maybe define this using a equivalence relation instead? (Alternatively a Setoid: x ∈ S = ∃(y ↦ (x ≡_T y) ∧ S(y)))
@@ -51,7 +52,7 @@ module _ where
 
   -- A singleton set (a set with only one element)
   •_ : T → PredSet(T)
-  •_ = (Equals._≡_)
+  •_ = (_≡ₛ_)
 
   -- An union of two sets
   _∪_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → PredSet(T)
@@ -93,6 +94,24 @@ module _ where
   Overlapping : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → Stmt
   Overlapping S₁ S₂ = ∃(S₁ ∩ S₂)
 
+  ⋃_ : PredSet{ℓ₁}(PredSet{ℓ₂}(T)) → PredSet(T)
+  ⋃_ S x = ∃(s ↦ (s ∈ S) ∧ (x ∈ s))
+
+  ⋂_ : PredSet{ℓ₁}(PredSet{ℓ₂}(T)) → PredSet(T)
+  ⋂_ S x = ∀{s} → (s ∈ S) → (x ∈ s)
+
+  ℘ : PredSet{ℓ₁}(T) → PredSet(PredSet{ℓ₁}(T))
+  ℘ S x = x ⊆ S
+
+  unapply : (f : A → B) → B → PredSet(A)
+  unapply f(y) x = f(x) ≡ₛ y
+
+  map : (f : A → B) → PredSet{ℓ}(A) → PredSet(B)
+  map f(S) y = Overlapping(S)(unapply f(y))
+
+  unmap : (f : A → B) → PredSet{ℓ}(B) → PredSet(A)
+  unmap f(y) x = f(x) ∈ y
+
   module _ where -- TODO: These proofs should be generalized somewhere else?
     private variable S₁ : PredSet{ℓ₁}(T)
     private variable S₂ : PredSet{ℓ₂}(T)
@@ -112,33 +131,6 @@ module _ where
     [∪]-of-subset : (S₁ ⊆ S₂) → ((S₁ ∪ S₂) ≡ S₂)
     [∪]-of-subset S₁S₂ = [↔]-intro [∨]-introᵣ ([∨]-elim S₁S₂ id)
 
-{-
-module _ where
-  private variable ℓ₁ ℓ₂ : Lvl.Level
-  private variable A : Type{ℓ₁}
-  private variable B : Type{ℓ₂}
-
-  map : (f : A → B) → ⦃ _ : Bijective(f) ⦄ → PredSet(A) → PredSet(B)
-  map f S x = S(inv(f)(x))
--}
-
-{-
-module _ {ℓₗ}{ℓₒ} where
-  ℘_ : ∀{T} → PredSet{ℓₗ}{ℓₒ}(T) → PredSet{ℓₗ}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}(PredSet{ℓₗ}{ℓₒ}(T))
-  ℘_ S x = Lvl.Up(x ⊆' S) where
-    _⊆'_ = _⊆_ {ℓₗ}{ℓₗ}{ℓₒ}
-
-  _⋃_ : ∀{T} → PredSet{ℓₗ}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}(PredSet{ℓₗ}{ℓₒ}(T)) → PredSet{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}{ℓₒ}(T)
-  _⋃_ S x = Logic.Predicate.∃{Lvl.𝐒(ℓₗ)}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}(s ↦ (s ∈₁ S) ⨯ (x ∈₂ s)) where
-    open import Data.Tuple as Tuple using (_⨯_ ; _,_)
-
-    _∈₁_ = _∈_ {Lvl.𝐒(ℓₗ)}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}
-    _∈₂_ = _∈_ {ℓₗ}{ℓₒ}
-
-  _⋂_ : ∀{T} → PredSet{ℓₗ}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}(PredSet{ℓₗ}{ℓₒ}(T)) → PredSet{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}{ℓₒ}(T)
-  _⋂_ {T} S x = (∀{s : PredSet{ℓₗ}{ℓₒ}(T)} → (s ∈₁ S) → (x ∈₂ s)) where
-    _∈₁_ = _∈_ {Lvl.𝐒(ℓₗ)}{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)}
-    _∈₂_ = _∈_ {ℓₗ}{ℓₒ}
--}
-
--- TODO: Idea (Does it work?): (Pseudo-code) Sets with anything using existential: AnySet = PredSet(∃{Type}(T ↦ t ∈ T))
+    choice : ∀{S : PredSet{ℓ₁}(PredSet{ℓ₂}(T))} → ∃{Obj = (s : PredSet(T)) → ⦃ s ∈ S ⦄ → T}(f ↦ ∀{x} → ⦃ xs : x ∈ S ⦄ → (f(x) ⦃ xs ⦄ ∈ x))
+    ∃.witness choice s ⦃ x ⦄ = {!!}
+    ∃.proof choice {x} ⦃ xs ⦄ = {!!}

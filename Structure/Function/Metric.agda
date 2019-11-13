@@ -10,6 +10,7 @@ import      Lvl
 open import Data.Boolean
 open import Data.Boolean.Proofs
 import      Data.Either as Either
+open import Data.Tuple
 open import Functional
 open import Logic
 open import Logic.Classical
@@ -17,6 +18,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Relator.Ordering
 open import Sets.PredicateSet renaming (_≡_ to _≡ₛ_)
+open import Sets.Setoid.Uniqueness
 open import Structure.Function.Ordering
 open import Structure.Operator.Field
 open import Structure.Operator.Monoid
@@ -28,7 +30,7 @@ open        Structure.Relator.Ordering.Weak.Properties
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 
-F₊ = ∃(NonNegative)
+F₊ = ∃(Positive)
 
 module _ where
   record MetricSpace {ℓ} {M : Type{ℓ}} ⦃ equiv-M : Equiv(M) ⦄ (d : M → M → F) : Type{ℓF Lvl.⊔ ℓ≤ Lvl.⊔ ℓ} where
@@ -99,8 +101,22 @@ module _ where
 
     -- Complete = Sequence.Cauchy ⊆ Sequence.Converging
 
+
+
+    neighborhood-contains-center : ∀{p}{r} → (p ∈ Neighborhood(p)(r))
+    left neighborhood-contains-center = {!!}
+    right (neighborhood-contains-center {r = [∃]-intro r ⦃ OrderedField.intro r-pos ⦄}) = {!!}
+
     subneighborhood-radius : ∀{p₁ p₂}{r₁ r₂} → (Neighborhood(p₁)(r₁) ⊆ Neighborhood(p₂)(r₂)) ← (d(p₁)(p₂) ≤ ([∃]-witness r₂ − [∃]-witness r₁))
     subneighborhood-radius-on-same : ∀{p}{r₁ r₂} → (Neighborhood(p)(r₁) ⊆ Neighborhood(p)(r₂)) ↔ ([∃]-witness r₁ ≤ [∃]-witness r₂)
+
+    interior-is-subset : ∀{ℓ}{E : PredSet{ℓ}(M)} → Interior(E) ⊆ E
+    interior-is-subset {ℓ} {E} {x} ([∃]-intro witness ⦃ proof ⦄) = {!!}
+
+    neighborhood-interior-is-self : ∀{p}{r} → (Interior(Neighborhood(p)(r)) ≡ₛ Neighborhood(p)(r))
+    ∃.witness (left (neighborhood-interior-is-self {p} {r}) x) = r
+    ∃.proof (left (neighborhood-interior-is-self {p} {r} {x}) Nx) = {!!}
+    right (neighborhood-interior-is-self {p} {r}) = {!!}
 
     neighborhood-is-open : ∀{p}{r} → Open(Neighborhood(p)(r))
 
@@ -132,7 +148,81 @@ module _ where
 
     intersection-is-connected : ∀{ℓ₁ ℓ₂}{A : PredSet{ℓ₁}(M)}{B : PredSet{ℓ₂}(M)} → Connected(A) → Connected(B) → Connected(A ∩ B)
 
-module Limit
+module Sequence {ℓ} {M : Type{ℓ}} ⦃ equiv-M : Equiv(M) ⦄ (d : M → M → F) where
+  open import Numeral.Natural
+  import      Numeral.Natural.Relation.Order as ℕ
+
+  ConvergesTo : (ℕ → M) → M → Stmt
+  ConvergesTo f(L) = ∃{Obj = F₊ → ℕ}(N ↦ ∀{ε : F₊}{n} → (n ℕ.≥ N(ε)) → (d(f(n))(L) < [∃]-witness ε))
+
+  Converging : (ℕ → M) → Stmt
+  Converging(f) = ∃(ConvergesTo(f))
+
+  Diverging : (ℕ → M) → Stmt
+  Diverging(f) = ∀{L} → ¬(ConvergesTo f(L))
+
+  lim : (f : ℕ → M) → ⦃ Converging(f) ⦄ → M
+  lim(f) ⦃ [∃]-intro L ⦄ = L
+
+  Cauchy : (ℕ → M) → Stmt
+  Cauchy(f) = ∃{Obj = F₊ → ℕ}(N ↦ ∀{ε : F₊}{a b} → (a ℕ.≥ N(ε)) → (b ℕ.≥ N(ε)) → (d(f(a))(f(b)) < [∃]-witness ε))
+
+  Complete : Stmt
+  Complete = Cauchy ⊆ Converging
+
+  Bounded : (ℕ → M) → Stmt
+  Bounded(f) = ∃(r ↦ ∃(p ↦ ∀{n} → (d(p)(f(n)) < r)))
+
+  unique-converges-to : ∀{f} → Unique(ConvergesTo(f))
+
+  converging-bounded : Converging ⊆ Bounded
+
+  -- strictly-ordered-sequence-limit : ∀{f g : ℕ → M} → (∀{n} → (f(n) < g(n))) → (lim f < lim g)
+  -- ordered-sequence-limit : ∀{f g : ℕ → M} → (∀{n} → (f(n) ≤ g(n))) → (lim f ≤ lim g)
+
+  -- limit-point-converging-sequence : ∀{E}{p} → LimitPoint(E)(p) → ∃(f ↦ (ConvergesTo f(p)) ∧ (∀{x} → (f(x) ∈ E)))
+
+  -- TODO: Apparently, this requires both axiom of choice and excluded middle? At least the (←)-direction?
+  -- continuous-sequence-convergence-composition : (ContinuousOn f(p)) ↔ (∀{g} → (ConvergesTo g(p)) → (ConvergesTo(f ∘ g)(f(p))))
+
+  {-
+  module Series where
+    ∑ : (ℕ → M) → ℕ → M
+    ∑ f(𝟎)    = 𝟎
+    ∑ f(𝐒(n)) = (∑ f(n)) + f(𝐒(n))
+
+    ∑₂ : (ℕ → M) → (ℕ ⨯ ℕ) → M
+    ∑₂ f(a , b) = ∑ (f ∘ (a +_))(b − a)
+
+    ConvergesTo : (ℕ → M) → M → Stmt
+    ConvergesTo f(L) = Sequence.ConvergesTo(∑ f)(L)
+
+    Converging : (ℕ → M) → Stmt
+    Converging(f) = ∃(ConvergesTo(f))
+
+    Diverging : (ℕ → M) → Stmt
+    Diverging(f) = ∀{L} → ¬(ConvergesTo f(L))
+
+    ConvergesTo : (ℕ → M) → M → Stmt
+    AbsolutelyConvergesTo f(L) = ConvergesTo (‖_‖ ∘ f)(L)
+
+    AbsolutelyConverging : (ℕ → M) → Stmt
+    AbsolutelyConverging(f) = ∃(AbsolutelyConvergesTo(f))
+
+    AbsolutelyDiverging : (ℕ → M) → Stmt
+    AbsolutelyDiverging(f) = ∀{L} → ¬(AbsolutelyConvergesTo f(L))
+
+    ConditionallyConverging : (ℕ → M) → Stmt
+    ConditionallyConverging(f) = AbsolutelyDiverging(f) ∧ Converging(f)
+
+    sequence-of-converging-series-converges-to-0 : Converging(f) → (Sequence.ConvergesTo f(𝟎))
+
+    convergence-by-ordering : (∀{n} → f(n) ≤ g(n)) → (Converging(f) ← Converging(g))
+    divergence-by-ordering : (∀{n} → f(n) ≤ g(n)) → (Diverging(f) → Diverging(g))
+    convergence-by-quotient : Sequence.Converging(n ↦ f(n) / g(n)) → (Converging(f) ↔ Converging(g))
+  -}
+
+module Analysis
   {ℓ₁ ℓ₂}
   {M₁ : Type{ℓ₁}} ⦃ equiv-M₁ : Equiv(M₁) ⦄ (d₁ : M₁ → M₁ → F)
   ⦃ space₁ : MetricSpace(d₁) ⦄

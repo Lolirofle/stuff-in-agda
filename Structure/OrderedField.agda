@@ -47,6 +47,10 @@ record OrderedField {ℓ₁ ℓ₂} {F : Type{ℓ₁}} ⦃ _ : Equiv(F) ⦄ (_+_
     constructor intro
     field proof : (x ≥ 𝟎)
 
+  record Positive (x : F) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field proof : (x > 𝟎)
+
   ‖_‖ : F → F
   ‖ x ‖ = if Either.bool(converseTotal(_≤_){𝟎}{x}) then (− x) else x
 
