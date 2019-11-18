@@ -43,7 +43,6 @@ import Functional.Domains.Proofs
 import Functional.Equals
 import Functional.Equals.Proofs
 import Functional.Names
-import Functional.PrimitiveRecursion
 import Functional.Proofs
 import Functional.Repeat
 import Functional.Repeat.Proofs

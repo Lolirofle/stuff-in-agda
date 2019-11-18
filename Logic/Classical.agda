@@ -270,6 +270,13 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
     pq : P → Q
     pq = contrapositiveₗ ⦃ classic-q ⦄ nqnp
 
+  [↔]-one-direction : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → (P ← Q) ∨ (P → Q)
+  [↔]-one-direction with excluded-middle{P = P} | excluded-middle{P = Q}
+  [↔]-one-direction | [∨]-introₗ p  | [∨]-introₗ q  = [∨]-introₗ (const p)
+  [↔]-one-direction | [∨]-introₗ p  | [∨]-introᵣ nq = [∨]-introₗ (const p)
+  [↔]-one-direction | [∨]-introᵣ np | [∨]-introₗ q  = [∨]-introᵣ (const q)
+  [↔]-one-direction | [∨]-introᵣ np | [∨]-introᵣ nq = [∨]-introᵣ ([⊥]-elim ∘ np)
+
 module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ _ : ◊ X ⦄ {P : X → Stmt{ℓ₂}} ⦃ classical-expx : Classical(∃ P) ⦄ {Q : X → Stmt{ℓ₃}} where
   [∃][←]-distributivity : ∃(x ↦ (P(x) → Q(x))) ← (∃(x ↦ P(x)) → ∃(x ↦ Q(x)))
   [∃][←]-distributivity (expx-exqx) =
@@ -339,3 +346,15 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{P : X → Stmt{ℓ₂}} ⦃ c
     --   ¬∀x. P(x)
     --   ⇒ ∃x. ¬P(x)
     --   ⇒ ∃x. P(x) → Q
+
+Classical₁ : ∀{ℓₒ ℓₗ}{X : Type{ℓₒ}} → (X → Stmt{ℓₗ}) → Stmt{ℓₒ ⊔ ℓₗ}
+Classical₁(P) = ∀¹(Classical ∘₁ P)
+-- Classical₁(P) = ∀{x} → Classical(P(x))
+
+Classical₂ : ∀{ℓₒ₁ ℓₒ₂ ℓₗ}{X : Type{ℓₒ₁}}{Y : Type{ℓₒ₂}} → (X → Y → Stmt{ℓₗ}) → Stmt{ℓₒ₁ ⊔ ℓₒ₂ ⊔ ℓₗ}
+Classical₂(P) = ∀²(Classical ∘₂ P)
+-- Classical₂(P) = ∀{x}{y} → Classical(P(x)(y))
+
+Classical₃ : ∀{ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ}{X : Type{ℓₒ₁}}{Y : Type{ℓₒ₂}}{Z : Type{ℓₒ₃}} → (X → Y → Z → Stmt{ℓₗ}) → Stmt{ℓₒ₁ ⊔ ℓₒ₂ ⊔ ℓₒ₃ ⊔ ℓₗ}
+Classical₃(P) = ∀³(Classical ∘₃ P)
+-- Classical₃(P) = ∀{x}{y}{z} → Classical(P(x)(y)(z))

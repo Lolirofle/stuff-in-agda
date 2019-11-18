@@ -131,7 +131,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
 
 module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ where
   -- Definition of compatibility for a binary operation
-  Compatibility : (T₁ → T₁ → T₁) → (T₁ → T₂ → T₂) → Stmt
+  Compatibility : (T₁ → T₁ → T₁) → (T₁ → T₂ → T₂) → Stmt -- TODO: https://en.wikipedia.org/wiki/Semigroup_action
   Compatibility (_▫₁_) (_▫₂_) = AssociativityPattern (_▫₁_) (_▫₂_) (_▫₂_) (_▫₂_)
   -- {x₁ x₂ : T₁}{y : T₂} → ((x₁ ▫₁ x₂) ▫₂ y) ≡ (x₁ ▫₂ (x₂ ▫₂ y))
 

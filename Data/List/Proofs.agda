@@ -39,7 +39,7 @@ module _ {ℓ} where
     -- (l ++ ∅) ≡ l
     -- x ⊰ (l ++ ∅) ≡ x ⊰ l
     -- (x ⊰ l) ++ ∅ ≡ x ⊰ l
-  {-# REWRITE [++]-identityᵣ-raw #-}
+  -- {-# REWRITE [++]-identityᵣ-raw #-}
 
   instance
     [++]-identityᵣ : ∀{T : Type{ℓ}} → Identityᵣ{T₁ = List(T)} (_++_) ∅
@@ -59,11 +59,10 @@ module _ {ℓ} where
     -- x ⊰ ((l++l₁)++l₂) = (x ⊰ l)++(l₁++l₂)
     -- (x ⊰ (l++l₁))++l₂ = (x ⊰ l)++(l₁++l₂)
     -- ((x ⊰ l)++l₁)++l₂ = (x ⊰ l)++(l₁++l₂)
-  {-# REWRITE [++]-associativity-raw #-}
 
   instance
     [++]-associativity : ∀{T : Type{ℓ}} → Associativity{T = List(T)} (_++_)
-    Associativity.proof([++]-associativity) = [≡]-intro
+    Associativity.proof([++]-associativity {T}) {x}{y}{z} = [++]-associativity-raw {T} {x}{y}{z}
 
   reverse-[++] : ∀{T : Type{ℓ}}{l₁ l₂ : List(T)} → (reverse(l₁ ++ l₂) ≡ reverse(l₂) ++ reverse(l₁))
   reverse-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
@@ -96,7 +95,6 @@ module _ {ℓ} where
     -- reverse (x ⊰ l) = (reverse l) ++ (singleton x)
     -- _++_ ∅ b = b
     -- _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
-  {-# REWRITE reverse-[++] #-}
 
   length-[∅] : ∀{T : Type{ℓ}} → (length(∅ {T = T}) ≡ 0)
   length-[∅] = [≡]-intro
@@ -141,7 +139,6 @@ module _ {ℓ} where
   length-repeat : ∀{T : Type{ℓ}}{x : T}{n} → (length(repeat(x)(n)) ≡ n)
   length-repeat{_}{_}{𝟎}    = [≡]-intro
   length-repeat{T}{x}{𝐒(n)} = [≡]-with(𝐒) (length-repeat{T}{x}{n})
-  {-# REWRITE length-repeat #-}
 
   length-tail : ∀{T : Type{ℓ}}{l : List(T)} → (length(tail(l)) ≡ 𝐏(length(l)))
   length-tail{T}{∅}     = [≡]-intro

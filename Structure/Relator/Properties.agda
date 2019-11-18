@@ -81,4 +81,4 @@ module _ {ℓ ℓ₁ ℓ₂} {T : Type{ℓ}} (_▫₁_ : T → T → Stmt{ℓ₁
   record _⊆₂_ : Stmt{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Subrelation(_▫₁_)(_▫₂_)
-  subrelation = inst-fn _⊆₂_.proof
+  sub₂ = inst-fn _⊆₂_.proof

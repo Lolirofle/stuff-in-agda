@@ -1,37 +1,51 @@
 module Structure.LinearAlgebra where
 
 import      Lvl
+open import Data
 open import Data.Tuple
 open import Functional hiding (id)
 open import Functional.Equals
 open import Functional.Proofs
+open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
-open import Numeral.CoordinateVector as Vec renaming (Vector to Vec)
+open import Numeral.CoordinateVector as Vec using () renaming (Vector to Vec)
 open import Numeral.Finite
 open import Numeral.Natural
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
-open import Relator.Equals
-open import Relator.Equals.Proofs
+-- open import Relator.Equals
+-- open import Relator.Equals.Proofs
+open import Sets.Setoid
 open import Sets.Setoid.Uniqueness
 open import Sets.Setoid.Uniqueness.Proofs
 open import Structure.Function.Domain
 import      Structure.Function.Linear as Linear
 open import Structure.Operator.Field
 open import Structure.Operator.Group
-open import Structure.Operator.Properties
+open import Structure.Operator.Properties hiding (commutativity)
 open import Structure.Operator.Vector
 open import Syntax.Number
 open import Type
 
 -- Finite dimensional linear algebra
 -- TODO: Apparently, most of linear algebra will not work in constructive logic
-module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
+
+module _
+  {ℓᵥ ℓₛ : Lvl.Level}
+  {V : Type{ℓᵥ}}
+  ⦃ equiv-V : Equiv(V) ⦄
+  {S : Type{ℓₛ}}
+  ⦃ equiv-S : Equiv(S) ⦄
+  {_+ᵥ_ : V → V → V}
+  {_⋅ₛᵥ_ : S → V → V}
+  {_+ₛ_ _⋅ₛ_ : S → S → S}
+  ⦃ vectorSpace : VectorSpace(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) ⦄
+  where
+
   module _ where
-    open Language(lang)
-    open VectorSpace(VSP)
+    open VectorSpace(vectorSpace)
 
     -- A list of scalars
     Scalars : ℕ → Type
@@ -42,6 +56,7 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
     Vectors(n) = Vec(n)(V)
 
     module _ where
+      -- TODO: Make this a record instead, and then define an "eval"-function and prove LinearCombination-addition for this eval function (homomorphism)
       -- A specific linear combination of vectors (specific as specified by scalars).
       -- Linear combination of 0 scalars and vectors are the zero vector.
       -- Linear combination of 1 scalar and vector is just scalar on vector multiplication.
@@ -51,8 +66,8 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
       LinearCombination {1}       vf sf = Vec.proj(sf)(0) ⋅ₛᵥ Vec.proj(vf)(0)
       LinearCombination {𝐒(𝐒(n))} vf sf = (Vec.proj(sf)(0) ⋅ₛᵥ Vec.proj(vf)(0)) +ᵥ (LinearCombination {𝐒(n)} (Vec.tail vf) (Vec.tail sf))
 
-      postulate LinearCombination-addition    : ∀{n}{sf₁ sf₂}{vf} → (LinearCombination{n}(vf)(sf₁) +ᵥ LinearCombination{n}(vf)(sf₂) ≡ LinearCombination{n}(vf)(sf₁ 〔 map₂ (_+ₛ_) 〕 sf₂))
-      postulate LinearCombination-subtraction : ∀{n}{sf₁ sf₂}{vf} → (LinearCombination{n}(vf)(sf₁) −ᵥ LinearCombination{n}(vf)(sf₂) ≡ LinearCombination{n}(vf)(sf₁ 〔 map₂ (_−ₛ_) 〕 sf₂))
+      postulate LinearCombination-addition    : ∀{n}{sf₁ sf₂}{vf} → (LinearCombination{n}(vf)(sf₁) +ᵥ LinearCombination{n}(vf)(sf₂) ≡ LinearCombination{n}(vf)(sf₁ 〔 Vec.map₂ (_+ₛ_) 〕 sf₂))
+      postulate LinearCombination-subtraction : ∀{n}{sf₁ sf₂}{vf} → (LinearCombination{n}(vf)(sf₁) −ᵥ LinearCombination{n}(vf)(sf₂) ≡ LinearCombination{n}(vf)(sf₁ 〔 Vec.map₂ (_−ₛ_) 〕 sf₂))
 
       -- Spanning(vf) ⇔ (VSP = Span(vf))
       -- A set of vectors is spanning the vector space when every vector in the vector space can be represented as a linear combination of the set of vectors.
@@ -74,7 +89,7 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
       -- TODO: Express this as injectivity when `Injective` is general over setoids
 
       basis-span-independent : ∀{n}{vf : Vectors(n)} → Basis(vf) ↔ (Spanning(vf) ∧ LinearlyIndependent(vf))
-      basis-span-independent{n}{vf} = [↔]-intro (uncurry l) (([↔]-elimₗ [→][∧]-distributivityₗ) ([∧]-intro r₁ r₂)) where
+      basis-span-independent{n}{vf} = [↔]-intro (uncurry l) (([↔]-to-[←] [→][∧]-distributivityₗ) ([∧]-intro r₁ r₂)) where
         l : Spanning(vf) → LinearlyIndependent(vf) → Basis(vf)
         l spanning indep {v} = [∃!]-intro existence uniqueness where
           existence : ∃(sf ↦ LinearCombination(vf)(sf) ≡ v)
@@ -183,7 +198,7 @@ module _ {V S} ⦃ lang ⦄ (VSP : VectorSpace(V)(S) ⦃ lang ⦄) where
 
         -- Transforms a vector to an unit vector in the same direction.
         normalize : (v : V) → ⦃ _ : v ≢ 𝟎ᵥ ⦄ → V
-        normalize(v) ⦃ proof ⦄ = (⅟ₛ_ (norm(v)) ⦃ contrapositiveᵣ (injectivity-zero) (proof) ⦄) ⋅ₛᵥ v
+        normalize(v) ⦃ proof ⦄ = (⅟ₛ (norm(v)) ⦃ contrapositiveᵣ (injectivity-zero) (proof) ⦄) ⋅ₛᵥ v
 
         postulate norm-of-normalize : ∀{v} → ⦃ nonzero : (v ≢ 𝟎ᵥ) ⦄ → (norm(normalize(v) ⦃ nonzero ⦄) ≡ 𝟏ₛ)
 

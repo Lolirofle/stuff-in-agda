@@ -4,7 +4,7 @@ import      Lvl
 open import Lang.Instance
 open import Logic
 open import Relator.Equals
-open import Sets.Setoid using (Equiv ; intro ; Function ; BinaryOperator)
+open import Sets.Setoid using (Equiv ; intro ; Function ; BinaryOperator) renaming (_≡_ to _≡ₛ_)
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type
@@ -32,8 +32,8 @@ module _ {ℓ} {T : Type{ℓ}} where
     [≡]-equiv : Equiv(T)
     [≡]-equiv = Equiv.intro(_≡_ {T = T}) ⦃ [≡]-equivalence ⦄
 
-  [≡]-to-equivalence : ∀{x y : T} → (x ≡ y) → ⦃ eq : Equiv(T) ⦄ → let Equiv.intro(_≡ₛ_) = eq in (x ≡ₛ y)
-  [≡]-to-equivalence([≡]-intro) ⦃ intro(_≡ₛ_) ⦄ = reflexivity(_≡ₛ_)
+  [≡]-to-equivalence : ∀{x y : T} → (x ≡ y) → ⦃ equiv-T : Equiv(T) ⦄ → (_≡ₛ_ ⦃ equiv-T ⦄ x y)
+  [≡]-to-equivalence([≡]-intro) = reflexivity(_≡ₛ_)
 
 module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} where
   -- Applies a function to each side of the equality (TODO: Make this an instance of Function instead)
@@ -45,7 +45,7 @@ module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} where
     Function.congruence([≡]-function {f}) eq = [≡]-with(f) eq
 
   [≡]-to-function : ⦃ equiv-B : Equiv(B) ⦄ → ∀{f : A → B} → Function ⦃ [≡]-equiv ⦄ ⦃ equiv-B ⦄ (f)
-  Function.congruence ([≡]-to-function ⦃ Equiv.intro(_≡ₛ_) ⦄) [≡]-intro = reflexivity(_≡ₛ_)
+  Function.congruence ([≡]-to-function) [≡]-intro = reflexivity(_≡ₛ_)
 
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} where
   -- Applies an operation to each side of the equality (TODO: Make this an instance of BinaryOperator instead)

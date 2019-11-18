@@ -63,18 +63,26 @@ module _ {ℓ₁}{ℓ₂} where
 
   syntax ∀ₗ{T}(λ x → y) = ∀❪ x ꞉ T ❫․ y
 
+module _ {ℓ} where
+  ∀⁰ : (Pred : Stmt{ℓ}) → Stmt
+  ∀⁰ = id
+
 module _ {ℓ₁}{ℓ} where
-  ∀ᶠ : ∀{X : Type{ℓ₁}} → (Pred : X → Stmt{ℓ}) → Stmt
-  ∀ᶠ (Pred) = (∀{x} → Pred(x))
+  ∀¹ : ∀{X : Type{ℓ₁}} → (Pred : X → Stmt{ℓ}) → Stmt
+  ∀¹ (Pred) = ∀⁰(∀ₗ ∘₀ Pred)
+  -- ∀¹ (Pred) = (∀{x} → Pred(x))
 
 module _ {ℓ₁}{ℓ₂}{ℓ} where
-  ∀²ᶠ : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}} → (Pred : X → Y → Stmt{ℓ}) → Stmt
-  ∀²ᶠ (Pred) = (∀{x}{y} → Pred(x)(y))
+  ∀² : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}} → (Pred : X → Y → Stmt{ℓ}) → Stmt
+  ∀² (Pred) = ∀¹(∀ₗ ∘₁ Pred)
+  -- ∀² (Pred) = (∀{x}{y} → Pred(x)(y))
 
 module _ {ℓ₁}{ℓ₂}{ℓ₃}{ℓ} where
-  ∀³ᶠ : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Pred : X → Y → Z → Stmt{ℓ}) → Stmt
-  ∀³ᶠ (Pred) = (∀{x}{y}{z} → Pred(x)(y)(z))
+  ∀³ : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Pred : X → Y → Z → Stmt{ℓ}) → Stmt
+  ∀³ (Pred) = ∀²(∀ₗ ∘₂ Pred)
+  -- ∀³ (Pred) = (∀{x}{y}{z} → Pred(x)(y)(z))
 
 module _ {ℓ₁}{ℓ₂}{ℓ₃}{ℓ₄}{ℓ} where
-  ∀⁴ᶠ : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}}{W : Type{ℓ₄}} → (Pred : X → Y → Z → W → Stmt{ℓ}) → Stmt
-  ∀⁴ᶠ (Pred) = (∀{x}{y}{z}{w} → Pred(x)(y)(z)(w))
+  ∀⁴ : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}}{W : Type{ℓ₄}} → (Pred : X → Y → Z → W → Stmt{ℓ}) → Stmt
+  ∀⁴ (Pred) = ∀³(∀ₗ ∘₃ Pred)
+  -- ∀⁴ (Pred) = (∀{x}{y}{z}{w} → Pred(x)(y)(z)(w))

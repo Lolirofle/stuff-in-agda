@@ -1,27 +1,30 @@
 module Logic.Classical.DoubleNegated where
 
-module Propositional{ℓ} where
-  open import Data.Tuple as Tuple using (_⨯_ ; _,_)
-  open import Functional
-  import      Logic.Propositional{ℓ}          as Constructive
-  import      Logic.Propositional.Theorems{ℓ} as ConstructiveTheorems
-  import      Logic.Predicate{ℓ}              as Constructive1
-  import      Lvl
-  open import Type
+open import Data.Tuple as Tuple using (_⨯_ ; _,_)
+open import Functional
+open import Logic
+import      Lvl
+open import Type
 
-  Stmt = Constructive.Stmt
+module Propositional where
+  import      Logic.Propositional          as Constructive
+  import      Logic.Propositional.Theorems as ConstructiveTheorems
+  import      Logic.Predicate              as Constructive1
+
+  private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+  private variable X Y Z W : Stmt{ℓ}
+  private variable P : X → Stmt{ℓ}
 
   -- Classical propositions are expressed as propositions wrapped in double negation.
   -- TODO: I am not sure, but I think this works? My reasoning is the following:
   -- • [¬¬]-elim ↔ excluded-middle
-  --     Double negation elimination is equivalent to excluded middle.
-  --     There are proofs of this.
+  --     Double negation elimination is equivalent to excluded middle in constructive logic.
   -- • Theory(ClassicalLogic) = Theory(ConstructiveLogic ∪ {excludedMiddle})
   --     Constructive logic is classical logic without EM.
-  --     EM is the difference between constructive and classical.
-  --     This seems to be a common description of constructive logic.
+  --     EM is the difference between classical and constructive.
   --     • Theory(ClassicalLogic) ⊈ Theory(ConstructiveLogic)
   --     • Theory(ClassicalLogic) ⊇ Theory(ConstructiveLogic)
+  --     This seems to be a common description of constructive logic.
   -- • [¬¬]-intro ∈ Theory(ConstructiveLogic)
   --     Double negation introduction exists in constructive logic.
   -- • (∀φ. ¬¬¬¬φ → ¬¬φ) ∈ Theory(ConstructiveLogic)
@@ -36,7 +39,6 @@ module Propositional{ℓ} where
   --     Therefore it is at least a classical logic.
   -- This cannot be done with predicate logic because the translation for [∀] does not hold in both directions.
   Classic = Constructive.¬¬_
-  -- TODO: Another idea: Classic(X) = (∀{Y} → (Y ∨ (¬ Y))) → X
 
   module Opers where
     infixl 1010 ¬_
@@ -44,19 +46,19 @@ module Propositional{ℓ} where
     infixl 1004 _∨_
     infixl 1000 _⟵_ _⟷_ _⟶_
 
-    _∧_ : Stmt → Stmt → Stmt
+    _∧_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
     _∧_ X Y = Classic(Constructive._∧_ X Y)
 
-    _⟶_ : Stmt → Stmt → Stmt
+    _⟶_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
     _⟶_ A B = Classic(A → B)
 
-    _⟵_ : Stmt → Stmt → Stmt
+    _⟵_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
     _⟵_ A B = Classic(A ← B)
 
-    _⟷_ : Stmt → Stmt → Stmt
+    _⟷_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
     _⟷_ A B = Classic(Constructive._↔_ A B)
 
-    _∨_ : Stmt → Stmt → Stmt
+    _∨_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
     _∨_ A B = Classic(Constructive._∨_ A B)
 
     ⊥ : Stmt
@@ -65,13 +67,13 @@ module Propositional{ℓ} where
     ⊤ : Stmt
     ⊤ = Classic(Constructive.⊤)
 
-    ¬_ : Stmt → Stmt
+    ¬_ : Stmt{ℓ} → Stmt
     ¬_ A = Classic(Constructive.¬_ A)
 
-    ∀ₗ : ∀{X : Type{ℓ}} → (X → Stmt) → Stmt
+    ∀ₗ : (X → Stmt{ℓ}) → Stmt
     ∀ₗ P = Classic(Constructive1.∀ₗ P)
 
-    ∃ : ∀{X : Type{ℓ}} → (X → Stmt) → Stmt
+    ∃ : (X → Stmt{ℓ}) → Stmt
     ∃ P = Classic(Constructive1.∃ P)
 
   module _ where
@@ -81,115 +83,115 @@ module Propositional{ℓ} where
       using(∀ₗ ; ∃)
 
     -- Also called: Double-negation shifts
-    [¬¬][→]-preserving : ∀{X Y} → Classic(X → Y) ↔ (Classic(X) → Classic(Y))
-    [¬¬][→]-preserving{X}{Y} = Constructive.[↔]-intro l r where
+    [¬¬][→]-preserving : Classic(X → Y) ↔ (Classic(X) → Classic(Y))
+    [¬¬][→]-preserving{X = X}{Y = Y} = Constructive.[↔]-intro l r where
       open Constructive
       open ConstructiveTheorems
 
       l : Classic(X → Y) ← (Classic(X) → Classic(Y))
-      l = [→]ᵣ-[¬¬]-move-out ∘ [→]ₗ-[¬¬]-elim
+      l = {!!} -- [→]ᵣ-[¬¬]-move-out ∘ [→]ₗ-[¬¬]-elim
 
       r : Classic(X → Y) → (Classic(X) → Classic(Y))
       r(nnxy)(nnx)(ny) =
         (([→]-elim
-          (nnxy :of: ¬¬(X → Y))
           ((xy ↦
             (([→]-elim
-              (ny :of: (Y → ⊥))
               (([→]-elim
-                (xy :of: (X → Y))
                 (([⊥]-elim
                   (([→]-elim
-                    (nnx :of: ((X → ⊥) → ⊥))
                     ((x ↦
                       (([→]-elim
+                        (([→]-elim x xy) :of: Y)
                         (ny :of: (Y → ⊥))
-                        (([→]-elim xy x) :of: Y)
                       ) :of: ⊥)
                     ) :of: (X → ⊥))
+                    (nnx :of: ((X → ⊥) → ⊥))
                   ) :of: ⊥)
                 ) :of: X)
+                (xy :of: (X → Y))
               ) :of: Y)
+              (ny :of: (Y → ⊥))
             ) :of: ⊥)
           ) :of: ((X → Y) → ⊥))
+          (nnxy :of: ¬¬(X → Y))
         ) :of: ⊥)
 
     ------------------------------------------
     -- Converting theorems with implication in constructive logic to classical logic
 
-    prop-intro : ∀{X} → X → Classic(X)
+    prop-intro : X → Classic(X)
     prop-intro = ConstructiveTheorems.[¬¬]-intro
 
-    [→]₁-intro : ∀{X Y} → (X → Y) → (Classic(X) → Classic(Y))
-    [→]₁-intro = ConstructiveTheorems.double-contrapositiveᵣ
+    [→]₁-intro : (X → Y) → (Classic(X) → Classic(Y))
+    [→]₁-intro = {!!} -- ConstructiveTheorems.double-contrapositiveᵣ
 
-    [→]₂-intro : ∀{X Y Z} → (X → Y → Z) → (Classic(X) → Classic(Y) → Classic(Z))
-    [→]₂-intro(xyz) = (Constructive.[↔]-elimᵣ [¬¬][→]-preserving) ∘ ([→]₁-intro(xyz))
+    [→]₂-intro : (X → Y → Z) → (Classic(X) → Classic(Y) → Classic(Z))
+    [→]₂-intro(xyz) = (Constructive.[↔]-to-[→] [¬¬][→]-preserving) ∘ ([→]₁-intro(xyz))
 
-    [→]₃-intro : ∀{X Y Z W} → (X → Y → Z → W) → (Classic(X) → Classic(Y) → Classic(Z) → Classic(W))
-    [→]₃-intro{X}{Y}{Z}{W}(xyzw) = (Constructive.[↔]-elimᵣ [¬¬][→]-preserving) ∘₂ ([→]₂-intro(xyzw))
+    [→]₃-intro : (X → Y → Z → W) → (Classic(X) → Classic(Y) → Classic(Z) → Classic(W))
+    [→]₃-intro(xyzw) = (Constructive.[↔]-to-[→] [¬¬][→]-preserving) ∘₂ ([→]₂-intro(xyzw))
 
     ------------------------------------------
     -- Conjunction (AND)
 
-    [∧]-intro : ∀{X Y} → Classic(X) → Classic(Y) → Classic(X ∧ Y)
+    [∧]-intro : Classic(X) → Classic(Y) → Classic(X ∧ Y)
     [∧]-intro = [→]₂-intro(Constructive.[∧]-intro)
 
-    [∧]-elimₗ : ∀{X Y} → Classic(X ∧ Y) → Classic(X)
+    [∧]-elimₗ : Classic(X ∧ Y) → Classic(X)
     [∧]-elimₗ = [→]₁-intro(Constructive.[∧]-elimₗ)
 
-    [∧]-elimᵣ : ∀{X Y} → Classic(X ∧ Y) → Classic(Y)
+    [∧]-elimᵣ : Classic(X ∧ Y) → Classic(Y)
     [∧]-elimᵣ = [→]₁-intro(Constructive.[∧]-elimᵣ)
 
     ------------------------------------------
     -- Implication
 
-    [→]-elim : ∀{X Y} → Classic(X → Y) → Classic(X) → Classic(Y)
-    [→]-elim = [→]₂-intro(Constructive.[→]-elim)
+    [→]-elim : Classic(X → Y) → Classic(X) → Classic(Y)
+    [→]-elim = [→]₂-intro(swap Constructive.[→]-elim)
 
-    [→]-intro : ∀{X Y : Stmt} → (Classic(X) → Classic(Y)) → Classic(X → Y)
-    [→]-intro = ConstructiveTheorems.[¬¬]-double-contrapositiveₗ
+    [→]-intro : (Classic(X) → Classic(Y)) → Classic(X → Y)
+    [→]-intro = {!!} -- ConstructiveTheorems.[¬¬]-double-contrapositiveₗ
 
     ------------------------------------------
     -- Reverse implication
 
-    [←]-intro : ∀{X Y : Stmt} → (Classic(Y) ← Classic(X)) → Classic(Y ← X)
-    [←]-intro = ConstructiveTheorems.[¬¬]-double-contrapositiveₗ
+    [←]-intro : (Classic(Y) ← Classic(X)) → Classic(Y ← X)
+    [←]-intro = {!!} -- ConstructiveTheorems.[¬¬]-double-contrapositiveₗ
 
-    [←]-elim : ∀{X Y} → Classic(X) → Classic(Y ← X) → Classic(Y)
+    [←]-elim : Classic(X) → Classic(Y ← X) → Classic(Y)
     [←]-elim = [→]₂-intro(Constructive.[←]-elim)
 
     ------------------------------------------
     -- Equivalence
 
-    [↔]-intro : ∀{X Y} → (Classic(X) ← Classic(Y)) → (Classic(X) → Classic(Y)) → Classic(X ↔ Y)
+    [↔]-intro : (Classic(X) ← Classic(Y)) → (Classic(X) → Classic(Y)) → Classic(X ↔ Y)
     [↔]-intro yx xy = ([→]₂-intro(Constructive.[↔]-intro)) ([→]-intro yx) ([→]-intro xy)
 
-    [↔]-elimₗ : ∀{X Y} → Classic(X ↔ Y) → Classic(X) ← Classic(Y)
-    [↔]-elimₗ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-elimₗ))
+    [↔]-elimₗ : Classic(X ↔ Y) → Classic(X) ← Classic(Y)
+    [↔]-elimₗ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-to-[←]))
 
     [↔]-elimᵣ : ∀{X Y} → Classic(X ↔ Y) → Classic(X) → Classic(Y)
-    [↔]-elimᵣ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-elimᵣ))
+    [↔]-elimᵣ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-to-[→]))
 
     ------------------------------------------
     -- Disjunction (OR)
 
-    [∨]-introₗ : ∀{X Y} → Classic(X) → Classic(X ∨ Y)
+    [∨]-introₗ : Classic(X) → Classic(X ∨ Y)
     [∨]-introₗ = [→]₁-intro(Constructive.[∨]-introₗ)
 
-    [∨]-introᵣ : ∀{X Y} → Classic(Y) → Classic(X ∨ Y)
+    [∨]-introᵣ : Classic(Y) → Classic(X ∨ Y)
     [∨]-introᵣ = [→]₁-intro(Constructive.[∨]-introᵣ)
 
-    [∨]-elim : ∀{X Y Z} → (Classic(X) → Classic(Z)) → (Classic(Y) → Classic(Z)) → Classic(X ∨ Y) → Classic(Z)
+    [∨]-elim : (Classic(X) → Classic(Z)) → (Classic(Y) → Classic(Z)) → Classic(X ∨ Y) → Classic(Z)
     [∨]-elim xz yz = ([→]₃-intro(Constructive.[∨]-elim)) ([→]-intro xz) ([→]-intro yz)
 
     ------------------------------------------
     -- Bottom (false, absurdity, empty, contradiction)
 
-    [⊥]-intro : ∀{X} → Classic(X) → Classic(¬ X) → Classic(⊥)
+    [⊥]-intro : Classic(X) → Classic(¬ X) → Classic(⊥)
     [⊥]-intro = [→]₂-intro(Constructive.[⊥]-intro)
 
-    [⊥]-elim : ∀{X} → Classic(⊥) → Classic(X)
+    [⊥]-elim : Classic(⊥) → Classic(X)
     [⊥]-elim = [→]₁-intro(Constructive.[⊥]-elim)
 
     ------------------------------------------
@@ -201,10 +203,10 @@ module Propositional{ℓ} where
     ------------------------------------------
     -- Negation
 
-    [¬]-intro : ∀{X} → (Classic(X) → Classic(⊥)) → Classic(¬ X)
+    [¬]-intro : (Classic(X) → Classic(⊥)) → Classic(¬ X)
     [¬]-intro = ([→]₁-intro(Constructive.[¬]-intro)) ∘ [→]-intro
 
-    [¬]-elim : ∀{X} → Classic(¬ X) → Classic(X → ⊥) -- TODO
+    [¬]-elim : Classic(¬ X) → Classic(X → ⊥) -- TODO
     [¬]-elim = [→]₁-intro(Constructive.[¬]-elim)
 
     ------------------------------------------
@@ -219,29 +221,29 @@ module Propositional{ℓ} where
     ------------------------------------------
     -- Existential quantification
 
-    [∃]-intro : ∀{X : Type{ℓ}}{P : X → Stmt}{x} → Classic(P(x)) → Classic(∃ P)
-    [∃]-intro {X}{P}{x} = [→]₁-intro(proof ↦ Constructive1.[∃]-intro (x) ⦃ proof ⦄)
+    [∃]-intro : ∀{x} → Classic(P(x)) → Classic(∃ P)
+    [∃]-intro {x = x} = [→]₁-intro(proof ↦ Constructive1.[∃]-intro (x) ⦃ proof ⦄)
 
     ------------------------------------------
     -- Theorems exclusive to classic logic (compared to constructive logic)
 
-    [¬¬]-elim : ∀{X} → Classic(¬¬ X) → Classic(X)
+    [¬¬]-elim : Classic(¬¬ X) → Classic(X)
     [¬¬]-elim = ConstructiveTheorems.[¬¬¬]-elim
 
-    excluded-middle : ∀{X} → Classic(X ∨ (¬ X))
-    excluded-middle{X} = ConstructiveTheorems.[¬¬]-excluded-middle
+    excluded-middle : Classic(X ∨ (¬ X))
+    excluded-middle{X = X} = ConstructiveTheorems.[¬¬]-excluded-middle
 
-    [¬]-elim₂ : ∀{X} → Classic((¬ X) → ⊥) → Classic(X)
+    [¬]-elim₂ : Classic((¬ X) → ⊥) → Classic(X)
     [¬]-elim₂ = [¬¬]-elim ∘ [¬]-intro ∘ [→]-elim
 
-    postulate [→]-disjunctive-formᵣ : ∀{X Y : Stmt} → Classic(X → Y) → Classic((¬ X) ∨ Y)
+    postulate [→]-disjunctive-formᵣ : Classic(X → Y) → Classic((¬ X) ∨ Y)
 
-    postulate contrapositiveₗ : ∀{X Y : Stmt} → Classic(X → Y) ← Classic((¬ X) ← (¬ Y))
+    postulate contrapositiveₗ : Classic(X → Y) ← Classic((¬ X) ← (¬ Y))
 
-    double-contrapositiveₗ : ∀{X Y : Stmt} → Classic(X → Y) ← Classic((¬¬ X) → (¬¬ Y))
+    double-contrapositiveₗ : Classic(X → Y) ← Classic((¬¬ X) → (¬¬ Y))
     double-contrapositiveₗ = contrapositiveₗ ∘ contrapositiveₗ
 
-    postulate callcc : ∀{X Y : Stmt} → Classic(((X → Y) → X) → X)
+    postulate callcc : Classic(((X → Y) → X) → X)
     {-callcc =
       ([→]-intro(xyx ↦
         ([→]-disjunctive-formᵣ
@@ -254,16 +256,16 @@ module Propositional{ℓ} where
     ------------------------------------------
     -- Theorems
 
-    [→][∧]-assumptionₗ : {X Y Z : Stmt} → Classic((X ∧ Y) → Z) ← Classic(X → Y → Z)
+    [→][∧]-assumptionₗ : Classic((X ∧ Y) → Z) ← Classic(X → Y → Z)
     [→][∧]-assumptionₗ = [→]₁-intro(Tuple.uncurry)
 
-    [→][∧]-assumptionᵣ : {X Y Z : Stmt} → Classic((X ∧ Y) → Z) → Classic(X → Y → Z)
+    [→][∧]-assumptionᵣ : Classic((X ∧ Y) → Z) → Classic(X → Y → Z)
     [→][∧]-assumptionᵣ = [→]₁-intro(Tuple.curry)
 
-    [¬¬]-intro : ∀{X} → Classic(X) → Classic(¬¬ X)
+    [¬¬]-intro : Classic(X) → Classic(¬¬ X)
     [¬¬]-intro = ConstructiveTheorems.[¬¬]-intro
 
-    double-contrapositiveᵣ : ∀{X Y} → Classic(X → Y) → Classic(¬¬ X → ¬¬ Y)
+    double-contrapositiveᵣ : Classic(X → Y) → Classic(¬¬ X → ¬¬ Y)
     double-contrapositiveᵣ = [→]₁-intro [→]₁-intro
 
 {- TODO: These are moved here from Logic.Propositional.Theorems
@@ -300,3 +302,17 @@ module _ {ℓ} {X : Stmt{ℓ}}{Y : Stmt{ℓ}} where
   [¬¬]-double-contrapositiveₗ : ¬¬(X → Y) ← ((¬¬ X) → (¬¬ Y))
   [¬¬]-double-contrapositiveₗ p = [→]ᵣ-[¬¬]-move-out {_} {X}{Y} ([→]ₗ-[¬¬]-elim {_} {X}{¬¬ Y} p)
 -}
+
+module _ where
+  open import Logic.Propositional
+  open import Logic.Propositional.Theorems
+
+  [weak-excluded-middle]-to-[[¬][∧]ₗ] : (∀{ℓ}{P : Stmt{ℓ}} → (¬ P) ∨ (¬¬ P)) → (∀{ℓ₁ ℓ₂}{P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} → ((¬ P) ∨ (¬ Q)) ← (¬ (P ∧ Q)))
+  [weak-excluded-middle]-to-[[¬][∧]ₗ] wem {P = P} {Q = Q} npq with wem {P = P} | wem {P = Q}
+  [weak-excluded-middle]-to-[[¬][∧]ₗ] wem {P = P} {Q = Q} npq | [∨]-introₗ np  | [∨]-introₗ nq  = [∨]-introₗ np
+  [weak-excluded-middle]-to-[[¬][∧]ₗ] wem {P = P} {Q = Q} npq | [∨]-introₗ np  | [∨]-introᵣ nnq = [∨]-introₗ np
+  [weak-excluded-middle]-to-[[¬][∧]ₗ] wem {P = P} {Q = Q} npq | [∨]-introᵣ nnp | [∨]-introₗ nq  = [∨]-introᵣ nq
+  [weak-excluded-middle]-to-[[¬][∧]ₗ] wem {P = P} {Q = Q} npq | [∨]-introᵣ nnp | [∨]-introᵣ nnq = [⊥]-elim(Propositional.[∧]-intro nnp nnq npq)
+
+  [[¬][∧]ₗ]-to-[weak-excluded-middle] : (∀{ℓ₁ ℓ₂}{P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} → ((¬ P) ∨ (¬ Q)) ← (¬ (P ∧ Q))) → (∀{ℓ}{P : Stmt{ℓ}} → (¬ P) ∨ (¬¬ P))
+  [[¬][∧]ₗ]-to-[weak-excluded-middle] [¬][∧]ₗ {ℓ} {P} = [¬][∧]ₗ non-contradiction

@@ -69,8 +69,14 @@ s-combinator f g x = (f x) (g x)
 
 
 
+_∘₀_ : ∀{ℓ₁ ℓ₂} {Y : Type{ℓ₁}}{Z : Type{ℓ₂}} → (Y → Z) → Y → Z
+_∘₀_ = id
+
+_∘₁_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X₁ : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y → Z) → (X₁ → Y) → (X₁ → Z)
+_∘₁_ f = (f ∘₀_) ∘_
+
 _∘₂_ : ∀{ℓ₁ ℓ₂ ℓ₃ ℓ₄} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{Y : Type{ℓ₃}}{Z : Type{ℓ₄}} → (Y → Z) → (X₁ → X₂ → Y) → (X₁ → X₂ → Z)
-_∘₂_ f = (f ∘_) ∘_
+_∘₂_ f = (f ∘₁_) ∘_
 -- (f ∘₂ g)(x₁)(x₂) = f(g(x₁)(x₂)) = curry(f ∘ (uncurry g))(x₁)(x₂) = (f ∘ (g(x₁)))(x₂)
 
 _∘₃_ : ∀{ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{X₃ : Type{ℓ₃}}{Y : Type{ℓ₄}}{Z : Type{ℓ₅}} → (Y → Z) → (X₁ → X₂ → X₃ → Y) → (X₁ → X₂ → X₃ → Z)

@@ -22,8 +22,8 @@ _🝖-[_]_ (_) {_▫_ = _▫_} = transitivity(_▫_)
 
 -- Syntax for "equational reasoning" for any transitive relation
 infixr 1 _🝖-[_]-sym_
-_🝖-[_]-sym_ : ∀{ℓ}{T : Type{ℓ}} → (x : T) → ∀{y z : T}{_▫_ : T → T → Stmt{ℓ}} → ⦃ _ : Transitivity(_▫_) ⦄ → ⦃ _ : Symmetry(_▫_) ⦄ → (x ▫ y) → (z ▫ y) → (x ▫ z)
-_🝖-[_]-sym_ (_) {_▫_ = _▫_} xy zy = transitivity(_▫_) xy (symmetry(_▫_) zy)
+_🝖-[_]-sym_ : ∀{ℓ}{T : Type{ℓ}} → (x : T) → ∀{y z : T}{_▫_ : T → T → Stmt{ℓ}} → ⦃ _ : Transitivity(_▫_) ⦄ → ⦃ _ : Symmetry(_▫_) ⦄ → (y ▫ x) → (y ▫ z) → (x ▫ z)
+_🝖-[_]-sym_ (_) {_▫_ = _▫_} yx yz = transitivity(_▫_) (symmetry(_▫_) yx) (yz)
 
 -- Syntax for "equational reasoning" for any transitive relation
 infixr 1 _🝖-reduce_
@@ -40,6 +40,3 @@ _🝖-[_]-end_ (_) =
 infixr 2 _🝖-end
 _🝖-end : ∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}} → (x : T) → ∀{_▫_ : T → T → Stmt{ℓ₂}} → ⦃ _ : Reflexivity(_▫_) ⦄ → (x ▫ x)
 _🝖-end x {_▫_} = reflexivity(_▫_)
-
--- _🝖_by-[_]_ : ∀{ℓ}{T : Type{ℓ}}{x : T} → (x ▫ y) → (y : T) → ∀{z : T}{_▫_ : T → T → Stmt{ℓ}} → ⦃ _ : Transitivity(_▫_) ⦄ → (y ▫ z) → (x ▫ z)
--- syntax TODO: Reorder (x ▫ y) and (y : T)

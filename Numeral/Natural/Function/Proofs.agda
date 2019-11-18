@@ -56,22 +56,20 @@ min-elementary {𝐒(a)} {𝐒(b)} = ([≡]-with(𝐒) (min-elementary {a} {b}))
 
 min-with-max : ∀{a b} → (min(a)(b) ≡ (a + b) −₀ max(a)(b))
 min-with-max {a}{b} =
-  min-elementary{a}{b}
-  🝖 [−₀][+]ₗ-nullify {a}{b}{b −₀ a}
-  🝖 symmetry(_≡_) ([≡]-with((a + b) −₀_) (max-elementary{a}{b}))
-  -- [≡]-elimᵣ (max-elementary{a}{b}) {expr ↦ (min(a)(b) ≡ (a + b) −₀ expr)} (min-elementary{a}{b})
-  -- (a + b) −₀ max(a)(b)
-  -- (a + b) −₀ (a + (b −₀ a))
-  -- b −₀ (b −₀ a)
+  min(a)(b)                 🝖-[ min-elementary{a}{b} ]
+  b −₀ (b −₀ a)             🝖-[ [−₀][+]ₗ-nullify {a}{b}{b −₀ a} ]-sym
+  (a + b) −₀ (a + (b −₀ a)) 🝖-[ [≡]-with((a + b) −₀_) (max-elementary{a}{b}) ]-sym
+  (a + b) −₀ max(a)(b)      🝖-end
 
--- max-with-min : ∀{a b} → (max(a)(b) ≡ (a + b) −₀ min(a)(b))
--- max-with-min
-  -- max(a)(b)
-  -- a + (b −₀ a)
-  -- (b + a) −₀ (b −₀ (b −₀ a))
-  -- (a + b) −₀ (b −₀ (b −₀ a))
-  -- (a + b) −₀ min(a)(b)
-
+{-
+max-with-min : ∀{a b} → (max(a)(b) ≡ (a + b) −₀ min(a)(b))
+max-with-min {a}{b} =
+  max(a)(b)                  🝖-[ max-elementary{a}{b} ]
+  a + (b −₀ a)               🝖-[ [−₀][+]ᵣ-nullify {{!!}} ]-sym
+  (b + a) −₀ (b −₀ (b −₀ a)) 🝖-[ {!!} ]
+  (a + b) −₀ (b −₀ (b −₀ a)) 🝖-[ {!!} ]
+  (a + b) −₀ min(a)(b)       🝖-end
+-}
 
 instance
   min-commutativity : Commutativity(min)

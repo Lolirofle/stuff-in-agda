@@ -132,7 +132,8 @@ data _⊕_ {ℓ₁ ℓ₂} (P : Stmt{ℓ₁}) (Q : Stmt{ℓ₂}) : Stmt{ℓ₁ L
 _⊽_ : ∀{ℓ₁ ℓ₂} → Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
 p ⊽ q = (¬ p) ∧ (¬ q)
 
-pattern [⊽]-intro p q = [∧]-intro p q
+[⊽]-intro : ∀{ℓ₁ ℓ₂}{P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} → (¬ P) → (¬ Q) → (P ⊽ Q)
+[⊽]-intro = [∧]-intro
 
 [⊽]-elimₗ : ∀{ℓ₁ ℓ₂}{P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} → (P ⊽ Q) → ¬ P
 [⊽]-elimₗ = [∧]-elimₗ

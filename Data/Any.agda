@@ -21,5 +21,5 @@ record UniversalAny : Typeω where
     {type} : Type{level}
     value  : type
 
-  map : ∀{ℓ}{T : Type{ℓ}} → (type → T) → Any{ℓ}
-  map f = intro(f(value))
+  map : ∀{ℓ}{T : Type{ℓ}} → (type → T) → UniversalAny
+  map f = record{value = f(value)}

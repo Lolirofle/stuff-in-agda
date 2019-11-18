@@ -28,8 +28,16 @@ module _ {ℓ₁ ℓ₂} {T : Type{ℓ₁}} {_<_ : T → T → Stmt{ℓ₂}} whe
     -- ∀x∀y. (x<y) → (y<x) → ⊥
     -- ∀x∀y. (x<y) → ¬(y<x)
 
-  -- Definition of a total binary operation
   [total]-to-reflexivity : ⦃ _ : ConverseTotal(_<_) ⦄ → Reflexivity(_<_)
   Reflexivity.proof([total]-to-reflexivity) = [∨]-elim id id (converseTotal(_<_))
+
+  negated-reflexivity-irreflexivity : ⦃ _ : Reflexivity(_<_) ⦄ → Irreflexivity(¬_ ∘₂ _<_)
+  Irreflexivity.proof negated-reflexivity-irreflexivity irrefl = irrefl(reflexivity(_<_))
+
+  negated-symmetry : ⦃ _ : Symmetry(_<_) ⦄ → Symmetry(¬_ ∘₂ _<_)
+  Symmetry.proof negated-symmetry nxy yx = nxy(symmetry(_<_) yx)
+
+-- module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {_▫_ : A → B → Stmt{ℓ₃}} where
+  
 
   -- TODO: https://proofwiki.org/wiki/Definition%3aRelation_Compatible_with_Operation and substitution. Special case for (≡) and function application: ∀(x∊T)∀(y∊T). (x ≡ y) → (∀(f: T→T). f(x) ≡ f(y))

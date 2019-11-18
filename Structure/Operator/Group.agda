@@ -39,6 +39,9 @@ record Group {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) 
     inverseᵣ : InverseFunctionᵣ (_▫_) inv
     inverseᵣ = InverseFunction.right(inverse)
 
+  inv-op : T → T → T
+  inv-op x y = x ▫ inv y
+
 record CommutativeGroup {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ} where
   constructor intro
   field
