@@ -17,9 +17,11 @@ open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type
 
+{-
 module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} ⦃ structureₗ : Group(_▫X_) ⦄ {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} ⦃ structureᵣ : Group(_▫Y_) ⦄ (f : X → Y) where
   monomorphic-cyclic : ⦃ (_▫X_) ↣ (_▫Y_) ⦄ → Cyclic(_▫X_) → Cyclic(_▫Y_)
   monomorphic-cyclic ⦃ [∃]-intro θ ⦃ θ-proof ⦄ ⦄ ([∃]-intro index ⦃ intro a ⦄) = {!!}
+-}
 
 {-
 module _ {T : Type{ℓ₂}} {_▫_ : T → T → T} ⦃ group : Group(_▫_) ⦄ where

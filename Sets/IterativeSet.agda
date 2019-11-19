@@ -187,12 +187,14 @@ module _ where
   ∃.witness (Tuple.right (∃.proof (Tuple.right ([⋃]-inclusion {A = A} {x}) ([∃]-intro (intro iA ia) ⦃ proof ⦄)))) = ia
   ∃.proof (Tuple.right (∃.proof (Tuple.right ([⋃]-inclusion {A = A} {x}) ([∃]-intro (intro iA ia) ⦃ proof ⦄)))) = proof
 
+  {-
   filter-inclusion : ∀{A : Iset{ℓ₁}}{i : Index(A)}{P} → (elem(A)(i) ∈ filter A P) ↔ P(i)
   Σ.left             (∃.witness (Tuple.left (filter-inclusion {i = i}) pi)) = i
   Σ.right            (∃.witness (Tuple.left (filter-inclusion {i = i}) pi)) = pi
   _≡_.left  (∃.proof (Tuple.left filter-inclusion pi)) = intro id [≡]-reflexivity
   _≡_.right (∃.proof (Tuple.left filter-inclusion pi)) = intro id [≡]-reflexivity
   Tuple.right (filter-inclusion {i = i}) ([∃]-intro (intro iA PiA) ⦃ proof ⦄) = {!_⊇_.proof ([≡]-to-[⊇] proof) {intro ? ?}!}
+  -}
 
   -- Iset-induction : ∀{P : Iset{ℓ₁} → Stmt{ℓ₂}} → (∀{I : Type{ℓ₁}}{e : I → Iset{ℓ₁}} → ((∀{i : I} → P(e(i))) → P(Iset.intro(e)))) → (∀{A : Iset{ℓ₁}} → P(A))
   -- Iset-induction {P = P} proof {A} = proof {Index(A)} {elem(A)} ?

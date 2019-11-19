@@ -13,14 +13,15 @@ import Data.List
 import Data.List.Computability
 -- import Data.List.Functor
 import Data.List.Proofs
-import Data.List.Relation.Membership.Proofs
-import Data.List.Relation.Sublist.Proofs
 import Data.List.Relation
 import Data.List.Relation.Membership
+import Data.List.Relation.Membership.Proofs
 import Data.List.Relation.Sublist
+import Data.List.Relation.Sublist.Proofs
 -- import Data.ListNonEmpty
 import Data.ListSized
 import Data.Option
+-- import Data.Option.Functor
 import Data.Option.Proofs
 import Data.Proofs
 import Data.Tuple
@@ -33,23 +34,29 @@ import Data.Tuple.Raise
 import Data.Tuple.Raiseᵣ
 import Data.Tuple.Raiseₗ
 import FFI.IO as FFI
-import Functional
 import FormalLanguage
+import FormalLanguage.ContextFreeGrammar
 import FormalLanguage.Equals
 import FormalLanguage.Proofs
+import FormalLanguage.RegularExpression
+import Functional
 -- import Functional.DomainRaise
 import Functional.Domains
 import Functional.Domains.Proofs
 import Functional.Equals
 import Functional.Equals.Proofs
+-- import Functional.Multi
 import Functional.Names
 import Functional.Proofs
 import Functional.Repeat
+import Functional.Repeat.Order
 import Functional.Repeat.Proofs
 import Lang.Instance
 import Lang.Irrelevance
+import Lang.Size
 import Logic
 import Logic.Classical
+-- import Logic.Classical.DoubleNegated
 import Logic.Computability
 import Logic.Computability.Binary
 import Logic.Names
@@ -62,14 +69,14 @@ import Metalogic.Classical.Propositional.ProofSystem
 import Metalogic.Classical.Propositional.Syntax
 import Metalogic.Classical.Propositional.TruthSemanticsModel
 import Numeral.CoordinateVector
--- import Numeral.CoordinateVector.Proofs
+import Numeral.CoordinateVector.Proofs
 import Numeral.Finite
 import Numeral.Finite.Bound
 import Numeral.Finite.Functions
 import Numeral.Finite.Oper
 import Numeral.Finite.Oper.Comparisons
+import Numeral.Finite.Oper.Comparisons.Proofs
 import Numeral.Finite.Proofs
--- import Numeral.FiniteInclusive
 import Numeral.Integer
 -- import Numeral.Integer.Function
 -- import Numeral.Integer.Oper
@@ -81,29 +88,31 @@ import Numeral.Natural
 -- import Numeral.Natural.Coprime
 import Numeral.Natural.Function
 import Numeral.Natural.Function.Proofs
--- import Numeral.Natural.GreatestCommonDivisor
+import Numeral.Natural.GreatestCommonDivisor
 import Numeral.Natural.Induction
 import Numeral.Natural.Inductions
 import Numeral.Natural.Oper
 import Numeral.Natural.Oper.Comparisons
 import Numeral.Natural.Oper.Comparisons.Proofs
+import Numeral.Natural.Oper.DivMod.Proofs
 import Numeral.Natural.Oper.Divisibility
+import Numeral.Natural.Oper.FlooredDivision
 import Numeral.Natural.Oper.Modulo
--- import Numeral.Natural.Oper.Modulo.Proofs
+import Numeral.Natural.Oper.Modulo.Proofs
 import Numeral.Natural.Oper.Proofs
 -- import Numeral.Natural.Prime
 import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Computability
--- import Numeral.Natural.Relation.Divisibility
--- import Numeral.Natural.Relation.Divisibility.Proofs
+import Numeral.Natural.Relation.Divisibility
+import Numeral.Natural.Relation.Divisibility.Proofs
 import Numeral.Natural.Relation.Order
--- import Numeral.Natural.Relation.Order.Classical
--- import Numeral.Natural.Relation.Order.Computability
--- import Numeral.Natural.Relation.Order.Existence
--- import Numeral.Natural.Relation.Order.Existence.Proofs
+import Numeral.Natural.Relation.Order.Classical
+import Numeral.Natural.Relation.Order.Computability
+import Numeral.Natural.Relation.Order.Existence
+import Numeral.Natural.Relation.Order.Existence.Proofs
 import Numeral.Natural.Relation.Order.Proofs
 -- import Numeral.Natural.Relation.Properties
--- import Numeral.Natural.TotalOper
+import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
 -- import Numeral.Rational.AlterAdd
 -- import Numeral.Rational.SternBrocot
@@ -111,17 +120,21 @@ import Numeral.Sign
 import Numeral.Sign.Oper
 import Numeral.Sign.Oper0
 import Operator.Equals
+import ReductionSystem
 import Relator.Congruence
 import Relator.Congruence.Proofs
 import Relator.Equals
-import Relator.Equals.Proofs.Equivalence
 import Relator.Equals.Heterogenous
 import Relator.Equals.Names
 import Relator.Equals.Proofs
-import Structure.Relator.Names
+import Relator.Equals.Proofs.Equivalence
 import Relator.Ordering
+import Relator.Ordering.Proofs
 import Sets.BoolSet
+import Sets.IterativeSet
+import Sets.PredicateSet
 import Sets.Setoid
+import Sets.Setoid.Names
 import Sets.Setoid.Proofs
 import Sets.Setoid.Size
 import Sets.Setoid.Size.Proofs
@@ -133,77 +146,71 @@ import String
 import Structure.Category
 import Structure.Category.Categories
 -- import Structure.Category.Dual
+-- import Structure.Category.Equiv
 import Structure.Category.Functor
+import Structure.Category.Functor.Equiv
 import Structure.Category.Functor.Functors
 import Structure.Category.Functor.Proofs
+-- import Structure.Category.NaturalTransformation
+import Structure.Category.Proofs
 import Structure.Function.Domain
 import Structure.Function.Domain.Proofs
 import Structure.Function.Linear
+-- import Structure.Function.Metric
 import Structure.Function.Ordering
+import Structure.Graph
 -- import Structure.LinearAlgebra
--- import Structure.Logic.Classical.NaturalDeduction
--- import Structure.Logic.Classical.NaturalDeduction.Proofs
--- import Structure.Logic.Classical.PredicateBoundedQuantification
--- import Structure.Logic.Classical.SetTheory
--- import Structure.Logic.Classical.SetTheory.Function
--- import Structure.Logic.Classical.SetTheory.Relation
--- import Structure.Logic.Classical.SetTheory.SetBoundedQuantification
--- import Structure.Logic.Classical.SetTheory.Structure.Function
--- import Structure.Logic.Classical.SetTheory.Structure.Numeral
--- import Structure.Logic.Classical.SetTheory.Structure.Relator
--- import Structure.Logic.Classical.SetTheory.ZFC
--- import Structure.Logic.Classical.SetTheory.ZFC.BinaryRelatorSet
--- import Structure.Logic.Classical.SetTheory.ZFC.Finite
--- import Structure.Logic.Classical.SetTheory.ZFC.FunctionSet
--- import Structure.Logic.Classical.SetTheory.ZFC.FunctionSet.Proofs
--- import Structure.Logic.Classical.SetTheory.ZFC.Numeral
--- import Structure.Logic.Classical.SetTheory.ZFC.Numeral.Integer
--- import Structure.Logic.Classical.SetTheory.ZFC.Numeral.Natural
--- import Structure.Logic.Classical.SetTheory.ZFC.Numeral.Rational
--- import Structure.Logic.Classical.SetTheory.ZFC.Numeral.Real
--- import Structure.Logic.Classical.SetTheory.ZFC.Proofs
--- import Structure.Logic.Constructive.Functions
--- import Structure.Logic.Constructive.Functions.Properties
--- import Structure.Logic.Constructive.NaturalDeduction
--- import Structure.Logic.Constructive.Relations.Properties
--- import Structure.Logic.Constructive.Syntax.Algebra
 import Structure.Operator.Field
 import Structure.Operator.Functions
 import Structure.Operator.Group
--- import Structure.Operator.Group.Proofs
+import Structure.Operator.Group.Proofs
+import Structure.Operator.Lattice
 import Structure.Operator.Monoid
 import Structure.Operator.Monoid.Category
--- import Structure.Operator.Monoid.Proofs
+import Structure.Operator.Monoid.Proofs
 import Structure.Operator.Names
--- import Structure.Operator.Proofs
+import Structure.Operator.Proofs
 import Structure.Operator.Properties
--- import Structure.Operator.SetAlgebra
--- import Structure.Operator.Vector
+import Structure.Operator.SetAlgebra
+import Structure.Operator.Vector
+import Structure.Operator.VectorSpace.Proofs
+import Structure.OrderedField
 import Structure.Real
 import Structure.Real.Abs
+-- import Structure.Real.Continuity
+-- import Structure.Real.Derivative
+-- import Structure.Real.Limit
 import Structure.Relator.Equivalence
 import Structure.Relator.Function
+import Structure.Relator.Names
 import Structure.Relator.Ordering
 import Structure.Relator.Properties
 import Structure.Relator.Properties.Proofs
+import Structure.Type.Quotient
 import Syntax.Function
 import Syntax.Method
 import Syntax.Number
 import Syntax.Transitivity
 import Type
 -- import Type.Category
+-- import Type.Cubical
+-- import Type.Cubical.Equality
+-- import Type.Cubical.Path
+-- import Type.Cubical.Path.Proofs
 import Type.Dependent
+import Type.Dependent.Functions
 import Type.Empty
 import Type.Empty.Proofs
+import Type.Homotopy
 import Type.Singleton
 import Type.Singleton.Proofs
 import Type.Size
 import Type.Size.Countable
 import Type.Size.Finite
 import Type.Size.Proofs
-
 import Type.Unit
 import Type.Unit.Proofs
+import Type.WellOrdering
 
 main : FFI.IO Data.Unit
 main = FFI.printStrLn("Okay")

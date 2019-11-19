@@ -146,10 +146,12 @@ module _ where
       [≡]-equivalence : Equivalence(_≡_ {ℓ₁}{ℓ₂}{T})
       [≡]-equivalence = intro
 
+    {- TODO: Cannot be an instance of Equiv because of level issues
     instance
       [≡]-equiv : Equiv(PredSet{ℓ}(T))
       Equiv._≡_ [≡]-equiv = {!_≡_!}
       Equiv.[≡]-equivalence [≡]-equiv = {![≡]-equivalence!}
+    -}
 
     [≡]-to-[⊆] : (S₁ ≡ S₂) → (S₁ ⊆ S₂)
     [≡]-to-[⊆] S₁S₂ {x} = [↔]-to-[→] (S₁S₂{x})

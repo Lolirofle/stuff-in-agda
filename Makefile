@@ -1,4 +1,5 @@
-OPTIONS=--rewriting --irrelevant-projections --without-K --no-default-libraries -W all --warning noUnknownFixityInMixfixDecl --show-implicit --confluence-check
+OPTIONS=--rewriting --irrelevant-projections --without-K --no-default-libraries --cubical
+DEBUG_OPTIONS=--show-implicit --confluence-check -W all --warning noUnknownFixityInMixfixDecl
 #--exact-split --without-K --proof-irrelevance --verbose=5 --experimental-irrelevance --instance-search-depth=10 --overlapping-instances
 
 all: typecheck
@@ -11,6 +12,9 @@ build:
 
 typecheck:
 	agda ${OPTIONS} Main.agda
+
+debug:
+	agda ${OPTIONS} ${DEBUG_OPTIONS} Main.agda
 
 test:
 	agda ${OPTIONS} Test.agda

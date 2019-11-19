@@ -70,7 +70,7 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : V → V → Type{ℓ₂}) w
     -- Note: Equality on edges must respect uniqueness. In other words, one edge must not have multiple constructions.
     record Path : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       constructor intro
-      field proof : ∀{v : V} → Unique(WalksThrough v walk)
+      field proof : ∀{v : V} → IsProp(WalksThrough v walk)
     path = inst-fn Path.proof
 
     record Traceable : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
@@ -101,10 +101,10 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : V → V → Type{ℓ₂}) w
 module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : V → V → Type{ℓ₂}) where
   record IsTree : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
-    field proof : ∀{x y : V} → IsUnit(Path(_⟶_) x y) -- TODO: Does not work because the field `unique` is a function
+    field proof : ∀{x y : V} → IsUnit(∃(Path(_⟶_) {x} {y})) -- TODO: Does not work because the field `unique` is a function
   isTree = inst-fn IsTree.proof
 
   record IsForest : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
-    field proof : ∀{x y : V} → IsProp(Path(_⟶_) x y)
+    field proof : ∀{x y : V} → IsProp(∃(Path(_⟶_) {x} {y}))
   isForest = inst-fn IsForest.proof

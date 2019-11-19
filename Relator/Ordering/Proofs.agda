@@ -10,6 +10,7 @@ import      Relator.Ordering
 open import Structure.Relator.Ordering
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
+open import Structure.Relator.Properties.Proofs
 open import Syntax.Transitivity
 
 module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
