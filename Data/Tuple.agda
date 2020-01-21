@@ -3,7 +3,7 @@ module Data.Tuple where
 import      Lvl
 open import Type
 
-infixl 200 _⨯_ _,_ -- TODO: Raiseᵣ gives the opposite: infixr
+infixr 200 _⨯_ _,_
 
 -- Definition of a 2-tuple
 record _⨯_ {ℓ₁}{ℓ₂} (X : Type{ℓ₁}) (Y : Type{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂} where

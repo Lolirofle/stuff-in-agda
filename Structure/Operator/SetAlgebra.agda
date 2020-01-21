@@ -9,6 +9,7 @@ open import Logic.Propositional
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Structure.Operator.Properties
+open import Structure.Operator.Proofs
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 
@@ -37,31 +38,19 @@ record Fundamentals : Stmt{ℓ} where
 
   instance
     [∪][∩]-distributivityᵣ : Distributivityᵣ(_∪_)(_∩_)
-    Distributivityᵣ.proof [∪][∩]-distributivityᵣ {a}{b}{c} =
-      commutativity(_∪_)
-      🝖 distributivityₗ(_∪_)(_∩_)
-      🝖 ([≡]-with(expr ↦ (expr ∩ (c ∪ b))) (commutativity(_∪_)))
-      🝖 ([≡]-with(expr ↦ ((a ∪ c) ∩ expr)) (commutativity(_∪_)))
+    [∪][∩]-distributivityᵣ = [↔]-to-[→] OneTypeTwoOp.distributivity-equivalence-by-commutativity [∪][∩]-distributivityₗ
 
   instance
     [∩][∪]-distributivityᵣ : Distributivityᵣ(_∩_)(_∪_)
-    Distributivityᵣ.proof [∩][∪]-distributivityᵣ {a}{b}{c} =
-      commutativity(_∩_)
-      🝖 distributivityₗ(_∩_)(_∪_)
-      🝖 ([≡]-with(expr ↦ (expr ∪ (c ∩ b))) (commutativity(_∩_)))
-      🝖 ([≡]-with(expr ↦ ((a ∩ c) ∪ expr)) (commutativity(_∩_)))
+    [∩][∪]-distributivityᵣ = [↔]-to-[→] OneTypeTwoOp.distributivity-equivalence-by-commutativity [∩][∪]-distributivityₗ
 
   instance
     [∪]-identityᵣ : Identityᵣ(_∪_)(∅)
-    Identityᵣ.proof [∪]-identityᵣ =
-      commutativity(_∪_)
-      🝖 identityₗ(_∪_)(∅)
+    [∪]-identityᵣ = [↔]-to-[→] One.identity-equivalence-by-commutativity [∪]-identityₗ
 
   instance
     [∩]-identityᵣ : Identityᵣ(_∩_)(𝐔)
-    Identityᵣ.proof [∩]-identityᵣ =
-      commutativity(_∩_)
-      🝖 identityₗ(_∩_)(𝐔)
+    [∩]-identityᵣ = [↔]-to-[→] One.identity-equivalence-by-commutativity [∩]-identityₗ
 
 record Complement : Stmt{ℓ} where
   infixl 1002 ∁_
@@ -320,3 +309,5 @@ record Subset : Set(Lvl.𝐒(ℓ)) where
   -- [⊆][∖]-equiv : (a ⊆ b) ↔ (a ∖ b ≡ ∅)
 
   -- [⊆][∁]-equiv : (a ⊆ b) ↔ (∁(b) ⊆ ∁(a))
+
+  -- [∩][∪]-sub : (a ∩ b) ⊆ (a ∪ b)

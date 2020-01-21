@@ -102,7 +102,7 @@ module _ {ℓₒ ℓₘ : Lvl.Level} {Obj : Type{ℓₒ}} (Morphism : Obj → Ob
       -- ∀{x y z w : Obj}{f : y ⟶ x}{g : z ⟶ y}{h : w ⟶ z} → ((f ∘ g) ∘ h ≡ f ∘ (g ∘ h))
       ⦃ associativity ⦄ : ∀{x y z w : Obj} → Names.AssociativityPattern {T₁ = y ⟶ x} {T₂ = z ⟶ y} {T₃ = w ⟶ z} (_∘_)(_∘_)(_∘_)(_∘_)
 
-      ⦃ op-binaryOperator ⦄ : ∀{x y z} → BinaryOperator(_∘_ {x}{y}{z})
+      ⦃ binaryOperator ⦄ : ∀{x y z} → BinaryOperator(_∘_ {x}{y}{z})
 
     -- A morphism is an isomorphism when it is invertible with respect to the operator.
     -- For the set and functions category, it means that f is bijective.

@@ -91,6 +91,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ 
     inverseFunction-right = inst-fn (InverseFunctionᵣ.proof ∘ InverseFunction.right)
   Invertible = ∃(InverseFunction)
 
+-- TODO: Maybe rename to ComplementFunction?
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ absorberₗ : ∃(Absorberₗ(_▫_)) ⦄ where
   module _ (opp : T → T) where
     record OppositeFunctionₗ : Stmt{ℓ} where

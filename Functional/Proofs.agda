@@ -8,7 +8,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Functional
 open import Functional.Names using (_⊜_)
-open import Sets.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_ ; [≡]-with to [≡ₛ]-with ; Function to Functionₛ)
+open import Sets.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_ ; [≡]-with to [≡ₛ]-with ; Function to Functionₛ ; BinaryOperator to BinaryOperatorₛ)
 open import Sets.Setoid.Uniqueness
 open import Structure.Relator.Function renaming (Function to RelatorFunction ; function to relatorFunction)
 open import Structure.Relator.Properties

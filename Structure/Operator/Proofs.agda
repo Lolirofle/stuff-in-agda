@@ -39,7 +39,7 @@ private
     select-invᵣ _ _ _ _ = Data.Unit
 
 module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T} where
-  private variable {id idₗ idᵣ} : T
+  private variable {id idₗ idᵣ ab abₗ abᵣ} : T
   private variable {inv invₗ invᵣ} : T → T
   private variable ⦃ op ⦄ : BinaryOperator ⦃ equiv ⦄ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫_)
   private variable ⦃ comm ⦄ : Commutativity ⦃ equiv ⦄ (_▫_)
@@ -62,6 +62,15 @@ module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T
     a ▫ ((c ▫ b) ▫ d) 🝖-[ [≡]-with2ᵣ(_▫_)(a) (associativity(_▫_) {c} {b} {d}) ]
     a ▫ (c ▫ (b ▫ d)) 🝖-[ symmetry(_≡_) (associativity(_▫_) {a} {c} {b ▫ d}) ]
     (a ▫ c) ▫ (b ▫ d) 🝖-end
+
+  associate4-123-321 : let _ = op , assoc in ∀{a b c d} → (((a ▫ b) ▫ c) ▫ d ≡ a ▫ (b ▫ (c ▫ d)))
+  associate4-123-321 {a}{b}{c}{d} = associativity(_▫_) 🝖 associativity(_▫_)
+
+  associate4-123-213 : let _ = op , assoc in ∀{a b c d} → (((a ▫ b) ▫ c) ▫ d ≡ (a ▫ (b ▫ c)) ▫ d)
+  associate4-123-213 {a}{b}{c}{d} = [≡]-with2ₗ(_▫_)(_) (associativity(_▫_))
+
+  associate4-321-231 : let _ = op , assoc in ∀{a b c d} → (a ▫ (b ▫ (c ▫ d)) ≡ a ▫ ((b ▫ c) ▫ d))
+  associate4-321-231 {a}{b}{c}{d} = [≡]-with2ᵣ(_▫_)(_) (symmetry(_≡_) (associativity(_▫_)))
 
   -- When an identity element exists and is the same for both sides, it is unique.
   unique-identity : Unique(Identity(_▫_))
@@ -145,11 +154,6 @@ module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T
     b ▫ idᵣ          🝖-[ identityᵣ(_▫_)(idᵣ) ]
     b                🝖-end
 
-  {- TODO
-  type-param : ∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}}{P : T → Type{ℓ₂}}{x : T} → P(x) → T
-  type-param {x = x} _ = x
-  -}
-
   -- When something and something else's inverse is the identity element, they are equal
   equality-zeroₗ : let _ = op , assoc , select-inv(id)(ident)(inv)(inver) in ∀{x y} → (x ≡ y) ← (x ▫ inv(y) ≡ id)
   equality-zeroₗ {id}{inv} {x}{y} (proof) =
@@ -159,6 +163,12 @@ module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T
     (x ▫ inv(y)) ▫ y 🝖-[ [≡]-with2ₗ(_▫_)(y) (proof) ]
     id ▫ y           🝖-[ identity-left(_▫_)(id) ]
     y                🝖-end
+
+  equality-zeroᵣ : let _ = op , assoc , select-inv(id)(ident)(inv)(inver) in ∀{x y} → (x ≡ y) → (x ▫ inv(y) ≡ id)
+  equality-zeroᵣ {id}{inv} {x}{y} (proof) =
+    x ▫ inv(y) 🝖-[ [≡]-with2ₗ(_▫_)(inv(y)) proof ]
+    y ▫ inv(y) 🝖-[ inverseFunctionᵣ(_▫_)(inv) ]
+    id         🝖-end
 
   commuting-id : let _ = select-id(id)(ident) in ∀{x} → (id ▫ x ≡ x ▫ id)
   commuting-id {id} {x} =
@@ -243,9 +253,16 @@ module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T
         inv(y) ▫ y                   🝖-[ symmetry(_≡_) (squeezed-inverse (inverseFunction-left(_▫_)(inv))) ]
         (inv(y) ▫ (inv(x) ▫ x)) ▫ y  🝖-[ [≡]-with2ₗ(_▫_)(_) (symmetry(_≡_) (associativity(_▫_))) ]
         ((inv(y) ▫ inv(x)) ▫ x) ▫ y  🝖-[ associativity(_▫_) ]
-        (inv(y) ▫ inv(x)) ▫ (x ▫ y) 🝖-end
+        (inv(y) ▫ inv(x)) ▫ (x ▫ y)  🝖-end
       ) :of: (inv(x ▫ y) ▫ (x ▫ y) ≡ (inv(y) ▫ inv(x)) ▫ (x ▫ y)))
     ) :of: (inv(x ▫ y) ≡ inv(y) ▫ inv(x))
+
+  inverse-distribute-to-inverse : let _ = op , assoc , select-inv(id)(ident)(inv)(inver) in ∀{x y} → inv(inv x ▫ inv y) ≡ y ▫ x
+  inverse-distribute-to-inverse {id}{inv} {x}{y} =
+    inv(inv x ▫ inv y)      🝖-[ inverse-distribution ]
+    inv(inv y) ▫ inv(inv x) 🝖-[ [≡]-with2ᵣ(_▫_)(_) (double-inverse ⦃ cancᵣ = cancellationᵣ-by-group ⦄) ]
+    inv(inv y) ▫ x          🝖-[ [≡]-with2ₗ(_▫_)(_) (double-inverse ⦃ cancᵣ = cancellationᵣ-by-group ⦄) ]
+    y ▫ x                   🝖-end
 
   unique-inverseₗ-by-id : let _ = op , assoc , select-id(id)(ident) in Unique(InverseFunctionₗ(_▫_))
   unique-inverseₗ-by-id {id = id} {x = inv₁} {inv₂} inverse₁ inverse₂ = intro \{x} →
@@ -282,6 +299,20 @@ module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T
       invᵣ(x)                 🝖-end
     )
 
+  absorber-equivalence-by-commutativity : let _ = comm in Absorberₗ(_▫_)(ab) ↔ Absorberᵣ(_▫_)(ab)
+  absorber-equivalence-by-commutativity {ab} = [↔]-intro l r where
+    r : Absorberₗ(_▫_)(ab) → Absorberᵣ(_▫_)(ab)
+    Absorberᵣ.proof (r absoₗ) {x} =
+      x ▫ ab 🝖-[ commutativity(_▫_) ]
+      ab ▫ x 🝖-[ absorberₗ(_▫_)(ab) ⦃ absoₗ ⦄ ]
+      ab     🝖-end
+
+    l : Absorberₗ(_▫_)(ab) ← Absorberᵣ(_▫_)(ab)
+    Absorberₗ.proof (l absoᵣ) {x} =
+      ab ▫ x 🝖-[ commutativity(_▫_) ]
+      x ▫ ab 🝖-[ absorberᵣ(_▫_)(ab) ⦃ absoᵣ ⦄ ]
+      ab     🝖-end
+
 module OneTypeTwoOp {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫₁_ _▫₂_ : T → T → T} where
   private variable {id} : T
   private variable {inv} : T → T
@@ -312,6 +343,8 @@ module OneTypeTwoOp {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫₁_ _�
 
   private variable ⦃ distriₗ ⦄ : Distributivityₗ ⦃ equiv ⦄ (_▫₁_)(_▫₂_)
   private variable ⦃ distriᵣ ⦄ : Distributivityᵣ ⦃ equiv ⦄ (_▫₁_)(_▫₂_)
+  private variable ⦃ absorpₗ ⦄ : Absorptionₗ ⦃ equiv ⦄ (_▫₁_)(_▫₂_)
+  private variable ⦃ absorpᵣ ⦄ : Absorptionᵣ ⦃ equiv ⦄ (_▫₁_)(_▫₂_)
 
   distributivity-equivalence-by-commutativity : let _ = op₂ , comm₁ in Distributivityₗ(_▫₁_)(_▫₂_) ↔ Distributivityᵣ(_▫₁_)(_▫₂_)
   distributivity-equivalence-by-commutativity = [↔]-intro l r where
@@ -328,6 +361,34 @@ module OneTypeTwoOp {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫₁_ _�
       🝖 distributivityₗ(_▫₁_)(_▫₂_) ⦃ distriₗ ⦄
       🝖 ([≡]-with2ₗ(_▫₂_)(_) (commutativity(_▫₁_)))
       🝖 ([≡]-with2ᵣ(_▫₂_)(_) (commutativity(_▫₁_)))
+
+  absorption-equivalence-by-commutativity : let _ = op₁ , comm₁ , comm₂ in Absorptionₗ(_▫₁_)(_▫₂_) ↔ Absorptionᵣ(_▫₁_)(_▫₂_)
+  absorption-equivalence-by-commutativity = [↔]-intro l r where
+    r : Absorptionₗ(_▫₁_)(_▫₂_) → Absorptionᵣ(_▫₁_)(_▫₂_)
+    Absorptionᵣ.proof (r absorpₗ) {x}{y} =
+      (x ▫₂ y) ▫₁ y 🝖-[ commutativity(_▫₁_) ]
+      y ▫₁ (x ▫₂ y) 🝖-[ [≡]-with2ᵣ(_▫₁_)(_) (commutativity(_▫₂_)) ]
+      y ▫₁ (y ▫₂ x) 🝖-[ absorptionₗ(_▫₁_)(_▫₂_) ⦃ absorpₗ ⦄ {y}{x} ]
+      y             🝖-end
+
+    l : Absorptionₗ(_▫₁_)(_▫₂_) ← Absorptionᵣ(_▫₁_)(_▫₂_)
+    Absorptionₗ.proof (l absorpᵣ) {x}{y} =
+      x ▫₁ (x ▫₂ y) 🝖-[ commutativity(_▫₁_) ]
+      (x ▫₂ y) ▫₁ x 🝖-[ [≡]-with2ₗ(_▫₁_)(_) (commutativity(_▫₂_)) ]
+      (y ▫₂ x) ▫₁ x 🝖-[ absorptionᵣ(_▫₁_)(_▫₂_) ⦃ absorpᵣ ⦄ {y}{x} ]
+      x             🝖-end
+
+  absorberₗ-by-absorptionₗ-identityₗ : let _ = absorpₗ , select-idₗ(id)(identₗ₁) in Absorberₗ(_▫₂_)(id)
+  Absorberₗ.proof (absorberₗ-by-absorptionₗ-identityₗ {id}) {x} =
+    id ▫₂ x         🝖-[ identityₗ(_▫₁_)(id) ]-sym
+    id ▫₁ (id ▫₂ x) 🝖-[ absorptionₗ(_▫₁_)(_▫₂_) ]
+    id              🝖-end
+
+  absorberᵣ-by-absorptionᵣ-identityᵣ : let _ = absorpᵣ , select-idᵣ(id)(identᵣ₁) in Absorberᵣ(_▫₂_)(id)
+  Absorberᵣ.proof (absorberᵣ-by-absorptionᵣ-identityᵣ {id}) {x} =
+    x ▫₂ id         🝖-[ identityᵣ(_▫₁_)(id) ]-sym
+    (x ▫₂ id) ▫₁ id 🝖-[ absorptionᵣ(_▫₁_)(_▫₂_) ]
+    id              🝖-end
 
 module Two {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ equiv-A : Equiv(A) ⦄ {_▫₁_ : A → A → A} {B : Type{ℓ₂}} ⦃ equiv-B : Equiv(B) ⦄ {_▫₂_ : B → B → B} where
   private variable {id₁} : A
@@ -398,51 +459,22 @@ module Two {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ equiv-A : Equiv(A) ⦄ {_▫�
         🝖 (symmetry(_≡_)(inverseFunctionᵣ(_▫₂_)(inv₂){θ(x)}) :of: (id₂ ≡ θ(x) ▫₂ inv₂(θ(x))))
       ))
 
-{-
-module One {ℓ} {T : Type{ℓ}} {_▫_ : T → T → T} where
-  {-
-  module MonoidLikeₗ (associativity : Associativity(_▫_)) {id} (identity : Identityₗ(_▫_)(id)) where
-    postulate 
-  -}
-
-  module LoopLikeᵣ {id} (identity : Identityᵣ(_▫_)(id)) {inv} (inverse : InverseFunctionᵣ(_▫_)(id)(inv)) where
-    -- When something and something else are equal, then the operation of the first one and the second's inverse is the identity element
-    equality-zeroᵣ : ∀{x y} → (x ≡ y) → (x ▫ inv(y) ≡ id)
-    equality-zeroᵣ {x}{y} (proof) =
-      ([≡]-with(_▫ inv(y)) (proof) :of: (x ▫ inv(y) ≡ y ▫ inv(y)))
-      🝖 (inverse                   :of: (y ▫ inv(y) ≡ id))
-
-module Two {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {_▫₁_}{_▫₂_} {θ : T₁ → T₂} (preserving : Preserving2(θ)(_▫₁_)(_▫₂_)) where
-  module GroupLike
-    (associativity₁ : Associativity(_▫₁_))
-    (associativity₂ : Associativity(_▫₂_))
-    {id₁}  (identity₁ : Identity(_▫₁_)(id₁))             {id₂}  (identity₂ : Identity(_▫₂_)(id₂))
-    {inv₁} (inverse₁ : InverseFunction(_▫₁_)(id₁)(inv₁)) {inv₂} (inverse₂ : InverseFunction(_▫₂_)(id₂)(inv₂))
-    where
-
-    open One.GroupLikeₗ {T₂} {_▫₂_} (associativity₂) {id₂} ([∧]-elimₗ identity₂) {inv₂} ([∧]-elimₗ inverse₂)
-    open One.GroupLike {T₁} {_▫₁_} (associativity₁) {id₁} (identity₁) {inv₁} (inverse₁)
-    open One.LoopLikeᵣ {T₂} {_▫₂_} {id₂} ([∧]-elimᵣ identity₂) {inv₂} ([∧]-elimᵣ inverse₂)
-
-    open Cancellableₗ.Identifiableᵣ (cancellation-by-associativity-inverse) {id₁} ([∧]-elimᵣ identity₁) {id₂} ([∧]-elimᵣ identity₂) using (preserving-identityᵣ) public
-    open Cancellableₗ.Identifiableᵣ.Invertibleᵣ (cancellation-by-associativity-inverse) {id₁} ([∧]-elimᵣ identity₁) {id₂} ([∧]-elimᵣ identity₂) {inv₁} ([∧]-elimᵣ inverse₁) {inv₂} ([∧]-elimᵣ inverse₂) public
-
-    injective-kernelᵣ : Injective(θ) ↔ (∀{a : T₁} → (θ(a) ≡ id₂) → (a ≡ id₁))
-    injective-kernelᵣ = [↔]-intro l r where
+    injective-kernelᵣ : let _ = op₁ , op₂ , assoc₁ , assoc₂ , cancₗ₂ , select-inv(id₁)(ident₁)(inv₁)(inver₁) , select-inv(id₂)(ident₂)(inv₂)(inver₂) in Injective(θ) ↔ (∀{a} → (θ(a) ≡ id₂) → (a ≡ id₁))
+    injective-kernelᵣ {id₁}{inv₁}{id₂}{inv₂} = [↔]-intro l (inj ↦ r ⦃ inj ⦄) where
       l : Injective(θ) ← (∀{a} → (θ(a) ≡ id₂) → (a ≡ id₁))
-      l(proof) {a}{b} (θa≡θb) =
-        equality-zeroₗ(
+      Injective.proof(l(proof)) {a}{b} (θa≡θb) =
+        One.equality-zeroₗ(
           proof(
-            (preserving{a}{inv₁(b)}                       :of: (θ(a ▫₁ inv₁(b)) ≡ θ(a) ▫₂ θ(inv₁(b))))
-            🝖 ([≡]-with(θ(a) ▫₂_) (preserving-inverseᵣ{b}) :of: (θ(a) ▫₂ θ(inv₁(b)) ≡ θ(a) ▫₂ inv₂(θ(b))))
-            🝖 (equality-zeroᵣ(θa≡θb)                       :of: (θ(a) ▫₂ inv₂(θ(b)) ≡ id₂))
+            (preserv{a}{inv₁(b)}                                   :of: (θ(a ▫₁ inv₁(b)) ≡ θ(a) ▫₂ θ(inv₁(b))))
+            🝖 ([≡]-with2ᵣ(_▫₂_)(θ(a)) (preserving-inverseᵣ{x = b}) :of: (θ(a) ▫₂ θ(inv₁(b)) ≡ θ(a) ▫₂ inv₂(θ(b))))
+            🝖 (One.equality-zeroᵣ(θa≡θb)                           :of: (θ(a) ▫₂ inv₂(θ(b)) ≡ id₂))
           ) :of: (a ▫₁ inv₁(b) ≡ id₁)
         ) :of: (a ≡ b)
 
-      r : Injective(θ) → (∀{a} → (θ(a) ≡ id₂) → (a ≡ id₁))
-      r(injective) {a} (θa≡id) =
-        symmetry(injective{id₁}{a}(
-          (preserving-identityᵣ :of: (θ(id₁) ≡ id₂))
-          🝖 (symmetry(θa≡id)    :of: (id₂ ≡ θ(a)))
-        ))
--}
+      r : ⦃ _ : Injective(θ) ⦄ → (∀{a} → (θ(a) ≡ id₂) → (a ≡ id₁))
+      r {a} (θa≡id) =
+        injective(θ) (
+          θ(a)   🝖-[ θa≡id ]
+          id₂    🝖-[ symmetry(_≡_) preserving-identityᵣ ]
+          θ(id₁) 🝖-end
+        )

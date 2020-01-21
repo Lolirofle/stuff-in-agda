@@ -45,14 +45,13 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{
   [⊜]-compose₁ : ∀{f₁ f₂ : B → C}{g : A → B} → (f₁ ⊜ f₂) → ((f₁ ∘ g) ⊜ (f₂ ∘ g))
   [⊜]-compose₁ {g = g} (intro feq) = intro(\{x} → feq{g(x)})
 
--- TODO: When does ((x⊜y) → (f(x) ⊜ f(y))) hold? Does it need some assumptions about the setoid?
--- TODO: When is BinaryOperator(_∘_) satisfied?
--- TODO: The instance resolutions here are preventing overlapping instances from working
-module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ {C : Type{ℓ₃}} ⦃ _ : Equiv(C) ⦄ ⦃ _ : BinaryOperator(_∘_) ⦄ where
-  [⊜]-compose : ∀{f₁ f₂ : B → C}{g₁ g₂ : A → B} → (f₁ ⊜ f₂) → (g₁ ⊜ g₂) → (f₁ ∘ g₁ ⊜ f₂ ∘ g₂)
-  [⊜]-compose {f₁}{f₂} feq geq =
-    [≡]-with (f₁ ∘_) ⦃ [≡]-congruence2-right(_∘_)(f₁) ⦄ geq
-    🝖 [⊜]-compose₁ feq
+module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ {C : Type{ℓ₃}} ⦃ _ : Equiv(C) ⦄ ⦃ _ : ∀{f : B → C} → Function(f) ⦄ where
+  [⊜]-compose : ∀{f₁ f₂ : B → C} → (f₁ ⊜ f₂) → ∀{g₁ g₂ : A → B} → (g₁ ⊜ g₂) → (f₁ ∘ g₁ ⊜ f₂ ∘ g₂)
+  [⊜]-compose {f₁}{f₂} feq {g₁}{g₂} (intro geq) = [⊜]-compose₁ feq 🝖 (intro \{x} → [≡]-with(f₂) (geq{x}))
+
+  instance
+    [⊜][∘]-binaryOperator : BinaryOperator(_∘_ {X = A}{Y = B}{Z = C})
+    BinaryOperator.congruence [⊜][∘]-binaryOperator = [⊜]-compose
 
 -- TODO: Is this correct?
 -- [⊜]-not-all : ∀{ℓ₁ ℓ₂}{T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (∀{f g : T₁ → T₂} → (f ⊜ g)) → IsEmpty(T₁)

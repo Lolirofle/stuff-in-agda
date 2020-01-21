@@ -69,12 +69,5 @@ module _ {T : Type} {_▫_ : T → T → T} ⦃ commGroup : CommutativeGroup(_�
   commutation = commutationᵣ(commutativity)
 
 module _ {T : Type} {_▫_ : T → T → T} ⦃ associativity : Associativity(_▫_) ⦄ where
-  associate4-123-321 : ∀{a b c d} → (((a ▫ b) ▫ c) ▫ d ≡ a ▫ (b ▫ (c ▫ d)))
-  associate4-123-321 {a}{b}{c}{d} = associativity 🝖 associativity
 
-  associate4-123-213 : ∀{a b c d} → (((a ▫ b) ▫ c) ▫ d ≡ (a ▫ (b ▫ c)) ▫ d)
-  associate4-123-213 {a}{b}{c}{d} = [≡]-with(_▫ d) associativity
-
-  associate4-321-231 : ∀{a b c d} → (a ▫ (b ▫ (c ▫ d)) ≡ a ▫ ((b ▫ c) ▫ d))
-  associate4-321-231 {a}{b}{c}{d} = [≡]-with(a ▫_) (symmetry associativity)
 -}

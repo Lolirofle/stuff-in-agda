@@ -5,9 +5,13 @@ module Structure.Operator.Lattice {ℓ} (L : Type{ℓ}) ⦃ equiv-L : Equiv(L) �
 
 import      Lvl
 open import Functional
+import      Functional.Names as Names
 open import Logic
 open import Logic.Propositional
+open import Logic.Predicate
+open import Structure.Function.Domain using (Involution ; involution)
 open import Structure.Operator.Properties
+open import Structure.Operator.Proofs
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
@@ -20,7 +24,10 @@ record Semilattice (_▫_ : L → L → L) : Stmt{ℓ} where
     ⦃ associative ⦄  : Associativity(_▫_)
     ⦃ idempotent ⦄   : Idempotence(_▫_)
 
-  partialOrder : Weak.PartialOrder(x ↦ y ↦ x ▫ y ≡ y)(_≡_)
+  order : L → L → Stmt{ℓ}
+  order x y = (x ▫ y ≡ y)
+
+  partialOrder : Weak.PartialOrder(order)(_≡_)
   Antisymmetry.proof (Weak.PartialOrder.antisymmetry partialOrder) {x}{y} xy yx =
     x     🝖-[ symmetry(_≡_) yx ]
     y ▫ x 🝖-[ commutativity(_▫_) ]
@@ -51,11 +58,7 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ} where
 
   instance
     [∨][∧]-absorptionᵣ : Absorptionᵣ(_∨_)(_∧_)
-    Absorptionᵣ.proof [∨][∧]-absorptionᵣ {x}{y} =
-      (x ∧ y) ∨ y 🝖-[ commutativity(_∨_) ]
-      y ∨ (x ∧ y) 🝖-[ [≡]-with2ᵣ(_∨_)(_) (commutativity(_∧_)) ]
-      y ∨ (y ∧ x) 🝖-[ absorptionₗ(_∨_)(_∧_) {y}{x} ]
-      y           🝖-end
+    [∨][∧]-absorptionᵣ = [↔]-to-[→] OneTypeTwoOp.absorption-equivalence-by-commutativity [∨][∧]-absorptionₗ
 
   instance
     [∨]-idempotence : Idempotence(_∨_)
@@ -66,11 +69,7 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ} where
 
   instance
     [∧][∨]-absorptionᵣ : Absorptionᵣ(_∧_)(_∨_)
-    Absorptionᵣ.proof [∧][∨]-absorptionᵣ {x}{y} =
-      (x ∨ y) ∧ y 🝖-[ commutativity(_∧_) ]
-      y ∧ (x ∨ y) 🝖-[ [≡]-with2ᵣ(_∧_)(_) (commutativity(_∨_)) ]
-      y ∧ (y ∨ x) 🝖-[ absorptionₗ(_∧_)(_∨_) {y}{x} ]
-      y           🝖-end
+    [∧][∨]-absorptionᵣ = [↔]-to-[→] OneTypeTwoOp.absorption-equivalence-by-commutativity [∧][∨]-absorptionₗ
 
   instance
     [∧]-idempotence : Idempotence(_∧_)
@@ -85,11 +84,43 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ} where
       ⦃ [∨]-identityₗ ⦄ : Identityₗ(_∨_)(𝟎)
       ⦃ [∧]-identityₗ ⦄ : Identityₗ(_∧_)(𝟏)
 
+    instance
+      [∨]-identityᵣ : Identityᵣ(_∨_)(𝟎)
+      [∨]-identityᵣ = [↔]-to-[→] One.identity-equivalence-by-commutativity [∨]-identityₗ
+
+    instance
+      [∧]-identityᵣ : Identityᵣ(_∧_)(𝟏)
+      [∧]-identityᵣ = [↔]-to-[→] One.identity-equivalence-by-commutativity [∧]-identityₗ
+
+    instance
+      [∨]-absorberₗ : Absorberₗ(_∨_)(𝟏)
+      [∨]-absorberₗ = OneTypeTwoOp.absorberₗ-by-absorptionₗ-identityₗ
+
+    instance
+      [∧]-absorberₗ : Absorberₗ(_∧_)(𝟎)
+      [∧]-absorberₗ = OneTypeTwoOp.absorberₗ-by-absorptionₗ-identityₗ
+
+    instance
+      [∨]-absorberᵣ : Absorberᵣ(_∨_)(𝟏)
+      [∨]-absorberᵣ = [↔]-to-[→] One.absorber-equivalence-by-commutativity [∨]-absorberₗ
+
+    instance
+      [∧]-absorberᵣ : Absorberᵣ(_∧_)(𝟎)
+      [∧]-absorberᵣ = [↔]-to-[→] One.absorber-equivalence-by-commutativity [∧]-absorberₗ
+
+    instance
+      [∨]-absorber : Absorber(_∨_)(𝟏)
+      [∨]-absorber = intro
+
+    instance
+      [∧]-absorber : Absorber(_∧_)(𝟎)
+      [∧]-absorber = intro
+
     record Complemented (¬_ : L → L) : Stmt{ℓ} where
       constructor intro
       field
-        excluded-middle   : ∀{x} → (x ∨ (¬ x) ≡ 𝟏)
-        non-contradiction : ∀{x} → (x ∧ (¬ x) ≡ 𝟎)
+        ⦃ excluded-middle   ⦄ : OppositeFunction(_∨_)(¬_)
+        ⦃ non-contradiction ⦄ : OppositeFunction(_∧_)(¬_)
 
   record Distributive : Stmt{ℓ} where
     constructor intro
@@ -97,18 +128,19 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ} where
       ⦃ [∨][∧]-distributivityₗ ⦄ : Distributivityₗ(_∨_)(_∧_)
       ⦃ [∧][∨]-distributivityₗ ⦄ : Distributivityₗ(_∧_)(_∨_)
 
+  -- TODO: Is a negatable lattice using one of its operators distributed by a negation a lattice? In other words, Lattice(_∧_)(¬_ ∘₂ (_∧_ on ¬_))?
   record Negatable (¬_ : L → L) : Stmt{ℓ} where
     constructor intro
     field
-      ⦃ [¬]-function ⦄ : Function(¬_)
-      [¬]-involution : ∀{x} → (¬(¬ x) ≡ x)
-      [¬][∧][∨]-distributivity : ∀{x y} → (¬(x ∧ y) ≡ (¬ x) ∨ (¬ y))
+      ⦃ [¬]-function ⦄   : Function(¬_)
+      ⦃ [¬]-involution ⦄ : Involution(¬_)
+      [¬][∧][∨]-distributivity : Names.Preserving₂(¬_)(_∧_)(_∨_)
 
-    [¬][∨][∧]-distributivity : ∀{x y} → (¬(x ∨ y) ≡ (¬ x) ∧ (¬ y))
+    [¬][∨][∧]-distributivity : Names.Preserving₂(¬_)(_∨_)(_∧_)
     [¬][∨][∧]-distributivity {x}{y} =
-      ¬(x ∨ y)               🝖-[ [≡]-with(¬_) ([≡]-with2(_∨_) (symmetry(_≡_) [¬]-involution) (symmetry(_≡_) [¬]-involution)) ]
+      ¬(x ∨ y)               🝖-[ [≡]-with(¬_) ([≡]-with2(_∨_) (symmetry(_≡_) (involution(¬_))) (symmetry(_≡_) (involution(¬_)))) ]
       ¬((¬(¬ x)) ∨ (¬(¬ y))) 🝖-[ [≡]-with(¬_) (symmetry(_≡_) [¬][∧][∨]-distributivity) ]
-      ¬(¬((¬ x) ∧ (¬ y)))    🝖-[ [¬]-involution ]
+      ¬(¬((¬ x) ∧ (¬ y)))    🝖-[ involution(¬_) ]
       (¬ x) ∧ (¬ y)          🝖-end
 
 -- Also called: De Morgan algebra

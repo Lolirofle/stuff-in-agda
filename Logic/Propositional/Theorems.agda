@@ -37,11 +37,10 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{
 
 module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [∧]-symmetry : (P ∧ Q) → (Q ∧ P)
-  [∧]-symmetry ([∧]-intro p q) = [∧]-intro q p
+  [∧]-symmetry = Tuple.swap
 
   [∨]-symmetry : (P ∨ Q) → (Q ∨ P)
-  [∨]-symmetry ([∨]-introₗ p) = [∨]-introᵣ p
-  [∨]-symmetry ([∨]-introᵣ q) = [∨]-introₗ q
+  [∨]-symmetry = Either.swap
 
 module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [↔]-symmetry : (P ↔ Q) → (Q ↔ P)

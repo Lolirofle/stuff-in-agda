@@ -125,7 +125,9 @@ record OrderedField {ℓ₁ ℓ₂} {F : Type{ℓ₁}} ⦃ _ : Equiv(F) ⦄ (_+_
   x 𝄩 y = ‖ x − y ‖
 
   instance
-    postulate [𝄩]-commutativity : Commutativity(_𝄩_)
+    [𝄩]-commutativity : Commutativity(_𝄩_)
+    Commutativity.proof [𝄩]-commutativity {x}{y} =
+      if-either-bool-intro {P = _≡ y 𝄩 x} {x = x − y} {y = −(x − y)} {!!} {!!} (converseTotal(_≤_){𝟎}{x − y})
 
   postulate [𝄩]-triangle-inequality : ∀{x y z} → ((x 𝄩 z) ≤ ((x 𝄩 y) + (y 𝄩 z)))
 

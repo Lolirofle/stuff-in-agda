@@ -10,6 +10,7 @@ open import Logic.Predicate
 open import Sets.Setoid hiding (Function)
 open import Type
 
+-- TODO: Merge with the one in Sets.Setoid
 module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv(B) ⦄ (f : A → B) where
   record Function : Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂} where
     constructor intro

@@ -34,6 +34,10 @@ const(x)(_) = x
 apply : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₂) → T₂
 apply(x)(f) = f(x)
 
+-- Function application as an operator
+_$_ : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (T₁ → T₂) → T₁ → T₂
+_$_ = id
+
 -- Function application as an operator. Function to the left, value to the right.
 _⩹_ : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (T₁ → T₂) → T₁ → T₂
 f ⩹ x = f(x)
@@ -63,7 +67,8 @@ _on₂_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Typ
 ((_▫_) on₂ f)(y₁)(y₂) = f(y₁) ▫ f(y₂)
 
 -- The S-combinator from combinatory logic.
--- It is usually described as a generalized version of the application operator. (TODO: But I am not sure why it is described as such?)
+-- It is usually described as a generalized version of the application operator. (TODO: But I am not sure why it is described as such? Maybe because X is also provided to the LHS?)
+-- Note: TODO: Applicative instance
 s-combinator : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y → Z) → (X → Y) → (X → Z)
 s-combinator f g x = (f x) (g x)
 
