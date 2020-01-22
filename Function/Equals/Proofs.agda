@@ -1,9 +1,9 @@
-module Functional.Equals.Proofs where
+module Function.Equals.Proofs where
 
 import      Lvl
 open import Data
 open import Functional
-open import Functional.Equals
+open import Function.Equals
 open import Logic.Propositional
 open import Sets.Setoid
 import      Structure.Operator.Names as Names

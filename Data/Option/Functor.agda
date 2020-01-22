@@ -2,7 +2,7 @@ module Data.Option.Functor where
 
 import Lvl
 open import Functional
-open import Functional.Equals
+open import Function.Equals
 open import Data.Option
 open import Data.Option.Proofs
 open import Lang.Instance

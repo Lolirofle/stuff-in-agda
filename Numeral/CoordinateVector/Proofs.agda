@@ -3,8 +3,8 @@ module Numeral.CoordinateVector.Proofs where
 import      Lvl
 open import Data.Boolean
 open import Functional
-open import Functional.Equals
-open import Functional.Names
+open import Function.Equals
+open import Function.Names
 open import Logic.Propositional
 open import Numeral.CoordinateVector
 open import Numeral.Finite

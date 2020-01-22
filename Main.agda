@@ -40,17 +40,17 @@ import FormalLanguage.Equals
 import FormalLanguage.Proofs
 import FormalLanguage.RegularExpression
 import Functional
--- import Functional.DomainRaise
-import Functional.Domains
-import Functional.Domains.Proofs
-import Functional.Equals
-import Functional.Equals.Proofs
--- import Functional.Multi
-import Functional.Names
-import Functional.Proofs
-import Functional.Repeat
-import Functional.Repeat.Order
-import Functional.Repeat.Proofs
+-- import Function.DomainRaise
+import Function.Domains
+import Function.Domains.Proofs
+import Function.Equals
+import Function.Equals.Proofs
+-- import Function.Multi
+import Function.Names
+import Function.Proofs
+import Function.Iteration
+import Function.Iteration.Order
+import Function.Iteration.Proofs
 import Lang.Instance
 import Lang.Irrelevance
 import Lang.Size
@@ -65,9 +65,6 @@ import Logic.Predicate.Theorems
 import Logic.Propositional
 import Logic.Propositional.Theorems
 import Lvl
-import Metalogic.Classical.Propositional.ProofSystem
-import Metalogic.Classical.Propositional.Syntax
-import Metalogic.Classical.Propositional.TruthSemanticsModel
 import Numeral.CoordinateVector
 import Numeral.CoordinateVector.Proofs
 import Numeral.Finite
@@ -173,7 +170,7 @@ import Structure.Operator.Proofs
 import Structure.Operator.Properties
 import Structure.Operator.SetAlgebra
 import Structure.Operator.Vector
-import Structure.Operator.VectorSpace.Proofs
+import Structure.Operator.Vector.Proofs
 import Structure.OrderedField
 import Structure.Real
 import Structure.Real.Abs

@@ -2,7 +2,7 @@ module Sets.Setoid.Names where
 
 open import Data.Tuple
 open import Functional
-open import Functional.Equals
+open import Function.Equals
 import      Lvl
 open import Logic
 open import Logic.Propositional

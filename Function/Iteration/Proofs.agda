@@ -1,10 +1,10 @@
-module Functional.Repeat.Proofs where
+module Function.Iteration.Proofs where
 
 import Lvl
 open import Functional
-open import Functional.Names as Names using (_⊜_)
-open import Functional.Repeat
-open import Functional.Proofs
+open import Function.Names as Names using (_⊜_)
+open import Function.Iteration
+open import Function.Proofs
 open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Natural
@@ -175,7 +175,7 @@ module _ {ℓ} {X : Type{ℓ}} where
   raise-repeat-equality{𝟎}       = [≡]-intro
   raise-repeat-equality{𝐒(n)}{f} = [≡]-with(f ∘_) (raise-repeat-equality{n}{f})
 module _ where
-  open import Functional.Equals
+  open import Function.Equals
   open import Sets.Setoid
 
   module _ {ℓ} {X : Type{ℓ}} ⦃ equiv-X : Equiv(X) ⦄ where

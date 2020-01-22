@@ -94,25 +94,25 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ 
 -- TODO: Maybe rename to ComplementFunction?
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ absorberₗ : ∃(Absorberₗ(_▫_)) ⦄ where
   module _ (opp : T → T) where
-    record OppositeFunctionₗ : Stmt{ℓ} where
+    record ComplementFunctionₗ : Stmt{ℓ} where
       constructor intro
       field proof : Names.InverseFunctionₗ(_▫_)([∃]-witness absorberₗ)(opp)
-    oppositeFunctionₗ = inst-fn OppositeFunctionₗ.proof
+    oppositeFunctionₗ = inst-fn ComplementFunctionₗ.proof
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ absorberᵣ : ∃(Absorberᵣ(_▫_)) ⦄ where
   module _ (opp : T → T) where
-    record OppositeFunctionᵣ : Stmt{ℓ} where
+    record ComplementFunctionᵣ : Stmt{ℓ} where
       constructor intro
       field proof : Names.InverseFunctionᵣ(_▫_)([∃]-witness absorberᵣ)(opp)
-    oppositeFunctionᵣ = inst-fn OppositeFunctionᵣ.proof
+    oppositeFunctionᵣ = inst-fn ComplementFunctionᵣ.proof
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ absorber : ∃(Absorber(_▫_)) ⦄ where
   module _ (opp : T → T) where
-    record OppositeFunction : Stmt{ℓ} where
+    record ComplementFunction : Stmt{ℓ} where
       constructor intro
       field
-        instance ⦃ left ⦄  : OppositeFunctionₗ(_▫_) ⦃ [∃]-map-proof Absorber.left  absorber ⦄ (opp)
-        instance ⦃ right ⦄ : OppositeFunctionᵣ(_▫_) ⦃ [∃]-map-proof Absorber.right absorber ⦄ (opp)
+        instance ⦃ left ⦄  : ComplementFunctionₗ(_▫_) ⦃ [∃]-map-proof Absorber.left  absorber ⦄ (opp)
+        instance ⦃ right ⦄ : ComplementFunctionᵣ(_▫_) ⦃ [∃]-map-proof Absorber.right absorber ⦄ (opp)
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) where
   record Associativity : Stmt{ℓ} where

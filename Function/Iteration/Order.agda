@@ -1,10 +1,10 @@
-module Functional.Repeat.Order where
+module Function.Iteration.Order where
 
 open import Data
 open import Data.Boolean.Stmt
 open import Functional renaming (id to id-fn)
-open import Functional.Repeat hiding (_^_)
-open import Functional.Repeat.Proofs
+open import Function.Iteration hiding (_^_)
+open import Function.Iteration.Proofs
 open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
@@ -33,7 +33,7 @@ open import Type.Size.Finite
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ op : BinaryOperator(_▫_) ⦄ {id} ⦃ ident : Identity(_▫_)(id) ⦄ ⦃ assoc : Associativity(_▫_) ⦄ where
   _^_ : T → ℕ → T
-  x ^ n = Functional.Repeat.repeatₗ(n)(_▫_)(id)(x)
+  x ^ n = Function.Iteration.repeatₗ(n)(_▫_)(id)(x)
 
   data FiniteOrder (x : T) : ℕ → Stmt{ℓ} where
     intro : ∀{n} → Weak.Properties.MinimumOf(_≤_)(n ↦ x ^ 𝐒(n) ≡ id)(n) → FiniteOrder(x)(𝐒(n))
@@ -160,7 +160,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
   module _ {id} ⦃ ident : Identity(_▫_)(id) ⦄ where
     open import Data.Boolean
     open import Data.Boolean.Stmt
-    import      Functional.Repeat
+    import      Function.Iteration
     open import Logic.Computability
     open import Logic.Computability.Binary renaming (ComputablyDecidable to ComputablyDecidable2)
     open import Logic

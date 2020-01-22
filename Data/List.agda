@@ -184,7 +184,7 @@ module _ {ℓ} where
   repeat x (𝐒(n)) = x ⊰ (repeat x n)
 
   -- The list with a list concatenated (repeated) n times
-  -- TODO: Can be defined using Functional.Repeat
+  -- TODO: Can be defined using Function.Iteration
   _++^_ : ∀{T : Type{ℓ}} → List(T) → ℕ → List(T)
   _++^_ _ 𝟎      = ∅
   _++^_ l (𝐒(n)) = l ++ (l ++^ n)

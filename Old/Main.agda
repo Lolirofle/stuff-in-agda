@@ -38,15 +38,15 @@ import FormalLanguage.ContextFreeGrammar
 import FormalLanguage.Proofs
 import FormalLanguage.RegularExpression
 import Functional
-import Functional.DomainRaise
-import Functional.Domains
-import Functional.Domains.Proofs
-import Functional.Equals
-import Functional.Names
-import Functional.PrimitiveRecursion
-import Functional.Proofs
-import Functional.Repeat
-import Functional.Repeat.Proofs
+import Function.DomainRaise
+import Function.Domains
+import Function.Domains.Proofs
+import Function.Equals
+import Function.Names
+import Function.PrimitiveRecursion
+import Function.Proofs
+import Function.Iteration
+import Function.Iteration.Proofs
 -- import Geometry.Test
 -- import Geometry.Test2
 import Geometry.Test3

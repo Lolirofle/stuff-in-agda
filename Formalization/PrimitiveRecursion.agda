@@ -1,4 +1,4 @@
-module Functional.PrimitiveRecursion where
+module Function.PrimitiveRecursion where
 
 import      Lvl
 open import Data

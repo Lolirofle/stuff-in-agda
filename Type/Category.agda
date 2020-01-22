@@ -24,8 +24,8 @@ module _ {ℓ} where
   Category.associativity             typeIntensionalFnCategory  = [≡]-intro
 
 module _ {ℓ} where
-  open import Functional.Equals
-  open import Functional.Equals.Proofs
+  open import Function.Equals
+  open import Function.Equals.Proofs
   import      Relator.Equals as Eq
   open import Relator.Equals.Proofs.Equivalence
 

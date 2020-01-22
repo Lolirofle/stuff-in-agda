@@ -1,7 +1,7 @@
 module Structure.Operator.Group.Proofs where
 
 open import Functional hiding (id)
-open import Functional.Repeat.Order
+open import Function.Iteration.Order
 import      Lvl
 open import Lang.Instance
 open import Logic.Propositional

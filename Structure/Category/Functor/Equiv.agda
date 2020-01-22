@@ -1,6 +1,6 @@
 module Structure.Category.Functor.Equiv where
 
-open import Functional.Equals
+open import Function.Equals
 open import Logic
 import      Lvl
 open import Sets.Setoid

@@ -3,8 +3,8 @@ module Stream where
 import      Lvl
 open import Data.Boolean
 open import Functional
-open import Functional.Repeat
-open import Functional.Repeat.Proofs
+open import Function.Iteration
+open import Function.Iteration.Proofs
 open import Data.List as List using (List)
 open import Logic
 open import Logic.Propositional

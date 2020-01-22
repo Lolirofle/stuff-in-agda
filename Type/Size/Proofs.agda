@@ -4,8 +4,8 @@ import      Lvl
 open import Data
 open import Data.Proofs
 open import Functional
-open import Functional.Equals
-open import Functional.Proofs
+open import Function.Equals
+open import Function.Proofs
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate

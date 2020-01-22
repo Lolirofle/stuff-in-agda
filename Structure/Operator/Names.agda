@@ -6,7 +6,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Sets.Setoid
 open import Syntax.Function
-open import Functional.Names
+open import Function.Names
 open import Syntax.Transitivity
 open import Type
 

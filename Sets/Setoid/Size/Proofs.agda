@@ -2,7 +2,7 @@ module Sets.Setoid.Size.Proofs where
 
 import      Lvl
 open import Functional
-open import Functional.Proofs
+open import Function.Proofs
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate

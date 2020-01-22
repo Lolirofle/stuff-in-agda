@@ -3,7 +3,7 @@ module Numeral.Natural.Oper.Proofs where
 import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
-import      Functional.Names as Names
+import      Function.Names as Names
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate

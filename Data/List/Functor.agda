@@ -2,7 +2,7 @@ module Data.List.Functor where
 
 import Lvl
 open import Functional
-open import Functional.Equals
+open import Function.Equals
 open import Data.List
 open import Data.List.Proofs
 open import Lang.Instance

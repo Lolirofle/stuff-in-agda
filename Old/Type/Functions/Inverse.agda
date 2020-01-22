@@ -3,7 +3,7 @@ open import Type
 
 module Type.Functions.Inverse {ℓₗ : Lvl.Level}{ℓₒ₁}{ℓₒ₂} {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} where
 
-open import Functional.Domains
+open import Function.Domains
 open import Type.Functions {ℓₗ}{ℓₒ₁}{ℓₒ₂} {X}{Y}
 open import Type.Empty
 open import Type.Unit {ℓₒ₁}{ℓₒ₂}

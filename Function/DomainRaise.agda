@@ -1,4 +1,4 @@
-module Functional.DomainRaise where
+module Function.DomainRaise where
 
 open import Functional
 import      Lvl

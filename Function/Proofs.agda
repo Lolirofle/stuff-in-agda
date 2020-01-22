@@ -1,4 +1,4 @@
-module Functional.Proofs where
+module Function.Proofs where
 
 import      Lvl
 open import Logic
@@ -7,7 +7,7 @@ open import Logic.Computability
 open import Logic.Propositional
 open import Logic.Predicate
 open import Functional
-open import Functional.Names using (_⊜_)
+open import Function.Names using (_⊜_)
 open import Sets.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_ ; [≡]-with to [≡ₛ]-with ; Function to Functionₛ ; BinaryOperator to BinaryOperatorₛ)
 open import Sets.Setoid.Uniqueness
 open import Structure.Relator.Function renaming (Function to RelatorFunction ; function to relatorFunction)
@@ -289,7 +289,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{
 
 {- TODO: Maybe this is unprovable because types. https://plato.stanford.edu/entries/axiom-choice/#AxiChoLog https://plato.stanford.edu/entries/axiom-choice/choice-and-type-theory.html https://en.wikipedia.org/wiki/Diaconescu%27s_theorem
 module _ {fn-ext : FunctionExtensionality} where
-  open import Functional.Names
+  open import Function.Names
   open import Data.Boolean
 
   function-extensionality-to-classical : ∀{P} → (P ∨ (¬ P))

@@ -1,4 +1,4 @@
-module Functional.Domains where
+module Function.Domains where
 
 import      Lvl
 open import Functional hiding (apply)

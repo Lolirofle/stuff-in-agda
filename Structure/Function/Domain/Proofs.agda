@@ -2,7 +2,7 @@ module Structure.Function.Domain.Proofs where
 
 import      Lvl
 open import Functional
-import      Functional.Names as Names
+import      Function.Names as Names
 open import Lang.Instance
 open import Logic
 open import Logic.Propositional

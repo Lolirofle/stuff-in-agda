@@ -3,7 +3,7 @@ open import Type
 
 module Type.Functions.Inverse.Proofs {ℓₗ : Lvl.Level}{ℓₒ₁}{ℓₒ₂} {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} where
 
-open import Functional.Domains
+open import Function.Domains
 open import Relator.Equals
 open import Type.Functions {ℓₗ}
 open import Type.Functions.Inverse {ℓₗ}

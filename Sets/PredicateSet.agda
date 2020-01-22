@@ -7,7 +7,7 @@ open import Data hiding (Empty)
 open import Data.Boolean
 open import Data.Boolean.Stmt
 open import Functional
-open import Functional.Proofs
+open import Function.Proofs
 open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems

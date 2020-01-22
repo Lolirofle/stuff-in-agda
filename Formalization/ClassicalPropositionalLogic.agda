@@ -12,7 +12,7 @@ open import Data.Boolean.Stmt
 open import Data.Either using (Left ; Right)
 private module BoolOp = Data.Boolean.Operators.Logic
 open import Functional
-open import Functional.Names using (_⊜_)
+open import Function.Names using (_⊜_)
 open import Logic
 open import Logic.Computability using (classicalIsComputablyDecidable)
 open        Logic.Computability.ComputablyDecidable ⦃ ... ⦄ using (decide)
@@ -52,9 +52,11 @@ module _ (P : Type{ℓₚ}) where
   infixl 1000 _⟵_ _⟷_ _⟶_
 
   -- TODO: How would this thing be proven?
+  -- TODO: Only if CountablyInfinite(P)
   instance
     Formula-is-countably-infinite : CountablyInfinite(Formula)
 
+  -- TODO: Use PredSet
   Formulas : Type{ℓₚ ⊔ Lvl.𝐒(ℓ)}
   Formulas{ℓ} = Formula → Stmt{ℓ}
 
@@ -153,7 +155,7 @@ module TruthTable {P : Type{ℓₚ}} (decide : P → Bool) where
   eval(• p)   = decide(p)
   eval(⊤)     = 𝑇
   eval(⊥)     = 𝐹
-  eval(¬ φ)   = BoolOp.¬ eval(φ)
+  eval(¬ φ)   = BoolOp.¬(eval(φ))
   eval(φ ∧ ψ) = eval(φ) BoolOp.∧ eval(ψ)
   eval(φ ∨ ψ) = eval(φ) BoolOp.∨ eval(ψ)
   eval(φ ⟶ ψ) = eval(φ) BoolOp.⟶ eval(ψ)
@@ -364,7 +366,7 @@ module NaturalDeduction where
     [⟶]-formula-inclusion : ∀{φ ψ} → ((φ ⟶ ψ) ∈ Γ) Logic.↔ ((φ ∉ Γ) Logic.∨ (ψ ∈ Γ))
 
   -- Also called: Lindenbaums' lemma
-  max : (Γ : Formulas(P){ℓₚ}) → Consistent(Γ) → Formulas(P){Lvl.𝐒(ℓₚ)}
+  max : (Γ : Formulas(P)) → Consistent(Γ) → Formulas(P){Lvl.𝐒(ℓₚ)}
   max Γ con φ = {!Consistent(Γ ∪ singleton(φ))!}
 
   max-maximally-consistent : (con : Consistent(Γ)) → MaximallyConsistent(max Γ con)

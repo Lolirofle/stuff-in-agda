@@ -4,7 +4,7 @@ open import Type
 module Type.Singleton.Proofs {ℓ : Lvl.Level} {X : Type{ℓ}} where
 
 open import Functional
-open import Functional.Domains
+open import Function.Domains
 open import Logic.Predicate
 open import Relator.Equals
 open import Relator.Equals.Proofs

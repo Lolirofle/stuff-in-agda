@@ -1,41 +1,12 @@
--- TODO: Maybe rename this to "function iteration"
-module Functional.Repeat where
+module Function.Iteration where
 
+open import Data
 open import Functional
 open import Numeral.Natural
 open import Type
+open import Syntax.Number
 
 module _ {ℓ} {T : Type{ℓ}} where
-  _⁰ : (T → T) → (T → T)
-  _⁰ = id
-
-  _¹ : (T → T) → (T → T)
-  _¹ f = f
-
-  _² : (T → T) → (T → T)
-  _² f = f ∘ f
-
-  _³ : (T → T) → (T → T)
-  _³ f = f ∘ f ∘ f
-
-  _⁴ : (T → T) → (T → T)
-  _⁴ f = f ∘ f ∘ f ∘ f
-
-  _⁵ : (T → T) → (T → T)
-  _⁵ f = f ∘ f ∘ f ∘ f ∘ f
-
-  _⁶ : (T → T) → (T → T)
-  _⁶ f = f ∘ f ∘ f ∘ f ∘ f ∘ f
-
-  _⁷ : (T → T) → (T → T)
-  _⁷ f = f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f
-
-  _⁸ : (T → T) → (T → T)
-  _⁸ f = f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f
-
-  _⁹ : (T → T) → (T → T)
-  _⁹ f = f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f ∘ f
-
   -- Repeated function composition
   -- Example:
   --   f ^ 0 = id
@@ -46,6 +17,37 @@ module _ {ℓ} {T : Type{ℓ}} where
   _^_ : (T → T) → ℕ → (T → T)
   _^_ f 𝟎      = id
   _^_ f (𝐒(n)) = f ∘ (f ^ n)
+
+  _⁰ : (T → T) → (T → T)
+  _⁰ = _^ 0
+
+  _¹ : (T → T) → (T → T)
+  _¹ = _^ 1
+
+  _² : (T → T) → (T → T)
+  _² = _^ 2
+
+  _³ : (T → T) → (T → T)
+  _³ = _^ 3
+
+  _⁴ : (T → T) → (T → T)
+  _⁴ = _^ 4
+
+  _⁵ : (T → T) → (T → T)
+  _⁵ = _^ 5
+
+  _⁶ : (T → T) → (T → T)
+  _⁶ = _^ 6
+
+  _⁷ : (T → T) → (T → T)
+  _⁷ = _^ 7
+
+  _⁸ : (T → T) → (T → T)
+  _⁸ = _^ 8
+
+  _⁹ : (T → T) → (T → T)
+  _⁹ = _^ 9
+
 
 module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
   -- Repeat a binary operation n times for the same element and an initial element
@@ -65,23 +67,17 @@ module _ {ℓ} {X : Type{ℓ}} where
   -- Repeat a binary operation n times for the same element and using the default element on zero.
   -- Examples:
   --   repeatₗ 0 def (_∘_) f = def
+  --   repeatₗ 1 def (_∘_) f = f
   --   repeatₗ 4 def (_∘_) f = ((f ∘ f) ∘ f) ∘ f
-  repeatₗ-default : ℕ → (X → X → X) → (X → X → X)
+  repeatₗ-default : ℕ → (X → X → X) → X → (X → X)
   repeatₗ-default 𝟎      _     def  _    = def
   repeatₗ-default (𝐒(n)) (_▫_) _    elem = repeatₗ(n) (_▫_) elem elem
 
   -- Repeat a binary operation n times for the same element and using the default element on zero.
   -- Examples:
   --   repeatᵣ 0 f (_∘_) def = def
+  --   repeatᵣ 1 f (_∘_) def = f
   --   repeatᵣ 4 f (_∘_) def = f ∘ (f ∘ (f ∘ f))
-  repeatᵣ-default : ℕ → (X → X → X) → (X → X → X)
-  repeatᵣ-default 𝟎      _     _    def  = def
-  repeatᵣ-default (𝐒(n)) (_▫_) elem _    = repeatᵣ(n) (_▫_) elem elem
-
-  -- TODO: curry ∘ curry does not work with repeat because LHS≠RHS, but can this be fixed?
-  -- curry             :: ((a, b) -> c) -> a -> b -> c
-  -- curry.curry       :: (((a, b), b1) -> c) -> a -> b -> b1 -> c
-  -- curry.curry.curry :: ((((a, b), b1), b2) -> c) -> a -> b -> b1 -> b2 -> c
-
-  -- (b → c) → ((a → b) → (a → c))
-  -- (((x , y) , z) → t) → (x → (y → (z → t)))
+  repeatᵣ-default : ℕ → (X → X → X) → X → (X → X)
+  repeatᵣ-default 𝟎      _     _    def = def
+  repeatᵣ-default (𝐒(n)) (_▫_) elem _   = repeatᵣ(n) (_▫_) elem elem

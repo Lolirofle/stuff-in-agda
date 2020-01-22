@@ -319,29 +319,29 @@ instance
     proof {𝐹}{𝐹}{𝐹} = [≡]-intro
 
 instance
-  [||]-oppositeFunctionₗ : OppositeFunctionₗ(_||_)(!)
-  OppositeFunctionₗ.proof([||]-oppositeFunctionₗ) = proof where
+  [||]-oppositeFunctionₗ : ComplementFunctionₗ(_||_)(!)
+  ComplementFunctionₗ.proof([||]-oppositeFunctionₗ) = proof where
     proof : Names.InverseFunctionᵣ(_||_)(𝑇)(!)
     proof {𝑇} = [≡]-intro
     proof {𝐹} = [≡]-intro
 
 instance
-  [||]-oppositeFunctionᵣ : OppositeFunctionᵣ(_||_)(!)
-  OppositeFunctionᵣ.proof([||]-oppositeFunctionᵣ) = proof where
+  [||]-oppositeFunctionᵣ : ComplementFunctionᵣ(_||_)(!)
+  ComplementFunctionᵣ.proof([||]-oppositeFunctionᵣ) = proof where
     proof : Names.InverseFunctionᵣ(_||_)(𝑇)(!)
     proof {𝑇} = [≡]-intro
     proof {𝐹} = [≡]-intro
 
 instance
-  [&&]-oppositeFunctionₗ : OppositeFunctionₗ(_&&_)(!)
-  OppositeFunctionₗ.proof([&&]-oppositeFunctionₗ) = proof where
+  [&&]-oppositeFunctionₗ : ComplementFunctionₗ(_&&_)(!)
+  ComplementFunctionₗ.proof([&&]-oppositeFunctionₗ) = proof where
     proof : Names.InverseFunctionᵣ(_&&_)(𝐹)(!)
     proof {𝑇} = [≡]-intro
     proof {𝐹} = [≡]-intro
 
 instance
-  [&&]-oppositeFunctionᵣ : OppositeFunctionᵣ(_&&_)(!)
-  OppositeFunctionᵣ.proof([&&]-oppositeFunctionᵣ) = proof where
+  [&&]-oppositeFunctionᵣ : ComplementFunctionᵣ(_&&_)(!)
+  ComplementFunctionᵣ.proof([&&]-oppositeFunctionᵣ) = proof where
     proof : Names.InverseFunctionᵣ(_&&_)(𝐹)(!)
     proof {𝑇} = [≡]-intro
     proof {𝐹} = [≡]-intro

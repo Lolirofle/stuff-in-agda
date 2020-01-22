@@ -3,7 +3,7 @@ module Structure.Graph where
 import      Data.Either as Either
 open import Data.Either.Proofs
 open import Functional
-open import Functional.Equals
+open import Function.Equals
 open import Lang.Instance
 import      Lvl
 open import Logic

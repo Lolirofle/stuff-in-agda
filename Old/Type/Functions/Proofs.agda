@@ -3,7 +3,7 @@ import Lvl
 module Type.Functions.Proofs {ℓₗ : Lvl.Level} where
 
 open import Functional
-import      Functional.Domains
+import      Function.Domains
 import      Lang.Irrelevance
 import      Logic.Predicate
 import      Logic.Predicate.Theorems
@@ -32,7 +32,7 @@ module _ {ℓₒ₁}{ℓₒ₂} {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} {f :
     pos-prop-is-unit {ℓₗ Lvl.⊔ ℓₒ₁} ⦃ surj{y} ⦄ ⦃ inj{y} ⦄
 
 module _ {ℓₒ₁}{ℓₒ₂} {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} {f : X → Y} where
-  open Functional.Domains
+  open Function.Domains
   open Type.Functions {ℓₗ}{ℓₒ₁}{ℓₒ₂} {X}{Y}
   open Relator.Equals
 

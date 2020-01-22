@@ -1,8 +1,8 @@
-module Functional.Equals where
+module Function.Equals where
 
 import      Lvl
 open import Functional
-import      Functional.Names as Names
+import      Function.Names as Names
 open import Logic
 open import Logic.Propositional
 open import Sets.Setoid

@@ -1,4 +1,4 @@
-module Formalization.FunctionalML where
+module Formalization.FunctionML where
 
 open import Numeral.Finite
 open import Numeral.Natural

@@ -1,4 +1,4 @@
-module Functional.Multi2 where
+module Function.Multi where
 
 open import Data
 open import Data.Tuple renaming (curry to curry₁ ; uncurry to uncurry₁) hiding (swap ; map)
@@ -79,6 +79,11 @@ _∘ᵣ_ {n = 𝐒(𝐒(n))} f = (f ∘ᵣ_) ∘_
 -- Example:
 --   curry((x,y,z,...) ↦ φ) = (x ↦ y ↦ z ↦ ... ↦ φ)
 -- Note: If there is a nested uncurry and curry, one can often rewrite it using (_∘ᵣ_) instead (I think).
+-- Note:
+--   curry                 : ((a₁ , a₂) -> b) -> a₁ -> a₂ -> b
+--   curry ∘ curry         : (((a₁ , a₂), a₃) -> b) -> a₁ -> a₂ -> a₃ -> b
+--   curry ∘ curry ∘ curry : ((((a₁ , a₂) , a₃) , a₄) -> b) -> a₁ -> a₂ -> a₃ -> a₄ -> b
+
 curry : ∀{n}{As : Type{ℓ} ^ 𝐒(n)}{B} → (reduceᵣ(_⨯_) As → B) → (As ⇉ B)
 curry {n = 𝟎}        = id
 curry {n = 𝐒(n)} f x = curry {n = n} (f ∘ (x ,_))
@@ -225,17 +230,17 @@ liftOn {n₁ = 𝟎} {n₂ = 𝐒 (𝐒 n₂)} x = {!!}
 -- liftOn {n₁ = 𝐒(𝐒 n₁)} {n₂ = 𝐒(𝐒 n₂)} = liftOn{n₁ = 𝐒(𝐒(n₁))}{n₂ = 𝐒(n₂)} (_$_) ∘ᵣ liftOn{n₁ = 𝐒(𝐒(n₁))}{n₁ = 𝐒(n₂)}
 -}
 
-liftOn : ∀{n₁ n₂}{As : Type{ℓ} ^ n₁}{Bs : Type{ℓ} ^ n₂}{C} → (Bs ⇉ C) → (map(As ⇉_) Bs ⇉ (As ⇉ C))
+-- liftOn : ∀{n₁ n₂}{As : Type{ℓ} ^ n₁}{Bs : Type{ℓ} ^ n₂}{C} → (Bs ⇉ C) → (map(As ⇉_) Bs ⇉ (As ⇉ C))
 {-liftOn {n₁ = 𝟎} {n₂ = n₂} = {!!}
 liftOn {n₁ = 𝐒 𝟎} {n₂ = n₂} = {!!}
 liftOn {n₁ = 𝐒(𝐒 n₁)} {n₂ = n₂} {A , As}{Bs}{C} f = {!!}
 -- _∘_ (liftOn {n₁ = 𝐒(𝐒 n₁)}{n₂ = 𝐒(𝐒 n₂)} {A₂ , As}{Bs}{C}) (liftOn {n₁ = 𝐒 n₁} {n₂ = 𝐒(𝐒 n₂)} {As}{Bs}{C})
 -}
 
-liftOn {n₁ = n₁} {n₂ = 𝟎} = const
-liftOn {n₁ = n₁} {n₂ = 𝐒 𝟎} = _∘ᵣ_
-liftOn {n₁ = n₁} {n₂ = 𝐒(𝐒 n₂)} {As}{B , Bs}{C} f g = test{n = 𝐒 n₂} (f ∘ᵣ g) (liftOn {n₁ = n₁} {n₂ = 𝐒 n₂} {As}{Bs}{C}) where
-  postulate test : ∀{n}{A}{Bs : Type{ℓ} ^ n}{C} → (Bs ⇉ A) → (A → (Bs ⇉ C)) → (Bs ⇉ C)
+-- liftOn {n₁ = n₁} {n₂ = 𝟎} = const
+-- liftOn {n₁ = n₁} {n₂ = 𝐒 𝟎} = _∘ᵣ_
+-- liftOn {n₁ = n₁} {n₂ = 𝐒(𝐒 n₂)} {As}{B , Bs}{C} f g = test{n = 𝐒 n₂} (f ∘ᵣ g) (liftOn {n₁ = n₁} {n₂ = 𝐒 n₂} {As}{Bs}{C}) where
+--   postulate test : ∀{n}{A}{Bs : Type{ℓ} ^ n}{C} → (Bs ⇉ A) → (A → (Bs ⇉ C)) → (Bs ⇉ C)
 -- 
 
 {- TODO: Does not work because of →→ being defined by a head tail list

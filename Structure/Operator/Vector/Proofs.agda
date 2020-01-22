@@ -1,4 +1,4 @@
-module Structure.Operator.VectorSpace.Proofs where
+module Structure.Operator.Vector.Proofs where
 
 open import Data.Tuple
 import      Lvl

@@ -1,6 +1,6 @@
 import      Lvl
 
-module Functional.Names where
+module Function.Names where
 
 open import Functional
 open import Logic
@@ -82,7 +82,7 @@ module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ 
   Preserving₂ (f)(_▫₁_)(_▫₂_) = (∀{x y} → (f(x ▫₁ y) ≡ f(x) ▫₂ f(y)))
 
 -- module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}}{Y : Type{ℓ₂}} (f : X → Y) where
---   open import Functional.DomainRaise
+--   open import Function.DomainRaise
 --   open import Numeral.Natural
 -- 
 --   Preserving : (n : ℕ) → (X →̂ X)(n) → (Y →̂ Y)(n) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}

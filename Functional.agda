@@ -22,15 +22,18 @@ y ←ᶠ x = y ← x
 
 
 
--- Identity functions
+-- The identity function.
+-- Returns the applied argument.
 id : ∀{ℓ} {T : Type{ℓ}} → T → T
 id(x) = x
 
--- Constant functions
+-- The constant function.
+-- Returns the first argument independent of the second.
 const : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₂ → (T₁ → T₂)
 const(x)(_) = x
 
--- Function application as a function
+-- Function application as a function.
+-- Applies the first argument on the function on the second argument.
 apply : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₂) → T₂
 apply(x)(f) = f(x)
 
@@ -67,66 +70,31 @@ _on₂_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Typ
 ((_▫_) on₂ f)(y₁)(y₂) = f(y₁) ▫ f(y₂)
 
 -- The S-combinator from combinatory logic.
--- It is usually described as a generalized version of the application operator. (TODO: But I am not sure why it is described as such? Maybe because X is also provided to the LHS?)
+-- It is sometimes described as a generalized version of the application operator or the composition operator.
 -- Note: TODO: Applicative instance
 s-combinator : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y → Z) → (X → Y) → (X → Z)
 s-combinator f g x = (f x) (g x)
 
-
-
+-- TODO: Move these to Function.Multi
 _∘₀_ : ∀{ℓ₁ ℓ₂} {Y : Type{ℓ₁}}{Z : Type{ℓ₂}} → (Y → Z) → Y → Z
 _∘₀_ = id
 
 _∘₁_ : ∀{ℓ₁ ℓ₂ ℓ₃} {X₁ : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y → Z) → (X₁ → Y) → (X₁ → Z)
 _∘₁_ f = (f ∘₀_) ∘_
 
+-- (f ∘₂ g)(x)(y) = f(g(x)(y))
 _∘₂_ : ∀{ℓ₁ ℓ₂ ℓ₃ ℓ₄} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{Y : Type{ℓ₃}}{Z : Type{ℓ₄}} → (Y → Z) → (X₁ → X₂ → Y) → (X₁ → X₂ → Z)
 _∘₂_ f = (f ∘₁_) ∘_
--- (f ∘₂ g)(x₁)(x₂) = f(g(x₁)(x₂)) = curry(f ∘ (uncurry g))(x₁)(x₂) = (f ∘ (g(x₁)))(x₂)
 
+-- (f ∘₃ g)(x)(y)(z) = f(g(x)(y)(z))
 _∘₃_ : ∀{ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{X₃ : Type{ℓ₃}}{Y : Type{ℓ₄}}{Z : Type{ℓ₅}} → (Y → Z) → (X₁ → X₂ → X₃ → Y) → (X₁ → X₂ → X₃ → Z)
 _∘₃_ f = (f ∘₂_) ∘_
--- (f ∘₃ g)(x)(y)(z) = f(g(x)(y)(z))
--- (f ∘₃ g)(x₁) = f ∘₂ (g(x₁))
 
 -- Function lifting //TODO: Consider removing because it is the same as _∘_
 liftₗ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → ((Z → X) → (Z → Y))
 liftₗ = _∘_ -- liftₗ(f) = f ∘_
 
 liftᵣ : ∀{ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → ((Y → Z) → (X → Z))
-liftᵣ = swap _∘_ -- liftᵣ(f) = _∘ f
-
-
-
--- 🔁(f ∘ 2)
--- curry ∘ curry
--- (Y → Z) → ((X → Y) → (X → Z))
--- ((T₁ ⨯ T₂) → T₃) → (T₁ → (T₂ → T₃))
---   Y = ((T₁ ⨯ T₂) → T₃)
---   Z = (T₁ → (T₂ → T₃))
--- ((T₄ ⨯ T₅) → T₆) → (T₄ → (T₅ → T₆))
---   X = ((T₄ ⨯ T₅) → T₆)
---   Y = (T₄ → (T₅ → T₆))
--- 
---   T₄ = (T₁ ⨯ T₂)
---   (T₅ → T₆) = T₃
+liftᵣ = swap(_∘_) -- liftᵣ(f) = _∘ f
 
 open import Syntax.Function public
-
--- Returns the domain type of a function
-Domain : ∀{ℓ₁ ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → Type{ℓ₁}
-Domain {_}{_} {A}{_} _ = A
-
--- Returns the codomain type of a function
-Codomain : ∀{ℓ₁ ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → Type{ℓ₂}
-Codomain {_}{_} {_}{B} _ = B
-
--- Functions with two parameters as an infix binary operator
-_〔_〕_ : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} → A → (A → B → C) → B → C
-a 〔 op 〕 b = op a b
-
-infixl 10000 _〔ₗ_〕_
-infixr 10000 _〔ᵣ_〕_
-
-_〔ₗ_〕_ = _〔_〕_
-_〔ᵣ_〕_ = _〔_〕_

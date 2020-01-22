@@ -5,7 +5,7 @@ module Structure.Operator.Lattice {ℓ} (L : Type{ℓ}) ⦃ equiv-L : Equiv(L) �
 
 import      Lvl
 open import Functional
-import      Functional.Names as Names
+import      Function.Names as Names
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
@@ -68,6 +68,10 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ} where
       x                 🝖-end
 
   instance
+    [∨]-semilattice : Semilattice(_∨_)
+    [∨]-semilattice = intro
+
+  instance
     [∧][∨]-absorptionᵣ : Absorptionᵣ(_∧_)(_∨_)
     [∧][∨]-absorptionᵣ = [↔]-to-[→] OneTypeTwoOp.absorption-equivalence-by-commutativity [∧][∨]-absorptionₗ
 
@@ -77,6 +81,10 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ} where
       x ∧ x             🝖-[ [≡]-with2ᵣ(_∧_)(_) (symmetry(_≡_) (absorptionₗ(_∨_)(_∧_))) ]
       x ∧ (x ∨ (x ∧ x)) 🝖-[ absorptionₗ(_∧_)(_∨_) ]
       x                 🝖-end
+
+  instance
+    [∧]-semilattice : Semilattice(_∧_)
+    [∧]-semilattice = intro
 
   record Bounded (𝟎 : L) (𝟏 : L) : Stmt{ℓ} where
     constructor intro
@@ -119,8 +127,8 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ} where
     record Complemented (¬_ : L → L) : Stmt{ℓ} where
       constructor intro
       field
-        ⦃ excluded-middle   ⦄ : OppositeFunction(_∨_)(¬_)
-        ⦃ non-contradiction ⦄ : OppositeFunction(_∧_)(¬_)
+        ⦃ excluded-middle   ⦄ : ComplementFunction(_∨_)(¬_)
+        ⦃ non-contradiction ⦄ : ComplementFunction(_∧_)(¬_)
 
   record Distributive : Stmt{ℓ} where
     constructor intro

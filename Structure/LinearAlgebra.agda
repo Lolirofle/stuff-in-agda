@@ -4,8 +4,8 @@ import      Lvl
 open import Data
 open import Data.Tuple
 open import Functional hiding (id)
-open import Functional.Equals
-open import Functional.Proofs
+open import Function.Equals
+open import Function.Proofs
 open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
@@ -142,7 +142,7 @@ module _
     module _ where
       private LinearMap = Linear.LinearMap(_+ᵥ_)(_⋅ₛᵥ_)(_+ᵥ_)(_⋅ₛᵥ_)
 
-      postulate linear-map-id : LinearMap(Functional.id)
+      postulate linear-map-id : LinearMap(Function.id)
 
       -- v is a eigenvector for the eigenvalue 𝜆 of the linear transformation f
       Eigenvector : (V → V) → S → V → Stmt

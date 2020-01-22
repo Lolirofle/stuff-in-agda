@@ -4,8 +4,8 @@ import Lvl
 open import Data
 open import Data.Tuple
 open import Functional hiding (id)
-open import Functional.Equals
-import      Functional.Names as Names
+open import Function.Equals
+import      Function.Names as Names
 open import Logic.Propositional
 open import Logic.Predicate
 open import Sets.Setoid

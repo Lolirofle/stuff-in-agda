@@ -3,7 +3,7 @@ open import Type
 
 module Type.Functions {ℓₗ : Lvl.Level}{ℓₒ₁}{ℓₒ₂} {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} where
 
-open import Functional.Domains
+open import Function.Domains
 open import Type.Empty
 open import Type.Unit
 
