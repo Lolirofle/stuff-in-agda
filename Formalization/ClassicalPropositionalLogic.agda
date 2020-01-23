@@ -21,7 +21,7 @@ open import Logic.Propositional.Theorems as Logic using ()
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Relator.Equals.Proofs.Equivalence
-open import Sets.PredicateSet using (_∈_ ; _∉_ ; _∪_ ; _⊆_ ; _⊇_ ; ∅ ; [≡]-to-[⊆] ; [≡]-to-[⊇]) renaming (•_ to singleton ; _≡_ to _≡ₛ_)
+open import Sets.PredicateSet using (PredSet ; _∈_ ; _∉_ ; _∪_ ; _⊆_ ; _⊇_ ; ∅ ; [≡]-to-[⊆] ; [≡]-to-[⊇]) renaming (•_ to singleton ; _≡_ to _≡ₛ_)
 open import Structure.Relator.Properties
 open import Syntax.Function
 open import Type.Size.Countable
@@ -52,13 +52,12 @@ module _ (P : Type{ℓₚ}) where
   infixl 1000 _⟵_ _⟷_ _⟶_
 
   -- TODO: How would this thing be proven?
-  -- TODO: Only if CountablyInfinite(P)
+  -- TODO: Only if CountablyInfinite(P) or less
   instance
     Formula-is-countably-infinite : CountablyInfinite(Formula)
 
-  -- TODO: Use PredSet
   Formulas : Type{ℓₚ ⊔ Lvl.𝐒(ℓ)}
-  Formulas{ℓ} = Formula → Stmt{ℓ}
+  Formulas{ℓ} = PredSet{ℓ}(Formula)
 
 module Semantics where
   private variable P : Type{ℓₚ}
@@ -68,6 +67,7 @@ module Semantics where
 
   -- Satisfication relation.
   -- (𝔐 ⊧ φ) means that the formula φ is satisfied in the model 𝔐.
+  -- Or in other words: A formula is true in the model 𝔐.
   _⊧_ : Model(P) → Formula(P) → Stmt
   𝔐 ⊧ (• p)   = IsTrue(𝔐(p))
   𝔐 ⊧ ⊤       = Logic.⊤
@@ -147,6 +147,20 @@ module Semantics where
     [⊨]-entailment-unsatisfiability {Γ = Γ}{φ = φ} = Logic.[↔]-intro (λ r {𝔐} 𝔐Γ → Logic.[⊥]-elim (r (Logic.[∃]-intro 𝔐 ⦃ λ x → 𝔐Γ (Logic.[∨]-elim id (λ x₁ → {!!}) x) ⦄))) λ{l (Logic.[∃]-intro 𝔐 ⦃ sat ⦄) → {!sat!}}
 
     [⊨][⟶]-intro : ((Γ ∪ singleton(φ)) ⊨ ψ) Logic.↔ (Γ ⊨ (φ ⟶ ψ))
+    [⊨][⟶]-intro {Γ = Γ}{φ = φ}{ψ = ψ} = Logic.[↔]-intro l r where
+      l : (Γ ⊨ (φ ⟶ ψ)) → ((Γ ∪ singleton(φ)) ⊨ ψ)
+      l φψ {𝔐 = 𝔐} 𝔐Γφ = Logic.[∨]-elim (¬φ ↦ Logic.[⊥]-elim(¬φ 𝔐φ)) id (φψ 𝔐Γ) where
+        𝔐Γ : 𝔐 ⊧₊ Γ
+        𝔐Γ {γ = γ} Γγ = 𝔐Γφ {γ} (Logic.[∨]-introₗ Γγ)
+
+        𝔐φ : 𝔐 ⊧ φ
+        𝔐φ = 𝔐Γφ {φ} (Logic.[∨]-introᵣ [≡]-intro)
+
+      r : ((Γ ∪ singleton(φ)) ⊨ ψ) → (Γ ⊨ (φ ⟶ ψ))
+      r Γφψ {𝔐 = 𝔐} 𝔐Γ with Logic.excluded-middle{P = (𝔐 ⊧ φ)}
+      ... | Logic.[∨]-introₗ 𝔐φ  = Logic.[∨]-introᵣ (Γφψ(Logic.[∨]-elim 𝔐Γ \{[≡]-intro → 𝔐φ}))
+      ... | Logic.[∨]-introᵣ ¬𝔐φ = Logic.[∨]-introₗ ¬𝔐φ
+
     [⊨]-unsatisfiability : (Γ ⊨ ⊥) Logic.↔ Unsatisfiable(Γ)
     [⊨][¬]-intro : ((Γ ∪ singleton(φ)) ⊨ ⊥) Logic.↔ (Γ ⊨ (¬ φ))
 
