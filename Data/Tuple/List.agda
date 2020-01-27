@@ -7,7 +7,7 @@ import      Data.List
 open        Data.List using (List)
 open import Type{ℓ}
 
--- Tuple type described with lists
+-- Constructs a tuple from a list
 Tuple : List(Type) → Type
 Tuple(List.∅)          = Unit
 Tuple(T List.⊰ List.∅) = T

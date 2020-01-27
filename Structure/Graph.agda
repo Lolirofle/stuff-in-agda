@@ -96,12 +96,12 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) w
     reverse (prepend e w) = postpend (reverse w) (undirected-reverse e)
 
     prelop : ∀{a c} → (Walk a c) → Σ(_)(b ↦ Walk b c)
-    prelop at            = Σ.intro _ at
-    prelop (prepend e w) = Σ.intro _ w
+    prelop at            = intro _ at
+    prelop (prepend e w) = intro _ w
 
     postlop : ∀{a c} → (Walk a c) → Σ(_)(b ↦ Walk a b)
-    postlop at                          = Σ.intro _ at
-    postlop (prepend e  at)             = Σ.intro _ at
+    postlop at                          = intro _ at
+    postlop (prepend e  at)             = intro _ at
     postlop (prepend e₁ (prepend e₂ w)) = [Σ]-mapᵣ (postlop(prepend e₂ w)) (prepend e₁)
 
     length : ∀{a b} → (Walk a b) → ℕ
@@ -246,6 +246,7 @@ module Proofs {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(
     [++]-path-length {a} {.a} {.a} {at}            {at}          = reflexivity(_≡_)
     [++]-path-length {a} {.a} {c}  {at}            {prepend e w} = prepend-path-length {e = e}{w = w}
     [++]-path-length {a} {b}  {c}  {prepend e₁ w₁} {w₂}          = [≡]-with(𝐒) ([++]-path-length {w₁ = w₁}{w₂ = w₂})
+    {-# REWRITE [++]-path-length #-}
 
     at-visits : ∀{v} → Visits(_⟶_) v (at{x = v})
     at-visits = current

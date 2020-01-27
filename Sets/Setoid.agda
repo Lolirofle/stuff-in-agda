@@ -8,7 +8,8 @@ open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties using (Reflexivity ; Symmetry ; Transitivity)
 
 module _ {ℓₒ} where
-  -- Helps finding an instance of an equivalence relation from a type
+  -- An instance of `Equiv(T)` is that the type `T` has an equivalence relation which may be treated as a default one.
+  -- Helps finding an instance of an equivalence relation for a type.
   record Equiv (T : Set(ℓₒ)) : Set(Lvl.𝐒(ℓₒ)) where
     constructor intro
 

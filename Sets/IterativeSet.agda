@@ -36,34 +36,34 @@ module _ where
 -}
 
   ∅ : Iset{ℓ₁}
-  ∅ = Iset.intro{Index = Empty} empty
+  ∅ = intro{Index = Empty} empty
 
   singleton : Iset{ℓ₁} → Iset{ℓ₁}
-  singleton = Iset.intro{Index = Unit} ∘ const
+  singleton = intro{Index = Unit} ∘ const
 
   pair : Iset{ℓ₁} → Iset{ℓ₁} → Iset{ℓ₁}
-  pair A B = Iset.intro{Index = Lvl.Up(Bool)} \{(Lvl.up 𝐹) → A ; (Lvl.up 𝑇) → B}
+  pair A B = intro{Index = Lvl.Up(Bool)} \{(Lvl.up 𝐹) → A ; (Lvl.up 𝑇) → B}
 
   _∪_ : Iset{ℓ₁} → Iset{ℓ₁} → Iset{ℓ₁}
-  A ∪ B = Iset.intro{Index = Index(A) ‖ Index(B)} (Either.map1 (elem(A)) (elem(B)))
+  A ∪ B = intro{Index = Index(A) ‖ Index(B)} (Either.map1 (elem(A)) (elem(B)))
 
   _,_ : Iset{ℓ₁} → Iset{ℓ₁} → Iset{ℓ₁}
   A , B = pair (singleton A) (pair A B)
 
   _⨯_ : Iset{ℓ₁} → Iset{ℓ₁} → Iset{ℓ₁}
-  A ⨯ B = Iset.intro{Index = Index(A) Tuple.⨯ Index(B)} \{(ia Tuple., ib) → (elem(A)(ia) , elem(B)(ib))}
+  A ⨯ B = intro{Index = Index(A) Tuple.⨯ Index(B)} \{(ia Tuple., ib) → (elem(A)(ia) , elem(B)(ib))}
 
   ⋃ : Iset{ℓ₁} → Iset{ℓ₁}
-  ⋃ A = Iset.intro{Index = Σ(Index(A)) (ia ↦ Index(elem(A)(ia)))} (\{(intro ia i) → elem(elem(A)(ia))(i)})
+  ⋃ A = intro{Index = Σ(Index(A)) (ia ↦ Index(elem(A)(ia)))} (\{(intro ia i) → elem(elem(A)(ia))(i)})
 
   filter : (A : Iset{ℓ₁}) → (Index(A) → Stmt{ℓ₁}) → Iset{ℓ₁}
-  filter A P = Iset.intro {Index = Σ(Index(A)) P} (\{(intro i _) → elem(A)(i)})
+  filter A P = intro {Index = Σ(Index(A)) P} (\{(intro i _) → elem(A)(i)})
 
   filterBool : (A : Iset{ℓ₁}) → (Index(A) → Bool) → Iset{ℓ₁}
   filterBool A f = filter A (Lvl.Up ∘ IsTrue ∘ f)
 
   ℘ : Iset{ℓ₁} → Iset{ℓ₁}
-  ℘ A = Iset.intro{Index = Index(A) → Bool} (filterBool A) -- TODO: How should one use Stmt and filter instead? The levels become a problem
+  ℘ A = intro{Index = Index(A) → Bool} (filterBool A) -- TODO: How should one use Stmt and filter instead? The levels become a problem
 
   record _≡_ (A : Iset{ℓ₁}) (B : Iset{ℓ₁}) : Type{ℓ₁}
   record _⊆_ (A : Iset{ℓ₁}) (B : Iset{ℓ₁}) : Type{ℓ₁}
@@ -137,7 +137,7 @@ module _ where
   ∃.witness ([∈]-of-elem {ia = ia}) = ia
   ∃.proof    [∈]-of-elem = [≡]-reflexivity
 
-  Iset-intro-self-equality : ∀{A : Iset{ℓ₁}} → (Iset.intro{Index = Index(A)}(elem(A)) ≡ A)
+  Iset-intro-self-equality : ∀{A : Iset{ℓ₁}} → (intro{Index = Index(A)}(elem(A)) ≡ A)
   _⊆_.map   (_≡_.left  Iset-intro-self-equality) = id
   _⊆_.map   (_≡_.right Iset-intro-self-equality) = id
   _⊆_.proof (_≡_.left  Iset-intro-self-equality) = [≡]-reflexivity

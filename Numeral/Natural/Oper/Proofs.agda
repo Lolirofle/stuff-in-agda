@@ -55,7 +55,6 @@ instance
 
   next : ∀(x y i : ℕ) → ((x + y) + i) ≡ (x + (y + i)) → ((x + y) + 𝐒(i)) ≡ (x + (y + 𝐒(i)))
   next _ _ _ = [≡]-with(𝐒)
--- {-# REWRITE [+]-associativity-raw #-}
 
 instance
   [+]-associativity : Associativity (_+_)
@@ -159,7 +158,6 @@ instance
 -- = (x+1)⋅y
 -- = x⋅y + 1⋅y
 -- = x⋅y + y
--- TODO: Maybe this is the cause of a compiler error in Divisibility.Proof? {-# REWRITE [⋅]-with-[𝐒]ₗ #-}
 
 [⋅]-with-[𝐒]ᵣ : ∀{x y} → x ⋅ 𝐒(y) ≡ x + (x ⋅ y)
 [⋅]-with-[𝐒]ᵣ = [≡]-intro
@@ -233,8 +231,8 @@ commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
 [⋅]-product-is-1ᵣ {a}{b} p = [⋅]-product-is-1ₗ {b}{a} ([⋅]-commutativity-raw{b}{a} 🝖 p)
 
 [⋅]-product-is-0 : ∀{a b} → (a ⋅ b ≡ 0) → ((a ≡ 0)∨(b ≡ 0))
-[⋅]-product-is-0 {a}{0} (_) = [∨]-introᵣ ([≡]-intro)
-[⋅]-product-is-0 {0}{b} (_) = [∨]-introₗ ([≡]-intro)
+[⋅]-product-is-0 {a}{0}    (_) = [∨]-introᵣ ([≡]-intro)
+[⋅]-product-is-0 {0}{𝐒(b)} (_) = [∨]-introₗ ([≡]-intro)
 [⋅]-product-is-0 {𝐒(a)}{𝐒(b)} (𝐒a⋅𝐒b≡0) =
   ([⊥]-elim
     ([𝐒]-not-0 {(𝐒(a) ⋅ b) + a}(
@@ -340,7 +338,8 @@ postulate [⋅][−₀]-distributivityᵣ-raw : ∀{x y z : ℕ} → ((x −₀ 
 
 [−₀]ₗ[+]ᵣ-nullify : ∀{x y} → ((x + y) −₀ y ≡ x)
 [−₀]ₗ[+]ᵣ-nullify{𝟎}   {𝟎}    = [≡]-intro
-[−₀]ₗ[+]ᵣ-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([−₀]ₗ[+]ᵣ-nullify{x}{y})
+[−₀]ₗ[+]ᵣ-nullify{𝟎}   {𝐒(y)} = [≡]-intro
+[−₀]ₗ[+]ᵣ-nullify{𝐒(x)}{𝐒(y)} = [≡]-intro 🝖 ([−₀]ₗ[+]ᵣ-nullify{𝐒(x)}{y})
 [−₀]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
 
 [−₀]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) −₀ x ≡ y)
@@ -476,7 +475,8 @@ postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
 
 [𝄩]ₗ[+]ᵣ-nullify : ∀{x y} → ((x + y) 𝄩 y ≡ x)
 [𝄩]ₗ[+]ᵣ-nullify{𝟎}   {𝟎}    = [≡]-intro
-[𝄩]ₗ[+]ᵣ-nullify{x}   {𝐒(y)} = [≡]-intro 🝖 ([𝄩]ₗ[+]ᵣ-nullify{x}{y})
+[𝄩]ₗ[+]ᵣ-nullify{𝟎}   {𝐒(y)} = [≡]-intro
+[𝄩]ₗ[+]ᵣ-nullify{𝐒(x)}{𝐒(y)} = [≡]-intro 🝖 ([𝄩]ₗ[+]ᵣ-nullify{𝐒(x)}{y})
 [𝄩]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
 
 [𝄩]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) 𝄩 x ≡ y)

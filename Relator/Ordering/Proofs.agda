@@ -50,7 +50,7 @@ module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{�
       [<]-asymmetry = [irreflexivity,transitivity]-to-asymmetry
 
     [<]-strictOrder : Strict.Order(_<_)
-    [<]-strictOrder = Strict.Order.intro
+    [<]-strictOrder = Strict.intro
 
     module _ ⦃ _ : (_≡_) ⊆₂ (_≤_) ⦄ where -- TODO: Consider including this in weak orders
       [≡]-to-[≥] : Names.Subrelation(_≡_)(_≥_)

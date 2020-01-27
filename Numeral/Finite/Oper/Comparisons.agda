@@ -11,6 +11,7 @@ open import Numeral.Sign
 _≡?_ : ∀{a b} → 𝕟(a) → 𝕟(b) → Bool
 𝟎    ≡? 𝟎    = 𝑇
 𝐒(a) ≡? 𝐒(b) = (a ≡? b)
+{-# CATCHALL #-}
 _    ≡? _    = 𝐹
 
 -- Non-equality check
@@ -21,12 +22,14 @@ x ≢? y = !(x ≡? y)
 _<?_ : ∀{a b} → 𝕟(a) → 𝕟(b) → Bool
 𝟎    <? 𝐒(_) = 𝑇
 𝐒(a) <? 𝐒(b) = (a <? b)
+{-# CATCHALL #-}
 _    <? _    = 𝐹
 
 -- Lesser-than or equals check
 _≤?_ : ∀{a b} → 𝕟(a) → 𝕟(b) → Bool
 𝟎    ≤? _    = 𝑇
 𝐒(a) ≤? 𝐒(b) = (a ≤? b)
+{-# CATCHALL #-}
 _    ≤? _    = 𝐹
 
 -- Greater-than check

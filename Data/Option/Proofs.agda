@@ -1,15 +1,18 @@
 module Data.Option.Proofs where
 
 import      Lvl
+open import Data
 open import Data.Option
 open import Data.Either
 open import Data.Either.Proofs
 open import Functional
 open import Relator.Equals
+open import Relator.Equals.Proofs.Equivalence
+open import Structure.Function.Domain
 open import Type
 
-module _ {ℓ} {T : Type{ℓ}} where -- TODO: This does not seem to work?
-  Some-injectivity : ∀{x y : T} → (Right{ℓ}{ℓ}{T}{T}(x) ≡ Some(y)) → (x ≡ y)
+module _ {ℓ} {T : Type{ℓ}} where
+  Some-injectivity : Injective {B = Option(T)} (Some)
   Some-injectivity = Right-injectivity
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{ℓ₃}} {f : B → C}{g : A → B} where

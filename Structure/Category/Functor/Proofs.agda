@@ -30,7 +30,7 @@ module _
   open module Equivᵣ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equivᵣ{x}{y} ⦄) using () renaming (transitivity to transitivityᵣ ; symmetry to symmetryᵣ ; reflexivity to reflexivityᵣ)
 
   isomorphism-preserving : ∀{x y}{f : x ⟶ₗ y} → Category.Isomorphism(Categoryₗ)(f) → Category.Isomorphism(Categoryᵣ)(map f)
-  isomorphism-preserving {x}{y} {f} (Category.Isomorphism.intro g gfid fgid) = Category.Isomorphism.intro (map g) proofₗ proofᵣ where
+  isomorphism-preserving {x}{y} {f} (Category.intro g gfid fgid) = Category.intro (map g) proofₗ proofᵣ where
     proofₗ : map(g) ∘ᵣ map(f) ≡ idᵣ
     proofₗ =
       (symmetry(_≡_) op-preserving  :of: (map(g) ∘ᵣ map(f) ≡ map(g ∘ₗ f)))

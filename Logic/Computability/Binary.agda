@@ -19,7 +19,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
   ComputablyDecidable = C.ComputablyDecidable ∘ uncurry
 
   ComputablyDecidable-intro : {_▫_ : X → Y → Stmt} → (decide : X → Y → Bool) → ⦃ _ : ∀{x}{y} → (x ▫ y) ↔ (decide(x)(y) ≡ 𝑇) ⦄ → ComputablyDecidable(_▫_)
-  ComputablyDecidable-intro {_▫_} (decide) ⦃ proof ⦄ = C.ComputablyDecidable.intro(uncurry decide) ⦃ lr ⦄ where
+  ComputablyDecidable-intro {_▫_} (decide) ⦃ proof ⦄ = C.intro(uncurry decide) ⦃ lr ⦄ where
      l : ∀{arg} → ((uncurry _▫_)(arg)) ← ((uncurry decide)(arg) ≡ 𝑇)
      l{x , y} = [↔]-to-[←] (proof{x}{y})
 

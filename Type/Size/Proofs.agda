@@ -23,7 +23,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Sets.Setoid.Equiv(T) ⦄ where
   open Type.Size
 
   [≼]-maximum : (_≼_ T (T → T) ⦃ [⊜]-equiv ⦄)
-  [≼]-maximum = [∃]-intro(const) ⦃ Injective.intro(proof) ⦄ where
+  [≼]-maximum = [∃]-intro(const) ⦃ intro(proof) ⦄ where
     proof : ∀{x y} → (const(x) ⊜ const(y)) → (x ≡ y)
     proof{x}{y} (intro fneq) = fneq{x}
 

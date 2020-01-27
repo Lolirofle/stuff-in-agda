@@ -105,7 +105,7 @@ record Classical {ℓ} (P : Stmt{ℓ}) : Stmt{ℓ} where
 
   module _ {ℓ₂ ℓ₃} where
     [∃]-unrelatedᵣ-[→]ₗ : ∀{X : Type{ℓ₂}} → ⦃ _ : ◊ X ⦄ → ∀{Q : X → Stmt{ℓ₃}} → ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
-    [∃]-unrelatedᵣ-[→]ₗ {X} ⦃ ◊.intro ⦃ x ⦄ ⦄ {Q} = l where
+    [∃]-unrelatedᵣ-[→]ₗ {X} ⦃ intro ⦃ x ⦄ ⦄ {Q} = l where
       l : ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
       l(pexqx) with excluded-middle
       ... | ([∨]-introₗ p)  = [∃]-map-proof (const) (pexqx(p))
@@ -116,7 +116,7 @@ open Classical ⦃ ... ⦄ hiding (decide ; decide-true ; decide-false) public
 module _ {ℓ} {P : Stmt{ℓ}} where
   instance
     [¬]-classical-intro : ⦃ _ : Classical(P) ⦄ → Classical(¬ P)
-    [¬]-classical-intro ⦃ classical-p ⦄ = Classical.intro ⦃ proof ⦄ where
+    [¬]-classical-intro ⦃ classical-p ⦄ = intro ⦃ proof ⦄ where
       proof : (¬ P) ∨ (¬¬ P)
       proof = Either.swap(Either.mapLeft [¬¬]-intro (excluded-middle ⦃ classical-p ⦄))
 
@@ -132,7 +132,7 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
   -}
 
   classical-by-equivalence : (P ↔ Q) → (Classical(P) ↔ Classical(Q))
-  classical-by-equivalence (xy) = [↔]-intro (cy ↦ Classical.intro ⦃ proofₗ(cy) ⦄) (cx ↦ Classical.intro ⦃ proofᵣ(cx) ⦄) where
+  classical-by-equivalence (xy) = [↔]-intro (cy ↦ intro ⦃ proofₗ(cy) ⦄) (cx ↦ intro ⦃ proofᵣ(cx) ⦄) where
     proofᵣ : Classical(P) → (Q ∨ (¬ Q))
     proofᵣ (classical-p) with excluded-middle ⦃ classical-p ⦄
     ... | [∨]-introₗ(p)  = [∨]-introₗ([↔]-to-[→] xy p)
@@ -145,7 +145,7 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
 
   instance
     [∧]-classical-intro : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → Classical(P ∧ Q)
-    [∧]-classical-intro ⦃ classical-p ⦄ ⦃ classical-q ⦄ = Classical.intro ⦃ proof ⦄ where
+    [∧]-classical-intro ⦃ classical-p ⦄ ⦃ classical-q ⦄ = intro ⦃ proof ⦄ where
       proof : (P ∧ Q) ∨ (¬ (P ∧ Q))
       proof with (excluded-middle ⦃ classical-p ⦄ , excluded-middle ⦃ classical-q ⦄)
       ... | ([∨]-introₗ(p)  , [∨]-introₗ(q))  = [∨]-introₗ([∧]-intro(p)(q))
@@ -155,7 +155,7 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
 
   instance
     [∨]-classical-intro : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → Classical(P ∨ Q)
-    [∨]-classical-intro ⦃ classical-p ⦄ ⦃ classical-q ⦄ = Classical.intro ⦃ proof ⦄ where
+    [∨]-classical-intro ⦃ classical-p ⦄ ⦃ classical-q ⦄ = intro ⦃ proof ⦄ where
       proof : (P ∨ Q) ∨ (¬ (P ∨ Q))
       proof with (excluded-middle ⦃ classical-p ⦄ , excluded-middle ⦃ classical-q ⦄)
       ... | ([∨]-introₗ(p)  , [∨]-introₗ(q))  = [∨]-introₗ([∨]-introₗ(p))
@@ -165,7 +165,7 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
 
   instance
     [→]-classical-intro : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → Classical(P → Q)
-    [→]-classical-intro ⦃ classical-p ⦄ ⦃ classical-q ⦄ = Classical.intro ⦃ proof ⦄ where
+    [→]-classical-intro ⦃ classical-p ⦄ ⦃ classical-q ⦄ = intro ⦃ proof ⦄ where
       proof : (P → Q) ∨ (¬ (P → Q))
       proof with (excluded-middle ⦃ classical-p ⦄ , excluded-middle ⦃ classical-q ⦄)
       ... | ([∨]-introₗ(p)  , [∨]-introₗ(q))  = [∨]-introₗ(const(q))
@@ -175,7 +175,7 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
 
   instance
     [↔]-classical-intro : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → Classical(P ↔ Q)
-    [↔]-classical-intro ⦃ classical-p ⦄ ⦃ classical-q ⦄ = Classical.intro ⦃ proof ⦄ where
+    [↔]-classical-intro ⦃ classical-p ⦄ ⦃ classical-q ⦄ = intro ⦃ proof ⦄ where
       proof : (P ↔ Q) ∨ (¬ (P ↔ Q))
       proof with (excluded-middle ⦃ classical-p ⦄ , excluded-middle ⦃ classical-q ⦄)
       ... | ([∨]-introₗ(p)  , [∨]-introₗ(q))  = [∨]-introₗ([↔]-intro (const(p)) (const(q)))
@@ -185,13 +185,13 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
 
 instance
   [⊤]-classical-intro : Classical(⊤)
-  [⊤]-classical-intro = Classical.intro ⦃ proof ⦄ where
+  [⊤]-classical-intro = intro ⦃ proof ⦄ where
     proof : ⊤ ∨ (¬ ⊤)
     proof = [∨]-introₗ ([⊤]-intro)
 
 instance
   [⊥]-classical-intro : Classical(⊥)
-  [⊥]-classical-intro = Classical.intro ⦃ proof ⦄ where
+  [⊥]-classical-intro = intro ⦃ proof ⦄ where
     proof : ⊥ ∨ (¬ ⊥)
     proof = [∨]-introᵣ (id)
 
@@ -199,8 +199,8 @@ module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : (◊ X) ⦄ {P : X → Stmt{
   instance
     [∃]-classical-elim : ⦃ _ : Classical(∃ P) ⦄ → ∃(x ↦ Classical(P(x)))
     [∃]-classical-elim ⦃ classical-expx ⦄ with excluded-middle ⦃ classical-expx ⦄
-    ... | [∨]-introₗ(expx)  = [∃]-intro([∃]-witness(expx)) ⦃ Classical.intro ⦃ [∨]-introₗ([∃]-proof(expx)) ⦄ ⦄
-    ... | [∨]-introᵣ(nexpx) = [∃]-intro([◊]-existence) ⦃ Classical.intro ⦃ [∨]-introᵣ(axnpx{[◊]-existence}) ⦄ ⦄ where
+    ... | [∨]-introₗ(expx)  = [∃]-intro([∃]-witness(expx)) ⦃ intro ⦃ [∨]-introₗ([∃]-proof(expx)) ⦄ ⦄
+    ... | [∨]-introᵣ(nexpx) = [∃]-intro([◊]-existence) ⦃ intro ⦃ [∨]-introᵣ(axnpx{[◊]-existence}) ⦄ ⦄ where
       axnpx = [¬∃]-to-[∀¬] (nexpx)
 
 -- TODO: Here I tried to prove some stuff that probably are unprovable. Also, see https://ncatlab.org/nlab/show/principle+of+omniscience . That thing cannot be proven
@@ -324,7 +324,7 @@ module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}}{P : X → Stmt{ℓ₂}} ⦃ classica
   drinker-ambiguity-equiv : ⦃ _ : Classical(∀ₗ P) ⦄ → ((◊ X) ↔ ∃(x ↦ (P(x) → ∀{y} → P(y))))
   drinker-ambiguity-equiv ⦃ classical-axpx ⦄ =
     [↔]-intro
-      (\ex → ◊.intro ⦃ [∃]-witness ex ⦄)
+      (\ex → intro ⦃ [∃]-witness ex ⦄)
       (\pos-x → drinker-ambiguity ⦃ pos-x ⦄ ⦃ classical-axpx ⦄)
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{P : X → Stmt{ℓ₂}} ⦃ classical-proof1 : ∀{x} → Classical(P(x)) ⦄ ⦃ classical-proof2 : Classical(∃(¬_ ∘ P)) ⦄ where

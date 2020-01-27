@@ -13,8 +13,7 @@ open import Relator.Equals.Proofs
 
 -- Total predecessor function (Truncated predecessor)
 𝐏 : (n : ℕ) → ⦃ _ : n ≢ 𝟎 ⦄ → ℕ
-𝐏(𝟎) ⦃ [⊥]-proof ⦄ with [⊥]-proof([≡]-intro)
-... | ()
+𝐏(𝟎) ⦃ incons ⦄ = [⊥]-elim(incons [≡]-intro)
 𝐏(𝐒(n)) = n
 
 -- Total subtraction (Truncated subtraction)

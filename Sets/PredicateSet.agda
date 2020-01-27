@@ -42,6 +42,13 @@ module _ where
   _∌_ : PredSet{ℓ}(T) → T → Stmt
   _∌_ = (¬_) ∘₂ (_∋_) -- (S ∌ x) = ¬(S ∋ x)
 
+  module BoundedQuantifiers {T : Type{ℓₒ}} where
+    ∀ₛ : PredSet{ℓ}(T) → (T → Stmt{ℓ₁}) → Stmt{ℓ ⊔ ℓ₁ ⊔ ℓₒ}
+    ∀ₛ(S) P = ∀{elem : T} → (elem ∈ S) → P(elem)
+
+    ∃ₛ : PredSet{ℓ}(T) → (T → Stmt{ℓ₁}) → Stmt{ℓ ⊔ ℓ₁ ⊔ ℓₒ}
+    ∃ₛ(S) P = ∃(elem ↦ (elem ∈ S) ∧ P(elem))
+
   -- An empty set
   ∅ : PredSet{ℓ}(T)
   ∅ = const(Data.Empty)
@@ -210,3 +217,4 @@ module _ where
     ∃.proof   (∃.witness (choice {S = S}) ([∃]-intro f ⦃ proof ⦄)) = {!!}
     ∃.proof              (choice {S = S}) {[∃]-intro f ⦃ proof ⦄}  = {!!}
     -}
+  

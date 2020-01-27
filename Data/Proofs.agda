@@ -20,7 +20,7 @@ module _ {ℓ} where
 instance
   -- `Empty` is an empty type.
   Empty-IsEmpty : ∀{ℓ} → IsEmpty{ℓ}(Empty)
-  Empty-IsEmpty = IsEmpty.intro(empty)
+  Empty-IsEmpty = intro(empty)
 
 module _ {ℓ₁ ℓ₂} {T : Type{ℓ₁}} ⦃ _ : Equiv(T) ⦄ where
   instance

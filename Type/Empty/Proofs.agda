@@ -7,5 +7,5 @@ open import Logic.Propositional
 
 -- A type is never inhabited and empty at the same time.
 notInhabitedAndEmpty : ∀{ℓ}{T : Set(ℓ)} → (◊ T) → IsEmpty{ℓ}(T) → ⊥
-notInhabitedAndEmpty (◊.intro ⦃ obj ⦄) (IsEmpty.intro empty) with empty{Empty} (obj)
+notInhabitedAndEmpty (intro ⦃ obj ⦄) (intro empty) with empty{Empty} (obj)
 ... | ()

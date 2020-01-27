@@ -30,7 +30,7 @@ module _ {ℓ} {T : Type{ℓ}} where
 
   instance
     [≡]-equiv : Equiv(T)
-    [≡]-equiv = Equiv.intro(_≡_ {T = T}) ⦃ [≡]-equivalence ⦄
+    [≡]-equiv = intro(_≡_ {T = T}) ⦃ [≡]-equivalence ⦄
 
   [≡]-to-equivalence : ∀{x y : T} → (x ≡ y) → ⦃ equiv-T : Equiv(T) ⦄ → (_≡ₛ_ ⦃ equiv-T ⦄ x y)
   [≡]-to-equivalence([≡]-intro) = reflexivity(_≡ₛ_)

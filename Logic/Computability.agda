@@ -66,8 +66,8 @@ record ComputablyDecidable {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} (P : X → Stmt{�
   instance
     classical : ∀{x} → Classical(P(x))
     classical {x} with bivalence
-    ... | [∨]-introₗ(≡𝑇) = Classical.intro ⦃ [∨]-introₗ (soundness-𝑇 {x} (≡𝑇)) ⦄
-    ... | [∨]-introᵣ(≡𝐹) = Classical.intro ⦃ [∨]-introᵣ (soundness-𝐹 {x} (≡𝐹)) ⦄
+    ... | [∨]-introₗ(≡𝑇) = intro ⦃ [∨]-introₗ (soundness-𝑇 {x} (≡𝑇)) ⦄
+    ... | [∨]-introᵣ(≡𝐹) = intro ⦃ [∨]-introᵣ (soundness-𝐹 {x} (≡𝐹)) ⦄
 
   negation : ComputablyDecidable(¬_ ∘ P)
   decide (negation) (x) = !(decide(x))

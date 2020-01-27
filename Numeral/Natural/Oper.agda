@@ -41,8 +41,8 @@ _𝄩_ : ℕ → ℕ → ℕ
 
 -- Closed total subtraction (monus)
 _−₀_ : ℕ → ℕ → ℕ
-x −₀ 𝟎 = x
-𝟎 −₀ x = 𝟎
+x    −₀ 𝟎    = x
+𝟎    −₀ 𝐒(_) = 𝟎
 𝐒(x) −₀ 𝐒(y) = x −₀ y
 {-# BUILTIN NATMINUS _−₀_ #-}
 -- x −₀ 𝟎 = x

@@ -4,6 +4,7 @@ import Lvl
 open import Functional
 open import Data.Boolean
 open import Data.Option hiding (map)
+open import Data.Either
 open import Data.Either.Proofs
 open import Data.List
 open import Logic
@@ -13,6 +14,7 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function.Domain
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties
@@ -29,17 +31,10 @@ module _ {ℓ} where
     [++]-identityₗ : ∀{T : Type{ℓ}} → Identityₗ{T₁ = List(T)} (_++_) ∅
     Identityₗ.proof([++]-identityₗ) = [≡]-intro
 
-  [++]-identityᵣ-raw : ∀{T : Type{ℓ}} → Names.Identityᵣ (_++_) ∅
-  [++]-identityᵣ-raw {T} = List-induction base next where
-    base : (∅ ++ ∅) ≡ ∅
-    base = [≡]-intro
-
-    next : ∀(x : T)(l : List(T)) → ((l ++ ∅) ≡ l) → (((x ⊰ l) ++ ∅) ≡ (x ⊰ l))
-    next x _ stmt = [≡]-with(list ↦ x ⊰ list) stmt
-    -- (l ++ ∅) ≡ l
-    -- x ⊰ (l ++ ∅) ≡ x ⊰ l
-    -- (x ⊰ l) ++ ∅ ≡ x ⊰ l
-  -- {-# REWRITE [++]-identityᵣ-raw #-}
+  [++]-identityᵣ-raw : ∀{T : Type{ℓ}} → Names.Identityᵣ (_++_ {T = T}) ∅
+  [++]-identityᵣ-raw {x = ∅}     = [≡]-intro
+  [++]-identityᵣ-raw {x = x ⊰ l} = [≡]-with(x ⊰_) ([++]-identityᵣ-raw {x = l})
+  {-# REWRITE [++]-identityᵣ-raw #-}
 
   instance
     [++]-identityᵣ : ∀{T : Type{ℓ}} → Identityᵣ{T₁ = List(T)} (_++_) ∅
@@ -164,7 +159,7 @@ module _ {ℓ} where
     Cancellationᵣ.proof([⊰]-cancellationᵣ) = proof where
       proof : Names.Cancellationᵣ(_⊰_)
       proof {∅}     [≡]-intro = [≡]-intro
-      proof {x ⊰ l} p = Right-injectivity([≡]-with(firstElem) p)
+      proof {x ⊰ l} p = injective(Right) ([≡]-with(firstElem) p)
 
   [⊰]-general-cancellationᵣ : ∀{T : Type{ℓ}}{x₁ x₂ : T}{l₁ l₂} → ((x₁ ⊰ l₁) ≡ (x₂ ⊰ l₂)) → (l₁ ≡ l₂)
   [⊰]-general-cancellationᵣ p = [≡]-with(tail) p
@@ -173,7 +168,7 @@ module _ {ℓ} where
   [⊰]-general-cancellationₗ {_} {x1} {x2} {∅}      {∅}      [≡]-intro = [≡]-intro
   [⊰]-general-cancellationₗ {_} {x1} {x2} {∅}      {x ⊰ l2} p with [⊰]-general-cancellationᵣ p
   ...                                                                | ()
-  [⊰]-general-cancellationₗ {_} {x1} {x2} {xl1 ⊰ l1} {xl2 ⊰ l2} p = Right-injectivity([≡]-with(firstElem) p)
+  [⊰]-general-cancellationₗ {_} {x1} {x2} {xl1 ⊰ l1} {xl2 ⊰ l2} p = injective(Right) ([≡]-with(firstElem) p)
 
   [∅][⊰]-unequal : ∀{T : Type{ℓ}}{x : T}{l} → ¬(∅ ≡ x ⊰ l)
   [∅][⊰]-unequal {_} {x} {l} ()
@@ -238,6 +233,7 @@ module _ {ℓ} {T : Type{ℓ}} where
   first-0-length : ∀{L : List(T)} → (first(0)(L) ≡ ∅)
   first-0-length {∅}    = [≡]-intro
   first-0-length {x ⊰ L} = [≡]-intro
+  {-# REWRITE first-0-length #-}
 
   first-of-∅ : ∀{n} → (first(n)(∅ {T = T}) ≡ ∅)
   first-of-∅ {𝟎}   = [≡]-intro
@@ -248,7 +244,11 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{
   map-preserves-[∘] {∅}     = [≡]-intro
   map-preserves-[∘] {x ⊰ l} = [≡]-with(f(g(x)) ⊰_) (map-preserves-[∘] {l})
 
+  map-preserves-[∘]-sym = \{l} → symmetry(_≡_) (map-preserves-[∘] {l})
+  {-# REWRITE map-preserves-[∘]-sym #-}
+
 module _ {ℓ} {T : Type{ℓ}} where
   map-preserves-id : ∀{l : List(T)} → (map id(l) ≡ l)
   map-preserves-id {∅} = [≡]-intro
   map-preserves-id {x ⊰ l} = [≡]-with(x ⊰_) (map-preserves-id {l})
+  {-# REWRITE map-preserves-id #-}

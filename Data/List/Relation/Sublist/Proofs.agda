@@ -23,7 +23,5 @@ instance
 
 instance
   [⊑]ᵣ-of-[++]ₗ : ∀{L₁ L₂} → (L₁ ⊑ (L₂ ++ L₁))
-  [⊑]ᵣ-of-[++]ₗ {∅}{∅} = empty
-  [⊑]ᵣ-of-[++]ₗ {L₁}{∅} = [⊑]-reflexivity
-  -- [⊑]-of-[++]ₗ {L₁}{∅} = emptyᵣ -- Either this line or the first seems to be redundant
+  [⊑]ᵣ-of-[++]ₗ {L₁}{∅}       = [⊑]-reflexivity
   [⊑]ᵣ-of-[++]ₗ {L₁}{a₂ ⊰ L₂} = skip{a₂}([⊑]ᵣ-of-[++]ₗ {L₁}{L₂})
