@@ -240,7 +240,32 @@ module _ {Σ} where
     r {[]}    _       = [≡]-intro
     r {a ⊰ l} (proof) = [⊥]-elim (([↔]-to-[→] ([∅]-containment {l})) (proof))
 
-  -- [𝁼]-containment : ∀{x y}{A B : Language(Σ)} → ((x ++ y) ∈ (A 𝁼 B)) ← (x ∈ A)∧(y ∈ B)
+  suffix-head-step : ∀{A : Language(Σ)}{a}{l} → ((a ⊰ l) ∈ A) → (l ∈ Language.suffix-lang(A)(a))
+  suffix-head-step p = p
+
+  Language-list-suffix : Language(Σ) → List(Σ) → Language(Σ)
+  Language-list-suffix A []      = A
+  Language-list-suffix A (x ⊰ l) = Language.suffix-lang(A)(x)
+
+  suffix-concat-step : ∀{A : Language(Σ)}{l₁ l₂} → ((l₁ ++ l₂) ∈ A) → (l₂ ∈ Language-list-suffix(A)(l₁))
+  suffix-concat-step {A}{[]}         p = p
+  suffix-concat-step {A}{x ⊰ l₁}{l₂} p = {!!}
+
+  [𝁼]-containmentₗ : ∀{x y}{A B : Language(Σ)} → (x ∈ A) → (y ∈ B) → ((x ++ y) ∈ (A 𝁼 B))
+  -- [𝁼]-containmentₗ {x} {y} {A} {B} xa xb with Language.accepts-ε(A) | y Oper.∈? B
+  [𝁼]-containmentₗ {LongOper.empty} {LongOper.empty} {A} {B} xa xb with Language.accepts-ε(A) | Language.accepts-ε(B)
+  [𝁼]-containmentₗ {LongOper.empty} {LongOper.empty} {A} {B} xa xb | 𝑇 | 𝑇 = [⊤]-intro
+  [𝁼]-containmentₗ {LongOper.empty} {LongOper.prepend x y} {A} {B} xa xb = {![⊤]-intro!} where
+    test : ∀{A B : Language(Σ)}{a} → ([] ∈ A) → (a ∈ B) → (a ∈ (A 𝁼 B))
+    test {A}{B}{LongOper.empty} p q with Language.accepts-ε(A) | Language.accepts-ε(B)
+    test {A}{B}{LongOper.empty} p q | 𝑇 | 𝑇 = [⊤]-intro
+    test {A}{B}{LongOper.prepend x a} p q = {!test {A}{B}{a} p !}
+    -- test {LongOper.prepend x a} p q with test {a} p (Language.suffix-lang q)
+    -- ... | test = ?
+    
+  [𝁼]-containmentₗ {LongOper.prepend x x₁} {LongOper.empty} {A} {B} xa xb = {!!}
+  [𝁼]-containmentₗ {LongOper.prepend x x₁} {LongOper.prepend x₂ y} {A} {B} xa xb = {!!}
+
   -- [𝁼]-containment : ∀{x}{A B : Language(Σ)} → (x ∈ (A 𝁼 B)) ↔ ∃(a ↦ ∃ b ↦ (a ++ b ≡ x)∧(a ∈ A)∧(b ∈ B))
   -- [𝁼]-containment {x} = [↔]-intro (l{x}) (r{x}) where
 

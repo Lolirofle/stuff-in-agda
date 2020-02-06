@@ -87,9 +87,10 @@ module Oper {Σ} where
   _𝁼_ : ∀{s} → Language(Σ){s} → Language(Σ){s} → Language(Σ){s}
   Language.accepts-ε   (L₁ 𝁼 L₂)   = Language.accepts-ε(L₁) && Language.accepts-ε(L₂)
   Language.suffix-lang (L₁ 𝁼 L₂) c =
-    if  Language.accepts-ε(L₁)
-    then((Language.suffix-lang(L₁)(c) 𝁼 L₂) ∪ Language.suffix-lang(L₂)(c))
-    else(Language.suffix-lang(L₁)(c) 𝁼 L₂)
+      if   Language.accepts-ε(L₁)
+      then (Language.suffix-lang(L₁)(c) 𝁼 L₂) ∪ Language.suffix-lang(L₂)(c)
+      else (Language.suffix-lang(L₁)(c) 𝁼 L₂)
+
 
   -- Star/Closure
   -- The language that includes words in any number of concatenations with itself.
