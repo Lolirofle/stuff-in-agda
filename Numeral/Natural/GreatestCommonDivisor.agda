@@ -13,7 +13,7 @@ open import Numeral.Natural.Oper.Proofs
 {-# TERMINATING #-}
 gcd : ℕ → ℕ → ℕ
 gcd(a)(𝟎) = a
-gcd(a)(𝐒(b)) = gcd(𝐒(b))(a mod₀ 𝐒(b))
+gcd(a)(𝐒(b)) = gcd(𝐒(b))(a mod 𝐒(b))
 
 lcm : ℕ → ℕ → ℕ
 lcm(a)(b) = (a ⋅ b) ⌊/⌋₀ gcd(a)(b)

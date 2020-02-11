@@ -61,6 +61,19 @@ _+_ {𝐒(b₁)}{𝐒(b₂)} 𝟎       𝟎      = 𝟎
 _+_ {𝐒(b₁)}{𝐒(b₂)} (𝐒(a))  𝟎      = 𝐒(a + 𝟎{b₂})
 _+_ {𝐒(b₁)}{𝐒(b₂)} a       (𝐒(b)) = 𝐒(a + b)
 
+-- Example: shrink-subtract(5) (7 : 𝕟(6 + 5)) = (2 : 𝕟(6))
+shrink-subtractₗ : ∀{b₁} → (b₂ : ℕ) → 𝕟(𝐒(b₁) ℕ.+ b₂) → 𝕟(𝐒(b₁))
+shrink-subtractₗ        _      𝟎     = 𝟎
+shrink-subtractₗ        𝟎      (𝐒 a) = 𝐒 a
+shrink-subtractₗ {𝟎}    (𝐒 b₂) (𝐒 a) = 𝟎
+shrink-subtractₗ {𝐒 b₁} (𝐒 b₂) (𝐒 a) = shrink-subtractₗ {𝐒 b₁} (b₂) (a)
+
+shrink-subtractᵣ : (b₁ : ℕ) → ∀{b₂} → 𝕟(b₁ ℕ.+ 𝐒(b₂)) → 𝕟(𝐒(b₂))
+shrink-subtractᵣ        _      𝟎     = 𝟎
+shrink-subtractᵣ        𝟎      (𝐒 a) = 𝐒 a
+shrink-subtractᵣ (𝐒 b₁) {𝟎}    (𝐒 a) = 𝟎
+shrink-subtractᵣ (𝐒 b₁) {𝐒 b₂} (𝐒 a) = shrink-subtractᵣ (b₁) {𝐒 b₂} (a)
+
 _𝄩_ : ∀{b₁ b₂} → 𝕟(b₁) → 𝕟(b₂) → 𝕟(max b₁ b₂)
 _𝄩_ {𝐒 b₁}     {𝐒 b₂}     𝟎     𝟎     = 𝟎
 _𝄩_ {𝐒 𝟎}      {𝐒 b₂}     𝟎     (𝐒 b) = 𝐒 b

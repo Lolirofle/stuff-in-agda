@@ -2,7 +2,7 @@ module Function.Multi where
 
 open import Data
 open import Data.Tuple renaming (curry to curry₁ ; uncurry to uncurry₁) hiding (swap ; map)
-open import Data.Tuple.Raiseᵣ
+open import Data.Tuple.Raise
 open import Functional using (_→ᶠ_ ; id ; _∘_ ; _〔_〕_) renaming (const to const₁ ; apply to apply₁ ; swap to swap₁ ; _$_ to _$₁_)
 import      Lvl
 open import Numeral.Finite

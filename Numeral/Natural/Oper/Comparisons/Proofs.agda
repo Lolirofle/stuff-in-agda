@@ -12,9 +12,24 @@ instance
   [≤?]-𝟎 = [⊤]-intro
 
 instance
-  [≤?]-𝐒 : ∀{n} → IsTrue(n ≤? n)
-  [≤?]-𝐒 {𝟎}    = [⊤]-intro
-  [≤?]-𝐒 {𝐒(n)} = [≤?]-𝐒 {n}
+  [≤?]-𝐒 : ∀{n} → IsTrue(n ≤? 𝐒(n))
+  [≤?]-𝐒 {𝟎}   = [⊤]-intro
+  [≤?]-𝐒 {𝐒 n} = [≤?]-𝐒 {n}
+
+instance
+  [<?]-𝟎 : ∀{n} → IsTrue(𝟎 <? 𝐒(n))
+  [<?]-𝟎 {𝟎}   = [⊤]-intro
+  [<?]-𝟎 {𝐒 n} = [<?]-𝟎 {n}
+
+instance
+  [<?]-𝐒 : ∀{n} → IsTrue(n <? 𝐒(n))
+  [<?]-𝐒 {𝟎}   = [⊤]-intro
+  [<?]-𝐒 {𝐒 n} = [<?]-𝐒 {n}
+
+instance
+  [≤?]-reflexivity : ∀{n} → IsTrue(n ≤? n)
+  [≤?]-reflexivity {𝟎}    = [⊤]-intro
+  [≤?]-reflexivity {𝐒(n)} = [≤?]-reflexivity {n}
 
 [<?]-positive : ∀{n} → (𝟎 <? n) ≡ positive?(n)
 [<?]-positive {𝟎}    = [≡]-intro

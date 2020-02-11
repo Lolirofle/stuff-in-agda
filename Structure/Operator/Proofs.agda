@@ -10,7 +10,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Sets.Setoid
 open import Sets.Setoid.Uniqueness
-open import Structure.Function.Domain hiding (Function)
+open import Structure.Function.Domain
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties

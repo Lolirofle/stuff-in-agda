@@ -12,6 +12,7 @@ open import Type.Empty
 
 module _ {ℓ₁}{ℓ₂} where
   record ∃ {Obj : Type{ℓ₁}} (Pred : Obj → Stmt{ℓ₂}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    eta-equality
     constructor [∃]-intro
     field
       witness   : Obj

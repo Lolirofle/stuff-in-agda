@@ -1,4 +1,4 @@
-module FormalLanguage.Proofs where
+module FormalLanguage.Proofs {ℓ} where
 
 import      Lvl
 open import Data.Boolean
@@ -12,6 +12,7 @@ open        FormalLanguage.Oper using (_∈?_)
 open import FormalLanguage.Equals
 open import Data.List renaming (∅ to [])
 open import Lang.Size
+open import Logic.Computability.Binary
 open import Logic.Predicate
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
@@ -29,34 +30,34 @@ open import Type
 -- TODO: Prove all these
 -- TODO: http://www.cse.chalmers.se/~abela/jlamp17.pdf
 
-module _ {Σ} where
-  open Oper{Σ}
+module _ {Σ : Alphabet{ℓ}} where
+  open Oper{ℓ}{Σ}
 
   instance
     [∪]-associativity : Associativity(_∪_)
     Associativity.proof([∪]-associativity) = [∪]-associativity-raw where
-      [∪]-associativity-raw : ∀{A B C} → (((A ∪ B) ∪ C) ≅ (A ∪ (B ∪ C))) -- Names.Associativity(_∪_)
+      [∪]-associativity-raw : Names.Associativity ⦃ [≅]-equiv ⦄ (_∪_)
       _≅_.accepts-ε   ([∪]-associativity-raw {A})     = associativity(_||_) {Language.accepts-ε A}
       _≅_.suffix-lang ([∪]-associativity-raw {A}) {c} = [∪]-associativity-raw {Language.suffix-lang A c}
 
   instance
     [∪]-commutativity : Commutativity(_∪_)
     Commutativity.proof([∪]-commutativity) = [∪]-commutativity-raw where
-      [∪]-commutativity-raw : ∀{A B} → ((A ∪ B) ≅ (B ∪ A))
+      [∪]-commutativity-raw : Names.Commutativity ⦃ [≅]-equiv ⦄ (_∪_)
       _≅_.accepts-ε   ([∪]-commutativity-raw {A})     = commutativity(_||_) {Language.accepts-ε A}
       _≅_.suffix-lang ([∪]-commutativity-raw {A}) {c} = [∪]-commutativity-raw {Language.suffix-lang A c}
 
   instance
     [∪]-identityₗ : Identityₗ(_∪_)(∅)
     Identityₗ.proof([∪]-identityₗ) = [∪]-identityₗ-raw where
-      [∪]-identityₗ-raw : ∀{A} → ((∅ ∪ A) ≅ A)
+      [∪]-identityₗ-raw : Names.Identityₗ ⦃ [≅]-equiv ⦄ (_∪_)(∅)
       _≅_.accepts-ε   ([∪]-identityₗ-raw {A})     = [≡]-intro
       _≅_.suffix-lang ([∪]-identityₗ-raw {A}) {c} = [∪]-identityₗ-raw {Language.suffix-lang A c}
 
   instance
     [∪]-identityᵣ : Identityᵣ(_∪_)(∅)
     Identityᵣ.proof([∪]-identityᵣ) = [∪]-identityᵣ-raw where
-      [∪]-identityᵣ-raw : ∀{A} → ((A ∪ ∅) ≅ A)
+      [∪]-identityᵣ-raw : Names.Identityᵣ ⦃ [≅]-equiv ⦄ (_∪_)(∅)
       _≅_.accepts-ε   ([∪]-identityᵣ-raw {A})     = [≡]-intro
       _≅_.suffix-lang ([∪]-identityᵣ-raw {A}) {c} = [∪]-identityᵣ-raw {Language.suffix-lang A c}
 
@@ -67,14 +68,14 @@ module _ {Σ} where
   instance
     [∪]-absorberₗ : Absorberₗ(_∪_)(Σ*)
     Absorberₗ.proof([∪]-absorberₗ) = [∪]-absorberₗ-raw where
-      [∪]-absorberₗ-raw : ∀{A} → ((Σ* ∪ A) ≅ Σ*)
+      [∪]-absorberₗ-raw : Names.Absorberₗ ⦃ [≅]-equiv ⦄ (_∪_)(Σ*)
       _≅_.accepts-ε   ([∪]-absorberₗ-raw {A})     = [≡]-intro
       _≅_.suffix-lang ([∪]-absorberₗ-raw {A}) {c} = [∪]-absorberₗ-raw {Language.suffix-lang A c}
 
   instance
     [∪]-absorberᵣ : Absorberᵣ(_∪_)(Σ*)
     Absorberᵣ.proof([∪]-absorberᵣ) = [∪]-absorberᵣ-raw where
-      [∪]-absorberᵣ-raw : ∀{A} → ((A ∪ Σ*) ≅ Σ*)
+      [∪]-absorberᵣ-raw : Names.Absorberᵣ ⦃ [≅]-equiv ⦄ (_∪_)(Σ*)
       _≅_.accepts-ε   ([∪]-absorberᵣ-raw {A})     = [≡]-intro
       _≅_.suffix-lang ([∪]-absorberᵣ-raw {A}) {c} = [∪]-absorberᵣ-raw {Language.suffix-lang A c}
 
@@ -96,28 +97,28 @@ module _ {Σ} where
   instance
     [∩]-associativity : Associativity(_∩_)
     Associativity.proof([∩]-associativity) = [∩]-associativity-raw where
-      [∩]-associativity-raw : ∀{A B C} → (((A ∩ B) ∩ C) ≅ (A ∩ (B ∩ C)))
+      [∩]-associativity-raw : Names.Associativity ⦃ [≅]-equiv ⦄ (_∩_)
       _≅_.accepts-ε   ([∩]-associativity-raw {A})     = associativity(_&&_) {Language.accepts-ε A}
       _≅_.suffix-lang ([∩]-associativity-raw {A}) {c} = [∩]-associativity-raw {Language.suffix-lang A c}
 
   instance
     [∩]-commutativity : Commutativity(_∩_)
     Commutativity.proof([∩]-commutativity) = [∩]-commutativity-raw where
-      [∩]-commutativity-raw : ∀{A B} → ((A ∩ B) ≅ (B ∩ A))
+      [∩]-commutativity-raw : Names.Commutativity ⦃ [≅]-equiv ⦄ (_∩_)
       _≅_.accepts-ε   ([∩]-commutativity-raw {A})     = commutativity(_&&_) {Language.accepts-ε A}
       _≅_.suffix-lang ([∩]-commutativity-raw {A}) {c} = [∩]-commutativity-raw {Language.suffix-lang A c}
 
   instance
     [∩]-identityₗ : Identityₗ(_∩_)(Σ*)
     Identityₗ.proof([∩]-identityₗ) = [∩]-identityₗ-raw where
-      [∩]-identityₗ-raw : ∀{A} → ((Σ* ∩ A) ≅ A)
+      [∩]-identityₗ-raw : Names.Identityₗ ⦃ [≅]-equiv ⦄ (_∩_)(Σ*)
       _≅_.accepts-ε   ([∩]-identityₗ-raw {A})     = [≡]-intro
       _≅_.suffix-lang ([∩]-identityₗ-raw {A}) {c} = [∩]-identityₗ-raw {Language.suffix-lang A c}
 
   instance
     [∩]-identityᵣ : Identityᵣ(_∩_)(Σ*)
     Identityᵣ.proof([∩]-identityᵣ) = [∩]-identityᵣ-raw where
-      [∩]-identityᵣ-raw : ∀{A} → ((A ∩ Σ*) ≅ A)
+      [∩]-identityᵣ-raw : Names.Identityᵣ ⦃ [≅]-equiv ⦄ (_∩_)(Σ*)
       _≅_.accepts-ε   ([∩]-identityᵣ-raw {A})     = [≡]-intro
       _≅_.suffix-lang ([∩]-identityᵣ-raw {A}) {c} = [∩]-identityᵣ-raw {Language.suffix-lang A c}
 
@@ -128,14 +129,14 @@ module _ {Σ} where
   instance
     [∩]-absorberₗ : Absorberₗ(_∩_)(∅)
     Absorberₗ.proof([∩]-absorberₗ) = [∩]-absorberₗ-raw where
-      [∩]-absorberₗ-raw : ∀{A} → ((∅ ∩ A) ≅ ∅)
+      [∩]-absorberₗ-raw : Names.Absorberₗ ⦃ [≅]-equiv ⦄ (_∩_)(∅)
       _≅_.accepts-ε   ([∩]-absorberₗ-raw {A})     = [≡]-intro
       _≅_.suffix-lang ([∩]-absorberₗ-raw {A}) {c} = [∩]-absorberₗ-raw {Language.suffix-lang A c}
 
   instance
     [∩]-absorberᵣ : Absorberᵣ(_∩_)(∅)
     Absorberᵣ.proof([∩]-absorberᵣ) = [∩]-absorberᵣ-raw where
-      [∩]-absorberᵣ-raw : ∀{A} → ((A ∩ ∅) ≅ ∅)
+      [∩]-absorberᵣ-raw : Names.Absorberᵣ ⦃ [≅]-equiv ⦄ (_∩_)(∅)
       _≅_.accepts-ε   ([∩]-absorberᵣ-raw {A})     = [≡]-intro
       _≅_.suffix-lang ([∩]-absorberᵣ-raw {A}) {c} = [∩]-absorberᵣ-raw {Language.suffix-lang A c}
 
@@ -157,14 +158,14 @@ module _ {Σ} where
   instance
     [∪][∩]-distributivityₗ : Distributivityₗ(_∪_)(_∩_)
     Distributivityₗ.proof([∪][∩]-distributivityₗ) = [∪][∩]-distributivityₗ-raw where
-      [∪][∩]-distributivityₗ-raw : ∀{A B C} → (A ∪ (B ∩ C)) ≅ ((A ∪ B) ∩ (A ∪ C))
+      [∪][∩]-distributivityₗ-raw : Names.Distributivityₗ ⦃ [≅]-equiv ⦄ (_∪_)(_∩_)
       _≅_.accepts-ε   ([∪][∩]-distributivityₗ-raw {A})     = distributivityₗ(_||_)(_&&_) {Language.accepts-ε A}
       _≅_.suffix-lang ([∪][∩]-distributivityₗ-raw {A}) {c} = [∪][∩]-distributivityₗ-raw {Language.suffix-lang A c}
 
   instance
     [∩][∪]-distributivityₗ : Distributivityₗ(_∩_)(_∪_)
     Distributivityₗ.proof([∩][∪]-distributivityₗ) = [∩][∪]-distributivityₗ-raw where
-      [∩][∪]-distributivityₗ-raw : ∀{A B C} → (A ∩ (B ∪ C)) ≅ ((A ∩ B) ∪ (A ∩ C))
+      [∩][∪]-distributivityₗ-raw : Names.Distributivityₗ ⦃ [≅]-equiv ⦄ (_∩_)(_∪_)
       _≅_.accepts-ε   ([∩][∪]-distributivityₗ-raw {A})     = distributivityₗ(_&&_)(_||_) {Language.accepts-ε A}
       _≅_.suffix-lang ([∩][∪]-distributivityₗ-raw {A}) {c} = [∩][∪]-distributivityₗ-raw {Language.suffix-lang A c}
 
@@ -186,8 +187,8 @@ module _ {Σ} where
   -- postulate [𝁼]-set-algebra : SetAlgebra -- TODO: Complement is missing
   -}
 
-module _ {Σ} where
-  open Oper{Σ}
+module _ {Σ : Alphabet{ℓ}} where
+  open Oper{ℓ}{Σ}
 
   suffix-lang-containment : ∀{c}{x}{L : Language(Σ)} → (x ∈ Language.suffix-lang(L)(c)) → ((c ⊰ x) ∈ L)
   suffix-lang-containment eq = eq
@@ -222,6 +223,16 @@ module _ {Σ} where
     r {[]} = IsTrue.[¬]-elim
     r {c ⊰ w} = r {w}
 
+  single-containment : ⦃ _ : ComputablyDecidable(_≡_) ⦄ → ∀{x}{a} → (x ∈ single(a)) ↔ (x ≡ singleton(a))
+  single-containment ⦃ dec ⦄ = [↔]-intro l r where
+    postulate l : ∀{x}{a} → (x ∈ single(a)) ← (x ≡ singleton(a))
+    {-l {c ⊰ w} [≡]-intro with ComputablyDecidable.decide(_≡_) ⦃ dec ⦄ c c
+    ... | 𝑇 = {!!}
+    ... | 𝐹 = {!!}-}
+
+    postulate r : ∀{x}{a} → (x ∈ single(a)) → (x ≡ singleton(a))
+    --r {c ⊰ w} p = {![↔]-to-[←] (ComputablyDecidable.proof-istrue(_≡_) {x = ?}) ?!}
+
   [∅]-containment : ∀{x} → (x ∈ ∅) ↔ ⊥
   [∅]-containment {x} = [↔]-intro (l{x}) (r{x}) where
     l : ∀{x} → (x ∈ ∅) ← ⊥
@@ -247,13 +258,13 @@ module _ {Σ} where
   Language-list-suffix A []      = A
   Language-list-suffix A (x ⊰ l) = Language.suffix-lang(A)(x)
 
-  suffix-concat-step : ∀{A : Language(Σ)}{l₁ l₂} → ((l₁ ++ l₂) ∈ A) → (l₂ ∈ Language-list-suffix(A)(l₁))
-  suffix-concat-step {A}{[]}         p = p
-  suffix-concat-step {A}{x ⊰ l₁}{l₂} p = {!!}
+  postulate suffix-concat-step : ∀{A : Language(Σ)}{l₁ l₂} → ((l₁ ++ l₂) ∈ A) → (l₂ ∈ Language-list-suffix(A)(l₁))
+  -- suffix-concat-step {A}{[]}         p = p
+  -- suffix-concat-step {A}{x ⊰ l₁}{l₂} p = {!!}
 
-  [𝁼]-containmentₗ : ∀{x y}{A B : Language(Σ)} → (x ∈ A) → (y ∈ B) → ((x ++ y) ∈ (A 𝁼 B))
+  postulate [𝁼]-containmentₗ : ∀{x y}{A B : Language(Σ)} → (x ∈ A) → (y ∈ B) → ((x ++ y) ∈ (A 𝁼 B))
   -- [𝁼]-containmentₗ {x} {y} {A} {B} xa xb with Language.accepts-ε(A) | y Oper.∈? B
-  [𝁼]-containmentₗ {LongOper.empty} {LongOper.empty} {A} {B} xa xb with Language.accepts-ε(A) | Language.accepts-ε(B)
+  {-[𝁼]-containmentₗ {LongOper.empty} {LongOper.empty} {A} {B} xa xb with Language.accepts-ε(A) | Language.accepts-ε(B)
   [𝁼]-containmentₗ {LongOper.empty} {LongOper.empty} {A} {B} xa xb | 𝑇 | 𝑇 = [⊤]-intro
   [𝁼]-containmentₗ {LongOper.empty} {LongOper.prepend x y} {A} {B} xa xb = {![⊤]-intro!} where
     test : ∀{A B : Language(Σ)}{a} → ([] ∈ A) → (a ∈ B) → (a ∈ (A 𝁼 B))
@@ -265,6 +276,7 @@ module _ {Σ} where
     
   [𝁼]-containmentₗ {LongOper.prepend x x₁} {LongOper.empty} {A} {B} xa xb = {!!}
   [𝁼]-containmentₗ {LongOper.prepend x x₁} {LongOper.prepend x₂ y} {A} {B} xa xb = {!!}
+-}
 
   -- [𝁼]-containment : ∀{x}{A B : Language(Σ)} → (x ∈ (A 𝁼 B)) ↔ ∃(a ↦ ∃ b ↦ (a ++ b ≡ x)∧(a ∈ A)∧(b ∈ B))
   -- [𝁼]-containment {x} = [↔]-intro (l{x}) (r{x}) where

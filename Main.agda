@@ -8,6 +8,7 @@ import Data.Boolean.Proofs
 import Data.Boolean.Stmt
 import Data.Boolean.Stmt.Proofs
 import Data.Either
+import Data.Either.Equiv
 import Data.Either.Proofs
 import Data.List
 import Data.List.Computability
@@ -39,24 +40,35 @@ import FormalLanguage.ContextFreeGrammar
 import FormalLanguage.Equals
 import FormalLanguage.Proofs
 import FormalLanguage.RegularExpression
-import Functional
--- import Function.DomainRaise
+-- import Formalization.ClassicalPropositionalLogic
+-- import Formalization.FunctionalML
+-- import Formalization.LambdaCalculus
+import Formalization.PrimitiveRecursion
+import Formalization.SimplyTypedLambdaCalculus
+import Function
+import Function.DomainRaise
 import Function.Domains
 import Function.Domains.Proofs
 import Function.Equals
 import Function.Equals.Proofs
--- import Function.Multi
-import Function.Names
-import Function.Proofs
+import Function.Multi
+import Function.Inverse
+import Function.Inverseᵣ
+-- import Function.Inverseₗ
 import Function.Iteration
 import Function.Iteration.Order
 import Function.Iteration.Proofs
+import Function.Multi
+import Function.Names
+import Function.Proofs
+import Functional
+import Lang.Inspect
 import Lang.Instance
 import Lang.Irrelevance
 import Lang.Size
 import Logic
 import Logic.Classical
--- import Logic.Classical.DoubleNegated
+import Logic.Classical.DoubleNegated
 import Logic.Computability
 import Logic.Computability.Binary
 import Logic.Names
@@ -74,6 +86,7 @@ import Numeral.Finite.Oper
 import Numeral.Finite.Oper.Comparisons
 import Numeral.Finite.Oper.Comparisons.Proofs
 import Numeral.Finite.Proofs
+import Numeral.Finite.Sequence
 import Numeral.Integer
 -- import Numeral.Integer.Function
 -- import Numeral.Integer.Oper
@@ -88,6 +101,7 @@ import Numeral.Natural.Function.Proofs
 import Numeral.Natural.GreatestCommonDivisor
 import Numeral.Natural.Induction
 import Numeral.Natural.Inductions
+-- import Numeral.Natural.LinearSearchDecidable
 import Numeral.Natural.Oper
 import Numeral.Natural.Oper.Comparisons
 import Numeral.Natural.Oper.Comparisons.Proofs
@@ -108,7 +122,8 @@ import Numeral.Natural.Relation.Order.Computability
 import Numeral.Natural.Relation.Order.Existence
 import Numeral.Natural.Relation.Order.Existence.Proofs
 import Numeral.Natural.Relation.Order.Proofs
--- import Numeral.Natural.Relation.Properties
+import Numeral.Natural.Relation.Properties
+-- import Numeral.Natural.Sequence
 import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
 -- import Numeral.Rational.AlterAdd

@@ -5,6 +5,8 @@ open import Data
 open import Data.Proofs
 open import Functional
 open import Function.Equals
+open import Function.Inverseᵣ
+open import Function.Inverse
 open import Function.Proofs
 open import Logic
 open import Logic.Propositional
@@ -61,7 +63,7 @@ module _ where
 
     [≽]-to-[≼] : (A ≽ B) → (B ≼ A)
     [≽]-to-[≼] ([∃]-intro(f) ⦃ f-surjective ⦄) =
-      ([∃]-intro(invᵣ f) ⦃ invᵣ-injective{f = f} ⦃ Function-function ⦄ ⦃ f-surjective ⦄ ⦄)
+      ([∃]-intro(invᵣ f) ⦃ invᵣ-injective{f = f} ⦃ f-surjective ⦄ ⦄)
 
     {-[≼]-to-[≽] : (A ≼ B) → (B ≽ A)
     [≼]-to-[≽] ([∃]-intro(f) ⦃ f-injective ⦄) =
@@ -77,14 +79,14 @@ module _ where
       [≍]-symmetry : Symmetry(_≍_ {ℓ})
       Symmetry.proof([≍]-symmetry) ([∃]-intro(f) ⦃ f-bijective ⦄)
         = [∃]-intro(inv f ⦃ f-bijective ⦄) ⦃
-            (inv-bijective{f = f} ⦃ Function-function ⦄ ⦃ f-bijective ⦄)
+            (inv-bijective{f = f} ⦃ f-bijective ⦄)
           ⦄
 
     instance
       [≍]-transitivity : Transitivity(_≍_ {ℓ})
       Transitivity.proof([≍]-transitivity) ([∃]-intro(f) ⦃ f-bijective ⦄) ([∃]-intro(g) ⦃ g-bijective ⦄)
         = [∃]-intro(g ∘ f) ⦃
-            ([∘]-bijective {f = g} ⦃ Function-function ⦄ {g = f} ⦃ g-bijective ⦄ ⦃ f-bijective ⦄)
+            ([∘]-bijective {f = g} {g = f} ⦃ g-bijective ⦄ ⦃ f-bijective ⦄)
           ⦄
 
     instance
@@ -110,7 +112,7 @@ module _ where
       [≽]-transitivity : Transitivity(_≽_ {ℓ})
       Transitivity.proof([≽]-transitivity) ([∃]-intro(f) ⦃ f-surjective ⦄) ([∃]-intro(g) ⦃ g-surjective ⦄)
         = [∃]-intro(g ∘ f) ⦃
-            ([∘]-surjective {f = g} ⦃ Function-function ⦄ {g = f} ⦃ g-surjective ⦄ ⦃ f-surjective ⦄)
+            ([∘]-surjective {f = g} {g = f} ⦃ g-surjective ⦄ ⦃ f-surjective ⦄)
           ⦄
 
     instance

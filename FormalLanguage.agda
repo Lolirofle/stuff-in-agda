@@ -1,14 +1,16 @@
-module FormalLanguage where
+module FormalLanguage {ℓ} where
 
 import      Lvl
 open import Data.List renaming (∅ to []) hiding (filter)
 open import Lang.Size
+open import Logic.Computability.Binary
 open import Data.Boolean
 open import Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.Boolean.Stmt
 open import Functional
 open import Relator.Equals
+open import Type
 
 -- Definitions:
 --   A language is a set of words.
@@ -20,7 +22,7 @@ open import Relator.Equals
 --   L is a language
 --   Σ is an alphabet
 
-Alphabet = Set
+Alphabet = Type{ℓ}
 Word     = List
 
 -- Language is defined as follows (LHS is using the definition of Language, RHS is using the usual "semantics" of languages as sets):
@@ -33,7 +35,7 @@ Word     = List
 --     suffix-lang(L)(c) returns the language of the rest of the words when a word is starting with c in L.
 -- Copied (with modifications) from: http://agda.readthedocs.io/en/v2.5.2/language/sized-types.html (2017-05-13)
 -- which links the following paper: "Formal Languages, Formally and Coinductively, Dmitriy Traytel, FSCD (2016)" [https://www21.in.tum.de/~traytel/papers/fscd16-coind_lang/paper.pdf]
-record Language (Σ : Alphabet) {s₁ : Size} : Set where
+record Language (Σ : Alphabet) {s₁ : Size} : Type{ℓ} where
   constructor intro
   coinductive
   field
@@ -61,9 +63,9 @@ module Oper {Σ} where
   -- The single symbol language
   -- The language consisting of a single word with a single letter
   -- TODO: This is only possible when Alphabet has a computably decidable equality relation
-  -- single : ∀{s} → Alphabet → Language(Σ){s}
-  -- Language.accepts-ε   (single _)   = 𝐹
-  -- Language.suffix-lang (single a) c = if (a ≡? c) then ε else ∅
+  single : ⦃ _ : ComputablyDecidable(_≡_) ⦄ → ∀{s} → Σ → Language(Σ){s}
+  Language.accepts-ε   (single _)   = 𝐹
+  Language.suffix-lang (single a) c = if (ComputablyDecidable.decide(_≡_) a c) then ε else ∅
 
   -- The filtered language
   filter : ∀{s} → (Σ → Bool) → Language(Σ){s}

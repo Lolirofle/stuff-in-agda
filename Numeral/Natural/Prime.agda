@@ -1,19 +1,20 @@
-module Numeral.Natural.Prime{ℓ} where
+module Numeral.Natural.Prime where
 
 import Lvl
 open import Functional
-open import Logic.Propositional{ℓ}
-open import Logic.Predicate{ℓ}
+open import Logic
+open import Logic.Propositional
+open import Logic.Predicate
 open import Numeral.Natural
-open import Numeral.Natural.Relation.Divisibility{ℓ}
-open import Numeral.Natural.Relation.Divisibility.Proofs{ℓ}
+open import Numeral.Natural.Relation.Divisibility
+open import Numeral.Natural.Relation.Divisibility.Proofs
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Oper.Proofs{ℓ}
-open import Numeral.Natural.Relation.Order{ℓ}
-open import Numeral.Natural.Relation.Order.Proofs{ℓ}
-open import Relator.Equals{ℓ}{Lvl.𝟎}
-open import Relator.Equals.Proofs{ℓ}{Lvl.𝟎}
-open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
+open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Relation.Order
+open import Numeral.Natural.Relation.Order.Proofs
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Structure.Relator.Properties
 
 -- A prime number is a number `n` in which its divisors are only `{1,n}`.
 record Prime(n : ℕ) : Stmt where

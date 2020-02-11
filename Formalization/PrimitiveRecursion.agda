@@ -1,4 +1,4 @@
-module Function.PrimitiveRecursion where
+module Formalization.PrimitiveRecursion where
 
 import      Lvl
 open import Data
@@ -60,7 +60,6 @@ evaluate {_}    (Composition{m}{n}(f)(gs)) xs            = evaluate f (mapper gs
   mapper (g ⊰ gs) = (evaluate g xs) ⊰ (mapper gs)
 evaluate {𝐒(_)} (Recursion(f)(g))          (𝟎    ⊰ xs)   = evaluate f xs
 evaluate {𝐒(_)} (Recursion(f)(g))          (𝐒(n) ⊰ xs)   = evaluate g (n ⊰ (evaluate (Recursion(f)(g)) (n ⊰ xs) ⊰ xs))
-
 
 Const : Function(0) → ∀{n} → Function(n)
 Const(c) = Composition(c) ∅

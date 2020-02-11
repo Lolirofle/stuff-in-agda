@@ -3,6 +3,7 @@ module Sets.Setoid.Size.Proofs where
 import      Lvl
 open import Functional
 open import Function.Proofs
+open import Function.Inverse
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
@@ -41,8 +42,8 @@ module _ {ℓ} where
     [≍]-symmetry : Symmetry(_≍_ {ℓ})
     Symmetry.proof([≍]-symmetry) ([∃]-intro(f) ⦃ [∧]-intro f-function f-bijective ⦄)
       = [∃]-intro(inv f ⦃ f-bijective ⦄) ⦃ [∧]-intro
-          (inv-function{f = f} ⦃ f-function ⦄ ⦃ f-bijective ⦄)
-          (inv-bijective{f = f} ⦃ f-function ⦄ ⦃ f-bijective ⦄)
+          (inv-function{f = f} ⦃ f-bijective ⦄)
+          (inv-bijective{f = f} ⦃ f-bijective ⦄ ⦃ f-function ⦄)
         ⦄
 
 module _ {ℓ} where

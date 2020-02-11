@@ -4,33 +4,35 @@ import      Lvl
 open import Data
 open import Data.Either as Either
 open import Functional
+open import Logic
 open import Logic.Predicate
-open import Structure.Function.Domain hiding (Function)
+open import Structure.Function.Domain
 open import Type
 
-module _ {ℓ} {A B : Type{ℓ}} where
+module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} where
   open import Sets.Setoid
   open import Structure.Relator.Equivalence
   open import Structure.Relator.Properties
 
   module _ ⦃ equiv-A : Equiv(A) ⦄ ⦃ equiv-B : Equiv(B) ⦄ where
+    data EitherEquality : (A ‖ B) → (A ‖ B) → Stmt{ℓ₁ ⊔ ℓ₂} where
+      Left  : ∀{x y} → (x ≡ y) → EitherEquality(Left  x)(Left  y)
+      Right : ∀{x y} → (x ≡ y) → EitherEquality(Right x)(Right y)
+
     instance
       Either-equiv : Equiv(A ‖ B)
-      Equiv._≡_ Either-equiv (Left  x) (Left  y) = x ≡ y
-      Equiv._≡_ Either-equiv (Left  x) (Right y) = Empty
-      Equiv._≡_ Either-equiv (Right x) (Left  y) = Empty
-      Equiv._≡_ Either-equiv (Right x) (Right y) = x ≡ y
-      Reflexivity.proof  (Equivalence.reflexivity  (Equiv.[≡]-equivalence Either-equiv)) {Left  x} = reflexivity(_≡_ {T = A})
-      Reflexivity.proof  (Equivalence.reflexivity  (Equiv.[≡]-equivalence Either-equiv)) {Right x} = reflexivity(_≡_ {T = B})
-      Symmetry.proof     (Equivalence.symmetry     (Equiv.[≡]-equivalence Either-equiv)) {Left  x} {Left  y} = symmetry(_≡_ {T = A})
-      Symmetry.proof     (Equivalence.symmetry     (Equiv.[≡]-equivalence Either-equiv)) {Right x} {Right y} = symmetry(_≡_ {T = B})
-      Transitivity.proof (Equivalence.transitivity (Equiv.[≡]-equivalence Either-equiv)) {Left  x} {Left  y} {Left  z} = transitivity(_≡_ {T = A})
-      Transitivity.proof (Equivalence.transitivity (Equiv.[≡]-equivalence Either-equiv)) {Right x} {Right y} {Right z} = transitivity(_≡_ {T = B})
+      Equiv._≡_ Either-equiv = EitherEquality
+      Reflexivity.proof (Equivalence.reflexivity (Equiv.[≡]-equivalence Either-equiv)) {Left  _} = Left (reflexivity(_≡_))
+      Reflexivity.proof (Equivalence.reflexivity (Equiv.[≡]-equivalence Either-equiv)) {Right _} = Right (reflexivity(_≡_))
+      Symmetry.proof (Equivalence.symmetry (Equiv.[≡]-equivalence Either-equiv)) {.(Left _)} {.(Left _)} (Left p) = Left (symmetry(_≡_) p)
+      Symmetry.proof (Equivalence.symmetry (Equiv.[≡]-equivalence Either-equiv)) {.(Right _)} {.(Right _)} (Right p) = Right (symmetry(_≡_) p)
+      Transitivity.proof (Equivalence.transitivity (Equiv.[≡]-equivalence Either-equiv)) {.(Left _)} {.(Left _)} {.(Left _)} (Left xy) (Left yz) = Left (transitivity(_≡_) xy yz)
+      Transitivity.proof (Equivalence.transitivity (Equiv.[≡]-equivalence Either-equiv)) {.(Right _)} {.(Right _)} {.(Right _)} (Right xy) (Right yz) = Right (transitivity(_≡_) xy yz)
 
     instance
       Left-function : Function ⦃ equiv-A ⦄ ⦃ Either-equiv ⦄ (Left)
-      Function.congruence Left-function = id
+      Function.congruence Left-function = Left
 
     instance
       Right-function : Function ⦃ equiv-B ⦄ ⦃ Either-equiv ⦄ (Right)
-      Function.congruence Right-function = id
+      Function.congruence Right-function = Right

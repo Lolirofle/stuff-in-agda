@@ -42,6 +42,8 @@ module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) 
     field proof : Names.ConverseTotal(_▫_)
   converseTotal = inst-fn ConverseTotal.proof
 
+-- Definition of a converse dichotomy.
+-- It or its converse always holds, but never both at the same time.
 module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
   record ConverseDichotomy : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro

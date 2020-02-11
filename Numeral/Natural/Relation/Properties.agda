@@ -13,6 +13,7 @@ open import Numeral.Natural.Induction
 open import Numeral.Natural.Relation
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function.Domain
 open import Structure.Operator.Properties
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
@@ -26,4 +27,4 @@ open import Type
 [≡][ℕ]-excluded-middle {𝟎}   {𝟎}    = [∨]-introₗ [≡]-intro
 [≡][ℕ]-excluded-middle {𝟎}   {𝐒(_)} = [∨]-introᵣ \()
 [≡][ℕ]-excluded-middle {𝐒(_)}{𝟎}    = [∨]-introᵣ \()
-[≡][ℕ]-excluded-middle {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ [≡]-with(𝐒)) ([∨]-introᵣ ∘ (contrapositiveᵣ [𝐒]-injectivity)) ([≡][ℕ]-excluded-middle {a}{b})
+[≡][ℕ]-excluded-middle {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ [≡]-with(𝐒)) ([∨]-introᵣ ∘ (contrapositiveᵣ(injective(𝐒)))) ([≡][ℕ]-excluded-middle {a}{b})

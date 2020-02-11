@@ -29,50 +29,68 @@ open import Structure.Relator.Properties
 open import Structure.Relator.Ordering
 open import Syntax.Transitivity
 open import Type
+open import Type.Empty
 open import Type.Size.Finite
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ op : BinaryOperator(_▫_) ⦄ {id} ⦃ ident : Identity(_▫_)(id) ⦄ ⦃ assoc : Associativity(_▫_) ⦄ where
+  -- Operator alias for iterated application of an operator with an element.
   _^_ : T → ℕ → T
   x ^ n = Function.Iteration.repeatₗ(n)(_▫_)(id)(x)
 
+  -- `FiniteOrder(x)(n)` means that the element `x` is of order `n`.
+  -- It is finite in the sense that it is a number and not infinite.
+  -- An element's order is the smallest positive integer power of x such that the result is the identity element.
   data FiniteOrder (x : T) : ℕ → Stmt{ℓ} where
     intro : ∀{n} → Weak.Properties.MinimumOf(_≤_)(n ↦ x ^ 𝐒(n) ≡ id)(n) → FiniteOrder(x)(𝐒(n))
 
+  -- `Ord(x)` means that the element `x` has a finite order.
   Ord : T → Stmt{ℓ}
   Ord(x) = ∃(FiniteOrder(x))
 
+  -- `ord(x)` is the order of x (when it is finite).
   ord : (x : T) → ⦃ _ : Ord(x) ⦄ → ℕ
   ord(_) ⦃ [∃]-intro n ⦄ = n
 
   module _ {x : T} where
+    -- An order is never 0 by definition.
     finite-order-0 : ¬ FiniteOrder(x)(𝟎)
     finite-order-0 ()
 
+    -- An element power its order is the identity element.
     [^]-by-ord : ⦃ p : Ord(x) ⦄ → (x ^ ord(x) ⦃ p ⦄ ≡ id)
     [^]-by-ord ⦃ [∃]-intro (𝐒(_)) ⦃ intro p ⦄ ⦄ = Weak.Properties.MinimumOf.proof(p)
 
+    -- When an element power something is the identity element, then the power is either zero or greater/equal its order.
     ord-is-minimum : ⦃ p : Ord(x) ⦄ → ∀{n} → (x ^ n ≡ id) → (n ≡ₑ 𝟎) ∨ (ord(x) ⦃ p ⦄ ≤ n)
     ord-is-minimum ⦃ [∃]-intro (_)     ⦃ intro p ⦄ ⦄      {𝟎}   x0id  = [∨]-introₗ [≡ₑ]-intro
     ord-is-minimum ⦃ [∃]-intro .(𝐒 po) ⦃ intro {po} p ⦄ ⦄ {𝐒 n} xsnid = [∨]-introᵣ ([≤]-with-[𝐒] ⦃ Weak.Properties.MinimumOf.minimum(p) ⦃ xsnid ⦄ ⦄)
 
+    -- When an element power something less than its order and it is the identity element, then the power is 0.
     ord-is-minimum-but-0 : ⦃ p : Ord(x) ⦄ → ∀{n} → (x ^ n ≡ id) → (n < ord(x) ⦃ p ⦄) → (n ≡ₑ 𝟎)
     ord-is-minimum-but-0 ⦃ p ⦄ {𝟎}    _    _    = [≡ₑ]-intro
     ord-is-minimum-but-0 ⦃ p ⦄ {𝐒(n)} xnid nord with ord-is-minimum ⦃ p ⦄ {𝐒(n)} xnid
     ... | [∨]-introᵣ ordsn = [⊥]-elim([<]-to-[≱] nord (ordsn))
 
+    -- An order is never 0.
     ord-non-zero : ⦃ p : Ord(x) ⦄ → (ord(x) ⦃ p ⦄ ≢ₑ 𝟎)
     ord-non-zero ⦃ [∃]-intro 𝟎 ⦃ ⦄ ⦄ [≡ₑ]-intro
 
+    -- Iteration (_^_) distributes to the right.
+    -- Can also be seen as iteration preserving from addition to the operation.
     [^]-by-add : ∀{a b} → ((x ^ a) ▫ (x ^ b) ≡ x ^ (a + b))
     [^]-by-add {a}{b} = repeatₗ-by-sum {X = T}{_▫_}{x}{id}{a}{b}
 
+    -- Nested iterations can join to be a product.
     [^]-by-product : ∀{a b} → ((((x ^ a)) ^ b) ≡ x ^ (a ⋅ b))
     [^]-by-product {a}{b} = repeatₗ-by-product {X = T}{_▫_}{x}{id}{a}{b}
 
+    -- When powering a difference yields the identity element, the powered elements are the same.
     [^]-by-distanceₗ : ∀{a b} → (x ^ a ≡ x ^ b) ← (x ^ (a 𝄩 b) ≡ id)
     [^]-by-distanceₗ {a}{b} = repeatₗ-by-distanceₗ {X = T}{_▫_}{x}{id}{a}{b}
 
+    -- Theorems where `n` is a power which yields an identity element.
     module _ {n} (n-id : (x ^ n ≡ id)) where
+      -- Adding something to `n` is only leaving the something behind.
       [^]-by-id-add : ∀{a} → (x ^ (n + a)  ≡ x ^ a)
       [^]-by-id-add {a} =
         x ^ (n + a)       🝖-[ symmetry(_≡_) ([^]-by-add {n}{a}) ]
@@ -80,6 +98,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
         id ▫ (x ^ a)      🝖-[ identityₗ(_▫_)(id) ]
         x ^ a             🝖-end
 
+      -- Multiplying something by `n` is still the identity element.
       [^]-by-id-multiple : ∀{a} → (x ^ (n ⋅ a) ≡ id)
       [^]-by-id-multiple {𝟎}    = repeatₗ-by-0 {X = T}{_▫_}{x}{id}
       [^]-by-id-multiple {𝐒(a)} =
@@ -88,6 +107,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
         id ▫ id                 🝖-[ identityₗ(_▫_)(id) ]
         id                      🝖-end
 
+    -- A power yields an identity element only when it is a multiple of the order of the element.
     [^]-id-when-div : ⦃ p : Ord(x) ⦄ → ∀{n} → (x ^ n ≡ id) ↔ (ord(x) ⦃ p ⦄ ∣ n)
     [^]-id-when-div ⦃ p ⦄ {n} = [↔]-intro (l{n}) (r{n}) where
       l : ∀{n} → (x ^ n ≡ id) ← (ord(x) ⦃ p ⦄ ∣ n)
@@ -148,7 +168,20 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
   Cyclic : Stmt{ℓ}
   Cyclic = ∃(Generator)
 
-  postulate finite-have-order : ⦃ Finite(T) ⦄ → ∀{a} → Ord(a)
+  {- TODO: Because the thing exists, there is finitely many. Search for the first one
+  finite-order-from-dec-existence : ⦃ Decidable(_≡_) ⦄ → ∀{a} → ∃(n ↦ (a ^ 𝐒(n) ≡ id)) → Ord(a)
+  finite-order-from-dec-existence {n} asnid = {!!}
+  -- intro (Weak.Properties.intro ⦃ asnid ⦄ {!!})
+
+  -- TODO: Assume decidable equality and use finite-order-from-dec-existence above. Existence should follow from finiteness
+  finite-have-order : ⦃ Finite(T) ⦄ → ∀{a} → Ord(a)
+  ∃.witness (finite-have-order ⦃ [∃]-intro size ⦃ fin-bij ⦄ ⦄) = size
+  ∃.proof (finite-have-order ⦃ [∃]-intro 𝟎 ⦃ [∃]-intro fin-bij ⦄ ⦄ {a = a}) with fin-bij a
+  ... | ()
+  ∃.proof (finite-have-order ⦃ [∃]-intro (𝐒(size)) ⦃ fin-bij ⦄ ⦄) = intro {!!}
+  -}
+
+
   postulate cyclic-commutative : ⦃ Cyclic ⦄ → Commutativity(_▫_)
   -- generator-order-size : ⦃ Finite(T) ⦄ → ∀{a} → ⦃ p : Ord(a) ⦄ → Generator(a) ↔ ((# T) ≡ₑ ord(a) ⦃ p ⦄)
   -- cyclic-order-size : ⦃ Finite(T) ⦄ → ⦃ Cyclic ⦄ ↔ ∃(a ↦ (# T) ≡ₑ ord(a))

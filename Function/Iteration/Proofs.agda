@@ -14,7 +14,7 @@ open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
 import      Structure.Operator.Names as Names
 open import Structure.Relator.Properties
-open import Structure.Function.Domain hiding (Function)
+open import Structure.Function.Domain
 open import Syntax.Transitivity
 open import Type
 

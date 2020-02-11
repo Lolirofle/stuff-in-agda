@@ -1,4 +1,4 @@
-module FormalLanguage.Equals where
+module FormalLanguage.Equals{ℓ} where
 
 import      Lvl
 open import FormalLanguage
@@ -10,9 +10,10 @@ import      Structure.Relator.Names as Names
 open import Sets.Setoid
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Type
 
-module _ {Σ}{s₁ : Size} where
-  record _≅_ (A : Language(Σ){∞}) (B : Language(Σ){∞}) : Set where
+module _ {Σ : Alphabet{ℓ}}{s₁ : Size} where
+  record _≅_ (A : Language(Σ){∞}) (B : Language(Σ){∞}) : Type{ℓ} where
     constructor intro
     coinductive
     field

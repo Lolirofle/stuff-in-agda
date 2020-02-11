@@ -34,11 +34,11 @@ _    ≤? _    = 𝐹
 
 -- Greater-than check
 _>?_ : ∀{a b} → 𝕟(a) → 𝕟(b) → Bool
-x >? y = !(x <? y)
+x >? y = (y <? x)
 
 -- Greater-than or equals check
 _≥?_ : ∀{a b} → 𝕟(a) → 𝕟(b) → Bool
-x ≥? y = !(x ≤? y)
+x ≥? y = (y ≤? x)
 
 -- Compare
 _⋚?_ : ∀{a b} → 𝕟(a) → 𝕟(b) → (−|0|+)

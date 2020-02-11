@@ -4,7 +4,7 @@ import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid hiding (Function)
+open import Sets.Setoid
 open import Structure.Function.Domain
 open import Syntax.Function
 open import Type

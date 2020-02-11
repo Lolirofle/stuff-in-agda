@@ -31,7 +31,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
 
   -- TODO: The other functions in Logic.Computability.ComputablyDecidable
 
-  module ComputablyDecidable (_▫_ : X → Y → Stmt) ⦃ decidable : ComputablyDecidable(_▫_) ⦄ where
+  module ComputablyDecidable (_▫_ : X → Y → Stmt{ℓ₃}) ⦃ decidable : ComputablyDecidable(_▫_) ⦄ where
     decide : X → Y → Bool
     decide(x)(y) = C.ComputablyDecidable.decide (decidable) (x , y)
 

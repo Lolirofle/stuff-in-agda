@@ -33,7 +33,7 @@ record SemiComputablyDecidable {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} (P : X → St
   soundness-𝐹 = (contrapositiveᵣ(completeness-𝑇)) ∘ ([↔]-to-[←] [≢][𝑇]-is-[𝐹])
 
 -- Existence of a computable function which mirrors the result of whether a proposition is provable or not.
-record ComputablyDecidable {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} (P : X → Stmt{ℓ₂}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where -- TODO: Is this the correct definition?
+record ComputablyDecidable {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} (P : X → Stmt{ℓ₂}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
   constructor intro
   field
     decide : X → Bool

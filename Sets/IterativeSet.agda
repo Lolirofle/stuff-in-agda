@@ -18,7 +18,7 @@ open import Type.Dependent
 module _ where
   private variable {ℓ₁ ℓ₂} : Lvl.Level
 
-  -- A model of constructive set theory (CZF) using iterative sets.
+  -- A model of constructive set theory (CZF) using iterative sets. (TODO: Not sure. Filter does not work?)
   record Iset : Type{Lvl.𝐒(ℓ₁)} where
     coinductive
     constructor intro
@@ -57,13 +57,21 @@ module _ where
   ⋃ A = intro{Index = Σ(Index(A)) (ia ↦ Index(elem(A)(ia)))} (\{(intro ia i) → elem(elem(A)(ia))(i)})
 
   filter : (A : Iset{ℓ₁}) → (Index(A) → Stmt{ℓ₁}) → Iset{ℓ₁}
-  filter A P = intro {Index = Σ(Index(A)) P} (\{(intro i _) → elem(A)(i)})
+  filter A P = intro {Index = Σ(Index(A)) P} (elem(A) ∘ Σ.left)
+
+  {-
+  filter2 : (A : Iset{Lvl.𝐒 ℓ₁}) → (Iset{ℓ₁} → Stmt{ℓ₁}) → Iset{Lvl.𝐒 ℓ₁}
+  filter2 A P = intro {Index = Σ(Iset) P} (\{(intro i p) → {!i!}})
+  -- intro i p
+  -}
 
   filterBool : (A : Iset{ℓ₁}) → (Index(A) → Bool) → Iset{ℓ₁}
   filterBool A f = filter A (Lvl.Up ∘ IsTrue ∘ f)
 
   ℘ : Iset{ℓ₁} → Iset{ℓ₁}
-  ℘ A = intro{Index = Index(A) → Bool} (filterBool A) -- TODO: How should one use Stmt and filter instead? The levels become a problem
+  ℘ A = intro{Index = Index(A) → Bool} (filterBool A)
+  -- intro{Index = Index(A) → Stmt} (filter A)
+  -- TODO: How should one use Stmt and filter instead? The levels become a problem
 
   record _≡_ (A : Iset{ℓ₁}) (B : Iset{ℓ₁}) : Type{ℓ₁}
   record _⊆_ (A : Iset{ℓ₁}) (B : Iset{ℓ₁}) : Type{ℓ₁}
@@ -193,7 +201,8 @@ module _ where
   Σ.right            (∃.witness (Tuple.left (filter-inclusion {i = i}) pi)) = pi
   _≡_.left  (∃.proof (Tuple.left filter-inclusion pi)) = intro id [≡]-reflexivity
   _≡_.right (∃.proof (Tuple.left filter-inclusion pi)) = intro id [≡]-reflexivity
-  Tuple.right (filter-inclusion {i = i}) ([∃]-intro (intro iA PiA) ⦃ proof ⦄) = {!_⊇_.proof ([≡]-to-[⊇] proof) {intro ? ?}!}
+  Tuple.right (filter-inclusion {i = i}) ([∃]-intro (intro iA PiA) ⦃ [≡]-intro ⦄) = {!!}
+  -- {!_⊇_.proof ([≡]-to-[⊇] proof) {intro ? ?}!}
   -}
 
   -- Iset-induction : ∀{P : Iset{ℓ₁} → Stmt{ℓ₂}} → (∀{I : Type{ℓ₁}}{e : I → Iset{ℓ₁}} → ((∀{i : I} → P(e(i))) → P(Iset.intro(e)))) → (∀{A : Iset{ℓ₁}} → P(A))

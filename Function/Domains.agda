@@ -88,3 +88,8 @@ module _ {ℓₒ₁ ℓₒ₂ : Lvl.Level} {X : Type{ℓₒ₁}} {Y : Type{ℓ�
     field
       obj : X
       ⦃ proof ⦄ : (f(obj) ≡ y)
+
+  -- TODO: Temporary name. Use this instead and Unapply is Σ Unapply2
+  record Unapply2 (f : X → Y) (y : Y) (x : X) : Type{ℓₒ₂} where
+    constructor intro
+    field ⦃ proof ⦄ : (f(x) ≡ y)

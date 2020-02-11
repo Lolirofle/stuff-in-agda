@@ -6,14 +6,48 @@ open import Logic
 import      Lvl
 open import Type
 
+private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+private variable X Y Z W : Stmt{ℓ}
+private variable P : X → Stmt{ℓ}
+
+module _ where
+  open import Logic.Propositional
+  open import Logic.Propositional.Theorems
+
+  [→]ₗ-[¬¬]-elim : ((¬¬ X) → Y) → (X → Y)
+  [→]ₗ-[¬¬]-elim = liftᵣ([¬¬]-intro)
+
+  [→]ᵣ-[¬¬]-move-out : (X → (¬¬ Y)) → ¬¬(X → Y)
+  [→]ᵣ-[¬¬]-move-out {X = X}{Y = Y} (xnny) =
+    (nxy ↦
+      ([→]-elim
+        ((x ↦
+          (([⊥]-elim
+            (([→]-elim
+              ((y ↦
+                (([→]-elim
+                  ((const y) :of: (X → Y))
+                  (nxy           :of: ¬(X → Y))
+                ) :of: ⊥)
+              ) :of: (¬ Y))
+              (([→]-elim x xnny) :of: (¬¬ Y))
+            ) :of: ⊥)
+          ) :of: Y)
+        ) :of: (X → Y))
+        (nxy :of: ¬(X → Y))
+      )
+    )
+
+  double-contrapositiveᵣ : (X → Y) → ((¬¬ X) → (¬¬ Y)) -- Classic(X → Y) → Classic(¬¬ X → ¬¬ Y)
+  double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
+
+  [¬¬]-double-contrapositiveₗ : ¬¬(X → Y) ← ((¬¬ X) → (¬¬ Y))
+  [¬¬]-double-contrapositiveₗ {X = X}{Y = Y} p = [→]ᵣ-[¬¬]-move-out {X = X}{Y = Y} ([→]ₗ-[¬¬]-elim {X = X}{Y = ¬¬ Y} p)
+
 module Propositional where
   import      Logic.Propositional          as Constructive
   import      Logic.Propositional.Theorems as ConstructiveTheorems
   import      Logic.Predicate              as Constructive1
-
-  private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
-  private variable X Y Z W : Stmt{ℓ}
-  private variable P : X → Stmt{ℓ}
 
   -- Classical propositions are expressed as propositions wrapped in double negation.
   -- TODO: I am not sure, but I think this works? My reasoning is the following:
@@ -89,7 +123,7 @@ module Propositional where
       open ConstructiveTheorems
 
       l : Classic(X → Y) ← (Classic(X) → Classic(Y))
-      l = {!!} -- [→]ᵣ-[¬¬]-move-out ∘ [→]ₗ-[¬¬]-elim
+      l = [→]ᵣ-[¬¬]-move-out ∘ [→]ₗ-[¬¬]-elim
 
       r : Classic(X → Y) → (Classic(X) → Classic(Y))
       r(nnxy)(nnx)(ny) =
@@ -123,13 +157,25 @@ module Propositional where
     prop-intro = ConstructiveTheorems.[¬¬]-intro
 
     [→]₁-intro : (X → Y) → (Classic(X) → Classic(Y))
-    [→]₁-intro = {!!} -- ConstructiveTheorems.double-contrapositiveᵣ
+    [→]₁-intro = double-contrapositiveᵣ
 
     [→]₂-intro : (X → Y → Z) → (Classic(X) → Classic(Y) → Classic(Z))
     [→]₂-intro(xyz) = (Constructive.[↔]-to-[→] [¬¬][→]-preserving) ∘ ([→]₁-intro(xyz))
 
     [→]₃-intro : (X → Y → Z → W) → (Classic(X) → Classic(Y) → Classic(Z) → Classic(W))
     [→]₃-intro(xyzw) = (Constructive.[↔]-to-[→] [¬¬][→]-preserving) ∘₂ ([→]₂-intro(xyzw))
+
+    ------------------------------------------
+    -- Theorems
+
+    [→][∧]-assumptionₗ : Classic((X ∧ Y) → Z) ← Classic(X → Y → Z)
+    [→][∧]-assumptionₗ = [→]₁-intro(Tuple.uncurry)
+
+    [→][∧]-assumptionᵣ : Classic((X ∧ Y) → Z) → Classic(X → Y → Z)
+    [→][∧]-assumptionᵣ = [→]₁-intro(Tuple.curry)
+
+    [¬¬]-intro : Classic(X) → Classic(¬¬ X)
+    [¬¬]-intro = ConstructiveTheorems.[¬¬]-intro
 
     ------------------------------------------
     -- Conjunction (AND)
@@ -150,13 +196,13 @@ module Propositional where
     [→]-elim = [→]₂-intro(swap Constructive.[→]-elim)
 
     [→]-intro : (Classic(X) → Classic(Y)) → Classic(X → Y)
-    [→]-intro = {!!} -- ConstructiveTheorems.[¬¬]-double-contrapositiveₗ
+    [→]-intro = [¬¬]-double-contrapositiveₗ
 
     ------------------------------------------
     -- Reverse implication
 
     [←]-intro : (Classic(Y) ← Classic(X)) → Classic(Y ← X)
-    [←]-intro = {!!} -- ConstructiveTheorems.[¬¬]-double-contrapositiveₗ
+    [←]-intro = [¬¬]-double-contrapositiveₗ
 
     [←]-elim : Classic(X) → Classic(Y ← X) → Classic(Y)
     [←]-elim = [→]₂-intro(Constructive.[←]-elim)
@@ -170,7 +216,7 @@ module Propositional where
     [↔]-elimₗ : Classic(X ↔ Y) → Classic(X) ← Classic(Y)
     [↔]-elimₗ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-to-[←]))
 
-    [↔]-elimᵣ : ∀{X Y} → Classic(X ↔ Y) → Classic(X) → Classic(Y)
+    [↔]-elimᵣ : Classic(X ↔ Y) → Classic(X) → Classic(Y)
     [↔]-elimᵣ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-to-[→]))
 
     ------------------------------------------
@@ -206,7 +252,7 @@ module Propositional where
     [¬]-intro : (Classic(X) → Classic(⊥)) → Classic(¬ X)
     [¬]-intro = ([→]₁-intro(Constructive.[¬]-intro)) ∘ [→]-intro
 
-    [¬]-elim : Classic(¬ X) → Classic(X → ⊥) -- TODO
+    [¬]-elim : Classic(¬ X) → Classic(X → ⊥)
     [¬]-elim = [→]₁-intro(Constructive.[¬]-elim)
 
     ------------------------------------------
@@ -236,9 +282,11 @@ module Propositional where
     [¬]-elim₂ : Classic((¬ X) → ⊥) → Classic(X)
     [¬]-elim₂ = [¬¬]-elim ∘ [¬]-intro ∘ [→]-elim
 
-    postulate [→]-disjunctive-formᵣ : Classic(X → Y) → Classic((¬ X) ∨ Y)
+    [→]-disjunctive-formᵣ : Classic(X → Y) → Classic((¬ X) ∨ Y)
+    [→]-disjunctive-formᵣ n-n-x→y n-nx∨y = (n-nx∨y ∘ Constructive.[∨]-introₗ) (n-n-x→y ∘ (n-nx∨y ∘ Constructive.[∨]-introᵣ ∘₂ apply))
 
-    postulate contrapositiveₗ : Classic(X → Y) ← Classic((¬ X) ← (¬ Y))
+    contrapositiveₗ : Classic(X → Y) ← Classic((¬ X) ← (¬ Y))
+    contrapositiveₗ n-n-ny→nx = [→]-intro ([¬¬]-elim ∘ ConstructiveTheorems.contrapositiveᵣ([→]-elim n-n-ny→nx) ∘ [¬¬]-intro)
 
     double-contrapositiveₗ : Classic(X → Y) ← Classic((¬¬ X) → (¬¬ Y))
     double-contrapositiveₗ = contrapositiveₗ ∘ contrapositiveₗ
@@ -252,56 +300,6 @@ module Propositional where
     -}
 
     -- postulate callcc2 : ∀{X Y Z} → ((X → Y) → Z) → X
-
-    ------------------------------------------
-    -- Theorems
-
-    [→][∧]-assumptionₗ : Classic((X ∧ Y) → Z) ← Classic(X → Y → Z)
-    [→][∧]-assumptionₗ = [→]₁-intro(Tuple.uncurry)
-
-    [→][∧]-assumptionᵣ : Classic((X ∧ Y) → Z) → Classic(X → Y → Z)
-    [→][∧]-assumptionᵣ = [→]₁-intro(Tuple.curry)
-
-    [¬¬]-intro : Classic(X) → Classic(¬¬ X)
-    [¬¬]-intro = ConstructiveTheorems.[¬¬]-intro
-
-    double-contrapositiveᵣ : Classic(X → Y) → Classic(¬¬ X → ¬¬ Y)
-    double-contrapositiveᵣ = [→]₁-intro [→]₁-intro
-
-{- TODO: These are moved here from Logic.Propositional.Theorems
-module _ {ℓ} {X : Stmt{ℓ}}{Y : Stmt{ℓ}} where
-  [→]ₗ-[¬¬]-elim : ((¬¬ X) → Y) → (X → Y)
-  [→]ₗ-[¬¬]-elim = liftᵣ([¬¬]-intro)
-
-  [→]ᵣ-[¬¬]-move-out  : (X → (¬¬ Y)) → ¬¬(X → Y)
-  [→]ᵣ-[¬¬]-move-out (xnny) =
-    (nxy ↦
-      ([→]-elim
-        ((x ↦
-          (([⊥]-elim
-            (([→]-elim
-              ((y ↦
-                (([→]-elim
-                  ((const y) :of: (X → Y))
-                  (nxy           :of: ¬(X → Y))
-                ) :of: ⊥)
-              ) :of: (¬ Y))
-              (([→]-elim x xnny) :of: (¬¬ Y))
-            ) :of: ⊥)
-          ) :of: Y)
-        ) :of: (X → Y))
-        (nxy :of: ¬(X → Y))
-      )
-    )
-
-module _ {ℓ₁ ℓ₂} {X : Stmt{ℓ₁}}{Y : Stmt{ℓ₂}} where
-  double-contrapositiveᵣ : (X → Y) → ((¬¬ X) → (¬¬ Y))
-  double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
-
-module _ {ℓ} {X : Stmt{ℓ}}{Y : Stmt{ℓ}} where
-  [¬¬]-double-contrapositiveₗ : ¬¬(X → Y) ← ((¬¬ X) → (¬¬ Y))
-  [¬¬]-double-contrapositiveₗ p = [→]ᵣ-[¬¬]-move-out {_} {X}{Y} ([→]ₗ-[¬¬]-elim {_} {X}{¬¬ Y} p)
--}
 
 module _ where
   open import Logic.Propositional
