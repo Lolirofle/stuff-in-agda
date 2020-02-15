@@ -100,11 +100,12 @@ module _ {ℓₒ₁ ℓₒ₂} {A : Type{ℓₒ₁}} ⦃ eq-a : Equiv(A) ⦄ {B 
 
 module _ {ℓₒ₁ ℓₒ₂} {A : Type{ℓₒ₁}} ⦃ eq-a : Equiv(A) ⦄ {B : Type{ℓₒ₂}} ⦃ eq-b : Equiv(B) ⦄ where
   open import Function.Equals
+  open import Function.Equals.Proofs
 
   -- The constant function is extensionally a function.
   instance
     const-function-function : ∀{c : B} → Function {A = B}{B = A → B} const
-    _⊜_.proof (Function.congruence const-function-function p) = p
+    Function.congruence const-function-function = [⊜]-abstract
 
 module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₒ₄} {a : Type{ℓₒ₁}}{b : Type{ℓₒ₂}}{c : Type{ℓₒ₃}}{d : Type{ℓₒ₄}} ⦃ _ : Equiv(a → d) ⦄ where
   -- Function composition is associative.
@@ -182,6 +183,10 @@ module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
   s-combinator-const-id : ⦃ _ : Equiv(X → X) ⦄ → (s-combinator{X = X}{Y → X}{X} const const ≡ₛ id)
   s-combinator-const-id = reflexivity(_≡ₛ_)
 
+module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{ℓ₃}} ⦃ equiv-z : Equiv(Z) ⦄ where
+  s-combinator-const-eq : ∀{f}{a}{b} → (s-combinator{X = X}{Y = Y}{Z = Z} f (const b) a ≡ₛ f a b)
+  s-combinator-const-eq = reflexivity(_≡ₛ_)
+
 {- TODO: Maybe this is unprovable because types. https://plato.stanford.edu/entries/axiom-choice/#AxiChoLog https://plato.stanford.edu/entries/axiom-choice/choice-and-type-theory.html https://en.wikipedia.org/wiki/Diaconescu%27s_theorem
 module _ {fn-ext : FunctionExtensionality} where
   open import Function.Names
@@ -198,3 +203,10 @@ module _ {fn-ext : FunctionExtensionality} where
     C : (Bool → Stmt) → Stmt
     C(F) = (F ⊜ A) ∨ (F ⊜ B)
 -}
+
+module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {X : Type{ℓₒ₁}} ⦃ eq-x : Equiv(X) ⦄ {Y : Type{ℓₒ₂}} ⦃ eq-y : Equiv(Y) ⦄ {Z : Type{ℓₒ₃}} ⦃ eq-z : Equiv(Z) ⦄ where
+  open import Function.Equals
+  open import Function.Equals.Proofs
+
+  s-combinator-injective : Injective(s-combinator {X = X}{Y = Y}{Z = Z})
+  _⊜_.proof (Injective.proof s-combinator-injective {f} {g} sxsy) {x} = Function.Equals.intro(\{a} → [⊜]-apply([⊜]-apply sxsy {const(a)}){x}) -- TODO: Left inverse (S⁻¹ ∘ S = id) is probably (S⁻¹ f a b = f (const b) a)

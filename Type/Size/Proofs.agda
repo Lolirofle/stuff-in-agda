@@ -116,8 +116,8 @@ module _ where
           ⦄
 
     instance
-      [≼]-minimum : Weak.Properties.Minimum(_≼_ {ℓ})(Empty)
-      Weak.Properties.Minimum.proof([≼]-minimum) = [∃]-intro(empty) ⦃ empty-injective ⦄
+      [≼]-minimum : Weak.Properties.LE.Minimum(_≼_ {ℓ})(Empty)
+      Weak.Properties.LE.Minimum.proof([≼]-minimum) = [∃]-intro(empty) ⦃ empty-injective ⦄
 
     -- TODO: Impossible because there are no functions of type (T → ⊥)?
     -- instance

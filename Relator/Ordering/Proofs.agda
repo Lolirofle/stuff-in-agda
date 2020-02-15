@@ -49,7 +49,7 @@ module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{�
       [<]-asymmetry : Asymmetry(_<_) -- TODO: Proof of this property is independent of the model. Actually, many of them here are
       [<]-asymmetry = [irreflexivity,transitivity]-to-asymmetry
 
-    [<]-strictOrder : Strict.Order(_<_)
+    [<]-strictOrder : Strict.PartialOrder(_<_)
     [<]-strictOrder = Strict.intro
 
     module _ ⦃ _ : (_≡_) ⊆₂ (_≤_) ⦄ where -- TODO: Consider including this in weak orders

@@ -53,6 +53,13 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ _ : 
     [⊜][∘]-binaryOperator : BinaryOperator(_∘_ {X = A}{Y = B}{Z = C})
     BinaryOperator.congruence [⊜][∘]-binaryOperator = [⊜]-compose
 
+module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}} ⦃ equiv-a : Equiv(A) ⦄ {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ where
+  [⊜]-abstract : ∀{a b : B} → (a ≡ b) → ((x ↦ a) ⊜ ((x ↦ b) :of: (A → B)))
+  [⊜]-abstract {a} {b} x = intro x
+
+  [⊜]-apply : ∀{f g : A → B} → (f ⊜ g) → (∀{x} → (f(x) ≡ g(x)))
+  [⊜]-apply (intro proof) = proof
+
 -- TODO: Is this correct?
 -- [⊜]-not-all : ∀{ℓ₁ ℓ₂}{T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (∀{f g : T₁ → T₂} → (f ⊜ g)) → IsEmpty(T₁)
 -- [⊜]-not-all{_}{_} {_} {_}{_} = intro(\{})

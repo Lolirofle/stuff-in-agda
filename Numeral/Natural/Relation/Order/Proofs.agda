@@ -145,7 +145,7 @@ instance
   Asymmetry.proof([<]-asymmetry) (l) (r) = Irreflexivity.proof([<]-irreflexivity) (Transitivity.proof([<]-transitivity) (l) (r))
 
 instance
-  [<]-strictOrder : Strict.Order (_<_)
+  [<]-strictOrder : Strict.PartialOrder (_<_)
   [<]-strictOrder = record{}
 
 instance
@@ -161,7 +161,7 @@ instance
   Asymmetry.proof([>]-asymmetry) = swap(Asymmetry.proof([<]-asymmetry))
 
 instance
-  [>]-strictOrder : Strict.Order (_>_)
+  [>]-strictOrder : Strict.PartialOrder (_>_)
   [>]-strictOrder = record{}
 
 [<]-of-[𝐒] : ∀{x : ℕ} → (x < 𝐒(x))

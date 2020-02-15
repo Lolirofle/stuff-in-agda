@@ -27,6 +27,7 @@ open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
 open import Structure.Relator.Properties
 open import Structure.Relator.Ordering
+open import Structure.Relator.Ordering.Lattice
 open import Syntax.Transitivity
 open import Type
 open import Type.Empty
@@ -41,7 +42,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
   -- It is finite in the sense that it is a number and not infinite.
   -- An element's order is the smallest positive integer power of x such that the result is the identity element.
   data FiniteOrder (x : T) : ℕ → Stmt{ℓ} where
-    intro : ∀{n} → Weak.Properties.MinimumOf(_≤_)(n ↦ x ^ 𝐒(n) ≡ id)(n) → FiniteOrder(x)(𝐒(n))
+    intro : ∀{n} → LE.Minimum(_≤_)(n ↦ x ^ 𝐒(n) ≡ id)(n) → FiniteOrder(x)(𝐒(n))
 
   -- `Ord(x)` means that the element `x` has a finite order.
   Ord : T → Stmt{ℓ}
@@ -58,12 +59,12 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
 
     -- An element power its order is the identity element.
     [^]-by-ord : ⦃ p : Ord(x) ⦄ → (x ^ ord(x) ⦃ p ⦄ ≡ id)
-    [^]-by-ord ⦃ [∃]-intro (𝐒(_)) ⦃ intro p ⦄ ⦄ = Weak.Properties.MinimumOf.proof(p)
+    [^]-by-ord ⦃ [∃]-intro (𝐒(_)) ⦃ intro p ⦄ ⦄ = LE.Minimum.inclusion(p)
 
     -- When an element power something is the identity element, then the power is either zero or greater/equal its order.
     ord-is-minimum : ⦃ p : Ord(x) ⦄ → ∀{n} → (x ^ n ≡ id) → (n ≡ₑ 𝟎) ∨ (ord(x) ⦃ p ⦄ ≤ n)
     ord-is-minimum ⦃ [∃]-intro (_)     ⦃ intro p ⦄ ⦄      {𝟎}   x0id  = [∨]-introₗ [≡ₑ]-intro
-    ord-is-minimum ⦃ [∃]-intro .(𝐒 po) ⦃ intro {po} p ⦄ ⦄ {𝐒 n} xsnid = [∨]-introᵣ ([≤]-with-[𝐒] ⦃ Weak.Properties.MinimumOf.minimum(p) ⦃ xsnid ⦄ ⦄)
+    ord-is-minimum ⦃ [∃]-intro .(𝐒 po) ⦃ intro {po} p ⦄ ⦄ {𝐒 n} xsnid = [∨]-introᵣ ([≤]-with-[𝐒] ⦃ LE.Minimum.proof(p) ⦃ xsnid ⦄ ⦄)
 
     -- When an element power something less than its order and it is the identity element, then the power is 0.
     ord-is-minimum-but-0 : ⦃ p : Ord(x) ⦄ → ∀{n} → (x ^ n ≡ id) → (n < ord(x) ⦃ p ⦄) → (n ≡ₑ 𝟎)
