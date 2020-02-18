@@ -113,6 +113,7 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
     -- It is well-founded when all objects are left accessible.
     -- Note: Not equivalent to the classical definition of well-foundedness. This does not require a construction of the minimal element. (TODO: I think? At least not computable from the relation? So maybe this should be renamed to something else?)
     -- Note: In the context of rewriting, the a well-founded converse is called terminating.
+    -- TODO: Maybe move this to ReductionSystems because it is formalized like this in those cases, but well-foundedness is usually defined using some other formula classically?
     record WellFounded : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       constructor intro
       field ⦃ proof ⦄ : ∀ₗ(Accessibleₗ)

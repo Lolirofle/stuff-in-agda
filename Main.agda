@@ -9,6 +9,7 @@ import Data.Boolean.Stmt
 import Data.Boolean.Stmt.Proofs
 import Data.Either
 import Data.Either.Equiv
+import Data.Either.Equiv.Proofs
 import Data.Either.Proofs
 import Data.List
 import Data.List.Computability
@@ -44,6 +45,7 @@ import FormalLanguage.RegularExpression
 -- import Formalization.FunctionalML
 -- import Formalization.LambdaCalculus
 import Formalization.PrimitiveRecursion
+-- import Formalization.SKICombinatorCalculus
 import Formalization.SimplyTypedLambdaCalculus
 import Function
 import Function.DomainRaise
@@ -62,6 +64,15 @@ import Function.Multi
 import Function.Names
 import Function.Proofs
 import Functional
+import Graph
+import Graph.Oper
+import Graph.Properties
+import Graph.Properties.Proofs
+import Graph.Walk
+import Graph.Walk.Functions
+import Graph.Walk.Functions.Proofs
+import Graph.Walk.Proofs
+import Graph.Walk.Properties
 import Lang.Inspect
 import Lang.Instance
 import Lang.Irrelevance
@@ -135,6 +146,7 @@ import Operator.Equals
 import ReductionSystem
 import Relator.Congruence
 import Relator.Congruence.Proofs
+import Relator.Converse
 import Relator.Equals
 import Relator.Equals.Heterogenous
 import Relator.Equals.Names
@@ -142,6 +154,7 @@ import Relator.Equals.Proofs
 import Relator.Equals.Proofs.Equivalence
 import Relator.Ordering
 import Relator.Ordering.Proofs
+import Relator.ReflexiveTransitiveClosure
 import Sets.BoolSet
 import Sets.IterativeSet
 import Sets.PredicateSet
@@ -170,7 +183,6 @@ import Structure.Function.Domain.Proofs
 import Structure.Function.Linear
 -- import Structure.Function.Metric
 import Structure.Function.Ordering
-import Structure.Graph
 -- import Structure.LinearAlgebra
 import Structure.Operator.Field
 import Structure.Operator.Functions
@@ -196,11 +208,11 @@ import Structure.Relator.Equivalence
 import Structure.Relator.Function
 import Structure.Relator.Names
 import Structure.Relator.Ordering
+import Structure.Relator.Ordering.Lattice
 import Structure.Relator.Properties
 import Structure.Relator.Properties.Proofs
 import Structure.Type.Quotient
 import Syntax.Function
-import Syntax.Method
 import Syntax.Number
 import Syntax.Transitivity
 import Type

@@ -179,6 +179,9 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{
   swap-involution : ⦃ _ : Equiv(X → Y → Z) ⦄ → ∀{f : X → Y → Z} → (swap(swap(f)) ≡ₛ f)
   swap-involution = reflexivity(_≡ₛ_)
 
+  swap-involution-fn : ⦃ _ : Equiv((X → Y → Z) → (X → Y → Z)) ⦄ → (swap ∘ swap ≡ₛ id {T = X → Y → Z})
+  swap-involution-fn = reflexivity(_≡ₛ_)
+
 module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
   s-combinator-const-id : ⦃ _ : Equiv(X → X) ⦄ → (s-combinator{X = X}{Y → X}{X} const const ≡ₛ id)
   s-combinator-const-id = reflexivity(_≡ₛ_)

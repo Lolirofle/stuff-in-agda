@@ -32,7 +32,7 @@ R3 (19,6) 25-19 = 6
 L5 (1,6) 19-6⋅3 = 1
 In (1,1) 6−1⋅5 = 1
 f(R$R$R$R$R$R $ L$L$L$L $ R$R$R $ L$L $ R$R $ L $ R$R$R $ L$L$L$L$L $ Init)
-
+If this is the case, then just represent the tree by: (Tree = List(Bool)) or (Tree = List(Either ℕ ℕ))
 
 postulate TODO : ∀{a} → a
 Tree-construction-algorithm : (x : ℕ) → (y : ℕ) → Tree(x)(y)

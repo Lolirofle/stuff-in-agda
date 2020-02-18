@@ -1,5 +1,6 @@
-module Type.Homotopy {ℓ} where
+module Type.Homotopy where
 
+import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Numeral.Natural
@@ -10,6 +11,8 @@ open import Type
 open import Type.Dependent
 open import Type.Empty
 open import Type.Unit
+
+private variable ℓ : Lvl.Level
 
 IsLevel : ℕ → (A : Type{ℓ}) → Type
 IsLevel(𝟎)   (A) = IsUnit(A)
