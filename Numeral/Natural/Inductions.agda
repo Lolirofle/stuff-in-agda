@@ -13,6 +13,7 @@ open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type
@@ -90,3 +91,15 @@ module _ {ℓ} where
   -- 
   --   next2 : ∀{i} → (∀{j} → (j ≤ i) → φ(j)) → φ(𝐒(i))
   --   next2{i} assumption = next{i} (\{j} → convert-assumption{i} assumption {j})
+
+  module _ where
+    open Strict.Properties
+
+    instance
+      [ℕ]-accessibleₗ : ∀{n} → Accessibleₗ(_<_)(n)
+      Accessibleₗ.proof ([ℕ]-accessibleₗ {𝟎})    {m}    ⦃ ⦄
+      Accessibleₗ.proof ([ℕ]-accessibleₗ {𝐒(n)}) {𝟎}    ⦃ [≤]-with-[𝐒] ⦃ mn ⦄ ⦄ = intro ⦃ \ ⦃ ⦄ ⦄
+      Accessibleₗ.proof ([ℕ]-accessibleₗ {𝐒(n)}) {𝐒(m)} ⦃ [≤]-with-[𝐒] ⦃ mn ⦄ ⦄ = intro ⦃ \{k} ⦃ xsm ⦄ → Accessibleₗ.proof ([ℕ]-accessibleₗ {n}) ⦃ transitivity(_≤_) xsm mn ⦄ ⦄
+
+    [ℕ]-wellfounded : WellFounded(_<_)
+    [ℕ]-wellfounded = [ℕ]-accessibleₗ

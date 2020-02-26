@@ -19,7 +19,6 @@ open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
 open import Type
 
--- TODO: The instance declarations probably do nothing for functions with arguments. Either make all the args implicit or remove the instance decls.
 -- TODO: A method for pattern matching: https://stackoverflow.com/questions/20682013/agda-why-am-i-unable-to-pattern-match-on-refl
 
 [<]-minimum : ∀{x : ℕ} → (0 < 𝐒(x))

@@ -22,6 +22,9 @@ disjointness {𝑇} (Logic.[∧]-intro [⊤]-intro ())
 disjointness {𝐹} (Logic.[∧]-intro () [⊤]-intro)
 
 module IsTrue where
+  from-eq : ∀{a} → (a ≡ 𝑇) → IsTrue(a)
+  from-eq [≡]-intro = [⊤]-intro
+
   [∧]-intro : ∀{a b} → IsTrue(a) → IsTrue(b) → IsTrue(a && b)
   [∧]-intro {𝑇} {b} ta tb = tb
   [∧]-intro {𝐹} {b} ta tb = ta
@@ -89,6 +92,9 @@ module IsTrue where
     r {𝐹} _ ()
 
 module IsFalse where
+  from-eq : ∀{a} → (a ≡ 𝐹) → IsFalse(a) -- TODO: Use is-[𝐹] instead
+  from-eq [≡]-intro = [⊤]-intro
+
   [∧]-introₗ : ∀{a b} → IsFalse(a) → IsFalse(a && b)
   [∧]-introₗ {_}{𝑇} = id
   [∧]-introₗ {_}{𝐹} _ = [⊤]-intro
@@ -101,11 +107,11 @@ module IsFalse where
   [∨]-intro {𝑇} fa fb = fa
   [∨]-intro {𝐹} fa fb = fb
 
-  [¬]-intro : ∀{a} → IsTrue(! a) → IsFalse(a)
-  [¬]-intro = IsTrue.[¬]-elim
+  [¬]-intro : ∀{a} → IsTrue(a) → IsFalse(! a)
+  [¬]-intro = id
 
-  [¬]-elim : ∀{a} → IsFalse(a) → IsTrue(! a)
-  [¬]-elim = IsTrue.[¬]-intro
+  [¬]-elim : ∀{a} → IsFalse(! a) → IsTrue(a)
+  [¬]-elim = id
 
   is-[𝐹] : ∀{a} → IsFalse(a) ↔ (a ≡ 𝐹)
   is-[𝐹] {a} = [↔]-intro (l{a}) (r{a}) where

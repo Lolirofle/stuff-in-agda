@@ -36,7 +36,7 @@ module _ {ℓ} {T : Type{ℓ}} where
   [≡]-to-equivalence([≡]-intro) = reflexivity(_≡ₛ_)
 
 module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} where
-  -- Applies a function to each side of the equality (TODO: Make this an instance of Function instead)
+  -- Applies a function to each side of the equality (TODO: Remove this and use Function everywhere instead)
   [≡]-with : (f : A → B) → ∀{x y : A} → (x ≡ y) → (f(x) ≡ f(y))
   [≡]-with f [≡]-intro = [≡]-intro
 

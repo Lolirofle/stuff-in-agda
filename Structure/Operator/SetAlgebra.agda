@@ -241,7 +241,7 @@ record Complement : Stmt{ℓ} where
 
 record Subset : Set(Lvl.𝐒(ℓ)) where
   field
-    _⊆_ : S → S → Stmt -- Subset
+    _⊆_ : S → S → Stmt{ℓ} -- Subset
     ⦃ fundamentals ⦄ : Fundamentals
   open Fundamentals(fundamentals)
 

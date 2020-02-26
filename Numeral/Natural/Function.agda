@@ -24,3 +24,17 @@ min (𝐒(a)) (𝐒(b)) = 𝐒(min a b)
 infixl 100 _[max]_ _[min]_
 _[max]_ = max
 _[min]_ = min
+
+-- Fibonacci numbers
+fib : ℕ → ℕ
+fib(𝟎)       = 𝟎
+fib(𝐒(𝟎))    = 𝐒(𝟎)
+fib(𝐒(𝐒(n))) = fib(n) + fib(𝐒(n))
+
+arithmetic-sequence : ℕ → ℕ → (ℕ → ℕ)
+arithmetic-sequence init diff 𝟎      = init
+arithmetic-sequence init diff (𝐒(n)) = diff + arithmetic-sequence init diff n
+
+geometric-sequence : ℕ → ℕ → (ℕ → ℕ)
+geometric-sequence init diff 𝟎      = init
+geometric-sequence init diff (𝐒(n)) = diff ⋅ arithmetic-sequence init diff n

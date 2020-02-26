@@ -59,37 +59,36 @@ module _ {ℓ} where
     [++]-associativity : ∀{T : Type{ℓ}} → Associativity{T = List(T)} (_++_)
     Associativity.proof([++]-associativity {T}) {x}{y}{z} = [++]-associativity-raw {T} {x}{y}{z}
 
+  postpend-of-prepend : ∀{T : Type{ℓ}}{a b}{l : List(T)} → (postpend a (b ⊰ l) ≡ b ⊰ postpend a l)
+  postpend-of-prepend = [≡]-intro
+
+  reverse-postpend : ∀{T : Type{ℓ}}{a}{l : List(T)} → (reverse(postpend a l) ≡ a ⊰ reverse l)
+  reverse-postpend {l = ∅}     = [≡]-intro
+  reverse-postpend {l = x ⊰ l} = [≡]-with(postpend x) (reverse-postpend {l = l})
+
+  prepend-[++] : ∀{T : Type{ℓ}}{a}{l : List(T)} → (a ⊰ l ≡ singleton(a) ++ l)
+  prepend-[++] = [≡]-intro
+
+  postpend-[++] : ∀{T : Type{ℓ}}{a}{l : List(T)} → (postpend a l ≡ l ++ singleton(a))
+  postpend-[++] {l = ∅}     = [≡]-intro
+  postpend-[++] {l = x ⊰ l} = [≡]-with(x ⊰_) (postpend-[++] {l = l})
+
+  postpend-of-[++] : ∀{T : Type{ℓ}}{a}{l₁ l₂ : List(T)} → (postpend a (l₁ ++ l₂) ≡ l₁ ++ postpend a l₂)
+  postpend-of-[++] {T} {a} {∅}      {l₂} = [≡]-intro
+  postpend-of-[++] {T} {a} {x ⊰ l₁} {l₂} = [≡]-with(x ⊰_) (postpend-of-[++] {T} {a} {l₁} {l₂})
+
+  map-postpend : ∀{ℓ₂}{A : Type{ℓ}}{B : Type{ℓ₂}}{f : A → B}{a}{l : List(A)} → (map f(postpend a l) ≡ postpend (f(a)) (map f(l)))
+  map-postpend {f = f} {l = ∅}     = [≡]-intro
+  map-postpend {f = f} {l = x ⊰ l} = [≡]-with (f(x) ⊰_) map-postpend
+
   reverse-[++] : ∀{T : Type{ℓ}}{l₁ l₂ : List(T)} → (reverse(l₁ ++ l₂) ≡ reverse(l₂) ++ reverse(l₁))
-  reverse-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
-    base : reverse(∅ ++ l₂) ≡ reverse(l₂) ++ reverse(∅)
-    base =
-      ([≡]-with(reverse) {l₂} ([≡]-intro))
-      🝖 (symmetry(_≡_) [++]-identityᵣ-raw)
-    -- ∅++l = l //[++]-identityₗ
-    -- reverse(∅++l) = l //[≡]-with(reverse) (..)
-    --   l = l++∅
+  reverse-[++] {T} {∅}      {l₂} = [≡]-intro
+  reverse-[++] {T} {x ⊰ l₁} {l₂} = [≡]-with(postpend x) (reverse-[++] {T} {l₁} {l₂}) 🝖 postpend-of-[++] {l₁ = reverse l₂} {l₂ = reverse l₁}
 
-    -- ([≡]-with(reverse) {l₂} ([≡]-symmetry [++]-identityᵣ))
-    -- l++∅ = l //[++]-identityᵣ
-    -- l = l++∅ //[≡]-symmetry(..)
-    -- reverse(l) = reverse(l++∅) //[≡]-with(reverse) (..)
-    -- ∅++reverse(l) = reverse(l++∅)
-    -- reverse(∅)++reverse(l) = reverse(l++∅)
-
-    next : ∀(x : T)(l : List(T)) → (reverse(l ++ l₂) ≡ reverse(l₂) ++ reverse(l)) → (reverse((x ⊰ l) ++ l₂) ≡ reverse(l₂) ++ reverse(x ⊰ l))
-    next x l stmt =
-      ([≡]-with(list ↦ list ++ (singleton x)) stmt)
-      🝖 ([++]-associativity-raw {_} {reverse(l₂)} {reverse(l)} {singleton x})
-    -- reverse(l₁++l₂) = reverse(l₂)++reverse(l₁)
-    -- reverse(l₁++l₂)++(singleton x) = (reverse(l₂)++reverse(l₁))++(singleton x)
-    -- reverse(l₁++l₂)++(singleton x) = reverse(l₂)++(reverse(l₁)++(singleton x))
-    -- reverse(l₁++l₂)++(singleton x) = reverse(l₂)++reverse(x ⊰ l₁)
-    -- reverse(x ⊰ (l₁++l₂)) = reverse(l₂)++reverse(x ⊰ l₁)
-    -- reverse((x ⊰ l₁)++l₂) = reverse(l₂)++reverse(x ⊰ l₁)
-
-    -- reverse (x ⊰ l) = (reverse l) ++ (singleton x)
-    -- _++_ ∅ b = b
-    -- _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
+  map-[++] : ∀{ℓ₂}{A : Type{ℓ}}{B : Type{ℓ₂}}{f : A → B}{l₁ l₂ : List(A)} → (map f(l₁ ++ l₂) ≡ map f(l₁) ++ map f(l₂))
+  map-[++] {f = f} {l₁ = ∅} {∅} = [≡]-intro
+  map-[++] {f = f} {l₁ = ∅} {x ⊰ l₂} = [≡]-intro
+  map-[++] {f = f} {l₁ = x ⊰ l₁} {l₂} = [≡]-with(f(x) ⊰_) (map-[++] {f = f} {l₁ = l₁} {l₂})
 
   length-[∅] : ∀{T : Type{ℓ}} → (length(∅ {T = T}) ≡ 0)
   length-[∅] = [≡]-intro
@@ -97,53 +96,37 @@ module _ {ℓ} where
   length-singleton : ∀{T : Type{ℓ}}{a : T} → (length(singleton(a)) ≡ 1)
   length-singleton = [≡]-intro
 
+  length-postpend : ∀{T : Type{ℓ}}{a : T}{l : List(T)} → (length(postpend a l) ≡ 𝐒(length l))
+  length-postpend {l = ∅}     = [≡]-intro
+  length-postpend {l = x ⊰ l} = [≡]-with(𝐒) (length-postpend {l = l})
+  {-# REWRITE length-postpend #-}
+
   length-[++] : ∀{T : Type{ℓ}}{l₁ l₂ : List(T)} → (length(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
   length-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
     base : length(∅ ++ l₂) ≡ length{ℓ}{T}(∅) + length(l₂)
     base = symmetry(_≡_) (identityₗ(_+_)(0))
 
     next : ∀(x : T)(l : List(T)) → (length(l ++ l₂) ≡ length(l) + length(l₂)) → (length((x ⊰ l) ++ l₂) ≡ length(x ⊰ l) + length(l₂))
-    next x l stmt =
-      ([≡]-with(𝐒) stmt)
-      🝖 (symmetry(_≡_) ([+1]-commutativity {length(l)} {length(l₂)}))
-    -- length(l++l₂) = length(l)+length(l₂)
-    -- length(l++l₂) = length(l₂)+length(l)
-    -- 𝐒(length(l++l₂)) = 𝐒(length(l₂)+length(l))
-    -- 𝐒(length(l++l₂)) = length(l₂)+𝐒(length(l))
-    -- 𝐒(length(l++l₂)) = 𝐒(length(l))+length(l₂)
-    -- length(x ⊰ (l++l₂)) = length(x ⊰ l)+length(l₂) //TODO: Is this step really okay? 𝐒 cannot uniquely identify that x was the precedant
+    next x l stmt = ([≡]-with(𝐒) stmt) 🝖 (symmetry(_≡_) ([+1]-commutativity {length(l)} {length(l₂)}))
+    -- length(l++l₂) = length(l)+length(l₂) = length(l₂)+length(l)
+    -- 𝐒(length(l++l₂)) = 𝐒(length(l₂)+length(l))  = length(l₂)+𝐒(length(l))  = 𝐒(length(l))+length(l₂)
+    -- length(x ⊰ (l++l₂)) = length(x ⊰ l)+length(l₂)
 
-  length-reverse : ∀{T : Type{ℓ}}{l : List(T)} → length(reverse(l)) ≡ length(l)
-  length-reverse {T} = List-induction base next where
-    base : length{_}{T}(reverse(∅)) ≡ length{_}{T}(∅)
-    base = [≡]-intro
-
-    next : ∀(x : T)(l : List(T)) → (length(reverse(l)) ≡ length(l)) → (length(reverse(x ⊰ l)) ≡ length(x ⊰ l))
-    next x l stmt =
-      ((length-[++] {T} {reverse(l)} {singleton(x)}))
-      🝖 ([≡]-with(𝐒) stmt)
-      -- length(reverse(x ⊰ l))
-      -- = length((reverse l) ++ (singleton x))
-      -- = length(reverse l) + length(singleton x)
-      -- = length(reverse l) + 1
-      -- = 𝐒(length(reverse l))
-
-      -- length(x ⊰ l)
-      -- = 𝐒(length(l))
+  length-reverse : ∀{T : Type{ℓ}}{l : List(T)} → (length(reverse(l)) ≡ length(l))
+  length-reverse {l = ∅}     = [≡]-intro
+  length-reverse {l = x ⊰ l} = [≡]-with(𝐒) (length-reverse {l = l})
 
   length-repeat : ∀{T : Type{ℓ}}{x : T}{n} → (length(repeat(x)(n)) ≡ n)
-  length-repeat{_}{_}{𝟎}    = [≡]-intro
-  length-repeat{T}{x}{𝐒(n)} = [≡]-with(𝐒) (length-repeat{T}{x}{n})
+  length-repeat{n = 𝟎}    = [≡]-intro
+  length-repeat{n = 𝐒(n)} = [≡]-with(𝐒) (length-repeat{n = n})
 
   length-tail : ∀{T : Type{ℓ}}{l : List(T)} → (length(tail(l)) ≡ 𝐏(length(l)))
   length-tail{T}{∅}     = [≡]-intro
   length-tail{T}{_ ⊰ l} = [≡]-intro
-    -- length(tail(x ⊰ l))
-    -- = length(l)
 
-    -- 𝐏(length(x ⊰ l))
-    -- = 𝐏(𝐒(length(l)))
-    -- = length(l))
+  length-map : ∀{ℓ₂}{A : Type{ℓ}}{B : Type{ℓ₂}}{f : A → B}{l : List(A)} → (length(map f(l)) ≡ length(l))
+  length-map {l = ∅}     = [≡]-intro
+  length-map {l = x ⊰ l} = [≡]-with(𝐒) (length-map {l = l})
 
   instance
     [⊰]-cancellationₗ : ∀{T : Type{ℓ}} → Cancellationₗ {T₁ = T} (_⊰_)
@@ -176,13 +159,27 @@ module _ {ℓ} where
   [⊰]-unequal : ∀{T : Type{ℓ}}{x : T}{l} → ¬(x ⊰ l ≡ l)
   [⊰]-unequal {_} {x} {l} ()
 
-  {- TODO
-  postulate [⊰][++]-unequal : ∀{T : Type{ℓ}}{x : T}{a l} → ¬(a ++ (x ⊰ l) ≡ l)
-  -- [⊰][++]-unequal {T} {x} {x₁ ⊰ a} {x₂ ⊰ l} p = {!!}
+  [∅]-postpend-unequal : ∀{T : Type{ℓ}}{x : T}{l} → ¬(postpend x l ≡ ∅)
+  [∅]-postpend-unequal {_} {_} {∅}     ()
+  [∅]-postpend-unequal {_} {_} {_ ⊰ _} ()
+
+  postpend-unequal : ∀{T : Type{ℓ}}{x : T}{l} → ¬(postpend x l ≡ l)
+  postpend-unequal {_} {x} {∅} ()
+  postpend-unequal {_} {x} {y ⊰ l} p = postpend-unequal {_} {x} {l} (cancellationₗ(_⊰_) p)
+
+  {-
+  [⊰][++]-unequal : ∀{T : Type{ℓ}}{x : T}{a l} → ¬(a ++ (x ⊰ l) ≡ l)
+  [⊰][++]-unequal {x = x} {a} {l} p = {![≡]-with(_++ l) postpend-[++] 🝖 associativity(_++_) {x = a}{y = singleton x}{z = l} 🝖 p!} where
+    proof : ∀{l} → ¬(postpend x a ++ l ≡ l)
+    proof {∅}       = [∅]-postpend-unequal
+    proof {x ⊰ l} p = proof {l} {!!}
+  -- associativity(_++_) {x = a}{y = singleton x}{z = l} 🝖 p
+  -- [⊰][++]-unequal {T} {x} {x₁ ⊰ a} {x₂ ⊰ l} p = [⊰][++]-unequal {T} {x} {a} {x₂ ⊰ l} ({!!} 🝖 p)
 
   [++]-cancellation-of-[∅]l : ∀{T : Type{ℓ}}{a b : List(T)} → (a ++ b ≡ b) → (a ≡ ∅)
   [++]-cancellation-of-[∅]l {_} {∅}    {b}      _ = [≡]-intro
   [++]-cancellation-of-[∅]l {_} {x ⊰ a} {y ⊰ b} p = [⊥]-elim([⊰][++]-unequal([⊰]-general-cancellationᵣ p))
+  -}
 
   instance
     [++]-cancellationₗ : ∀{T : Type{ℓ}} → Cancellationₗ {T₁ = List(T)} (_++_)
@@ -190,22 +187,18 @@ module _ {ℓ} where
       proof : Names.Cancellationₗ (_++_)
       proof {∅}     p = p
       proof {x ⊰ l} p  = proof {l} (cancellationₗ(_⊰_) p)
-      -- (x ⊰ l) ++ a
-      -- = x ⊰ (l ++ a)
 
-      -- ((x ⊰ l) ++ a) ≡ ((x ⊰ l) ++ b)
-      -- x ⊰ (l ++ a) ≡ x ⊰ (l ++ b)
-      -- l ++ a ≡ l ++ b
-      -- a ≡ b
-
+  {-
   instance
     [++]-cancellationᵣ : ∀{T : Type{ℓ}} → Cancellationᵣ {T₁ = List(T)} (_++_)
     Cancellationᵣ.proof([++]-cancellationᵣ) {a}{b} = proof {a}{b} where
       proof : Names.Cancellationᵣ(_++_)
       proof {l}      {∅}     {∅}      p = [≡]-intro
-      proof {x₁ ⊰ l} {∅}     {x ⊰ b}  p = [⊥]-elim([⊰][++]-unequal(symmetry(_≡_) ([⊰]-general-cancellationᵣ p)))
-      proof {x₁ ⊰ l} {x ⊰ a}  {∅}     p = [⊥]-elim([⊰][++]-unequal([⊰]-general-cancellationᵣ p))
       proof {l}      {x ⊰ a} {x₁ ⊰ b} p = [≡]-with-op(_⊰_) ([⊰]-general-cancellationₗ p) (proof{l}{a}{b} ([⊰]-general-cancellationᵣ p))
+      proof {∅}      {∅}     {x ⊰ b}  p = [++]-identityᵣ-raw 🝖 p
+      proof {x₁ ⊰ l} {∅}     {x ⊰ b}  p = [⊥]-elim([⊰][++]-unequal(symmetry(_≡_) ([⊰]-general-cancellationᵣ p)))
+      proof {∅}      {x ⊰ a}  {∅}     p = p
+      proof {x₁ ⊰ l} {x ⊰ a}  {∅}     p = [⊥]-elim([⊰][++]-unequal([⊰]-general-cancellationᵣ p))
   -}
 
   length-[++^] : ∀{T : Type{ℓ}}{l : List(T)}{n : ℕ} → (length(l ++^ n) ≡ length(l) ⋅ n)
@@ -224,10 +217,15 @@ module _ {ℓ} where
     r : (length(x ⊰ L) ≡ 0) → (isEmpty(x ⊰ L) ≡ 𝑇)
     r()
 
--- TODO: Empty list is prefix and suffix of everything
--- TODO: Whole list is prefix and suffix of everything
--- TODO: multiply(singleton(l))(n) = repeat(l)(n)
--- TODO: reverse(reverse(l)) = l
+module _ {ℓ} {T : Type{ℓ}} where
+  multiply-singleton-repeat : ∀{l : List(T)}{n} → (singleton(l) ++^ n ≡ repeat(l)(n))
+  multiply-singleton-repeat {l} {𝟎}   = [≡]-intro
+  multiply-singleton-repeat {l} {𝐒 n} = [≡]-with(l ⊰_) (multiply-singleton-repeat {l} {n})
+
+module _ {ℓ} {T : Type{ℓ}} where
+  reverse-involution : ∀{l : List(T)} → (reverse(reverse(l)) ≡ l)
+  reverse-involution {∅} = [≡]-intro
+  reverse-involution {x ⊰ l} = reverse-postpend {a = x}{l = reverse l} 🝖 [≡]-with(x ⊰_) (reverse-involution {l})
 
 module _ {ℓ} {T : Type{ℓ}} where
   first-0-length : ∀{L : List(T)} → (first(0)(L) ≡ ∅)
@@ -244,8 +242,8 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{
   map-preserves-[∘] {∅}     = [≡]-intro
   map-preserves-[∘] {x ⊰ l} = [≡]-with(f(g(x)) ⊰_) (map-preserves-[∘] {l})
 
-  map-preserves-[∘]-sym = \{l} → symmetry(_≡_) (map-preserves-[∘] {l})
-  {-# REWRITE map-preserves-[∘]-sym #-}
+  -- map-preserves-[∘]-sym = \{l} → symmetry(_≡_) (map-preserves-[∘] {l})
+  -- {-# REWRITE map-preserves-[∘]-sym #-}
 
 module _ {ℓ} {T : Type{ℓ}} where
   map-preserves-id : ∀{l : List(T)} → (map id(l) ≡ l)

@@ -162,17 +162,48 @@ instance
 [⋅]-with-[𝐒]ᵣ : ∀{x y} → x ⋅ 𝐒(y) ≡ x + (x ⋅ y)
 [⋅]-with-[𝐒]ᵣ = [≡]-intro
 
-postulate [⋅][+]-distributivityₗ-raw : Names.Distributivityₗ(_⋅_)(_+_)
+[⋅][+]-distributivityₗ-raw : Names.Distributivityₗ(_⋅_)(_+_)
+[⋅][+]-distributivityₗ-raw {𝟎}   {𝟎}   {𝟎}   = [≡]-intro
+[⋅][+]-distributivityₗ-raw {𝟎}   {𝟎}   {𝐒 z} = [≡]-intro
+[⋅][+]-distributivityₗ-raw {𝟎}   {𝐒 y} {𝟎}   = [≡]-intro
+[⋅][+]-distributivityₗ-raw {𝟎}   {𝐒 y} {𝐒 z} = [≡]-intro
+[⋅][+]-distributivityₗ-raw {𝐒 x} {𝟎}   {𝟎}   = [≡]-intro
+[⋅][+]-distributivityₗ-raw {𝐒 x} {𝟎}   {𝐒 z} = [≡]-intro
+[⋅][+]-distributivityₗ-raw {𝐒 x} {𝐒 y} {𝟎}   = [≡]-intro
+[⋅][+]-distributivityₗ-raw {𝐒 x} {𝐒 y} {𝐒 z} = [≡]-with(𝐒 ∘ 𝐒) $
+  x + (x + (𝐒 x ⋅ (y + z)))         🝖[ _≡_ ]-[ [≡]-with((x +_) ∘ (x +_)) ([⋅][+]-distributivityₗ-raw {𝐒 x} {y} {z}) ]
+  x + (x + ((𝐒 x ⋅ y) + (𝐒 x ⋅ z))) 🝖[ _≡_ ]-[ [≡]-with(x +_) (One.commuteₗ-assocᵣ ⦃ comm = intro(\{x y} → [+]-commutativity-raw {x}{y}) ⦄ {a = x}{b = 𝐒 x ⋅ y}{c = 𝐒 x ⋅ z}) ]
+  x + ((𝐒 x ⋅ y) + (x + (𝐒 x ⋅ z))) 🝖[ _≡_ ]-[ [+]-associativity-raw {x = x}{y = 𝐒 x ⋅ y} ]-sym
+  (x + (𝐒 x ⋅ y)) + (x + (𝐒 x ⋅ z)) 🝖-end
 
-postulate [⋅]-associativity-raw : Names.Associativity (_⋅_)
+[⋅]-associativity-raw : Names.Associativity (_⋅_)
+[⋅]-associativity-raw {𝟎}   {𝟎}   {𝟎}   = [≡]-intro
+[⋅]-associativity-raw {𝟎}   {𝟎}   {𝐒 z} = [≡]-intro
+[⋅]-associativity-raw {𝟎}   {𝐒 y} {𝟎}   = [≡]-intro
+[⋅]-associativity-raw {𝟎}   {𝐒 y} {𝐒 z} = [≡]-intro
+[⋅]-associativity-raw {𝐒 x} {𝟎}   {𝟎}   = [≡]-intro
+[⋅]-associativity-raw {𝐒 x} {𝟎}   {𝐒 z} = [≡]-intro
+[⋅]-associativity-raw {𝐒 x} {𝐒 y} {𝟎}   = [≡]-intro
+[⋅]-associativity-raw {𝐒 x} {𝐒 y} {𝐒 z} = [≡]-with(𝐒) $
+  (x + (𝐒 x ⋅ y)) + (𝐒(x + 𝐒 x ⋅ y) ⋅ z)  🝖[ _≡_ ]-[ [+]-associativity-raw {x = x}{y = 𝐒 x ⋅ y} ]
+  x + ((𝐒 x ⋅ y) + (𝐒(x + 𝐒 x ⋅ y) ⋅ z))  🝖[ _≡_ ]-[]
+  x + ((𝐒 x ⋅ y) + ((𝐒 x + 𝐒 x ⋅ y) ⋅ z)) 🝖[ _≡_ ]-[]
+  x + ((𝐒 x ⋅ y) + ((𝐒 x ⋅ 𝐒 y) ⋅ z))     🝖[ _≡_ ]-[ [≡]-with(expr ↦ x + ((𝐒 x ⋅ y) + expr)) ([⋅]-associativity-raw {𝐒 x}{𝐒 y}{z}) ]
+  x + ((𝐒 x ⋅ y) + (𝐒 x ⋅ (𝐒 y ⋅ z)))     🝖[ _≡_ ]-[ [≡]-with(x +_) ([⋅][+]-distributivityₗ-raw {x = 𝐒 x}{y = y}{z = 𝐒 y ⋅ z}) ]-sym
+  x + (𝐒 x ⋅ (y + (𝐒 y ⋅ z)))             🝖-end
 
-postulate [⋅]-commutativity-raw : Names.Commutativity (_⋅_)
-
--- testAssociativityOfSuccessor1 : ∀{x y} → ((x + 1) + y) ≡ (x + (1 + y))
--- testAssociativityOfSuccessor1 {x} {y} = [+]-associativity {x} {1} {y}
-
--- testAssociativityOfSuccessor2 : ∀{x y} → (𝐒(x) + y) ≡ (x + (1 + y))
--- testAssociativityOfSuccessor2 {x} {y} = [+]-associativity {x} {1} {y}
+[⋅]-commutativity-raw : Names.Commutativity (_⋅_)
+[⋅]-commutativity-raw {𝟎} {𝟎} = [≡]-intro
+[⋅]-commutativity-raw {𝟎} {𝐒 y} = [≡]-intro
+[⋅]-commutativity-raw {𝐒 x} {𝟎} = [≡]-intro
+[⋅]-commutativity-raw {𝐒 x} {𝐒 y} = [≡]-with(𝐒) $
+  x + (𝐒 x ⋅ y)     🝖-[ [≡]-with(x +_) ([⋅]-with-[𝐒]ₗ {x}{y}) ]
+  x + ((x ⋅ y) + y) 🝖-[ [≡]-with(x +_) ([+]-commutativity-raw {x ⋅ y}{y}) ]
+  x + (y + (x ⋅ y)) 🝖-[ One.commuteₗ-assocᵣ ⦃ comm = intro(\{x y} → [+]-commutativity-raw {x}{y}) ⦄ {a = x}{b = y}{c = x ⋅ y} ]
+  y + (x + (x ⋅ y)) 🝖-[ [≡]-with(expr ↦ y + (x + expr)) ([⋅]-commutativity-raw {x} {y}) ]
+  y + (x + (y ⋅ x)) 🝖-[ [≡]-with(y +_) ([+]-commutativity-raw {x}{y ⋅ x}) ]
+  y + ((y ⋅ x) + x) 🝖-[ [≡]-with(y +_) ([⋅]-with-[𝐒]ₗ {y}{x}) ]-sym
+  y + (𝐒 y ⋅ x)     🝖-end
 
 [𝐒]-injectivity-raw : Names.Injective(𝐒)
 [𝐒]-injectivity-raw {0}    ([≡]-intro) = [≡]-intro
@@ -282,11 +313,9 @@ commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
     ))
   )
 
-{-
-  postulate [⋅]-cancellationₗ : ∀{x} → ⦃ _ : x ≢ 0 ⦄ → (Names.Cancellationₗ(_⋅_)){x}
+postulate [⋅]-cancellationₗ : ∀{x} → ⦃ _ : (x ≢ 0) ⦄ → (Names.CancellationOnₗ(_⋅_)(x))
 
-  postulate [⋅]-cancellationᵣ : ∀{x} → ⦃ _ : x ≢ 0 ⦄ → (Names.Cancellationᵣ(_⋅_)){x}
--}
+postulate [⋅]-cancellationᵣ : ∀{x} → ⦃ _ : (x ≢ 0) ⦄ → (Names.CancellationOnᵣ(_⋅_)(x))
 
 postulate [⋅][−₀]-distributivityₗ-raw : ∀{x y z : ℕ} → (x ⋅ (y −₀ z)) ≡ (x ⋅ y) −₀ (x ⋅ z)
 
@@ -514,10 +543,15 @@ postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
 [𝄩]-equality {𝐒(x)}{𝟎}    ()
 [𝄩]-equality {𝐒(x)}{𝐒(y)} proof     = [≡]-with(𝐒) ([𝄩]-equality {x}{y} proof)
 
-{-
-[𝄩]-associativity : Associativity (_𝄩_)
-[𝄩]-associativity {x}{y}{z} = 
--}
+[𝄩]-of-𝐒ₗ : ∀{x y} → (x ≥ y) → (𝐒(x) 𝄩 y ≡ 𝐒(x 𝄩 y))
+[𝄩]-of-𝐒ₗ {𝟎}   {𝟎}   xy = [≡]-intro
+[𝄩]-of-𝐒ₗ {𝐒 x} {𝟎}   xy = [≡]-intro
+[𝄩]-of-𝐒ₗ {𝐒 x} {𝐒 y} xy = [𝄩]-of-𝐒ₗ {x} {y} ([≤]-without-[𝐒] xy)
+
+[𝄩]-of-𝐒ᵣ : ∀{x y} → (x ≤ y) → (x 𝄩 𝐒(y) ≡ 𝐒(x 𝄩 y))
+[𝄩]-of-𝐒ᵣ {𝟎}   {𝟎}   xy = [≡]-intro
+[𝄩]-of-𝐒ᵣ {𝟎}   {𝐒 y} xy = [≡]-intro
+[𝄩]-of-𝐒ᵣ {𝐒 x} {𝐒 y} xy = [𝄩]-of-𝐒ᵣ {x} {y} ([≤]-without-[𝐒] xy)
 
 instance
   [+]-identity : Identity (_+_) (0)
@@ -526,6 +560,14 @@ instance
 instance
   [+]-commutativity : Commutativity (_+_)
   Commutativity.proof([+]-commutativity) {x}{y} = [+]-commutativity-raw {x}{y}
+
+instance
+  [+]-cancellationₗ : Cancellationₗ (_+_)
+  Cancellationₗ.proof([+]-cancellationₗ) {x}{y} = [+]-cancellationₗ-raw {x}{y}
+
+instance
+  [+]-cancellationᵣ : Cancellationᵣ (_+_)
+  Cancellationᵣ.proof([+]-cancellationᵣ) {x}{y} = [+]-cancellationᵣ-raw {x}{y}
 
 instance
   [⋅]-absorberₗ : Absorberₗ (_⋅_) (0)

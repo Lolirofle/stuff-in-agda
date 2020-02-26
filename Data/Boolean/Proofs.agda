@@ -515,6 +515,11 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T : Type{ℓ₁}} {x y : T} {P : T → Type{ℓ
   if-elim{𝑇} p pxq pyq = pxq p
   if-elim{𝐹} p pxq pyq = pyq p
 
+module _ {ℓ₁ ℓ₂ ℓ₃} {T : Type{ℓ₁}} {x y : T} {P : T → Type{ℓ₂}} {Q : Type{ℓ₃}} where
+  if-bool-elim : ∀{B} → P(if B then x else y) → (P(x) → (B ≡ 𝑇) → Q) → (P(y) → (B ≡ 𝐹) → Q) → Q
+  if-bool-elim{𝑇} p pxq pyq = pxq p [≡]-intro
+  if-bool-elim{𝐹} p pxq pyq = pyq p [≡]-intro
+
 module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {T : Type{ℓ₁}} {P : T → Type{ℓ₂}} {X : Type{ℓ₃}} {Y : Type{ℓ₄}} (nxy : X → Y → Logic.⊥) where
   either-bool-left : (xy : (X ∨ Y)) → (X ↔ (Either.bool(xy) ≡ 𝐹))
   either-bool-left xy with bivalence{Either.bool(xy)}

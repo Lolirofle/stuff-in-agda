@@ -72,6 +72,20 @@ module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T
   associate4-321-231 : let _ = op , assoc in ∀{a b c d} → (a ▫ (b ▫ (c ▫ d)) ≡ a ▫ ((b ▫ c) ▫ d))
   associate4-321-231 {a}{b}{c}{d} = [≡]-with2ᵣ(_▫_)(_) (symmetry(_≡_) (associativity(_▫_)))
 
+  commuteᵣ-assocₗ : let _ = op , assoc , comm in ∀{a b c} → (((a ▫ b) ▫ c) ≡ ((a ▫ c) ▫ b))
+  commuteᵣ-assocₗ {a}{b}{c} =
+    (a ▫ b) ▫ c 🝖-[ associativity(_▫_) ]
+    a ▫ (b ▫ c) 🝖-[ [≡]-with2ᵣ(_▫_)(_) (commutativity(_▫_)) ]
+    a ▫ (c ▫ b) 🝖-[ associativity(_▫_) ]-sym
+    (a ▫ c) ▫ b 🝖-end
+
+  commuteₗ-assocᵣ : let _ = op , assoc , comm in ∀{a b c} → ((a ▫ (b ▫ c)) ≡ (b ▫ (a ▫ c)))
+  commuteₗ-assocᵣ {a}{b}{c} =
+    a ▫ (b ▫ c) 🝖-[ associativity(_▫_) ]-sym
+    (a ▫ b) ▫ c 🝖-[ [≡]-with2ₗ(_▫_)(_) (commutativity(_▫_)) ]
+    (b ▫ a) ▫ c 🝖-[ associativity(_▫_) ]
+    b ▫ (a ▫ c) 🝖-end
+
   -- When an identity element exists and is the same for both sides, it is unique.
   unique-identity : Unique(Identity(_▫_))
   unique-identity{x₁}{x₂} (intro ⦃ intro identityₗ₁ ⦄ ⦃ intro identityᵣ₁ ⦄) (intro ⦃ intro identityₗ₂ ⦄ ⦃ intro identityᵣ₂ ⦄) =

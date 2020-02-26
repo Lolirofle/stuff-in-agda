@@ -34,9 +34,9 @@ _++_ : ∀{ℓ}{T : Type{ℓ}} → List(T) → List(T) → List(T)
 _++_ ∅             b = b
 _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
 
-postpend : ∀{ℓ}{T : Type{ℓ}} → List(T) → T → List(T)
-postpend ∅       a = a ⊰ ∅
-postpend (x ⊰ l) a = x ⊰ postpend l a
+postpend : ∀{ℓ}{T : Type{ℓ}} → T → List(T) → List(T)
+postpend a ∅       = a ⊰ ∅
+postpend a (x ⊰ l) = x ⊰ postpend a l
 
 module LongOper where
   pattern empty = ∅
@@ -176,7 +176,7 @@ module _ {ℓ} where
   -- Reverse the order of the elements in the list
   reverse : ∀{T : Type{ℓ}} → List(T) → List(T)
   reverse ∅ = ∅
-  reverse (x ⊰ l) = (reverse l) ++ (singleton x)
+  reverse (x ⊰ l) = postpend x (reverse l)
 
   -- The list with an element repeated n times
   repeat : ∀{T : Type{ℓ}} → T → ℕ → List(T)

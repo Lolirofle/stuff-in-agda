@@ -39,6 +39,9 @@ interleave af bf (𝐒(𝐒 n)) = interleave (af ∘ 𝐒) (bf ∘ 𝐒) n
 --   pairIndexing a b = a + (∑(𝕟(a + b)) (i ↦ 𝕟-to-ℕ(i)))
 --   pairIndexing a b = a + ((a + b) * (a + b + 1) / 2)
 -- Example:
+--   Horizontal axis is `a` starting from 0.
+--   Vertical axis is `b` starting from 0.
+--   Cells are `pairIndexing a b`.
 --    0, 1, 3, 6,10,15
 --    2, 4, 7,11,16,..
 --    5, 8,12,17,   ..

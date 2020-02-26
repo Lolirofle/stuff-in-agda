@@ -107,6 +107,8 @@ import Numeral.Integer
 import Numeral.Matrix
 import Numeral.Natural
 -- import Numeral.Natural.Coprime
+import Numeral.Natural.Combinatorics
+import Numeral.Natural.Combinatorics.Proofs
 import Numeral.Natural.Function
 import Numeral.Natural.Function.Proofs
 import Numeral.Natural.GreatestCommonDivisor
@@ -209,6 +211,7 @@ import Structure.Relator.Function
 import Structure.Relator.Names
 import Structure.Relator.Ordering
 import Structure.Relator.Ordering.Lattice
+import Structure.Relator.Ordering.Proofs
 import Structure.Relator.Properties
 import Structure.Relator.Properties.Proofs
 import Structure.Type.Quotient
