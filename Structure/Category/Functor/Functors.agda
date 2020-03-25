@@ -28,6 +28,8 @@ module Raw where
   _∘ᶠᵘⁿᶜᵗᵒʳ_ = Fn._∘_
 
 module _
+  ⦃ obj₁-equiv : Equiv(Obj₁) ⦄
+  ⦃ obj₂-equiv : Equiv(Obj₂) ⦄
   ⦃ morphism-equivₗ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
   ⦃ morphism-equivᵣ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
   {Category₁ : Category(Morphism₁)}
@@ -51,6 +53,7 @@ module _
     id-preserving (constant(objᵣ)) = reflexivity(_≡_)
 
 module _
+  ⦃ obj-equiv : Equiv(Obj) ⦄
   ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
   {Category : Category(Morphism)}
   where
@@ -67,6 +70,9 @@ module _
   id-preserving (identity) = reflexivity(_≡_)
 
 module _
+  ⦃ obj₁-equiv : Equiv(Obj₁) ⦄
+  ⦃ obj₂-equiv : Equiv(Obj₂) ⦄
+  ⦃ obj₃-equiv : Equiv(Obj₃) ⦄
   ⦃ morphism-equiv₁ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
   ⦃ morphism-equiv₂ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
   ⦃ morphism-equiv₃ : ∀{x y : Obj₃} → Equiv(Morphism₃ x y) ⦄
@@ -90,19 +96,22 @@ module _
     → (functor₁₂ : Functor(Category₁)(Category₂)(F₁₂))
     → Functor(Category₁)(Category₃)(F₂₃ ∘ᶠᵘⁿᶜᵗᵒʳ F₁₂)
 
-  map           (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y} = (map(functor₂₃){F₁₂(x)}{F₁₂(y)}) Fn.∘ (map(functor₁₂){x}{y})
-  map-function  (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) = [∘]-function ⦃ func-f = map-function(functor₂₃) ⦄ ⦃ func-g = map-function(functor₁₂) ⦄
-  op-preserving (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y}{z} {f}{g} =
+  map              (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y} = (map(functor₂₃){F₁₂(x)}{F₁₂(y)}) Fn.∘ (map(functor₁₂){x}{y})
+  map-function     (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) = [∘]-function ⦃ func-f = map-function(functor₂₃) ⦄ ⦃ func-g = map-function(functor₁₂) ⦄
+  functor-function (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) = [∘]-function {f = F₂₃} {g = F₁₂}
+  op-preserving    (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y}{z} {f}{g} =
     map(functor₂₃) (map(functor₁₂) (f ∘ g))                               🝖-[ [≡]-with(map(functor₂₃)) (op-preserving(functor₁₂)) ]
     map(functor₂₃) (map(functor₁₂) f ∘ map functor₁₂ g)                   🝖-[ op-preserving(functor₂₃)]
     map(functor₂₃) (map(functor₁₂) f) ∘ map(functor₂₃) (map(functor₁₂) g) 🝖-end
-  id-preserving (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) {x} =
+  id-preserving    (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) {x} =
     map(functor₂₃) (map(functor₁₂) id) 🝖-[ [≡]-with(_) (id-preserving(functor₁₂)) ]
     map(functor₂₃) id                  🝖-[ id-preserving(functor₂₃) ]
     id                                 🝖-end
 
 module Wrapped where
   module _
+    ⦃ obj₁-equiv : Equiv(Obj₁) ⦄
+    ⦃ obj₂-equiv : Equiv(Obj₂) ⦄
     ⦃ morphism-equivₗ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
     ⦃ morphism-equivᵣ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
     {A : Category(Morphism₁)}
@@ -115,6 +124,7 @@ module Wrapped where
     ∃.proof   constᶠᵘⁿᶜᵗᵒʳ = constant c
 
   module _
+    ⦃ obj-equiv : Equiv(Obj) ⦄
     ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
     {A : Category(Morphism)}
     where
@@ -124,6 +134,9 @@ module Wrapped where
     ∃.proof   idᶠᵘⁿᶜᵗᵒʳ = identity
 
   module _
+    ⦃ obj₁-equiv : Equiv(Obj₁) ⦄
+    ⦃ obj₂-equiv : Equiv(Obj₂) ⦄
+    ⦃ obj₃-equiv : Equiv(Obj₃) ⦄
     ⦃ morphism-equiv₁ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
     ⦃ morphism-equiv₂ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
     ⦃ morphism-equiv₃ : ∀{x y : Obj₃} → Equiv(Morphism₃ x y) ⦄

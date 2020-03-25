@@ -17,6 +17,8 @@ module _
   {ℓₒₗ ℓₒᵣ ℓₘₗ ℓₘᵣ : Lvl.Level}
   {Objₗ : Type{ℓₒₗ}}
   {Objᵣ : Type{ℓₒᵣ}}
+  ⦃ obj-equivₗ : Equiv(Objₗ) ⦄
+  ⦃ obj-equivᵣ : Equiv(Objᵣ) ⦄
   {Morphismₗ : Objₗ → Objₗ → Type{ℓₘₗ}}
   {Morphismᵣ : Objᵣ → Objᵣ → Type{ℓₘᵣ}}
   ⦃ morphism-equivₗ : ∀{x y} → Equiv(Morphismₗ x y) ⦄

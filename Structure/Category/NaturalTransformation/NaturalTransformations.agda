@@ -6,6 +6,8 @@ module Structure.Category.NaturalTransformation.NaturalTransformations
   {ℓₒₗ ℓₒᵣ ℓₘₗ ℓₘᵣ : Lvl.Level}
   {Objₗ : Type{ℓₒₗ}}
   {Objᵣ : Type{ℓₒᵣ}}
+  ⦃ objₗ-equiv : Equiv(Objₗ) ⦄
+  ⦃ objᵣ-equiv : Equiv(Objᵣ) ⦄
   {Morphismₗ : Objₗ → Objₗ → Type{ℓₘₗ}}
   {Morphismᵣ : Objᵣ → Objᵣ → Type{ℓₘᵣ}}
   ⦃ morphism-equivₗ : ∀{x y : Objₗ} → Equiv(Morphismₗ x y) ⦄

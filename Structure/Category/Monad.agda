@@ -5,6 +5,7 @@ open import Type
 module Structure.Category.Monad
   {ℓₒ ℓₘ}
   {Obj : Type{ℓₒ}}
+  ⦃ obj-equiv : Equiv(Obj) ⦄
   {Morphism : Obj → Obj → Type{ℓₘ}}
   ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
   {cat : Category(Morphism)}

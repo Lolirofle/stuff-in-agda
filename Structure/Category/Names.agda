@@ -49,7 +49,7 @@ module Morphism where
 
     module _ (_▫_ : Names.SwappedTransitivity(_⟶_)) where
       Associativity : Stmt
-      Associativity = ∀{x y z w : Obj} → Names.AssociativityPattern {T₁ = y ⟶ x} {T₂ = z ⟶ y} {T₃ = w ⟶ z} (_▫_)(_▫_)(_▫_)(_▫_)
+      Associativity = ∀{x y z w : Obj} → Names.AssociativityPattern {T₁ = z ⟶ w} {T₂ = y ⟶ z} {T₃ = x ⟶ y} (_▫_)(_▫_)(_▫_)(_▫_)
 
       module _ (id : Names.Reflexivity(_⟶_)) where
         Identityₗ : Stmt

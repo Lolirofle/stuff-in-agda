@@ -109,7 +109,7 @@ module _ {ℓₒ₁ ℓₒ₂} {A : Type{ℓₒ₁}} ⦃ eq-a : Equiv(A) ⦄ {B 
 
 module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₒ₄} {a : Type{ℓₒ₁}}{b : Type{ℓₒ₂}}{c : Type{ℓₒ₃}}{d : Type{ℓₒ₄}} ⦃ _ : Equiv(a → d) ⦄ where
   -- Function composition is associative.
-  [∘]-associativity : ∀{f : a → b}{g : b → c}{h : c → d} → ((h ∘ (g ∘ f)) ≡ₛ ((h ∘ g) ∘ f))
+  [∘]-associativity : ∀{f : c → d}{g : b → c}{h : a → b} → ((f ∘ (g ∘ h)) ≡ₛ ((f ∘ g) ∘ h))
   [∘]-associativity = reflexivity(_≡ₛ_)
 
 module _ {ℓₒ₁ ℓₒ₂} {a : Type{ℓₒ₁}}{b : Type{ℓₒ₂}} ⦃ _ : Equiv(a → b) ⦄ {f : a → b} where

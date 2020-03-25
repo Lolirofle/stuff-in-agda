@@ -14,10 +14,12 @@ private variable ℓₒ ℓₘ ℓₘₗ ℓₘᵣ : Lvl.Level
 private variable Obj Objₗ Objᵣ : Type{ℓₒ}
 private variable Morphism Morphismₗ Morphismᵣ : Obj → Obj → Type{ℓₘ}
 
-module _  
+module _
+  ⦃ obj-equivₗ : Equiv(Objₗ) ⦄
+  ⦃ obj-equivᵣ : Equiv(Objᵣ) ⦄
   ⦃ morphism-equivₗ : ∀{x y : Objₗ} → Equiv(Morphismₗ x y) ⦄
-  {catₗ : Category(Morphismₗ)}
   ⦃ morphism-equivᵣ : ∀{x y : Objᵣ} → Equiv(Morphismᵣ x y) ⦄
+  {catₗ : Category(Morphismₗ)}
   {catᵣ : Category(Morphismᵣ)}
   where
 
