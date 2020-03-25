@@ -2,23 +2,14 @@
 module Data.List.Relation.Membership {ℓ} {T : Set(ℓ)} where
 
 import Lvl
-open import Functional
-open import Data.List
-open import Data.List.Proofs
+open import Data.List hiding (skip)
 open import Logic
 open import Logic.Propositional
-open import Logic.Propositional.Theorems using ([↔]-transitivity)
-open import Logic.Predicate
-open import Numeral.Natural
-open import Relator.Equals renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_)
-open import Relator.Equals.Proofs hiding ([≡]-substitutionₗ ; [≡]-substitutionᵣ ; [≡]-reflexivity ; [≡]-transitivity ; [≡]-symmetry)
-open import Type
 
 -- The statement of whether an element is in a list
 data _∈_ : T → List(T) → Stmt{ℓ} where
-  instance
-    [∈]-use  : ∀{a}  {L} → (a ∈ (a ⊰ L)) -- Proof of containment when the element is the first element in the list
-    [∈]-skip : ∀{a x}{L} → (a ∈ L) → (a ∈ (x ⊰ L)) -- Proof of containment of a longer list when already having a proof of a shorter list
+  instance use  : ∀{a}  {L} → (a ∈ (a ⊰ L)) -- Proof of containment when the element is the first element in the list
+  instance skip : ∀{a x}{L} → ⦃ _ : (a ∈ L) ⦄ → (a ∈ (x ⊰ L)) -- Proof of containment of a longer list when already having a proof of a shorter list
 
 _∉_ : T → List(T) → Stmt
 _∉_ x L = ¬(x ∈ L)

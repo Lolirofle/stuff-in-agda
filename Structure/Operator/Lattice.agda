@@ -7,6 +7,7 @@ import      Lvl
 open import Functional
 import      Function.Names as Names
 open import Logic
+open import Logic.IntroInstances
 open import Logic.Propositional
 open import Logic.Predicate
 open import Structure.Function.Domain using (Involution ; involution)

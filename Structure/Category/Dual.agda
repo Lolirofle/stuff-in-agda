@@ -1,8 +1,11 @@
 module Structure.Category.Dual where
 
+open import Data.Tuple as Tuple using ()
 open import Functional using (swap)
 open import Sets.Setoid
 open import Structure.Category
+open import Structure.Category.Names
+open import Structure.Category.Properties
 import      Structure.Operator.Properties as Properties
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
@@ -16,14 +19,15 @@ module _
   (cat : Category(Morphism))
   where
 
-  open ArrowNotation
-  open Category
-  open module MorphismEquiv {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv{x}{y} ⦄) using () renaming (transitivity to morphism-transitivity ; symmetry to morphism-symmetry ; reflexivity to morphism-reflexivity)
+  open Category.ArrowNotation(cat)
+  open Category(cat)
+  private open module MorphismEquiv {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
 
   -- The opposite/dual category of a category.
-  dual : Category(swap Morphism)
-  _∘_ (dual) = swap(_∘_ (cat)) -- \{x}{y}{z} yz xy → _∘_ {z}{y}{x} xy yz
-  id(dual) = id(cat)
-  Properties.Identityₗ.proof(identityₗ(dual)) = Properties.Identityᵣ.proof(identityᵣ(cat))
-  Properties.Identityᵣ.proof(identityᵣ(dual)) = Properties.Identityₗ.proof(identityₗ(cat))
-  associativity(dual) {x}{y}{z}{w} {f}{g}{h} = symmetry(_≡_) (associativity(cat) {w}{z}{y}{x} {h}{g}{f})
+  dual : Category(_⟵_)
+  Category._∘_ dual = swap(_∘_)
+  Category.id dual = id
+  BinaryOperator.congruence             (Category.binaryOperator dual) p₁ p₂ = [≡]-with2(_∘_) p₂ p₁
+  Morphism.Associativity.proof          (Category.associativity  dual)  = symmetry(_≡_) (Morphism.associativity(_∘_))
+  Morphism.Identityₗ.proof (Tuple.left  (Category.identity       dual)) = Morphism.identity-right(_∘_)(id)
+  Morphism.Identityᵣ.proof (Tuple.right (Category.identity       dual)) = Morphism.identity-left (_∘_)(id)

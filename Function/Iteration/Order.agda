@@ -6,6 +6,7 @@ open import Functional renaming (id to id-fn)
 open import Function.Iteration hiding (_^_)
 open import Function.Iteration.Proofs
 open import Logic
+open import Logic.IntroInstances
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate

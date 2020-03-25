@@ -92,14 +92,14 @@ module _ {ℓ} where
   --   next2 : ∀{i} → (∀{j} → (j ≤ i) → φ(j)) → φ(𝐒(i))
   --   next2{i} assumption = next{i} (\{j} → convert-assumption{i} assumption {j})
 
-  module _ where
-    open Strict.Properties
+module _ where
+  open Strict.Properties
 
-    instance
-      [ℕ]-accessibleₗ : ∀{n} → Accessibleₗ(_<_)(n)
-      Accessibleₗ.proof ([ℕ]-accessibleₗ {𝟎})    {m}    ⦃ ⦄
-      Accessibleₗ.proof ([ℕ]-accessibleₗ {𝐒(n)}) {𝟎}    ⦃ [≤]-with-[𝐒] ⦃ mn ⦄ ⦄ = intro ⦃ \ ⦃ ⦄ ⦄
-      Accessibleₗ.proof ([ℕ]-accessibleₗ {𝐒(n)}) {𝐒(m)} ⦃ [≤]-with-[𝐒] ⦃ mn ⦄ ⦄ = intro ⦃ \{k} ⦃ xsm ⦄ → Accessibleₗ.proof ([ℕ]-accessibleₗ {n}) ⦃ transitivity(_≤_) xsm mn ⦄ ⦄
+  instance
+    [ℕ]-accessibleₗ : ∀{n} → Accessibleₗ(_<_)(n)
+    Accessibleₗ.proof ([ℕ]-accessibleₗ {𝟎})    {m}    ⦃ ⦄
+    Accessibleₗ.proof ([ℕ]-accessibleₗ {𝐒(n)}) {𝟎}    ⦃ [≤]-with-[𝐒] ⦃ mn ⦄ ⦄ = intro ⦃ \ ⦃ ⦄ ⦄
+    Accessibleₗ.proof ([ℕ]-accessibleₗ {𝐒(n)}) {𝐒(m)} ⦃ [≤]-with-[𝐒] ⦃ mn ⦄ ⦄ = intro ⦃ \{k} ⦃ xsm ⦄ → Accessibleₗ.proof ([ℕ]-accessibleₗ {n}) ⦃ transitivity(_≤_) xsm mn ⦄ ⦄
 
-    [ℕ]-wellfounded : WellFounded(_<_)
-    [ℕ]-wellfounded = [ℕ]-accessibleₗ
+  [ℕ]-wellfounded : WellFounded(_<_)
+  [ℕ]-wellfounded = [ℕ]-accessibleₗ

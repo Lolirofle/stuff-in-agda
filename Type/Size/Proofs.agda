@@ -9,6 +9,7 @@ open import Function.Inverseᵣ
 open import Function.Inverse
 open import Function.Proofs
 open import Logic
+open import Logic.IntroInstances
 open import Logic.Propositional
 open import Logic.Predicate
 import      Sets.Setoid

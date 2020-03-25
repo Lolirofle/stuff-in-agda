@@ -1,22 +1,49 @@
 module Type.Unit.Proofs where
 
-open import Data
+open import Logic
 import      Lvl
 open import Type.Empty
 open import Type.Unit
 open import Logic.Propositional
-open import Relator.Equals
-open import Relator.Equals.Proofs
+open import Sets.Setoid
+open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Type
 
-instance
-  unit-is-pos : ∀{ℓ}{T : Set(ℓ)} → ⦃ _ : IsUnit(T) ⦄ → ◊(T)
-  unit-is-pos ⦃ intro unit uniqueness ⦄ = intro ⦃ unit ⦄
+private variable ℓ : Lvl.Level
+private variable A B U : Type{ℓ}
 
-instance
-  unit-is-prop : ∀{ℓ}{T : Set(ℓ)} → ⦃ _ : IsUnit(T) ⦄ → IsProp(T)
-  unit-is-prop {ℓ₁}{ℓ₂} ⦃ intro unit uniqueness ⦄ = intro (\{x}{y} → transitivity(_≡_) (uniqueness{x}) (symmetry(_≡_)(uniqueness{y}))) where
+module _ ⦃ equiv : Equiv(U) ⦄ where
+  instance
+    unit-is-pos : ⦃ proof : IsUnit(U) ⦄ → ◊(U)
+    unit-is-pos ⦃ intro unit uniqueness ⦄ = intro ⦃ unit ⦄
 
-instance
-  pos-prop-is-unit : ∀{ℓ}{T : Set(ℓ)} → ⦃ _ : (◊ T) ⦄ → ⦃ _ : IsProp(T) ⦄ → IsUnit(T)
-  pos-prop-is-unit {ℓ} ⦃ intro ⦃ unit ⦄ ⦄ ⦃ intro uniqueness ⦄ = intro unit (\{x} → uniqueness{x}{unit}) where
+  instance
+    unit-is-prop : ⦃ proof : IsUnit(U) ⦄ → IsProp(U)
+    unit-is-prop ⦃ intro unit uniqueness ⦄ = intro (\{x}{y} → transitivity(_≡_) (uniqueness{x}) (symmetry(_≡_)(uniqueness{y}))) where
+
+  instance
+    pos-prop-is-unit : ⦃ _ : (◊ U) ⦄ → ⦃ _ : IsProp(U) ⦄ → IsUnit(U)
+    pos-prop-is-unit ⦃ intro ⦃ unit ⦄ ⦄ ⦃ intro uniqueness ⦄ = intro unit (\{x} → uniqueness{x}{unit}) where
+
+module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ is-prop : IsProp(U) ⦄ ⦃ equiv-a : Equiv(A) ⦄ where
+  prop-fn-unique-value : ∀{f : U → A} → ⦃ _ : Function(f) ⦄ → (∀{x y} → (f(x) ≡ f(y)))
+  prop-fn-unique-value {f = f}{x}{y} = [≡]-with(f) (IsProp.uniqueness(is-prop){x}{y})
+
+module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ is-unit : IsUnit(U) ⦄ ⦃ equiv-a : Equiv(A) ⦄ where
+  unit-fn-unique-value : ∀{f : U → A} → ⦃ _ : Function(f) ⦄ → (∀{x y} → (f(x) ≡ f(y)))
+  unit-fn-unique-value = prop-fn-unique-value ⦃ is-prop = unit-is-prop ⦃ proof = is-unit ⦄ ⦄
+
+module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ is-prop : IsProp(U) ⦄ ⦃ equiv-a : Equiv(A) ⦄ where
+  prop-pred-all : ∀{f : U → A} → ⦃ _ : Function(f) ⦄ → (∀{x y} → (f(x) ≡ f(y)))
+  prop-pred-all {f = f}{x}{y} = [≡]-with(f) (IsProp.uniqueness(is-prop){x}{y})
+
+{- TODO
+-- Any binary relation on Unit is an equivalence given that it is reflexive.
+module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ is-unit : IsUnit(U) ⦄ {_▫_ : U → U → Stmt} where
+  unit-equiv : Equiv(U)
+  Equiv._≡_ unit-equiv = (_▫_)
+  Reflexivity.proof  (Equivalence.reflexivity  (Equiv.[≡]-equivalence unit-equiv))       = {!!}
+  Symmetry.proof     (Equivalence.symmetry     (Equiv.[≡]-equivalence unit-equiv)) _     = {!!}
+  Transitivity.proof (Equivalence.transitivity (Equiv.[≡]-equivalence unit-equiv)) _ _   = {!!}
+-}

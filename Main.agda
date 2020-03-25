@@ -169,17 +169,26 @@ import Sets.Setoid.Uniqueness
 import Sets.Setoid.Uniqueness.Proofs
 import Stream
 import String
--- import Structure.Arithmetic
+import Structure.Arithmetic
 import Structure.Category
 import Structure.Category.Categories
--- import Structure.Category.Dual
+-- import Structure.Category.Category
+import Structure.Category.Dual
 -- import Structure.Category.Equiv
 import Structure.Category.Functor
+-- import Structure.Category.Functor.Category
 import Structure.Category.Functor.Equiv
 import Structure.Category.Functor.Functors
 import Structure.Category.Functor.Proofs
--- import Structure.Category.NaturalTransformation
+import Structure.Category.Monad
+-- import Structure.Category.Monad.Category
+import Structure.Category.Monad.ExtensionSystem
+import Structure.Category.Names
+import Structure.Category.NaturalTransformation
+import Structure.Category.NaturalTransformation.NaturalTransformations
 import Structure.Category.Proofs
+import Structure.Category.Properties
+import Structure.Category.Semicategory
 import Structure.Function.Domain
 import Structure.Function.Domain.Proofs
 import Structure.Function.Linear

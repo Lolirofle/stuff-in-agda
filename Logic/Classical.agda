@@ -26,7 +26,7 @@ record Classical {ℓ} (P : Stmt{ℓ}) : Stmt{ℓ} where
     ⦃ excluded-middle ⦄ : P ∨ (¬ P)
 
   decide : Bool
-  decide = not(Either.bool(excluded-middle))
+  decide = not(Either.isRight(excluded-middle))
 
   -- TODO: Maybe use the generalized functions in Data.Boolean.Proofs to implement these. The either-bool-* functions.
   decide-true : P ↔ (decide ≡ 𝑇)

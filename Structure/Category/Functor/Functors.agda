@@ -1,105 +1,137 @@
 module Structure.Category.Functor.Functors where
 
-open import Functional
+import      Functional as Fn
+open import Function.Proofs
+open import Logic.Predicate
 import      Lvl
 open import Sets.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
-open import Structure.Operator.Properties
+open import Structure.Category.Properties
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Syntax.Transitivity
+open import Type
 
-open Functor
+private variable ℓ : Lvl.Level
+private variable Obj Obj₁ Obj₂ Obj₃ : Type{ℓ}
+private variable Morphism Morphism₁ Morphism₂ Morphism₃ : Obj → Obj → Type{ℓ}
+
+module Raw where
+  constᶠᵘⁿᶜᵗᵒʳ : Obj₂ → (Obj₁ → Obj₂)
+  constᶠᵘⁿᶜᵗᵒʳ = Fn.const
+
+  idᶠᵘⁿᶜᵗᵒʳ : Obj → Obj
+  idᶠᵘⁿᶜᵗᵒʳ = Fn.id
+
+  _∘ᶠᵘⁿᶜᵗᵒʳ_ : (Obj₂ → Obj₃) → (Obj₁ → Obj₂) → (Obj₁ → Obj₃)
+  _∘ᶠᵘⁿᶜᵗᵒʳ_ = Fn._∘_
 
 module _
-  {ℓₒₗ ℓₘₗ ℓₒᵣ ℓₘᵣ : Lvl.Level}
-  {Objₗ : Set(ℓₒₗ)}
-  {Objᵣ : Set(ℓₒᵣ)}
-  {Morphismₗ : Objₗ → Objₗ → Set(ℓₘₗ)}
-  ⦃ morphism-equivₗ : ∀{x y} → Equiv(Morphismₗ x y) ⦄
-  {Morphismᵣ : Objᵣ → Objᵣ → Set(ℓₘᵣ)}
-  ⦃ morphism-equivᵣ : ∀{x y} → Equiv(Morphismᵣ x y) ⦄
-  (Categoryₗ : Category(Morphismₗ))
-  (Categoryᵣ : Category(Morphismᵣ))
+  ⦃ morphism-equivₗ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
+  ⦃ morphism-equivᵣ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
+  {Category₁ : Category(Morphism₁)}
+  {Category₂ : Category(Morphism₂)}
   where
 
   module _ where
-
-    open module Equivₗ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equivₗ{x}{y} ⦄) using () renaming (transitivity to transitivityₗ ; symmetry to symmetryₗ ; reflexivity to reflexivityₗ)
-    open module Equivᵣ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equivᵣ{x}{y} ⦄) using () renaming (transitivity to transitivityᵣ ; symmetry to symmetryᵣ ; reflexivity to reflexivityᵣ)
-    open SideNotation(Categoryₗ)(Categoryᵣ)
+    private open module Equivₗ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equivₗ{x}{y} ⦄) using ()
+    private open module Equivᵣ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equivᵣ{x}{y} ⦄) using ()
+    open Category ⦃ … ⦄
     open Functor
+    open Raw
+
+    private instance _ = Category₁
+    private instance _ = Category₂
 
     -- A constant functor maps every object and morphism in a category to a single specified object and the identity morphism.
-    constantFunctor : (objᵣ : Objᵣ) → Functor(Categoryₗ)(Categoryᵣ)(const(objᵣ))
-    map           (constantFunctor(objᵣ)) = const(idᵣ)
-    op-preserving (constantFunctor(objᵣ)) = symmetry(_≡_) (identityₗ(_∘ᵣ_)(idᵣ))
-    id-preserving (constantFunctor(objᵣ)) = reflexivity(_≡_)
+    constant : (objᵣ : Obj₂) → Functor(Category₁)(Category₂)(constᶠᵘⁿᶜᵗᵒʳ(objᵣ))
+    map           (constant(objᵣ)) = Fn.const(id)
+    op-preserving (constant(objᵣ)) = symmetry(_≡_) (Morphism.identityₗ(_∘_)(id))
+    id-preserving (constant(objᵣ)) = reflexivity(_≡_)
 
 module _
-  {ℓₒ ℓₘ : Lvl.Level}
-  {Obj : Set(ℓₒ)}
-  {Morphism : Obj → Obj → Set(ℓₘ)}
-  ⦃ morphism-equiv : ∀{x y} → Equiv(Morphism x y) ⦄
+  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
   {Category : Category(Morphism)}
   where
 
-  open import Functional
-  open import Structure.Relator.Equivalence
-  open import Structure.Relator.Properties
-
-  open module [≡]-Equivalence {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv{x}{y} ⦄) using () renaming (transitivity to [≡]-transitivity ; symmetry to [≡]-symmetry ; reflexivity to [≡]-reflexivity)
+  private open module [≡]-Equivalence {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
   open Functor
+  open Raw
 
-  identityFunctor : Endofunctor(Category)(id)
-  map           (identityFunctor) = id
-  op-preserving(identityFunctor)  = reflexivity(_≡_)
-  id-preserving (identityFunctor) = reflexivity(_≡_)
+  private instance _ = Category
+
+  identity : Endofunctor(Category)(idᶠᵘⁿᶜᵗᵒʳ)
+  map           (identity) = Fn.id
+  op-preserving (identity) = reflexivity(_≡_)
+  id-preserving (identity) = reflexivity(_≡_)
 
 module _
-  {ℓₒ₁ ℓₘ₁ ℓₒ₂ ℓₘ₂ ℓₒ₃ ℓₘ₃ : Lvl.Level}
-  {Obj₁ : Set(ℓₒ₁)}
-  {Obj₂ : Set(ℓₒ₂)}
-  {Obj₃ : Set(ℓₒ₃)}
-  {Morphism₁ : Obj₁ → Obj₁ → Set(ℓₘ₁)}
-  {Morphism₂ : Obj₂ → Obj₂ → Set(ℓₘ₂)}
-  {Morphism₃ : Obj₃ → Obj₃ → Set(ℓₘ₃)}
-  ⦃ morphism-equiv₁ : ∀{x y} → Equiv(Morphism₁ x y) ⦄
-  ⦃ morphism-equiv₂ : ∀{x y} → Equiv(Morphism₂ x y) ⦄
-  ⦃ morphism-equiv₃ : ∀{x y} → Equiv(Morphism₃ x y) ⦄
+  ⦃ morphism-equiv₁ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
+  ⦃ morphism-equiv₂ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
+  ⦃ morphism-equiv₃ : ∀{x y : Obj₃} → Equiv(Morphism₃ x y) ⦄
   {Category₁ : Category(Morphism₁)}
   {Category₂ : Category(Morphism₂)}
   {Category₃ : Category(Morphism₃)}
   where
 
-  open import Functional
-  open import Structure.Relator.Equivalence
-  open import Structure.Relator.Properties
-
-  -- open module Equiv₁ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv₁{x}{y} ⦄) using () renaming (transitivity to transitivity₁ ; symmetry to symmetry₁ ; reflexivity to reflexivity₁)
-  -- open module Equiv₂ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv₂{x}{y} ⦄) using () renaming (transitivity to transitivity₂ ; symmetry to symmetry₂ ; reflexivity to reflexivity₂)
-  open module Equiv₃ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv₃{x}{y} ⦄) using () renaming (transitivity to transitivity₃ ; symmetry to symmetry₃ ; reflexivity to reflexivity₃)
+  private open module Equiv₃ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv₃{x}{y} ⦄) using ()
+  open Category ⦃ … ⦄
   open Functor
+  open Raw
 
-  compositionFunctor :
+  private instance _ = Category₁
+  private instance _ = Category₂
+  private instance _ = Category₃
+
+  composition :
     ∀{F₂₃}{F₁₂}
     → (functor₂₃ : Functor(Category₂)(Category₃)(F₂₃))
-    → ⦃ _ : ∀{x y} → Function(map(functor₂₃) {x}{y}) ⦄
     → (functor₁₂ : Functor(Category₁)(Category₂)(F₁₂))
-    → ⦃ _ : ∀{x y} → Function(map(functor₁₂) {x}{y}) ⦄
-    → Functor(Category₁)(Category₃)(F₂₃ ∘ F₁₂)
+    → Functor(Category₁)(Category₃)(F₂₃ ∘ᶠᵘⁿᶜᵗᵒʳ F₁₂)
 
-  map           (compositionFunctor{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y} = (map(functor₂₃){F₁₂(x)}{F₁₂(y)}) ∘ (map(functor₁₂){x}{y})
-  op-preserving (compositionFunctor{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y}{z} {f}{g} =
-    transitivity(_≡_) ⦃ transitivity₃ ⦄
-      ([≡]-with(map(functor₂₃)) (op-preserving(functor₁₂) {x}{y}{z} {f}{g}))
-      (op-preserving(functor₂₃) {F₁₂(x)} {F₁₂(y)} {F₁₂(z)} {map(functor₁₂)(f)} {map(functor₁₂)(g)})
+  map           (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y} = (map(functor₂₃){F₁₂(x)}{F₁₂(y)}) Fn.∘ (map(functor₁₂){x}{y})
+  map-function  (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) = [∘]-function ⦃ func-f = map-function(functor₂₃) ⦄ ⦃ func-g = map-function(functor₁₂) ⦄
+  op-preserving (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y}{z} {f}{g} =
+    map(functor₂₃) (map(functor₁₂) (f ∘ g))                               🝖-[ [≡]-with(map(functor₂₃)) (op-preserving(functor₁₂)) ]
+    map(functor₂₃) (map(functor₁₂) f ∘ map functor₁₂ g)                   🝖-[ op-preserving(functor₂₃)]
+    map(functor₂₃) (map(functor₁₂) f) ∘ map(functor₂₃) (map(functor₁₂) g) 🝖-end
+  id-preserving (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) {x} =
+    map(functor₂₃) (map(functor₁₂) id) 🝖-[ [≡]-with(_) (id-preserving(functor₁₂)) ]
+    map(functor₂₃) id                  🝖-[ id-preserving(functor₂₃) ]
+    id                                 🝖-end
 
-  id-preserving (compositionFunctor{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) {x} =
-    transitivity(_≡_) ⦃ transitivity₃ ⦄
-      ([≡]-with(map(functor₂₃)) (id-preserving(functor₁₂) {x}))
-      (id-preserving(functor₂₃) {F₁₂(x)})
-    -- map₁₂(id₁{x}) ≡ id₂{F₁₂(x)}
-    -- map₂₃(map₁₂(id₁{x})) ≡ map₂₃(id₂{F₁₂(x)})
-    --                      ≡ id₃{F₂₃(F₁₂(x))}
-    -- (map₂₃ ∘ map₁₂)(id₁{x}) ≡ id₃{F₂₃(F₁₂(x))}
+module Wrapped where
+  module _
+    ⦃ morphism-equivₗ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
+    ⦃ morphism-equivᵣ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
+    {A : Category(Morphism₁)}
+    {B : Category(Morphism₂)}
+    (c : Obj₂)
+    where
+
+    constᶠᵘⁿᶜᵗᵒʳ : (A →ᶠᵘⁿᶜᵗᵒʳ B)
+    ∃.witness constᶠᵘⁿᶜᵗᵒʳ = Raw.constᶠᵘⁿᶜᵗᵒʳ c
+    ∃.proof   constᶠᵘⁿᶜᵗᵒʳ = constant c
+
+  module _
+    ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
+    {A : Category(Morphism)}
+    where
+
+    idᶠᵘⁿᶜᵗᵒʳ : A →ᶠᵘⁿᶜᵗᵒʳ A
+    ∃.witness idᶠᵘⁿᶜᵗᵒʳ = Raw.idᶠᵘⁿᶜᵗᵒʳ
+    ∃.proof   idᶠᵘⁿᶜᵗᵒʳ = identity
+
+  module _
+    ⦃ morphism-equiv₁ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
+    ⦃ morphism-equiv₂ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
+    ⦃ morphism-equiv₃ : ∀{x y : Obj₃} → Equiv(Morphism₃ x y) ⦄
+    {A : Category(Morphism₁)}
+    {B : Category(Morphism₂)}
+    {C : Category(Morphism₃)}
+    where
+
+    _∘ᶠᵘⁿᶜᵗᵒʳ_ : (B →ᶠᵘⁿᶜᵗᵒʳ C) → (A →ᶠᵘⁿᶜᵗᵒʳ B) → (A →ᶠᵘⁿᶜᵗᵒʳ C)
+    ∃.witness (_∘ᶠᵘⁿᶜᵗᵒʳ_ ([∃]-intro F)               ([∃]-intro G))               = Raw._∘ᶠᵘⁿᶜᵗᵒʳ_ F G
+    ∃.proof   (_∘ᶠᵘⁿᶜᵗᵒʳ_ ([∃]-intro _ ⦃ F-functor ⦄) ([∃]-intro _ ⦃ G-functor ⦄)) = composition F-functor G-functor

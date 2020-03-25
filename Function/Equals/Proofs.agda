@@ -2,8 +2,8 @@ module Function.Equals.Proofs where
 
 import      Lvl
 open import Data
-open import Functional
-open import Function.Equals
+import      Functional
+import      Function.Equals
 open import Logic.Propositional
 open import Sets.Setoid
 import      Structure.Operator.Names as Names
@@ -13,47 +13,71 @@ open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type
 
-module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ where
+private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓₑ ℓᵤ : Lvl.Level
+
+module Dependent where
+  open        Functional using (id)
+  open import Functional.Dependent
+  open        Function.Equals.Dependent
+
+  module _ {A : Type{ℓ₁}} {B : A → Type{ℓ₂}} ⦃ equiv-B : ∀{a} → Equiv(B(a)) ⦄ where
+    [⊜]-identityₗ : Identityₗ {T₂ = (a : A) → B(a)} (_∘_)(id)
+    _⊜_.proof (Identityₗ.proof [⊜]-identityₗ) {x} = reflexivity(_≡_) ⦃ Equiv.reflexivity equiv-B ⦄
+
+  module _ {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : B → Type{ℓ₂}} ⦃ equiv-C : ∀{b} → Equiv(C(b)) ⦄ where
+    [⊜][∘]ₗ-function-raw : ∀{f₁ f₂ : (b : B) → C(b)}{g : A → B} → (f₁ ⊜ f₂) → ((f₁ ∘ g) ⊜ (f₂ ∘ g))
+    [⊜][∘]ₗ-function-raw {g = g} (intro feq) = intro(\{x} → feq{g(x)})
+
+  module _ {A : Type{ℓ₁}} {B : A → Type{ℓ₂}} {C : (a : A) → B(a) → Type{ℓ₃}} ⦃ equiv-C : ∀{a}{b} → Equiv(C(a)(b)) ⦄ where
+    [⊜][∘ₛ]ₗ-function-raw : ∀{f₁ f₂ : (a : A) → (b : B(a)) → C(a)(b)}{g : (a : A) → B(a)} → (f₁ ⊜ f₂) → ((f₁ ∘ₛ g) ⊜ (f₂ ∘ₛ g))
+    [⊜][∘ₛ]ₗ-function-raw {g = g} (intro feq) = intro(\{x} → _⊜_.proof (feq{x}) {g(x)})
+
+  -- module _ {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : B → Type{ℓ₃}} ⦃ _ : Equiv(B) ⦄ ⦃ equiv-C : ∀{b} → Equiv(C(b)) ⦄ {f₁ f₂ : (b : B) → C(b)} ⦃ _ : Function(f₂) ⦄ where (TODO: Requires Function to be able to take a dependent function)
+    -- [⊜][∘]-binaryOperator-raw : (f₁ ⊜ f₂) → ∀{g₁ g₂ : A → B} → (g₁ ⊜ g₂) → (f₁ ∘ g₁ ⊜ f₂ ∘ g₂)
+    -- [⊜][∘]-binaryOperator-raw feq (intro geq) = [⊜][∘]ₗ-function-raw feq 🝖 (intro([≡]-with(f₂) (geq)))
+
+open Functional
+open Function.Equals
+
+private variable A B C D : Type{ℓ}
+
+module _ ⦃ _ : let _ = A in Equiv(B) ⦄ where
   [⊜]-identityₗ : Identityₗ {T₂ = A → B} (_∘_)(id)
-  _⊜_.proof(Identityₗ.proof([⊜]-identityₗ)) =  reflexivity(_≡_)
+  _⊜_.proof(Identityₗ.proof([⊜]-identityₗ)) = reflexivity(_≡_)
 
-module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ where
   [⊜]-identityᵣ : Identityᵣ {T₁ = A → B} (_∘_)(id)
-  _⊜_.proof(Identityᵣ.proof([⊜]-identityᵣ)) =  reflexivity(_≡_)
+  _⊜_.proof(Identityᵣ.proof([⊜]-identityᵣ)) = reflexivity(_≡_)
 
-module _ {ℓ₁}{ℓ₂}{ℓ₃}{ℓ₄} {A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}}{D : Type{ℓ₄}} ⦃ _ : Equiv(A) ⦄ where
-  [⊜]-associativity : Names.AssociativityPattern {T₁ = B → A} {T₂ = C → B} {T₃ = D → C} (_∘_)(_∘_)(_∘_)(_∘_)
+module _ ⦃ _ : let _ = A ; _ = B ; _ = C ; _ = D in Equiv(D) ⦄ where
+  [⊜]-associativity : Names.AssociativityPattern {T₁ = C → D} {T₂ = B → C} {T₃ = A → B} (_∘_)(_∘_)(_∘_)(_∘_)
   _⊜_.proof ([⊜]-associativity {f} {g} {h}) {x} = reflexivity(_≡_)
 
-module _ where
-  import Relator.Equals.Proofs
+module _ ⦃ _ : Equiv(Empty{ℓₑ}) ⦄ where
+  [⊜]-emptyₗ : ∀{f g : A → Empty{ℓₑ}} → (f ⊜ g)
+  [⊜]-emptyₗ {f = f} = intro(\{x} → empty(f(x)))
 
-  [⊜]-emptyₗ : ∀{ℓ ℓₑ}{T : Type{ℓ}}{f g : T → Empty{ℓₑ}} → (f ⊜ g)
-  [⊜]-emptyₗ {_}{_} {_} {f}{_} = intro(\{x} → empty(f(x)))
+module _ ⦃ _ : Equiv(A) ⦄ where
+  [⊜]-emptyᵣ : ∀{f g : Empty{ℓₑ} → A} → (f ⊜ g)
+  [⊜]-emptyᵣ = intro(\{})
 
-module _ {ℓ}{ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
-  [⊜]-emptyᵣ : ∀{f g : Empty{ℓₑ} → T} → (f ⊜ g)
-  [⊜]-emptyᵣ {_}{_} = intro(\{})
+module _ ⦃ _ : Equiv(Unit{ℓᵤ}) ⦄ where
+  [⊜]-unitₗ : ∀{f g : A → Unit{ℓᵤ}} → (f ⊜ g)
+  [⊜]-unitₗ = intro(reflexivity(_≡_))
 
-module _ {ℓ}{ℓₑ} {T : Type{ℓ}} where
-  import Relator.Equals.Proofs
+module _ ⦃ _ : let _ = A ; _ = B ; _ = C in Equiv(C) ⦄ where
+  [⊜][∘]ₗ-function-raw : ∀{f₁ f₂ : B → C}{g : A → B} → (f₁ ⊜ f₂) → ((f₁ ∘ g) ⊜ (f₂ ∘ g))
+  [⊜][∘]ₗ-function-raw {g = g} (intro feq) = intro(\{x} → feq{g(x)})
 
-  [⊜]-unitₗ : ∀{f g : T → Unit{ℓₑ}} → (f ⊜ g)
-  [⊜]-unitₗ {_}{_} = intro(reflexivity(_≡_))
+module _ ⦃ _ : let _ = A in Equiv(B) ⦄ ⦃ _ : Equiv(C) ⦄ {f₁ f₂ : B → C} ⦃ _ : Function(f₂) ⦄ where
+  [⊜][∘]-binaryOperator-raw : (f₁ ⊜ f₂) → ∀{g₁ g₂ : A → B} → (g₁ ⊜ g₂) → (f₁ ∘ g₁ ⊜ f₂ ∘ g₂)
+  [⊜][∘]-binaryOperator-raw feq (intro geq) = [⊜][∘]ₗ-function-raw feq 🝖 (intro([≡]-with(f₂) (geq)))
 
-module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} ⦃ _ : Equiv(C) ⦄ where
-  [⊜]-compose₁ : ∀{f₁ f₂ : B → C}{g : A → B} → (f₁ ⊜ f₂) → ((f₁ ∘ g) ⊜ (f₂ ∘ g))
-  [⊜]-compose₁ {g = g} (intro feq) = intro(\{x} → feq{g(x)})
-
-module _ {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ {C : Type{ℓ₃}} ⦃ _ : Equiv(C) ⦄ ⦃ _ : ∀{f : B → C} → Function(f) ⦄ where
-  [⊜]-compose : ∀{f₁ f₂ : B → C} → (f₁ ⊜ f₂) → ∀{g₁ g₂ : A → B} → (g₁ ⊜ g₂) → (f₁ ∘ g₁ ⊜ f₂ ∘ g₂)
-  [⊜]-compose {f₁}{f₂} feq {g₁}{g₂} (intro geq) = [⊜]-compose₁ feq 🝖 (intro \{x} → [≡]-with(f₂) (geq{x}))
-
+module _ ⦃ _ : let _ = A in Equiv(B) ⦄ ⦃ _ : Equiv(C) ⦄ ⦃ function : ∀{f : B → C} → Function(f) ⦄ where
   instance
     [⊜][∘]-binaryOperator : BinaryOperator(_∘_ {X = A}{Y = B}{Z = C})
-    BinaryOperator.congruence [⊜][∘]-binaryOperator = [⊜]-compose
+    BinaryOperator.congruence [⊜][∘]-binaryOperator = [⊜][∘]-binaryOperator-raw
 
-module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}} ⦃ equiv-a : Equiv(A) ⦄ {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ where
+module _ ⦃ _ : let _ = A in Equiv(B) ⦄ where
   [⊜]-abstract : ∀{a b : B} → (a ≡ b) → ((x ↦ a) ⊜ ((x ↦ b) :of: (A → B)))
   [⊜]-abstract {a} {b} x = intro x
 

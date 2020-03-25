@@ -31,7 +31,7 @@ module _ {ℓ} where
     [++]-identityₗ : ∀{T : Type{ℓ}} → Identityₗ{T₁ = List(T)} (_++_) ∅
     Identityₗ.proof([++]-identityₗ) = [≡]-intro
 
-  [++]-identityᵣ-raw : ∀{T : Type{ℓ}} → Names.Identityᵣ (_++_ {T = T}) ∅
+  [++]-identityᵣ-raw : ∀{T : Type{ℓ}} → Names.Identityᵣ (Functional.swap(foldᵣ{T = T}(_⊰_))) ∅
   [++]-identityᵣ-raw {x = ∅}     = [≡]-intro
   [++]-identityᵣ-raw {x = x ⊰ l} = [≡]-with(x ⊰_) ([++]-identityᵣ-raw {x = l})
   {-# REWRITE [++]-identityᵣ-raw #-}
@@ -99,7 +99,7 @@ module _ {ℓ} where
   length-postpend : ∀{T : Type{ℓ}}{a : T}{l : List(T)} → (length(postpend a l) ≡ 𝐒(length l))
   length-postpend {l = ∅}     = [≡]-intro
   length-postpend {l = x ⊰ l} = [≡]-with(𝐒) (length-postpend {l = l})
-  {-# REWRITE length-postpend #-}
+  -- {-# REWRITE length-postpend #-}
 
   length-[++] : ∀{T : Type{ℓ}}{l₁ l₂ : List(T)} → (length(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
   length-[++] {T} {l₁} {l₂} = List-induction base next {l₁} where
@@ -114,7 +114,7 @@ module _ {ℓ} where
 
   length-reverse : ∀{T : Type{ℓ}}{l : List(T)} → (length(reverse(l)) ≡ length(l))
   length-reverse {l = ∅}     = [≡]-intro
-  length-reverse {l = x ⊰ l} = [≡]-with(𝐒) (length-reverse {l = l})
+  length-reverse {l = x ⊰ l} = length-postpend{a = x}{l = reverse l} 🝖 [≡]-with(𝐒) (length-reverse {l = l})
 
   length-repeat : ∀{T : Type{ℓ}}{x : T}{n} → (length(repeat(x)(n)) ≡ n)
   length-repeat{n = 𝟎}    = [≡]-intro
@@ -182,8 +182,8 @@ module _ {ℓ} where
   -}
 
   instance
-    [++]-cancellationₗ : ∀{T : Type{ℓ}} → Cancellationₗ {T₁ = List(T)} (_++_)
-    Cancellationₗ.proof([++]-cancellationₗ) = proof where
+    [++]-cancellationₗ : ∀{T : Type{ℓ}} → Cancellationₗ(_++_ {T = T})
+    Cancellationₗ.proof([++]-cancellationₗ {T}) {x}{y}{z} = proof {x}{y}{z} where
       proof : Names.Cancellationₗ (_++_)
       proof {∅}     p = p
       proof {x ⊰ l} p  = proof {l} (cancellationₗ(_⊰_) p)

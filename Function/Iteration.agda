@@ -48,7 +48,6 @@ module _ {ℓ} {T : Type{ℓ}} where
   _⁹ : (T → T) → (T → T)
   _⁹ = _^ 9
 
-
 module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
   -- Repeat a binary operation n times for the same element and an initial element
   -- Example: repeatₗ 3 id (_∘_) f = ((id ∘ f) ∘ f) ∘ f

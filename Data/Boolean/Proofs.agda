@@ -7,6 +7,7 @@ import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.Either as Either using (_‖_ ; Left ; Right)
 open import Functional
+open import Logic.IntroInstances
 open import Logic.Propositional as Logic using (_∨_ ; _∧_ ; ¬_ ; _↔_ ; [⊤]-intro ; [↔]-intro ; [⊥]-elim ; [↔]-to-[←] ; [↔]-to-[→])
 open import Logic.Predicate
 open import Relator.Equals
@@ -521,32 +522,32 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T : Type{ℓ₁}} {x y : T} {P : T → Type{ℓ
   if-bool-elim{𝐹} p pxq pyq = pyq p [≡]-intro
 
 module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {T : Type{ℓ₁}} {P : T → Type{ℓ₂}} {X : Type{ℓ₃}} {Y : Type{ℓ₄}} (nxy : X → Y → Logic.⊥) where
-  either-bool-left : (xy : (X ∨ Y)) → (X ↔ (Either.bool(xy) ≡ 𝐹))
-  either-bool-left xy with bivalence{Either.bool(xy)}
+  either-bool-left : (xy : (X ∨ Y)) → (X ↔ (Either.isRight(xy) ≡ 𝐹))
+  either-bool-left xy with bivalence{Either.isRight(xy)}
   either-bool-left (Left  x) | Right f = [↔]-intro (const x) (const f)
   either-bool-left (Right y) | Left  t = [↔]-intro (\()) (x ↦ empty(nxy x y))
 
-  either-bool-right : (xy : (X ∨ Y)) → (Y ↔ (Either.bool(xy) ≡ 𝑇))
-  either-bool-right xy with bivalence{Either.bool(xy)}
+  either-bool-right : (xy : (X ∨ Y)) → (Y ↔ (Either.isRight(xy) ≡ 𝑇))
+  either-bool-right xy with bivalence{Either.isRight(xy)}
   either-bool-right (Left  x) | Right f = [↔]-intro (\()) (y ↦ empty(nxy x y))
   either-bool-right (Right y) | Left  t = [↔]-intro (const y) (const t)
 
 module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {T : Type{ℓ₁}} {P : T → Type{ℓ₂}} {X : Type{ℓ₃}} {Y : Type{ℓ₄}} where
-  either-bool-leftₗ : (xy : (X ∨ Y)) → (X ← (Either.bool(xy) ≡ 𝐹))
-  either-bool-leftₗ xy with bivalence{Either.bool(xy)}
+  either-bool-leftₗ : (xy : (X ∨ Y)) → (X ← (Either.isRight(xy) ≡ 𝐹))
+  either-bool-leftₗ xy with bivalence{Either.isRight(xy)}
   either-bool-leftₗ (Left  x) | Right f = const x
   either-bool-leftₗ (Right y) | Left  t = \()
 
-  either-bool-rightₗ : (xy : (X ∨ Y)) → (Y ← (Either.bool(xy) ≡ 𝑇))
-  either-bool-rightₗ xy with bivalence{Either.bool(xy)}
+  either-bool-rightₗ : (xy : (X ∨ Y)) → (Y ← (Either.isRight(xy) ≡ 𝑇))
+  either-bool-rightₗ xy with bivalence{Either.isRight(xy)}
   either-bool-rightₗ (Left  x) | Right f = \()
   either-bool-rightₗ (Right y) | Left  t = const y
 
-  if-not-either-bool-intro : ∀{x y : T} → (X → P(x)) → (Y → P(y)) → (xy : (X ∨ Y)) → P(if not(Either.bool(xy)) then x else y)
+  if-not-either-bool-intro : ∀{x y : T} → (X → P(x)) → (Y → P(y)) → (xy : (X ∨ Y)) → P(if not(Either.isRight(xy)) then x else y)
   if-not-either-bool-intro {x}{y} xp yp xy = if-intro {x = x}{y = y} (xp ∘ either-bool-leftₗ xy ∘ 𝑇.[¬]-elim) (yp ∘ either-bool-rightₗ xy ∘ 𝐹.[¬]-elim)
 
 module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {T : Type{ℓ₁}} {P : T → Type{ℓ₂}} {X : Type{ℓ₃}} {Y : Type{ℓ₄}} where
-  if-either-bool-intro : ∀{x y : T} → (X → P(x)) → (Y → P(y)) → (xy : (X ∨ Y)) → P(if Either.bool(xy) then y else x)
+  if-either-bool-intro : ∀{x y : T} → (X → P(x)) → (Y → P(y)) → (xy : (X ∨ Y)) → P(if Either.isRight(xy) then y else x)
   if-either-bool-intro {x}{y} xp yp xy = if-intro {x = y}{y = x} (yp ∘ either-bool-rightₗ {P = P} xy) (xp ∘ either-bool-leftₗ {P = P} xy)
 
 ---------------------------------------------

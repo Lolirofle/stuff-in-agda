@@ -11,8 +11,8 @@ open import Sets.Setoid hiding (Function)
 open import Type
 
 
-module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv(B) ⦄ where
-  _⊜_ : (A → B) → (A → B) → Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂}
+module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} {B : A → Type{ℓₒ₂}} ⦃ _ : ∀{a} → Equiv(B(a)) ⦄ where
+  _⊜_ : ((a : A) → B(a)) → ((a : A) → B(a)) → Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂}
   _⊜_ f g = (∀{x} → (f(x) ≡ g(x)))
 
 module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv(B) ⦄ ⦃ _ : Equiv(A → B) ⦄ where

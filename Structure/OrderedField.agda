@@ -7,6 +7,7 @@ import      Data.Either as Either
 open import Functional
 open import Logic
 open import Logic.Classical
+open import Logic.IntroInstances
 open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Natural using (ℕ)
@@ -52,7 +53,7 @@ record OrderedField {ℓ₁ ℓ₂} {F : Type{ℓ₁}} ⦃ _ : Equiv(F) ⦄ (_+_
     field proof : (x > 𝟎)
 
   ‖_‖ : F → F
-  ‖ x ‖ = if Either.bool(converseTotal(_≤_){𝟎}{x}) then (− x) else x
+  ‖ x ‖ = if Either.isRight(converseTotal(_≤_){𝟎}{x}) then (− x) else x
 
   [−]-of-𝟎 : ((− 𝟎) ≡ 𝟎)
   [−]-of-𝟎 =

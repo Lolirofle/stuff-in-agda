@@ -162,7 +162,7 @@ module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {a : Type{ℓₒ₁}} ⦃ _ : Equiv(a) 
       ⦄
 
   -- The composition of functions is a function.
-  [∘]-function : ∀{f : b → c}{g : a → b} → ⦃ _ : Function(f) ⦄ → ⦃ _ : Function(g) ⦄ → Function(f ∘ g)
+  [∘]-function : ∀{f : b → c}{g : a → b} → ⦃ func-f : Function(f) ⦄ → ⦃ func-g : Function(g) ⦄ → Function(f ∘ g)
   Function.congruence([∘]-function {f = f}{g = g} ⦃ func-f ⦄ ⦃ func-g ⦄ ) {x₁}{x₂} = ([≡ₛ]-with(f) ⦃ func-f ⦄ {g(x₁)} {g(x₂)}) ∘ ([≡ₛ]-with(g) ⦃ func-g ⦄ {x₁} {x₂})
 
 module _ {ℓₒ₁ ℓₒ₂} {a : Type{ℓₒ₁}} ⦃ _ : Equiv(a) ⦄ {b : Type{ℓₒ₂}} ⦃ _ : Equiv(b) ⦄ where
@@ -182,12 +182,15 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{
   swap-involution-fn : ⦃ _ : Equiv((X → Y → Z) → (X → Y → Z)) ⦄ → (swap ∘ swap ≡ₛ id {T = X → Y → Z})
   swap-involution-fn = reflexivity(_≡ₛ_)
 
+  swap-binaryOperator : ⦃ _ : Equiv(X) ⦄ ⦃ _ : Equiv(Y) ⦄ ⦃ _ : Equiv(Z) ⦄ → ∀{_▫_ : X → Y → Z} → ⦃ _ : BinaryOperator(_▫_) ⦄ → BinaryOperator(swap(_▫_))
+  BinaryOperator.congruence (swap-binaryOperator {_▫_ = _▫_} ⦃ Sets.Setoid.intro p ⦄) x₁y₁ x₂y₂ = p x₂y₂ x₁y₁
+
 module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
-  s-combinator-const-id : ⦃ _ : Equiv(X → X) ⦄ → (s-combinator{X = X}{Y → X}{X} const const ≡ₛ id)
+  s-combinator-const-id : ⦃ _ : Equiv(X → X) ⦄ → (_∘ₛ_ {X = X}{Y = Y → X}{Z = X} const const ≡ₛ id)
   s-combinator-const-id = reflexivity(_≡ₛ_)
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{ℓ₃}} ⦃ equiv-z : Equiv(Z) ⦄ where
-  s-combinator-const-eq : ∀{f}{a}{b} → (s-combinator{X = X}{Y = Y}{Z = Z} f (const b) a ≡ₛ f a b)
+  s-combinator-const-eq : ∀{f}{a}{b} → (_∘ₛ_{X = X}{Y = Y}{Z = Z} f (const b) a ≡ₛ f a b)
   s-combinator-const-eq = reflexivity(_≡ₛ_)
 
 {- TODO: Maybe this is unprovable because types. https://plato.stanford.edu/entries/axiom-choice/#AxiChoLog https://plato.stanford.edu/entries/axiom-choice/choice-and-type-theory.html https://en.wikipedia.org/wiki/Diaconescu%27s_theorem
@@ -211,5 +214,5 @@ module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {X : Type{ℓₒ₁}} ⦃ eq-x : Equiv(
   open import Function.Equals
   open import Function.Equals.Proofs
 
-  s-combinator-injective : Injective(s-combinator {X = X}{Y = Y}{Z = Z})
+  s-combinator-injective : Injective(_∘ₛ_ {X = X}{Y = Y}{Z = Z})
   _⊜_.proof (Injective.proof s-combinator-injective {f} {g} sxsy) {x} = Function.Equals.intro(\{a} → [⊜]-apply([⊜]-apply sxsy {const(a)}){x}) -- TODO: Left inverse (S⁻¹ ∘ S = id) is probably (S⁻¹ f a b = f (const b) a)

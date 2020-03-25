@@ -1,44 +1,54 @@
 module Structure.Category.Categories where
 
 open import Data
+open import Data.Proofs
+open import Data.Tuple as Tuple using ()
 open import Functional
+open import Logic
 import      Lvl
 open import Sets.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Functor.Functors
 open import Structure.Category.Proofs
+open import Structure.Category.Properties
 open import Structure.Operator.Properties
+open import Structure.Relator.Equivalence
+open import Structure.Relator.Properties
 open import Type
 
-module _ {ℓₒ ℓₘ} where
-  open import Relator.Equals
-  open import Relator.Equals.Proofs.Equivalence
+private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 
-  -- The empty category is a category containing nothing.
-  -- The objects are empty.
-  -- The morphisms are empty.
-  emptyCategory : Category{ℓₒ}{ℓₘ}{Obj = Empty}(empty)
-  Category._∘_           (emptyCategory) {}
-  Category.id            (emptyCategory) {}
-  Category.identityₗ     (emptyCategory) {}
-  Category.identityᵣ     (emptyCategory) {}
-  Category.associativity (emptyCategory) {}
+-- The empty category is a category containing nothing.
+-- The objects are empty.
+-- The morphisms are empty.
+emptyCategory : Category{ℓ₁}{ℓ₂}(empty) ⦃ \{} ⦄
+Category._∘_            emptyCategory {}
+Category.id             emptyCategory {}
+Category.binaryOperator emptyCategory {}
+Morphism.Associativity.proof (Category.associativity emptyCategory) {}
+Morphism.Identityₗ.proof (Tuple.left  (Category.identity emptyCategory)) {}
+Morphism.Identityᵣ.proof (Tuple.right (Category.identity emptyCategory)) {}
 
-module _ {ℓₒ ℓₘ} where
-  open import Relator.Equals
-  open import Relator.Equals.Proofs.Equivalence
+{-
+module _ where
+  private variable _▫_ : Unit{ℓ₁} → Unit{ℓ₁} → Stmt{ℓ₂}
 
-  -- The single category is a category containing a single object.
-  -- The objects consists of a single thing.
-  -- The morphisms consists of a single connection connecting the single thing to itself.
-  singleCategory : Category{ℓₒ}{ℓₘ}{Obj = Unit}(const(const Unit))
-  Category._∘_                      (singleCategory) <> <> = <>
-  Category.id                       (singleCategory) = <>
-  Identityₗ.proof(Category.identityₗ (singleCategory)) = [≡]-intro
-  Identityᵣ.proof(Category.identityᵣ (singleCategory)) = [≡]-intro
-  Category.associativity            (singleCategory) = [≡]-intro
+  module _ ⦃ proof : (<> ▫ <>) ⦄ ⦃ equiv : Equiv(<> ▫ <>) ⦄ where
+    -- The single category is a category containing a single object.
+    -- The objects consists of a single thing.
+    -- The morphisms consists of a single connection connecting the single thing to itself.
+    singleCategory : Category{Obj = Unit}(_▫_) ⦃ equiv ⦄
+    Category._∘_ singleCategory {<>} {<>} {<>} p q = {!q!}
+    Category.id singleCategory {<>} = {!!}
+    BinaryOperator.congruence (Category.binaryOperator singleCategory) _ _ = reflexivity(_) ⦃ Equivalence.reflexivity (Equiv.[≡]-equivalence(equiv)) ⦄
+    Morphism.Associativity.proof (Category.associativity singleCategory) = reflexivity(_) ⦃ Equivalence.reflexivity (Equiv.[≡]-equivalence(equiv)) ⦄
+    Morphism.Identityₗ.proof (Tuple.left (Category.identity singleCategory)) {<>} {<>} = {!reflexivity(_) ⦃ Equivalence.reflexivity (Equiv.[≡]-equivalence(equiv)) ⦄!}
+    Morphism.Identityᵣ.proof (Tuple.right (Category.identity singleCategory)) = {!!}
+  -- reflexivity(_≡_) ⦃ Equivalence.reflexivity (Equiv.[≡]-equivalence equiv) ⦄
+-}
 
+{- 
 
 {- TODO: May have to use an alternative equality definition for the proofs to work? When are two instances of Category equal?
 
@@ -67,4 +77,5 @@ module _
   Category.associativity             (categoryCategory) {x}{y}{z}{w} {F₁}{F₂}{F₃} = {!!}
 
   Category-equiv = ?
+-}
 -}

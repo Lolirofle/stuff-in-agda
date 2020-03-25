@@ -82,12 +82,14 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ 
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ identity : ∃(Identity(_▫_)) ⦄ where
   module _ (inv : T → T) where
+    import Logic.IntroInstances
+
     record InverseFunction : Stmt{ℓ} where
       constructor intro
       field
         instance ⦃ left ⦄  : InverseFunctionₗ(_▫_) ⦃ [∃]-map-proof Identity.left  identity ⦄ (inv)
         instance ⦃ right ⦄ : InverseFunctionᵣ(_▫_) ⦃ [∃]-map-proof Identity.right identity ⦄ (inv)
-    inverseFunction-left = inst-fn (InverseFunctionₗ.proof ∘ InverseFunction.left)
+    inverseFunction-left  = inst-fn (InverseFunctionₗ.proof ∘ InverseFunction.left)
     inverseFunction-right = inst-fn (InverseFunctionᵣ.proof ∘ InverseFunction.right)
   Invertible = ∃(InverseFunction)
 

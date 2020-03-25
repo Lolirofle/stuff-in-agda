@@ -1,58 +1,85 @@
-module Structure.Arithmetic {ℓₗ}{ℓₒ} where
+module Structure.Arithmetic where
 
 import      Lvl
-open import Logic.Propositional{ℓₗ Lvl.⊔ ℓₒ}
-open import Relator.Equals{ℓₗ Lvl.⊔ ℓₒ}{ℓₒ}
-open import Structure.Relator.Ordering{ℓₗ}{ℓₒ}
-open import Structure.Function.Domain{ℓₗ}
+open import Logic
+open import Logic.Predicate
+open import Logic.Propositional
+open import Relator.Ordering
+open import Sets.Setoid
+open import Structure.Relator.Ordering
+open import Structure.Relator.Properties
+open import Structure.Function.Domain
+open import Syntax.Function
 open import Type
 
-record Language (T : Type{ℓₒ}) : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
-  field
-    𝟎 : T
-    𝐒 : T → T
+private variable ℓₒ ℓₗ ℓₗ₁ ℓₗ₂ : Lvl.Level
+private variable T T₁ T₂ : Type{ℓₒ}
 
-    _<_ : T → T → Stmt
+module _ ⦃ equiv : Equiv(T) ⦄ (𝟎 : T) (𝐒 : T → T) where
+  record Elemental : Type{Lvl.of(T)} where
+    field
+      ⦃ 𝐒-function  ⦄   : Function(𝐒)
+      ⦃ 𝐒-injectivity ⦄ : Injective(𝐒)
+      𝐒-positivity      : ∀{x} → (𝐒(x) ≢ 𝟎)
 
-record Minimal (T : Type{ℓₒ}) ⦃ _ : Language(T) ⦄ : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
-  open Language ⦃ ... ⦄
-  open From-[<][≡] {T} (_<_) (_≡_)
+  module _ (_<_ : T → T → Stmt{ℓₗ}) where
+    record Minimal : Type{Lvl.of(T) ⊔ ℓₗ} where
+      open From-[<][≡] (_<_) (_≡_)
 
-  field
-    [𝐒]-positivity  : ∀{x : T} → (𝐒(x) ≢ 𝟎)
-    [𝐒]-injectivity : Injective{ℓₒ}{ℓₒ}{T}{T}(𝐒)
+      field
+        ⦃ elemental ⦄ : Elemental
+        [<]ₗ-𝟎 : ∀{x} → (𝟎 < x) ↔ (x ≢ 𝟎)
+        [<]ᵣ-𝟎 : ∀{x} → (𝟎 ≤ x) -- Minimum in the order (TODO: Is (∀x. x≥0) neccessary? Which means (0<x)∨(0=x))
+        [<]ₗ-𝐒 : ∀{x y} → (𝐒(x) < y) ↔ ((x < y)∧(𝐒(x) ≢ y)) -- TODO: Also the definition of (_≤_)?
+        [<]ᵣ-𝐒 : ∀{x y} → (x < 𝐒(y)) ↔ (x ≤ y)
 
-    [<][𝟎]ₗ : ∀{x : T} → (𝟎 < x) ↔ (x ≢ 𝟎)
-    [<][𝟎]ᵣ : ∀{x : T} → (x ≥ 𝟎) -- Minimum in the order (TODO: Is (∀x. x≥0) neccessary? Which means (0<x)∨(0=x))
-    [<][𝐒]ₗ : ∀{x y : T} → (𝐒(x) < y) ↔ ((x < y)∧(𝐒(x) ≢ y)) -- TODO: Also the definition of (_≤_)?
-    [<][𝐒]ᵣ : ∀{x y : T} → (x < 𝐒(y)) ↔ (x ≤ y)
+    record Full : Typeω where
+      field
+        ⦃ minimal ⦄ : Minimal
+        induction : ∀{ℓ}{P : T → Stmt{ℓ}} → P(𝟎) → (∀{x} → P(x) → P(𝐒(x))) → (∀{x} → P(x))
 
-record Peano (T : Type{ℓₒ}) ⦃ _ : Language(T) ⦄ : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
-  open Language ⦃ ... ⦄
+      𝟎-or-𝐒 : ∀{x} → (x ≡ 𝟎) ∨ ∃(y ↦ x ≡ 𝐒(y))
+      𝟎-or-𝐒 {x} = induction {P = x ↦ (x ≡ 𝟎) ∨ ∃(y ↦ x ≡ 𝐒(y))} ([∨]-introₗ (reflexivity(_≡_))) (\{x} → [∨]-elim (p ↦ [∨]-introᵣ([∃]-intro 𝟎 ⦃ [≡]-with(𝐒) p ⦄)) (\{([∃]-intro y ⦃ p ⦄) → [∨]-introᵣ([∃]-intro (𝐒(y)) ⦃ [≡]-with(𝐒) p ⦄)})) {x}
 
-  field
-   ⦃ minimal ⦄ : Minimal(T)
+{-
+module _ ⦃ equiv : Equiv(T) ⦄ {𝟎}{𝐒}{_<_ : T → T → Stmt{ℓₗ}} ⦃ full : Full(𝟎)(𝐒)(_<_) ⦄ where
+  open import Numeral.Natural as ℕ using (ℕ)
+  open import Type.Empty
 
-  field
-    induction : ∀{P : T → Stmt} → P(𝟎) → (∀{x} → P(x) → P(𝐒(x))) → (∀{x} → P(x))
+  -- TODO: This is a definition of an isomorphism between any of these and ℕ?
 
-record Addition (T : Type{ℓₒ}) ⦃ _ : Language(T) ⦄ : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
-  open Language ⦃ ... ⦄
+  from-ℕ : ℕ → T
+  from-ℕ (ℕ.𝟎)    = 𝟎
+  from-ℕ (ℕ.𝐒(n)) = 𝐒(from-ℕ n)
 
-  field
-    _+_ : T → T → T
+  to-ℕ : T → ℕ
+  to-ℕ x = ◊.existence (Full.induction(full) zero succ {x}) where
+    zero = intro ⦃ ℕ.𝟎 ⦄
+    succ = \{(intro ⦃ n ⦄) → intro ⦃ ℕ.𝐒(n) ⦄}
 
-  field
-    [+]-base    : ∀{x : T} → (x + 𝟎 ≡ x)
-    [+]-step    : ∀{x y : T} → (x + 𝐒(y) ≡ 𝐒(x + y))
+  -}
 
-record Multiplication (T : Type{ℓₒ}) ⦃ _ : Language(T) ⦄ ⦃ _ : Addition(T) ⦄ : Type{Lvl.𝐒(ℓₗ Lvl.⊔ ℓₒ)} where
-  open Language ⦃ ... ⦄
-  open Addition ⦃ ... ⦄
+{-
+module _
+  ⦃ equiv : Equiv(T₁) ⦄ {𝟎₁}{𝐒₁}{_<₁_ : T₁ → T₁ → Stmt{ℓₗ₁}} ⦃ full₁ : Full(𝟎₁)(𝐒₁)(_<₁_) ⦄
+  ⦃ equiv : Equiv(T₂) ⦄ {𝟎₂}{𝐒₂}{_<₂_ : T₂ → T₂ → Stmt{ℓₗ₂}} ⦃ full₂ : Full(𝟎₂)(𝐒₂)(_<₂_) ⦄
+  where
+  open import Type.Empty
 
-  field
-    _⋅_ : T → T → T
+  {- TODO: Probably impossible to prove anything about this morph because nothing is stated about the "values" of Full.induction
+  morph : T₁ → T₂
+  morph x = ◊.existence (Full.induction(full₁) zero succ {x}) where
+    zero = intro ⦃ 𝟎₂ ⦄
+    succ = \{(intro ⦃ n ⦄) → intro ⦃ 𝐒₂(n) ⦄}
 
-  field
-    [⋅]-base    : ∀{x : T} → (x ⋅ 𝟎 ≡ 𝟎)
-    [⋅]-step    : ∀{x y : T} → (x ⋅ 𝐒(y) ≡ (x ⋅ y) + x)
+  morph-zero : morph(𝟎₁) ≡ 𝟎₂
+  morph-zero = {!!}
+  -}
+
+  {- TODO: Termination checking fails because recursion depends on Full.𝟎-or-𝐒 which it does not know whether it "shrinks" the result or not
+  morph : T₁ → T₂
+  morph x with Full.𝟎-or-𝐒 (full₁) {x}
+  ... | [∨]-introₗ _ = 𝟎₂
+  ... | [∨]-introᵣ ([∃]-intro y) = 𝐒₂(morph y)
+  -}
+-}

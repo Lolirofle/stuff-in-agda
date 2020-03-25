@@ -2,6 +2,7 @@ module Structure.Operator.Group where
 
 import      Lvl
 open import Logic
+open import Logic.IntroInstances
 open import Logic.Predicate
 open import Sets.Setoid
 open import Structure.Operator.Monoid using (Monoid)

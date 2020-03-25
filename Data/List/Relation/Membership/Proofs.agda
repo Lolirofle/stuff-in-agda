@@ -3,7 +3,7 @@ module Data.List.Relation.Membership.Proofs {ℓ} {T : Set(ℓ)} where
 
 import Lvl
 open import Functional
-open import Data.List
+open import Data.List hiding (skip)
 open import Data.List.Proofs
 open import Data.List.Relation.Membership {ℓ}{T}
 open import Logic
@@ -17,9 +17,8 @@ open import Relator.Equals.Proofs hiding ([≡]-substitutionₗ ; [≡]-substitu
 open import Structure.Operator.Properties
 open import Type
 
-
-pattern [∈]-id        {a}{L}          = [∈]-use  {a}{L}
-pattern [∈][⊰]-expand {a}{x}{L} proof = [∈]-skip {a}{x}{L} (proof)
+pattern [∈]-id        {a}{L}          = use  {a}{L}
+pattern [∈][⊰]-expand {a}{x}{L} proof = skip {a}{x}{L} ⦃ proof ⦄
 
 [∉]-empty : ∀{a} → (a ∉ ∅)
 [∉]-empty ()
@@ -69,16 +68,12 @@ pattern [∈][⊰]-expand {a}{x}{L} proof = [∈]-skip {a}{x}{L} (proof)
   left (a∈L₁) = [∈][⊰]-expand ([∈][++]-expandᵣ {a}{L₁}{L₂} (a∈L₁))
 
   right : ∀{a} → (a ∈ (x ⊰ L₂)) → (a ∈ (x ⊰ (L₁ ++ L₂)))
-  right ([∈]-use)              = [∈]-use
+  right (use)              = use
   right ([∈][⊰]-expand (a∈L₂)) = [∈][⊰]-expand ([∈][++]-expandₗ {_}{L₁}{L₂} (a∈L₂))
 
 -- [∈][⊰]-reorderᵣ : ∀{a x}{L₁ L₂} → (a ∈ (x ⊰ (L₁ ++ L₂))) → (a ∈ (L₁ ++ (x ⊰ L₂)))
 -- [∈][⊰]-reorderᵣ {a}{x}{L₁}{L₂} ([∈]-id) = 
 -- [∈][⊰]-reorderᵣ {a}{x}{L₁}{L₂} ([∈][⊰]-expand (a∈L₁++L₂)) = 
-
-construct : ∀{a}{L} → (a ∈ L) → T
-construct{a}(_) = a
-
 
 [∈]-apply : ∀{a}{L} → (a ∈ L) → ∀{f} → (f(a) ∈ (map f(L)))
 [∈]-apply ([∈]-id)               = [∈]-id
@@ -108,18 +103,6 @@ module _ where
   [≡]-substitutionᵣ : ∀{L₁ L₂ : List(T)} → (L₁ ≡ L₂) → ∀{P : T → Stmt{ℓ₂}} → (∀{a} → (a ∈ L₂) → P(a)) → (∀{a} → (a ∈ L₁) → P(a))
   [≡]-substitutionᵣ (L₁≡L₂) = [⊆]-substitution ([↔]-to-[→] (L₁≡L₂))
 
--- [⊆]-application : ∀{L₁ L₂} → (L₁ ⊆ L₂) → ∀{f} → (map f(L₁))⊆(map f(L₂))
--- [⊆]-application proof fL₁ = [∈]-proof.application ∘ proof
--- (∀{x} → (x ∈ L₂) → (x ∈ L₁)) → ∀{f} → (∀{x} → (x ∈ map f(L₂)) → (x ∈ map f(L₁)))
-
-postulate [≡]-included-in : ∀{L : List(T)}{x} → (x ∈ L) → ((x ⊰ L) ≡ L)
--- [≡]-included-in (x-in) {a} = 
-
-postulate [≡]-included-subset : ∀{L₁ L₂ : List(T)} → (L₁ ⊆ L₂) → ((L₁ ++ L₂) ≡ L₂)
-
-postulate [≡]-subset-[++] : ∀{L L₁ L₂ : List(T)} → (L₁ ⊆ L) → (L₂ ⊆ L) → (L₁ ++ L₂ ⊆ L)
-
-
 [⊆]-reflexivity : ∀{L} → (L ⊆ L)
 [⊆]-reflexivity = id
 
@@ -144,6 +127,28 @@ postulate [≡]-subset-[++] : ∀{L L₁ L₂ : List(T)} → (L₁ ⊆ L) → (L
 [≡]-transitivity : ∀{L₁ L₂ L₃} → (L₁ ≡ L₂) → (L₂ ≡ L₃) → (L₁ ≡ L₃)
 [≡]-transitivity (L₁≡L₂) (L₂≡L₃) {x} with [∧]-intro ((L₁≡L₂){x}) ((L₂≡L₃){x})
 ... | ([∧]-intro (lr₁) (lr₂)) = [↔]-transitivity  (lr₁) (lr₂)
+
+-- [⊆]-application : ∀{L₁ L₂} → (L₁ ⊆ L₂) → ∀{f} → (map f(L₁))⊆(map f(L₂))
+-- [⊆]-application proof fL₁ = [∈]-proof.application ∘ proof
+-- (∀{x} → (x ∈ L₂) → (x ∈ L₁)) → ∀{f} → (∀{x} → (x ∈ map f(L₂)) → (x ∈ map f(L₁)))
+
+[≡]-included-in : ∀{L : List(T)}{x} → (x ∈ L) → ((x ⊰ L) ≡ L)
+[≡]-included-in xL = [⊆]-antisymmetry (r xL) (l xL) where
+  l : ∀{L : List(T)}{x} → (x ∈ L) → ((x ⊰ L) ⊇ L)
+  l use  use  = use
+  l use  skip = skip
+  l skip use  = skip ⦃ use ⦄
+  l skip skip = skip ⦃ skip ⦄
+
+  r : ∀{L : List(T)}{x} → (x ∈ L) → ((x ⊰ L) ⊆ L)
+  r use  use          = use
+  r use  (skip ⦃ p ⦄) = p
+  r skip use          = skip
+  r skip (skip ⦃ p ⦄) = p
+
+postulate [≡]-included-subset : ∀{L₁ L₂ : List(T)} → (L₁ ⊆ L₂) → ((L₁ ++ L₂) ≡ L₂)
+
+postulate [≡]-subset-[++] : ∀{L L₁ L₂ : List(T)} → (L₁ ⊆ L) → (L₂ ⊆ L) → (L₁ ++ L₂ ⊆ L)
 
 
 [⊆]-with-[⊰] : ∀{L₁ L₂ : List(T)} → (L₁ ⊆ L₂) → ∀{b} → (L₁ ⊆ (b ⊰ L₂))

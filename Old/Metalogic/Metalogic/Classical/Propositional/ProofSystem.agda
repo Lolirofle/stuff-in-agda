@@ -114,22 +114,22 @@ module NaturalDeduction where
     empty ()
 
     singleton : ∀{φ} → Tree(φ) → Trees([ φ ])
-    singleton (φ-tree) ([∈]-use) = φ-tree
-    singleton (φ-tree) ([∈]-skip ())
+    singleton (φ-tree) (use) = φ-tree
+    singleton (φ-tree) (skip ())
 
     -- TODO: This could possibly be generalized to: ∀{Γ₁ Γ₂}{F : T → Set} → (∀{a} → (a ∈ Γ₁) → (a ∈ Γ₂)) → ((∀{γ} → (γ ∈ Γ₂) → F(γ)) → (∀{γ} → (γ ∈ Γ₁) → F(γ)))
     from-[∈] : ∀{Γ₁ Γ₂} → (∀{a} → (a ∈ Γ₁) → (a ∈ Γ₂)) → (Trees(Γ₂) → Trees(Γ₁))
     from-[∈] (f) (Γ₂-trees) {γ} = liftᵣ (f{γ}) (Γ₂-trees)
 
     push : ∀{Γ}{φ} → Tree(φ) → Trees(Γ) → Trees(φ ⊰ Γ)
-    push (φ-tree) (Γ-tree) ([∈]-use) = φ-tree
-    push (φ-tree) (Γ-tree) ([∈]-skip inclusion) = Γ-tree (inclusion)
+    push (φ-tree) (Γ-tree) (use) = φ-tree
+    push (φ-tree) (Γ-tree) (skip inclusion) = Γ-tree (inclusion)
 
     pop : ∀{Γ}{φ} → Trees(φ ⊰ Γ) → Trees(Γ)
-    pop = from-[∈] ([∈]-skip)
+    pop = from-[∈] (skip)
 
     first : ∀{Γ}{φ} → Trees(φ ⊰ Γ) → Tree(φ)
-    first(f) = f([∈]-use)
+    first(f) = f(use)
 
     -- TODO: Could be removed because liftᵣ is easier to use. ALthough a note/tip should be written for these purposes.
     -- formula-weaken : ∀{ℓ}{T : Set(ℓ)}{Γ₁ Γ₂} → (Trees(Γ₁) → Trees(Γ₂)) → (Trees(Γ₂) → T) → (Trees(Γ₁) → T)
@@ -311,7 +311,7 @@ module NaturalDeduction where
       (assumption-trees ↦ [∨]-elim
         (φ₁-tree ↦ (φ₁Γ⊢φ₃) (Trees.push (φ₁-tree) (Trees.[++]-left  {Γ₁}{Γ₂} (Trees.pop (\{γ} → assumption-trees {γ})))))
         (φ₂-tree ↦ (φ₂Γ⊢φ₃) (Trees.push (φ₂-tree) (Trees.[++]-right {Γ₁}{Γ₂} (Trees.pop (\{γ} → assumption-trees {γ})))))
-        (assumption-trees ([∈]-use))
+        (assumption-trees (use))
       )
 
     [⊢][⇒]-intro : ∀{Γ}{φ₁ φ₂} → ((φ₁ ⊰ Γ) ⊢ φ₂) → (Γ ⊢ (φ₁ ⇒ φ₂))

@@ -10,37 +10,46 @@ open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type
 
-module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ equiv-B : Equiv(B) ⦄ where
+module Dependent {ℓ₁}{ℓ₂} {A : Type{ℓ₁}} {B : A → Type{ℓ₂}} ⦃ equiv-B : ∀{a} → Equiv(B(a)) ⦄ where
   infixl 15 _⊜_
 
   -- Function equivalence. When the types and all their values are shared/equivalent.
-  record _⊜_ (f : A → B) (g : A → B) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+  record _⊜_ (f : (a : A) → B(a)) (g : (a : A) → B(a)) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field
       proof : (f Names.⊜ g)
 
   instance
     [⊜]-reflexivity : Reflexivity(_⊜_)
-    Reflexivity.proof([⊜]-reflexivity) = intro(reflexivity(_≡_))
+    Reflexivity.proof([⊜]-reflexivity) = intro(reflexivity(_≡_) ⦃ Equiv.reflexivity(equiv-B) ⦄)
 
   instance
     [⊜]-symmetry : Symmetry(_⊜_)
-    Symmetry.proof([⊜]-symmetry) (intro f≡g) = intro(symmetry(_≡_)(f≡g))
+    Symmetry.proof([⊜]-symmetry) (intro fg) = intro(symmetry(_≡_) ⦃ Equiv.symmetry(equiv-B) ⦄ fg)
 
   instance
     [⊜]-transitivity : Transitivity(_⊜_)
-    Transitivity.proof([⊜]-transitivity) (intro f≡g) (intro g≡h) = intro(transitivity(_≡_)(f≡g)(g≡h))
+    Transitivity.proof([⊜]-transitivity) (intro fg) (intro gh) = intro(transitivity(_≡_) ⦃ Equiv.transitivity(equiv-B) ⦄ fg gh)
 
   instance
     [⊜]-equivalence : Equivalence(_⊜_)
     [⊜]-equivalence = record{}
 
   instance
-    [⊜]-equiv : Equiv(A → B)
+    [⊜]-equiv : Equiv((a : A) → B(a))
     [⊜]-equiv = intro(_⊜_) ⦃ [⊜]-equivalence ⦄
 
--- TODO: Probably incorrect?
--- [≡]-inherit-property : ∀{ℓ₁}{ℓ₂} → (∀{X : Type{ℓ₂}}{Y : Type{ℓ₂}} {a₁ b₁ : X}{a₂ b₂ : Y} → (a₁ ≡ᵥ b₁) → (a₂ ≡ᵥ b₂)) → (∀{X₁ X₂ : Type{ℓ₁}}{Y₁ Y₂ : Type{ℓ₂}}{f₁ g₁ : X₁ → Y₁}{f₂ g₂ : X₂ → Y₂} → (f₁ ≡ g₁) → (f₂ ≡ g₂))
--- [≡]-inherit-property(prop) {X₁}{X₂} {Y₁}{Y₂} {f₁}{g₁} {f₂}{g₂} =
---   [≡]-intro{_}{_} {_}{_} (\{x} → prop{_}{_} {f₁(x)}{g₁(x)} {f₂(x)}{g₂(x)})
--- P : ∀{X Y} → (X , X) → (Y , Y)
+  instance
+    [⊜]-sub : (_≡_) ⊆₂ (_⊜_)
+    _⊆₂_.proof [⊜]-sub (intro proof) = intro proof
+
+module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ equiv-B : Equiv(B) ⦄ where
+  private module D = Dependent {A = A} {B = const B} ⦃ equiv-B ⦄
+  open D using (module _⊜_ ; intro) public
+  _⊜_              = D._⊜_
+  [⊜]-reflexivity  = D.[⊜]-reflexivity
+  [⊜]-symmetry     = D.[⊜]-symmetry
+  [⊜]-transitivity = D.[⊜]-transitivity
+  [⊜]-equivalence  = D.[⊜]-equivalence
+  [⊜]-equiv        = D.[⊜]-equiv
+  [⊜]-sub          = D.[⊜]-sub

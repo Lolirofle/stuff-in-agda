@@ -129,53 +129,69 @@ module _ where
         (f ∘ (f ^ n)) ∘ (g ∘ (g ^ n)) 🝖-[ reflexivity(_≡_) ]
         (f ^ 𝐒(n)) ∘ (g ^ 𝐒(n))       🝖-end
 
-module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
-  open import Relator.Equals
-  open import Relator.Equals.Proofs
+  module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} ⦃ equiv-x : Equiv(X) ⦄ {Y : Type{ℓ₂}} ⦃ equiv-y : Equiv(Y) ⦄ where
+    private variable n : ℕ
+    private variable x : X
+    private variable init : Y
 
-  repeatᵣₗ-flip-equality : ∀{n : ℕ}{_▫_ : Y → X → Y}{init : Y}{x : X} → (repeatᵣ n (swap(_▫_)) x init ≡ repeatₗ n (_▫_) init x)
-  repeatᵣₗ-flip-equality {𝟎}               = [≡]-intro
-  repeatᵣₗ-flip-equality {𝐒(n)}{_▫_}{_}{x} = [≡]-with(_▫ x) (repeatᵣₗ-flip-equality {n}{_▫_})
+    repeatᵣₗ-flip-equality : ∀{_▫_ : Y → X → Y} → ⦃ op : BinaryOperator(_▫_) ⦄ → (repeatᵣ n (swap(_▫_)) x init ≡ repeatₗ n (_▫_) init x)
+    repeatᵣₗ-flip-equality {n = 𝟎}                      = reflexivity(_≡_)
+    repeatᵣₗ-flip-equality {n = 𝐒(n)}{x = x}{_▫_ = _▫_} = [≡]-with2ₗ(_▫_)(x) (repeatᵣₗ-flip-equality {n = n}{_▫_ = _▫_})
 
-  repeatₗᵣ-flip-equality : ∀{n : ℕ}{_▫_ : X → Y → Y}{x : X}{init : Y} → (repeatₗ n (swap _▫_) init x ≡ repeatᵣ n (_▫_) x init)
-  repeatₗᵣ-flip-equality {n}{_▫_}{x}{init} = symmetry(_≡_) (repeatᵣₗ-flip-equality {n}{swap _▫_}{init}{x})
+    repeatₗᵣ-flip-equality : ∀{_▫_ : X → Y → Y} → ⦃ op : BinaryOperator(_▫_) ⦄ → (repeatₗ n (swap _▫_) init x ≡ repeatᵣ n (_▫_) x init)
+    repeatₗᵣ-flip-equality {n = n}{init = init}{x = x}{_▫_ = _▫_} = symmetry(_≡_) (repeatᵣₗ-flip-equality {n = n}{x = x}{init = init}{_▫_ = swap(_▫_)} ⦃ op = swap-binaryOperator ⦄)
+
+  module _ {ℓ} {X : Type{ℓ}} ⦃ equiv-x : Equiv(X) ⦄ where
+    private variable f : X → X
+    private variable _▫_ : X → X → X
+    private variable x elem init : X
+    private variable n : ℕ
+
+    [^]-from-repeatᵣ-alt : ⦃ func : Function(f) ⦄ → ((f ^ n) ⊜ repeatᵣ(n) (f ∘_) id)
+    [^]-from-repeatᵣ-alt    {n = 𝟎}   = reflexivity(_≡_)
+    [^]-from-repeatᵣ-alt {f}{n = 𝐒 n} = [≡]-with(f) ([^]-from-repeatᵣ-alt {n = n})
+
+    [^]-from-repeatᵣ : ⦃ func : Function(f) ⦄ → ((f ^ n) ⊜ repeatᵣ(n) (_∘_) f id)
+    [^]-from-repeatᵣ    {n = 𝟎}   = reflexivity(_≡_)
+    [^]-from-repeatᵣ {f}{n = 𝐒 n} = [≡]-with(f) ([^]-from-repeatᵣ {f}{n = n})
+
+    -- TODO: Should also be provable using associativity? Prove (CommutingOn(_▫_)(x)(x) → AssociativityOn(_▫_)(x)). Is this helping?
+    repeat-swap-side : ⦃ op : BinaryOperator(_▫_) ⦄ ⦃ _ : Commutativity(_▫_) ⦄ → (repeatₗ n (_▫_) x x ≡ repeatᵣ n (_▫_) x x)
+    repeat-swap-side            {n = 𝟎}      = reflexivity(_≡_)
+    repeat-swap-side {_▫_ = _▫_}{n = 𝐒 n}{x} = [≡]-with2ₗ(_▫_)(x) (repeat-swap-side {n = n}) 🝖 commutativity(_▫_)
+
+    repeat-swap-side-by-associativity : ⦃ op : BinaryOperator(_▫_) ⦄ ⦃ _ : Associativity(_▫_) ⦄ → (repeatₗ n (_▫_) x x ≡ repeatᵣ n (_▫_) x x)
+    repeat-swap-side-by-associativity             {n = 𝟎}         = reflexivity(_≡_)
+    repeat-swap-side-by-associativity             {n = 𝐒 𝟎}   {x} = reflexivity(_≡_)
+    repeat-swap-side-by-associativity {_▫_ = _▫_} {n = 𝐒(𝐒 n)}{x} =
+      repeatₗ (𝐒(𝐒(n))) (_▫_) x x        🝖[ _≡_ ]-[]
+      repeatₗ (𝐒(n)) (_▫_) x x ▫ x       🝖[ _≡_ ]-[ [≡]-with2ₗ(_▫_)(x) (repeat-swap-side-by-associativity {n = 𝐒 n}) ]
+      repeatᵣ (𝐒(n)) (_▫_) x x ▫ x       🝖[ _≡_ ]-[]
+      (x ▫ repeatᵣ n (_▫_) x x) ▫ x      🝖[ _≡_ ]-[ associativity(_▫_) ]
+      x ▫ (repeatᵣ n (_▫_) x x ▫ x)      🝖[ _≡_ ]-[ [≡]-with2ᵣ(_▫_)(x) ([≡]-with2ₗ(_▫_)(x) (repeat-swap-side-by-associativity {n = n})) ]-sym
+      x ▫ (repeatₗ n (_▫_) x x ▫ x)      🝖[ _≡_ ]-[]
+      x ▫ repeatₗ (𝐒(n)) (_▫_) x x       🝖[ _≡_ ]-[ [≡]-with2ᵣ(_▫_)(x) (repeat-swap-side-by-associativity {n = 𝐒(n)}) ]
+      x ▫ repeatᵣ (𝐒(n)) (_▫_) x x       🝖[ _≡_ ]-[]
+      repeatᵣ (𝐒(𝐒(n))) (_▫_) x x        🝖[ _≡_ ]-end
+
+    repeat-with-id-swap-side : ⦃ op : BinaryOperator(_▫_) ⦄ ⦃ _ : Commutativity(_▫_) ⦄ ⦃ _ : Identity(_▫_)(init) ⦄ → (repeatₗ n (_▫_) init x ≡ repeatᵣ n (_▫_) x init)
+    repeat-with-id-swap-side {n = 𝟎} = reflexivity(_≡_)
+    repeat-with-id-swap-side {_▫_ = _▫_}{n = 𝐒 n}{x = x} = [≡]-with2ₗ(_▫_)(x) (repeat-with-id-swap-side {n = n}) 🝖 commutativity(_▫_)
+
+    repeat-raise-equality : ⦃ op : BinaryOperator(_▫_) ⦄ → (repeatᵣ n (_▫_) elem (x) ≡ ((elem ▫_) ^ n)(x))
+    repeat-raise-equality           {n = 𝟎}             = reflexivity(_≡_)
+    repeat-raise-equality{_▫_ = _▫_}{n = 𝐒(n)}{elem}{x} = [≡]-with2ᵣ(_▫_)(elem) (repeat-raise-equality{_▫_ = _▫_}{n = n}{elem}{x})
+
 
 module _ {ℓ} {X : Type{ℓ}} where
   open import Relator.Equals
   open import Relator.Equals.Proofs
 
-  [^]-from-repeatᵣ-alt : ∀{f : X → X}{n} → ((f ^ n) ⊜ repeatᵣ(n) (f ∘_) id)
-  [^]-from-repeatᵣ-alt    {n = 𝟎}   = [≡]-intro
-  [^]-from-repeatᵣ-alt {f}{n = 𝐒 n} = [≡]-with(f) ([^]-from-repeatᵣ-alt {n = n})
-
-  [^]-from-repeatᵣ : ∀{f : X → X}{n} → ((f ^ n) ⊜ repeatᵣ(n) (_∘_) f id)
-  [^]-from-repeatᵣ    {n = 𝟎}   = [≡]-intro
-  [^]-from-repeatᵣ {f}{n = 𝐒 n} = [≡]-with(f) ([^]-from-repeatᵣ {f}{n = n})
-
-  -- TODO: Should also be provable using associativity? Prove (CommutingOn(_▫_)(x)(x) → AssociativityOn(_▫_)(x)). Is this helping?
-  repeat-swap-side : ∀{n : ℕ}{_▫_ : X → X → X}{x : X} → ⦃ _ : Commutativity(_▫_) ⦄ → (repeatₗ n (_▫_) x x ≡ repeatᵣ n (_▫_) x x)
-  repeat-swap-side {𝟎}   = [≡]-intro
-  repeat-swap-side {𝐒 n}{_▫_}{x} = [≡]-with(_▫ x) (repeat-swap-side {n}) 🝖 commutativity(_▫_)
-
-  {-
-  repeat-swap-side-by-associativity : ∀{n : ℕ}{_▫_ : X → X → X}{x : X} → ⦃ _ : Associativity(_▫_) ⦄ → (repeatₗ n (_▫_) x x ≡ repeatᵣ n (_▫_) x x)
-  repeat-swap-side-by-associativity {𝟎}   = [≡]-intro
-  repeat-swap-side-by-associativity {𝐒 n}{_▫_}{x} = {!repeat-swap-side-by-associativity {n}{_▫_}{x}!}
-  -}
-
-  repeat-with-id-swap-side : ∀{n : ℕ}{_▫_ : X → X → X}{x init : X} → ⦃ _ : Commutativity(_▫_) ⦄ ⦃ _ : Identity(_▫_)(init) ⦄ → (repeatₗ n (_▫_) init x ≡ repeatᵣ n (_▫_) x init)
-  repeat-with-id-swap-side {𝟎} = [≡]-intro
-  repeat-with-id-swap-side {𝐒 n}{_▫_}{x} ⦃ comm ⦄ ⦃ ident ⦄ = [≡]-with(_▫ x) (repeat-with-id-swap-side {n} ⦃ comm ⦄ ⦃ ident ⦄) 🝖 commutativity(_▫_)
-
-  repeat-raise-equality : ∀{n : ℕ}{_▫_ : X → X → X}{elem x : X} → (repeatᵣ n (_▫_) elem (x) ≡ ((elem ▫_) ^ n)(x))
-  repeat-raise-equality{𝟎}                  = [≡]-intro
-  repeat-raise-equality{𝐒(n)}{_▫_}{elem}{x} = [≡]-with(elem ▫_) (repeat-raise-equality{n}{_▫_}{elem}{x})
-
   raise-repeat-equality : ∀{n : ℕ}{f : X → X} → (f ^ n ≡ repeatᵣ n (_∘_) f id)
-  raise-repeat-equality{𝟎}       = [≡]-intro
+  raise-repeat-equality{𝟎}       = reflexivity(_≡_)
   raise-repeat-equality{𝐒(n)}{f} = [≡]-with(f ∘_) (raise-repeat-equality{n}{f})
+
 module _ where
-  open import Function.Equals
   open import Sets.Setoid
 
   module _ {ℓ} {X : Type{ℓ}} ⦃ equiv-X : Equiv(X) ⦄ where
@@ -184,8 +200,6 @@ module _ where
 
     repeatₗ-by-1 : ∀{_▫_ : X → X → X}{x id} → ⦃ _ : Identityᵣ(_▫_)(id) ⦄ → (repeatᵣ 1 (_▫_) x id ≡ x)
     repeatₗ-by-1 {_▫_} {x}{id} ⦃ identᵣ ⦄ = identityᵣ(_▫_)(id)
-
-    -- repeatᵣ-by-sum : ∀{_▫_ : X → X → X}{x id} → ⦃ _ : Identityᵣ(_▫_)(id) ⦄ → ∀{a b} → ((repeatᵣ a (_▫_) x id) ▫ (repeatᵣ b (_▫_) x id) ≡ repeatᵣ (a + b) (_▫_) x id)
 
     repeatₗ-by-sum : ∀{_▫_ : X → X → X}{x id} → ⦃ _ : BinaryOperator(_▫_) ⦄ → ⦃ _ : Identityᵣ(_▫_)(id) ⦄ → ⦃ _ : Associativity(_▫_) ⦄ → ∀{a b} → ((repeatₗ a (_▫_) id x) ▫ (repeatₗ b (_▫_) id x) ≡ repeatₗ (a + b) (_▫_) id x)
     repeatₗ-by-sum {_▫_} {x} {id} ⦃ identᵣ ⦄ {a} {𝟎}   =

@@ -38,6 +38,15 @@ mapLeft f = map2 f id
 mapRight : (B → C) → (A ‖ B) → (A ‖ C)
 mapRight f = map2 id f
 
-bool : (A ‖ B) → Bool
-bool(Left  _) = 𝐹
-bool(Right _) = 𝑇
+isLeft : (A ‖ B) → Bool
+isLeft(Left  _) = 𝑇
+isLeft(Right _) = 𝐹
+
+isRight : (A ‖ B) → Bool
+isRight(Left  _) = 𝐹
+isRight(Right _) = 𝑇
+
+-- TODO: Remove
+-- bool : (A ‖ B) → Bool
+-- bool = isRight
+-- {-# WARNING_ON_USAGE bool "DEPRECATED: Use `isRight` instead of `bool`" #-}

@@ -1,56 +1,58 @@
 module Structure.Category.Functor where
 
+open import Lang.Instance
 import      Lvl
 open import Logic.Predicate
 open import Sets.Setoid
 open import Structure.Category
+open import Type
+
+private variable ℓ : Lvl.Level
+private variable Obj Objₗ Objᵣ : Type{ℓ}
+private variable Morphism Morphismₗ Morphismᵣ : Objₗ → Objᵣ → Type{ℓ}
 
 module _
-  {ℓₒₗ ℓₘₗ ℓₒᵣ ℓₘᵣ : Lvl.Level}
-  {Objₗ : Set(ℓₒₗ)}
-  {Objᵣ : Set(ℓₒᵣ)}
-  {Morphismₗ : Objₗ → Objₗ → Set(ℓₘₗ)}
-  ⦃ morphism-equivₗ : ∀{x y} → Equiv(Morphismₗ x y) ⦄
-  {Morphismᵣ : Objᵣ → Objᵣ → Set(ℓₘᵣ)}
-  ⦃ morphism-equivᵣ : ∀{x y} → Equiv(Morphismᵣ x y) ⦄
+  ⦃ morphism-equivₗ : ∀{x y : Objₗ} → Equiv(Morphismₗ x y) ⦄
+  ⦃ morphism-equivᵣ : ∀{x y : Objᵣ} → Equiv(Morphismᵣ x y) ⦄
   (Categoryₗ : Category(Morphismₗ))
   (Categoryᵣ : Category(Morphismᵣ))
   where
 
-  -- Arrow notation for the domain category and the codomain category of a functor.
-  module SideNotation where
-    _⟶ₗ_ = Morphismₗ
-    _⟶ᵣ_ = Morphismᵣ
-
-    _∘ₗ_ = Category._∘_ (Categoryₗ)
-    _∘ᵣ_ = Category._∘_ (Categoryᵣ)
-
-    idₗ = Category.id (Categoryₗ)
-    idᵣ = Category.id (Categoryᵣ)
-
   -- A covariant functor.
   -- A homomorphism between categories.
-  -- "Preserves structure"
-  -- A "functor" is specifically a function which morphs/transforms objects from category 1 to category 2.
-  record Functor (F : Objₗ → Objᵣ) : Set((ℓₒₗ Lvl.⊔ ℓₘₗ) Lvl.⊔ (ℓₒᵣ Lvl.⊔ ℓₘᵣ)) where
-    open SideNotation
+  -- "Preserves structure".
+  -- A "functor" is specifically a function which morphs/transforms objects from the left category to the right category.
+  record Functor (F : Objₗ → Objᵣ) : Type{Lvl.of(type-of(Categoryₗ)) Lvl.⊔ Lvl.of(type-of(Categoryᵣ))} where
+    open Category ⦃ … ⦄
+    open Category.ArrowNotation ⦃ … ⦄
+    private instance _ = Categoryₗ
+    private instance _ = Categoryᵣ
 
     field
-      -- Morphs/Transforms morphisms from category 1 to category 2
-      map : ∀{x y} → (x ⟶ₗ y) → (F(x) ⟶ᵣ F(y))
+      -- Morphs/Transforms morphisms from the left category to the right category.
+      map : ∀{x y : Objₗ} → (x ⟶ y) → (F(x) ⟶ F(y))
 
     field
-      ⦃ op-preserving ⦄ : ∀{x y z}{f : y ⟶ₗ z}{g : x ⟶ₗ y} → (map(f ∘ₗ g) ≡ map(f) ∘ᵣ map(g))
-      ⦃ id-preserving  ⦄ : ∀{x} → (map(idₗ{x}) ≡ idᵣ)
+      -- ⦃ functor-function ⦄ : Function(F)
+      ⦃ map-function ⦄     : ∀{x y} → Function(map{x}{y})
+      ⦃ op-preserving ⦄    : ∀{x y z : Objₗ}{f : y ⟶ z}{g : x ⟶ y} → (map(f ∘ g) ≡ map(f) ∘ map(g))
+      ⦃ id-preserving ⦄    : ∀{x : Objₗ} → (map(id {x = x}) ≡ id)
+
+    open import Structure.Category.Properties
+    open import Structure.Function.Domain
+
+    Faithful      = ∀{x y} → Injective (map{x}{y})
+    Full          = ∀{x y} → Surjective(map{x}{y})
+    FullyFaithful = ∀{x y} → Bijective (map{x}{y})
+    -- TODO: Conservative  = ∀{x y : Objₗ}{f : x ⟶ y} → Morphism.Isomorphism(\{x} → _∘_ {x = x})(\{x} → id{x = x})(map f) → Morphism.Isomorphism(\{x} → _∘_ {x = x})(id)(f)
 
   _→ᶠᵘⁿᶜᵗᵒʳ_ = ∃(Functor)
 
 module _
-  {ℓₒ ℓₘ : Lvl.Level}
-  {Obj : Set(ℓₒ)}
-  {Morphism : Obj → Obj → Set(ℓₘ)}
-  ⦃ morphism-equiv : ∀{x y} → Equiv(Morphism x y) ⦄
+  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
   (Category : Category(Morphism))
   where
 
   Endofunctor = Functor(Category)(Category)
+
+  ⟲ᶠᵘⁿᶜᵗᵒʳ = ∃(Endofunctor)

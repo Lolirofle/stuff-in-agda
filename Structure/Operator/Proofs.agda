@@ -6,6 +6,7 @@ open import Data.Tuple
 open import Functional hiding (id)
 open import Function.Equals
 import      Function.Names as Names
+open import Logic.IntroInstances
 open import Logic.Propositional
 open import Logic.Predicate
 open import Sets.Setoid
