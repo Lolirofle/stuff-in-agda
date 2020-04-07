@@ -17,7 +17,7 @@ private variable ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
 -- A weak order formalizes both "less or equals"-relations and "greater or equals"-relations.
 module Weak {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
   record PartialOrder (_≡_ : T → T → Stmt{ℓ₃}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
-    instance constructor intro
+    constructor intro
     field
      ⦃ antisymmetry ⦄ : Antisymmetry (_≤_) (_≡_)
      ⦃ transitivity ⦄ : Transitivity (_≤_)
@@ -26,7 +26,7 @@ module Weak {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
   -- A weak total order is a weak partial order where all objects are ordered.
   -- Also called: Weak Linear order
   record TotalOrder (_≡_ : T → T → Stmt{ℓ₃}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
-    instance constructor intro
+    constructor intro
     field
      ⦃ partialOrder ⦄ : PartialOrder(_≡_)
      ⦃ totality ⦄     : ConverseTotal(_≤_)
@@ -64,7 +64,7 @@ module Weak {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
 
 module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
   record PartialOrder : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    instance constructor intro
+    constructor intro
     field
      ⦃ transitivity ⦄  : Transitivity  (_<_)
      ⦃ asymmetry ⦄     : Asymmetry     (_<_)
@@ -73,7 +73,7 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
   -- A strict total order is a strict partial order where all objects are ordered.
   -- Also called: Strict linear order
   record TotalOrder : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    instance constructor intro
+    constructor intro
     field
      ⦃ partialOrder ⦄ : PartialOrder
      ⦃ totality ⦄     : ConverseTotal(_<_)

@@ -1,40 +1,49 @@
 module Function.DomainRaise where
 
-open import Functional
+open import Data
+open import Data.Boolean
+import      Functional as Fn
 import      Lvl
-open import Numeral.Finite
-open import Numeral.Finite.Bound
+-- open import Numeral.Finite
+-- open import Numeral.Finite.Bound
 open import Numeral.Natural
-open import Numeral.Natural.Oper.Comparisons.Proofs
-open import Numeral.Natural.Relation.Order
-open import Numeral.Natural.Relation.Order.Proofs
+open import Numeral.Natural.Oper.Comparisons
+-- open import Numeral.Natural.Oper.Comparisons.Proofs
+-- open import Numeral.Natural.Relation.Order
+-- open import Numeral.Natural.Relation.Order.Proofs
 open import Syntax.Number
 open import Type
 
-module _ {ℓ₁ ℓ₂} where
-  -- Repeated function type like an n-ary operator.
-  -- Examples:
-  --   (a →̂ b)(0) = (b)
-  --   (a →̂ b)(1) = (a → b)
-  --   (a →̂ b)(2) = (a → a → b)
-  --   (a →̂ b)(3) = (a → a → a → b)
-  --   (a →̂ b)(4) = (a → a → a → a → b)
-  _→̂_ : Type{ℓ₁} → Type{ℓ₁ Lvl.⊔ ℓ₂} → ℕ → Type{ℓ₁ Lvl.⊔ ℓ₂}
-  (A →̂ B)(𝟎)    = B
-  (A →̂ B)(𝐒(n)) = A → (A →̂ B)(n)
+private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+private variable T X Y Z : Type{ℓ}
+private variable n : ℕ
 
-  -- Applies the same argument on all arguments.
-  -- Examples:
-  --   f : (a →̂ b)(5)
-  --   applyRepeated{0} f(x) = f
-  --   applyRepeated{1} f(x) = f(x)
-  --   applyRepeated{2} f(x) = f(x)(x)
-  --   applyRepeated{3} f(x) = f(x)(x)(x)
-  --   applyRepeated{2}(applyRepeated{3} f(x)) (y) = f(x)(x)(y)(y)(y)
-  applyRepeated : ∀{n}{T₁}{T₂} → (T₁ →̂ T₂)(n) → T₁ → T₂
-  applyRepeated{𝟎}    f(x) = f
-  applyRepeated{𝐒(n)} f(x) = applyRepeated{n} (f(x)) (x)
+-- Repeated function type like an n-ary operator.
+-- Examples:
+--   (a →̂ b)(0) = (b)
+--   (a →̂ b)(1) = (a → b)
+--   (a →̂ b)(2) = (a → a → b)
+--   (a →̂ b)(3) = (a → a → a → b)
+--   (a →̂ b)(4) = (a → a → a → a → b)
+_→̂_ : Type{ℓ₁} → Type{ℓ₂} → (n : ℕ) → Type{if positive?(n) then (ℓ₁ Lvl.⊔ ℓ₂) else ℓ₂}
+(A →̂ B)(𝟎)       = B
+(A →̂ B)(𝐒(𝟎))    = A → B
+(A →̂ B)(𝐒(𝐒(n))) = A → (A →̂ B)(𝐒(n))
 
+-- Applies the same argument on all arguments.
+-- Examples:
+--   f : (a →̂ b)(5)
+--   applyRepeated{0} f(x) = f
+--   applyRepeated{1} f(x) = f(x)
+--   applyRepeated{2} f(x) = f(x)(x)
+--   applyRepeated{3} f(x) = f(x)(x)(x)
+--   applyRepeated{2}(applyRepeated{3} f(x)) (y) = f(x)(x)(y)(y)(y)
+applyRepeated : let _ = n in (X →̂ Y)(n) → (X → Y)
+applyRepeated{𝟎}       f(x) = f
+applyRepeated{𝐒(𝟎)}    f(x) = f(x)
+applyRepeated{𝐒(𝐒(n))} f(x) = applyRepeated{𝐒(n)} (f(x)) (x)
+
+{-
   -- Applies arguments from a function.
   -- Almost (not really) like a composition operation.
   -- Examples:
@@ -55,74 +64,79 @@ module _ {ℓ₁ ℓ₂} where
   -- swapReverse {𝐒(n)} f(yₙ) = (swapReverse {n} f) ∘ (f(yₙ))
 
   -- directOp : ∀{n}{X}{Y} → ((X → Y) →̂ ((X ^ n) → (Y ^ n)))(n)
-
-module _ {ℓ₁ ℓ₂ ℓ₃ : Lvl.Level} where
-  private _→̂₁₂_ = _→̂_ {ℓ₁}{ℓ₂}
-  private _→̂₁₃_ = _→̂_ {ℓ₁}{ℓ₃}
-
-  -- TODO: Make n explicit
-  -- Function composition on a multi-argument function (Like PrimitiveRecursion.Composition).
-  -- Examples:
-  --   (f ∘₃ g)(x₂)(x₁)(x₀)
-  --   (f ∘₂ (g(x₂)))(x₁)(x₀)
-  --   (f ∘₁ (g(x₂)(x₁)))(x₁)(x₀)
-  --   (f ∘₀ (g(x₂)(x₁)))(x₀)
-  --   f(g(x₂)(x₁)(x₀))
-  _[∘]_ : ∀{n}{X}{Y}{Z} → (Y → Z) → (X →̂₁₂ Y)(n) → (X →̂₁₃ Z)(n)
-  _[∘]_ {𝟎}    f = f
-  _[∘]_ {𝐒(n)} f = (_[∘]_ {n} f) ∘_
---  _[∘]_ {𝐒(n)} f g(xₙ) = _[∘]_ {n} f (g(xₙ))
-
-module _ {ℓ₁ ℓ₂ ℓ₃ : Lvl.Level} where
-  private _→̂₁₃_ = _→̂_ {ℓ₁}{ℓ₂ Lvl.⊔ ℓ₃}
-  private _→̂₂₃_ = _→̂_ {ℓ₂}{ℓ₁ Lvl.⊔ ℓ₃}
-
-  -- TODO: Flip the arguments and make n explicit
-  -- Single function composition on every argument.
-  -- (f on g)(y₁)(y₂).. = g (f(y₁)) (f(y₂)) ..
-  -- Examples:
-  --   _on_ {3} f g (y₂) (y₁) (y₀)
-  --   = _on_ {2} f (g (f(y₂))) (y₁) (y₀)
-  --   = _on_ {1} f (g (f(y₂)) (f(y₁))) (y₀)
-  --   = _on_ {0} f (g (f(y₂)) (f(y₁)) (f(y₀)))
-  --   = g (f(y₂)) (f(y₁)) (f(y₀))
-  _on_ : ∀{n}{X}{Y}{Z} → (X → Y) → (Y →̂₂₃ Z)(n) → (X →̂₁₃ Z)(n)
-  _on_ {𝟎}    _ g  = g
-  _on_ {𝐒(n)} f g(yₙ) = _on_ {n} f (g(f(yₙ)))
-
-  -- applyOnFn : ∀{n}{X}{Y} → (Y →̂ Y)(n) → ((X → Y) →̂ (X → Y))(n)
-  -- applyOnFn
-
-{-
-apply-repeat₂ : ∀{ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → T₁ → (T₁ → T₁ → T₂) → T₂
-apply-repeat₂(x) = (apply(x)) ∘ (apply(x))
-apply-repeat₂(x)(f) = f(x)(x)
 -}
 
-module _ {ℓ} where
-  private _→̂₁_ = _→̂_ {ℓ}{ℓ}
+-- Function composition on a multi-argument function (Like PrimitiveRecursion.Composition).
+-- Examples:
+--   (f ∘₄ g) x₁ x₂ x₃ x₄
+--   = (f ∘₃ g x₁) x₂ x₃ x₄
+--   = (f ∘₂ g x₁ x₂) x₃ x₄
+--   = (f ∘₁ g x₁ x₂ x₃) x₄
+--   = (f ∘ g x₁ x₂ x₃) x₄
+--   = f(g x₁ x₂ x₃ x₄)
+_∘_ : let _ = n ; _ = X ; _ = Y ; _ = Z in (Y → Z) → (X →̂ Y)(n) → (X →̂ Z)(n)
+_∘_ {𝟎}       = Fn.id
+_∘_ {𝐒(𝟎)}    = Fn._∘_
+_∘_ {𝐒(𝐒(n))} = Fn._∘_ Fn.∘ (_∘_) -- (f ∘ₙ₊₂ g)(x) = f ∘ₙ₊₁ g(x)
 
-  -- Examples: (TODO: This example is _slightly_ incorrect: Where is the arguments coming from?)
-  --   (nary{3} (_▫_)) ∘ (_▫ x₄)
-  --   ((nary{2} (_▫_)) ∘ (_▫ x₃)) ∘ (_▫ x₄)
-  --   (((nary{1} (_▫_)) ∘ (_▫ x₂)) ∘ (_▫ x₃)) ∘ (_▫ x₄)
-  --   ((((nary{0} (_▫_)) ∘ (_▫ x₁)) ∘ (_▫ x₂)) ∘ (_▫ x₃)) ∘ (_▫ x₄)
-  --   ((((_▫ x₀) ∘ (_▫ x₁)) ∘ (_▫ x₂)) ∘ (_▫ x₃)) ∘ (_▫ x₄)
-  --   (_▫ x₀) ∘ (_▫ x₁) ∘ (_▫ x₂) ∘ (_▫ x₃) ∘ (_▫ x₄)
-  --   ((((_▫ x₄) ▫ x₃) ▫ x₂) ▫ x₁) ▫ x₀
-  naryₗ : ∀{n}{X} → (X → X → X) → (X →̂₁ X)(𝐒(𝐒(n)))
-  naryₗ{𝟎}    (_▫_) (x₀)   = (x₀ ▫_)
-  naryₗ{𝐒(n)} (_▫_) (xₙ₊₁) = (naryₗ{n} (_▫_)) ∘ (xₙ₊₁ ▫_)
+_∘[_]_ : let _ = X ; _ = Y ; _ = Z in (Y → Z) → (n : ℕ) → (X →̂ Y)(n) → (X →̂ Z)(n)
+f ∘[ n ] g = _∘_ {n = n} f g
 
-  -- Examples: (TODO: This example is incorrect)
-  --   (naryᵣ{3} (_▫_)) (x₃) (x₂) (x₁) (x₀)
-  --   ((x₃ ▫_) ∘₄ (naryᵣ{2} (_▫_))) (x₂) (x₁) (x₀)
-  --   ((x₃ ▫_) ∘₄ ((x₂ ▫_) ∘₃ (naryᵣ{1} (_▫_)))) (x₁) (x₀)
-  --   ((x₃ ▫_) ∘₄ ((x₂ ▫_) ∘₃ ((x₁ ▫_) ∘₂ (naryᵣ{0} (_▫_)))) (x₀)
-  --   ((x₃ ▫_) ∘₄ ((x₂ ▫_) ∘₃ ((x₁ ▫_) ∘₂ (x₀ ▫_)))
-  --   ...
-  --   x₅ ▫ (x₄ ▫ (x₃ ▫ (x₂ ▫ (x₁ ▫ x₀))))
-  naryᵣ : ∀{n}{X} → (X → X → X) → (X →̂₁ X)(𝐒(𝐒(n)))
-  naryᵣ{𝟎}    (_▫_) (x₀)   = (x₀ ▫_)
-  naryᵣ{𝐒(n)} (_▫_) (xₙ₊₁) = (xₙ₊₁ ▫_) ∘ₙ₊₂ (naryᵣ{n} (_▫_)) where
-    _∘ₙ₊₂_ = _[∘]_ {ℓ}{ℓ}{ℓ}{𝐒(𝐒(n))}
+_∘₀_ = _∘_ {0}
+_∘₁_ = _∘_ {1}
+_∘₂_ = _∘_ {2}
+_∘₃_ = _∘_ {3}
+_∘₄_ = _∘_ {4}
+_∘₅_ = _∘_ {5}
+_∘₆_ = _∘_ {6}
+_∘₇_ = _∘_ {7}
+_∘₈_ = _∘_ {8}
+_∘₉_ = _∘_ {9}
+
+-- TODO: Flip the arguments and make n explicit
+-- Single function composition on every argument.
+-- (f on g)(y₁)(y₂).. = g (f(y₁)) (f(y₂)) ..
+-- Examples:
+--   _on_ {3} f g (y₂) (y₁) (y₀)
+--   = _on_ {2} f (g (f(y₂))) (y₁) (y₀)
+--   = _on_ {1} f (g (f(y₂)) (f(y₁))) (y₀)
+--   = _on_ {0} f (g (f(y₂)) (f(y₁)) (f(y₀)))
+--   = g (f(y₂)) (f(y₁)) (f(y₀))
+_on_ : let _ = n ; _ = X ; _ = Y ; _ = Z in (Y →̂ Z)(n) → (X → Y) → (X →̂ Z)(n)
+_on_ {n = 𝟎}               = Fn.const
+_on_ {n = 𝐒(𝟎)}            = Fn._∘_
+_on_ {n = 𝐒(𝐒(n))} f g(yₙ) = _on_ {n = 𝐒(n)} (f(g(yₙ))) g
+
+-- applyOnFn : ∀{n}{X}{Y} → (Y →̂ Y)(n) → ((X → Y) →̂ (X → Y))(n)
+-- applyOnFn
+
+-- Constructs a left-associated n-ary operator from a binary operator.
+-- Example:
+--   naryₗ{3} (_▫_) x₁ x₂ x₃ x₄ x₅
+--   = ((naryₗ{2} (_▫_)) Fn.∘ (x₁ ▫_)) x₂ x₃ x₄
+--   = (naryₗ{2} (_▫_) (x₁ ▫ x₂)) x₃ x₄ x₅
+--   = ((naryₗ{1} (_▫_)) Fn.∘ ((x₁ ▫ x₂) ▫_)) x₃ x₄ x₅
+--   = (naryₗ{1} (_▫_) ((x₁ ▫ x₂) ▫ x₃)) x₄ x₅
+--   = ((naryₗ{0} (_▫_)) Fn.∘ (((x₁ ▫ x₂) ▫ x₃) ▫_)) x₃ x₄ x₅
+--   = (naryₗ{0} (_▫_) (((x₁ ▫ x₂) ▫ x₃) ▫ x₄)) x₅
+--   = ((_▫_) (((x₁ ▫ x₂) ▫ x₃) ▫ x₄)) x₅
+--   = ((((x₁ ▫ x₂) ▫ x₃) ▫ x₄) ▫_) x₅
+--   = (((x₁ ▫ x₂) ▫ x₃) ▫ x₄) x₅
+naryₗ : (n : ℕ) → (X → X → X) → (X →̂ X)(𝐒(𝐒(n)))
+naryₗ(𝟎)    (_▫_)   = (_▫_)
+naryₗ(𝐒(n)) (_▫_) x = (naryₗ(n) (_▫_)) Fn.∘ (x ▫_)
+
+-- Constructs a right-associated n-ary operator from a binary operator.
+-- Example:
+--   naryᵣ{3} (_▫_) x₁ x₂ x₃ x₄ x₅
+--   = ((x₁ ▫_) ∘[ 4 ] (naryᵣ{2} (_▫_))) x₂ x₃ x₄ x₅
+--   = x₁ ▫ (naryᵣ{2} (_▫_) x₂ x₃ x₄ x₅)
+--   = x₁ ▫ (((x₂ ▫_) ∘[ 3 ] (naryᵣ{1} (_▫_))) x₃ x₄ x₅)
+--   = x₁ ▫ (x₂ ▫ (naryᵣ{1} (_▫_) x₃ x₄ x₅))
+--   = x₁ ▫ (x₂ ▫ (((x₃ ▫_) ∘[ 2 ] (naryᵣ{0} (_▫_))) x₄ x₅))
+--   = x₁ ▫ (x₂ ▫ (x₃ ▫ (naryᵣ{0} (_▫_) x₄ x₅)))
+--   = x₁ ▫ (x₂ ▫ (x₃ ▫ ((_▫_) x₄ x₅)))
+--   = x₁ ▫ (x₂ ▫ (x₃ ▫ (x₄ ▫ x₅)))
+naryᵣ : (n : ℕ) → (X → X → X) → (X →̂ X)(𝐒(𝐒(n)))
+naryᵣ(𝟎)    (_▫_)   = (_▫_)
+naryᵣ(𝐒(n)) (_▫_) x = (x ▫_) ∘[ 𝐒(𝐒(n)) ] (naryᵣ(n) (_▫_))

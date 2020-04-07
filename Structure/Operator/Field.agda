@@ -18,10 +18,12 @@ private
 
 record Field {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ} where
   field
-    instance ⦃ [+]-commutative-group ⦄ : CommutativeGroup (_+_)
-    instance ⦃ [⋅]-monoid ⦄            : Monoid (_⋅_)
-    instance ⦃ distributivityₗ ⦄       : Distributivityₗ (_⋅_) (_+_)
-    instance ⦃ distributivityᵣ ⦄       : Distributivityᵣ (_⋅_) (_+_)
+    instance ⦃ [+]-commutative-group ⦄  : CommutativeGroup (_+_)
+    instance ⦃ [⋅]-monoid ⦄             : Monoid (_⋅_)
+    instance ⦃ [⋅][+]-distributivityₗ ⦄ : Distributivityₗ (_⋅_) (_+_)
+    instance ⦃ [⋅][+]-distributivityᵣ ⦄ : Distributivityᵣ (_⋅_) (_+_)
+    instance ⦃ [⋅]-commutativity ⦄      : Commutativity(_⋅_) -- TODO: Consider removing this to get a more general structure: The division ring
+    -- distinct-identities : 𝟎 ≢ 𝟏 -- TODO: Consider adding this somewhere or at least aknowledge it because this is unprovable, and models where this is true are always a "trivial/singleton ring"
 
   open CommutativeGroup([+]-commutative-group)
     using ()

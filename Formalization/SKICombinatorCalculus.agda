@@ -23,6 +23,13 @@ T = C
 Z = B
 -- Z = C · (C · (B · N · (S · I · I)) · Ω) · I
 
+{-
+term-fn-type : ∀{ℓ} → Term → Type{Lvl.𝐒(ℓ)}
+term-fn-type {ℓ} S = ∀{X Y Z : Type{ℓ}} → (X → Y → Z) → (X → Y) → (X → Z)
+term-fn-type {ℓ} K = ∀{X Y : Type{ℓ}} → Y → X → Y
+term-fn-type {ℓ} (x · y) = {!term-fn-type {ℓ} x!}
+-}
+
 data _⟶_ : Term → Term → Type{Lvl.𝟎} where -- TODO: Use reflexive-transitive closure instead
   constant : ∀{c t} → (((K · c) · t) ⟶ c)
   fuse     : ∀{a b c} → ((((S · a) · b) · c) ⟶ ((a · c) · (b · c)))
@@ -125,6 +132,7 @@ module Boolean where
     K · f · (K · f)               🝖-[ constant ]
     f                             🝖-end-}
 
+  {-
   not-false : IsTrue(FALSE · NOT)
   not-false {t}{f} =
     FALSE · NOT · t · f            🝖-[ refl ]
@@ -134,6 +142,7 @@ module Boolean where
     t · f                          🝖-[ {!!} ] -- TODO: ???
     t                              🝖-end
   -- not-false-is-true identity
+  -}
 
   or-true-true : IsTrue(TRUE · OR · TRUE)
   or-true-true = reduce-true-is-true constant

@@ -1,3 +1,5 @@
+-- TODO: Move these to stuff related to metric spaces
+
 module Derivative where
   open Limit using (Lim ; lim)
 

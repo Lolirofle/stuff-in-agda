@@ -156,3 +156,27 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T�
     constructor intro
     field proof : Names.Absorptionᵣ(_▫₁_)(_▫₂_)
   absorptionᵣ = inst-fn Absorptionᵣ.proof
+
+module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ (_▫_ : T₁ → T₂ → T₂) (inv : T₁ → T₁) where
+  record InversePropertyₗ : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field proof : Names.InversePropertyₗ(_▫_)(inv)
+  inversePropₗ = inst-fn InversePropertyₗ.proof
+
+module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ (_▫_ : T₂ → T₁ → T₂) (inv : T₁ → T₁) where
+  record InversePropertyᵣ : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field proof : Names.InversePropertyᵣ(_▫_)(inv)
+  inversePropᵣ = inst-fn InversePropertyᵣ.proof
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ (_▫₁_ : T₁ → T₂ → T₃) (_▫₂_ : T₁ → T₃ → T₂) where
+  record InverseOperatorₗ : Stmt{ℓ₁ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field proof : Names.InverseOperatorₗ(_▫₁_)(_▫₂_)
+  inverseOperₗ = inst-fn InverseOperatorₗ.proof
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ (_▫₁_ : T₁ → T₂ → T₃) (_▫₂_ : T₃ → T₂ → T₁) where
+  record InverseOperatorᵣ : Stmt{ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field proof : Names.InverseOperatorᵣ(_▫₁_)(_▫₂_)
+  inverseOperᵣ = inst-fn InverseOperatorᵣ.proof

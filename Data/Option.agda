@@ -8,7 +8,7 @@ open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Type
 
 private variable ℓ : Lvl.Level
-private variable T T₁ T₂ : Type{ℓ}
+private variable T T₁ T₂ T₃ : Type{ℓ}
 
 Option : Type{ℓ} → Type{ℓ}
 Option {ℓ} T = (Unit{ℓ} ‖ T)
@@ -30,6 +30,21 @@ isSome = Either.isRight
 isNone : Option(T) → Bool
 isNone = Either.isLeft
 
+_andThen_ : Option(T₁) → (T₁ → Option(T₂)) → Option(T₂)
+_andThen_ None     _ = None
+_andThen_ (Some x) f = f(x)
+
+and-combine : (T₁ → T₂ → T₃) → (Option(T₁) → Option(T₂) → Option(T₃))
+and-combine (_▫_) (Some x) (Some y)  = Some(x ▫ y)
+{-# CATCHALL #-}
+and-combine _ _ _ = None
+
+or-combine : (T₁ → T₂ → T₃) → (T₁ → T₃) → (T₂ → T₃) → (Option(T₁) → Option(T₂) → Option(T₃))
+or-combine(_▫_) l r None     None     = None
+or-combine(_▫_) l r None     (Some y) = Some(r(y))
+or-combine(_▫_) l r (Some x) None     = Some(l(x))
+or-combine(_▫_) l r (Some x) (Some y) = Some(x ▫ y)
+
 module Same where
   _orₗ_ : Option(T) → Option(T) → Option(T)
   _orₗ_ (Some x) (Some y)  = Some(x)
@@ -43,9 +58,15 @@ module Same where
   _orᵣ_ None     (Some y)  = Some(y)
   _orᵣ_ None     None      = None
 
-  _andThen_ : Option(T) → (T → Option(T)) → Option(T)
-  _andThen_ None _ = None
-  _andThen_ (Some x) optF = optF x
+  _andₗ_ : Option(T) → Option(T) → Option(T)
+  _andₗ_ (Some x) (Some y)  = Some(x)
+  {-# CATCHALL #-}
+  _andₗ_ _        _         = None
+
+  _andᵣ_ : Option(T) → Option(T) → Option(T)
+  _andᵣ_ (Some x) (Some y)  = Some(y)
+  {-# CATCHALL #-}
+  _andᵣ_ _        _         = None
 
 module Different where
   _orₗ_ : Option(T₁) → Option(T₂) → Option(T₁ ‖ T₂)
@@ -60,7 +81,7 @@ module Different where
   _orᵣ_ None     (Some y)  = Some(Either.Right(y))
   _orᵣ_ None     None      = None
 
-  _and_ : Option(T) → Option(T) → Option(T ⨯ T)
+  _and_ : Option(T₁) → Option(T₂) → Option(T₁ ⨯ T₂)
   _and_ (Some x) (Some y)  = Some(x , y)
   {-# CATCHALL #-}
   _and_ _        _         = None

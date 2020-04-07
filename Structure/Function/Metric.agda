@@ -1,8 +1,18 @@
+open import Logic
+open import Logic.Classical
 open import Sets.Setoid
 open import Structure.OrderedField
 open import Type
 
-module Structure.Function.Metric {ℓF ℓ≤} {F} ⦃ equiv-F : Equiv(F) ⦄ {_+_}{_⋅_}{_≤_} ⦃ orderedField-F : OrderedField{ℓF}{ℓ≤}{F}(_+_)(_⋅_)(_≤_) ⦄ where
+module Structure.Function.Metric
+  {ℓF ℓ≤}
+  {F}
+  ⦃ equiv-F : Equiv(F) ⦄
+  {_+_}{_⋅_}
+  {_≤_}
+  ⦃ orderedField-F : OrderedField{ℓF}{ℓ≤}{F}(_+_)(_⋅_)(_≤_) ⦄
+  ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄
+  where
 
 open OrderedField(orderedField-F)
 
@@ -10,10 +20,8 @@ import      Lvl
 open import Data.Boolean
 open import Data.Boolean.Proofs
 import      Data.Either as Either
-open import Data.Tuple
-open import Functional
-open import Logic
-open import Logic.Classical
+open import Data.Tuple as Tuple using (_⨯_ ; _,_)
+open import Functional as Fn
 open import Logic.Propositional
 open import Logic.Predicate
 open import Relator.Ordering
@@ -29,16 +37,17 @@ open import Structure.Relator.Ordering
 open        Structure.Relator.Ordering.Weak.Properties
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
-
+  
 F₊ = ∃(Positive)
 
 module _ where
   record MetricSpace {ℓ} {M : Type{ℓ}} ⦃ equiv-M : Equiv(M) ⦄ (d : M → M → F) : Type{ℓF Lvl.⊔ ℓ≤ Lvl.⊔ ℓ} where
     field
+      ⦃ distance-binary-operator ⦄ : BinaryOperator(d)
       self-distance : ∀{x y} → (d(x)(y) ≡ 𝟎) ↔ (x ≡ y)
       ⦃ distance-commutativity ⦄ : Commutativity(d)
       triangle-inequality : ∀{x y z} → (d(x)(z) ≤ (d(x)(y) + d(y)(z)))
-      non-negativity : ∀{x y} → (d(x)(y) ≥ 𝟎)
+      ⦃ non-negativity ⦄ : ∀{x y} → NonNegative(d(x)(y))
       {-
       non-negativity{x}{y} =
         ([≤]ₗ-of-[+] (
@@ -50,7 +59,8 @@ module _ where
         ))
       -}
 
-    -- [≤]ₗ-of-[+] ((x + y) ≤ z) → ((x ≤ z) ∨ (y ≤ z))
+    distance-to-self : ∀{x} → (d(x)(x) ≡ 𝟎)
+    distance-to-self = [↔]-to-[←] self-distance (reflexivity(_≡_))
 
     Neighborhood : M → F₊ → PredSet(M)
     Neighborhood(p)([∃]-intro r)(q) = (d(p)(q) < r)
@@ -101,22 +111,44 @@ module _ where
 
     -- Complete = Sequence.Cauchy ⊆ Sequence.Converging
 
-
-
     neighborhood-contains-center : ∀{p}{r} → (p ∈ Neighborhood(p)(r))
-    left neighborhood-contains-center = {!!}
-    right (neighborhood-contains-center {r = [∃]-intro r ⦃ OrderedField.intro r-pos ⦄}) = {!!}
+    neighborhood-contains-center {p}{[∃]-intro r ⦃ intro positive-r ⦄} =
+      d(p)(p) 🝖-[ sub₂(_≡_)(_≤_) distance-to-self ]-sub
+      𝟎       🝖-semiend
+      r       🝖-end-from-[ positive-r ]
 
-    subneighborhood-radius : ∀{p₁ p₂}{r₁ r₂} → (Neighborhood(p₁)(r₁) ⊆ Neighborhood(p₂)(r₂)) ← (d(p₁)(p₂) ≤ ([∃]-witness r₂ − [∃]-witness r₁))
-    subneighborhood-radius-on-same : ∀{p}{r₁ r₂} → (Neighborhood(p)(r₁) ⊆ Neighborhood(p)(r₂)) ↔ ([∃]-witness r₁ ≤ [∃]-witness r₂)
+    -- TODO: Not always the case?
+    -- subneighborhood-subradius : ∀{p₁ p₂}{r₁ r₂} → (Neighborhood(p₁)(r₁) ⊆ Neighborhood(p₂)(r₂)) → ([∃]-witness r₁ ≤ [∃]-witness r₂)
+
+    subneighborhood-radius : ∀{p₁ p₂}{r₁ r₂} → (Neighborhood(p₁)(r₁) ⊆ Neighborhood(p₂)(r₂)) ← (d(p₂)(p₁) ≤ ([∃]-witness r₂ − [∃]-witness r₁))
+    subneighborhood-radius {p₁} {p₂} {[∃]-intro r₁} {[∃]-intro r₂} p {q} qN₁ =
+      d(p₂)(q)             🝖[ _≤_ ]-[ triangle-inequality ]-sub
+      d(p₂)(p₁) + d(p₁)(q) 🝖[ _<_ ]-[ [<][+]-preserve-subₗ p qN₁ ]-super
+      (r₂ − r₁) + r₁       🝖[ _≡_ ]-[ {!inverseOperₗ ? ?!} ] -- inverseOperatorᵣ(_+_)(_−_)
+      r₂                   🝖-end
+      {-where
+        r₁r₂ : (r₁ ≤ r₂) -- TODO: This seems to be provable, but not used here
+        r₁r₂ =
+          r₁             🝖-[ {!!} ]
+          d(p₁)(p₂) + r₁ 🝖-[ {!!} ]
+          r₂             🝖-end
+      -}
+
+    subneighborhood-radius-on-same : ∀{p}{r₁ r₂} → (Neighborhood(p)(r₁) ⊆ Neighborhood(p)(r₂)) ← ([∃]-witness r₁ ≤ [∃]-witness r₂)
+    subneighborhood-radius-on-same {p} {[∃]-intro r₁} {[∃]-intro r₂} r₁r₂ {x} xN₁ xN₂ = xN₁ (r₁r₂ 🝖 xN₂)
 
     interior-is-subset : ∀{ℓ}{E : PredSet{ℓ}(M)} → Interior(E) ⊆ E
-    interior-is-subset {ℓ} {E} {x} ([∃]-intro witness ⦃ proof ⦄) = {!!}
+    interior-is-subset {ℓ} {E} {x} ([∃]-intro ([∃]-intro r ⦃ intro positive-r ⦄) ⦃ N⊆E ⦄) =
+      N⊆E {x} (p ↦ positive-r (
+        r       🝖[ _≤_ ]-[ p ]-super
+        d(x)(x) 🝖[ _≡_ ]-[ distance-to-self ]
+        𝟎       🝖[ _≡_ ]-end
+      ))
 
     neighborhood-interior-is-self : ∀{p}{r} → (Interior(Neighborhood(p)(r)) ≡ₛ Neighborhood(p)(r))
-    ∃.witness (left (neighborhood-interior-is-self {p} {r}) x) = r
-    ∃.proof (left (neighborhood-interior-is-self {p} {r} {x}) Nx) = {!!}
-    right (neighborhood-interior-is-self {p} {r}) = {!!}
+    ∃.witness (Tuple.left (neighborhood-interior-is-self {p} {r}) x) = r
+    ∃.proof (Tuple.left (neighborhood-interior-is-self {p} {r} {x}) Nx) = {!!}
+    Tuple.right (neighborhood-interior-is-self {p} {r}) = {!!}
 
     neighborhood-is-open : ∀{p}{r} → Open(Neighborhood(p)(r))
 

@@ -51,6 +51,9 @@ module Morphism where
       Associativity : Stmt
       Associativity = ∀{x y z w : Obj} → Names.AssociativityPattern {T₁ = z ⟶ w} {T₂ = y ⟶ z} {T₃ = x ⟶ y} (_▫_)(_▫_)(_▫_)(_▫_)
 
+      Idempotent : (x ⟶ x) → Stmt
+      Idempotent(f) = (f ▫ f ≡ f)
+
       module _ (id : Names.Reflexivity(_⟶_)) where
         Identityₗ : Stmt
         Identityₗ = ∀{x y}{f : x ⟶ y} → (id ▫ f ≡ f)
@@ -58,8 +61,26 @@ module Morphism where
         Identityᵣ : Stmt
         Identityᵣ = ∀{x y}{f : x ⟶ y} → (f ▫ id ≡ f)
 
-        Inverseₗ : ∀{x y} → (x ⟶ y) → (y ⟶ x) → Stmt
+        Inverseₗ : (x ⟶ y) → (y ⟶ x) → Stmt
         Inverseₗ(f)(f⁻¹) = (f⁻¹ ▫ f ≡ id)
 
-        Inverseᵣ : ∀{x y} → (x ⟶ y) → (y ⟶ x) → Stmt
+        Inverseᵣ : (x ⟶ y) → (y ⟶ x) → Stmt
         Inverseᵣ(f)(f⁻¹) = (f ▫ f⁻¹ ≡ id)
+
+        Involution : (x ⟶ x) → Stmt
+        Involution(f) = Inverseᵣ f f
+
+module Polymorphism where
+  module _ {Morphism : Obj → Obj → Type{ℓₘ}} ⦃ equiv-morphism : ∀{x y} → Equiv(Morphism x y) ⦄ where
+    open ArrowNotation(Morphism)
+
+    module _ (_▫_ : Names.SwappedTransitivity(_⟶_)) where
+      IdempotentOn : Obj → Obj → (∀{x y} → (x ⟶ y)) → Stmt
+      IdempotentOn(x)(z) (f) = ∀{y} → (f{y}{z} ▫ f{x}{y} ≡ f{x}{z})
+
+      module _ (id : Names.Reflexivity(_⟶_)) where
+        InvolutionOn : Obj → Obj → (∀{x y} → (x ⟶ y)) → Stmt
+        InvolutionOn(x)(y) (f) = (f{x}{y} ▫ f{y}{x} ≡ id{y})
+
+        Involution : (∀{x y} → (x ⟶ y)) → Stmt
+        Involution(f) = ∀{x y} → InvolutionOn(x)(y)(f)

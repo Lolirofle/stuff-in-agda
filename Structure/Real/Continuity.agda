@@ -1,3 +1,5 @@
+-- TODO: Move these to stuff related to metric spaces
+
 module Continuity where
   open Limit
 

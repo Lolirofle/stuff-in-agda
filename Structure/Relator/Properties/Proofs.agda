@@ -12,7 +12,7 @@ open import Type
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 private variable T : Type{ℓ}
-private variable _<_ _≡_ : T → T → Stmt{ℓ}
+private variable _<_ _≡_ _▫₁_ _▫₂_ : T → T → Stmt{ℓ}
 
 [asymmetry]-to-irreflexivity : ⦃ _ : Asymmetry(_<_) ⦄ → Irreflexivity(_<_)
 Irreflexivity.proof([asymmetry]-to-irreflexivity {_<_ = _<_}) = [→]-redundancy(asymmetry(_<_))
@@ -46,5 +46,11 @@ Asymmetry.proof (antisymmetry-irreflexivity-to-asymmetry {_<_ = _<_}) xy yx with
 
 asymmetry-to-antisymmetry : ⦃ _ : Asymmetry(_<_) ⦄ → Antisymmetry(_<_)(Equals._≡_)
 Antisymmetry.proof (asymmetry-to-antisymmetry {_<_ = _<_}) ab ba = [⊥]-elim(asymmetry(_<_) ab ba)
+
+subrelation-transitivity-to-subtransitivityₗ : ⦃ _ : (_▫₁_) ⊆₂ (_▫₂_) ⦄ ⦃ _ : Transitivity(_▫₂_) ⦄ → Subtransitivityₗ(_▫₂_)(_▫₁_)
+Subtransitivityₗ.proof (subrelation-transitivity-to-subtransitivityₗ {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_}) xy yz = transitivity(_▫₂_) (sub₂(_▫₁_)(_▫₂_) xy) yz
+
+subrelation-transitivity-to-subtransitivityᵣ : ⦃ _ : (_▫₁_) ⊆₂ (_▫₂_) ⦄ ⦃ _ : Transitivity(_▫₂_) ⦄ → Subtransitivityᵣ(_▫₂_)(_▫₁_)
+Subtransitivityᵣ.proof (subrelation-transitivity-to-subtransitivityᵣ {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_}) xy yz = transitivity(_▫₂_) xy (sub₂(_▫₁_)(_▫₂_) yz)
 
 -- TODO: https://proofwiki.org/wiki/Definition%3aRelation_Compatible_with_Operation and substitution. Special case for (≡) and function application: ∀(x∊T)∀(y∊T). (x ≡ y) → (∀(f: T→T). f(x) ≡ f(y))

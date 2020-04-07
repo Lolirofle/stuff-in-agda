@@ -6,8 +6,6 @@ module Structure.Category.NaturalTransformation.NaturalTransformations
   {ℓₒₗ ℓₒᵣ ℓₘₗ ℓₘᵣ : Lvl.Level}
   {Objₗ : Type{ℓₒₗ}}
   {Objᵣ : Type{ℓₒᵣ}}
-  ⦃ objₗ-equiv : Equiv(Objₗ) ⦄
-  ⦃ objᵣ-equiv : Equiv(Objᵣ) ⦄
   {Morphismₗ : Objₗ → Objₗ → Type{ℓₘₗ}}
   {Morphismᵣ : Objᵣ → Objᵣ → Type{ℓₘᵣ}}
   ⦃ morphism-equivₗ : ∀{x y : Objₗ} → Equiv(Morphismₗ x y) ⦄
@@ -77,12 +75,10 @@ module _
         map f ∘ (comp₁(x) ∘ comp₂(x)) 🝖-end
 
   module Wrapped where
-    private module Raw' = Raw(catₗ)(catᵣ)
-
     module _ {functor@([∃]-intro F) : catₗ →ᶠᵘⁿᶜᵗᵒʳ catᵣ} where
       idᴺᵀ : (F →ᴺᵀ F)
-      idᴺᵀ = [∃]-intro Raw'.idᴺᵀ ⦃ identity ⦄
+      idᴺᵀ = [∃]-intro (Raw.idᴺᵀ(catₗ)(catᵣ)) ⦃ identity ⦄
 
     module _ {functor₁@([∃]-intro F₁) functor₂@([∃]-intro F₂) functor₃@([∃]-intro F₃) : catₗ →ᶠᵘⁿᶜᵗᵒʳ catᵣ} where
       _∘ᴺᵀ_ : (F₂ →ᴺᵀ F₃) → (F₁ →ᴺᵀ F₂) → (F₁ →ᴺᵀ F₃)
-      _∘ᴺᵀ_ ([∃]-intro F ⦃ F-proof ⦄) ([∃]-intro G ⦃ G-proof ⦄) = [∃]-intro (F Raw'.∘ᴺᵀ G) ⦃ composition F-proof G-proof ⦄
+      _∘ᴺᵀ_ ([∃]-intro F ⦃ F-proof ⦄) ([∃]-intro G ⦃ G-proof ⦄) = [∃]-intro (Raw._∘ᴺᵀ_ (catₗ)(catᵣ) F G) ⦃ composition F-proof G-proof ⦄

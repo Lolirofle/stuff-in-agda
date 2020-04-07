@@ -31,11 +31,20 @@ module _
   ⦃ obj-equiv : Equiv(Obj) ⦄
   (Morphism : Obj → Obj → Type{ℓₘ})
   ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
+  ⦃ functor-equiv : ∀{x y} → Equiv(x →ᶠᵘⁿᶜᵗᵒʳ y) ⦄
   where
 
   open Names.ArrowNotation(Morphism)
   open Functors.Wrapped
 
+  categoryCategory : Category{Obj = Category(_⟶_)} (_→ᶠᵘⁿᶜᵗᵒʳ_)
+  Category._∘_ categoryCategory = _∘ᶠᵘⁿᶜᵗᵒʳ_
+  Category.id categoryCategory = idᶠᵘⁿᶜᵗᵒʳ
+  BinaryOperator.congruence (Category.binaryOperator categoryCategory) p₁ p₂ = {!!}
+  Morphism.Associativity.proof (Category.associativity categoryCategory) = {!reflexivity(_≡_)!}
+  Category.identity categoryCategory = {!!}
+
+  {- TODO: Resolve the problem in Category.Functor.Equiv if possible
   categoryCategory : Category{Obj = Category(_⟶_)} (_→ᶠᵘⁿᶜᵗᵒʳ_)
   Category._∘_ categoryCategory = _∘ᶠᵘⁿᶜᵗᵒʳ_
   Category.id  categoryCategory = idᶠᵘⁿᶜᵗᵒʳ
@@ -45,3 +54,4 @@ module _
   Morphism.Associativity.proof (Category.associativity categoryCategory) {x = _}{_}{_}{_} {[∃]-intro F} {[∃]-intro G} {[∃]-intro H} = Lvl.up(Function.[∘]-associativity {f = F}{g = G}{h = H})
   Morphism.Identityₗ.proof (Tuple.left  (Category.identity categoryCategory)) = Lvl.up(Function.[∘]-identityₗ)
   Morphism.Identityᵣ.proof (Tuple.right (Category.identity categoryCategory)) = Lvl.up(Function.[∘]-identityᵣ)
+  -}

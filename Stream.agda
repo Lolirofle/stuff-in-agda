@@ -2,10 +2,11 @@ module Stream where
 
 import      Lvl
 open import Data.Boolean
+open import Data.List as List using (List)
+import      Data.List.Proofs as List
 open import Functional
 open import Function.Iteration
 open import Function.Iteration.Proofs
-open import Data.List as List using (List)
 open import Logic
 open import Logic.Propositional
 open import Numeral.Natural
@@ -13,37 +14,49 @@ open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Type
 
+private variable ℓ : Lvl.Level
+private variable T A B : Type{ℓ}
+private variable a x init : T
+private variable f : A → B
+private variable n : ℕ
+
 -- A countably infinite list
-record Stream {ℓ} (T : Type{ℓ}) : Type{ℓ} where
+record Stream (T : Type{ℓ}) : Type{ℓ} where
   coinductive
   field
     head : T
     tail : Stream(T)
 open Stream
 
-module _ {ℓ} {T : Type{ℓ}} where
-  index : Stream(T) → ℕ -> T
+module _ where
+  -- The n:th element of a stream.
+  -- Example: index(2)(0,1,2,…) = 2
+  index : Stream(T) → ℕ → T
   index(l)(𝟎)    = head(l)
   index(l)(𝐒(n)) = index(tail(l))(n)
 
-  -- Stream of (x,x,x,..)
-  repeat : T -> Stream(T)
+  -- The constant stream, consisting of a single element repeated.
+  -- Example: repeat(x) = (x,x,x,..)
+  repeat : T → Stream(T)
   head(repeat(x)) = x
   tail(repeat(x)) = repeat(x)
 
-  {-
+  -- The stream consisting of a list repeated/concatenated.
+  -- Example: loop(1,2,3) = (1,2,3 , 1,2,3 , 1,2,3 , …)
   loop : (l : List(T)) → (l ≢ List.∅) → Stream(T)
-  loop (a List.⊰ l) p = loop-impl (a List.⊰ l) p where
-    loop-impl : (l : List(T)) → (l ≢ List.∅) → Stream(T)
-    head(loop-impl(a List.⊰ l) p) = a
-    tail(loop-impl(a List.⊰ l) p) = loop-impl l {!!}
-  -}
+  loop List.∅       p with () ← p [≡]-intro
+  head (loop (x List.⊰ l) p) = x
+  tail (loop (x List.⊰ l) p) = loop (List.postpend x l) List.[∅]-postpend-unequal
 
+  -- The stream of two interleaved streams.
+  -- Example: interleave₂(1,2,3,‥)(a,b,c,…) = (1,a , 2,b , 3,c , …)
   interleave₂ : Stream(T) -> Stream(T) -> Stream(T)
   head(interleave₂(a)(b)) = head(a)
   tail(interleave₂(a)(b)) = interleave₂(b)(a)
 
+  -- A stream which skips the first n number of elements from the specified stream.
   -- From the stream of (index 0 l , index 1 l , index 2 l , ..), the stream of (index n l , index (n+1) l , index (n+2) l , ..)
+  -- Example: skip(2)(1,2,3,4,…) = (3,4,…)
   skip : ℕ → Stream(T) -> Stream(T)
   head(skip 𝟎      l) = head(l)
   tail(skip 𝟎      l) = tail(l)
@@ -51,6 +64,7 @@ module _ {ℓ} {T : Type{ℓ}} where
   tail(skip (𝐒(n)) l) = tail(skip n (tail(l)))
 
   -- From the stream of (index 0 l , index 1 l , index 2 l , ..), the stream of (index 0 l , index n l , index (2⋅n) l , ..)
+  -- Example: takeMultiples(3)(0,1,2,…) = (0,3,6,…)
   takeMultiples : ℕ → Stream(T) -> Stream(T)
   head(takeMultiples _ l) = head(l)
   tail(takeMultiples n l) = takeMultiples n ((tail ^ n) l)
@@ -70,7 +84,12 @@ module _ {ℓ} {T : Type{ℓ}} where
   take(𝟎)   (l) = List.∅
   take(𝐒(n))(l) = head(l) List.⊰ take(n)(tail(l))
 
-module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} where
+  -- Example: indexIntervals(0,0,2,0,1,2,…)(0,1,2,3,…) = (0,0,2,2,3,5,…)
+  indexIntervals : Stream(ℕ) → Stream(T) → Stream(T)
+  head (indexIntervals i l) = index l (head i)
+  tail (indexIntervals i l) = indexIntervals (tail i) (skip (head i) l)
+
+module _ where
   -- From the stream of (a,b,c,..), the stream of (f(a),f(b),f(c),..)
   map : (A → B) → Stream(A) → Stream(B)
   head(map f(l)) = f(head(l))
@@ -85,49 +104,59 @@ module _ {ℓ} {A : Type{ℓ}} where
   tail(filter p(l)) = filter p(tail(l))
 -}
 
-module _ {ℓ} {T : Type{ℓ}} where
-  data _∈_ : T → Stream(T) → Stmt{ℓ} where
+module _ where
+  data _∈_ {T : Type{ℓ}} : T → Stream(T) → Stmt{ℓ} where
     instance
       [∈]-head : ∀{l}   → (head(l) ∈ l)
       [∈]-tail : ∀{a l} → (a ∈ tail(l)) → (a ∈ l)
 
-  _⊆_ : Stream(T) → Stream(T) → Stmt{ℓ}
+  private variable l : Stream(T)
+
+  index-of-[∈] : (x ∈ l) → ℕ
+  index-of-[∈] [∈]-head     = 𝟎
+  index-of-[∈] ([∈]-tail p) = 𝐒(index-of-[∈] p)
+
+  index-of-[∈]-correctness : ∀{p : (x ∈ l)} → (index l (index-of-[∈] p) ≡ x)
+  index-of-[∈]-correctness {x = .(head l)} {l} {[∈]-head}   = [≡]-intro
+  index-of-[∈]-correctness {x = x}         {l} {[∈]-tail p} = index-of-[∈]-correctness {x = x} {tail l} {p}
+
+  _⊆_ : Stream(T) → Stream(T) → Stmt
   _⊆_ l₁ l₂ = ∀{a} → (a ∈ l₁) → (a ∈ l₂)
 
-  [∈]-tails : ∀{l}{n} → ((tail ^ n)(l) ⊆ l)
-  [∈]-tails {l} {𝟎}   {a} tailn = tailn
-  [∈]-tails {l} {𝐒 n} {a} tailn = [∈]-tail ([∈]-tails {tail l} {n} {a} ([≡]-substitutionₗ ([^]-inner-value {f = tail}{x = l}{n}) {a ∈_} tailn))
+  [∈]-tails : ((tail ^ n)(l) ⊆ l)
+  [∈]-tails {n = 𝟎}   {l = l} {a} tailn = tailn
+  [∈]-tails {n = 𝐒 n} {l = l} {a} tailn = [∈]-tail ([∈]-tails {n = n} {l = tail l} {a} ([≡]-substitutionₗ ([^]-inner-value {f = tail}{x = l}{n}) {a ∈_} tailn))
 
-  [∈]-head-tail : ∀{l} → (head(tail(l)) ∈ l)
+  [∈]-head-tail : (head(tail(l)) ∈ l)
   [∈]-head-tail = [∈]-tail ([∈]-head)
 
-  [∈]-head-tails-inclusion : ∀{n}{l} → (head((tail ^ n)(l)) ∈ l)
+  [∈]-head-tails-inclusion : (head((tail ^ n)(l)) ∈ l)
   [∈]-head-tails-inclusion{𝟎}       = [∈]-head
   [∈]-head-tails-inclusion{𝐒(n)}{l} = [∈]-tails {n = n} ([∈]-head-tail)
 
-  [∈]-disjunction : ∀{x}{l} → (x ∈ l) → ((x ≡ head(l)) ∨ (x ∈ tail(l)))
+  [∈]-disjunction : (x ∈ l) → ((x ≡ head(l)) ∨ (x ∈ tail(l)))
   [∈]-disjunction ([∈]-head)       = [∨]-introₗ [≡]-intro
   [∈]-disjunction ([∈]-tail proof) = [∨]-introᵣ proof
 
-  -- [∈]-index : ∀{n}{l} → (index(n)(l) ∈ l)
-  -- [∈]-index {𝟎}    = [∈]-head
-  -- [∈]-index {𝐒(n)} = [∈]-head-tails
+  [∈]-index : (index l n ∈ l)
+  [∈]-index {n = 𝟎}    = [∈]-head
+  [∈]-index {n = 𝐒(n)} = [∈]-tail ([∈]-index {n = n})
 
-  repeat-[∈] : ∀{a}{x} → (x ∈ repeat(a)) ↔ (x ≡ a)
-  repeat-[∈] {a}{x} = [↔]-intro l r where
-    l : (x ∈ repeat(a)) ← (x ≡ a)
-    l ([≡]-intro) = [∈]-head
+  repeat-[∈] : (x ∈ repeat(a)) ↔ (x ≡ a)
+  repeat-[∈] {x = x}{a = a} = [↔]-intro left right where
+    left : (x ∈ repeat(a)) ← (x ≡ a)
+    left ([≡]-intro) = [∈]-head
 
-    r : (x ∈ repeat(a)) → (x ≡ a)
-    r ([∈]-head)       = [≡]-intro
-    r ([∈]-tail proof) = r(proof)
+    right : (x ∈ repeat(a)) → (x ≡ a)
+    right ([∈]-head)       = [≡]-intro
+    right ([∈]-tail proof) = right(proof)
 
-  map-[∈] : ∀{x}{l} → (x ∈ l) → ∀{f} → (f(x) ∈ map f(l))
-  map-[∈] ([∈]-head)       = [∈]-head
-  map-[∈] ([∈]-tail proof) = [∈]-tail (map-[∈] (proof))
+  map-[∈] : (x ∈ l) → (f(x) ∈ map f(l))
+  map-[∈]         ([∈]-head)       = [∈]-head
+  map-[∈] {l = l} ([∈]-tail proof) = [∈]-tail (map-[∈] {l = tail l} (proof))
 
-  [⊰][∈] : ∀{a}{x}{l} → (a ∈ (x ⊰ l)) ↔ ((x ≡ a) ∨ (a ∈ l))
-  [⊰][∈] {a}{x}{l} = [↔]-intro ll rr where
+  [⊰][∈] : (a ∈ (x ⊰ l)) ↔ ((x ≡ a) ∨ (a ∈ l))
+  [⊰][∈] {a = a}{x = x}{l = l} = [↔]-intro ll rr where
     ll : (a ∈ (x ⊰ l)) ← ((x ≡ a) ∨ (a ∈ l))
     ll ([∨]-introₗ ([≡]-intro)) = [∈]-head
     ll ([∨]-introᵣ (proof))     = [∈]-tail (proof)
@@ -136,10 +165,10 @@ module _ {ℓ} {T : Type{ℓ}} where
     rr ([∈]-head)         = [∨]-introₗ ([≡]-intro)
     rr ([∈]-tail (proof)) = [∨]-introᵣ (proof)
 
-  iterated-init-[∈] : ∀{init}{f} → (init ∈ iterated(init)(f))
+  iterated-init-[∈] : (init ∈ iterated(init)(f))
   iterated-init-[∈] = [∈]-head
 
-  iterated-next-[∈] : ∀{x}{init}{f} → (x ∈ iterated(init)(f)) → (f(x) ∈ iterated(init)(f))
+  iterated-next-[∈] : (x ∈ iterated(init)(f)) → (f(x) ∈ iterated(init)(f))
   iterated-next-[∈] ([∈]-head)       = [∈]-tail ([∈]-head)
   iterated-next-[∈] ([∈]-tail proof) = [∈]-tail (iterated-next-[∈] (proof))
   -- First:
@@ -151,25 +180,38 @@ module _ {ℓ} {T : Type{ℓ}} where
   --   x ∈ iterated (f(init)) f
   --   ...
 
+  iterated-[∈] : ((f ^ n)(init) ∈ iterated(init)(f))
+  iterated-[∈] {n = 𝟎}   = iterated-init-[∈]
+  iterated-[∈] {n = 𝐒 n} = iterated-next-[∈] (iterated-[∈] {n = n})
+
 -- Stream of (0,1,2,3,..)
 [ℕ]-stream : Stream(ℕ)
 [ℕ]-stream = iterated(𝟎)(𝐒)
 
-{-
-[ℕ]-stream-includes-[0] : (0 ∈ [ℕ]-stream)
-[ℕ]-stream-includes-[0] = [∈]-head
-
-[ℕ]-stream-includes-[1] : (1 ∈ [ℕ]-stream)
-[ℕ]-stream-includes-[1] = [∈]-tail([∈]-head)
-
-[ℕ]-stream-includes-[2] : (2 ∈ [ℕ]-stream)
-[ℕ]-stream-includes-[2] = [∈]-tail([∈]-tail([∈]-head))
--}
-
-[ℕ]-stream-[∈] : ∀{n : ℕ} → (n ∈ [ℕ]-stream)
+[ℕ]-stream-[∈] : (n ∈ [ℕ]-stream)
 [ℕ]-stream-[∈]{𝟎}    = [∈]-head
 [ℕ]-stream-[∈]{𝐒(n)} = iterated-next-[∈]([ℕ]-stream-[∈]{n})
 
 -- Stream of (f(0),f(1),f(2),f(3),..)
-[ℕ]-function-stream : ∀{ℓ}{T : Type{ℓ}} → (ℕ → T) → Stream(T)
+[ℕ]-function-stream : (ℕ → T) → Stream(T)
 [ℕ]-function-stream f = map f([ℕ]-stream)
+
+module _ {ℓ} {T : Type{ℓ}} where
+  open import Logic.Predicate
+  open import Logic.Predicate.Theorems
+  open import Structure.Function.Domain
+  open import Type.Size.Countable
+
+  -- This provides another way of proving that a type is countable.
+  -- The method is: If a stream can enumerate every object of a certain type, then it is countable.
+  countable-equivalence : ∃(l ↦ ∀{x : T} → (x ∈ l)) ↔ Countable(T)
+  countable-equivalence = [↔]-intro left right where
+    left : ∃(l ↦ ∀{x : T} → (x ∈ l)) ← Countable(T)
+    ∃.witness (left ([∃]-intro f ⦃ intro proof ⦄)) = [ℕ]-function-stream f
+    ∃.proof   (left ([∃]-intro f ⦃ intro proof ⦄)) {x} with proof{x}
+    ... | [∃]-intro n ⦃ [≡]-intro ⦄ = map-[∈] [ℕ]-stream-[∈]
+
+    right : ∃(l ↦ ∀{x : T} → (x ∈ l)) → Countable(T)
+    ∃.witness (right ([∃]-intro l ⦃ p ⦄)) = index l
+    ∃.witness (Surjective.proof (∃.proof (right ([∃]-intro l ⦃ p ⦄))) {x}) = index-of-[∈] (p{x})
+    ∃.proof   (Surjective.proof (∃.proof (right ([∃]-intro l ⦃ p ⦄))) {x}) = index-of-[∈]-correctness {p = p}

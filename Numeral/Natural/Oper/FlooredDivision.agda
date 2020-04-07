@@ -6,6 +6,8 @@ open import Data.Boolean.Stmt
 open import Logic.Propositional.Theorems
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
+open import Numeral.Natural.Oper.Comparisons.Proofs
+open import Numeral.Natural.Relation.Order
 open import Relator.Equals
 
 infixl 10100 _⌊/⌋_
@@ -25,7 +27,7 @@ infixl 10100 _⌊/⌋_
 {-# BUILTIN NATDIVSUCAUX [_,_]_div_ #-}
 
 -- Floored division operation.
-_⌊/⌋_ : ℕ → (m : ℕ) → ⦃ _ : IsTrue(m ≢? 𝟎)⦄ → ℕ
+_⌊/⌋_ : ℕ → (m : ℕ) → ⦃ _ : IsTrue(positive?(m)) ⦄ → ℕ
 a ⌊/⌋ 𝐒(m) = [ 𝟎 , m ] a div m
 
 _⌊/⌋₀_ : ℕ → ℕ → ℕ
@@ -67,17 +69,17 @@ inddiv-step-denominator {d} {b} {a'} {𝐒 b'} = inddiv-step-denominator {d} {b}
 
 
 
-[⌊/⌋]-of-0ₗ : ∀{n} → ⦃ _ : IsTrue(n ≢? 𝟎)⦄ → (𝟎 ⌊/⌋ n ≡ 𝟎)
+[⌊/⌋]-of-0ₗ : ∀{n} → ⦃ _ : IsTrue(positive?(n))⦄ → (𝟎 ⌊/⌋ n ≡ 𝟎)
 [⌊/⌋]-of-0ₗ {𝐒 n} = [≡]-intro
 
-[⌊/⌋]-of-1ₗ : ∀{n} → ⦃ _ : IsTrue(n ≢? 𝟎)⦄ → ⦃ _ : IsTrue(n ≢? 1)⦄ → (1 ⌊/⌋ n ≡ 𝟎)
+[⌊/⌋]-of-1ₗ : ∀{n} → ⦃ _ : IsTrue(positive?(n))⦄ → ⦃ _ : IsTrue(n ≢? 1)⦄ → (1 ⌊/⌋ n ≡ 𝟎)
 [⌊/⌋]-of-1ₗ {𝐒 (𝐒 n)} = [≡]-intro
 
 [⌊/⌋]-of-1ᵣ : ∀{m} → (m ⌊/⌋ 1 ≡ m)
 [⌊/⌋]-of-1ᵣ {𝟎} = [≡]-intro
 [⌊/⌋]-of-1ᵣ {𝐒 m} = [≡]-with(𝐒) ([⌊/⌋]-of-1ᵣ {m})
 
-[⌊/⌋]-of-same : ∀{n} → ⦃ _ : IsTrue(n ≢? 𝟎)⦄ → (n ⌊/⌋ n ≡ 1)
+[⌊/⌋]-of-same : ∀{n} → ⦃ _ : IsTrue(positive?(n))⦄ → (n ⌊/⌋ n ≡ 1)
 [⌊/⌋]-of-same {𝐒 n} = inddiv-of-denominator-successor {b' = n}
 
 {-
@@ -91,3 +93,7 @@ inddiv-step-denominator {d} {b} {a'} {𝐒 b'} = inddiv-step-denominator {d} {b}
 [⌊/⌋]-is-0 {𝐒 m} {𝐒(𝐒 n)} p with [⌊/⌋]-is-0 {𝐒 m} {𝐒 n} {!!}
 ... | pp = {!!}
 -}
+
+postulate [⌊/⌋]-leₗ : ∀{a b} ⦃ _ : IsTrue(positive?(b))⦄ → (a ⌊/⌋ b ≤ a)
+
+postulate [⌊/⌋]-ltₗ : ∀{a} ⦃ _ : IsTrue(positive?(a))⦄ {b} ⦃ b-proof : IsTrue(b >? 1)⦄ → ((a ⌊/⌋ b) ⦃ [<?]-positive-any {1}{b} ⦄ < a)

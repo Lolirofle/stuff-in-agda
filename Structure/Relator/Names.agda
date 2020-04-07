@@ -48,3 +48,9 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {T : Type{ℓ₁}} (_▫₁_ : T → T → Stm
 
 -- Trichotomy : {T : Type} → (T → T → Stmt) → Stmt
 -- Trichotomy {T} (_▫₁_) (_▫₂_) = {x y : T} → (x ▫₁ y) ⊕ (y ▫₁ x) ⊕ (x ▫₂ y) -- TODO: Not correct. Should only be one of them
+
+  Subtransitivityₗ : Stmt
+  Subtransitivityₗ = ∀{x y z : T} → (x ▫₂ y) → (y ▫₁ z) → (x ▫₁ z)
+
+  Subtransitivityᵣ : Stmt
+  Subtransitivityᵣ = ∀{x y z : T} → (x ▫₁ y) → (y ▫₂ z) → (x ▫₁ z)

@@ -153,7 +153,7 @@ module _ where
       [≡]-equivalence : Equivalence(_≡_ {ℓ₁}{ℓ₂}{T})
       [≡]-equivalence = intro
 
-    {- TODO: Cannot be an instance of Equiv because of level issues
+    {- TODO: Cannot be an instance of Equiv because of level issues, but see a solution in ExtensionalPredicateSet
     instance
       [≡]-equiv : Equiv(PredSet{ℓ}(T))
       Equiv._≡_ [≡]-equiv = {!_≡_!}

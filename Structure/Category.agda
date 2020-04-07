@@ -24,38 +24,45 @@ open import Type.Unit
 module _ {ℓₒ ℓₘ : Lvl.Level} {Obj : Type{ℓₒ}} (Morphism : Obj → Obj → Type{ℓₘ}) where
   open Names.ArrowNotation(Morphism)
 
-  -- A category can be seen as an generalization of a collection of sets (the objects)
-  -- and the functions between them. More specifically the algebraic rules of functions
-  -- regarding composition and the identity function.
+  -- A category is a general algebraic structure.
   --
-  -- It can also be seen as a generalization of monoids where the type is not restricted to a single one (algebraic structure without the "closed" property). It is instead replaced with the notion of a "morphism".
+  -- It can be seen as a generalization of monoids where the type is not restricted to a single one (algebraic structure without the "closed" property). It is instead replaced with the concept of a "morphism".
+  -- In this case, the binary operation is (_∘_). It has an identity and is associative.
   --
-  -- An alternative interpretation:
+  -- It can also be seen as an generalization of the structure in functions between a collection of sets.
+  -- More specifically, the algebraic properties of functions regarding composition and the identity function.
+  -- In this case, sets are objects and functions are morphisms.
+  --
+  -- An alternative interpretation of the definition:
   -- A type (Obj) and a binary relation (Morphism) on this type is a category when:
   -- • The relator is transitive.
   -- • The relator is reflexive.
   -- • The reflexivity proof inside the transitivity proof result in the same proof.
   -- • Chains of the transitivity proofs can be applied in any direction and the resulting proof will be the same.
   --
+  -- A similiar interpretation to the above is that a category describes a graph and its paths.
+  -- Vertices are objects and morphisms are paths between the vertices.
+  --
   -- When the objects are algebraic structures, the morphisms is usually homomorphisms of the respective algebraic structure.
   -- In the case of categories being the objects in a category, functors are homomorphisms, and therefore also the morphisms.
   -- TODO: https://math.stackexchange.com/questions/405459/homomorphisms-vs-functors/405479#comment867772_405459 https://ncatlab.org/nlab/show/homomorphism)
-  record Category ⦃ morphism-equiv : ∀{x y} → Equiv(Morphism x y) ⦄ : Stmt{ℓₒ Lvl.⊔ ℓₘ} where
+  record Category ⦃ morphism-equiv : ∀{x y} → Equiv(x ⟶ y) ⦄ : Stmt{ℓₒ Lvl.⊔ ℓₘ} where
     field
       -- Existence of morphisms constructed by connecting two morphisms (The composition of two morphisms).
       -- Existence of a binary operator on morphisms connecting the ends of two morphisms.
-      -- Proof of transitivity for the binary relator (_⟶_).
+      -- Also a proof of transitivity for the binary relator (_⟶_).
       -- Note that this is the operator like the operators in other algebraic structures with binary operators
       -- ∀{x y z : Obj} → (y ⟶ z) → (x ⟶ y) → (x ⟶ z)
       _∘_ : Names.SwappedTransitivity(_⟶_)
 
       -- Existence of a morphism connected to itself (The identity morphism).
-      -- Proof of reflexivity for the binary relator (_⟶_).
+      -- Also a proof of reflexivity for the binary relator (_⟶_).
       -- ∀{x : Obj} → (x ⟶ x)
       id  : Names.Reflexivity(_⟶_)
     infixr 20 _∘_
 
     field
+      -- The binary operator respects the equivalence relation.
       ⦃ binaryOperator ⦄ : ∀{x y z} → BinaryOperator(_∘_ {x}{y}{z})
 
       -- The binary operator on mophisms is associative.
@@ -74,5 +81,13 @@ module _ {ℓₒ ℓₘ : Lvl.Level} {Obj : Type{ℓₒ}} (Morphism : Obj → Ob
     instance
       identityᵣ : Morphism.Identityᵣ(_∘_)(\{x} → id{x})
       identityᵣ = [∧]-elimᵣ identity
+
+    -- As stated in `id`, it could be interpreted as proof of reflexivity when `Morphism` is interpreted as a binary relation.
+    morphism-reflexivity : Reflexivity(_⟶_)
+    morphism-reflexivity = intro id
+
+    -- As stated in `_∘_`, it could be interpreted as proof of transitivity when `Morphism` is interpreted as a binary relation.
+    morphism-transitivity : Transitivity(_⟶_)
+    morphism-transitivity = intro(swap _∘_)
 
     module ArrowNotation = Names.ArrowNotation(Morphism)

@@ -66,7 +66,7 @@ infixl 10100 _mod_
 {-# BUILTIN NATMODSUCAUX [_,_]_mod'_ #-}
 
 -- Difference between the value before and after the floored division operation.
-_mod_ : ℕ → (m : ℕ) → ⦃ _ : IsTrue(m ≢? 𝟎)⦄ → ℕ
+_mod_ : ℕ → (m : ℕ) → ⦃ _ : IsTrue(positive?(m))⦄ → ℕ
 a mod 𝐒(m) = [ 𝟎 , m ] a mod' m
 
 _mod₀_ : ℕ → ℕ → ℕ

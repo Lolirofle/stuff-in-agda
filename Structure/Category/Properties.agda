@@ -41,6 +41,12 @@ module Morphism where
         field proof : Names.Morphism.Associativity{Morphism = Morphism}(_▫_)
       associativity = inst-fn Associativity.proof
 
+      module _ {x : Obj} (f : x ⟶ x) where
+        record Idempotent : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ} where
+          constructor intro
+          field proof : Names.Morphism.Idempotent{Morphism = Morphism}(_▫_)(f)
+        idempotent = inst-fn Idempotent.proof
+
       module IdModule (id : Names.Reflexivity(_⟶_)) where
         record Identityₗ : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ} where
           constructor intro
@@ -55,6 +61,12 @@ module Morphism where
         Identity = Identityₗ ∧ Identityᵣ
         identity-left  = inst-fn{X = Identity}(Identityₗ.proof Fn.∘ [∧]-elimₗ{Q = Identityᵣ})
         identity-right = inst-fn{X = Identity}(Identityᵣ.proof Fn.∘ [∧]-elimᵣ{P = Identityₗ})
+        
+        module _ {x : Obj} (f : x ⟶ x) where
+          record Involution : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ} where
+            constructor intro
+            field proof : Names.Morphism.Involution{Morphism = Morphism}(_▫_)(id)(f)
+          involution = inst-fn Involution.proof
 
         module _ {x y : Obj} (f : x ⟶ y) where
           module _ (f⁻¹ : y ⟶ x) where
@@ -118,6 +130,33 @@ module Morphism where
           field
             proof : ∀{z} → Names.CancellationOnᵣ {T₁ = y ⟶ z} (_▫_) (f)
         cancellationᵣ = inst-fn Epimorphism.proof
+
+    open OperModule public
+    open IdModule   public
+
+module Polymorphism where
+  module _ {Morphism : Obj → Obj → Type{ℓₘ}} ⦃ equiv-morphism : ∀{x y} → Equiv(Morphism x y) ⦄ where
+    open Names.ArrowNotation(Morphism)
+
+    module OperModule (_▫_ : Names.SwappedTransitivity(_⟶_)) where
+      module _ (x y : Obj) (f : ∀{x y} → (x ⟶ y)) where
+        record IdempotentOn : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ} where
+          constructor intro
+          field proof : Names.Polymorphism.IdempotentOn{Morphism = Morphism}(_▫_)(x)(y)(f)
+        idempotent-on = inst-fn IdempotentOn.proof
+
+      module IdModule (id : Names.Reflexivity(_⟶_)) where
+        module _ (x y : Obj) (f : ∀{x y} → (x ⟶ y)) where
+          record InvolutionOn : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ} where
+            constructor intro
+            field proof : Names.Polymorphism.InvolutionOn{Morphism = Morphism}(_▫_)(id) (x)(y) (f)
+          involution-on = inst-fn InvolutionOn.proof
+
+        module _ (f : ∀{x y} → (x ⟶ y)) where
+          record Involution : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ} where
+            constructor intro
+            field proof : Names.Polymorphism.Involution{Morphism = Morphism}(_▫_)(id)(f)
+          involution = inst-fn Involution.proof
 
     open OperModule public
     open IdModule   public

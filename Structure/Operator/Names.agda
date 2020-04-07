@@ -11,44 +11,68 @@ open import Syntax.Transitivity
 open import Type
 
 module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ where
-  -- Definition of commutativity of specific elements
+  -- Definition of commutativity of specific elements.
+  -- The binary operation swapped yields the same result.
+  -- Example: For any x, (x ▫ x) always commutes.
   Commuting : (T₁ → T₁ → T₂) → T₁ → T₁ → Stmt
   Commuting (_▫_) x y = ((x ▫ y) ≡ (y ▫ x))
 
--- Definition of commutativity
+  -- Definition of commutativity.
+  -- Order of application for the operation does not matter for equality.
+  -- Example: Addition of the natural numbers (_+_ : ℕ → ℕ → ℕ).
   Commutativity : (T₁ → T₁ → T₂) → Stmt
   Commutativity (_▫_) = ∀{x y : T₁} → Commuting(_▫_)(x)(y)
 
-  -- Definition of an left identity element
+  -- Definition of an left identity element.
+  -- Example: Top implies a proposition in boolean logic (⊤ →_).
   Identityₗ : (T₁ → T₂ → T₂) → T₁ → Stmt
   Identityₗ (_▫_) id = ∀{x : T₂} → (id ▫ x) ≡ x
 
   -- Definition of a right absorber element
   -- Also called "right neutral element" or "right annihilator"
+  -- Applying the operation on this element to the right always yields itself.
+  -- Example: A proposition implies top in boolean logic (_→ ⊤).
   Absorberᵣ : (T₁ → T₂ → T₂) → T₂ → Stmt
   Absorberᵣ (_▫_) null = ∀{x : T₁} → (x ▫ null) ≡ null
 
+  ConverseAbsorberᵣ : (T₁ → T₂ → T₂) → T₂ → Stmt
+  ConverseAbsorberᵣ (_▫_)(a) = ∀{x y} → (x ▫ y ≡ a) → (y ≡ a)
+
 module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} ⦃ _ : Equiv(T₁) ⦄ {T₂ : Type{ℓ₂}} where
   -- Definition of an right identity element
+  -- Example: Subtracting 0 for integers (_− 0).
   Identityᵣ : (T₁ → T₂ → T₁) → T₂ → Stmt
   Identityᵣ (_▫_) id = ∀{x : T₁} → (x ▫ id) ≡ x
 
   -- Definition of a left absorber element
   -- Also called "left neutral element" or "left annihilator"
+  -- Example: Subtraction (monus) of 0 for natural numbers (0 − ).
   Absorberₗ : (T₁ → T₂ → T₁) → T₁ → Stmt
   Absorberₗ (_▫_) null = ∀{x : T₂} → (null ▫ x) ≡ null
 
+  ConverseAbsorberₗ : (T₁ → T₂ → T₁) → T₁ → Stmt
+  ConverseAbsorberₗ (_▫_)(a) = ∀{x y} → (x ▫ y ≡ a) → (x ≡ a)
+
 module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
   -- Definition of an identity element
+  -- Example: 0 for addition of integers, 1 for multiplication of integers.
   Identity : (T → T → T) → T → Stmt
   Identity (_▫_) id = (Identityₗ (_▫_) id) ∧ (Identityᵣ (_▫_) id)
 
-  -- Definition of idempotence
+  -- Definition of idempotence.
   Idempotence : (T → T → T) → Stmt
   Idempotence (_▫_) = ∀{x : T} → (x ▫ x ≡ x)
 
+  -- Example: 0 for addition of natural numbers, 1 for multiplication of natural numbers.
+  ConverseAbsorber : (T → T → T) → T → Stmt
+  ConverseAbsorber (_▫_)(a) = ∀{x y} → (x ▫ y ≡ a) → (x ≡ a)∧(y ≡ a)
+
+  -- Example: 0 for multiplication of natural numbers.
+  WeakConverseAbsorber : (T → T → T) → T → Stmt
+  WeakConverseAbsorber (_▫_)(a) = ∀{x y} → (x ▫ y ≡ a) → (x ≡ a)∨(y ≡ a)
+
 module _ {ℓ₁ ℓ₂ ℓ₃} {T₊ : Type{ℓ₁}} {T₋ : Type{ℓ₂}} {Tᵣ : Type{ℓ₃}} ⦃ _ : Equiv(Tᵣ) ⦄ where
-  -- Definition of a left invertible element
+  -- Definition of a left invertible element.
   Invertibleₗ : (T₋ → T₊ → Tᵣ) → Tᵣ → T₊ → Stmt
   Invertibleₗ (_▫_) id x = ∃(inv ↦ (inv ▫ x) ≡ id)
 
@@ -74,10 +98,6 @@ module _ {ℓ₁ ℓ₂} {T : Type{ℓ₁}} {Tᵣ : Type{ℓ₂}} ⦃ _ : Equiv(
   InverseFunction (_▫_) id inv = (InverseFunctionₗ (_▫_) id inv) ∧ (InverseFunctionᵣ (_▫_) id inv)
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ where
-  -- Definition of a left inverse operator
-  InverseOperatorₗ : (T₁ → T₂ → T₃) → (T₁ → T₃ → T₂) → Stmt
-  InverseOperatorₗ (_▫₁_) (_▫₂_) = ∀{x}{y}{z} → ((x ▫₁ y) ≡ z) ↔ (y ≡ (x ▫₂ z)) -- TODO: Is this implied by InverseFunction?
-
   -- Definition of right cancellation of a specific object
   -- ∀{a b : T₂} → ((x ▫ a) ≡ (x ▫ b)) → (a ≡ b)
   CancellationOnₗ : (T₁ → T₂ → T₃) → T₁ → Stmt
@@ -89,10 +109,6 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ 
   Cancellationₗ (_▫_) = (∀{x : T₁} → CancellationOnₗ(_▫_)(x))
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} ⦃ _ : Equiv(T₁) ⦄ {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ where
-  -- Definition of a right inverse operator
-  InverseOperatorᵣ : (T₁ → T₂ → T₃) → (T₃ → T₂ → T₁) → Stmt
-  InverseOperatorᵣ (_▫₁_) (_▫₂_) = ∀{x}{y}{z} → ((x ▫₁ y) ≡ z) ↔ (x ≡ (z ▫₂ y))
-
   -- Definition of right cancellation of a specific object
   -- ∀{a b : T₁} → ((a ▫ x) ≡ (b ▫ x)) → (a ≡ b)
   CancellationOnᵣ : (T₁ → T₂ → T₃) → T₂ → Stmt
@@ -102,6 +118,28 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} ⦃ _ : Equiv(T₁) ⦄ {T
   -- ∀{x : T₂}{a b : T₁} → ((a ▫ x) ≡ (b ▫ x)) → (a ≡ b)
   Cancellationᵣ : (T₁ → T₂ → T₃) → Stmt
   Cancellationᵣ (_▫_) = (∀{x : T₂} → CancellationOnᵣ (_▫_)(x))
+
+module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ where
+  -- Definition of the left inverse property
+  InverseOperatorOnₗ : (T₁ → T₂ → T₃) → (T₁ → T₃ → T₂) → T₁ → T₃ → Stmt
+  InverseOperatorOnₗ (_▫₁_) (_▫₂_) x y = (x ▫₁ (x ▫₂ y) ≡ y)
+
+  -- Definition of the right inverse property
+  InverseOperatorOnᵣ : (T₁ → T₂ → T₃) → (T₃ → T₂ → T₁) → T₃ → T₂ → Stmt
+  InverseOperatorOnᵣ (_▫₁_) (_▫₂_) x y = ((x ▫₂ y) ▫₁ y ≡ x)
+
+  InverseOperatorₗ : (T₁ → T₂ → T₃) → (T₁ → T₃ → T₂) → Stmt
+  InverseOperatorₗ (_▫₁_) (_▫₂_) = ∀{x y} → (x ▫₁ (x ▫₂ y) ≡ y)
+
+  InverseOperatorᵣ : (T₁ → T₂ → T₃) → (T₃ → T₂ → T₁) → Stmt
+  InverseOperatorᵣ (_▫₁_) (_▫₂_) = ∀{x y} → ((x ▫₂ y) ▫₁ y ≡ x)
+
+module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ where
+  InversePropertyₗ : (T₁ → T₂ → T₂) → (T₁ → T₁) → Stmt
+  InversePropertyₗ (_▫_) inv = ∀{x y} → InverseOperatorOnₗ (a ↦ b ↦ inv(a) ▫ b) (_▫_) x y
+
+  InversePropertyᵣ : (T₂ → T₁ → T₂) → (T₁ → T₁) → Stmt
+  InversePropertyᵣ (_▫_) inv = ∀{x y} → InverseOperatorOnᵣ (a ↦ b ↦ a ▫ inv(b)) (_▫_) x y
 
 ---------------------------------------------------------
 -- Patterns
@@ -156,7 +194,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T�
   Absorptionᵣ (_▫₁_)(_▫₂_) = ∀{x : T₁}{y : T₂} → ((x ▫₂ y) ▫₁ y ≡ y)
 
 ---------------------------------------------------------
--- Functions
+-- Functions (TODO: Move to Structure.Operator.Proofs)
 {-
 open import Relator.Equals{ℓ₁}{ℓ₂}
 open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}

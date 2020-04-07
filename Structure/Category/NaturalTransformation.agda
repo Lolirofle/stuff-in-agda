@@ -15,8 +15,6 @@ private variable Obj Objₗ Objᵣ : Type{ℓₒ}
 private variable Morphism Morphismₗ Morphismᵣ : Obj → Obj → Type{ℓₘ}
 
 module _
-  ⦃ obj-equivₗ : Equiv(Objₗ) ⦄
-  ⦃ obj-equivᵣ : Equiv(Objᵣ) ⦄
   ⦃ morphism-equivₗ : ∀{x y : Objₗ} → Equiv(Morphismₗ x y) ⦄
   ⦃ morphism-equivᵣ : ∀{x y : Objᵣ} → Equiv(Morphismᵣ x y) ⦄
   {catₗ : Category(Morphismₗ)}

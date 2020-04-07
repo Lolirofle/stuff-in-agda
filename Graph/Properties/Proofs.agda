@@ -21,7 +21,7 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) w
   instance
     undirect-undirected : Undirected(undirect(_⟶_))
     Undirected.reversable         undirect-undirected = intro [∨]-symmetry
-    Undirected.reverse-involution undirect-undirected = intro swap-involution
+    Undirected.reverse-involution undirect-undirected = intro (_⊜_.proof swap-involution)
 
   -- [++]-visits : ∀{ae be a₁ b₁ a₂ b₂}{e : ae ⟶ be}{w₁ : Walk(_⟶_) a₁ b₁}{w₂ : Walk(_⟶_) a₂ b₂} → (Visits(_⟶_) e w₁) ∨ (Visits(_⟶_) e w₂) → Visits(_⟶_) e (w₁ ++ w₂)
 

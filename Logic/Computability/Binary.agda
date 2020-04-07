@@ -8,7 +8,7 @@ open import Data.Tuple
 open import Functional
 open import Logic
 import      Logic.Computability as C
-open import Logic.Classical
+open import Logic.Classical hiding (decide)
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Relator.Equals

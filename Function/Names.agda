@@ -10,7 +10,6 @@ open import Sets.Setoid.Uniqueness
 open import Sets.Setoid hiding (Function)
 open import Type
 
-
 module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} {B : A → Type{ℓₒ₂}} ⦃ _ : ∀{a} → Equiv(B(a)) ⦄ where
   _⊜_ : ((a : A) → B(a)) → ((a : A) → B(a)) → Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂}
   _⊜_ f g = (∀{x} → (f(x) ≡ g(x)))
@@ -24,6 +23,8 @@ module _ {ℓₒ₁}{ℓₒ₂} where
 
   FunctionExtensionality : Stmt{Lvl.𝐒(ℓₒ₁ Lvl.⊔ ℓₒ₂)}
   FunctionExtensionality = ∀{A : Type{ℓₒ₁}}{B : Type{ℓₒ₂}} → ∀²(FunctionExtensionalityOn{ℓₒ₁}{ℓₒ₂}{A}{B} ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄)
+
+-- TODO: Move below to Structure.Function.Names
 
 module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv(B) ⦄ where
   Function : (A → B) → Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂}
@@ -69,23 +70,3 @@ module _ {ℓₒ} {A : Type{ℓₒ}} ⦃ _ : Equiv(A) ⦄ where
 
   Idempotent : (A → A) → Stmt{ℓₒ}
   Idempotent(f) = ∀ₗ(IdempotentOn f)
-
-module _ {ℓₒ₁}{ℓₒ₂} {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv(B) ⦄ where
-  -- Definition of the relation between a function and an operation that says:
-  -- The function preserves the operation.
-  -- Also called: Homomorphism
-  Preserving₁ : (A → B) → (A → A) → (B → B) → Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂}
-  Preserving₁ (f)(x)(y) = (∀{a : A} → (f(x(a)) ≡ y(f(a))))
-  -- ∀{a : A} → ((f ∘ x)(a) ≡ (y ∘ f)(a))
-
-  Preserving₂ : (A → B) → (A → A → A) → (B → B → B) → Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂}
-  Preserving₂ (f)(_▫₁_)(_▫₂_) = (∀{x y} → (f(x ▫₁ y) ≡ f(x) ▫₂ f(y)))
-
--- module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}}{Y : Type{ℓ₂}} (f : X → Y) where
---   open import Function.DomainRaise
---   open import Numeral.Natural
--- 
---   Preserving : (n : ℕ) → (X →̂ X)(n) → (Y →̂ Y)(n) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
---   Preserving(𝟎)    (g₁)(g₂) = (f(g₁) ≡ g₂)
---   Preserving(𝐒(n)) (g₁)(g₂) = (∀{x} → Preserving(n) (g₁(x))(g₂(f(x))))
-

@@ -29,13 +29,14 @@ Walk-sub {_▫_ = _▫_}{_⟶_ = _⟶_} = intro proof where
   proof at                    = transitivity(_▫_) (reflexivity(_▫_)) (reflexivity(_▫_))
   proof (prepend ab1 walkb1b) = transitivity(_▫_) (sub₂(_⟶_)(_▫_) ab1) (proof walkb1b)
 
+Walk-transitivity-raw : Names.Transitivity(Walk(_⟶_))
+Walk-transitivity-raw at              xz = xz
+Walk-transitivity-raw (prepend xb by) yz = prepend xb (Walk-transitivity-raw by yz)
+
 instance
   -- A walk can be joined/concatenated to form a new walk.
   Walk-transitivity : Transitivity(Walk(_⟶_))
-  Transitivity.proof Walk-transitivity = proof where
-    proof : Names.Transitivity(Walk(_⟶_))
-    proof at             xz = xz
-    proof (prepend xb by) yz = prepend xb (proof by yz)
+  Transitivity.proof Walk-transitivity = Walk-transitivity-raw
 
 instance
   Walk-reflexivity : Reflexivity(Walk(_⟶_))

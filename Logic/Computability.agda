@@ -9,7 +9,7 @@ open        Data.Boolean.Operators.Programming
 open import Data.Boolean.Proofs
 open import Functional
 open import Logic
-open import Logic.Classical
+open import Logic.Classical hiding (decide)
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Relator.Equals

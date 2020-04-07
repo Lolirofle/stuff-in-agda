@@ -9,6 +9,7 @@ open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.Oper
+open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Induction
 open import Numeral.Natural.Relation.Order
 open import Relator.Equals
@@ -17,6 +18,7 @@ import      Structure.Relator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
+open import Syntax.Transitivity
 open import Type
 
 -- TODO: A method for pattern matching: https://stackoverflow.com/questions/20682013/agda-why-am-i-unable-to-pattern-match-on-refl
@@ -93,8 +95,12 @@ instance
     proof {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ (proof ↦ [≤]-with-[𝐒] {a}{b} ⦃ proof ⦄)) ([∨]-introᵣ ∘ (proof ↦ [≤]-with-[𝐒] {b}{a} ⦃ proof ⦄)) (proof {a}{b})
 
 instance
-  [≤]-weakOrder : Weak.TotalOrder (_≤_) (_≡_)
-  [≤]-weakOrder = record{}
+  [≤]-weakPartialOrder : Weak.PartialOrder (_≤_) (_≡_)
+  [≤]-weakPartialOrder = record{}
+
+instance
+  [≤]-weakTotalOrder : Weak.TotalOrder (_≤_) (_≡_)
+  [≤]-weakTotalOrder = record{}
 
 instance
   [≥]-reflexivity : Reflexivity (_≥_)
@@ -113,8 +119,12 @@ instance
   ConverseTotal.proof([≥]-totality) = ConverseTotal.proof([≤]-totality)
 
 instance
-  [≥]-weakOrder : Weak.TotalOrder (_≥_) (_≡_)
-  [≥]-weakOrder = record{}
+  [≥]-weakPartialOrder : Weak.PartialOrder (_≥_) (_≡_)
+  [≥]-weakPartialOrder = record{}
+
+instance
+  [≥]-weakTotalOrder : Weak.TotalOrder (_≥_) (_≡_)
+  [≥]-weakTotalOrder = record{}
 
 [≥]-to-[≮] : ∀{a b : ℕ} → (a ≮ b) ← (a ≥ b)
 [≥]-to-[≮] {a}{b} (b≤a) (𝐒a≤b) = [≤][𝐒]ₗ (transitivity(_≤_) {𝐒(a)}{b}{a} (𝐒a≤b) (b≤a))
@@ -267,3 +277,138 @@ instance
 
 [<]-non-zero-existence : ∀{a b : ℕ} → (a < b) → (𝟎 < b)
 [<]-non-zero-existence [≤]-with-[𝐒] = [<]-of-[𝟎][𝐒]
+
+{-
+[+][−₀]-commutativity : ∀{x y} → ⦃ _ : y ≥ z ⦄ → (x + (y −₀ z) ≡ (x −₀ z) + y)
+-}
+
+[≤]ₗ[+] : ∀{x y : ℕ} → (x + y ≤ x) → (y ≡ 𝟎)
+[≤]ₗ[+] {𝟎}               = [≤][0]ᵣ
+[≤]ₗ[+] {𝐒(x)}{y} (proof) = [≤]ₗ[+] {x} ([≤]-without-[𝐒] {x + y} {x} (proof))
+
+[≤]-with-[+]ᵣ : ∀{x y z : ℕ} → (x ≤ y) → (x + z ≤ y + z)
+[≤]-with-[+]ᵣ {_}{_}{𝟎}    (proof)    = proof
+[≤]-with-[+]ᵣ {_}{_}{𝐒(z)} (proof) = [≤]-with-[𝐒] ⦃ [≤]-with-[+]ᵣ {_}{_}{z} (proof) ⦄
+
+[≤]-with-[+]ₗ : ∀{x y z : ℕ} → (x ≤ y) → (z + x ≤ z + y)
+[≤]-with-[+]ₗ {.0} {𝟎}   {z } [≤]-minimum            = reflexivity(_≤_)
+[≤]-with-[+]ₗ {.0} {𝐒 y} {z}  [≤]-minimum            = [≤]-successor([≤]-with-[+]ₗ {0}{y}{z} [≤]-minimum)
+[≤]-with-[+]ₗ {𝐒 x} {𝐒 y} {z} ([≤]-with-[𝐒] ⦃ xy ⦄ ) = [≤]-with-[𝐒] ⦃ [≤]-with-[+]ₗ {x} {y} {z} xy ⦄
+
+[≤]-of-[+]ᵣ : ∀{x y : ℕ} → (x ≤ y + x)
+[≤]-of-[+]ᵣ {𝟎} {y} = [≤]-minimum
+[≤]-of-[+]ᵣ {𝐒 x} {𝟎} = reflexivity(_≤_)
+[≤]-of-[+]ᵣ {𝐒 x} {𝐒 y} = [≤]-with-[𝐒] ⦃ [≤]-of-[+]ᵣ {x}{𝐒 y} ⦄
+
+[≤]-of-[+]ₗ : ∀{x y : ℕ} → (x ≤ x + y)
+[≤]-of-[+]ₗ {𝟎}   {y}   = [≤]-minimum
+[≤]-of-[+]ₗ {𝐒 x} {𝟎}   = reflexivity(_≤_)
+[≤]-of-[+]ₗ {𝐒 x} {𝐒 y} =  [≤]-with-[𝐒] ⦃ [≤]-of-[+]ₗ {x}{𝐒 y} ⦄
+
+[≤]-with-[+] : ∀{x₁ y₁ : ℕ} → ⦃ _ : (x₁ ≤ y₁)⦄ → ∀{x₂ y₂ : ℕ} → ⦃ _ : (x₂ ≤ y₂)⦄ → (x₁ + x₂ ≤ y₁ + y₂)
+[≤]-with-[+] {x₁} {y₁} ⦃ x1y1 ⦄ {.0}     {y₂}     ⦃ [≤]-minimum ⦄ = transitivity(_≤_) x1y1 [≤]-of-[+]ₗ
+[≤]-with-[+] {x₁} {y₁} ⦃ x1y1 ⦄ {𝐒 x₂} {𝐒 y₂} ⦃ [≤]-with-[𝐒] ⦃ p ⦄ ⦄ = [≤]-with-[𝐒] ⦃ [≤]-with-[+] {x₁} {y₁} {x₂} {y₂} ⦄
+
+[≤]-from-[+] : ∀{ℓ}{P : ℕ → Stmt{ℓ}}{x} → (∀{n} → P(x + n)) → (∀{y} → ⦃ _ : (x ≤ y) ⦄ → P(y))
+[≤]-from-[+] {ℓ} {P} {𝟎}   anpxn {y}   ⦃ [≤]-minimum ⦄        = anpxn{y}
+[≤]-from-[+] {ℓ} {P} {𝐒 x} anpxn {𝐒 y} ⦃ [≤]-with-[𝐒] ⦃ xy ⦄ ⦄ = [≤]-from-[+] {ℓ} {P ∘ 𝐒} {x} anpxn {y} ⦃ xy ⦄
+
+[−₀]-move-[𝐒] : ∀{x y} → (x ≥ y) → ((𝐒(x) −₀ y) ≡ 𝐒(x −₀ y))
+[−₀]-move-[𝐒] {𝟎}   {𝟎}    _ = [≡]-intro
+[−₀]-move-[𝐒] {𝟎}   {𝐒(_)} ()
+[−₀]-move-[𝐒] {𝐒(_)}{𝟎}    _ = [≡]-intro
+[−₀]-move-[𝐒] {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [−₀]-move-[𝐒] {x}{y} proof
+  -- 𝐒𝐒x −₀ 𝐒y ≡ 𝐒(𝐒x −₀ 𝐒y)
+  -- 𝐒x −₀ y ≡ 𝐒(x −₀ y)
+
+[−₀][+]-nullify2 : ∀{x y} → (x ≤ y) ↔ (x + (y −₀ x) ≡ y)
+[−₀][+]-nullify2 {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
+  l : ∀{x y} → (x ≤ y) ← (x + (y −₀ x) ≡ y)
+  l {𝟎}   {_}    _     = [≤]-minimum
+  l {𝐒(_)}{𝟎}    ()
+  l {𝐒(x)}{𝐒(y)} proof = [≤]-with-[𝐒] ⦃ l{x}{y} ([𝐒]-injectivity-raw proof) ⦄
+
+  r : ∀{x y} → (x ≤ y) → (x + (y −₀ x) ≡ y)
+  r {𝟎}   {𝟎}    proof = [≡]-intro
+  r {𝟎}   {𝐒(_)} proof = [≡]-intro
+  r {𝐒(_)}{𝟎}    ()
+  r {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [≡]-with(𝐒) (r{x}{y} (proof))
+  -- x + (y −₀ x) ≡ y
+  -- ∃z. x + ((x + z) −₀ x) ≡ y
+  -- ∃z. x + z ≡ y
+  -- y ≡ y
+
+[−₀]-comparison : ∀{x y} → (x ≤ y) ↔ (x −₀ y ≡ 𝟎)
+[−₀]-comparison {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
+  l : ∀{x y} → (x ≤ y) ← (x −₀ y ≡ 𝟎)
+  l {𝟎}   {_}    _     = [≤]-minimum
+  l {𝐒(_)}{𝟎}    ()
+  l {𝐒(x)}{𝐒(y)} proof = [≤]-with-[𝐒] ⦃ l{x}{y} proof ⦄
+
+  r : ∀{x y} → (x ≤ y) → (x −₀ y ≡ 𝟎)
+  r {𝟎}   {_}    proof = [≡]-intro
+  r {𝐒(_)}{𝟎}    ()
+  r {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = r{x}{y} (proof)
+
+-- TODO: One way to prove this is contraposition of [−₀]-comparison. Another is by [≤]-with-[+]ᵣ and some other stuff, but it seems to require more work
+postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
+-- [−₀]-when-non-zero {x}{y} 
+
+[−₀]-lesser-[𝐒]ₗ : ∀{x y} → ((x −₀ 𝐒(y)) ≤ (x −₀ y))
+[−₀]-lesser-[𝐒]ᵣ : ∀{x y} → ((x −₀ y) ≤ (𝐒(x) −₀ y))
+
+[−₀]-lesser-[𝐒]ₗ {𝟎}   {_}    = [≤]-minimum
+[−₀]-lesser-[𝐒]ₗ {𝐒(_)}{𝟎}    = [≤]-of-[𝐒]
+[−₀]-lesser-[𝐒]ₗ {𝐒(x)}{𝐒(y)} = [−₀]-lesser-[𝐒]ᵣ {x}{𝐒(y)}
+
+[−₀]-lesser-[𝐒]ᵣ {𝟎}   {_}    = [≤]-minimum
+[−₀]-lesser-[𝐒]ᵣ {𝐒(x)}{𝟎}    = [≤]-of-[𝐒]
+[−₀]-lesser-[𝐒]ᵣ {𝐒(x)}{𝐒(y)} = [−₀]-lesser-[𝐒]ₗ {𝐒(x)}{y}
+
+[≤][−₀][𝐒]ₗ : ∀{x y} → ((𝐒(x) −₀ y) ≤ 𝐒(x −₀ y))
+[≤][−₀][𝐒]ₗ {x}   {𝟎}    = reflexivity(_≤_)
+[≤][−₀][𝐒]ₗ {𝟎}   {𝐒(y)} = [≤]-minimum
+[≤][−₀][𝐒]ₗ {𝐒(x)}{𝐒(y)} = [≤][−₀][𝐒]ₗ {x}{y}
+
+[−₀]-lesser : ∀{x y} → ((x −₀ y) ≤ x)
+[−₀]-lesser {𝟎}   {_}    = [≤]-minimum
+[−₀]-lesser {𝐒(x)}{𝟎}    = reflexivity(_≤_)
+[−₀]-lesser {𝐒(x)}{𝐒(y)} = ([−₀]-lesser-[𝐒]ₗ {𝐒(x)}{y}) 🝖 ([−₀]-lesser {𝐒(x)}{y})
+
+[−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0) -- TODO: Converse is probably also true
+[−₀]-positive {𝟎}   {𝟎}    ()
+[−₀]-positive {𝐒(x)}{𝟎}    ()
+[−₀]-positive {𝟎}   {𝐒(y)} (_) = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
+[−₀]-positive {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [−₀]-positive {x}{y} (proof)
+  -- (𝐒y > 𝐒x) → (𝐒y −₀ 𝐒x > 0)
+  -- (𝐒x < 𝐒y) → (0 < 𝐒y −₀ 𝐒x)
+  -- (𝐒𝐒x ≤ 𝐒y) → (𝐒0 ≤ 𝐒y −₀ 𝐒x)
+  -- (𝐒x ≤ y) → (𝐒0 ≤ 𝐒y −₀ 𝐒x)
+  -- (𝐒x ≤ y) → (𝐒0 ≤ y −₀ x)
+  -- (x < y) → (0 < y −₀ x)
+  -- (y > x) → (y −₀ x > 0)
+
+[−₀]-nested-sameₗ : ∀{x y} → (x ≥ y) ↔ (x −₀ (x −₀ y) ≡ y)
+[−₀]-nested-sameₗ {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
+  l : ∀{x y} → (x ≥ y) ← (x −₀ (x −₀ y) ≡ y)
+  l {x}{y} proof =
+    [≡]-to-[≤] (symmetry(_≡_) proof)
+    🝖 [−₀]-lesser {x}{x −₀ y}
+
+  r : ∀{x y} → (x ≥ y) → (x −₀ (x −₀ y) ≡ y)
+  r{x}{y} x≥y =
+    [≡]-with(_−₀ (x −₀ y)) (symmetry(_≡_) ([↔]-to-[→] ([−₀][+]-nullify2 {y}{x}) (x≥y)) 🝖 [+]-commutativity-raw{y}{x −₀ y})
+    🝖 [−₀]ₗ[+]ₗ-nullify {x −₀ y}{y}
+      -- x −₀ (x −₀ y)
+      -- ((x −₀ y) + y) −₀ (x −₀ y)
+      -- y
+
+[𝄩]-of-𝐒ₗ : ∀{x y} → (x ≥ y) → (𝐒(x) 𝄩 y ≡ 𝐒(x 𝄩 y))
+[𝄩]-of-𝐒ₗ {𝟎}   {𝟎}   xy = [≡]-intro
+[𝄩]-of-𝐒ₗ {𝐒 x} {𝟎}   xy = [≡]-intro
+[𝄩]-of-𝐒ₗ {𝐒 x} {𝐒 y} xy = [𝄩]-of-𝐒ₗ {x} {y} ([≤]-without-[𝐒] xy)
+
+[𝄩]-of-𝐒ᵣ : ∀{x y} → (x ≤ y) → (x 𝄩 𝐒(y) ≡ 𝐒(x 𝄩 y))
+[𝄩]-of-𝐒ᵣ {𝟎}   {𝟎}   xy = [≡]-intro
+[𝄩]-of-𝐒ᵣ {𝟎}   {𝐒 y} xy = [≡]-intro
+[𝄩]-of-𝐒ᵣ {𝐒 x} {𝐒 y} xy = [𝄩]-of-𝐒ᵣ {x} {y} ([≤]-without-[𝐒] xy)

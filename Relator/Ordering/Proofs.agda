@@ -34,6 +34,7 @@ module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{�
 
     [>]-to-[≥] : Names.Subrelation(_>_)(_≥_)
     [>]-to-[≥] = [<]-to-[≤]
+
     [>][≥]-sub : (_>_) ⊆₂ (_≥_)
     _⊆₂_.proof [>][≥]-sub = [>]-to-[≥]
 
@@ -52,7 +53,31 @@ module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{�
     [<]-strictOrder : Strict.PartialOrder(_<_)
     [<]-strictOrder = Strict.intro
 
+    {- TODO: Maybe one must assume decidability of (_≡_)?
+    instance
+      [<]-total : ConverseTotal(_<_)
+      ConverseTotal.proof [<]-total {x} {y} with converseTotal(_≤_)
+      ... | [∨]-introₗ x₁ = {!!}
+      ... | [∨]-introᵣ x₁ = {!!}
+    -}
+
+    instance
+      [<][≤]-subtransitivityₗ : Subtransitivityₗ(_<_)(_≤_)
+      Subtransitivityₗ.proof [<][≤]-subtransitivityₗ xy yz zx = yz(transitivity(_≤_) zx xy)
+      
+    instance
+      [<][≤]-subtransitivityᵣ : Subtransitivityᵣ(_<_)(_≤_)
+      Subtransitivityᵣ.proof [<][≤]-subtransitivityᵣ xy yz zx = xy(transitivity(_≤_) yz zx)
+
     module _ ⦃ _ : (_≡_) ⊆₂ (_≤_) ⦄ where -- TODO: Consider including this in weak orders
+      instance
+        [≤][≡]-subtransitivityₗ : Subtransitivityₗ(_≤_)(_≡_)
+        [≤][≡]-subtransitivityₗ = subrelation-transitivity-to-subtransitivityₗ
+
+      instance
+        [≤][≡]-subtransitivityᵣ : Subtransitivityᵣ(_≤_)(_≡_)
+        [≤][≡]-subtransitivityᵣ = subrelation-transitivity-to-subtransitivityᵣ
+
       [≡]-to-[≥] : Names.Subrelation(_≡_)(_≥_)
       [≡]-to-[≥] = sub₂(_≡_)(_≤_) ∘ symmetry(_≡_)
       instance
@@ -62,38 +87,62 @@ module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{�
       [≡][>]-not : ∀{a b} → (a ≡ b) → (a > b) → ⊥
       [≡][>]-not eq gt = [≤][>]-not (sub₂(_≡_)(_≤_) eq) gt
 
+      instance
+        [≡][≯]-sub : (_≡_) ⊆₂ (_≯_)
+        _⊆₂_.proof [≡][≯]-sub = [≡][>]-not
+
+      instance
+        [>][≢]-sub : (_>_) ⊆₂ (_≢_)
+        _⊆₂_.proof [>][≢]-sub = swap [≡][>]-not
+
       [≡][<]-not : ∀{a b} → (a ≡ b) → (a < b) → ⊥
       [≡][<]-not eq lt = [≤][>]-not ([≡]-to-[≥] eq) lt
+
+      instance
+        [≡][≮]-sub : (_≡_) ⊆₂ (_≮_)
+        _⊆₂_.proof [≡][≮]-sub = [≡][<]-not
+
+      instance
+        [<][≢]-sub : (_<_) ⊆₂ (_≢_)
+        _⊆₂_.proof [<][≢]-sub = swap [≡][<]-not
+
+      instance
+        [<][≡]-subtransitivityₗ : Subtransitivityₗ(_<_)(_≡_)
+        Subtransitivityₗ.proof [<][≡]-subtransitivityₗ xy yz zx = [≡][>]-not xy (subtransitivityᵣ(_<_)(_≤_) yz zx)
+      
+      instance
+        [<][≡]-subtransitivityᵣ : Subtransitivityᵣ(_<_)(_≡_)
+        Subtransitivityᵣ.proof [<][≡]-subtransitivityᵣ xy yz zx = [≡][>]-not yz (subtransitivityₗ(_<_)(_≤_) zx xy)
 
       module _ ⦃ [≡]-classical : Classical₂(_≡_) ⦄ where
         [≤]-or-[>] : ∀{a b} → (a ≤ b) ∨ (a > b)
         [≤]-or-[>] {a} {b} with converseTotal(_≤_){a}{b}
         [≤]-or-[>] {a} {b} | [∨]-introₗ ab = [∨]-introₗ ab
-        [≤]-or-[>] {a} {b} | [∨]-introᵣ ba with excluded-middle ⦃ [≡]-classical {a}{b} ⦄
+        [≤]-or-[>] {a} {b} | [∨]-introᵣ ba with excluded-middle _ ⦃ [≡]-classical {a}{b} ⦄
         [≤]-or-[>] {a} {b} | [∨]-introᵣ ba | [∨]-introₗ eqab  = [∨]-introₗ (sub₂(_≡_)(_≤_) eqab)
         [≤]-or-[>] {a} {b} | [∨]-introᵣ ba | [∨]-introᵣ neqab = [∨]-introᵣ (ab ↦ neqab(antisymmetry(_≤_)(_≡_) ab ba))
 
         instance
           [≤]-classical : Classical₂(_≤_)
-          excluded-middle ⦃ [≤]-classical ⦄ = [≤]-or-[>]
+          Classical.excluded-middle [≤]-classical = [≤]-or-[>]
 
         [≥]-or-[<] : ∀{a b} → (a ≥ b) ∨ (a < b)
         [≥]-or-[<] = [≤]-or-[>]
 
         [≥]-classical : Classical₂(_≥_)
-        excluded-middle ⦃ [≥]-classical ⦄ = [≥]-or-[<]
+        Classical.excluded-middle [≥]-classical = [≥]-or-[<]
 
         instance
           [<]-classical : Classical₂(_<_)
-          excluded-middle ⦃ [<]-classical {a}{b} ⦄ with [≤]-or-[>] {b}{a}
-          excluded-middle ⦃ [<]-classical {a}{b} ⦄ | [∨]-introₗ x = [∨]-introᵣ ([¬¬]-intro x)
-          excluded-middle ⦃ [<]-classical {a}{b} ⦄ | [∨]-introᵣ x = [∨]-introₗ x
+          Classical.excluded-middle ([<]-classical {a}{b}) with [≤]-or-[>] {b}{a}
+          Classical.excluded-middle ([<]-classical {a}{b}) | [∨]-introₗ x = [∨]-introᵣ ([¬¬]-intro x)
+          Classical.excluded-middle ([<]-classical {a}{b}) | [∨]-introᵣ x = [∨]-introₗ x
 
         [>]-classical : Classical₂(_>_)
         [>]-classical = [<]-classical
 
         [≤]-to-[<][≡] : ∀{a b} → (a ≤ b) → ((a < b) ∨ (a ≡ b))
-        [≤]-to-[<][≡] {a} {b} ab with excluded-middle ⦃ [≡]-classical {a}{b} ⦄
+        [≤]-to-[<][≡] {a} {b} ab with excluded-middle _ ⦃ [≡]-classical {a}{b} ⦄
         [≤]-to-[<][≡] {a} {b} ab | [∨]-introₗ eq = [∨]-introᵣ eq
         [≤]-to-[<][≡] {a} {b} ab | [∨]-introᵣ ne = [∨]-introₗ (ba ↦ ne(antisymmetry(_≤_)(_≡_) ab ba))
 
@@ -102,3 +151,47 @@ module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{�
 
     -- [<]-trichotomy : ∀{a b} → (a < b) ∨ (b < a) ∨ (a ≡ b)
     -- [<]-trichotomy {a} {b} = {!!}
+
+module From-[≤][≢] {ℓ₁ ℓ₂ ℓ₃} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) (_≢_ : T → T → Stmt{ℓ₃}) where
+  open Relator.Ordering.From-[≤][≢] (_≤_)(_≢_)
+
+  {-
+  postulate instance [<]-totalOrder : Strict.TotalOrder(_<_)
+
+  -- TODO: Remove the "to" functions and replace them with "sub₂"
+  [<]-to-[≤] : ∀{x y} → (x < y) → (x ≤ y)
+  [<]-to-[≤] = [∧]-elimₗ
+
+  [>]-to-[≥] : ∀{x y} → (x > y) → (x ≥ y)
+  [>]-to-[≥] = [<]-to-[≤]
+
+  [<]-to-[≢] : ∀{x y} → (x < y) → (x ≢ y)
+  [<]-to-[≢] = [∧]-elimᵣ
+
+  [>]-to-[≢] : ∀{x y} → (x > y) → (x ≢ y)
+  [>]-to-[≢] x>y = ([<]-to-[≢] x>y) ∘ symmetry(_≡_)
+
+  instance
+    [<][≤]-sub : (_<_) ⊆₂ (_≤_)
+    _⊆₂_.proof [<][≤]-sub = [<]-to-[≤]
+
+  instance
+    [>][≥]-sub : (_>_) ⊆₂ (_≥_)
+    _⊆₂_.proof [>][≥]-sub = [>]-to-[≥]
+
+  instance
+    [<][≢]-sub : (_<_) ⊆₂ (_≢_)
+    _⊆₂_.proof [<][≢]-sub = [<]-to-[≢]
+
+  instance
+    [>][≢]-sub : (_>_) ⊆₂ (_≢_)
+    _⊆₂_.proof [>][≢]-sub = [>]-to-[≢]
+
+  instance
+    [<][≤]-subtransitivityₗ : Subtransitivityₗ(_<_)(_≤_)
+    left (Subtransitivityₗ.proof [<][≤]-subtransitivityₗ xy ([∧]-intro yz nyz)) = transitivity(_≤_) xy yz
+    Tuple.right (Subtransitivityₗ.proof [<][≤]-subtransitivityₗ xy yz) xz = {!!}
+  postulate instance [<][≤]-subtransitivityᵣ : Subtransitivityᵣ(_<_)(_≤_)
+  postulate instance [≤][≡]-subtransitivityₗ : Subtransitivityₗ(_≤_)(_≡_)
+  postulate instance [≤][≡]-subtransitivityᵣ : Subtransitivityᵣ(_≤_)(_≡_)
+  -}

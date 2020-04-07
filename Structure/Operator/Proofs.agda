@@ -12,6 +12,7 @@ open import Logic.Predicate
 open import Sets.Setoid
 open import Sets.Setoid.Uniqueness
 open import Structure.Function.Domain
+open import Structure.Function.Multi
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties
@@ -20,6 +21,10 @@ open import Type
 
 -- TODO: These are to make the generalized variables work when they depend on each other. Are there any better ways?
 private
+  module _ {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ where
+    select-invol : ∀(f : T → T) → Involution(f) → Type{Lvl.𝟎}
+    select-invol _ _ = Data.Unit
+
   module _ {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T} where
     select-id : ∀(id) → Identity(_▫_)(id) → Type{Lvl.𝟎}
     select-id _ _ = Data.Unit
@@ -39,6 +44,12 @@ private
     select-invᵣ : ∀(id)(ident)(inv) → InverseFunctionᵣ(_▫_) ⦃ [∃]-intro(id) ⦃ ident ⦄ ⦄ (inv) → Type{Lvl.𝟎}
     select-invᵣ _ _ _ _ = Data.Unit
 
+    select-invPropₗ : ∀(inv) → InversePropertyₗ(_▫_)(inv) → Type{Lvl.𝟎}
+    select-invPropₗ _ _ = Data.Unit
+
+    select-invPropᵣ : ∀(inv) → InversePropertyᵣ(_▫_)(inv) → Type{Lvl.𝟎}
+    select-invPropᵣ _ _ = Data.Unit
+
 module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T} where
   private variable {id idₗ idᵣ ab abₗ abᵣ} : T
   private variable {inv invₗ invᵣ} : T → T
@@ -53,6 +64,9 @@ module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T
   private variable ⦃ inver  ⦄ : InverseFunction ⦃ equiv ⦄ (_▫_) ⦃ [∃]-intro(id) ⦃ ident ⦄ ⦄ (inv)
   private variable ⦃ inverₗ ⦄ : InverseFunctionₗ ⦃ equiv ⦄ (_▫_) ⦃ [∃]-intro(idₗ) ⦃ identₗ ⦄ ⦄ (invₗ)
   private variable ⦃ inverᵣ ⦄ : InverseFunctionᵣ ⦃ equiv ⦄ (_▫_) ⦃ [∃]-intro(idᵣ) ⦃ identᵣ ⦄ ⦄ (invᵣ)
+  private variable ⦃ inverPropₗ ⦄ : InversePropertyₗ ⦃ equiv ⦄ (_▫_) (invₗ)
+  private variable ⦃ inverPropᵣ ⦄ : InversePropertyᵣ ⦃ equiv ⦄ (_▫_) (invᵣ)
+  private variable ⦃ invol ⦄ : Involution ⦃ equiv ⦄ (inv)
 
   associate-commute4 : let _ = op , assoc in ∀{a b c d} → Names.Commuting(_▫_)(b)(c) → ((a ▫ b) ▫ (c ▫ d) ≡ (a ▫ c) ▫ (b ▫ d))
   associate-commute4 {a}{b}{c}{d} com =
@@ -327,6 +341,45 @@ module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T
       ab ▫ x 🝖-[ commutativity(_▫_) ]
       x ▫ ab 🝖-[ absorberᵣ(_▫_)(ab) ⦃ absoᵣ ⦄ ]
       ab     🝖-end
+
+  inverse-propertyₗ-by-groupₗ : let _ = op , assoc , select-invₗ(id)(identₗ)(inv)(inverₗ) in InversePropertyₗ(_▫_)(inv)
+  InversePropertyₗ.proof (inverse-propertyₗ-by-groupₗ {id = id}{inv = inv}) {x} {y} =
+    inv(x) ▫ (x ▫ y) 🝖-[ associativity(_▫_) ]-sym
+    (inv(x) ▫ x) ▫ y 🝖-[ [≡]-with2ₗ(_▫_)(y) (inverseFunctionₗ(_▫_)(inv)) ]
+    id ▫ y           🝖-[ identityₗ(_▫_)(id) ]
+    y                🝖-end
+
+  inverse-propertyᵣ-by-groupᵣ : let _ = op , assoc , select-invᵣ(id)(identᵣ)(inv)(inverᵣ) in InversePropertyᵣ(_▫_)(inv)
+  InversePropertyᵣ.proof (inverse-propertyᵣ-by-groupᵣ {id = id}{inv = inv}) {x} {y} =
+    (x ▫ y) ▫ inv(y) 🝖-[ associativity(_▫_) ]
+    x ▫ (y ▫ inv(y)) 🝖-[ [≡]-with2ᵣ(_▫_)(x) (inverseFunctionᵣ(_▫_)(inv)) ]
+    x ▫ id           🝖-[ identityᵣ(_▫_)(id) ]
+    x                🝖-end
+
+  standard-inverse-operatorₗ-by-involuting-inverse-propₗ : let _ = op , select-invol(inv)(invol) , select-invPropₗ(inv)(inverPropₗ) in InverseOperatorₗ(_▫_)(x ↦ y ↦ inv(x) ▫ y)
+  InverseOperatorₗ.proof (standard-inverse-operatorₗ-by-involuting-inverse-propₗ {inv = inv}) {x} {y} =
+    x ▫ (inv x ▫ y)            🝖-[ [≡]-with2ₗ(_▫_)((inv x ▫ y)) (involution(inv)) ]-sym
+    inv(inv(x)) ▫ (inv x ▫ y)  🝖-[ inversePropₗ(_▫_)(inv) ]
+    y                          🝖-end
+
+  standard-inverse-inverse-operatorₗ-by-inverse-propₗ : let _ = select-invPropₗ(inv)(inverPropₗ) in InverseOperatorₗ(x ↦ y ↦ inv(x) ▫ y)(_▫_)
+  InverseOperatorₗ.proof (standard-inverse-inverse-operatorₗ-by-inverse-propₗ {inv = inv}) {x} {y} = inversePropₗ(_▫_)(inv)
+
+  standard-inverse-operatorᵣ-by-involuting-inverse-propᵣ : let _ = op , select-invol(inv)(invol) , select-invPropᵣ(inv)(inverPropᵣ) in InverseOperatorᵣ(_▫_)(x ↦ y ↦ x ▫ inv(y))
+  InverseOperatorᵣ.proof (standard-inverse-operatorᵣ-by-involuting-inverse-propᵣ {inv = inv}) {x} {y} =
+    (x ▫ inv y) ▫ y           🝖-[ [≡]-with2ᵣ(_▫_)((x ▫ inv y)) (involution(inv)) ]-sym
+    (x ▫ inv y) ▫ inv(inv(y)) 🝖-[ inversePropᵣ(_▫_)(inv) ]
+    x                         🝖-end
+
+  standard-inverse-inverse-operatorᵣ-by-inverse-propᵣ : let _ = select-invPropᵣ(inv)(inverPropᵣ) in InverseOperatorᵣ(x ↦ y ↦ x ▫ inv(y))(_▫_)
+  InverseOperatorᵣ.proof (standard-inverse-inverse-operatorᵣ-by-inverse-propᵣ {inv = inv}) {x} {y} = inversePropᵣ(_▫_)(inv)
+
+  inverseᵣ-by-assoc-inv-propᵣ : let _ = op , assoc , select-idₗ(id)(identₗ) , select-invPropᵣ(inv)(inverPropᵣ) in InverseFunctionᵣ(_▫_) ⦃ [∃]-intro(id) ⦃ identᵣ ⦄ ⦄ (inv)
+  InverseFunctionᵣ.proof (inverseᵣ-by-assoc-inv-propᵣ {id = id} {inv = inv}) {x} =
+    x ▫ inv x        🝖-[ identityₗ(_▫_)(id) ]-sym
+    id ▫ (x ▫ inv x) 🝖-[ associativity(_▫_) ]-sym
+    (id ▫ x) ▫ inv x 🝖-[ inversePropᵣ(_▫_)(inv) ]
+    id               🝖-end
 
 module OneTypeTwoOp {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫₁_ _▫₂_ : T → T → T} where
   private variable {id} : T

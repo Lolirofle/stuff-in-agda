@@ -13,7 +13,7 @@ import Data.Either.Equiv.Proofs
 import Data.Either.Proofs
 import Data.List
 import Data.List.Computability
--- import Data.List.Functor
+import Data.List.Functor
 import Data.List.Proofs
 import Data.List.Relation
 import Data.List.Relation.Membership
@@ -23,7 +23,7 @@ import Data.List.Relation.Sublist.Proofs
 -- import Data.ListNonEmpty
 import Data.ListSized
 import Data.Option
--- import Data.Option.Functor
+import Data.Option.Functor
 import Data.Option.Proofs
 import Data.Proofs
 import Data.Tuple
@@ -45,7 +45,7 @@ import FormalLanguage.RegularExpression
 -- import Formalization.FunctionalML
 -- import Formalization.LambdaCalculus
 import Formalization.PrimitiveRecursion
--- import Formalization.SKICombinatorCalculus
+import Formalization.SKICombinatorCalculus
 import Formalization.SimplyTypedLambdaCalculus
 import Function
 import Function.DomainRaise
@@ -177,7 +177,7 @@ import Structure.Category.Dual
 -- import Structure.Category.Equiv
 import Structure.Category.Functor
 -- import Structure.Category.Functor.Category
-import Structure.Category.Functor.Equiv
+-- import Structure.Category.Functor.Equiv
 import Structure.Category.Functor.Functors
 import Structure.Category.Functor.Proofs
 import Structure.Category.Monad
@@ -228,7 +228,7 @@ import Syntax.Function
 import Syntax.Number
 import Syntax.Transitivity
 import Type
--- import Type.Category
+import Type.Category
 -- import Type.Cubical
 -- import Type.Cubical.Equality
 -- import Type.Cubical.Path

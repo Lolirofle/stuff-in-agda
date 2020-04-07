@@ -137,7 +137,7 @@ mod-of-1 {𝐒 a} = mod-of-1{a}
 mod-lesser-than-modulus : ∀{a b} → ⦃ _ : a ≤ b ⦄ → (a mod 𝐒(b) ≡ a)
 mod-lesser-than-modulus {a} {b} ⦃ ab ⦄ = mod'-result-lesser {0}
 
-mod-maxᵣ : ∀{a b} → ⦃ _ : IsTrue(b ≢? 𝟎) ⦄ → (a mod b < b)
+mod-maxᵣ : ∀{a b} → ⦃ _ : IsTrue(positive?(b)) ⦄ → (a mod b < b)
 mod-maxᵣ {𝟎}   {𝐒 𝟎}    = [≤]-with-[𝐒]
 mod-maxᵣ {𝟎}   {𝐒(𝐒 b)} = [≤]-with-[𝐒]
 mod-maxᵣ {𝐒 a} {𝐒 𝟎}    = mod-maxᵣ {a}{𝐒 𝟎}
@@ -215,7 +215,7 @@ mod-zero-cases {.(𝐒 (b + p))} {b} ab0 | [∨]-introᵣ ba | [∃]-intro p ⦃
 -}
 
 {-# TERMINATING #-} -- TODO: Write a general induction proof function for the divisibility relation which terminates
-mod-divisibility : ∀{a b} → ⦃ _ : IsTrue(b ≢? 𝟎) ⦄ → (a mod b ≡ 𝟎) ↔ (b ∣ a)
+mod-divisibility : ∀{a b} → ⦃ _ : IsTrue(positive?(b)) ⦄ → (a mod b ≡ 𝟎) ↔ (b ∣ a)
 mod-divisibility {a}{𝐒(b)} = [↔]-intro l r where
   l : ∀{a b} → (a mod 𝐒(b) ≡ 𝟎) ← (𝐒(b) ∣ a)
   l {.0}           {b} Div𝟎              = [≡]-intro

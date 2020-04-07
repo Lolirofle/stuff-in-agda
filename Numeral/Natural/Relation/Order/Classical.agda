@@ -20,7 +20,7 @@ open import Structure.Relator.Properties
 open import Type
 
 [≰]-to-[>] : ∀{a b : ℕ} → (a ≰ b) → (a > b)
-[≰]-to-[>] {a}{b} (a≰b) with excluded-middle ⦃ ComputablyDecidable.classical(_>_) ⦄
+[≰]-to-[>] {a}{b} (a≰b) with excluded-middle _ ⦃ ComputablyDecidable.classical(_>_) ⦄
 ... | [∨]-introₗ a>b = a>b
 ... | [∨]-introᵣ a≯b = [⊥]-elim ([≰][≯]-not (a≰b) (a≯b))
 
@@ -28,7 +28,7 @@ open import Type
 [≯]-to-[≤] {a}{b} = contrapositive-variantₗ ⦃ ComputablyDecidable.classical(_≤_) ⦄ ([≰]-to-[>] {a}{b})
 
 [≱]-to-[<] : ∀{a b : ℕ} → (a ≱ b) → (a < b)
-[≱]-to-[<] {a}{b} (a≱b) with excluded-middle ⦃ ComputablyDecidable.classical(_<_) ⦄
+[≱]-to-[<] {a}{b} (a≱b) with excluded-middle _ ⦃ ComputablyDecidable.classical(_<_) ⦄
 ... | [∨]-introₗ a<b = a<b
 ... | [∨]-introᵣ a≮b = [⊥]-elim ([≮][≱]-not (a≮b) (a≱b))
 
@@ -36,11 +36,11 @@ open import Type
 [≮]-to-[≥] {a}{b} = contrapositive-variantₗ ⦃ ComputablyDecidable.classical(_≥_) ⦄ ([≱]-to-[<] {a}{b})
 
 [≤]-or-[>] : ∀{a b : ℕ} → (a ≤ b)∨(a > b)
-[≤]-or-[>] with excluded-middle ⦃ ComputablyDecidable.classical(_≤_) ⦄
+[≤]-or-[>] with excluded-middle _ ⦃ ComputablyDecidable.classical(_≤_) ⦄
 ... | [∨]-introₗ a≤b = [∨]-introₗ a≤b
 ... | [∨]-introᵣ a≰b = [∨]-introᵣ ([≰]-to-[>] a≰b)
 
 [≥]-or-[<] : ∀{a b : ℕ} → (a < b)∨(a ≥ b)
-[≥]-or-[<] with excluded-middle ⦃ ComputablyDecidable.classical(_≤_) ⦄
+[≥]-or-[<] with excluded-middle _  ⦃ ComputablyDecidable.classical(_≤_) ⦄
 ... | [∨]-introₗ a≥b = [∨]-introᵣ a≥b
 ... | [∨]-introᵣ a≱b = [∨]-introₗ ([≱]-to-[<] a≱b)

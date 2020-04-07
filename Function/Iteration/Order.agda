@@ -132,6 +132,9 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
           ord-non-zero-comp = [↔]-to-[→] (ComputablyDecidable.proof-istrue([≢]-computable)) (ord-non-zero ⦃ p ⦄)
 
         instance
+          postulate ord-positive : IsTrue(positive?(ord(x) ⦃ p ⦄))
+
+        instance
           ord-n-ineq : ord(x) ⦃ p ⦄ ≤ 𝐒(n)
           ord-n-ineq with ord-is-minimum ⦃ p ⦄ {𝐒(n)} xnid
           ord-n-ineq | [∨]-introₗ ()

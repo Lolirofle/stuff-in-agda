@@ -1,12 +1,44 @@
 module Data.Tuple.Category where
 
-open import Data.Tuple as Tuple hiding (_⨯_)
+open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Data.Tuple.Equiv
 open import Logic.Propositional
 open import Sets.Setoid
 open import Structure.Category
-import      Structure.Operator.Properties as Properties
+open import Structure.Category.Functor
+open import Structure.Category.Properties
 open import Type
+
+open Category ⦃ … ⦄
+
+module Raw where
+  module _
+    {ℓₒ}
+    (Obj₁ : Type{ℓₒ})
+    (Obj₂ : Type{ℓₒ})
+    where
+
+    productObj : Type{ℓₒ}
+    productObj = Obj₁ ⨯ Obj₂
+
+  module _
+    {ℓₒ ℓₘ}
+    {Obj₁ : Type{ℓₒ}}
+    {Obj₂ : Type{ℓₒ}}
+    (Morphism₁ : Obj₁ → Obj₁ → Type{ℓₘ})
+    (Morphism₂ : Obj₂ → Obj₂ → Type{ℓₘ})
+    where
+
+    productMorphism : productObj(Obj₁)(Obj₂) → productObj(Obj₁)(Obj₂) → Type{ℓₘ}
+    productMorphism(x₁ , x₂) (y₁ , y₂) = (Morphism₁ x₁ y₁) ⨯ (Morphism₂ x₂ y₂)
+
+  module _
+    {ℓₒ}
+    {Obj₁ₗ Obj₁ᵣ Obj₂ₗ Obj₂ᵣ : Type{ℓₒ}}
+    where
+
+    _⨯ᶠᵘⁿᶜᵗᵒʳ_ : (Obj₁ₗ → Obj₂ₗ) → (Obj₁ᵣ → Obj₂ᵣ) → (productObj(Obj₁ₗ)(Obj₁ᵣ) → productObj(Obj₂ₗ)(Obj₂ᵣ))
+    (f ⨯ᶠᵘⁿᶜᵗᵒʳ g) (x₁ , x₂) = (f(x₁) , g(x₂))
 
 module _
   {ℓₒ ℓₘ}
@@ -16,25 +48,58 @@ module _
   {Morphism₂ : Obj₂ → Obj₂ → Type{ℓₘ}}
   ⦃ _ : ∀{x y} → Equiv(Morphism₁ x y) ⦄
   ⦃ _ : ∀{x y} → Equiv(Morphism₂ x y) ⦄
+  (cat₁ : Category(Morphism₁))
+  (cat₂ : Category(Morphism₂))
   where
 
-  [⨯]-obj : Type{ℓₒ}
-  [⨯]-obj = Obj₁ Tuple.⨯ Obj₂
+  private instance _ = cat₁
+  private instance _ = cat₂
 
-  [⨯]-morphism : [⨯]-obj → [⨯]-obj → Type{ℓₘ}
-  [⨯]-morphism(x₁ , x₂) (y₁ , y₂) = (Morphism₁ x₁ y₁) Tuple.⨯ (Morphism₂ x₂ y₂)
+  productCategory : Category(Raw.productMorphism(Morphism₁)(Morphism₂))
+  Category._∘_ productCategory (f₁ , f₂) (g₁ , g₂) = ((f₁ ∘ g₁) , (f₂ ∘ g₂))
+  Category.id  productCategory                     = (id , id)
+  _⨯_.left  (BinaryOperator.congruence (Category.binaryOperator productCategory) (p₁l , p₁r) (p₂l , p₂r)) = [≡]-with2(_∘_) p₁l p₂l
+  _⨯_.right (BinaryOperator.congruence (Category.binaryOperator productCategory) (p₁l , p₁r) (p₂l , p₂r)) = [≡]-with2(_∘_) p₁r p₂r
+  _⨯_.left  (Morphism.Associativity.proof (Category.associativity productCategory)) = Morphism.associativity(_∘_)
+  _⨯_.right (Morphism.Associativity.proof (Category.associativity productCategory)) = Morphism.associativity(_∘_)
+  _⨯_.left  (Morphism.Identityₗ.proof (_⨯_.left  (Category.identity productCategory))) = Morphism.identityₗ(_∘_)(id)
+  _⨯_.right (Morphism.Identityₗ.proof (_⨯_.left  (Category.identity productCategory))) = Morphism.identityₗ(_∘_)(id)
+  _⨯_.left  (Morphism.Identityᵣ.proof (_⨯_.right (Category.identity productCategory))) = Morphism.identityᵣ(_∘_)(id)
+  _⨯_.right (Morphism.Identityᵣ.proof (_⨯_.right (Category.identity productCategory))) = Morphism.identityᵣ(_∘_)(id)
 
-  open Category
+  _⨯ᶜᵃᵗ_ = productCategory
 
-  _⨯_ : Category(Morphism₁) → Category(Morphism₂) → Category {Obj = [⨯]-obj} ([⨯]-morphism)
-  _∘_ (cat₁ ⨯ cat₂) {x₁ , x₂}{y₁ , y₂}{z₁ , z₂} (yz₁ , yz₂) (xy₁ , xy₂) = (_∘_ cat₁ yz₁ xy₁ , _∘_ cat₂ yz₂ xy₂)
-  id  (cat₁ ⨯ cat₂) {x₁ , x₂} = (id cat₁ {x₁} , id cat₂ {x₂})
-  Properties.Identityₗ.proof(identityₗ(cat₁ ⨯ cat₂) {x₁ , x₂}{y₁ , y₂}) {f₁ , f₂} = [∧]-intro
-    (Properties.identityₗ(_∘_ cat₁)(id cat₁) ⦃ identityₗ cat₁ {x₁}{y₁} ⦄ {f₁})
-    (Properties.identityₗ(_∘_ cat₂)(id cat₂) ⦃ identityₗ cat₂ {x₂}{y₂} ⦄ {f₂})
-  Properties.Identityᵣ.proof(identityᵣ(cat₁ ⨯ cat₂) {x₁ , x₂}{y₁ , y₂}) {f₁ , f₂} = [∧]-intro
-    (Properties.identityᵣ(_∘_ cat₁)(id cat₁) ⦃ identityᵣ cat₁ {x₁}{y₁} ⦄ {f₁})
-    (Properties.identityᵣ(_∘_ cat₂)(id cat₂) ⦃ identityᵣ cat₂ {x₂}{y₂} ⦄ {f₂})
-  associativity(cat₁ ⨯ cat₂) {x₁ , x₂}{y₁ , y₂}{z₁ , z₂}{w₁ , w₂} {f₁ , f₂}{g₁ , g₂}{h₁ , h₂} = [∧]-intro
-    (associativity cat₁ {x₁}{y₁}{z₁}{w₁} {f₁}{g₁}{h₁})
-    (associativity cat₂ {x₂}{y₂}{z₂}{w₂} {f₂}{g₂}{h₂})
+module _
+  {ℓₒ ℓₘ}
+  {Obj₁ₗ Obj₁ᵣ Obj₂ₗ Obj₂ᵣ : Type{ℓₒ}}
+  {Morphism₁ₗ : Obj₁ₗ → Obj₁ₗ → Type{ℓₘ}}
+  {Morphism₁ᵣ : Obj₁ᵣ → Obj₁ᵣ → Type{ℓₘ}}
+  {Morphism₂ₗ : Obj₂ₗ → Obj₂ₗ → Type{ℓₘ}}
+  {Morphism₂ᵣ : Obj₂ᵣ → Obj₂ᵣ → Type{ℓₘ}}
+  ⦃ _ : ∀{x y} → Equiv(Morphism₁ₗ x y) ⦄
+  ⦃ _ : ∀{x y} → Equiv(Morphism₁ᵣ x y) ⦄
+  ⦃ _ : ∀{x y} → Equiv(Morphism₂ₗ x y) ⦄
+  ⦃ _ : ∀{x y} → Equiv(Morphism₂ᵣ x y) ⦄
+  {cat₁ₗ : Category(Morphism₁ₗ)}
+  {cat₁ᵣ : Category(Morphism₁ᵣ)}
+  {cat₂ₗ : Category(Morphism₂ₗ)}
+  {cat₂ᵣ : Category(Morphism₂ᵣ)}
+  {F₁ : Obj₁ₗ → Obj₂ₗ}
+  {F₂ : Obj₁ᵣ → Obj₂ᵣ}
+  (functorₗ : Functor(cat₁ₗ)(cat₂ₗ) (F₁))
+  (functorᵣ : Functor(cat₁ᵣ)(cat₂ᵣ) (F₂))
+  where
+
+  private instance _ = functorₗ
+  private instance _ = functorᵣ
+
+  open Functor ⦃ … ⦄
+
+  productFunctor : Functor(productCategory cat₁ₗ cat₁ᵣ)(productCategory cat₂ₗ cat₂ᵣ) (F₁ Raw.⨯ᶠᵘⁿᶜᵗᵒʳ F₂)
+  Functor.map productFunctor (x₁ , x₂) = (map x₁ , map x₂)
+  _⨯_.left  (Function.congruence (Functor.map-function productFunctor) (x₁ , x₂)) = [≡]-with(map) x₁
+  _⨯_.right (Function.congruence (Functor.map-function productFunctor) (x₁ , x₂)) = [≡]-with(map) x₂
+  _⨯_.left  (Functor.op-preserving productFunctor) = op-preserving
+  _⨯_.right (Functor.op-preserving productFunctor) = op-preserving
+  _⨯_.left  (Functor.id-preserving productFunctor) = id-preserving
+  _⨯_.right (Functor.id-preserving productFunctor) = id-preserving

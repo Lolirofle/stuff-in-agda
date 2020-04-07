@@ -11,6 +11,7 @@ open import Logic.IntroInstances
 open import Logic.Propositional
 open import Logic.Predicate
 open import Structure.Function.Domain using (Involution ; involution)
+open import Structure.Function.Multi
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
 open import Structure.Relator.Ordering

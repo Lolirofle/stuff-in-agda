@@ -14,6 +14,7 @@ open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Natural
 open import Sets.Setoid
 -- open import Structure.Function.Domain
+open import Structure.Function.Multi
 open import Structure.Operator.Names -- Properties
 open import Structure.Relator.Properties
 open import Type
@@ -51,7 +52,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
   transfer-associativity : Associativity(_▫_) → ∀{n} → Associativity(transfer-op{n}(_▫_))
   transfer-associativity (associativity) {n} = intro(associativity)
 
-  transfer-preserves : ∀{n} → Preserving₂(transfer-elem{n}) (_▫_) (transfer-op{n}(_▫_))
+  transfer-preserves : ∀{n} → Names.Preserving₂(transfer-elem{n}) (_▫_) (transfer-op{n}(_▫_))
   _⊜_.proof (transfer-preserves {n = n} {x} {y}) {i} = reflexivity(_≡_)
   -- ∀{x y} → (fill(x ▫ y) ≡ fill(x) 〔 map₂ (_▫_) {n} 〕 fill(y))
 

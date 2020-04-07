@@ -32,6 +32,12 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T�
   mapRight : (T₂ → T₃) → (T₁ ⨯ T₂) → (T₁ ⨯ T₃)
   mapRight f(x , y) = (x , f(y))
 
+  associateLeft : (T₁ ⨯ (T₂ ⨯ T₃)) → ((T₁ ⨯ T₂) ⨯ T₃)
+  associateLeft (x , (y , z)) = ((x , y) , z)
+
+  associateRight : ((T₁ ⨯ T₂) ⨯ T₃) → (T₁ ⨯ (T₂ ⨯ T₃))
+  associateRight ((x , y) , z) = (x , (y , z))
+
 module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} where
   -- Swaps the left and right elements of a 2-tuple
   swap : (T₁ ⨯ T₂) → (T₂ ⨯ T₁)

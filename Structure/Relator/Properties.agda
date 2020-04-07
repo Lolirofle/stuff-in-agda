@@ -84,3 +84,14 @@ module _ {ℓ ℓ₁ ℓ₂} {T : Type{ℓ}} (_▫₁_ : T → T → Stmt{ℓ₁
     constructor intro
     field proof : Names.Subrelation(_▫₁_)(_▫₂_)
   sub₂ = inst-fn _⊆₂_.proof
+
+  record Subtransitivityₗ : Stmt{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field proof : Names.Subtransitivityₗ(_▫₁_)(_▫₂_)
+  subtransitivityₗ = inst-fn Subtransitivityₗ.proof
+
+  record Subtransitivityᵣ : Stmt{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field proof : Names.Subtransitivityᵣ(_▫₁_)(_▫₂_)
+  subtransitivityᵣ = inst-fn Subtransitivityᵣ.proof
+

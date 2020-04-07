@@ -68,14 +68,3 @@ module _ {ℓₒ} {A : Type{ℓₒ}} ⦃ _ : Equiv(A) ⦄ (f : A → A) where
     constructor intro
     field proof : Names.Idempotent(f)
   idempotent = inst-fn Idempotent.proof
-
-{-
-  -- Definition of the relation between a function and an operation that says:
-  -- The function preserves the operation.
-  -- This is a special case of the (_preserves_)-relation that has the same operator inside and outside.
-  -- Special cases:
-  --   Additive function (Operator is a conventional _+_)
-  --   Multiplicative function (Operator is a conventional _*_)
-  _preserves_ : ∀{T : Type{ℓ₂}} → (T → T) → (T → T → T) → Stmt{ℓ₂}
-  _preserves_ (f)(_▫_) = (∀{x y} → (f(x ▫ y) ≡ f(x) ▫ f(y)))
--}

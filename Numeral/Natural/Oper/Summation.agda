@@ -20,7 +20,7 @@ a ‥₌ b = a ‥ 𝐒(b)
 ‥₌_ : ℕ → List(ℕ)
 ‥₌ b = 𝟎 ‥₌ b
 
--- TODO: Change to (∑ : List(ℕ) → (ℕ → A) → A) with (_▫_), Identity(_▫_)(id),  and use setoids
+-- TODO: Change to (∑ : List(ℕ) → (ℕ → A) → A) with (_▫_), Identity(_▫_)(id) or just a monoid, and use setoids
 ∑ : List(ℕ) → (ℕ → ℕ) → ℕ
 ∑(r) f = foldᵣ(_+_) 𝟎 (map f(r))
 

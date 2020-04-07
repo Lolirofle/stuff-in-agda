@@ -39,8 +39,9 @@ module Dependent where
 open Functional
 open Function.Equals
 
-private variable A B C D : Type{ℓ}
+private variable A B C D A₁ A₂ B₁ B₂ : Type{ℓ}
 
+-- TODO: Rename all these so that they mention (_∘_)
 module _ ⦃ _ : let _ = A in Equiv(B) ⦄ where
   [⊜]-identityₗ : Identityₗ {T₂ = A → B} (_∘_)(id)
   _⊜_.proof(Identityₗ.proof([⊜]-identityₗ)) = reflexivity(_≡_)

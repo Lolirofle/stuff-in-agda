@@ -74,10 +74,19 @@ _∘ᵢₙₛₜ_ : let _ = X in (⦃ Y ⦄ → Z) → (⦃ X ⦄ → Y) → (�
 _∘ₛ_ : (X → Y → Z) → (X → Y) → (X → Z)
 (f ∘ₛ g)(x) = (f x) (g x)
 
+_on₀_ : let _ = X in Z → (X → Y) → Z
+((▫) on₀ f) = ▫ -- const
+
+_on₁_ : let _ = X in (Y → Z) → (X → Y) → (X → Z)
+((_▫) on₁ f)(y₁) = (f(y₁) ▫) on₀ f -- f(y₁) ▫
+
 -- Function composition on a binary operator
 -- A function is composed on every argument of the binary operator.
 _on₂_ : let _ = X in (Y → Y → Z) → (X → Y) → (X → X → Z)
-((_▫_) on₂ f)(y₁)(y₂) = f(y₁) ▫ f(y₂)
+((_▫_) on₂ f)(y₁) = (f(y₁) ▫_) on₁ f -- f(y₁) ▫ f(y₂)
+
+_on₃_ : let _ = X in (Y → Y → Y → Z) → (X → Y) → (X → X → X → Z)
+((_▫_▫_) on₃ f)(y₁) = (f(y₁) ▫_▫_) on₂ f -- f(y₁) ▫ f(y₂) ▫ f(y₃)
 
 -- TODO: Move these to Function.Multi
 _∘₀_ : (Y → Z) → Y → Z

@@ -17,7 +17,7 @@ open import Syntax.Function
 open import Syntax.Transitivity
 open import Type
 
-postulate division-remainder : ∀{a b} → ⦃ _ : (a ≥ b) ⦄ → ⦃ _ : IsTrue(b ≢? 𝟎) ⦄ → ((b ⋅ (a ⌊/⌋ b)) + (a mod b) ≡ a)
+postulate division-remainder : ∀{a b} → ⦃ _ : (a ≥ b) ⦄ → ⦃ _ : IsTrue(positive?(b)) ⦄ → ((b ⋅ (a ⌊/⌋ b)) + (a mod b) ≡ a)
 -- division-remainder {.(𝐒 a)} {𝐒 𝟎}     ⦃ [≤]-with-[𝐒] {.0}     {a} ⦄ = {!!}
 -- division-remainder {.(𝐒 a)} {𝐒 (𝐒 b)} ⦃ [≤]-with-[𝐒] {.(𝐒 b)} {a} ⦄ = {!!}
 {-  ((a ⌊/⌋ b) ⋅ b) + (a mod b)

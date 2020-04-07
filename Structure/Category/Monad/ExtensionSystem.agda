@@ -5,7 +5,6 @@ open import Type
 module Structure.Category.Monad.ExtensionSystem
   {ℓₒ ℓₘ}
   {Obj : Type{ℓₒ}}
-  ⦃ obj-equiv : Equiv(Obj) ⦄
   {Morphism : Obj → Obj → Type{ℓₘ}}
   ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
   {cat : Category(Morphism)}
@@ -41,7 +40,6 @@ record ExtensionSystem (T : Obj → Obj) : Type{Lvl.of(type-of(cat))} where
   μ(x) = ext(id{x = T(x)})
 
   field
-    ⦃ function ⦄     : Function(T)
     ⦃ ext-function ⦄ : ∀{x y} → Function(ext{x}{y})
     ext-inverse      : ∀{x} → (ext(η(x)) ≡ id) -- ext ∘ᶠⁿ η ⊜ idᴺᵀ
     ext-identity     : ∀{x y}{f : x ⟶ T(y)} → (ext(f) ∘ η(x) ≡ f)
