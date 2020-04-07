@@ -51,6 +51,7 @@ open Type
 -- TODO: Maybe these should be moved and renamed to function like all other properties in Structure.Operator and Structure.Function
 
 -- The function `f` "(behaves like)/is a function" in the context of `_≡_` from the Equiv instance.
+-- `congruence` is the defining property of a function.
 module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv(B) ⦄ (f : A → B) where
   record Function : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂} where
     constructor intro
@@ -67,6 +68,7 @@ module _ where
 
   module _ {A₁ : Type{ℓₒ₁}} ⦃ _ : Equiv(A₁) ⦄ {A₂ : Type{ℓₒ₂}} ⦃ _ : Equiv(A₂) ⦄ {B : Type{ℓₒ₃}} ⦃ _ : Equiv(B) ⦄ (_▫_ : A₁ → A₂ → B) where
     -- The operator `_▫_` "(behaves like)/is a function" in the context of `_≡_` from the Equiv instance.
+    -- `congruence` is the defining property of a binary operation.
     record BinaryOperator : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂ Lvl.⊔ ℓₒ₃} where
       constructor intro
 
@@ -107,7 +109,11 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv(A) ⦄ (P : A → Type{ℓₒ₂}) 
     constructor intro
     field
       substitution : ∀{x y : A} → (x ≡ y) → P(x) → P(y)
-  substitute₁ = inst-fn UnaryRelator.substitution
+    substitution-sym : ∀{x y : A} → (x ≡ y) → P(x) ← P(y)
+    substitution-sym = substitution ∘ Structure.Relator.Properties.symmetry(_≡_)
+  substituteₗ₁ = inst-fn UnaryRelator.substitution-sym
+  substituteₗᵣ = inst-fn UnaryRelator.substitution
+  substitute₁ = substituteₗᵣ
 
 -- The binary relator `_▫_` "(behaves like)/is a relator" in the context of `_≡_` from the Equiv instance.
 module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv(B) ⦄ (_▫_ : A → B → Type{ℓₒ₃}) where
