@@ -14,6 +14,9 @@ inst-fn P ⦃ x ⦄ = P(x)
 inst-fn₂ : ∀{ℓ₁ ℓ₂ ℓ₃}{X : Set(ℓ₁)}{Y : Set(ℓ₂)}{Z : Set(ℓ₃)} → (X → Y → Z) → (⦃ _ : X ⦄ → ⦃ _ : Y ⦄ → Z)
 inst-fn₂ P ⦃ x ⦄ ⦃ y ⦄ = P(x)(y)
 
+inst-fnᵢ : ∀{ℓ₁ ℓ₂ ℓ₃}{X : Set(ℓ₁)}{Y : Set(ℓ₂)}{Z : Set(ℓ₃)} → ({_ : X} → Y → Z) → ({_ : X} → ⦃ _ : Y ⦄ → Z)
+inst-fnᵢ P {x} ⦃ y ⦄ = P{x}(y)
+
 impl-to-expl : ∀{ℓ₁ ℓ₂}{X : Set(ℓ₁)}{Y : Set(ℓ₂)} → ({ _ : X} → Y) → (X → Y)
 impl-to-expl f(x) = f{x}
 

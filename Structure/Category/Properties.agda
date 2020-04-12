@@ -95,7 +95,7 @@ module Morphism where
           Isomorphism = ∃(Inverse)
 
           module Isomorphism ⦃ iso : Isomorphism ⦄ where
-            instance inverse  = [∃]-proof iso
+            instance inverse = [∃]-proof iso
             instance inverse-left  = [∧]-elimₗ inverse
             instance inverse-right = [∧]-elimᵣ inverse
 

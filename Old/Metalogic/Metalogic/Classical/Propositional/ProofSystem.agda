@@ -123,7 +123,7 @@ module NaturalDeduction where
 
     push : ∀{Γ}{φ} → Tree(φ) → Trees(Γ) → Trees(φ ⊰ Γ)
     push (φ-tree) (Γ-tree) (use) = φ-tree
-    push (φ-tree) (Γ-tree) (skip inclusion) = Γ-tree (inclusion)
+    push (φ-tree) (Γ-tree) (skip membership) = Γ-tree (membership)
 
     pop : ∀{Γ}{φ} → Trees(φ ⊰ Γ) → Trees(Γ)
     pop = from-[∈] (skip)
@@ -218,16 +218,16 @@ module NaturalDeduction where
       )
     -- TODO: ∀{Γ}{φ₁ φ₂} → (Γ ⊢ φ₁) → ((φ₁ ∈ Γ) → (Γ ⊢ φ₂)) → (Γ ⊢ φ₂) Provable?
 
-    [⊢]-inclusion-precedingₗ : ∀{Γ}{φ₁ φ₂} → ((φ₁ ∈ Γ) → (Γ ⊢ φ₂)) ← ((φ₁ ⊰ Γ) ⊢ φ₂)
-    [⊢]-inclusion-precedingₗ{Γ}{φ₁}{φ₂} ([φ₁Γ]⊢[φ₂]) ([φ₁]-in) =
+    [⊢]-membership-precedingₗ : ∀{Γ}{φ₁ φ₂} → ((φ₁ ∈ Γ) → (Γ ⊢ φ₂)) ← ((φ₁ ⊰ Γ) ⊢ φ₂)
+    [⊢]-membership-precedingₗ{Γ}{φ₁}{φ₂} ([φ₁Γ]⊢[φ₂]) ([φ₁]-in) =
       [⊢]-construct([Γ]-trees ↦
         [⊢]-apply ([φ₁Γ]⊢[φ₂]) (Trees.push ([Γ]-trees [φ₁]-in) (\{γ} → [Γ]-trees {γ}))
       )
 
     {- TODO: Maybe this is unprovable? And also false?
     postulate a : ∀{b : Set(ℓₚ)} → b
-    [⊢]-inclusion-precedingᵣ : ∀{Γ}{φ₁ φ₂} → ((φ₁ ∈ Γ) → (Γ ⊢ φ₂)) → ((φ₁ ⊰ Γ) ⊢ φ₂)
-    [⊢]-inclusion-precedingᵣ{Γ}{φ₁}{φ₂} (incl) =
+    [⊢]-membership-precedingᵣ : ∀{Γ}{φ₁ φ₂} → ((φ₁ ∈ Γ) → (Γ ⊢ φ₂)) → ((φ₁ ⊰ Γ) ⊢ φ₂)
+    [⊢]-membership-precedingᵣ{Γ}{φ₁}{φ₂} (incl) =
       [⊢]-construct ([φ₁Γ]-trees ↦
         let [Γ]-trees = Trees.pop (\{γ} → [φ₁Γ]-trees {γ})
             [φ₁]-in = a

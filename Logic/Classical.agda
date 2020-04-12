@@ -3,6 +3,8 @@ module Logic.Classical where
 import      Lvl
 open import Data
 open import Data.Boolean
+open import Data.Boolean.Stmt
+open import Data.Boolean.Stmt.Proofs using (module IsTrue ; module IsFalse)
 open import Data.Boolean.Proofs
 open import Data.Either as Either using (_‖_)
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
@@ -43,6 +45,12 @@ module _ (P : Stmt{ℓ}) where
     decide-false with excluded-middle | bivalence{decide}
     decide-false | [∨]-introₗ p  | [∨]-introₗ t = [↔]-intro (\()) (np ↦ empty(np p))
     decide-false | [∨]-introᵣ np | [∨]-introᵣ f = [↔]-intro (const np) (const f)
+
+    decide-is-true : P ↔ IsTrue(decide)
+    decide-is-true = [↔]-transitivity decide-true ([↔]-symmetry IsTrue.is-𝑇)
+
+    decide-is-false : (¬ P) ↔ IsFalse(decide)
+    decide-is-false = [↔]-transitivity decide-false ([↔]-symmetry IsFalse.is-𝐹)
 
     decide-excluded-middle : (P ∧ (decide ≡ 𝑇)) ∨ ((¬ P) ∧ (decide ≡ 𝐹))
     decide-excluded-middle = [∨]-map (p ↦ [∧]-intro p ([↔]-to-[→] decide-true p)) (np ↦ [∧]-intro np ([↔]-to-[→] decide-false np)) excluded-middle

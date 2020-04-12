@@ -229,15 +229,15 @@ record EmptySet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     ∅ : Domain
 
   field
-    [∅]-inclusion : Proof(∀ₗ(x ↦ x ∉ ∅))
+    [∅]-membership : Proof(∀ₗ(x ↦ x ∉ ∅))
 
-  [∅]-inclusion-equiv : Proof(∀ₗ(x ↦ (x ∈ ∅) ⟷ ⊥))
-  [∅]-inclusion-equiv =
+  [∅]-membership-equiv : Proof(∀ₗ(x ↦ (x ∈ ∅) ⟷ ⊥))
+  [∅]-membership-equiv =
     ([∀].intro (\{x} →
       ([↔].intro
         ([⊥].elim)
         ([¬].elim
-          ([∀].elim [∅]-inclusion{x})
+          ([∀].elim [∅]-membership{x})
         )
       )
     ))
@@ -247,7 +247,7 @@ record EmptySet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     ([∀].intro(\{s} →
       ([∀].intro(\{x} →
         ([→].intro(xin∅ ↦
-          [⊥].elim ([↔].elimᵣ([∀].elim [∅]-inclusion-equiv {x}) (xin∅))
+          [⊥].elim ([↔].elimᵣ([∀].elim [∅]-membership-equiv {x}) (xin∅))
         ))
       ))
     ))
@@ -297,7 +297,7 @@ record EmptySet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   [∃ₛ]-of-[∅] : ∀{P : Domain → Formula} → Proof(¬(∃ₛ ∅ P))
   [∃ₛ]-of-[∅] =
     ([¬].intro(ep ↦
-      [∃ₛ]-elim(\{x} → x∈∅ ↦ _ ↦ [⊥].elim([¬].elim ([∀].elim [∅]-inclusion) x∈∅)) ep
+      [∃ₛ]-elim(\{x} → x∈∅ ↦ _ ↦ [⊥].elim([¬].elim ([∀].elim [∅]-membership) x∈∅)) ep
     ))
 
 -- Singleton set.
@@ -308,13 +308,13 @@ record SingletonSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     singleton : Domain → Domain
 
   field
-    singleton-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(x ↦ (x ∈ singleton(a)) ⟷ (x ≡ₛ a))))
+    singleton-membership : Proof(∀ₗ(a ↦ ∀ₗ(x ↦ (x ∈ singleton(a)) ⟷ (x ≡ₛ a))))
 
   singleton-contains-self : Proof(∀ₗ(s ↦ s ∈ singleton(s)))
   singleton-contains-self =
     ([∀].intro(\{s} →
       ([↔].elimₗ
-        ([∀].elim([∀].elim singleton-inclusion{s}){s})
+        ([∀].elim([∀].elim singleton-membership{s}){s})
         ([∀].elim [≡ₛ]-reflexivity{s})
       )
     ))
@@ -327,14 +327,14 @@ record FilterSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     filter : Domain → (Domain → Formula) → Domain
 
   field
-    filter-inclusion : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
+    filter-membership : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
 
   filter-subset : ∀{φ} → Proof(∀ₗ(s ↦ filter(s)(φ) ⊆ s))
   filter-subset =
     ([∀].intro(\{s} →
       ([∀].intro(\{x} →
         ([→].intro(xinfilter ↦
-          [∧].elimₗ([↔].elimᵣ([∀].elim([∀].elim filter-inclusion{s}){x}) (xinfilter))
+          [∧].elimₗ([↔].elimᵣ([∀].elim([∀].elim filter-membership{s}){x}) (xinfilter))
         ))
       ))
     ))
@@ -357,7 +357,7 @@ record FilterSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     ([∀].intro(\{s} →
       ([∀].intro(\{x} →
         ([→].intro(xinfilter ↦
-          [∧].elimᵣ([↔].elimᵣ([∀].elim([∀].elim filter-inclusion{s}){x}) (xinfilter))
+          [∧].elimᵣ([↔].elimᵣ([∀].elim([∀].elim filter-membership{s}){x}) (xinfilter))
         ))
       ))
     ))
@@ -370,7 +370,7 @@ record PowerSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     ℘ : Domain → Domain
 
   field
-    [℘]-inclusion : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s))))
+    [℘]-membership : Proof(∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s))))
 
   module _ ⦃ _ : EmptySet ⦄ where
     open EmptySet ⦃ ... ⦄
@@ -379,7 +379,7 @@ record PowerSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     [℘]-contains-empty =
       ([∀].intro(\{s} →
         ([↔].elimₗ
-          ([∀].elim([∀].elim [℘]-inclusion{s}){∅})
+          ([∀].elim([∀].elim [℘]-membership{s}){∅})
           ([∀].elim [∅]-subset{s})
         )
       ))
@@ -393,7 +393,7 @@ record PowerSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   [℘]-contains-self =
     ([∀].intro(\{s} →
       ([↔].elimₗ
-        ([∀].elim([∀].elim [℘]-inclusion{s}){s})
+        ([∀].elim([∀].elim [℘]-membership{s}){s})
         ([∀].elim [⊆]-reflexivity{s})
       )
     ))
@@ -406,7 +406,7 @@ record SetUnionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     ⋃ : Domain → Domain
 
   field
-    [⋃]-inclusion : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₛ(ss)(s ↦ x ∈ s))))
+    [⋃]-membership : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₛ(ss)(s ↦ x ∈ s))))
 
   postulate [⋃]-containing-max : Proof(∀ₗ(s ↦ ∀ₛ(s)(max ↦ ∀ₛ(s)(x ↦ x ⊆ max) ⟶ (⋃(s) ≡ₛ max))))
 
@@ -415,7 +415,7 @@ record SetUnionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
 
     postulate [⋃]-of-[∅] : Proof(⋃(∅) ≡ₛ ∅)
     -- [⋃]-of-[∅] =
-    --   ([⋃]-inclusion
+    --   ([⋃]-membership
     --   )
     --   [∃ₛ]-of-[∅]
 
@@ -430,7 +430,7 @@ record UnionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     _∪_ : Domain → Domain → Domain
 
   field
-    [∪]-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∪ b)) ⟷ (x ∈ a)∨(x ∈ b)))))
+    [∪]-membership : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∪ b)) ⟷ (x ∈ a)∨(x ∈ b)))))
 
   [∪]-commutativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∪ b ≡ₛ b ∪ a)))
   [∪]-commutativity =
@@ -438,8 +438,8 @@ record UnionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
       ([∀].intro(\{b} →
         ([∀].intro(\{x} →
           ([↔].intro
-            (([↔].elimₗ ([∀].elim ([∀].elim ([∀].elim [∪]-inclusion)))) ∘ [∨].commutativity ∘ ([↔].elimᵣ ([∀].elim ([∀].elim ([∀].elim [∪]-inclusion)))))
-            (([↔].elimₗ ([∀].elim ([∀].elim ([∀].elim [∪]-inclusion)))) ∘ [∨].commutativity ∘ ([↔].elimᵣ ([∀].elim ([∀].elim ([∀].elim [∪]-inclusion)))))
+            (([↔].elimₗ ([∀].elim ([∀].elim ([∀].elim [∪]-membership)))) ∘ [∨].commutativity ∘ ([↔].elimᵣ ([∀].elim ([∀].elim ([∀].elim [∪]-membership)))))
+            (([↔].elimₗ ([∀].elim ([∀].elim ([∀].elim [∪]-membership)))) ∘ [∨].commutativity ∘ ([↔].elimᵣ ([∀].elim ([∀].elim ([∀].elim [∪]-membership)))))
           )
         ))
       ))
@@ -468,7 +468,7 @@ record IntersectionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     _∩_ : Domain → Domain → Domain
 
   field
-    [∩]-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∩ b)) ⟷ (x ∈ a)∧(x ∈ b)))))
+    [∩]-membership : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∩ b)) ⟷ (x ∈ a)∧(x ∈ b)))))
 
   postulate [∩]-commutativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ a ∩ b ≡ₛ b ∩ a)))
   postulate [∩]-associativity : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(c ↦ (a ∩ b) ∩ c ≡ₛ a ∩ (b ∩ c)))))
@@ -495,7 +495,7 @@ record WithoutSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     _∖_ : Domain → Domain → Domain
 
   field
-    [∖]-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∖ b)) ⟷ (x ∈ a)∧(x ∉ b)))))
+    [∖]-membership : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ∖ b)) ⟷ (x ∈ a)∧(x ∉ b)))))
 
   postulate [∖]-of-disjoint : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ Disjoint(a)(b) ⟶ (a ∖ b ≡ₛ a)))))
 
@@ -525,7 +525,7 @@ record SetIntersectionSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     ⋂ : Domain → Domain
 
   field
-    [⋂]-inclusion : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋂(ss)) ⟷ ∀ₛ(ss)(s ↦ x ∈ s))))
+    [⋂]-membership : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋂(ss)) ⟷ ∀ₛ(ss)(s ↦ x ∈ s))))
 
   postulate [⋂]-containing-min : Proof(∀ₗ(s ↦ ∀ₛ(s)(min ↦ ∀ₛ(s)(x ↦ min ⊆ x) ⟶ (⋂(s) ≡ₛ min))))
 
@@ -544,13 +544,13 @@ record UniversalSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     𝐔 : Domain
 
   field
-    [𝐔]-inclusion : Proof(∀ₗ(x ↦ (x ∈ 𝐔)))
+    [𝐔]-membership : Proof(∀ₗ(x ↦ (x ∈ 𝐔)))
 
-  [𝐔]-inclusion-equiv : Proof(∀ₗ(x ↦ (x ∈ 𝐔) ⟷ ⊤))
-  [𝐔]-inclusion-equiv =
+  [𝐔]-membership-equiv : Proof(∀ₗ(x ↦ (x ∈ 𝐔) ⟷ ⊤))
+  [𝐔]-membership-equiv =
     ([∀].intro(\{x} →
       ([↔].intro
-        (_ ↦ [∀].elim [𝐔]-inclusion)
+        (_ ↦ [∀].elim [𝐔]-membership)
         (_ ↦ [⊤].intro)
       )
     ))
@@ -560,7 +560,7 @@ record UniversalSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     ([∀].intro(\{x} →
       ([∀].intro(\{a} →
         ([→].intro(_ ↦
-          [∀].elim [𝐔]-inclusion
+          [∀].elim [𝐔]-membership
         ))
       ))
     ))
@@ -580,7 +580,7 @@ record UniversalSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     ))
 
   [𝐔]-contains-self : Proof(𝐔 ∈ 𝐔)
-  [𝐔]-contains-self = [∀].elim [𝐔]-inclusion
+  [𝐔]-contains-self = [∀].elim [𝐔]-membership
 
   [𝐔]-nonempty : Proof(∃ₗ(x ↦ (x ∈ 𝐔)))
   [𝐔]-nonempty = [∃].intro [𝐔]-contains-self
@@ -594,7 +594,7 @@ record UniversalSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
         (contains ↦
           ([¬].elim
             ([∧].elimᵣ([↔].elimᵣ
-              ([∀].elim([∀].elim filter-inclusion{𝐔}){not-in-self})
+              ([∀].elim([∀].elim filter-membership{𝐔}){not-in-self})
               contains
             ))
             contains
@@ -605,9 +605,9 @@ record UniversalSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
           ([¬].elim
             (contains-not)
             ([↔].elimₗ
-              ([∀].elim([∀].elim filter-inclusion{𝐔}){not-in-self})
+              ([∀].elim([∀].elim filter-membership{𝐔}){not-in-self})
               ([∧].intro
-                ([∀].elim [𝐔]-inclusion {not-in-self})
+                ([∀].elim [𝐔]-membership {not-in-self})
                 (contains-not)
               )
             )
@@ -638,7 +638,7 @@ record TupleSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
   swap(x) = (right(x) , left(x))
 
   field
-    [⨯]-inclusion : Proof(∀ₗ(A ↦ ∀ₗ(B ↦ ∀ₗ(x ↦ (x ∈ (A ⨯ B)) ⟷ ∃ₛ(A)(a ↦ ∃ₛ(B)(b ↦ x ≡ (a , b))))))) -- TODO: Maybe left and right is not neccessary because one can just take the witnesses of this
+    [⨯]-membership : Proof(∀ₗ(A ↦ ∀ₗ(B ↦ ∀ₗ(x ↦ (x ∈ (A ⨯ B)) ⟷ ∃ₛ(A)(a ↦ ∃ₛ(B)(b ↦ x ≡ (a , b))))))) -- TODO: Maybe left and right is not neccessary because one can just take the witnesses of this
     left-equality : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ left(a , b) ≡ a)))
     right-equality : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ right(a , b) ≡ b)))
 
@@ -658,17 +658,17 @@ record QuotientSet : Type{ℓₘₗ Lvl.⊔ ℓₗ Lvl.⊔ ℓₒ} where
     [_of_] : Domain → (Domain ⨯ₘ BinaryRelator) → Domain
 
   field
-    [/]-inclusion : ∀{T}{_≅_} → Proof(∀ₗ(x ↦ (x ∈ (T / (_≅_))) ⟷ (∃ₗ(y ↦ x ≡ [ y of (T ,ₘ (_≅_)) ]))))
-    eqClass-inclusion : ∀{T}{_≅_} → Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ∈ [ b of (T ,ₘ (_≅_)) ]) ⟷ (a ≅ b))))
+    [/]-membership : ∀{T}{_≅_} → Proof(∀ₗ(x ↦ (x ∈ (T / (_≅_))) ⟷ (∃ₗ(y ↦ x ≡ [ y of (T ,ₘ (_≅_)) ]))))
+    eqClass-membership : ∀{T}{_≅_} → Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ∈ [ b of (T ,ₘ (_≅_)) ]) ⟷ (a ≅ b))))
 
   -- module Quotient {T : Domain} {_≅_ : BinaryRelator} ⦃ equivalence : Proof(Structure.Relator.Properties.Equivalence(T)(_≅_)) ⦄ where
   --   open Structure.Relator.Properties
 
-  --   postulate [/]-inclusion : Proof(∀ₗ(x ↦ (x ∈ (T / (_≅_))) ⟷ (∃ₗ(y ↦ x ≡ [ y of T , (_≅_) ]))))
+  --   postulate [/]-membership : Proof(∀ₗ(x ↦ (x ∈ (T / (_≅_))) ⟷ (∃ₗ(y ↦ x ≡ [ y of T , (_≅_) ]))))
   --   postulate [/]-pairwise-disjoint : Proof(∀ₗ(x ↦ (x ∈ (T / (_≅_))) ⟷ (∃ₗ(y ↦ x ≡ [ y of T , (_≅_) ]))))
   --   postulate [/]-not-containing-[∅] : Proof(∀ₗ(x ↦ ∅ ∉ (T / (_≅_))))
   --   postulate [/]-cover : Proof(⋃(T / (_≅_)) ≡ T)
-  --   postulate eqClass-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ∈ [ b of T , (_≅_) ]) ⟷ (a ≅ b))))
+  --   postulate eqClass-membership : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ (a ∈ [ b of T , (_≅_) ]) ⟷ (a ≅ b))))
   --   postulate eqClass-containing-self : Proof(∀ₗ(a ↦ a ∈ [ a of T , (_≅_) ]))
   --   postulate eqClass-nonempty : Proof(∀ₗ(a ↦ NonEmpty([ a of T , (_≅_) ])))
   --   postulate eqClass-equal-disjoint : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ([ a of T , (_≅_) ] ≡ [ b of T , (_≅_) ]) ⟷ ¬ Disjoint([ a of T , (_≅_) ])([ b of T , (_≅_) ]))))

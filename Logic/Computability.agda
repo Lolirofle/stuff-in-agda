@@ -40,7 +40,7 @@ record ComputablyDecidable {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} (P : X → Stmt{�
     ⦃ proof ⦄ : ∀{x} → P(x) ↔ (decide(x) ≡ 𝑇)
 
   proof-istrue : ∀{x} → P(x) ↔ IsTrue(decide(x))
-  proof-istrue = [↔]-transitivity proof ([↔]-symmetry BooleanStmt.IsTrue.is-[𝑇])
+  proof-istrue = [↔]-transitivity proof ([↔]-symmetry BooleanStmt.IsTrue.is-𝑇)
 
   soundness-𝑇 : ∀{x} → P(x) ← (decide(x) ≡ 𝑇)
   soundness-𝑇 = [↔]-to-[←] (proof)

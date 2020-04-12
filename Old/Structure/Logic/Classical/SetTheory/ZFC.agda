@@ -218,13 +218,13 @@ module Axioms ⦃ signature : Signature ⦄ where
 
   -- `∅` is a set which is empty.
   -- • Allows a construction of an empty set.
-  EmptySetInclusion : Formula
-  EmptySetInclusion = Empty(∅)
+  EmptySetMembership : Formula
+  EmptySetMembership = Empty(∅)
 
   -- `pair` is the construction of a set with two elements.
   -- • Allows a construction of a set with two elements.
-  PairingInclusion : Formula
-  PairingInclusion = ∀ₗ(x₁ ↦ ∀ₗ(x₂ ↦ (∀ₗ(x ↦ (x ∈ pair(x₁)(x₂)) ⟷ (x ≡ x₁)∨(x ≡ x₂)))))
+  PairingMembership : Formula
+  PairingMembership = ∀ₗ(x₁ ↦ ∀ₗ(x₂ ↦ (∀ₗ(x ↦ (x ∈ pair(x₁)(x₂)) ⟷ (x ≡ x₁)∨(x ≡ x₂)))))
 
   -- `filter` is the set which is the subset of a set where all elements satisfies a predicate.
   RestrictedComprehension : (Domain → Formula) → Formula
@@ -232,13 +232,13 @@ module Axioms ⦃ signature : Signature ⦄ where
 
   -- `℘` is the construction of a set which contains all the subsets of a set.
   -- • Allows a construction of a set that is the powerset of a set.
-  PowerSetInclusion : Formula
-  PowerSetInclusion = ∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s)))
+  PowerSetMembership : Formula
+  PowerSetMembership = ∀ₗ(s ↦ ∀ₗ(x ↦ (x ∈ ℘(s)) ⟷ (x ⊆ s)))
 
   -- `⋃` is the construction of a set which contains all the elements of a collection of sets.
   -- • Allows a construction of a set that is the union of some sets.
-  UnionInclusion : Formula
-  UnionInclusion = ∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s))))
+  UnionMembership : Formula
+  UnionMembership = ∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s))))
 
   -- `inductiveSet` is ℕ-inductive.
   -- • An inductive set is infinite, so this implies that an infinite set exists.
@@ -284,11 +284,11 @@ record Z ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ ℓ
 
   field
     extensional   : Proof(Extensionality)
-    empty         : Proof(EmptySetInclusion)
-    pairing       : Proof(PairingInclusion)
+    empty         : Proof(EmptySetMembership)
+    pairing       : Proof(PairingMembership)
     comprehension : ∀{φ} → Proof(RestrictedComprehension(φ))
-    union         : Proof(UnionInclusion)
-    power         : Proof(PowerSetInclusion)
+    union         : Proof(UnionMembership)
+    power         : Proof(PowerSetMembership)
     infinity      : Proof(Infinity)
 
 record ZF ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ ℓₘₗ) where
@@ -297,11 +297,11 @@ record ZF ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ �
 
   field
     extensional   : Proof(Extensionality)
-    empty         : Proof(EmptySetInclusion)
-    pairing       : Proof(PairingInclusion)
+    empty         : Proof(EmptySetMembership)
+    pairing       : Proof(PairingMembership)
     comprehension : ∀{φ} → Proof(RestrictedComprehension(φ))
-    union         : Proof(UnionInclusion)
-    power         : Proof(PowerSetInclusion)
+    union         : Proof(UnionMembership)
+    power         : Proof(PowerSetMembership)
     infinity      : Proof(Infinity)
     regular       : Proof(Regularity)
     replacement   : ∀{f} → Proof(Replacement(f))
@@ -312,11 +312,11 @@ record ZFC ⦃ signature : Signature ⦄ : Set((ℓₗ Lvl.⊔ ℓₒ) Lvl.⊔ �
 
   field
     extensional   : Proof(Extensionality)
-    empty         : Proof(EmptySetInclusion)
-    pairing       : Proof(PairingInclusion)
+    empty         : Proof(EmptySetMembership)
+    pairing       : Proof(PairingMembership)
     comprehension : ∀{φ} → Proof(RestrictedComprehension(φ))
-    union         : Proof(UnionInclusion)
-    power         : Proof(PowerSetInclusion)
+    union         : Proof(UnionMembership)
+    power         : Proof(PowerSetMembership)
     infinity      : Proof(Infinity)
     regular       : Proof(Regularity)
     replacement   : ∀{f} → Proof(Replacement(f))

@@ -12,7 +12,7 @@ module _ {ℓₒ₁}{ℓₒ₂} where
   const-is-function : ∀{T₁ : Set(ℓₒ₁)} → ⦃ _ : Equiv(T₁) ⦄
                     → ∀{T₂ : Set(ℓₒ₂)} → ⦃ _ : Equiv(T₂) ⦄
                     → ∀{x : T₂}
-                    → Function {_}{_} {T₁}{T₂} (const x)
+                    → Function(const{X = T₁} x)
   Function.congruence(const-is-function {T₁}{T₂} ⦃ equiv₂ ⦄ {x}) = const(reflexivity(_≡_))
 
   {-

@@ -60,7 +60,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
 
     -- An element power its order is the identity element.
     [^]-by-ord : ⦃ p : Ord(x) ⦄ → (x ^ ord(x) ⦃ p ⦄ ≡ id)
-    [^]-by-ord ⦃ [∃]-intro (𝐒(_)) ⦃ intro p ⦄ ⦄ = LE.Minimum.inclusion(p)
+    [^]-by-ord ⦃ [∃]-intro (𝐒(_)) ⦃ intro p ⦄ ⦄ = LE.Minimum.membership(p)
 
     -- When an element power something is the identity element, then the power is either zero or greater/equal its order.
     ord-is-minimum : ⦃ p : Ord(x) ⦄ → ∀{n} → (x ^ n ≡ id) → (n ≡ₑ 𝟎) ∨ (ord(x) ⦃ p ⦄ ≤ n)

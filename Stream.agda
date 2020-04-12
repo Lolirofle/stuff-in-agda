@@ -130,9 +130,9 @@ module _ where
   [∈]-head-tail : (head(tail(l)) ∈ l)
   [∈]-head-tail = [∈]-tail ([∈]-head)
 
-  [∈]-head-tails-inclusion : (head((tail ^ n)(l)) ∈ l)
-  [∈]-head-tails-inclusion{𝟎}       = [∈]-head
-  [∈]-head-tails-inclusion{𝐒(n)}{l} = [∈]-tails {n = n} ([∈]-head-tail)
+  [∈]-head-tails-membership : (head((tail ^ n)(l)) ∈ l)
+  [∈]-head-tails-membership{𝟎}       = [∈]-head
+  [∈]-head-tails-membership{𝐒(n)}{l} = [∈]-tails {n = n} ([∈]-head-tail)
 
   [∈]-disjunction : (x ∈ l) → ((x ≡ head(l)) ∨ (x ∈ tail(l)))
   [∈]-disjunction ([∈]-head)       = [∨]-introₗ [≡]-intro

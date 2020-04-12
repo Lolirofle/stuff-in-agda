@@ -6,6 +6,7 @@ import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.Option as Option using (Option)
 open import Functional
+open import Numeral.Finite
 open import Numeral.Natural
 open import Type
 
@@ -207,10 +208,10 @@ concatMap f ∅ = ∅
 concatMap f (x ⊰ l) = f(x) ++ concatMap f l
 
 -- The nth element in the list
-index : ℕ → List(T) → Option(T)
-index _      ∅       = Option.None
-index 𝟎      (x ⊰ _) = Option.Some(x)
-index (𝐒(n)) (_ ⊰ l) = index n l
+index₀ : ℕ → List(T) → Option(T)
+index₀ _      ∅       = Option.None
+index₀ 𝟎      (x ⊰ _) = Option.Some(x)
+index₀ (𝐒(n)) (_ ⊰ l) = index₀ n l
 
 -- The sublist with the first n elements in the list
 first : ℕ → List(T) → List(T)
@@ -250,6 +251,12 @@ splits₂ l = (∅ , l) ⊰ f ∅ l where
 -- Length of the list (number of elements in the list)
 length : List(T) → ℕ
 length = foldᵣ (const 𝐒) 0
+
+-- The nth element in the list as a total function.
+index : (l : List(T)) → 𝕟(length(l)) → T
+index ∅       ()
+index (x ⊰ l) 𝟎     = x
+index (x ⊰ l) (𝐒 n) = index l n
 
 -- The sublist with the last n elements in the list
 -- last : ℕ → List(T) → List(T)
@@ -323,8 +330,8 @@ withoutIndex (𝐒(n))  (x ⊰ l) = x ⊰ withoutIndex(n)(l)
 swapIndex : ℕ → ℕ → List(T) → List(T)
 swapIndex _      _      ∅      = ∅
 swapIndex 𝟎      𝟎      (x ⊰ l) = (x ⊰ l)
-swapIndex (𝐒(a)) 𝟎      (x ⊰ l) = Option.map(_⊰ replaceAt a x l) (index a l) Option.or (x ⊰ l)
-swapIndex 𝟎      (𝐒(b)) (x ⊰ l) = Option.map(_⊰ replaceAt b x l) (index b l) Option.or (x ⊰ l)
+swapIndex (𝐒(a)) 𝟎      (x ⊰ l) = Option.map(_⊰ replaceAt a x l) (index₀ a l) Option.or (x ⊰ l)
+swapIndex 𝟎      (𝐒(b)) (x ⊰ l) = Option.map(_⊰ replaceAt b x l) (index₀ b l) Option.or (x ⊰ l)
 swapIndex (𝐒(a)) (𝐒(b)) (x ⊰ l) = x ⊰ swapIndex a b l
 
 filter : (T → Bool) → List(T) → List(T)

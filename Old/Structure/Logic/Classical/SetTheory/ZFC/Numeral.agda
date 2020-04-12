@@ -14,7 +14,7 @@
             ([∧].intro
               -- ∅ is in
               ([↔].elimₗ
-                ([∀].elim([∀].elim([∀].elim([∩]-inclusion){a}){b}){∅})
+                ([∀].elim([∀].elim([∀].elim([∩]-membership){a}){b}){∅})
                 ([∧].intro
                   ([∧].elimₗ([∧].elimₗ indaindb))
                   ([∧].elimₗ([∧].elimᵣ indaindb))
@@ -25,13 +25,13 @@
               ([∀].intro (\{x} →
                 ([→].intro(x∈a∩b ↦
                   ([↔].elimₗ
-                    ([∀].elim([∀].elim([∀].elim([∩]-inclusion){a}){b}){𝐒(x)})
+                    ([∀].elim([∀].elim([∀].elim([∩]-membership){a}){b}){𝐒(x)})
                     ([∧].intro
                       -- 𝐒(x) ∈ a
                       ([→].elim([∀].elim([∧].elimᵣ([∧].elimₗ indaindb)){x})(
                         -- x ∈ a
                         [∧].elimₗ([↔].elimᵣ
-                          ([∀].elim([∀].elim([∀].elim([∩]-inclusion){a}){b}){x})
+                          ([∀].elim([∀].elim([∀].elim([∩]-membership){a}){b}){x})
                           (x∈a∩b)
                         )
                       ))
@@ -40,7 +40,7 @@
                       ([→].elim([∀].elim([∧].elimᵣ([∧].elimᵣ indaindb)){x})(
                         -- x ∈ b
                         [∧].elimᵣ([↔].elimᵣ
-                          ([∀].elim([∀].elim([∀].elim([∩]-inclusion){a}){b}){x})
+                          ([∀].elim([∀].elim([∀].elim([∩]-membership){a}){b}){x})
                           (x∈a∩b)
                         )
                       ))
@@ -78,7 +78,7 @@
         )
         ([∀].intro(\{x} →
           ([→].intro(x∈filter ↦
-            [∧].elimᵣ(([↔].elimᵣ([∀].elim([∀].elim filter-inclusion{℘(inductiveSet)}){x})) (x∈filter))
+            [∧].elimᵣ(([↔].elimᵣ([∀].elim([∀].elim filter-membership{℘(inductiveSet)}){x})) (x∈filter))
           ))
         ))
       )

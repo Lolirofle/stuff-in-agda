@@ -16,13 +16,13 @@ module _ {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
   record Bottom (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
     constructor intro
     field
-      ⦃ inclusion ⦄ : P(m)
+      ⦃ membership ⦄ : P(m)
       proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (m ≤ x)
 
   record Top (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
     constructor intro
     field
-      ⦃ inclusion ⦄ : P(m)
+      ⦃ membership ⦄ : P(m)
       proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (x ≤ m)
 
   record LeftBound (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where

@@ -30,11 +30,11 @@ open SetIntersectionSet ⦃ ... ⦄ hiding (⋂)
 -- All sets are either empty or non-empty.
 postulate Empty-excluded-middle : ∀{s} → Proof(Empty(s) ∨ NonEmpty(s))
 
-pair-inclusion : Proof(∀ₗ(a₁ ↦ ∀ₗ(a₂ ↦ (∀ₗ(x ↦ (x ∈ pair(a₁)(a₂)) ⟷ (x ≡ a₁)∨(x ≡ a₂))))))
-pair-inclusion = pairing
+pair-membership : Proof(∀ₗ(a₁ ↦ ∀ₗ(a₂ ↦ (∀ₗ(x ↦ (x ∈ pair(a₁)(a₂)) ⟷ (x ≡ a₁)∨(x ≡ a₂))))))
+pair-membership = pairing
 
-postulate pair-inclusion-[≡ₛ] : Proof(∀ₗ(a₁ ↦ ∀ₗ(a₂ ↦ (∀ₗ(x ↦ (x ∈ pair(a₁)(a₂)) ⟷ (x ≡ₛ a₁)∨(x ≡ₛ a₂))))))
--- pair-inclusion-[≡ₛ] = pairing
+postulate pair-membership-[≡ₛ] : Proof(∀ₗ(a₁ ↦ ∀ₗ(a₂ ↦ (∀ₗ(x ↦ (x ∈ pair(a₁)(a₂)) ⟷ (x ≡ₛ a₁)∨(x ≡ₛ a₂))))))
+-- pair-membership-[≡ₛ] = pairing
 
 instance
   setEqualityInstance : SetEquality
@@ -50,7 +50,7 @@ instance
     ([∀].intro (\{a} →
       ([∀].intro (\{x} →
         [↔].transitivity
-          ([∀].elim([∀].elim([∀].elim(pair-inclusion-[≡ₛ]){a}){a}){x})
+          ([∀].elim([∀].elim([∀].elim(pair-membership-[≡ₛ]){a}){a}){x})
           ([↔].intro ([∨].redundancyₗ) ([∨].redundancyᵣ))
       ))
     ))
@@ -73,10 +73,10 @@ instance
     ([∀].intro (\{a} →
       ([∀].intro (\{b} →
         ([∀].intro (\{x} →
-          ([∀].elim([∀].elim [⋃]-inclusion{pair(a)(b)}){x})
+          ([∀].elim([∀].elim [⋃]-membership{pair(a)(b)}){x})
           〔ₗ [↔].transitivity 〕
           ([↔]-with-[∃] (\{s} →
-            ([↔]-with-[∧]ₗ ([∀].elim([∀].elim([∀].elim pair-inclusion{a}){b}){s}))
+            ([↔]-with-[∧]ₗ ([∀].elim([∀].elim([∀].elim pair-membership{a}){b}){s}))
             〔ₗ [↔].transitivity 〕
             ([∧][∨]-distributivityᵣ)
             〔ₗ [↔].transitivity 〕
@@ -93,7 +93,7 @@ instance
   intersectionSetInstance = IntersectionSet.intro _∩_
     ([∀].intro (\{a} →
       ([∀].intro (\{b} →
-        ([∀].elim(filter-inclusion){a})
+        ([∀].elim(filter-membership){a})
       ))
     ))
 
@@ -102,7 +102,7 @@ instance
   withoutSetInstance = WithoutSet.intro _∖_
     ([∀].intro (\{a} →
       ([∀].intro (\{b} →
-        ([∀].elim(filter-inclusion){a})
+        ([∀].elim(filter-membership){a})
       ))
     ))
 
@@ -115,7 +115,7 @@ instance
           -- (⟵)-case
           (allssinssxins ↦
             ([↔].elimₗ
-              ([∀].elim([∀].elim filter-inclusion{⋃(ss)}){x})
+              ([∀].elim([∀].elim filter-membership{⋃(ss)}){x})
               ([∧].intro
                 -- x ∈ ⋃(ss)
                 ([∨].elim
@@ -128,7 +128,7 @@ instance
                   (existsyinss ↦
                     ([∃].elim
                       (\{y} → yinss ↦ (
-                        ([↔].elimₗ([∀].elim([∀].elim([⋃]-inclusion){ss}){x}))
+                        ([↔].elimₗ([∀].elim([∀].elim([⋃]-membership){ss}){x}))
                         ([∃].intro{_}
                           {y}
                           ([∧].intro
@@ -165,7 +165,7 @@ instance
                       ([↔].elimᵣ
                         ([∀].elim
                           ([∀].elim
-                            filter-inclusion
+                            filter-membership
                             {⋃(ss)}
                           )
                           {x}
@@ -189,12 +189,12 @@ instance
 
 -- TODO: Just used for reference. Remove these lines later
 -- ⋂(a) = filter(⋃(ss)) (x ↦ ∀ₗ(a₂ ↦ (a₂ ∈ ss) ⟶ (x ∈ a₂)))
--- filter-inclusion : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
--- [⋃]-inclusion : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s)))))
+-- filter-membership : ∀{φ : Domain → Formula} → Proof(∀ₗ(s ↦ ∀ₗ(x ↦ ((x ∈ filter(s)(φ)) ⟷ ((x ∈ s) ∧ φ(x))))))
+-- [⋃]-membership : Proof(∀ₗ(ss ↦ ∀ₗ(x ↦ (x ∈ ⋃(ss)) ⟷ ∃ₗ(s ↦ (s ∈ ss)∧(x ∈ s)))))
 
 
--- [⨯]-inclusion : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ⨯ b)) ⟷ ∃ₛ(a)(x₁ ↦ ∃ₛ(b)(x₂ ↦ x ≡ (x₁ , x₂)))))))
--- [⨯]-inclusion =
+-- [⨯]-membership : Proof(∀ₗ(a ↦ ∀ₗ(b ↦ ∀ₗ(x ↦ (x ∈ (a ⨯ b)) ⟷ ∃ₛ(a)(x₁ ↦ ∃ₛ(b)(x₂ ↦ x ≡ (x₁ , x₂)))))))
+-- [⨯]-membership =
 
 -- [⋃][℘]-inverse : Proof(∀ₗ(s ↦ ⋃(℘(s)) ≡ s))
 

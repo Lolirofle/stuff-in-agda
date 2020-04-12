@@ -62,8 +62,8 @@ module IsTrue where
   [¬]-elim {𝑇} ()
   [¬]-elim {𝐹} [⊤]-intro = [⊤]-intro
 
-  is-[𝑇] : ∀{a} → IsTrue(a) ↔ (a ≡ 𝑇)
-  is-[𝑇] {a} = [↔]-intro (l{a}) (r{a}) where
+  is-𝑇 : ∀{a} → IsTrue(a) ↔ (a ≡ 𝑇)
+  is-𝑇 {a} = [↔]-intro (l{a}) (r{a}) where
     r : ∀ {a} → IsTrue(a) → (a ≡ 𝑇)
     r {𝑇} _ = [≡]-intro
     r {𝐹} ()
@@ -113,8 +113,8 @@ module IsFalse where
   [¬]-elim : ∀{a} → IsFalse(! a) → IsTrue(a)
   [¬]-elim = id
 
-  is-[𝐹] : ∀{a} → IsFalse(a) ↔ (a ≡ 𝐹)
-  is-[𝐹] {a} = [↔]-intro (l{a}) (r{a}) where
+  is-𝐹 : ∀{a} → IsFalse(a) ↔ (a ≡ 𝐹)
+  is-𝐹 {a} = [↔]-intro (l{a}) (r{a}) where
     r : ∀{a} → IsFalse(a) → (a ≡ 𝐹)
     r {𝑇} ()
     r {𝐹} _ = [≡]-intro

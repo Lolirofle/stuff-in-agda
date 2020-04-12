@@ -8,6 +8,7 @@ open import Numeral.Natural
 open import Numeral.Natural.Combinatorics
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
@@ -26,6 +27,10 @@ factorial-non-zero : ∀{n} → ((n !) ≢ 𝟎)
 factorial-non-zero {𝟎}   ()
 factorial-non-zero {𝐒 n} p with [⋅]-product-is-0 {a = 𝐒 n}{b = n !} p
 ... | [∨]-introᵣ n!0 = factorial-non-zero {n} n!0
+
+instance
+  factorial-positive : ∀{n} → Positive(n !)
+  factorial-positive {n} = non-zero-positive(factorial-non-zero {n})
 
 -- Also called: Pascals's identity
 𝑐𝐶-step : ∀{n k} → (𝑐𝐶 (𝐒(n)) (𝐒(k)) ≡ 𝑐𝐶 n k + 𝑐𝐶 n (𝐒(k)))
@@ -176,7 +181,7 @@ factorial-non-zero {𝐒 n} p with [⋅]-product-is-0 {a = 𝐒 n}{b = n !} p
   n !            🝖-end
 
 𝑐𝐶-step-diff : ∀{n k} → (𝑐𝐶 n k ⋅ n ≡ (𝑐𝐶 n k ⋅ k) + (𝑐𝐶 n (𝐒 k) ⋅ (𝐒 k)))
-𝑐𝐶-step-diff {n}{k} = [⋅]-cancellationᵣ {x = k !} ⦃ factorial-non-zero {k} ⦄ $
+𝑐𝐶-step-diff {n}{k} = [⋅]-cancellationᵣ {x = k !} ⦃ factorial-positive {k} ⦄ $
   (𝑐𝐶 n k ⋅ n) ⋅ (k !)                                  🝖[ _≡_ ]-[ One.commuteᵣ-assocₗ {_▫_ = _⋅_}{a = 𝑐𝐶 n k}{b = n}{c = k !} ]
   (𝑐𝐶 n k ⋅ (k !)) ⋅ n                                  🝖[ _≡_ ]-[ [≡]-with(_⋅ n) (𝑐𝐶-permutations-is-𝑐𝑃 {n}{k}) ]
   𝑐𝑃 n k ⋅ n                                            🝖[ _≡_ ]-[ 𝑐𝑃-step-diff {n}{k} ]

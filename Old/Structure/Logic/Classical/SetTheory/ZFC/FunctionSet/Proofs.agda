@@ -43,7 +43,7 @@ fnset-proof{D} f ⦃ function ⦄ ⦃ total ⦄ =
 [→ₛₑₜ]-witness f ⦃ proof ⦄ (x) =
   (fnset-witness f
     ⦃ [∧].elimᵣ([∧].elimᵣ([↔].elimᵣ
-      ([∀].elim([∀].elim filter-inclusion))
+      ([∀].elim([∀].elim filter-membership))
       (proof)
     )) ⦄
     (x)

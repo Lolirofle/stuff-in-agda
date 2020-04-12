@@ -4,7 +4,7 @@ import      Lvl
 open import Lang.Instance
 open import Logic
 open import Relator.Equals
-open import Sets.Setoid using (Equiv ; intro ; Function ; BinaryOperator) renaming (_≡_ to _≡ₛ_)
+open import Sets.Setoid.WithLvl using (Equiv ; intro ; Function ; BinaryOperator) renaming (_≡_ to _≡ₛ_)
 open import Structure.Relator.Equivalence
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
@@ -37,11 +37,16 @@ module One {ℓ} {T : Type{ℓ}} where
     [≡]-equivalence = intro
 
   instance
-    [≡]-equiv : Equiv(T)
-    [≡]-equiv = intro(_≡_ {T = T}) ⦃ [≡]-equivalence ⦄
+    [≡]-equiv : Equiv{ℓ}(T)
+    Equiv._≡_ [≡]-equiv = _≡_
+    Equiv.[≡]-equivalence [≡]-equiv = [≡]-equivalence
 
-  [≡]-to-equivalence : ∀{x y : T} → (x ≡ y) → ⦃ equiv-T : Equiv(T) ⦄ → (_≡ₛ_ ⦃ equiv-T ⦄ x y)
+  [≡]-to-equivalence : ∀{ℓₗ}{x y : T} → (x ≡ y) → ⦃ equiv-T : Equiv{ℓₗ}(T) ⦄ → (_≡ₛ_ ⦃ equiv-T ⦄ x y)
   [≡]-to-equivalence([≡]-intro) = reflexivity(_≡ₛ_)
+
+  instance
+    [≡]-sub-of-reflexive : ∀{ℓₗ}{_▫_ : T → T → Stmt{ℓₗ}} → ⦃ _ : Reflexivity(_▫_) ⦄ → ((_≡_) ⊆₂ (_▫_))
+    _⊆₂_.proof [≡]-sub-of-reflexive [≡]-intro = reflexivity(_)
 open One public
 
 module Two {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} where
@@ -53,7 +58,7 @@ module Two {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} where
   Function.congruence([≡]-function {f}) eq = [≡]-with(f) eq
 
   instance
-    [≡]-to-function : ⦃ equiv-B : Equiv(B) ⦄ → ∀{f : A → B} → Function ⦃ [≡]-equiv ⦄ ⦃ equiv-B ⦄ (f)
+    [≡]-to-function : ∀{ℓₗ} → ⦃ equiv-B : Equiv{ℓₗ}(B) ⦄ → ∀{f : A → B} → Function ⦃ [≡]-equiv ⦄ ⦃ equiv-B ⦄ (f)
     Function.congruence ([≡]-to-function) [≡]-intro = reflexivity(_≡ₛ_)
 open Two public
 

@@ -431,26 +431,26 @@ module NaturalDeduction where
     [⊢]-to-[∈] : ∀{φ} → (Γ ⊢ φ) → (φ ∈ Γ)
     [⊢]-to-[∈] = Logic.[→]-from-contrary (λ Γφ φ∉Γ → consistent ([⊢]-compose-inconsistence Γφ (element-maximal-contra φ∉Γ)))
 
-    -- excluded-middle-formula-inclusion : ∀{φ} → (φ ∈ Γ) Logic.∨ ((¬ φ) ∈ Γ)
+    -- excluded-middle-formula-membership : ∀{φ} → (φ ∈ Γ) Logic.∨ ((¬ φ) ∈ Γ)
 
-    [∧]-formula-inclusion : ∀{φ ψ} → ((φ ∧ ψ) ∈ Γ) Logic.↔ ((φ ∈ Γ) Logic.∧ (ψ ∈ Γ))
-    [∧]-formula-inclusion {φ}{ψ} = Logic.[↔]-intro l r where
+    [∧]-formula-membership : ∀{φ ψ} → ((φ ∧ ψ) ∈ Γ) Logic.↔ ((φ ∈ Γ) Logic.∧ (ψ ∈ Γ))
+    [∧]-formula-membership {φ}{ψ} = Logic.[↔]-intro l r where
       l : ((φ ∧ ψ) ∈ Γ) ← ((φ ∈ Γ) Logic.∧ (ψ ∈ Γ))
       l (Logic.[∧]-intro φΓ ψΓ) = [⊢]-to-[∈] ([∧]-intro (direct φΓ) (direct ψΓ))
 
       r : ((φ ∧ ψ) ∈ Γ) → ((φ ∈ Γ) Logic.∧ (ψ ∈ Γ))
       r φψΓ = Logic.[∧]-intro ([⊢]-to-[∈] ([∧]-elimₗ(direct φψΓ))) ([⊢]-to-[∈] ([∧]-elimᵣ(direct φψΓ)))
 
-    [∨]-formula-inclusion : ∀{φ ψ} → ((φ ∨ ψ) ∈ Γ) Logic.↔ ((φ ∈ Γ) Logic.∨ (ψ ∈ Γ))
-    [∨]-formula-inclusion {φ}{ψ} = Logic.[↔]-intro l r where
+    [∨]-formula-membership : ∀{φ ψ} → ((φ ∨ ψ) ∈ Γ) Logic.↔ ((φ ∈ Γ) Logic.∨ (ψ ∈ Γ))
+    [∨]-formula-membership {φ}{ψ} = Logic.[↔]-intro l r where
       l : ((φ ∨ ψ) ∈ Γ) ← ((φ ∈ Γ) Logic.∨ (ψ ∈ Γ))
       l = Logic.[∨]-elim ([⊢]-to-[∈] ∘ [∨]-introₗ ∘ direct) ([⊢]-to-[∈] ∘ [∨]-introᵣ ∘ direct)
 
       r : ((φ ∨ ψ) ∈ Γ) → ((φ ∈ Γ) Logic.∨ (ψ ∈ Γ))
       r = Logic.contrapositiveₗ ⦃ classical ⦄ ((\{(Logic.[∧]-intro ¬φΓ ¬ψΓ) → φψΓ ↦ consistent([∨]-elim (element-maximal-contra ¬φΓ) (element-maximal-contra ¬ψΓ) (direct φψΓ))}) ∘ Logic.[↔]-to-[←] Logic.[¬][∨])
 
-    -- [⟶]-formula-inclusion : ∀{φ ψ} → ((φ ⟶ ψ) ∈ Γ) Logic.↔ ((φ ∉ Γ) Logic.∨ (ψ ∈ Γ))
-    -- [⟶]-formula-inclusion {φ}{ψ} = Logic.[↔]-intro l r where
+    -- [⟶]-formula-membership : ∀{φ ψ} → ((φ ⟶ ψ) ∈ Γ) Logic.↔ ((φ ∉ Γ) Logic.∨ (ψ ∈ Γ))
+    -- [⟶]-formula-membership {φ}{ψ} = Logic.[↔]-intro l r where
       -- l : ((φ ⟶ ψ) ∈ Γ) ← ((φ ∉ Γ) Logic.∨ (ψ ∈ Γ))
       -- r : ((φ ⟶ ψ) ∈ Γ) → ((φ ∉ Γ) Logic.∨ (ψ ∈ Γ))
 

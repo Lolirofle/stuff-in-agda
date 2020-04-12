@@ -3,19 +3,23 @@ module Sets.IterativeSet where
 import      Lvl
 open import Data
 open import Data.Boolean
+open import Data.Boolean.Proofs
 open import Data.Boolean.Stmt
+open import Data.Boolean.Stmt.Proofs
 open import Data.Either as Either using (_‖_)
 open import Data.Tuple as Tuple using ()
 open import Functional
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
+open import Numeral.Natural
 open import Relator.Equals using () renaming (_≡_ to Id ; [≡]-intro to intro)
-open import Sets.Setoid using (Equiv ; UnaryRelator ; BinaryRelator ; intro)
+open import Sets.Setoid.WithLvl using (Function ; UnaryRelator ; BinaryRelator ; Equiv ; intro ; substitute₁ ; substitute₂ ; substitute₂ₗ ; substitute₂ᵣ ; [≡]-with)
 open import Structure.Function.Domain
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Syntax.Function
+open import Syntax.Transitivity
 open import Type
 open import Type.Dependent
 
@@ -23,7 +27,6 @@ module _ where
   private variable {ℓ ℓ₁ ℓ₂} : Lvl.Level
 
   -- A model of constructive set theory (CZF) using iterative sets through W-types.
-  -- TODO: Is it really? How are power sets handled?
   record Iset : Type{Lvl.𝐒(ℓ)} where
     inductive
     constructor intro
@@ -32,15 +35,23 @@ module _ where
       elem : Index → Iset{ℓ}
   open Iset
 
+  -- The empty set, consisting of no elements.
+  -- Index is the empty type, which means that there are no objects pointing to elements in the set.
   ∅ : Iset{ℓ}
   ∅ = intro{Index = Empty} empty
 
+  -- The singleton set, consisting of one element.
+  -- Index is the unit type, which means that there are a single object pointing to a single element in the set.
   singleton : Iset{ℓ} → Iset{ℓ}
   singleton = intro{Index = Unit} ∘ const
 
+  -- The pair set, consisting of two elements.
+  -- Index is the boolean type, which means that there are two objects pointing to two elements in the set.
   pair : Iset{ℓ} → Iset{ℓ} → Iset{ℓ}
   pair A B = intro{Index = Lvl.Up(Bool)} \{(Lvl.up 𝐹) → A ; (Lvl.up 𝑇) → B}
 
+  -- The union operator.
+  -- Index(A ∪ B) is the either type of two indices, which means that both objects from the A and the B index point to elements in the set.
   _∪_ : Iset{ℓ} → Iset{ℓ} → Iset{ℓ}
   A ∪ B = intro{Index = Index(A) ‖ Index(B)} (Either.map1 (elem(A)) (elem(B)))
 
@@ -50,6 +61,8 @@ module _ where
   _⨯_ : Iset{ℓ} → Iset{ℓ} → Iset{ℓ}
   A ⨯ B = intro{Index = Index(A) Tuple.⨯ Index(B)} \{(ia Tuple., ib) → (elem(A)(ia) , elem(B)(ib))}
 
+  -- The big union operator.
+  -- Index(⋃ A) is the dependent sum type of an Index(A) and the index of the element this index points to.
   ⋃ : Iset{ℓ} → Iset{ℓ}
   ⋃ A = intro{Index = Σ(Index(A)) (ia ↦ Index(elem(A)(ia)))} (\{(intro ia i) → elem(elem(A)(ia))(i)})
 
@@ -65,15 +78,27 @@ module _ where
   filterBool : (A : Iset{ℓ}) → (Iset{ℓ} → Bool) → Iset{ℓ}
   filterBool A f = indexFilterBool A (f ∘ elem(A))
 
-  -- ℘ : Iset{Lvl.𝐒 ℓ} → Iset{Lvl.𝐒 ℓ}
-  -- ℘ A = intro{Index = Index(A) → Bool} (indexFilterBool A)
-  -- ℘{ℓ} A = intro{Lvl.𝐒 ℓ}{Index = Index(A) → Stmt{Lvl.𝟎}} {!indexFilter(A)!}
-  -- TODO: How should one use Stmt and filter instead? The levels become a problem
+  mapSet : (Iset{ℓ} → Iset{ℓ}) → (Iset{ℓ} → Iset{ℓ})
+  mapSet f(A) = intro{Index = Index(A)} (f ∘ elem(A))
 
-  record _≡_ (A : Iset{ℓ}) (B : Iset{ℓ}) : Type{ℓ}
-  record _⊆_ (A : Iset{ℓ}) (B : Iset{ℓ}) : Type{ℓ}
-  _⊇_ : Iset{ℓ} → Iset{ℓ} → Type{ℓ}
+  -- The power set operator.
+  -- Index(℘(A)) is a function type. An instance of such a function represents a subset, and essentially maps every element in A to a boolean which is interpreted as "in the subset of not".
+  -- Note: This only works properly in a classical setting. Trying to use indexFilter instead result in universe level problems.
+  ℘ : Iset{ℓ} → Iset{ℓ}
+  ℘(A) = intro{Index = Index(A) → Bool} (indexFilterBool A)
 
+  -- The set of ordinal numbers of the first order.
+  ω : Iset{ℓ}
+  ω = intro{Index = Lvl.Up ℕ} (N ∘ Lvl.Up.obj) where
+    N : ℕ → Iset{ℓ}
+    N(𝟎)    = ∅
+    N(𝐒(n)) = N(n) ∪ singleton(N(n))
+
+  record _≡_ (A : Iset{ℓ₁}) (B : Iset{ℓ₂}) : Type{ℓ₁ ⊔ ℓ₂}
+  record _⊆_ (A : Iset{ℓ₁}) (B : Iset{ℓ₂}) : Type{ℓ₁ ⊔ ℓ₂}
+  _⊇_ : Iset{ℓ₁} → Iset{ℓ₂} → Type{ℓ₁ ⊔ ℓ₂}
+
+  -- Set equality is by definition the antisymmetric property of the subset relation.
   record _≡_ A B where
     coinductive
     constructor intro
@@ -81,9 +106,11 @@ module _ where
       left  : A ⊇ B
       right : A ⊆ B
 
-  _∈_ : Iset{ℓ} → Iset{ℓ} → Type{ℓ}
+  -- Set membership is the existence of an index in the set that points to a set equal element to the element.
+  _∈_ : Iset{ℓ₁} → Iset{ℓ₂} → Type{ℓ₁ ⊔ ℓ₂}
   a ∈ B = ∃{Obj = Index(B)} (ib ↦ a ≡ elem(B)(ib))
 
+  -- Set subset is a mapping between the indices such that they point to the same element in both sets.
   record _⊆_ A B where
     inductive
     constructor intro
@@ -95,7 +122,7 @@ module _ where
   module _⊇_ where
     open _⊆_ public
 
-  _∉_ : Iset{ℓ} → Iset{ℓ} → Type{ℓ}
+  _∉_ : Iset{ℓ₁} → Iset{ℓ₂} → Type{ℓ₁ ⊔ ℓ₂}
   a ∉ B = ¬(a ∈ B)
 
   instance
@@ -166,15 +193,18 @@ module _ where
   instance
     [≡]-equivalence : Equivalence(_≡_ {ℓ})
     [≡]-equivalence = intro
-  {- TODO: Iset equivalence and Isets are not on the same level
   instance
     Iset-equiv : Equiv(Iset{ℓ})
-    Iset-equiv = {!intro(_≡_)!}
-  -}
+    Equiv._≡_ Iset-equiv = _≡_
+    Equiv.[≡]-equivalence Iset-equiv = [≡]-equivalence
 
 
-  Iset-induction : ∀{P : Iset{ℓ₁} → Stmt{ℓ₂}} → (∀{A : Iset{ℓ₁}} → (∀{i : Index(A)} → P(elem(A)(i))) → P(A)) → (∀{A : Iset{ℓ₁}} → P(A))
-  Iset-induction {P = P} proof {intro Aelem} = proof{_} \{i} → Iset-induction{P = P} proof {Aelem(i)}
+
+  Iset-index-induction : ∀{P : Iset{ℓ₁} → Stmt{ℓ₂}} → (∀{A : Iset{ℓ₁}} → (∀{i : Index(A)} → P(elem(A)(i))) → P(A)) → (∀{A : Iset{ℓ₁}} → P(A))
+  Iset-index-induction {P = P} proof {intro Aelem} = proof{_} \{i} → Iset-index-induction{P = P} proof {Aelem(i)}
+
+  Iset-induction : ∀{P : Iset{ℓ₁} → Stmt{ℓ₂}} ⦃ _ : UnaryRelator(P) ⦄ → (∀{A : Iset{ℓ₁}} → (∀{a} → (a ∈ A) → P(a)) → P(A)) → (∀{A : Iset{ℓ₁}} → P(A))
+  Iset-induction {P = P} p = Iset-index-induction (\{A} pp → p{A} (\{a} aA → substitute₁(P) (symmetry(_≡_) ([∃]-proof aA)) (pp{[∃]-witness aA})))
 
   [∈]-of-elem : ∀{A : Iset{ℓ}}{ia : Index(A)} → (elem(A)(ia) ∈ A)
   ∃.witness ([∈]-of-elem {ia = ia}) = ia
@@ -189,14 +219,10 @@ module _ where
   [⊆]-with-elem : ∀{x y : Iset{ℓ}} → (xy : x ⊆ y) → ∀{ix} → (elem x ix ≡ elem y (_⊆_.map xy ix))
   [⊆]-with-elem (intro map proof) {ix} = proof{ix}
 
-  -- TODO: When is this true
-  -- elemᵣ-injectivity : ∀{x : Iset{ℓ}} → ∀{i₁ i₂} → (elem x i₁ ≡ elem x i₂) → (i₁ ≡ i₂)
-  -- elemᵣ-injectivity x = {!!}
 
 
-
-  [⊆]-inclusion : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (∀{x : Iset{ℓ}} → (x ∈ A) → (x ∈ B)) ↔ (A ⊆ B)
-  [⊆]-inclusion {A = A}{B = B} = [↔]-intro l r where
+  [⊆]-membership : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (∀{x : Iset{ℓ}} → (x ∈ A) → (x ∈ B)) ↔ (A ⊆ B)
+  [⊆]-membership {A = A}{B = B} = [↔]-intro l r where
     l : (∀{x} → (x ∈ A) → (x ∈ B)) ← (A ⊆ B)
     ∃.witness (l (intro map proof) {x} xa) = map(∃.witness xa)
     ∃.proof   (l (intro map proof) {x} xa) = [≡]-transitivity-raw (∃.proof xa) proof
@@ -205,68 +231,142 @@ module _ where
     _⊆_.map   (r proof) ia = [∃]-witness (proof{x = elem(A)(ia)} ([∈]-of-elem {A = A}))
     _⊆_.proof (r proof) {ia} = [∃]-proof (proof([∈]-of-elem {A = A}))
 
-  [⊇]-inclusion : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (∀{x : Iset{ℓ}} → (x ∈ A) ← (x ∈ B)) ↔ (A ⊇ B)
-  [⊇]-inclusion {A = A}{B = B} = [⊆]-inclusion {A = B}{B = A}
+  [⊇]-membership : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (∀{x : Iset{ℓ}} → (x ∈ A) ← (x ∈ B)) ↔ (A ⊇ B)
+  [⊇]-membership {A = A}{B = B} = [⊆]-membership {A = B}{B = A}
 
-  [≡]-inclusion : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (∀{x : Iset{ℓ}} → (x ∈ A) ↔ (x ∈ B)) ↔ (A ≡ B)
-  Tuple.left  (Tuple.left ([≡]-inclusion {A = A} {B = B}) ab) = [↔]-to-[←] [⊇]-inclusion (_≡_.left ab)
-  Tuple.right (Tuple.left ([≡]-inclusion {A = A} {B = B}) ab) = [↔]-to-[←] [⊆]-inclusion (_≡_.right ab)
-  _≡_.left  (Tuple.right ([≡]-inclusion {A = A} {B = B}) xaxb) = [↔]-to-[→] [⊇]-inclusion ([↔]-to-[←] xaxb)
-  _≡_.right (Tuple.right ([≡]-inclusion {A = A} {B = B}) xaxb) = [↔]-to-[→] [⊆]-inclusion ([↔]-to-[→] xaxb)
+  [≡]-membership : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (∀{x : Iset{ℓ}} → (x ∈ A) ↔ (x ∈ B)) ↔ (A ≡ B)
+  Tuple.left  (Tuple.left ([≡]-membership {A = A} {B = B}) ab) = [↔]-to-[←] [⊇]-membership (_≡_.left ab)
+  Tuple.right (Tuple.left ([≡]-membership {A = A} {B = B}) ab) = [↔]-to-[←] [⊆]-membership (_≡_.right ab)
+  _≡_.left  (Tuple.right ([≡]-membership {A = A} {B = B}) xaxb) = [↔]-to-[→] [⊇]-membership ([↔]-to-[←] xaxb)
+  _≡_.right (Tuple.right ([≡]-membership {A = A} {B = B}) xaxb) = [↔]-to-[→] [⊆]-membership ([↔]-to-[→] xaxb)
 
 
 
-  -- [∈]ₗ-unaryRelation : ∀{B} → UnaryRelator(_∈ B)
-  -- [∈]ₗ-unaryRelation = {!!}
   [∈]ₗ-unaryRelation-raw : ∀{A₁ A₂ B : Iset{ℓ}} → (A₁ ≡ A₂) → (A₁ ∈ B) → (A₂ ∈ B)
   ∃.witness ([∈]ₗ-unaryRelation-raw pa ([∃]-intro i ⦃ p ⦄)) = i
   ∃.proof ([∈]ₗ-unaryRelation-raw pa ([∃]-intro i ⦃ p ⦄)) = [≡]-transitivity-raw ([≡]-symmetry-raw pa) p
 
   [∈]-binaryRelation-raw : ∀{A₁ A₂ B₁ B₂ : Iset{ℓ}} → (A₁ ≡ A₂) → (B₁ ≡ B₂) → ((A₁ ∈ B₁) → (A₂ ∈ B₂))
-  [∈]-binaryRelation-raw {B₂ = B₂} pa pb = [∈]ₗ-unaryRelation-raw {B = B₂} pa ∘ [↔]-to-[←] [⊆]-inclusion (sub₂(_≡_)(_⊆_) pb)
+  [∈]-binaryRelation-raw {B₂ = B₂} pa pb = [∈]ₗ-unaryRelation-raw {B = B₂} pa ∘ [↔]-to-[←] [⊆]-membership (sub₂(_≡_)(_⊆_) pb)
+
+  instance
+    [∈]-binaryRelation : BinaryRelator(_∈_ {ℓ})
+    [∈]-binaryRelation = intro [∈]-binaryRelation-raw
+
+  instance
+    [⊆]-binaryRelator : BinaryRelator(_⊆_ {ℓ}{ℓ})
+    BinaryRelator.substitution [⊆]-binaryRelator p1 p2 ps = sub₂(_≡_)(_⊇_) p1 🝖 ps 🝖 sub₂(_≡_)(_⊆_) p2
 
 
 
-  ∅-inclusion : ∀{x : Iset{ℓ}} → (x ∉ ∅)
-  ∅-inclusion ()
+  -- If there is an element in the empty set, then there exists an instance of the empty type by definition, and that is false by definition.
+  ∅-membership : ∀{x : Iset{ℓ₁}} → (x ∉ ∅ {ℓ₂})
+  ∅-membership ()
 
-  singleton-inclusion : ∀{a x : Iset{ℓ}} → (x ∈ singleton(a)) ↔ (x ≡ a)
-  Tuple.left (singleton-inclusion {a = a} {x}) xin = [∃]-intro <> ⦃ xin ⦄
-  Tuple.right (singleton-inclusion {a = a} {x}) ([∃]-intro i ⦃ eq ⦄ ) = eq
+  -- There is a bijection between (A ‖ B) and ∃{Lvl.Up Bool}(\{(Lvl.up 𝐹) → A ; (Lvl.up 𝑇) → B}).
+  pair-membership : ∀{a b x : Iset{ℓ}} → (x ∈ pair a b) ↔ (x ≡ a)∨(x ≡ b)
+  Tuple.left (pair-membership {a = a} {x}) ([∨]-introₗ p) = [∃]-intro (Lvl.up 𝐹) ⦃ p ⦄
+  Tuple.left (pair-membership {a = a} {x}) ([∨]-introᵣ p) = [∃]-intro (Lvl.up 𝑇) ⦃ p ⦄
+  Tuple.right (pair-membership {a = a} {x}) ([∃]-intro (Lvl.up 𝐹) ⦃ eq ⦄) = [∨]-introₗ eq
+  Tuple.right (pair-membership {a = a} {x}) ([∃]-intro (Lvl.up 𝑇) ⦃ eq ⦄) = [∨]-introᵣ eq
 
-  [∪]-inclusion : ∀{A B x : Iset{ℓ}} → (x ∈ (A ∪ B)) ↔ (x ∈ A)∨(x ∈ B)
-  Tuple.left ([∪]-inclusion {A = A} {B} {x}) ([∨]-introₗ ([∃]-intro ia)) = [∃]-intro (Either.Left  ia)
-  Tuple.left ([∪]-inclusion {A = A} {B} {x}) ([∨]-introᵣ ([∃]-intro ib)) = [∃]-intro (Either.Right ib)
-  Tuple.right ([∪]-inclusion {A = A} {B} {x}) ([∃]-intro ([∨]-introₗ ia)) = [∨]-introₗ ([∃]-intro ia)
-  Tuple.right ([∪]-inclusion {A = A} {B} {x}) ([∃]-intro ([∨]-introᵣ ib)) = [∨]-introᵣ ([∃]-intro ib)
+  -- There is a bijection between (A) and ∃{Unit}(\{<> → A}).
+  singleton-membership : ∀{a x : Iset{ℓ}} → (x ∈ singleton(a)) ↔ (x ≡ a)
+  Tuple.left (singleton-membership {a = a} {x}) xin = [∃]-intro <> ⦃ xin ⦄
+  Tuple.right (singleton-membership {a = a} {x}) ([∃]-intro i ⦃ eq ⦄ ) = eq
 
-  [⋃]-inclusion : ∀{A x : Iset{ℓ}} → (x ∈ (⋃ A)) ↔ ∃(a ↦ (a ∈ A) ∧ (x ∈ a))
-  Σ.left  (∃.witness (Tuple.left ([⋃]-inclusion {A = A} {x}) ([∃]-intro a ⦃ [∧]-intro ([∃]-intro iA) _ ⦄))) = iA
-  Σ.right (∃.witness (Tuple.left ([⋃]-inclusion {A = A} {x}) ([∃]-intro a ⦃ [∧]-intro ([∃]-intro iA ⦃ aA ⦄) ([∃]-intro ia) ⦄))) = _⊆_.map (_≡_.right aA) ia
-  ∃.proof (Tuple.left ([⋃]-inclusion {A = A} {x}) ([∃]-intro a ⦃ [∧]-intro ([∃]-intro iA ⦃ aA ⦄) ([∃]-intro ia ⦃ xa ⦄) ⦄)) = [≡]-transitivity-raw xa ([⊆]-with-elem (sub₂(_≡_)(_⊆_) aA) {ia})
-  ∃.witness (Tuple.right ([⋃]-inclusion {A = A} {x}) ([∃]-intro (intro iA ia) ⦃ proof ⦄)) = elem(A)(iA)
-  Tuple.left (∃.proof (Tuple.right ([⋃]-inclusion {A = A} {x}) ([∃]-intro (intro iA ia) ⦃ proof ⦄))) = [∈]-of-elem {A = A}
-  ∃.witness (Tuple.right (∃.proof (Tuple.right ([⋃]-inclusion {A = A} {x}) ([∃]-intro (intro iA ia) ⦃ proof ⦄)))) = ia
-  ∃.proof (Tuple.right (∃.proof (Tuple.right ([⋃]-inclusion {A = A} {x}) ([∃]-intro (intro iA ia) ⦃ proof ⦄)))) = proof
+  [∪]-membership : ∀{A B x : Iset{ℓ}} → (x ∈ (A ∪ B)) ↔ (x ∈ A)∨(x ∈ B)
+  Tuple.left ([∪]-membership {A = A} {B} {x}) ([∨]-introₗ ([∃]-intro ia)) = [∃]-intro (Either.Left  ia)
+  Tuple.left ([∪]-membership {A = A} {B} {x}) ([∨]-introᵣ ([∃]-intro ib)) = [∃]-intro (Either.Right ib)
+  Tuple.right ([∪]-membership {A = A} {B} {x}) ([∃]-intro ([∨]-introₗ ia)) = [∨]-introₗ ([∃]-intro ia)
+  Tuple.right ([∪]-membership {A = A} {B} {x}) ([∃]-intro ([∨]-introᵣ ib)) = [∨]-introᵣ ([∃]-intro ib)
 
-  -- TODO: This should be true when result is an Iset? Because that is why filter-inclusion works?
-  -- test-injective : ∀{A : Iset{ℓ}} → Injective(elem(A))
+  [⋃]-membership : ∀{A x : Iset{ℓ}} → (x ∈ (⋃ A)) ↔ ∃(a ↦ (a ∈ A) ∧ (x ∈ a))
+  Σ.left  (∃.witness (Tuple.left ([⋃]-membership {A = A} {x}) ([∃]-intro a ⦃ [∧]-intro ([∃]-intro iA) _ ⦄))) = iA
+  Σ.right (∃.witness (Tuple.left ([⋃]-membership {A = A} {x}) ([∃]-intro a ⦃ [∧]-intro ([∃]-intro iA ⦃ aA ⦄) ([∃]-intro ia) ⦄))) = _⊆_.map (_≡_.right aA) ia
+  ∃.proof (Tuple.left ([⋃]-membership {A = A} {x}) ([∃]-intro a ⦃ [∧]-intro ([∃]-intro iA ⦃ aA ⦄) ([∃]-intro ia ⦃ xa ⦄) ⦄)) = [≡]-transitivity-raw xa ([⊆]-with-elem (sub₂(_≡_)(_⊆_) aA) {ia})
+  ∃.witness (Tuple.right ([⋃]-membership {A = A} {x}) ([∃]-intro (intro iA ia) ⦃ proof ⦄)) = elem(A)(iA)
+  Tuple.left (∃.proof (Tuple.right ([⋃]-membership {A = A} {x}) ([∃]-intro (intro iA ia) ⦃ proof ⦄))) = [∈]-of-elem {A = A}
+  ∃.witness (Tuple.right (∃.proof (Tuple.right ([⋃]-membership {A = A} {x}) ([∃]-intro (intro iA ia) ⦃ proof ⦄)))) = ia
+  ∃.proof (Tuple.right (∃.proof (Tuple.right ([⋃]-membership {A = A} {x}) ([∃]-intro (intro iA ia) ⦃ proof ⦄)))) = proof
 
-  {-UnaryRelator : (Iset{ℓ₁} → Stmt{ℓ₂}) → Stmt
-  UnaryRelator(P) = ∀{x y} → (x ≡ y) → (P(x) → P(y))
+  module _ {A : Iset{ℓ}} where
+    open import Relator.Equals.Proofs.Equiv(Index(A)) using ([≡]-equiv)
 
-  filter-inclusionᵣ : ∀{A : Iset{ℓ}}{i : Index(A)}{P} → UnaryRelator(P) → (elem(A)(i) ∈ filter A P) → P(elem(A)(i))
-  filter-inclusionᵣ {i = i} subst ([∃]-intro (intro iA PiA) ⦃ pp ⦄) = subst ([≡]-symmetry-raw pp) PiA-}
+    module _ {P : Index(A) → Stmt{ℓ}} where
+      indexFilter-elem-membershipₗ : ∀{i : Index(A)} → (elem(A)(i) ∈ indexFilter A P) ← P(i)
+      Σ.left (∃.witness ((indexFilter-elem-membershipₗ {i = i}) pi)) = i
+      Σ.right(∃.witness ((indexFilter-elem-membershipₗ {i = i}) pi)) = pi
+      _≡_.left  (∃.proof (indexFilter-elem-membershipₗ pi)) = intro id [≡]-reflexivity-raw
+      _≡_.right (∃.proof (indexFilter-elem-membershipₗ pi)) = intro id [≡]-reflexivity-raw
 
-  {-
-  -- TODO: Assume setoid on Index(A), UnaryRelator(P), and injectivity on (elem A) for this proof to work
-  indexFilter-inclusion : ∀{A : Iset{ℓ}}{i : Index(A)}{P} → (elem(A)(i) ∈ indexFilter A P) ↔ P(i)
-  Σ.left             (∃.witness (Tuple.left (indexFilter-inclusion {i = i}) pi)) = i
-  Σ.right            (∃.witness (Tuple.left (indexFilter-inclusion {i = i}) pi)) = pi
-  _≡_.left  (∃.proof (Tuple.left indexFilter-inclusion pi)) = intro id [≡]-reflexivity-raw
-  _≡_.right (∃.proof (Tuple.left indexFilter-inclusion pi)) = intro id [≡]-reflexivity-raw
-  Tuple.right (indexFilter-inclusion {i = i} {P = P}) ([∃]-intro (intro iA PiA) ⦃ pp ⦄) = {!!}
-  -}
+    module _
+      ⦃ _ : Injective(elem A) ⦄ -- TODO: Is this satisfiable?
+      {P : Index(A) → Stmt{ℓ}}
+      ⦃ unaryRelator-P : UnaryRelator(P) ⦄
+      where
+
+      indexFilter-elem-membership : ∀{i : Index(A)} → (elem(A)(i) ∈ indexFilter A P) ↔ P(i)
+      Tuple.left   indexFilter-elem-membership = indexFilter-elem-membershipₗ
+      Tuple.right (indexFilter-elem-membership {i = i}) ([∃]-intro (intro iA PiA) ⦃ pp ⦄) = substitute₁(P) (injective(elem A) (symmetry(_≡_) pp)) PiA
+
+  filter-elem-membership : ∀{A : Iset{ℓ}}{P} ⦃ _ : UnaryRelator(P) ⦄ {i : Index(A)} → (elem(A)(i) ∈ filter A P) ↔ P(elem(A)(i))
+  Tuple.left  (filter-elem-membership {A = A}{P = P}) = indexFilter-elem-membershipₗ {A = A}{P = P ∘ elem(A)}
+  Tuple.right (filter-elem-membership {P = P}) ([∃]-intro (intro iA PiA) ⦃ pp ⦄) = substitute₁(P) (symmetry(_≡_) pp) PiA
+
+  filter-membership : ∀{A : Iset{ℓ}}{P} ⦃ _ : UnaryRelator(P) ⦄ {x : Iset{ℓ}} → (x ∈ filter A P) ↔ ((x ∈ A) ∧ P(x))
+  ∃.witness (Tuple.left(filter-membership {P = P}) ([∧]-intro ([∃]-intro i ⦃ p ⦄) pb)) = intro i (substitute₁(P) p pb)
+  ∃.proof   (Tuple.left(filter-membership) ([∧]-intro ([∃]-intro i ⦃ p ⦄) pb)) = p
+  ∃.witness (Tuple.left (Tuple.right(filter-membership) ([∃]-intro (intro iA PiA) ⦃ pp ⦄))) = iA
+  ∃.proof (Tuple.left (Tuple.right(filter-membership) ([∃]-intro (intro iA PiA) ⦃ pp ⦄))) = pp
+  Tuple.right (Tuple.right(filter-membership {P = P}) ([∃]-intro (intro iA PiA) ⦃ pp ⦄)) = substitute₁(P) (symmetry(_≡_) pp) PiA
+
+  mapSet-membership : ∀{A : Iset{ℓ}}{f} ⦃ _ : Function(f) ⦄ {y : Iset{ℓ}} → (y ∈ mapSet f(A)) ↔ ∃(x ↦ (x ∈ A) ∧ (y ≡ f(x)))
+  ∃.witness (Tuple.left  (mapSet-membership)                         ([∃]-intro x ⦃ [∧]-intro xA fxy ⦄)) = [∃]-witness xA
+  ∃.proof   (Tuple.left  (mapSet-membership {A = A} {f = f} {y = y}) ([∃]-intro x ⦃ [∧]-intro xA fxy ⦄)) =
+    y                                   🝖[ _≡_ ]-[ fxy ]
+    f(x)                                🝖[ _≡_ ]-[ [≡]-with(f) ([∃]-proof xA) ]
+    f(elem(A) ([∃]-witness xA))         🝖[ _≡_ ]-[]
+    elem (mapSet f(A)) ([∃]-witness xA) 🝖[ _≡_ ]-end
+  ∃.witness (Tuple.right (mapSet-membership {A = A}) ([∃]-intro iA)) = elem(A) iA
+  Tuple.left  (∃.proof (Tuple.right (mapSet-membership {A = A}) ([∃]-intro iA ⦃ p ⦄))) = [∈]-of-elem {A = A} {ia = iA}
+  Tuple.right (∃.proof (Tuple.right  mapSet-membership          ([∃]-intro iA ⦃ p ⦄))) = p
+
+  open import Logic.Classical
+  module _ ⦃ classical : ∀{ℓ}{P} → Classical{ℓ}(P) ⦄ where
+    indexFilterBool-subset : ∀{A : Iset{ℓ}}{P} → (indexFilterBool A P ⊆ A)
+    _⊇_.map indexFilterBool-subset (intro iA _) = iA
+    _⊇_.proof (indexFilterBool-subset {ℓ = ℓ}{A = A}{P = P}) {intro iA (Lvl.up PiA)} =
+      elem (indexFilterBool A P) (intro iA (Lvl.up PiA))                        🝖[ _≡_ ]-[]
+      elem (indexFilter A (Lvl.Up ∘ IsTrue ∘ P)) (intro iA (Lvl.up PiA))        🝖[ _≡_ ]-[]
+      elem A (Σ.left {B = Lvl.Up{ℓ₂ = ℓ} ∘ IsTrue ∘ P} (intro iA (Lvl.up PiA))) 🝖[ _≡_ ]-[]
+      elem A iA                                                                 🝖[ _≡_ ]-end
+
+    ℘-membershipₗ : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (B ∈ ℘(A)) ← (B ⊆ A)
+    ∃.witness (℘-membershipₗ {A = A}{B = B} (intro map proof)) iA = decide(∃(iB ↦ Id(map iB) iA))
+    _⊇_.map (_≡_.left (∃.proof (℘-membershipₗ {A = A} {B = B} (intro map proof)))) (intro iA (Lvl.up mapiBiA)) = [∃]-witness([↔]-to-[←] decide-is-true mapiBiA)
+    _⊇_.proof (_≡_.left (∃.proof (℘-membershipₗ {ℓ = ℓ} {A = A} {B = B} (intro map proof)))) {intro iA (Lvl.up mapiBiA)} =
+      elem (elem (℘ A) f) (intro iA (Lvl.up mapiBiA))                              🝖[ _≡_ ]-[]
+      elem (indexFilterBool A f) (intro iA (Lvl.up mapiBiA))                        🝖[ _≡_ ]-[]
+      elem (indexFilter A (Lvl.Up ∘ IsTrue ∘ f)) (intro iA (Lvl.up mapiBiA))        🝖[ _≡_ ]-[]
+      elem A (Σ.left {B = Lvl.Up{ℓ₂ = ℓ} ∘ IsTrue ∘ f} (intro iA (Lvl.up mapiBiA))) 🝖[ _≡_ ]-[]
+      elem A iA                                                                     🝖[ _≡_ ]-[ [≡]-to-equivalence([≡]-with(elem A) ([∃]-proof emapiBiA)) ]-sym
+      elem A (map ([∃]-witness emapiBiA)) 🝖[ _≡_ ]-[ symmetry(_≡_) (proof{[∃]-witness emapiBiA}) ]
+      elem B ([∃]-witness emapiBiA)       🝖[ _≡_ ]-end
+      where
+        f = \iA → decide(∃(iB ↦ Id(map iB) iA))
+        emapiBiA = [↔]-to-[←] decide-is-true mapiBiA
+        open import Relator.Equals.Proofs.Equivalence using ([≡]-to-equivalence)
+    _⊇_.map (_≡_.right (∃.proof (℘-membershipₗ {A = A} {B = B} (intro map proof)))) iB = intro (map iB) (Lvl.up ([↔]-to-[→] decide-is-true ([∃]-intro iB ⦃ intro ⦄)))
+    _⊇_.proof (_≡_.right (∃.proof (℘-membershipₗ {A = A} {B = B} (intro map proof)))) = proof
+
+    ℘-membershipᵣ : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (B ∈ ℘(A)) → (B ⊆ A)
+    ℘-membershipᵣ ([∃]-intro witness ⦃ b≡indexFilterBool ⦄) = substitute₂ₗ(_⊆_) (symmetry(_≡_) b≡indexFilterBool) indexFilterBool-subset
+
+    ℘-membership : ∀{A : Iset{ℓ}}{x : Iset{ℓ}} → (x ∈ ℘(A)) ↔ (x ⊆ A)
+    ℘-membership = [↔]-intro ℘-membershipₗ ℘-membershipᵣ
+
+
 
   -- Iset-2-2 : ∀{P : Iset{ℓ} → Stmt{ℓ₂}} → (∀{x : Iset{ℓ}} → (∀{y : Iset{ℓ}} → (y ∈ x) → P(y) → P(x))) → (∀{A : Iset{ℓ}} → P(A))
   -- Iset-2-2 {P = P} proof {A = A} = Iset-induction {P = P} {Index(A)}{elem(A)} (p ↦ proof {intro (elem(A))}{A} {!!} {!!}) {A = A}

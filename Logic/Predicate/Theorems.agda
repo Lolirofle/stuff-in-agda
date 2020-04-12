@@ -7,7 +7,7 @@ open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Type
-open import Type.Empty using (◊)
+open import Type.Empty using (◊ ; [◊]-existence)
 
 ------------------------------------------
 -- Swapping nested quantifiers
@@ -23,8 +23,6 @@ module _ {ℓₒ₁}{ℓₒ₂}{ℓₗ} {X : Type{ℓₒ₁}}{Y : Type{ℓₒ₂
 -- Introducing and eliminating unnecessary quantifiers when the predicate is constant
 
 module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} ⦃ pos : ◊ X ⦄ {P : Stmt{ℓₗ}} where
-  open Type.Empty{ℓₒ}
-
   [∃]-unnecessary-intro : P → ∃{Obj = X}(x ↦ P)
   [∃]-unnecessary-intro(p) = [∃]-intro([◊]-existence ⦃ pos ⦄) ⦃ p ⦄
 
@@ -91,8 +89,6 @@ module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} {P : X → Stmt{ℓₗ}} where
     ))
 
 module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} ⦃ pos : ◊ X ⦄ {P : X → Stmt{ℓₗ}} where
-  open Type.Empty{ℓₒ}
-
   [¬∃]-to-[∃¬] : ¬(∃ P) → ∃(¬_ ∘ P)
   [¬∃]-to-[∃¬] (nexpx) = [∃]-intro ([◊]-existence ⦃ pos ⦄) ⦃ [¬∃]-to-[∀¬] {ℓₒ}{ℓₗ} {X}{P} (nexpx) ⦄
 
@@ -137,6 +133,10 @@ module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} {P : X → Stmt{ℓₗ}} where
   [¬¬∀]-to-[∀¬¬] : ¬¬ ∀ₗ(x ↦ (P(x))) → ∀ₗ(x ↦ ¬¬(P(x)))
   [¬¬∀]-to-[∀¬¬] = [¬∃¬]-to-[∀¬¬] ∘ [¬¬∀]-to-[¬∃¬]
 
+  [∀]-to-[∃]-conditional-by-existence : ∃(P) → ∀{Q : X → Stmt{ℓₗ}} → ∀ₗ(x ↦ (P(x) → Q(x))) → ∃(x ↦ (P(x) ∧ Q(x)))
+  ∃.witness ([∀]-to-[∃]-conditional-by-existence p pq) = [∃]-witness p
+  ∃.proof   ([∀]-to-[∃]-conditional-by-existence p pq) = [∧]-intro ([∃]-proof p) (pq{[∃]-witness p} ([∃]-proof p))
+
   -- TODO: Probably unprovable because people said so. Not sure why. Maybe because (¬¬A is valid in constructive logic) ⇔ (A is valid in classical logic), and therefore this would not be possible because everything here is in constructive logic.
   -- [∀¬¬]-to-[¬¬∀] : ∀{X}{P : X → Stmt} → ¬¬∀ₗ(x ↦ (P(x))) ← ∀ₗ(x ↦ ¬¬(P(x)))
 
@@ -144,8 +144,6 @@ module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} {P : X → Stmt{ℓₗ}} where
 -- Changing quantifier
 
 module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} ⦃ pos : ◊ X ⦄ {P : X → Stmt{ℓₗ}} where
-  open Type.Empty{ℓₒ}
-
   -- Note: If X would be empty, then this would be unprovable because [∀]-elim needs a constructed element.
   [∀ₑ]-to-[∃] : ∀ₗ(x ↦ P(x)) → ∃(x ↦ P(x))
   [∀ₑ]-to-[∃] (apx) =

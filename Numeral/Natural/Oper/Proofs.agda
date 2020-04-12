@@ -10,6 +10,7 @@ open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Induction
+open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Order
 -- open import Numeral.Natural.Relation.Order.Proofs
 -- open import Numeral.Natural.Relation.Order.Classical
@@ -231,9 +232,9 @@ commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
     ))
   )
 
-postulate [⋅]-cancellationₗ : ∀{x} → ⦃ _ : (x ≢ 0) ⦄ → (Names.CancellationOnₗ(_⋅_)(x))
+postulate [⋅]-cancellationₗ : ∀{x} → ⦃ _ : Positive(x) ⦄ → (Names.CancellationOnₗ(_⋅_)(x))
 
-postulate [⋅]-cancellationᵣ : ∀{x} → ⦃ _ : (x ≢ 0) ⦄ → (Names.CancellationOnᵣ(_⋅_)(x))
+postulate [⋅]-cancellationᵣ : ∀{x} → ⦃ _ : Positive(x) ⦄ → (Names.CancellationOnᵣ(_⋅_)(x))
 {-[⋅]-cancellationᵣ {𝟎}       ⦃ nx0 ⦄ {y₁}   {y₂}   p with () ← nx0 p
 [⋅]-cancellationᵣ {𝐒 𝟎}     ⦃ nx0 ⦄ {y₁}   {y₂}   p = p
 [⋅]-cancellationᵣ {𝐒 (𝐒 x)} ⦃ nx0 ⦄ {𝟎}    {𝟎}    p = [≡]-intro

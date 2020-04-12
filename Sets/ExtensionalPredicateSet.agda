@@ -14,15 +14,17 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
-open import Sets.Setoid using (Equiv ; Function ; UnaryRelator ; BinaryRelator ; substitute₁ ; substitute₂ ; [≡]-with ; [≡]-with2ₗ ; [≡]-with2ᵣ) renaming (_≡_ to _≡ₑ_)
+open import Sets.Setoid using (Equiv ; Function ; UnaryRelator ; BinaryRelator ; substitute₁ ; substitute₁ₗ ; substitute₁ᵣ ; substitute₁ₗᵣ ; substitute₂ ; [≡]-with ; [≡]-with2ₗ ; [≡]-with2ᵣ) renaming (_≡_ to _≡ₑ_)
 open import Structure.Function.Domain
 open import Structure.Relator.Equivalence
+import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
+open import Structure.Relator.Proofs
 open import Syntax.Transitivity
 open import Type
 open import Type.Size
 
-private variable ℓ ℓₒ ℓ₁ ℓ₂ : Lvl.Level
+private variable ℓ ℓₒ ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
 
 -- A set of objects of a certain type where equality is based on setoids.
 -- This is defined by the containment predicate (_∋_) and a proof that it respects the setoid structure.
@@ -38,7 +40,7 @@ open PredSet using (preserve-equiv)
 
 -- Element-set relations.
 module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
-  -- The inclusion relation.
+  -- The membership relation.
   -- (a ∈ A) is read "The element a is included in the set A".
   _∈_ : T → PredSet{ℓ}(T) → Stmt
   _∈_ = swap(_∋_)
@@ -48,6 +50,9 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
 
   _∌_ : PredSet{ℓ}(T) → T → Stmt
   _∌_ = (¬_) ∘₂ (_∋_)
+
+  NonEmpty : PredSet{ℓ}(T) → Stmt
+  NonEmpty(S) = ∃(_∈ S)
 
 -- Set-bounded quantifiers.
 module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
@@ -100,6 +105,28 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
   _∖_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → PredSet(T)
   A ∖ B = (A ∩ (∁ B))
 
+  filter : (P : T → Stmt{ℓ₁}) ⦃ _ : UnaryRelator(P) ⦄ → PredSet{ℓ₂}(T) → PredSet(T)
+  filter P(A) ∋ x = (x ∈ A) ∧ P(x)
+  _⨯_.left (UnaryRelator.substitution (preserve-equiv (filter P A)) xy ([∧]-intro xA Px)) = substitute₁(A ∋_) xy xA
+  _⨯_.right (UnaryRelator.substitution (preserve-equiv (filter P A)) xy ([∧]-intro xA Px)) = substitute₁(P) xy Px
+
+  ⊷ : (P : T → Stmt{ℓ₁}) ⦃ _ : UnaryRelator(P) ⦄ → PredSet(T)
+  (⊷ P) ∋ x = P(x)
+  preserve-equiv (⊷ P ⦃ p ⦄) = p
+
+  --unapply : ⦃ Equiv(B) ⦄ → (f : A → B) → B → PredSet(A)
+  -- unapply f(y) x = f(x) ≡ₛ y
+
+  --map : ⦃ Equiv(B) ⦄ → (f : A → B) → PredSet{ℓ}(A) → PredSet(B)
+  --map f(S) y = Overlapping(S)(unapply f(y))
+
+unmap : ∀{A : Type{ℓ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ → (f : A → B) ⦃ _ : Function(f) ⦄ → PredSet{ℓ}(B) → PredSet(A)
+(unmap f(Y)) ∋ x = f(x) ∈ Y
+preserve-equiv (unmap f x) = [∘]-unaryRelator
+
+  --⊶ : ⦃ Equiv(B) ⦄ → (f : A → B) → PredSet(B)
+  --⊶ f y = ∃(unapply f(y))
+
 -- Set-set relations.
 module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
   record _⊆_ (A : PredSet{ℓ₁}(T)) (B : PredSet{ℓ₂}(T)) : Stmt{ℓₒ ⊔ ℓ₁ ⊔ Lvl.𝐒(ℓ₂)} where
@@ -122,6 +149,9 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
     [≡]-symmetry : Symmetry(_≡_ {ℓ})
     Symmetry.proof [≡]-symmetry (intro xy) = intro([↔]-symmetry xy)
 
+  [≡]-transitivity-raw : ∀{A : PredSet{ℓ₁}(T)}{B : PredSet{ℓ₂}(T)}{C : PredSet{ℓ₃}(T)} → (A ≡ B) → (B ≡ C) → (A ≡ C)
+  [≡]-transitivity-raw (intro xy) (intro yz) = intro([↔]-transitivity xy yz)
+
   instance
     [≡]-transitivity : Transitivity(_≡_ {ℓ})
     Transitivity.proof [≡]-transitivity (intro xy) (intro yz) = intro([↔]-transitivity xy yz)
@@ -140,6 +170,10 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
     -- Note: The purpose of this module is to satisfy this property for arbitrary equivalences.
     [∋]-binaryRelator : BinaryRelator(_∋_ {ℓ}{T = T})
     BinaryRelator.substitution [∋]-binaryRelator (intro pₛ) pₑ p = [↔]-to-[→] pₛ(substitute₁(_) pₑ p)
+
+  instance
+    [∋]-unaryRelatorₗ : ∀{a : T} → UnaryRelator(A ↦ _∋_ {ℓ} A a)
+    [∋]-unaryRelatorₗ = BinaryRelator.left [∋]-binaryRelator
 
 -- TODO: There are level problems here that I am not sure how to solve. The big union of a set of sets are not of the same type as the inner sets. So, for example it would be useful if (⋃ As : PredSet{ℓₒ ⊔ Lvl.𝐒(ℓ₁)}(T)) and (A : PredSet{ℓ₁}(T)) for (A ∈ As) had the same type/levels when (As : PredSet{Lvl.𝐒(ℓ₁)}(PredSet{ℓ₁}(T))) so that they become comparable. But here, the result of big union is a level greater.
 module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
@@ -187,3 +221,15 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
   ⋂ᵢ-of-bijection : ∀{A : Type{ℓ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ → ∀{f : B → PredSet{ℓ}(T)} ⦃ _ : Function(f)⦄ → (([∃]-intro g) : A ≍ B) → (⋂ᵢ{I = A}(f ∘ g) ≡ ⋂ᵢ{I = B}(f))
   _⨯_.left (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = p{g(b)}
   _⨯_.right (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = substitute₂(_∋_) ([≡]-with(f) inv-inverseᵣ) (reflexivity(_≡ₑ_)) (p{inv g(b)})
+
+  -- TODO: Levels
+  -- singleton-function-raw : ∀{A : Type{ℓ}} ⦃ _ : Equiv(A) ⦄ → ∀{x y : T} → (x ≡ₑ y) → ((• x) ≡ (• y))
+  -- _≡_.proof (singleton-function-raw {x = x}{y = y} xy) {a} = [↔]-intro {!substitute₁ₗ(x ∈_) xy!} {!!}
+  {-
+  instance
+    singleton-function : ∀{A : Type{ℓ}} ⦃ _ : Equiv(A) ⦄ → Function{A = A}(•_)
+    _≡_.proof (Function.congruence singleton-function {x} {y} xy) {a} =
+      let (intro _) = • x
+          (intro _) = • y
+      in [↔]-intro {!substitute₁ₗ(x ∈_) xy!} {!!}
+  -}

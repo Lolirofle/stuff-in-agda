@@ -193,6 +193,11 @@ module _ where
   postpend-unequal {l = ∅}     ()
   postpend-unequal {l = y ⊰ l} p = postpend-unequal {l = l} (cancellationₗ(_⊰_) p)
 
+  [++]-middle-prepend-postpend : postpend x l₁ ++ l₂ ≡ l₁ ++ (x ⊰ l₂)
+  [++]-middle-prepend-postpend {l₁ = ∅} {l₂ = ∅} = [≡]-intro
+  [++]-middle-prepend-postpend {l₁ = ∅} {l₂ = x ⊰ l₂} = [≡]-intro
+  [++]-middle-prepend-postpend {l₁ = x ⊰ l₁} {l₂ = l₂} = [≡]-with (x ⊰_) ([++]-middle-prepend-postpend {l₁ = l₁} {l₂ = l₂})
+
   {-
   [⊰][++]-unequal : ∀{T : Type{ℓ}}{x : T}{a l} → ¬(a ++ (x ⊰ l) ≡ l)
   [⊰][++]-unequal {x = x} {a} {l} p = {![≡]-with(_++ l) postpend-[++] 🝖 associativity(_++_) {x = a}{y = singleton x}{z = l} 🝖 p!} where
