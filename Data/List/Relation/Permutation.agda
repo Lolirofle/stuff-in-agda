@@ -91,7 +91,7 @@ module Proofs where
     permutation-mapping-injective {p = p} = intro(proof p) where
       proof : (p : (l₁ permutes l₂)) → Names.Injective(permutation-mapping p)
       proof (prepend p) {𝟎}   {𝟎}   eq = [≡]-intro
-      proof (prepend p) {𝐒 x} {𝐒 y} eq = [≡]-with(𝐒) (proof p (injective(𝐒) ⦃ [𝐒]-injective ⦄ eq))
+      proof (prepend p) {𝐒 x} {𝐒 y} eq = congruence₁(𝐒) (proof p (injective(𝐒) ⦃ [𝐒]-injective ⦄ eq))
       proof swap {𝟎}       {𝟎}       eq = [≡]-intro
       proof swap {𝟎}       {𝐒 (𝐒 y)} ()
       proof swap {𝐒 (𝐒 x)} {𝟎}       ()
@@ -105,14 +105,14 @@ module Proofs where
       proof : (p : (l₁ permutes l₂)) → Names.Surjective(permutation-mapping p)
       ∃.witness (proof p {y}) = permutation-mapping(symmetry(_permutes_) p) y
       ∃.proof (proof (prepend p) {𝟎})   = [≡]-intro
-      ∃.proof (proof (prepend p) {𝐒 y}) = [≡]-with(𝐒) (∃.proof (proof p {y}))
+      ∃.proof (proof (prepend p) {𝐒 y}) = congruence₁(𝐒) (∃.proof (proof p {y}))
       ∃.proof (proof swap {𝟎})       = [≡]-intro
       ∃.proof (proof swap {𝐒 𝟎})     = [≡]-intro
       ∃.proof (proof swap {𝐒 (𝐒 y)}) = [≡]-intro
       ∃.proof (proof (trans p q) {y}) =
         permutation-mapping (trans p q) (∃.witness (proof (trans p q))) 🝖[ _≡_ ]-[]
         (permutation-mapping (trans p q) ∘ permutation-mapping(symmetry(_permutes_) p) ∘ permutation-mapping (symmetry(_permutes_) q)) y 🝖[ _≡_ ]-[]
-        (permutation-mapping q ∘ permutation-mapping p ∘ permutation-mapping(symmetry(_permutes_) p) ∘ permutation-mapping (symmetry(_permutes_) q)) y 🝖[ _≡_ ]-[ [≡]-with(permutation-mapping q) (∃.proof (proof p {_})) ]
+        (permutation-mapping q ∘ permutation-mapping p ∘ permutation-mapping(symmetry(_permutes_) p) ∘ permutation-mapping (symmetry(_permutes_) q)) y 🝖[ _≡_ ]-[ congruence₁(permutation-mapping q) (∃.proof (proof p {_})) ]
         (permutation-mapping q ∘ permutation-mapping (symmetry(_permutes_) q)) y 🝖[ _≡_ ]-[ ∃.proof (proof q {y}) ]
         y 🝖[ _≡_ ]-end
 
@@ -136,7 +136,7 @@ module Proofs where
 
   permutes-length : (l₁ permutes l₂) → (length l₁ ≡ length l₂)
   permutes-length empty       = [≡]-intro
-  permutes-length (prepend p) = [≡]-with(𝐒) (permutes-length p)
+  permutes-length (prepend p) = congruence₁(𝐒) (permutes-length p)
   permutes-length swap        = [≡]-intro
   permutes-length (trans p q) = transitivity(_≡_) (permutes-length p) (permutes-length q)
 

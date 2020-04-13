@@ -327,7 +327,7 @@ module _ where
   ∃.witness (Tuple.left  (mapSet-membership)                         ([∃]-intro x ⦃ [∧]-intro xA fxy ⦄)) = [∃]-witness xA
   ∃.proof   (Tuple.left  (mapSet-membership {A = A} {f = f} {y = y}) ([∃]-intro x ⦃ [∧]-intro xA fxy ⦄)) =
     y                                   🝖[ _≡_ ]-[ fxy ]
-    f(x)                                🝖[ _≡_ ]-[ [≡]-with(f) ([∃]-proof xA) ]
+    f(x)                                🝖[ _≡_ ]-[ congruence₁(f) ([∃]-proof xA) ]
     f(elem(A) ([∃]-witness xA))         🝖[ _≡_ ]-[]
     elem (mapSet f(A)) ([∃]-witness xA) 🝖[ _≡_ ]-end
   ∃.witness (Tuple.right (mapSet-membership {A = A}) ([∃]-intro iA)) = elem(A) iA
@@ -352,7 +352,7 @@ module _ where
       elem (indexFilterBool A f) (intro iA (Lvl.up mapiBiA))                        🝖[ _≡_ ]-[]
       elem (indexFilter A (Lvl.Up ∘ IsTrue ∘ f)) (intro iA (Lvl.up mapiBiA))        🝖[ _≡_ ]-[]
       elem A (Σ.left {B = Lvl.Up{ℓ₂ = ℓ} ∘ IsTrue ∘ f} (intro iA (Lvl.up mapiBiA))) 🝖[ _≡_ ]-[]
-      elem A iA                                                                     🝖[ _≡_ ]-[ [≡]-to-equivalence([≡]-with(elem A) ([∃]-proof emapiBiA)) ]-sym
+      elem A iA                                                                     🝖[ _≡_ ]-[ [≡]-to-equivalence(congruence₁(elem A) ([∃]-proof emapiBiA)) ]-sym
       elem A (map ([∃]-witness emapiBiA)) 🝖[ _≡_ ]-[ symmetry(_≡_) (proof{[∃]-witness emapiBiA}) ]
       elem B ([∃]-witness emapiBiA)       🝖[ _≡_ ]-end
       where

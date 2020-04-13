@@ -100,7 +100,7 @@ module Theorems where
   -- TODO: Is this wrong?
   -- step-isWordAccepted : ∀{Q}{Σ} → (auto : DFA(Q)(Σ)) → ∀{c}{w} → DFA.isWordAccepted(auto)(c ⊰ w) ≡ DFA.isWordAccepted(Dfa (DFA.δ auto) (DFA.δ(auto)(DFA.q₀(auto))(c)) (DFA.F auto))(w)
   -- step-isWordAccepted auto {c}{[]} = [≡]-intro
-  -- step-isWordAccepted auto {c}{w} = [≡]-with(DFA.F(auto)) [≡]-intro
+  -- step-isWordAccepted auto {c}{w} = congruence₁(DFA.F(auto)) [≡]-intro
 
   Language-isWordAccepted : ∀{Q}{Σ} → (auto : DFA(Q)(Σ)) → ∀{w} → DFA.isWordAccepted(auto)(w) ≡ w ∈? (𝔏(auto))
   Language-isWordAccepted{_}{Σ}(auto){w} = List-induction base step {w} where
@@ -132,7 +132,7 @@ module Theorems where
     [∁]-δ̂ {q}{a ⊰ w} = [∁]-δ̂ {DFA.δ(∁ auto)(q)(a)}{w}
 
     [∁]-isWordAccepted : ∀{w} → DFA.isWordAccepted(∁ auto)(w) ≡ !(DFA.isWordAccepted(auto)(w))
-    [∁]-isWordAccepted {w} = [≡]-with(x ↦ !(DFA.F(auto)(x))) ([∁]-δ̂{DFA.q₀(auto)}{w})
+    [∁]-isWordAccepted {w} = congruence₁(x ↦ !(DFA.F(auto)(x))) ([∁]-δ̂{DFA.q₀(auto)}{w})
 
     -- TODO: Prove ∁ postulates regarding languages before accepting them, because the definition of ∁ for languages might be wrong.
     -- [∁]-language : 𝔏(∁ auto) ≡ Oper.∁(𝔏(auto))
@@ -171,10 +171,10 @@ module Theorems where
     -- TODO: δ̂-on-[𝁼]
 
     [⨯]-isWordAccepted : ∀{w} → DFA.isWordAccepted(auto ⨯ auto₂)(w) ≡ DFA.isWordAccepted(auto)(w) && DFA.isWordAccepted(auto₂)(w)
-    [⨯]-isWordAccepted {w} = [≡]-with(DFA.F(auto ⨯ auto₂)) ([⨯]-δ̂{DFA.q₀(auto)}{DFA.q₀(auto₂)}{w})
+    [⨯]-isWordAccepted {w} = congruence₁(DFA.F(auto ⨯ auto₂)) ([⨯]-δ̂{DFA.q₀(auto)}{DFA.q₀(auto₂)}{w})
 
     [+]-isWordAccepted : ∀{w} → DFA.isWordAccepted(auto + auto₂)(w) ≡ DFA.isWordAccepted(auto)(w) || DFA.isWordAccepted(auto₂)(w)
-    [+]-isWordAccepted {w} = [≡]-with(DFA.F(auto + auto₂)) ([+]-δ̂{DFA.q₀(auto)}{DFA.q₀(auto₂)}{w})
+    [+]-isWordAccepted {w} = congruence₁(DFA.F(auto + auto₂)) ([+]-δ̂{DFA.q₀(auto)}{DFA.q₀(auto₂)}{w})
 
     -- TODO: Prove postulates
     postulate [⨯]-language : 𝔏(auto ⨯ auto₂) ≡ 𝔏(auto) ∩ 𝔏(auto₂)

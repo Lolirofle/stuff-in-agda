@@ -56,10 +56,10 @@ module NumAndDivisionProofs where
   testImpl = reflexivity
 
   fnℕ+1 : (𝟎 ≡ 𝐒(𝟎)) → (𝐒(𝟎) ≡ (𝐒 ∘ 𝐒)(𝟎))
-  fnℕ+1 = [≡]-with(𝐒)
+  fnℕ+1 = congruence₁(𝐒)
 
   fnℕ+3 : ∀{x} → (x ≡ 5) → (x + 3 ≡ 8)
-  fnℕ+3 = [≡]-with(x ↦ x + 3)
+  fnℕ+3 = congruence₁(x ↦ x + 3)
 
   ℕ8Eqℕ2⋅4 : 8 ≡ 2 ⋅ 4
   ℕ8Eqℕ2⋅4 = reflexivity
@@ -244,7 +244,7 @@ module testEqProof where
 
   minSkit : ⦃ _ : Absorberₗ (_⋅_) (0) ⦄ → ⦃ _ : Identityᵣ (_+_) (0) ⦄ → ∀{x} → (1 ≡ ((0 ⋅ x) + 1) + 0)
   minSkit ⦃ absorb ⦄ ⦃ id ⦄ {x} =
-    (([≡]-with(_+ 1)
+    ((congruence₁(_+ 1)
       ((symmetry (absorb {x})) :of: (0 ≡ 0 ⋅ x))
     ) :of: (1 ≡ (0 ⋅ x) + 1))
     🝖 ((symmetry id) :of: (_ ≡ ((0 ⋅ x) + 1) + 0))
@@ -393,7 +393,7 @@ module testPrimitiveRecursiveDefinitions where
   proofPlus : ∀{a b} → evaluate plus(b , a) ≡ (a Nat.+ b)
   proofPlus{𝟎}   {𝟎}    = [≡]-intro
   proofPlus{𝐒(_)}{𝟎}    = [≡]-intro
-  proofPlus{a}   {𝐒(b)} = [≡]-with(𝐒) (proofPlus{a}{b})
+  proofPlus{a}   {𝐒(b)} = congruence₁(𝐒) (proofPlus{a}{b})
 
   is-zero : ℕ → ℕ
   is-zero(0) = 1

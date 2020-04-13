@@ -71,5 +71,5 @@ module _  ⦃ _ : Equiv(C) ⦄ {f₁ f₂ : A → C} {g₁ g₂ : B → C} where
 
 module _  ⦃ _ : Equiv(A) ⦄ ⦃ _ : Equiv(B) ⦄ ⦃ _ : Equiv(C) ⦄ {f₁ f₂ : A → C} ⦃ _ : Function(f₁) ⦄ {g₁ g₂ : B → C} ⦃ _ : Function(g₁) ⦄  {x₁ x₂ : (A ‖ B)} where
   map1-eq : (f₁ ≡ f₂) → (g₁ ≡ g₂) → (x₁ ≡ x₂) → (map1 f₁ g₁ x₁ ≡ map1 f₂ g₂ x₂)
-  map1-eq (intro f₁f₂) (intro g₁g₂) (Left  xy) = [≡]-with(f₁) xy 🝖 f₁f₂
-  map1-eq (intro f₁f₂) (intro g₁g₂) (Right xy) = [≡]-with(g₁) xy 🝖 g₁g₂
+  map1-eq (intro f₁f₂) (intro g₁g₂) (Left  xy) = congruence₁(f₁) xy 🝖 f₁f₂
+  map1-eq (intro f₁f₂) (intro g₁g₂) (Right xy) = congruence₁(g₁) xy 🝖 g₁g₂

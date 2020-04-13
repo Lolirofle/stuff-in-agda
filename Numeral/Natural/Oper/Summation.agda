@@ -30,7 +30,7 @@ open import Functional
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Relation.Order
 open import Relator.Equals hiding (_≡_)
-open import Relator.Equals.Proofs.Equivalence hiding ([≡]-with)
+open import Relator.Equals.Proofs.Equivalence hiding (congruence₁)
 open import Structure.Setoid
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
@@ -57,8 +57,8 @@ Range-prepend {𝐒 a} {𝐒 b} ⦃ [≤]-with-[𝐒] ⦃ ab ⦄ ⦄ rewrite Ran
 
 Range-postpend : ∀{a b} → ⦃ _ : (a < 𝐒(b)) ⦄ → (a ‥ 𝐒(b) ≡ postpend b (a ‥ b))
 Range-postpend {𝟎}   {𝟎}   ⦃ [≤]-with-[𝐒] ⦄ = [≡]-intro
-Range-postpend {𝟎}   {𝐒 b} ⦃ [≤]-with-[𝐒] ⦄  = [≡]-with(prepend 𝟎) $
-  map 𝐒(𝟎 ‥ 𝐒(b))                 🝖[ _≡_ ]-[ [≡]-with(map 𝐒) (Range-postpend {𝟎}{b}) ]
+Range-postpend {𝟎}   {𝐒 b} ⦃ [≤]-with-[𝐒] ⦄  = congruence₁(prepend 𝟎) $
+  map 𝐒(𝟎 ‥ 𝐒(b))                 🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-postpend {𝟎}{b}) ]
   map 𝐒(postpend b (𝟎 ‥ b))       🝖[ _≡_ ]-[ map-postpend ]
   postpend (𝐒(b)) (map 𝐒(𝟎 ‥ b))  🝖-end
 Range-postpend {𝐒 a} {𝐒 b} ⦃ [≤]-with-[𝐒] ⦃ 𝐒ab ⦄ ⦄
@@ -70,7 +70,7 @@ Range-length {𝟎} {𝟎} = [≡]-intro
 Range-length {𝟎} {𝐒 b}
   rewrite length-map{f = 𝐒}{l = 𝟎 ‥ b}
   rewrite Range-length {𝟎} {b}
-  = [≡]-with(𝐒) [≡]-intro
+  = congruence₁(𝐒) [≡]-intro
 Range-length {𝐒 a} {𝟎} = [≡]-intro
 Range-length {𝐒 a} {𝐒 b}
   rewrite length-map{f = 𝐒}{l = a ‥ b}
@@ -89,13 +89,13 @@ Range-singleton {𝐒 a}
 
 Range-concat : ∀{a b c} → ⦃ ab : (a ≤ b) ⦄ ⦃ bc : (b < c) ⦄ → ((a ‥ b) ++ (b ‥ c) ≡ a ‥ c)
 Range-concat {𝟎} {𝟎}   {𝐒 c} ⦃ [≤]-minimum ⦄ ⦃ [≤]-with-[𝐒] ⦄ = [≡]-intro
-Range-concat {𝟎} {𝐒 b} {𝐒 c} ⦃ [≤]-minimum ⦄ ⦃ [≤]-with-[𝐒] ⦄ = [≡]-with (prepend 0) $
+Range-concat {𝟎} {𝐒 b} {𝐒 c} ⦃ [≤]-minimum ⦄ ⦃ [≤]-with-[𝐒] ⦄ = congruence₁ (prepend 0) $
   map 𝐒(𝟎 ‥ b) ++ map 𝐒 (b ‥ c) 🝖[ _≡_ ]-[ map-[++] {l₁ = 𝟎 ‥ b}{l₂ = b ‥ c} ]-sym
-  map 𝐒((𝟎 ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ [≡]-with(map 𝐒) (Range-concat {𝟎} {b} {c}) ]
+  map 𝐒((𝟎 ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-concat {𝟎} {b} {c}) ]
   map 𝐒(𝟎 ‥ c)                  🝖-end
 Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with-[𝐒] ⦄ =
   map 𝐒(a ‥ b) ++ map 𝐒 (b ‥ c) 🝖[ _≡_ ]-[ map-[++] {l₁ = a ‥ b}{l₂ = b ‥ c} ]-sym
-  map 𝐒((a ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ [≡]-with(map 𝐒) (Range-concat {a} {b} {c}) ]
+  map 𝐒((a ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-concat {a} {b} {c}) ]
   map 𝐒(a ‥ c)                  🝖-end
 
 
@@ -109,19 +109,19 @@ Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with
 ∑-postpend : ∀{f}{x}{r} → (∑(postpend x r) f ≡ ∑(r) f + f(x))
 ∑-postpend {f} {x} {∅} = reflexivity(_≡_)
 ∑-postpend {f} {x} {r₀ ⊰ r} =
-  f(r₀) + ∑(postpend x r) f  🝖[ _≡_ ]-[ [≡]-with2ᵣ(_+_)(f(r₀)) (∑-postpend {f} {x} {r}) ]
+  f(r₀) + ∑(postpend x r) f  🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(r₀)) (∑-postpend {f} {x} {r}) ]
   f(r₀) + (∑(r) f + f(x))    🝖[ _≡_ ]-[ associativity(_+_) {f(r₀)}{∑(r) f}{f(x)} ]-sym
   (f(r₀) + ∑(r) f) + f(x)    🝖-end
 
 ∑-compose : ∀{f}{g}{r} → ∑(r) (f ∘ g) ≡ ∑(map g r) f
-∑-compose {f}{g}{r} = [≡]-with(foldᵣ(_+_) 𝟎) (map-preserves-[∘] {f = f}{g = g}{l = r})
+∑-compose {f}{g}{r} = congruence₁(foldᵣ(_+_) 𝟎) (map-preserves-[∘] {f = f}{g = g}{l = r})
 
 ∑-add : ∀{r}{f g} → (∑(r) f + ∑(r) g ≡ ∑(r) (x ↦ f(x) + g(x)))
 ∑-add {∅}      {f} {g} = reflexivity(_≡_)
 ∑-add {r₀ ⊰ r} {f} {g} =
   ∑(prepend r₀ r) f + ∑(prepend r₀ r) g    🝖[ _≡_ ]-[]
   (f(r₀) + ∑(r) f) + (g(r₀) + ∑(r) g)      🝖[ _≡_ ]-[ One.associate-commute4 {a = f(r₀)}{b = ∑(r) f}{c = g(r₀)}{d = ∑(r) g} (commutativity(_+_){x = ∑(r) f}{y = g(r₀)}) ]
-  (f(r₀) + g(r₀)) + (∑(r) f + ∑(r) g)      🝖[ _≡_ ]-[ [≡]-with2ᵣ(_+_)(f(r₀) + g(r₀)) (∑-add {r} {f} {g}) ]
+  (f(r₀) + g(r₀)) + (∑(r) f + ∑(r) g)      🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(r₀) + g(r₀)) (∑-add {r} {f} {g}) ]
   (f(r₀) + g(r₀)) + ∑(r) (x ↦ f(x) + g(x)) 🝖[ _≡_ ]-[]
   ∑(prepend r₀ r) (x ↦ f(x) + g(x))        🝖-end
 
@@ -130,13 +130,13 @@ Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with
 ∑-scalar-mult : ∀{r}{c}{f} → (∑(r) (x ↦ c ⋅ f(x)) ≡ c ⋅ (∑(r) f))
 ∑-scalar-mult {empty}        {c} {f} = [≡]-intro
 ∑-scalar-mult {prepend r₀ r} {c} {f} =
-  (c ⋅ f(r₀)) + ∑(r) (x ↦ c ⋅ f(x)) 🝖[ _≡_ ]-[ [≡]-with2ᵣ(_+_)(c ⋅ f(r₀)) (∑-scalar-mult {r}{c}{f}) ]
+  (c ⋅ f(r₀)) + ∑(r) (x ↦ c ⋅ f(x)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(c ⋅ f(r₀)) (∑-scalar-mult {r}{c}{f}) ]
   (c ⋅ f(r₀)) + (c ⋅ (∑(r) f))      🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) {c}{f(r₀)}{∑(r) f} ]-sym
   c ⋅ (f(r₀) + (∑(r) f))            🝖-end
 
 ∑-const : ∀{r}{c} → (∑(r) (const c) ≡ c ⋅ length(r))
 ∑-const {empty}      {c} = reflexivity(_≡_)
-∑-const {prepend x r}{c} = [≡]-with2ᵣ(_+_)(c) (∑-const {r}{c})
+∑-const {prepend x r}{c} = congruence₂ᵣ(_+_)(c) (∑-const {r}{c})
 
 ∑-zero : ∀{r} → (∑(r) (const 𝟎) ≡ 𝟎)
 ∑-zero {r} = ∑-const {r}{𝟎}
@@ -147,7 +147,7 @@ Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with
 ∑-concat : ∀{f}{r₁ r₂} → (∑(r₁ ++ r₂) f ≡ ∑(r₁) f + ∑(r₂) f)
 ∑-concat {f} {empty}        {r₂} = [≡]-intro
 ∑-concat {f} {prepend x r₁} {r₂} =
-  f(x) + ∑(r₁ ++ r₂) f      🝖[ _≡_ ]-[ [≡]-with2ᵣ(_+_)(f(x)) (∑-concat {f}{r₁}{r₂}) ]
+  f(x) + ∑(r₁ ++ r₂) f      🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(x)) (∑-concat {f}{r₁}{r₂}) ]
   f(x) + (∑(r₁) f + ∑ r₂ f) 🝖[ _≡_ ]-[ associativity(_+_) {x = f(x)}{y = ∑(r₁) f}{z = ∑(r₂) f} ]-sym
   (f(x) + ∑(r₁) f) + ∑ r₂ f 🝖-end
 
@@ -169,13 +169,13 @@ Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with
   (f(x₁)(x₂) + ∑(r₂) (b ↦ f(x₁)(b))) + ∑(r₁) (a ↦ f(a)(x₂) + ∑(r₂) (b ↦ f(a)(b)))                 🝖[ _≡_ ]-[]
   (f(x₁)(x₂) + ∑(r₂) (b ↦ f(x₁)(b))) + (∑(r₁) (a ↦ f(a)(x₂) + ∑(r₂) (b ↦ f(a)(b))))               🝖[ _≡_ ]-[ associativity(_+_) {x = f(x₁)(x₂)}{y = ∑(r₂) (b ↦ f(x₁)(b))} ]
   f(x₁)(x₂) + (∑(r₂) (b ↦ f(x₁)(b)) + (∑(r₁) (a ↦ f(a)(x₂) + ∑(r₂) (b ↦ f(a)(b)))))               🝖[ _≡_ ]-[]
-  f(x₁)(x₂) + (∑(r₂) (b ↦ f(x₁)(b)) + (∑(r₁) (a ↦ ∑(x₂ ⊰ r₂) (b ↦ f(a)(b)))))                     🝖[ _≡_ ]-[ [≡]-with2ᵣ(_+_)(f(x₁)(x₂)) ([≡]-with2ᵣ(_+_)(∑(r₂) (b ↦ f(x₁)(b))) (∑-swap-nested {f}{r₁}{x₂ ⊰ r₂})) ]
+  f(x₁)(x₂) + (∑(r₂) (b ↦ f(x₁)(b)) + (∑(r₁) (a ↦ ∑(x₂ ⊰ r₂) (b ↦ f(a)(b)))))                     🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(x₁)(x₂)) (congruence₂ᵣ(_+_)(∑(r₂) (b ↦ f(x₁)(b))) (∑-swap-nested {f}{r₁}{x₂ ⊰ r₂})) ]
   f(x₁)(x₂) + (∑(r₂) (b ↦ f(x₁)(b)) + (∑(x₂ ⊰ r₂) (b ↦ ∑(r₁) (a ↦ f(a)(b)))))                     🝖[ _≡_ ]-[]
-  f(x₁)(x₂) + (∑(r₂) (b ↦ f(x₁)(b)) + (∑(r₁) (a ↦ f(a)(x₂)) + (∑(r₂) (b ↦ ∑(r₁) (a ↦ f(a)(b)))))) 🝖[ _≡_ ]-[ [≡]-with2ᵣ(_+_)(f(x₁)(x₂)) (symmetry(_≡_) (associativity(_+_) {x = ∑(r₂) (b ↦ f(x₁)(b))}{y = ∑(r₁) (a ↦ f(a)(x₂))})) ]
-  f(x₁)(x₂) + ((∑(r₂) (b ↦ f(x₁)(b)) + ∑(r₁) (a ↦ f(a)(x₂))) + (∑(r₂) (b ↦ ∑(r₁) (a ↦ f(a)(b))))) 🝖[ _≡_ ]-[ [≡]-with2ᵣ(_+_)(f(x₁)(x₂)) ([≡]-with2(_+_) (commutativity(_+_) {x = ∑(r₂) (b ↦ f(x₁)(b))}{y = ∑(r₁) (a ↦ f(a)(x₂))}) (symmetry(_≡_) (∑-swap-nested {f}{r₁}{r₂}))) ]
-  f(x₁)(x₂) + ((∑(r₁) (a ↦ f(a)(x₂)) + ∑(r₂) (b ↦ f(x₁)(b))) + ∑(r₁) (a ↦ ∑(r₂) (b ↦ f(a)(b))))   🝖[ _≡_ ]-[ [≡]-with2ᵣ(_+_)(f(x₁)(x₂)) (associativity(_+_) {x = ∑(r₁) (a ↦ f(a)(x₂))}{y = ∑(r₂) (b ↦ f(x₁)(b))}) ]
+  f(x₁)(x₂) + (∑(r₂) (b ↦ f(x₁)(b)) + (∑(r₁) (a ↦ f(a)(x₂)) + (∑(r₂) (b ↦ ∑(r₁) (a ↦ f(a)(b)))))) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(x₁)(x₂)) (symmetry(_≡_) (associativity(_+_) {x = ∑(r₂) (b ↦ f(x₁)(b))}{y = ∑(r₁) (a ↦ f(a)(x₂))})) ]
+  f(x₁)(x₂) + ((∑(r₂) (b ↦ f(x₁)(b)) + ∑(r₁) (a ↦ f(a)(x₂))) + (∑(r₂) (b ↦ ∑(r₁) (a ↦ f(a)(b))))) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(x₁)(x₂)) (congruence₂(_+_) (commutativity(_+_) {x = ∑(r₂) (b ↦ f(x₁)(b))}{y = ∑(r₁) (a ↦ f(a)(x₂))}) (symmetry(_≡_) (∑-swap-nested {f}{r₁}{r₂}))) ]
+  f(x₁)(x₂) + ((∑(r₁) (a ↦ f(a)(x₂)) + ∑(r₂) (b ↦ f(x₁)(b))) + ∑(r₁) (a ↦ ∑(r₂) (b ↦ f(a)(b))))   🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(x₁)(x₂)) (associativity(_+_) {x = ∑(r₁) (a ↦ f(a)(x₂))}{y = ∑(r₂) (b ↦ f(x₁)(b))}) ]
   f(x₁)(x₂) + (∑(r₁) (a ↦ f(a)(x₂)) + (∑(r₂) (b ↦ f(x₁)(b)) + ∑(r₁) (a ↦ ∑(r₂) (b ↦ f(a)(b)))))   🝖[ _≡_ ]-[]
-  f(x₁)(x₂) + (∑(r₁) (a ↦ f(a)(x₂)) + (∑(x₁ ⊰ r₁) (a ↦ ∑(r₂) (b ↦ f(a)(b)))))                     🝖[ _≡_ ]-[ [≡]-with2ᵣ(_+_)(f(x₁)(x₂)) ([≡]-with2ᵣ(_+_)(∑(r₁) (a ↦ f(a)(x₂))) (∑-swap-nested {f}{x₁ ⊰ r₁}{r₂})) ]
+  f(x₁)(x₂) + (∑(r₁) (a ↦ f(a)(x₂)) + (∑(x₁ ⊰ r₁) (a ↦ ∑(r₂) (b ↦ f(a)(b)))))                     🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(x₁)(x₂)) (congruence₂ᵣ(_+_)(∑(r₁) (a ↦ f(a)(x₂))) (∑-swap-nested {f}{x₁ ⊰ r₁}{r₂})) ]
   f(x₁)(x₂) + (∑(r₁) (a ↦ f(a)(x₂)) + (∑(r₂) (b ↦ ∑(x₁ ⊰ r₁) (a ↦ f(a)(b)))))                     🝖[ _≡_ ]-[]
   f(x₁)(x₂) + (∑(r₁) (a ↦ f(a)(x₂)) + (∑(r₂) (b ↦ f(x₁)(b) + ∑(r₁) (a ↦ f(a)(b)))))               🝖[ _≡_ ]-[ associativity(_+_) {x = f(x₁)(x₂)}{y = ∑(r₁) (a ↦ f(a)(x₂))} ]-sym
   (f(x₁)(x₂) + ∑(r₁) (a ↦ f(a)(x₂))) + (∑(r₂) (b ↦ f(x₁)(b) + ∑(r₁) (a ↦ f(a)(b))))               🝖[ _≡_ ]-[]
@@ -185,7 +185,7 @@ Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with
 
 
 ∑-zero-range : ∀{a}{f} → (∑(a ‥ a) f ≡ 𝟎)
-∑-zero-range {a}{f} = [≡]-with (r ↦ ∑(r) f) (Range-empty{a})
+∑-zero-range {a}{f} = congruence₁ (r ↦ ∑(r) f) (Range-empty{a})
 
 ∑-single-range : ∀{a}{f} → (∑(a ‥ 𝐒(a)) f ≡ f(a))
 ∑-single-range {𝟎}  {f} = reflexivity(_≡_)
@@ -202,7 +202,7 @@ Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with
 ∑-stepₗ-range {𝐒 a} {𝐒 b} {f} ⦃ [≤]-with-[𝐒] ⦃ ab ⦄ ⦄ =
   ∑(𝐒(a) ‥ 𝐒(b)) f                                🝖[ _≡_ ]-[ ∑-step-range {a}{b}{f} ]
   ∑(a ‥ b) (f ∘ 𝐒)                                🝖[ _≡_ ]-[ ∑-stepₗ-range {a}{b}{f ∘ 𝐒} ]
-  (f ∘ 𝐒)(a) + ∑(𝐒(a) ‥ b) (f ∘ 𝐒)                🝖[ _≡_ ]-[ [≡]-with2(_+_) (reflexivity(_≡_) {x = f(𝐒(a))}) (symmetry(_≡_) (∑-step-range {𝐒 a}{b}{f})) ]
+  (f ∘ 𝐒)(a) + ∑(𝐒(a) ‥ b) (f ∘ 𝐒)                🝖[ _≡_ ]-[ congruence₂(_+_) (reflexivity(_≡_) {x = f(𝐒(a))}) (symmetry(_≡_) (∑-step-range {𝐒 a}{b}{f})) ]
   f(𝐒(a)) + ∑(𝐒(𝐒(a)) ‥ 𝐒(b)) f                   🝖-end
 
 -- ∑-stepᵣ-range : ∀{a b}{f} → ⦃ _ : (a < 𝐒(b)) ⦄ → (∑(a ‥ 𝐒(b)) f ≡ ∑(a ‥ b) f + f(b))
@@ -213,7 +213,7 @@ Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with
 ∑-trans-range : ∀{a b c} → ⦃ ab : (a ≤ b) ⦄ ⦃ bc : (b < c) ⦄ → ∀{f} → (∑(a ‥ b) f + ∑(b ‥ c) f ≡ ∑(a ‥ c) f)
 ∑-trans-range {a}{b}{c} {f} =
   ∑(a ‥ b) f + ∑(b ‥ c) f 🝖[ _≡_ ]-[ ∑-concat{f = f}{r₁ = a ‥ b}{r₂ = b ‥ c} ]-sym
-  ∑((a ‥ b) ++ (b ‥ c)) f 🝖[ _≡_ ]-[ [≡]-with(r ↦ ∑(r) f) (Range-concat{a}{b}{c}) ]
+  ∑((a ‥ b) ++ (b ‥ c)) f 🝖[ _≡_ ]-[ congruence₁(r ↦ ∑(r) f) (Range-concat{a}{b}{c}) ]
   ∑(a ‥ c) f              🝖-end
 
 -- TODO: Formulate ∑({(x,y). a ≤ x ≤ y ≤ b}) f ≡ ∑(a ‥ b) (x ↦ ∑(a ‥ x) (y ↦ f(x)(y))) ≡ ∑(a ‥ b) (x ↦ ∑(x ‥ b) (y ↦ f(x)(y))) ≡ ... and first prove a theorem stating that the order of a list does not matter
@@ -226,8 +226,8 @@ Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with
 ∑-of-succ {prepend x r}{f} =
   ∑(x ⊰ r) (𝐒 ∘ f)                 🝖[ _≡_ ]-[]
   𝐒(f(x)) + ∑(r) (𝐒 ∘ f)           🝖[ _≡_ ]-[]
-  𝐒(f(x) + ∑(r) (𝐒 ∘ f))           🝖[ _≡_ ]-[ [≡]-with(𝐒) ([≡]-with2ᵣ(_+_)(f(x)) (∑-of-succ {r}{f})) ]
-  𝐒(f(x) + ((∑(r) f) + length(r))) 🝖[ _≡_ ]-[ [≡]-with(𝐒) (symmetry(_≡_) (associativity(_+_) {x = f(x)}{y = ∑(r) f}{z = length(r)})) ]
+  𝐒(f(x) + ∑(r) (𝐒 ∘ f))           🝖[ _≡_ ]-[ congruence₁(𝐒) (congruence₂ᵣ(_+_)(f(x)) (∑-of-succ {r}{f})) ]
+  𝐒(f(x) + ((∑(r) f) + length(r))) 🝖[ _≡_ ]-[ congruence₁(𝐒) (symmetry(_≡_) (associativity(_+_) {x = f(x)}{y = ∑(r) f}{z = length(r)})) ]
   𝐒((f(x) + (∑(r) f)) + length(r)) 🝖[ _≡_ ]-[]
   𝐒((∑(x ⊰ r) f) + length(r))      🝖[ _≡_ ]-[]
   (∑(x ⊰ r) f) + 𝐒(length(r))      🝖[ _≡_ ]-[]
@@ -243,8 +243,8 @@ Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with
   ∑(map 𝐒(𝟎 ‥₌ n)) (k ↦ 2 ⋅ k)                   🝖[ _≡_ ]-[ ∑-step-range {a = 𝟎}{b = 𝐒 n}{f = 2 ⋅_} ]
   ∑(𝟎 ‥₌ n) (k ↦ 2 ⋅ 𝐒(k))                       🝖[ _≡_ ]-[]
   ∑(𝟎 ‥₌ n) (k ↦ 2 + (2 ⋅ k))                    🝖[ _≡_ ]-[ ∑-add {r = 0 ‥₌ n}{f = const 2}{g = 2 ⋅_} ]-sym
-  ∑(𝟎 ‥₌ n) (const(2)) + ∑(𝟎 ‥₌ n) (k ↦ (2 ⋅ k)) 🝖[ _≡_ ]-[ [≡]-with2(_+_) (∑-const {r = 0 ‥₌ n}{c = 2}) (∑-even-sum {n}) ]
-  (2 ⋅ length(𝟎 ‥₌ n)) + (n ⋅ 𝐒(n))              🝖[ _≡_ ]-[ [≡]-with2ₗ(_+_)(n ⋅ 𝐒(n)) ([≡]-with2ᵣ(_⋅_)(2) (Range-length-zero {𝐒(n)})) ]
+  ∑(𝟎 ‥₌ n) (const(2)) + ∑(𝟎 ‥₌ n) (k ↦ (2 ⋅ k)) 🝖[ _≡_ ]-[ congruence₂(_+_) (∑-const {r = 0 ‥₌ n}{c = 2}) (∑-even-sum {n}) ]
+  (2 ⋅ length(𝟎 ‥₌ n)) + (n ⋅ 𝐒(n))              🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(n ⋅ 𝐒(n)) (congruence₂ᵣ(_⋅_)(2) (Range-length-zero {𝐒(n)})) ]
   (2 ⋅ 𝐒(n)) + (n ⋅ 𝐒(n))                        🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) {x = 2}{y = n}{z = 𝐒(n)} ]-sym
   (2 + n) ⋅ 𝐒(n)                                 🝖[ _≡_ ]-[]
   𝐒(𝐒(n)) ⋅ 𝐒(n)                                 🝖[ _≡_ ]-[ commutativity(_⋅_) {x = 𝐒(𝐒(n))}{y = 𝐒(n)} ]
@@ -255,7 +255,7 @@ Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with
 ∑-odd-sum {𝐒 n} =
   ∑(𝟎 ‥ 𝐒(n)) (k ↦ 𝐒(2 ⋅ k))               🝖[ _≡_ ]-[]
   ∑(𝟎 ‥₌ n) (k ↦ 𝐒(2 ⋅ k))                 🝖[ _≡_ ]-[ ∑-of-succ {r = 𝟎 ‥ 𝐒(n)}{f = 2 ⋅_} ]
-  ∑(𝟎 ‥₌ n) (k ↦ 2 ⋅ k) + length(𝟎 ‥ 𝐒(n)) 🝖[ _≡_ ]-[ [≡]-with2(_+_) (∑-even-sum {n}) (Range-length-zero {𝐒(n)}) ]
+  ∑(𝟎 ‥₌ n) (k ↦ 2 ⋅ k) + length(𝟎 ‥ 𝐒(n)) 🝖[ _≡_ ]-[ congruence₂(_+_) (∑-even-sum {n}) (Range-length-zero {𝐒(n)}) ]
   (n ⋅ 𝐒(n)) + 𝐒(n)                        🝖[ _≡_ ]-[ [⋅]-with-[𝐒]ₗ {x = n}{y = 𝐒(n)} ]-sym
   𝐒(n) ⋅ 𝐒(n)                              🝖[ _≡_ ]-[]
   𝐒(n) ^ 2                                 🝖-end
@@ -285,7 +285,7 @@ binomial-power {𝟎}   {a} {b} =
   ∑(𝟎 ‥₌ 𝟎) (i ↦ 𝑐𝐶(𝟎)(i) ⋅ (a ^ (𝟎 −₀ i)) ⋅ (b ^ 𝟎)) 🝖-end
 binomial-power {𝐒 n} {a} {b} = {!!}
 {-  (a + b) ^ 𝐒(n)                                                                                                            🝖[ _≡_ ]-[]
-  (a + b) ⋅ ((a + b) ^ n)                                                                                                   🝖[ _≡_ ]-[ [≡]-with2ᵣ(_⋅_)(a + b) (binomial-power{n}{a}{b}) ]
+  (a + b) ⋅ ((a + b) ^ n)                                                                                                   🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(a + b) (binomial-power{n}{a}{b}) ]
   (a + b) ⋅ (∑(𝟎 ‥₌ n) (i ↦ 𝑐𝐶(n)(i) ⋅ (a ^ i) ⋅ (b ^ (n −₀ i))))                                                           🝖[ _≡_ ]-[ {!!} ]
   (a ⋅ (∑(𝟎 ‥₌ n) (i ↦ 𝑐𝐶(n)(i) ⋅ (a ^ i) ⋅ (b ^ (n −₀ i))))) + (b ⋅ (∑(𝟎 ‥₌ n) (i ↦ 𝑐𝐶(n)(i) ⋅ (a ^ i) ⋅ (b ^ (n −₀ i))))) 🝖[ _≡_ ]-[ {!!} ]
 

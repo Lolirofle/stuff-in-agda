@@ -49,7 +49,7 @@ proof-from-[ℕ]₊ : ∀{φ : ℕ → Stmt}{n : ℕ} → ?
     base = [≡]-intro
 
     next : (n : ℕ) → (𝐏(−𝐒ₙ(n)) ≡ −𝐒ₙ(ℕ.𝐒(n))) → (𝐏(−𝐒ₙ(ℕ.𝐒(n))) ≡ −𝐒ₙ(ℕ.𝐒(ℕ.𝐒(n))))
-    next(n)(proof) = [≡]-with(𝐏) (proof)
+    next(n)(proof) = congruence₁(𝐏) (proof)
   -}
 
 -- -(n+1) = −(n+1)
@@ -61,7 +61,7 @@ proof-from-[ℕ]₊ : ∀{φ : ℕ → Stmt}{n : ℕ} → ?
     base = [≡]-intro
 
     postulate next : (n : ℕ) → (−𝐒ₙ(n) ≡ −ₙ(ℕ.𝐒(n))) → (−𝐒ₙ(ℕ.𝐒(n)) ≡ −ₙ(ℕ.𝐒(ℕ.𝐒(n))))
-    -- next(n)(proof) = [≡]-with(𝐏) (proof)
+    -- next(n)(proof) = congruence₁(𝐏) (proof)
     -- −𝐒ₙ(n) ≡ −ₙ(ℕ.𝐒(n))
     -- 𝐏(−𝐒ₙ(n)) ≡ 𝐏(−ₙ(ℕ.𝐒(n)))
     -- −𝐒ₙ(ℕ.𝐒(n))) ≡ 𝐏(−𝐒ₙ(n)) ≡ 𝐏(−ₙ(ℕ.𝐒(n)))
@@ -182,7 +182,7 @@ record [ℤ]-induction-data (P : ℤ → Stmt) : Set(ℓ) where
 [−]-injectivity : Injective(−_)
 [−]-injectivity {a}{b} (−a≡−b) =
   symmetry [−]-involution
-  🝖 [≡]-with(−_) (−a≡−b)
+  🝖 congruence₁(−_) (−a≡−b)
   🝖 [−]-involution
 
 [−][−ₙ] : ∀{x} → (−(+ₙ x) ≡ −ₙ x)
@@ -286,10 +286,10 @@ absₙ-zero {−𝐒ₙ(_)} ()
 [+]-identity = [∧]-intro [+]-identityₗ [+]-identityᵣ
 
 [+]-commutativity : Commutativity(_+_)
-[+]-commutativity {+ₙ x}  {+ₙ y}  = [≡]-with(+ₙ_) (ℕ.[+]-commutativity {_} {x}{y})
+[+]-commutativity {+ₙ x}  {+ₙ y}  = congruence₁(+ₙ_) (ℕ.[+]-commutativity {_} {x}{y})
 [+]-commutativity {+ₙ _}  {−𝐒ₙ _} = [≡]-intro
 [+]-commutativity {−𝐒ₙ _} {+ₙ _}  = [≡]-intro
-[+]-commutativity {−𝐒ₙ x} {−𝐒ₙ y} = [≡]-with(−𝐒ₙ_ ∘ ℕ.𝐒) (ℕ.[+]-commutativity {_} {x}{y})
+[+]-commutativity {−𝐒ₙ x} {−𝐒ₙ y} = congruence₁(−𝐒ₙ_ ∘ ℕ.𝐒) (ℕ.[+]-commutativity {_} {x}{y})
 
 [+]-of-negative : ∀{x y} → ((−ₙ x) + (−ₙ y) ≡ −ₙ (x +ₙ y))
 [+]-of-negative {ℕ.𝟎}    {ℕ.𝟎}    = [≡]-intro
@@ -320,7 +320,7 @@ absₙ-zero {−𝐒ₙ(_)} ()
 [+][−ₙ]-associativity {ℕ.𝐒(_)}{ℕ.𝐒(_)}{ℕ.𝟎}    = [≡]-intro
 [+][−ₙ]-associativity {ℕ.𝐒(x)}{ℕ.𝐒(y)}{ℕ.𝐒(z)} =
   [−ₙ][𝐒]-step {x +ₙ y}{z}
-  🝖 [≡]-with(𝐒) ([+][−ₙ]-associativity {x}{ℕ.𝐒(y)}{ℕ.𝐒(z)})
+  🝖 congruence₁(𝐒) ([+][−ₙ]-associativity {x}{ℕ.𝐒(y)}{ℕ.𝐒(z)})
   🝖 symmetry ([+][𝐒]-stepₗ {+ₙ x}{ℕ.𝐒 y −ₙ ℕ.𝐒 z})
 
 {- TODO

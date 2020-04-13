@@ -76,7 +76,7 @@ record OrderedField {ℓ₁ ℓ₂} {F : Type{ℓ₁}} ⦃ _ : Equiv(F) ⦄ (_+_
   [+]-negation-distribution = One.inverse-distribution 🝖 commutativity(_+_)
 
   [−]-negation-distribution : ∀{x y} → (−(x − y) ≡ y − x)
-  [−]-negation-distribution = One.inverse-distribution 🝖 [≡]-with2ₗ(_−_)(_) [−−]-elim
+  [−]-negation-distribution = One.inverse-distribution 🝖 congruence₂ₗ(_−_)(_) [−−]-elim
 
   instance
     [−]-involution : Involution(−_)
@@ -94,7 +94,7 @@ record OrderedField {ℓ₁ ℓ₂} {F : Type{ℓ₁}} ⦃ _ : Equiv(F) ⦄ (_+_
   instance
     [⋅]-absorberₗ : Absorberₗ(_⋅_)(𝟎)
     Absorberₗ.proof [⋅]-absorberₗ {x} = zero-when-redundant-addition $
-      𝟎 ⋅ x             🝖-[ [≡]-with2ₗ(_⋅_)(x) (identityₗ(_+_)(𝟎)) ]-sym
+      𝟎 ⋅ x             🝖-[ congruence₂ₗ(_⋅_)(x) (identityₗ(_+_)(𝟎)) ]-sym
       (𝟎 + 𝟎) ⋅ x       🝖-[ distributivityᵣ(_⋅_)(_+_) ]
       (𝟎 ⋅ x) + (𝟎 ⋅ x) 🝖-end
 
@@ -154,13 +154,13 @@ record OrderedField {ℓ₁ ℓ₂} {F : Type{ℓ₁}} ⦃ _ : Equiv(F) ⦄ (_+_
       𝟎 + x           🝖-[ [≤][+]ₗ-preserve 𝟎yx ]
       (y − x) + x     🝖-[ reflexivity(_≤_) ]
       (y + (− x)) + x 🝖-[ sub₂(_≡_)(_≤_) (associativity(_+_)) ]
-      y + ((− x) + x) 🝖-[ sub₂(_≡_)(_≤_) ([≡]-with2ᵣ(_+_)(_) (inverseFunctionₗ(_+_)(−_))) ]
+      y + ((− x) + x) 🝖-[ sub₂(_≡_)(_≤_) (congruence₂ᵣ(_+_)(_) (inverseFunctionₗ(_+_)(−_))) ]
       y + 𝟎           🝖-[ sub₂(_≡_)(_≤_) (identityᵣ(_+_)(𝟎)) ]
       y               🝖-end
 
     proof3 : (((− y) − (− x)) ≤ 𝟎)
     proof3 =
-      (− y) − (− x) 🝖-[ sub₂(_≡_)(_≤_) ([≡]-with2ᵣ(_+_)(_) [−−]-elim) ]
+      (− y) − (− x) 🝖-[ sub₂(_≡_)(_≤_) (congruence₂ᵣ(_+_)(_) [−−]-elim) ]
       (− y) + x     🝖-[ sub₂(_≡_)(_≤_) (commutativity(_+_)) ]
       x − y         🝖-[ [≤][+]ₗ-preserve xy ]
       y − y         🝖-[ sub₂(_≡_)(_≤_) (inverseFunctionᵣ(_+_)(−_)) ]
@@ -169,7 +169,7 @@ record OrderedField {ℓ₁ ℓ₂} {F : Type{ℓ₁}} ⦃ _ : Equiv(F) ⦄ (_+_
     proof4 : ∀{x y} → ((x − y) ≤ 𝟎) → (x ≤ y)
     proof4 {x}{y} xy𝟎 =
       x               🝖-[ sub₂(_≡_)(_≤_) (symmetry(_≡_) (identityᵣ(_+_)(𝟎))) ]
-      x + 𝟎           🝖-[ sub₂(_≡_)(_≤_) (symmetry(_≡_) ([≡]-with2ᵣ(_+_)(_) (inverseFunctionₗ(_+_)(−_)))) ]
+      x + 𝟎           🝖-[ sub₂(_≡_)(_≤_) (symmetry(_≡_) (congruence₂ᵣ(_+_)(_) (inverseFunctionₗ(_+_)(−_)))) ]
       x + ((− y) + y) 🝖-[ sub₂(_≡_)(_≤_) (symmetry(_≡_) (associativity(_+_))) ]
       (x + (− y)) + y 🝖-[ reflexivity(_≤_) ]
       (x − y) + y     🝖-[ [≤][+]ₗ-preserve xy𝟎 ]

@@ -71,7 +71,7 @@ instance
   Injective.proof (concat-injective {a = 𝐒 a}{𝐒 b} {af}{bf}) {𝟎}   {𝐒 y} fxfy with Injective.proof (concat-injective {a = a}{𝐒 b} {af ∘ 𝐒}{bf} ⦃ [∘]-injective {f = af}{g = 𝐒} ⦄) {𝟎} {y} {!!}
   ... | [≡]-intro = {!!}
   Injective.proof (concat-injective {a = 𝐒 a}{b}   {af}{bf}) {𝐒 x} {𝟎}   fxfy = {!!} -- with injective()
-  Injective.proof (concat-injective {a = 𝐒 a}{b}   {af}{bf}) {𝐒 x} {𝐒 y} fxfy = [≡]-with(𝐒) (Injective.proof (concat-injective {a = a} {b} {af ∘ 𝐒} {bf} ⦃ [∘]-injective {f = af} ⦄) {x} {y} fxfy)
+  Injective.proof (concat-injective {a = 𝐒 a}{b}   {af}{bf}) {𝐒 x} {𝐒 y} fxfy = congruence₁(𝐒) (Injective.proof (concat-injective {a = a} {b} {af ∘ 𝐒} {bf} ⦃ [∘]-injective {f = af} ⦄) {x} {y} fxfy)
   -}
 
 instance
@@ -80,8 +80,8 @@ instance
   Surjective.proof (concat-surjective {a = 𝟎}  {b}   {af}{bf}) {Either.Left  y} with () ← [∃]-witness(surjective(af){y})
   Surjective.proof (concat-surjective {a = 𝟎}  {𝟎}   {af}{bf}) {Either.Right y} with () ← [∃]-witness(surjective(bf){y})
   Surjective.proof (concat-surjective {a = 𝐒 a}{𝟎}   {af}{bf}) {Either.Right y} with () ← [∃]-witness(surjective(bf){y})
-  Surjective.proof (concat-surjective {a = 𝟎}  {𝐒 b} {af}{bf}) {Either.Right y} = [∃]-map-proof ([≡]-with(Either.Right)) (surjective(bf))
-  Surjective.proof (concat-surjective {a = 𝐒 a}{𝟎}   {af}{bf}) {Either.Left  y} = [∃]-map-proof ([≡]-with(Either.Left)) (surjective(af))
+  Surjective.proof (concat-surjective {a = 𝟎}  {𝐒 b} {af}{bf}) {Either.Right y} = [∃]-map-proof (congruence₁(Either.Right)) (surjective(bf))
+  Surjective.proof (concat-surjective {a = 𝐒 a}{𝟎}   {af}{bf}) {Either.Left  y} = [∃]-map-proof (congruence₁(Either.Left)) (surjective(af))
   Surjective.proof (concat-surjective {a = 𝐒 a}{𝐒 b} {af}{bf}) {Either.Left  y} with surjective(af){y}
   ... | [∃]-intro 𝟎     ⦃ [≡]-intro ⦄ = [∃]-intro 𝟎 ⦃ [≡]-intro ⦄
   ... | [∃]-intro (𝐒 x) ⦃ [≡]-intro ⦄ = {!Surjective.proof (concat-surjective {a = {!a!}}{𝐒 b} {{!af ∘ 𝐒!}}{bf} ⦃ {!!} ⦄) {Either.Left  x}!}
@@ -104,7 +104,7 @@ instance
   Injective.proof (interleave-injective {a = 𝐒 a} {b = 𝐒 b} {af} {bf}) {𝐒 𝟎}   {𝐒 𝟎}    fxfy = [≡]-intro
   Injective.proof (interleave-injective {a = 𝐒 a} {b = 𝐒 b} {af} {bf}) {𝟎}     {𝐒(𝐒 y)} fxfy = {!!}
   Injective.proof (interleave-injective {a = 𝐒 a} {b = 𝐒 b} {af} {bf}) {𝐒(𝐒 x)}{𝟎}      fxfy = {!!}
-  Injective.proof (interleave-injective {a = 𝐒 a} {b = 𝐒 b} {af} {bf}) {𝐒 𝟎}   {𝐒(𝐒 y)} fxfy = [≡]-with(𝐒) (Injective.proof (interleave-injective {a = 𝐒 a} {b = b} {af} {bf ∘ 𝐒} ⦃ infer ⦄ ⦃ [∘]-injective {f = bf} ⦄) {𝟎}     {𝐒 y} {!!})
-  Injective.proof (interleave-injective {a = 𝐒 a} {b = 𝐒 b} {af} {bf}) {𝐒(𝐒 x)}{𝐒 𝟎}    fxfy = [≡]-with(𝐒) (Injective.proof (interleave-injective {a = a} {b = 𝐒 b} {af ∘ 𝐒} {bf} ⦃ [∘]-injective {f = af} ⦄) {𝐒 x}     {𝟎} {!fxfy!})
-  Injective.proof (interleave-injective {a = 𝐒 a} {b = 𝐒 b} {af} {bf}) {𝐒(𝐒 x)}{𝐒(𝐒 y)} fxfy = [≡]-with(𝐒 ∘ 𝐒) (injective(interleave(af ∘ 𝐒)(bf ∘ 𝐒)) ⦃ interleave-injective {af = af ∘ 𝐒} {bf = bf ∘ 𝐒} ⦃ [∘]-injective {f = af} ⦄ ⦃ [∘]-injective {f = bf} ⦄ ⦄ fxfy)
+  Injective.proof (interleave-injective {a = 𝐒 a} {b = 𝐒 b} {af} {bf}) {𝐒 𝟎}   {𝐒(𝐒 y)} fxfy = congruence₁(𝐒) (Injective.proof (interleave-injective {a = 𝐒 a} {b = b} {af} {bf ∘ 𝐒} ⦃ infer ⦄ ⦃ [∘]-injective {f = bf} ⦄) {𝟎}     {𝐒 y} {!!})
+  Injective.proof (interleave-injective {a = 𝐒 a} {b = 𝐒 b} {af} {bf}) {𝐒(𝐒 x)}{𝐒 𝟎}    fxfy = congruence₁(𝐒) (Injective.proof (interleave-injective {a = a} {b = 𝐒 b} {af ∘ 𝐒} {bf} ⦃ [∘]-injective {f = af} ⦄) {𝐒 x}     {𝟎} {!fxfy!})
+  Injective.proof (interleave-injective {a = 𝐒 a} {b = 𝐒 b} {af} {bf}) {𝐒(𝐒 x)}{𝐒(𝐒 y)} fxfy = congruence₁(𝐒 ∘ 𝐒) (injective(interleave(af ∘ 𝐒)(bf ∘ 𝐒)) ⦃ interleave-injective {af = af ∘ 𝐒} {bf = bf ∘ 𝐒} ⦃ [∘]-injective {f = af} ⦄ ⦃ [∘]-injective {f = bf} ⦄ ⦄ fxfy)
   -}

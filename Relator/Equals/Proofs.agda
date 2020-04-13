@@ -65,4 +65,4 @@ module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} where
   [≡]-with-specific f [≡]-intro = [≡]-intro
 
   -- [≢]-without : ∀{A : Type{ℓ₂}}{B : Type{ℓ₃}} → (f : A → B) → ∀{x y : A} → (f(x) ≢₃ f(y)) → (x ≢₂ y)
-  -- [≢]-without f {_}{_} = liftᵣ([≡]-with f)
+  -- [≢]-without f {_}{_} = liftᵣ(congruence₁ f)

@@ -12,8 +12,8 @@ open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
-open import Relator.Equals.Proofs             hiding ([≡]-with)
-open import Relator.Equals.Proofs.Equivalence hiding ([≡]-with)
+open import Relator.Equals.Proofs
+open import Relator.Equals.Proofs.Equivalence
 open import Structure.Setoid hiding (_≡_ ; _≢_)
 open import Structure.Function.Domain
 open import Structure.Function
@@ -44,7 +44,7 @@ instance
 
 𝑐𝐶-singleton-subsets : ∀{n} → (𝑐𝐶 n (𝐒 𝟎) ≡ n)
 𝑐𝐶-singleton-subsets {𝟎}   = [≡]-intro
-𝑐𝐶-singleton-subsets {𝐒 n} = [≡]-with(𝐒) (𝑐𝐶-singleton-subsets {n})
+𝑐𝐶-singleton-subsets {𝐒 n} = congruence₁(𝐒) (𝑐𝐶-singleton-subsets {n})
 {-# REWRITE 𝑐𝐶-singleton-subsets #-}
 
 𝑐𝐶-larger-subsets : ∀{n k} → (n < k) → (𝑐𝐶 n k ≡ 𝟎)
@@ -105,7 +105,7 @@ instance
     𝑐𝐶 (𝐒(𝐒(k₁ + k₂))) (𝐒 k₁)                                    🝖[ _≡_ ]-[]
     𝑐𝐶 (𝐒(k₁ + k₂)) k₁ + 𝑐𝐶 (𝐒(k₁ + k₂)) (𝐒 k₁)                  🝖[ _≡_ ]-[]
     𝑐𝐶 (𝐒(k₁ + k₂)) k₁ + (𝑐𝐶 (k₁ + k₂) k₁ + 𝑐𝐶 (k₁ + k₂) (𝐒 k₁)) 🝖[ _≡_ ]-[ One.commuteₗ-assocᵣ {_▫_ = _+_}{a = 𝑐𝐶 (𝐒(k₁ + k₂)) k₁}{b = 𝑐𝐶 (k₁ + k₂) k₁}{c = 𝑐𝐶 (k₁ + k₂) (𝐒 k₁)} ]
-    𝑐𝐶 (k₁ + k₂) k₁ + (𝑐𝐶 (𝐒(k₁ + k₂)) k₁ + 𝑐𝐶 (k₁ + k₂) (𝐒 k₁)) 🝖[ _≡_ ]-[ [≡]-with2(_+_) (𝑐𝐶-symmetric {k₁ + k₂} {k₁} {k₂} [≡]-intro) (𝑐𝐶-test2 {k₁}{k₂}) ]
+    𝑐𝐶 (k₁ + k₂) k₁ + (𝑐𝐶 (𝐒(k₁ + k₂)) k₁ + 𝑐𝐶 (k₁ + k₂) (𝐒 k₁)) 🝖[ _≡_ ]-[ congruence₂(_+_) (𝑐𝐶-symmetric {k₁ + k₂} {k₁} {k₂} [≡]-intro) (𝑐𝐶-test2 {k₁}{k₂}) ]
     𝑐𝐶 (k₁ + k₂) k₂ + (𝑐𝐶 (𝐒(k₁ + k₂)) k₂ + 𝑐𝐶 (k₁ + k₂) (𝐒 k₂)) 🝖[ _≡_ ]-[ One.commuteₗ-assocᵣ {_▫_ = _+_}{a = 𝑐𝐶 (𝐒(k₁ + k₂)) k₂}{b = 𝑐𝐶 (k₁ + k₂) k₂}{c = 𝑐𝐶 (k₁ + k₂) (𝐒 k₂)} ]-sym
     𝑐𝐶 (𝐒(k₁ + k₂)) k₂ + (𝑐𝐶 (k₁ + k₂) k₂ + 𝑐𝐶 (k₁ + k₂) (𝐒 k₂)) 🝖[ _≡_ ]-[]
     𝑐𝐶 (𝐒(k₁ + k₂)) k₂ + 𝑐𝐶 (𝐒(k₁ + k₂)) (𝐒 k₂)                  🝖[ _≡_ ]-[]
@@ -135,7 +135,7 @@ instance
   𝑐𝑃 (𝐒 n) (𝐒 k) ⋅ (𝐒 n)                                      🝖[ _≡_ ]-[]
   (𝑐𝑃 n k ⋅ (𝐒 n)) ⋅ (𝐒 n)                                    🝖[ _≡_ ]-[]
   (𝑐𝑃 n k + 𝑐𝑃 n k ⋅ n) ⋅ (𝐒 n)                               🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) {x = 𝑐𝑃 n k}{y = 𝑐𝑃 n k ⋅ n}{z = 𝐒 n} ]
-  (𝑐𝑃 n k ⋅ (𝐒 n)) + ((𝑐𝑃 n k ⋅ n) ⋅ (𝐒 n))                   🝖[ _≡_ ]-[ [≡]-with2(_+_) (reflexivity(_≡_) {x = 𝑐𝑃 (𝐒 n) (𝐒 k)}) proof1 ]
+  (𝑐𝑃 n k ⋅ (𝐒 n)) + ((𝑐𝑃 n k ⋅ n) ⋅ (𝐒 n))                   🝖[ _≡_ ]-[ congruence₂(_+_) (reflexivity(_≡_) {x = 𝑐𝑃 (𝐒 n) (𝐒 k)}) proof1 ]
   𝑐𝑃 (𝐒 n) (𝐒 k) + ((𝑐𝑃 (𝐒 n) (𝐒 k) ⋅ k) + 𝑐𝑃 (𝐒 n) (𝐒(𝐒 k))) 🝖[ _≡_ ]-[ associativity(_+_) {x = 𝑐𝑃 (𝐒 n) (𝐒 k)}{y = 𝑐𝑃 (𝐒 n) (𝐒 k) ⋅ k}{z = 𝑐𝑃 (𝐒 n) (𝐒(𝐒 k))} ]-sym
   (𝑐𝑃 (𝐒 n) (𝐒 k) + (𝑐𝑃 (𝐒 n) (𝐒 k) ⋅ k)) + 𝑐𝑃 (𝐒 n) (𝐒(𝐒 k)) 🝖[ _≡_ ]-[]
   (𝑐𝑃 (𝐒 n) (𝐒 k) ⋅ 𝐒 k) + 𝑐𝑃 (𝐒 n) (𝐒(𝐒 k))                  🝖-end
@@ -146,9 +146,9 @@ instance
       𝑐𝑃 (𝐒 n) (𝐒 k) ⋅ k   🝖-end
 
     proof1 =
-      (𝑐𝑃 n k ⋅ n) ⋅ (𝐒 n)                          🝖[ _≡_ ]-[ [≡]-with2ₗ(_⋅_)(𝐒 n) (𝑐𝑃-step-diff {n}{k}) ]
+      (𝑐𝑃 n k ⋅ n) ⋅ (𝐒 n)                          🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(𝐒 n) (𝑐𝑃-step-diff {n}{k}) ]
       (𝑐𝑃 n k ⋅ k + 𝑐𝑃 n (𝐒 k)) ⋅ (𝐒 n)             🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) {x = 𝑐𝑃 n k ⋅ k}{y = 𝑐𝑃 n (𝐒 k)}{z = 𝐒 n} ]
-      ((𝑐𝑃 n k ⋅ k) ⋅ (𝐒 n)) + (𝑐𝑃 n (𝐒 k) ⋅ (𝐒 n)) 🝖[ _≡_ ]-[ [≡]-with2(_+_) proof2 (reflexivity(_≡_)) ]
+      ((𝑐𝑃 n k ⋅ k) ⋅ (𝐒 n)) + (𝑐𝑃 n (𝐒 k) ⋅ (𝐒 n)) 🝖[ _≡_ ]-[ congruence₂(_+_) proof2 (reflexivity(_≡_)) ]
       (𝑐𝑃 (𝐒 n) (𝐒 k) ⋅ k) + 𝑐𝑃 (𝐒 n) (𝐒(𝐒 k))      🝖-end
 
 𝑐𝑃-step-alt : ∀{n k} → (𝑐𝑃 (𝐒 n) (𝐒 k) ≡ (𝑐𝑃 n k ⋅ 𝐒 k) + 𝑐𝑃 n (𝐒 k))
@@ -160,14 +160,14 @@ instance
 𝑐𝐶-permutations-is-𝑐𝑃 {𝐒 n} {𝟎}   = [≡]-intro
 𝑐𝐶-permutations-is-𝑐𝑃 {𝐒 n} {𝐒 k} =
   (𝑐𝐶 n k + 𝑐𝐶 n (𝐒 k)) ⋅ (𝐒 k ⋅ (k !))                   🝖-[ distributivityᵣ(_⋅_)(_+_) {x = 𝑐𝐶 n k}{y = 𝑐𝐶 n (𝐒 k)}{z = 𝐒 k ⋅ (k !)} ]
-  (𝑐𝐶 n k ⋅ (𝐒 k ⋅ (k !))) + (𝑐𝐶 n (𝐒 k) ⋅ (𝐒 k ⋅ (k !))) 🝖-[ [≡]-with2(_+_) l r ]
+  (𝑐𝐶 n k ⋅ (𝐒 k ⋅ (k !))) + (𝑐𝐶 n (𝐒 k) ⋅ (𝐒 k ⋅ (k !))) 🝖-[ congruence₂(_+_) l r ]
   (𝑐𝑃 n k ⋅ 𝐒 k) + 𝑐𝑃 n (𝐒 k)                             🝖-[ 𝑐𝑃-step-alt {n}{k} ]-sym
   𝑐𝑃 n k ⋅ 𝐒 n                                            🝖-end
   where
     l =
-      𝑐𝐶 n k ⋅ (𝐒 k ⋅ (k !)) 🝖-[ [≡]-with2ᵣ(_⋅_)(𝑐𝐶 n k) (commutativity(_⋅_) {x = 𝐒 k}{y = k !}) ]
+      𝑐𝐶 n k ⋅ (𝐒 k ⋅ (k !)) 🝖-[ congruence₂ᵣ(_⋅_)(𝑐𝐶 n k) (commutativity(_⋅_) {x = 𝐒 k}{y = k !}) ]
       𝑐𝐶 n k ⋅ ((k !) ⋅ 𝐒 k) 🝖-[ associativity(_⋅_) {x = 𝑐𝐶 n k}{y = k !}{z = 𝐒 k} ]-sym
-      (𝑐𝐶 n k ⋅ (k !)) ⋅ 𝐒 k 🝖-[ [≡]-with2ₗ(_⋅_)(𝐒 k) (𝑐𝐶-permutations-is-𝑐𝑃 {n} {k}) ]
+      (𝑐𝐶 n k ⋅ (k !)) ⋅ 𝐒 k 🝖-[ congruence₂ₗ(_⋅_)(𝐒 k) (𝑐𝐶-permutations-is-𝑐𝑃 {n} {k}) ]
       𝑐𝑃 n k ⋅ 𝐒 k           🝖-end
 
     r =
@@ -178,18 +178,18 @@ instance
 𝑐𝑃-full : ∀{n} → (𝑐𝑃 n n ≡ n !)
 𝑐𝑃-full {n} =
   𝑐𝑃 n n         🝖[ _≡_ ]-[ 𝑐𝐶-permutations-is-𝑐𝑃 {n}{n} ]-sym
-  𝑐𝐶 n n ⋅ (n !) 🝖[ _≡_ ]-[ [≡]-with2ₗ(_⋅_)(n !) (𝑐𝐶-full-subsets {n}) ]
+  𝑐𝐶 n n ⋅ (n !) 🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(n !) (𝑐𝐶-full-subsets {n}) ]
   𝐒(𝟎) ⋅ (n !)   🝖[ _≡_ ]-[]
   n !            🝖-end
 
 𝑐𝐶-step-diff : ∀{n k} → (𝑐𝐶 n k ⋅ n ≡ (𝑐𝐶 n k ⋅ k) + (𝑐𝐶 n (𝐒 k) ⋅ (𝐒 k)))
 𝑐𝐶-step-diff {n}{k} = [⋅]-cancellationᵣ {x = k !} ⦃ factorial-positive {k} ⦄ $
   (𝑐𝐶 n k ⋅ n) ⋅ (k !)                                  🝖[ _≡_ ]-[ One.commuteᵣ-assocₗ {_▫_ = _⋅_}{a = 𝑐𝐶 n k}{b = n}{c = k !} ]
-  (𝑐𝐶 n k ⋅ (k !)) ⋅ n                                  🝖[ _≡_ ]-[ [≡]-with(_⋅ n) (𝑐𝐶-permutations-is-𝑐𝑃 {n}{k}) ]
+  (𝑐𝐶 n k ⋅ (k !)) ⋅ n                                  🝖[ _≡_ ]-[ congruence₁(_⋅ n) (𝑐𝐶-permutations-is-𝑐𝑃 {n}{k}) ]
   𝑐𝑃 n k ⋅ n                                            🝖[ _≡_ ]-[ 𝑐𝑃-step-diff {n}{k} ]
-  𝑐𝑃 n k ⋅ k + 𝑐𝑃 n (𝐒 k)                               🝖[ _≡_ ]-[ [≡]-with2(_+_) ([≡]-with(_⋅ k) (symmetry(_≡_) (𝑐𝐶-permutations-is-𝑐𝑃 {n}{k}))) (symmetry(_≡_) (𝑐𝐶-permutations-is-𝑐𝑃 {n}{𝐒 k})) ]
+  𝑐𝑃 n k ⋅ k + 𝑐𝑃 n (𝐒 k)                               🝖[ _≡_ ]-[ congruence₂(_+_) (congruence₁(_⋅ k) (symmetry(_≡_) (𝑐𝐶-permutations-is-𝑐𝑃 {n}{k}))) (symmetry(_≡_) (𝑐𝐶-permutations-is-𝑐𝑃 {n}{𝐒 k})) ]
   (𝑐𝐶 n k ⋅ (k !)) ⋅ k + (𝑐𝐶 n (𝐒 k) ⋅ ((𝐒 k) !))       🝖[ _≡_ ]-[]
-  (𝑐𝐶 n k ⋅ (k !)) ⋅ k + (𝑐𝐶 n (𝐒 k) ⋅ ((𝐒 k) ⋅ (k !))) 🝖[ _≡_ ]-[ [≡]-with2(_+_) (One.commuteᵣ-assocₗ {_▫_ = _⋅_}{a = 𝑐𝐶 n k}{b = k !}{c = k}) (symmetry(_≡_) (associativity(_⋅_) {x = 𝑐𝐶 n (𝐒 k)}{y = 𝐒 k}{z = k !})) ]
+  (𝑐𝐶 n k ⋅ (k !)) ⋅ k + (𝑐𝐶 n (𝐒 k) ⋅ ((𝐒 k) ⋅ (k !))) 🝖[ _≡_ ]-[ congruence₂(_+_) (One.commuteᵣ-assocₗ {_▫_ = _⋅_}{a = 𝑐𝐶 n k}{b = k !}{c = k}) (symmetry(_≡_) (associativity(_⋅_) {x = 𝑐𝐶 n (𝐒 k)}{y = 𝐒 k}{z = k !})) ]
   (𝑐𝐶 n k ⋅ k) ⋅ (k !) + ((𝑐𝐶 n (𝐒 k) ⋅ (𝐒 k)) ⋅ (k !)) 🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) {x = 𝑐𝐶 n k ⋅ k}{y = 𝑐𝐶 n (𝐒 k) ⋅ (𝐒 k)}{z = k !} ]-sym
   ((𝑐𝐶 n k ⋅ k) + (𝑐𝐶 n (𝐒 k) ⋅ (𝐒 k))) ⋅ (k !)         🝖-end
 

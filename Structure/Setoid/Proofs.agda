@@ -80,7 +80,7 @@ module _ where
       Transitivity.proof thing-transitivity ([∨]-introᵣ p)  _               = [∨]-introᵣ p
 
     thing-ext : let ([∃]-intro f) = thing-choice{P = P} in ∀{a b} → thing(P) a b → (f(a) ≡ f(b))
-    thing-ext ([∨]-introₗ ab) = [≡]-with([∃]-witness thing-choice) ab
+    thing-ext ([∨]-introₗ ab) = congruence₁([∃]-witness thing-choice) ab
     thing-ext {a = a} {b = b} ([∨]-introᵣ p) = {!!}
 
     thing-eq : let ([∃]-intro f) = thing-choice{P = P} in (P ↔ (f(𝐹) ≡ f(𝑇)))

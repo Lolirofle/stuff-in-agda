@@ -30,11 +30,11 @@ module _ (_⟶_ : Graph) where
 
   Walk-transitivity-raw-identityᵣ-raw : (Walk-transitivity-raw w at ≡ w)
   Walk-transitivity-raw-identityᵣ-raw {a}{.a} {Walk.at}                  = [≡]-intro
-  Walk-transitivity-raw-identityᵣ-raw {a}{c}  {Walk.prepend {b = b} e w} = [≡]-with(prepend e) (Walk-transitivity-raw-identityᵣ-raw {b}{c} {w})
+  Walk-transitivity-raw-identityᵣ-raw {a}{c}  {Walk.prepend {b = b} e w} = congruence₁(prepend e) (Walk-transitivity-raw-identityᵣ-raw {b}{c} {w})
 
   Walk-transitivity-raw-associativity-raw : Names.Morphism.Associativity{Obj = V}(\{w} → Walk-transitivity-raw{_⟶_ = _⟶_}{z = w})
   Walk-transitivity-raw-associativity-raw {a}{b}{c}{d}  {Walk.at}          {w₂}{w₃} = [≡]-intro
-  Walk-transitivity-raw-associativity-raw {a}{b}{c}{d}  {Walk.prepend e w₁}{w₂}{w₃} = [≡]-with(prepend e) (Walk-transitivity-raw-associativity-raw {a}{b}{c}{_} {w₁}{w₂}{w₃})
+  Walk-transitivity-raw-associativity-raw {a}{b}{c}{d}  {Walk.prepend e w₁}{w₂}{w₃} = congruence₁(prepend e) (Walk-transitivity-raw-associativity-raw {a}{b}{c}{_} {w₁}{w₂}{w₃})
 
   instance
     Walk-transitivity-raw-identityₗ : Morphism.Identityₗ{Obj = V}(\{w} → Walk-transitivity-raw{z = w})(at)

@@ -200,7 +200,7 @@ module _ where
 
   {-
   [⊰][++]-unequal : ∀{T : Type{ℓ}}{x : T}{a l} → ¬(a ++ (x ⊰ l) ≡ l)
-  [⊰][++]-unequal {x = x} {a} {l} p = {![≡]-with(_++ l) postpend-[++] 🝖 associativity(_++_) {x = a}{y = singleton x}{z = l} 🝖 p!} where
+  [⊰][++]-unequal {x = x} {a} {l} p = {!congruence₁(_++ l) postpend-[++] 🝖 associativity(_++_) {x = a}{y = singleton x}{z = l} 🝖 p!} where
     proof : ∀{l} → ¬(postpend x a ++ l ≡ l)
     proof {∅}       = [∅]-postpend-unequal
     proof {x ⊰ l} p = proof {l} {!!}
@@ -225,7 +225,7 @@ module _ where
     Cancellationᵣ.proof([++]-cancellationᵣ) {a}{b} = proof {a}{b} where
       proof : Names.Cancellationᵣ(_++_)
       proof {l}      {∅}     {∅}      p = [≡]-intro
-      proof {l}      {x ⊰ a} {x₁ ⊰ b} p = [≡]-with-op(_⊰_) ([⊰]-general-cancellationₗ p) (proof{l}{a}{b} ([⊰]-general-cancellationᵣ p))
+      proof {l}      {x ⊰ a} {x₁ ⊰ b} p = congruence₁-op(_⊰_) ([⊰]-general-cancellationₗ p) (proof{l}{a}{b} ([⊰]-general-cancellationᵣ p))
       proof {∅}      {∅}     {x ⊰ b}  p = [++]-identityᵣ-raw 🝖 p
       proof {x₁ ⊰ l} {∅}     {x ⊰ b}  p = [⊥]-elim([⊰][++]-unequal(symmetry(_≡_) ([⊰]-general-cancellationᵣ p)))
       proof {∅}      {x ⊰ a}  {∅}     p = p

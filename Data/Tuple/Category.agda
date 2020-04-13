@@ -59,8 +59,8 @@ module _
   productCategory : Category(Raw.productMorphism(Morphism₁)(Morphism₂))
   Category._∘_ productCategory (f₁ , f₂) (g₁ , g₂) = ((f₁ ∘ g₁) , (f₂ ∘ g₂))
   Category.id  productCategory                     = (id , id)
-  _⨯_.left  (BinaryOperator.congruence (Category.binaryOperator productCategory) (p₁l , p₁r) (p₂l , p₂r)) = [≡]-with2(_∘_) p₁l p₂l
-  _⨯_.right (BinaryOperator.congruence (Category.binaryOperator productCategory) (p₁l , p₁r) (p₂l , p₂r)) = [≡]-with2(_∘_) p₁r p₂r
+  _⨯_.left  (BinaryOperator.congruence (Category.binaryOperator productCategory) (p₁l , p₁r) (p₂l , p₂r)) = congruence₂(_∘_) p₁l p₂l
+  _⨯_.right (BinaryOperator.congruence (Category.binaryOperator productCategory) (p₁l , p₁r) (p₂l , p₂r)) = congruence₂(_∘_) p₁r p₂r
   _⨯_.left  (Morphism.Associativity.proof (Category.associativity productCategory)) = Morphism.associativity(_∘_)
   _⨯_.right (Morphism.Associativity.proof (Category.associativity productCategory)) = Morphism.associativity(_∘_)
   _⨯_.left  (Morphism.Identityₗ.proof (_⨯_.left  (Category.identity productCategory))) = Morphism.identityₗ(_∘_)(id)
@@ -98,8 +98,8 @@ module _
 
   productFunctor : Functor(productCategory cat₁ₗ cat₁ᵣ)(productCategory cat₂ₗ cat₂ᵣ) (F₁ Raw.⨯ᶠᵘⁿᶜᵗᵒʳ F₂)
   Functor.map productFunctor (x₁ , x₂) = (map x₁ , map x₂)
-  _⨯_.left  (Function.congruence (Functor.map-function productFunctor) (x₁ , x₂)) = [≡]-with(map) x₁
-  _⨯_.right (Function.congruence (Functor.map-function productFunctor) (x₁ , x₂)) = [≡]-with(map) x₂
+  _⨯_.left  (Function.congruence (Functor.map-function productFunctor) (x₁ , x₂)) = congruence₁(map) x₁
+  _⨯_.right (Function.congruence (Functor.map-function productFunctor) (x₁ , x₂)) = congruence₁(map) x₂
   _⨯_.left  (Functor.op-preserving productFunctor) = op-preserving
   _⨯_.right (Functor.op-preserving productFunctor) = op-preserving
   _⨯_.left  (Functor.id-preserving productFunctor) = id-preserving

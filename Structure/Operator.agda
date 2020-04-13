@@ -46,10 +46,10 @@ module _
   [≡]-congruence2-right : ⦃ inst : BinaryOperator ⦄ → (x : _) → Function(x ▫_)
   [≡]-congruence2-right = x ↦ inst-fn(BinaryOperator.right) {x}
 
-  [≡]-with2 = inst-fn BinaryOperator.congruence
+  congruence₂ = inst-fn BinaryOperator.congruence
 
-  [≡]-with2ₗ : ⦃ inst : BinaryOperator ⦄ → (a : A₂) → ∀{x y : A₁} → (x ≡ y) → (x ▫ a ≡ y ▫ a)
-  [≡]-with2ₗ _ = inst-fn BinaryOperator.congruenceₗ -- ([≡]-with(_▫ a) ⦃ [≡]-congruence2-left ⦃ inst ⦄ a ⦄)
+  congruence₂ₗ : ⦃ inst : BinaryOperator ⦄ → (a : A₂) → ∀{x y : A₁} → (x ≡ y) → (x ▫ a ≡ y ▫ a)
+  congruence₂ₗ _ = inst-fn BinaryOperator.congruenceₗ -- (congruence₁(_▫ a) ⦃ [≡]-congruence2-left ⦃ inst ⦄ a ⦄)
 
-  [≡]-with2ᵣ : ⦃ inst : BinaryOperator ⦄ → (a : A₁) → ∀{x y : A₂} → (x ≡ y) → (a ▫ x ≡ a ▫ y)
-  [≡]-with2ᵣ _ = inst-fn BinaryOperator.congruenceᵣ
+  congruence₂ᵣ : ⦃ inst : BinaryOperator ⦄ → (a : A₁) → ∀{x y : A₂} → (x ≡ y) → (a ▫ x ≡ a ▫ y)
+  congruence₂ᵣ _ = inst-fn BinaryOperator.congruenceᵣ

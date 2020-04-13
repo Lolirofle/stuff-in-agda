@@ -40,7 +40,7 @@ module _ ⦃ equiv : Equiv(T) ⦄ (𝟎 : T) (𝐒 : T → T) where
         induction : ∀{ℓ}{P : T → Stmt{ℓ}} → P(𝟎) → (∀{x} → P(x) → P(𝐒(x))) → (∀{x} → P(x))
 
       𝟎-or-𝐒 : ∀{x} → (x ≡ 𝟎) ∨ ∃(y ↦ x ≡ 𝐒(y))
-      𝟎-or-𝐒 {x} = induction {P = x ↦ (x ≡ 𝟎) ∨ ∃(y ↦ x ≡ 𝐒(y))} ([∨]-introₗ (reflexivity(_≡_))) (\{x} → [∨]-elim (p ↦ [∨]-introᵣ([∃]-intro 𝟎 ⦃ [≡]-with(𝐒) p ⦄)) (\{([∃]-intro y ⦃ p ⦄) → [∨]-introᵣ([∃]-intro (𝐒(y)) ⦃ [≡]-with(𝐒) p ⦄)})) {x}
+      𝟎-or-𝐒 {x} = induction {P = x ↦ (x ≡ 𝟎) ∨ ∃(y ↦ x ≡ 𝐒(y))} ([∨]-introₗ (reflexivity(_≡_))) (\{x} → [∨]-elim (p ↦ [∨]-introᵣ([∃]-intro 𝟎 ⦃ congruence₁(𝐒) p ⦄)) (\{([∃]-intro y ⦃ p ⦄) → [∨]-introᵣ([∃]-intro (𝐒(y)) ⦃ congruence₁(𝐒) p ⦄)})) {x}
 
 {-
 module _ ⦃ equiv : Equiv(T) ⦄ {𝟎}{𝐒}{_<_ : T → T → Stmt{ℓₗ}} ⦃ full : Full(𝟎)(𝐒)(_<_) ⦄ where

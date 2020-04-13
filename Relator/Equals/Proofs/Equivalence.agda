@@ -5,7 +5,7 @@ open import Lang.Instance
 open import Logic
 open import Relator.Equals
 open import Structure.Setoid.WithLvl using (Equiv) renaming (_≡_ to _≡ₛ_)
-open import Structure.Function hiding ([≡]-with)
+open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Equivalence
 import      Structure.Relator.Names as Names

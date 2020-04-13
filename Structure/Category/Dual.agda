@@ -28,7 +28,7 @@ module _
   dual : Category(_⟵_)
   Category._∘_ dual = swap(_∘_)
   Category.id dual = id
-  BinaryOperator.congruence             (Category.binaryOperator dual) p₁ p₂ = [≡]-with2(_∘_) p₂ p₁
+  BinaryOperator.congruence             (Category.binaryOperator dual) p₁ p₂ = congruence₂(_∘_) p₂ p₁
   Morphism.Associativity.proof          (Category.associativity  dual)  = symmetry(_≡_) (Morphism.associativity(_∘_))
   Morphism.Identityₗ.proof (Tuple.left  (Category.identity       dual)) = Morphism.identity-right(_∘_)(id)
   Morphism.Identityᵣ.proof (Tuple.right (Category.identity       dual)) = Morphism.identity-left (_∘_)(id)

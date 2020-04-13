@@ -69,9 +69,9 @@ module _
       composition : ∀{comp₁ comp₂} → NaturalTransformation(functor₂)(functor₃)(comp₁) → NaturalTransformation(functor₁)(functor₂)(comp₂) → NaturalTransformation(functor₁)(functor₃)(comp₁ ∘ᴺᵀ comp₂)
       NaturalTransformation.natural (composition {comp₁} {comp₂} nat₁ nat₂) {x} {y} {f} =
         (comp₁(y) ∘ comp₂(y)) ∘ map f 🝖-[ Morphism.associativity(_) ⦃ Category.associativity(catᵣ) ⦄ ]
-        comp₁(y) ∘ (comp₂(y) ∘ map f) 🝖-[ [≡]-with2ᵣ(_∘_)(comp₁(y)) (NaturalTransformation.natural nat₂) ]
+        comp₁(y) ∘ (comp₂(y) ∘ map f) 🝖-[ congruence₂ᵣ(_∘_)(comp₁(y)) (NaturalTransformation.natural nat₂) ]
         comp₁(y) ∘ (map f ∘ comp₂(x)) 🝖-[ Morphism.associativity(_) ⦃ Category.associativity(catᵣ) ⦄ ]-sym
-        (comp₁(y) ∘ map f) ∘ comp₂(x) 🝖-[ [≡]-with2ₗ(_∘_)(comp₂(x)) (NaturalTransformation.natural nat₁) ]
+        (comp₁(y) ∘ map f) ∘ comp₂(x) 🝖-[ congruence₂ₗ(_∘_)(comp₂(x)) (NaturalTransformation.natural nat₁) ]
         (map f ∘ comp₁(x)) ∘ comp₂(x) 🝖-[ Morphism.associativity(_) ⦃ Category.associativity(catᵣ) ⦄ ]
         map f ∘ (comp₁(x) ∘ comp₂(x)) 🝖-end
 

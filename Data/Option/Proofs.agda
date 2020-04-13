@@ -107,7 +107,7 @@ module _
     or-combine-associativity-raw {Some _} {None}   {None}   = reflexivity(_≡_)
     or-combine-associativity-raw {Some _} {None}   {Some _} = reflexivity(_≡_)
     or-combine-associativity-raw {Some _} {Some _} {None}   = reflexivity(_≡_)
-    or-combine-associativity-raw {Some _} {Some _} {Some _} = [≡]-with(Some) assoc
+    or-combine-associativity-raw {Some _} {Some _} {Some _} = congruence₁(Some) assoc
 
   instance
     or-combine-associativity : ⦃ _ : Associativity(_▫_) ⦄ → Associativity(or-combine(_▫_))
@@ -124,20 +124,20 @@ module _
       Morphism.Associativity.proof and-combine-associativity {_}{_}{_}{_} {Some x} {Left x₁} {Left x₂} = reflexivity(_≡_)
       Morphism.Associativity.proof and-combine-associativity {_}{_}{_}{_} {Some x} {Left x₁} {Some x₂} = reflexivity(_≡_)
       Morphism.Associativity.proof and-combine-associativity {_}{_}{_}{_} {Some x} {Some x₁} {Left x₂} = reflexivity(_≡_)
-      Morphism.Associativity.proof and-combine-associativity {X}{Y}{Z}{W} {Some x} {Some x₁} {Some x₂} = {!!} -- [≡]-with(Some) (Morphism.associativity(_▫_) {x = X}{y = Y}{z = Z}{w = W})
+      Morphism.Associativity.proof and-combine-associativity {X}{Y}{Z}{W} {Some x} {Some x₁} {Some x₂} = {!!} -- congruence₁(Some) (Morphism.associativity(_▫_) {x = X}{y = Y}{z = Z}{w = W})
 -}
   module _ {id : T} where
     module _ ⦃ identₗ : Morphism.Identityₗ{Obj = Type{ℓ}}(_▫_)(id) ⦄ where
       instance
         and-combine-identityₗ : Morphism.Identityₗ{Obj = Type{ℓ}} (and-combine(_▫_))(Some id)
         Morphism.Identityₗ.proof and-combine-identityₗ {_}{_} {None}   = reflexivity(_≡_)
-        Morphism.Identityₗ.proof and-combine-identityₗ {X}{Y} {Some x} = [≡]-with(Some) (Morphism.identityₗ(_▫_)(id) {x = X}{y = Y})
+        Morphism.Identityₗ.proof and-combine-identityₗ {X}{Y} {Some x} = congruence₁(Some) (Morphism.identityₗ(_▫_)(id) {x = X}{y = Y})
 
     module _ ⦃ identᵣ : Morphism.Identityᵣ{Obj = Type{ℓ}}(_▫_)(id) ⦄ where
       instance
         and-combine-identityᵣ : Morphism.Identityᵣ{Obj = Type{ℓ}}(and-combine(_▫_))(Some id)
         Morphism.Identityᵣ.proof and-combine-identityᵣ {_}{_} {None}   = reflexivity(_≡_)
-        Morphism.Identityᵣ.proof and-combine-identityᵣ {X}{Y} {Some x} = [≡]-with(Some) (Morphism.identityᵣ(_▫_)(id) {x = X}{y = Y})
+        Morphism.Identityᵣ.proof and-combine-identityᵣ {X}{Y} {Some x} = congruence₁(Some) (Morphism.identityᵣ(_▫_)(id) {x = X}{y = Y})
 
   module _
     ⦃ morphism-equiv : ∀{x y} → Equiv(x →ᶠ y) ⦄

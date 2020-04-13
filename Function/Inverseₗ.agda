@@ -50,7 +50,7 @@ module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv(A) ⦄ {B : Type{ℓ
     ... | [∨]-introₗ ([∃]-intro x₁ ⦃ intro ⦃ p₁ ⦄ ⦄) | intro pp₁ | [∨]-introₗ ([∃]-intro x₂ ⦃ intro ⦃ p₂ ⦄ ⦄) | intro pp₂ = symmetry(_≡_) pp₁ 🝖 proof-test 🝖 pp₂ where -- TODO: Requires that Either.map1 is a function/operation
     -- Classical.excluded-middle classical-unapply
     -- {f₁ = [∃]-witness {Pred = Unapply f(y₂)}}
-    -- map1-eq (reflexivity(_≡_)) ([≡]-with(const) ⦃ const-function-function ⦃ ? ⦄ ⦄ ([≡]-with(fallback) y₁y₂))
+    -- map1-eq (reflexivity(_≡_)) (congruence₁(const) ⦃ const-function-function ⦃ ? ⦄ ⦄ (congruence₁(fallback) y₁y₂))
       proof-test :
         (Either.map1
           {ℓ₁ ⊔ ℓ₂} {∃ {ℓ₁} {ℓ₂} {A} (Unapply {ℓ₁} {ℓ₂} {A} {B} ⦃ eqB ⦄ f y₁)}
@@ -69,7 +69,7 @@ module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv(A) ⦄ {B : Type{ℓ
           (λ _ → fallback y₂)
           (Classical.excluded-middle (classical-unapply {y₂}))
         )
-      proof-test = map1-eq {f₁ = {![∃]-witness!}} (reflexivity(_≡_)) ([≡]-with(const) ⦃ const-function-function {c = x₁} ⦄ ([≡]-with(fallback) y₁y₂)) {!!}
+      proof-test = map1-eq {f₁ = {![∃]-witness!}} (reflexivity(_≡_)) (congruence₁(const) ⦃ const-function-function {c = x₁} ⦄ (congruence₁(fallback) y₁y₂)) {!!}
     ... | [∨]-introₗ([∃]-intro x₁ ⦃ intro ⦃ p₁ ⦄ ⦄) | intro pp₁ | [∨]-introᵣ np₂ | intro pp₂ with () ← np₂([∃]-intro(x₁) ⦃ intro ⦃ proof = p₁ 🝖 y₁y₂ ⦄ ⦄)
     ... | [∨]-introᵣ np₁ | intro pp₁ | [∨]-introₗ([∃]-intro x₂ ⦃ intro ⦃ p₂ ⦄ ⦄) | intro pp₂ with () ← np₁([∃]-intro(x₂) ⦃ intro ⦃ proof = p₂ 🝖 symmetry(_≡_) y₁y₂ ⦄ ⦄)
-    ... | [∨]-introᵣ np₁ | intro pp₁ | [∨]-introᵣ np₂ | intro pp₂ = [≡]-with(fallback) y₁y₂
+    ... | [∨]-introᵣ np₁ | intro pp₁ | [∨]-introᵣ np₂ | intro pp₂ = congruence₁(fallback) y₁y₂

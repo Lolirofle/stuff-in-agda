@@ -29,7 +29,7 @@ module _ ⦃ equiv : Equiv(U) ⦄ where
 
 module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ is-prop : IsProp(U) ⦄ ⦃ equiv-a : Equiv(A) ⦄ where
   prop-fn-unique-value : ∀{f : U → A} → ⦃ _ : Function(f) ⦄ → (∀{x y} → (f(x) ≡ f(y)))
-  prop-fn-unique-value {f = f}{x}{y} = [≡]-with(f) (IsProp.uniqueness(is-prop){x}{y})
+  prop-fn-unique-value {f = f}{x}{y} = congruence₁(f) (IsProp.uniqueness(is-prop){x}{y})
 
 module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ is-unit : IsUnit(U) ⦄ ⦃ equiv-a : Equiv(A) ⦄ where
   unit-fn-unique-value : ∀{f : U → A} → ⦃ _ : Function(f) ⦄ → (∀{x y} → (f(x) ≡ f(y)))
@@ -37,7 +37,7 @@ module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ is-unit : IsUnit(U) ⦄ ⦃ equiv-a : Eq
 
 module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ is-prop : IsProp(U) ⦄ ⦃ equiv-a : Equiv(A) ⦄ where
   prop-pred-all : ∀{f : U → A} → ⦃ _ : Function(f) ⦄ → (∀{x y} → (f(x) ≡ f(y)))
-  prop-pred-all {f = f}{x}{y} = [≡]-with(f) (IsProp.uniqueness(is-prop){x}{y})
+  prop-pred-all {f = f}{x}{y} = congruence₁(f) (IsProp.uniqueness(is-prop){x}{y})
 
 {- TODO
 -- Any binary relation on Unit is an equivalence given that it is reflexive.

@@ -38,9 +38,9 @@ record Semilattice (_▫_ : L → L → L) : Stmt{ℓ} where
     x ▫ y 🝖-[ xy ]
     y     🝖-end
   Transitivity.proof (Weak.PartialOrder.transitivity partialOrder) {x}{y}{z} xy yz =
-    x ▫ z       🝖-[ [≡]-with2ᵣ(_▫_)(_) (symmetry(_≡_) yz) ]
+    x ▫ z       🝖-[ congruence₂ᵣ(_▫_)(_) (symmetry(_≡_) yz) ]
     x ▫ (y ▫ z) 🝖-[ symmetry(_≡_) (associativity(_▫_)) ]
-    (x ▫ y) ▫ z 🝖-[ [≡]-with2ₗ(_▫_)(_) xy ]
+    (x ▫ y) ▫ z 🝖-[ congruence₂ₗ(_▫_)(_) xy ]
     y ▫ z       🝖-[ yz ]
     z           🝖-end
   Reflexivity.proof  (Weak.PartialOrder.reflexivity  partialOrder) = idempotence(_▫_)
@@ -67,7 +67,7 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ} where
   instance
     [∨]-idempotence : Idempotence(_∨_)
     Idempotence.proof [∨]-idempotence {x} =
-      x ∨ x             🝖-[ [≡]-with2ᵣ(_∨_)(_) (symmetry(_≡_) (absorptionₗ(_∧_)(_∨_))) ]
+      x ∨ x             🝖-[ congruence₂ᵣ(_∨_)(_) (symmetry(_≡_) (absorptionₗ(_∧_)(_∨_))) ]
       x ∨ (x ∧ (x ∨ x)) 🝖-[ absorptionₗ(_∨_)(_∧_) ]
       x                 🝖-end
 
@@ -82,7 +82,7 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ} where
   instance
     [∧]-idempotence : Idempotence(_∧_)
     Idempotence.proof [∧]-idempotence {x} =
-      x ∧ x             🝖-[ [≡]-with2ᵣ(_∧_)(_) (symmetry(_≡_) (absorptionₗ(_∨_)(_∧_))) ]
+      x ∧ x             🝖-[ congruence₂ᵣ(_∧_)(_) (symmetry(_≡_) (absorptionₗ(_∨_)(_∧_))) ]
       x ∧ (x ∨ (x ∧ x)) 🝖-[ absorptionₗ(_∧_)(_∨_) ]
       x                 🝖-end
 
@@ -150,8 +150,8 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ} where
 
     [¬][∨][∧]-distributivity : Names.Preserving₂(¬_)(_∨_)(_∧_)
     [¬][∨][∧]-distributivity {x}{y} =
-      ¬(x ∨ y)               🝖-[ [≡]-with(¬_) ([≡]-with2(_∨_) (symmetry(_≡_) (involution(¬_))) (symmetry(_≡_) (involution(¬_)))) ]
-      ¬((¬(¬ x)) ∨ (¬(¬ y))) 🝖-[ [≡]-with(¬_) (symmetry(_≡_) [¬][∧][∨]-distributivity) ]
+      ¬(x ∨ y)               🝖-[ congruence₁(¬_) (congruence₂(_∨_) (symmetry(_≡_) (involution(¬_))) (symmetry(_≡_) (involution(¬_)))) ]
+      ¬((¬(¬ x)) ∨ (¬(¬ y))) 🝖-[ congruence₁(¬_) (symmetry(_≡_) [¬][∧][∨]-distributivity) ]
       ¬(¬((¬ x) ∧ (¬ y)))    🝖-[ involution(¬_) ]
       (¬ x) ∧ (¬ y)          🝖-end
 

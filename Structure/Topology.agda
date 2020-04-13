@@ -103,7 +103,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   -- TODO: Level problem in PredSet
   instance
     postulate IsolatedPoint-unaryRelator : ∀{A} → UnaryRelator(IsolatedPoint(A))
-    {-UnaryRelator.substitution IsolatedPoint-unaryRelator xy (intro N p) = intro N ⦃ substitute₁(_) xy infer ⦄ ([≡]-transitivity-raw p {![≡]-with(•_) xy!})
+    {-UnaryRelator.substitution IsolatedPoint-unaryRelator xy (intro N p) = intro N ⦃ substitute₁(_) xy infer ⦄ ([≡]-transitivity-raw p {!congruence₁(•_) xy!})
   -}
 
   Closure : PredSet{ℓ₁ ⊔ ℓ₃}(X) → PredSet(X)

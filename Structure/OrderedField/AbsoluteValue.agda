@@ -74,7 +74,7 @@ instance
   [𝄩]-commutativity : Commutativity(_𝄩_)
   Commutativity.proof [𝄩]-commutativity {x}{y} =
     ‖ x − y ‖    🝖-[ abs-of-negation ]-sym
-    ‖ −(x − y) ‖ 🝖-[ [≡]-with(‖_‖) [−]-negation-distribution ]
+    ‖ −(x − y) ‖ 🝖-[ congruence₁(‖_‖) [−]-negation-distribution ]
     ‖ y − x ‖    🝖-end
 
 postulate [𝄩]-triangle-inequality : ∀{x y z} → ((x 𝄩 z) ≤ ((x 𝄩 y) + (y 𝄩 z)))

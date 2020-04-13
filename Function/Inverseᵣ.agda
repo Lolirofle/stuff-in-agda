@@ -47,7 +47,7 @@ module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv(A) ⦄ {B : Type{ℓ
       invᵣ-injective : ⦃ func : Function(f) ⦄ → Injective(invᵣ f)
       Injective.proof(invᵣ-injective) {x₁}{x₂} (invᵣfx₁≡invᵣfx₂) =
         symmetry(_≡_) (invᵣ-inverseᵣ{x₁})
-        🝖 [≡]-with(f) {invᵣ f(x₁)} {invᵣ f(x₂)} (invᵣfx₁≡invᵣfx₂)
+        🝖 congruence₁(f) {invᵣ f(x₁)} {invᵣ f(x₂)} (invᵣfx₁≡invᵣfx₂)
         🝖 invᵣ-inverseᵣ{x₂}
 
       -- The right inverse is surjective when the surjective f is injective.
@@ -67,13 +67,13 @@ module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv(A) ⦄ {B : Type{ℓ
       invᵣ-unique-inverseᵣ : ⦃ inj : Injective(f) ⦄ → ∀{f⁻¹} → (f ∘ f⁻¹ ⊜ id) → (f⁻¹ ⊜ invᵣ(f))
       invᵣ-unique-inverseᵣ {f⁻¹} p {x} =
         f⁻¹(x)            🝖-[ invᵣ-inverseₗ ]-sym
-        invᵣ f(f(f⁻¹(x))) 🝖-[ [≡]-with(invᵣ f) ⦃ invᵣ-function ⦄ p ]
+        invᵣ f(f(f⁻¹(x))) 🝖-[ congruence₁(invᵣ f) ⦃ invᵣ-function ⦄ p ]
         invᵣ f(x)         🝖-end
 
       -- The right inverse is an unique left inverse function.
       invᵣ-unique-inverseₗ : ∀{f⁻¹} → ⦃ _ : Function(f⁻¹) ⦄ → (f⁻¹ ∘ f ⊜ id) → (f⁻¹ ⊜ invᵣ(f))
       invᵣ-unique-inverseₗ {f⁻¹} p {x} =
-        f⁻¹(x)            🝖-[ [≡]-with(f⁻¹) (symmetry(_≡_) invᵣ-inverseᵣ) ]
+        f⁻¹(x)            🝖-[ congruence₁(f⁻¹) (symmetry(_≡_) invᵣ-inverseᵣ) ]
         f⁻¹(f(invᵣ f(x))) 🝖-[ p{invᵣ f(x)} ]
         invᵣ f(x)         🝖-end
 

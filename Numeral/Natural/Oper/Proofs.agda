@@ -239,7 +239,7 @@ postulate [⋅]-cancellationᵣ : ∀{x} → ⦃ _ : Positive(x) ⦄ → (Names.
 [⋅]-cancellationᵣ {𝐒 𝟎}     ⦃ nx0 ⦄ {y₁}   {y₂}   p = p
 [⋅]-cancellationᵣ {𝐒 (𝐒 x)} ⦃ nx0 ⦄ {𝟎}    {𝟎}    p = [≡]-intro
 [⋅]-cancellationᵣ {𝐒 (𝐒 x)} ⦃ nx0 ⦄ {𝐒 y₁} {𝐒 y₂} p = {!!}
--- [⋅]-cancellationᵣ {𝐒 (𝐒 x)} ⦃ nx0 ⦄ {𝐒 y₁} {𝐒 y₂} p = [≡]-with(𝐒) ([⋅]-cancellationᵣ {𝐒 x} ⦃ [𝐒]-not-0 ⦄ {y₁} {y₂} {![𝐒]-injectivity-raw([𝐒]-injectivity-raw p)!})
+-- [⋅]-cancellationᵣ {𝐒 (𝐒 x)} ⦃ nx0 ⦄ {𝐒 y₁} {𝐒 y₂} p = congruence₁(𝐒) ([⋅]-cancellationᵣ {𝐒 x} ⦃ [𝐒]-not-0 ⦄ {y₁} {y₂} {![𝐒]-injectivity-raw([𝐒]-injectivity-raw p)!})
 -}
 
 postulate [⋅][−₀]-distributivityₗ-raw : ∀{x y z : ℕ} → (x ⋅ (y −₀ z)) ≡ (x ⋅ y) −₀ (x ⋅ z)
@@ -263,7 +263,7 @@ postulate [⋅][−₀]-distributivityᵣ-raw : ∀{x y z : ℕ} → ((x −₀ 
   [𝐒]-of-[−₀] {x}   {𝟎} (proof) = proof
   [𝐒]-of-[−₀] {𝟎}   {𝐒(y)} {𝟎} ()
   [𝐒]-of-[−₀] {𝟎}   {𝐒(y)} {𝐒(z)} ([≡]-intro) = [≡]-intro
-  -- = PROVE where -- ([≡]-with(𝐒) proof) 🝖 (symmetry ([𝐒]-of-[−₀] {𝐒(𝟎)} {𝐒(y)} (proof)))
+  -- = PROVE where -- (congruence₁(𝐒) proof) 🝖 (symmetry ([𝐒]-of-[−₀] {𝐒(𝟎)} {𝐒(y)} (proof)))
     -- postulate PROVE : ∀{y z} → (𝐒(𝟎 −₀ 𝐒(y)) ≡ z) → (𝐒(𝟎) −₀ 𝐒(y) ≡ z)
   -- 𝐒(𝟎 −₀ 𝐒(y)) ≡ 𝐒(z)
   -- ⇔ 𝐒(𝟎) ≡ 𝐒(z)

@@ -199,7 +199,7 @@ mod-zero-cases {.(𝐒 (b + p))} {b} ab0 | [∨]-introᵣ ba | [∃]-intro p ⦃
     mod-zero-cases {p}{b}
     (
       p mod 𝐒(b)          🝖-[ symmetry(_≡_) (mod-of-modulus-add {p}{b}) ]
-      (𝐒(b) + p) mod 𝐒(b) 🝖-[ [≡]-with(_mod 𝐒(b)) ([∃]-proof prev) ]
+      (𝐒(b) + p) mod 𝐒(b) 🝖-[ congruence₁(_mod 𝐒(b)) ([∃]-proof prev) ]
       a mod 𝐒(b)          🝖-[ ab0 ]
       𝟎                   🝖-end
     )
@@ -209,7 +209,7 @@ mod-zero-cases {.(𝐒 (b + p))} {b} ab0 | [∨]-introᵣ ba | [∃]-intro p ⦃
   proof : (a ≡ 𝐒(b) ⋅ 𝐒(c))
   proof =
     a           🝖-[ symmetry(_≡_) ([∃]-proof prev) ]
-    𝐒(b) + p    🝖-[ [≡]-with(𝐒(b) +_) ([∃]-proof curr) ]
+    𝐒(b) + p    🝖-[ congruence₁(𝐒(b) +_) ([∃]-proof curr) ]
     𝐒(b) ⋅ 𝐒(c) 🝖-end
 -}
 -}
@@ -301,10 +301,10 @@ mod₀-of-periods {𝐒(a)}{b}{c} =
 
 mod₀-subtract-when-zero : ∀{a b} → (a mod₀ b ≡ 𝟎) → ((a −₀ b) mod₀ b ≡ 𝟎)
 mod₀-subtract-when-zero {a}{b} proof with [−₀]-cases-commuted{a}{b}
-... | [∨]-introᵣ ab0 = [≡]-with(_mod₀ b) ab0
+... | [∨]-introᵣ ab0 = congruence₁(_mod₀ b) ab0
 ... | [∨]-introₗ baba =
   (symmetry(mod₀-period {a −₀ b}{b})    :of: (a −₀ b mod₀ b ≡ (b + (a −₀ b)) mod₀ b))
-  🝖 ([≡]-with(_mod₀ b) baba             :of: (_ ≡ a mod₀ b))
+  🝖 (congruence₁(_mod₀ b) baba             :of: (_ ≡ a mod₀ b))
   🝖 (proof                              :of: (_ ≡ 𝟎))
 
 -- mod₀-divisibility : ∀{a b} → (a mod₀ b ≡ 𝟎) ↔ (b ∣ a)
@@ -335,7 +335,7 @@ mod₀-𝐒-equality {a}{b}{c} proof with mod₀-of-𝐒 {a}{c} | mod₀-of-𝐒
 ... | [∨]-introᵣ ac | [∨]-introₗ bc = alls where postulate alls : ∀{a} → a
 ... | [∨]-introᵣ ac | [∨]-introᵣ bc =
   ac
-  🝖 [≡]-with(𝐒) proof
+  🝖 congruence₁(𝐒) proof
   🝖 symmetry bc
 -- 𝐒(a) mod₀ c ≡ 𝟎
 -- 𝐒(b) mod₀ c ≡ 𝐒(b mod₀ c)

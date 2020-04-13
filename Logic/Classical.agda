@@ -33,7 +33,7 @@ module _ (P : Stmt{ℓ}) where
       ⦃ excluded-middle ⦄ : P ∨ (¬ P)
 
     decide : Bool
-    decide = not(Either.isRight(excluded-middle))
+    decide = Either.isLeft(excluded-middle)
 
     -- TODO: Maybe use the generalized functions in Data.Boolean.Proofs to implement these. The either-bool-* functions.
     decide-true : P ↔ (decide ≡ 𝑇)
@@ -198,92 +198,34 @@ module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
 
 instance
   [⊤]-classical-intro : Classical(⊤)
-  [⊤]-classical-intro = intro ⦃ proof ⦄ where
-    proof : ⊤ ∨ (¬ ⊤)
-    proof = [∨]-introₗ ([⊤]-intro)
+  [⊤]-classical-intro = intro ⦃ [∨]-introₗ ([⊤]-intro) ⦄ where
 
 instance
   [⊥]-classical-intro : Classical(⊥)
-  [⊥]-classical-intro = intro ⦃ proof ⦄ where
-    proof : ⊥ ∨ (¬ ⊥)
-    proof = [∨]-introᵣ (id)
+  [⊥]-classical-intro = intro ⦃ [∨]-introᵣ (id) ⦄ where
 
 module _ {X : Type{ℓ₁}} ⦃ _ : (◊ X) ⦄ {P : X → Stmt{ℓ₂}} where
   instance
     [∃]-classical-elim : ⦃ _ : Classical(∃ P) ⦄ → ∃(x ↦ Classical(P(x)))
     [∃]-classical-elim ⦃ classical-expx ⦄ with excluded-middle(∃ P)
     ... | [∨]-introₗ(expx)  = [∃]-intro([∃]-witness(expx)) ⦃ intro ⦃ [∨]-introₗ([∃]-proof(expx)) ⦄ ⦄
-    ... | [∨]-introᵣ(nexpx) = [∃]-intro([◊]-existence) ⦃ intro ⦃ [∨]-introᵣ(axnpx{[◊]-existence}) ⦄ ⦄ where
-      axnpx = [¬∃]-to-[∀¬] (nexpx)
+    ... | [∨]-introᵣ(nexpx) = [∃]-intro([◊]-existence) ⦃ intro ⦃ [∨]-introᵣ([¬∃]-to-[∀¬] (nexpx) {[◊]-existence}) ⦄ ⦄
 
--- TODO: Here I tried to prove some stuff that probably are unprovable. Also, see https://ncatlab.org/nlab/show/principle+of+omniscience . That thing cannot be proven
-
--- instance
---   [∀][∃]-classical-elim : ∀{X} → ⦃ _ : ◊ X ⦄ → ∀{P : X → Stmt} → ⦃ _ : Classical(∀ₗ P) ⦄ → ⦃ _ : Classical(∃ P) ⦄ → ∀{x} → Classical(P(x))
---   [∀][∃]-classical-elim {X}{P} ⦃ classical-axpx ⦄ ⦃ classical-expx ⦄ {x} = Classical.intro ⦃ proof ⦄ where
---     proof : P(x) ∨ (¬ P(x))
---     proof with (excluded-middle ⦃ classical-axpx ⦄ , excluded-middle ⦃ classical-expx ⦄)
---     ... | ([∨]-introₗ(axpx)  , [∨]-introₗ(expx))  = [∨]-introₗ(axpx{x})
---     ... | ([∨]-introₗ(axpx)  , [∨]-introₗ(nexpx)) = [∨]-introᵣ(axpx{x})
---     ... | ([∨]-introᵣ(naxpx) , [∨]-introₗ(expx))  = [∨]-introᵣ(?)
---     ... | ([∨]-introᵣ(naxpx) , [∨]-introᵣ(nexpx)) = [∨]-introₗ([¬∃]-to-[∀¬] nexpx {x})
-
--- instance
---   [∃¬]-classical-intro : ∀{X} → ⦃ _ : ◊ X ⦄ → ∀{P : X → Stmt} → ⦃ _ : ∀{x} → Classical(P(x)) ⦄ → ⦃ _ : Classical(∃ P) ⦄ → Classical(∃(¬_ ∘ P))
---   [∃¬]-classical-intro {X}{P} ⦃ classical-p ⦄ ⦃ classical-expx ⦄ = Classical.intro ⦃ proof ⦄ where
---     proof : ∃(¬_ ∘ P) ∨ ¬(∃(¬_ ∘ P))
---     proof with excluded-middle ⦃ classical-expx ⦄
---     ... | [∨]-introₗ(expx)  = [∨]-introᵣ(axnpx{[◊]-existence})
---     ... | [∨]-introᵣ(nexpx) = [∨]-introₗ([¬¬]-elim([¬∃]-to-[∀¬] ∘ naxnpx))
-
--- instance
---   [∃¬]-classical-elim : ∀{X}{P} → ⦃ _ : Classical(∀ₗ P) ⦄ → ⦃ _ : Classical(∃ P) ⦄ → Classical(∃(¬_ ∘ P))
---   [∃¬]-classical-elim {X}{P} ⦃ classical-axpx ⦄ ⦃ classical-expx ⦄ {x} = Classical.intro ⦃ proof ⦄ where
---     proof : ∃(¬_ ∘ P) ∨ ¬(∃(¬_ ∘ P))
---     proof with excluded-middle ⦃ classical-axpx ⦄ | excluded-middle ⦃ classical-expx ⦄
---     ... | [∨]-introₗ(axpx)  | [∨]-introₗ(expx)  = [∨]-introₗ(axpx{x})
---     ... | [∨]-introₗ(axpx)  | [∨]-introᵣ(nexpx) = [∨]-introₗ(axpx{x})
---     ... | [∨]-introᵣ(naxpx) | [∨]-introₗ(expx)  = [∨]-introᵣ(axnpx{x})
---     ... | [∨]-introᵣ(naxpx) | [∨]-introᵣ(nexpx) = [∨]-introᵣ(naxpx)
-
--- instance
---   [∀]-classical-elim : ∀{X}{P} → ⦃ _ : Classical(∀ₗ P) ⦄ → ⦃ _ : Classical(∃ P) ⦄ → ∀{x} → Classical(P(x))
---   [∀]-classical-elim {X}{P} ⦃ classical-axpx ⦄ ⦃ classical-expx ⦄ {x} = Classical.intro ⦃ proof ⦄ where
---     proof : P(x) ∨ ¬(P(x))
---     proof with excluded-middle ⦃ classical-axpx ⦄ | excluded-middle ⦃ classical-expx ⦄
---     ... | [∨]-introₗ(axpx)  | [∨]-introₗ(expx)  = [∨]-introₗ(axpx{x})
---     ... | [∨]-introₗ(axpx)  | [∨]-introᵣ(nexpx) = [∨]-introₗ(axpx{x})
---     ... | [∨]-introᵣ(naxpx) | [∨]-introₗ(expx)  = [∨]-introᵣ(axnpx{x})
---     ... | [∨]-introᵣ(naxpx) | [∨]-introᵣ(nexpx) = [∨]-introᵣ(naxpx)
-
--- instance
---   [∃]-classical-elim : ∀{X}{P} → ⦃ _ : Classical(∃ₗ P) ⦄ → ∀{x} → Classical(P(x))
---   [∃]-classical-elim {X}{P} ⦃ classical-expx ⦄ {x} = Classical.intro ⦃ proof ⦄ where
---     proof : P(x) ∨ (¬ P(x))
---     proof with excluded-middle ⦃ classical-axpx ⦄
---     ... | [∨]-introₗ(expx)  = [∨]-introₗ(expx{x})
---     ... | [∨]-introᵣ(eaxpx) = [∨]-introᵣ(expx ↦ ∃)
-
-module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
-  [¬][∧]ₗ : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → ((¬ P) ∨ (¬ Q)) ← (¬ (P ∧ Q))
-  [¬][∧]ₗ ⦃ classic-p ⦄ ⦃ classic-q ⦄ (npq) =
+module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} ⦃ classic-p : Classical(P) ⦄ ⦃ classic-q : Classical(Q) ⦄ where
+  [¬][∧]ₗ : ((¬ P) ∨ (¬ Q)) ← (¬ (P ∧ Q))
+  [¬][∧]ₗ npq =
     [→]-disjunctive-formᵣ {P = P} ⦃ classic-p ⦄ {Q = ¬ Q} ([→][∧]ₗ ⦃ [¬]-classical-intro ⦃ classic-q ⦄ ⦄ (npq ∘ (Tuple.mapRight ([¬¬]-elim ⦃ classic-q ⦄))))
     -- ((P ∧ Q) → ⊥) → ((P → ⊥) ∨ (Q → ⊥))
     -- ¬((P ∧ Q) → ⊥) ← ¬((P → ⊥) ∨ (Q → ⊥))
 
   -- TODO: Is this provable constructivelq? Doesn't seem like it?
-  [¬→][∧]ᵣ : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → ¬(P → Q) → (P ∧ (¬ Q))
-  [¬→][∧]ᵣ ⦃ classic-p ⦄ ⦃ classic-q ⦄ = contrapositive-variantₗ ⦃ [∧]-classical-intro ⦃ classic-p ⦄ ⦃ [¬]-classical-intro ⦃ classic-q ⦄ ⦄ ⦄ ([→][∧]ₗ ⦃ classic-q ⦄)
+  [¬→][∧]ᵣ : ¬(P → Q) → (P ∧ (¬ Q))
+  [¬→][∧]ᵣ = contrapositive-variantₗ ⦃ [∧]-classical-intro ⦃ classic-p ⦄ ⦃ [¬]-classical-intro ⦃ classic-q ⦄ ⦄ ⦄ ([→][∧]ₗ ⦃ classic-q ⦄)
 
-  [↔]-negationₗ : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → (P ↔ Q) ← ((¬ P) ↔ (¬ Q))
-  [↔]-negationₗ ⦃ classic-p ⦄ ⦃ classic-q ⦄ ([↔]-intro nqnp npnq) = [↔]-intro qp pq where
-    qp : Q → P
-    qp = contrapositiveₗ ⦃ classic-p ⦄ npnq
+  [↔]-negationₗ : (P ↔ Q) ← ((¬ P) ↔ (¬ Q))
+  [↔]-negationₗ ([↔]-intro nqnp npnq) = [↔]-intro (contrapositiveₗ ⦃ classic-p ⦄ npnq) (contrapositiveₗ ⦃ classic-q ⦄ nqnp)
 
-    pq : P → Q
-    pq = contrapositiveₗ ⦃ classic-q ⦄ nqnp
-
-  [↔]-one-direction : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → (P ← Q) ∨ (P → Q)
+  [↔]-one-direction : (P ← Q) ∨ (P → Q)
   [↔]-one-direction with excluded-middle(P) | excluded-middle(Q)
   [↔]-one-direction | [∨]-introₗ p  | [∨]-introₗ q  = [∨]-introₗ (const p)
   [↔]-one-direction | [∨]-introₗ p  | [∨]-introᵣ nq = [∨]-introₗ (const p)
@@ -328,37 +270,31 @@ module _ {X : Type{ℓ₁}}{P : X → Stmt{ℓ₂}} ⦃ classical-proof1 : ∀{x
     -- ⇒ ¬¬∃x. ¬P(x)
     -- ⇒ ∃x. ¬P(x)
 
+  [∃]-unrelatedₗ-[→]ₗ : ⦃ _ : ◊ X ⦄ → ⦃ _ : Classical(∀ₗ P) ⦄ → ∀{Q : Stmt{ℓ₃}} → ∃(x ↦ (P(x) → Q)) ← (∀ₗ(x ↦ P(x)) → Q)
+  [∃]-unrelatedₗ-[→]ₗ ⦃ pos-x ⦄ ⦃ classical-axpx ⦄ {Q} axpxq with excluded-middle(∀ₗ P)
+  ... | ([∨]-introₗ axpx)  = [∃]-intro([◊]-existence) ⦃ const(axpxq (axpx)) ⦄
+  ... | ([∨]-introᵣ naxpx) = [∃]-map-proof ([⊥]-elim ∘_) ([¬∀]-to-[∃¬] (naxpx))
+  -- (∀x. P(x)) → Q
+  -- • ∀x. P(x)
+  --   ∀x. P(x)
+  --   ⇒ ∀x. P(x)
+  --   ⇒ Q
+  --   ⇒ P(a) → Q
+  --   ⇒ ∃x. P(x) → Q
+  -- • ¬∀x. P(x)
+  --   ¬∀x. P(x)
+  --   ⇒ ∃x. ¬P(x)
+  --   ⇒ ∃x. P(x) → Q
+
   -- Also known as: Drinker paradox
   drinker-ambiguity : ⦃ _ : ◊ X ⦄ → ⦃ _ : Classical(∀ₗ P) ⦄ → ∃(x ↦ (P(x) → ∀{y} → P(y)))
-  drinker-ambiguity ⦃ pos-x ⦄ ⦃ classical-axpx ⦄ with excluded-middle(∀ₗ P)
-  ... | ([∨]-introₗ axpx)  = [∃]-intro ([◊]-existence ⦃ pos-x ⦄) ⦃ const(\{x} → axpx{x}) ⦄
-  ... | ([∨]-introᵣ naxpx) = [∃]-map-proof ([⊥]-elim ∘_) ([¬∀]-to-[∃¬] (naxpx))
+  drinker-ambiguity = [∃]-map-proof (\pxap px {y} → pxap px {y}) ([∃]-unrelatedₗ-[→]ₗ id)
 
   drinker-ambiguity-equiv : ⦃ _ : Classical(∀ₗ P) ⦄ → ((◊ X) ↔ ∃(x ↦ (P(x) → ∀{y} → P(y))))
   drinker-ambiguity-equiv ⦃ classical-axpx ⦄ =
     [↔]-intro
       (\ex → intro ⦃ [∃]-witness ex ⦄)
       (\pos-x → drinker-ambiguity ⦃ pos-x ⦄ ⦃ classical-axpx ⦄)
-
-module _ {X : Type{ℓ₁}}{P : X → Stmt{ℓ₂}} ⦃ classical-proof1 : ∀{x} → Classical(P(x)) ⦄ ⦃ classical-proof2 : Classical(∃(¬_ ∘ P)) ⦄ where
-  -- TODO: Why is this proof so similar to the proof of `drinker-ambiguity`? Seems like that one is a special case of this when Q is (∀ₗ P) here
-  [∃]-unrelatedₗ-[→]ₗ : ⦃ _ : ◊ X ⦄ → ⦃ _ : Classical(∀ₗ P) ⦄ → ∀{Q : Stmt{ℓ₃}} → ∃(x ↦ (P(x) → Q)) ← (∀ₗ(x ↦ P(x)) → Q)
-  [∃]-unrelatedₗ-[→]ₗ ⦃ pos-x ⦄ ⦃ classical-axpx ⦄ {Q} = l where
-    l : ∃(x ↦ (P(x) → Q)) ← (∀ₗ(x ↦ P(x)) → Q)
-    l(axpxq) with excluded-middle(∀ₗ P)
-    ... | ([∨]-introₗ axpx)  = [∃]-intro([◊]-existence) ⦃ const(axpxq (axpx)) ⦄
-    ... | ([∨]-introᵣ naxpx) = [∃]-map-proof ([⊥]-elim ∘_) ([¬∀]-to-[∃¬] ⦃ classical-proof1 ⦄ ⦃ classical-proof2 ⦄ (naxpx))
-    -- (∀x. P(x)) → Q
-    -- • ∀x. P(x)
-    --   ∀x. P(x)
-    --   ⇒ ∀x. P(x)
-    --   ⇒ Q
-    --   ⇒ P(a) → Q
-    --   ⇒ ∃x. P(x) → Q
-    -- • ¬∀x. P(x)
-    --   ¬∀x. P(x)
-    --   ⇒ ∃x. ¬P(x)
-    --   ⇒ ∃x. P(x) → Q
 
 Classical₁ : ∀{ℓₒ ℓₗ}{X : Type{ℓₒ}} → (X → Stmt{ℓₗ}) → Stmt{ℓₒ ⊔ ℓₗ}
 Classical₁(P) = ∀¹(Classical ∘₁ P)

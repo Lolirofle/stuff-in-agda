@@ -16,7 +16,7 @@ open import Structure.Relator.Properties
 open import Structure.Relator
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
-open import Structure.Function renaming ([≡]-with to [≡ₛ]-with)
+open import Structure.Function renaming (congruence₁ to [≡ₛ]-with)
 open import Structure.Operator
 open import Syntax.Transitivity
 open import Type

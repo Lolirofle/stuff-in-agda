@@ -14,7 +14,7 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
-open import Structure.Setoid using (Equiv ; Function ; UnaryRelator ; BinaryRelator ; substitute₁ ; substitute₁ₗ ; substitute₁ᵣ ; substitute₁ₗᵣ ; substitute₂ ; [≡]-with ; [≡]-with2ₗ ; [≡]-with2ᵣ) renaming (_≡_ to _≡ₑ_)
+open import Structure.Setoid using (Equiv ; Function ; UnaryRelator ; BinaryRelator ; substitute₁ ; substitute₁ₗ ; substitute₁ᵣ ; substitute₁ₗᵣ ; substitute₂ ; congruence₁ ; congruence₂ₗ ; congruence₂ᵣ) renaming (_≡_ to _≡ₑ_)
 open import Structure.Function.Domain
 open import Structure.Function
 open import Structure.Relator.Equivalence
@@ -216,13 +216,13 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
 
   ⋃ᵢ-of-bijection : ∀{A : Type{ℓ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ → ∀{f : B → PredSet{ℓ}(T)} ⦃ _ : Function(f)⦄ → (([∃]-intro g) : A ≍ B) → (⋃ᵢ{I = A}(f ∘ g) ≡ ⋃ᵢ{I = B}(f))
   ∃.witness (_⨯_.left (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = inv g(b)
-  ∃.proof (_⨯_.left (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = substitute₂(_∋_) (symmetry(_≡_) ([≡]-with(f) inv-inverseᵣ)) (reflexivity(_≡ₑ_)) p
+  ∃.proof (_⨯_.left (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = substitute₂(_∋_) (symmetry(_≡_) (congruence₁(f) inv-inverseᵣ)) (reflexivity(_≡ₑ_)) p
   ∃.witness (_⨯_.right (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro a ⦃ p ⦄)) = g(a)
   ∃.proof (_⨯_.right (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = p
 
   ⋂ᵢ-of-bijection : ∀{A : Type{ℓ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ → ∀{f : B → PredSet{ℓ}(T)} ⦃ _ : Function(f)⦄ → (([∃]-intro g) : A ≍ B) → (⋂ᵢ{I = A}(f ∘ g) ≡ ⋂ᵢ{I = B}(f))
   _⨯_.left (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = p{g(b)}
-  _⨯_.right (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = substitute₂(_∋_) ([≡]-with(f) inv-inverseᵣ) (reflexivity(_≡ₑ_)) (p{inv g(b)})
+  _⨯_.right (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = substitute₂(_∋_) (congruence₁(f) inv-inverseᵣ) (reflexivity(_≡ₑ_)) (p{inv g(b)})
 
   -- TODO: Levels
   -- singleton-function-raw : ∀{A : Type{ℓ}} ⦃ _ : Equiv(A) ⦄ → ∀{x y : T} → (x ≡ₑ y) → ((• x) ≡ (• y))

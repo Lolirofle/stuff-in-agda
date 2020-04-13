@@ -16,4 +16,4 @@ _≡_ = Path
 
 [≡]-function = function-path
 
-[≡]-with = map-path
+congruence₁ = map-path

@@ -66,10 +66,10 @@ private variable bf : ℕ → B
 {-# TERMINATING #-}
 pairIndexing-injective-raw : ∀{a₁ b₁ a₂ b₂} → (pairIndexing a₁ b₁ ≡ pairIndexing a₂ b₂) → ((a₁ ≡ a₂) ∧ (b₁ ≡ b₂))
 pairIndexing-injective-raw {𝟎} {𝟎} {𝟎} {𝟎} p = [∧]-intro [≡]-intro [≡]-intro
-pairIndexing-injective-raw {𝟎} {𝐒 b₁} {𝟎} {𝐒 b₂} p = [∧]-intro [≡]-intro ([≡]-with(𝐒) ([∧]-elimₗ(pairIndexing-injective-raw (injective(𝐒) p))))
+pairIndexing-injective-raw {𝟎} {𝐒 b₁} {𝟎} {𝐒 b₂} p = [∧]-intro [≡]-intro (congruence₁(𝐒) ([∧]-elimₗ(pairIndexing-injective-raw (injective(𝐒) p))))
 pairIndexing-injective-raw {𝟎} {𝐒 b₁} {𝐒 a₂} {b₂} p with [∧]-intro _ () ← pairIndexing-injective-raw {b₁} {𝟎} {a₂} {𝐒 b₂} (injective(𝐒) p)
 pairIndexing-injective-raw {𝐒 a₁} {b₁} {𝟎} {𝐒 b₂} p with [∧]-intro _ () ← pairIndexing-injective-raw {a₁} {𝐒 b₁} {b₂} {𝟎} (injective(𝐒) p)
-pairIndexing-injective-raw {𝐒 a₁} {b₁} {𝐒 a₂} {b₂} p = Tuple.map ([≡]-with(𝐒)) (injective(𝐒)) (pairIndexing-injective-raw {a₁} {𝐒 b₁} {a₂} {𝐒 b₂} (injective(𝐒) p))
+pairIndexing-injective-raw {𝐒 a₁} {b₁} {𝐒 a₂} {b₂} p = Tuple.map (congruence₁(𝐒)) (injective(𝐒)) (pairIndexing-injective-raw {a₁} {𝐒 b₁} {a₂} {𝐒 b₂} (injective(𝐒) p))
 
 pairIndexing-injective : Injective(Tuple.uncurry pairIndexing)
 Injective.proof pairIndexing-injective {a₁ , b₁} {a₂ , b₂} p = Tuple.uncurry Tuple-equality (pairIndexing-injective-raw p)
@@ -95,32 +95,32 @@ interleave-values {af = af}{bf = bf} {n = 𝐒(𝐒 n)} = interleave-values {af 
 interleave-left-args : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) ↔ (m ≡ 2 ⋅ n)
 interleave-left-args {n = n} = [↔]-intro (\{[≡]-intro → [≡]-intro}) r where
   r : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) → (m ≡ 2 ⋅ n)
-  r {af = af} {m = 𝟎}{n = n} = [≡]-with(2 ⋅_) ∘ injective(af) ∘ injective(Either.Left)
+  r {af = af} {m = 𝟎}{n = n} = congruence₁(2 ⋅_) ∘ injective(af) ∘ injective(Either.Left)
   r {af = af}{bf = bf} {m = 𝐒 (𝐒 m)}{n = 𝟎} p with interleave-values {af = af}{bf = bf}{n = 𝐒(𝐒 m)}
   ... | [∨]-introₗ v with () ← injective(af) (injective(Either.Left) (symmetry(_≡_) v 🝖 p))
   ... | [∨]-introᵣ v with () ← symmetry(_≡_) v 🝖 p
-  r {af = af} {m = 𝐒 (𝐒 m)}{n = 𝐒 n} p = [≡]-with(𝐒 ∘ 𝐒) (r ⦃ [∘]-injective {f = af} ⦄{m = m}{n = n} p)
+  r {af = af} {m = 𝐒 (𝐒 m)}{n = 𝐒 n} p = congruence₁(𝐒 ∘ 𝐒) (r ⦃ [∘]-injective {f = af} ⦄{m = m}{n = n} p)
 
 interleave-right-args : ⦃ _ : Injective(bf) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Right(bf(n))) ↔ (m ≡ 𝐒(2 ⋅ n))
 interleave-right-args {n = n} = [↔]-intro (\{[≡]-intro → [≡]-intro}) r where
   r : ⦃ _ : Injective(bf) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Right(bf(n))) → (m ≡ 𝐒(2 ⋅ n))
-  r {bf = bf} {m = 𝐒 𝟎}{n = n} = [≡]-with(𝐒 ∘ (2 ⋅_)) ∘ injective(bf) ∘ injective(Either.Right)
+  r {bf = bf} {m = 𝐒 𝟎}{n = n} = congruence₁(𝐒 ∘ (2 ⋅_)) ∘ injective(bf) ∘ injective(Either.Right)
   r {bf = bf}{af = af} {m = 𝐒 (𝐒 m)}{n = 𝟎} p with interleave-values {af = af}{bf = bf}{n = 𝐒(𝐒 m)}
   ... | [∨]-introₗ v with () ← symmetry(_≡_) v 🝖 p
   ... | [∨]-introᵣ v with () ← injective(bf) (injective(Either.Right) (symmetry(_≡_) v 🝖 p))
-  r {bf = bf} {m = 𝐒 (𝐒 m)}{n = 𝐒 n} p = [≡]-with(𝐒 ∘ 𝐒) (r ⦃ [∘]-injective {f = bf} ⦄{m = m}{n = n} p)
+  r {bf = bf} {m = 𝐒 (𝐒 m)}{n = 𝐒 n} p = congruence₁(𝐒 ∘ 𝐒) (r ⦃ [∘]-injective {f = bf} ⦄{m = m}{n = n} p)
 
 interleave-step-left : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) ↔ (interleave af bf (𝐒(𝐒 m)) ≡ Either.Left(af(𝐒 n)))
 interleave-step-left{af = iaf}{bf = ibf}{m = m}{n = n} = [↔]-intro (l{af = iaf}{bf = ibf}{m = m}{n = n}) (r{af = iaf}{bf = ibf}{m = m}{n = n}) where
   l : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) ← (interleave af bf (𝐒(𝐒 m)) ≡ Either.Left(af(𝐒 n)))
-  l {af = af}          {m = 𝟎}      {n}   = [≡]-with(Either.Left) ∘ [≡]-with(af) ∘ injective(𝐒) ∘ injective(af) ∘ injective(Either.Left)
+  l {af = af}          {m = 𝟎}      {n}   = congruence₁(Either.Left) ∘ congruence₁(af) ∘ injective(𝐒) ∘ injective(af) ∘ injective(Either.Left)
   l {af = af}{bf = bf} {m = 𝐒 (𝐒 m)}{𝟎}   p with interleave-values {af = af}{bf = bf}{n = 𝐒(𝐒(𝐒(𝐒 m)))}
   ... | [∨]-introₗ v with () ← injective(af) (injective(Either.Left) (symmetry(_≡_) v 🝖 p))
   ... | [∨]-introᵣ v with () ← symmetry(_≡_) v 🝖 p
   l {af = af}          {m = 𝐒 (𝐒 m)}{𝐒 n} = l {af = af ∘ 𝐒} ⦃ [∘]-injective {f = af} ⦄ {m = m}{n}
 
   r : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) → (interleave af bf (𝐒(𝐒 m)) ≡ Either.Left(af(𝐒 n)))
-  r {af = af}          {m = 𝟎}      {n}   = [≡]-with(Either.Left) ∘ [≡]-with(af) ∘ [≡]-with(𝐒) ∘ injective(af) ∘ injective(Either.Left)
+  r {af = af}          {m = 𝟎}      {n}   = congruence₁(Either.Left) ∘ congruence₁(af) ∘ congruence₁(𝐒) ∘ injective(af) ∘ injective(Either.Left)
   r {af = af}{bf = bf} {m = 𝐒(𝐒 m)} {𝟎}   p with interleave-values {af = af}{bf = bf}{n = 𝐒(𝐒 m)}
   ... | [∨]-introₗ v with () ← injective(af) (injective(Either.Left) (symmetry(_≡_) v 🝖 p))
   ... | [∨]-introᵣ v with () ← symmetry(_≡_) v 🝖 p
@@ -142,7 +142,7 @@ instance
   Injective.proof (interleave-injective {af = af}{bf = bf}) {𝐒(𝐒 x)}{𝐒 𝟎}    fxfy with interleave-values{af = af}{bf = bf} {n = 𝐒(𝐒 x)}
   ... | [∨]-introₗ p with () ← symmetry(_≡_) fxfy 🝖 p
   ... | [∨]-introᵣ p with () ← injective(bf) (injective(Either.Right) (symmetry(_≡_) fxfy 🝖 p))
-  Injective.proof (interleave-injective {af = af}{bf = bf}) {𝐒(𝐒 x)}{𝐒(𝐒 y)} fxfy = [≡]-with(𝐒 ∘ 𝐒) (Injective.proof (interleave-injective {af = af}{bf = bf}) {x} {y} {!!})
+  Injective.proof (interleave-injective {af = af}{bf = bf}) {𝐒(𝐒 x)}{𝐒(𝐒 y)} fxfy = congruence₁(𝐒 ∘ 𝐒) (Injective.proof (interleave-injective {af = af}{bf = bf}) {x} {y} {!!})
 
 instance
   interleave-surjective : ⦃ Surjective(af) ⦄ → ⦃ Surjective(bf) ⦄ → Surjective(interleave af bf)

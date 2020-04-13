@@ -38,7 +38,7 @@ UnaryRelator.substitution [∧]-unaryRelator xy = Tuple.map (substitute₁(_) xy
 UnaryRelator.substitution [∨]-unaryRelator xy = Either.map2 (substitute₁(_) xy) (substitute₁(_) xy)
 
 [∘]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ {f : A → B} ⦃ _ : Function(f) ⦄ {P : B → Stmt{ℓₗ₃}} → ⦃ _ : UnaryRelator(P) ⦄ → UnaryRelator(P ∘ f)
-UnaryRelator.substitution ([∘]-unaryRelator {f = f}{P = P}) xy pfx = substitute₁(P) ([≡]-with(f) xy) pfx
+UnaryRelator.substitution ([∘]-unaryRelator {f = f}{P = P}) xy pfx = substitute₁(P) (congruence₁(f) xy) pfx
 
 binary-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ {P : A → A → Stmt{ℓₗ₁}} → ⦃ rel-P : BinaryRelator(P) ⦄ → UnaryRelator(\x → P x x)
 UnaryRelator.substitution (binary-unaryRelator {P = P}) xy pxx = substitute₂(P) xy xy pxx

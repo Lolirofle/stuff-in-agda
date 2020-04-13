@@ -49,7 +49,7 @@ open import Type
 -- a + n ≡ b //f
 -- a + ? ≡ 𝐒(b) //What value works if f?
 -- a + 𝐒(n) ≡ 𝐒(b)
--- 𝐒(a + n) ≡ 𝐒(b) //[≡]-with(𝐒) f
+-- 𝐒(a + n) ≡ 𝐒(b) //congruence₁(𝐒) f
 
 [≤]-predecessor : ∀{a b : ℕ} → (𝐒(a) ≤ b) → (a ≤ b)
 [≤]-predecessor ([∃]-intro(n) ⦃ proof ⦄) = [∃]-intro (𝐒(n)) ⦃ proof ⦄

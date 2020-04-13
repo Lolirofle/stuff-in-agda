@@ -57,7 +57,7 @@ module _
       constructor intro
       field
         functor-proof : (F₁ ⊜ F₂)
-        map-proof     : ∀{x y : Obj}{a : x ⟶ y} → (_≡_ ⦃ morphism-equiv ⦄ ([≡]-substitute-type ([≡]-with2(Morphism) (_⊜_.proof functor-proof{x}) (_⊜_.proof functor-proof{y})) (Functor.map(functor₁){x}{y} a)) (Functor.map(functor₂){x}{y} a))
+        map-proof     : ∀{x y : Obj}{a : x ⟶ y} → (_≡_ ⦃ morphism-equiv ⦄ ([≡]-substitute-type (congruence₂(Morphism) (_⊜_.proof functor-proof{x}) (_⊜_.proof functor-proof{y})) (Functor.map(functor₁){x}{y} a)) (Functor.map(functor₂){x}{y} a))
   open import Lang.Inspect
   module _ where
     private variable catₗ catᵣ : Category(Morphism) ⦃ morphism-equiv ⦄

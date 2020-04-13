@@ -36,7 +36,7 @@ module Dependent where
 
   -- module _ {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : B → Type{ℓ₃}} ⦃ _ : Equiv(B) ⦄ ⦃ equiv-C : ∀{b} → Equiv(C(b)) ⦄ {f₁ f₂ : (b : B) → C(b)} ⦃ _ : Function(f₂) ⦄ where (TODO: Requires Function to be able to take a dependent function)
     -- [⊜][∘]-binaryOperator-raw : (f₁ ⊜ f₂) → ∀{g₁ g₂ : A → B} → (g₁ ⊜ g₂) → (f₁ ∘ g₁ ⊜ f₂ ∘ g₂)
-    -- [⊜][∘]-binaryOperator-raw feq (intro geq) = [⊜][∘]ₗ-function-raw feq 🝖 (intro([≡]-with(f₂) (geq)))
+    -- [⊜][∘]-binaryOperator-raw feq (intro geq) = [⊜][∘]ₗ-function-raw feq 🝖 (intro(congruence₁(f₂) (geq)))
 
 open Functional
 open Function.Equals
@@ -73,7 +73,7 @@ module _ ⦃ _ : let _ = A ; _ = B ; _ = C in Equiv(C) ⦄ where
 
 module _ ⦃ _ : let _ = A in Equiv(B) ⦄ ⦃ _ : Equiv(C) ⦄ {f₁ f₂ : B → C} ⦃ _ : Function(f₂) ⦄ where
   [⊜][∘]-binaryOperator-raw : (f₁ ⊜ f₂) → ∀{g₁ g₂ : A → B} → (g₁ ⊜ g₂) → (f₁ ∘ g₁ ⊜ f₂ ∘ g₂)
-  [⊜][∘]-binaryOperator-raw feq (intro geq) = [⊜][∘]ₗ-function-raw feq 🝖 (intro([≡]-with(f₂) (geq)))
+  [⊜][∘]-binaryOperator-raw feq (intro geq) = [⊜][∘]ₗ-function-raw feq 🝖 (intro(congruence₁(f₂) (geq)))
 
 module _ ⦃ _ : let _ = A in Equiv(B) ⦄ ⦃ _ : Equiv(C) ⦄ ⦃ function : ∀{f : B → C} → Function(f) ⦄ where
   instance

@@ -96,11 +96,11 @@ module _
   map              (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y} = (map(functor₂₃){F₁₂(x)}{F₁₂(y)}) Fn.∘ (map(functor₁₂){x}{y})
   map-function     (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) = [∘]-function ⦃ func-f = map-function(functor₂₃) ⦄ ⦃ func-g = map-function(functor₁₂) ⦄
   op-preserving    (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y}{z} {f}{g} =
-    map(functor₂₃) (map(functor₁₂) (f ∘ g))                               🝖-[ [≡]-with(map(functor₂₃)) (op-preserving(functor₁₂)) ]
+    map(functor₂₃) (map(functor₁₂) (f ∘ g))                               🝖-[ congruence₁(map(functor₂₃)) (op-preserving(functor₁₂)) ]
     map(functor₂₃) (map(functor₁₂) f ∘ map functor₁₂ g)                   🝖-[ op-preserving(functor₂₃)]
     map(functor₂₃) (map(functor₁₂) f) ∘ map(functor₂₃) (map(functor₁₂) g) 🝖-end
   id-preserving    (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) {x} =
-    map(functor₂₃) (map(functor₁₂) id) 🝖-[ [≡]-with(_) (id-preserving(functor₁₂)) ]
+    map(functor₂₃) (map(functor₁₂) id) 🝖-[ congruence₁(_) (id-preserving(functor₁₂)) ]
     map(functor₂₃) id                  🝖-[ id-preserving(functor₂₃) ]
     id                                 🝖-end
 

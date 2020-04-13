@@ -44,12 +44,12 @@ module _
   ∃.proof (isomorphism-preserving {f = f} iso@([∃]-intro g)) =
     (Morphism.intro $
       map g ∘ map f 🝖-[ op-preserving ]-sym
-      map(g ∘ f)    🝖-[ [≡]-with(map) (inverseₗ(f)(g) ⦃ inverse-left ⦃ iso ⦄ ⦄) ]
+      map(g ∘ f)    🝖-[ congruence₁(map) (inverseₗ(f)(g) ⦃ inverse-left ⦃ iso ⦄ ⦄) ]
       map id        🝖-[ id-preserving ]
       id            🝖-end
     ) , (Morphism.intro $
       map f ∘ map g 🝖-[ op-preserving ]-sym
-      map(f ∘ g)    🝖-[ [≡]-with(map) (inverseᵣ(f)(g) ⦃ inverse-right ⦃ iso ⦄ ⦄) ]
+      map(f ∘ g)    🝖-[ congruence₁(map) (inverseᵣ(f)(g) ⦃ inverse-right ⦃ iso ⦄ ⦄) ]
       map id        🝖-[ id-preserving ]
       id            🝖-end
     )

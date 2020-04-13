@@ -41,13 +41,13 @@ module _
   associate4-123-321 = Morphism.associativity(_∘_) 🝖 Morphism.associativity(_∘_)
 
   associate4-123-213 : (((f ∘ g) ∘ h) ∘ i ≡ (f ∘ (g ∘ h)) ∘ i)
-  associate4-123-213 = [≡]-with2ₗ(_∘_)(_) (Morphism.associativity(_∘_))
+  associate4-123-213 = congruence₂ₗ(_∘_)(_) (Morphism.associativity(_∘_))
 
   associate4-321-231 : (f ∘ (g ∘ (h ∘ i)) ≡ f ∘ ((g ∘ h) ∘ i))
-  associate4-321-231 = [≡]-with2ᵣ(_∘_)(_) (symmetry(_≡_) (Morphism.associativity(_∘_)))
+  associate4-321-231 = congruence₂ᵣ(_∘_)(_) (symmetry(_≡_) (Morphism.associativity(_∘_)))
 
   associate4-213-121 : ((f ∘ (g ∘ h)) ∘ i ≡ (f ∘ g) ∘ (h ∘ i))
-  associate4-213-121 = symmetry(_≡_) ([≡]-with2ₗ(_∘_)(_) (Morphism.associativity(_∘_))) 🝖 Morphism.associativity(_∘_)
+  associate4-213-121 = symmetry(_≡_) (congruence₂ₗ(_∘_)(_) (Morphism.associativity(_∘_))) 🝖 Morphism.associativity(_∘_)
 
   associate4-231-213 : f ∘ ((g ∘ h) ∘ i) ≡ (f ∘ (g ∘ h)) ∘ i
   associate4-231-213 = symmetry(_≡_) (Morphism.associativity(_∘_))
@@ -69,8 +69,8 @@ module _
     ∃.witness (op-closed-under-isomorphism f g) = inv g ∘ inv f
     Tuple.left (∃.proof (op-closed-under-isomorphism f g)) = intro $
       (inv g ∘ inv f) ∘ (f ∘ g) 🝖-[ associate4-213-121 ]-sym
-      (inv g ∘ (inv f ∘ f)) ∘ g 🝖-[ [≡]-with2ₗ(_∘_) ⦃ op ⦄ (g) ([≡]-with2ᵣ(_∘_) ⦃ op ⦄ (inv g) (Morphism.inverseₗ(_∘_)(id) (f)(inv f))) ]
-      (inv g ∘ id) ∘ g          🝖-[ [≡]-with2ₗ(_∘_) ⦃ op ⦄ (g) (Morphism.identityᵣ(_∘_)(id)) ]
+      (inv g ∘ (inv f ∘ f)) ∘ g 🝖-[ congruence₂ₗ(_∘_) ⦃ op ⦄ (g) (congruence₂ᵣ(_∘_) ⦃ op ⦄ (inv g) (Morphism.inverseₗ(_∘_)(id) (f)(inv f))) ]
+      (inv g ∘ id) ∘ g          🝖-[ congruence₂ₗ(_∘_) ⦃ op ⦄ (g) (Morphism.identityᵣ(_∘_)(id)) ]
       inv g ∘ g                 🝖-[ Morphism.inverseₗ(_∘_)(id) (g)(inv g) ]
       id                        🝖-end
       where
@@ -78,8 +78,8 @@ module _
         open Isomorphism(g)
     Tuple.right (∃.proof (op-closed-under-isomorphism f g)) = intro $
       (f ∘ g) ∘ (inv g ∘ inv f) 🝖-[ associate4-213-121 ]-sym
-      (f ∘ (g ∘ inv g)) ∘ inv f 🝖-[ [≡]-with2ₗ(_∘_) ⦃ op ⦄ (_) ([≡]-with2ᵣ(_∘_) ⦃ op ⦄ (_) (Morphism.inverseᵣ(_∘_)(id) (_)(_))) ]
-      (f ∘ id) ∘ inv f          🝖-[ [≡]-with2ₗ(_∘_) ⦃ op ⦄ (_) (Morphism.identityᵣ(_∘_)(id)) ]
+      (f ∘ (g ∘ inv g)) ∘ inv f 🝖-[ congruence₂ₗ(_∘_) ⦃ op ⦄ (_) (congruence₂ᵣ(_∘_) ⦃ op ⦄ (_) (Morphism.inverseᵣ(_∘_)(id) (_)(_))) ]
+      (f ∘ id) ∘ inv f          🝖-[ congruence₂ₗ(_∘_) ⦃ op ⦄ (_) (Morphism.identityᵣ(_∘_)(id)) ]
       f ∘ inv f                 🝖-[ Morphism.inverseᵣ(_∘_)(id) (_)(_) ]
       id                        🝖-end
       where
