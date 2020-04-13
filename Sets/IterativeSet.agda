@@ -14,10 +14,12 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Natural
 open import Relator.Equals using () renaming (_≡_ to Id ; [≡]-intro to intro)
-open import Sets.Setoid.WithLvl using (Function ; UnaryRelator ; BinaryRelator ; Equiv ; intro ; substitute₁ ; substitute₂ ; substitute₂ₗ ; substitute₂ᵣ ; [≡]-with)
+open import Sets.Setoid.WithLvl using (Equiv)
 open import Structure.Function.Domain
+open import Structure.Function
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Structure.Relator
 open import Syntax.Function
 open import Syntax.Transitivity
 open import Type

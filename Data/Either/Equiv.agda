@@ -7,6 +7,7 @@ open import Functional
 open import Logic
 open import Logic.Predicate
 open import Structure.Function.Domain
+open import Structure.Function
 open import Type
 
 module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} where

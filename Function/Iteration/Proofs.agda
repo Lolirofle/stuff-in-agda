@@ -10,9 +10,11 @@ open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.Oper using (_+_ ; _⋅_ ; _𝄩_)
 open import Numeral.Natural.Oper.Proofs
+import      Structure.Function
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
 import      Structure.Operator.Names as Names
+import      Structure.Operator 
 open import Structure.Relator.Properties
 open import Structure.Function.Domain
 open import Syntax.Transitivity
@@ -20,6 +22,8 @@ open import Type
 
 module _ where
   open import Sets.Setoid
+  open        Structure.Function
+  open        Structure.Operator
 
   module _ {ℓ} {X : Type{ℓ}} ⦃ _ : Equiv(X) ⦄ where
     -- Propositions that state something about arbitrary composed functions also apply to arbitrary function iterations of the first function.
@@ -193,6 +197,8 @@ module _ {ℓ} {X : Type{ℓ}} where
 
 module _ where
   open import Sets.Setoid
+  open        Structure.Function
+  open        Structure.Operator
 
   module _ {ℓ} {X : Type{ℓ}} ⦃ equiv-X : Equiv(X) ⦄ where
     repeatₗ-by-0 : ∀{_▫_ : X → X → X}{x id} → ⦃ _ : Identityᵣ(_▫_)(id) ⦄ → (repeatᵣ 0 (_▫_) x id ≡ id)

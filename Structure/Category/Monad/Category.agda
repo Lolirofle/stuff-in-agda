@@ -25,6 +25,7 @@ open import Structure.Category.NaturalTransformation
 open import Structure.Category.NaturalTransformation.NaturalTransformations
 open import Structure.Category.Proofs
 open import Structure.Category.Properties
+open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Syntax.Transitivity

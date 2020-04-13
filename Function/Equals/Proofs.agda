@@ -6,8 +6,10 @@ import      Functional
 import      Function.Equals
 open import Logic.Propositional
 open import Sets.Setoid
+open import Structure.Function
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
+open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Syntax.Transitivity

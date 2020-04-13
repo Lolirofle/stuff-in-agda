@@ -9,12 +9,15 @@ open import Logic.Predicate
 open import Functional
 open import Function.Inverseᵣ
 open import Function.Names using (_⊜_)
-open import Sets.Setoid using (Equiv ; Function ; UnaryRelator ; BinaryOperator ; substitute₁) renaming (_≡_ to _≡ₛ_ ; [≡]-with to [≡ₛ]-with)
+open import Sets.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_)
 open import Sets.Setoid.Uniqueness
 import      Structure.Relator.Function as Relator
 open import Structure.Relator.Properties
+open import Structure.Relator
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
+open import Structure.Function renaming ([≡]-with to [≡ₛ]-with)
+open import Structure.Operator
 open import Syntax.Transitivity
 open import Type
 open import Type.Empty
@@ -183,7 +186,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{
   swap-involution-fn = reflexivity(_≡ₛ_)
 
   swap-binaryOperator : ⦃ _ : Equiv(X) ⦄ ⦃ _ : Equiv(Y) ⦄ ⦃ _ : Equiv(Z) ⦄ → ∀{_▫_ : X → Y → Z} → ⦃ _ : BinaryOperator(_▫_) ⦄ → BinaryOperator(swap(_▫_))
-  BinaryOperator.congruence (swap-binaryOperator {_▫_ = _▫_} ⦃ Sets.Setoid.intro p ⦄) x₁y₁ x₂y₂ = p x₂y₂ x₁y₁
+  BinaryOperator.congruence (swap-binaryOperator {_▫_ = _▫_} ⦃ intro p ⦄) x₁y₁ x₂y₂ = p x₂y₂ x₁y₁
 
 module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
   s-combinator-const-id : ⦃ _ : Equiv(X → X) ⦄ → (_∘ₛ_ {X = X}{Y = Y → X}{Z = X} const const ≡ₛ id)

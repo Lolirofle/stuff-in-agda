@@ -13,8 +13,10 @@ open import Sets.Setoid
 open import Sets.Setoid.Uniqueness
 open import Structure.Function.Domain
 open import Structure.Function.Multi
+open import Structure.Function
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
+open import Structure.Operator
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type

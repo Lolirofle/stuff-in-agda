@@ -22,6 +22,7 @@ open import Functional
 open import Logic.Propositional
 open import Structure.Function.Domain
 open import Structure.Function.Ordering
+open import Structure.Function
 open import Structure.Operator.Proofs
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties

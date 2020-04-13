@@ -6,8 +6,9 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 open import Functional
-open import Sets.Setoid hiding (Function)
+open import Sets.Setoid
 open import Sets.Setoid.Uniqueness
+open import Structure.Relator
 open import Type
 
 module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {A : Type{ℓₒ₁}}{B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv(B) ⦄ (φ : A → B → Stmt{ℓₒ₃}) where

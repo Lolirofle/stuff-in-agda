@@ -11,10 +11,10 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equivalence
-open import Sets.Setoid using (Function ; BinaryOperator)
 import      Structure.Category.Functor as Functor
 open import Structure.Operator.Monoid
 open import Structure.Operator.Properties
+open import Structure.Operator
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type

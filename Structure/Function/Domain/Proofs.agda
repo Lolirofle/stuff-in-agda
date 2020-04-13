@@ -13,6 +13,7 @@ open import Sets.Setoid
 open import Sets.Setoid.Uniqueness
 open import Structure.Function.Domain
 open import Structure.Relator.Properties
+open import Structure.Relator
 open import Syntax.Transitivity
 open import Type
 

@@ -16,10 +16,12 @@ open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Sets.Setoid using (Equiv ; Function ; UnaryRelator ; BinaryRelator ; substitute₁ ; substitute₁ₗ ; substitute₁ᵣ ; substitute₁ₗᵣ ; substitute₂ ; [≡]-with ; [≡]-with2ₗ ; [≡]-with2ᵣ) renaming (_≡_ to _≡ₑ_)
 open import Structure.Function.Domain
+open import Structure.Function
 open import Structure.Relator.Equivalence
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
 open import Structure.Relator.Proofs
+open import Structure.Relator
 open import Syntax.Transitivity
 open import Type
 open import Type.Size

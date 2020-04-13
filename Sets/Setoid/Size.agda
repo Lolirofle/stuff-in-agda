@@ -6,6 +6,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Sets.Setoid
 open import Structure.Function.Domain
+open import Structure.Function
 open import Syntax.Function
 open import Type
 

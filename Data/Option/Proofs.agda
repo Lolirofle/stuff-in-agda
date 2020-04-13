@@ -6,8 +6,9 @@ open import Data.Option
 open import Data.Either
 open import Data.Either.Proofs
 open import Functional
-open import Sets.Setoid using (Equiv ; Function)
+open import Sets.Setoid using (Equiv)
 open import Structure.Function.Domain
+open import Structure.Function using (Function)
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties

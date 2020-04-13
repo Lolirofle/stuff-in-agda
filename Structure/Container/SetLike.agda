@@ -12,6 +12,7 @@ open import Sets.Setoid.WithLvl using (Equiv ; Function ; UnaryRelator ; BinaryR
 open import Structure.Function.Domain
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Structure.Relator
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ : Lvl.Level

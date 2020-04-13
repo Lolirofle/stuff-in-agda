@@ -24,8 +24,10 @@ open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals using () renaming (_≡_ to _≡ₑ_ ; _≢_ to _≢ₑ_ ; [≡]-intro to [≡ₑ]-intro)
 open import Sets.Setoid
 open import Structure.Function.Domain
+open import Structure.Function
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
+open import Structure.Operator
 open import Structure.Relator.Properties
 open import Structure.Relator.Ordering
 open import Structure.Relator.Ordering.Lattice

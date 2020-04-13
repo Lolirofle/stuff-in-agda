@@ -4,7 +4,9 @@ import      Lvl
 open import Lang.Instance
 open import Logic
 open import Relator.Equals
-open import Sets.Setoid.WithLvl using (Equiv ; intro ; Function ; BinaryOperator) renaming (_≡_ to _≡ₛ_)
+open import Sets.Setoid.WithLvl using (Equiv) renaming (_≡_ to _≡ₛ_)
+open import Structure.Function hiding ([≡]-with)
+open import Structure.Operator
 open import Structure.Relator.Equivalence
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties

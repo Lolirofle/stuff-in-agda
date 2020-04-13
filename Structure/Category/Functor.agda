@@ -5,6 +5,7 @@ import      Lvl
 open import Logic.Predicate
 open import Sets.Setoid
 open import Structure.Category
+open import Structure.Function
 open import Type
 
 private variable ℓ : Lvl.Level

@@ -7,6 +7,7 @@ open import Structure.Category
 open import Structure.Category.Names
 open import Structure.Category.Properties
 import      Structure.Operator.Properties as Properties
+open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type

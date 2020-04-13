@@ -9,6 +9,7 @@ open import Sets.Setoid
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
 open import Structure.Function.Domain
+open import Structure.Function
 open import Syntax.Function
 open import Type
 

@@ -9,6 +9,7 @@ import      Structure.Category.Functor as Category
 import      Structure.Category.Monad.ExtensionSystem as Category
 open import Structure.Category.Properties
 open import Structure.Operator.Properties
+open import Structure.Operator
 open import Type
 open import Type.Unit
 

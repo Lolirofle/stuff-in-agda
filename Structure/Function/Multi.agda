@@ -13,7 +13,7 @@ import      Lvl
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
 open import Sets.Setoid.Uniqueness
-open import Sets.Setoid hiding (Function)
+open import Sets.Setoid
 open import Syntax.Number
 open import Type
 

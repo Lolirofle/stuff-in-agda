@@ -42,8 +42,10 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   open import Lvl.Proofs
   import      Relator.Equals.Proofs.Equiv
   open import Structure.Function.Domain
+  open import Structure.Function
   open import Structure.Relator.Proofs
   open import Structure.Relator.Properties
+  open import Structure.Relator
   open import Syntax.Function
   open import Syntax.Transitivity
 

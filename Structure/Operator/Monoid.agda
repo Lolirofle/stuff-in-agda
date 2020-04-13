@@ -4,7 +4,9 @@ import      Lvl
 open import Logic
 open import Logic.Predicate
 open import Sets.Setoid
+open import Structure.Function
 open import Structure.Operator.Properties hiding (associativity ; identityₗ ; identityᵣ)
+open import Structure.Operator
 open import Type
 open import Type.Size
 

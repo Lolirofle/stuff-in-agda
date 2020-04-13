@@ -11,6 +11,7 @@ open import Sets.Setoid
 open import Sets.Setoid.Size
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
+open import Structure.Function
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties

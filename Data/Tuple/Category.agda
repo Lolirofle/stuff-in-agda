@@ -7,6 +7,7 @@ open import Sets.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Properties
+open import Structure.Operator
 open import Type
 
 open Category ⦃ … ⦄

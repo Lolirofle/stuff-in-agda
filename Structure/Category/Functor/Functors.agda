@@ -8,6 +8,7 @@ open import Sets.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Properties
+open import Structure.Function
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Syntax.Transitivity

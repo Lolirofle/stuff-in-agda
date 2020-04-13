@@ -16,8 +16,10 @@ open import Relator.Equals.Proofs             hiding ([≡]-with)
 open import Relator.Equals.Proofs.Equivalence hiding ([≡]-with)
 open import Sets.Setoid hiding (_≡_ ; _≢_)
 open import Structure.Function.Domain
+open import Structure.Function
 open import Structure.Operator.Proofs
 open import Structure.Operator.Properties
+open import Structure.Operator
 open import Structure.Relator.Properties
 open import Syntax.Function
 open import Syntax.Transitivity

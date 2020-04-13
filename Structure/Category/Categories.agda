@@ -13,6 +13,7 @@ open import Structure.Category.Functor.Functors
 open import Structure.Category.Proofs
 open import Structure.Category.Properties
 open import Structure.Operator.Properties
+open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type

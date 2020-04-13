@@ -23,6 +23,7 @@ open import Structure.Operator.Monoid
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 -- open import Structure.Operator.SetAlgebra
+open import Structure.Operator
 open import Structure.Function.Domain
 open import Structure.Relator.Properties
 open import Type

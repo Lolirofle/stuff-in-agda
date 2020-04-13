@@ -10,6 +10,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Sets.Setoid
 open import Structure.Function.Domain
+open import Structure.Function
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type

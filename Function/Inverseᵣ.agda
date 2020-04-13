@@ -7,6 +7,7 @@ open import Logic.Predicate
 open import Functional
 open import Function.Names using (_⊜_)
 open import Sets.Setoid
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
 open import Structure.Relator.Properties

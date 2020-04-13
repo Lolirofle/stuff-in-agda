@@ -7,10 +7,11 @@ open import Function.Equals
 open import Functional
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid hiding ([≡]-with)
+open import Sets.Setoid
 open import Structure.Category.Properties
 open import Structure.Function.Domain
 open import Structure.Function.Multi
+open import Structure.Operator
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type

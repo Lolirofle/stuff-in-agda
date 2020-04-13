@@ -13,6 +13,7 @@ import      Structure.Category.Names as Names
 open import Structure.Category.Properties
 import      Structure.Operator.Names as Names
 import      Structure.Operator.Properties as Properties
+open import Structure.Operator
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
 open import Syntax.Function

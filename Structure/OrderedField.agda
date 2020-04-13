@@ -23,6 +23,7 @@ open import Structure.Operator.Monoid
 open import Structure.Operator.Group
 open import Structure.Operator.Proofs
 open import Structure.Operator.Properties
+open import Structure.Operator
 open import Structure.Relator.Ordering
 open        Structure.Relator.Ordering.Weak.Properties
 open import Structure.Relator.Properties

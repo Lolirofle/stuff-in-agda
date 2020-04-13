@@ -9,6 +9,7 @@ open import Function.Names using (_⊜_)
 open import Function.Inverseᵣ
 open import Sets.Setoid
 open import Sets.Setoid.Uniqueness
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
 open import Structure.Relator.Properties

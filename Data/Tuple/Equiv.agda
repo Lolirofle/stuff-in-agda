@@ -5,6 +5,8 @@ open import Data using (Unit ; <>)
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Logic.Propositional
 open import Sets.Setoid
+open import Structure.Function
+open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type
