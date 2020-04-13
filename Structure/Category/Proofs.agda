@@ -8,7 +8,7 @@ open import Lang.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Names
 open import Structure.Category.Properties

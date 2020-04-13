@@ -12,7 +12,7 @@ open import Numeral.Finite.Bound
 open import Numeral.Finite.Oper
 open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Natural
-open import Sets.Setoid
+open import Structure.Setoid
 -- open import Structure.Function.Domain
 open import Structure.Function.Multi
 open import Structure.Operator.Names -- Properties

@@ -8,8 +8,8 @@ open import Logic.Propositional
 open import Logic.Predicate
 import      Lvl
 open import Numeral.Natural
-open import Sets.Setoid.Uniqueness
-open import Sets.Setoid hiding (Function)
+open import Structure.Setoid.Uniqueness
+open import Structure.Setoid hiding (Function)
 open import Type
 
 private variable ℓₒ₁ ℓₒ₂ : Lvl.Level

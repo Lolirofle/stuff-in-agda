@@ -9,8 +9,8 @@ open import Logic.Predicate
 open import Functional
 open import Function.Inverseᵣ
 open import Function.Names using (_⊜_)
-open import Sets.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_)
-open import Sets.Setoid.Uniqueness
+open import Structure.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid.Uniqueness
 import      Structure.Relator.Function as Relator
 open import Structure.Relator.Properties
 open import Structure.Relator

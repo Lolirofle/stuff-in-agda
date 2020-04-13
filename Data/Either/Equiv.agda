@@ -11,7 +11,7 @@ open import Structure.Function
 open import Type
 
 module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} where
-  open import Sets.Setoid
+  open import Structure.Setoid
   open import Structure.Relator.Equivalence
   open import Structure.Relator.Properties
 

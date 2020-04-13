@@ -5,7 +5,7 @@ open import Logic
 open import Logic.Predicate
 open import Logic.Propositional
 open import Relator.Ordering
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
 open import Structure.Function.Domain

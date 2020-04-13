@@ -6,8 +6,8 @@ open import Functional
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid.Uniqueness
-open import Sets.Setoid.WithLvl
+open import Structure.Setoid.Uniqueness
+open import Structure.Setoid.WithLvl
 open import Type
 
 private variable ℓₒ ℓₒ₁ ℓₒ₂ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ : Lvl.Level

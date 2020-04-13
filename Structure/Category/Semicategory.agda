@@ -7,8 +7,8 @@ open import Lang.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid.Uniqueness
-open import Sets.Setoid
+open import Structure.Setoid.Uniqueness
+open import Structure.Setoid
 import      Structure.Category.Names as Names
 open import Structure.Category.Properties
 import      Structure.Operator.Names as Names

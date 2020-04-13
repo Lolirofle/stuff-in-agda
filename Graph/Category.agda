@@ -12,7 +12,7 @@ open import Graph.Walk.Proofs{ℓ₁}{ℓ₂}{V}
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Relator.Equals.Proofs.Equivalence
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 import      Structure.Category.Names as Names
 open import Structure.Category.Properties

@@ -1,5 +1,5 @@
 import      Lvl
-open import Sets.Setoid
+open import Structure.Setoid
 open import Type
 
 module Structure.Category.NaturalTransformation.NaturalTransformations

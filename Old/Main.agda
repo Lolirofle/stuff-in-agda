@@ -134,7 +134,7 @@ import Relator.Countable
 import Relator.Equals
 import Relator.Equals.Proofs
 import Relator.Equals.Proofs.Uniqueness
-import Sets.Setoid.Uniqueness
+import Structure.Setoid.Uniqueness
 import Relator.Finite
 import Sets.BoolSet
 import Sets.BoolSet.Proofs
@@ -145,8 +145,8 @@ import Sets.PredicateSet.Filter
 import Sets.PredicateSet.Finite
 import Sets.PredicateSet.Proofs
 import Sets.PredicateSet.Relations
-import Sets.Setoid
-import Sets.Setoid.Proofs
+import Structure.Setoid
+import Structure.Setoid.Proofs
 import Stream
 import String
 import Structure.Arithmetic

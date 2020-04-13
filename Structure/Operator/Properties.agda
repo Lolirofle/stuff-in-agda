@@ -6,7 +6,7 @@ open import Lang.Instance
 open import Logic
 open import Logic.Predicate
 import      Structure.Operator.Names as Names
-open import Sets.Setoid
+open import Structure.Setoid
 open import Syntax.Function
 open import Type
 

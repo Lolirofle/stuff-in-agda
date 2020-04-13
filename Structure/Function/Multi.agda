@@ -12,8 +12,8 @@ open import Logic.Predicate
 import      Lvl
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
-open import Sets.Setoid.Uniqueness
-open import Sets.Setoid
+open import Structure.Setoid.Uniqueness
+open import Structure.Setoid
 open import Syntax.Number
 open import Type
 

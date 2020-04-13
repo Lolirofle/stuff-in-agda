@@ -4,7 +4,7 @@ import Lvl
 open import Lang.Instance
 open import Logic.Predicate
 open import Logic
-open import Sets.Setoid.WithLvl
+open import Structure.Setoid.WithLvl
 open import Type
 
 private variable ℓ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ : Lvl.Level

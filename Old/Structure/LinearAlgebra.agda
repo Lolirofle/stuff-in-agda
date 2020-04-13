@@ -17,9 +17,9 @@ open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
 -- open import Relator.Equals
 -- open import Relator.Equals.Proofs
-open import Sets.Setoid
-open import Sets.Setoid.Uniqueness
-open import Sets.Setoid.Uniqueness.Proofs
+open import Structure.Setoid
+open import Structure.Setoid.Uniqueness
+open import Structure.Setoid.Uniqueness.Proofs
 open import Structure.Function.Domain
 import      Structure.Function.Linear as Linear
 open import Structure.Operator.Field

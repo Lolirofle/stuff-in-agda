@@ -3,7 +3,7 @@ module Structure.Operator.Field where
 import      Lvl
 open import Logic
 open import Logic.Propositional
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Operator.Group using (Group ; CommutativeGroup)
 open import Structure.Operator.Monoid using (Monoid)
 open import Structure.Operator.Properties hiding (distributivityₗ ; distributivityᵣ)

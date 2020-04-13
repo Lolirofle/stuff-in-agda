@@ -13,7 +13,7 @@ import      Lvl
 open import Graph
 open import Graph.Properties
 open import Relator.Equals.Proofs.Equivalence
-open import Sets.Setoid.Uniqueness
+open import Structure.Setoid.Uniqueness
 open import Structure.Relator.Properties
 open import Type.Unit
 

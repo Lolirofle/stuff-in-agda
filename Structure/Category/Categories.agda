@@ -6,7 +6,7 @@ open import Data.Tuple as Tuple using ()
 open import Functional
 open import Logic
 import      Lvl
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Functor.Functors

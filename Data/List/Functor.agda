@@ -10,7 +10,7 @@ open import Logic
 open import Logic.Propositional
 open import Relator.Equals
 open import Relator.Equals.Proofs
-open import Sets.Setoid using (intro)
+open import Structure.Setoid using (intro)
 open import Structure.Function
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties

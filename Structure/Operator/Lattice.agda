@@ -1,5 +1,5 @@
 open import Type
-open import Sets.Setoid
+open import Structure.Setoid
 
 module Structure.Operator.Lattice {ℓ} (L : Type{ℓ}) ⦃ equiv-L : Equiv(L) ⦄ where
 

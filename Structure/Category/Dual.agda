@@ -2,7 +2,7 @@ module Structure.Category.Dual where
 
 open import Data.Tuple as Tuple using ()
 open import Functional using (swap)
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Names
 open import Structure.Category.Properties

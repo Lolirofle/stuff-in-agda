@@ -5,7 +5,7 @@ open import Data
 import      Functional
 import      Function.Equals
 open import Logic.Propositional
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Function
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties

@@ -17,7 +17,7 @@ open import Relator.Converse
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equivalence
 open import Relator.ReflexiveTransitiveClosure
-open import Sets.Setoid.Uniqueness
+open import Structure.Setoid.Uniqueness
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties

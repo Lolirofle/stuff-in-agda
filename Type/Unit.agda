@@ -1,7 +1,7 @@
 module Type.Unit {ℓ} where
 
 import      Lvl
-open import Sets.Setoid
+open import Structure.Setoid
 open import Type
 
 -- A type is an unit type when it has exactly one inhabitant (there is only one object with this type).

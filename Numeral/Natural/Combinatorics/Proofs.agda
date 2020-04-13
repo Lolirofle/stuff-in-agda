@@ -14,7 +14,7 @@ open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs             hiding ([≡]-with)
 open import Relator.Equals.Proofs.Equivalence hiding ([≡]-with)
-open import Sets.Setoid hiding (_≡_ ; _≢_)
+open import Structure.Setoid hiding (_≡_ ; _≢_)
 open import Structure.Function.Domain
 open import Structure.Function
 open import Structure.Operator.Proofs

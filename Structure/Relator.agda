@@ -6,7 +6,7 @@ open import Lang.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid.WithLvl
+open import Structure.Setoid.WithLvl
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Syntax.Function

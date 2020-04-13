@@ -10,7 +10,7 @@ open import Logic.Propositional
 import      Lvl
 open import Graph
 open import Relator.Equals.Proofs.Equivalence hiding ([≡]-with)
-open import Sets.Setoid.Uniqueness
+open import Structure.Setoid.Uniqueness
 open import Structure.Relator.Properties
 open import Type.Unit
 

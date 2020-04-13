@@ -6,7 +6,7 @@ open import Data.Tuple.Category
 open import Data.Tuple.Equiv
 import      Functional as Fn
 open import Logic.Predicate
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
 import      Structure.Category.Functor.Functors as Functors

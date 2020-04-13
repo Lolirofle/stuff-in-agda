@@ -28,7 +28,7 @@ data Gcd : ℕ → ℕ → ℕ → Type{Lvl.𝟎} where
   GcdSwap : ∀{a b c} → ⦃ _ : (a < b) ⦄ → Gcd a (𝐒(b)) c → Gcd (𝐒(b)) a c
 
 open import Relator.Equals
--- open import Sets.Setoid.Uniqueness
+-- open import Structure.Setoid.Uniqueness
 
 -- Gcd-𝟎 : ∀{a b c}{obj : Gcd a 𝟎 c} → (obj ≡ GcdBase{a})
 

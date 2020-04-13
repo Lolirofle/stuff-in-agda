@@ -1,4 +1,4 @@
-module Sets.Setoid.Names where
+module Structure.Setoid.Names where
 
 open import Data.Tuple
 open import Functional
@@ -7,7 +7,7 @@ import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid
+open import Structure.Setoid
 open import Syntax.Function
 open import Type
 

@@ -2,7 +2,7 @@ module Structure.Operator.Functions where
 
 import      Lvl
 open import Logic
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Operator.Properties
 open import Type
 

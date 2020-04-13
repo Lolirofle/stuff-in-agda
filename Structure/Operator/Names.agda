@@ -4,7 +4,7 @@ import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid
+open import Structure.Setoid
 open import Syntax.Function
 open import Function.Names
 open import Syntax.Transitivity

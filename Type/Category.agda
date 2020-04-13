@@ -3,7 +3,7 @@ module Type.Category where
 open import Data
 open import Functional
 open import Logic.Propositional
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 import      Structure.Category.Functor as Category
 import      Structure.Category.Monad.ExtensionSystem as Category

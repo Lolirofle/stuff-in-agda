@@ -7,7 +7,7 @@ open import Functional
 open import Logic
 open import Logic.Predicate
 open import Numeral.Natural
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Function.Domain
 open import Type
 open import Type.Size

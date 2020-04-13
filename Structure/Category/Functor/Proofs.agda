@@ -4,7 +4,7 @@ open import Data.Tuple as Tuple using (_,_)
 open import Functional using (_$_)
 open import Logic.Predicate
 import      Lvl
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Properties
 open import Structure.Category.Functor

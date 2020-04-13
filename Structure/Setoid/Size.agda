@@ -1,10 +1,10 @@
-module Sets.Setoid.Size where
+module Structure.Setoid.Size where
 
 import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Function.Domain
 open import Structure.Function
 open import Syntax.Function

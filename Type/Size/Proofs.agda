@@ -12,7 +12,7 @@ open import Logic
 open import Logic.IntroInstances
 open import Logic.Propositional
 open import Logic.Predicate
-import      Sets.Setoid
+import      Structure.Setoid
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
 open import Structure.Relator.Equivalence
@@ -21,8 +21,8 @@ open import Structure.Relator.Properties
 open import Type
 import      Type.Size
 
-module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Sets.Setoid.Equiv(T) ⦄ where
-  open Sets.Setoid
+module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Structure.Setoid.Equiv(T) ⦄ where
+  open Structure.Setoid
   open Type.Size
 
   [≼]-maximum : (_≼_ T (T → T) ⦃ [⊜]-equiv ⦄)

@@ -8,7 +8,7 @@ import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid.WithLvl using (Equiv ; Function ; UnaryRelator ; BinaryRelator ; substitute₁ ; substitute₂ ; [≡]-with ; binaryRelator) renaming (_≡_ to _≡ₛ_ ; _≢_ to _≢ₛ_)
+open import Structure.Setoid.WithLvl using (Equiv ; Function ; UnaryRelator ; BinaryRelator ; substitute₁ ; substitute₂ ; [≡]-with ; binaryRelator) renaming (_≡_ to _≡ₛ_ ; _≢_ to _≢ₛ_)
 open import Structure.Function.Domain
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties

@@ -4,7 +4,7 @@ import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Numeral.Natural
-open import Sets.Setoid hiding (_≡_)
+open import Structure.Setoid hiding (_≡_)
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equivalence
 open import Type

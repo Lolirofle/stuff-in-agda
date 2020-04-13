@@ -7,7 +7,7 @@ open import Logic.Propositional
 open import Relator.Equals using ([≡]-intro) renaming (_≡_ to _≡ₑ_)
 open import Relator.Equals.Proofs
 import      Structure.Relator.Names as Names
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type

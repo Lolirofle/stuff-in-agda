@@ -3,7 +3,7 @@ module Data.Tuple.Category where
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Data.Tuple.Equiv
 open import Logic.Propositional
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Properties

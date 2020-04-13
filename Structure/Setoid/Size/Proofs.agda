@@ -1,4 +1,4 @@
-module Sets.Setoid.Size.Proofs where
+module Structure.Setoid.Size.Proofs where
 
 import      Lvl
 open import Functional
@@ -7,8 +7,8 @@ open import Function.Inverse
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid
-open import Sets.Setoid.Size
+open import Structure.Setoid
+open import Structure.Setoid.Size
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
 open import Structure.Function

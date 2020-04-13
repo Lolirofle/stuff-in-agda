@@ -6,7 +6,7 @@ open import Data.Option
 open import Data.Either
 open import Data.Either.Proofs
 open import Functional
-open import Sets.Setoid using (Equiv)
+open import Structure.Setoid using (Equiv)
 open import Structure.Function.Domain
 open import Structure.Function using (Function)
 import      Structure.Operator.Names as Names
@@ -27,7 +27,7 @@ module _ where
   Some-injectivity = Right-injectivity
 
 module _ where
-  open Sets.Setoid
+  open Structure.Setoid
   open import Function.Equals
 
   module _ ⦃ _ : let _ = A ; _ = B ; _ = C in Equiv(Option(C)) ⦄ {f : B → C}{g : A → B} where
@@ -93,7 +93,7 @@ module _
   {_▫_ : ∀{T₁ T₂ T₃ : Type{ℓ}} → T₁ → T₂ → T₃}
   where
 
-  open        Sets.Setoid
+  open        Structure.Setoid
   open import Structure.Category
   open import Structure.Category.Properties
 

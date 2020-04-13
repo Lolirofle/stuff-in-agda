@@ -31,7 +31,7 @@ open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Relation.Order
 open import Relator.Equals hiding (_≡_)
 open import Relator.Equals.Proofs.Equivalence hiding ([≡]-with)
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
 open import Structure.Relator.Properties

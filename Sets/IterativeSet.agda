@@ -14,7 +14,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Natural
 open import Relator.Equals using () renaming (_≡_ to Id ; [≡]-intro to intro)
-open import Sets.Setoid.WithLvl using (Equiv)
+open import Structure.Setoid.WithLvl using (Equiv)
 open import Structure.Function.Domain
 open import Structure.Function
 open import Structure.Relator.Equivalence

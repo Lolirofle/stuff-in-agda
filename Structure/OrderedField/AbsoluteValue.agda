@@ -1,5 +1,5 @@
 open import Logic
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.OrderedField
 open import Type
 

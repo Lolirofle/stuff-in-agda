@@ -4,7 +4,7 @@ import      Functional as Fn
 open import Function.Proofs
 open import Logic.Predicate
 import      Lvl
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Properties

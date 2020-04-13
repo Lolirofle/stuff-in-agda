@@ -1,4 +1,4 @@
-module Sets.Setoid.WithLvl where
+module Structure.Setoid.WithLvl where
 
 import Lvl
 open import Functional.Dependent

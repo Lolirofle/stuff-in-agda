@@ -8,7 +8,7 @@ import      Lvl
 open import Type
 open import Relator.Equals using ([≡]-intro) renaming (_≡_ to _≡ₑ_)
 open import Relator.Equals.Proofs.Equivalence
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Functor.Functors as Functors

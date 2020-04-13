@@ -1,11 +1,11 @@
-module Sets.Setoid.Uniqueness where
+module Structure.Setoid.Uniqueness where
 
 import      Lvl
 open import Functional
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid.WithLvl
+open import Structure.Setoid.WithLvl
 open import Type
 
 private variable ℓₗ ℓₗ₁ ℓₗ₂ : Lvl.Level

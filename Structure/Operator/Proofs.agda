@@ -9,8 +9,8 @@ import      Function.Names as Names
 open import Logic.IntroInstances
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid
-open import Sets.Setoid.Uniqueness
+open import Structure.Setoid
+open import Structure.Setoid.Uniqueness
 open import Structure.Function.Domain
 open import Structure.Function.Multi
 open import Structure.Function

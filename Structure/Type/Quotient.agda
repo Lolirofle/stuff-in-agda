@@ -3,7 +3,7 @@ module Structure.Type.Quotient where
 import      Lvl
 open import Logic
 open import Logic.Propositional
-open import Sets.Setoid hiding (intro)
+open import Structure.Setoid hiding (intro)
 open import Structure.Relator.Equivalence hiding (intro)
 open import Type renaming (Type to Ty)
 open import Type.Empty hiding (intro)

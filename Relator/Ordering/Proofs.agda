@@ -15,7 +15,7 @@ open import Syntax.Transitivity
 
 module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
   open        Relator.Ordering.From-[≤] (_≤_)
-  open import Sets.Setoid
+  open import Structure.Setoid
 
   [≤][>]-not : ∀{a b} → (a ≤ b) → (a > b) → ⊥
   [≤][>]-not = apply

@@ -7,7 +7,7 @@ open import Function.Equals
 open import Functional
 open import Logic.Propositional
 open import Logic.Predicate
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category.Properties
 open import Structure.Function.Domain
 open import Structure.Function.Multi

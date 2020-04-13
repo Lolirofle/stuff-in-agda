@@ -21,7 +21,7 @@ open import Syntax.Transitivity
 open import Type
 
 module _ where
-  open import Sets.Setoid
+  open import Structure.Setoid
   open        Structure.Function
   open        Structure.Operator
 
@@ -196,7 +196,7 @@ module _ {ℓ} {X : Type{ℓ}} where
   raise-repeat-equality{𝐒(n)}{f} = [≡]-with(f ∘_) (raise-repeat-equality{n}{f})
 
 module _ where
-  open import Sets.Setoid
+  open import Structure.Setoid
   open        Structure.Function
   open        Structure.Operator
 

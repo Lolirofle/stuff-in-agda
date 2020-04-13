@@ -9,7 +9,7 @@ import      Function.Proofs as Function
 import      Lvl
 open import Logic
 open import Logic.Predicate
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Functor.Equiv
 import      Structure.Category.Names as Names

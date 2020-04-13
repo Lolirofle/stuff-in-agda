@@ -3,7 +3,7 @@ module Structure.Topology where
 open import Logic
 import      Lvl
 open import Sets.ExtensionalPredicateSet renaming (_≡_ to _≡ₛ_)
-open import Sets.Setoid
+open import Structure.Setoid
 open import Type
 
 private variable ℓ : Lvl.Level

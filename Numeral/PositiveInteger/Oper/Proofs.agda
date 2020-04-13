@@ -13,7 +13,7 @@ open import Numeral.PositiveInteger.Oper
 open import Relator.Equals
 open import Relator.Equals.Proofs hiding ([≡]-with)
 import      Function.Names as Names
-open import Sets.Setoid using ([≡]-with ; [≡]-with2 ; [≡]-with2ₗ ; [≡]-with2ᵣ)
+open import Structure.Setoid using ([≡]-with ; [≡]-with2 ; [≡]-with2ₗ ; [≡]-with2ᵣ)
 open import Structure.Function.Domain
 open import Structure.Function.Multi
 open import Structure.Operator.Monoid

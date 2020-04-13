@@ -12,7 +12,7 @@ open import Logic.Predicate
 open import Numeral.Natural using (ℕ)
 import      Numeral.Natural.Relation.Order as ℕ
 open import Relator.Ordering
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Function.Ordering
 open import Structure.Operator.Field
 open import Structure.Operator.Monoid

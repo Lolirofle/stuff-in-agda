@@ -1,4 +1,4 @@
-module Sets.Setoid.Uniqueness.Proofs where
+module Structure.Setoid.Uniqueness.Proofs where
 
 import      Lvl
 open import Functional
@@ -6,7 +6,7 @@ open import Function.Names
 open import Logic.Propositional
 open import Logic.Predicate
 open import Relator.Equals
-open import Sets.Setoid.Uniqueness
+open import Structure.Setoid.Uniqueness
 open import Relator.Equals.Proofs
 -- TODO: open import Structure.Function.Domain
 open import Structure.Relator.Properties

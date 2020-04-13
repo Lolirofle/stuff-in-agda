@@ -1,6 +1,6 @@
 open import Logic
 open import Logic.Classical
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.OrderedField
 open import Type
 
@@ -26,7 +26,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Relator.Ordering
 open import Sets.PredicateSet renaming (_≡_ to _≡ₛ_)
-open import Sets.Setoid.Uniqueness
+open import Structure.Setoid.Uniqueness
 open import Structure.Function.Ordering
 open import Structure.Operator.Field
 open import Structure.Operator.Monoid

@@ -3,7 +3,7 @@ module Relator.Equals.Proofs where
 open import Relator.Equals
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
-open import Sets.Setoid renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid renaming (_≡_ to _≡ₛ_)
 
 instance
   [≡]-reflexivity : ∀{ℓ}{A : Type{ℓ}} → Reflexivity(_≡_ {P = A})

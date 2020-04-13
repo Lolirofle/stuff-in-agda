@@ -3,7 +3,7 @@ module Structure.Category.Functor where
 open import Lang.Instance
 import      Lvl
 open import Logic.Predicate
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Function
 open import Type

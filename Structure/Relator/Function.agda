@@ -6,8 +6,8 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 open import Functional
-open import Sets.Setoid
-open import Sets.Setoid.Uniqueness
+open import Structure.Setoid
+open import Structure.Setoid.Uniqueness
 open import Structure.Relator
 open import Type
 

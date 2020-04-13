@@ -5,7 +5,7 @@ import      Lvl
 open import Type.Empty
 open import Type.Unit
 open import Logic.Propositional
-open import Sets.Setoid
+open import Structure.Setoid
 open import Structure.Function
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
