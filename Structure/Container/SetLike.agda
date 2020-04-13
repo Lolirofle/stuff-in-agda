@@ -255,7 +255,7 @@ module Proofs where
         instance
           [≡]-equiv : Equiv{ℓ₃}(C)
           Equiv._≡_ [≡]-equiv = _≡_
-          Equiv.[≡]-equivalence [≡]-equiv = equivalence
+          Equiv.equivalence [≡]-equiv = equivalence
 
       module _
         ⦃ _ : Equiv{ℓₗ₂}(E) ⦄

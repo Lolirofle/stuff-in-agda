@@ -38,7 +38,7 @@ open Morphism.OperModule{Morphism = Morphism}(_∘_)
 open Morphism.OperModule.IdModule{Morphism = Morphism}(_∘_)(id)
 open Functor(functor)
 private instance _ = cat
-private open module MorphismEquiv {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
+private open module MorphismEquiv {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
 
 -- Extension operator
 -- Also called: _*

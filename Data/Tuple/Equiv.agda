@@ -17,7 +17,7 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ 
   instance
     Tuple-equiv : Equiv(A ⨯ B)
     _≡_ ⦃ Tuple-equiv ⦄ (x₁ , y₁) (x₂ , y₂) = (x₁ ≡ x₂) ∧ (y₁ ≡ y₂)
-    [≡]-equivalence ⦃ Tuple-equiv ⦄ = intro where
+    Equiv-equivalence ⦃ Tuple-equiv ⦄ = intro where
       instance
         [≡]-reflexivity : Reflexivity(_≡_ ⦃ Tuple-equiv ⦄)
         Reflexivity.proof([≡]-reflexivity) = [∧]-intro (reflexivity(_≡_)) (reflexivity(_≡_))

@@ -157,7 +157,7 @@ module _ where
     instance
       [≡]-equiv : Equiv(PredSet{ℓ}(T))
       Equiv._≡_ [≡]-equiv = {!_≡_!}
-      Equiv.[≡]-equivalence [≡]-equiv = {![≡]-equivalence!}
+      Equiv.equivalence [≡]-equiv = {![≡]-equivalence!}
     -}
 
     [≡]-to-[⊆] : (S₁ ≡ S₂) → (S₁ ⊆ S₂)

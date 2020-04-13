@@ -42,11 +42,11 @@ module _ where
     singleCategory : Category{Obj = Unit}(_▫_) ⦃ equiv ⦄
     Category._∘_ singleCategory {<>} {<>} {<>} p q = {!q!}
     Category.id singleCategory {<>} = {!!}
-    BinaryOperator.congruence (Category.binaryOperator singleCategory) _ _ = reflexivity(_) ⦃ Equivalence.reflexivity (Equiv.[≡]-equivalence(equiv)) ⦄
-    Morphism.Associativity.proof (Category.associativity singleCategory) = reflexivity(_) ⦃ Equivalence.reflexivity (Equiv.[≡]-equivalence(equiv)) ⦄
-    Morphism.Identityₗ.proof (Tuple.left (Category.identity singleCategory)) {<>} {<>} = {!reflexivity(_) ⦃ Equivalence.reflexivity (Equiv.[≡]-equivalence(equiv)) ⦄!}
+    BinaryOperator.congruence (Category.binaryOperator singleCategory) _ _ = reflexivity(_) ⦃ Equivalence.reflexivity (Equiv.equivalence(equiv)) ⦄
+    Morphism.Associativity.proof (Category.associativity singleCategory) = reflexivity(_) ⦃ Equivalence.reflexivity (Equiv.equivalence(equiv)) ⦄
+    Morphism.Identityₗ.proof (Tuple.left (Category.identity singleCategory)) {<>} {<>} = {!reflexivity(_) ⦃ Equivalence.reflexivity (Equiv.equivalence(equiv)) ⦄!}
     Morphism.Identityᵣ.proof (Tuple.right (Category.identity singleCategory)) = {!!}
-  -- reflexivity(_≡_) ⦃ Equivalence.reflexivity (Equiv.[≡]-equivalence equiv) ⦄
+  -- reflexivity(_≡_) ⦃ Equivalence.reflexivity (Equiv.equivalence equiv) ⦄
 -}
 
 {- 

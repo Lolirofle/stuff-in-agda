@@ -38,8 +38,8 @@ module _
   where
 
   module _ where
-    private open module Equivₗ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equivₗ{x}{y} ⦄) using ()
-    private open module Equivᵣ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equivᵣ{x}{y} ⦄) using ()
+    private open module Equivₗ {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equivₗ{x}{y} ⦄) using ()
+    private open module Equivᵣ {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equivᵣ{x}{y} ⦄) using ()
     open Category ⦃ … ⦄
     open Functor
     open Raw
@@ -58,7 +58,7 @@ module _
   {Category : Category(Morphism)}
   where
 
-  private open module [≡]-Equivalence {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
+  private open module [≡]-Equivalence {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
   open Functor
   open Raw
 
@@ -78,7 +78,7 @@ module _
   {Category₃ : Category(Morphism₃)}
   where
 
-  private open module Equiv₃ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv₃{x}{y} ⦄) using ()
+  private open module Equiv₃ {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equiv₃{x}{y} ⦄) using ()
   open Category ⦃ … ⦄
   open Functor
   open Raw

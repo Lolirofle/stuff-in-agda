@@ -31,9 +31,9 @@ module _
   instance -- TODO: Incorrect definition. The two `map` should also be the equivalent.
     functor-equiv : ∀{catₗ catᵣ : Category(Morphism)} → Equiv(catₗ →ᶠᵘⁿᶜᵗᵒʳ catᵣ)
     Equiv._≡_ functor-equiv ([∃]-intro F₁) ([∃]-intro F₂) = Lvl.Up{ℓ₂ = ℓₘ}(F₁ ⊜ F₂)
-    Reflexivity.proof (Equivalence.reflexivity (Equiv.[≡]-equivalence functor-equiv)) = Lvl.up(reflexivity(_≡_))
-    Symmetry.proof (Equivalence.symmetry (Equiv.[≡]-equivalence functor-equiv)) (Lvl.up proof) = Lvl.up(symmetry(_⊜_) proof)
-    Transitivity.proof (Equivalence.transitivity (Equiv.[≡]-equivalence functor-equiv)) (Lvl.up p) (Lvl.up q) = Lvl.up(transitivity(_⊜_) p q)
+    Reflexivity.proof (Equivalence.reflexivity (Equiv.equivalence functor-equiv)) = Lvl.up(reflexivity(_≡_))
+    Symmetry.proof (Equivalence.symmetry (Equiv.equivalence functor-equiv)) (Lvl.up proof) = Lvl.up(symmetry(_⊜_) proof)
+    Transitivity.proof (Equivalence.transitivity (Equiv.equivalence functor-equiv)) (Lvl.up p) (Lvl.up q) = Lvl.up(transitivity(_⊜_) p q)
   {-# WARNING_ON_USAGE functor-equiv "Incorrect definition" #-}
 -}
 

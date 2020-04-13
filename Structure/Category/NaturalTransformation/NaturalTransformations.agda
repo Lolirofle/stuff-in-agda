@@ -53,7 +53,7 @@ module _
 
   open Category ⦃ … ⦄ hiding (identity)
   open Functor ⦃ … ⦄
-  private open module Equivᵣ {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equivᵣ{x}{y} ⦄) using ()
+  private open module Equivᵣ {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equivᵣ{x}{y} ⦄) using ()
 
   module _ where
     open Raw(catₗ)(catᵣ)

@@ -32,7 +32,7 @@ module _
   open Category.ArrowNotation(cat)
   open Morphism.OperModule(\{x} → _∘_ {x})
   open Morphism.IdModule(\{x} → _∘_ {x})(id)
-  private open module [≡]-Equivalence {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
+  private open module [≡]-Equivalence {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
 
   private variable x y z : Obj
   private variable f g h i : x ⟶ y

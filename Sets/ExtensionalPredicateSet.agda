@@ -165,7 +165,7 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
   instance
     [≡]-equiv : Equiv(PredSet{ℓ}(T))
     Equiv._≡_ ([≡]-equiv {ℓ}) x y = x ≡ y
-    Equiv.[≡]-equivalence [≡]-equiv = [≡]-equivalence
+    Equiv.equivalence [≡]-equiv = [≡]-equivalence
 
 module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv(T) ⦄ where
   instance

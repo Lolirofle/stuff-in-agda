@@ -41,7 +41,7 @@ module One {ℓ} {T : Type{ℓ}} where
   instance
     [≡]-equiv : Equiv{ℓ}(T)
     Equiv._≡_ [≡]-equiv = _≡_
-    Equiv.[≡]-equivalence [≡]-equiv = [≡]-equivalence
+    Equiv.equivalence [≡]-equiv = [≡]-equivalence
 
   [≡]-to-equivalence : ∀{ℓₗ}{x y : T} → (x ≡ y) → ⦃ equiv-T : Equiv{ℓₗ}(T) ⦄ → (_≡ₛ_ ⦃ equiv-T ⦄ x y)
   [≡]-to-equivalence([≡]-intro) = reflexivity(_≡ₛ_)

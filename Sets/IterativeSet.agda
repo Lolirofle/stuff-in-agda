@@ -198,7 +198,7 @@ module _ where
   instance
     Iset-equiv : Equiv(Iset{ℓ})
     Equiv._≡_ Iset-equiv = _≡_
-    Equiv.[≡]-equivalence Iset-equiv = [≡]-equivalence
+    Equiv.equivalence Iset-equiv = [≡]-equivalence
 
 
 

@@ -44,7 +44,7 @@ module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ is-prop : IsProp(U) ⦄ ⦃ equiv-a : Eq
 module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ is-unit : IsUnit(U) ⦄ {_▫_ : U → U → Stmt} where
   unit-equiv : Equiv(U)
   Equiv._≡_ unit-equiv = (_▫_)
-  Reflexivity.proof  (Equivalence.reflexivity  (Equiv.[≡]-equivalence unit-equiv))       = {!!}
-  Symmetry.proof     (Equivalence.symmetry     (Equiv.[≡]-equivalence unit-equiv)) _     = {!!}
-  Transitivity.proof (Equivalence.transitivity (Equiv.[≡]-equivalence unit-equiv)) _ _   = {!!}
+  Reflexivity.proof  (Equivalence.reflexivity  (Equiv.equivalence unit-equiv))       = {!!}
+  Symmetry.proof     (Equivalence.symmetry     (Equiv.equivalence unit-equiv)) _     = {!!}
+  Transitivity.proof (Equivalence.transitivity (Equiv.equivalence unit-equiv)) _ _   = {!!}
 -}

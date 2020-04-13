@@ -23,12 +23,12 @@ module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} where
     instance
       Either-equiv : Equiv(A ‖ B)
       Equiv._≡_ Either-equiv = EitherEquality
-      Reflexivity.proof (Equivalence.reflexivity (Equiv.[≡]-equivalence Either-equiv)) {Left  _} = Left (reflexivity(_≡_))
-      Reflexivity.proof (Equivalence.reflexivity (Equiv.[≡]-equivalence Either-equiv)) {Right _} = Right (reflexivity(_≡_))
-      Symmetry.proof (Equivalence.symmetry (Equiv.[≡]-equivalence Either-equiv)) {.(Left _)} {.(Left _)} (Left p) = Left (symmetry(_≡_) p)
-      Symmetry.proof (Equivalence.symmetry (Equiv.[≡]-equivalence Either-equiv)) {.(Right _)} {.(Right _)} (Right p) = Right (symmetry(_≡_) p)
-      Transitivity.proof (Equivalence.transitivity (Equiv.[≡]-equivalence Either-equiv)) {.(Left _)} {.(Left _)} {.(Left _)} (Left xy) (Left yz) = Left (transitivity(_≡_) xy yz)
-      Transitivity.proof (Equivalence.transitivity (Equiv.[≡]-equivalence Either-equiv)) {.(Right _)} {.(Right _)} {.(Right _)} (Right xy) (Right yz) = Right (transitivity(_≡_) xy yz)
+      Reflexivity.proof (Equivalence.reflexivity (Equiv.equivalence Either-equiv)) {Left  _} = Left (reflexivity(_≡_))
+      Reflexivity.proof (Equivalence.reflexivity (Equiv.equivalence Either-equiv)) {Right _} = Right (reflexivity(_≡_))
+      Symmetry.proof (Equivalence.symmetry (Equiv.equivalence Either-equiv)) {.(Left _)} {.(Left _)} (Left p) = Left (symmetry(_≡_) p)
+      Symmetry.proof (Equivalence.symmetry (Equiv.equivalence Either-equiv)) {.(Right _)} {.(Right _)} (Right p) = Right (symmetry(_≡_) p)
+      Transitivity.proof (Equivalence.transitivity (Equiv.equivalence Either-equiv)) {.(Left _)} {.(Left _)} {.(Left _)} (Left xy) (Left yz) = Left (transitivity(_≡_) xy yz)
+      Transitivity.proof (Equivalence.transitivity (Equiv.equivalence Either-equiv)) {.(Right _)} {.(Right _)} {.(Right _)} (Right xy) (Right yz) = Right (transitivity(_≡_) xy yz)
 
     instance
       Left-function : Function ⦃ equiv-A ⦄ ⦃ Either-equiv ⦄ (Left)

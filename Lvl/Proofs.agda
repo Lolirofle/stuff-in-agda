@@ -15,9 +15,9 @@ private variable T : Type{ℓ}
 instance
   LvlUp-equiv : ⦃ _ : Equiv(T) ⦄ → Equiv(Lvl.Up{_}{ℓ}(T))
   Equiv._≡_ (LvlUp-equiv {ℓ = ℓ}) (up x) (up y) = Lvl.Up{_}{ℓ}(x ≡ y)
-  Up.obj (Reflexivity.proof (Equivalence.reflexivity (Equiv.[≡]-equivalence LvlUp-equiv))) = reflexivity(_≡_)
-  Up.obj (Symmetry.proof (Equivalence.symmetry (Equiv.[≡]-equivalence LvlUp-equiv)) (up p)) = symmetry(_≡_) p
-  Up.obj (Transitivity.proof (Equivalence.transitivity (Equiv.[≡]-equivalence LvlUp-equiv)) (up p) (up q)) = transitivity(_≡_) p q
+  Up.obj (Reflexivity.proof (Equivalence.reflexivity (Equiv.equivalence LvlUp-equiv))) = reflexivity(_≡_)
+  Up.obj (Symmetry.proof (Equivalence.symmetry (Equiv.equivalence LvlUp-equiv)) (up p)) = symmetry(_≡_) p
+  Up.obj (Transitivity.proof (Equivalence.transitivity (Equiv.equivalence LvlUp-equiv)) (up p) (up q)) = transitivity(_≡_) p q
 
 instance
   LvlUpObj-bijective : ⦃ _ : Equiv(T) ⦄ → Bijective(Lvl.Up.obj{ℓ₂ = ℓ}{T = T})

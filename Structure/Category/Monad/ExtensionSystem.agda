@@ -31,7 +31,7 @@ open Category.ArrowNotation(cat)
 open Category(cat)
 open NaturalTransformations.Raw(cat)(cat)
 private instance _ = cat
-private open module MorphismEquiv {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
+private open module MorphismEquiv {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
 
 record ExtensionSystem (T : Obj → Obj) : Type{Lvl.of(type-of(cat))} where
   field

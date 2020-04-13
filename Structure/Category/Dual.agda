@@ -22,7 +22,7 @@ module _
 
   open Category.ArrowNotation(cat)
   open Category(cat)
-  private open module MorphismEquiv {x}{y} = Equivalence ([≡]-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
+  private open module MorphismEquiv {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
 
   -- The opposite/dual category of a category.
   dual : Category(_⟵_)
