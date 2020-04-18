@@ -4,6 +4,8 @@ import      Lvl
 open import Data.List
 open import Numeral.Natural
 open import Numeral.Natural.Oper
+open import Structure.Function
+open import Structure.Operator
 open import Type
 
 _‥_ : ℕ → ℕ → List(ℕ)
@@ -30,7 +32,7 @@ open import Functional
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Relation.Order
 open import Relator.Equals hiding (_≡_)
-open import Relator.Equals.Proofs.Equivalence hiding (congruence₁)
+open import Relator.Equals.Proofs.Equivalence
 open import Structure.Setoid
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
@@ -68,12 +70,12 @@ Range-postpend {𝐒 a} {𝐒 b} ⦃ [≤]-with-[𝐒] ⦃ 𝐒ab ⦄ ⦄
 Range-length : ∀{a b} → (length(a ‥ b) ≡ b −₀ a)
 Range-length {𝟎} {𝟎} = [≡]-intro
 Range-length {𝟎} {𝐒 b}
-  rewrite length-map{f = 𝐒}{l = 𝟎 ‥ b}
+  rewrite length-map{f = 𝐒}{x = 𝟎 ‥ b}
   rewrite Range-length {𝟎} {b}
   = congruence₁(𝐒) [≡]-intro
 Range-length {𝐒 a} {𝟎} = [≡]-intro
 Range-length {𝐒 a} {𝐒 b}
-  rewrite length-map{f = 𝐒}{l = a ‥ b}
+  rewrite length-map{f = 𝐒}{x = a ‥ b}
   rewrite Range-length {a} {b}
   = [≡]-intro
 
@@ -114,7 +116,7 @@ Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with
   (f(r₀) + ∑(r) f) + f(x)    🝖-end
 
 ∑-compose : ∀{f}{g}{r} → ∑(r) (f ∘ g) ≡ ∑(map g r) f
-∑-compose {f}{g}{r} = congruence₁(foldᵣ(_+_) 𝟎) (map-preserves-[∘] {f = f}{g = g}{l = r})
+∑-compose {f}{g}{r} = congruence₁(foldᵣ(_+_) 𝟎) (map-preserves-[∘] {f = f}{g = g}{x = r})
 
 ∑-add : ∀{r}{f g} → (∑(r) f + ∑(r) g ≡ ∑(r) (x ↦ f(x) + g(x)))
 ∑-add {∅}      {f} {g} = reflexivity(_≡_)
@@ -267,7 +269,7 @@ module _ where
 
   mapDep : ∀{ℓ₁ ℓ₂}{A : Type{ℓ₁}}{B : Type{ℓ₂}} → (l : List(A)) → ((elem : A) → ⦃ _ : (elem ∈ l) ⦄ → B) → List(B)
   mapDep ∅ _ = ∅
-  mapDep (elem ⊰ l) f = (f elem) ⊰ (mapDep l (\x ⦃ p ⦄ → f x ⦃ skip p ⦄))
+  mapDep (elem ⊰ l) f = (f elem ⦃ use ⦄) ⊰ (mapDep l (\x → f x ⦃ _∈_.skip ⦄))
 
   -- ∑dep : (r : List(ℕ)) → ((i : ℕ) → ⦃ _ : (i ∈ r) ⦄ → ℕ) → ℕ
 

@@ -12,10 +12,10 @@ open import Graph.Walk.Proofs{ℓ₁}{ℓ₂}{V}
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Relator.Equals.Proofs.Equivalence
-open import Structure.Setoid
 open import Structure.Category
 import      Structure.Category.Names as Names
 open import Structure.Category.Properties
+open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Properties
 open import Syntax.Transitivity

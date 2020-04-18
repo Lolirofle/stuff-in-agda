@@ -1,26 +1,34 @@
 module Relator.Equals.Proofs where
 
 import      Lvl
-open import Functional
+open import Functional using (_→ᶠ_ ; id)
+open import Functional.Dependent
 open import Lang.Instance
 open import Logic
 open import Logic.Propositional
+open import Logic.Propositional.Proofs.Structures
 open import Relator.Equals
 open import Relator.Equals.Names
 open import Relator.Equals.Proofs.Equivalence public
 open import Structure.Setoid using (Equiv ; intro)
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Syntax.Function
 open import Type
 
-module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} where
+private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+private variable T A B : Type{ℓ}
+private variable x y : T
+
+module _ where
   -- Replaces occurrences of an element in a function
-  [≡]-substitutionₗ : ∀{x y : T} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → f(x) ← f(y)
+  [≡]-substitutionₗ : (x ≡ y) → ∀{f : T → Type{ℓ}} → f(x) ← f(y)
   [≡]-substitutionₗ [≡]-intro = id
 
   -- Replaces occurrences of an element in a function
-  [≡]-substitutionᵣ : ∀{x y : T} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → f(x) → f(y)
+  [≡]-substitutionᵣ : (x ≡ y) → ∀{f : T → Type{ℓ}} → f(x) → f(y)
   [≡]-substitutionᵣ [≡]-intro = id
+  -- xy {f = f} = sub₂(_≡_)(Functional._→ᶠ_ on₂ f) xy
 
   -- Note:
   --   The elimination rules can be used in different ways:
@@ -31,16 +39,17 @@ module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} where
   [≡]-elimₗ = [≡]-substitutionₗ
   [≡]-elimᵣ = [≡]-substitutionᵣ
 
-  [≡]-elim : ∀{x y : T} → (x ≡ y) → ∀{f : T → Stmt} → f(x) ↔ f(y)
+  [≡]-elim : (x ≡ y) → ∀{f : T → Stmt{ℓ}} → f(x) ↔ f(y)
   [≡]-elim eq = [↔]-intro ([≡]-elimₗ eq) ([≡]-elimᵣ eq)
 
-  [≡]-unelim : ∀{x y : T} → (∀{f : T → Stmt} → f(x) → f(y)) → (x ≡ y)
-  [≡]-unelim {x}{_} (F) = F {y ↦ (x ≡ y)} ([≡]-intro)
+  [≡]-substitute-type : (A ≡ B) → (A → B)
+  [≡]-substitute-type = sub₂(_≡_)(Functional._→ᶠ_)
 
-  -- I think this is called "Extensional equality" and cannot be proved?
-  -- See:
-  --   https://www.reddit.com/r/agda/comments/4te0rg/functors_extensional_equality_and_function/
-  --   https://mathoverflow.net/questions/156238/function-extensionality-does-it-make-a-difference-why-would-one-keep-it-out-of
+  [≡]-unelim : (∀{f : T → Stmt} → f(x) → f(y)) → (x ≡ y)
+  [≡]-unelim {x = x} F = F {y ↦ (x ≡ y)} [≡]-intro
+
+  -- The statement that two functions are equal when all their values are equal are not provable.
+  -- Also called: Extensional equality, function extensionality.
   -- [≡]-function : ∀{A B : Type}{f₁ f₂ : A → B) → (∀{x} → (f₁(x) ≡ f₂(x))) → (f₁ ≡ f₂)
 
   -- Elimination rule for identity types.

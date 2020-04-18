@@ -3,7 +3,8 @@ module Function.Multi.Functions where
 open import Data
 open import Data.Tuple renaming (curry to curry₁ ; uncurry to uncurry₁) hiding (swap ; map)
 open import Data.Tuple.Raise
-open import FUnction.Multi
+open import Data.Tuple.Raiseᵣ.Functions
+open import Function.Multi
 open import Functional using (_→ᶠ_ ; id ; _∘_ ; _〔_〕_) renaming (const to const₁ ; apply to apply₁ ; swap to swap₁ ; _$_ to _$₁_)
 import      Lvl
 open import Numeral.Finite
@@ -14,8 +15,6 @@ open import Syntax.Number
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
-
-infixr 0 _⇉_
 
 -- A constant function of many variables.
 -- Lifts a value to being a number of nested functions.

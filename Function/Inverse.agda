@@ -7,7 +7,7 @@ open import Logic.Predicate
 open import Functional
 open import Function.Names using (_⊜_)
 open import Function.Inverseᵣ
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Setoid.Uniqueness
 open import Structure.Function
 open import Structure.Function.Domain
@@ -16,7 +16,7 @@ open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type
 
-module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv(A) ⦄ {B : Type{ℓ₂}} ⦃ eqB : Equiv(B) ⦄ where
+module _ {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓ₂}} ⦃ eqB : Equiv{ℓₑ₂}(B) ⦄ where
   -- The inverse function of a bijective function f.
   inv : (f : A → B) → ⦃ _ : Bijective(f) ⦄ → (B → A)
   inv(f) = invᵣ(f) ⦃ bijective-to-surjective(f) ⦄

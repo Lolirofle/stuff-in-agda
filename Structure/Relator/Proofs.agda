@@ -7,6 +7,7 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 import      Lvl
+open import Structure.Function
 open import Structure.Setoid.WithLvl
 open import Structure.Relator.Properties
 open import Structure.Relator

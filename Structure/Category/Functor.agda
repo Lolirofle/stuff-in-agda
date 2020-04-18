@@ -45,7 +45,6 @@ module _
     Full          = ∀{x y} → Surjective(map{x}{y})
     FullyFaithful = ∀{x y} → Bijective (map{x}{y})
     -- TODO: Conservative  = ∀{x y : Objₗ}{f : x ⟶ y} → Morphism.Isomorphism(\{x} → _∘_ {x = x})(\{x} → id{x = x})(map f) → Morphism.Isomorphism(\{x} → _∘_ {x = x})(id)(f)
-
   _→ᶠᵘⁿᶜᵗᵒʳ_ = ∃(Functor)
 
 module _

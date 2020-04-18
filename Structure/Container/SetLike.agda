@@ -8,8 +8,9 @@ import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl using (Equiv ; Function ; UnaryRelator ; BinaryRelator ; substitute₁ ; substitute₂ ; congruence₁ ; binaryRelator) renaming (_≡_ to _≡ₛ_ ; _≢_ to _≢ₛ_)
+open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₛ_ ; _≢_ to _≢ₛ_)
 open import Structure.Function.Domain
+open import Structure.Function
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Structure.Relator
@@ -181,6 +182,7 @@ open SetLike ⦃ … ⦄
 
 module Proofs where
   import      Data
+  import      Data.Either as Either
   import      Data.Tuple as Tuple
   open import Logic.Predicate.Theorems
   open import Logic.Propositional.Theorems
@@ -323,3 +325,69 @@ module Proofs where
     instance
       [≡]-equivalence : Equivalence(_≡_)
       [≡]-equivalence = intro
+
+    -- TODO: These are unneccessary if one uses Structure.Operator.SetAlgebra or lattices
+    module _ ⦃ _ : EmptySet ⦄ ⦃ _ : UniversalSet ⦄ ⦃ _ : ComplementOperator ⦄ where
+      ∁-of-∅ : (∁(∅) ≡ 𝐔)
+      ∁-of-∅ = [↔]-to-[←] [≡]-membership ([↔]-intro ([↔]-to-[←] Complement.membership ∘ const Empty.membership) (const Universal.membership))
+
+      ∁-of-𝐔 : (∁(𝐔) ≡ ∅)
+      ∁-of-𝐔 = [↔]-to-[←] [≡]-membership ([↔]-intro ([⊥]-elim ∘ Empty.membership) ([⊥]-elim ∘ apply Universal.membership ∘ [↔]-to-[→] Complement.membership))
+
+
+  module _ ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₁}{C}{E} (_∈_) ⦄ where
+    open SetLike(setLike)
+
+    open import Structure.Operator.Properties
+
+    module _ where
+      private
+        instance
+          equiv-C : Equiv{ℓ₁}(C)
+          equiv-C = intro(_≡_) ⦃ [≡]-equivalence ⦄
+
+      module _ ⦃ _ : UnionOperator ⦄ where
+        instance
+          [∪]-commutativity : Commutativity(_∪_)
+          Commutativity.proof [∪]-commutativity {x} {y} =
+            [↔]-to-[←] [≡]-membership (
+              Union.membership                    〔 [↔]-transitivity 〕
+              [↔]-intro [∨]-symmetry [∨]-symmetry 〔 [↔]-transitivity 〕
+              [↔]-symmetry Union.membership
+            )
+
+        instance
+          [∪]-associativity : Associativity(_∪_)
+          Associativity.proof [∪]-associativity {x} {y} =
+            [↔]-to-[←] [≡]-membership (
+              Union.membership 〔 [↔]-transitivity 〕
+              [↔]-intro (Either.mapLeft ([↔]-to-[←] Union.membership)) (Either.mapLeft ([↔]-to-[→] Union.membership)) 〔 [↔]-transitivity 〕
+              [∨]-associativity 〔 [↔]-transitivity 〕
+              [↔]-symmetry([↔]-intro (Either.mapRight ([↔]-to-[←] Union.membership)) (Either.mapRight ([↔]-to-[→] Union.membership))) 〔 [↔]-transitivity 〕
+              [↔]-symmetry Union.membership
+            )
+
+      module _ ⦃ _ : IntersectionOperator ⦄ where
+        instance
+          [∩]-commutativity : Commutativity(_∩_)
+          Commutativity.proof [∩]-commutativity {x} {y} =
+            [↔]-to-[←] [≡]-membership (
+              Intersection.membership             〔 [↔]-transitivity 〕
+              [↔]-intro [∧]-symmetry [∧]-symmetry 〔 [↔]-transitivity 〕
+              [↔]-symmetry Intersection.membership
+            )
+
+        instance
+          [∩]-associativity : Associativity(_∩_)
+          Associativity.proof [∩]-associativity {x} {y} =
+            [↔]-to-[←] [≡]-membership (
+              Intersection.membership 〔 [↔]-transitivity 〕
+              [↔]-intro (Tuple.mapLeft ([↔]-to-[←] Intersection.membership)) (Tuple.mapLeft ([↔]-to-[→] Intersection.membership)) 〔 [↔]-transitivity 〕
+              [∧]-associativity 〔 [↔]-transitivity 〕
+              [↔]-symmetry([↔]-intro (Tuple.mapRight ([↔]-to-[←] Intersection.membership)) (Tuple.mapRight ([↔]-to-[→] Intersection.membership))) 〔 [↔]-transitivity 〕
+              [↔]-symmetry Intersection.membership
+            )
+
+      module _ ⦃ _ : UnionOperator ⦄ ⦃ _ : IntersectionOperator ⦄ where
+        -- instance
+        --  [∩][∪]-distributivityₗ : Distributivityₗ(_∩_)(_∪_)

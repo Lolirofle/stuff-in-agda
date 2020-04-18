@@ -9,7 +9,7 @@ open import Lang.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Setoid.Uniqueness
 open import Structure.Function.Domain
 open import Structure.Relator.Properties
@@ -17,9 +17,9 @@ open import Structure.Relator
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓₒ₁ ℓₒ₂ : Lvl.Level
+private variable ℓₒ₁ ℓₒ₂ ℓₑ₁ ℓₑ₂ : Lvl.Level
 
-module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv(B) ⦄ (f : A → B) where
+module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ (f : A → B) where
   injective-to-unique : Injective(f) → ∀{y} → Unique(x ↦ f(x) ≡ y)
   injective-to-unique (intro(inj)) {y} {x₁}{x₂} fx₁y fx₂y =
     inj{x₁}{x₂} (fx₁y 🝖 symmetry(_≡_) fx₂y)
@@ -49,7 +49,7 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ 
     Bijective.proof(injective-surjective-to-bijective ⦃ inj ⦄ ⦃ intro(surj) ⦄) {y} =
       [∃!]-intro surj (injective-to-unique inj)
 
-module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv(B) ⦄ where
+module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv(B) ⦄ where
   instance
     injective-relator : UnaryRelator(Injective{A = A}{B = B})
     Injective.proof (UnaryRelator.substitution injective-relator {f₁}{f₂} (intro f₁f₂) (intro inj-f₁)) f₂xf₂y = inj-f₁ (f₁f₂ 🝖 f₂xf₂y 🝖 symmetry(_≡_) f₁f₂)

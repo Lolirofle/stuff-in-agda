@@ -1,8 +1,13 @@
 module Main where
 
+-- import Automaton.DeterministicFinite
+-- import Automaton.NonDeterministicFinite
+-- import Automaton.Pushdown
+-- import Automaton.TuringMachine
 import Data
 import Data.Any
 import Data.Boolean
+-- import Data.Boolean.Functions
 import Data.Boolean.Operators
 import Data.Boolean.Proofs
 import Data.Boolean.Stmt
@@ -12,14 +17,20 @@ import Data.Either.Equiv
 import Data.Either.Equiv.Proofs
 import Data.Either.Proofs
 import Data.List
+-- import Data.List.Combinatorics
 import Data.List.Computability
+import Data.List.FunctionsProven
 import Data.List.Functor
 import Data.List.Proofs
 import Data.List.Relation
 import Data.List.Relation.Membership
 import Data.List.Relation.Membership.Proofs
+import Data.List.Relation.OrderedPairwise
+import Data.List.Relation.Permutation
 import Data.List.Relation.Sublist
 import Data.List.Relation.Sublist.Proofs
+import Data.List.SizeOrdering
+import Data.List.Sort
 -- import Data.ListNonEmpty
 import Data.ListSized
 import Data.Option
@@ -34,6 +45,7 @@ import Data.Tuple.Function
 import Data.Tuple.Proofs
 import Data.Tuple.Raise
 import Data.Tuple.Raiseᵣ
+import Data.Tuple.Raiseᵣ.Functions
 import Data.Tuple.Raiseₗ
 import FFI.IO as FFI
 import FormalLanguage
@@ -52,8 +64,8 @@ import Function.DomainRaise
 import Function.Domains
 import Function.Domains.Proofs
 import Function.Equals
+-- import Function.Equals.Multi
 import Function.Equals.Proofs
-import Function.Multi
 import Function.Inverse
 import Function.Inverseᵣ
 -- import Function.Inverseₗ
@@ -61,10 +73,13 @@ import Function.Iteration
 import Function.Iteration.Order
 import Function.Iteration.Proofs
 import Function.Multi
+import Function.Multi.Functions
 import Function.Names
 import Function.Proofs
 import Functional
+import Functional.Dependent
 import Graph
+import Graph.Category
 import Graph.Oper
 import Graph.Properties
 import Graph.Properties.Proofs
@@ -82,12 +97,16 @@ import Logic.Classical
 import Logic.Classical.DoubleNegated
 import Logic.Computability
 import Logic.Computability.Binary
+import Logic.IntroInstances
 import Logic.Names
 import Logic.Predicate
 import Logic.Predicate.Theorems
 import Logic.Propositional
+import Logic.Propositional.Proofs.Structures
 import Logic.Propositional.Theorems
 import Lvl
+import Lvl.Functions
+import Lvl.Proofs
 import Numeral.CoordinateVector
 import Numeral.CoordinateVector.Proofs
 import Numeral.Finite
@@ -106,10 +125,11 @@ import Numeral.Integer
 -- import Numeral.Integer.Sign
 import Numeral.Matrix
 import Numeral.Natural
--- import Numeral.Natural.Coprime
 import Numeral.Natural.Combinatorics
 import Numeral.Natural.Combinatorics.Proofs
+-- import Numeral.Natural.Coprime
 import Numeral.Natural.Function
+import Numeral.Natural.Function.FlooredLogarithm
 import Numeral.Natural.Function.Proofs
 import Numeral.Natural.GreatestCommonDivisor
 import Numeral.Natural.Induction
@@ -124,6 +144,9 @@ import Numeral.Natural.Oper.FlooredDivision
 import Numeral.Natural.Oper.Modulo
 import Numeral.Natural.Oper.Modulo.Proofs
 import Numeral.Natural.Oper.Proofs
+-- import Numeral.Natural.Oper.Proofs.Elemantary
+-- import Numeral.Natural.Oper.Proofs.Iteration
+import Numeral.Natural.Oper.Summation
 -- import Numeral.Natural.Prime
 import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Computability
@@ -139,6 +162,9 @@ import Numeral.Natural.Relation.Properties
 -- import Numeral.Natural.Sequence
 import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
+import Numeral.PositiveInteger
+import Numeral.PositiveInteger.Oper
+import Numeral.PositiveInteger.Oper.Proofs
 -- import Numeral.Rational.AlterAdd
 -- import Numeral.Rational.SternBrocot
 import Numeral.Sign
@@ -158,15 +184,9 @@ import Relator.Ordering
 import Relator.Ordering.Proofs
 import Relator.ReflexiveTransitiveClosure
 import Sets.BoolSet
+import Sets.ExtensionalPredicateSet
 import Sets.IterativeSet
 import Sets.PredicateSet
-import Structure.Setoid
-import Structure.Setoid.Names
-import Structure.Setoid.Proofs
-import Structure.Setoid.Size
-import Structure.Setoid.Size.Proofs
-import Structure.Setoid.Uniqueness
-import Structure.Setoid.Uniqueness.Proofs
 import Stream
 import String
 import Structure.Arithmetic
@@ -177,24 +197,32 @@ import Structure.Category.Dual
 -- import Structure.Category.Equiv
 import Structure.Category.Functor
 -- import Structure.Category.Functor.Category
--- import Structure.Category.Functor.Equiv
+import Structure.Category.Functor.Equiv
 import Structure.Category.Functor.Functors
 import Structure.Category.Functor.Proofs
 import Structure.Category.Monad
 -- import Structure.Category.Monad.Category
 import Structure.Category.Monad.ExtensionSystem
+import Structure.Category.Monoid
+import Structure.Category.Monoidal
+import Structure.Category.Morphism.IdTransport
+import Structure.Category.Morphism.Transport
 import Structure.Category.Names
 import Structure.Category.NaturalTransformation
 import Structure.Category.NaturalTransformation.NaturalTransformations
 import Structure.Category.Proofs
 import Structure.Category.Properties
 import Structure.Category.Semicategory
+import Structure.Container.SetLike
+import Structure.Function
 import Structure.Function.Domain
 import Structure.Function.Domain.Proofs
 import Structure.Function.Linear
 -- import Structure.Function.Metric
+import Structure.Function.Multi
+import Structure.Function.Names
 import Structure.Function.Ordering
--- import Structure.LinearAlgebra
+import Structure.Operator
 import Structure.Operator.Field
 import Structure.Operator.Functions
 import Structure.Operator.Group
@@ -210,21 +238,36 @@ import Structure.Operator.SetAlgebra
 import Structure.Operator.Vector
 import Structure.Operator.Vector.Proofs
 import Structure.OrderedField
+import Structure.OrderedField.AbsoluteValue
 import Structure.Real
 import Structure.Real.Abs
 -- import Structure.Real.Continuity
 -- import Structure.Real.Derivative
 -- import Structure.Real.Limit
+import Structure.Relator
 import Structure.Relator.Equivalence
 import Structure.Relator.Function
 import Structure.Relator.Names
 import Structure.Relator.Ordering
 import Structure.Relator.Ordering.Lattice
 import Structure.Relator.Ordering.Proofs
+import Structure.Relator.Proofs
 import Structure.Relator.Properties
 import Structure.Relator.Properties.Proofs
+import Structure.Setoid
+import Structure.Setoid.Names
+import Structure.Setoid.Proofs
+import Structure.Setoid.Size
+import Structure.Setoid.Size.Proofs
+import Structure.Setoid.Uniqueness
+import Structure.Setoid.Uniqueness.Proofs
+import Structure.Setoid.WithLvl
+import Structure.Topology
+-- import Structure.Topology.Proofs
+-- import Structure.Topology.Properties
 import Structure.Type.Quotient
 import Syntax.Function
+import Syntax.Implication
 import Syntax.Number
 import Syntax.Transitivity
 import Type

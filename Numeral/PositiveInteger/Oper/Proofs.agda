@@ -14,8 +14,10 @@ open import Relator.Equals
 open import Relator.Equals.Proofs hiding (congruence₁)
 import      Function.Names as Names
 open import Structure.Setoid using (congruence₁ ; congruence₂ ; congruence₂ₗ ; congruence₂ᵣ)
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Multi
+open import Structure.Operator
 open import Structure.Operator.Monoid
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Proofs

@@ -34,6 +34,7 @@ module _
     where
 
     record NaturalTransformation (η : (x : Objₗ) → (F₁(x) ⟶ F₂(x))) : Type{Lvl.of(type-of(catₗ)) Lvl.⊔ Lvl.of(type-of(catᵣ))} where
+      constructor intro
       field
         natural : ∀{x y : Objₗ}{f : x ⟶ y} → (η(y) ∘ map(f) ≡ map(f) ∘ η(x))
 

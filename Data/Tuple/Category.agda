@@ -7,6 +7,7 @@ open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Properties
+open import Structure.Function
 open import Structure.Operator
 open import Type
 
@@ -98,9 +99,9 @@ module _
 
   productFunctor : Functor(productCategory cat₁ₗ cat₁ᵣ)(productCategory cat₂ₗ cat₂ᵣ) (F₁ Raw.⨯ᶠᵘⁿᶜᵗᵒʳ F₂)
   Functor.map productFunctor (x₁ , x₂) = (map x₁ , map x₂)
-  _⨯_.left  (Function.congruence (Functor.map-function productFunctor) (x₁ , x₂)) = congruence₁(map) x₁
-  _⨯_.right (Function.congruence (Functor.map-function productFunctor) (x₁ , x₂)) = congruence₁(map) x₂
-  _⨯_.left  (Functor.op-preserving productFunctor) = op-preserving
-  _⨯_.right (Functor.op-preserving productFunctor) = op-preserving
-  _⨯_.left  (Functor.id-preserving productFunctor) = id-preserving
-  _⨯_.right (Functor.id-preserving productFunctor) = id-preserving
+  Tuple.left  (Function.congruence (Functor.map-function productFunctor) (x₁ , x₂)) = congruence₁(map) x₁
+  Tuple.right (Function.congruence (Functor.map-function productFunctor) (x₁ , x₂)) = congruence₁(map) x₂
+  Tuple.left  (Functor.op-preserving productFunctor) = op-preserving
+  Tuple.right (Functor.op-preserving productFunctor) = op-preserving
+  Tuple.left  (Functor.id-preserving productFunctor) = id-preserving
+  Tuple.right (Functor.id-preserving productFunctor) = id-preserving

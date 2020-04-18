@@ -6,7 +6,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Functional
 open import Function.Names using (_⊜_)
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
@@ -14,7 +14,7 @@ open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type
 
-module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv(A) ⦄ {B : Type{ℓ₂}} ⦃ eqB : Equiv(B) ⦄ where
+module _ {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓ₂}} ⦃ eqB : Equiv{ℓₑ₂}(B) ⦄ where
   module _ where
     -- One of the right inverse functions of a surjective function f.
     -- Specifically the one that is used in the constructive proof of surjectivity for f.

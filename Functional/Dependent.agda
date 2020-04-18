@@ -24,6 +24,9 @@ module _ where
   apply : (x : X) → ((x : X) → Y(x)) → Y(x)
   apply(x)(f) = f(x)
 
+  const : (∀{x : X} → Y(x)) → ((x : X) → Y(x))
+  const y _ = y
+
   _$_ : ((x : X) → Y(x)) → (x : X) → Y(x)
   f $ x = f(x)
 

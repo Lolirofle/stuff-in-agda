@@ -47,6 +47,7 @@ module Proofs where
   open import Relator.Equals.Proofs
   open import Structure.Function.Domain
   open import Structure.Function.Domain.Proofs
+  open import Structure.Function
   import      Structure.Relator.Names as Names
   open import Structure.Relator.Equivalence
   open import Structure.Relator.Properties

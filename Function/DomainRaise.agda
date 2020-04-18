@@ -25,7 +25,7 @@ private variable n : ℕ
 --   (a →̂ b)(2) = (a → a → b)
 --   (a →̂ b)(3) = (a → a → a → b)
 --   (a →̂ b)(4) = (a → a → a → a → b)
-_→̂_ : Type{ℓ₁} → Type{ℓ₂} → (n : ℕ) → Type{if positive?(n) then (ℓ₁ Lvl.⊔ ℓ₂) else ℓ₂}
+_→̂_ : Type{ℓ₁} → Type{ℓ₂} → (n : ℕ) → Type{if positive?(n) then (ℓ₁ Lvl.⊔ ℓ₂) else ℓ₂} -- TODO: Is the level thing really working?
 (A →̂ B)(𝟎)       = B
 (A →̂ B)(𝐒(𝟎))    = A → B
 (A →̂ B)(𝐒(𝐒(n))) = A → (A →̂ B)(𝐒(n))

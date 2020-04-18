@@ -33,6 +33,7 @@ syntax [⤇](λ x → y) = x ⤇ y
 _〔_〕_ : ∀{ℓ₁ ℓ₂ ℓ₃}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} → A → (A → B → C) → B → C
 a 〔 op 〕 b = op a b
 
+infixl 10000 _〔_〕_
 infixl 10000 _〔ₗ_〕_
 infixr 10000 _〔ᵣ_〕_
 
