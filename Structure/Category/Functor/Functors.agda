@@ -4,17 +4,17 @@ import      Functional as Fn
 open import Function.Proofs
 open import Logic.Predicate
 import      Lvl
-open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Properties
 open import Structure.Function
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Structure.Setoid.WithLvl
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓ : Lvl.Level
+private variable ℓ ℓₒ ℓₘ ℓₑ ℓₗₑ ℓᵣₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ : Lvl.Level
 private variable Obj Obj₁ Obj₂ Obj₃ : Type{ℓ}
 private variable Morphism Morphism₁ Morphism₂ Morphism₃ : Obj → Obj → Type{ℓ}
 
@@ -31,8 +31,8 @@ module Raw where
   infixl 10000 _∘ᶠᵘⁿᶜᵗᵒʳ_
 
 module _
-  ⦃ morphism-equivₗ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
-  ⦃ morphism-equivᵣ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
+  ⦃ morphism-equivₗ : ∀{x y : Obj₁} → Equiv{ℓₗₑ}(Morphism₁ x y) ⦄
+  ⦃ morphism-equivᵣ : ∀{x y : Obj₂} → Equiv{ℓᵣₑ}(Morphism₂ x y) ⦄
   {Category₁ : Category(Morphism₁)}
   {Category₂ : Category(Morphism₂)}
   where
@@ -54,7 +54,7 @@ module _
     id-preserving (constant(objᵣ)) = reflexivity(_≡_)
 
 module _
-  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
+  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv{ℓₑ}(Morphism x y) ⦄
   {Category : Category(Morphism)}
   where
 
@@ -70,9 +70,9 @@ module _
   id-preserving (identity) = reflexivity(_≡_)
 
 module _
-  ⦃ morphism-equiv₁ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
-  ⦃ morphism-equiv₂ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
-  ⦃ morphism-equiv₃ : ∀{x y : Obj₃} → Equiv(Morphism₃ x y) ⦄
+  ⦃ morphism-equiv₁ : ∀{x y : Obj₁} → Equiv{ℓₑ₁}(Morphism₁ x y) ⦄
+  ⦃ morphism-equiv₂ : ∀{x y : Obj₂} → Equiv{ℓₑ₂}(Morphism₂ x y) ⦄
+  ⦃ morphism-equiv₃ : ∀{x y : Obj₃} → Equiv{ℓₑ₃}(Morphism₃ x y) ⦄
   {Category₁ : Category(Morphism₁)}
   {Category₂ : Category(Morphism₂)}
   {Category₃ : Category(Morphism₃)}
@@ -105,36 +105,18 @@ module _
     id                                 🝖-end
 
 module Wrapped where
-  module _
-    ⦃ morphism-equivₗ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
-    ⦃ morphism-equivᵣ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
-    {A : Category(Morphism₁)}
-    {B : Category(Morphism₂)}
-    (c : Obj₂)
-    where
+  open CategoryObject
 
-    constᶠᵘⁿᶜᵗᵒʳ : (A →ᶠᵘⁿᶜᵗᵒʳ B)
-    ∃.witness constᶠᵘⁿᶜᵗᵒʳ = Raw.constᶠᵘⁿᶜᵗᵒʳ c
-    ∃.proof   constᶠᵘⁿᶜᵗᵒʳ = constant c
+  private variable A B C : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}
 
-  module _
-    ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
-    {A : Category(Morphism)}
-    where
+  constᶠᵘⁿᶜᵗᵒʳ : let _ = A in Object(B) → (A →ᶠᵘⁿᶜᵗᵒʳ B)
+  ∃.witness (constᶠᵘⁿᶜᵗᵒʳ c) = Raw.constᶠᵘⁿᶜᵗᵒʳ c
+  ∃.proof   (constᶠᵘⁿᶜᵗᵒʳ c) = constant c
 
-    idᶠᵘⁿᶜᵗᵒʳ : A →ᶠᵘⁿᶜᵗᵒʳ A
-    ∃.witness idᶠᵘⁿᶜᵗᵒʳ = Raw.idᶠᵘⁿᶜᵗᵒʳ
-    ∃.proof   idᶠᵘⁿᶜᵗᵒʳ = identity
+  idᶠᵘⁿᶜᵗᵒʳ : A →ᶠᵘⁿᶜᵗᵒʳ A
+  ∃.witness idᶠᵘⁿᶜᵗᵒʳ = Raw.idᶠᵘⁿᶜᵗᵒʳ
+  ∃.proof   idᶠᵘⁿᶜᵗᵒʳ = identity
 
-  module _
-    ⦃ morphism-equiv₁ : ∀{x y : Obj₁} → Equiv(Morphism₁ x y) ⦄
-    ⦃ morphism-equiv₂ : ∀{x y : Obj₂} → Equiv(Morphism₂ x y) ⦄
-    ⦃ morphism-equiv₃ : ∀{x y : Obj₃} → Equiv(Morphism₃ x y) ⦄
-    {A : Category(Morphism₁)}
-    {B : Category(Morphism₂)}
-    {C : Category(Morphism₃)}
-    where
-
-    _∘ᶠᵘⁿᶜᵗᵒʳ_ : (B →ᶠᵘⁿᶜᵗᵒʳ C) → (A →ᶠᵘⁿᶜᵗᵒʳ B) → (A →ᶠᵘⁿᶜᵗᵒʳ C)
-    ∃.witness (_∘ᶠᵘⁿᶜᵗᵒʳ_ ([∃]-intro F)               ([∃]-intro G))               = Raw._∘ᶠᵘⁿᶜᵗᵒʳ_ F G
-    ∃.proof   (_∘ᶠᵘⁿᶜᵗᵒʳ_ ([∃]-intro _ ⦃ F-functor ⦄) ([∃]-intro _ ⦃ G-functor ⦄)) = composition F-functor G-functor
+  _∘ᶠᵘⁿᶜᵗᵒʳ_ : let _ = A ; _ = B ; _ = C in (B →ᶠᵘⁿᶜᵗᵒʳ C) → (A →ᶠᵘⁿᶜᵗᵒʳ B) → (A →ᶠᵘⁿᶜᵗᵒʳ C)
+  ∃.witness (_∘ᶠᵘⁿᶜᵗᵒʳ_ ([∃]-intro F)               ([∃]-intro G))               = Raw._∘ᶠᵘⁿᶜᵗᵒʳ_ F G
+  ∃.proof   (_∘ᶠᵘⁿᶜᵗᵒʳ_ ([∃]-intro _ ⦃ F-functor ⦄) ([∃]-intro _ ⦃ G-functor ⦄)) = composition F-functor G-functor

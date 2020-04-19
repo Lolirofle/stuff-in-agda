@@ -49,12 +49,12 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ�
     Bijective.proof(injective-surjective-to-bijective ⦃ inj ⦄ ⦃ intro(surj) ⦄) {y} =
       [∃!]-intro surj (injective-to-unique inj)
 
-module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv(B) ⦄ where
+module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
   instance
     injective-relator : UnaryRelator(Injective{A = A}{B = B})
     Injective.proof (UnaryRelator.substitution injective-relator {f₁}{f₂} (intro f₁f₂) (intro inj-f₁)) f₂xf₂y = inj-f₁ (f₁f₂ 🝖 f₂xf₂y 🝖 symmetry(_≡_) f₁f₂)
 
-module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv(B) ⦄ where
+module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
   instance
     surjective-relator : UnaryRelator(Surjective{A = A}{B = B})
     Surjective.proof (UnaryRelator.substitution surjective-relator {f₁}{f₂} (intro f₁f₂) (intro surj-f₁)) {y} = [∃]-map-proof (\{x} f₁xf₁y → symmetry(_≡_) (f₁f₂{x}) 🝖 f₁xf₁y) (surj-f₁{y})

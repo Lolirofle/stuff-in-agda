@@ -4,56 +4,57 @@ open import Data.Tuple as Tuple using (_,_)
 open import Functional using (_$_)
 open import Logic.Predicate
 import      Lvl
-open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Properties
 open import Structure.Category.Functor
+open import Structure.Category.Functor.Equiv
 open import Structure.Function
+open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Structure.Setoid.WithLvl
 open import Syntax.Transitivity
 open import Type
 
+private variable ℓ ℓₗₑ ℓᵣₑ : Lvl.Level
+private variable Obj Obj₁ Obj₂ Obj₃ : Type{ℓ}
+private variable Morphism Morphism₁ Morphism₂ Morphism₃ : Obj → Obj → Type{ℓ}
+
 module _
-  {ℓₒₗ ℓₒᵣ ℓₘₗ ℓₘᵣ : Lvl.Level}
-  {Objₗ : Type{ℓₒₗ}}
-  {Objᵣ : Type{ℓₒᵣ}}
-  {Morphismₗ : Objₗ → Objₗ → Type{ℓₘₗ}}
-  {Morphismᵣ : Objᵣ → Objᵣ → Type{ℓₘᵣ}}
-  ⦃ morphism-equivₗ : ∀{x y} → Equiv(Morphismₗ x y) ⦄
-  ⦃ morphism-equivᵣ : ∀{x y} → Equiv(Morphismᵣ x y) ⦄
-  {Categoryₗ : Category(Morphismₗ)}
-  {Categoryᵣ : Category(Morphismᵣ)}
-  (F : Objₗ → Objᵣ)
-  ⦃ functor : Functor(Categoryₗ)(Categoryᵣ)(F) ⦄
+  ⦃ morphism-equiv₁ : ∀{x y} → Equiv{ℓₗₑ}(Morphism₁ x y) ⦄
+  ⦃ morphism-equiv₂ : ∀{x y} → Equiv{ℓᵣₑ}(Morphism₂ x y) ⦄
+  {cat₁ : Category(Morphism₁)}
+  {cat₂ : Category(Morphism₂)}
+  (F : Obj₁ → Obj₂)
+  ⦃ functor : Functor(cat₁)(cat₂)(F) ⦄
   where
 
   open Category.ArrowNotation ⦃ … ⦄
   open Category ⦃ … ⦄
   open Functor(functor)
-  private open module Equivₗ {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equivₗ{x}{y} ⦄) using () renaming (transitivity to transitivityₗ ; symmetry to symmetryₗ ; reflexivity to reflexivityₗ)
-  private open module Equivᵣ {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equivᵣ{x}{y} ⦄) using () renaming (transitivity to transitivityᵣ ; symmetry to symmetryᵣ ; reflexivity to reflexivityᵣ)
+  private open module MorphismEquivₗ {x}{y} = Equiv(morphism-equiv₁{x}{y}) using () renaming (_≡_ to _≡ₗₘ_)
+  private open module MorphismEquivᵣ {x}{y} = Equiv(morphism-equiv₂{x}{y}) using () renaming (_≡_ to _≡ᵣₘ_)
 
-  private instance _ = Categoryₗ
-  private instance _ = Categoryᵣ
+  private instance _ = cat₁
+  private instance _ = cat₂
+  private variable x y : Obj₁
 
-  private variable x y : Objₗ
-
-  isomorphism-preserving : ∀{f : x ⟶ y} → Morphism.Isomorphism ⦃ \{x y} → morphism-equivₗ {x}{y} ⦄ (_∘_)(id)(f) → Morphism.Isomorphism ⦃ \{x y} → morphism-equivᵣ {x}{y} ⦄ (_∘_)(id)(map f)
+  isomorphism-preserving : ∀{f : x ⟶ y} → Morphism.Isomorphism ⦃ \{x y} → morphism-equiv₁ {x}{y} ⦄ (_∘_)(id)(f) → Morphism.Isomorphism ⦃ \{x y} → morphism-equiv₂ {x}{y} ⦄ (_∘_)(id)(map f)
   ∃.witness (isomorphism-preserving ([∃]-intro g)) = map g
   ∃.proof (isomorphism-preserving {f = f} iso@([∃]-intro g)) =
     (Morphism.intro $
       map g ∘ map f 🝖-[ op-preserving ]-sym
-      map(g ∘ f)    🝖-[ congruence₁(map) (inverseₗ(f)(g) ⦃ inverse-left ⦃ iso ⦄ ⦄) ]
+      map(g ∘ f)    🝖-[ congruence₁(map) (inverseₗ(f)(g)) ]
       map id        🝖-[ id-preserving ]
       id            🝖-end
     ) , (Morphism.intro $
       map f ∘ map g 🝖-[ op-preserving ]-sym
-      map(f ∘ g)    🝖-[ congruence₁(map) (inverseᵣ(f)(g) ⦃ inverse-right ⦃ iso ⦄ ⦄) ]
+      map(f ∘ g)    🝖-[ congruence₁(map) (inverseᵣ(f)(g)) ]
       map id        🝖-[ id-preserving ]
       id            🝖-end
     )
     where
-      open Morphism.OperModule (\{x : Objₗ} → _∘_ {x = x})
-      open Morphism.IdModule   (\{x : Objₗ} → _∘_ {x = x})(id)
-      open Morphism.Isomorphism(\{x : Objₗ} → _∘_ {x = x})(id)(f)
+      open Morphism.OperModule (\{x : Obj₁} → _∘_ {x = x})
+      open Morphism.IdModule   (\{x : Obj₁} → _∘_ {x = x})(id)
+      open Morphism.Isomorphism(\{x : Obj₁} → _∘_ {x = x})(id)(f)
+      instance _ = iso

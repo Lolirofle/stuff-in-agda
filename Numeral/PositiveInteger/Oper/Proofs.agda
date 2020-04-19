@@ -11,9 +11,8 @@ import      Numeral.Natural.Oper as ℕ
 open import Numeral.PositiveInteger
 open import Numeral.PositiveInteger.Oper
 open import Relator.Equals
-open import Relator.Equals.Proofs hiding (congruence₁)
+open import Relator.Equals.Proofs
 import      Function.Names as Names
-open import Structure.Setoid using (congruence₁ ; congruence₂ ; congruence₂ₗ ; congruence₂ᵣ)
 open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Multi

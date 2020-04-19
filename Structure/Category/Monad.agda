@@ -4,10 +4,7 @@ open import Type
 
 module Structure.Category.Monad
   {ℓₒ ℓₘ}
-  {Obj : Type{ℓₒ}}
-  {Morphism : Obj → Obj → Type{ℓₘ}}
-  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
-  {cat : Category(Morphism)}
+  {cat : CategoryObject{ℓₒ}{ℓₘ}}
   where
 
 import      Function.Equals
@@ -20,20 +17,23 @@ open import Structure.Category.Functor.Functors as Functors
 open import Structure.Category.NaturalTransformation
 open import Structure.Category.NaturalTransformation.NaturalTransformations as NaturalTransformations
 
-open Category.ArrowNotation(cat)
-open Category(cat)
-open Functors.Raw
-open NaturalTransformations.Raw(cat)(cat)
+open CategoryObject(cat)
+open Category.ArrowNotation(category)
+open Category(category)
+open Functors.Wrapped
+open NaturalTransformations.Raw(intro category)(intro category)
 private instance _ = cat
 
-record Monad (T : Obj → Obj) : Type{Lvl.of(type-of(cat))} where
-  field
-    ⦃ functor ⦄ : Functor(cat)(cat)(T)
+record Monad (T : Object → Object) ⦃ functor : Functor(category)(category)(T) ⦄ : Type{Lvl.of(type-of(cat))} where
   open Functor(functor)
 
+  functor-object : cat →ᶠᵘⁿᶜᵗᵒʳ cat
+  functor-object = [∃]-intro T ⦃ functor ⦄
+  private Tᶠᵘⁿᶜᵗᵒʳ = functor-object
+
   field
-    Η : (idᶠᵘⁿᶜᵗᵒʳ →ᴺᵀ T)      ⦃ Functors.identity ⦄ 
-    Μ : ((T ∘ᶠᵘⁿᶜᵗᵒʳ T) →ᴺᵀ T) ⦃ Functors.composition functor functor ⦄
+    Η : (idᶠᵘⁿᶜᵗᵒʳ →ᴺᵀ Tᶠᵘⁿᶜᵗᵒʳ)
+    Μ : ((Tᶠᵘⁿᶜᵗᵒʳ ∘ᶠᵘⁿᶜᵗᵒʳ Tᶠᵘⁿᶜᵗᵒʳ) →ᴺᵀ Tᶠᵘⁿᶜᵗᵒʳ)
 
   η = [∃]-witness Η
   μ = [∃]-witness Μ

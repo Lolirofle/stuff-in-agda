@@ -4,7 +4,7 @@ import Lvl
 open import Lang.Instance
 open import Logic.Predicate
 open import Logic
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Function
 open import Structure.Relator.Properties
 open import Syntax.Function

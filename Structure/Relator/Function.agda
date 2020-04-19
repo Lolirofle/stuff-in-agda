@@ -6,14 +6,16 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 open import Functional
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Setoid.Uniqueness
 open import Structure.Relator
 open import Type
 
-module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {A : Type{ℓₒ₁}}{B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv(B) ⦄ (φ : A → B → Stmt{ℓₒ₃}) where
+private variable ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₑ₂ : Lvl.Level
+
+module _ {A : Type{ℓₒ₁}}{B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ (φ : A → B → Stmt{ℓₒ₃}) where
   module _ (f : A → B) where
-    record Computable : Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂ Lvl.⊔ ℓₒ₃} where
+    record Computable : Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂ Lvl.⊔ ℓₒ₃ Lvl.⊔ ℓₑ₂} where
       constructor intro
       field proof : ∀{x}{y} → (f(x) ≡ y) → φ(x)(y)
     computable = inst-fn Computable.proof
@@ -32,7 +34,7 @@ module _ {ℓₒ₁ ℓₒ₂ ℓₒ₃} {A : Type{ℓₒ₁}}{B : Type{ℓₒ�
   total = inst-fn Total.proof
 
   -- A binary operation is a function when every LHS have at least one RHS in which the relation holds.
-  record Function : Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂ Lvl.⊔ ℓₒ₃} where
+  record Function : Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂ Lvl.⊔ ℓₒ₃ Lvl.⊔ ℓₑ₂} where
     constructor intro
     field proof : ∀{x} → Unique(φ(x))
   function = inst-fn Function.proof

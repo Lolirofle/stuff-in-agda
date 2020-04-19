@@ -8,7 +8,6 @@ open import Lang.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Names
 open import Structure.Category.Properties
@@ -16,15 +15,16 @@ import      Structure.Operator.Properties as Properties
 open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Structure.Setoid.WithLvl
 open import Syntax.Function
 open import Syntax.Transitivity
 open import Type
 
 module _
-  {ℓₒ ℓₘ : Lvl.Level}
+  {ℓₒ ℓₘ ℓₑ : Lvl.Level}
   {Obj : Type{ℓₒ}}
   {Morphism : Obj → Obj → Type{ℓₘ}}
-  ⦃ morphism-equiv : ∀{x y} → Equiv(Morphism x y) ⦄
+  ⦃ morphism-equiv : ∀{x y} → Equiv{ℓₑ}(Morphism x y) ⦄
   (cat : Category(Morphism))
   where
 

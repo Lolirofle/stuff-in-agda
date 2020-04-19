@@ -64,7 +64,7 @@ module Two {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} where
     Function.congruence ([≡]-to-function) [≡]-intro = reflexivity(_≡ₛ_)
 open Two public
 
-module Three {ℓ₁}{ℓ₂}{ℓ₃} {A : Type{ℓ₁}}{B : Type{ℓ₂}}{C : Type{ℓ₃}} where
+module Three {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} {ℓ₃}{C : Type{ℓ₃}} where
   -- Applies an operation to each side of the equality (TODO: Make this an instance of BinaryOperator instead)
   [≡]-with-op : (_▫_ : A → B → C) → {a₁ a₂ : A}{b₁ b₂ : B} → (a₁ ≡ a₂) → (b₁ ≡ b₂) → ((a₁ ▫ b₁) ≡ (a₂ ▫ b₂))
   [≡]-with-op (_▫_) [≡]-intro [≡]-intro = [≡]-intro

@@ -3,12 +3,12 @@ module Structure.Category.Names where
 import      Lvl
 open import Functional using (const ; swap)
 open import Logic
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 import      Structure.Operator.Names as Names
 import      Structure.Relator.Names as Names
 open import Type
 
-private variable ℓₒ ℓₘ : Lvl.Level
+private variable ℓₒ ℓₘ ℓₑ : Lvl.Level
 private variable Obj : Type{ℓₒ}
 private variable x y z w : Obj
 
@@ -44,7 +44,7 @@ module Morphism where
     codom : ∀{x y : Obj} → Morphism(x)(y) → Obj
     codom{_}{y} (_) = y
 
-  module _ {Morphism : Obj → Obj → Type{ℓₘ}} ⦃ equiv-morphism : ∀{x y} → Equiv(Morphism x y) ⦄ where
+  module _ {Morphism : Obj → Obj → Type{ℓₘ}} ⦃ equiv-morphism : ∀{x y} → Equiv{ℓₑ}(Morphism x y) ⦄ where
     open ArrowNotation(Morphism)
 
     module _ (_▫_ : Names.SwappedTransitivity(_⟶_)) where
@@ -71,7 +71,7 @@ module Morphism where
         Involution(f) = Inverseᵣ f f
 
 module Polymorphism where
-  module _ {Morphism : Obj → Obj → Type{ℓₘ}} ⦃ equiv-morphism : ∀{x y} → Equiv(Morphism x y) ⦄ where
+  module _ {Morphism : Obj → Obj → Type{ℓₘ}} ⦃ equiv-morphism : ∀{x y} → Equiv{ℓₑ}(Morphism x y) ⦄ where
     open ArrowNotation(Morphism)
 
     module _ (_▫_ : Names.SwappedTransitivity(_⟶_)) where

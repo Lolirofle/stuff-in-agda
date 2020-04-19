@@ -192,7 +192,7 @@ import String
 import Structure.Arithmetic
 import Structure.Category
 import Structure.Category.Categories
--- import Structure.Category.Category
+import Structure.Category.Category
 import Structure.Category.Dual
 -- import Structure.Category.Equiv
 import Structure.Category.Functor
@@ -204,7 +204,7 @@ import Structure.Category.Monad
 -- import Structure.Category.Monad.Category
 import Structure.Category.Monad.ExtensionSystem
 import Structure.Category.Monoid
-import Structure.Category.Monoidal
+-- import Structure.Category.Monoidal
 import Structure.Category.Morphism.IdTransport
 import Structure.Category.Morphism.Transport
 import Structure.Category.Names

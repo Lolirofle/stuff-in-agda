@@ -4,13 +4,15 @@ import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Syntax.Function
 open import Function.Names
 open import Syntax.Transitivity
 open import Type
 
-module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ where
+private variable ℓ ℓₑ ℓ₁ ℓ₂ ℓ₃ ℓᵣ₂ ℓᵣ₃ ℓᵣ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑᵣ : Lvl.Level
+
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ where
   -- Definition of commutativity of specific elements.
   -- The binary operation swapped yields the same result.
   -- Example: For any x, (x ▫ x) always commutes.
@@ -38,7 +40,7 @@ module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equ
   ConverseAbsorberᵣ : (T₁ → T₂ → T₂) → T₂ → Stmt
   ConverseAbsorberᵣ (_▫_)(a) = ∀{x y} → (x ▫ y ≡ a) → (y ≡ a)
 
-module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} ⦃ _ : Equiv(T₁) ⦄ {T₂ : Type{ℓ₂}} where
+module _ {T₁ : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(T₁) ⦄ {T₂ : Type{ℓ₂}} where
   -- Definition of an right identity element
   -- Example: Subtracting 0 for integers (_− 0).
   Identityᵣ : (T₁ → T₂ → T₁) → T₂ → Stmt
@@ -53,7 +55,7 @@ module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} ⦃ _ : Equiv(T₁) ⦄ {T₂ : T
   ConverseAbsorberₗ : (T₁ → T₂ → T₁) → T₁ → Stmt
   ConverseAbsorberₗ (_▫_)(a) = ∀{x y} → (x ▫ y ≡ a) → (x ≡ a)
 
-module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
+module _ {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
   -- Definition of an identity element
   -- Example: 0 for addition of integers, 1 for multiplication of integers.
   Identity : (T → T → T) → T → Stmt
@@ -71,7 +73,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
   WeakConverseAbsorber : (T → T → T) → T → Stmt
   WeakConverseAbsorber (_▫_)(a) = ∀{x y} → (x ▫ y ≡ a) → (x ≡ a)∨(y ≡ a)
 
-module _ {ℓ₁ ℓ₂ ℓ₃} {T₊ : Type{ℓ₁}} {T₋ : Type{ℓ₂}} {Tᵣ : Type{ℓ₃}} ⦃ _ : Equiv(Tᵣ) ⦄ where
+module _ {T₊ : Type{ℓ₁}} {T₋ : Type{ℓ₂}} {Tᵣ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑᵣ}(Tᵣ) ⦄ where
   -- Definition of a left invertible element.
   Invertibleₗ : (T₋ → T₊ → Tᵣ) → Tᵣ → T₊ → Stmt
   Invertibleₗ (_▫_) id x = ∃(inv ↦ (inv ▫ x) ≡ id)
@@ -88,7 +90,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₊ : Type{ℓ₁}} {T₋ : Type{ℓ₂}} {T�
   InverseFunctionᵣ : (T₊ → T₋ → Tᵣ) → Tᵣ → (T₊ → T₋) → Stmt
   InverseFunctionᵣ (_▫_) id inv = ∀{x : T₊} → (x ▫ (inv x)) ≡ id
 
-module _ {ℓ₁ ℓ₂} {T : Type{ℓ₁}} {Tᵣ : Type{ℓ₂}} ⦃ _ : Equiv(Tᵣ) ⦄ where
+module _ {T : Type{ℓ₁}} {Tᵣ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑᵣ}(Tᵣ) ⦄ where
   -- Definition of an invertible element
   Invertible : (T → T → Tᵣ) → Tᵣ → T → Stmt
   Invertible (_▫_) id x = ∃(inv ↦ ((inv ▫ x) ≡ id) ∧ ((x ▫ inv) ≡ id))
@@ -97,7 +99,7 @@ module _ {ℓ₁ ℓ₂} {T : Type{ℓ₁}} {Tᵣ : Type{ℓ₂}} ⦃ _ : Equiv(
   InverseFunction : (T → T → Tᵣ) → Tᵣ → (T → T) → Stmt
   InverseFunction (_▫_) id inv = (InverseFunctionₗ (_▫_) id inv) ∧ (InverseFunctionᵣ (_▫_) id inv)
 
-module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ where
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₃}(T₃) ⦄ where
   -- Definition of right cancellation of a specific object
   -- ∀{a b : T₂} → ((x ▫ a) ≡ (x ▫ b)) → (a ≡ b)
   CancellationOnₗ : (T₁ → T₂ → T₃) → T₁ → Stmt
@@ -108,7 +110,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ 
   Cancellationₗ : (T₁ → T₂ → T₃) → Stmt
   Cancellationₗ (_▫_) = (∀{x : T₁} → CancellationOnₗ(_▫_)(x))
 
-module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} ⦃ _ : Equiv(T₁) ⦄ {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ where
+module _ {T₁ : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(T₁) ⦄ {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₃}(T₃) ⦄ where
   -- Definition of right cancellation of a specific object
   -- ∀{a b : T₁} → ((a ▫ x) ≡ (b ▫ x)) → (a ≡ b)
   CancellationOnᵣ : (T₁ → T₂ → T₃) → T₂ → Stmt
@@ -119,7 +121,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} ⦃ _ : Equiv(T₁) ⦄ {T
   Cancellationᵣ : (T₁ → T₂ → T₃) → Stmt
   Cancellationᵣ (_▫_) = (∀{x : T₂} → CancellationOnᵣ (_▫_)(x))
 
-module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ where
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₃}(T₃) ⦄ where
   -- Definition of the left inverse property
   InverseOperatorOnₗ : (T₁ → T₂ → T₃) → (T₁ → T₃ → T₂) → T₁ → T₃ → Stmt
   InverseOperatorOnₗ (_▫₁_) (_▫₂_) x y = (x ▫₁ (x ▫₂ y) ≡ y)
@@ -134,7 +136,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T�
   InverseOperatorᵣ : (T₁ → T₂ → T₃) → (T₃ → T₂ → T₁) → Stmt
   InverseOperatorᵣ (_▫₁_) (_▫₂_) = ∀{x y} → ((x ▫₂ y) ▫₁ y ≡ x)
 
-module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ where
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ where
   InversePropertyₗ : (T₁ → T₂ → T₂) → (T₁ → T₁) → Stmt
   InversePropertyₗ (_▫_) inv = ∀{x y} → InverseOperatorOnₗ (a ↦ b ↦ inv(a) ▫ b) (_▫_) x y
 
@@ -144,12 +146,12 @@ module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equ
 ---------------------------------------------------------
 -- Patterns
 
-module _ {ℓ₁ ℓ₂ ℓ₃ ℓᵣ₂ ℓᵣ₃ ℓᵣ} {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}}{T₃ : Type{ℓ₃}}{Tᵣ₂ : Type{ℓᵣ₂}}{Tᵣ₃ : Type{ℓᵣ₃}}{Tᵣ : Type{ℓᵣ}} ⦃ _ : Equiv(Tᵣ) ⦄ where
+module _ {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}}{T₃ : Type{ℓ₃}}{Tᵣ₂ : Type{ℓᵣ₂}}{Tᵣ₃ : Type{ℓᵣ₃}}{Tᵣ : Type{ℓᵣ}} ⦃ _ : Equiv{ℓₑᵣ}(Tᵣ) ⦄ where
   AssociativityPattern : (T₁ → T₂ → Tᵣ₃) → (Tᵣ₃ → T₃ → Tᵣ)  → (T₁ → Tᵣ₂ → Tᵣ) → (T₂ → T₃ → Tᵣ₂)→ Stmt
   AssociativityPattern (_▫₁_) (_▫₂_) (_▫₃_) (_▫₄_) =
     ∀{x : T₁}{y : T₂}{z : T₃} → ((x ▫₁ y) ▫₂ z) ≡ (x ▫₃ (y ▫₄ z))
 
-module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₃) ⦄ where
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₃}(T₃) ⦄ where
   DistributivityPatternₗ : (T₁ → T₂ → T₃) → (T₂ → T₂ → T₂) → (T₃ → T₃ → T₃) → Stmt
   DistributivityPatternₗ (_▫₁_) (_▫₂_) (_▫₃_) =
     ∀{x : T₁} {y z : T₂} → (x ▫₁ (y ▫₂ z)) ≡ ((x ▫₁ y) ▫₃ (x ▫₁ z))
@@ -161,13 +163,13 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T�
 ---------------------------------------------------------
 -- Derived
 
-module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
+module _ {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
   -- Definition of associativity for a binary operation
   Associativity : (T → T → T) → Stmt
   Associativity (_▫_) = AssociativityPattern (_▫_) (_▫_) (_▫_) (_▫_)
   -- {x y z : T} → ((x ▫ y) ▫ z) ≡ (x ▫ (y ▫ z))
 
-module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv(T₂) ⦄ where
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ where
   -- Definition of compatibility for a binary operation
   Compatibility : (T₁ → T₁ → T₁) → (T₁ → T₂ → T₂) → Stmt -- TODO: https://en.wikipedia.org/wiki/Semigroup_action
   Compatibility (_▫₁_) (_▫₂_) = AssociativityPattern (_▫₁_) (_▫₂_) (_▫₂_) (_▫₂_)
@@ -183,12 +185,12 @@ module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equ
   Distributivityᵣ (_▫₁_) (_▫₂_) = DistributivityPatternᵣ (_▫₁_) (_▫₂_) (_▫₂_)
   -- ∀{x y : T₂} {z : T₁} → ((x ▫₂ y) ▫₁ z) ≡ (x ▫₁ z) ▫₂ (y ▫₁ z)
 
-module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₁) ⦄ where
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₁}(T₁) ⦄ where
   -- Definition of left absorption for two binary operators
   Absorptionₗ : (T₁ → T₃ → T₁) → (T₁ → T₂ → T₃) → Stmt
   Absorptionₗ (_▫₁_)(_▫₂_) = ∀{x : T₁}{y : T₂} → (x ▫₁ (x ▫₂ y) ≡ x)
 
-module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv(T₂) ⦄ where
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ where
   -- Definition of right absorption for two binary operators
   Absorptionᵣ : (T₃ → T₂ → T₂) → (T₁ → T₂ → T₃) → Stmt
   Absorptionᵣ (_▫₁_)(_▫₂_) = ∀{x : T₁}{y : T₂} → ((x ▫₂ y) ▫₁ y ≡ y)

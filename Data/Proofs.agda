@@ -11,6 +11,7 @@ open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type
 open import Type.Empty
+open import Type.Unit
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 private variable T : Type{ℓ}
@@ -41,6 +42,20 @@ module _ where
   instance
     Unit-equiv : Equiv(Unit{ℓ})
     Unit-equiv = General.Unit-equiv ⦃ [≡]-intro {x = <>} ⦄
+
+  instance
+    -- `Unit` is an unit type.
+    Unit-IsUnit : IsUnit{ℓ}(Unit)
+    IsUnit.unit       Unit-IsUnit = <>
+    IsUnit.uniqueness Unit-IsUnit = [≡]-intro
+
+  {- TODO: So, why is this unprovable but Unit-IsUnit is? UIP? What is the difference?
+  module _ where
+    open import Relator.Equals.Proofs.Equivalence
+    testee : ∀{T : Type{ℓ}}{a : T} → IsUnit{ℓ}(a ≡ a)
+    IsUnit.unit       testee     = [≡]-intro
+    IsUnit.uniqueness testee {x} = {!!}
+  -}
 
 instance
   -- `Empty` is an empty type.

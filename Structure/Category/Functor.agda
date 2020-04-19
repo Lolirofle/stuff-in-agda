@@ -3,18 +3,19 @@ module Structure.Category.Functor where
 open import Lang.Instance
 import      Lvl
 open import Logic.Predicate
-open import Structure.Setoid
 open import Structure.Category
 open import Structure.Function
+open import Structure.Setoid.WithLvl
+open import Syntax.Function
 open import Type
 
-private variable ℓ : Lvl.Level
+private variable ℓ ℓₒ ℓₘ ℓₗₒ ℓₗₘ ℓᵣₒ ℓᵣₘ ℓₑ ℓₗₑ ℓᵣₑ : Lvl.Level
 private variable Obj Objₗ Objᵣ : Type{ℓ}
 private variable Morphism Morphismₗ Morphismᵣ : Objₗ → Objᵣ → Type{ℓ}
 
 module _
-  ⦃ morphism-equivₗ : ∀{x y : Objₗ} → Equiv(Morphismₗ x y) ⦄
-  ⦃ morphism-equivᵣ : ∀{x y : Objᵣ} → Equiv(Morphismᵣ x y) ⦄
+  ⦃ morphism-equivₗ : ∀{x y : Objₗ} → Equiv{ℓₗₑ}(Morphismₗ x y) ⦄
+  ⦃ morphism-equivᵣ : ∀{x y : Objᵣ} → Equiv{ℓᵣₑ}(Morphismᵣ x y) ⦄
   (Categoryₗ : Category(Morphismₗ))
   (Categoryᵣ : Category(Morphismᵣ))
   where
@@ -45,14 +46,17 @@ module _
     Full          = ∀{x y} → Surjective(map{x}{y})
     FullyFaithful = ∀{x y} → Bijective (map{x}{y})
     -- TODO: Conservative  = ∀{x y : Objₗ}{f : x ⟶ y} → Morphism.Isomorphism(\{x} → _∘_ {x = x})(\{x} → id{x = x})(map f) → Morphism.Isomorphism(\{x} → _∘_ {x = x})(id)(f)
-  _→ᶠᵘⁿᶜᵗᵒʳ_ = ∃(Functor)
 
 module _
-  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
+  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv{ℓₑ}(Morphism x y) ⦄
   (Category : Category(Morphism))
   where
 
   Endofunctor = Functor(Category)(Category)
   module Endofunctor = Functor{Categoryₗ = Category}{Categoryᵣ = Category}
 
-  ⟲ᶠᵘⁿᶜᵗᵒʳ = ∃(Endofunctor)
+_→ᶠᵘⁿᶜᵗᵒʳ_ : CategoryObject{ℓₗₒ}{ℓₗₘ}{ℓₗₑ} → CategoryObject{ℓᵣₒ}{ℓᵣₘ}{ℓᵣₑ} → Type
+catₗ →ᶠᵘⁿᶜᵗᵒʳ catᵣ = ∃(Functor (CategoryObject.category(catₗ)) ((CategoryObject.category(catᵣ))))
+
+⟲ᶠᵘⁿᶜᵗᵒʳ_ : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ} → Type
+⟲ᶠᵘⁿᶜᵗᵒʳ cat = cat →ᶠᵘⁿᶜᵗᵒʳ cat

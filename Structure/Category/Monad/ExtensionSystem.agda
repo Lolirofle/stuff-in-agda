@@ -4,10 +4,7 @@ open import Type
 
 module Structure.Category.Monad.ExtensionSystem
   {ℓₒ ℓₘ}
-  {Obj : Type{ℓₒ}}
-  {Morphism : Obj → Obj → Type{ℓₘ}}
-  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
-  {cat : Category(Morphism)}
+  {cat : CategoryObject{ℓₒ}{ℓₘ}}
   where
 
 import      Function.Equals
@@ -27,18 +24,18 @@ open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 
-open Category.ArrowNotation(cat)
-open Category(cat)
+open CategoryObject(cat)
+open Category.ArrowNotation(category)
+open Category(category)
 open NaturalTransformations.Raw(cat)(cat)
-private instance _ = cat
 private open module MorphismEquiv {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
 
-record ExtensionSystem (T : Obj → Obj) : Type{Lvl.of(type-of(cat))} where
+record ExtensionSystem (T : Object → Object) : Type{Lvl.of(type-of(cat))} where
   field
-    η   : (x : Obj) → (x ⟶ T(x))
+    η   : (x : Object) → (x ⟶ T(x))
     ext : ∀{x y} → (x ⟶ T(y)) → (T(x) ⟶ T(y))
 
-  μ : (x : Obj) → (T(T(x)) ⟶ T(x))
+  μ : (x : Object) → (T(T(x)) ⟶ T(x))
   μ(x) = ext(id{x = T(x)})
 
   field
@@ -47,7 +44,7 @@ record ExtensionSystem (T : Obj → Obj) : Type{Lvl.of(type-of(cat))} where
     ext-identity     : ∀{x y}{f : x ⟶ T(y)} → (ext(f) ∘ η(x) ≡ f)
     ext-distribute   : ∀{x y z}{f : y ⟶ T(z)}{g : x ⟶ T(y)} → (ext(ext(f) ∘ g) ≡ ext(f) ∘ ext(g))
 
-  functor : Functor(cat)(cat)(T)
+  functor : Functor(category)(category)(T)
   Functor.map functor {x} {y} f = ext(η(y) ∘ f)
   Function.congruence (Functor.map-function functor) xy = congruence₁(ext) (congruence₂ᵣ(_∘_)(_) xy)
   Functor.op-preserving functor {x} {y} {z} {f} {g} =
@@ -62,8 +59,7 @@ record ExtensionSystem (T : Obj → Obj) : Type{Lvl.of(type-of(cat))} where
     id             🝖-end
   open Functor(functor)
 
-  monad : Monad(T)
-  Monad.functor monad = functor
+  monad : Monad(T) ⦃ functor ⦄
   ∃.witness (Monad.Η monad) = η
   NaturalTransformation.natural (∃.proof (Monad.Η monad)) = symmetry(_≡_) ext-identity
   ∃.witness (Monad.Μ monad) = μ

@@ -6,7 +6,7 @@ open import Data.Tuple as Tuple using ()
 open import Functional
 open import Logic
 import      Lvl
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Functor.Functors
@@ -18,12 +18,12 @@ open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type
 
-private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+private variable ℓ ℓ₁ ℓ₂ ℓₑ : Lvl.Level
 
 -- The empty category is a category containing nothing.
 -- The objects are empty.
 -- The morphisms are empty.
-emptyCategory : Category{ℓ₁}{ℓ₂}(empty) ⦃ \{} ⦄
+emptyCategory : Category{ℓ₁}{ℓ₂}{ℓₑ}(empty) ⦃ \{} ⦄
 Category._∘_            emptyCategory {}
 Category.id             emptyCategory {}
 Category.binaryOperator emptyCategory {}

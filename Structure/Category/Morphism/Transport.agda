@@ -4,11 +4,8 @@ open import Structure.Setoid
 open import Type
 
 module Structure.Category.Morphism.Transport
-  {ℓₒ ℓₘ : Lvl.Level}
-  {Obj : Type{ℓₒ}}
-  {Morphism : Obj → Obj → Type{ℓₘ}}
-  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
-  (cat : Category(Morphism) ⦃ morphism-equiv ⦄)
+  {ℓₒ ℓₘ ℓₑ : Lvl.Level}
+  (cat : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ})
   where
 
 import      Functional.Dependent as Fn
@@ -25,13 +22,14 @@ open import Structure.Category.Properties
 open import Structure.Function
 open import Structure.Relator.Properties
 
-open Names.ArrowNotation(Morphism)
-open Category(cat)
+open CategoryObject(cat)
+open Category(category)
+open Category.ArrowNotation(category)
 open Morphism.OperModule ⦃ morphism-equiv ⦄ (\{x} → _∘_ {x})
 open Morphism.IdModule   ⦃ morphism-equiv ⦄ (\{x} → _∘_ {x})(id)
 
-module _ {P : Obj → Obj} (p : ∀{x} → (x ⟶ P(x))) ⦃ isomorphism : ∀{x} → Isomorphism(p{x}) ⦄ where
-  private variable a b c : Obj
+module _ {P : Object → Object} (p : ∀{x} → (x ⟶ P(x))) ⦃ isomorphism : ∀{x} → Isomorphism(p{x}) ⦄ where
+  private variable a b c : Object
 
   transport : (a ≡ₑ b) → (P(a) ⟶ P(b))
   transport ab = p ∘ IdTransport.transport(cat) ab ∘ inv(p)

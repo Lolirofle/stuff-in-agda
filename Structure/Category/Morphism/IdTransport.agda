@@ -1,14 +1,11 @@
 import      Lvl
 open import Structure.Category
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Type
 
 module Structure.Category.Morphism.IdTransport
-  {ℓₒ ℓₘ : Lvl.Level}
-  {Obj : Type{ℓₒ}}
-  {Morphism : Obj → Obj → Type{ℓₘ}}
-  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv(Morphism x y) ⦄
-  (cat : Category(Morphism) ⦃ morphism-equiv ⦄)
+  {ℓₒ ℓₘ ℓₑ : Lvl.Level}
+  (cat : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ})
   where
 
 import      Functional.Dependent as Fn
@@ -24,13 +21,15 @@ open import Structure.Category.Properties
 open import Structure.Function
 open import Structure.Relator.Properties
 
-open Names.ArrowNotation(Morphism)
-open Category(cat)
+open CategoryObject(cat)
+open Category(category) using (_∘_ ; id ; identityₗ ; identityᵣ)
+open Category.ArrowNotation(category)
 open Morphism.OperModule ⦃ morphism-equiv ⦄ (\{x} → _∘_ {x})
 open Morphism.IdModule   ⦃ morphism-equiv ⦄ (\{x} → _∘_ {x})(id)
 
-private variable a b c : Obj
+private variable a b c : Object
 
+-- Essentially the identity morphism masquerading as a morphism between two arbitrary but identical objects.
 transport : (a ≡ₑ b) → (a ⟶ b)
 transport = sub₂(_≡ₑ_)(_⟶_) ⦃ [≡]-sub-of-reflexive ⦃ intro id ⦄ ⦄
 
@@ -44,6 +43,10 @@ transport-of-reflexivity = reflexivity(_≡_) ⦃ Equiv.reflexivity morphism-equ
 
 transport-of-transitivity : ∀{ab : (a ≡ₑ b)}{bc : (b ≡ₑ c)} → (transport(transitivity(_≡ₑ_) ab bc) ≡ transport(bc) ∘ transport(ab))
 transport-of-transitivity {ab = [≡]-intro} {bc = [≡]-intro} = symmetry(_≡_) ⦃ Equiv.symmetry morphism-equiv ⦄ (Morphism.identityₗ(_∘_)(id))
+
+-- TODO: More `cat`'s
+-- transport-of-congruenced-functor : ∀{ab : (a ≡ₑ b)}{[∃]-intro F : Functor} → (F(transport(ab)) ≡ transport(congruence₁ F ab))
+-- transport-of-congruenced-bifunctor : ∀{ab : (a ≡ₑ b)}{[∃]-intro F : Bifunctor} → (F(transport(ab)(cd)) ≡ transport(congruence₂ F ab cd))
 
 [∘]-on-transport-inverseₗ : ∀{ab : (a ≡ₑ b)} → ((transport (symmetry(_≡ₑ_) ab)) ∘ (transport ab) ≡ id)
 [∘]-on-transport-inverseₗ {ab = [≡]-intro} = Morphism.identityₗ(_∘_)(id)

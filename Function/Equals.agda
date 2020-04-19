@@ -5,16 +5,16 @@ open import Functional
 import      Function.Names as Names
 open import Logic
 open import Logic.Propositional
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type
 
-module Dependent {ℓ₁}{ℓ₂} {A : Type{ℓ₁}} {B : A → Type{ℓ₂}} ⦃ equiv-B : ∀{a} → Equiv(B(a)) ⦄ where
+module Dependent {ℓ₁ ℓ₂ ℓₑ₂} {A : Type{ℓ₁}} {B : A → Type{ℓ₂}} ⦃ equiv-B : ∀{a} → Equiv{ℓₑ₂}(B(a)) ⦄ where
   infixl 15 _⊜_
 
   -- Function equivalence. When the types and all their values are shared/equivalent.
-  record _⊜_ (f : (a : A) → B(a)) (g : (a : A) → B(a)) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+  record _⊜_ (f : (a : A) → B(a)) (g : (a : A) → B(a)) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓₑ₂} where
     constructor intro
     field
       proof : (f Names.⊜ g)
@@ -43,7 +43,7 @@ module Dependent {ℓ₁}{ℓ₂} {A : Type{ℓ₁}} {B : A → Type{ℓ₂}} �
     [⊜]-sub : (_≡_) ⊆₂ (_⊜_)
     _⊆₂_.proof [⊜]-sub (intro proof) = intro proof
 
-module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ equiv-B : Equiv(B) ⦄ where
+module _ {ℓ₁ ℓ₂ ℓₑ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
   private module D = Dependent {A = A} {B = const B} ⦃ equiv-B ⦄
   open D using (module _⊜_ ; intro) public
   _⊜_              = D._⊜_
