@@ -3,8 +3,9 @@ module Structure.Operator.Monoid where
 import      Lvl
 open import Logic
 open import Logic.Predicate
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Function
+open import Structure.Function.Multi
 open import Structure.Operator.Properties hiding (associativity ; identityₗ ; identityᵣ)
 open import Structure.Operator
 open import Type
@@ -13,7 +14,7 @@ open import Type.Size
 -- A type and a binary operator using this type is a monoid when:
 -- • The operator is associative.
 -- • The operator have an identity in both directions.
-record Monoid {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ} where
+record Monoid {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
     instance ⦃ binary-operator ⦄    : BinaryOperator(_▫_)
@@ -31,42 +32,35 @@ record Monoid {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T)
   identityᵣ : Identityᵣ (_▫_) id
   identityᵣ = Identity.right(identity)
 
-module Morphism where
-  record Homomorphism {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    constructor intro
-    field
-      instance ⦃ structureₗ ⦄ : Monoid(_▫X_)
-      instance ⦃ structureᵣ ⦄ : Monoid(_▫Y_)
+record MonoidObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
+  constructor intro
+  field
+    {T} : Type{ℓ}
+    ⦃ equiv ⦄ : Equiv{ℓₑ}(T)
+    _▫_ : T → T → T
+    ⦃ monoid ⦄ : Monoid(_▫_) 
 
-    idₗ = Monoid.id(structureₗ)
-    idᵣ = Monoid.id(structureᵣ)
+record Homomorphism
+  {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂}
+  {X : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(X) ⦄ {_▫X_ : X → X → X} ( structureₗ : Monoid(_▫X_))
+  {Y : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ {_▫Y_ : Y → Y → Y} ( structureᵣ : Monoid(_▫Y_))
+  (f : X → Y)
+  : Stmt{ℓ₁ Lvl.⊔ ℓₑ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓₑ₂} where
 
-    field
-      preserve-op : ∀{x y : X} → (f(x ▫X y) ≡ f(x) ▫Y f(y))
-      preserve-id : (f(idₗ) ≡ idᵣ)
+  constructor intro
 
-  -- Monoid monomorphism (Injective homomorphism)
-  record _↣_ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    constructor intro
-    field
-      ⦃ homomorphism ⦄ : Homomorphism {_▫X_ = _▫X_} {_▫Y_ = _▫Y_} (f)
-      ⦃ size ⦄         : (X ≼ Y)
+  idₗ = Monoid.id(structureₗ)
+  idᵣ = Monoid.id(structureᵣ)
 
+  field
+    ⦃ function ⦄ : Function(f)
+    ⦃ preserve-op ⦄ : Preserving₂(f)(_▫X_)(_▫Y_)
+    ⦃ preserve-id ⦄ : (f(idₗ) ≡ idᵣ)
 
-  -- Monoid epimorphism (Surjective homomorphism)
-  record _↠_ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    constructor intro
-    field
-      ⦃ homomorphism ⦄ : Homomorphism {_▫X_ = _▫X_} {_▫Y_ = _▫Y_} (f)
-      ⦃ size ⦄         : (X ≽ Y)
+_→ᵐᵒⁿᵒⁱᵈ_ : ∀{ℓₗ ℓₗₑ ℓᵣ ℓᵣₑ} → MonoidObject{ℓₗ}{ℓₗₑ} → MonoidObject{ℓᵣ}{ℓᵣₑ} → Type
+A →ᵐᵒⁿᵒⁱᵈ B = ∃(Homomorphism(MonoidObject.monoid A)(MonoidObject.monoid B))
 
-  -- Monoid isomorphism (Bijective homomorphism)
-  record _⤖_ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} (f : X → Y) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-    constructor intro
-    field
-      ⦃ homomorphism ⦄ : Homomorphism {_▫X_ = _▫X_} {_▫Y_ = _▫Y_} (f)
-      ⦃ size ⦄         : (X ≍ Y)
-
-  -- TODO: When f is a function and a homomorphism and only _▫X_ is a monoid, is it enough to prove that RHS is a monoid?
-  -- structureᵣ : ⦃ _ : Function(f) ⦄ → Monoid(_▫Y_)
-  -- Identityₗ.proof(Monoid.identityₗ(structureᵣ)) = function(f) (Identityₗ.proof(Monoid.identityₗ(structureₗ)))
+-- TODO: Notation for morphisms
+-- Monomorphism _↣_ inj
+-- Epimorphism _↠_ surj
+-- Isomorphism _⤖_ bij

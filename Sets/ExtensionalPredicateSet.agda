@@ -26,7 +26,8 @@ open import Syntax.Transitivity
 open import Type
 open import Type.Size
 
-private variable ℓ ℓₒ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
+private variable ℓ ℓₒ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ ℓ₁ ℓ₂ ℓ₃ ℓₑ₁ ℓₑ₂ : Lvl.Level
+private variable T A B : Type{ℓ}
 
 -- A set of objects of a certain type where equality is based on setoids.
 -- This is defined by the containment predicate (_∋_) and a proof that it respects the setoid structure.
@@ -112,18 +113,21 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
   _⨯_.left (UnaryRelator.substitution (preserve-equiv (filter P A)) xy ([∧]-intro xA Px)) = substitute₁(A ∋_) xy xA
   _⨯_.right (UnaryRelator.substitution (preserve-equiv (filter P A)) xy ([∧]-intro xA Px)) = substitute₁(P) xy Px
 
-  --unapply : ⦃ Equiv(B) ⦄ → (f : A → B) → B → PredSet(A)
-  -- unapply f(y) x = f(x) ≡ₛ y
+unapply : ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ → (f : A → B) ⦃ _ : Function(f) ⦄ → B → PredSet(A)
+unapply f(y) ∋ x = f(x) ≡ₑ y
+preserve-equiv (unapply f(y)) = [∘]-unaryRelator ⦃ rel = binary-unaryRelatorᵣ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄
 
-  --map : ⦃ Equiv(B) ⦄ → (f : A → B) → PredSet{ℓ}(A) → PredSet(B)
-  --map f(S) y = Overlapping(S)(unapply f(y))
+⊶ : ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ → (f : A → B) → PredSet(B)
+⊶ f ∋ y = ∃(x ↦ f(x) ≡ₑ y)
+preserve-equiv (⊶ f) = [∃]-unaryRelator ⦃ rel-P = binary-unaryRelatorₗ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄
 
-unmap : ∀{A : Type{ℓ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ → (f : A → B) ⦃ _ : Function(f) ⦄ → PredSet{ℓ}(B) → PredSet(A)
+unmap : ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ → (f : A → B) ⦃ _ : Function(f) ⦄ → PredSet{ℓ}(B) → PredSet(A)
 (unmap f(Y)) ∋ x = f(x) ∈ Y
 preserve-equiv (unmap f x) = [∘]-unaryRelator
 
-  --⊶ : ⦃ Equiv(B) ⦄ → (f : A → B) → PredSet(B)
-  --⊶ f y = ∃(unapply f(y))
+map : ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ → (f : A → B) → PredSet{ℓ}(A) → PredSet(B)
+map f(S) ∋ y = ∃(x ↦ (x ∈ S) ∧ (f(x) ≡ₑ y))
+preserve-equiv (map f S) = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-Q = binary-unaryRelatorₗ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄ ⦄
 
 -- Set-set relations.
 module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where

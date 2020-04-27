@@ -5,6 +5,7 @@ open import Lang.Instance
 open import Logic.Predicate
 open import Logic
 open import Structure.Setoid.WithLvl
+open import Function.Names
 open import Structure.Function
 open import Structure.Relator.Properties
 open import Syntax.Function
@@ -24,7 +25,7 @@ module _
   -- `congruence` is the defining property of a binary operation.
   record BinaryOperator : Type{Lvl.of(A₁) Lvl.⊔ Lvl.of(A₂) Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓₗ₃} where
     constructor intro
-    field congruence : ∀{x₁ y₁ : A₁} → (x₁ ≡ y₁) → ∀{x₂ y₂ : A₂} → (x₂ ≡ y₂) → (x₁ ▫ x₂ ≡ y₁ ▫ y₂)
+    field congruence : Congruence₂(_▫_)
 
     instance
       left : ∀{x} → Function(_▫ x)

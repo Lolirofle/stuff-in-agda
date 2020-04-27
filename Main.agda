@@ -1,3 +1,6 @@
+{-# OPTIONS --sized-types --guardedness #-}
+
+-- Note: This module is not meant to be imported.
 module Main where
 
 -- import Automaton.DeterministicFinite
@@ -48,11 +51,11 @@ import Data.Tuple.Raiseᵣ
 import Data.Tuple.Raiseᵣ.Functions
 import Data.Tuple.Raiseₗ
 import FFI.IO as FFI
-import FormalLanguage
-import FormalLanguage.ContextFreeGrammar
-import FormalLanguage.Equals
-import FormalLanguage.Proofs
-import FormalLanguage.RegularExpression
+-- import FormalLanguage
+-- import FormalLanguage.ContextFreeGrammar
+-- import FormalLanguage.Equals
+-- import FormalLanguage.Proofs
+-- import FormalLanguage.RegularExpression
 -- import Formalization.ClassicalPropositionalLogic
 -- import Formalization.FunctionalML
 -- import Formalization.LambdaCalculus

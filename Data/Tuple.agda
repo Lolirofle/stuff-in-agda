@@ -17,6 +17,9 @@ module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂
   map : (T₁ → T₃) → (T₂ → T₄) → (T₁ ⨯ T₂) → (T₃ ⨯ T₄)
   map f g (x , y) = (f(x) , g(y))
 
+  mapApply : ((T₁ → T₂) ⨯ (T₃ → T₄)) → (T₁ ⨯ T₃) → (T₂ ⨯ T₄)
+  mapApply (f , g) (x , y) = (f(x) , g(y))
+
 module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} where
   -- Curries a function taking a 2-tuple, transforming it to a function returning a function instead
   curry : ((T₁ ⨯ T₂) → T₃) → (T₁ → T₂ → T₃)
@@ -37,6 +40,9 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T�
 
   associateRight : ((T₁ ⨯ T₂) ⨯ T₃) → (T₁ ⨯ (T₂ ⨯ T₃))
   associateRight ((x , y) , z) = (x , (y , z))
+
+  mapApply1 : ((T₁ → T₂) ⨯ (T₁ → T₃)) → T₁ → (T₂ ⨯ T₃)
+  mapApply1 (f , g) x = (f(x) , g(x))
 
 module _ {ℓ₁ ℓ₂} {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} where
   -- Swaps the left and right elements of a 2-tuple

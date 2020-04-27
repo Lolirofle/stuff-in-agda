@@ -71,7 +71,7 @@ module _ where
 
     instance
       thing-symmetry : Symmetry(thing(P))
-      Symmetry.proof thing-symmetry = [∨]-map (symmetry(_≡_)) id
+      Symmetry.proof thing-symmetry = [∨]-elim2 (symmetry(_≡_)) id
 
     instance
       thing-transitivity : Transitivity(thing(P))

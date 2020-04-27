@@ -9,7 +9,7 @@ import      Function.Names as Names
 open import Logic.IntroInstances
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Setoid.Uniqueness
 open import Structure.Function.Domain
 open import Structure.Function.Multi
@@ -23,11 +23,11 @@ open import Type
 
 -- TODO: These are to make the generalized variables work when they depend on each other. Are there any better ways?
 private
-  module _ {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ where
+  module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     select-invol : ∀(f : T → T) → Involution(f) → Type{Lvl.𝟎}
     select-invol _ _ = Data.Unit
 
-  module _ {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T} where
+  module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : T → T → T} where
     select-id : ∀(id) → Identity(_▫_)(id) → Type{Lvl.𝟎}
     select-id _ _ = Data.Unit
 
@@ -61,7 +61,7 @@ private
     select-absᵣ : ∀(id) → Absorberᵣ(_▫_)(id) → Type{Lvl.𝟎}
     select-absᵣ _ _ = Data.Unit
 
-module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T} where
+module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : T → T → T} where
   private variable {id idₗ idᵣ ab abₗ abᵣ} : T
   private variable {inv invₗ invᵣ} : T → T
   private variable ⦃ op ⦄ : BinaryOperator ⦃ equiv ⦄ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫_)
@@ -417,7 +417,7 @@ module One {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫_ : T → T → T
     (id ▫ x) ▫ inv x 🝖-[ inversePropᵣ(_▫_)(inv) ]
     id               🝖-end
 
-module OneTypeTwoOp {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫₁_ _▫₂_ : T → T → T} where
+module OneTypeTwoOp {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫₁_ _▫₂_ : T → T → T} where
   private variable {id} : T
   private variable {inv} : T → T
 
@@ -516,7 +516,7 @@ module OneTypeTwoOp {ℓ} {T : Type{ℓ}} ⦃ equiv : Equiv(T) ⦄ {_▫₁_ _�
     (x ▫₂ id) ▫₁ id 🝖-[ absorptionᵣ(_▫₁_)(_▫₂_) ]
     id              🝖-end
 
-module Two {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ equiv-A : Equiv(A) ⦄ {_▫₁_ : A → A → A} {B : Type{ℓ₂}} ⦃ equiv-B : Equiv(B) ⦄ {_▫₂_ : B → B → B} where
+module Two {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {_▫₁_ : A → A → A} {B : Type{ℓ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ {_▫₂_ : B → B → B} where
   private variable {id₁} : A
   private variable {inv₁} : A → A
   private variable {id₂} : B

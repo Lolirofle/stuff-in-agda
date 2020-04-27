@@ -25,9 +25,6 @@ module _ where
   [≡]-substitutionₗ : (x ≡ y) → ∀{f : T → Type{ℓ}} → f(x) ← f(y)
   [≡]-substitutionₗ [≡]-intro = id
 
-  -- Replaces occurrences of an element in a function
-  [≡]-substitutionᵣ : (x ≡ y) → ∀{f : T → Type{ℓ}} → f(x) → f(y)
-  [≡]-substitutionᵣ [≡]-intro = id
   -- xy {f = f} = sub₂(_≡_)(Functional._→ᶠ_ on₂ f) xy
 
   -- Note:

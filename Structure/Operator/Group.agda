@@ -4,7 +4,7 @@ import      Lvl
 open import Logic
 open import Logic.IntroInstances
 open import Logic.Predicate
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Function
 open import Structure.Operator.Monoid using (Monoid)
 open import Structure.Operator.Properties hiding (commutativity)
@@ -14,7 +14,7 @@ open import Type.Size
 -- A type and a binary operator using this type is a group when:
 -- • It is a monoid.
 -- • The operator have an inverse in both directions.
-record Group {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ} where
+record Group {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
 
   field
@@ -44,13 +44,14 @@ record Group {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) 
   inv-op : T → T → T
   inv-op x y = x ▫ inv y
 
-record CommutativeGroup {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ} where
+record CommutativeGroup {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
     instance ⦃ group ⦄         : Group (_▫_)
     instance ⦃ commutativity ⦄ : Commutativity (_▫_)
   open Group(group) public
 
+{- TODO: See Monoid for how this should be rewritten to fit how it is done in Category
 module Morphism where
   module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} ⦃ _ : Equiv(X) ⦄ {_▫X_ : X → X → X} ⦃ structureₗ : Group(_▫X_) ⦄ {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ {_▫Y_ : Y → Y → Y} ⦃ structureᵣ : Group(_▫Y_) ⦄ (f : X → Y) where
     -- Group homomorphism
@@ -98,3 +99,4 @@ module Morphism where
 
   _⤖_ : ∀{ℓ₁ ℓ₂} → {X : Type{ℓ₁}} → ⦃ _ : Equiv(X) ⦄ → (_▫X_ : X → X → X) → ⦃ structureₗ : Group(_▫X_) ⦄ → {Y : Type{ℓ₂}} → ⦃ _ : Equiv(Y) ⦄ → (_▫Y_ : Y → Y → Y) → ⦃ structureᵣ : Group(_▫Y_) ⦄ → Stmt{ℓ₁ Lvl.⊔ ℓ₂}
   (_▫X_) ⤖ (_▫Y_) = ∃(Isomorphism{_▫X_ = _▫X_}{_▫Y_ = _▫Y_})
+-}

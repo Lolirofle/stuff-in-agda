@@ -10,7 +10,7 @@ open import Structure.Setoid.Uniqueness
 open import Structure.Setoid.WithLvl
 open import Type
 
-private variable ℓₒ ℓₒ₁ ℓₒ₂ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ : Lvl.Level
+private variable ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ : Lvl.Level
 
 module _ {A : Type{ℓₒ₁}} {B : A → Type{ℓₒ₂}} ⦃ _ : ∀{a} → Equiv{ℓₗ₃}(B(a)) ⦄ where
   _⊜_ : ((a : A) → B(a)) → ((a : A) → B(a)) → Stmt
@@ -27,9 +27,6 @@ module _ (A : Type{ℓₒ₁}) (B : Type{ℓₒ₂}) ⦃ _ : Equiv{ℓₗ₂}(B)
 -- TODO: Move below to Structure.Function.Names
 
 module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ where
-  Function : (A → B) → Stmt
-  Function(f) = (∀{x y : A} → (x ≡ y) → (f(x) ≡ f(y)))
-
   Injective : (A → B) → Stmt
   Injective(f) = (∀{x y : A} → (f(x) ≡ f(y)) → (x ≡ y))
 
@@ -70,3 +67,11 @@ module _ {A : Type{ℓₒ}} ⦃ _ : Equiv{ℓₗ}(A) ⦄ where
 
   Idempotent : (A → A) → Stmt
   Idempotent(f) = ∀ₗ(IdempotentOn f)
+
+module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ where
+  Congruence₁ : (A → B) → Stmt
+  Congruence₁(f) = (∀{x y : A} → (x ≡ y) → (f(x) ≡ f(y)))
+
+  module _ {C : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₗ₃}(C) ⦄ where
+    Congruence₂ : (A → B → C) → Stmt
+    Congruence₂(f) = (∀{x₁ y₁ : A} → (x₁ ≡ y₁) → ∀{x₂ y₂ : B} → (x₂ ≡ y₂) → (f x₁ x₂ ≡ f y₁ y₂))

@@ -53,7 +53,7 @@ module _ (P : Stmt{ℓ}) where
     decide-is-false = [↔]-transitivity decide-false ([↔]-symmetry IsFalse.is-𝐹)
 
     decide-excluded-middle : (P ∧ (decide ≡ 𝑇)) ∨ ((¬ P) ∧ (decide ≡ 𝐹))
-    decide-excluded-middle = [∨]-map (p ↦ [∧]-intro p ([↔]-to-[→] decide-true p)) (np ↦ [∧]-intro np ([↔]-to-[→] decide-false np)) excluded-middle
+    decide-excluded-middle = [∨]-elim2 (p ↦ [∧]-intro p ([↔]-to-[→] decide-true p)) (np ↦ [∧]-intro np ([↔]-to-[→] decide-false np)) excluded-middle
 
     module _ {T : Type{ℓ₁}} {x y : T} {Q : T → Type{ℓ₂}} where
       decide-if-intro : (P → Q(x)) → ((¬ P) → Q(y)) → Q(if decide then x else y)

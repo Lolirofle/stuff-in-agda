@@ -1,6 +1,6 @@
-OPTIONS=--rewriting --irrelevant-projections --without-K --no-default-libraries --cubical
+OPTIONS=--rewriting --cubical --without-K --no-default-libraries --no-libraries --no-guardedness --no-sized-types
 DEBUG_OPTIONS=--show-implicit --confluence-check -W all --warning noUnknownFixityInMixfixDecl
-#--exact-split --without-K --proof-irrelevance --verbose=5 --experimental-irrelevance --instance-search-depth=10 --overlapping-instances
+#--cubical --exact-split --proof-irrelevance --verbose=5 --experimental-irrelevance --instance-search-depth=10 --overlapping-instances
 
 all: typecheck
 

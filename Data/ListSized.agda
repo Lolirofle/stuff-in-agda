@@ -8,6 +8,7 @@ open import Data.Option as Option using (Option)
 open import Functional
 open import Numeral.Finite
 open import Numeral.Natural
+open import Numeral.Natural.Function
 open import Numeral.Natural.Oper
 -- open import Numeral.Natural.Oper.Proofs
 open import Type
@@ -123,3 +124,13 @@ module _ {ℓ} {T : Type{ℓ}} where
   --   reduceᵣ(▫)[a,b,c,d,e] = a▫(b▫(c▫(d▫e)))
   reduceᵣ : ∀{n} → (T → T → T) → List(T)(𝐒(n)) → T
   reduceᵣ _▫_ (elem ⊰ l) = foldᵣ _▫_ elem l
+
+private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+private variable T A A₁ A₂ B B₁ B₂ Result : Type{ℓ}
+private variable n n₁ n₂ : ℕ
+
+map₂ : (A₁ → A₂ → B) → (List(A₁)(n₁) → List(B)(n₁)) → (List(A₂)(n₂) → List(B)(n₂)) → (List(A₁)(n₁) → List(A₂)(n₂) → List(B)(max n₁ n₂))
+map₂ f g₁ g₂ ∅          ∅          = ∅
+map₂ f g₁ g₂ ∅          l₂@(_ ⊰ _) = g₂ l₂
+map₂ f g₁ g₂ l₁@(_ ⊰ _) ∅          = g₁ l₁
+map₂ f g₁ g₂ (x₁ ⊰ l₁)  (x₂ ⊰ l₂)  = f x₁ x₂ ⊰ map₂ f (tail ∘ g₁ ∘ (x₁ ⊰_)) ((tail ∘ g₂ ∘ (x₂ ⊰_))) l₁ l₂

@@ -147,7 +147,7 @@ module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{�
         [≤]-to-[<][≡] {a} {b} ab | [∨]-introᵣ ne = [∨]-introₗ (ba ↦ ne(antisymmetry(_≤_)(_≡_) ab ba))
 
         [≥]-to-[>][≡] : ∀{a b} → (a ≥ b) → ((a > b) ∨ (a ≡ b))
-        [≥]-to-[>][≡] ab = [∨]-map id (symmetry(_≡_)) ([≤]-to-[<][≡] ab)
+        [≥]-to-[>][≡] ab = [∨]-elim2 id (symmetry(_≡_)) ([≤]-to-[<][≡] ab)
 
     -- [<]-trichotomy : ∀{a b} → (a < b) ∨ (b < a) ∨ (a ≡ b)
     -- [<]-trichotomy {a} {b} = {!!}

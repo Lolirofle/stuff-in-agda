@@ -1,1 +1,0 @@
-module Automaton.NonDeterministicFinite where

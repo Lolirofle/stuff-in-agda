@@ -39,6 +39,20 @@ min-0ᵣ {𝟎}   = [≡]-intro
 min-0ᵣ {𝐒 a} = [≡]-intro
 {-# REWRITE min-0ᵣ #-}
 
+instance
+  min-idempotence : Idempotence(min)
+  min-idempotence = intro proof where
+    proof : Names.Idempotence(min)
+    proof{𝟎}   = [≡]-intro
+    proof{𝐒 x} = [≡]-with(𝐒) (proof{x})
+
+instance
+  max-idempotence : Idempotence(max)
+  max-idempotence = intro proof where
+    proof : Names.Idempotence(max)
+    proof{𝟎}   = [≡]-intro
+    proof{𝐒 x} = [≡]-with(𝐒) (proof{x})
+
 max-elementary : ∀{a b} → (max(a)(b) ≡ a + (b −₀ a))
 max-elementary {𝟎}    {𝟎}    = [≡]-intro
 max-elementary {𝟎}    {𝐒(b)} = [≡]-intro
@@ -214,7 +228,7 @@ max-defᵣ {a}{b} = [≡]-substitutionᵣ (commutativity(max)) {expr ↦ (b ≥ 
 
 [≤]-disjunction-min : ∀{a b c} → ((a ≤ c) ∨ (b ≤ c)) ↔ (min a b ≤ c)
 [≤]-disjunction-min = [↔]-intro
-  (ab≤c ↦ [∨]-map
+  (ab≤c ↦ [∨]-elim2
     ((_🝖 ab≤c) ∘ [≡]-to-[≤] ∘ symmetry(_≡_))
     ((_🝖 ab≤c) ∘ [≡]-to-[≤] ∘ symmetry(_≡_))
     min-arg
@@ -226,7 +240,7 @@ max-defᵣ {a}{b} = [≡]-substitutionᵣ (commutativity(max)) {expr ↦ (b ≥ 
 
 [≤]-disjunction-max : ∀{a b c} → ((a ≤ b) ∨ (a ≤ c)) ↔ (a ≤ max b c)
 [≤]-disjunction-max = [↔]-intro
-  (a≤bc ↦ [∨]-map
+  (a≤bc ↦ [∨]-elim2
     ((_🝖 a≤bc) ∘ [≡]-to-[≤])
     ((_🝖 a≤bc) ∘ [≡]-to-[≤])
     max-arg
@@ -235,3 +249,6 @@ max-defᵣ {a}{b} = [≡]-substitutionᵣ (commutativity(max)) {expr ↦ (b ≥ 
     (_🝖 max-orderₗ)
     (_🝖 max-orderᵣ)
   )
+
+max-order-[+] : ∀{a b} → (max(a)(b) ≤ a + b)
+max-order-[+] {a}{b} = [↔]-to-[→] [≤]-conjunction-max ([∧]-intro [≤]-of-[+]ₗ ([≤]-of-[+]ᵣ {a}{b}))

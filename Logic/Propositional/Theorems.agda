@@ -24,7 +24,7 @@ module _ {ℓ} {P : Stmt{ℓ}} where
 
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{ℓ₃}} where
   [→]-transitivity : (P → Q) → (Q → R) → (P → R)
-  [→]-transitivity = swap _∘_
+  [→]-transitivity = liftᵣ
 
   [↔]-transitivity : (P ↔ Q) → (Q ↔ R) → (P ↔ R)
   [↔]-transitivity ([↔]-intro qp pq) ([↔]-intro rq qr) = [↔]-intro (qp ∘ rq) (qr ∘ pq)
@@ -77,27 +77,24 @@ module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
 
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{ℓ₃}} where
   [∧]-associativity : ((P ∧ Q) ∧ R) ↔ (P ∧ (Q ∧ R))
-  [∧]-associativity = [↔]-intro [∧]-associativity₁ [∧]-associativity₂
-    where [∧]-associativity₁ : ((P ∧ Q) ∧ R) ← (P ∧ (Q ∧ R))
-          [∧]-associativity₁ ([∧]-intro p ([∧]-intro q r)) = [∧]-intro ([∧]-intro p q) r
+  [∧]-associativity = [↔]-intro l r
+    where l : ((P ∧ Q) ∧ R) ← (P ∧ (Q ∧ R))
+          l ([∧]-intro p ([∧]-intro q r)) = [∧]-intro ([∧]-intro p q) r
 
-          [∧]-associativity₂ : ((P ∧ Q) ∧ R) → (P ∧ (Q ∧ R))
-          [∧]-associativity₂ ([∧]-intro ([∧]-intro p q) r) = [∧]-intro p ([∧]-intro q r)
+          r : ((P ∧ Q) ∧ R) → (P ∧ (Q ∧ R))
+          r ([∧]-intro ([∧]-intro p q) r) = [∧]-intro p ([∧]-intro q r)
 
   [∨]-associativity : ((P ∨ Q) ∨ R) ↔ (P ∨ (Q ∨ R))
-  [∨]-associativity = [↔]-intro [∨]-associativity₁ [∨]-associativity₂
-    where [∨]-associativity₁ : ((P ∨ Q) ∨ R) ← (P ∨ (Q ∨ R))
-          [∨]-associativity₁ ([∨]-introₗ p) = [∨]-introₗ([∨]-introₗ p)
-          [∨]-associativity₁ ([∨]-introᵣ([∨]-introₗ q)) = [∨]-introₗ([∨]-introᵣ q)
-          [∨]-associativity₁ ([∨]-introᵣ([∨]-introᵣ r)) = [∨]-introᵣ r
+  [∨]-associativity = [↔]-intro l r
+    where l : ((P ∨ Q) ∨ R) ← (P ∨ (Q ∨ R))
+          l ([∨]-introₗ p) = [∨]-introₗ([∨]-introₗ p)
+          l ([∨]-introᵣ([∨]-introₗ q)) = [∨]-introₗ([∨]-introᵣ q)
+          l ([∨]-introᵣ([∨]-introᵣ r)) = [∨]-introᵣ r
 
-          [∨]-associativity₂ : ((P ∨ Q) ∨ R) → (P ∨ (Q ∨ R))
-          [∨]-associativity₂ ([∨]-introₗ([∨]-introₗ p)) = [∨]-introₗ p
-          [∨]-associativity₂ ([∨]-introₗ([∨]-introᵣ q)) = [∨]-introᵣ([∨]-introₗ q)
-          [∨]-associativity₂ ([∨]-introᵣ r) = [∨]-introᵣ([∨]-introᵣ r)
-
-          -- [∨]-associativity₂ : ∀{P Q R : Stmt} → ((P ∨ Q) ∨ R) ← (P ∨ (Q ∨ R))
-          -- [∨]-associativity₂ {P} {Q} {R} stmt = [∨]-associativity₁ {Q} {R} {P} ([∨]-symmetry {P} {Q ∨ R} stmt)
+          r : ((P ∨ Q) ∨ R) → (P ∨ (Q ∨ R))
+          r ([∨]-introₗ([∨]-introₗ p)) = [∨]-introₗ p
+          r ([∨]-introₗ([∨]-introᵣ q)) = [∨]-introᵣ([∨]-introₗ q)
+          r ([∨]-introᵣ r) = [∨]-introᵣ([∨]-introᵣ r)
 
 -- TODO: According to https://math.stackexchange.com/questions/440261/associativity-of-iff , this is unprovable
 {-[↔]-associativity : ∀{P Q R : Stmt} → ((P ↔ Q) ↔ R) ↔ (P ↔ (Q ↔ R))
@@ -178,7 +175,7 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{
     r([∨]-introᵣ r)               = [∧]-intro ([∨]-introᵣ r) ([∨]-introᵣ r)
 
 ------------------------------------------
--- Identity (with respect to ↔) (TODO: Looks like → rather than ↔)
+-- Identity (with respect to →)
 
 module _ {ℓ} {P : Stmt{ℓ}} where
   [∧]-identityₗ : (⊤ ∧ P) → P
@@ -213,44 +210,37 @@ module _ {ℓ₁}{ℓ₃} {_▫_ : Stmt{ℓ₁} → Stmt{Lvl.𝟎} → Stmt{ℓ�
   [⊤]-as-nullifierᵣ _ = [⊤]-intro
 
 ------------------------------------------
--- Syllogism
+-- Other
 
 module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
-  [∨]-syllogismₗ : (P ∨ Q) → (¬ P) → Q
-  [∨]-syllogismₗ ([∨]-introₗ p) np = [⊥]-elim(np p)
-  [∨]-syllogismₗ ([∨]-introᵣ q) = const q
+  [∨]-exclude-left : (P ∨ Q) → (¬ P) → Q
+  [∨]-exclude-left ([∨]-introₗ p) np = [⊥]-elim(np p)
+  [∨]-exclude-left ([∨]-introᵣ q) = const q
 
-  [∨]-syllogismᵣ : (P ∨ Q) → (¬ Q) → P
-  [∨]-syllogismᵣ ([∨]-introₗ p) = const p
-  [∨]-syllogismᵣ ([∨]-introᵣ q) nq = [⊥]-elim(nq q)
-
-module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{ℓ₃}} where
-  [→]-syllogism : (P → Q) → (Q → R) → (P → R)
-  [→]-syllogism = liftᵣ
-
-------------------------------------------
--- Other
+  [∨]-exclude-right : (P ∨ Q) → (¬ Q) → P
+  [∨]-exclude-right ([∨]-introₗ p) = const p
+  [∨]-exclude-right ([∨]-introᵣ q) nq = [⊥]-elim(nq q)
 
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{T : Stmt{ℓ₃}} where
   [→]-lift : (P → Q) → ((T → P) → (T → Q))
   [→]-lift = liftₗ
 
-module _ {ℓ₁}{ℓ₂}{ℓ₃}{ℓ₄} {A : Stmt{ℓ₁}}{B : Stmt{ℓ₂}}{C : Stmt{ℓ₃}}{D : Stmt{ℓ₄}} where
-  constructive-dilemma : (A → B) → (C → D) → (A ∨ C) → (B ∨ D)
-  constructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
-
-  -- destructive-dilemma : (A → B) → (C → D) → ((¬ B) ∨ (¬ D)) → ((¬ A) ∨ (¬ C))
-  -- destructive-dilemma l r = [∨]-elim ([∨]-introₗ ∘ l) ([∨]-introᵣ ∘ r)
-
 module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   contrapositiveᵣ : (P → Q) → ((¬ P) ← (¬ Q))
-  contrapositiveᵣ = swap _∘_
+  contrapositiveᵣ = [→]-transitivity
 
   contrapositive-variantᵣ : (P → (¬ Q)) → ((¬ P) ← Q)
   contrapositive-variantᵣ = swap
 
   modus-tollens : (P → Q) → (¬ Q) → (¬ P)
   modus-tollens = contrapositiveᵣ
+
+module _ {ℓ₁}{ℓ₂}{ℓ₃}{ℓ₄} {A : Stmt{ℓ₁}}{B : Stmt{ℓ₂}}{C : Stmt{ℓ₃}}{D : Stmt{ℓ₄}} where
+  constructive-dilemma : (A → B) → (C → D) → (A ∨ C) → (B ∨ D)
+  constructive-dilemma = [∨]-elim2
+
+  destructive-dilemma : (A → B) → (C → D) → ((¬ B) ∨ (¬ D)) → ((¬ A) ∨ (¬ C))
+  destructive-dilemma l r = [∨]-elim2 (contrapositiveᵣ l) (contrapositiveᵣ r)
 
 module _ {ℓ} {P : Stmt{ℓ}} where
   [¬¬]-intro : P → (¬¬ P)
@@ -259,18 +249,6 @@ module _ {ℓ} {P : Stmt{ℓ}} where
 
   [¬¬¬]-elim : (¬ (¬ (¬ P))) → (¬ P)
   [¬¬¬]-elim = contrapositiveᵣ [¬¬]-intro
-    -- (((P → ⊥) → ⊥) → ⊥) → (P → ⊥)
-    -- (((P → ⊥) → ⊥) → ⊥) → P → ⊥
-    --   (A → B) → ((B → ⊥) → (A → ⊥)) //contrapositiveᵣ
-    --   (A → B) → (B → ⊥) → (A → ⊥)
-    --   (A → B) → (B → ⊥) → A → ⊥
-    --   (P → ((P → ⊥) → ⊥)) → (((P → ⊥) → ⊥) → ⊥) → P → ⊥ //A≔P , B≔((P → ⊥) → ⊥)
-
-    --   P → (¬ (¬ P)) //[¬¬]-intro
-    --   P → ((P → ⊥) → ⊥)
-
-    --   (((P → ⊥) → ⊥) → ⊥) → P → ⊥ //[→]-elim (Combining those two)
-    --   (((P → ⊥) → ⊥) → ⊥) → (P → ⊥)
 
 module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [→][∧]ᵣ : (P → Q) → ¬(P ∧ (¬ Q))
@@ -279,7 +257,7 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [¬→][∧]ₗ : ¬(P → Q) ← (P ∧ (¬ Q))
   [¬→][∧]ₗ (pnq) = contrapositiveᵣ([→][∧]ᵣ)([¬¬]-intro pnq)
 
-  -- [→][¬∧] : (P → ¬ Q) ↔ ¬(P ∧ Q) -- TODO: Probably needs [¬¬]-elim
+  -- [→][¬∧] : (P → ¬ Q) ↔ ¬(P ∧ Q) -- TODO: Probably need [¬¬]-elim
 
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{ℓ₃}} where
   [↔]-of-[∧] : ((P ∧ R) ↔ (Q ∧ R)) → (R → (P ↔ Q))
@@ -321,22 +299,14 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [¬][∧]ᵣ : ((¬ P) ∨ (¬ Q)) → (¬ (P ∧ Q))
   [¬][∧]ᵣ ([∨]-introₗ np) = np ∘ [∧]-elimₗ
   [¬][∧]ᵣ ([∨]-introᵣ nq) = nq ∘ [∧]-elimᵣ
-  -- (P → ⊥) → (P ∧ Q) → ⊥
-  -- (Q → ⊥) → (P ∧ Q) → ⊥
 
   [¬][∨] : ((¬ P) ∧ (¬ Q)) ↔ (¬ (P ∨ Q))
-  [¬][∨] = [↔]-intro [¬][∨]₁ [¬][∨]₂
-    where [¬][∨]₁ : (¬ (P ∨ Q)) → ((¬ P) ∧ (¬ Q))
-          [¬][∨]₁ f = [∧]-intro (f ∘ [∨]-introₗ) (f ∘ [∨]-introᵣ)
-          -- (¬ (P ∨ Q)) → ((¬ P) ∧ (¬ Q))
-          -- ((P ∨ Q) → ⊥) → ((P → ⊥) ∧ (Q → ⊥))
+  [¬][∨] = [↔]-intro l r
+    where l : (¬ (P ∨ Q)) → ((¬ P) ∧ (¬ Q))
+          l f = [∧]-intro (f ∘ [∨]-introₗ) (f ∘ [∨]-introᵣ)
 
-          [¬][∨]₂ : ((¬ P)∧(¬ Q)) → ¬(P ∨ Q)
-          [¬][∨]₂ ([∧]-intro np nq) = [∨]-elim np nq
-          -- ((¬ P) ∧ (¬ Q)) → (¬ (P ∨ Q))
-          -- ((P → ⊥) ∧ (Q → ⊥)) → ((P ∨ Q) → ⊥)
-          -- ((P → ⊥) ∧ (Q → ⊥)) → (P ∨ Q) → ⊥
-          -- (P → ⊥) → (Q → ⊥) → (P ∨ Q) → ⊥
+          r : ((¬ P)∧(¬ Q)) → ¬(P ∨ Q)
+          r ([∧]-intro np nq) = [∨]-elim np nq
 
 ------------------------------------------
 -- Conjunction and implication (Tuples and functions)
@@ -386,12 +356,7 @@ module _ {ℓ} {A : Stmt{ℓ}} where
 module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   -- Also called: Material implication
   [→]-disjunctive-formₗ : (P → Q) ← ((¬ P) ∨ Q)
-  [→]-disjunctive-formₗ = [∨]-elim ([→]-lift [⊥]-elim) (const)
-  -- ((¬ P) ∨ Q)
-  -- ((P → ⊥) ∨ Q)
-  -- ((P → ⊥) ∨ (P → Q))
-  -- ((P → Q) ∨ (P → Q))
-  -- (P → Q)
+  [→]-disjunctive-formₗ = [∨]-elim ([→]-lift [⊥]-elim) const
 
   [↔]-disjunctive-formₗ : (P ↔ Q) ← ((P ∧ Q) ∨ ((¬ P) ∧ (¬ Q)))
   [↔]-disjunctive-formₗ ([∨]-introₗ ([∧]-intro p q))   = [↔]-intro (const p) (const q)
@@ -471,6 +436,18 @@ module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [⊕][↔]-contradiction : (P ⊕ Q) → (P ↔ Q) → ⊥
   [⊕][↔]-contradiction ([⊕]-introₗ p nq) pq = nq([↔]-elimᵣ p pq)
   [⊕][↔]-contradiction ([⊕]-introᵣ q np) pq = np([↔]-elimₗ q pq)
+
+  [⊕][∧]-contradiction : (P ⊕ Q) → (P ∧ Q) → ⊥
+  [⊕][∧]-contradiction xor = [⊕][↔]-contradiction xor ∘ [∧]-to-[↔]
+
+  [⊕]-not-both : (P ⊕ Q) → P → Q → ⊥
+  [⊕]-not-both = Tuple.curry ∘ [⊕][∧]-contradiction
+
+  [⊕]-not-left : (P ⊕ Q) → P → (¬ Q)
+  [⊕]-not-left = [⊕]-not-both
+
+  [⊕]-not-right : (P ⊕ Q) → Q → (¬ P)
+  [⊕]-not-right = swap ∘ [⊕]-not-both
 
   [⊕]-to-[∨] : (P ⊕ Q) → (P ∨ Q)
   [⊕]-to-[∨] ([⊕]-introₗ p _) = [∨]-introₗ p

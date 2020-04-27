@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness #-}
+
 module Sets.IterativeSet where
 
 import      Lvl
@@ -28,7 +30,7 @@ open import Type.Dependent
 module _ where
   private variable {ℓ ℓ₁ ℓ₂} : Lvl.Level
 
-  -- A model of constructive set theory (CZF) using iterative sets through W-types.
+  -- A model of constructive set theory (CZF) by iterative sets through W-types.
   record Iset : Type{Lvl.𝐒(ℓ)} where
     inductive
     constructor intro

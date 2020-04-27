@@ -13,16 +13,16 @@ import      Lvl
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
 open import Structure.Setoid.Uniqueness
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Syntax.Number
 open import Type
 
-private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+private variable ℓ ℓ₁ ℓ₂ ℓₑ ℓₑ₁ ℓₑ₂ : Lvl.Level
 
 module Names where
   -- Function₊ : (f : )
 
-  module _ {X : Type{ℓ₁}} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ where
+  module _ {X : Type{ℓ₁}} {Y : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ where
     -- Definition of the relation between a function and an operation that says:
     -- The function preserves the operation.
     -- Often used when defining homomorphisms.
@@ -36,7 +36,7 @@ module Names where
     --   Preserving(3) (f)(g₁)(g₂)
     --   = (∀{x y z} → (f ∘₃ g₁)(x)(y)(z) ≡ (g₂ on₃ f)(x)(y)(z))
     --   = (∀{x y z} → (f(g₁ x y z) ≡ g₂ (f(x)) (f(y)) (f(z))))
-    Preserving : (n : ℕ) → (f : X → Y) → (X →̂ X)(n) → (Y →̂ Y)(n) → Stmt{if positive?(n) then (ℓ₁ Lvl.⊔ ℓ₂) else ℓ₂}
+    Preserving : (n : ℕ) → (f : X → Y) → (X →̂ X)(n) → (Y →̂ Y)(n) → Stmt{if positive?(n) then (ℓ₁ Lvl.⊔ ℓₑ₂) else ℓₑ₂}
     Preserving(𝟎)       (f)(g₁)(g₂) = (f(g₁) ≡ g₂)
     Preserving(𝐒(𝟎))    (f)(g₁)(g₂) = (∀{x} → f(g₁(x)) ≡ g₂(f(x)))
     Preserving(𝐒(𝐒(n))) (f)(g₁)(g₂) = (∀{x} → Preserving(𝐒(n)) (f) (g₁(x)) (g₂(f(x))))
@@ -52,19 +52,19 @@ module Names where
     Preserving₈ = Preserving(8)
     Preserving₉ = Preserving(9)
 
-  module _ {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
+  module _ {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
     -- Definition of the relation between a function and an operation that says:
     -- The function preserves the operation.
     -- This is a special case of the (_preserves_)-relation that has the same operator inside and outside.
     -- Special cases:
     --   Additive function (Operator is a conventional _+_)
     --   Multiplicative function (Operator is a conventional _*_)
-    _preserves_ : (T → T) → (T → T → T) → Stmt{ℓ}
+    _preserves_ : (T → T) → (T → T → T) → Stmt
     f preserves (_▫_) = Preserving(2) f (_▫_)(_▫_) -- (∀{x y} → (f(x ▫ y) ≡ f(x) ▫ f(y)))
 
-module _ {X : Type{ℓ₁}} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ where
+module _ {X : Type{ℓ₁}} {Y : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ where
   module _ (n : ℕ) (f : X → Y) (g₁ : (X →̂ X)(n)) (g₂ : (Y →̂ Y)(n)) where
-    record Preserving : Stmt{if positive?(n) then (ℓ₁ Lvl.⊔ ℓ₂) else ℓ₂} where -- TODO: How to prove for levels that an if-expression is less if both are less?
+    record Preserving : Stmt{if positive?(n) then (ℓ₁ Lvl.⊔ ℓₑ₂) else ℓₑ₂} where -- TODO: Is it possible to prove for levels that an if-expression is less if both are less?
       constructor intro
       field proof : Names.Preserving(n) (f)(g₁)(g₂)
     preserving = inst-fn Preserving.proof
@@ -91,5 +91,5 @@ module _ {X : Type{ℓ₁}} {Y : Type{ℓ₂}} ⦃ _ : Equiv(Y) ⦄ where
   preserving₈ = preserving(8)
   preserving₉ = preserving(9)
 
-module _ {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (n : ℕ) (f : T → T) (_▫_ : T → T → T) where
+module _ {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (n : ℕ) (f : T → T) (_▫_ : T → T → T) where
   _preserves_ = Preserving(2) (f)(_▫_)(_▫_)

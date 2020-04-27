@@ -2,7 +2,7 @@ module Structure.Topology where
 
 open import Logic
 import      Lvl
-open import Sets.ExtensionalPredicateSet renaming (_≡_ to _≡ₛ_)
+open import Sets.ExtensionalPredicateSet renaming (_≡_ to _≡ₛ_) hiding (map)
 open import Structure.Setoid.WithLvl
 open import Type
 

@@ -9,7 +9,6 @@ open import Logic.Predicate
 open import Structure.Setoid
 open import Structure.Function.Domain
 open import Structure.Operator.Group
-open        Structure.Operator.Group.Morphism
 open import Structure.Operator.Monoid
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs

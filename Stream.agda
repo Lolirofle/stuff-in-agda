@@ -1,3 +1,5 @@
+{-# OPTIONS --guardedness #-}
+
 module Stream where
 
 import      Lvl

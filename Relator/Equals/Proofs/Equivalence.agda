@@ -7,6 +7,7 @@ open import Relator.Equals
 open import Structure.Setoid.WithLvl using (Equiv) renaming (_≡_ to _≡ₛ_)
 open import Structure.Function
 open import Structure.Operator
+open import Structure.Relator
 open import Structure.Relator.Equivalence
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
@@ -49,6 +50,14 @@ module One {ℓ} {T : Type{ℓ}} where
   instance
     [≡]-sub-of-reflexive : ∀{ℓₗ}{_▫_ : T → T → Stmt{ℓₗ}} → ⦃ _ : Reflexivity(_▫_) ⦄ → ((_≡_) ⊆₂ (_▫_))
     _⊆₂_.proof [≡]-sub-of-reflexive [≡]-intro = reflexivity(_)
+
+  -- Replaces occurrences of an element in a function
+  [≡]-substitutionᵣ : ∀{ℓ₂}{x y} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → f(x) → f(y)
+  [≡]-substitutionᵣ [≡]-intro p = p
+
+  instance
+    [≡]-unary-relator : ∀{ℓ₂}{P : T → Stmt{ℓ₂}} → UnaryRelator ⦃ [≡]-equiv ⦄ (P)
+    UnaryRelator.substitution([≡]-unary-relator {P = P}) xy = [≡]-substitutionᵣ xy {P}
 open One public
 
 module Two {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} where
