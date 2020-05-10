@@ -7,7 +7,7 @@ open import Logic
 import      Lvl
 open import Graph{ℓ₁}{ℓ₂}(V)
 open import Graph.Walk{ℓ₁}{ℓ₂}{V}
-open import Relator.Equals.Proofs.Equivalence
+open import Relator.Equals.Proofs.Equiv
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
 open import Type.Unit

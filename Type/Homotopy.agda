@@ -6,7 +6,7 @@ open import Logic.Propositional
 open import Numeral.Natural
 open import Structure.Setoid hiding (_≡_)
 open import Relator.Equals
-open import Relator.Equals.Proofs.Equivalence
+open import Relator.Equals.Proofs.Equiv
 open import Type
 open import Type.Dependent
 open import Type.Empty

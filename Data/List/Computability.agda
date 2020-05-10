@@ -11,7 +11,7 @@ open import Logic.Computability.Binary
 open import Functional
 open import Logic.Propositional
 open import Relator.Equals
-open import Relator.Equals.Proofs.Equivalence
+open import Relator.Equals.Proofs.Equiv
 open import Type
 
 instance

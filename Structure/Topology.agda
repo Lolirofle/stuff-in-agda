@@ -42,7 +42,6 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   open import Logic.Propositional
   open import Logic.Predicate
   open import Lvl.Proofs
-  import      Relator.Equals.Proofs.Equiv
   open import Structure.Function.Domain
   open import Structure.Function
   open import Structure.Relator.Proofs
@@ -52,7 +51,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   open import Syntax.Transitivity
 
   module _ where
-    open Relator.Equals.Proofs.Equiv(Bool) renaming ([≡]-equiv to bool-equiv)
+    open import Relator.Equals.Proofs.Equiv{T = Bool} renaming ([≡]-equiv to bool-equiv)
 
     union-closure : ∀{A B} → (A ∈ 𝓣) → (B ∈ 𝓣) → ((A ∪ B) ∈ 𝓣)
     union-closure {A}{B} pa pb = substitute₂(_∋_) (reflexivity(_≡_) {x = 𝓣}) (⋃ᵢ-of-bijection ([∃]-intro Lvl.Up.obj) 🝖 ⋃ᵢ-of-boolean) (indexed-union-closure f-proof) where

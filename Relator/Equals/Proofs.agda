@@ -9,7 +9,7 @@ open import Logic.Propositional
 open import Logic.Propositional.Proofs.Structures
 open import Relator.Equals
 open import Relator.Equals.Names
-open import Relator.Equals.Proofs.Equivalence public
+open import Relator.Equals.Proofs.Equiv public
 open import Structure.Setoid using (Equiv ; intro)
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
@@ -21,10 +21,6 @@ private variable T A B : Type{ℓ}
 private variable x y : T
 
 module _ where
-  -- Replaces occurrences of an element in a function
-  [≡]-substitutionₗ : (x ≡ y) → ∀{f : T → Type{ℓ}} → f(x) ← f(y)
-  [≡]-substitutionₗ [≡]-intro = id
-
   -- xy {f = f} = sub₂(_≡_)(Functional._→ᶠ_ on₂ f) xy
 
   -- Note:

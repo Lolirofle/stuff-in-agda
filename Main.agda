@@ -182,7 +182,7 @@ import Relator.Equals
 import Relator.Equals.Heterogenous
 import Relator.Equals.Names
 import Relator.Equals.Proofs
-import Relator.Equals.Proofs.Equivalence
+import Relator.Equals.Proofs.Equiv
 import Relator.Ordering
 import Relator.Ordering.Proofs
 import Relator.ReflexiveTransitiveClosure

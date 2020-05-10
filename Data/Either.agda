@@ -45,8 +45,3 @@ isLeft(Right _) = 𝐹
 isRight : (A ‖ B) → Bool
 isRight(Left  _) = 𝐹
 isRight(Right _) = 𝑇
-
--- TODO: Remove
--- bool : (A ‖ B) → Bool
--- bool = isRight
--- {-# WARNING_ON_USAGE bool "DEPRECATED: Use `isRight` instead of `bool`" #-}

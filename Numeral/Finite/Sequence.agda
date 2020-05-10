@@ -17,7 +17,7 @@ open import Numeral.Natural
 import      Numeral.Natural.Oper as ℕ
 open import Numeral.Natural.Oper.Proofs
 open import Relator.Equals
-open import Relator.Equals.Proofs.Equivalence
+open import Relator.Equals.Proofs.Equiv
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
 open import Syntax.Transitivity

@@ -103,3 +103,5 @@ module _ {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
     max = top
     sup = join
     inf = meet
+
+-- TODO: https://en.wikipedia.org/wiki/Map_of_lattices

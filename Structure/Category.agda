@@ -41,6 +41,11 @@ module _
   -- In this case, the binary operation is (_∘_) and the laws are the usual identity and associative laws.
   -- See `Structure.Category.Monoid`.
   --
+  -- A category can also be constructed by letting objects be the models of algebraic structures, and morphisms the homomorphisms of the respective algebraic structure.
+  --
+  -- In the case of categories being the objects in a category, functors are homomorphisms, and therefore also the morphisms.
+  -- See `Structure.Category.Category`.
+  --
   -- An alternative interpretation of the definition:
   -- A type (Obj) and a binary relation (Morphism) on this type is a category when:
   -- • The relator is transitive.
@@ -53,9 +58,7 @@ module _
   -- The operator joins two paths into one, and the identity is a loop (the empty path).
   -- See `Graph.Category`.
   --
-  -- When the objects are algebraic structures, the morphisms is usually homomorphisms of the respective algebraic structure.
-  -- In the case of categories being the objects in a category, functors are homomorphisms, and therefore also the morphisms.
-  -- TODO: https://math.stackexchange.com/questions/405459/homomorphisms-vs-functors/405479#comment867772_405459 https://ncatlab.org/nlab/show/homomorphism)
+  -- A category is the pattern seen in all the examples above.
   record Category : Stmt{ℓₒ Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
     field
       -- Existence of morphisms constructed by connecting two morphisms (The composition of two morphisms).
@@ -76,12 +79,12 @@ module _
       ⦃ binaryOperator ⦄ : ∀{x y z} → BinaryOperator(_∘_ {x}{y}{z})
 
       -- The binary operator on mophisms is associative.
-      -- The order of applying two transitivies on three proofs does not matter. It is the same proof.
+      -- Or, the order of applying two transitivies on three proofs does not matter. It is the same proof.
       -- ∀{x y z w : Obj}{f : y ⟶ x}{g : z ⟶ y}{h : w ⟶ z} → ((f ∘ g) ∘ h ≡ f ∘ (g ∘ h))
       ⦃ associativity ⦄ : Morphism.Associativity(\{x} → _∘_ {x})
 
       -- The morphism `id` behaves like aa identity element with respect to the binary operator.
-      -- Applying the proof of reflexivity on transitivity is an identity function for proofs.
+      -- Or, applying the proof of reflexivity on transitivity is an identity function for proofs.
       ⦃ identity ⦄ : Morphism.Identity(_∘_)(\{x} → id{x})
 
     instance

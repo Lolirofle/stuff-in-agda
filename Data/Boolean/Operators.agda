@@ -66,4 +66,12 @@ module Logic where
 
 -- Definition of boolean operators with conventions from typical programming languages
 module Programming where
-  open Logic using () renaming (_∧_ to _&&_ ; _∨_ to _||_ ; ¬ to ! ; _⟷_ to _==_ ; _⊼_ to _!=_) public
+  open Logic using () renaming
+    (_∧_  to _&&_
+    ; _∨_ to _||_
+    ; ¬   to !
+    ; _⟷_ to _==_
+    ; _⊼_ to _!=_
+    ; _⟶_ to _→?_
+    ; _⟵_ to _←?_
+    ) public

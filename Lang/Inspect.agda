@@ -14,7 +14,6 @@ module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : A → Type{ℓ₂}} ⦃ eqB : �
   {-# INLINE inspect #-}
 -}
 
--- TODO: Move to Lang.Inspect
 module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ eqB : Equiv(B) ⦄ (f : A → B) (x : A) where
   data Inspect (y : B) : Type{ℓ₂} where
     intro : (f(x) ≡ y) → Inspect(y)

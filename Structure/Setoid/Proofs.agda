@@ -54,7 +54,7 @@ module _ where
     open import Data.Boolean
     open import Structure.Relator.Properties
     open import Structure.Relator.Properties.Proofs
-    open import Relator.Equals.Proofs.Equivalence
+    open import Relator.Equals.Proofs.Equiv
 
     thing : Stmt{ℓ} → Bool → Bool → Stmt
     thing P a b = (a ≡ b) ∨ P

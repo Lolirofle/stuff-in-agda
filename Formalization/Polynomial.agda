@@ -25,7 +25,7 @@ module _ where
   open import Numeral.Natural.Relation.Order
   open import Numeral.Natural.Relation.Order.Proofs
   open import Relator.Equals
-  open import Relator.Equals.Proofs.Equiv(ℕ)
+  open import Relator.Equals.Proofs.Equiv{T = ℕ}
 
   -- Zero polynomial.
   -- Semantically, this corresponds to zero.
@@ -101,7 +101,7 @@ module Semantics  where
   open import Numeral.Finite as 𝕟 using (𝕟)
   import      Numeral.Natural.Oper as ℕ
   open import Numeral.Natural.Oper.Proofs
-  open import Relator.Equals.Proofs.Equiv(ℕ)
+  open import Relator.Equals.Proofs.Equiv{T = ℕ}
   open import Structure.Function.Multi
   open import Structure.Operator
   open import Structure.Operator.Proofs

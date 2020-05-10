@@ -26,9 +26,9 @@ module _
   private instance _ = catₗ
   private instance _ = catᵣ
 
+  -- A natural transformation is a family of morphisms on 
   record NaturalTransformation (η : ∀(x) → (F₁(x) ⟶ F₂(x))) : Type{Lvl.of(type-of(catₗ)) Lvl.⊔ Lvl.of(type-of(catᵣ))} where
     constructor intro
-    field
-      natural : ∀{x y}{f : x ⟶ y} → (η(y) ∘ map(f) ≡ map(f) ∘ η(x))
+    field natural : ∀{x y}{f : x ⟶ y} → (η(y) ∘ map(f) ≡ map(f) ∘ η(x))
 
   _→ᴺᵀ_ = ∃(NaturalTransformation)

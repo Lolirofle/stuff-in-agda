@@ -1,5 +1,6 @@
 module Logic.Names where
 
+import      Lvl
 open import Logic
 open import Logic.Predicate
 open import Logic.Propositional
@@ -16,6 +17,12 @@ module _ {ℓ} where
   DoubleNegationOn : Stmt{ℓ} → Stmt
   DoubleNegationOn(X) = (¬(¬ X)) → X
   DoubleNegation = ∀ₗ(DoubleNegationOn)
+
+module _ where
+  private variable ℓ₁ ℓ₂ : Lvl.Level
+
+  TopOrBottom : (Stmt{ℓ₁} → Stmt{Lvl.𝟎} → Stmt{ℓ₂}) → Stmt{ℓ₁} → Stmt
+  TopOrBottom(_≡_)(P) = (P ≡ ⊤) ∨ (P ≡ ⊥)
 
 module _ {ℓ₁ ℓ₂} where
   CallCCOn : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt

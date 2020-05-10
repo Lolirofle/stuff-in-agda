@@ -15,7 +15,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Relator.Equals using ([≡]-intro) renaming (_≡_ to _≡ₑ_)
 open import Relator.Equals.Proofs
-open import Relator.Equals.Proofs.Equivalence
+open import Relator.Equals.Proofs.Equiv
 open import Structure.Category.Functor
 open import Structure.Category.Functor.Functors as Functors
 open import Structure.Category.Morphism.IdTransport

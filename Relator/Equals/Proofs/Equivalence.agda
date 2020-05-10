@@ -39,14 +39,15 @@ module One {ℓ} {T : Type{ℓ}} where
     [≡]-equivalence : Equivalence (_≡_ {T = T})
     [≡]-equivalence = intro
 
-  instance
-    [≡]-equiv : Equiv{ℓ}(T)
-    Equiv._≡_ [≡]-equiv = _≡_
-    Equiv.equivalence [≡]-equiv = [≡]-equivalence
-
   [≡]-to-equivalence : ∀{ℓₗ}{x y : T} → (x ≡ y) → ⦃ equiv-T : Equiv{ℓₗ}(T) ⦄ → (_≡ₛ_ ⦃ equiv-T ⦄ x y)
   [≡]-to-equivalence([≡]-intro) = reflexivity(_≡ₛ_)
 
+  [≡]-equiv : Equiv{ℓ}(T)
+  Equiv._≡_ [≡]-equiv = _≡_
+  Equiv.equivalence [≡]-equiv = [≡]-equivalence
+
+  -- Equality is a subrelation to every reflexive relation.
+  -- One interpretation of this is that identity is the smallest reflexive relation when a relation is interpreted as a set of tuples and size is the cardinality of the set.
   instance
     [≡]-sub-of-reflexive : ∀{ℓₗ}{_▫_ : T → T → Stmt{ℓₗ}} → ⦃ _ : Reflexivity(_▫_) ⦄ → ((_≡_) ⊆₂ (_▫_))
     _⊆₂_.proof [≡]-sub-of-reflexive [≡]-intro = reflexivity(_)
@@ -55,9 +56,12 @@ module One {ℓ} {T : Type{ℓ}} where
   [≡]-substitutionᵣ : ∀{ℓ₂}{x y} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → f(x) → f(y)
   [≡]-substitutionᵣ [≡]-intro p = p
 
-  instance
-    [≡]-unary-relator : ∀{ℓ₂}{P : T → Stmt{ℓ₂}} → UnaryRelator ⦃ [≡]-equiv ⦄ (P)
-    UnaryRelator.substitution([≡]-unary-relator {P = P}) xy = [≡]-substitutionᵣ xy {P}
+  -- Replaces occurrences of an element in a function
+  [≡]-substitutionₗ : ∀{ℓ₂}{x y} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → f(y) → f(x)
+  [≡]-substitutionₗ [≡]-intro p = p
+
+  [≡]-unary-relator : ∀{ℓ₂}{P : T → Stmt{ℓ₂}} → UnaryRelator ⦃ [≡]-equiv ⦄ (P)
+  UnaryRelator.substitution([≡]-unary-relator {P = P}) xy = [≡]-substitutionᵣ xy {P}
 open One public
 
 module Two {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} where
@@ -65,12 +69,11 @@ module Two {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} where
   [≡]-with : (f : A → B) → ∀{x y : A} → (x ≡ y) → (f(x) ≡ f(y))
   [≡]-with f [≡]-intro = [≡]-intro
 
-  [≡]-function : ∀{f} → Function(f)
+  [≡]-function : ∀{f} → Function ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ (f)
   Function.congruence([≡]-function {f}) eq = [≡]-with(f) eq
 
-  instance
-    [≡]-to-function : ∀{ℓₗ} → ⦃ equiv-B : Equiv{ℓₗ}(B) ⦄ → ∀{f : A → B} → Function ⦃ [≡]-equiv ⦄ ⦃ equiv-B ⦄ (f)
-    Function.congruence ([≡]-to-function) [≡]-intro = reflexivity(_≡ₛ_)
+  [≡]-to-function : ∀{ℓₗ} → ⦃ equiv-B : Equiv{ℓₗ}(B) ⦄ → ∀{f : A → B} → Function ⦃ [≡]-equiv ⦄ ⦃ equiv-B ⦄ (f)
+  Function.congruence ([≡]-to-function) [≡]-intro = reflexivity(_≡ₛ_)
 open Two public
 
 module Three {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} {ℓ₃}{C : Type{ℓ₃}} where
@@ -80,7 +83,6 @@ module Three {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} {ℓ₃}{C : 
   -- [≡]-with-op-[_] (_▫_) {a₁}{a₂} {b₁}{b₂} (a₁≡a₂) (b₁≡b₂) =
   --   [≡]-elimᵣ (b₁≡b₂) {\x → (a₁ ▫ b₁) ≡ (a₂ ▫ x)} ([≡]-with(x ↦ (x ▫ b₁)) (a₁≡a₂))
 
-  instance
-    [≡]-binary-operator : ∀{_▫_} → BinaryOperator(_▫_)
-    BinaryOperator.congruence([≡]-binary-operator {_▫_}) aeq beq = [≡]-with-op(_▫_) aeq beq
+  [≡]-binary-operator : ∀{_▫_} → BinaryOperator ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ (_▫_)
+  BinaryOperator.congruence([≡]-binary-operator {_▫_}) aeq beq = [≡]-with-op(_▫_) aeq beq
 open Three public

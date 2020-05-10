@@ -21,7 +21,7 @@ private variable o : Option(T)
 
 module _ where
   open import Relator.Equals
-  open import Relator.Equals.Proofs.Equivalence
+  open import Relator.Equals.Proofs.Equiv
 
   Some-injectivity : Injective {B = Option(T)} (Some)
   Some-injectivity = Right-injectivity
@@ -75,7 +75,7 @@ module _ where
 module _ where
   open import Function.Equals
   open import Relator.Equals
-  open import Relator.Equals.Proofs.Equivalence
+  open import Relator.Equals.Proofs.Equiv
 
   map-function-eq : Function ⦃ [⊜]-equiv ⦄ ⦃ [⊜]-equiv ⦃ [≡]-equiv ⦄ ⦄ (map {T₁ = A}{T₂ = B})
   Dependent._⊜_.proof (Function.congruence map-function-eq (Dependent.intro p)) {None}   = [≡]-intro

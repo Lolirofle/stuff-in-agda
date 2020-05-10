@@ -40,26 +40,101 @@ module OperShortcut where
 Primitive : Type
 Primitive = ℕ
 
--- The semantics.
--- `Base` is interpreted as the constant 0.
--- `Successor` is interpreted as the successor function of ℕ.
--- `Projection{n}(i)` is interpreted as the projection of the i:th element of ℕⁿ.
--- `Composition(f)(gs)` is interpreted as generalized composition by using map on the arguments of a function.
---    Specifically (f ∘ (map gs)).
--- `Recursion(f)(g)` is interpreted as a "recursion constructor".
---    This is used to construct a function `r` in which the following holds:
---    • r(0   ,..xs) = f(..xs)
---    • r(𝐒(n),..xs) = g(n,r(n,..xs),..xs)
-evaluate : ∀{n} → Function(n) → List(Primitive)(n) → Primitive
-evaluate {𝟎}    (Base)                     ∅             = 𝟎
-evaluate {𝐒(𝟎)} (Successor)                (singleton x) = 𝐒(x)
-evaluate {𝐒(n)} (Projection(i))            xs            = index(i)(xs)
-evaluate {_}    (Composition{m}{n}(f)(gs)) xs            = evaluate f (mapper gs) where -- evaluate f (map(g ↦ evaluate g xs)(gs))
-  mapper : ∀{n} → List(Function(m))(n) → List(Primitive)(n)
-  mapper ∅        = ∅
-  mapper (g ⊰ gs) = (evaluate g xs) ⊰ (mapper gs)
-evaluate {𝐒(_)} (Recursion(f)(g))          (𝟎    ⊰ xs)   = evaluate f xs
-evaluate {𝐒(_)} (Recursion(f)(g))          (𝐒(n) ⊰ xs)   = evaluate g (n ⊰ (evaluate (Recursion(f)(g)) (n ⊰ xs) ⊰ xs))
+module _ where
+  private variable m n   : ℕ
+  private variable i     : 𝕟(n)
+  private variable x  v  : Primitive
+  private variable xs vs : List(Primitive)(n)
+  private variable f g   : Function(m)
+  private variable fs gs : List(Function(m))(n)
+
+  -- The operational semantics.
+  data _$_⟹_ : ∀{m n} → List(Function(m))(n) → List(Primitive)(m) → List(Primitive)(n) → Type
+  data _$_⟶_ : ∀{n} → Function(n) → List(Primitive)(n) → ℕ → Type where
+    zero : (Base $ ∅ ⟶ 𝟎)
+    succ : (Successor $ singleton(n) ⟶ 𝐒(n))
+    proj : (Projection{n}(i) $ xs ⟶ index(i)(xs))
+    comp : (f $ vs ⟶ v) → (gs $ xs ⟹ vs) → (Composition{m}{n} f gs $ xs ⟶ v)
+    rec𝟎 : (f $ xs ⟶ v) → (Recursion f g $ (𝟎 ⊰ xs) ⟶ v)
+    rec𝐒 : (Recursion f g $ (n ⊰ xs) ⟶ x) → (g $ (n ⊰ x ⊰ xs) ⟶ v) → (Recursion f g $ (𝐒(n) ⊰ xs) ⟶ v)
+  data _$_⟹_ where
+    base : (∅ $ xs ⟹ ∅)
+    step : (f $ xs ⟶ v) → (fs $ xs ⟹ vs) → ((f ⊰ fs) $ xs ⟹ (v ⊰ vs))
+
+  -- Functionally equivalent to `evaluate f (map(g ↦ evaluate g xs)(gs))`, but the termination checker does not accept that form.
+  mapEvaluate : ∀{m n} → List(Function(m))(n) → List(Primitive)(m) → List(Primitive)(n)
+
+  -- The denotational semantics.
+  -- This is possible to encode into an Agda function because: Primitive recursive functions ⊆ Agda functions.
+  -- `Base` is interpreted as the constant 0.
+  -- `Successor` is interpreted as the successor function of ℕ.
+  -- `Projection{n}(i)` is interpreted as the projection of the i:th element of ℕⁿ.
+  -- `Composition(f)(gs)` is interpreted as generalized composition by using map on the arguments of a function.
+  --    Specifically (f ∘ (map gs)).
+  -- `Recursion(f)(g)` is interpreted as a "recursion constructor".
+  --    This is used to construct a function `r` in which the following holds:
+  --    • r(0   ,..xs) = f(..xs)
+  --    • r(𝐒(n),..xs) = g(n,r(n,..xs),..xs)
+  evaluate : ∀{n} → Function(n) → (List(Primitive)(n) → Primitive)
+  evaluate {.𝟎}   (Base)                     ∅             = 𝟎
+  evaluate {.𝐒(𝟎)}(Successor)                (singleton x) = 𝐒(x)
+  evaluate {_}    (Projection(i))            xs            = index(i)(xs)
+  evaluate {m}    (Composition{m}{n}(f)(gs)) xs            = evaluate{n} f (mapEvaluate{m}{n} gs xs)
+  evaluate {𝐒(_)} (Recursion(f)(g))          (𝟎    ⊰ xs)   = evaluate f xs
+  evaluate {𝐒(_)} (Recursion(f)(g))          (𝐒(n) ⊰ xs)   = evaluate g (n ⊰ (evaluate (Recursion(f)(g)) (n ⊰ xs) ⊰ xs))
+
+  mapEvaluate ∅        xs = ∅
+  mapEvaluate (g ⊰ gs) xs = (evaluate g xs) ⊰ (mapEvaluate gs xs)
+
+  ------------------------------------------------------
+  -- This section proves the equivalence between the operational and the denotational semantics. Or it can be interpreted as the correctness of one of the definitions by the other one.
+  -- This equivalence should be obvious from the definitions.
+  --
+
+  open import Relator.Equals
+  open import Relator.Equals.Proofs
+  open import Syntax.Transitivity
+
+  [⟹]-to-eval : (fs $ xs ⟹ vs) → (mapEvaluate fs xs ≡ vs)
+
+  [⟶]-to-eval : (f $ xs ⟶ v) → (evaluate f xs ≡ v)
+  [⟶]-to-eval zero = [≡]-intro
+  [⟶]-to-eval succ = [≡]-intro
+  [⟶]-to-eval {xs = _⊰_ {𝟎}   x xs} (proj {i = 𝟎})   = [≡]-intro
+  [⟶]-to-eval {xs = _⊰_ {𝐒 n} x xs} (proj {i = 𝟎})   = [≡]-intro
+  [⟶]-to-eval {xs = _⊰_ {𝐒 n} x xs} (proj {i = 𝐒 i}) = [≡]-intro
+  [⟶]-to-eval (comp p q) with [⟶]-to-eval p | [⟹]-to-eval q
+  ... | [≡]-intro | [≡]-intro = [≡]-intro
+  [⟶]-to-eval (rec𝟎 p) with [⟶]-to-eval p
+  ... | [≡]-intro = [≡]-intro
+  [⟶]-to-eval (rec𝐒 p q) with [⟶]-to-eval p | [⟶]-to-eval q
+  ... | [≡]-intro | [≡]-intro = [≡]-intro
+  [⟹]-to-eval {fs = ∅}      {vs = ∅}      _           = [≡]-intro
+  [⟹]-to-eval {fs = f ⊰ fs} {vs = v ⊰ vs} (step p ps) with [⟶]-to-eval p | [⟹]-to-eval {fs = fs} {vs = vs} ps
+  ... | [≡]-intro | [≡]-intro = [≡]-intro
+
+  eval-to-[⟹] : (mapEvaluate fs xs ≡ vs) → (fs $ xs ⟹ vs)
+
+  eval-to-[⟶] : (evaluate f xs ≡ v) → (f $ xs ⟶ v)
+  eval-to-[⟶] {f = Base}             {∅}           [≡]-intro = zero
+  eval-to-[⟶] {f = Successor}        {singleton x} [≡]-intro = succ
+  eval-to-[⟶] {f = Projection _}                   [≡]-intro = proj
+  eval-to-[⟶] {f = Composition f gs} {xs}          p         = comp (eval-to-[⟶] p) (eval-to-[⟹] [≡]-intro)
+  eval-to-[⟶] {f = Recursion f g}    {𝟎    ⊰ xs}   p         = rec𝟎(eval-to-[⟶] {f = f}{xs = xs} p)
+  eval-to-[⟶] {f = Recursion f g}    {𝐒(n) ⊰ xs}   p         = rec𝐒 (eval-to-[⟶] [≡]-intro) (eval-to-[⟶] p)
+
+  eval-to-[⟹] {fs = ∅}      [≡]-intro = base
+  eval-to-[⟹] {fs = f ⊰ fs} [≡]-intro = step (eval-to-[⟶] [≡]-intro) (eval-to-[⟹] [≡]-intro)
+
+  -- TODO: Is it possible to prove that _⟶_ terminates and normalizes by using [⟶]-to-eval ?
+
+  open import Function.Equals
+  open import Logic
+  open import Logic.Predicate
+
+  -- When a function on lists of primitives are primitive recursive.
+  PrimitiveRecursive : (List(Primitive)(n) → Primitive) → Stmt
+  PrimitiveRecursive(f) = ∃(e ↦ evaluate e ⊜ f)
 
 Const : Function(0) → ∀{n} → Function(n)
 Const(c) = Composition(c) ∅
@@ -171,4 +246,58 @@ module Arithmetic where -- TODO: Prove that these are correct by `evaluate`
 
 -- TODO: http://www.reluctantm.com/gcruttw/teaching/cpsc513.W2010/A3Solutions.pdf
 -- TODO: http://ii.fmph.uniba.sk/cl/courses/1-AIN-625-lpp/0910zs/ln/doc/ch_p_gd.pdf
--- TODO: https://proofwiki.org/wiki/Equality_Relation_is_Primitive_Recursive
+
+module Proofs where
+  open import Numeral.Natural.Oper
+  open import Numeral.Natural.Oper.Comparisons
+  open import Numeral.Natural.Oper.Proofs
+  open import Relator.Equals
+  open import Relator.Equals.Proofs
+  open import Structure.Relator.Properties
+  open import Syntax.Transitivity
+
+  -- TODO: Formalize "Function(1) is countably infinite". Maybe take some inspiration from https://proofwiki.org/wiki/Not_All_URM_Computable_Functions_are_Primitive_Recursive . Then prove that (ℕ → ℕ) is not countably infinite, and therefore not all computable functions are expressible primitive recursively (is this argument constructive?)
+
+  addition-correctness : ∀{a b} → (evaluate Arithmetic.Addition (a ⊰ b ⊰ ∅) ≡ a + b)
+  addition-correctness {𝟎}   {b} = [≡]-intro
+  addition-correctness {𝐒 a} {b} = [≡]-with(𝐒) (addition-correctness {a}{b})
+
+  multiplication-correctness : ∀{a b} → (evaluate Arithmetic.Multiplication (a ⊰ b ⊰ ∅) ≡ a ⋅ b)
+  multiplication-correctness {𝟎}   {b} = [≡]-intro
+  multiplication-correctness {𝐒 a} {b} =
+    addition-correctness {evaluate Arithmetic.Multiplication (a ⊰ b ⊰ ∅)}{b}
+    🝖 [≡]-with(_+ b) (multiplication-correctness {a}{b})
+    🝖 symmetry(_≡_) ([⋅]-with-[𝐒]ₗ {a}{b})
+
+  exponentiation-correctness : ∀{a b} → (evaluate Arithmetic.Exponentiation (a ⊰ b ⊰ ∅) ≡ a ^ b)
+  exponentiation-correctness {𝟎}   {b} = symmetry(_≡_) ([^]-with-𝟎ₗ {b})
+  exponentiation-correctness {𝐒 a} {b} =
+    multiplication-correctness {evaluate Arithmetic.Exponentiation (a ⊰ b ⊰ ∅)}{b}
+    🝖 [≡]-with(_⋅ b) (exponentiation-correctness {a}{b})
+    🝖 symmetry(_≡_) ([^]-with-[𝐒]ₗ {a}{b})
+
+  factorial-correctness : ∀{a} → (evaluate Arithmetic.Factorial (a ⊰ ∅) ≡ a !)
+  factorial-correctness {𝟎}   = [≡]-intro
+  factorial-correctness {𝐒 a} =
+    multiplication-correctness {𝐒 a}
+    🝖 [≡]-with(𝐒(a) ⋅_) (factorial-correctness {a})
+
+  predecessor-correctness : ∀{a} → (evaluate Arithmetic.Predecessor (a ⊰ ∅) ≡ 𝐏(a))
+  predecessor-correctness {𝟎}   = [≡]-intro
+  predecessor-correctness {𝐒 a} = [≡]-intro
+
+  monus-correctness : ∀{a b} → (evaluate Arithmetic.Monus (a ⊰ b ⊰ ∅) ≡ a −₀ b)
+  monus-correctness {a}   {𝟎}   = [≡]-intro
+  monus-correctness {𝟎}   {𝐒 b} = predecessor-correctness{evaluate Arithmetic.Monus (𝟎 ⊰ b ⊰ ∅)} 🝖 [≡]-with(𝐏) (monus-correctness {𝟎}{b})
+  monus-correctness {𝐒 a} {𝐒 b} =
+    predecessor-correctness{evaluate Arithmetic.Monus (𝐒(a) ⊰ b ⊰ ∅)}
+    🝖 [≡]-with(𝐏) (monus-correctness {𝐒 a}{b})
+    🝖 symmetry(_≡_) ([−₀]-with-[𝐒]ᵣ {𝐒(a)}{b})
+
+  isnonzero-correctness : ∀{a} → (evaluate Arithmetic.IsNonZero (a ⊰ ∅) ≡ ℕbool(a ≢? 𝟎))
+  isnonzero-correctness {𝟎}   = [≡]-intro
+  isnonzero-correctness {𝐒 a} = [≡]-intro
+
+  iszero-correctness : ∀{a} → (evaluate Arithmetic.IsZero (a ⊰ ∅) ≡ ℕbool(a ≡? 𝟎))
+  iszero-correctness {𝟎}   = [≡]-intro
+  iszero-correctness {𝐒 a} = [≡]-intro

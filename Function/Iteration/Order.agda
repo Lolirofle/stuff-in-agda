@@ -127,7 +127,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
       r {𝐒(n)} xnid = [↔]-to-[→] mod-divisibility mod-is-0 where
         open import Logic.Computability
         open import Numeral.Natural.Relation.Computability
-        open import Relator.Equals.Proofs.Equivalence using ([≡]-to-equivalence)
+        open import Relator.Equals.Proofs.Equiv using ([≡]-to-equivalence)
 
         instance
           ord-non-zero-comp : IsTrue(ord(x) ⦃ p ⦄ ≢? 𝟎)
@@ -147,7 +147,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
           x ^ (𝐒(n) mod ord(x) ⦃ p ⦄)                                                      🝖-[ symmetry(_≡_) (identityₗ(_▫_)(id)) ]
           id ▫ (x ^ (𝐒(n) mod ord(x) ⦃ p ⦄))                                               🝖-[ congruence₂ₗ(_▫_)(_) (symmetry(_≡_) ([^]-by-id-multiple {ord(x) ⦃ p ⦄} ([^]-by-ord ⦃ p ⦄) {𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄})) ]
           (x ^ ((ord(x) ⦃ p ⦄) ⋅ (𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄))) ▫ (x ^ (𝐒(n) mod ord(x) ⦃ p ⦄)) 🝖-[ [^]-by-add {(ord(x) ⦃ p ⦄) ⋅ (𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄)} {𝐒(n) mod ord(x) ⦃ p ⦄} ]
-          x ^ (((ord(x) ⦃ p ⦄) ⋅ (𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄)) + (𝐒(n) mod ord(x) ⦃ p ⦄))       🝖-[ congruence₁(x ^_) ⦃ Relator.Equals.Proofs.Equivalence.[≡]-to-function ⦄ ([≡]-to-equivalence(division-remainder{𝐒(n)}{ord(x) ⦃ p ⦄})) ]
+          x ^ (((ord(x) ⦃ p ⦄) ⋅ (𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄)) + (𝐒(n) mod ord(x) ⦃ p ⦄))       🝖-[ congruence₁(x ^_) ⦃ Relator.Equals.Proofs.Equiv.[≡]-to-function ⦄ ([≡]-to-equivalence(division-remainder{𝐒(n)}{ord(x) ⦃ p ⦄})) ]
           x ^ 𝐒(n)                                                                         🝖-[ xnid ]
           id                                                                               🝖-end
 

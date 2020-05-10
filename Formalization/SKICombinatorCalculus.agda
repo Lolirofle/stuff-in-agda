@@ -2,6 +2,7 @@ module Formalization.SKICombinatorCalculus where
 
 import      Lvl
 import      Function
+open import Functional using (_∘_)
 open import Type
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
@@ -23,13 +24,31 @@ T = C
 Z = B
 -- Z = C · (C · (B · N · (S · I · I)) · Ω) · I
 
-{-
+{- TODO: Is this possible?
 term-fn-type : ∀{ℓ} → Term → Type{Lvl.𝐒(ℓ)}
-term-fn-type {ℓ} S = ∀{X Y Z : Type{ℓ}} → (X → Y → Z) → (X → Y) → (X → Z)
+term-fn-type {ℓ} S = ∀{X Y Z : Type{ℓ}} → (X → (Y → Z)) → (X → Y) → (X → Z)
 term-fn-type {ℓ} K = ∀{X Y : Type{ℓ}} → Y → X → Y
 term-fn-type {ℓ} (x · y) = {!term-fn-type {ℓ} x!}
 -}
 
+
+
+module Derivation where
+  -- TODO: But there are no base cases?
+  data deriv : Term → Type{Lvl.𝟎} where
+    constant : ∀{α β γ ι} → deriv(α · ((K · β) · γ) · ι) → deriv(α · β · ι)
+    fuse     : ∀{α β γ δ ι} → deriv(α · (((S · β) · γ) · δ) · ι) → deriv(α · ((β · δ) · (γ · δ)) · ι)
+
+  _⇒_ : Term → Term → Type
+  a ⇒ b = ∀{α ι} → deriv(α · a · ι) → deriv(α · b · ι)
+
+  identity : ∀{β} → ((I · β) ⇒ β)
+  identity = constant ∘ fuse
+
+  -- composition : ∀{α ι a b c} → deriv(α · (B · a · b · c) · ι) → deriv(α · ((a · (b · c))) · ι)
+  -- composition = {!!}
+
+-- TODO: Is this really correct? Should be similar to deriv
 data _⟶_ : Term → Term → Type{Lvl.𝟎} where -- TODO: Use reflexive-transitive closure instead
   constant : ∀{c t} → (((K · c) · t) ⟶ c)
   fuse     : ∀{a b c} → ((((S · a) · b) · c) ⟶ ((a · c) · (b · c)))

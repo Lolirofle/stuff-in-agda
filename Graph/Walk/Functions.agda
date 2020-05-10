@@ -37,7 +37,7 @@ module _ {_⟶_ : Graph} where
   postlop : ∀{a c} → (Walk(_⟶_) a c) → Σ(_)(b ↦ Walk(_⟶_) a b)
   postlop at                          = intro _ at
   postlop (prepend e  at)             = intro _ at
-  postlop (prepend e₁ (prepend e₂ w)) = [Σ]-mapᵣ (postlop(prepend e₂ w)) (prepend e₁)
+  postlop (prepend e₁ (prepend e₂ w)) = [Σ]-applyᵣ (postlop(prepend e₂ w)) (prepend e₁)
 
   length : ∀{a b} → (Walk(_⟶_) a b) → ℕ
   length at            = 𝟎

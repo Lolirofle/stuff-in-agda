@@ -21,7 +21,7 @@ CountablyInfinite : ∀{ℓ} → (T : Type{ℓ}) → ⦃ _ : Equiv(T) ⦄ → St
 CountablyInfinite(T) = (ℕ ≍' T) where
   _≍'_ : ∀{ℓ₁ ℓ₂} → (A : Type{ℓ₁}) → (B : Type{ℓ₂}) → ⦃ _ : Equiv(B) ⦄ → Stmt
   _≍'_ A B ⦃ equiv-B ⦄ = _≍_ A ⦃ [≡]-equiv ⦄ B ⦃ equiv-B ⦄ where
-    open import Relator.Equals.Proofs.Equivalence
+    open import Relator.Equals.Proofs.Equiv
 
 module Countable where
   private variable ℓ₁ ℓ₂ : Lvl.Level

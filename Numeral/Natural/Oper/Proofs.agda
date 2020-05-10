@@ -242,6 +242,11 @@ postulate [⋅]-cancellationᵣ : ∀{x} → ⦃ _ : Positive(x) ⦄ → (Names.
 -- [⋅]-cancellationᵣ {𝐒 (𝐒 x)} ⦃ nx0 ⦄ {𝐒 y₁} {𝐒 y₂} p = congruence₁(𝐒) ([⋅]-cancellationᵣ {𝐒 x} ⦃ [𝐒]-not-0 ⦄ {y₁} {y₂} {![𝐒]-injectivity-raw([𝐒]-injectivity-raw p)!})
 -}
 
+postulate [^]-with-𝟎ₗ : ∀{x} → (𝟎 ^ x ≡ 𝟎)
+
+postulate [^]-with-[𝐒]ₗ : ∀{x y} → (𝐒(x) ^ y ≡ (x ^ y) ⋅ y)
+-- [^]-with-[𝐒]ₗ = {!!}
+
 postulate [⋅][−₀]-distributivityₗ-raw : ∀{x y z : ℕ} → (x ⋅ (y −₀ z)) ≡ (x ⋅ y) −₀ (x ⋅ z)
 
 postulate [⋅][−₀]-distributivityᵣ-raw : ∀{x y z : ℕ} → ((x −₀ y) ⋅ z) ≡ (x ⋅ z) −₀ (y ⋅ z)
@@ -273,6 +278,12 @@ postulate [⋅][−₀]-distributivityᵣ-raw : ∀{x y z : ℕ} → ((x −₀ 
   -- ⇔ 𝟎 −₀ y ≡ 𝐒(z)
   -- ⇔ 𝐒(𝟎) −₀ 𝐒(y) ≡ 𝐒(z)
 -}
+
+[−₀]-with-[𝐒]ᵣ : ∀{x y} → ((x −₀ 𝐒(y)) ≡ 𝐏(x −₀ y))
+[−₀]-with-[𝐒]ᵣ {𝟎} {𝟎}     = [≡]-intro
+[−₀]-with-[𝐒]ᵣ {𝟎} {𝐒 y}   = [≡]-intro
+[−₀]-with-[𝐒]ᵣ {𝐒 x} {𝟎}   = [≡]-intro
+[−₀]-with-[𝐒]ᵣ {𝐒 x} {𝐒 y} = [−₀]-with-[𝐒]ᵣ {x} {y}
 
 [−₀]-self-[𝐒] : ∀{x} → ((𝐒(x) −₀ x) ≡ 𝐒(x −₀ x))
 [−₀]-self-[𝐒] {𝟎}    = [≡]-intro

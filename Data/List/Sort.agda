@@ -46,7 +46,7 @@ module Sorted where
     open import Lang.Inspect
     open import Logic.Propositional
     open import Relator.Equals
-    open import Relator.Equals.Proofs.Equivalence
+    open import Relator.Equals.Proofs.Equiv
 
     -- If a list is sorted, then its tail is also sorted.
     tail-sorted-proof : ∀{l} → Sorted(l) → Sorted(List.tail l)
@@ -126,7 +126,7 @@ module Proofs where
   open import Lang.Inspect
   open import Logic.Propositional
   open import Relator.Equals
-  open import Relator.Equals.Proofs.Equivalence
+  open import Relator.Equals.Proofs.Equiv
   open import Structure.Relator.Properties
   open import Syntax.Transitivity
 

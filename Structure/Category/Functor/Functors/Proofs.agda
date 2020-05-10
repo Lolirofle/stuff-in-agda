@@ -7,7 +7,7 @@ open import Function.Equals.Proofs
 open import Logic.Predicate
 open import Logic.Propositional
 import      Lvl
-open import Relator.Equals.Proofs.Equiv
+open import Relator.Equals.Proofs.Equivalence
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Functor.Equiv
@@ -33,9 +33,9 @@ module _ where
 
   -- TODO: Prove transport-of-congruenced-bifunctor
   [∘ᶠᵘⁿᶜᵗᵒʳ]-binaryOperator : BinaryOperator(_∘ᶠᵘⁿᶜᵗᵒʳ_ {A = A}{B = B}{C = C})
-  _≡ᶠᵘⁿᶜᵗᵒʳ_.functor-proof (BinaryOperator.congruence ([∘ᶠᵘⁿᶜᵗᵒʳ]-binaryOperator {A = A} {B = B} {C = C}) {[∃]-intro F₁} {[∃]-intro F₂} (intro fp₁ mp₁) {[∃]-intro G₁} {[∃]-intro G₂} (intro fp₂ mp₂)) = congruence₂(Fn._∘_) ⦃ [⊜][∘]-binaryOperator ⦃ function = [≡]-function _ ⦄ ⦄ fp₁ fp₂ where
-    instance _ = [≡]-equiv (Object(B))
-    instance _ = [≡]-equiv (Object(C))
+  _≡ᶠᵘⁿᶜᵗᵒʳ_.functor-proof (BinaryOperator.congruence ([∘ᶠᵘⁿᶜᵗᵒʳ]-binaryOperator {A = A} {B = B} {C = C}) {[∃]-intro F₁} {[∃]-intro F₂} (intro fp₁ mp₁) {[∃]-intro G₁} {[∃]-intro G₂} (intro fp₂ mp₂)) = congruence₂(Fn._∘_) ⦃ [⊜][∘]-binaryOperator ⦃ function = [≡]-function ⦄ ⦄ fp₁ fp₂ where
+    instance _ = [≡]-equiv {T = Object(B)}
+    instance _ = [≡]-equiv {T = Object(C)}
   NaturalTransformation.natural (_≡ᶠᵘⁿᶜᵗᵒʳ_.map-proof (BinaryOperator.congruence ([∘ᶠᵘⁿᶜᵗᵒʳ]-binaryOperator {A = A} {B = B} {C = C}) {[∃]-intro F₁}{[∃]-intro F₂} (intro fp₁ mp₁) {[∃]-intro G₁}{[∃]-intro G₂} (intro fp₂ mp₂))) {x}{y} {f} = anything {-
     transport C (_⊜_.proof (congruence₂(Fn._∘_) ⦃ [⊜][∘]-binaryOperator ⦃ function = [≡]-function _ ⦄ ⦄ fp₁ fp₂)) ∘ map(map f)      🝖-[ {!x₂ y₂!} ]
     map(map f) ∘ transport C ([≡]-with-op (Object C) (λ v v₁ → {!v!}) (_⊜_.proof fp₁) (_⊜_.proof fp₂)) 🝖-[ {!!} ]
@@ -47,14 +47,14 @@ module _ where
       instance _ = category A
       instance _ = category B
       instance _ = category C
-      instance _ = [≡]-equiv (Object B)
-      instance _ = [≡]-equiv (Object C)
+      instance _ = [≡]-equiv {T = Object B}
+      instance _ = [≡]-equiv {T = Object C}
       -- [≡]-with-op
 
   instance
     [∘ᶠᵘⁿᶜᵗᵒʳ]-identityₗ : Morphism.Identityₗ {Obj = CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}} (\{A} → _∘ᶠᵘⁿᶜᵗᵒʳ_ {A = A})(idᶠᵘⁿᶜᵗᵒʳ)
     _≡ᶠᵘⁿᶜᵗᵒʳ_.functor-proof (Morphism.Identityₗ.proof ([∘ᶠᵘⁿᶜᵗᵒʳ]-identityₗ) {y = B}) = reflexivity(_⊜_) where
-      instance _ = [≡]-equiv (Object(B))
+      instance _ = [≡]-equiv {T = Object(B)}
     NaturalTransformation.natural (_≡ᶠᵘⁿᶜᵗᵒʳ_.map-proof (Morphism.Identityₗ.proof [∘ᶠᵘⁿᶜᵗᵒʳ]-identityₗ {A} {B} {[∃]-intro F})) {x} {y} {f} =
       id ∘ map f 🝖-[ Morphism.identityₗ(_∘_)(id) ]
       map f      🝖-[ Morphism.identityᵣ(_∘_)(id) ]-sym
@@ -67,7 +67,7 @@ module _ where
   instance
     [∘ᶠᵘⁿᶜᵗᵒʳ]-identityᵣ : Morphism.Identityᵣ {Obj = CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}} (\{A} → _∘ᶠᵘⁿᶜᵗᵒʳ_ {A = A})(idᶠᵘⁿᶜᵗᵒʳ)
     _≡ᶠᵘⁿᶜᵗᵒʳ_.functor-proof (Morphism.Identityᵣ.proof ([∘ᶠᵘⁿᶜᵗᵒʳ]-identityᵣ) {y = B}) = reflexivity(_⊜_) where
-      instance _ = [≡]-equiv (Object(B))
+      instance _ = [≡]-equiv {T = Object(B)}
     NaturalTransformation.natural (_≡ᶠᵘⁿᶜᵗᵒʳ_.map-proof (Morphism.Identityᵣ.proof [∘ᶠᵘⁿᶜᵗᵒʳ]-identityᵣ {A} {B} {[∃]-intro F})) {x} {y} {f} = 
       id ∘ map f 🝖-[ Morphism.identityₗ(_∘_)(id) ]
       map f      🝖-[ Morphism.identityᵣ(_∘_)(id) ]-sym
@@ -85,7 +85,7 @@ module _ where
   instance
     [∘ᶠᵘⁿᶜᵗᵒʳ]-associativity : Morphism.Associativity {Obj = CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}} (\{A B C} → _∘ᶠᵘⁿᶜᵗᵒʳ_ {A = A}{B = B}{C = C})
     _≡ᶠᵘⁿᶜᵗᵒʳ_.functor-proof (Morphism.Associativity.proof [∘ᶠᵘⁿᶜᵗᵒʳ]-associativity {w = D}) = reflexivity(_⊜_) where
-      instance _ = [≡]-equiv (Object(D))
+      instance _ = [≡]-equiv {T = Object(D)}
     NaturalTransformation.natural (_≡ᶠᵘⁿᶜᵗᵒʳ_.map-proof (Morphism.Associativity.proof [∘ᶠᵘⁿᶜᵗᵒʳ]-associativity {A}{B}{C}{D} {[∃]-intro F}{[∃]-intro G}{[∃]-intro H})) {x}{y}{f} =
       id ∘ map(map(map f)) 🝖-[ Morphism.identityₗ(_∘_)(id) ]
       map(map(map f))      🝖-[ Morphism.identityᵣ(_∘_)(id) ]-sym

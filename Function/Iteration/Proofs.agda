@@ -231,7 +231,7 @@ module _ where
       repeatₗ ((a ⋅ b) + a) (_▫_) id x                                       🝖-[ [≡]-to-equivalence (congruence₁(expr ↦ repeatₗ expr (_▫_) id x) {a ⋅ b + a}{a + a ⋅ b} (commutativity(_+_) {a ⋅ b})) ]
       repeatₗ (a ⋅ 𝐒(b)) (_▫_) id x                                          🝖-end
       where
-        open import Relator.Equals.Proofs.Equivalence using ([≡]-to-equivalence)
+        open import Relator.Equals.Proofs.Equiv using ([≡]-to-equivalence)
 
     repeatₗ-by-distanceₗ : ∀{_▫_ : X → X → X}{x id} → ⦃ _ : BinaryOperator(_▫_) ⦄ → ⦃ _ : Identityᵣ(_▫_)(id) ⦄ → ⦃ _ : Associativity(_▫_) ⦄ → ∀{a b} → (repeatₗ a (_▫_) id x ≡ repeatₗ b (_▫_) id x) ← (repeatₗ (a 𝄩 b) (_▫_) id x ≡ id)
     repeatₗ-by-distanceₗ {_▫_} {x} {id} {𝟎}   {𝟎}   p = p

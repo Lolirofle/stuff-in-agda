@@ -21,7 +21,7 @@ private variable A B C A₁ A₂ A₃ B₁ B₂ B₃ : Type{ℓ}
 
 module _ where
   open import Relator.Equals using ([≡]-intro)
-  open import Relator.Equals.Proofs.Equivalence
+  open import Relator.Equals.Proofs.Equiv
 
   module _ ⦃ _ : Equiv(A) ⦄ ⦃ _ : Equiv(B) ⦄ where
     instance

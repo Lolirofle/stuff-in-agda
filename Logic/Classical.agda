@@ -11,6 +11,7 @@ open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Lang.Instance
 open import Logic
+open import Logic.Names
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
@@ -19,19 +20,21 @@ open import Relator.Equals
 open import Type
 open import Type.Empty
 
-private variable ℓ ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
+private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ : Lvl.Level
+private variable X Y Z : Type{ℓ}
 
 -- A proposition is behaving classically when excluded middle holds for it.
 -- In other words: For the proposition or its negation, if one of them is provable.
 -- It could be interpreted as: The proposition is either true or false.
 -- In classical logic, this is always the case for any proposition.
--- Sometimes (∀x. Classical(P(x))) is called: P is decidable
+-- Note: (∀x. Classical(P(x))) is also called: P is decidable.
 module _ (P : Stmt{ℓ}) where
   record Classical : Stmt{ℓ} where
     constructor intro
     field
-      ⦃ excluded-middle ⦄ : P ∨ (¬ P)
+      ⦃ excluded-middle ⦄ : ExcludedMiddleOn(P)
 
+    -- Boolean value representing the truth value of the proposition P.
     decide : Bool
     decide = Either.isLeft(excluded-middle)
 
@@ -52,98 +55,141 @@ module _ (P : Stmt{ℓ}) where
     decide-is-false : (¬ P) ↔ IsFalse(decide)
     decide-is-false = [↔]-transitivity decide-false ([↔]-symmetry IsFalse.is-𝐹)
 
-    decide-excluded-middle : (P ∧ (decide ≡ 𝑇)) ∨ ((¬ P) ∧ (decide ≡ 𝐹))
-    decide-excluded-middle = [∨]-elim2 (p ↦ [∧]-intro p ([↔]-to-[→] decide-true p)) (np ↦ [∧]-intro np ([↔]-to-[→] decide-false np)) excluded-middle
-
     module _ {T : Type{ℓ₁}} {x y : T} {Q : T → Type{ℓ₂}} where
       decide-if-intro : (P → Q(x)) → ((¬ P) → Q(y)) → Q(if decide then x else y)
       decide-if-intro pq npq = if-intro{x = x}{y = y}{P = Q}{B = decide} (pq ∘ [↔]-to-[←] decide-true) (npq ∘ [↔]-to-[←] decide-false)
 
-    -- Double negation elimination
-    [¬¬]-elim : (¬¬ P) → P
-    [¬¬]-elim = [¬¬]-elim-from-excluded-middle (excluded-middle)
-
-    -- Contraposition rule in reverse
-    contrapositiveₗ : ∀{Q : Stmt{ℓ₂}} → (Q → P) ← ((¬ Q) ← (¬ P))
-    contrapositiveₗ (nqnp) = [¬¬]-elim ∘ (contrapositiveᵣ (nqnp)) ∘ [¬¬]-intro
-      -- (¬ X) ← (¬ Y)
-      -- (¬ Y) → (¬ X)
-      -- (Y → ⊥) → (X → ⊥)
-      -- (Y → ⊥) → X → ⊥
-      -- X → (Y → ⊥) → ⊥
-      -- X → ((Y → ⊥) → ⊥)
-      -- X → (¬ (Y → ⊥))
-      -- X → (¬ (¬ Y))
-
-    -- One direction of the equivalence of implication using disjunction
-    [→]-disjunctive-formᵣ : ∀{Q : Stmt{ℓ₂}} → (P → Q) → ((¬ P) ∨ Q)
-    [→]-disjunctive-formᵣ (pq) with excluded-middle
-    ... | [∨]-introₗ(p)  = [∨]-introᵣ(pq(p))
-    ... | [∨]-introᵣ(np) = [∨]-introₗ(np)
-
-    -- One direction of the equivalence of implication using conjunction
-    [→][∧]ₗ : ∀{Q : Stmt{ℓ₂}} → (Q → P) ← ¬(Q ∧ (¬ P))
-    [→][∧]ₗ (nqnp) = [¬¬]-elim ∘ (Tuple.curry(nqnp))
-      -- ¬(A ∧ ¬B) → (A → ¬¬B)
-      --   ¬(A ∧ (¬ B)) //assumption
-      --   ((A ∧ (B → ⊥)) → ⊥) //Definition: (¬)
-      --   (A → (B → ⊥) → ⊥) //Tuple.curry
-      --   (A → ¬(B → ⊥)) //Definition: (¬)
-      --   (A → ¬(¬ B)) //Definition: (¬)
-
-    [→]-from-contrary : ∀{Q : Stmt{ℓ₂}} → (Q → (¬ P) → ⊥) → (Q → P)
-    [→]-from-contrary = [¬¬]-elim ∘_
-
-    -- The type signature of the "call/cc or "call-with-current-continuation" subroutine in the programming language Scheme
-    -- Also known as: "Peirce's law"
-    call-cc : ∀{Q : Stmt{ℓ₂}} → (((P → Q) → P) → P)
-    call-cc (pqp) with excluded-middle
-    ... | ([∨]-introₗ p ) = p
-    ... | ([∨]-introᵣ np) = pqp([⊥]-elim ∘ np)
-
-    contrapositive-variantₗ : ∀{Q : Stmt{ℓ₂}} → ((¬ P) → Q) → (P ← (¬ Q))
-    contrapositive-variantₗ {Q = Q} npq nq = nqnp(nq) where
-      npnnq : (¬ P) → (¬¬ Q)
-      npnnq = [¬¬]-intro ∘ npq
-
-      nqnp : (¬ Q) → P
-      nqnp = contrapositiveₗ (npnnq)
-
-    -- Also known as: "Clavius's Law"
-    negative-implies-positive : ((¬ P) → P) → P
-    negative-implies-positive npp with excluded-middle
-    ... | ([∨]-introₗ p ) = p
-    ... | ([∨]-introᵣ np) = npp np
-
-    [∃]-unrelatedᵣ-[→]ₗ : ∀{X : Type{ℓ₂}} → ⦃ _ : ◊ X ⦄ → ∀{Q : X → Stmt{ℓ₃}} → ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
-    [∃]-unrelatedᵣ-[→]ₗ {X} ⦃ intro ⦃ x ⦄ ⦄ {Q} = l where
-      l : ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
-      l(pexqx) with excluded-middle
-      ... | ([∨]-introₗ p)  = [∃]-map-proof (const) (pexqx(p))
-      ... | ([∨]-introᵣ np) = [∃]-intro(x) ⦃ ([⊥]-elim{P = Q(x)}) ∘ np ⦄
-
   excluded-middle = inst-fn Classical.excluded-middle
   decide          = inst-fn Classical.decide
-open Classical ⦃ ... ⦄ hiding (excluded-middle ; decide ; decide-true ; decide-false) public
+open Classical ⦃ ... ⦄ hiding (excluded-middle ; decide) public
+
+------------------------------------------
+-- Classical on predicates.
+
+Classical₁ : (X → Stmt{ℓₗ}) → Stmt
+Classical₁(P) = ∀¹(Classical ∘₁ P)
+decide₁ : (P : X → Stmt{ℓ}) → ⦃ _ : Classical₁(P) ⦄ → (X → Bool)
+decide₁ P x = decide(P x)
+
+Classical₂ : (X → Y → Stmt{ℓₗ}) → Stmt
+Classical₂(P) = ∀²(Classical ∘₂ P)
+decide₂ : (P : X → Y → Stmt{ℓ}) → ⦃ _ : Classical₂(P) ⦄ → (X → Y → Bool)
+decide₂ P x y = decide(P x y)
+
+Classical₃ : (X → Y → Z → Stmt{ℓₗ}) → Stmt
+Classical₃(P) = ∀³(Classical ∘₃ P)
+decide₃ : (P : X → Y → Z → Stmt{ℓ}) → ⦃ _ : Classical₃(P) ⦄ → (X → Y → Z → Bool)
+decide₃ P x y z = decide(P x y z)
+
+------------------------------------------
+-- Changing classical propositions' universe levels by using their boolean representation.
+
+module _ (P : Stmt{ℓ}) ⦃ classical : Classical(P) ⦄ where
+  LvlConvert : Stmt{ℓ₁}
+  LvlConvert = Lvl.Up(IsTrue(decide(P)))
+
+  -- LvlConvert is satisfied whenever its proposition is.
+  LvlConvert-correctness : P ↔ LvlConvert{ℓ₁}
+  LvlConvert-correctness = [↔]-transitivity decide-is-true ([↔]-intro Lvl.Up.obj Lvl.up)
+
+------------------------------------------
+-- Well-known classical rules.
+
+module _ {P : Stmt{ℓ}} ⦃ classical-P : Classical(P) ⦄ where
+  -- Double negation elimination.
+  [¬¬]-elim : (¬¬ P) → P
+  [¬¬]-elim = [¬¬]-elim-from-excluded-middle (excluded-middle(P))
+
+  -- A double negated proposition is equivalent to the positive.
+  double-negation : P ↔ (¬¬ P)
+  double-negation = [↔]-intro [¬¬]-elim [¬¬]-intro
+
+  -- The type signature of the "call/cc or "call-with-current-continuation" subroutine in the programming language Scheme.
+  -- Also known as: "Peirce's law"
+  call-cc-rule : ∀{Q : Stmt{ℓ₂}} → (((P → Q) → P) → P)
+  call-cc-rule (pqp) with excluded-middle(P)
+  ... | ([∨]-introₗ p ) = p
+  ... | ([∨]-introᵣ np) = pqp([⊥]-elim ∘ np)
+
+  -- When the negative implies the positive, thus implying a contradiction, the positive is true.
+  -- Also called: "Clavius's Law".
+  negative-implies-positive : ((¬ P) → P) → P
+  negative-implies-positive npp with excluded-middle(P)
+  ... | ([∨]-introₗ p ) = p
+  ... | ([∨]-introᵣ np) = npp np
+
+module _ (P : Stmt{ℓ}) ⦃ classical : Classical(P) ⦄ where
+  -- Elimination rule for the disjunction in excluded middle.
+  excluded-middle-elim : ∀{Q : Stmt{ℓ₂}} → (P → Q) → ((¬ P) → Q) → Q
+  excluded-middle-elim pq npq = [∨]-elim pq npq (excluded-middle(P))
+
+------------------------------------------
+-- Contraposition rules on implication.
+
+module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} ⦃ classical : Classical(Q) ⦄ where
+  -- Contraposition rule in reverse removing negations.
+  contrapositiveₗ : (P → Q) ← ((¬ P) ← (¬ Q))
+  contrapositiveₗ (npnq) = [¬¬]-elim ∘ (contrapositiveᵣ (npnq)) ∘ [¬¬]-intro
+
+  contrapositive : (P → Q) ↔ ((¬ P) ← (¬ Q))
+  contrapositive = [↔]-intro contrapositiveₗ contrapositiveᵣ
+
+module _ {P : Stmt{ℓ₁}} ⦃ classical : Classical(P) ⦄ {Q : Stmt{ℓ₂}} where
+  contrapositive-variantₗ : ((¬ P) → Q) → (P ← (¬ Q))
+  contrapositive-variantₗ npq nq = nqnp(nq) where
+    npnnq : (¬ P) → (¬¬ Q)
+    npnnq = [¬¬]-intro ∘ npq
+
+    nqnp : (¬ Q) → P
+    nqnp = contrapositiveₗ (npnnq)
+
+module _ {P : Stmt{ℓ₁}} ⦃ classic-p : Classical(P) ⦄ {Q : Stmt{ℓ₂}} ⦃ classic-q : Classical(Q) ⦄ where
+  one-direction-implication : (P ← Q) ∨ (P → Q)
+  one-direction-implication with excluded-middle(P) | excluded-middle(Q)
+  one-direction-implication | [∨]-introₗ p  | [∨]-introₗ q  = [∨]-introₗ (const p)
+  one-direction-implication | [∨]-introₗ p  | [∨]-introᵣ nq = [∨]-introₗ (const p)
+  one-direction-implication | [∨]-introᵣ np | [∨]-introₗ q  = [∨]-introᵣ (const q)
+  one-direction-implication | [∨]-introᵣ np | [∨]-introᵣ nq = [∨]-introᵣ ([⊥]-elim ∘ np)
+
+  [↔]-negationₗ : (P ↔ Q) ← ((¬ P) ↔ (¬ Q))
+  [↔]-negationₗ ([↔]-intro nqnp npnq) = [↔]-intro (contrapositiveₗ ⦃ classic-p ⦄ npnq) (contrapositiveₗ ⦃ classic-q ⦄ nqnp)
+
+  [↔]-negation : (P ↔ Q) ↔ ((¬ P) ↔ (¬ Q))
+  [↔]-negation = [↔]-intro [↔]-negationₗ [↔]-negationᵣ
+
+------------------------------------------
+-- XOR.
+
+module _ (P : Stmt{ℓ}) ⦃ classical : Classical(P) ⦄ where
+  xor-negation : P ⊕ (¬ P)
+  xor-negation with excluded-middle(P)
+  ... | [∨]-introₗ p  = [⊕]-introₗ p ([¬¬]-intro p)
+  ... | [∨]-introᵣ np = [⊕]-introᵣ np np
+
+module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
+  classical-from-xorₗ : ⦃ xor : (P ⊕ Q) ⦄ → Classical(P)
+  classical-from-xorₗ ⦃ xor ⦄ = intro ⦃ [⊕]-excluded-middleₗ xor ⦄
+
+  classical-from-xorᵣ : ⦃ xor : (P ⊕ Q) ⦄ → Classical(Q)
+  classical-from-xorᵣ ⦃ xor ⦄ = intro ⦃ [⊕]-excluded-middleᵣ xor ⦄
+
+------------------------------------------
+-- Introduction/elimination rules for Classical when combined with logical connectives.
 
 module _ {P : Stmt{ℓ}} where
   instance
-    [¬]-classical-intro : ⦃ _ : Classical(P) ⦄ → Classical(¬ P)
+    [¬]-classical-intro : ⦃ classical : Classical(P) ⦄ → Classical(¬ P)
     [¬]-classical-intro ⦃ classical-p ⦄ = intro ⦃ proof ⦄ where
       proof : (¬ P) ∨ (¬¬ P)
       proof = Either.swap(Either.mapLeft [¬¬]-intro (excluded-middle(P)))
 
-module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
-  {- TODO: Seems impossible to get the q
-  instance
-    [∧]-classical-elimₗ : ⦃ _ : Classical(P ∧ Q) ⦄ → Classical(P)
-    [∧]-classical-elimₗ {P}{Q} ⦃ classical-xy ⦄ = classical-intro (proof) where
-      proof : P ∨ (¬ P)
-      proof with excluded-middle ⦃ classical-xy ⦄
-      ... | [∨]-introₗ(xy)  = [∨]-introₗ([∧]-elimₗ(xy))
-      ... | [∨]-introᵣ(nxy) = [∨]-introᵣ(p ↦ nxy([∧]-intro(p)(q)))
-  -}
+  excluded-middle-classical-intro : ⦃ _ : Classical(P) ⦄ → Classical(P ∨ (¬ P))
+  excluded-middle-classical-intro = intro ⦃ [∨]-introₗ (excluded-middle(P)) ⦄
 
+  -- [¬]-classical-elim : ⦃ _ : Classical(¬ P) ⦄ → Classical(P)
+  -- [¬]-classical-elim ⦃ classical ⦄ = intro ⦃ excluded-middle-elim(¬ P) ⦃ classical ⦄ [∨]-introᵣ (nnp ↦ [∨]-introₗ {!!}) ⦄
+
+module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
   classical-by-equivalence : (P ↔ Q) → (Classical(P) ↔ Classical(Q))
   classical-by-equivalence (xy) = [↔]-intro (cy ↦ intro ⦃ proofₗ(cy) ⦄) (cx ↦ intro ⦃ proofᵣ(cx) ⦄) where
     proofᵣ : Classical(P) → (Q ∨ (¬ Q))
@@ -157,7 +203,7 @@ module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
     ... | [∨]-introᵣ(ny) = [∨]-introᵣ(ny ∘ ([↔]-to-[→] xy))
 
   instance
-    [∧]-classical-intro : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → Classical(P ∧ Q)
+    [∧]-classical-intro : ⦃ classical-p : Classical(P) ⦄ → ⦃ classical-q : Classical(Q) ⦄ → Classical(P ∧ Q)
     [∧]-classical-intro ⦃ classical-p ⦄ ⦃ classical-q ⦄ = intro ⦃ proof ⦄ where
       proof : (P ∧ Q) ∨ (¬ (P ∧ Q))
       proof with (excluded-middle(P) , excluded-middle(Q))
@@ -167,7 +213,7 @@ module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
       ... | ([∨]-introᵣ(nx) , [∨]-introᵣ(ny)) = [∨]-introᵣ(xy ↦ nx([∧]-elimₗ(xy)))
 
   instance
-    [∨]-classical-intro : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → Classical(P ∨ Q)
+    [∨]-classical-intro : ⦃ classical-p : Classical(P) ⦄ → ⦃ classical-q : Classical(Q) ⦄ → Classical(P ∨ Q)
     [∨]-classical-intro ⦃ classical-p ⦄ ⦃ classical-q ⦄ = intro ⦃ proof ⦄ where
       proof : (P ∨ Q) ∨ (¬ (P ∨ Q))
       proof with (excluded-middle(P) , excluded-middle(Q))
@@ -177,7 +223,7 @@ module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
       ... | ([∨]-introᵣ(nx) , [∨]-introᵣ(ny)) = [∨]-introᵣ(xy ↦ [∨]-elim(nx)(ny) (xy))
 
   instance
-    [→]-classical-intro : ⦃ _ : Classical(P) ⦄ → ⦃ _ : Classical(Q) ⦄ → Classical(P → Q)
+    [→]-classical-intro : ⦃ classical-p : Classical(P) ⦄ → ⦃ classical-q : Classical(Q) ⦄ → Classical(P → Q)
     [→]-classical-intro ⦃ classical-p ⦄ ⦃ classical-q ⦄ = intro ⦃ proof ⦄ where
       proof : (P → Q) ∨ (¬ (P → Q))
       proof with (excluded-middle(P) , excluded-middle(Q))
@@ -211,28 +257,95 @@ module _ {X : Type{ℓ₁}} ⦃ _ : (◊ X) ⦄ {P : X → Stmt{ℓ₂}} where
     ... | [∨]-introₗ(expx)  = [∃]-intro([∃]-witness(expx)) ⦃ intro ⦃ [∨]-introₗ([∃]-proof(expx)) ⦄ ⦄
     ... | [∨]-introᵣ(nexpx) = [∃]-intro([◊]-existence) ⦃ intro ⦃ [∨]-introᵣ([¬∃]-to-[∀¬] (nexpx) {[◊]-existence}) ⦄ ⦄
 
-module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} ⦃ classic-p : Classical(P) ⦄ ⦃ classic-q : Classical(Q) ⦄ where
-  [¬][∧]ₗ : ((¬ P) ∨ (¬ Q)) ← (¬ (P ∧ Q))
-  [¬][∧]ₗ npq =
-    [→]-disjunctive-formᵣ {P = P} ⦃ classic-p ⦄ {Q = ¬ Q} ([→][∧]ₗ ⦃ [¬]-classical-intro ⦃ classic-q ⦄ ⦄ (npq ∘ (Tuple.mapRight ([¬¬]-elim ⦃ classic-q ⦄))))
-    -- ((P ∧ Q) → ⊥) → ((P → ⊥) ∨ (Q → ⊥))
-    -- ¬((P ∧ Q) → ⊥) ← ¬((P → ⊥) ∨ (Q → ⊥))
+------------------------------------------
+-- ???
 
-  -- TODO: Is this provable constructivelq? Doesn't seem like it?
+module _ {P : Stmt{ℓ}} {Q : Stmt{ℓ₂}} ⦃ classical-Q : Classical(Q) ⦄ where
+  -- One direction of the equivalence of implication using conjunction
+  [→][∧]ₗ : (P → Q) ← ¬(P ∧ (¬ Q))
+  [→][∧]ₗ (nqnp) = [¬¬]-elim ∘ (Tuple.curry(nqnp))
+    -- ¬(A ∧ ¬B) → (A → ¬¬B)
+    --   ¬(A ∧ (¬ B)) //assumption
+    --   ((A ∧ (B → ⊥)) → ⊥) //Definition: (¬)
+    --   (A → (B → ⊥) → ⊥) //Tuple.curry
+    --   (A → ¬(B → ⊥)) //Definition: (¬)
+    --   (A → ¬(¬ B)) //Definition: (¬)
+
+  [→][∧] : (P → Q) ↔ ¬(P ∧ (¬ Q))
+  [→][∧] = [↔]-intro [→][∧]ₗ [→][∧]ᵣ
+
+module _ {P : Stmt{ℓ}} ⦃ classical-P : Classical(P) ⦄ where
+  -- One direction of the equivalence of implication using disjunction
+  [→]-disjunctive-formᵣ : ∀{Q : Stmt{ℓ₂}} → (P → Q) → ((¬ P) ∨ Q)
+  [→]-disjunctive-formᵣ (pq) with excluded-middle(P)
+  ... | [∨]-introₗ(p)  = [∨]-introᵣ(pq(p))
+  ... | [∨]-introᵣ(np) = [∨]-introₗ(np)
+
+  [→]-disjunctive-form : ∀{Q : Stmt{ℓ₂}} → (P → Q) ↔ ((¬ P) ∨ Q)
+  [→]-disjunctive-form = [↔]-intro [→]-disjunctive-formₗ [→]-disjunctive-formᵣ
+
+  [→]-from-contrary : ∀{Q : Stmt{ℓ₂}} → (Q → (¬ P) → ⊥) → (Q → P)
+  [→]-from-contrary = [¬¬]-elim ∘_
+
+  [¬→]-[∨]ᵣ : ∀{Q : Stmt{ℓ₂}} → ((¬ P) → Q) → (P ∨ Q)
+  [¬→]-[∨]ᵣ npq = excluded-middle-elim P [∨]-introₗ ([∨]-introᵣ ∘ npq)
+
+  [¬→]-[∨] : ∀{Q : Stmt{ℓ₂}} → ((¬ P) → Q) ↔ (P ∨ Q)
+  [¬→]-[∨] = [↔]-intro [¬→]-[∨]ₗ [¬→]-[∨]ᵣ
+
+  -- [↔]-boolean-cases : ∀{Q : Stmt{ℓ₂}} → (P ↔ Q) ↔ (P ∧ Q) ∨ ((¬ P) ∧ (¬ Q))
+  -- [↔]-boolean-cases = [↔]-intro [↔]-boolean-casesₗ ?
+
+  module _ {Q : Stmt{ℓ₂}} {R : Stmt{ℓ₃}} where
+    [→][∨]-distributivityₗ : (P → (Q ∨ R)) ↔ ((P → Q) ∨ (P → R))
+    [→][∨]-distributivityₗ = [↔]-intro [→][∨]-distributivityₗₗ r where
+      r : (P → (Q ∨ R)) → ((P → Q) ∨ (P → R))
+      r pqr = excluded-middle-elim P ([∨]-elim2 const const ∘ pqr) ([∨]-introₗ ∘ ([⊥]-elim ∘_))
+
+module _ {P : Stmt{ℓ₁}} ⦃ classic-p : Classical(P) ⦄ {Q : Stmt{ℓ₂}} ⦃ classic-q : Classical(Q) ⦄ where
   [¬→][∧]ᵣ : ¬(P → Q) → (P ∧ (¬ Q))
-  [¬→][∧]ᵣ = contrapositive-variantₗ ⦃ [∧]-classical-intro ⦃ classic-p ⦄ ⦃ [¬]-classical-intro ⦃ classic-q ⦄ ⦄ ⦄ ([→][∧]ₗ ⦃ classic-q ⦄)
+  [¬→][∧]ᵣ = contrapositive-variantₗ ⦃ [∧]-classical-intro {P = P}{Q = ¬ Q} ⦃ classical-q = [¬]-classical-intro ⦄ ⦄ ([→][∧]ₗ {Q = Q})
 
-  [↔]-negationₗ : (P ↔ Q) ← ((¬ P) ↔ (¬ Q))
-  [↔]-negationₗ ([↔]-intro nqnp npnq) = [↔]-intro (contrapositiveₗ ⦃ classic-p ⦄ npnq) (contrapositiveₗ ⦃ classic-q ⦄ nqnp)
+  [¬→][∧] : ¬(P → Q) ↔ (P ∧ (¬ Q))
+  [¬→][∧] = [↔]-intro [¬→][∧]ₗ [¬→][∧]ᵣ
 
-  [↔]-one-direction : (P ← Q) ∨ (P → Q)
-  [↔]-one-direction with excluded-middle(P) | excluded-middle(Q)
-  [↔]-one-direction | [∨]-introₗ p  | [∨]-introₗ q  = [∨]-introₗ (const p)
-  [↔]-one-direction | [∨]-introₗ p  | [∨]-introᵣ nq = [∨]-introₗ (const p)
-  [↔]-one-direction | [∨]-introᵣ np | [∨]-introₗ q  = [∨]-introᵣ (const q)
-  [↔]-one-direction | [∨]-introᵣ np | [∨]-introᵣ nq = [∨]-introᵣ ([⊥]-elim ∘ np)
+classical-topOrBottom : ∀{P : Stmt{ℓ}} → (Classical(P) ↔ TopOrBottom(_↔_)(P))
+_⨯_.left  (classical-topOrBottom {P = P}) tb        = intro ⦃ [∨]-elim2 ([↔]-elimₗ [⊤]-intro) [↔]-to-[→] tb ⦄
+_⨯_.right (classical-topOrBottom {P = P}) classical = excluded-middle-elim P ⦃ classical ⦄ ([∨]-introₗ ∘ provable-top-equivalence) (([∨]-introᵣ ∘ unprovable-bottom-equivalence))
 
-module _ {X : Type{ℓ₁}} ⦃ _ : ◊ X ⦄ {P : X → Stmt{ℓ₂}} ⦃ classical-expx : Classical(∃ P) ⦄ {Q : X → Stmt{ℓ₃}} where
+------------------------------------------
+-- Negation is almost preserved over the conjunction-dijunction dual (De-morgan's laws).
+
+module _ {P : Stmt{ℓ₁}} ⦃ classic-p : Classical(P) ⦄ {Q : Stmt{ℓ₂}} ⦃ classic-q : Classical(Q) ⦄ where
+  [¬]-preserves-[∧][∨]ᵣ : ¬(P ∧ Q) → ((¬ P) ∨ (¬ Q))
+  [¬]-preserves-[∧][∨]ᵣ npq = [→]-disjunctive-formᵣ {P = P} {Q = ¬ Q} ([→][∧]ₗ ⦃ [¬]-classical-intro ⦄ (npq ∘ (Tuple.mapRight ([¬¬]-elim {P = Q}))))
+
+  [¬]-preserves-[∧][∨] : ¬(P ∧ Q) ↔ ((¬ P) ∨ (¬ Q))
+  [¬]-preserves-[∧][∨] = [↔]-intro [¬]-preserves-[∧][∨]ₗ [¬]-preserves-[∧][∨]ᵣ
+
+{- TODO: Organize Logic.Classical.DoubleNegated, and this is already proven in there, though this result is more general.
+module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
+  [¬]-preserves-[∧][∨]ᵣ-weak-excluded-middle : (¬(P ∧ Q) → ((¬ P) ∨ (¬ Q))) ← (Classical(¬ P) ∧ Classical(¬ Q))
+  [¬]-preserves-[∧][∨]ᵣ-weak-excluded-middle ([↔]-intro (intro ⦃ pex ⦄) (intro ⦃ qex ⦄)) npq with pex | qex
+  ... | [∨]-introₗ np  | [∨]-introₗ nq  = [∨]-introₗ np
+  ... | [∨]-introₗ np  | [∨]-introᵣ nnq = [∨]-introₗ np
+  ... | [∨]-introᵣ nnp | [∨]-introₗ nq  = [∨]-introᵣ nq
+  ... | [∨]-introᵣ nnp | [∨]-introᵣ nnq with () ← (DoubleNegated.[∧]-intro nnp nnq) npq
+-}
+
+------------------------------------------
+-- Predicate logic.
+
+module _ {P : Stmt{ℓ}} ⦃ classical-P : Classical(P) ⦄ {X : Type{ℓ₂}} ⦃ (intro ⦃ x ⦄) : (◊ X) ⦄ {Q : X → Stmt{ℓ₃}} where
+  [∃]-unrelatedᵣ-[→]ₗ : ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
+  [∃]-unrelatedᵣ-[→]ₗ pexqx with excluded-middle(P)
+  ... | ([∨]-introₗ p)  = [∃]-map-proof (const) (pexqx(p))
+  ... | ([∨]-introᵣ np) = [∃]-intro(x) ⦃ [⊥]-elim {P = Q(x)} ∘ np ⦄
+
+  [∃]-unrelatedᵣ-[→] : ∃(x ↦ (P → Q(x))) ↔ (P → ∃(x ↦ Q(x)))
+  [∃]-unrelatedᵣ-[→] = [↔]-intro [∃]-unrelatedᵣ-[→]ₗ [∃]-unrelatedᵣ-[→]ᵣ
+
+module _ {X : Type{ℓ₁}} ⦃ _ : (◊ X) ⦄ {P : X → Stmt{ℓ₂}} ⦃ classical-expx : Classical(∃ P) ⦄ {Q : X → Stmt{ℓ₃}} where
   [∃][←]-distributivity : ∃(x ↦ (P(x) → Q(x))) ← (∃(x ↦ P(x)) → ∃(x ↦ Q(x)))
   [∃][←]-distributivity (expx-exqx) =
       (([∃]-map-proof (\{x} → proof ↦ proof{x})
@@ -242,14 +355,23 @@ module _ {X : Type{ℓ₁}} ⦃ _ : ◊ X ⦄ {P : X → Stmt{ℓ₂}} ⦃ class
           )            :of: (∃(x ↦ (∃(x ↦ P(x)) → Q(x)))))
         )              :of: (∃(x ↦ ∀ₗ(y ↦ (P(y) → Q(x))))))
       )                :of: (∃(x ↦ (P(x) → Q(x)))))
-    -- ∃(x ↦ P(x)) → ∃(x ↦ Q(x))
-    -- ⇒ ∃(x ↦ ∃(x ↦ P(x)) → Q(x))
-    -- ⇒ ∃(x ↦ ∀(y ↦ P(y) → Q(x)))
-    -- ⇒ ∃(x ↦ P(x) → Q(x))
+
+{-
+module _ {X : Type{ℓ₁}} ⦃ _ : (◊ X) ⦄ {P : X → Stmt{ℓ₂}} where
+  [¬∀¬]-to-[∃] : (∃ P) ← ¬(∀ₗ(¬_ ∘ P))
+  [¬∀¬]-to-[∃] x = {!!} -- TODO: When is this true?
+
+  [∃]-classical-intro : ⦃ _ : Classical(∀ₗ P) ⦄ ⦃ _ : Classical(∀ₗ(¬_ ∘ P)) ⦄ → Classical(∃ P)
+  Classical.excluded-middle ([∃]-classical-intro ⦃ classical-pa ⦄ ⦃ classical-npa ⦄) with excluded-middle(∀ₗ P) | excluded-middle(∀ₗ(¬_ ∘ P))
+  ... | [∨]-introₗ ap  | [∨]-introₗ nap  with () ← nap(ap {[◊]-existence})
+  ... | [∨]-introₗ ap  | [∨]-introᵣ nanp = [∨]-introₗ ([∃]-intro [◊]-existence ⦃ ap ⦄)
+  ... | [∨]-introᵣ npa | [∨]-introₗ nap  = [∨]-introᵣ ([∀¬]-to-[¬∃] nap)
+  ... | [∨]-introᵣ npa | [∨]-introᵣ nanp = [∨]-introₗ ([¬∀¬]-to-[∃] nanp)
+-}
 
 -- TODO: Maybe try to get rid of the second instance assumption? Idea: Only [¬¬]-elim is needed for that one, so if possible and true, prove: (∀{x} → Classic(P(x)) → P(x)) → (Classic(∃ P) → (∃ P)). No, that is probably not true
 module _ {X : Type{ℓ₁}}{P : X → Stmt{ℓ₂}} ⦃ classical-proof1 : ∀{x} → Classical(P(x)) ⦄ ⦃ classical-proof2 : Classical(∃(¬_ ∘ P)) ⦄ where
-  [¬∀]-to-[∃¬] : ∃(x ↦ ¬(P(x))) ← (¬ ∀ₗ(x ↦ P(x)))
+  [¬∀]-to-[∃¬] : ∃(x ↦ ¬(P(x))) ← ¬(∀ₗ(x ↦ P(x)))
   [¬∀]-to-[∃¬] (naxpx) =
     ([¬¬]-elim ⦃ classical-proof2 ⦄
       ([¬]-intro {P = ¬ ∃(x ↦ ¬(P(x)))} (nexnpx ↦
@@ -295,15 +417,3 @@ module _ {X : Type{ℓ₁}}{P : X → Stmt{ℓ₂}} ⦃ classical-proof1 : ∀{x
     [↔]-intro
       (\ex → intro ⦃ [∃]-witness ex ⦄)
       (\pos-x → drinker-ambiguity ⦃ pos-x ⦄ ⦃ classical-axpx ⦄)
-
-Classical₁ : ∀{ℓₒ ℓₗ}{X : Type{ℓₒ}} → (X → Stmt{ℓₗ}) → Stmt{ℓₒ ⊔ ℓₗ}
-Classical₁(P) = ∀¹(Classical ∘₁ P)
--- Classical₁(P) = ∀{x} → Classical(P(x))
-
-Classical₂ : ∀{ℓₒ₁ ℓₒ₂ ℓₗ}{X : Type{ℓₒ₁}}{Y : Type{ℓₒ₂}} → (X → Y → Stmt{ℓₗ}) → Stmt{ℓₒ₁ ⊔ ℓₒ₂ ⊔ ℓₗ}
-Classical₂(P) = ∀²(Classical ∘₂ P)
--- Classical₂(P) = ∀{x}{y} → Classical(P(x)(y))
-
-Classical₃ : ∀{ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ}{X : Type{ℓₒ₁}}{Y : Type{ℓₒ₂}}{Z : Type{ℓₒ₃}} → (X → Y → Z → Stmt{ℓₗ}) → Stmt{ℓₒ₁ ⊔ ℓₒ₂ ⊔ ℓₒ₃ ⊔ ℓₗ}
-Classical₃(P) = ∀³(Classical ∘₃ P)
--- Classical₃(P) = ∀{x}{y}{z} → Classical(P(x)(y)(z))

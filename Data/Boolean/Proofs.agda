@@ -11,7 +11,7 @@ open import Logic.IntroInstances
 open import Logic.Propositional as Logic using (_∨_ ; _∧_ ; ¬_ ; _↔_ ; [⊤]-intro ; [↔]-intro ; [⊥]-elim ; [↔]-to-[←] ; [↔]-to-[→])
 open import Logic.Predicate
 open import Relator.Equals
-open import Relator.Equals.Proofs.Equivalence
+open import Relator.Equals.Proofs.Equiv
 open import Structure.Operator.Monoid
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
@@ -395,6 +395,18 @@ bivalence {𝐹} = Logic.[∨]-introᵣ [≡]-intro
 disjointness : ∀{a} → ¬((a ≡ 𝑇) ∧ (a ≡ 𝐹))
 disjointness {𝑇} (Logic.[∧]-intro [≡]-intro ())
 disjointness {𝐹} (Logic.[∧]-intro () [≡]-intro)
+
+[→?]-disjunctive-form : ∀{a b} → ((a →? b) ≡ ((! a) || b))
+[→?]-disjunctive-form {𝑇} {𝑇} = [≡]-intro
+[→?]-disjunctive-form {𝑇} {𝐹} = [≡]-intro
+[→?]-disjunctive-form {𝐹} {𝑇} = [≡]-intro
+[→?]-disjunctive-form {𝐹} {𝐹} = [≡]-intro
+
+[==]-disjunctive-form : ∀{a b} → ((a == b) ≡ ((a && b) || ((! a) && (! b))))
+[==]-disjunctive-form {𝑇} {𝑇} = [≡]-intro
+[==]-disjunctive-form {𝑇} {𝐹} = [≡]-intro
+[==]-disjunctive-form {𝐹} {𝑇} = [≡]-intro
+[==]-disjunctive-form {𝐹} {𝐹} = [≡]-intro
 
 module 𝑇 where
   [∧]-intro : ∀{a b} → (a ≡ 𝑇) → (b ≡ 𝑇) → ((a && b) ≡ 𝑇)

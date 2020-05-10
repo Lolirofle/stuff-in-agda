@@ -21,9 +21,8 @@ module _
   where
 
   -- A covariant functor.
+  -- A mapping which transforms objects and morphisms from one category to another while "preserving" the categorical structure.
   -- A homomorphism between categories.
-  -- "Preserves structure".
-  -- A "functor" is specifically a function which morphs/transforms objects from the left category to the right category.
   record Functor (F : Objₗ → Objᵣ) : Type{Lvl.of(type-of(Categoryₗ)) Lvl.⊔ Lvl.of(type-of(Categoryᵣ))} where
     open Category ⦃ … ⦄
     open Category.ArrowNotation ⦃ … ⦄

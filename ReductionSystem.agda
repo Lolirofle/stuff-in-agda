@@ -15,7 +15,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Relator.Converse
 open import Relator.Equals
-open import Relator.Equals.Proofs.Equivalence
+open import Relator.Equals.Proofs.Equiv
 open import Relator.ReflexiveTransitiveClosure
 open import Structure.Setoid.Uniqueness
 open import Structure.Relator.Equivalence
@@ -136,7 +136,7 @@ record Convergent : Stmt{ℓ₁ ⊔ ℓ₂} where
     ⦃ confluence ⦄ : Confluence
     ⦃ strongly-normalizing ⦄ : StronglyNormalizing
 
-
+Evaluable = ∃(f ↦ )
 
 
 

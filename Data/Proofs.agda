@@ -4,7 +4,8 @@ import      Lvl
 open import Data
 open import Logic
 open import Logic.Propositional
-open import Structure.Setoid renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₛ_)
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
 open import Structure.Relator.Equivalence
@@ -13,11 +14,11 @@ open import Type
 open import Type.Empty
 open import Type.Unit
 
-private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+private variable ℓ ℓₑ ℓₑ₁ ℓₑ₂ ℓ₁ ℓ₂ : Lvl.Level
 private variable T : Type{ℓ}
 
 module General where
-  module _ {_▫_ : Empty{ℓ} → Empty{ℓ} → Stmt{ℓ}} where
+  module _ {_▫_ : Empty{ℓ} → Empty{ℓ} → Stmt{ℓₑ}} where
     Empty-equiv : Equiv(Empty)
     Equiv._≡_ Empty-equiv = _▫_
     Reflexivity.proof  (Equivalence.reflexivity  (Equiv.equivalence Empty-equiv)) {}
@@ -51,7 +52,7 @@ module _ where
 
   {- TODO: So, why is this unprovable but Unit-IsUnit is? UIP? What is the difference?
   module _ where
-    open import Relator.Equals.Proofs.Equivalence
+    open import Relator.Equals.Proofs.Equiv
     testee : ∀{T : Type{ℓ}}{a : T} → IsUnit{ℓ}(a ≡ a)
     IsUnit.unit       testee     = [≡]-intro
     IsUnit.uniqueness testee {x} = {!!}
@@ -62,16 +63,20 @@ instance
   Empty-IsEmpty : IsEmpty{ℓ}(Empty)
   Empty-IsEmpty = intro(empty)
 
-module _ ⦃ _ : Equiv(T) ⦄ ⦃ empty-equiv : Equiv{ℓ₂}(Empty) ⦄ where
+module _ ⦃ _ : Equiv{ℓₑ₁}(T) ⦄ ⦃ empty-equiv : Equiv{ℓₑ₂}(Empty{ℓ₂}) ⦄ where
   instance
     empty-injective : Injective ⦃ empty-equiv ⦄(empty{T = T})
     Injective.proof(empty-injective) {}
 
-module _ ⦃ equiv : Equiv(T) ⦄ where
+  instance
+    empty-function : Function ⦃ empty-equiv ⦄(empty{T = T})
+    Function.congruence empty-function {()}
+
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   Unit-fn-unique-value : ∀{f : Unit{ℓ} → T} → (∀{x y} → (f(x) ≡ₛ f(y)))
   Unit-fn-unique-value {x = <>} {y = <>} = reflexivity(_≡ₛ_)
 
-module _ ⦃ equiv : Equiv(Unit{ℓ₁}) ⦄ where
+module _ ⦃ equiv : Equiv{ℓₑ}(Unit{ℓ₁}) ⦄ where
   Unit-fn-unique-fn : ∀{f g : T → Unit{ℓ₁}} → (∀{x y} → (_≡ₛ_ ⦃ equiv ⦄ (f(x)) (g(y))))
   Unit-fn-unique-fn {f = f}{g = g}{x = x}{y = y} with f(x) | g(y)
   ... | <> | <> = reflexivity(_≡ₛ_ ⦃ equiv ⦄)

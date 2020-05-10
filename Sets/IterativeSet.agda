@@ -295,7 +295,8 @@ module _ where
   ∃.proof (Tuple.right (∃.proof (Tuple.right ([⋃]-membership {A = A} {x}) ([∃]-intro (intro iA ia) ⦃ proof ⦄)))) = proof
 
   module _ {A : Iset{ℓ}} where
-    open import Relator.Equals.Proofs.Equiv(Index(A)) using ([≡]-equiv)
+    open import Relator.Equals.Proofs.Equivalence using ([≡]-equiv)
+    instance _ = [≡]-equiv {T = Index(A)}
 
     module _ {P : Index(A) → Stmt{ℓ}} where
       indexFilter-elem-membershipₗ : ∀{i : Index(A)} → (elem(A)(i) ∈ indexFilter A P) ← P(i)
@@ -360,7 +361,7 @@ module _ where
       where
         f = \iA → decide(∃(iB ↦ Id(map iB) iA))
         emapiBiA = [↔]-to-[←] decide-is-true mapiBiA
-        open import Relator.Equals.Proofs.Equivalence using ([≡]-to-equivalence)
+        open import Relator.Equals.Proofs.Equiv using ([≡]-to-equivalence)
     _⊇_.map (_≡_.right (∃.proof (℘-membershipₗ {A = A} {B = B} (intro map proof)))) iB = intro (map iB) (Lvl.up ([↔]-to-[→] decide-is-true ([∃]-intro iB ⦃ intro ⦄)))
     _⊇_.proof (_≡_.right (∃.proof (℘-membershipₗ {A = A} {B = B} (intro map proof)))) = proof
 
@@ -369,8 +370,3 @@ module _ where
 
     ℘-membership : ∀{A : Iset{ℓ}}{x : Iset{ℓ}} → (x ∈ ℘(A)) ↔ (x ⊆ A)
     ℘-membership = [↔]-intro ℘-membershipₗ ℘-membershipᵣ
-
-
-
-  -- Iset-2-2 : ∀{P : Iset{ℓ} → Stmt{ℓ₂}} → (∀{x : Iset{ℓ}} → (∀{y : Iset{ℓ}} → (y ∈ x) → P(y) → P(x))) → (∀{A : Iset{ℓ}} → P(A))
-  -- Iset-2-2 {P = P} proof {A = A} = Iset-induction {P = P} {Index(A)}{elem(A)} (p ↦ proof {intro (elem(A))}{A} {!!} {!!}) {A = A}

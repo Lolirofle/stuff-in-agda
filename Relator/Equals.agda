@@ -8,9 +8,9 @@ open import Type
 
 infixl 15 _≡_ _≢_
 
--- Definition of intensional equality.
--- Also called "identical".
--- Two terms are equal when data representation is the same.
+-- Propositional equality.
+-- Also called: Identity type.
+-- Two terms are equal/identical when their data representation are the same.
 data _≡_ {ℓ}{T : Type{ℓ}} : T → T → Stmt{ℓ} where
   instance [≡]-intro : ∀{x : T} → (x ≡ x)
   -- Interpretation:

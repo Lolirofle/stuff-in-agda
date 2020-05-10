@@ -12,8 +12,8 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
--- open import Relator.Equals.Proofs.Equivalence
-open import Structure.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_)
+-- open import Relator.Equals.Proofs.Equiv
+open import Structure.Setoid.WithLvl using (Equiv) renaming (_≡_ to _≡ₛ_)
 open import Data.Any
 open import Structure.Function.Domain
 open import Type
@@ -25,7 +25,7 @@ module _ where
   PredSet : ∀{ℓ ℓₒ} → Type{ℓₒ} → Type{Lvl.𝐒(ℓ) ⊔ ℓₒ}
   PredSet{ℓ}{ℓₒ} (T) = (T → Stmt{ℓ})
 
-  private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓₒ : Lvl.Level
+  private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓₒ ℓₑ : Lvl.Level
   private variable T A B : Type{ℓₒ}
 
   -- The statement of whether an element is in a set
@@ -59,7 +59,7 @@ module _ where
   𝐔 = const(Unit)
 
   -- A singleton set (a set with only one element)
-  •_ : ⦃ Equiv(T) ⦄ → T → PredSet(T)
+  •_ : ⦃ Equiv{ℓₑ}(T) ⦄ → T → PredSet(T)
   •_ = (_≡ₛ_)
 
   -- An union of two sets
@@ -117,16 +117,16 @@ module _ where
   ℘ : PredSet{ℓ₁}(T) → PredSet(PredSet{ℓ₁}(T))
   ℘ S x = x ⊆ S
 
-  unapply : ⦃ Equiv(B) ⦄ → (f : A → B) → B → PredSet(A)
+  unapply : ⦃ Equiv{ℓₑ}(B) ⦄ → (f : A → B) → B → PredSet(A)
   unapply f(y) x = f(x) ≡ₛ y
 
-  map : ⦃ Equiv(B) ⦄ → (f : A → B) → PredSet{ℓ}(A) → PredSet(B)
+  map : ⦃ Equiv{ℓₑ}(B) ⦄ → (f : A → B) → PredSet{ℓ}(A) → PredSet(B)
   map f(S) y = Overlapping(S)(unapply f(y))
 
   unmap : (f : A → B) → PredSet{ℓ}(B) → PredSet(A)
   unmap f(y) x = f(x) ∈ y
 
-  ⊶ : ⦃ Equiv(B) ⦄ → (f : A → B) → PredSet(B)
+  ⊶ : ⦃ Equiv{ℓₑ}(B) ⦄ → (f : A → B) → PredSet(B)
   ⊶ f y = ∃(unapply f(y))
 
   module _ where -- TODO: These proofs should be generalized somewhere else?
@@ -187,7 +187,7 @@ module _ where
     [𝐔]-containment : ∀{x : T} → (x ∈ 𝐔 {ℓ})
     [𝐔]-containment = <>
 
-    map-containmentₗ : ⦃ equiv-B : Equiv(B) ⦄ → ∀{x : A}{f : A → B} → (f(x) ∈ map ⦃ equiv-B ⦄ f(S)) ← (x ∈ S)
+    map-containmentₗ : ⦃ equiv-B : Equiv{ℓₑ}(B) ⦄ → ∀{x : A}{f : A → B} → (f(x) ∈ map ⦃ equiv-B ⦄ f(S)) ← (x ∈ S)
     map-containmentₗ {x = x} = (xS ↦ [∃]-intro x ⦃ [↔]-intro xS (reflexivity(_≡ₛ_)) ⦄)
 
     -- map-containmentᵣ : ⦃ _ : Relation(S) ⦄ → ∀{f : A → B} → ⦃ _ : Injective(f) ⦄ → ∀{x : A} → (f(x) ∈ map f(S)) → (x ∈ S)

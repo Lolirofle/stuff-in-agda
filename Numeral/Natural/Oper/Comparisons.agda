@@ -6,6 +6,9 @@ import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Numeral.Natural
 
+ℕbool : Bool → ℕ
+ℕbool = if_then 1 else 0
+
 -- Equality check
 _≡?_ : ℕ → ℕ → Bool
 𝟎    ≡? 𝟎    = 𝑇

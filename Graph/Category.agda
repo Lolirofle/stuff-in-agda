@@ -11,7 +11,7 @@ open import Graph.Walk{ℓ₁}{ℓ₂}{V}
 open import Graph.Walk.Proofs{ℓ₁}{ℓ₂}{V}
 open import Relator.Equals
 open import Relator.Equals.Proofs
-open import Relator.Equals.Proofs.Equivalence
+open import Relator.Equals.Proofs.Equiv
 open import Structure.Category
 import      Structure.Category.Names as Names
 open import Structure.Category.Properties

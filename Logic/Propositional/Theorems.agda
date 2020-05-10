@@ -66,12 +66,6 @@ module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [∨]-to-[←][→] ([∨]-introₗ p) = [∨]-introₗ (const p)
   [∨]-to-[←][→] ([∨]-introᵣ q) = [∨]-introᵣ (const q)
 
-  -- [↔]-to-[] : ∀{P Q : Stmt} → (P ↔ Q) ← (P ∧ Q) ∨ ((¬ P) ∧ (¬ Q))
-
-  -- TODO: Probably unprovable
-  -- [↔]-to-[] : ∀{P Q : Stmt} → (P ↔ Q) → (P ∧ Q) ∨ ((¬ P) ∧ (¬ Q))
-  -- [↔]-to-[] ([∧]-intro qp pq) = ?
-
 ------------------------------------------
 -- Associativity (with respect to ↔)
 
@@ -250,15 +244,6 @@ module _ {ℓ} {P : Stmt{ℓ}} where
   [¬¬¬]-elim : (¬ (¬ (¬ P))) → (¬ P)
   [¬¬¬]-elim = contrapositiveᵣ [¬¬]-intro
 
-module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
-  [→][∧]ᵣ : (P → Q) → ¬(P ∧ (¬ Q))
-  [→][∧]ᵣ f = Tuple.uncurry([¬¬]-intro ∘ f)
-
-  [¬→][∧]ₗ : ¬(P → Q) ← (P ∧ (¬ Q))
-  [¬→][∧]ₗ (pnq) = contrapositiveᵣ([→][∧]ᵣ)([¬¬]-intro pnq)
-
-  -- [→][¬∧] : (P → ¬ Q) ↔ ¬(P ∧ Q) -- TODO: Probably need [¬¬]-elim
-
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{ℓ₃}} where
   [↔]-of-[∧] : ((P ∧ R) ↔ (Q ∧ R)) → (R → (P ↔ Q))
   [↔]-of-[∧] ([↔]-intro qrpr prqr) r =
@@ -274,39 +259,53 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{
       (pr ↦ [∧]-intro (pq([∧]-elimₗ pr)) ([∧]-elimᵣ pr))
     )
 
-module _ {ℓ} {P : Stmt{ℓ}}{Q : Stmt{ℓ}} where
+module _ {ℓ₁}{ℓ₂}{ℓ₃}{ℓ₄} {A : Stmt{ℓ₁}}{B : Stmt{ℓ₂}}{C : Stmt{ℓ₃}}{D : Stmt{ℓ₄}} where
+  -- TODO: Rename to binaryOperator
+  postulate [∧]-equiv-map : (A ↔ C) → (B ↔ D) → ((A ∧ B) ↔ (C ∧ D))
+  postulate [∨]-equiv-map : (A ↔ C) → (B ↔ D) → ((A ∨ B) ↔ (C ∨ D))
+
+module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [↔]-elimₗ-[¬] : (P ↔ Q) → (¬ P) → (¬ Q)
   [↔]-elimₗ-[¬] pq np q = np([↔]-elimₗ(q)(pq))
 
   [↔]-elimᵣ-[¬] : (P ↔ Q) → (¬ Q) → (¬ P)
   [↔]-elimᵣ-[¬] pq nq p = nq([↔]-elimᵣ(p)(pq))
 
-  [↔]-negationᵣ : (P ↔ Q) → ((¬ P) ↔ (¬ Q)) -- TODO: Is the other direction also valid? Probably not
+  -- TODO: Rename to binaryOperator
+  [↔]-negationᵣ : (P ↔ Q) → ((¬ P) ↔ (¬ Q))
   [↔]-negationᵣ pq = [↔]-intro ([↔]-elimᵣ-[¬] (pq)) ([↔]-elimₗ-[¬] (pq))
+
+  [↔]-boolean-casesₗ : (P ↔ Q) ← (P ∧ Q) ∨ ((¬ P) ∧ (¬ Q))
+  [↔]-boolean-casesₗ ([∨]-introₗ pq)   = [∧]-to-[↔] pq
+  [↔]-boolean-casesₗ ([∨]-introᵣ npnq) = Tuple.map ([⊥]-elim ∘_) ([⊥]-elim ∘_) (Tuple.swap npnq)
 
 module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [↔]-elim-[∨] : (P ↔ Q) → (P ∨ Q) → (P ∧ Q)
   [↔]-elim-[∨] (p↔q) ([∨]-introₗ p) = [∧]-intro p ([↔]-elimᵣ(p) p↔q)
   [↔]-elim-[∨] (p↔q) ([∨]-introᵣ q) = [∧]-intro ([↔]-elimₗ(q) p↔q) q
 
-  -- TODO: Is this possible to prove?
-  -- [↔]-elim-[¬∨¬] : (P ↔ Q) → ((¬ P) ∨ (¬ Q)) → (P ∧ Q)
+module _ {ℓ} {P : Stmt{ℓ}} where
+  provable-top-equivalence : P → (P ↔ ⊤)
+  provable-top-equivalence p = [↔]-intro (const p) (const [⊤]-intro)
+
+  unprovable-bottom-equivalence : (¬ P) → (P ↔ ⊥)
+  unprovable-bottom-equivalence np = [↔]-intro [⊥]-elim np
 
 ------------------------------------------
--- Almost-distributivity with duals (De-morgan's laws)
+-- Negation is almost preserved over the conjunction-dijunction dual (De-morgan's laws).
 
 module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
-  [¬][∧]ᵣ : ((¬ P) ∨ (¬ Q)) → (¬ (P ∧ Q))
-  [¬][∧]ᵣ ([∨]-introₗ np) = np ∘ [∧]-elimₗ
-  [¬][∧]ᵣ ([∨]-introᵣ nq) = nq ∘ [∧]-elimᵣ
+  [¬]-preserves-[∧][∨]ₗ : (¬ (P ∧ Q)) ← ((¬ P) ∨ (¬ Q))
+  [¬]-preserves-[∧][∨]ₗ ([∨]-introₗ np) = np ∘ [∧]-elimₗ
+  [¬]-preserves-[∧][∨]ₗ ([∨]-introᵣ nq) = nq ∘ [∧]-elimᵣ
 
-  [¬][∨] : ((¬ P) ∧ (¬ Q)) ↔ (¬ (P ∨ Q))
-  [¬][∨] = [↔]-intro l r
-    where l : (¬ (P ∨ Q)) → ((¬ P) ∧ (¬ Q))
-          l f = [∧]-intro (f ∘ [∨]-introₗ) (f ∘ [∨]-introᵣ)
+  [¬]-preserves-[∨][∧] : (¬ (P ∨ Q)) ↔ ((¬ P) ∧ (¬ Q))
+  [¬]-preserves-[∨][∧] = [↔]-intro l r where
+    l : ¬(P ∨ Q) ← ((¬ P) ∧ (¬ Q))
+    l ([∧]-intro np nq) = [∨]-elim np nq
 
-          r : ((¬ P)∧(¬ Q)) → ¬(P ∨ Q)
-          r ([∧]-intro np nq) = [∨]-elim np nq
+    r : (¬ (P ∨ Q)) → ((¬ P) ∧ (¬ Q))
+    r f = [∧]-intro (f ∘ [∨]-introₗ) (f ∘ [∨]-introᵣ)
 
 ------------------------------------------
 -- Conjunction and implication (Tuples and functions)
@@ -323,14 +322,11 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{
           r : ((P → Q) ∧ (P → R)) ← (P → (Q ∧ R))
           r both = [∧]-intro ([∧]-elimₗ ∘ both) ([∧]-elimᵣ ∘ both)
 
-  [→][∨]-distributivityₗ : (P → (Q ∨ R)) ← ((P → Q) ∨ (P → R))
-  [→][∨]-distributivityₗ = l -- [↔]-intro l r
+  [→][∨]-distributivityₗₗ : (P → (Q ∨ R)) ← ((P → Q) ∨ (P → R))
+  [→][∨]-distributivityₗₗ = l
     where l : ((P → Q) ∨ (P → R)) → (P → (Q ∨ R))
           l ([∨]-introₗ pq) p = [∨]-introₗ (pq(p))
           l ([∨]-introᵣ pr) p = [∨]-introᵣ (pr(p))
-
-          -- r : ∀{P Q R : Stmt} → ((P → Q) ∨ (P → R)) ← (P → (Q ∨ R))
-          -- r both = [∨]-introₗ (p ↦ both p)
 
 module _ {ℓ} {P : Stmt{ℓ}} where
   non-contradiction : ¬(P ∧ (¬ P))
@@ -351,7 +347,7 @@ module _ {ℓ} {A : Stmt{ℓ}} where
   [∨]-redundancy = [↔]-intro [∨]-introₗ (p ↦ [∨]-elim id id p)
 
 ------------------------------------------
--- Disjunctive normal form conversions in classical logic
+-- Disjunctive forms
 
 module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   -- Also called: Material implication
@@ -366,12 +362,25 @@ module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   -- [↔]-disjunctive-formᵣ : ∀{P Q : Stmt} → (P ↔ Q) → ((P ∧ Q) ∨ ((¬ P) ∧ (¬ Q)))
   -- [↔]-disjunctive-formᵣ ([↔]-intro qp pq) = 
 
+  [¬→]-[∨]ₗ : ((¬ P) → Q) ← (P ∨ Q)
+  [¬→]-[∨]ₗ = [∨]-exclude-left
+
 ------------------------------------------
--- Conjuctive normal form conversions in classical logic
+-- Conjuctive forms
 
 -- TODO: None of them are provable?
 -- [↔]-conjunctive-form : ∀{P Q : Stmt} → (P ↔ Q) ↔ ((P ∨ Q) ∧ ((¬ P) ∨ (¬ Q)))
 -- [↔]-conjunctive-form ([↔]-intro qp pq) = [∨]-elim ([→]-lift [⊥]-elim) (const)
+
+module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
+  [→][∧]ᵣ : (P → Q) → ¬(P ∧ (¬ Q))
+  [→][∧]ᵣ f = Tuple.uncurry([¬¬]-intro ∘ f)
+
+  [¬→][∧]ₗ : ¬(P → Q) ← (P ∧ (¬ Q))
+  [¬→][∧]ₗ = swap [→][∧]ᵣ
+
+  [→¬]-¬[∧] : (P → (¬ Q)) ↔ ¬(P ∧ Q)
+  [→¬]-¬[∧] = [↔]-intro Tuple.curry Tuple.uncurry
 
 ------------------------------------------
 -- Stuff related to classical logic

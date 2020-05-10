@@ -1,6 +1,7 @@
 module Data.List.Relation.Permutation where
 
-open import Data.List renaming (module LongOper to List)
+open import Data.List using () renaming (module LongOper to List)
+open import Data.List renaming (module List to List)
 open import Functional using (id ; _∘_)
 open import Logic
 import      Lvl

@@ -6,7 +6,7 @@ open import Logic
 open import Logic.Predicate
 open import Numeral.Finite
 open import Numeral.Natural
-open import Relator.Equals.Proofs.Equivalence
+open import Relator.Equals.Proofs.Equiv
 open import Type
 open import Type.Size
 

@@ -29,7 +29,7 @@ module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}
 
     field
       [⊆]-membership : ∀{a b} → (a ⊆ b) ↔ (∀{x} → (x ∈ a) → (x ∈ b))
-      [≡]-membership : ∀{a b} → (a ≡ b) ↔ (∀{x} → (x ∈ a) ↔ (x ∈ b))  
+      [≡]-membership : ∀{a b} → (a ≡ b) ↔ (∀{x} → (x ∈ a) ↔ (x ∈ b))
 
     _∋_ : C → E → Stmt
     _∋_ = swap(_∈_)
@@ -147,7 +147,7 @@ module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_)
   open BooleanFilterFunction ⦃ ... ⦄ hiding (Membership ; membership) public
   module BooleanFilter ⦃ inst ⦄ = BooleanFilterFunction(inst)
 
-module _ ⦃ outer-setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{Cₒ}{Cᵢ} (_∈ₒ_) {ℓ₄}{ℓ₅} ⦄ ⦃ inner-setLike : SetLike{ℓ₂}{ℓ₆}{ℓ₇}{Cᵢ}{E} (_∈ᵢ_) {ℓ₈}{ℓ₉} ⦄ where
+module _ (_∈ₒ_ : _) ⦃ outer-setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{Cₒ}{Cᵢ} (_∈ₒ_) {ℓ₄}{ℓ₅} ⦄ (_∈ᵢ_ : _) ⦃ inner-setLike : SetLike{ℓ₂}{ℓ₆}{ℓ₇}{Cᵢ}{E} (_∈ᵢ_) {ℓ₈}{ℓ₉} ⦄ where
   open SetLike ⦃ … ⦄
 
   record PowerFunction : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₈} where
@@ -201,7 +201,7 @@ module Proofs where
           big-intersection-filter-unary-relator : ⦃ _ : Equiv{ℓₗ}(E) ⦄ ⦃ _ : BinaryRelator{B = C}(_∈_) ⦄ → ∀{As} → UnaryRelator(\a → ∀{A} → (A ∈ As) → (a ∈ A))
           big-intersection-filter-unary-relator ⦃ [∈]-binaryRelator ⦄ = [∀]-unaryRelator ⦃ rel-P = \{A} → [→]-unaryRelator ⦃ rel-P = const-unaryRelator ⦄ ⦃ rel-Q = BinaryRelator.left (binaryRelator(_∈_)) {A} ⦄ ⦄
 
-      filter-big-union-to-big-intersection : ⦃ _ : BinaryRelator(_∈_) ⦄ ⦃ _ : FilterFunction(_∈_){ℓ = ℓ₁ ⊔ ℓ₂} ⦄ ⦃ _ : BigUnionOperator ⦄ → BigIntersectionOperator
+      filter-big-union-to-big-intersection : ⦃ _ : BinaryRelator(_∈_) ⦄ ⦃ _ : FilterFunction(_∈_){ℓ = ℓ₁ ⊔ ℓ₂} ⦄ ⦃ _ : BigUnionOperator(_∈_)(_∈_) ⦄ → BigIntersectionOperator(_∈_)(_∈_)
       BigIntersectionOperator.⋂ filter-big-union-to-big-intersection As = filter(\a → ∀{A} → (A ∈ As) → (a ∈ A))(⋃ As)
       Tuple.left (BigIntersectionOperator.membership filter-big-union-to-big-intersection {As} eAs {a}) p = [↔]-to-[←] Filter.membership ([∧]-intro ([↔]-to-[←] BigUnion.membership ([∃]-map-proof (aAs ↦ [∧]-intro aAs (p aAs)) eAs)) (\{x} → p{x}))
       Tuple.right (BigIntersectionOperator.membership filter-big-union-to-big-intersection {As} eAs {a}) xfilter {A} AAs = [∧]-elimᵣ([↔]-to-[→] Filter.membership xfilter) AAs
@@ -261,6 +261,9 @@ module Proofs where
           Equiv._≡_ [≡]-equiv = _≡_
           Equiv.equivalence [≡]-equiv = equivalence
 
+      [∈]-unaryOperatorᵣ : UnaryRelator(x ∈_)
+      UnaryRelator.substitution [∈]-unaryOperatorᵣ xy = [↔]-to-[→] ([↔]-to-[→] [≡]-membership xy)
+
       module _
         ⦃ _ : Equiv{ℓₗ₂}(E) ⦄
         ⦃ _ : Weak.PartialOrder(_⊆_)(_≡_) ⦄
@@ -269,64 +272,52 @@ module Proofs where
         ⦃ _ : (_≡_) ⊆₂ (_⊇_) ⦄
         where
 
-        instance
-          [⊆]-binaryRelator : BinaryRelator(_⊆_)
-          BinaryRelator.substitution [⊆]-binaryRelator p1 p2 ps = sub₂(_≡_)(_⊇_) p1 🝖 ps 🝖 sub₂(_≡_)(_⊆_) p2
+        [⊆]-binaryRelator : BinaryRelator(_⊆_)
+        BinaryRelator.substitution [⊆]-binaryRelator p1 p2 ps = sub₂(_≡_)(_⊇_) p1 🝖 ps 🝖 sub₂(_≡_)(_⊆_) p2
 
-        instance
-          [⊇]-binaryRelator : BinaryRelator(_⊇_)
-          BinaryRelator.substitution [⊇]-binaryRelator = swap(substitute₂(_⊆_))
+        [⊇]-binaryRelator : BinaryRelator(_⊇_)
+        BinaryRelator.substitution [⊇]-binaryRelator = swap(substitute₂(_⊆_) ⦃ [⊆]-binaryRelator ⦄)
 
-    instance
-      [≡]-to-[⊆] : (_≡_) ⊆₂ (_⊆_)
-      _⊆₂_.proof [≡]-to-[⊆] =
-        [↔]-to-[←] [⊆]-membership
-        ∘ [∀][→]-distributivity [↔]-to-[→]
-        ∘ [↔]-to-[→] [≡]-membership
+    [≡]-to-[⊆] : (_≡_) ⊆₂ (_⊆_)
+    _⊆₂_.proof [≡]-to-[⊆] =
+      [↔]-to-[←] [⊆]-membership
+      ∘ [∀][→]-distributivity [↔]-to-[→]
+      ∘ [↔]-to-[→] [≡]-membership
 
-    instance
-      [≡]-to-[⊇] : (_≡_) ⊆₂ (_⊇_)
-      _⊆₂_.proof [≡]-to-[⊇] =
-        [↔]-to-[←] [⊆]-membership
-        ∘ [∀][→]-distributivity [↔]-to-[←]
-        ∘ [↔]-to-[→] [≡]-membership
+    [≡]-to-[⊇] : (_≡_) ⊆₂ (_⊇_)
+    _⊆₂_.proof [≡]-to-[⊇] =
+      [↔]-to-[←] [⊆]-membership
+      ∘ [∀][→]-distributivity [↔]-to-[←]
+      ∘ [↔]-to-[→] [≡]-membership
 
-    instance
-      [⊆]-reflexivity : Reflexivity(_⊆_)
-      Reflexivity.proof [⊆]-reflexivity = [↔]-to-[←] [⊆]-membership [→]-reflexivity
+    [⊆]-reflexivity : Reflexivity(_⊆_)
+    Reflexivity.proof [⊆]-reflexivity = [↔]-to-[←] [⊆]-membership [→]-reflexivity
 
-    instance
-      [⊆]-antisymmetry : Antisymmetry(_⊆_)(_≡_)
-      Antisymmetry.proof [⊆]-antisymmetry ab ba =
-        [↔]-to-[←] [≡]-membership ([↔]-intro ([↔]-to-[→] [⊇]-membership ba) ([↔]-to-[→] [⊆]-membership ab))
+    [⊆]-antisymmetry : Antisymmetry(_⊆_)(_≡_)
+    Antisymmetry.proof [⊆]-antisymmetry ab ba =
+      [↔]-to-[←] [≡]-membership ([↔]-intro ([↔]-to-[→] [⊇]-membership ba) ([↔]-to-[→] [⊆]-membership ab))
 
-    instance
-      [⊆]-transitivity : Transitivity(_⊆_)
-      Transitivity.proof [⊆]-transitivity xy yz =
-        [↔]-to-[←] [⊆]-membership ([→]-transitivity ([↔]-to-[→] [⊆]-membership xy) ([↔]-to-[→] [⊆]-membership yz))
+    [⊆]-transitivity : Transitivity(_⊆_)
+    Transitivity.proof [⊆]-transitivity xy yz =
+      [↔]-to-[←] [⊆]-membership ([→]-transitivity ([↔]-to-[→] [⊆]-membership xy) ([↔]-to-[→] [⊆]-membership yz))
 
-    instance
-      [⊆]-partialOrder : Weak.PartialOrder(_⊆_)(_≡_)
-      [⊆]-partialOrder = Weak.intro
+    [⊆]-partialOrder : Weak.PartialOrder(_⊆_)(_≡_)
+    [⊆]-partialOrder = Weak.intro ⦃ [⊆]-antisymmetry ⦄ ⦃ [⊆]-transitivity ⦄ ⦃ [⊆]-reflexivity ⦄
 
-    instance
-      [≡]-reflexivity : Reflexivity(_≡_)
-      Reflexivity.proof [≡]-reflexivity = [↔]-to-[←] [≡]-membership [↔]-reflexivity
+    [≡]-reflexivity : Reflexivity(_≡_)
+    Reflexivity.proof [≡]-reflexivity = [↔]-to-[←] [≡]-membership [↔]-reflexivity
 
-    instance
-      [≡]-symmetry : Symmetry(_≡_)
-      Symmetry.proof [≡]-symmetry =
-        [↔]-to-[←] [≡]-membership
-        ∘ [∀][→]-distributivity [↔]-symmetry
-        ∘ [↔]-to-[→] [≡]-membership
+    [≡]-symmetry : Symmetry(_≡_)
+    Symmetry.proof [≡]-symmetry =
+      [↔]-to-[←] [≡]-membership
+      ∘ [∀][→]-distributivity [↔]-symmetry
+      ∘ [↔]-to-[→] [≡]-membership
 
-    instance
-      [≡]-transitivity : Transitivity(_≡_)
-      Transitivity.proof [≡]-transitivity xy yz = [↔]-to-[←] [≡]-membership ([↔]-transitivity ([↔]-to-[→] [≡]-membership xy) ([↔]-to-[→] [≡]-membership yz))
+    [≡]-transitivity : Transitivity(_≡_)
+    Transitivity.proof [≡]-transitivity xy yz = [↔]-to-[←] [≡]-membership ([↔]-transitivity ([↔]-to-[→] [≡]-membership xy) ([↔]-to-[→] [≡]-membership yz))
 
-    instance
-      [≡]-equivalence : Equivalence(_≡_)
-      [≡]-equivalence = intro
+    [≡]-equivalence : Equivalence(_≡_)
+    [≡]-equivalence = intro ⦃ [≡]-reflexivity ⦄ ⦃ [≡]-symmetry ⦄ ⦃ [≡]-transitivity ⦄
 
     -- TODO: These are unneccessary if one uses Structure.Operator.SetAlgebra or lattices
     module _ ⦃ _ : EmptySet(_∈_) ⦄ ⦃ _ : UniversalSet(_∈_) ⦄ ⦃ _ : ComplementOperator(_∈_) ⦄ where
@@ -335,7 +326,6 @@ module Proofs where
 
       ∁-of-𝐔 : (∁(𝐔) ≡ ∅)
       ∁-of-𝐔 = [↔]-to-[←] [≡]-membership ([↔]-intro ([⊥]-elim ∘ Empty.membership) ([⊥]-elim ∘ apply Universal.membership ∘ [↔]-to-[→] Complement.membership))
-
 
   module _ ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ where
     open SetLike(setLike)

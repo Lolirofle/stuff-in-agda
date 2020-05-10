@@ -45,8 +45,6 @@ x    −₀ 𝟎    = x
 𝟎    −₀ 𝐒(_) = 𝟎
 𝐒(x) −₀ 𝐒(y) = x −₀ y
 {-# BUILTIN NATMINUS _−₀_ #-}
--- x −₀ 𝟎 = x
--- x −₀ 𝐒(y) = 𝐏(x −₀ y)
 
 -- Closed total ceiled division (rounding up)
 {-# TERMINATING #-}
