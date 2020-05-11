@@ -134,16 +134,17 @@ module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} ⦃ classical : Classical(Q) ⦄ 
   contrapositive : (P → Q) ↔ ((¬ P) ← (¬ Q))
   contrapositive = [↔]-intro contrapositiveₗ contrapositiveᵣ
 
-module _ {P : Stmt{ℓ₁}} ⦃ classical : Classical(P) ⦄ {Q : Stmt{ℓ₂}} where
-  contrapositive-variantₗ : ((¬ P) → Q) → (P ← (¬ Q))
-  contrapositive-variantₗ npq nq = nqnp(nq) where
-    npnnq : (¬ P) → (¬¬ Q)
-    npnnq = [¬¬]-intro ∘ npq
+  contrapositive-variant2ᵣ : (P ← (¬ Q)) → ((¬ P) → Q)
+  contrapositive-variant2ᵣ = [¬¬]-elim ∘₂ (swap _∘_)
 
-    nqnp : (¬ Q) → P
-    nqnp = contrapositiveₗ (npnnq)
+module _ {P : Stmt{ℓ₁}} ⦃ classical : Classical(P) ⦄ {Q : Stmt{ℓ₂}} where
+  contrapositive-variant2ₗ : ((¬ P) → Q) → (P ← (¬ Q))
+  contrapositive-variant2ₗ = contrapositiveₗ ∘ ([¬¬]-intro ∘_)
 
 module _ {P : Stmt{ℓ₁}} ⦃ classic-p : Classical(P) ⦄ {Q : Stmt{ℓ₂}} ⦃ classic-q : Classical(Q) ⦄ where
+  contrapositive-variant2 : (P ← (¬ Q)) ↔ ((¬ P) → Q)
+  contrapositive-variant2 = [↔]-intro contrapositive-variant2ₗ contrapositive-variant2ᵣ
+
   one-direction-implication : (P ← Q) ∨ (P → Q)
   one-direction-implication with excluded-middle(P) | excluded-middle(Q)
   one-direction-implication | [∨]-introₗ p  | [∨]-introₗ q  = [∨]-introₗ (const p)
@@ -151,11 +152,11 @@ module _ {P : Stmt{ℓ₁}} ⦃ classic-p : Classical(P) ⦄ {Q : Stmt{ℓ₂}} 
   one-direction-implication | [∨]-introᵣ np | [∨]-introₗ q  = [∨]-introᵣ (const q)
   one-direction-implication | [∨]-introᵣ np | [∨]-introᵣ nq = [∨]-introᵣ ([⊥]-elim ∘ np)
 
-  [↔]-negationₗ : (P ↔ Q) ← ((¬ P) ↔ (¬ Q))
-  [↔]-negationₗ ([↔]-intro nqnp npnq) = [↔]-intro (contrapositiveₗ ⦃ classic-p ⦄ npnq) (contrapositiveₗ ⦃ classic-q ⦄ nqnp)
+  [¬]-injective : (P ↔ Q) ← ((¬ P) ↔ (¬ Q))
+  [¬]-injective ([↔]-intro nqnp npnq) = [↔]-intro (contrapositiveₗ ⦃ classic-p ⦄ npnq) (contrapositiveₗ ⦃ classic-q ⦄ nqnp)
 
   [↔]-negation : (P ↔ Q) ↔ ((¬ P) ↔ (¬ Q))
-  [↔]-negation = [↔]-intro [↔]-negationₗ [↔]-negationᵣ
+  [↔]-negation = [↔]-intro [¬]-injective [¬]-unaryOperator
 
 ------------------------------------------
 -- XOR.
@@ -287,14 +288,14 @@ module _ {P : Stmt{ℓ}} ⦃ classical-P : Classical(P) ⦄ where
   [→]-from-contrary : ∀{Q : Stmt{ℓ₂}} → (Q → (¬ P) → ⊥) → (Q → P)
   [→]-from-contrary = [¬¬]-elim ∘_
 
-  [¬→]-[∨]ᵣ : ∀{Q : Stmt{ℓ₂}} → ((¬ P) → Q) → (P ∨ Q)
-  [¬→]-[∨]ᵣ npq = excluded-middle-elim P [∨]-introₗ ([∨]-introᵣ ∘ npq)
+  [¬→]-disjunctive-formᵣ : ∀{Q : Stmt{ℓ₂}} → ((¬ P) → Q) → (P ∨ Q)
+  [¬→]-disjunctive-formᵣ npq = excluded-middle-elim P [∨]-introₗ ([∨]-introᵣ ∘ npq)
 
-  [¬→]-[∨] : ∀{Q : Stmt{ℓ₂}} → ((¬ P) → Q) ↔ (P ∨ Q)
-  [¬→]-[∨] = [↔]-intro [¬→]-[∨]ₗ [¬→]-[∨]ᵣ
+  [¬→]-disjunctive-form : ∀{Q : Stmt{ℓ₂}} → ((¬ P) → Q) ↔ (P ∨ Q)
+  [¬→]-disjunctive-form = [↔]-intro [¬→]-disjunctive-formₗ [¬→]-disjunctive-formᵣ
 
-  -- [↔]-boolean-cases : ∀{Q : Stmt{ℓ₂}} → (P ↔ Q) ↔ (P ∧ Q) ∨ ((¬ P) ∧ (¬ Q))
-  -- [↔]-boolean-cases = [↔]-intro [↔]-boolean-casesₗ ?
+  -- [↔]-disjunctive-form : ∀{Q : Stmt{ℓ₂}} → (P ↔ Q) ↔ (P ∧ Q) ∨ ((¬ P) ∧ (¬ Q))
+  -- [↔]-disjunctive-form = [↔]-intro [↔]-disjunctive-formₗ ?
 
   module _ {Q : Stmt{ℓ₂}} {R : Stmt{ℓ₃}} where
     [→][∨]-distributivityₗ : (P → (Q ∨ R)) ↔ ((P → Q) ∨ (P → R))
@@ -304,7 +305,7 @@ module _ {P : Stmt{ℓ}} ⦃ classical-P : Classical(P) ⦄ where
 
 module _ {P : Stmt{ℓ₁}} ⦃ classic-p : Classical(P) ⦄ {Q : Stmt{ℓ₂}} ⦃ classic-q : Classical(Q) ⦄ where
   [¬→][∧]ᵣ : ¬(P → Q) → (P ∧ (¬ Q))
-  [¬→][∧]ᵣ = contrapositive-variantₗ ⦃ [∧]-classical-intro {P = P}{Q = ¬ Q} ⦃ classical-q = [¬]-classical-intro ⦄ ⦄ ([→][∧]ₗ {Q = Q})
+  [¬→][∧]ᵣ = contrapositive-variant2ₗ ⦃ [∧]-classical-intro {P = P}{Q = ¬ Q} ⦃ classical-q = [¬]-classical-intro ⦄ ⦄ ([→][∧]ₗ {Q = Q})
 
   [¬→][∧] : ¬(P → Q) ↔ (P ∧ (¬ Q))
   [¬→][∧] = [↔]-intro [¬→][∧]ₗ [¬→][∧]ᵣ

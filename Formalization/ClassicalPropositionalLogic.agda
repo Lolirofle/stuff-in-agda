@@ -819,9 +819,9 @@ module _ where
       maximally-consistent-is-modelSet maxCon {• x} = {!!}
       maximally-consistent-is-modelSet maxCon {⊤} = [⊤]-maximal-membership ⦃ maxCon ⦄
       maximally-consistent-is-modelSet maxCon {⊥} = [⊥]-maximal-membership ⦃ maxCon ⦄
-      maximally-consistent-is-modelSet maxCon {¬ φ} = Logic.[↔]-transitivity ([¬]-maximal-membership ⦃ maxCon ⦄) (Logic.[↔]-negationᵣ (maximally-consistent-is-modelSet maxCon))
-      maximally-consistent-is-modelSet maxCon {φ ∧ ψ} = Logic.[↔]-transitivity ([∧]-maximal-membership ⦃ maxCon ⦄) (Logic.[∧]-equiv-map (maximally-consistent-is-modelSet maxCon) (maximally-consistent-is-modelSet maxCon))
-      maximally-consistent-is-modelSet maxCon {φ ∨ ψ} = Logic.[↔]-transitivity ([∨]-maximal-membership ⦃ maxCon ⦄) (Logic.[∨]-equiv-map (maximally-consistent-is-modelSet maxCon) (maximally-consistent-is-modelSet maxCon))
+      maximally-consistent-is-modelSet maxCon {¬ φ} = Logic.[↔]-transitivity ([¬]-maximal-membership ⦃ maxCon ⦄) (Logic.[¬]-unaryOperator (maximally-consistent-is-modelSet maxCon))
+      maximally-consistent-is-modelSet maxCon {φ ∧ ψ} = Logic.[↔]-transitivity ([∧]-maximal-membership ⦃ maxCon ⦄) (Logic.[∧]-binaryOperator (maximally-consistent-is-modelSet maxCon) (maximally-consistent-is-modelSet maxCon))
+      maximally-consistent-is-modelSet maxCon {φ ∨ ψ} = Logic.[↔]-transitivity ([∨]-maximal-membership ⦃ maxCon ⦄) (Logic.[∨]-binaryOperator (maximally-consistent-is-modelSet maxCon) (maximally-consistent-is-modelSet maxCon))
       maximally-consistent-is-modelSet maxCon {φ ⟶ ψ} = {!!}
       maximally-consistent-is-modelSet maxCon {φ ⟷ ψ} = {!!}
 

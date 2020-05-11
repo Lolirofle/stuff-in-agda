@@ -136,7 +136,7 @@ record Convergent : Stmt{ℓ₁ ⊔ ℓ₂} where
     ⦃ confluence ⦄ : Confluence
     ⦃ strongly-normalizing ⦄ : StronglyNormalizing
 
-Evaluable = ∃(f ↦ )
+-- Evaluable = ∃(f ↦ )
 
 
 

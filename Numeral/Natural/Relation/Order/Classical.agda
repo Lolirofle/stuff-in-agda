@@ -25,7 +25,7 @@ open import Type
 ... | [∨]-introᵣ a≯b = [⊥]-elim ([≰][≯]-not (a≰b) (a≯b))
 
 [≯]-to-[≤] : ∀{a b : ℕ} → (a ≯ b) → (a ≤ b)
-[≯]-to-[≤] {a}{b} = contrapositive-variantₗ ⦃ ComputablyDecidable.classical(_≤_) ⦄ ([≰]-to-[>] {a}{b})
+[≯]-to-[≤] {a}{b} = contrapositive-variant2ₗ ⦃ ComputablyDecidable.classical(_≤_) ⦄ ([≰]-to-[>] {a}{b})
 
 [≱]-to-[<] : ∀{a b : ℕ} → (a ≱ b) → (a < b)
 [≱]-to-[<] {a}{b} (a≱b) with excluded-middle _ ⦃ ComputablyDecidable.classical(_<_) ⦄
@@ -33,7 +33,7 @@ open import Type
 ... | [∨]-introᵣ a≮b = [⊥]-elim ([≮][≱]-not (a≮b) (a≱b))
 
 [≮]-to-[≥] : ∀{a b : ℕ} → (a ≮ b) → (a ≥ b)
-[≮]-to-[≥] {a}{b} = contrapositive-variantₗ ⦃ ComputablyDecidable.classical(_≥_) ⦄ ([≱]-to-[<] {a}{b})
+[≮]-to-[≥] {a}{b} = contrapositive-variant2ₗ ⦃ ComputablyDecidable.classical(_≥_) ⦄ ([≱]-to-[<] {a}{b})
 
 [≤]-or-[>] : ∀{a b : ℕ} → (a ≤ b)∨(a > b)
 [≤]-or-[>] with excluded-middle _ ⦃ ComputablyDecidable.classical(_≤_) ⦄

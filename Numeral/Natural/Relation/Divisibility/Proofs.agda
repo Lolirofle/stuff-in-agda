@@ -93,6 +93,9 @@ divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , di
     )
   )
 
+postulate divides-with-[⋅]ₗ : ∀{a b c} → (a ∣ b) → (a ∣ (b ⋅ c))
+postulate divides-with-[⋅]ᵣ : ∀{a b c} → (a ∣ c) → (a ∣ (b ⋅ c))
+
 divides-with-[⋅] : ∀{a b c} → (a ∣ b) → (a ∣ c) → (a ∣ (b ⋅ c)) -- TODO: Does it really need both? One of them should be enough?
 divides-with-[⋅] {a}{b}{c} (a-div-b) (a-div-c) with (divides-elim (a-div-b) , divides-elim (a-div-c))
 ... | (([∃]-intro (n₁) ⦃ a⋅n₁≡b ⦄),([∃]-intro (n₂) ⦃ a⋅n₂≡c ⦄)) =
@@ -195,8 +198,17 @@ divides-not-lower-limit {a}{b} = (contrapositiveᵣ (divides-upper-limit {a}{b})
 Div𝐏 : ∀{x y : ℕ} → (y ∣ (y + x)) → (y ∣ x)
 Div𝐏 {x}{y} proof = divides-without-[+]ᵣ {y}{y}{x} (proof) (divides-reflexivity)
 
--- TODO: divides-factorial : ∀{n x} → (𝐒(x) ≤ n) → (𝐒(x) ∣ n !)
+divides-with-[⋅]ₗ-both : ∀{x y z} → (x ∣ y) → (z ⋅ x ∣ z ⋅ y)
+divides-with-[⋅]ₗ-both {x} {.0}       {z} Div𝟎 = Div𝟎
+divides-with-[⋅]ₗ-both {x} {.(x + _)} {z} (Div𝐒 {_}{y} xy) rewrite [⋅][+]-distributivityₗ-raw {z}{x}{y} = Div𝐒 (divides-with-[⋅]ₗ-both {x}{y}{z} xy)
 
+divides-with-[⋅]ᵣ-both : ∀{x y z} → (x ∣ y) → (x ⋅ z ∣ y ⋅ z)
+divides-with-[⋅]ᵣ-both {x} {.0}       {z} Div𝟎 = Div𝟎
+divides-with-[⋅]ᵣ-both {x} {.(x + _)} {z} (Div𝐒 {_}{y} xy) rewrite [⋅][+]-distributivityᵣ-raw {x}{y}{z} = Div𝐒 (divides-with-[⋅]ᵣ-both {x}{y}{z} xy)
+
+-- divides-without-[⋅]ₗ-both : ∀{x y z} → (z ⋅ x ∣ z ⋅ y) → (x ∣ y)
+
+-- divides-factorial : ∀{n x} → (𝐒(x) ≤ n) → (𝐒(x) ∣ (n !))
 
 -- postulate gcd-identityₗ : ∀{b} → (gcd(𝟎)(b) ≡ b)
 -- gcd-identityₗ {𝟎}    = [≡]-intro

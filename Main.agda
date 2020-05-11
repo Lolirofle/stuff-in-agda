@@ -150,7 +150,7 @@ import Numeral.Natural.Oper.Proofs
 -- import Numeral.Natural.Oper.Proofs.Elemantary
 -- import Numeral.Natural.Oper.Proofs.Iteration
 import Numeral.Natural.Oper.Summation
--- import Numeral.Natural.Prime
+import Numeral.Natural.Prime
 import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Computability
 import Numeral.Natural.Relation.Divisibility

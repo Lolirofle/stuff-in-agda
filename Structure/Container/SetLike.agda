@@ -346,7 +346,7 @@ module Proofs where
           Function.congruence [∁]-function xy =
             [↔]-to-[←] [≡]-membership (
               Complement.membership 〔 [↔]-transitivity 〕
-              [↔]-negationᵣ ([↔]-to-[→] [≡]-membership xy) 〔 [↔]-transitivity 〕
+              [¬]-unaryOperator ([↔]-to-[→] [≡]-membership xy) 〔 [↔]-transitivity 〕
               [↔]-symmetry Complement.membership
             )
 
@@ -355,7 +355,7 @@ module Proofs where
           Involution.proof [∁]-involution =
             [↔]-to-[←] [≡]-membership (
               Complement.membership 〔 [↔]-transitivity 〕
-              [↔]-negationᵣ Complement.membership 〔 [↔]-transitivity 〕
+              [¬]-unaryOperator Complement.membership 〔 [↔]-transitivity 〕
               [↔]-intro [¬¬]-intro [¬¬]-elim
             )
 

@@ -207,13 +207,13 @@ module _ {ℓ₁}{ℓ₃} {_▫_ : Stmt{ℓ₁} → Stmt{Lvl.𝟎} → Stmt{ℓ�
 -- Other
 
 module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
-  [∨]-exclude-left : (P ∨ Q) → (¬ P) → Q
-  [∨]-exclude-left ([∨]-introₗ p) np = [⊥]-elim(np p)
-  [∨]-exclude-left ([∨]-introᵣ q) = const q
+  [∨]-not-left : (P ∨ Q) → (¬ P) → Q
+  [∨]-not-left ([∨]-introₗ p) np = [⊥]-elim(np p)
+  [∨]-not-left ([∨]-introᵣ q) = const q
 
-  [∨]-exclude-right : (P ∨ Q) → (¬ Q) → P
-  [∨]-exclude-right ([∨]-introₗ p) = const p
-  [∨]-exclude-right ([∨]-introᵣ q) nq = [⊥]-elim(nq q)
+  [∨]-not-right : (P ∨ Q) → (¬ Q) → P
+  [∨]-not-right ([∨]-introₗ p) = const p
+  [∨]-not-right ([∨]-introᵣ q) nq = [⊥]-elim(nq q)
 
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{T : Stmt{ℓ₃}} where
   [→]-lift : (P → Q) → ((T → P) → (T → Q))
@@ -223,8 +223,8 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   contrapositiveᵣ : (P → Q) → ((¬ P) ← (¬ Q))
   contrapositiveᵣ = [→]-transitivity
 
-  contrapositive-variantᵣ : (P → (¬ Q)) → ((¬ P) ← Q)
-  contrapositive-variantᵣ = swap
+  contrapositive-variant : (P → (¬ Q)) ↔ ((¬ P) ← Q)
+  contrapositive-variant = [↔]-intro swap swap
 
   modus-tollens : (P → Q) → (¬ Q) → (¬ P)
   modus-tollens = contrapositiveᵣ
@@ -245,39 +245,39 @@ module _ {ℓ} {P : Stmt{ℓ}} where
   [¬¬¬]-elim = contrapositiveᵣ [¬¬]-intro
 
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{ℓ₃}} where
-  [↔]-of-[∧] : ((P ∧ R) ↔ (Q ∧ R)) → (R → (P ↔ Q))
-  [↔]-of-[∧] ([↔]-intro qrpr prqr) r =
+  [↔]-move-out-[∧]ᵣ : ((P ∧ R) ↔ (Q ∧ R)) → (R → (P ↔ Q))
+  [↔]-move-out-[∧]ᵣ ([↔]-intro qrpr prqr) r =
     ([↔]-intro
       (q ↦ [∧]-elimₗ(qrpr([∧]-intro q r)))
       (p ↦ [∧]-elimₗ(prqr([∧]-intro p r)))
     )
 
-  [↔]-adding-[∧] : (P ↔ Q) → ((P ∧ R) ↔ (Q ∧ R))
-  [↔]-adding-[∧] ([↔]-intro qp pq) =
+  [∧]-unaryOperatorₗ : (P ↔ Q) → ((P ∧ R) ↔ (Q ∧ R))
+  [∧]-unaryOperatorₗ ([↔]-intro qp pq) =
     ([↔]-intro
       (qr ↦ [∧]-intro (qp([∧]-elimₗ qr)) ([∧]-elimᵣ qr))
       (pr ↦ [∧]-intro (pq([∧]-elimₗ pr)) ([∧]-elimᵣ pr))
     )
 
+  currying : (P → (Q → R)) ↔ ((P ∧ Q) → R)
+  currying = [↔]-intro Tuple.curry Tuple.uncurry
+
 module _ {ℓ₁}{ℓ₂}{ℓ₃}{ℓ₄} {A : Stmt{ℓ₁}}{B : Stmt{ℓ₂}}{C : Stmt{ℓ₃}}{D : Stmt{ℓ₄}} where
-  -- TODO: Rename to binaryOperator
-  postulate [∧]-equiv-map : (A ↔ C) → (B ↔ D) → ((A ∧ B) ↔ (C ∧ D))
-  postulate [∨]-equiv-map : (A ↔ C) → (B ↔ D) → ((A ∨ B) ↔ (C ∨ D))
+  [∧]-binaryOperator : (A ↔ C) → (B ↔ D) → ((A ∧ B) ↔ (C ∧ D))
+  [∧]-binaryOperator ([↔]-intro ca ac) ([↔]-intro db bd) = [↔]-intro (Tuple.map ca db) (Tuple.map ac bd)
+
+  [∨]-binaryOperator : (A ↔ C) → (B ↔ D) → ((A ∨ B) ↔ (C ∨ D))
+  [∨]-binaryOperator ([↔]-intro ca ac) ([↔]-intro db bd) = [↔]-intro (Either.map2 ca db) (Either.map2 ac bd)
 
 module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
-  [↔]-elimₗ-[¬] : (P ↔ Q) → (¬ P) → (¬ Q)
-  [↔]-elimₗ-[¬] pq np q = np([↔]-elimₗ(q)(pq))
+  [↔]-not-left : (P ↔ Q) → (¬ P) → (¬ Q)
+  [↔]-not-left pq np q = np([↔]-elimₗ(q)(pq))
 
-  [↔]-elimᵣ-[¬] : (P ↔ Q) → (¬ Q) → (¬ P)
-  [↔]-elimᵣ-[¬] pq nq p = nq([↔]-elimᵣ(p)(pq))
+  [↔]-not-right : (P ↔ Q) → (¬ Q) → (¬ P)
+  [↔]-not-right pq nq p = nq([↔]-elimᵣ(p)(pq))
 
-  -- TODO: Rename to binaryOperator
-  [↔]-negationᵣ : (P ↔ Q) → ((¬ P) ↔ (¬ Q))
-  [↔]-negationᵣ pq = [↔]-intro ([↔]-elimᵣ-[¬] (pq)) ([↔]-elimₗ-[¬] (pq))
-
-  [↔]-boolean-casesₗ : (P ↔ Q) ← (P ∧ Q) ∨ ((¬ P) ∧ (¬ Q))
-  [↔]-boolean-casesₗ ([∨]-introₗ pq)   = [∧]-to-[↔] pq
-  [↔]-boolean-casesₗ ([∨]-introᵣ npnq) = Tuple.map ([⊥]-elim ∘_) ([⊥]-elim ∘_) (Tuple.swap npnq)
+  [¬]-unaryOperator : (P ↔ Q) → ((¬ P) ↔ (¬ Q))
+  [¬]-unaryOperator pq = [↔]-intro ([↔]-not-right (pq)) ([↔]-not-left (pq))
 
 module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [↔]-elim-[∨] : (P ↔ Q) → (P ∨ Q) → (P ∧ Q)
@@ -355,15 +355,15 @@ module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [→]-disjunctive-formₗ = [∨]-elim ([→]-lift [⊥]-elim) const
 
   [↔]-disjunctive-formₗ : (P ↔ Q) ← ((P ∧ Q) ∨ ((¬ P) ∧ (¬ Q)))
-  [↔]-disjunctive-formₗ ([∨]-introₗ ([∧]-intro p q))   = [↔]-intro (const p) (const q)
-  [↔]-disjunctive-formₗ ([∨]-introᵣ ([∧]-intro np nq)) = [↔]-intro ([⊥]-elim ∘ nq) ([⊥]-elim ∘ np)
+  [↔]-disjunctive-formₗ ([∨]-introₗ pq)   = [∧]-to-[↔] pq
+  [↔]-disjunctive-formₗ ([∨]-introᵣ npnq) = Tuple.map ([⊥]-elim ∘_) ([⊥]-elim ∘_) (Tuple.swap npnq)
 
   -- TODO: Probably unprovable
   -- [↔]-disjunctive-formᵣ : ∀{P Q : Stmt} → (P ↔ Q) → ((P ∧ Q) ∨ ((¬ P) ∧ (¬ Q)))
   -- [↔]-disjunctive-formᵣ ([↔]-intro qp pq) = 
 
-  [¬→]-[∨]ₗ : ((¬ P) → Q) ← (P ∨ Q)
-  [¬→]-[∨]ₗ = [∨]-exclude-left
+  [¬→]-disjunctive-formₗ : ((¬ P) → Q) ← (P ∨ Q)
+  [¬→]-disjunctive-formₗ = [∨]-not-left
 
 ------------------------------------------
 -- Conjuctive forms
@@ -380,7 +380,7 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [¬→][∧]ₗ = swap [→][∧]ᵣ
 
   [→¬]-¬[∧] : (P → (¬ Q)) ↔ ¬(P ∧ Q)
-  [→¬]-¬[∧] = [↔]-intro Tuple.curry Tuple.uncurry
+  [→¬]-¬[∧] = currying
 
 ------------------------------------------
 -- Stuff related to classical logic
@@ -473,3 +473,8 @@ module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [⊕]-excluded-middleᵣ : (P ⊕ Q) → (Q ∨ (¬ Q))
   [⊕]-excluded-middleᵣ ([⊕]-introₗ p nq) = [∨]-introᵣ nq
   [⊕]-excluded-middleᵣ ([⊕]-introᵣ q np) = [∨]-introₗ q
+
+  [⊕]-or-not-both : (P ∨ Q) → ¬(P ∧ Q) → (P ⊕ Q)
+  [⊕]-or-not-both or nand with or
+  ... | [∨]-introₗ p = [⊕]-introₗ p (q ↦ nand([↔]-intro p q))
+  ... | [∨]-introᵣ q = [⊕]-introᵣ q (p ↦ nand([↔]-intro p q))
