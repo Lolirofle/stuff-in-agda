@@ -15,5 +15,6 @@ type-of : ∀{T : Type} → T → Type
 type-of {T} _ = T
 
 open import Agda.Primitive public
+  using ()
   renaming (Setω to Typeω)
 

@@ -334,6 +334,18 @@ module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
   ... | [∨]-introᵣ nnp | [∨]-introᵣ nnq with () ← (DoubleNegated.[∧]-intro nnp nnq) npq
 -}
 
+-- TODO: See TODO directly above
+weak-excluded-middle-[¬]-preserves-[∧][∨]ᵣ : (∀{P : Stmt{ℓ}} → Classical(¬ P)) ↔ (∀{P : Stmt{ℓ}}{Q : Stmt{ℓ}} → ¬(P ∧ Q) → ((¬ P) ∨ (¬ Q)))
+weak-excluded-middle-[¬]-preserves-[∧][∨]ᵣ = [↔]-intro l r where
+  l : (∀{P} → Classical(¬ P)) ← (∀{P}{Q} → ¬(P ∧ Q) → ((¬ P) ∨ (¬ Q)))
+  l pres {P} = intro ⦃ pres{P}{¬ P} non-contradiction ⦄
+  r : (∀{P} → Classical(¬ P)) → (∀{P}{Q} → ¬(P ∧ Q) → ((¬ P) ∨ (¬ Q)))
+  r wem {P}{Q} npq with excluded-middle(¬ P) ⦃ wem ⦄ | excluded-middle(¬ Q) ⦃ wem ⦄
+  ... | [∨]-introₗ np  | [∨]-introₗ nq  = [∨]-introₗ np
+  ... | [∨]-introₗ np  | [∨]-introᵣ nnq = [∨]-introₗ np
+  ... | [∨]-introᵣ nnp | [∨]-introₗ nq  = [∨]-introᵣ nq
+  ... | [∨]-introᵣ nnp | [∨]-introᵣ nnq = [∨]-introₗ (p ↦ nnq(q ↦ npq([∧]-intro p q)))
+
 ------------------------------------------
 -- Predicate logic.
 

@@ -275,7 +275,10 @@ firstElem (x ⊰ _) = Option.Some(x)
 
 -- The last element of the list
 lastElem : List(T) → Option(T)
-lastElem = foldᵣ (const ∘ Option.Some) Option.None
+lastElem ∅           = Option.None
+lastElem (x ⊰ ∅)     = Option.Some(x)
+lastElem (_ ⊰ y ⊰ l) = lastElem (y ⊰ l)
+-- TODO: Prove function equivalent to (foldₗ (const Option.Some) Option.None)
 
 _orₗ_ : List(T) → List(T) → List(T)
 _orₗ_ ∅ default      = default

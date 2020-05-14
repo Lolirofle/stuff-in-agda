@@ -1,13 +1,14 @@
 module Function.Multi where
 
 open import Data
+open import Data.Boolean
 open import Data.Tuple
 open import Data.Tuple.Raise
 import      Lvl
 open import Numeral.Natural
 open import Type
 
-private variable ℓ : Lvl.Level
+private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 
 infixr 0 _⇉_
 

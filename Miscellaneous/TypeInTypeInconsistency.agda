@@ -6,6 +6,43 @@ module Miscellaneous.TypeInTypeInconsistency where
 data ISet : Set where
   set : ∀{I : Set} → (I → ISet) → ISet
 
+open import Functional
+open import Logic.Predicate
+open import Logic.Propositional
+open import Relator.Equals
+open import Relator.Equals.Proofs
+open import Structure.Relator
+open import Syntax.Function
+
+_∉_ : ISet → ISet → Set
+a ∉ set(b) = ∀{ib} → (a ≢ b(ib))
+
+NotSelfContaining : ISet → Set
+NotSelfContaining(a) = a ∉ a
+
+NotSelfContainingSet : ISet
+NotSelfContainingSet = set{∃(NotSelfContaining)} [∃]-witness
+
+is-not-in : NotSelfContainingSet ∉ NotSelfContainingSet
+is-not-in {[∃]-intro (set a) ⦃ proof ⦄} p = substitute₁ₗ(NotSelfContaining) p (\{_} → proof) {[∃]-intro (set a) ⦃ \{_} → proof ⦄} p
+
+is-in : ¬(NotSelfContainingSet ∉ NotSelfContainingSet)
+is-in p = p {[∃]-intro NotSelfContainingSet ⦃ \{proof} → p{proof} ⦄ } [≡]-intro
+
+contradiction : ⊥
+contradiction = is-in (\{proof} → is-not-in {proof})
+
+
+
+
+
+
+
+
+
+
+{-
+
 open import Data.Tuple as Tuple using ()
 open import Logic.Predicate
 open import Logic.Propositional
@@ -83,3 +120,4 @@ NotSelfContaining-self : (NotSelfContaining ∈ NotSelfContaining)
 
 paradox : ⊥
 paradox = [↔]-to-[→] NotSelfContaining-membership NotSelfContaining-self NotSelfContaining-self
+-}

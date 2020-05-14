@@ -79,10 +79,11 @@ module _ {ℓ} where
       f <*$> x = (_$ x) <$> f
 
   Monad = Category.ExtensionSystem{cat = typeExtensionalFnCategoryObject}
+
   module Monad {T} ⦃ monad : Monad(T) ⦄ where
     open Category.ExtensionSystem{cat = typeExtensionalFnCategoryObject} (monad) renaming (module HaskellNames to HaskellNames') public
 
-    module HaskellNames where
+    module HaskellNames where -- TODO: What to do about this. Maybe remove or move now that Syntax.Do exists?
       open HaskellNames' public
 
       _=<<_ : ∀{x y} → (x → T(y)) → T(x) → T(y)
@@ -108,6 +109,13 @@ module _ {ℓ} where
         f <- tf
         a <- ta
         return(f(a))
+
+  -- Do notation for monads.
+  open import Syntax.Do
+  instance
+    Monad-doNotation : ∀{T} ⦃ _ : Monad(T) ⦄ → DoNotation(T)
+    return ⦃ Monad-doNotation ⦄ = Monad.HaskellNames.pure
+    _>>=_  ⦃ Monad-doNotation ⦄ = Monad.HaskellNames._>>=_
 
   Empty-initialObject : Object.Initial{Obj = Type{ℓ}}(_→ᶠ_) ⦃ [⊜]-equiv ⦃ [≡]-equiv ⦄ ⦄ (Empty)
   IsUnit.unit Empty-initialObject = empty

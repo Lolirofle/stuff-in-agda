@@ -14,7 +14,7 @@ module _ where
 
   -- An instance of `Equiv(T)` is that the type `T` has an equivalence relation which may be treated as a default one.
   -- Helps finding an instance of an equivalence relation for a type.
-  record Equiv (T : Type{ℓₒ}) : Type{Lvl.𝐒(ℓₗ) ⊔ ℓₒ} where
+  record Equiv (T : Type{ℓₒ}) : Type{Lvl.𝐒(ℓₗ) Lvl.⊔ ℓₒ} where
     constructor intro
 
     infixl 15 _≡_ _≢_

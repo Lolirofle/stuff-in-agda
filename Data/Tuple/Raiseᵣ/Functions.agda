@@ -10,6 +10,31 @@ open import Numeral.Finite
 open import Syntax.Number
 open import Type
 
+module _ {ℓ} {T : Type{ℓ}} where
+  -- Prepends an element to a tuple.
+  -- Example: a ⊰ (b,c) = (a,b,c)
+  _⊰_ : ∀{n : ℕ} → T → (T ^ n) → (T ^ 𝐒(n))
+  _⊰_ {𝟎}       x _ = x
+  _⊰_ {𝐒(n)}    x l = (x , l)
+
+  -- The first element of a tuple.
+  -- Example: head(a,b,c) = a
+  head : ∀{n : ℕ} → (T ^ (𝐒(n))) → T
+  head {𝟎}    x       = x
+  head {𝐒(_)} (x , _) = x
+
+  -- The tuple without its first element.
+  -- Example: tail(a,b,c) = (b,c)
+  tail : ∀{n : ℕ} → (T ^ (𝐒(n))) → (T ^ n)
+  tail {𝟎}    _       = <>
+  tail {𝐒(_)} (_ , x) = x
+
+module Dependent where
+  foldᵣ : ∀{n : ℕ}{ℓ₁ ℓ₂}{A : Type{ℓ₁}} → (As : A ^ n) → ∀{B : (A ^ n) → Type{ℓ₂}} → (A → B(As) → B(As)) → B(As) → B(As)
+  foldᵣ {0}       _                (_▫_) def = def
+  foldᵣ {1}       x                (_▫_) def = x ▫ def
+  foldᵣ {𝐒(𝐒(n))} (x , xs) {B = B} (_▫_) def = x ▫ foldᵣ {𝐒(n)} xs {B = \as → B(x ⊰ as)} (_▫_) def
+
 -- Example: map f(a,b,c,d) = (f(a),f(b),f(c),f(d))
 map : ∀{n : ℕ}{ℓ₁ ℓ₂}{A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → ((A ^ n) → (B ^ n))
 map {0}       f _ = <>
@@ -47,8 +72,8 @@ reduceᵣ {𝐒(n)} (_▫_) (x , xs) = x ▫ reduceᵣ {n} (_▫_) xs
 
 -- Example: foldᵣ(_▫_) def (a,b,c,d) = a ▫ (b ▫ (c ▫ (d ▫ def)))
 foldᵣ : ∀{n : ℕ}{ℓ₁ ℓ₂}{A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B → B) → B → (A ^ n) → B
-foldᵣ {𝟎}       (_▫_) def _        = def
-foldᵣ {𝐒(𝟎)}    (_▫_) def x        = x ▫ def
+foldᵣ {0}       (_▫_) def _        = def
+foldᵣ {1}       (_▫_) def x        = x ▫ def
 foldᵣ {𝐒(𝐒(n))} (_▫_) def (x , xs) = x ▫ foldᵣ {𝐒(n)} (_▫_) def xs
 
 -- TODO: Could be split to an implementation of something of type "(A ^ n) → A ^ (min 1 n)" or "(A ^ n) → (A ^ S(P(n)))" instead
@@ -58,29 +83,11 @@ mapReduceᵣ {𝐒(n)}    (_▫_) def map l = map(reduceᵣ {n} (_▫_) l)
 
 -- Example: foldₗ(_▫_) def (a,b,c,d) = (((def ▫ a) ▫ b) ▫ c) ▫ d
 foldₗ : ∀{n : ℕ}{ℓ₁ ℓ₂}{A : Type{ℓ₁}}{B : Type{ℓ₂}} → (B → A → B) → B → (A ^ n) → B
-foldₗ {𝟎}       (_▫_) def _        = def
-foldₗ {𝐒(𝟎)}    (_▫_) def x        = def ▫ x
+foldₗ {0}       (_▫_) def _        = def
+foldₗ {1}       (_▫_) def x        = def ▫ x
 foldₗ {𝐒(𝐒(n))} (_▫_) def (x , xs) = foldₗ {𝐒(n)} (_▫_) (def ▫ x) xs
 
 module _ {ℓ} {T : Type{ℓ}} where
-  -- Prepends an element to a tuple.
-  -- Example: a ⊰ (b,c) = (a,b,c)
-  _⊰_ : ∀{n : ℕ} → T → (T ^ n) → (T ^ 𝐒(n))
-  _⊰_ {𝟎}       x _ = x
-  _⊰_ {𝐒(n)}    x l = (x , l)
-
-  -- The first element of a tuple.
-  -- Example: head(a,b,c) = a
-  head : ∀{n : ℕ} → (T ^ (𝐒(n))) → T
-  head {𝟎}    x       = x
-  head {𝐒(_)} (x , _) = x
-
-  -- The tuple without its first element.
-  -- Example: tail(a,b,c) = (b,c)
-  tail : ∀{n : ℕ} → (T ^ (𝐒(n))) → (T ^ n)
-  tail {𝟎}    _       = <>
-  tail {𝐒(_)} (_ , x) = x
-
   -- A tuple with only a single element.
   -- Example: singelton(x) = x
   singleton : ∀{n : ℕ} → T → (T ^ 1)
@@ -103,30 +110,30 @@ module _ {ℓ} {T : Type{ℓ}} where
   -- The element at the specified position of a tuple.
   -- Example: index(2)(a,b,c,d) = c
   index : ∀{n : ℕ} → 𝕟(n) → (T ^ n) → T
-  index {𝟎}       ()
-  index {𝐒(𝟎)}    𝟎      x          = x
+  index {0}       ()
+  index {1}       𝟎      x          = x
   index {𝐒(𝐒(_))} 𝟎      (init , _) = init
   index {𝐒(𝐒(n))} (𝐒(i)) (_ , rest) = index{𝐒(n)}(i)(rest)
 
   -- The tuple without the element at the specified position.
   -- Example: without(2)(a,b,c,d) = (a,b,d)
   without : ∀{n : ℕ} → 𝕟(𝐒(n)) → (T ^ 𝐒(n)) → (T ^ n)
-  without {0}       𝟎     _ = <>
+  without {𝟎}    𝟎     _        = <>
   without {𝐒(n)} 𝟎     (x₁ , l) = l
   without {𝐒(n)} (𝐒 i) (x₁ , l) = (x₁ ⊰ without {n} i l)
 
   -- Concatenates two tuples.
   -- Example: (1,2,3,4) ++ (5,6) = (1,2,3,4,5,6)
   _++_ : ∀{a b : ℕ} → (T ^ a) → (T ^ b) → (T ^ (a + b))
-  _++_ {a = 𝟎}       _        ys = ys
-  _++_ {a = 𝐒(𝟎)}    x        ys = x ⊰ ys
+  _++_ {a = 0}       _        ys = ys
+  _++_ {a = 1}       x        ys = x ⊰ ys
   _++_ {a = 𝐒(𝐒(a))} (x , xs) ys = x ⊰ (xs ++ ys)
 
   -- Concatenates all tuples in the specified tuple of tuples.
   -- Example: concat((1,2,3),(4,5,6)) = (1,2,3,4,5,6)
   concat : ∀{a b : ℕ} → ((T ^ a) ^ b) → (T ^ (a ⋅ b))
-  concat {b = 𝟎}       _          = <>
-  concat {b = 𝐒(𝟎)}    xs         = xs
+  concat {b = 0}       _          = <>
+  concat {b = 1}       xs         = xs
   concat {b = 𝐒(𝐒(b))} (xs , xss) = xs ++ concat {b = 𝐒(b)} xss
 
   -- Transposes the specified tuple of tuples.
