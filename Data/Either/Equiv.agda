@@ -16,7 +16,7 @@ module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} where
   open import Structure.Relator.Properties
 
   module _ ⦃ equiv-A : Equiv(A) ⦄ ⦃ equiv-B : Equiv(B) ⦄ where
-    data EitherEquality : (A ‖ B) → (A ‖ B) → Stmt{ℓ₁ ⊔ ℓ₂} where
+    data EitherEquality : (A ‖ B) → (A ‖ B) → Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       Left  : ∀{x y} → (x ≡ y) → EitherEquality(Left  x)(Left  y)
       Right : ∀{x y} → (x ≡ y) → EitherEquality(Right x)(Right y)
 

@@ -22,7 +22,7 @@ module Names where
 
 -- The unary relator `P` "(behaves like)/is a relator" in the context of `_≡_` from the Equiv instance.
 module _ {A : Type{ℓₒ}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ (P : A → Stmt{ℓₗ₂}) where
-  record UnaryRelator : Stmt{ℓₒ ⊔ ℓₗ₁ ⊔ ℓₗ₂} where
+  record UnaryRelator : Stmt{ℓₒ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂} where
     constructor intro
     field
       substitution : Names.Substitution₁(P)

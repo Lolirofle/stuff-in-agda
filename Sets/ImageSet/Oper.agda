@@ -33,16 +33,16 @@ module _ where
   pair : T → T → ImageSet{ℓᵢ}(T)
   pair x y = intro{Index = Lvl.Up(Bool)} \{(Lvl.up 𝐹) → x ; (Lvl.up 𝑇) → y}
 
-  _∪_ : ImageSet{ℓᵢ₁}(T) → ImageSet{ℓᵢ₂}(T) → ImageSet{ℓᵢ₁ ⊔ ℓᵢ₂}(T)
+  _∪_ : ImageSet{ℓᵢ₁}(T) → ImageSet{ℓᵢ₂}(T) → ImageSet{ℓᵢ₁ Lvl.⊔ ℓᵢ₂}(T)
   A ∪ B = intro{Index = Index(A) ‖ Index(B)} (Either.map1 (elem(A)) (elem(B)))
 
   ⋃ : ImageSet{ℓᵢ}(ImageSet{ℓᵢ}(T)) → ImageSet{ℓᵢ}(T)
   ⋃ A = intro{Index = Σ(Index(A)) (Index ∘ elem(A))} \{(intro ia i) → elem(elem(A)(ia))(i)}
 
-  indexFilter : (A : ImageSet{ℓᵢ}(T)) → (Index(A) → Stmt{ℓ}) → ImageSet{ℓᵢ ⊔ ℓ}(T)
+  indexFilter : (A : ImageSet{ℓᵢ}(T)) → (Index(A) → Stmt{ℓ}) → ImageSet{ℓᵢ Lvl.⊔ ℓ}(T)
   indexFilter A P = intro {Index = Σ(Index(A)) P} (elem(A) ∘ Σ.left)
 
-  filter : (T → Stmt{ℓ}) → ImageSet{ℓᵢ}(T) → ImageSet{ℓᵢ ⊔ ℓ}(T)
+  filter : (T → Stmt{ℓ}) → ImageSet{ℓᵢ}(T) → ImageSet{ℓᵢ Lvl.⊔ ℓ}(T)
   filter P(A) = indexFilter A (P ∘ elem(A))
 
   indexFilterBool : (A : ImageSet{ℓᵢ}(T)) → (Index(A) → Bool) → ImageSet{ℓᵢ}(T)
@@ -54,10 +54,10 @@ module _ where
   map : (X → Y) → (ImageSet{ℓᵢ}(X) → ImageSet{ℓᵢ}(Y))
   map f(A) = intro{Index = Index(A)} (f ∘ elem(A))
 
-  unapply : (X → Y) → ⦃ _ : Equiv{ℓₑ}(Y)⦄ → (Y → ImageSet{Lvl.of(X) ⊔ ℓₑ}(X))
+  unapply : (X → Y) → ⦃ _ : Equiv{ℓₑ}(Y)⦄ → (Y → ImageSet{Lvl.of(X) Lvl.⊔ ℓₑ}(X))
   unapply f(y) = intro{Index = ∃(x ↦ f(x) ≡ₛ y)} [∃]-witness
 
-  -- unmap : (X → Y) → ⦃ _ : Equiv{ℓₑ}(Y)⦄ → (ImageSet{{!Lvl.of(T) ⊔ ℓₑ!}}(Y) → ImageSet{Lvl.of(T) ⊔ ℓₑ}(X))
+  -- unmap : (X → Y) → ⦃ _ : Equiv{ℓₑ}(Y)⦄ → (ImageSet{{!Lvl.of(T) Lvl.⊔ ℓₑ!}}(Y) → ImageSet{Lvl.of(T) Lvl.⊔ ℓₑ}(X))
   -- unmap f(B) = intro{Index = ∃(x ↦ f(x) ∈ B)} [∃]-witness
 
   ℘ : ImageSet{ℓᵢ}(T) → ImageSet{Lvl.𝐒(ℓᵢ)}(ImageSet{ℓᵢ}(T))
@@ -66,7 +66,7 @@ module _ where
   _∩_ : ⦃ _ : Equiv{ℓᵢ}(T) ⦄ → ImageSet{ℓᵢ}(T) → ImageSet{ℓᵢ}(T) → ImageSet{ℓᵢ}(T)
   A ∩ B = indexFilter(A) (iA ↦ elem(A) iA ∈ B)
 
-  ⋂ : ⦃ _ : Equiv{ℓᵢ}(T) ⦄ → ImageSet{Lvl.of(T)}(ImageSet{Lvl.of(T)}(T)) → ImageSet{ℓᵢ ⊔ Lvl.of(T)}(T)
+  ⋂ : ⦃ _ : Equiv{ℓᵢ}(T) ⦄ → ImageSet{Lvl.of(T)}(ImageSet{Lvl.of(T)}(T)) → ImageSet{ℓᵢ Lvl.⊔ Lvl.of(T)}(T)
   -- ⋂ As = intro{Index = Σ((iAs : Index(As)) → Index(elem(As) iAs)) (f ↦ (∀{iAs₁ iAs₂} → (elem(elem(As) iAs₁)(f iAs₁) ≡ₛ elem(elem(As) iAs₂)(f iAs₂))))} {!!} (TODO: I think this definition only works with excluded middle because one must determine if an A from AS is empty or not and if it is not, then one can apply its index to the function in the Σ)
   ⋂ As = indexFilter(⋃ As) (iUAs ↦ ∃{Obj = (iAs : Index(As)) → Index(elem(As) iAs)}(f ↦ ∀{iAs} → (elem(⋃ As) iUAs ≡ₛ elem(elem(As) iAs) (f iAs))))
   -- ⋂ As = indexFilter(⋃ As) (iUAs ↦ ∀{iAs} → (elem(⋃ As) iUAs ∈ elem(As) iAs))

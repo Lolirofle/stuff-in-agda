@@ -17,8 +17,8 @@ private variable a b c x y z : T
 -- An atom is an instance of the atoms/urelements.
 -- A set is an instance of a set container which is a function from a type of indices (which depends on the set) to an IUset. The function should be interpreted as pointing to every element of the set, and the image of this function is how a single set is represented.
 module _ (T : Type{ℓₒ}) ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {ℓ} where
-  data IUset : Type{Lvl.𝐒(ℓ) ⊔ ℓₒ}
-  SetContainer : Type{Lvl.𝐒(ℓ) ⊔ ℓₒ}
+  data IUset : Type{Lvl.𝐒(ℓ) Lvl.⊔ ℓₒ}
+  SetContainer : Type{Lvl.𝐒(ℓ) Lvl.⊔ ℓₒ}
   SetContainer = Σ(Type{ℓ}) (_→ᶠ IUset)
   data IUset where
     atom : T → IUset
@@ -57,15 +57,15 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   private variable SC SCₗ SCᵣ : SetContainer(T) ⦃ equiv ⦄ {ℓ}
 
   -- The predicate stating that an IUset is a set.
-  data IsSet {ℓ} : IUset(T){ℓ} → Type{Lvl.of(T) ⊔ Lvl.𝐒(ℓ)} where
+  data IsSet {ℓ} : IUset(T){ℓ} → Type{Lvl.of(T) Lvl.⊔ Lvl.𝐒(ℓ)} where
     intro : IsSet(set(SC))
 
   -- The predicate stating that an IUset is an atom.
-  data IsAtom {ℓ} : IUset(T){ℓ} → Type{Lvl.of(T) ⊔ Lvl.𝐒(ℓ)} where
+  data IsAtom {ℓ} : IUset(T){ℓ} → Type{Lvl.of(T) Lvl.⊔ Lvl.𝐒(ℓ)} where
     intro : IsAtom(atom(x))
 
-  data _≡_ {ℓ₁ ℓ₂} : IUset(T){ℓ₁} → IUset(T){ℓ₂} → Type{Lvl.𝐒(ℓ₁ ⊔ ℓ₂) ⊔ ℓₑ ⊔ Lvl.of(T)}
-  data _⊆_ {ℓ₁ ℓ₂} : IUset(T){ℓ₁} → IUset(T){ℓ₂} → Type{Lvl.𝐒(ℓ₁ ⊔ ℓ₂) ⊔ ℓₑ ⊔ Lvl.of(T)}
+  data _≡_ {ℓ₁ ℓ₂} : IUset(T){ℓ₁} → IUset(T){ℓ₂} → Type{Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂) Lvl.⊔ ℓₑ Lvl.⊔ Lvl.of(T)}
+  data _⊆_ {ℓ₁ ℓ₂} : IUset(T){ℓ₁} → IUset(T){ℓ₂} → Type{Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂) Lvl.⊔ ℓₑ Lvl.⊔ Lvl.of(T)}
 
   _⊇_ : IUset(T){ℓ₁} → IUset(T){ℓ₂} → Type
   A ⊇ B = B ⊆ A
@@ -77,7 +77,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   -- Set membership is the existence of an index in the set that points to a set equal element to the element.
   -- Note: This is never satisfied for an atom on the right.
-  data _∈_ {ℓ₁ ℓ₂} (x : IUset(T){ℓ₁}) : IUset(T){ℓ₂} → Type{Lvl.𝐒(ℓ₁ ⊔ ℓ₂) ⊔ ℓₑ ⊔ Lvl.of(T)} where
+  data _∈_ {ℓ₁ ℓ₂} (x : IUset(T){ℓ₁}) : IUset(T){ℓ₂} → Type{Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₂) Lvl.⊔ ℓₑ Lvl.⊔ Lvl.of(T)} where
     set : ∃{Obj = SetContainer.Index(SC)} (i ↦ x ≡ SetContainer.elem(SC) i) → (x ∈ set SC)
   [∈]-proof : (x ∈ set SC) → ∃{Obj = SetContainer.Index(SC)} (i ↦ x ≡ SetContainer.elem(SC) i)
   [∈]-proof (set p) = p
@@ -220,7 +220,7 @@ module Oper ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   -- TODO: Many of these operations are simply copy-pasted from Sets.IterativeSet with small modifications.
 
   -- The operation converting an IUset from a lower universe level to a higher universe level.
-  IUset-level-up : IUset(T){ℓ₁} → IUset(T){ℓ₁ ⊔ ℓ₂}
+  IUset-level-up : IUset(T){ℓ₁} → IUset(T){ℓ₁ Lvl.⊔ ℓ₂}
   IUset-level-up          (atom x) = atom x
   IUset-level-up {ℓ₁}{ℓ₂} (setc {Index} elem) = setc {Lvl.Up{ℓ₁}{ℓ₂}(Index)} \{(Lvl.up i) → IUset-level-up{ℓ₁}{ℓ₂}(elem(i))}
 

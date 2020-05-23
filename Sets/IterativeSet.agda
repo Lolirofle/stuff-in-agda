@@ -98,9 +98,9 @@ module _ where
     N(𝟎)    = ∅
     N(𝐒(n)) = N(n) ∪ singleton(N(n))
 
-  record _≡_ (A : Iset{ℓ₁}) (B : Iset{ℓ₂}) : Type{ℓ₁ ⊔ ℓ₂}
-  record _⊆_ (A : Iset{ℓ₁}) (B : Iset{ℓ₂}) : Type{ℓ₁ ⊔ ℓ₂}
-  _⊇_ : Iset{ℓ₁} → Iset{ℓ₂} → Type{ℓ₁ ⊔ ℓ₂}
+  record _≡_ (A : Iset{ℓ₁}) (B : Iset{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂}
+  record _⊆_ (A : Iset{ℓ₁}) (B : Iset{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂}
+  _⊇_ : Iset{ℓ₁} → Iset{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}
 
   -- Set equality is by definition the antisymmetric property of the subset relation.
   record _≡_ A B where
@@ -111,7 +111,7 @@ module _ where
       right : A ⊆ B
 
   -- Set membership is the existence of an index in the set that points to a set equal element to the element.
-  _∈_ : Iset{ℓ₁} → Iset{ℓ₂} → Type{ℓ₁ ⊔ ℓ₂}
+  _∈_ : Iset{ℓ₁} → Iset{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}
   a ∈ B = ∃{Obj = Index(B)} (ib ↦ a ≡ elem(B)(ib))
 
   -- Set subset is a mapping between the indices such that they point to the same element in both sets.
@@ -126,7 +126,7 @@ module _ where
   module _⊇_ where
     open _⊆_ public
 
-  _∉_ : Iset{ℓ₁} → Iset{ℓ₂} → Type{ℓ₁ ⊔ ℓ₂}
+  _∉_ : Iset{ℓ₁} → Iset{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}
   a ∉ B = ¬(a ∈ B)
 
   instance

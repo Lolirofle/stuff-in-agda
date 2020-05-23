@@ -38,7 +38,7 @@ const(x)(_) = x
 
 -- Function application as a function.
 -- Applies the first argument on the function on the second argument.
-apply : let _ = X in X → (X → Y) → Y
+apply : X → (X → Y) → Y
 apply(x)(f) = f(x)
 
 -- Function application as an operator
@@ -115,5 +115,12 @@ liftₗ = _∘_ -- liftₗ(f) = f ∘_
 
 liftᵣ : (X → Y) → ((Y → Z) → (X → Z))
 liftᵣ = swap(_∘_) -- liftᵣ(f) = _∘ f
+
+-- Applies an argument to two arguments of a binary function.
+_$₂_ : (X → X → Y) → (X → Y)
+f $₂ x = f x x
+
+apply₂ : X → (X → X → Y) → Y
+apply₂ x f = f x x
 
 open import Syntax.Function public

@@ -29,12 +29,6 @@ module _ {ℓ} {T : Type{ℓ}} where
   tail {𝟎}    _       = <>
   tail {𝐒(_)} (_ , x) = x
 
-module Dependent where
-  foldᵣ : ∀{n : ℕ}{ℓ₁ ℓ₂}{A : Type{ℓ₁}} → (As : A ^ n) → ∀{B : (A ^ n) → Type{ℓ₂}} → (A → B(As) → B(As)) → B(As) → B(As)
-  foldᵣ {0}       _                (_▫_) def = def
-  foldᵣ {1}       x                (_▫_) def = x ▫ def
-  foldᵣ {𝐒(𝐒(n))} (x , xs) {B = B} (_▫_) def = x ▫ foldᵣ {𝐒(n)} xs {B = \as → B(x ⊰ as)} (_▫_) def
-
 -- Example: map f(a,b,c,d) = (f(a),f(b),f(c),f(d))
 map : ∀{n : ℕ}{ℓ₁ ℓ₂}{A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → B) → ((A ^ n) → (B ^ n))
 map {0}       f _ = <>
@@ -59,12 +53,6 @@ repeat(0)       _ = <>
 repeat(1)       x = x
 repeat(𝐒(𝐒(n))) x = (x , repeat(𝐒(n)) x)
 
--- Returns a multivariate function from a singlevariate function
-lift : ∀{ℓ₁ ℓ₂}{A : Type{ℓ₁}}{B : Type{ℓ₂}} → (n : _) → (A → B) → ((A ^ n) → (B ^ n))
-lift(0)       f(_)  = <>
-lift(1)       f(x)  = f(x)
-lift(𝐒(𝐒(n))) f(first , rest) = (f(first) , lift(𝐒(n)) f(rest))
-
 -- Example: reduceᵣ(_▫_) (a,b,c,d) = a ▫ (b ▫ (c ▫ d))
 reduceᵣ : ∀{n : ℕ}{ℓ}{T : Type{ℓ}} → (T → T → T) → (T ^ 𝐒(n)) → T
 reduceᵣ {𝟎}    (_▫_) x        = x
@@ -76,7 +64,13 @@ foldᵣ {0}       (_▫_) def _        = def
 foldᵣ {1}       (_▫_) def x        = x ▫ def
 foldᵣ {𝐒(𝐒(n))} (_▫_) def (x , xs) = x ▫ foldᵣ {𝐒(n)} (_▫_) def xs
 
--- TODO: Could be split to an implementation of something of type "(A ^ n) → A ^ (min 1 n)" or "(A ^ n) → (A ^ S(P(n)))" instead
+-- Example: reduceOrᵣ(_▫_) def (a,b,c,d) = a ▫ (b ▫ (c ▫ d))
+reduceOrᵣ : ∀{n : ℕ}{ℓ}{A : Type{ℓ}} → (A → A → A) → A → (A ^ n) → A
+reduceOrᵣ {0}       (_▫_) def _        = def
+reduceOrᵣ {1}       (_▫_) def x        = x
+reduceOrᵣ {𝐒(𝐒(n))} (_▫_) def (x , xs) = x ▫ reduceOrᵣ {𝐒(n)} (_▫_) def xs
+
+-- TODO: Could be split to an implementation of something of type "(A ^ n) → A ^ (min 1 n)" or "(A ^ n) → (A ^ S(P(n)))" instead, or maybe reduceOrᵣ
 mapReduceᵣ : ∀{n : ℕ}{ℓ₁ ℓ₂}{A : Type{ℓ₁}}{B : Type{ℓ₂}} → (A → A → A) → B → (A → B) → (A ^ n) → B
 mapReduceᵣ {𝟎}       (_▫_) def map _ = def
 mapReduceᵣ {𝐒(n)}    (_▫_) def map l = map(reduceᵣ {n} (_▫_) l)
@@ -90,7 +84,7 @@ foldₗ {𝐒(𝐒(n))} (_▫_) def (x , xs) = foldₗ {𝐒(n)} (_▫_) (def �
 module _ {ℓ} {T : Type{ℓ}} where
   -- A tuple with only a single element.
   -- Example: singelton(x) = x
-  singleton : ∀{n : ℕ} → T → (T ^ 1)
+  singleton : T → (T ^ 1)
   singleton(x) = x
 
   -- The element at the specified position of a tuple (allowing out of bounds positions).

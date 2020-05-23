@@ -29,7 +29,7 @@ private variable X Y Z : Type{ℓ}
 -- In classical logic, this is always the case for any proposition.
 -- Note: (∀x. Classical(P(x))) is also called: P is decidable.
 module _ (P : Stmt{ℓ}) where
-  record Classical : Stmt{ℓ} where
+  record Classical : Stmt{ℓ} where -- TODO: Rename to ExcludedMiddle. Define WeakExcludedMiddle = ExcludedMiddle ∘ ¬_ and Classical = ∀ₗ(ExcludedMiddle)
     constructor intro
     field
       ⦃ excluded-middle ⦄ : ExcludedMiddleOn(P)

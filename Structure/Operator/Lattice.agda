@@ -21,7 +21,7 @@ open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 
-record Semilattice (_▫_ : L → L → L) : Stmt{ℓ ⊔ ℓₑ} where
+record Semilattice (_▫_ : L → L → L) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
     ⦃ operator ⦄     : BinaryOperator(_▫_)
@@ -46,7 +46,7 @@ record Semilattice (_▫_ : L → L → L) : Stmt{ℓ ⊔ ℓₑ} where
     z           🝖-end
   Reflexivity.proof  (Weak.PartialOrder.reflexivity  partialOrder) = idempotence(_▫_)
 
-record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ ⊔ ℓₑ} where
+record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
     ⦃ [∨]-operator ⦄ : BinaryOperator(_∨_)
@@ -91,7 +91,7 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ ⊔ �
     [∧]-semilattice : Semilattice(_∧_)
     [∧]-semilattice = intro
 
-  record Bounded (𝟎 : L) (𝟏 : L) : Stmt{ℓ ⊔ ℓₑ} where
+  record Bounded (𝟎 : L) (𝟏 : L) : Stmt{ℓ Lvl.⊔ ℓₑ} where
     constructor intro
     field
       ⦃ [∨]-identityₗ ⦄ : Identityₗ(_∨_)(𝟎)
@@ -145,14 +145,14 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ ⊔ �
       [∨]-monoid : Monoid(_∨_)
       Monoid.identity-existence [∨]-monoid = [∃]-intro(𝟎)
 
-    record Complemented (¬_ : L → L) : Stmt{ℓ ⊔ ℓₑ} where
+    record Complemented (¬_ : L → L) : Stmt{ℓ Lvl.⊔ ℓₑ} where
       constructor intro
       field
         ⦃ [¬]-function ⦄      : Function(¬_)
         ⦃ excluded-middle   ⦄ : ComplementFunction(_∨_)(¬_)
         ⦃ non-contradiction ⦄ : ComplementFunction(_∧_)(¬_)
 
-  record Distributive : Stmt{ℓ ⊔ ℓₑ} where
+  record Distributive : Stmt{ℓ Lvl.⊔ ℓₑ} where
     constructor intro
     field
       ⦃ [∨][∧]-distributivityₗ ⦄ : Distributivityₗ(_∨_)(_∧_)
@@ -167,7 +167,7 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ ⊔ �
       [∧][∨]-distributivityᵣ = [↔]-to-[→] OneTypeTwoOp.distributivity-equivalence-by-commutativity [∧][∨]-distributivityₗ
 
   -- TODO: Is a negatable lattice using one of its operators distributed by a negation a lattice? In other words, Lattice(_∧_)(¬_ ∘₂ (_∧_ on ¬_))?
-  record Negatable (¬_ : L → L) : Stmt{ℓ ⊔ ℓₑ} where
+  record Negatable (¬_ : L → L) : Stmt{ℓ Lvl.⊔ ℓₑ} where
     constructor intro
     field
       ⦃ [¬]-function ⦄   : Function(¬_)
@@ -200,7 +200,7 @@ Absorptionₗ.proof (Lattice.[∧][∨]-absorptionₗ (semilattices-to-lattice {
 -}
 
 -- Also called: De Morgan algebra
-record MorganicAlgebra (_∨_ : L → L → L) (_∧_ : L → L → L) (¬_ : L → L) (⊥ : L) (⊤ : L) : Stmt{ℓ ⊔ ℓₑ} where
+record MorganicAlgebra (_∨_ : L → L → L) (_∧_ : L → L → L) (¬_ : L → L) (⊥ : L) (⊤ : L) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
     ⦃ lattice ⦄             : Lattice(_∨_)(_∧_)
@@ -208,7 +208,7 @@ record MorganicAlgebra (_∨_ : L → L → L) (_∧_ : L → L → L) (¬_ : L 
     ⦃ distributiveLattice ⦄ : Lattice.Distributive(lattice)
     ⦃ negatableLattice ⦄    : Lattice.Negatable(lattice)(¬_)
 
-record BooleanAlgebra (_∨_ : L → L → L) (_∧_ : L → L → L) (¬_ : L → L) (⊥ : L) (⊤ : L) : Stmt{ℓ ⊔ ℓₑ} where
+record BooleanAlgebra (_∨_ : L → L → L) (_∧_ : L → L → L) (¬_ : L → L) (⊥ : L) (⊤ : L) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
     ⦃ lattice ⦄             : Lattice(_∨_)(_∧_)

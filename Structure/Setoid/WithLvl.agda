@@ -30,13 +30,13 @@ module _ where
     open Equivalence(equivalence) public
 
   open Equiv ⦃ ... ⦄ using (_≡_ ; _≢_) renaming (equivalence to Equiv-equivalence) public
-  {-# INLINE _≡_ #-}
-  {-# DISPLAY Equiv._≡_ a b = a ≡ b #-}
+  {-# INLINE _≡_ #-} -- TODO: Not sure if this does anything
+  {-# DISPLAY Equiv._≡_ a b = a ≡ b #-} -- TODO: Not sure about this either
 
 module _ where
   -- A set and an equivalence relation on it
   Setoid = ∃(Equiv)
-  module Setoid(([∃]-intro T ⦃ equiv ⦄) : Setoid) where
+  module Setoid(([∃]-intro T ⦃ equiv-T ⦄) : Setoid) where
     Type : Type.Type
     Type = T
-    open Equiv(equiv) public
+    open Equiv(equiv-T) public

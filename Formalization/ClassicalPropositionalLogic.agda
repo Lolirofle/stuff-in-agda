@@ -46,7 +46,7 @@ module _ (P : Type{ℓₚ}) where
     _⟶_ : Formula → Formula → Formula -- Implication
     _⟷_ : Formula → Formula → Formula -- Equivalence
 
-  Formulas : Type{ℓₚ ⊔ Lvl.𝐒(ℓ)}
+  Formulas : Type{ℓₚ Lvl.⊔ Lvl.𝐒(ℓ)}
   Formulas{ℓ} = PredSet{ℓ}(Formula)
 
   infixl 1011 •_
@@ -357,7 +357,7 @@ module NaturalDeduction where
   private variable Γ Γ₁ Γ₂ : Formulas(P){ℓ}
   private variable φ ψ : Formula(P)
 
-  data _⊢_ {ℓ ℓₚ} {P : Type{ℓₚ}} : Formulas(P){ℓ} → Formula(P) → Stmt{Lvl.𝐒(ℓₚ ⊔ ℓ)} where
+  data _⊢_ {ℓ ℓₚ} {P : Type{ℓₚ}} : Formulas(P){ℓ} → Formula(P) → Stmt{Lvl.𝐒(ℓₚ Lvl.⊔ ℓ)} where
     direct : ∀{Γ} → (Γ ⊆ (Γ ⊢_))
 
     [⊤]-intro : ∀{Γ} → (Γ ⊢ ⊤)
@@ -628,7 +628,7 @@ module NaturalDeduction where
     finiteAssumptions-index ([⟷]-elimᵣ p p₁) = {!!}
   -}
 
-  record MaximallyConsistent (Γ : Formulas(P){ℓ}) : Stmt{Lvl.𝐒(Lvl.of(P) ⊔ ℓ)} where
+  record MaximallyConsistent (Γ : Formulas(P){ℓ}) : Stmt{Lvl.𝐒(Lvl.of(P) Lvl.⊔ ℓ)} where
     field
       consistent : Consistent(Γ)
       --maximal    : ∀{Δ : Formulas(P)} → Consistent(Γ ∪ Δ) → (Δ ⊆ Γ)
@@ -732,7 +732,7 @@ module NaturalDeduction where
     ) public
 
   -- Also called: Lindenbaums' lemma
-  max : (Γ : Formulas(P){ℓ}) → Consistent(Γ) → Formulas(P){Lvl.𝐒(Lvl.of(P) ⊔ ℓ)}
+  max : (Γ : Formulas(P){ℓ}) → Consistent(Γ) → Formulas(P){Lvl.𝐒(Lvl.of(P) Lvl.⊔ ℓ)}
   max Γ con φ = Consistent(Γ ∪ singleton(φ)) -- TODO: Probably not like this
   -- if decide(Consistent(Γ ∪ singleton(φ))) then (Γ ∪ singleton(φ)) else (Γ ∪ singleton(¬ φ))
 

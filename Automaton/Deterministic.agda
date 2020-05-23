@@ -32,7 +32,7 @@ module _ {ℓₚ ℓₛ ℓₑ ℓₐ} (State : Type{ℓₛ}) ⦃ equiv-state : 
   -- `transition` (δ)  is the transition function.
   -- `start`      (q₀) is the start state.
   -- `Final`      (F)  is the subset of State which are the final/accepting states.
-  record Deterministic : Type{ℓₛ ⊔ ℓₑ ⊔ ℓₐ ⊔ Lvl.𝐒(ℓₚ)} where
+  record Deterministic : Type{ℓₛ Lvl.⊔ ℓₑ Lvl.⊔ ℓₐ Lvl.⊔ Lvl.𝐒(ℓₚ)} where
     constructor deterministic
     field
       transition : State → Alphabet → State

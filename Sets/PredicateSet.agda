@@ -22,7 +22,7 @@ module _ where
   -- A set of objects of a certain type.
   -- This is represented by a predicate.
   -- Note: This is only a "set" within a certain type, so everything PredSet(T) is actually a subset of T (if T were a set (the set of all objects with type T)). Or in other words: PredSet(T) is supposed to represent the set {x. x: T}, and then (S ∈ PredSet(T)) essentially means that S when interpreted as a set of objects is a subset of {x. x: T}.
-  PredSet : ∀{ℓ ℓₒ} → Type{ℓₒ} → Type{Lvl.𝐒(ℓ) ⊔ ℓₒ}
+  PredSet : ∀{ℓ ℓₒ} → Type{ℓₒ} → Type{Lvl.𝐒(ℓ) Lvl.⊔ ℓₒ}
   PredSet{ℓ}{ℓₒ} (T) = (T → Stmt{ℓ})
 
   private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓₒ ℓₑ : Lvl.Level
@@ -43,10 +43,10 @@ module _ where
   _∌_ = (¬_) ∘₂ (_∋_) -- (S ∌ x) = ¬(S ∋ x)
 
   module BoundedQuantifiers {T : Type{ℓₒ}} where
-    ∀ₛ : PredSet{ℓ}(T) → (T → Stmt{ℓ₁}) → Stmt{ℓ ⊔ ℓ₁ ⊔ ℓₒ}
+    ∀ₛ : PredSet{ℓ}(T) → (T → Stmt{ℓ₁}) → Stmt{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓₒ}
     ∀ₛ(S) P = ∀{elem : T} → (elem ∈ S) → P(elem)
 
-    ∃ₛ : PredSet{ℓ}(T) → (T → Stmt{ℓ₁}) → Stmt{ℓ ⊔ ℓ₁ ⊔ ℓₒ}
+    ∃ₛ : PredSet{ℓ}(T) → (T → Stmt{ℓ₁}) → Stmt{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓₒ}
     ∃ₛ(S) P = ∃(elem ↦ (elem ∈ S) ∧ P(elem))
 
   -- An empty set

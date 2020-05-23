@@ -17,6 +17,7 @@ open import Structure.Category.Functor.Functors as Functors
 open import Structure.Category.Monad{cat = cat}
 open import Structure.Category.NaturalTransformation
 open import Structure.Category.NaturalTransformation.NaturalTransformations as NaturalTransformations
+open import Structure.Category.Proofs
 open import Structure.Category.Properties
 open import Structure.Function
 open import Structure.Operator
@@ -111,3 +112,39 @@ record ExtensionSystem (T : Object → Object) : Type{Lvl.of(type-of(cat))} wher
     return = FunctionalNames.lift
     join   = FunctionalNames.flatten
     bind   = FunctionalNames.flatMap
+
+module _ where
+  open Functor ⦃ … ⦄
+  open Monad   ⦃ … ⦄
+
+  monad-to-extensionSystem : ∀{T : Object → Object} → ⦃ functor : Functor(category)(category)(T) ⦄ → ⦃ monad : Monad(T) ⦄ → ExtensionSystem(T)
+  ExtensionSystem.η   (monad-to-extensionSystem ⦃ functor ⦄ ⦃ monad ⦄) = η
+  ExtensionSystem.ext (monad-to-extensionSystem ⦃ functor ⦄ ⦃ monad ⦄) = (μ(_) ∘_) ∘ᶠⁿ map
+  Function.congruence (ExtensionSystem.ext-function monad-to-extensionSystem  {x} {y}) {f} {g} fg =
+    ((μ(y) ∘_) ∘ᶠⁿ map) f 🝖[ _≡_ ]-[]
+    μ(y) ∘ map f          🝖[ _≡_ ]-[ congruence₂ᵣ(_∘_) _ (congruence₁(map) fg) ]
+    μ(y) ∘ map g          🝖[ _≡_ ]-[]
+    ((μ(y) ∘_) ∘ᶠⁿ map) g 🝖[ _≡_ ]-end
+  ExtensionSystem.ext-inverse monad-to-extensionSystem {x} =
+    ((μ(x) ∘_) ∘ᶠⁿ map)(η(x)) 🝖[ _≡_ ]-[]
+    μ(x) ∘ map(η(x))          🝖[ _≡_ ]-[ _⊜_.proof μ-functor-[∘]-identityₗ ]
+    id                        🝖[ _≡_ ]-end
+  ExtensionSystem.ext-identity (monad-to-extensionSystem {T = T}) {x} {y} {f} =
+    ((μ(y) ∘_) ∘ᶠⁿ map)(f) ∘ η(x) 🝖[ _≡_ ]-[]
+    (μ(y) ∘ (map f)) ∘ η(x)       🝖[ _≡_ ]-[ Morphism.associativity(_∘_) ]
+    μ(y) ∘ ((map f) ∘ η(x))       🝖[ _≡_ ]-[ congruence₂ᵣ(_∘_) _ η-natural ]-sym
+    μ(y) ∘ (η(T(y)) ∘ f)          🝖[ _≡_ ]-[ Morphism.associativity(_∘_) ]-sym
+    (μ(y) ∘ η(T(y))) ∘ f          🝖[ _≡_ ]-[ congruence₂ₗ(_∘_) _ (_⊜_.proof μ-functor-[∘]-identityᵣ) ]
+    id ∘ f                        🝖[ _≡_ ]-[ Morphism.identityₗ(_∘_)(id) ]    
+    f                             🝖[ _≡_ ]-end
+  ExtensionSystem.ext-distribute (monad-to-extensionSystem {T = T}) {x} {y} {z} {f} {g} =
+    ((μ(z) ∘_) ∘ᶠⁿ map)(((μ(z) ∘_) ∘ᶠⁿ map)(f) ∘ g) 🝖[ _≡_ ]-[]
+    μ(z) ∘ map((μ(z) ∘ (map f)) ∘ g)                🝖[ _≡_ ]-[ congruence₂ᵣ(_∘_) _ op-preserving ]
+    μ(z) ∘ (map(μ(z) ∘ (map f)) ∘ (map g))          🝖[ _≡_ ]-[ congruence₂ᵣ(_∘_) _ (congruence₂ₗ(_∘_) _ op-preserving) ]
+    μ(z) ∘ ((map(μ(z)) ∘ map(map f)) ∘ (map g))     🝖[ _≡_ ]-[ associate4-231-121 category ]
+    (μ(z) ∘ map(μ(z))) ∘ (map(map f) ∘ (map g))     🝖[ _≡_ ]-[ congruence₂ₗ(_∘_) _ (_⊜_.proof μ-functor-[∘]-commutativity) ]
+    (μ(z) ∘ μ(T(z))) ∘ (map(map f) ∘ (map g))       🝖[ _≡_ ]-[ associate4-213-121 category ]-sym
+    (μ(z) ∘ (μ(T(z)) ∘ map(map f))) ∘ (map g)       🝖[ _≡_ ]-[ congruence₂ₗ(_∘_) _ (congruence₂ᵣ(_∘_) _ μ-natural) ]
+    (μ(z) ∘ ((map f) ∘ μ(y))) ∘ (map g)             🝖[ _≡_ ]-[ associate4-213-121 category ]
+    (μ(z) ∘ (map f)) ∘ (μ(y) ∘ (map g))             🝖[ _≡_ ]-[]
+    ((μ(z) ∘_) ∘ᶠⁿ map)(f) ∘ ((μ(y) ∘_) ∘ᶠⁿ map)(g) 🝖[ _≡_ ]-end

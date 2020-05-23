@@ -10,23 +10,23 @@ open import Type
 -- The interpretation is that X is the collection of points and 𝓣 is the collection of open sets of X.
 -- (X,𝓣) is called a topological space.
 -- 𝓣 is called a topology on X.
-record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Equiv{ℓ₁ ⊔ ℓ₃}(X) ⦄ (𝓣 : PredSet{ℓ₂}(PredSet{ℓ₁ ⊔ ℓ₃}(X))) : Type{Lvl.𝐒(Lvl.of(X)) ⊔ Lvl.of(type-of(𝓣))} where
+record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Equiv{ℓ₁ Lvl.⊔ ℓ₃}(X) ⦄ (𝓣 : PredSet{ℓ₂}(PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X))) : Type{Lvl.𝐒(Lvl.of(X)) Lvl.⊔ Lvl.of(type-of(𝓣))} where
   field
     contains-empty        : (∅ ∈ 𝓣)
     contains-universe     : (𝐔 ∈ 𝓣)
     intersection-closure  : ∀{A B} → (A ∈ 𝓣) → (B ∈ 𝓣) → ((A ∩ B) ∈ 𝓣)
-    indexed-union-closure : ∀{I : Type{ℓ₁ ⊔ ℓ₃}}{Ai : I → PredSet{ℓ₁ ⊔ ℓ₃}(X)} → (∀{i} → (Ai(i) ∈ 𝓣)) → ((⋃ᵢ Ai) ∈ 𝓣)
+    indexed-union-closure : ∀{I : Type{ℓ₁ Lvl.⊔ ℓ₃}}{Ai : I → PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X)} → (∀{i} → (Ai(i) ∈ 𝓣)) → ((⋃ᵢ Ai) ∈ 𝓣)
 
-  Open : PredSet{ℓ₁ ⊔ ℓ₃}(X) → Stmt
+  Open : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X) → Stmt
   Open(A) = (A ∈ 𝓣)
 
-  Closed : PredSet{ℓ₁ ⊔ ℓ₃}(X) → Stmt
+  Closed : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X) → Stmt
   Closed(A) = Open(∁ A)
 
-  record Neighborhood (p : X) (N : PredSet{ℓ₁ ⊔ ℓ₃}(X)) : Stmt{Lvl.𝐒(ℓ₁) ⊔ ℓ₂ ⊔ Lvl.𝐒(ℓ₃)} where
+  record Neighborhood (p : X) (N : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X)) : Stmt{Lvl.𝐒(ℓ₁) Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
     constructor intro
     field
-      O : PredSet{ℓ₁ ⊔ ℓ₃}(X)
+      O : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X)
       ⦃ open-set ⦄       : Open(O)
       ⦃ covers ⦄         : O ⊆ N
       ⦃ contains-point ⦄ : p ∈ O
@@ -64,7 +64,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
     UnaryRelator.substitution Neighborhood-unaryRelator xy (intro O ⦃ contains-point = p ⦄) = intro O ⦃ contains-point = substitute₁(_∈ O) xy p ⦄
 
   -- TODO: Is it usable when defined like this?
-  record Base {I : Type{ℓ₁ ⊔ ℓ₃}} (Bi : I → PredSet{ℓ₁ ⊔ ℓ₃}(X)) : Stmt{Lvl.𝐒(ℓ₁ ⊔ ℓ₃)} where
+  record Base {I : Type{ℓ₁ Lvl.⊔ ℓ₃}} (Bi : I → PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X)) : Stmt{Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₃)} where
     constructor intro
     field
       covers-space : (∀{x} → (x ∈ (⋃ᵢ Bi)))
@@ -72,7 +72,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
       generator-contains-point : ∀{x : X}{i₁ i₂ : I} ⦃ _ : x ∈ (Bi(i₁) ∩ Bi(i₂)) ⦄ → (x ∈ Bi(generator x i₁ i₂))
       generator-subset : ∀{x : X}{i₁ i₂ : I} ⦃ _ : x ∈ (Bi(i₁) ∩ Bi(i₂)) ⦄ → (Bi(generator x i₁ i₂) ⊆ (Bi(i₁) ∩ Bi(i₂)))
 
-  record ClosurePoint (A : PredSet{ℓ₁ ⊔ ℓ₃}(X)) (p : X) : Stmt{Lvl.𝐒(ℓ₁) ⊔ ℓ₂ ⊔ Lvl.𝐒(ℓ₃)} where
+  record ClosurePoint (A : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X)) (p : X) : Stmt{Lvl.𝐒(ℓ₁) Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
     constructor intro
     field proof : ∀{N} → ⦃ _ : Neighborhood(p)(N) ⦄ → NonEmpty(A ∩ N)
 
@@ -82,7 +82,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
 
   InternalPoint = swap Neighborhood
 
-  record LimitPoint (A : PredSet{ℓ₁ ⊔ ℓ₃}(X)) (p : X) : Stmt{Lvl.𝐒(ℓ₁) ⊔ ℓ₂ ⊔ Lvl.𝐒(ℓ₃)} where
+  record LimitPoint (A : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X)) (p : X) : Stmt{Lvl.𝐒(ℓ₁) Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
     constructor intro
     field proof : ∀{N} → ⦃ _ : Neighborhood(p)(N) ⦄ → NonEmpty(A ∩ (N ∖ (• p)))
 
@@ -95,10 +95,10 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
         inst = [∘]-unaryRelator {f = x ↦ A ∩ (N ∖ (• x))} ⦃ {!!} ⦄ {P = NonEmpty} ⦃ {!!} ⦄
     -}
 
-  record IsolatedPoint (A : PredSet{ℓ₁ ⊔ ℓ₃}(X)) (p : X) : Stmt{Lvl.𝐒(ℓ₁) ⊔ ℓ₂ ⊔ Lvl.𝐒(ℓ₃)} where
+  record IsolatedPoint (A : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X)) (p : X) : Stmt{Lvl.𝐒(ℓ₁) Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
     constructor intro
     field
-      N : PredSet{ℓ₁ ⊔ ℓ₃}(X)
+      N : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X)
       ⦃ neighborhood ⦄ : Neighborhood(p)(N)
       proof : ((A ∩ N) ≡ₛ (• p))
 
@@ -106,28 +106,28 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
     IsolatedPoint-unaryRelator : ∀{A} → UnaryRelator(IsolatedPoint(A))
     UnaryRelator.substitution IsolatedPoint-unaryRelator xy (intro N p) = intro N ⦃ substitute₁(a ↦ Neighborhood a N) xy infer ⦄ (p 🝖 (congruence₁ (•_) ⦃ singleton-function ⦃ equiv ⦄ ⦄ xy))
 
-  Closure : PredSet{ℓ₁ ⊔ ℓ₃}(X) → PredSet(X)
+  Closure : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X) → PredSet(X)
   Closure(A) = intro(ClosurePoint(A))
 
-  Interior : PredSet{ℓ₁ ⊔ ℓ₃}(X) → PredSet(X)
+  Interior : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X) → PredSet(X)
   Interior(A) = intro(InternalPoint(A))
 
-  ∂ : PredSet{ℓ₁ ⊔ ℓ₃}(X) → PredSet(X)
+  ∂ : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X) → PredSet(X)
   ∂ A = Closure(A) ∖ Interior(A)
 
-  Discrete : PredSet{ℓ₁ ⊔ ℓ₃}(X) → Stmt
+  Discrete : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X) → Stmt
   Discrete(A) = A ⊆ intro(IsolatedPoint(A))
 
-  Dense : PredSet{ℓ₁ ⊔ ℓ₃}(X) → Stmt
+  Dense : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X) → Stmt
   Dense(A) = Closure(A) ⊆ A
 
-  Perfect : PredSet{ℓ₁ ⊔ ℓ₃}(X) → Stmt
+  Perfect : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X) → Stmt
   Perfect(A) = ∀{p} → (¬ IsolatedPoint(A)(p))
 
   open import Numeral.Natural
   open import Numeral.Natural.Relation.Order
 
-  record _converges-to_ (f : ℕ → X) (L : X) : Stmt{Lvl.𝐒(ℓ₁) ⊔ ℓ₂ ⊔ Lvl.𝐒(ℓ₃)} where
+  record _converges-to_ (f : ℕ → X) (L : X) : Stmt{Lvl.𝐒(ℓ₁) Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
     constructor intro
     field
       min : ∃(Neighborhood(L)) → ℕ
@@ -136,9 +136,9 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   lim f ⦃ [∃]-intro L ⦄ = L
 
 module _
-  {ℓₗ₁ ℓₗ₂ ℓₗ₃} {X : Type{ℓₗ₁}} ⦃ equivₗ : Equiv{ℓₗ₁ ⊔ ℓₗ₃}(X) ⦄ (𝓣ₗ : PredSet{ℓₗ₂}(PredSet{ℓₗ₁ ⊔ ℓₗ₃}(X)))
+  {ℓₗ₁ ℓₗ₂ ℓₗ₃} {X : Type{ℓₗ₁}} ⦃ equivₗ : Equiv{ℓₗ₁ Lvl.⊔ ℓₗ₃}(X) ⦄ (𝓣ₗ : PredSet{ℓₗ₂}(PredSet{ℓₗ₁ Lvl.⊔ ℓₗ₃}(X)))
   ⦃ _ : TopologicalSpace{ℓₗ₁}{ℓₗ₂}{ℓₗ₃} (𝓣ₗ) ⦄
-  {ℓᵣ₁ ℓᵣ₂ ℓᵣ₃} {Y : Type{ℓᵣ₁}} ⦃ equivᵣ : Equiv{ℓᵣ₁ ⊔ ℓᵣ₃}(Y) ⦄ (𝓣ᵣ : PredSet{ℓᵣ₂}(PredSet{ℓᵣ₁ ⊔ ℓᵣ₃}(Y)))
+  {ℓᵣ₁ ℓᵣ₂ ℓᵣ₃} {Y : Type{ℓᵣ₁}} ⦃ equivᵣ : Equiv{ℓᵣ₁ Lvl.⊔ ℓᵣ₃}(Y) ⦄ (𝓣ᵣ : PredSet{ℓᵣ₂}(PredSet{ℓᵣ₁ Lvl.⊔ ℓᵣ₃}(Y)))
   ⦃ _ : TopologicalSpace{ℓᵣ₁}{ℓᵣ₂}{ℓᵣ₃} (𝓣ᵣ) ⦄
   where
   open TopologicalSpace ⦃ … ⦄
@@ -146,7 +146,7 @@ module _
   open import Logic.Predicate
   open import Structure.Function
 
-  record ContinuousAt (f : X → Y) ⦃ _ : Function(f) ⦄ (x : X) : Stmt{Lvl.𝐒(ℓₗ₁ ⊔ ℓₗ₃ ⊔ ℓᵣ₁ ⊔ ℓᵣ₃) ⊔ ℓₗ₂ ⊔ ℓᵣ₂} where
+  record ContinuousAt (f : X → Y) ⦃ _ : Function(f) ⦄ (x : X) : Stmt{Lvl.𝐒(ℓₗ₁ Lvl.⊔ ℓₗ₃ Lvl.⊔ ℓᵣ₁ Lvl.⊔ ℓᵣ₃) Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓᵣ₂} where
     constructor intro
     field
       map : ∃(Neighborhood(f(x))) → ∃(Neighborhood(x))
@@ -154,13 +154,13 @@ module _
             → let ([∃]-intro A) = map(NB)
               in  (A ⊆ unmap f(B))
 
-  Continuous : (f : X → Y) ⦃ _ : Function(f) ⦄ → Stmt{Lvl.𝐒(ℓₗ₁ ⊔ ℓₗ₃ ⊔ ℓᵣ₁ ⊔ ℓᵣ₃) ⊔ ℓₗ₂ ⊔ ℓᵣ₂}
+  Continuous : (f : X → Y) ⦃ _ : Function(f) ⦄ → Stmt{Lvl.𝐒(ℓₗ₁ Lvl.⊔ ℓₗ₃ Lvl.⊔ ℓᵣ₁ Lvl.⊔ ℓᵣ₃) Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓᵣ₂}
   Continuous(f) = ∀{x} → ContinuousAt f(x)
 
 module _
-  {ℓₗ₁ ℓₗ₂ ℓₗ₃} {X : Type{ℓₗ₁}} ⦃ equivₗ : Equiv{ℓₗ₁ ⊔ ℓₗ₃}(X) ⦄ (𝓣ₗ : PredSet{ℓₗ₂}(PredSet{ℓₗ₁ ⊔ ℓₗ₃}(X)))
+  {ℓₗ₁ ℓₗ₂ ℓₗ₃} {X : Type{ℓₗ₁}} ⦃ equivₗ : Equiv{ℓₗ₁ Lvl.⊔ ℓₗ₃}(X) ⦄ (𝓣ₗ : PredSet{ℓₗ₂}(PredSet{ℓₗ₁ Lvl.⊔ ℓₗ₃}(X)))
   ⦃ _ : TopologicalSpace{ℓₗ₁}{ℓₗ₂}{ℓₗ₃} (𝓣ₗ) ⦄
-  {ℓᵣ₁ ℓᵣ₂ ℓᵣ₃} {Y : Type{ℓᵣ₁}} ⦃ equivᵣ : Equiv{ℓᵣ₁ ⊔ ℓᵣ₃}(Y) ⦄ (𝓣ᵣ : PredSet{ℓᵣ₂}(PredSet{ℓᵣ₁ ⊔ ℓᵣ₃}(Y)))
+  {ℓᵣ₁ ℓᵣ₂ ℓᵣ₃} {Y : Type{ℓᵣ₁}} ⦃ equivᵣ : Equiv{ℓᵣ₁ Lvl.⊔ ℓᵣ₃}(Y) ⦄ (𝓣ᵣ : PredSet{ℓᵣ₂}(PredSet{ℓᵣ₁ Lvl.⊔ ℓᵣ₃}(Y)))
   ⦃ _ : TopologicalSpace{ℓᵣ₁}{ℓᵣ₂}{ℓᵣ₃} (𝓣ᵣ) ⦄
   where
   open TopologicalSpace ⦃ … ⦄
@@ -169,7 +169,7 @@ module _
   open import Structure.Function.Domain hiding (bijective)
   open import Structure.Function
 
-  record Homeomorphism (f : X → Y) ⦃ func : Function(f) ⦄ : Stmt{Lvl.𝐒(ℓₗ₁ ⊔ ℓₗ₃ ⊔ ℓᵣ₁ ⊔ ℓᵣ₃) ⊔ ℓₗ₂ ⊔ ℓᵣ₂} where
+  record Homeomorphism (f : X → Y) ⦃ func : Function(f) ⦄ : Stmt{Lvl.𝐒(ℓₗ₁ Lvl.⊔ ℓₗ₃ Lvl.⊔ ℓᵣ₁ Lvl.⊔ ℓᵣ₃) Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓᵣ₂} where
     constructor intro
     field
       ⦃ bijective ⦄          : Bijective(f)

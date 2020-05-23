@@ -26,14 +26,14 @@ open import Syntax.Transitivity
 open import Type
 open import Type.Size
 
-private variable ℓ ℓₒ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ ℓ₁ ℓ₂ ℓ₃ ℓₑ₁ ℓₑ₂ : Lvl.Level
+private variable ℓ ℓₒ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
 private variable T A B : Type{ℓ}
 
 -- A set of objects of a certain type where equality is based on setoids.
 -- This is defined by the containment predicate (_∋_) and a proof that it respects the setoid structure.
 -- (A ∋ a) is read "The set A contains the element a".
 -- Note: This is only a "set" within a certain type, so a collection of type PredSet(T) is actually a subcollection of T.
-record PredSet {ℓ ℓₒ ℓₗ} (T : Type{ℓₒ}) ⦃ equiv : Equiv{ℓₗ}(T) ⦄ : Type{Lvl.𝐒(ℓ) ⊔ ℓₒ ⊔ ℓₗ} where
+record PredSet {ℓ ℓₒ ℓₑ} (T : Type{ℓₒ}) ⦃ equiv : Equiv{ℓₑ}(T) ⦄ : Type{Lvl.𝐒(ℓ) Lvl.⊔ ℓₒ Lvl.⊔ ℓₑ} where
   constructor intro
   field
     _∋_ : T → Stmt{ℓ}
@@ -42,7 +42,7 @@ open PredSet using (_∋_) public
 open PredSet using (preserve-equiv)
 
 -- Element-set relations.
-module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
+module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   -- The membership relation.
   -- (a ∈ A) is read "The element a is included in the set A".
   _∈_ : T → PredSet{ℓ}(T) → Stmt
@@ -58,15 +58,15 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
   NonEmpty(S) = ∃(_∈ S)
 
 -- Set-bounded quantifiers.
-module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
-  ∀ₛ : PredSet{ℓ}(T) → (T → Stmt{ℓ₁}) → Stmt{ℓ ⊔ ℓ₁ ⊔ ℓₒ}
+module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  ∀ₛ : PredSet{ℓ}(T) → (T → Stmt{ℓ₁}) → Stmt{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓₒ}
   ∀ₛ(S) P = ∀{elem : T} → (elem ∈ S) → P(elem)
 
-  ∃ₛ : PredSet{ℓ}(T) → (T → Stmt{ℓ₁}) → Stmt{ℓ ⊔ ℓ₁ ⊔ ℓₒ}
+  ∃ₛ : PredSet{ℓ}(T) → (T → Stmt{ℓ₁}) → Stmt{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓₒ}
   ∃ₛ(S) P = ∃(elem ↦ (elem ∈ S) ∧ P(elem))
 
 -- Sets and set operations.
-module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
+module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   -- An empty set.
   -- Contains nothing.
   ∅ : PredSet{ℓ}(T)
@@ -121,7 +121,7 @@ preserve-equiv (unapply f(y)) = [∘]-unaryRelator ⦃ rel = binary-unaryRelator
 ⊶ f ∋ y = ∃(x ↦ f(x) ≡ₑ y)
 preserve-equiv (⊶ f) = [∃]-unaryRelator ⦃ rel-P = binary-unaryRelatorₗ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄
 
-unmap : ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ → (f : A → B) ⦃ _ : Function(f) ⦄ → PredSet{ℓ}(B) → PredSet(A)
+unmap : ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ → (f : A → B) ⦃ _ : Function(f) ⦄ → PredSet{ℓ}(B) → PredSet(A)
 (unmap f(Y)) ∋ x = f(x) ∈ Y
 preserve-equiv (unmap f x) = [∘]-unaryRelator
 
@@ -130,16 +130,16 @@ map f(S) ∋ y = ∃(x ↦ (x ∈ S) ∧ (f(x) ≡ₑ y))
 preserve-equiv (map f S) = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-Q = binary-unaryRelatorₗ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄ ⦄
 
 -- Set-set relations.
-module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
-  record _⊆_ (A : PredSet{ℓ₁}(T)) (B : PredSet{ℓ₂}(T)) : Stmt{ℓₒ ⊔ ℓ₁ ⊔ ℓ₂} where
+module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  record _⊆_ (A : PredSet{ℓ₁}(T)) (B : PredSet{ℓ₂}(T)) : Stmt{ℓₒ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : ∀{x} → (x ∈ A) → (x ∈ B)
 
-  record _⊇_ (A : PredSet{ℓ₁}(T)) (B : PredSet{ℓ₂}(T)) : Stmt{ℓₒ ⊔ ℓ₁ ⊔ ℓ₂} where
+  record _⊇_ (A : PredSet{ℓ₁}(T)) (B : PredSet{ℓ₂}(T)) : Stmt{ℓₒ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : ∀{x} → (x ∈ A) ← (x ∈ B)
 
-  record _≡_ (A : PredSet{ℓ₁}(T)) (B : PredSet{ℓ₂}(T)) : Stmt{ℓₒ ⊔ ℓ₁ ⊔ ℓ₂} where
+  record _≡_ (A : PredSet{ℓ₁}(T)) (B : PredSet{ℓ₂}(T)) : Stmt{ℓₒ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : ∀{x} → (x ∈ A) ↔ (x ∈ B)
 
@@ -167,7 +167,7 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
     Equiv._≡_ ([≡]-equiv {ℓ}) x y = x ≡ y
     Equiv.equivalence [≡]-equiv = [≡]-equivalence
 
-module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
+module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   instance
     -- Note: The purpose of this module is to satisfy this property for arbitrary equivalences.
     [∋]-binaryRelator : BinaryRelator(_∋_ {ℓ}{T = T})
@@ -177,9 +177,9 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
     [∋]-unaryRelatorₗ : ∀{a : T} → UnaryRelator(A ↦ _∋_ {ℓ} A a)
     [∋]-unaryRelatorₗ = BinaryRelator.left [∋]-binaryRelator
 
--- TODO: There are level problems here that I am not sure how to solve. The big union of a set of sets are not of the same type as the inner sets. So, for example it would be useful if (⋃ As : PredSet{ℓₒ ⊔ Lvl.𝐒(ℓ₁)}(T)) and (A : PredSet{ℓ₁}(T)) for (A ∈ As) had the same type/levels when (As : PredSet{Lvl.𝐒(ℓ₁)}(PredSet{ℓ₁}(T))) so that they become comparable. But here, the result of big union is a level greater.
-module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
-  -- ⋃_ : PredSet{Lvl.𝐒(ℓ₁)}(PredSet{ℓ₁}(T)) → PredSet{ℓₒ ⊔ Lvl.𝐒(ℓ₁)}(T)
+-- TODO: There are level problems here that I am not sure how to solve. The big union of a set of sets are not of the same type as the inner sets. So, for example it would be useful if (⋃ As : PredSet{ℓₒ Lvl.⊔ Lvl.𝐒(ℓ₁)}(T)) and (A : PredSet{ℓ₁}(T)) for (A ∈ As) had the same type/levels when (As : PredSet{Lvl.𝐒(ℓ₁)}(PredSet{ℓ₁}(T))) so that they become comparable. But here, the result of big union is a level greater.
+module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  -- ⋃_ : PredSet{Lvl.𝐒(ℓ₁)}(PredSet{ℓ₁}(T)) → PredSet{ℓₒ Lvl.⊔ Lvl.𝐒(ℓ₁)}(T)
   ⋃ : PredSet{ℓ₁}(PredSet{ℓ₂}(T)) → PredSet(T)
   (⋃ As) ∋ x = ∃(A ↦ (A ∈ As) ∧ (x ∈ A))
   UnaryRelator.substitution (preserve-equiv (⋃ As)) xy = [∃]-map-proof (Tuple.mapRight (substitute₁(_) xy))
@@ -189,12 +189,12 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
   UnaryRelator.substitution (preserve-equiv (⋂ As)) xy = substitute₁(_) xy ∘_
 
 -- Indexed set operations.
-module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
-  ⋃ᵢ : ∀{I : Type{ℓ₁}} → (I → PredSet{ℓ₂}(T)) → PredSet{ℓ₁ ⊔ ℓ₂}(T)
+module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  ⋃ᵢ : ∀{I : Type{ℓ₁}} → (I → PredSet{ℓ₂}(T)) → PredSet{ℓ₁ Lvl.⊔ ℓ₂}(T)
   (⋃ᵢ Ai) ∋ x = ∃(i ↦ x ∈ Ai(i))
   UnaryRelator.substitution (preserve-equiv (⋃ᵢ Ai)) xy = [∃]-map-proof (\{i} → substitute₁(_) ⦃ preserve-equiv(Ai(i)) ⦄ xy)
 
-  ⋂ᵢ : ∀{I : Type{ℓ₁}} → (I → PredSet{ℓ₂}(T)) → PredSet{ℓ₁ ⊔ ℓ₂}(T)
+  ⋂ᵢ : ∀{I : Type{ℓ₁}} → (I → PredSet{ℓ₂}(T)) → PredSet{ℓ₁ Lvl.⊔ ℓ₂}(T)
   (⋂ᵢ Ai) ∋ x = ∀ₗ(i ↦ x ∈ Ai(i))
   UnaryRelator.substitution (preserve-equiv (⋂ᵢ Ai)) xy p {i} = substitute₁(_) ⦃ preserve-equiv(Ai(i)) ⦄ xy p
 
@@ -215,7 +215,7 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
   _⨯_.right (_⨯_.right (_≡_.proof ⋂ᵢ-of-boolean) p) = p{𝑇}
 
 module _
-  {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄
+  {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄
   {A : Type{ℓ₁}} ⦃ _ : Equiv(A) ⦄
   {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄
   where
@@ -230,7 +230,7 @@ module _
   _⨯_.left (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = p{g(b)}
   _⨯_.right (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = substitute₂(_∋_) (congruence₁(f) inv-inverseᵣ) (reflexivity(_≡ₑ_)) (p{inv g(b)})
 
-module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(T) ⦄ where
+module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   instance
-    singleton-function : ∀{A : Type{ℓ}} ⦃ _ : Equiv{ℓₗ}(A) ⦄ → Function{A = A}(•_)
+    singleton-function : ∀{A : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(A) ⦄ → Function{A = A}(•_)
     _≡_.proof (Function.congruence singleton-function {x} {y} xy) {a} = [↔]-intro (_🝖 symmetry(_≡ₑ_) xy) (_🝖 xy)

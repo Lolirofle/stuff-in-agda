@@ -1,6 +1,6 @@
 import      Lvl
 
-module Structure.Category.Dual {ℓₒ ℓₘ : Lvl.Level} where
+module Structure.Category.Dual {ℓₒ ℓₘ ℓₑ : Lvl.Level} where
 
 open import Data.Tuple as Tuple using ()
 open import Functional using (swap)
@@ -11,13 +11,13 @@ import      Structure.Operator.Properties as Properties
 open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Type
 
 module _
   {Obj : Type{ℓₒ}}
   {Morphism : Obj → Obj → Type{ℓₘ}}
-  ⦃ morphism-equiv : ∀{x y} → Equiv(Morphism x y) ⦄
+  ⦃ morphism-equiv : ∀{x y} → Equiv{ℓₑ}(Morphism x y) ⦄
   (cat : Category(Morphism))
   where
 

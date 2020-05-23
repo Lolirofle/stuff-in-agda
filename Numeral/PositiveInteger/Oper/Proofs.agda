@@ -19,6 +19,7 @@ open import Structure.Function.Multi
 open import Structure.Operator
 open import Structure.Operator.Monoid
 import      Structure.Operator.Names as Names
+open import Structure.Operator.Proofs.Util
 open import Structure.Operator.Proofs
 open import Structure.Operator.Properties
 open import Syntax.Transitivity

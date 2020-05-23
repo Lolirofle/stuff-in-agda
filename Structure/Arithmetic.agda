@@ -24,7 +24,7 @@ module _ ⦃ equiv : Equiv(T) ⦄ (𝟎 : T) (𝐒 : T → T) where
       𝐒-positivity      : ∀{x} → (𝐒(x) ≢ 𝟎)
 
   module _ (_<_ : T → T → Stmt{ℓₗ}) where
-    record Minimal : Type{Lvl.of(T) ⊔ ℓₗ} where
+    record Minimal : Type{Lvl.of(T) Lvl.⊔ ℓₗ} where
       open From-[<][≡] (_<_) (_≡_)
 
       field

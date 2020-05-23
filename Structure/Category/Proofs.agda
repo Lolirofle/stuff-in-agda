@@ -55,6 +55,9 @@ module _
   associate4-231-123 : f ∘ ((g ∘ h) ∘ i) ≡ ((f ∘ g) ∘ h) ∘ i
   associate4-231-123 = associate4-231-213 🝖 symmetry(_≡_) associate4-123-213
 
+  associate4-231-121 : (f ∘ ((g ∘ h) ∘ i) ≡ (f ∘ g) ∘ (h ∘ i))
+  associate4-231-121 = congruence₂ᵣ(_∘_)(_) (Morphism.associativity(_∘_)) 🝖 symmetry(_≡_) (Morphism.associativity(_∘_))
+
   id-automorphism : Automorphism(id{x})
   ∃.witness id-automorphism = id
   ∃.proof   id-automorphism = intro(Morphism.identityₗ(_∘_)(id)) , intro(Morphism.identityᵣ(_∘_)(id))

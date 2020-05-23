@@ -18,7 +18,7 @@ open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Structure.Setoid.Uniqueness
 open import Structure.Function.Domain
-open import Structure.Operator.Proofs
+open import Structure.Operator.Proofs.Util
 open import Structure.Operator.Properties
 import      Structure.Operator.Names as Names
 open import Structure.Relator.Properties
@@ -139,18 +139,11 @@ instance
 [+]ₗ-injectivity-raw {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
 [+]ₗ-injectivity-raw {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]ₗ-injectivity-raw {n} ([≡]-with(𝐏) x₁+𝐒n≡x₂+𝐒n)
 
--- TODO: Rename and generalize this (See commuteBoth in Structure.Operator.Properties)
-commuteBothTemp : ∀{a₁ a₂ b₁ b₂} → (a₁ + a₂ ≡ b₁ + b₂) → (a₂ + a₁ ≡ b₂ + b₁)
-commuteBothTemp {a₁} {a₂} {b₁} {b₂} a₁+a₂≡b₁+b₂ =
-    (symmetry(_≡_) ([+]-commutativity-raw {a₁} {a₂}))
-    🝖 a₁+a₂≡b₁+b₂
-    🝖 ([+]-commutativity-raw {b₁} {b₂})
-
 [+]ᵣ-injectivity-raw : ∀{a} → Names.Injective (a +_)
-[+]ᵣ-injectivity-raw {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = commuteBothTemp {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
+[+]ᵣ-injectivity-raw {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = One.commuteBothTemp ⦃ comm = intro(\{x y} → [+]-commutativity-raw {x}{y}) ⦄ {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
 [+]ᵣ-injectivity-raw {𝐒(n)} {x₁} {x₂} (𝐒n+x₁≡𝐒n+x₂) =
   [+]ᵣ-injectivity-raw {n} (
-    commuteBothTemp {x₁} {n} {x₂} {n} ([≡]-with(𝐏) (commuteBothTemp {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
+    One.commuteBothTemp ⦃ comm = intro(\{x y} → [+]-commutativity-raw {x}{y}) ⦄ {x₁} {n} {x₂} {n} ([≡]-with(𝐏) (One.commuteBothTemp ⦃ comm = intro(\{x y} → [+]-commutativity-raw {x}{y}) ⦄ {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
   )
 
 [+]-sum-is-0ₗ : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)

@@ -143,7 +143,7 @@ module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}} {P : X → Stmt{ℓ₂}} where
 
 -- Existence of a computable function which yields whether a relation between two arguments is provable or not.
 -- TODO: Is this neccessary to have? Compare with Function.Proofs.function
-record Computable {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}} (P : X → Y → Stmt{ℓ₃}) : Stmt{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃} where
+record Computable {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}}{Y : Type{ℓ₂}} (P : X → Y → Stmt{ℓ₃}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
   field
     function : X → Y
 

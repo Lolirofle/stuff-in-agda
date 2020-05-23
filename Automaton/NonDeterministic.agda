@@ -17,7 +17,7 @@ open import Type
 -- `transition` (δ)  is the transition function.
 -- `start`      (q₀) is the start state.
 -- `Final`      (F)  is the subset of State which are the final/accepting states.
-record NonDeterministic {ℓₚ ℓₛ ℓₑ ℓₐ} (State : Type{ℓₛ}) ⦃ equiv-state : Equiv{ℓₑ}(State) ⦄ (Alphabet : Type{ℓₐ}) : Type{ℓₛ ⊔ ℓₑ ⊔ ℓₐ ⊔ Lvl.𝐒(ℓₚ)} where
+record NonDeterministic {ℓₚ ℓₛ ℓₑ ℓₐ} (State : Type{ℓₛ}) ⦃ equiv-state : Equiv{ℓₑ}(State) ⦄ (Alphabet : Type{ℓₐ}) : Type{ℓₛ Lvl.⊔ ℓₑ Lvl.⊔ ℓₐ Lvl.⊔ Lvl.𝐒(ℓₚ)} where
   constructor nondeterministic
   field
     transition : State → Alphabet → PredSet{ℓₚ}(State)

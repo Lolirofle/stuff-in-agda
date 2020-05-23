@@ -14,7 +14,7 @@ open import Type.Dependent
 private variable ℓ ℓₑ ℓᵢ ℓᵢ₁ ℓᵢ₂ ℓᵢ₃ ℓᵢₑ ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
 private variable T X Y Z : Type{ℓ}
 
-record ImageSet {ℓᵢ ℓ} (T : Type{ℓ}) : Type{Lvl.𝐒(ℓᵢ) ⊔ ℓ} where
+record ImageSet {ℓᵢ ℓ} (T : Type{ℓ}) : Type{Lvl.𝐒(ℓᵢ) Lvl.⊔ ℓ} where
   constructor intro
   field
     {Index} : Type{ℓᵢ}

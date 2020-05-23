@@ -13,54 +13,54 @@ open import Type
 private variable ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
 
 module _ {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
-  record Bottom (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
+  record Bottom (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
       ⦃ membership ⦄ : P(m)
       proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (m ≤ x)
 
-  record Top (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
+  record Top (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
       ⦃ membership ⦄ : P(m)
       proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (x ≤ m)
 
-  record LeftBound (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
+  record LeftBound (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (b ≤ x)
 
-  record RightBound (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
+  record RightBound (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (x ≤ b)
 
-  record Join (P : T → Stmt{ℓ₃}) (sup : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
+  record Join (P : T → Stmt{ℓ₃}) (sup : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
       bound : RightBound(P) (sup)
       extreme : LeftBound(RightBound(P)) (sup)
 
-  record Meet (P : T → Stmt{ℓ₃}) (inf : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ ℓ₃} where
+  record Meet (P : T → Stmt{ℓ₃}) (inf : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
       bound : LeftBound(P) (inf)
       extreme : RightBound(LeftBound(P)) (inf)
 
   module Complete {ℓ₃} where
-    record JoinSemilattice : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ Lvl.𝐒(ℓ₃)} where
+    record JoinSemilattice : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
       constructor intro
       field proof : ∀{P : T → Stmt{ℓ₃}} → ∃(Join(P))
 
-    record MeetSemilattice : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ Lvl.𝐒(ℓ₃)} where
+    record MeetSemilattice : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
       constructor intro
       field proof : ∀{P : T → Stmt{ℓ₃}} → ∃(Meet(P))
 
-    record Lattice : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ Lvl.𝐒(ℓ₃)} where
+    record Lattice : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
       constructor intro
       field
         ⦃ meet-semilattice ⦄ : MeetSemilattice
         ⦃ join-semilattice ⦄ : JoinSemilattice
 
-      record Bounded (⊤ : T) (⊥ : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ ⊔ Lvl.𝐒(ℓ₃)} where
+      record Bounded (⊤ : T) (⊥ : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
         constructor intro
         field
           ⦃ bottom ⦄ : Weak.Properties.Extremumᵣ(_≤_)(⊥)

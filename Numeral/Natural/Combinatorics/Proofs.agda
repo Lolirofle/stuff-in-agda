@@ -17,7 +17,7 @@ open import Relator.Equals.Proofs.Equiv
 open import Structure.Setoid hiding (_≡_ ; _≢_)
 open import Structure.Function.Domain
 open import Structure.Function
-open import Structure.Operator.Proofs
+open import Structure.Operator.Proofs.Util
 open import Structure.Operator.Properties
 open import Structure.Operator
 open import Structure.Relator.Properties

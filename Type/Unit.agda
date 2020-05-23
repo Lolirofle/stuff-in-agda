@@ -7,7 +7,7 @@ open import Type
 -- A type is an unit type when it has exactly one inhabitant (there is only one object with this type).
 -- In other words: There is an unique inhabitant of type T.
 -- IsUnit(T) is sometimes also called "T is a singleton", or "T is contractible".
-record IsUnit (T : Type{ℓ}) ⦃ _ : Equiv{ℓₑ}(T) ⦄ : Type{ℓ ⊔ ℓₑ} where
+record IsUnit (T : Type{ℓ}) ⦃ _ : Equiv{ℓₑ}(T) ⦄ : Type{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
     unit : T
@@ -25,7 +25,7 @@ open IsUnit ⦃ ... ⦄ using (unit)
 -- • "is of h-level 1"
 -- • "a mere proposition"
 -- Classically, when IsProp(T), T is either empty or a singleton (which in the context of proofs corresponds to ⊥ and ⊤).
-record IsProp (T : Type{ℓ}) ⦃ _ : Equiv{ℓₑ}(T) ⦄ : Type{ℓ ⊔ ℓₑ} where
+record IsProp (T : Type{ℓ}) ⦃ _ : Equiv{ℓₑ}(T) ⦄ : Type{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
     uniqueness : ∀{x y : T} → (x ≡ y)

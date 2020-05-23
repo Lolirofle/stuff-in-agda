@@ -12,7 +12,7 @@ open import Numeral.Natural.Oper using (_+_ ; _⋅_ ; _𝄩_)
 open import Numeral.Natural.Oper.Proofs
 import      Structure.Function
 open import Structure.Operator.Properties
-open import Structure.Operator.Proofs
+open import Structure.Operator.Proofs.Util
 import      Structure.Operator.Names as Names
 import      Structure.Operator 
 open import Structure.Relator.Properties

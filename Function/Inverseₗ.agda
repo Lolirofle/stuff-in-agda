@@ -53,18 +53,18 @@ module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} ⦃ eqA : Equiv(A) ⦄ {B : Type{ℓ
     -- map1-eq (reflexivity(_≡_)) (congruence₁(const) ⦃ const-function-function ⦃ ? ⦄ ⦄ (congruence₁(fallback) y₁y₂))
       proof-test :
         (Either.map1
-          {ℓ₁ ⊔ ℓ₂} {∃ {ℓ₁} {ℓ₂} {A} (Unapply {ℓ₁} {ℓ₂} {A} {B} ⦃ eqB ⦄ f y₁)}
+          {ℓ₁ Lvl.⊔ ℓ₂} {∃ {ℓ₁} {ℓ₂} {A} (Unapply {ℓ₁} {ℓ₂} {A} {B} ⦃ eqB ⦄ f y₁)}
           {ℓ₁} {A}
-          {ℓ₁ ⊔ ℓ₂} {∃ {ℓ₁} {ℓ₂} {A} (Unapply {ℓ₁} {ℓ₂} {A} {B} ⦃ eqB ⦄ f y₁) → ⊥}
+          {ℓ₁ Lvl.⊔ ℓ₂} {∃ {ℓ₁} {ℓ₂} {A} (Unapply {ℓ₁} {ℓ₂} {A} {B} ⦃ eqB ⦄ f y₁) → ⊥}
           [∃]-witness
           (λ _ → fallback y₁)
           (Classical.excluded-middle (classical-unapply {y₁}))
         )
         ≡
         (Either.map1
-          {ℓ₁ ⊔ ℓ₂} {∃ {ℓ₁} {ℓ₂} {A} (Unapply {ℓ₁} {ℓ₂} {A} {B} ⦃ eqB ⦄ f y₂)}
+          {ℓ₁ Lvl.⊔ ℓ₂} {∃ {ℓ₁} {ℓ₂} {A} (Unapply {ℓ₁} {ℓ₂} {A} {B} ⦃ eqB ⦄ f y₂)}
           {ℓ₁} {A}
-          {ℓ₁ ⊔ ℓ₂} {∃ {ℓ₁} {ℓ₂} {A} (Unapply {ℓ₁} {ℓ₂} {A} {B} ⦃ eqB ⦄ f y₂) → ⊥}
+          {ℓ₁ Lvl.⊔ ℓ₂} {∃ {ℓ₁} {ℓ₂} {A} (Unapply {ℓ₁} {ℓ₂} {A} {B} ⦃ eqB ⦄ f y₂) → ⊥}
           [∃]-witness
           (λ _ → fallback y₂)
           (Classical.excluded-middle (classical-unapply {y₂}))

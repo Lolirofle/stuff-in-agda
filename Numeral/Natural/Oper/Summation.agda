@@ -35,7 +35,7 @@ open import Relator.Equals hiding (_≡_)
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Setoid
 open import Structure.Operator.Properties
-open import Structure.Operator.Proofs
+open import Structure.Operator.Proofs.Util
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 

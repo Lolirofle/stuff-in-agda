@@ -22,7 +22,7 @@ private variable A B C Cₒ Cᵢ E : Type{ℓ}
 private variable _∈_ _∈ₒ_ _∈ᵢ_ : E → C
 
 module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}) where
-  record SetLike : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ Lvl.𝐒(ℓ₄ ⊔ ℓ₅)} where
+  record SetLike : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ Lvl.𝐒(ℓ₄ Lvl.⊔ ℓ₅)} where
     field
       _⊆_ : C → C → Stmt{ℓ₄}
       _≡_ : C → C → Stmt{ℓ₅}
@@ -52,7 +52,7 @@ module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}
 module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ where
   open SetLike(setLike)
 
-  record EmptySet : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃} where
+  record EmptySet : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     field ∅ : C
     Membership = ∀{x} → (x ∉ ∅)
     field membership : Membership
@@ -60,21 +60,21 @@ module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_)
   module Empty ⦃ inst ⦄ = EmptySet(inst)
   {-# DISPLAY EmptySet.∅ = ∅ #-}
 
-  record UniversalSet : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃} where
+  record UniversalSet : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     field 𝐔 : C
     Membership = ∀{x} → (x ∈ 𝐔)
     field membership : Membership
   open UniversalSet ⦃ ... ⦄ hiding (Membership ; membership) public
   module Universal ⦃ inst ⦄ = UniversalSet(inst)
 
-  record UnionOperator : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃} where
+  record UnionOperator : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     field _∪_ : C → C → C
     Membership = ∀{a b}{x} → (x ∈ (a ∪ b)) ↔ ((x ∈ a) ∨ (x ∈ b))
     field membership : Membership
   open UnionOperator ⦃ ... ⦄ hiding (Membership ; membership) public
   module Union ⦃ inst ⦄ = UnionOperator(inst)
 
-  record IntersectionOperator : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃} where
+  record IntersectionOperator : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     field _∩_ : C → C → C
     Membership = ∀{a b}{x} → (x ∈ (a ∩ b)) ↔ ((x ∈ a) ∧ (x ∈ b))
     field membership : Membership
@@ -82,14 +82,14 @@ module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_)
   module Intersection ⦃ inst ⦄ = IntersectionOperator(inst)
   {-# DISPLAY IntersectionOperator._∩_ = _∩_ #-}
 
-  record WithoutOperator : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃} where
+  record WithoutOperator : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     field _∖_ : C → C → C
     Membership = ∀{a b}{x} → (x ∈ (a ∖ b)) ↔ ((x ∈ a) ∧ (x ∉ b))
     field membership : Membership
   open WithoutOperator ⦃ ... ⦄ hiding (Membership ; membership) public
   module Without ⦃ inst ⦄ = WithoutOperator(inst)
 
-  record ComplementOperator : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃} where
+  record ComplementOperator : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     field ∁ : C → C
     Membership = ∀{a}{x} → (x ∈ (∁ a)) ↔ (x ∉ a)
     field membership : Membership
@@ -97,35 +97,35 @@ module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_)
   module Complement ⦃ inst ⦄ = ComplementOperator(inst)
 
   module _ ⦃ _ : Equiv{ℓₗ}(E) ⦄ where
-    record SingletonSet : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓₗ} where
+    record SingletonSet : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓₗ} where
       field singleton : E → C
       Membership = ∀{y}{x} → (x ∈ singleton(y)) ↔ (x ≡ₛ y)
       field membership : Membership
     open SingletonSet ⦃ ... ⦄ hiding (Membership ; membership) public
     module Singleton ⦃ inst ⦄ = SingletonSet(inst)
 
-    record PairSet : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓₗ} where
+    record PairSet : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓₗ} where
       field pair : E → E → C
       Membership = ∀{y₁ y₂}{x} → (x ∈ pair y₁ y₂) ↔ (x ≡ₛ y₁)∨(x ≡ₛ y₂)
       field membership : Membership
     open PairSet ⦃ ... ⦄ hiding (Membership ; membership) public
     module Pair ⦃ inst ⦄ = PairSet(inst)
 
-    record AddFunction : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓₗ} where
+    record AddFunction : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓₗ} where
       field add : E → C → C
       Membership = ∀{y}{a}{x} → (x ∈ add y a) ↔ ((x ∈ a) ∨ (x ≡ₛ y))
       field membership : Membership
     open AddFunction ⦃ ... ⦄ hiding (Membership ; membership) public
     module Add ⦃ inst ⦄ = AddFunction(inst)
 
-    record RemoveFunction : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓₗ} where
+    record RemoveFunction : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓₗ} where
       field remove : E → C → C
       Membership = ∀{y}{a}{x} → (x ∈ remove y a) ↔ ((x ∈ a) ∧ (x ≢ₛ y))
       field membership : Membership
     open RemoveFunction ⦃ ... ⦄ hiding (Membership ; membership) public
     module Remove ⦃ inst ⦄ = RemoveFunction(inst)
 
-    record MapFunction : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓₗ} where
+    record MapFunction : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓₗ} where
       field map : (E → E) → (C → C)
       Membership = ∀{A}{f} ⦃ _ : Function(f) ⦄ {y} → (y ∈ map f(A)) ↔ ∃(x ↦ (x ∈ A) ∧ (y ≡ₛ f(x)))
       field membership : Membership
@@ -133,14 +133,14 @@ module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_)
     module Map ⦃ inst ⦄ = MapFunction(inst)
 
     module _ {ℓ} where
-      record FilterFunction : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ Lvl.𝐒(ℓ) ⊔ ℓₗ} where
+      record FilterFunction : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ Lvl.𝐒(ℓ) Lvl.⊔ ℓₗ} where
         field filter : (E → Stmt{ℓ}) → (C → C)
         Membership = ∀{A}{P} ⦃ unaryRelator : UnaryRelator(P) ⦄ {x} → (x ∈ filter P(A)) ↔ ((x ∈ A) ∧ P(x))
         field membership : Membership
       open FilterFunction ⦃ ... ⦄ hiding (Membership ; membership) public
       module Filter ⦃ inst ⦄ = FilterFunction(inst)
 
-  record BooleanFilterFunction : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃} where
+  record BooleanFilterFunction : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     field boolFilter : (E → Bool) → (C → C)
     Membership = ∀{A}{P}{x} → (x ∈ boolFilter P(A)) ↔ ((x ∈ A) ∧ IsTrue(P(x)))
     field membership : Membership
@@ -150,21 +150,21 @@ module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_)
 module _ (_∈ₒ_ : _) ⦃ outer-setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{Cₒ}{Cᵢ} (_∈ₒ_) {ℓ₄}{ℓ₅} ⦄ (_∈ᵢ_ : _) ⦃ inner-setLike : SetLike{ℓ₂}{ℓ₆}{ℓ₇}{Cᵢ}{E} (_∈ᵢ_) {ℓ₈}{ℓ₉} ⦄ where
   open SetLike ⦃ … ⦄
 
-  record PowerFunction : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₈} where
+  record PowerFunction : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₈} where
     field ℘ : Cᵢ → Cₒ
     Membership = ∀{A x} → (x ∈ₒ ℘(A)) ↔ (x ⊆ A)
     field membership : Membership
   open PowerFunction ⦃ ... ⦄ hiding (Membership ; membership) public
   module Power ⦃ inst ⦄ = PowerFunction(inst)
 
-  record BigUnionOperator : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₆ ⊔ ℓ₇} where
+  record BigUnionOperator : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₆ Lvl.⊔ ℓ₇} where
     field ⋃ : Cₒ → Cᵢ
     Membership = ∀{A}{x} → (x ∈ᵢ (⋃ A)) ↔ ∃(a ↦ (a ∈ₒ A) ∧ (x ∈ᵢ a))
     field membership : Membership
   open BigUnionOperator ⦃ ... ⦄ hiding (Membership ; membership) public
   module BigUnion ⦃ inst ⦄ = BigUnionOperator(inst)
 
-  record BigIntersectionOperator : Type{ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₆ ⊔ ℓ₇} where
+  record BigIntersectionOperator : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₆ Lvl.⊔ ℓ₇} where
     field ⋂ : Cₒ → Cᵢ
     Membership = ∀{A} → ∃(_∈ₒ A) → ∀{x} → (x ∈ᵢ (⋂ A)) ↔ (∀{a} → (a ∈ₒ A) → (x ∈ᵢ a))
     field membership : Membership
@@ -201,7 +201,7 @@ module Proofs where
           big-intersection-filter-unary-relator : ⦃ _ : Equiv{ℓₗ}(E) ⦄ ⦃ _ : BinaryRelator{B = C}(_∈_) ⦄ → ∀{As} → UnaryRelator(\a → ∀{A} → (A ∈ As) → (a ∈ A))
           big-intersection-filter-unary-relator ⦃ [∈]-binaryRelator ⦄ = [∀]-unaryRelator ⦃ rel-P = \{A} → [→]-unaryRelator ⦃ rel-P = const-unaryRelator ⦄ ⦃ rel-Q = BinaryRelator.left (binaryRelator(_∈_)) {A} ⦄ ⦄
 
-      filter-big-union-to-big-intersection : ⦃ _ : BinaryRelator(_∈_) ⦄ ⦃ _ : FilterFunction(_∈_){ℓ = ℓ₁ ⊔ ℓ₂} ⦄ ⦃ _ : BigUnionOperator(_∈_)(_∈_) ⦄ → BigIntersectionOperator(_∈_)(_∈_)
+      filter-big-union-to-big-intersection : ⦃ _ : BinaryRelator(_∈_) ⦄ ⦃ _ : FilterFunction(_∈_){ℓ = ℓ₁ Lvl.⊔ ℓ₂} ⦄ ⦃ _ : BigUnionOperator(_∈_)(_∈_) ⦄ → BigIntersectionOperator(_∈_)(_∈_)
       BigIntersectionOperator.⋂ filter-big-union-to-big-intersection As = filter(\a → ∀{A} → (A ∈ As) → (a ∈ A))(⋃ As)
       Tuple.left (BigIntersectionOperator.membership filter-big-union-to-big-intersection {As} eAs {a}) p = [↔]-to-[←] Filter.membership ([∧]-intro ([↔]-to-[←] BigUnion.membership ([∃]-map-proof (aAs ↦ [∧]-intro aAs (p aAs)) eAs)) (\{x} → p{x}))
       Tuple.right (BigIntersectionOperator.membership filter-big-union-to-big-intersection {As} eAs {a}) xfilter {A} AAs = [∧]-elimᵣ([↔]-to-[→] Filter.membership xfilter) AAs
@@ -435,7 +435,7 @@ module Proofs where
             Identityₗ.proof [∩]-identityₗ {x} =
               [↔]-to-[←] [≡]-membership (
                 Intersection.membership 〔 [↔]-transitivity 〕
-                [↔]-intro (Tuple.mapLeft {ℓ₁ = ℓ₁} (const Universal.membership)) (Tuple.mapLeft (const [⊤]-intro)) 〔 [↔]-transitivity 〕
+                [↔]-intro (Tuple.mapLeft {ℓ₁} (const Universal.membership)) (Tuple.mapLeft (const [⊤]-intro)) 〔 [↔]-transitivity 〕
                 [↔]-intro ([∧]-intro [⊤]-intro) [∧]-elimᵣ
               )
 

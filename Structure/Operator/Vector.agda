@@ -18,7 +18,7 @@ record VectorSpace {ℓᵥ ℓₛ}
                    (_⋅ₛᵥ_ : S → V → V)
                    (_+ₛ_ : S → S → S)
                    (_⋅ₛ_ : S → S → S)
-                   : Stmt{ℓᵥ ⊔ ℓₛ} where
+                   : Stmt{ℓᵥ Lvl.⊔ ℓₛ} where
   constructor intro
   field
     ⦃ scalarField ⦄            : Field(_+ₛ_)(_⋅ₛ_)

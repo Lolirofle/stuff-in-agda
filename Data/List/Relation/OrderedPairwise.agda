@@ -7,7 +7,7 @@ module Data.List.Relation.OrderedPairwise {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_�
 open import Data.List as List using (List ; ∅ ; _⊰_)
 
 -- Statement for when a list's elements in order pairwise satisfy a binary relation.
-data OrderedPairwise : List(T) → Stmt{ℓ₁ ⊔ ℓ₂} where
+data OrderedPairwise : List(T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
   instance
     empty  : OrderedPairwise(∅)
     single : ∀{a} → OrderedPairwise(List.singleton(a))

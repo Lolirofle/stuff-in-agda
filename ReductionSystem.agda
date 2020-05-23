@@ -42,7 +42,7 @@ module NormalForm = FinalVertex
 
 -- "a normalizes to b" means that "a" reduces to the normal form "b".
 -- In terms of paths, this means that the dead end of one path from "a" is "b".
-record _normalizes-to_ (a : Term) (b : Term) : Stmt{ℓ₁ ⊔ ℓ₂} where
+record _normalizes-to_ (a : Term) (b : Term) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
   constructor intro
   field
     reduction : Walk(_⟶_) a b
@@ -95,27 +95,27 @@ EverywhereCommonReduct = (Walk(_⟶_)) ⊆₂ Joinable
 module _ (a : Term) where
   -- A term is confluent when all its reducts have a common reduct.
   -- In terms of paths, this means that paths starting from this point will always eventually meet.
-  record Confluent : Stmt{ℓ₁ ⊔ ℓ₂} where
+  record Confluent : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Confluent(a)
   confluent = inst-fn Confluent.proof
 
-  record Semiconfluent : Stmt{ℓ₁ ⊔ ℓ₂} where
+  record Semiconfluent : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Semiconfluent(a)
   semiconfluent = inst-fn Semiconfluent.proof
 
-  record LocallyConfluent : Stmt{ℓ₁ ⊔ ℓ₂} where
+  record LocallyConfluent : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.LocallyConfluent(a)
   locally-confluent = inst-fn LocallyConfluent.proof
 
-  record StronglyConfluent : Stmt{ℓ₁ ⊔ ℓ₂} where
+  record StronglyConfluent : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.StronglyConfluent(a)
   strongly-confluent = inst-fn StronglyConfluent.proof
 
-  record DiamondProperty : Stmt{ℓ₁ ⊔ ℓ₂} where
+  record DiamondProperty : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.DiamondProperty(a)
   diamond-property = inst-fn DiamondProperty.proof
@@ -130,7 +130,7 @@ LocalConfluence = ∀ₗ(LocallyConfluent)
 
 StrongConfluence = ∀ₗ(StronglyConfluent)
 
-record Convergent : Stmt{ℓ₁ ⊔ ℓ₂} where
+record Convergent : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
   constructor intro
   field
     ⦃ confluence ⦄ : Confluence
