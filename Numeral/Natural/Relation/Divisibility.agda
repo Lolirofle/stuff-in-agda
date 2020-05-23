@@ -12,15 +12,13 @@ open import Numeral.Natural.Oper.Proofs
 open import Type
 
 data Even : ℕ → Stmt{Lvl.𝟎} where
-  instance
-    Even0 : Even(𝟎)
-    Even𝐒 : ∀{x : ℕ} → Even(x) → Even(𝐒(𝐒(x)))
+  Even0 : Even(𝟎)
+  Even𝐒 : ∀{x : ℕ} → Even(x) → Even(𝐒(𝐒(x)))
 {-# INJECTIVE Even #-}
 
 data Odd : ℕ → Stmt{Lvl.𝟎} where
-  instance
-    Odd0 : Odd(𝐒(𝟎))
-    Odd𝐒 : ∀{x : ℕ} → Odd(x) → Odd(𝐒(𝐒(x)))
+  Odd0 : Odd(𝐒(𝟎))
+  Odd𝐒 : ∀{x : ℕ} → Odd(x) → Odd(𝐒(𝐒(x)))
 {-# INJECTIVE Odd #-}
 
 -- `(y ∣ x)` means that `y` is divisible by `x`.
@@ -39,9 +37,8 @@ data Odd : ℕ → Stmt{Lvl.𝟎} where
 --   (0 ∣ 0) is true, and it is the only number divisible by 0.
 -- TODO: Consider defining it like this instead: (Div𝟎 : ∀{y} → (𝐒(y) ∣ 𝟎))
 data _∣_ : ℕ → ℕ → Stmt{Lvl.𝟎} where
-  instance
-    Div𝟎 : ∀{y}   → (y ∣ 𝟎)
-    Div𝐒 : ∀{y x} → (y ∣ x) → (y ∣ (y + x))
+  instance Div𝟎 : ∀{y}   → (y ∣ 𝟎)
+  Div𝐒 : ∀{y x} → (y ∣ x) → (y ∣ (y + x))
 
 _∤_ : ℕ → ℕ → Stmt
 y ∤ x = ¬(y ∣ x)

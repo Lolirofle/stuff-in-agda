@@ -33,6 +33,7 @@ module _ where
   -- A model of constructive set theory (CZF) by iterative sets through W-types.
   record Iset : Type{Lvl.𝐒(ℓ)} where
     inductive
+    pattern
     constructor intro
     field
       {Index} : Type{ℓ}
@@ -205,7 +206,7 @@ module _ where
 
 
   Iset-index-induction : ∀{P : Iset{ℓ₁} → Stmt{ℓ₂}} → (∀{A : Iset{ℓ₁}} → (∀{i : Index(A)} → P(elem(A)(i))) → P(A)) → (∀{A : Iset{ℓ₁}} → P(A))
-  Iset-index-induction {P = P} proof {intro Aelem} = proof{_} \{i} → Iset-index-induction{P = P} proof {Aelem(i)}
+  Iset-index-induction {P = P} proof {intro elem} = proof{_} \{i} → Iset-index-induction{P = P} proof {elem(i)}
 
   Iset-induction : ∀{P : Iset{ℓ₁} → Stmt{ℓ₂}} ⦃ _ : UnaryRelator(P) ⦄ → (∀{A : Iset{ℓ₁}} → (∀{a} → (a ∈ A) → P(a)) → P(A)) → (∀{A : Iset{ℓ₁}} → P(A))
   Iset-induction {P = P} p = Iset-index-induction (\{A} pp → p{A} (\{a} aA → substitute₁(P) (symmetry(_≡_) ([∃]-proof aA)) (pp{[∃]-witness aA})))
@@ -221,15 +222,15 @@ module _ where
   _⊆_.proof (_≡_.right Iset-intro-self-equality) = [≡]-reflexivity-raw
 
   [⊆]-with-elem : ∀{x y : Iset{ℓ}} → (xy : x ⊆ y) → ∀{ix} → (elem x ix ≡ elem y (_⊆_.map xy ix))
-  [⊆]-with-elem (intro map proof) {ix} = proof{ix}
+  [⊆]-with-elem xy {ix} = _⊆_.proof xy {ix}
 
 
 
   [⊆]-membership : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (∀{x : Iset{ℓ}} → (x ∈ A) → (x ∈ B)) ↔ (A ⊆ B)
   [⊆]-membership {A = A}{B = B} = [↔]-intro l r where
     l : (∀{x} → (x ∈ A) → (x ∈ B)) ← (A ⊆ B)
-    ∃.witness (l (intro map proof) {x} xa) = map(∃.witness xa)
-    ∃.proof   (l (intro map proof) {x} xa) = [≡]-transitivity-raw (∃.proof xa) proof
+    ∃.witness (l AB {x} xa) = _⊆_.map AB (∃.witness xa)
+    ∃.proof   (l AB {x} xa) = [≡]-transitivity-raw (∃.proof xa) (_⊆_.proof AB)
 
     r : (∀{x} → (x ∈ A) → (x ∈ B)) → (A ⊆ B)
     _⊆_.map   (r proof) ia = [∃]-witness (proof{x = elem(A)(ia)} ([∈]-of-elem {A = A}))
@@ -348,22 +349,22 @@ module _ where
       elem A iA                                                                 🝖[ _≡_ ]-end
 
     ℘-membershipₗ : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (B ∈ ℘(A)) ← (B ⊆ A)
-    ∃.witness (℘-membershipₗ {A = A}{B = B} (intro map proof)) iA = decide(∃(iB ↦ Id(map iB) iA))
-    _⊇_.map (_≡_.left (∃.proof (℘-membershipₗ {A = A} {B = B} (intro map proof)))) (intro iA (Lvl.up mapiBiA)) = [∃]-witness([↔]-to-[←] decide-is-true mapiBiA)
-    _⊇_.proof (_≡_.left (∃.proof (℘-membershipₗ {ℓ = ℓ} {A = A} {B = B} (intro map proof)))) {intro iA (Lvl.up mapiBiA)} =
+    ∃.witness (℘-membershipₗ {A = A}{B = B} BA) iA = decide(∃(iB ↦ Id(_⊆_.map BA iB) iA))
+    _⊇_.map (_≡_.left (∃.proof (℘-membershipₗ {A = A} {B = B} _))) (intro iA (Lvl.up mapiBiA)) = [∃]-witness([↔]-to-[←] decide-is-true mapiBiA)
+    _⊇_.proof (_≡_.left (∃.proof (℘-membershipₗ {ℓ = ℓ} {A = A} {B = B} BA))) {intro iA (Lvl.up mapiBiA)} =
       elem (elem (℘ A) f) (intro iA (Lvl.up mapiBiA))                              🝖[ _≡_ ]-[]
       elem (indexFilterBool A f) (intro iA (Lvl.up mapiBiA))                        🝖[ _≡_ ]-[]
       elem (indexFilter A (Lvl.Up ∘ IsTrue ∘ f)) (intro iA (Lvl.up mapiBiA))        🝖[ _≡_ ]-[]
       elem A (Σ.left {B = Lvl.Up{ℓ₂ = ℓ} ∘ IsTrue ∘ f} (intro iA (Lvl.up mapiBiA))) 🝖[ _≡_ ]-[]
       elem A iA                                                                     🝖[ _≡_ ]-[ [≡]-to-equivalence(congruence₁(elem A) ([∃]-proof emapiBiA)) ]-sym
-      elem A (map ([∃]-witness emapiBiA)) 🝖[ _≡_ ]-[ symmetry(_≡_) (proof{[∃]-witness emapiBiA}) ]
+      elem A (_⊆_.map BA ([∃]-witness emapiBiA)) 🝖[ _≡_ ]-[ symmetry(_≡_) (_⊆_.proof BA {[∃]-witness emapiBiA}) ]
       elem B ([∃]-witness emapiBiA)       🝖[ _≡_ ]-end
       where
-        f = \iA → decide(∃(iB ↦ Id(map iB) iA))
+        f = \iA → decide(∃(iB ↦ Id(_⊆_.map BA iB) iA))
         emapiBiA = [↔]-to-[←] decide-is-true mapiBiA
         open import Relator.Equals.Proofs.Equiv using ([≡]-to-equivalence)
-    _⊇_.map (_≡_.right (∃.proof (℘-membershipₗ {A = A} {B = B} (intro map proof)))) iB = intro (map iB) (Lvl.up ([↔]-to-[→] decide-is-true ([∃]-intro iB ⦃ intro ⦄)))
-    _⊇_.proof (_≡_.right (∃.proof (℘-membershipₗ {A = A} {B = B} (intro map proof)))) = proof
+    _⊇_.map (_≡_.right (∃.proof (℘-membershipₗ {A = A} {B = B} BA))) iB = intro (_⊆_.map BA iB) (Lvl.up ([↔]-to-[→] decide-is-true ([∃]-intro iB ⦃ intro ⦄)))
+    _⊇_.proof (_≡_.right (∃.proof (℘-membershipₗ {A = A} {B = B} BA))) = _⊆_.proof BA
 
     ℘-membershipᵣ : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (B ∈ ℘(A)) → (B ⊆ A)
     ℘-membershipᵣ ([∃]-intro witness ⦃ b≡indexFilterBool ⦄) = substitute₂ₗ(_⊆_) (symmetry(_≡_) b≡indexFilterBool) indexFilterBool-subset

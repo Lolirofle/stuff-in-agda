@@ -2,6 +2,7 @@ module Structure.Relator.Ordering.Proofs where
 
 import      Lvl
 open import Functional
+open import Lang.Instance
 open import Logic
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
@@ -17,11 +18,12 @@ private variable x : A
 module _ ⦃ trans : Transitivity{T = B}(_≤_) ⦄ where
   open Strict.Properties
 
-  accessibleₗ-image-by-trans : ⦃ _ : Accessibleₗ{T = B}(_≤_)(f(x)) ⦄ → Accessibleₗ((_≤_) on₂ f)(x)
-  Accessibleₗ.proof (accessibleₗ-image-by-trans {f = f} {y} ⦃ intro ⦃ acc ⦄ ⦄) {x} ⦃ xy ⦄ = intro ⦃ \{a} ⦃ ax ⦄ → accessibleₗ-image-by-trans ⦃ acc {f(a)} ⦃ transitivity(_≤_) ax xy ⦄ ⦄ ⦄
+  -- TODO: Agda bug 20200523 does not allow instance arg
+  accessibleₗ-image-by-trans : Accessibleₗ{T = B}(_≤_)(f(x)) → Accessibleₗ((_≤_) on₂ f)(x)
+  accessibleₗ-image-by-trans {f = f} {y} (intro ⦃ acc ⦄) = intro ⦃ \{x} ⦃ xy ⦄ → intro ⦃ \{a} ⦃ ax ⦄ → accessibleₗ-image-by-trans (acc {f(a)} ⦃ transitivity(_≤_) ax xy ⦄ ) ⦄ ⦄
 
   wellfounded-image-by-trans : ∀{f : A → B} → ⦃ _ : WellFounded{T = B}(_≤_) ⦄ → WellFounded((_≤_) on₂ f)
-  wellfounded-image-by-trans = accessibleₗ-image-by-trans
+  wellfounded-image-by-trans = accessibleₗ-image-by-trans infer
 
 module _ ⦃ refl : Reflexivity{T = B}(_≤_) ⦄ where
   open Strict.Properties

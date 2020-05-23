@@ -245,11 +245,11 @@ module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
 
 instance
   [⊤]-classical-intro : Classical(⊤)
-  [⊤]-classical-intro = intro ⦃ [∨]-introₗ ([⊤]-intro) ⦄ where
+  [⊤]-classical-intro = intro ⦃ [∨]-introₗ ([⊤]-intro) ⦄
 
 instance
   [⊥]-classical-intro : Classical(⊥)
-  [⊥]-classical-intro = intro ⦃ [∨]-introᵣ (id) ⦄ where
+  [⊥]-classical-intro = intro ⦃ [∨]-introᵣ (id) ⦄
 
 module _ {X : Type{ℓ₁}} ⦃ _ : (◊ X) ⦄ {P : X → Stmt{ℓ₂}} where
   instance

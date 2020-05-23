@@ -11,9 +11,8 @@ private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ : Lvl.Level
 private variable A B C A₁ A₂ B₁ B₂ : Type{ℓ}
 
 data _‖_ (A : Type{ℓ₁}) (B : Type{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂} where
-  instance
-    Left  : A → (A ‖ B)
-    Right : B → (A ‖ B)
+  Left  : A → (A ‖ B)
+  Right : B → (A ‖ B)
 {-# FOREIGN GHC type AgdaEither ℓ₁ ℓ₂ = Either #-}
 {-# COMPILE GHC _‖_ = data AgdaEither (Left | Right) #-}
 

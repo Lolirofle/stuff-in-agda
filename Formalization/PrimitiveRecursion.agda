@@ -75,16 +75,17 @@ module _ where
   --    This is used to construct a function `r` in which the following holds:
   --    • r(0   ,..xs) = f(..xs)
   --    • r(𝐒(n),..xs) = g(n,r(n,..xs),..xs)
+  {-# TERMINATING #-} -- TODO: Terminated before but the termination checker in Agda version 2.6.2-9bed10c denies this
   evaluate : ∀{n} → Function(n) → (List(Primitive)(n) → Primitive)
   evaluate {.𝟎}   (Base)                     ∅             = 𝟎
   evaluate {.𝐒(𝟎)}(Successor)                (singleton x) = 𝐒(x)
   evaluate {_}    (Projection(i))            xs            = index(i)(xs)
   evaluate {m}    (Composition{m}{n}(f)(gs)) xs            = evaluate{n} f (mapEvaluate{m}{n} gs xs)
   evaluate {𝐒(_)} (Recursion(f)(g))          (𝟎    ⊰ xs)   = evaluate f xs
-  evaluate {𝐒(_)} (Recursion(f)(g))          (𝐒(n) ⊰ xs)   = evaluate g (n ⊰ (evaluate (Recursion(f)(g)) (n ⊰ xs) ⊰ xs))
+  evaluate {𝐒(m)} (Recursion(f)(g))          (𝐒(n) ⊰ xs)   = evaluate{𝐒(𝐒(m))} g (n ⊰ (evaluate{𝐒 m} (Recursion(f)(g)) (n ⊰ xs) ⊰ xs))
 
-  mapEvaluate ∅        xs = ∅
-  mapEvaluate (g ⊰ gs) xs = (evaluate g xs) ⊰ (mapEvaluate gs xs)
+  mapEvaluate          ∅        xs = ∅
+  mapEvaluate{m}{𝐒(n)} (g ⊰ gs) xs = (evaluate{m} g xs) ⊰ (mapEvaluate{m}{n} gs xs)
 
   ------------------------------------------------------
   -- This section proves the equivalence between the operational and the denotational semantics. Or it can be interpreted as the correctness of one of the definitions by the other one.
@@ -115,6 +116,7 @@ module _ where
 
   eval-to-[⟹] : (mapEvaluate fs xs ≡ vs) → (fs $ xs ⟹ vs)
 
+  {-# TERMINATING #-} -- TODO: See TODO above in eval
   eval-to-[⟶] : (evaluate f xs ≡ v) → (f $ xs ⟶ v)
   eval-to-[⟶] {f = Base}             {∅}           [≡]-intro = zero
   eval-to-[⟶] {f = Successor}        {singleton x} [≡]-intro = succ

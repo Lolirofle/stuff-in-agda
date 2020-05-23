@@ -108,9 +108,8 @@ module _ {ℓ} {A : Type{ℓ}} where
 
 module _ where
   data _∈_ {T : Type{ℓ}} : T → Stream(T) → Stmt{ℓ} where
-    instance
-      [∈]-head : ∀{l}   → (head(l) ∈ l)
-      [∈]-tail : ∀{a l} → (a ∈ tail(l)) → (a ∈ l)
+    [∈]-head : ∀{l}   → (head(l) ∈ l)
+    [∈]-tail : ∀{a l} → (a ∈ tail(l)) → (a ∈ l)
 
   private variable l : Stream(T)
 

@@ -252,7 +252,7 @@ semiconfluence-everywhere-common-reduct ⦃ semiconfl ⦄ = intro proof where
 
   proof : Names.EverywhereCommonReduct
   proof at = reflexivity(Joinable)
-  proof {a}{c} (prepend {b = b} ab bc) = transitivity(Joinable) (sub₂(Walk(_⟶_))(Joinable) (sub₂(_⟶_)(Walk(_⟶_)) ab)) (proof bc) where
+  proof {a}{c} (prepend {b = b} ab bc) = transitivity(Joinable) (sub₂(Walk(_⟶_))(Joinable) (sub₂(_⟶_)(Walk(_⟶_)) ab)) (proof bc)
 
 diamond-property-locally-confluent : ⦃ _ : ∀ₗ(DiamondProperty) ⦄ → LocalConfluence
 LocallyConfluent.proof (diamond-property-locally-confluent {x}) xb xc = [∃]-map-proof ([∧]-map (sub₂(_⟶_)(Walk(_⟶_))) (sub₂(_⟶_)(Walk(_⟶_)))) (diamond-property _ xb xc)

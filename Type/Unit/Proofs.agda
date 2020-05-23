@@ -21,11 +21,11 @@ module _ ⦃ equiv : Equiv(U) ⦄ where
 
   instance
     unit-is-prop : ⦃ proof : IsUnit(U) ⦄ → IsProp(U)
-    unit-is-prop ⦃ intro unit uniqueness ⦄ = intro (\{x}{y} → transitivity(_≡_) (uniqueness{x}) (symmetry(_≡_)(uniqueness{y}))) where
+    unit-is-prop ⦃ intro unit uniqueness ⦄ = intro (\{x}{y} → transitivity(_≡_) (uniqueness{x}) (symmetry(_≡_)(uniqueness{y})))
 
   instance
     pos-prop-is-unit : ⦃ _ : (◊ U) ⦄ → ⦃ _ : IsProp(U) ⦄ → IsUnit(U)
-    pos-prop-is-unit ⦃ intro ⦃ unit ⦄ ⦄ ⦃ intro uniqueness ⦄ = intro unit (\{x} → uniqueness{x}{unit}) where
+    pos-prop-is-unit ⦃ intro ⦃ unit ⦄ ⦄ ⦃ intro uniqueness ⦄ = intro unit (\{x} → uniqueness{x}{unit})
 
 module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ is-prop : IsProp(U) ⦄ ⦃ equiv-a : Equiv(A) ⦄ where
   prop-fn-unique-value : ∀{f : U → A} → ⦃ _ : Function(f) ⦄ → (∀{x y} → (f(x) ≡ f(y)))

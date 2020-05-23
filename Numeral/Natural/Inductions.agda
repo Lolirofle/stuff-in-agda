@@ -97,9 +97,11 @@ module _ where
 
   instance
     [ℕ]-accessibleₗ : ∀{n} → Accessibleₗ(_<_)(n)
-    Accessibleₗ.proof ([ℕ]-accessibleₗ {𝟎})    {m}    ⦃ ⦄
-    Accessibleₗ.proof ([ℕ]-accessibleₗ {𝐒(n)}) {𝟎}    ⦃ [≤]-with-[𝐒] ⦃ mn ⦄ ⦄ = intro ⦃ \ ⦃ ⦄ ⦄
-    Accessibleₗ.proof ([ℕ]-accessibleₗ {𝐒(n)}) {𝐒(m)} ⦃ [≤]-with-[𝐒] ⦃ mn ⦄ ⦄ = intro ⦃ \{k} ⦃ xsm ⦄ → Accessibleₗ.proof ([ℕ]-accessibleₗ {n}) ⦃ transitivity(_≤_) xsm mn ⦄ ⦄
+    [ℕ]-accessibleₗ{n} = intro ⦃ proof{n} ⦄ where
+      proof : ∀{n m} → ⦃ _ : (m < n) ⦄ → Accessibleₗ(_<_)(m)
+      proof {𝟎}   {m}    ⦃ ⦄
+      proof{𝐒(n)} {𝟎}    ⦃ [≤]-with-[𝐒] ⦃ mn ⦄ ⦄ = intro ⦃ \ ⦃ ⦄ ⦄
+      proof{𝐒(n)} {𝐒(m)} ⦃ [≤]-with-[𝐒] ⦃ mn ⦄ ⦄ = intro ⦃ \{k} ⦃ xsm ⦄ → Accessibleₗ.proof ([ℕ]-accessibleₗ {n}) ⦃ transitivity(_≤_) xsm mn ⦄ ⦄
 
   [ℕ]-wellfounded : WellFounded(_<_)
   [ℕ]-wellfounded = [ℕ]-accessibleₗ

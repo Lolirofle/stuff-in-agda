@@ -11,7 +11,7 @@ private variable X Y Z X₁ X₂ Y₁ Y₂ : Type{ℓ}
 
 -- Definition of a 2-tuple
 record _⨯_ (X : Type{ℓ₁}) (Y : Type{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂} where
-  instance constructor _,_
+  constructor _,_
   field
     left  : X
     right : Y

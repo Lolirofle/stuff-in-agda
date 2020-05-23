@@ -36,7 +36,7 @@ module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}}{Y : Type{ℓ₂}} {f : X → Y} wher
       }
 
   [≅]-to-[≡] : Injective(f) ↔ (∀{x₁ x₂ : X} → (x₁ ≅ x₂ of f) → (x₁ ≡ x₂))
-  [≅]-to-[≡] = [↔]-intro (_∘ [≅]-intro) (_∘ [≅]-elim) where
+  [≅]-to-[≡] = [↔]-intro (_∘ [≅]-intro) (_∘ [≅]-elim)
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{Y : Type{ℓ₃}} where
   [≅]-composition : ∀{x₁ x₂ : X₁}{g : X₁ → X₂} → (x₁ ≅ x₂ of g) → ∀{f : X₂ → Y} → (g(x₁) ≅ g(x₂) of f)

@@ -50,8 +50,8 @@ private variable n : ℕ
 [⊑]-transitivity (skip l₁l₂) (skip l₂l₃) = skip([⊑]-transitivity (skip l₁l₂) l₂l₃)
 
 [⊑]-not-prepend : ¬((x ⊰ l) ⊑ l)
-[⊑]-not-prepend {x} {.(x ⊰ _)} (use  p) = [⊑]-not-prepend p
-[⊑]-not-prepend {x} {y ⊰ _}    (skip p) = [⊑]-not-prepend([⊑]-without-[⊰] {y = y} (skip p))
+[⊑]-not-prepend {x} {x ⊰ l₂} (use  p) = [⊑]-not-prepend {x}{l₂} p
+[⊑]-not-prepend {x} {y ⊰ _}  (skip p) = [⊑]-not-prepend([⊑]-without-[⊰] {y = y} (skip p))
 
 [⊑]-antisymmetry : (l₂ ⊑ l₁) → (l₁ ⊑ l₂) → (l₁ ≡ l₂)
 [⊑]-antisymmetry {∅}      {∅}       l        r        = [≡]-intro

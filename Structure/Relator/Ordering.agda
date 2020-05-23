@@ -98,6 +98,7 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
     --   c₂ is accessible because all elements lesser than c₂ are a and b, and both of them are accessible.
     record Accessibleₗ (a : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       inductive
+      pattern
       constructor intro
       field ⦃ proof ⦄ : ∀{x : T} → ⦃ _ : (x < a) ⦄ → Accessibleₗ(x)
 

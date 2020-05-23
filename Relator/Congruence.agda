@@ -11,7 +11,7 @@ open import Relator.Equals
 -- The congruence relation with respect to a relation
 infixl 15 _≅_of_
 data _≅_of_ (x₁ : X) (x₂ : X) (f : X → Y) : Stmt{ℓ₂} where
-  instance [≅]-intro : (f(x₁) ≡ f(x₂)) → (x₁ ≅ x₂ of f)
+  [≅]-intro : (f(x₁) ≡ f(x₂)) → (x₁ ≅ x₂ of f)
 
 [≅]-elim : ∀{x₁ x₂ : X}{f : X → Y} → (x₁ ≅ x₂ of f) → (f(x₁) ≡ f(x₂))
 [≅]-elim ([≅]-intro eq) = eq
