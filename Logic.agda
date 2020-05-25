@@ -1,8 +1,3 @@
-module Logic {ℓ} where
+module Logic where
 
-Stmt : _
-Stmt = Set(ℓ)
-
-open import Agda.Primitive public
-  using ()
-  renaming (Setω to Stmtω)
+open import Type renaming (Type to Stmt ; Typeω to Stmtω) public

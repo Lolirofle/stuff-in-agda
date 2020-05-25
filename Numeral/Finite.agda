@@ -24,7 +24,7 @@ open import Type
 --         because there is nothing that could fill the blank in (𝐒{3} (𝐒{2} (𝐒{1} (𝐒{0} (_))))).
 --       The smallest upper bound that can be is 0 (from using ℕ and its definition).
 --       This limits how many successors (𝐒) that can "fit".
-data 𝕟 : ℕ → Set where
+data 𝕟 : ℕ → Type{Lvl.𝟎} where
   𝟎 : ∀{n} → 𝕟(ℕ.𝐒(n))        -- Zero
   𝐒 : ∀{n} → 𝕟(n) → 𝕟(ℕ.𝐒(n)) -- Successor function
 {-# INJECTIVE 𝕟 #-}

@@ -24,7 +24,8 @@ open Functors.Wrapped
 open NaturalTransformations.Raw(intro category)(intro category)
 private instance _ = cat
 
-record Monad (T : Object → Object) ⦃ functor : Functor(category)(category)(T) ⦄ : Type{Lvl.of(type-of(cat))} where
+-- A monad is a generalization of a binary operator with identity. In this special case, η is the identity element, μ is the operator, and the category is the monoid category of the monoid (_⨯_) on types.
+record Monad (T : Object → Object) ⦃ functor : Functor(category)(category)(T) ⦄ : Type{Lvl.of(Type.of(cat))} where
   open Functor(functor)
 
   functor-object : cat →ᶠᵘⁿᶜᵗᵒʳ cat

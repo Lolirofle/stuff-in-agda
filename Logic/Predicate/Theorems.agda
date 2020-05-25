@@ -6,6 +6,7 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
+open import Syntax.Type
 open import Type
 open import Type.Empty using (◊ ; [◊]-existence)
 

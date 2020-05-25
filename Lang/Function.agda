@@ -24,10 +24,10 @@ default x hole = quoteTC x >>= unify hole
 -- This makes implicit arguments work like explicit arguments by throwing an error when the hole does not match perfectly while still maintaining its implicit visibility status.
 -- It works by always selecting the last argument in the hole, and the last argument is the one closest to the value, which is the argument one expects it to choose.
 -- Examples:
---   idᵢwith : ∀{T : Set} → {@(tactic no-infer) x :  T} → T
+--   idᵢwith : ∀{T : TYPE} → {@(tactic no-infer) x :  T} → T
 --   idᵢwith {x = x} = x
 --
---   idᵢwithout : ∀{T : Set} → {x :  T} → T
+--   idᵢwithout : ∀{T : TYPE} → {x :  T} → T
 --   idᵢwithout {x = x} = x
 --
 --   postulate test : ({_ : Bool} → Bool) → Bool
@@ -38,7 +38,7 @@ default x hole = quoteTC x >>= unify hole
 --   test2 : (Bool → Bool) → Bool
 --   test2 _ = test idᵢwith
 --
---   test3 : ∀{T : Set} → {_ : T} → T
+--   test3 : ∀{T : TYPE} → {_ : T} → T
 --   test3 = idᵢwith
 --
 --   It is useful in these kinds of scenarios because idᵢwithout would require writing the implicit argument explicitly, while idᵢwith always uses the given argument like how explicit arguments work.

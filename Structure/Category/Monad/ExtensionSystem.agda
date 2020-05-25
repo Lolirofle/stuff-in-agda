@@ -31,7 +31,7 @@ open Category(category)
 open NaturalTransformations.Raw(cat)(cat)
 private open module MorphismEquiv {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
 
-record ExtensionSystem (T : Object → Object) : Type{Lvl.of(type-of(cat))} where
+record ExtensionSystem (T : Object → Object) : Type{Lvl.of(Type.of(cat))} where
   field
     η   : (x : Object) → (x ⟶ T(x))
     ext : ∀{x y} → (x ⟶ T(y)) → (T(x) ⟶ T(y))

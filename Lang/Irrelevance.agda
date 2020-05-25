@@ -1,3 +1,5 @@
 module Lang.Irrelevance where
 
-postulate .axiom : ∀{ℓ}{T : Set(ℓ)} -> .T -> T
+open import Type
+
+postulate .axiom : ∀{ℓ}{T : Type{ℓ}} -> .T -> T

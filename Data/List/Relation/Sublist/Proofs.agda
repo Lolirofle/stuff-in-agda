@@ -5,7 +5,8 @@ module Data.List.Relation.Sublist.Proofs {ℓ} {T : Type{ℓ}} where
 
 open import Data.Boolean
 open import Data.Either as Either
-open import Data.List as List hiding (skip)
+open import Data.List as List
+open import Data.List.Functions as List hiding (skip)
 open import Data.List.Proofs
 open import Data.List.Relation.Sublist
 open import Data.Tuple as Tuple using (_,_)

@@ -34,8 +34,6 @@ module _ {_⟶_ : Graph} where
   prelop at            = intro _ at
   prelop (prepend e w) = intro _ w
 
-  -- TODO: Terminated before but not on Agda version 2.6.2-9bed10c
-  {-# TERMINATING #-}
   postlop : ∀{a c} → (Walk(_⟶_) a c) → Σ(_)(b ↦ Walk(_⟶_) a b)
   postlop at                          = intro _ at
   postlop (prepend e  at)             = intro _ at

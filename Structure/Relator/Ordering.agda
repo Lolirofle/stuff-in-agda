@@ -106,7 +106,7 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
     accessible-induction proof ⦃ intro ⦄ = proof(accessible-induction proof)
 
     accessible-recursion : ∀{U : T → Type{ℓ₃}} → ((x : T) → ((prev : T) → ⦃ _ : (prev < x) ⦄ → U(prev)) → U(x)) → ((x : T) → ⦃ _ : Accessibleₗ(x) ⦄ → U(x))
-    accessible-recursion previous x ⦃ intro ⦄ = previous x (x ↦ accessible-recursion previous x)
+    accessible-recursion previous x ⦃ intro ⦄ = previous x (\x → accessible-recursion previous x)
 
     -- TODO: When proving stuff about a function defined using accessible-recursion? accessible-recursion-all-proof : ∀{U}{x} → ⦃ _ : Accessibleₗ(x) ⦄ → P(accessible-recursion)
 

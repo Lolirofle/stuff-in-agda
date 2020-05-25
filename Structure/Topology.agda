@@ -10,7 +10,7 @@ open import Type
 -- The interpretation is that X is the collection of points and 𝓣 is the collection of open sets of X.
 -- (X,𝓣) is called a topological space.
 -- 𝓣 is called a topology on X.
-record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Equiv{ℓ₁ Lvl.⊔ ℓ₃}(X) ⦄ (𝓣 : PredSet{ℓ₂}(PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X))) : Type{Lvl.𝐒(Lvl.of(X)) Lvl.⊔ Lvl.of(type-of(𝓣))} where
+record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Equiv{ℓ₁ Lvl.⊔ ℓ₃}(X) ⦄ (𝓣 : PredSet{ℓ₂}(PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X))) : Type{Lvl.𝐒(Lvl.of(X)) Lvl.⊔ Lvl.of(Type.of(𝓣))} where
   field
     contains-empty        : (∅ ∈ 𝓣)
     contains-universe     : (𝐔 ∈ 𝓣)

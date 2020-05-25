@@ -273,6 +273,7 @@ import Syntax.Function
 import Syntax.Implication
 import Syntax.Number
 import Syntax.Transitivity
+import Syntax.Type
 import Type
 import Type.Category
 -- import Type.Cubical
@@ -296,10 +297,3 @@ import Type.WellOrdering
 
 main : FFI.IO Data.Unit
 main = FFI.printStrLn("Okay")
-
-module _ where
-  open Syntax.Function
-  open Type
-
-  test : Set → Set → Set
-  test = (x ↦ y ↦ x :of: Set :of: Set)

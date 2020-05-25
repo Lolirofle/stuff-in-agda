@@ -4,9 +4,9 @@ module Lang.Size where
 
 -- Some stuff about sizes that seems to :
 -- • Types:
---   • SizeU   : Set
---   • Size    : Set
---   • <ˢⁱᶻᵉ_  : Size → Set
+--   • SizeU   : TYPE
+--   • Size    : TYPE
+--   • <ˢⁱᶻᵉ_  : Size → TYPE
 --   • 𝐒ˢⁱᶻᵉ   : Size → Size
 --   • ∞ˢⁱᶻᵉ   : Size
 --   • _⊔ˢⁱᶻᵉ_ : Size → Size → Size
@@ -34,13 +34,13 @@ private
   module Test where
     open import Relator.Equals
 
-    types-SizeU : Set
+    types-SizeU : TYPE
     types-SizeU = SizeU
 
-    types-Size : Set
+    types-Size : TYPE
     types-Size = Size
 
-    types-<ˢⁱᶻᵉ : Size → Set
+    types-<ˢⁱᶻᵉ : Size → TYPE
     types-<ˢⁱᶻᵉ = <ˢⁱᶻᵉ_
 
     types-𝐒ˢⁱᶻᵉ : Size → Size

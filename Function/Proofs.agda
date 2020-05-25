@@ -130,22 +130,20 @@ module _ {a : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(a) ⦄ {b : Type{ℓₒ�
   -- The composition of injective functions is injective.
   -- Source: https://math.stackexchange.com/questions/2049511/is-the-composition-of-two-injective-functions-injective/2049521
   -- Alternative proof: [∘]-associativity {f⁻¹}{g⁻¹}{g}{f} becomes id by inverseₗ-value injective equivalence
-  [∘]-injective : ∀{f : b → c}{g : a → b} → ⦃ _ : Injective(f) ⦄ → ⦃ _ : Injective(g) ⦄ → Injective(f ∘ g)
+  [∘]-injective : ∀{f : b → c}{g : a → b} → ⦃ inj-f : Injective(f) ⦄ → ⦃ inj-g : Injective(g) ⦄ → Injective(f ∘ g)
   Injective.proof([∘]-injective {f = f}{g = g} ⦃ inj-f ⦄ ⦃ inj-g ⦄ ) {x₁}{x₂} = (injective(g) ⦃ inj-g ⦄ {x₁} {x₂}) ∘ (injective(f) ⦃ inj-f ⦄ {g(x₁)} {g(x₂)})
 
   -- RHS of composition is injective if the composition is injective.
-  [∘]-injective-elim : ∀{f : b → c} → ⦃ _ : Function(f) ⦄ → ∀{g : a → b} → ⦃ _ : Injective(f ∘ g) ⦄ → Injective(g)
+  [∘]-injective-elim : ∀{f : b → c} → ⦃ func-f : Function(f) ⦄ → ∀{g : a → b} → ⦃ inj-fg : Injective(f ∘ g) ⦄ → Injective(g)
   Injective.proof([∘]-injective-elim {f = f}{g = g} ⦃ inj-fg ⦄) {x₁}{x₂} (gx₁gx₂) = injective(f ∘ g) ⦃ inj-fg ⦄ {x₁} {x₂} ([≡ₛ]-with(f) (gx₁gx₂))
 
 module _ {a : Type{ℓₒ₁}} {b : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(b) ⦄ {c : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₑ₃}(c) ⦄ where
   -- The composition of surjective functions is surjective.
-  [∘]-surjective : ∀{f : b → c} → ⦃ _ : Function(f) ⦄ → ∀{g : a → b} → ⦃ _ : Surjective(f) ⦄ → ⦃ _ : Surjective(g) ⦄ → Surjective(f ∘ g)
+  [∘]-surjective : ∀{f : b → c} → ⦃ func-f : Function(f) ⦄ → ∀{g : a → b} → ⦃ surj-f : Surjective(f) ⦄ → ⦃ surj-g : Surjective(g) ⦄ → Surjective(f ∘ g)
   Surjective.proof([∘]-surjective {f = f}{g = g}) {y}
-    with (surjective(f) {y})
-  ... | [∃]-intro (a) ⦃ fa≡y ⦄
-    with (surjective(g) {a})
-  ... | [∃]-intro (x) ⦃ gx≡a ⦄
-    = [∃]-intro (x) ⦃ [≡ₛ]-with(f) (gx≡a) 🝖 fa≡y ⦄
+    with [∃]-intro (a) ⦃ fa≡y ⦄ ← surjective(f) {y}
+    with [∃]-intro (x) ⦃ gx≡a ⦄ ← surjective(g) {a}
+    = [∃]-intro (x) ⦃ [≡ₛ]-with(f) gx≡a 🝖 fa≡y ⦄
 
   -- LHS of composition is surjective if the composition is surjective.
   [∘]-surjective-elim : ∀{f : b → c}{g : a → b} → ⦃ _ : Surjective(f ∘ g) ⦄ → Surjective(f)
@@ -155,30 +153,30 @@ module _ {a : Type{ℓₒ₁}} {b : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(b)
 module _ {a : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(a) ⦄ {b : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(b) ⦄ {c : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₑ₃}(c) ⦄ where
   -- The composition of bijective functions is bijective.
   [∘]-bijective : ∀{f : b → c} → ⦃ _ : Function(f) ⦄ → ∀{g : a → b} → ⦃ _ : Bijective(f) ⦄ → ⦃ _ : Bijective(g) ⦄ → Bijective(f ∘ g)
-  [∘]-bijective {f = f} ⦃ func-f ⦄ {g} ⦃ bij-f ⦄ ⦃ bij-g ⦄ =
+  [∘]-bijective {f = f} {g = g} =
     injective-surjective-to-bijective(f ∘ g)
-      ⦃ [∘]-injective {f = f}{g = g}
-        ⦃ bijective-to-injective(f) ⦃ bij-f ⦄ ⦄
-        ⦃ bijective-to-injective(g) ⦃ bij-g ⦄ ⦄
+      ⦃ [∘]-injective
+        ⦃ inj-f = bijective-to-injective(f) ⦄
+        ⦃ inj-g = bijective-to-injective(g) ⦄
       ⦄
-      ⦃ [∘]-surjective {f = f} ⦃ func-f ⦄ {g = g}
-        ⦃ bijective-to-surjective(f) ⦃ bij-f ⦄ ⦄
-        ⦃ bijective-to-surjective(g) ⦃ bij-g ⦄ ⦄
+      ⦃ [∘]-surjective
+        ⦃ surj-f = bijective-to-surjective(f) ⦄
+        ⦃ surj-g = bijective-to-surjective(g) ⦄
       ⦄
 
   -- The composition of functions is a function.
   [∘]-function : ∀{f : b → c}{g : a → b} → ⦃ func-f : Function(f) ⦄ → ⦃ func-g : Function(g) ⦄ → Function(f ∘ g)
-  Function.congruence([∘]-function {f = f}{g = g} ⦃ func-f ⦄ ⦃ func-g ⦄ ) {x₁}{x₂} = ([≡ₛ]-with(f) ⦃ func-f ⦄ {g(x₁)} {g(x₂)}) ∘ ([≡ₛ]-with(g) ⦃ func-g ⦄ {x₁} {x₂})
+  Function.congruence([∘]-function {f = f}{g = g}) {x₁}{x₂} = ([≡ₛ]-with(f) {g(x₁)}{g(x₂)}) ∘ ([≡ₛ]-with(g) {x₁}{x₂})
 
 module _ {a : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(a) ⦄ {b : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(b) ⦄ where
   open import Function.Equals
   open import Structure.Function.Domain.Proofs
 
-  [∘]-inverse-to-injective : ∀{f : a → b} → ∃(g ↦ Function(g) ∧ (g ∘ f ≡ₛ id)) → Injective(f)
-  [∘]-inverse-to-injective {f} ([∃]-intro g ⦃ [∧]-intro func-g gfid ⦄) = [∘]-injective-elim {f = g} ⦃ func-g ⦄ {g = f} ⦃ substitute₁(Injective) (symmetry(_≡ₛ_) gfid) id-injective ⦄
+  [∘]-inverse-to-injective : ∀{f : a → b} → ∃(g ↦ Function(g) ∧ Inverseₗ(f)(g)) → Injective(f)
+  [∘]-inverse-to-injective {f} ([∃]-intro g ⦃ [∧]-intro func-g gfid ⦄) = [∘]-injective-elim {f = g} ⦃ func-g ⦄ {g = f} ⦃ substitute₁ₗ(Injective) (intro(inverseₗ _ _ ⦃ gfid ⦄)) id-injective ⦄
 
-  [∘]-inverse-to-surjective : ∀{f : a → b} → ∃(g ↦ Function(g) ∧ (f ∘ g ≡ₛ id)) → Surjective(f)
-  [∘]-inverse-to-surjective {f} ([∃]-intro g ⦃ [∧]-intro func-g fgid ⦄) = [∘]-surjective-elim {f = f}{g = g} ⦃ substitute₁(Surjective) (symmetry(_≡ₛ_) fgid) id-surjective ⦄
+  [∘]-inverse-to-surjective : ∀{f : a → b} → ∃(g ↦ Function(g) ∧ Inverseᵣ(f)(g)) → Surjective(f)
+  [∘]-inverse-to-surjective {f} ([∃]-intro g ⦃ [∧]-intro func-g fgid ⦄) = [∘]-surjective-elim {f = f}{g = g} ⦃ substitute₁ₗ(Surjective) (intro(inverseᵣ _ _ ⦃ fgid ⦄)) id-surjective ⦄
 
 module _ {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{ℓ₃}} where
   swap-involution : ⦃ _ : Equiv{ℓₑ}(X → Y → Z) ⦄ → ∀{f : X → Y → Z} → (swap(swap(f)) ≡ₛ f)

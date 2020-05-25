@@ -9,7 +9,8 @@ open import Data
 open import Data.Boolean.Proofs
 open import Data.Boolean.Stmt
 open import Data.Boolean.Stmt.Proofs
-open import Data.List as List using (List ; ∅ ; _⊰_)
+open import Data.List
+open import Data.List.Functions as List
 open import Data.List.Relation.Membership as Membership using (_∈_ ; use ; skip)
 open import Data.List.Relation.Sublist.Proofs
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
@@ -38,8 +39,8 @@ module Sorted where
   merge = List.foldᵣ insert
 
   -- Merges a list of sorted lists so that the resulting list is still sorted.
-  concat : List(List(T)) → List(T)
-  concat = List.foldᵣ merge ∅
+  mergeAll : List(List(T)) → List(T)
+  mergeAll = List.foldᵣ merge ∅
 
   module _ where
     open import Data.List.Relation.OrderedPairwise(IsTrue ∘₂ (_≤?_)) renaming (OrderedPairwise to Sorted)
@@ -75,9 +76,9 @@ module Sorted where
       merge-sorted-proof {l₁} {x ⊰ ∅}      s₁ single               = insert-sorted-proof s₁
       merge-sorted-proof {l₁} {x ⊰ y ⊰ l₂} s₁ (step ⦃ xy ⦄ ⦃ s₂ ⦄) = insert-sorted-proof (merge-sorted-proof s₁ s₂)
 
-      concat-sorted-proof : ∀{ls} → (∀{l} → ⦃ _ : (l ∈ ls) ⦄ → Sorted(l)) → Sorted(concat ls)
-      concat-sorted-proof {∅}      p = Sorted.empty
-      concat-sorted-proof {l ⊰ ls} p = merge-sorted-proof (p ⦃ use ⦄) (concat-sorted-proof {ls} (\{l} ⦃ q ⦄ → p{l} ⦃ _∈_.skip ⦃ q ⦄ ⦄))
+      mergeAll-sorted-proof : ∀{ls} → (∀{l} → ⦃ _ : (l ∈ ls) ⦄ → Sorted(l)) → Sorted(mergeAll ls)
+      mergeAll-sorted-proof {∅}      p = Sorted.empty
+      mergeAll-sorted-proof {l ⊰ ls} p = merge-sorted-proof (p ⦃ use ⦄) (mergeAll-sorted-proof {ls} (\{l} ⦃ q ⦄ → p{l} ⦃ _∈_.skip ⦃ q ⦄ ⦄))
 
       {-
       split₂-sorted-proof : ∀{l} → Sorted(l) → let (a , b) = List.split₂(l) in (Sorted(a) ∧ Sorted(b))
@@ -113,7 +114,7 @@ module _
   merge-sort : List(T) → List(T)
   merge-sort = Strict.Properties.wellfounded-recursion(_<_) f where
     f : (l : List(T)) → ((prev : List(T)) → ⦃ _ : prev < l ⦄ → List(T)) → List(T)
-    f(l) rec = Sorted.concat(Listₚ.map (split l) (ll ↦ rec ll))
+    f(l) rec = Sorted.mergeAll(Listₚ.map (split l) (\ll → rec ll))
 
 module Proofs where
   open import Functional

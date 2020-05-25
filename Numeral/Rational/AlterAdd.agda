@@ -2,6 +2,7 @@
 -- One bijective representation of ℚ. That is, every rational number is appearing exactly once in this representation (TODO: Some proof would be nice).
 module Numeral.Rational.AlterAdd where
 
+import      Lvl
 open import Data.Boolean
 open import Logic.Propositional
 open import Numeral.Natural             as ℕ
@@ -9,8 +10,9 @@ import      Numeral.Natural.Oper        as ℕ
 import      Numeral.Natural.Oper.Comparisons as ℕ
 import      Numeral.Integer
 open        Numeral.Integer             using (ℤ)
+open import Type
 
-data Tree : ℕ → ℕ → Set where
+data Tree : ℕ → ℕ → Type{Lvl.𝟎} where
   Tree-intro : Tree(1)(1)
   Tree-left  : ∀{x y} → Tree(x)(y) → Tree(x) (x ℕ.+ y)
   Tree-right : ∀{x y} → Tree(x)(y) → Tree(x ℕ.+ y) (y)
@@ -46,7 +48,7 @@ Tree-construction-algorithm(x)(y) with (x ℕ.≤? y) -- TODO: Prove that ℕ.�
 -- _+_ : Tree(a₁)(b₁) → Tree(a₂)(b₂) → 
 -- _⋅_ : Tree(a₁)(b₁) → Tree(a₂)(b₂) → 
 
-data ℚ : Set where
+data ℚ : Type{Lvl.𝟎} where
   𝟎  : ℚ
   _/₋_ : (x : ℕ) → (y : ℕ) → ⦃ _ : Tree(x)(y) ⦄ → ℚ
   _/₊_ : (x : ℕ) → (y : ℕ) → ⦃ _ : Tree(x)(y) ⦄ → ℚ

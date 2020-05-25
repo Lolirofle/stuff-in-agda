@@ -13,6 +13,7 @@ open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
+open import Syntax.Type
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓₑ ℓᵤ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ : Lvl.Level

@@ -17,6 +17,7 @@ open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Logic.Predicate.Theorems
 open import Relator.Equals
+open import Syntax.Type
 open import Type
 open import Type.Empty
 

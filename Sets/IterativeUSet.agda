@@ -29,11 +29,11 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {ℓ} where
 
   module SetContainer where
     -- The projection of the index type for a set container.
-    Index : (SC : SetContainer(T){ℓ}) → type-of(Σ.left SC)
+    Index : (SC : SetContainer(T){ℓ}) → Type.of(Σ.left SC)
     Index = Σ.left
 
     -- The projection of the elements' function for a set container.
-    elem : (SC : SetContainer(T){ℓ}) → type-of(Σ.right SC)
+    elem : (SC : SetContainer(T){ℓ}) → Type.of(Σ.right SC)
     elem = Σ.right
 
   -- The projection of the index type for an IUset's set container if it is a set.
@@ -220,9 +220,9 @@ module Oper ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   -- TODO: Many of these operations are simply copy-pasted from Sets.IterativeSet with small modifications.
 
   -- The operation converting an IUset from a lower universe level to a higher universe level.
-  IUset-level-up : IUset(T){ℓ₁} → IUset(T){ℓ₁ Lvl.⊔ ℓ₂}
+  IUset-level-up : let _ = ℓ₁ in IUset(T){ℓ₂} → IUset(T){ℓ₁ Lvl.⊔ ℓ₂}
   IUset-level-up          (atom x) = atom x
-  IUset-level-up {ℓ₁}{ℓ₂} (setc {Index} elem) = setc {Lvl.Up{ℓ₁}{ℓ₂}(Index)} \{(Lvl.up i) → IUset-level-up{ℓ₁}{ℓ₂}(elem(i))}
+  IUset-level-up {ℓ₁}{ℓ₂} (setc {Index} elem) = setc {Lvl.Up{ℓ₂}{ℓ₁}(Index)} \{(Lvl.up i) → IUset-level-up{ℓ₁}{ℓ₂}(elem(i))}
 
   -- The empty set, consisting of no elements.
   -- Index is the empty type, which means that there are no objects pointing to elements in the set.
@@ -257,7 +257,7 @@ module Oper ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   -- The pair set, consisting of two elements.
   -- Index is the boolean type, which means that there are two objects pointing to two elements in the set.
   pair : IUset(T){ℓ} → IUset(T){ℓ} → IUset(T){ℓ}
-  pair A B = setc{Index = Lvl.Up(Bool)} \{(Lvl.up 𝐹) → A ; (Lvl.up 𝑇) → B}
+  pair A B = setc{Index = Lvl.Up(Bool)} ((if_then B else A) ∘ Lvl.Up.obj)
 
   -- The union operator.
   -- Index(A ∪ B) is the either type of two indices, which means that both objects from the A and the B index point to elements in the set.

@@ -1,5 +1,5 @@
-OPTIONS=--rewriting --cubical --without-K --no-default-libraries --no-libraries --no-guardedness --no-sized-types
-DEBUG_OPTIONS=--show-implicit --confluence-check -W all --warning noUnknownFixityInMixfixDecl
+OPTIONS=--rewriting --without-K --no-default-libraries --no-libraries --no-guardedness --no-sized-types --no-import-sorts
+DEBUG_OPTIONS=--show-implicit --confluence-check -W all --warning noUnknownFixityInMixfixDecl --cubical
 #--cubical --exact-split --proof-irrelevance --verbose=5 --experimental-irrelevance --instance-search-depth=10 --overlapping-instances
 
 all: typecheck

@@ -18,6 +18,7 @@ open import Structure.Operator.Properties{ℓ}{Lvl.𝟎}
 open import Structure.Relator.Properties{ℓ}{Lvl.𝟎}
 open import Syntax.Number
 open import Syntax.Transitivity
+open import Type
 
 -- TODO: Prove the usual strcutures for ℤ
 
@@ -110,7 +111,7 @@ proof-from-[ℕ]₊ : ∀{φ : ℕ → Stmt}{n : ℕ} → ?
 {-# REWRITE [𝐒][𝐏]-identity #-}
 
 -- An intuitive induction proof method on integers
-record [ℤ]-simple-induction-data (P : ℤ → Stmt) : Set(ℓ) where
+record [ℤ]-simple-induction-data (P : ℤ → Stmt) : Type{ℓ} where
   constructor [ℤ]-simple-ind
   field
     [−] : ∀{n} → P(−ₙ n) → P(−𝐒ₙ(n))
@@ -124,7 +125,7 @@ record [ℤ]-simple-induction-data (P : ℤ → Stmt) : Set(ℓ) where
 [ℤ]-simple-induction {P} ([ℤ]-simple-ind [−] [0] [+]) {−𝐒ₙ(ℕ.𝐒(n))} = [−] ([ℤ]-simple-induction {P} ([ℤ]-simple-ind [−] [0] [+]) {−𝐒ₙ(n)})
 
 -- An intuitive induction proof method on integers
-record [ℤ]-induction-data (P : ℤ → Stmt) : Set(ℓ) where
+record [ℤ]-induction-data (P : ℤ → Stmt) : Type{ℓ} where
   constructor [ℤ]-ind
   field
     [−] : ∀{n} → P(n) → P(𝐏(n))

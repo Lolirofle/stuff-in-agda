@@ -31,7 +31,7 @@ module _
   open Category(category)
   open Functor
 
-  record MonoidalCategory : Type{Lvl.of(type-of C)} where
+  record MonoidalCategory : Type{Lvl.of(Type.of C)} where
     constructor intro
 
     field
@@ -110,7 +110,7 @@ module _
   open MonoidalCategory ⦃ … ⦄
 
   -- Also called: Lax monoidal functor, applicative functor, idiom.
-  record MonoidalFunctor : Type{Lvl.of(type-of C₁)} where
+  record MonoidalFunctor : Type{Lvl.of(Type.of C₁)} where
     constructor intro
     field
       ε : 𝟏₂ ⟶ F(𝟏₁)
@@ -139,7 +139,7 @@ module _
   open Functor ⦃ … ⦄
   open MonoidalCategory ⦃ … ⦄
 
-  record TensorialStrength : Type{Lvl.of(type-of C)} where
+  record TensorialStrength : Type{Lvl.of(Type.of C)} where
     constructor intro
     field
       Β : (product ∘ᶠᵘⁿᶜᵗᵒʳ Tupleᶜᵃᵗ.mapRight functor) →ᴺᵀ (functor ∘ᶠᵘⁿᶜᵗᵒʳ product)

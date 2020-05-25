@@ -1,19 +1,21 @@
 module Formalization.SimplyTypedLambdaCalculus where
 
+import      Lvl
 open import Numeral.Natural
+open import Type as _ using (TYPE)
 
-data Type (B : Set) : Set₁ where
+data Type (B : TYPE) : TYPE₁ where
   Base : B → Type(B)
   Function : Type(B) → Type(B) → Type(B)
 
-data Term (B : Set) : Set₁ where
+data Term (B : TYPE) : TYPE₁ where
   Apply : Term(B) → Term(B) → Term(B)
   Abstract : Type(B) → Term(B) → Term(B)
   Var : ℕ → Term(B)
   Const : B → Term(B)
 
 module _ {B} where
-  data _⊢_::_ (Γ : Term(B) → Type(B) → Set) : Term(B) → Type(B) → Set₁ where
+  data _⊢_::_ (Γ : Term(B) → Type(B) → TYPE) : Term(B) → Type(B) → TYPE₁ where
     intro : ∀{a}{T} → Γ(a)(T) → (Γ ⊢ a :: T)
     -- const : ∀{a}{T} → Γ(a)(T) → (Γ ⊢ a :: T)
     abstr : ∀{body}{A B} → (Γ ⊢ body :: B) → (Γ ⊢ Abstract A body :: Function A B)

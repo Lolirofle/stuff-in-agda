@@ -19,15 +19,15 @@ open import Type.Unit.Proofs
 module _ {ℓₒ₁}{ℓₒ₂} {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} {f : X → Y} where
   open Type.Functions {ℓₗ}{ℓₒ₁}{ℓₒ₂} {X}{Y}
 
-  bijective-to-injective : ⦃ _ : Bijective(f) ⦄ → Injective(f)
+  bijective-to-injective : ⦃ bij : Bijective(f) ⦄ → Injective(f)
   Injective.proof (bijective-to-injective ⦃ intro proof ⦄) {y} =
     unit-is-prop {ℓₒ₁} ⦃ proof{y} ⦄
 
-  bijective-to-surjective : ⦃ _ : Bijective(f) ⦄ → Surjective(f)
+  bijective-to-surjective : ⦃ bij : Bijective(f) ⦄ → Surjective(f)
   Surjective.proof (bijective-to-surjective ⦃ intro proof ⦄) {y} =
     unit-is-pos {ℓₗ Lvl.⊔ ℓₒ₁} ⦃ proof{y} ⦄
 
-  injective-surjective-to-bijective : ⦃ _ : Injective(f) ⦄ → ⦃ _ : Surjective(f) ⦄ → Bijective(f)
+  injective-surjective-to-bijective : ⦃ inj : Injective(f) ⦄ → ⦃ surj : Surjective(f) ⦄ → Bijective(f)
   Bijective.proof(injective-surjective-to-bijective ⦃ intro inj ⦄ ⦃ intro surj ⦄) {y} =
     pos-prop-is-unit {ℓₗ Lvl.⊔ ℓₒ₁} ⦃ surj{y} ⦄ ⦃ inj{y} ⦄
 

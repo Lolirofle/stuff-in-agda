@@ -16,6 +16,7 @@ open import Relator.Equals.Proofs
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
+open import Syntax.Type
 open import Type
 
 module _ {ℓ} where

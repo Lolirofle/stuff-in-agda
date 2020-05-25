@@ -66,8 +66,8 @@ module _
       LinearCombination {1}       vf sf = Vec.proj(sf)(0) ⋅ₛᵥ Vec.proj(vf)(0)
       LinearCombination {𝐒(𝐒(n))} vf sf = (Vec.proj(sf)(0) ⋅ₛᵥ Vec.proj(vf)(0)) +ᵥ (LinearCombination {𝐒(n)} (Vec.tail vf) (Vec.tail sf))
 
-      postulate LinearCombination-addition    : ∀{n}{sf₁ sf₂}{vf} → (LinearCombination{n}(vf)(sf₁) +ᵥ LinearCombination{n}(vf)(sf₂) ≡ LinearCombination{n}(vf)(sf₁ 〔 Vec.map₂ (_+ₛ_) 〕 sf₂))
-      postulate LinearCombination-subtraction : ∀{n}{sf₁ sf₂}{vf} → (LinearCombination{n}(vf)(sf₁) −ᵥ LinearCombination{n}(vf)(sf₂) ≡ LinearCombination{n}(vf)(sf₁ 〔 Vec.map₂ (_−ₛ_) 〕 sf₂))
+      postulate LinearCombination-addition    : ∀{n}{sf₁ sf₂}{vf} → (LinearCombination{n}(vf)(sf₁) +ᵥ LinearCombination{n}(vf)(sf₂) ≡ LinearCombination{n}(vf)(sf₁ ⦗ Vec.map₂ (_+ₛ_) ⦘ sf₂))
+      postulate LinearCombination-subtraction : ∀{n}{sf₁ sf₂}{vf} → (LinearCombination{n}(vf)(sf₁) −ᵥ LinearCombination{n}(vf)(sf₂) ≡ LinearCombination{n}(vf)(sf₁ ⦗ Vec.map₂ (_−ₛ_) ⦘ sf₂))
 
       -- Spanning(vf) ⇔ (VSP = Span(vf))
       -- A set of vectors is spanning the vector space when every vector in the vector space can be represented as a linear combination of the set of vectors.

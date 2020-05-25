@@ -1,11 +1,13 @@
 module Numeral.Integer where
 
+import      Lvl
 open import Numeral.Natural      as ℕ using (ℕ)
 import      Numeral.Natural.Oper as ℕ
 open import Syntax.Number
+open import Type
 
 -- Integers
-data ℤ : Set where
+data ℤ : Type{Lvl.𝟎} where
   +ₙ_  : ℕ → ℤ -- Positive integers including zero (0,1,..)
   −𝐒ₙ_ : ℕ → ℤ -- Negative integers (..,-1)
 

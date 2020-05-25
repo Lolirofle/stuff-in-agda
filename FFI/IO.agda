@@ -3,8 +3,9 @@ module FFI.IO where
 import      Lvl
 open import Data
 open import String
+open import Type
 
-postulate IO : ∀{a} → Set a → Set a
+postulate IO : ∀{a} → Type{a} → Type{a}
 {-# BUILTIN IO IO #-}
 {-# FOREIGN GHC type AgdaIO a b = IO b #-}
 {-# COMPILE GHC IO = type AgdaIO #-}

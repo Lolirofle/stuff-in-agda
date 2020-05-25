@@ -15,7 +15,7 @@ open import Type
 
 -- Names --
 
-postulate Name : Set
+postulate Name : TYPE
 {-# BUILTIN QNAME Name #-}
 
 primitive
@@ -25,16 +25,16 @@ primitive
 
 -- Fixity --
 
-data Associativity : Set where
+data Associativity : TYPE where
   left-assoc  : Associativity
   right-assoc : Associativity
   non-assoc   : Associativity
 
-data Precedence : Set where
+data Precedence : TYPE where
   related   : Float → Precedence
   unrelated : Precedence
 
-data Fixity : Set where
+data Fixity : TYPE where
   fixity : Associativity → Precedence → Fixity
 
 {-# BUILTIN ASSOC      Associativity #-}
@@ -73,7 +73,7 @@ primitive
 
 -- Metavariables --
 
-postulate Meta : Set
+postulate Meta : TYPE
 {-# BUILTIN AGDAMETA Meta #-}
 
 primitive
@@ -85,7 +85,7 @@ primitive
 -- Arguments --
 
 -- Arguments can be (visible), {hidden}, or {{instance}}.
-data Visibility : Set where
+data Visibility : TYPE where
   visible hidden instance′ : Visibility
 
 {-# BUILTIN HIDING   Visibility #-}
@@ -94,17 +94,17 @@ data Visibility : Set where
 {-# BUILTIN INSTANCE instance′  #-}
 
 -- Arguments can be relevant or irrelevant.
-data Relevance : Set where
+data Relevance : TYPE where
   relevant irrelevant : Relevance
 
 {-# BUILTIN RELEVANCE  Relevance  #-}
 {-# BUILTIN RELEVANT   relevant   #-}
 {-# BUILTIN IRRELEVANT irrelevant #-}
 
-data ArgInfo : Set where
+data ArgInfo : TYPE where
   arg-info : (v : Visibility) (r : Relevance) → ArgInfo
 
-data Arg {a} (A : Set a) : Set a where
+data Arg {a} (A : TYPE a) : TYPE a where
   arg : (i : ArgInfo) (x : A) → Arg A
 
 {-# BUILTIN ARGINFO    ArgInfo  #-}
@@ -114,7 +114,7 @@ data Arg {a} (A : Set a) : Set a where
 
 -- Name abstraction --
 
-data Abs {a} (A : Set a) : Set a where
+data Abs {a} (A : TYPE a) : TYPE a where
   abs : (s : String) (x : A) → Abs A
 
 {-# BUILTIN ABS    Abs #-}
@@ -122,7 +122,7 @@ data Abs {a} (A : Set a) : Set a where
 
 -- Literals --
 
-data Literal : Set where
+data Literal : TYPE where
   nat    : (n : ℕ)      → Literal
   word64 : (n : Word64) → Literal
   float  : (x : Float)  → Literal
@@ -142,7 +142,7 @@ data Literal : Set where
 
 -- Patterns --
 
-data Pattern : Set where
+data Pattern : TYPE where
   con    : (c : Name) (ps : List (Arg Pattern)) → Pattern
   dot    : Pattern
   var    : (s : String)  → Pattern
@@ -160,9 +160,9 @@ data Pattern : Set where
 
 -- Terms --
 
-data Sort   : Set
-data Clause : Set
-data Term   : Set
+data Sort   : TYPE
+data Clause : TYPE
+data Term   : TYPE
 TypeTerm = Term
 
 data Term where
@@ -210,7 +210,7 @@ data Clause where
 
 -- Definitions --
 
-data Definition : Set where
+data Definition : TYPE where
   function    : (cs : List Clause) → Definition
   data-type   : (pars : ℕ) (cs : List Name) → Definition
   record-type : (c : Name) (fs : List (Arg Name)) → Definition
@@ -228,7 +228,7 @@ data Definition : Set where
 
 -- Errors --
 
-data ErrorPart : Set where
+data ErrorPart : TYPE where
   strErr  : String → ErrorPart
   termErr : Term → ErrorPart
   nameErr : Name → ErrorPart
@@ -241,35 +241,35 @@ data ErrorPart : Set where
 -- TC monad --
 
 postulate
-  TC               : ∀ {a} → Set a → Set a
-  returnTC         : ∀ {a} {A : Set a} → A → TC A
-  bindTC           : ∀ {a b} {A : Set a} {B : Set b} → TC A → (A → TC B) → TC B
+  TC               : ∀ {a} → TYPE a → TYPE a
+  returnTC         : ∀ {a} {A : TYPE a} → A → TC A
+  bindTC           : ∀ {a b} {A : TYPE a} {B : TYPE b} → TC A → (A → TC B) → TC B
   unify            : Term → Term → TC(Unit{Lvl.𝟎})
-  typeError        : ∀ {a} {A : Set a} → List ErrorPart → TC A
+  typeError        : ∀ {a} {A : TYPE a} → List ErrorPart → TC A
   inferType        : Term → TC TypeTerm
   checkType        : Term → TypeTerm → TC Term
   normalise        : Term → TC Term
   reduce           : Term → TC Term
-  catchTC          : ∀ {a} {A : Set a} → TC A → TC A → TC A
-  quoteTC          : ∀ {a} {A : Set a} → A → TC Term
-  unquoteTC        : ∀ {a} {A : Set a} → Term → TC A
+  catchTC          : ∀ {a} {A : TYPE a} → TC A → TC A → TC A
+  quoteTC          : ∀ {a} {A : TYPE a} → A → TC Term
+  unquoteTC        : ∀ {a} {A : TYPE a} → Term → TC A
   quoteωTC         : ∀ {A : Typeω} → A → TC Term
   getContext       : TC (List (Arg TypeTerm))
-  extendContext    : ∀ {a} {A : Set a} → Arg TypeTerm → TC A → TC A
-  inContext        : ∀ {a} {A : Set a} → List (Arg TypeTerm) → TC A → TC A
+  extendContext    : ∀ {a} {A : TYPE a} → Arg TypeTerm → TC A → TC A
+  inContext        : ∀ {a} {A : TYPE a} → List (Arg TypeTerm) → TC A → TC A
   freshName        : String → TC Name
   declareDef       : Arg Name → TypeTerm → TC(Unit{Lvl.𝟎})
   declarePostulate : Arg Name → TypeTerm → TC(Unit{Lvl.𝟎})
   defineFun        : Name → List Clause → TC(Unit{Lvl.𝟎})
   getType          : Name → TC TypeTerm
   getDefinition    : Name → TC Definition
-  blockOnMeta      : ∀ {a} {A : Set a} → Meta → TC A
+  blockOnMeta      : ∀ {a} {A : TYPE a} → Meta → TC A
   commitTC         : TC(Unit{Lvl.𝟎})
   isMacro          : Name → TC Bool
 
   -- If the argument is 'true' makes the following primitives also normalise
   -- their results: inferType, checkType, quoteTC, getType, and getContext
-  withNormalisation : ∀ {a} {A : Set a} → Bool → TC A → TC A
+  withNormalisation : ∀ {a} {A : TYPE a} → Bool → TC A → TC A
 
   -- Prints the third argument if the corresponding verbosity level is turned
   -- on (with the -v flag to Agda).
@@ -277,12 +277,12 @@ postulate
 
   -- Fail if the given computation gives rise to new, unsolved
   -- "blocking" constraints.
-  noConstraints : ∀ {a} {A : Set a} → TC A → TC A
+  noConstraints : ∀ {a} {A : TYPE a} → TC A → TC A
 
   -- Run the given TC action and return the first component. Resets to
   -- the old TC state if the second component is 'false', or keep the
   -- new TC state if it is 'true'.
-  runSpeculative : ∀ {a} {A : Set a} → TC (Σ A λ _ → Bool) → TC A
+  runSpeculative : ∀ {a} {A : TYPE a} → TC (Σ A λ _ → Bool) → TC A
 
 {-# BUILTIN AGDATCM                           TC                         #-}
 {-# BUILTIN AGDATCMRETURN                     returnTC                   #-}

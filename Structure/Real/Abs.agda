@@ -18,6 +18,7 @@ open import Structure.Operator.Group
 open import Structure.Relator.Ordering
 open        Structure.Relator.Ordering.Weak.Properties
 open import Structure.Relator.Properties
+open import Syntax.Type
 open import Type
 
 -- TODO: This file is probably redundant. Move this to Structure.Operator.OrderedField.Abs

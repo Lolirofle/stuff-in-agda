@@ -4,7 +4,8 @@ open import Type
 
 module Data.List.Relation.OrderedPairwise {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
 
-open import Data.List as List using (List ; ∅ ; _⊰_)
+open import Data.List
+import      Data.List.Functions as List
 
 -- Statement for when a list's elements in order pairwise satisfy a binary relation.
 data OrderedPairwise : List(T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂} where

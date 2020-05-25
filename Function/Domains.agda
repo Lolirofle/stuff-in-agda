@@ -6,6 +6,7 @@ import      Lang.Irrelevance
 open import Logic.Predicate
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Syntax.Type
 open import Type
 open import Type.Dependent
 

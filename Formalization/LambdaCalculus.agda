@@ -22,13 +22,14 @@ open import Numeral.Sign
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Syntax.Number
+open import Type
 
 -- TODO: Someone else did something similiar apparently: https://gist.github.com/gallais/303cfcfe053fbc63eb61
 -- TODO: Execution is possible, but limited? https://stackoverflow.com/questions/2583337/strictly-positive-in-agda#
 
 -- A lambda term (A term in the language of lambda calculus).
 -- This is encoded with an abstraction depth which ensures that every term is well-formed.
-data Term : ℕ → Set where
+data Term : ℕ → Type{0} where
   -- The term which represents applying the second term on the first term.
   -- Representation in function notation:
   --   (Apply f(x)) is f(x)
@@ -44,7 +45,7 @@ data Term : ℕ → Set where
   --   (Var(n)) is xₙ
   Var : ∀{d} → 𝕟(d) → Term(d)
 
-Expression : Set
+Expression : Type{0}
 Expression = Term(0)
 
 -- Syntax for writing Var as a numeral
@@ -156,16 +157,16 @@ module IndexZeroFurthest where
 
   -- β-reduction (beta).
   -- Reduces a term of form `f(x)` to `f[0 ≔ x]`.
-  data _β⇴_ : ∀{a b} → Term(a) → Term(b) → Set₁ where
+  data _β⇴_ : ∀{a b} → Term(a) → Term(b) → Type{1} where
     intro : ∀{n}{f : Term(𝐒(𝐒(n)))}{x : Term(𝐒(n))} → (Apply(Abstract(f))(x) β⇴ substitute(x)(f))
 
   -- η-reduction (eta).
   -- Reduces a term of form `x ↦ f(x)` to `f`.
-  data _η⇴_ : ∀{a b} → Term(a) → Term(b) → Set₁ where
+  data _η⇴_ : ∀{a b} → Term(a) → Term(b) → Type{1} where
     intro : ∀{n}{f : Term(𝐒(𝐒(n)))} → (Abstract(Apply(f)(Var(maximum))) η⇴ f)
 
   -- Reduction of expressions
-  data _⇴_ : ∀{a b} → Term(a) → Term(b) → Set₁ where
+  data _⇴_ : ∀{a b} → Term(a) → Term(b) → Type{1} where
     β-reduction : ∀{n}{f : Term(𝐒(𝐒(n)))}{x : Term(𝐒(n))} → (Apply(Abstract(f))(x) ⇴ substitute(x)(f))
     η-reduction : ∀{n}{f : Term(𝐒(𝐒(n)))} → (Abstract(Apply(f)(Var(maximum))) ⇴ f)
 
@@ -288,16 +289,16 @@ module IndexZeroNearest where
 
   -- β-reduction (beta).
   -- Reduces a term of form `f(x)` to `f[0 ≔ x]`.
-  data _β⇴_ : ∀{a b} → Term(a) → Term(b) → Set₁ where
+  data _β⇴_ : ∀{a b} → Term(a) → Term(b) → Type₁ where
     intro : ∀{n}{f : Term(𝐒(𝐒(n)))}{x : Term(𝐒(n))} → (Apply(Abstract(f))(x) β⇴ substitute-recent-var(x)(f))
 
   -- η-reduction (eta).
   -- Reduces a term of form `x ↦ f(x)` to `f`.
-  data _η⇴_ : ∀{a b} → Term(a) → Term(b) → Set₁ where
+  data _η⇴_ : ∀{a b} → Term(a) → Term(b) → Type₁ where
     intro : ∀{n}{f : Term(𝐒(𝐒(n)))} → (Abstract(Apply(f)(Var(𝟎))) η⇴ f)
 
   -- Reduction of expressions
-  data _⇴_ : ∀{a b} → Term(a) → Term(b) → Set₁ where
+  data _⇴_ : ∀{a b} → Term(a) → Term(b) → Type₁ where
     β-reduction : ∀{n}{f : Term(𝐒(𝐒(n)))}{x : Term(𝐒(n))} → (Apply(Abstract(f))(x) ⇴ substitute-recent-var(x)(f))
     η-reduction : ∀{n}{f : Term(𝐒(𝐒(n)))} → (Abstract(Apply(f)(Var(𝟎))) ⇴ f)
 
@@ -479,7 +480,7 @@ module IndexZeroNearest where
 
     TermAny = Σ ℕ Term
 
-    _⟶_ : TermAny → TermAny → Set₁
+    _⟶_ : TermAny → TermAny → Type₁
     _⟶_ a b = (Σ.right a) ⇴ (Σ.right b)
 
     open import ReductionSystem(_⟶_)

@@ -8,6 +8,7 @@ open        Data.Boolean.Operators.Programming hiding (_==_)
 open import Data.Boolean.Stmt
 open import Data.Boolean.Proofs
 import      Data.List as List
+import      Data.List.Functions as List
 open import Logic
 open import Functional
 open import Operator.Equals
@@ -30,7 +31,7 @@ module _ {T : Type{ℓ}} where
   singleton(t) = (_== t)
 
   enumeration : ⦃ _ : BoolEquality(T) ⦄ → List.List(T) → BoolSet(T)
-  enumeration(l) = (x ↦ (List.satisfiesAny(_== x)(l)))
+  enumeration(l) = (x ↦ List.satisfiesAny(_== x)(l))
 
   _∈?_ : T → BoolSet(T) → Bool
   _∈?_ = apply

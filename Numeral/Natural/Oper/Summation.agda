@@ -2,6 +2,7 @@ module Numeral.Natural.Oper.Summation where
 
 import      Lvl
 open import Data.List
+open import Data.List.Functions
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Structure.Function
@@ -26,7 +27,7 @@ a ‥₌ b = a ‥ 𝐒(b)
 ∑ : List(ℕ) → (ℕ → ℕ) → ℕ
 ∑(r) f = foldᵣ(_+_) 𝟎 (map f(r))
 
-open        Data.List.LongOper
+open        Data.List.Functions.LongOper
 open import Data.List.Proofs
 open import Functional
 open import Numeral.Natural.Oper.Proofs

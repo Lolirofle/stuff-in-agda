@@ -1,9 +1,12 @@
+open import Type
+
 -- Finite sets represented by lists
-module Data.List.Relation.Membership.Proofs {ℓ} {T : Set(ℓ)} where
+module Data.List.Relation.Membership.Proofs {ℓ} {T : Type{ℓ}} where
 
 import Lvl
 open import Functional
-open import Data.List hiding (skip)
+open import Data.List
+open import Data.List.Functions hiding (skip)
 open import Data.List.Proofs
 open import Data.List.Relation.Membership {ℓ}{T}
 open import Logic
@@ -15,7 +18,6 @@ open import Numeral.Natural.Oper.Proofs
 open import Relator.Equals renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_)
 open import Relator.Equals.Proofs hiding ([≡]-substitutionₗ ; [≡]-substitutionᵣ ; [≡]-reflexivity ; [≡]-transitivity ; [≡]-symmetry)
 open import Structure.Operator.Properties
-open import Type
 
 pattern [∈]-id        {a}{L}          = use  {a}{L}
 pattern [∈][⊰]-expand {a}{x}{L} proof = skip {a}{x}{L} ⦃ proof ⦄

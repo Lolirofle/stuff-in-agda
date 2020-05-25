@@ -3,6 +3,7 @@ module Syntax.Do where
 
 open import Functional
 import      Lvl
+open import Syntax.Idiom
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
@@ -28,14 +29,11 @@ record DoNotation (F : Type{ℓ₁} → Type{ℓ₂}) : Type{Lvl.𝐒(ℓ₁) Lv
     _<=<_ : ∀{A B C : Type} → (B → F(C)) → (A → F(B)) → (A → F(C))
     _<=<_ = swap(_>=>_)
 
-  module IdiomBrackets where
-    pure : (A → F(A))
-    pure = return
-
-    _<*>_ : F(A → B) → (F(A) → F(B))
-    _<*>_ Ff Fa = do
-      f <- Ff
-      a <- Fa
-      return(f(a))
+  idiomBrackets : IdiomBrackets(F)
+  IdiomBrackets.pure  idiomBrackets = return
+  IdiomBrackets._<*>_ idiomBrackets Ff Fa = do
+    f <- Ff
+    a <- Fa
+    return(f(a))
 
 open DoNotation ⦃ … ⦄ using (return ; _>>=_) public

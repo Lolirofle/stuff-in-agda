@@ -1,11 +1,13 @@
 module MachineWord where
 
+import      Lvl
 open import Data.Boolean
 open import Numeral.Natural
 open import String
 open import Syntax.Number
+open import Type
 
-postulate Word64 : Set
+postulate Word64 : Type{Lvl.𝟎}
 {-# BUILTIN WORD64 Word64 #-}
 
 private
@@ -23,7 +25,7 @@ module Word64 where
     Word64-infiniteNumeral : InfiniteNumeral(Word64)
     Word64-infiniteNumeral = InfiniteNumeral.intro fromℕ
 
-postulate Float : Set
+postulate Float : Type{Lvl.𝟎}
 {-# BUILTIN FLOAT Float #-}
 
 primitive

@@ -7,7 +7,7 @@ import      Data.Tuple.Raiseᵣ.Functions as Raise
 open import Data.Tuple.RaiseTypeᵣ
 open import Data.Tuple.RaiseTypeᵣ.Functions
 open import Function.Multi
-open import Functional using (_→ᶠ_ ; id ; _∘_ ; _〔_〕_) renaming (const to const₁ ; apply to apply₁ ; swap to swap₁ ; _$_ to _$₁_)
+open import Functional using (_→ᶠ_ ; id ; _∘_ ; _⦗_⦘_) renaming (const to const₁ ; apply to apply₁ ; swap to swap₁ ; _$_ to _$₁_)
 open import Logic
 import      Lvl
 import      Lvl.MultiFunctions as Lvl
@@ -116,7 +116,7 @@ f $[ i ] x = applyAt i x f
 -- Example:
 --   (onMany(n) f g₁ g₂ g₃ ...) x₁ x₂ x₃ ... = f (g₁ x₁) (g₂ x₂) (g₃ x₃) ...
 -- TODO: Try to get rid of the curry/uncurry by using (_∘ᵣ_)
-onMany : (n : ℕ) → ∀{ℓ𝓈₁}{As : Types{n}(ℓ𝓈₁)}{ℓ𝓈₂}{Bs : Types{n}(ℓ𝓈₂)}{C : Type{ℓ}} → (Bs ⇉ C) → (As 〔 map₂(_→ᶠ_) 〕 Bs) ⇉ (As ⇉ C)
+onMany : (n : ℕ) → ∀{ℓ𝓈₁}{As : Types{n}(ℓ𝓈₁)}{ℓ𝓈₂}{Bs : Types{n}(ℓ𝓈₂)}{C : Type{ℓ}} → (Bs ⇉ C) → (As ⦗ map₂(_→ᶠ_) ⦘ Bs) ⇉ (As ⇉ C)
 onMany 𝟎             = id
 onMany (𝐒(𝟎))        = _∘_
 onMany (𝐒(𝐒(n))) f g = curry{n = n} (gs ↦ x ↦ apply{n = n} gs (onMany (𝐒(n)) (f(g(x)))))

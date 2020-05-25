@@ -4,6 +4,7 @@ open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic
 import      Lvl
+open import Syntax.Type
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level

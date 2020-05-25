@@ -29,11 +29,11 @@ module _
 
   module _ (([∃]-intro F₁ ⦃ functor₁ ⦄) ([∃]-intro F₂ ⦃ functor₂ ⦄) : Cₗ →ᶠᵘⁿᶜᵗᵒʳ Cᵣ) where
     -- A natural transformation is a family of morphisms on 
-    record NaturalTransformation(η : ∀(x) → (F₁(x) ⟶ F₂(x))) : Type{Lvl.of(type-of(Cₗ)) Lvl.⊔ Lvl.of(type-of(Cᵣ))} where
+    record NaturalTransformation(η : ∀(x) → (F₁(x) ⟶ F₂(x))) : Type{Lvl.of(Type.of(Cₗ)) Lvl.⊔ Lvl.of(Type.of(Cᵣ))} where
       constructor intro
       field natural : ∀{x y}{f : x ⟶ y} → (η(y) ∘ map(f) ≡ map(f) ∘ η(x))
 
-    record NaturalIsomorphism(η : ∀(x) → (F₁(x) ⟶ F₂(x))) : Type{Lvl.of(type-of(Cₗ)) Lvl.⊔ Lvl.of(type-of(Cᵣ))} where -- TODO: Consider defining this by two natural tranformations instead
+    record NaturalIsomorphism(η : ∀(x) → (F₁(x) ⟶ F₂(x))) : Type{Lvl.of(Type.of(Cₗ)) Lvl.⊔ Lvl.of(Type.of(Cᵣ))} where -- TODO: Consider defining this by two natural tranformations instead
       constructor intro
       field
         ⦃ naturalTransformation ⦄ : NaturalTransformation(η)

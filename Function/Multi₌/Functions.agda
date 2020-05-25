@@ -7,7 +7,7 @@ open import Data.Tuple.Raiseᵣ.Functions
 open import Data.Tuple.RaiseTypeᵣ
 import      Data.Tuple.RaiseTypeᵣ.Functions as RaiseTypeᵣ
 open import Function.Multi₌
-open import Functional using (_→ᶠ_ ; id ; _∘_ ; _〔_〕_) renaming (const to const₁ ; apply to apply₁ ; swap to swap₁ ; _$_ to _$₁_)
+open import Functional using (_→ᶠ_ ; id ; _∘_ ; _⦗_⦘_) renaming (const to const₁ ; apply to apply₁ ; swap to swap₁ ; _$_ to _$₁_)
 import      Lvl
 import      Lvl.MultiFunctions as Lvl
 open import Numeral.Finite
@@ -121,12 +121,12 @@ f $[ i ] x = applyAt i x f
 -- Example:
 --   (f ∘ₗ g₁ g₂ g₃ ...) x₁ x₂ x₃ ... = f (g₁ x₁) (g₂ x₂) (g₃ x₃) ...
 -- TODO: Try to get rid of the curry/uncurry by using (_∘ᵣ_)
-_∘ₗ : ∀{n}{As : Type{ℓ} ^ n}{Bs : Type{ℓ} ^ n}{C} → (Bs ⇉₌ C) → (As 〔 map₂(_→ᶠ_) 〕 Bs) ⇉₌ (As ⇉₌ C)
+_∘ₗ : ∀{n}{As : Type{ℓ} ^ n}{Bs : Type{ℓ} ^ n}{C} → (Bs ⇉₌ C) → (As ⦗ map₂(_→ᶠ_) ⦘ Bs) ⇉₌ (As ⇉₌ C)
 _∘ₗ {n = 𝟎}      = id
 _∘ₗ {n = 𝐒(𝟎)}   = _∘_
 _∘ₗ {n = 𝐒(𝐒(n))} f g = curry{n = n} (gs ↦ x ↦ apply{n = n} gs (_∘ₗ {n = 𝐒(n)} (f(g(x)))))
--- _∘ᵣ_ {n = 𝐒 (𝐒 n)} {As 〔 map₂ _→ᶠ_ 〕 Bs} {_} {As ⇉ C} (((λ g x → _∘ᵣ_ {n = 𝐒 (𝐒 n)} {right As} {_} {C})) {!!}) (\g → {!!})
--- _∘ᵣ_ {n = 𝐒 (𝐒 n)} {As 〔 map₂(_→ᶠ_) 〕 Bs} {_} {As ⇉ C} (_∘ᵣ_ {n = 𝐒 (𝐒 n)} {!f!}) (g ↦ _∘ᵣ_ {n = 𝐒 (𝐒 n)} {!!} ([↦] (x ↦ _∘ₗ {n = 𝐒(n)} {right As} {right Bs} (f(g(x))))) {!!})
+-- _∘ᵣ_ {n = 𝐒 (𝐒 n)} {As ⦗ map₂ _→ᶠ_ ⦘ Bs} {_} {As ⇉ C} (((λ g x → _∘ᵣ_ {n = 𝐒 (𝐒 n)} {right As} {_} {C})) {!!}) (\g → {!!})
+-- _∘ᵣ_ {n = 𝐒 (𝐒 n)} {As ⦗ map₂(_→ᶠ_) ⦘ Bs} {_} {As ⇉ C} (_∘ᵣ_ {n = 𝐒 (𝐒 n)} {!f!}) (g ↦ _∘ᵣ_ {n = 𝐒 (𝐒 n)} {!!} ([↦] (x ↦ _∘ₗ {n = 𝐒(n)} {right As} {right Bs} (f(g(x))))) {!!})
 -- {!_∘ᵣ_ {n = 𝐒(𝐒(n))} {As} {_} {As ⇉ C} (x ↦ (_∘ₗ {n = 𝐒(n)} (f(g(x))))) ? ?!}
 -- _∘ₗ {n = 𝐒(n)} f = curry{n = n} (gs ↦ curry{n = n} (xs ↦ f $ (fnsToMultivariate{n = n} gs) $ xs))
 -- _∘ₗ {n = 𝐒(𝐒(n))} f g = curry{n = n} (gs ↦ x ↦ apply{n = n} gs (_∘ₗ {n = 𝐒(n)} (f(g(x)))))
@@ -166,7 +166,7 @@ _on_ {n = 𝐒(𝐒(n))} f g x     = _on_ {n = 𝐒(n)} (f(g(x))) g
 -- The resulting function is a function where each value is dependent on only one of its arguments.
 -- Note: The converse is not possible in general because one value can depend on multiple arguments. See `splitMultivariate` for a possible implementation of this idea.
 -- TODO: Why is this uncurried
-fnsToMultivariate : ∀{n}{As Bs : Type{ℓ} ^ 𝐒(n)} → (reduceᵣ(_⨯_) (As 〔 map₂(_→ᶠ_) 〕 Bs)) → (As ⇉₌ reduceᵣ(_⨯_) Bs)
+fnsToMultivariate : ∀{n}{As Bs : Type{ℓ} ^ 𝐒(n)} → (reduceᵣ(_⨯_) (As ⦗ map₂(_→ᶠ_) ⦘ Bs)) → (As ⇉₌ reduceᵣ(_⨯_) Bs)
 fnsToMultivariate {n = 𝟎}               = id
 fnsToMultivariate {n = 𝐒(n)} (f , fs) x = (f(x) ,_) ∘ᵣ fnsToMultivariate{n = n} fs
 

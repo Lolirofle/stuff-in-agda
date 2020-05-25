@@ -1,8 +1,10 @@
+open import Type
+
 -- Finite sets represented by lists
-module Data.List.Relation.Membership {ℓ} {T : Set(ℓ)} where
+module Data.List.Relation.Membership {ℓ} {T : Type{ℓ}} where
 
 import Lvl
-open import Data.List hiding (skip)
+open import Data.List
 open import Logic
 open import Logic.Propositional
 

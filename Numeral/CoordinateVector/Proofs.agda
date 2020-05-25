@@ -54,7 +54,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
 
   transfer-preserves : ∀{n} → Names.Preserving₂(transfer-elem{n}) (_▫_) (transfer-op{n}(_▫_))
   _⊜_.proof (transfer-preserves {n = n} {x} {y}) {i} = reflexivity(_≡_)
-  -- ∀{x y} → (fill(x ▫ y) ≡ fill(x) 〔 map₂ (_▫_) {n} 〕 fill(y))
+  -- ∀{x y} → (fill(x ▫ y) ≡ fill(x) ⦗ map₂ (_▫_) {n} ⦘ fill(y))
 
   -- transfer-opposite-elem : ∀{n} → 𝕟(n) → Vector(n)(T) → T
   -- transfer-opposite-elem {n}(i)(x) = Vector.proj(n)(i)

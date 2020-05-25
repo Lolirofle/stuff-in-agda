@@ -23,7 +23,7 @@ module _
   -- A covariant functor.
   -- A mapping which transforms objects and morphisms from one category to another while "preserving" the categorical structure.
   -- A homomorphism between categories.
-  record Functor (F : Objₗ → Objᵣ) : Type{Lvl.of(type-of(Categoryₗ)) Lvl.⊔ Lvl.of(type-of(Categoryᵣ))} where
+  record Functor (F : Objₗ → Objᵣ) : Type{Lvl.of(Type.of(Categoryₗ)) Lvl.⊔ Lvl.of(Type.of(Categoryᵣ))} where
     open Category ⦃ … ⦄
     open Category.ArrowNotation ⦃ … ⦄
     private instance _ = Categoryₗ

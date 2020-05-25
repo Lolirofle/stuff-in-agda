@@ -345,8 +345,8 @@ module Proofs where
           [∁]-function : Function(∁)
           Function.congruence [∁]-function xy =
             [↔]-to-[←] [≡]-membership (
-              Complement.membership 〔 [↔]-transitivity 〕
-              [¬]-unaryOperator ([↔]-to-[→] [≡]-membership xy) 〔 [↔]-transitivity 〕
+              Complement.membership ⦗ [↔]-transitivity ⦘
+              [¬]-unaryOperator ([↔]-to-[→] [≡]-membership xy) ⦗ [↔]-transitivity ⦘
               [↔]-symmetry Complement.membership
             )
 
@@ -354,8 +354,8 @@ module Proofs where
           [∁]-involution : ⦃ _ : ∀{x y} → Classical(x ∈ y) ⦄ → Involution(∁)
           Involution.proof [∁]-involution =
             [↔]-to-[←] [≡]-membership (
-              Complement.membership 〔 [↔]-transitivity 〕
-              [¬]-unaryOperator Complement.membership 〔 [↔]-transitivity 〕
+              Complement.membership ⦗ [↔]-transitivity ⦘
+              [¬]-unaryOperator Complement.membership ⦗ [↔]-transitivity ⦘
               [↔]-intro [¬¬]-intro [¬¬]-elim
             )
 
@@ -364,8 +364,8 @@ module Proofs where
           [∪]-binaryOperator : BinaryOperator(_∪_)
           BinaryOperator.congruence [∪]-binaryOperator xy₁ xy₂ =
             [↔]-to-[←] [≡]-membership (
-              Union.membership 〔 [↔]-transitivity 〕
-              [↔]-intro (Either.map2 ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₂))) (Either.map2 ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₂))) 〔 [↔]-transitivity 〕
+              Union.membership ⦗ [↔]-transitivity ⦘
+              [↔]-intro (Either.map2 ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₂))) (Either.map2 ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₂))) ⦗ [↔]-transitivity ⦘
               [↔]-symmetry Union.membership
             )
 
@@ -373,8 +373,8 @@ module Proofs where
           [∪]-commutativity : Commutativity(_∪_)
           Commutativity.proof [∪]-commutativity {x} {y} =
             [↔]-to-[←] [≡]-membership (
-              Union.membership                    〔 [↔]-transitivity 〕
-              [↔]-intro [∨]-symmetry [∨]-symmetry 〔 [↔]-transitivity 〕
+              Union.membership                    ⦗ [↔]-transitivity ⦘
+              [↔]-intro [∨]-symmetry [∨]-symmetry ⦗ [↔]-transitivity ⦘
               [↔]-symmetry Union.membership
             )
 
@@ -382,10 +382,10 @@ module Proofs where
           [∪]-associativity : Associativity(_∪_)
           Associativity.proof [∪]-associativity {x} {y} =
             [↔]-to-[←] [≡]-membership (
-              Union.membership 〔 [↔]-transitivity 〕
-              [↔]-intro (Either.mapLeft ([↔]-to-[←] Union.membership)) (Either.mapLeft ([↔]-to-[→] Union.membership)) 〔 [↔]-transitivity 〕
-              [∨]-associativity 〔 [↔]-transitivity 〕
-              [↔]-symmetry([↔]-intro (Either.mapRight ([↔]-to-[←] Union.membership)) (Either.mapRight ([↔]-to-[→] Union.membership))) 〔 [↔]-transitivity 〕
+              Union.membership ⦗ [↔]-transitivity ⦘
+              [↔]-intro (Either.mapLeft ([↔]-to-[←] Union.membership)) (Either.mapLeft ([↔]-to-[→] Union.membership)) ⦗ [↔]-transitivity ⦘
+              [∨]-associativity ⦗ [↔]-transitivity ⦘
+              [↔]-symmetry([↔]-intro (Either.mapRight ([↔]-to-[←] Union.membership)) (Either.mapRight ([↔]-to-[→] Union.membership))) ⦗ [↔]-transitivity ⦘
               [↔]-symmetry Union.membership
             )
 
@@ -394,8 +394,8 @@ module Proofs where
             [∪]-identityₗ : Identityₗ(_∪_)(∅)
             Identityₗ.proof [∪]-identityₗ {x} =
               [↔]-to-[←] [≡]-membership (
-                Union.membership 〔 [↔]-transitivity 〕
-                [↔]-intro (Either.mapLeft [⊥]-elim) (Either.mapLeft Empty.membership) 〔 [↔]-transitivity 〕
+                Union.membership ⦗ [↔]-transitivity ⦘
+                [↔]-intro (Either.mapLeft [⊥]-elim) (Either.mapLeft Empty.membership) ⦗ [↔]-transitivity ⦘
                 [↔]-intro [∨]-introᵣ [∨]-identityₗ
               )
 
@@ -404,8 +404,8 @@ module Proofs where
           [∩]-binaryOperator : BinaryOperator(_∩_)
           BinaryOperator.congruence [∩]-binaryOperator xy₁ xy₂ =
             [↔]-to-[←] [≡]-membership (
-              Intersection.membership 〔 [↔]-transitivity 〕
-              [↔]-intro (Tuple.map ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₂))) (Tuple.map ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₂))) 〔 [↔]-transitivity 〕
+              Intersection.membership ⦗ [↔]-transitivity ⦘
+              [↔]-intro (Tuple.map ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₂))) (Tuple.map ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₂))) ⦗ [↔]-transitivity ⦘
               [↔]-symmetry Intersection.membership
             )
 
@@ -413,8 +413,8 @@ module Proofs where
           [∩]-commutativity : Commutativity(_∩_)
           Commutativity.proof [∩]-commutativity {x} {y} =
             [↔]-to-[←] [≡]-membership (
-              Intersection.membership             〔 [↔]-transitivity 〕
-              [↔]-intro [∧]-symmetry [∧]-symmetry 〔 [↔]-transitivity 〕
+              Intersection.membership             ⦗ [↔]-transitivity ⦘
+              [↔]-intro [∧]-symmetry [∧]-symmetry ⦗ [↔]-transitivity ⦘
               [↔]-symmetry Intersection.membership
             )
 
@@ -422,10 +422,10 @@ module Proofs where
           [∩]-associativity : Associativity(_∩_)
           Associativity.proof [∩]-associativity {x} {y} =
             [↔]-to-[←] [≡]-membership (
-              Intersection.membership 〔 [↔]-transitivity 〕
-              [↔]-intro (Tuple.mapLeft ([↔]-to-[←] Intersection.membership)) (Tuple.mapLeft ([↔]-to-[→] Intersection.membership)) 〔 [↔]-transitivity 〕
-              [∧]-associativity 〔 [↔]-transitivity 〕
-              [↔]-symmetry([↔]-intro (Tuple.mapRight ([↔]-to-[←] Intersection.membership)) (Tuple.mapRight ([↔]-to-[→] Intersection.membership))) 〔 [↔]-transitivity 〕
+              Intersection.membership ⦗ [↔]-transitivity ⦘
+              [↔]-intro (Tuple.mapLeft ([↔]-to-[←] Intersection.membership)) (Tuple.mapLeft ([↔]-to-[→] Intersection.membership)) ⦗ [↔]-transitivity ⦘
+              [∧]-associativity ⦗ [↔]-transitivity ⦘
+              [↔]-symmetry([↔]-intro (Tuple.mapRight ([↔]-to-[←] Intersection.membership)) (Tuple.mapRight ([↔]-to-[→] Intersection.membership))) ⦗ [↔]-transitivity ⦘
               [↔]-symmetry Intersection.membership
             )
 
@@ -434,8 +434,8 @@ module Proofs where
             [∩]-identityₗ : Identityₗ(_∩_)(𝐔)
             Identityₗ.proof [∩]-identityₗ {x} =
               [↔]-to-[←] [≡]-membership (
-                Intersection.membership 〔 [↔]-transitivity 〕
-                [↔]-intro (Tuple.mapLeft {ℓ₁} (const Universal.membership)) (Tuple.mapLeft (const [⊤]-intro)) 〔 [↔]-transitivity 〕
+                Intersection.membership ⦗ [↔]-transitivity ⦘
+                [↔]-intro (Tuple.mapLeft {ℓ₁} (const Universal.membership)) (Tuple.mapLeft (const [⊤]-intro)) ⦗ [↔]-transitivity ⦘
                 [↔]-intro ([∧]-intro [⊤]-intro) [∧]-elimᵣ
               )
 
@@ -444,10 +444,10 @@ module Proofs where
           [∩][∪]-distributivityₗ : Distributivityₗ(_∩_)(_∪_)
           Distributivityₗ.proof [∩][∪]-distributivityₗ {x} {y} {z} =
             [↔]-to-[←] [≡]-membership (
-              Intersection.membership 〔 [↔]-transitivity 〕
-              [↔]-intro (Tuple.mapRight ([↔]-to-[←] Union.membership)) (Tuple.mapRight ([↔]-to-[→] Union.membership)) 〔 [↔]-transitivity 〕
-              [∧][∨]-distributivityₗ 〔 [↔]-transitivity 〕
-              [↔]-intro (Either.map2 ([↔]-to-[→] Intersection.membership) ([↔]-to-[→] Intersection.membership)) (Either.map2 ([↔]-to-[←] Intersection.membership) ([↔]-to-[←] Intersection.membership)) 〔 [↔]-transitivity 〕
+              Intersection.membership ⦗ [↔]-transitivity ⦘
+              [↔]-intro (Tuple.mapRight ([↔]-to-[←] Union.membership)) (Tuple.mapRight ([↔]-to-[→] Union.membership)) ⦗ [↔]-transitivity ⦘
+              [∧][∨]-distributivityₗ ⦗ [↔]-transitivity ⦘
+              [↔]-intro (Either.map2 ([↔]-to-[→] Intersection.membership) ([↔]-to-[→] Intersection.membership)) (Either.map2 ([↔]-to-[←] Intersection.membership) ([↔]-to-[←] Intersection.membership)) ⦗ [↔]-transitivity ⦘
               [↔]-symmetry Union.membership
             )
 
@@ -455,10 +455,10 @@ module Proofs where
           [∪][∩]-distributivityₗ : Distributivityₗ(_∪_)(_∩_)
           Distributivityₗ.proof [∪][∩]-distributivityₗ {x} {y} {z} =
             [↔]-to-[←] [≡]-membership (
-              Union.membership 〔 [↔]-transitivity 〕
-              [↔]-intro (Either.mapRight ([↔]-to-[←] Intersection.membership)) (Either.mapRight ([↔]-to-[→] Intersection.membership)) 〔 [↔]-transitivity 〕
-              [∨][∧]-distributivityₗ 〔 [↔]-transitivity 〕
-              [↔]-intro (Tuple.map ([↔]-to-[→] Union.membership) ([↔]-to-[→] Union.membership)) (Tuple.map ([↔]-to-[←] Union.membership) ([↔]-to-[←] Union.membership)) 〔 [↔]-transitivity 〕
+              Union.membership ⦗ [↔]-transitivity ⦘
+              [↔]-intro (Either.mapRight ([↔]-to-[←] Intersection.membership)) (Either.mapRight ([↔]-to-[→] Intersection.membership)) ⦗ [↔]-transitivity ⦘
+              [∨][∧]-distributivityₗ ⦗ [↔]-transitivity ⦘
+              [↔]-intro (Tuple.map ([↔]-to-[→] Union.membership) ([↔]-to-[→] Union.membership)) (Tuple.map ([↔]-to-[←] Union.membership) ([↔]-to-[←] Union.membership)) ⦗ [↔]-transitivity ⦘
               [↔]-symmetry Intersection.membership
             )
 
@@ -466,7 +466,7 @@ module Proofs where
           [∩][∪]-absorptionₗ : Absorptionₗ(_∩_)(_∪_)
           Absorptionₗ.proof [∩][∪]-absorptionₗ {x} {y} =
             [↔]-to-[←] [≡]-membership (
-              Intersection.membership 〔 [↔]-transitivity 〕
+              Intersection.membership ⦗ [↔]-transitivity ⦘
               [↔]-intro (ax ↦ [∧]-intro ax ([↔]-to-[←] Union.membership ([∨]-introₗ ax))) [∧]-elimₗ
             )
 
@@ -474,7 +474,7 @@ module Proofs where
           [∪][∩]-absorptionₗ : Absorptionₗ(_∪_)(_∩_)
           Absorptionₗ.proof [∪][∩]-absorptionₗ {x} {y} =
             [↔]-to-[←] [≡]-membership (
-              Union.membership 〔 [↔]-transitivity 〕
+              Union.membership ⦗ [↔]-transitivity ⦘
               [↔]-intro [∨]-introₗ ([∨]-elim id ([∧]-elimₗ ∘ [↔]-to-[→] Intersection.membership))
             )
 

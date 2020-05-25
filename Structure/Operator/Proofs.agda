@@ -19,6 +19,7 @@ open import Structure.Operator.Properties
 open import Structure.Operator
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
+open import Syntax.Type
 open import Type
 
 -- TODO: These are to make the generalized variables work when they depend on each other. Are there any better ways?
@@ -545,7 +546,7 @@ module Two {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} ⦃ equiv-A : 
       θ(x) ▫₂ inv₂(θ(x)) 🝖-end 
 
     injective-kernel : let _ = op₁ , op₂ , assoc₁ , assoc₂ , cancₗ₂ , select-inv(id₁)(ident₁)(inv₁)(inver₁) , select-inv(id₂)(ident₂)(inv₂)(inver₂) in Injective(θ) ↔ (∀{a} → (θ(a) ≡ id₂) → (a ≡ id₁))
-    injective-kernel {id₁}{inv₁}{id₂}{inv₂} = [↔]-intro l (inj ↦ r ⦃ inj ⦄) where
+    injective-kernel {id₁}{inv₁}{id₂}{inv₂} = [↔]-intro l (\inj → r ⦃ inj ⦄) where
       l : Injective(θ) ← (∀{a} → (θ(a) ≡ id₂) → (a ≡ id₁))
       Injective.proof(l(proof)) {a}{b} (θa≡θb) =
         One.equality-zeroₗ(

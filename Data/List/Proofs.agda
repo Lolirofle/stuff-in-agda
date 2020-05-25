@@ -8,6 +8,7 @@ open import Data.Option hiding (map)
 open import Data.Either
 open import Data.Either.Proofs
 open import Data.List
+open import Data.List.Functions
 open import Logic
 open import Logic.Propositional
 open import Numeral.Natural

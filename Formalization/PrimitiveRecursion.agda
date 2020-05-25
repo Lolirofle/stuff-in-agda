@@ -21,29 +21,13 @@ data Function : ℕ → Type where
   Composition : ∀{m n : ℕ} → Function(n) → List(Function(m))(n) → Function(m)
   Recursion   : ∀{n : ℕ} → Function(n) → Function(𝐒(𝐒(n))) → Function(𝐒(n))
 
-module OperShortcut where
-  pattern Zero          = Base
-  pattern Succ          = Successor
-  pattern Comp n m f gs = Composition{m}{n}(f)(gs)
-
-  -- P : (n : ℕ) → (i : 𝕟(n)) → Function(𝐒(𝐏(n)))
-  -- P (𝟎)    i      = Projection{𝟎}(i)
-  -- P (𝐒(n)) 𝟎      = Projection{n}(𝟎)
-  -- P (𝐒(n)) (𝐒(i)) = Projection{n}(i)
-
-  -- Rec : (n : ℕ) → Function(𝐏(n)) → Function(𝐒(𝐒(𝐏(n)))) → Function(𝐒(𝐏(n)))
-  -- Rec (𝟎)    f g = Recursion{𝟎}(f)(g)
-  -- Rec (𝐒(n)) f g = Recursion{n}(f)(g)
-
-  zero' = Comp(0)(1) (Zero) ∅
-
 Primitive : Type
 Primitive = ℕ
 
 module _ where
   private variable m n   : ℕ
   private variable i     : 𝕟(n)
-  private variable x  v  : Primitive
+  private variable x v   : Primitive
   private variable xs vs : List(Primitive)(n)
   private variable f g   : Function(m)
   private variable fs gs : List(Function(m))(n)
@@ -75,7 +59,7 @@ module _ where
   --    This is used to construct a function `r` in which the following holds:
   --    • r(0   ,..xs) = f(..xs)
   --    • r(𝐒(n),..xs) = g(n,r(n,..xs),..xs)
-  {-# TERMINATING #-} -- TODO: Terminated before but the termination checker in Agda version 2.6.2-9bed10c denies this
+  {-# TERMINATING #-} -- TODO: Terminated before but the termination checker in Agda version 2.6.2-9bed10c denies this (or in some random cases it gives an internal error at src/full/Agda/TypeChecking/Reduce/Fast.hs:1358)
   evaluate : ∀{n} → Function(n) → (List(Primitive)(n) → Primitive)
   evaluate {.𝟎}   (Base)                     ∅             = 𝟎
   evaluate {.𝐒(𝟎)}(Successor)                (singleton x) = 𝐒(x)

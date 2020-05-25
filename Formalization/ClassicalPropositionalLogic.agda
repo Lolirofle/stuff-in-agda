@@ -684,24 +684,24 @@ module NaturalDeduction where
 
     [⟶]-maximal-membership : ((φ ⟶ ψ) ∈ Γ) Logic.↔ ((φ ∉ Γ) Logic.∨ (ψ ∈ Γ))
     [⟶]-maximal-membership =
-      Logic.[↔]-symmetry [⊢][∈]-equivalence 〔 Logic.[↔]-transitivity 〕
-      [→]-disjunctive-form                  〔 Logic.[↔]-transitivity 〕
-      [⊢][∈]-equivalence                    〔 Logic.[↔]-transitivity 〕
-      [∨]-maximal-membership                〔 Logic.[↔]-transitivity 〕
+      Logic.[↔]-symmetry [⊢][∈]-equivalence ⦗ Logic.[↔]-transitivity ⦘
+      [→]-disjunctive-form                  ⦗ Logic.[↔]-transitivity ⦘
+      [⊢][∈]-equivalence                    ⦗ Logic.[↔]-transitivity ⦘
+      [∨]-maximal-membership                ⦗ Logic.[↔]-transitivity ⦘
       Logic.[↔]-intro
         (Either.mapLeft (Logic.[↔]-to-[←] [¬]-maximal-membership))
         (Either.mapLeft ((Logic.[↔]-to-[→] [¬]-maximal-membership)))
 
     [⟷]-maximal-membership : ((φ ⟷ ψ) ∈ Γ) Logic.↔ (((φ ∈ Γ) Logic.∧ (ψ ∈ Γ)) Logic.∨ ((φ ∉ Γ) Logic.∧ (ψ ∉ Γ)))
     [⟷]-maximal-membership =
-      Logic.[↔]-symmetry [⊢][∈]-equivalence 〔 Logic.[↔]-transitivity 〕
-      [⟷]-conjunction-disjunction-negation  〔 Logic.[↔]-transitivity 〕
-      [⊢][∈]-equivalence                    〔 Logic.[↔]-transitivity 〕
-      [∨]-maximal-membership                〔 Logic.[↔]-transitivity 〕
+      Logic.[↔]-symmetry [⊢][∈]-equivalence ⦗ Logic.[↔]-transitivity ⦘
+      [⟷]-conjunction-disjunction-negation  ⦗ Logic.[↔]-transitivity ⦘
+      [⊢][∈]-equivalence                    ⦗ Logic.[↔]-transitivity ⦘
+      [∨]-maximal-membership                ⦗ Logic.[↔]-transitivity ⦘
       Logic.[↔]-intro
         (Either.map2 (Logic.[↔]-to-[←] [∧]-maximal-membership) (Logic.[↔]-to-[←] [∧]-maximal-membership))
         (Either.map2 (Logic.[↔]-to-[→] [∧]-maximal-membership) (Logic.[↔]-to-[→] [∧]-maximal-membership))
-                                            〔 Logic.[↔]-transitivity 〕
+                                            ⦗ Logic.[↔]-transitivity ⦘
       Logic.[↔]-intro
         (Either.mapRight (Tuple.map (Logic.[↔]-to-[←] [¬]-maximal-membership) (Logic.[↔]-to-[←] [¬]-maximal-membership)))
         (Either.mapRight (Tuple.map (Logic.[↔]-to-[→] [¬]-maximal-membership) (Logic.[↔]-to-[→] [¬]-maximal-membership)))

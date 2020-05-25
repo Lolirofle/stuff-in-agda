@@ -74,15 +74,15 @@ instance
       ([∀].intro (\{b} →
         ([∀].intro (\{x} →
           ([∀].elim([∀].elim [⋃]-membership{pair(a)(b)}){x})
-          〔ₗ [↔].transitivity 〕
+          ⦗ₗ [↔].transitivity ⦘
           ([↔]-with-[∃] (\{s} →
             ([↔]-with-[∧]ₗ ([∀].elim([∀].elim([∀].elim pair-membership{a}){b}){s}))
-            〔ₗ [↔].transitivity 〕
+            ⦗ₗ [↔].transitivity ⦘
             ([∧][∨]-distributivityᵣ)
-            〔ₗ [↔].transitivity 〕
+            ⦗ₗ [↔].transitivity ⦘
             [↔]-with-[∨] ([≡]-substitute-this-is-almost-trivial) ([≡]-substitute-this-is-almost-trivial)
           ))
-          〔ₗ [↔].transitivity 〕
+          ⦗ₗ [↔].transitivity ⦘
           ([↔].intro ([∃]-redundancyₗ) ([∃]-redundancyᵣ))
         ))
       ))

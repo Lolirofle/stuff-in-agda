@@ -13,11 +13,11 @@ private variable A B T : Type{ℓ}
 
 map : (l : List(A)) → ((x : A) → ⦃ _ : (x ∈ l) ⦄ → B) → List(B)
 map ∅          _ = ∅
-map (elem ⊰ l) f = (f elem ⦃ use ⦄) ⊰ (map l (x ↦ f(x) ⦃ skip ⦄))
+map (elem ⊰ l) f = (f elem ⦃ use ⦄) ⊰ (map l (\x → f(x) ⦃ skip ⦄))
 
 filter : (l : List(T)) → ((x : T) → ⦃ _ : (x ∈ l) ⦄ → Bool) → List(T)
 filter ∅       f = ∅
 filter (x ⊰ l) f =
   if f(x) ⦃ use ⦄
-  then (x ⊰ (filter l (x ↦ f(x) ⦃ skip ⦄)))
-  else (filter l (x ↦ f(x) ⦃ skip ⦄))
+  then (x ⊰ (filter l (\x → f(x) ⦃ skip ⦄)))
+  else (filter l (\x → f(x) ⦃ skip ⦄))

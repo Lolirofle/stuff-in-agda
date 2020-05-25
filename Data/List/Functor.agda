@@ -4,6 +4,7 @@ import Lvl
 open import Functional
 open import Function.Equals
 open import Data.List
+open import Data.List.Functions
 open import Data.List.Proofs
 open import Lang.Instance
 open import Logic

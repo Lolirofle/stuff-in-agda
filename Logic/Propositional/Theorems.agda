@@ -7,6 +7,7 @@ open import Functional
 open import Logic
 open import Logic.Propositional
 import      Lvl
+open import Syntax.Type
 open import Type
 
 ------------------------------------------

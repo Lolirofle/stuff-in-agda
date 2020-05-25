@@ -239,7 +239,7 @@ record Complement : Stmt{ℓ} where
   postulate [∖]-of-[𝐔]ᵣ : ∀{s : S} → s ∖ 𝐔 ≡ ∅
 
 
-record Subset : Set(Lvl.𝐒(ℓ)) where
+record Subset : Type{Lvl.𝐒(ℓ)} where
   field
     _⊆_ : S → S → Stmt{ℓ} -- Subset
     ⦃ fundamentals ⦄ : Fundamentals

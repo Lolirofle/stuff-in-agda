@@ -3,25 +3,30 @@ module Structure.Type.Quotient where
 import      Lvl
 open import Logic
 open import Logic.Propositional
-open import Structure.Setoid hiding (intro)
+open import Structure.Function hiding (intro)
+open import Structure.Function.Domain hiding (intro)
 open import Structure.Relator.Equivalence hiding (intro)
-open import Type renaming (Type to Ty)
+open import Structure.Setoid.WithLvl hiding (intro)
+import      Type
 open import Type.Empty hiding (intro)
 
-record Quotient {ℓ₁ ℓ₂} {T : Ty{ℓ₁}} (_≅_ : T → T → Stmt{ℓ₂}) ⦃ equivalence : Equivalence(_≅_) ⦄ : Stmtω where
+record Quotient {ℓ₁ ℓ₂} {T : TYPE(ℓ₁)} (_≅_ : T → T → Stmt{ℓ₂}) ⦃ equivalence : Equivalence(_≅_) ⦄ : Stmtω where
   field
     {ℓ} : Lvl.Level
-    Type : Ty{ℓ}
-    ⦃ equiv ⦄ : Equiv(Type)
+    Type : TYPE(ℓ)
+    {ℓₑ} : Lvl.Level
+    ⦃ equiv ⦄ : Equiv{ℓₑ}(Type) -- TODO: Consider using Id instead of this because otherwise every type has a quotient by just using itself
     intro : T → Type
-    elim : Type → T
-    inverseᵣ : ∀{q : Type} → (intro(elim(q)) ≡ q)
-    extensionality : ∀{a b : T} → (intro(a) ≡ intro(b)) ↔ (a ≅ b)
+    ⦃ intro-function ⦄ : Function ⦃ Structure.Setoid.WithLvl.intro(_≅_) ⦃ equivalence ⦄ ⦄ (intro)
+    ⦃ intro-bijective ⦄ : Bijective ⦃ Structure.Setoid.WithLvl.intro(_≅_) ⦃ equivalence ⦄ ⦄ (intro)
+    -- elim : Type → T -- TODO: Choice?
+    -- inverseᵣ : ∀{q : Type} → (intro(elim(q)) ≡ q)
+    -- extensionality : ∀{a b : T} → (intro(a) ≡ intro(b)) ↔ (a ≅ b)
 
-_/_ : ∀{ℓ₁ ℓ₂} → (T : Ty{ℓ₁}) → (_≅_ : T → T → Stmt{ℓ₂}) → ⦃ e : Equivalence(_≅_) ⦄ → ⦃ q : Quotient(_≅_) ⦃ e ⦄ ⦄ → Ty{Quotient.ℓ q}
+_/_ : ∀{ℓ₁ ℓ₂} → (T : TYPE(ℓ₁)) → (_≅_ : T → T → Stmt{ℓ₂}) → ⦃ e : Equivalence(_≅_) ⦄ → ⦃ q : Quotient(_≅_) ⦃ e ⦄ ⦄ → TYPE(Quotient.ℓ q)
 (T / (_≅_)) ⦃ _ ⦄ ⦃ q ⦄ = Quotient.Type(q)
 
-[_of_] : ∀{ℓ₁ ℓ₂}{T : Ty{ℓ₁}} → T → (_≅_ : T → T → Stmt{ℓ₂}) → ⦃ e : Equivalence(_≅_) ⦄ → ⦃ q : Quotient(_≅_) ⦃ e ⦄ ⦄ → (T / (_≅_))
+[_of_] : ∀{ℓ₁ ℓ₂}{T : TYPE(ℓ₁)} → T → (_≅_ : T → T → Stmt{ℓ₂}) → ⦃ e : Equivalence(_≅_) ⦄ → ⦃ q : Quotient(_≅_) ⦃ e ⦄ ⦄ → (T / (_≅_))
 [ x of (_≅_) ] ⦃ _ ⦄ ⦃ q ⦄ = Quotient.intro(q)(x)
 
 {-

@@ -25,7 +25,7 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ�
     inj{x₁}{x₂} (fx₁y 🝖 symmetry(_≡_) fx₂y)
 
   instance
-    bijective-to-injective : ⦃ _ : Bijective(f) ⦄ → Injective(f)
+    bijective-to-injective : ⦃ bij : Bijective(f) ⦄ → Injective(f)
     Injective.proof(bijective-to-injective ⦃ intro(bij) ⦄) {x₁}{x₂} (fx₁fx₂) =
       ([∃!]-existence-eq (bij {f(x₂)}) {x₁} (fx₁fx₂))
       🝖 symmetry(_≡_) ([∃!]-existence-eq (bij {f(x₂)}) {x₂} (reflexivity(_≡_)))
@@ -40,12 +40,12 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ�
     -- (f(x₂) ≡ f(x₂)) → (x₂ ≡ [∃!]-witness e)
 
   instance
-    bijective-to-surjective : ⦃ _ : Bijective(f) ⦄ → Surjective(f)
+    bijective-to-surjective : ⦃ bij : Bijective(f) ⦄ → Surjective(f)
     Surjective.proof(bijective-to-surjective ⦃ intro(bij) ⦄) {y} =
       [∃!]-existence (bij {y})
 
   instance
-    injective-surjective-to-bijective : ⦃ _ : Injective(f) ⦄ → ⦃ _ : Surjective(f) ⦄ → Bijective(f)
+    injective-surjective-to-bijective : ⦃ inj : Injective(f) ⦄ → ⦃ surj : Surjective(f) ⦄ → Bijective(f)
     Bijective.proof(injective-surjective-to-bijective ⦃ inj ⦄ ⦃ intro(surj) ⦄) {y} =
       [∃!]-intro surj (injective-to-unique inj)
 

@@ -22,6 +22,7 @@ open import Relator.Equals.Proofs
 open import Structure.Relator.Properties
 open import Syntax.Function
 open import Syntax.Transitivity
+open import Syntax.Type
 open import Type
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -304,7 +305,7 @@ mod₀-subtract-when-zero {a}{b} proof with [−₀]-cases-commuted{a}{b}
 ... | [∨]-introᵣ ab0 = congruence₁(_mod₀ b) ab0
 ... | [∨]-introₗ baba =
   (symmetry(mod₀-period {a −₀ b}{b})    :of: (a −₀ b mod₀ b ≡ (b + (a −₀ b)) mod₀ b))
-  🝖 (congruence₁(_mod₀ b) baba             :of: (_ ≡ a mod₀ b))
+  🝖 (congruence₁(_mod₀ b) baba          :of: (_ ≡ a mod₀ b))
   🝖 (proof                              :of: (_ ≡ 𝟎))
 
 -- mod₀-divisibility : ∀{a b} → (a mod₀ b ≡ 𝟎) ↔ (b ∣ a)

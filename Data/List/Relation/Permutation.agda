@@ -1,11 +1,15 @@
 module Data.List.Relation.Permutation where
 
-open import Data.List using () renaming (module LongOper to List)
-open import Data.List renaming (module List to List)
+import      Data
+open import Data.List
+open import Data.List.Functions renaming (module LongOper to List)
+open import Data.List.Relation
 open import Functional using (id ; _∘_)
+open import Logic.Propositional
 open import Logic
 import      Lvl
 open import Numeral.Finite
+open import Syntax.Function
 open import Type
 
 private variable ℓ : Lvl.Level
@@ -16,7 +20,7 @@ private variable x y z : T
 -- The relation for two lists that are permutations of each other.
 -- This means that they contain the same elements and the same number of them but possibly in a different order.
 -- Or in other words, the first list is a reordered list of the second.
-data _permutes_ {ℓ} : List{ℓ}(T) → List(T) → Stmt{Lvl.𝐒(ℓ)} where
+data _permutes_ {ℓ} : List{ℓ}(T) → List{ℓ}(T) → Stmt{Lvl.𝐒(ℓ)} where
   empty   : ∅ permutes (∅ {T = T})
   prepend : (l₁ permutes l₂) → ((x ⊰ l₁) permutes (x ⊰ l₂))
   swap    : (x ⊰ y ⊰ l) permutes (y ⊰ x ⊰ l)
@@ -24,6 +28,9 @@ data _permutes_ {ℓ} : List{ℓ}(T) → List(T) → Stmt{Lvl.𝐒(ℓ)} where
 
 trans-swap : (l₁ permutes l₂) → ((x ⊰ y ⊰ l₁) permutes (y ⊰ x ⊰ l₂))
 trans-swap p = trans swap (prepend (prepend p))
+
+_partition-of_ : List(List(T)) → List(T) → Stmt
+p partition-of l = (foldᵣ (x ↦ ¬ Empty(x) ∧_) Data.Unit p) ∧ (concat(p) permutes l)
 
 -- The permutation as a function between the permutated elements' indices.
 -- Example:

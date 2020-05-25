@@ -45,7 +45,7 @@ module _
   (f₁@([∃]-intro F₁) f₂@([∃]-intro F₂) : (catₗ →ᶠᵘⁿᶜᵗᵒʳ catᵣ))
   where
 
-  record _≡ᶠᵘⁿᶜᵗᵒʳ_ : Type{Lvl.of(type-of(catₗ)) Lvl.⊔ Lvl.of(type-of(catᵣ))} where
+  record _≡ᶠᵘⁿᶜᵗᵒʳ_ : Type{Lvl.of(Type.of(catₗ)) Lvl.⊔ Lvl.of(Type.of(catᵣ))} where
     constructor intro
     field
       functor-proof : (F₁ ⊜ F₂)

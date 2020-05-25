@@ -1,10 +1,12 @@
 module Formalization.FunctionML where
 
+import      Lvl
 open import Numeral.Finite
 open import Numeral.Natural
+open import Type{Lvl.𝟎}
 
-data Value : ℕ → Set
-data Expression : ℕ → Set
+data Value : ℕ → Type
+data Expression : ℕ → Type
 
 data Value where
   const : ∀{n} → ℕ → Value n

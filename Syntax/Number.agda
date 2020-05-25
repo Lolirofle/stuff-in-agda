@@ -14,14 +14,14 @@ open Numeral ⦃ ... ⦄ public using (num)
 {-# BUILTIN FROMNAT num #-}
 
 InfiniteNumeral = Numeral
-module InfiniteNumeral {ℓ} {T : Set(ℓ)} where
+module InfiniteNumeral {ℓ} {T : Type{ℓ}} where
   intro : (ℕ → T) → InfiniteNumeral(T)
   Numeral.restriction-ℓ (intro(_))         = Lvl.𝟎
   Numeral.restriction   (intro(_)) _       = ⊤
   Numeral.num           (intro(f)) n ⦃ _ ⦄ = f(n)
 
--- record InfiniteNumeral {ℓ} (T : Set(ℓ)) : Set(ℓ) where
--- record InfiniteNumeral {ℓ} (T : Set(ℓ)) : Set(ℓ) where
+-- record InfiniteNumeral {ℓ} (T : Type{ℓ}) : Type{ℓ} where
+-- record InfiniteNumeral {ℓ} (T : Type{ℓ}) : Type{ℓ} where
 --   field
 --     num : ℕ → T
 
@@ -46,7 +46,7 @@ instance
 
 
 
-record NegativeNumeral {ℓ} (T : Set(ℓ)) : Typeω where
+record NegativeNumeral {ℓ} (T : Type{ℓ}) : Typeω where
   field
     {restriction-ℓ} : Lvl.Level
     restriction : ℕ → Type{restriction-ℓ}
@@ -55,13 +55,13 @@ open NegativeNumeral ⦃ ... ⦄ public using () renaming (num to -num)
 {-# BUILTIN FROMNEG -num #-}
 
 InfiniteNegativeNumeral = NegativeNumeral
-module InfiniteNegativeNumeral {ℓ} {T : Set(ℓ)} where
+module InfiniteNegativeNumeral {ℓ} {T : Type{ℓ}} where
   intro : (ℕ → T) → InfiniteNegativeNumeral(T)
   NegativeNumeral.restriction-ℓ (intro(_))         = Lvl.𝟎
   NegativeNumeral.restriction   (intro(_)) _       = ⊤
   NegativeNumeral.num           (intro(f)) n ⦃ _ ⦄ = f(n)
 
--- record InfiniteNegativeNumeral {ℓ} (T : Set(ℓ)) : Set(ℓ) where
+-- record InfiniteNegativeNumeral {ℓ} (T : Type{ℓ}) : Type{ℓ} where
 --   field
 --     num : ℕ → T
 -- open InfiniteNegativeNumeral ⦃ ... ⦄ public

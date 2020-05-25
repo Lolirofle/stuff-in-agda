@@ -20,6 +20,7 @@ open import Structure.Operator
 open import Structure.Relator.Properties
 open import Structure.Setoid.WithLvl
 open import Syntax.Transitivity
+open import Type
 
 private variable ℓₒ ℓₘ ℓₑ : Lvl.Level
 private variable A B C : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}
@@ -41,7 +42,7 @@ module _ where
     map(map f) ∘ transport C ([≡]-with-op (Object C) (λ v v₁ → {!v!}) (_⊜_.proof fp₁) (_⊜_.proof fp₂)) 🝖-[ {!!} ]
     map(map f) ∘ transport C (_⊜_.proof (congruence₂(Fn._∘_) ⦃ [⊜][∘]-binaryOperator ⦃ function = [≡]-function _ ⦄ ⦄ fp₁ fp₂)) 🝖-end-}
     where
-      postulate anything : ∀{ℓ}{a : Set ℓ} → a
+      postulate anything : ∀{ℓ}{a : Type{ℓ}} → a
       open module MorphismEquivB {x}{y} = Equiv(morphism-equiv B {x}{y}) using () renaming (_≡_ to _≡B_)
       open module MorphismEquivC {x}{y} = Equiv(morphism-equiv C {x}{y}) using () renaming (_≡_ to _≡C_)
       instance _ = category A
