@@ -105,11 +105,11 @@ Tuple.right ([⊑]-separate₂ {x ⊰ y ⊰ l}) = skip (use (Tuple.right [⊑]-s
 [⊑]-withoutIndex {𝟎}   {x ⊰ l} = skip [⊑]-reflexivity
 [⊑]-withoutIndex {𝐒 n} {x ⊰ l} = use [⊑]-withoutIndex
 
-[⊑]-first : (first n l ⊑ l)
-[⊑]-first {𝟎}   {∅}     = empty
-[⊑]-first {𝐒 n} {∅}     = empty
-[⊑]-first {𝟎}   {x ⊰ l} = [⊑]-minimum
-[⊑]-first {𝐒 n} {x ⊰ l} = use [⊑]-first
+[⊑]-initial : (initial n l ⊑ l)
+[⊑]-initial {𝟎}   {∅}     = empty
+[⊑]-initial {𝐒 n} {∅}     = empty
+[⊑]-initial {𝟎}   {x ⊰ l} = [⊑]-minimum
+[⊑]-initial {𝐒 n} {x ⊰ l} = use [⊑]-initial
 
 [⊑]-skip : (List.skip n l ⊑ l)
 [⊑]-skip {𝟎}   {∅}     = empty
@@ -184,9 +184,9 @@ Tuple.right ([⊑]-separate₂ {x ⊰ y ⊰ l}) = skip (use (Tuple.right [⊑]-s
 [⊏]-tail : (∅ ⊏ l) → (tail l ⊏ l)
 [⊏]-tail (skip _) = skip [⊑]-reflexivity
 
-[⊏]-first : (n < length(l)) → (first n l ⊏ l)
-[⊏]-first {𝟎}   {x ⊰ l} p = [⊏]-emptyₗ
-[⊏]-first {𝐒 n} {x ⊰ l} p = use ([⊏]-first {n} ([≤]-without-[𝐒] p))
+[⊏]-initial : (n < length(l)) → (initial n l ⊏ l)
+[⊏]-initial {𝟎}   {x ⊰ l} p = [⊏]-emptyₗ
+[⊏]-initial {𝐒 n} {x ⊰ l} p = use ([⊏]-initial {n} ([≤]-without-[𝐒] p))
 
 [⊏]-skip : (𝟎 < n) → (n < length(l)) → (List.skip n l ⊏ l)
 [⊏]-skip {𝐒 n} {x ⊰ l} p q = skip [⊑]-skip

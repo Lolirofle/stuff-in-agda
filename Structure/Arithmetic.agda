@@ -45,7 +45,7 @@ module _ ⦃ equiv : Equiv(T) ⦄ (𝟎 : T) (𝐒 : T → T) where
 {-
 module _ ⦃ equiv : Equiv(T) ⦄ {𝟎}{𝐒}{_<_ : T → T → Stmt{ℓₗ}} ⦃ full : Full(𝟎)(𝐒)(_<_) ⦄ where
   open import Numeral.Natural as ℕ using (ℕ)
-  open import Type.Empty
+  open import Type.Properties.Empty
 
   -- TODO: This is a definition of an isomorphism between any of these and ℕ?
 
@@ -65,7 +65,7 @@ module _
   ⦃ equiv : Equiv(T₁) ⦄ {𝟎₁}{𝐒₁}{_<₁_ : T₁ → T₁ → Stmt{ℓₗ₁}} ⦃ full₁ : Full(𝟎₁)(𝐒₁)(_<₁_) ⦄
   ⦃ equiv : Equiv(T₂) ⦄ {𝟎₂}{𝐒₂}{_<₂_ : T₂ → T₂ → Stmt{ℓₗ₂}} ⦃ full₂ : Full(𝟎₂)(𝐒₂)(_<₂_) ⦄
   where
-  open import Type.Empty
+  open import Type.Properties.Empty
 
   {- TODO: Probably impossible to prove anything about this morph because nothing is stated about the "values" of Full.induction
   morph : T₁ → T₂

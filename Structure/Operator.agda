@@ -5,7 +5,7 @@ open import Lang.Instance
 open import Logic.Predicate
 open import Logic
 open import Structure.Setoid.WithLvl
-open import Function.Names
+open import Structure.Function.Names
 open import Structure.Function
 open import Structure.Relator.Properties
 open import Syntax.Function
@@ -15,9 +15,9 @@ private variable ℓ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ ℓₗ₁ ℓ�
 private variable A₁ A₂ B : Type{ℓ}
 
 module _
-  ⦃ _ : Equiv{ℓₗ₁}(A₁) ⦄
-  ⦃ _ : Equiv{ℓₗ₂}(A₂) ⦄
-  ⦃ _ : Equiv{ℓₗ₃}(B) ⦄
+  ⦃ equiv-A₁ : Equiv{ℓₗ₁}(A₁) ⦄
+  ⦃ equiv-A₂ : Equiv{ℓₗ₂}(A₂) ⦄
+  ⦃ equiv-B : Equiv{ℓₗ₃}(B) ⦄
   (_▫_ : A₁ → A₂ → B)
   where
 

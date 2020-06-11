@@ -4,8 +4,8 @@ open import Type
 module Type.Functions {ℓₗ : Lvl.Level}{ℓₒ₁}{ℓₒ₂} {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} where
 
 open import Function.Domains
-open import Type.Empty
-open import Type.Unit
+open import Type.Properties.Empty
+open import Type.Properties.Singleton
 
 record Bijective (f : X → Y) : Type{ℓₗ Lvl.⊔ ℓₒ₁ Lvl.⊔ ℓₒ₂} where
   constructor intro
@@ -15,7 +15,7 @@ record Bijective (f : X → Y) : Type{ℓₗ Lvl.⊔ ℓₒ₁ Lvl.⊔ ℓₒ₂
 record Injective (f : X → Y) : Type{ℓₗ Lvl.⊔ ℓₒ₁ Lvl.⊔ ℓₒ₂} where
   constructor intro
   field
-    proof : ∀{y} → IsProp{ℓₗ Lvl.⊔ ℓₒ₁} (Unapply {ℓₗ}{X = X}{Y = Y} f(y))
+    proof : ∀{y} → MereProposition{ℓₗ Lvl.⊔ ℓₒ₁} (Unapply {ℓₗ}{X = X}{Y = Y} f(y))
 
 record Surjective (f : X → Y) : Type{ℓₗ Lvl.⊔ ℓₒ₁ Lvl.⊔ ℓₒ₂} where
   constructor intro

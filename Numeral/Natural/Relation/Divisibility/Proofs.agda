@@ -42,7 +42,7 @@ Div𝐏 {_}{y} (Div𝐒{x} (y-div-x)) = [≡]-substitutionᵣ [−₀]ₗ[+]ᵣ-
 -}
 
 divides-intro : ∀{x y} → (∃(n ↦ y ⋅ n ≡ x)) → (y ∣ x)
-divides-intro {x}{y} ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [≡]-elimᵣ (y⋅n≡x) {expr ↦ (y ∣ expr)} (DivN{y}(n))
+divides-intro {x}{y} ([∃]-intro (n) ⦃ y⋅n≡x ⦄) = [≡]-substitutionᵣ (y⋅n≡x) {expr ↦ (y ∣ expr)} (DivN{y}(n))
 
 divides-elim : ∀{x y} → (y ∣ x) → (∃(n ↦ y ⋅ n ≡ x))
 divides-elim {_}{_} (Div𝟎) = [∃]-intro (0) ⦃ [≡]-intro ⦄
@@ -132,7 +132,7 @@ divides-without-[+]ₗ : ∀{a b c} → (a ∣ (b + c)) → (a ∣ c) → (a ∣
 divides-without-[+]ₗ {a}{b}{c} abc ac = [≡]-substitutionᵣ ([−₀]ₗ[+]ᵣ-nullify{b}{c}) {expr ↦ (a ∣ expr)} (divides-with-[−₀] {a}{b + c}{c} abc ac)
 
 divides-without-[+]ᵣ : ∀{a b c} → (a ∣ (b + c)) → (a ∣ b) → (a ∣ c)
-divides-without-[+]ᵣ {a}{b}{c} abc ab = divides-without-[+]ₗ {a}{c}{b} ([≡]-elimᵣ ([+]-commutativity-raw{b}{c}) {expr ↦ a ∣ expr} abc) ab
+divides-without-[+]ᵣ {a}{b}{c} abc ab = divides-without-[+]ₗ {a}{c}{b} ([≡]-substitutionᵣ ([+]-commutativity-raw{b}{c}) {expr ↦ a ∣ expr} abc) ab
 
 -- divides-[⋅] : ∀{a b c} → Coprime(b)(c) → (a ∣ (b ⋅ c)) → ((a ∣ b) ∨ (a ∣ c))
 
@@ -149,7 +149,7 @@ instance
   [1]-divides : ∀{n} → (1 ∣ n)
   [1]-divides {𝟎}    = Div𝟎
   [1]-divides {𝐒(n)} =
-    [≡]-elimₗ
+    [≡]-substitutionₗ
       ([+]-commutativity-raw {n}{1})
       {expr ↦ (1 ∣ expr)}
       (Div𝐒([1]-divides{n}))

@@ -5,7 +5,7 @@ import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Type
-open import Type.Empty
+open import Type.Properties.Inhabited
 
 ------------------------------------------
 -- Existential quantification (Existance, Exists)

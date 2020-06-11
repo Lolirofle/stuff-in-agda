@@ -4,7 +4,7 @@ import Lvl
 open import Lang.Instance
 open import Logic.Predicate
 open import Logic
-open import Function.Names
+open import Structure.Function.Names
 open import Structure.Setoid.WithLvl
 open import Type
 
@@ -14,8 +14,8 @@ private variable A B : Type{ℓ}
 -- The function `f` "(behaves like)/is a function" in the context of `_≡_` from the Equiv instance.
 -- `congruence` is the defining property of a function.
 module _
-  ⦃ _ : Equiv{ℓₗ₁}(A) ⦄
-  ⦃ _ : Equiv{ℓₗ₂}(B) ⦄
+  ⦃ equiv-A : Equiv{ℓₗ₁}(A) ⦄
+  ⦃ equiv-B : Equiv{ℓₗ₂}(B) ⦄
   (f : A → B)
   where
 

@@ -20,7 +20,7 @@ open import Structure.Function renaming (congruence₁ to [≡ₛ]-with)
 open import Structure.Operator
 open import Syntax.Transitivity
 open import Type
-open import Type.Empty
+open import Type.Properties.Empty
 
 private variable ℓ₁ ℓ₂ ℓ₃ ℓₗ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₒ₄ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ : Lvl.Level
 
@@ -96,6 +96,14 @@ module _ {T : Type{ℓₒ}} ⦃ eq : Equiv{ℓₑ}(T) ⦄ where
     -- Identity function is bijective.
     id-bijective : Bijective(id)
     id-bijective = injective-surjective-to-bijective(id)
+
+  instance
+    id-idempotent : Idempotent(id)
+    id-idempotent = intro(reflexivity _)
+
+  instance
+    id-involution : Involution(id)
+    id-involution = intro(reflexivity _)
 
 module _ {A : Type{ℓₒ₁}} ⦃ eq-a : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ eq-b : Equiv{ℓₑ₂}(B) ⦄ where
   instance

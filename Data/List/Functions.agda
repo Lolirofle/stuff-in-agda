@@ -6,6 +6,7 @@ import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.List
 open import Data.Option as Option using (Option)
+import      Data.Option.Functions as Option
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Numeral.Finite
@@ -17,21 +18,7 @@ private variable T A A₁ A₂ B B₁ B₂ Result : Type{ℓ}
 
 infixl 1000 _++_
 
--- A singleton list. A list with only a single element.
--- Example:
---   singleton(a) = [a]
-singleton : T → List(T)
-singleton elem = elem ⊰ ∅
-
--- The list without its first element (if there is one).
--- Example:
---   tail []      = []
---   tail [a]     = []
---   tail [a,b]   = [b]
---   tail [a,b,c] = [b,c]
-tail : List(T) → List(T)
-tail ∅ = ∅
-tail (_ ⊰ l) = l
+open import Data.List.Functions.Positional public
 
 -- The list of the successive application of `tail` on a list.
 -- For a list `l`, the range of `n ↦ (tail ^ n)(l)` as a list.
@@ -90,9 +77,8 @@ foldᵣ-init _▫_ init (elem ⊰ l) = init ▫ (foldᵣ-init _▫_ elem l)
 --   reduceOrₗ(▫)(result)[a,b,c]     = (a▫b)▫c
 --   reduceOrₗ(▫)(result)[a,b,c,d,e] = (((a▫b)▫c)▫d)▫e
 reduceOrₗ : (T → T → T) → T → List(T) → T
-reduceOrₗ _   result ∅                     = result
-reduceOrₗ _▫_ result (elem ⊰ ∅)            = elem
-reduceOrₗ _▫_ result (elem₁ ⊰ (elem₂ ⊰ l)) = reduceOrₗ _▫_ (result ▫ elem₁) (elem₂ ⊰ l)
+reduceOrₗ _   result ∅          = result
+reduceOrₗ _▫_ result (elem ⊰ l) = foldₗ _▫_ elem l
 
 -- If the list is empty, use the result, else like foldᵣ
 -- Example:
@@ -102,9 +88,8 @@ reduceOrₗ _▫_ result (elem₁ ⊰ (elem₂ ⊰ l)) = reduceOrₗ _▫_ (resu
 --   reduceOrᵣ(▫)(result)[a,b,c]     = a▫(b▫c)
 --   reduceOrᵣ(▫)(result)[a,b,c,d,e] = a▫(b▫(c▫(d▫e)))
 reduceOrᵣ : (T → T → T) → T → List(T) → T
-reduceOrᵣ _   init ∅                     = init
-reduceOrᵣ _▫_ init (elem ⊰ ∅)            = elem
-reduceOrᵣ _▫_ init (elem₁ ⊰ (elem₂ ⊰ l)) = elem₁ ▫ (reduceOrᵣ _▫_ init (elem₂ ⊰ l))
+reduceOrᵣ _   init ∅          = init
+reduceOrᵣ _▫_ init (elem ⊰ l) = foldᵣ-init _▫_ elem l
 
 -- Accumulates the results of every step in `foldₗ` into a list.
 -- Example:
@@ -187,10 +172,10 @@ index₀ 𝟎      (x ⊰ _) = Option.Some(x)
 index₀ (𝐒(n)) (_ ⊰ l) = index₀ n l
 
 -- The sublist with the first n elements in the list
-first : ℕ → List(T) → List(T)
-first _      ∅       = ∅
-first 𝟎      (_ ⊰ _) = ∅
-first (𝐒(n)) (x ⊰ l) = x ⊰ (first n l)
+initial : ℕ → List(T) → List(T)
+initial _      ∅       = ∅
+initial 𝟎      (_ ⊰ _) = ∅
+initial (𝐒(n)) (x ⊰ l) = x ⊰ (initial n l)
 
 -- The sublist without the first n elements in the list
 skip : ℕ → List(T) → List(T)
@@ -240,18 +225,6 @@ mapWindow2ₗ : (T → T → T) → List(T) → List(T)
 mapWindow2ₗ f (x₁ ⊰ x₂ ⊰ l) = (f x₁ x₂) ⊰ (mapWindow2ₗ f (x₂ ⊰ l))
 {-# CATCHALL #-}
 mapWindow2ₗ _ _ = ∅
-
--- The first element of the list (head)
-firstElem : List(T) → Option(T)
-firstElem ∅       = Option.None
-firstElem (x ⊰ _) = Option.Some(x)
-
--- The last element of the list
-lastElem : List(T) → Option(T)
-lastElem ∅           = Option.None
-lastElem (x ⊰ ∅)     = Option.Some(x)
-lastElem (_ ⊰ y ⊰ l) = lastElem (y ⊰ l)
--- TODO: Prove function equivalent to (foldₗ (const Option.Some) Option.None)
 
 _orₗ_ : List(T) → List(T) → List(T)
 _orₗ_ ∅ default      = default

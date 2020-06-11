@@ -11,8 +11,8 @@ open import Structure.Function.Domain.Proofs
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type
-open import Type.Empty
-open import Type.Unit
+open import Type.Properties.Empty
+open import Type.Properties.Singleton
 
 private variable ℓ ℓₑ ℓₑ₁ ℓₑ₂ ℓ₁ ℓ₂ : Lvl.Level
 private variable T : Type{ℓ}
@@ -72,7 +72,7 @@ module _ ⦃ _ : Equiv{ℓₑ₁}(T) ⦄ ⦃ empty-equiv : Equiv{ℓₑ₂}(Empt
     empty-function : Function ⦃ empty-equiv ⦄(empty{T = T})
     Function.congruence empty-function {()}
 
-module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where -- TODO: Duplicated in Type.Properties.Singleton.Proofs
   Unit-fn-unique-value : ∀{f : Unit{ℓ} → T} → (∀{x y} → (f(x) ≡ₛ f(y)))
   Unit-fn-unique-value {x = <>} {y = <>} = reflexivity(_≡ₛ_)
 

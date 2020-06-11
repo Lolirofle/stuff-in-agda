@@ -19,7 +19,7 @@ open import Logic.Predicate.Theorems
 open import Relator.Equals
 open import Syntax.Type
 open import Type
-open import Type.Empty
+open import Type.Properties.Inhabited
 
 private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ : Lvl.Level
 private variable X Y Z : Type{ℓ}

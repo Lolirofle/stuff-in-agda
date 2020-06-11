@@ -16,7 +16,6 @@ open import Type.Size
 -- • The operator have an inverse in both directions.
 record Group {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
-
   field
     instance ⦃ monoid ⦄ : Monoid(_▫_)
   open Monoid(monoid) public

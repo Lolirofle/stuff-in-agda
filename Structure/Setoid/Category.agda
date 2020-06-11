@@ -16,7 +16,7 @@ open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Structure.Setoid.WithLvl
 open import Type
-open import Type.Unit
+open import Type.Properties.Singleton
 
 private variable ℓ ℓₑ ℓₒ : Lvl.Level
 

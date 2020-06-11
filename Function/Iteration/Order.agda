@@ -33,7 +33,7 @@ open import Structure.Relator.Ordering
 open import Structure.Relator.Ordering.Lattice
 open import Syntax.Transitivity
 open import Type
-open import Type.Empty
+open import Type.Properties.Empty
 open import Type.Size.Finite
 
 module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ op : BinaryOperator(_▫_) ⦄ {id} ⦃ ident : Identity(_▫_)(id) ⦄ ⦃ assoc : Associativity(_▫_) ⦄ where

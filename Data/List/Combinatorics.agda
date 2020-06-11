@@ -3,8 +3,10 @@ module Data.List.Combinatorics where
 import      Lvl
 open import Data
 open import Data.List
+open import Data.List.Functions
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
-open import Data.Tuple.Raise as Tuple₊ using (_^_)
+open import Data.Tuple.Raiseᵣ as Tuple₊ using (_^_)
+import      Data.Tuple.Raiseᵣ.Functions as Tuple₊
 open import Functional
 open import Numeral.Natural
 open import Type
@@ -13,6 +15,12 @@ private variable ℓ : Lvl.Level
 private variable T : Type{ℓ}
 
 -- A list of all non-empty sublists of the specified list.
+-- Note:
+--   In the inductive case, all of these are permutations of each other:
+--   • `foldᵣ (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest)) ∅ (sublists₊ l)` (This is used because of its "natural" order)
+--   • `foldᵣ (prev ↦ rest ↦ ((x ⊰ prev) ⊰ prev ⊰ rest)) ∅ (sublists₊ l)`
+--   • `(map (x ⊰_) (sublists₊ l)) ++ (sublists₊ l)`
+--   • `(sublists₊ l) ++ (map (x ⊰_) (sublists₊ l))`
 sublists₊ : List(T) → List(List(T))
 sublists₊ ∅       = ∅
 sublists₊ (x ⊰ l) = singleton(x) ⊰ foldᵣ (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest)) ∅ (sublists₊ l)
@@ -34,10 +42,10 @@ tuples (𝐒(𝐒(n))) l = concat(map (x ↦ map (x Tuple₊.⊰_) (tuples (𝐒
 -- All subsets of size n from the set l.
 -- Every unique subset of size n up to set equality.
 combinations : ℕ → List(T) → List(List(T))
-combinations 0         _  = ∅
+combinations 0         _ = ∅
 combinations _         ∅ = ∅
-combinations 1         l  = map singleton l
-combinations (𝐒(𝐒(n))) l  = concat(map f(tails l)) where
+combinations 1         l = map singleton l
+combinations (𝐒(𝐒(n))) l = concat(map f(tails l)) where
   f : List(T) → List(List(T))
   f ∅      = ∅
   f(x ⊰ l) = map (x ⊰_) (combinations (𝐒(n)) l)

@@ -14,37 +14,37 @@ open import Numeral.Natural
 open import Numeral.CoordinateVector as Vector using (Vector)
 open import Type
 
--- Data in 2-dimensional finite space (Implies bounded).
+-- Accessor of data in 2-dimensional finite space (Implies bounded).
 -- Like a data table.
 record Matrix {ℓ} (s : ℕ ⨯ ℕ) (T : Type{ℓ}) : Type{ℓ} where
   constructor mat
 
-  -- Type of elements in the matrix
+  -- Type of elements in the matrix.
   Element : Type
   Element = T
 
-  -- Width of the matrix (Number of columns)
+  -- Width of the matrix (Number of columns).
   width : ℕ
   width = Tuple.left(s)
 
-  -- Height of the matrix (Number of rows)
+  -- Height of the matrix (Number of rows).
   height : ℕ
   height = Tuple.right(s)
 
   field
-    -- Projection of a matrix
-    -- A cell in the matrix
+    -- Projection of a matrix.
+    -- A cell in the matrix.
     proj : (𝕟(width) ⨯ 𝕟(height)) → T
 
-  -- Vector of a row in the matrix
+  -- Vector of a row in the matrix.
   row : 𝕟(height) → Vector(width)(T)
   (row(y))(x) = proj(x , y)
 
-  -- Vector of a column in the matrix
+  -- Vector of a column in the matrix.
   col : 𝕟(width) → Vector(height)(T)
   (col(x))(y) = proj(x , y)
 
-  -- Transpose (Reflection on main diagonal)
+  -- Transpose (Reflection on main diagonal).
   ⬔_ : Matrix(height , width)(T)
   proj(⬔_)(x , y) = proj(y , x)
 
@@ -108,56 +108,63 @@ module _ {ℓ₁ ℓ₂} {s} {A : Type{ℓ₁}} {B : Type{ℓ₂}} where
   Matrix.proj(map f(m))(x , y) = f(Matrix.proj(m)(x , y))
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {s} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{ℓ₃}} where
+  -- A matrix where a binary operator has been pairwise applied to every element of the given matrices at the same positions.
+  -- This can be used to construct a component-wise operator.
   map₂ : (A → B → C) → Matrix(s)(A) → Matrix(s)(B) → Matrix(s)(C)
   Matrix.proj(map₂(_▫_) (v₁)(v₂))(x , y) = Matrix.proj(v₁)(x , y) ▫ Matrix.proj(v₂)(x , y)
 
 module _ {ℓ} {w}{h} {T : Type{ℓ}} where
-  -- Matrix from a vector of vectors. The inner vectors becomes rows.
+  -- A matrix from a vector of vectors. The inner vectors becomes rows.
   rowMat : Vector(h)(Vector(w)(T)) → Matrix(w , h)(T)
   Matrix.proj(rowMat(vs))(x , y) = Vector.proj(Vector.proj(vs)(y))(x)
 
-  -- Matrix from a vector of vectors. The inner vectors becomes columns.
+  -- A matrix from a vector of vectors. The inner vectors becomes columns.
   colMat : Vector(w)(Vector(h)(T)) → Matrix(w , h)(T)
   Matrix.proj(colMat(vs))(x , y) = Vector.proj(Vector.proj(vs)(x))(y)
 
-  -- Matrix represented as a vector of vectors where the inner vectors are the rows of the matrix.
+  -- A matrix represented as a vector of vectors where the inner vectors are the rows of the matrix.
   rows : Matrix(w , h)(T) → Vector(h)(Vector(w)(T))
   ((rows(M))(y))(x) = Matrix.proj(M)(x , y)
 
-  -- Matrix represented as a vector of vectors where the inner vectors are the columns of the matrix.
+  -- A matrix represented as a vector of vectors where the inner vectors are the columns of the matrix.
   cols : Matrix(w , h)(T) → Vector(w)(Vector(h)(T))
   ((cols(M))(x))(y) = Matrix.proj(M)(x , y)
 
   -- Matrix with one row and one column removed
-  -- minor : Matrix(𝐒(w) , 𝐒(h))(T) → (𝕟(𝐒(w)) ⨯ 𝕟(𝐒(h))) → Matrix(w , h)(T)
-  -- Matrix.proj(minor(M)(X , Y))(x , y) = Matrix.proj(M)(newX , newY) where
-  --   newX = if (x ≤? X) then x else 𝐏₀(x)
-  --   newY = if (y ≤? Y) then y else 𝐏₀(y)
+  minor : Matrix(𝐒(w) , 𝐒(h))(T) → (𝕟(𝐒(w)) ⨯ 𝕟(𝐒(h))) → Matrix(w , h)(T)
+  Matrix.proj(minor(M)(X , Y))(x , y) = Matrix.proj(M)(new-x , new-y) where
+    new-x = if(x <? X) then bound-𝐒(x) else 𝐒(x)
+    new-y = if(y <? Y) then bound-𝐒(y) else 𝐒(y)
 
-  -- Matrix filled with a single element
-  fill : T → Matrix(w , h)(T)
+module _ {ℓ} {s} {T : Type{ℓ}} where
+  -- A matrix filled with a single element.
+  fill : T → Matrix(s)(T)
   Matrix.proj(fill(elem)) = const(elem)
 
   -- submatrix : Matrix(w , h)(T) → ((X , Y) : (𝕟(w) ⨯ 𝕟(h))) → ((W , H) : (𝕟(w −₀ X) ⨯ 𝕟(h −₀ Y))) → Matrix(W −₀ X , H −₀ Y)(T)
 
--- A square matrix is a matrix with equal length in both directions
+-- A square matrix is a matrix with equal length in both directions.
 SquareMatrix : ∀{ℓ} → ℕ → Type{ℓ} → Type{ℓ}
 SquareMatrix(d)(T) = Matrix(d , d)(T)
 module SquareMatrix {ℓ} {d} {T : Type{ℓ}} where
   module _ (m : SquareMatrix(d)(T)) where
-    -- The diagonal vector
+    -- The diagonal vector.
+    -- The vector consisting of the elements in the main diagonal of the matrix.
     diag : Vector(d)(T)
     (diag)(i) = Matrix.proj(m)(i , i)
 
-    -- The maximum number of dimensions of a space that the matrix can describe linear transformations in
+    -- The maximum number of dimensions of a space that the matrix can describe linear transformations in.
+    -- The width/height of the matrix.
     dim : ℕ
     dim = d
 
-  -- Diagonal matrix from a vector
+  -- The diagonal matrix from a vector.
+  -- The matrix consisting of the elements from the vector in the main diagonal and a default element (zero) in the rest of the positions.
   diagMat : T → Vector(d)(T) → SquareMatrix(d)(T)
   Matrix.proj(diagMat(zero)(v))(x , y) = if (x ≡? y) then Vector.proj(v)(x) else zero
 
-  -- Scalar matrix
+  -- Scalar matrix.
+  -- The matrix consisting of a constant element in the main diagonal and a default element (zero) in the rest of the positions.
   scalarMat : T → T → SquareMatrix(d)(T)
   scalarMat(zero)(elem) = diagMat(zero)(Vector.fill(elem))
 
@@ -174,6 +181,13 @@ module _ {ℓ} where
     colVecMat : Vector(d)(T) → ColVector(d)(T)
     Matrix.proj(colVecMat(v))(_ , y) = Vector.proj(v)(y)
 
-module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {T₁ : Type{ℓ₃}} {T₂ : Type{ℓ₄}} where
-  multPattern : ∀{x y z} → (T₁ → T₂ → T₂) → (A → B → T₁) → T₂ → Matrix(z , y)(A) → Matrix(x , z)(B) → Matrix(x , y)(T₂)
-  Matrix.proj(multPattern (_+_) (_⋅_) (zero) M₁ M₂)(x , y) = Vector.foldᵣ(_+_) zero (Vector.map₂ (_⋅_) (Matrix.row(M₁)(y)) (Matrix.col(M₂)(x)))
+module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{ℓ₃}} {D : Type{ℓ₄}} where
+  multPattern : ∀{x y z} → (C → D → D) → (A → B → C) → D → Matrix(y , z)(A) → Matrix(x , y)(B) → Matrix(x , z)(D)
+  Matrix.proj(multPattern (_+_) (_⋅_) (zero) M₁ M₂)(x , y) = Vector.foldᵣ(_+_) zero (Vector.map₂(_⋅_) (Matrix.row(M₁)(y)) (Matrix.col(M₂)(x)))
+
+{-
+module _ {ℓ} {T : Type{ℓ}} where
+  detPatternX : T → ∀{d} → SquareMatrix(d)(T) → 𝕟(d) → T
+  detPatternX _    {𝐒(𝟎)}    M _ = Matrix.proj M(0 , 0)
+  detPatternX zero {𝐒(𝐒(d))} M y = Vector.foldᵣ {!+_!} zero (Vector.map () (Matrix.row M(y)))
+-}

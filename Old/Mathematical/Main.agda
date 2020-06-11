@@ -33,12 +33,12 @@ import Type.Cubical
 import Type.Cubical.Path
 import Type.Cubical.Path.Proofs
 import Type.Dependent
-import Type.Empty
--- import Type.Empty.Proofs
+import Type.Properties.Empty
+-- import Type.Properties.Empty.Proofs
 import Type.Quotient
 -- import Type.Singleton
 -- import Type.Singleton.Proofs
 -- import Type.Size
 -- import Type.Size.Proofs
-import Type.Unit
--- import Type.Unit.Proofs
+import Type.Properties.Singleton
+-- import Type.Properties.Singleton.Proofs

@@ -29,8 +29,9 @@ data _permutes_ {ℓ} : List{ℓ}(T) → List{ℓ}(T) → Stmt{Lvl.𝐒(ℓ)} wh
 trans-swap : (l₁ permutes l₂) → ((x ⊰ y ⊰ l₁) permutes (y ⊰ x ⊰ l₂))
 trans-swap p = trans swap (prepend (prepend p))
 
-_partition-of_ : List(List(T)) → List(T) → Stmt
-p partition-of l = (foldᵣ (x ↦ ¬ Empty(x) ∧_) Data.Unit p) ∧ (concat(p) permutes l)
+-- TODO
+-- _partition-of_ : List(List(T)) → List(T) → Stmt
+-- p partition-of l = (foldᵣ (x ↦ ¬ Empty(x) ∧_) Data.Unit p) ∧ (concat(p) permutes l)
 
 -- The permutation as a function between the permutated elements' indices.
 -- Example:
@@ -47,7 +48,6 @@ permutation-mapping (trans p q)          = permutation-mapping q ∘ permutation
 
 module Proofs where
   open import Data.List.Proofs
-  import      Function.Names as Names
   open import Logic.Predicate
   open import Numeral.Natural
   open import Numeral.Finite.Proofs
@@ -55,6 +55,7 @@ module Proofs where
   open import Relator.Equals.Proofs
   open import Structure.Function.Domain
   open import Structure.Function.Domain.Proofs
+  import      Structure.Function.Names as Names
   open import Structure.Function
   import      Structure.Relator.Names as Names
   open import Structure.Relator.Equivalence

@@ -7,8 +7,8 @@ open import Function.Domains
 open import Relator.Equals
 open import Type.Functions {ℓₗ}
 open import Type.Functions.Inverse {ℓₗ}
-open import Type.Empty
-open import Type.Unit {ℓₒ₁}{ℓₒ₂}
+open import Type.Properties.Empty
+open import Type.Properties.Singleton {ℓₒ₁}{ℓₒ₂}
 
 postulate inv-bijective : ∀{f : X → Y} → ⦃ proof : Bijective(f) ⦄ → Bijective(inv f)
 -- inv-bijective {f} ⦃ Bijective.intro(proof) ⦄

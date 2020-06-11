@@ -1,10 +1,12 @@
 module Structure.Category.Functor where
 
+open import Functional using (_on₂_)
 open import Lang.Instance
 import      Lvl
 open import Logic.Predicate
 open import Structure.Category
 open import Structure.Function
+import      Structure.Relator.Names as Names
 open import Structure.Setoid.WithLvl
 open import Syntax.Function
 open import Type
@@ -31,7 +33,8 @@ module _
 
     field
       -- Morphs/Transforms morphisms from the left category to the right category.
-      map : ∀{x y : Objₗ} → (x ⟶ y) → (F(x) ⟶ F(y))
+      -- ∀{x y : Objₗ} → (x ⟶ y) → (F(x) ⟶ F(y))
+      map : Names.Subrelation(_⟶_) ((_⟶_) on₂ F)
 
     field
       ⦃ map-function ⦄     : ∀{x y} → Function(map{x}{y})
@@ -41,7 +44,7 @@ module _
     open import Structure.Category.Properties
     open import Structure.Function.Domain
 
-    Faithful      = ∀{x y} → Injective (map{x}{y})
+    Faithful      = ∀{x y} → Injective (map{x}{y}) -- TODO: F also? Not sure
     Full          = ∀{x y} → Surjective(map{x}{y})
     FullyFaithful = ∀{x y} → Bijective (map{x}{y})
     -- TODO: Conservative  = ∀{x y : Objₗ}{f : x ⟶ y} → Morphism.Isomorphism(\{x} → _∘_ {x = x})(\{x} → id{x = x})(map f) → Morphism.Isomorphism(\{x} → _∘_ {x = x})(id)(f)

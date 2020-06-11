@@ -15,7 +15,7 @@ open import Graph.Properties
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Setoid.Uniqueness
 open import Structure.Relator.Properties
-open import Type.Unit
+open import Type.Properties.Singleton
 
 module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) where
   instance

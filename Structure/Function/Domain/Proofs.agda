@@ -49,6 +49,12 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ�
     Bijective.proof(injective-surjective-to-bijective ⦃ inj ⦄ ⦃ intro(surj) ⦄) {y} =
       [∃!]-intro surj (injective-to-unique inj)
 
+  injective-surjective-bijective-equivalence : (Injective(f) ∧ Surjective(f)) ↔ Bijective(f)
+  injective-surjective-bijective-equivalence =
+    [↔]-intro
+      (\bij → [∧]-intro (bijective-to-injective ⦃ bij = bij ⦄) (bijective-to-surjective ⦃ bij = bij ⦄))
+      (\{([∧]-intro inj surj) → injective-surjective-to-bijective ⦃ inj = inj ⦄ ⦃ surj = surj ⦄})
+
 module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
   instance
     injective-relator : UnaryRelator(Injective{A = A}{B = B})

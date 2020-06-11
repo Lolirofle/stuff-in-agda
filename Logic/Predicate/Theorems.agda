@@ -8,7 +8,7 @@ open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Syntax.Type
 open import Type
-open import Type.Empty using (◊ ; [◊]-existence)
+open import Type.Properties.Inhabited using (◊ ; [◊]-existence)
 
 ------------------------------------------
 -- Swapping nested quantifiers

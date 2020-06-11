@@ -3,6 +3,7 @@ module Relator.Equals.Proofs where
 import      Lvl
 open import Functional using (_→ᶠ_ ; id)
 open import Functional.Dependent
+open import Function.Names
 open import Lang.Instance
 open import Logic
 open import Logic.Propositional
@@ -21,20 +22,6 @@ private variable T A B : Type{ℓ}
 private variable x y : T
 
 module _ where
-  -- xy {f = f} = sub₂(_≡_)(Functional._→ᶠ_ on₂ f) xy
-
-  -- Note:
-  --   The elimination rules can be used in different ways:
-  --   • From (f(x) ∧ (x=y)) to f(y)
-  --   • From f(x) to ((x=y) → f(y))
-  -- ((x=y) → f(y)) cannot prove f(x) alone because of implication rules.
-
-  [≡]-elimₗ = [≡]-substitutionₗ
-  [≡]-elimᵣ = [≡]-substitutionᵣ
-
-  [≡]-elim : (x ≡ y) → ∀{f : T → Stmt{ℓ}} → f(x) ↔ f(y)
-  [≡]-elim eq = [↔]-intro ([≡]-elimₗ eq) ([≡]-elimᵣ eq)
-
   [≡]-substitute-type : (A ≡ B) → (A → B)
   [≡]-substitute-type = sub₂(_≡_)(Functional._→ᶠ_)
 
@@ -60,11 +47,8 @@ module _ where
   [≡]-identity-eliminator _ proof {x}{.x} [≡]-intro = proof{x}
 
 module _ {ℓ₁}{ℓ₂} {A : Type{ℓ₁}}{B : Type{ℓ₂}} where
-  [≡]-function-application : ∀{f₁ f₂ : A → B} → (f₁ ≡ f₂) → (∀{x} → (f₁(x) ≡ f₂(x)))
+  [≡]-function-application : FunctionApplication A B
   [≡]-function-application [≡]-intro = [≡]-intro
 
   [≡]-with-specific : ∀{x y : A} → (f : (a : A) → ⦃ _ : (a ≡ x) ⦄ → ⦃ _ : (a ≡ y) ⦄ → B) → (p : (x ≡ y)) → (f(x) ⦃ [≡]-intro ⦄ ⦃ p ⦄ ≡ f(y) ⦃ symmetry(_≡_) p ⦄ ⦃ [≡]-intro ⦄)
   [≡]-with-specific f [≡]-intro = [≡]-intro
-
-  -- [≢]-without : ∀{A : Type{ℓ₂}}{B : Type{ℓ₃}} → (f : A → B) → ∀{x y : A} → (f(x) ≢₃ f(y)) → (x ≢₂ y)
-  -- [≢]-without f {_}{_} = liftᵣ(congruence₁ f)

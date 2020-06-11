@@ -1,4 +1,4 @@
-module Structure.Category.Properties where
+module Structure.Category.Properties where -- TODO: Consider moving this to Structure.Categorical.Properties, and create a new Structure.Category.Properties that reimports
 
 import      Functional.Dependent as Fn
 open import Lang.Instance
@@ -13,7 +13,7 @@ import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
 open import Syntax.Function
 open import Type
-open import Type.Unit
+open import Type.Properties.Singleton
 
 private variable ℓₒ ℓₘ ℓₑ : Lvl.Level
 private variable Obj : Type{ℓₒ}

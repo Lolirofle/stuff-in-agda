@@ -18,7 +18,7 @@ import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
 open import Syntax.Function
 open import Type
-open import Type.Unit
+open import Type.Properties.Singleton
 
 -- Obj is the collection of objects.
 -- _⟶_ is the collection of morphisms.

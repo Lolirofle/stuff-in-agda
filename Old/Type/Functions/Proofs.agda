@@ -10,11 +10,11 @@ import      Logic.Predicate.Theorems
 import      Relator.Equals
 import      Relator.Equals.Proofs
 open import Type
-open import Type.Empty
+open import Type.Properties.Empty
 import      Type.Functions
 import      Type.Singleton.Proofs
-open import Type.Unit
-open import Type.Unit.Proofs
+open import Type.Properties.Singleton
+open import Type.Properties.Singleton.Proofs
 
 module _ {ℓₒ₁}{ℓₒ₂} {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} {f : X → Y} where
   open Type.Functions {ℓₗ}{ℓₒ₁}{ℓₒ₂} {X}{Y}
@@ -41,7 +41,7 @@ module _ {ℓₒ₁}{ℓₒ₂} {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} {f :
 
   Injective-apply : ⦃ _ : Injective(f) ⦄ → ∀{x y} → (f(x) ≡₁ f(y)) → (x ≡₁ y)
   Injective-apply ⦃ Injective.intro proof ⦄ {x}{y} (fxfy) with proof{f(y)}
-  ... | IsProp.intro uniqueness with uniqueness{Unapply.intro x ⦃ fxfy ⦄} {Unapply.intro y ⦃ [≡]-intro ⦄}
+  ... | MereProposition.intro uniqueness with uniqueness{Unapply.intro x ⦃ fxfy ⦄} {Unapply.intro y ⦃ [≡]-intro ⦄}
   ...   | [≡]-intro = [≡]-intro
 
 module _ {ℓₒ : Lvl.Level} {X : Type{ℓₒ}} where

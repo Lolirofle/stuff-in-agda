@@ -3,7 +3,6 @@ module Numeral.Natural.Oper.Proofs where
 import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
-import      Function.Names as Names
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
@@ -18,6 +17,7 @@ open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Structure.Setoid.Uniqueness
 open import Structure.Function.Domain
+import      Structure.Function.Names as Names
 open import Structure.Operator.Proofs.Util
 open import Structure.Operator.Properties
 import      Structure.Operator.Names as Names
@@ -289,7 +289,7 @@ postulate [⋅][−₀]-distributivityᵣ-raw : ∀{x y z : ℕ} → ((x −₀ 
 [−₀]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
 
 [−₀]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) −₀ x ≡ y)
-[−₀]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity-raw {y}{x}) {expr ↦ (expr −₀ x ≡ y)} ([−₀]ₗ[+]ᵣ-nullify {y}{x})
+[−₀]ₗ[+]ₗ-nullify {x}{y} = [≡]-substitutionᵣ ([+]-commutativity-raw {y}{x}) {expr ↦ (expr −₀ x ≡ y)} ([−₀]ₗ[+]ᵣ-nullify {y}{x})
 
 [−₀][+]ᵣ-nullify : ∀{x₁ x₂ y} → ((x₁ + y) −₀ (x₂ + y) ≡ x₁ −₀ x₂)
 [−₀][+]ᵣ-nullify {_} {_} {𝟎}    = [≡]-intro
@@ -341,7 +341,7 @@ postulate [⋅][−₀]-distributivityᵣ-raw : ∀{x y z : ℕ} → ((x −₀ 
 [𝄩]ₗ[+]ᵣ-nullify{𝐒(x)}{𝟎}    = [≡]-intro
 
 [𝄩]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) 𝄩 x ≡ y)
-[𝄩]ₗ[+]ₗ-nullify {x}{y} = [≡]-elimᵣ ([+]-commutativity-raw {y}{x}) {expr ↦ (expr 𝄩 x ≡ y)} ([𝄩]ₗ[+]ᵣ-nullify {y}{x})
+[𝄩]ₗ[+]ₗ-nullify {x}{y} = [≡]-substitutionᵣ ([+]-commutativity-raw {y}{x}) {expr ↦ (expr 𝄩 x ≡ y)} ([𝄩]ₗ[+]ᵣ-nullify {y}{x})
 
 [𝄩]ᵣ[+]ᵣ-nullify : ∀{x y} → (y 𝄩 (x + y) ≡ x)
 [𝄩]ᵣ[+]ᵣ-nullify {x}{y} = transitivity(_≡_) ([𝄩]-commutativity-raw {y}{x + y}) ([𝄩]ₗ[+]ᵣ-nullify {x}{y})

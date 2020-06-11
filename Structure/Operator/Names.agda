@@ -4,9 +4,9 @@ import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
+open import Structure.Function.Names
 open import Structure.Setoid.WithLvl
 open import Syntax.Function
-open import Function.Names
 open import Syntax.Transitivity
 open import Type
 

@@ -3,7 +3,7 @@ module Structure.Operator.Field where
 import      Lvl
 open import Logic
 open import Logic.Propositional
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Operator.Group using (Group ; CommutativeGroup)
 open import Structure.Operator.Monoid using (Monoid)
 open import Structure.Operator.Properties hiding (distributivityₗ ; distributivityᵣ)
@@ -11,19 +11,18 @@ open import Type
 
 
 private
-  module Impl {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (𝟎 : T) where
-    record NonZero (x : T) : Stmt{ℓ} where
+  module Impl {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (𝟎 : T) where
+    record NonZero (x : T) : Stmt{ℓₑ} where
       constructor intro
       field proof : (x ≢ 𝟎)
 
-record Field {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ} where
+record Field {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   field
     instance ⦃ [+]-commutative-group ⦄  : CommutativeGroup (_+_)
     instance ⦃ [⋅]-monoid ⦄             : Monoid (_⋅_)
     instance ⦃ [⋅][+]-distributivityₗ ⦄ : Distributivityₗ (_⋅_) (_+_)
     instance ⦃ [⋅][+]-distributivityᵣ ⦄ : Distributivityᵣ (_⋅_) (_+_)
     instance ⦃ [⋅]-commutativity ⦄      : Commutativity(_⋅_) -- TODO: Consider removing this to get a more general structure: The division ring
-    -- distinct-identities : 𝟎 ≢ 𝟏 -- TODO: Consider adding this somewhere or at least aknowledge it because this is unprovable, and models where this is true are always a "trivial/singleton ring"
 
   open CommutativeGroup([+]-commutative-group)
     using ()
@@ -40,6 +39,7 @@ record Field {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_+_  : T → T → T) (
       identityᵣ          to [+]-identityᵣ ;
       inverse-existence  to [+]-inverse-existence ;
       inv                to −_ ;
+      inv-function        to [−]-function ;
       inverse            to [+]-inverse ;
       inverseₗ           to [+]-inverseₗ ;
       inverseᵣ           to [+]-inverseᵣ
@@ -63,6 +63,7 @@ record Field {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ (_+_  : T → T → T) (
     ⅟ : (x : T) → ⦃ NonZero(x) ⦄ → T
     [⋅]-inverseₗ : ∀{x} → ⦃ non-zero : NonZero(x) ⦄ → (x ⋅ (⅟ x) ≡ 𝟏)
     [⋅]-inverseᵣ : ∀{x} → ⦃ non-zero : NonZero(x) ⦄ → ((⅟ x) ⋅ x ≡ 𝟏)
+    distinct-identities : 𝟎 ≢ 𝟏 -- Note: This is unprovable from the other field axioms, and models where this is true are always a "trivial/singleton ring".
 
   _−_ : T → T → T
   x − y = x + (− y)

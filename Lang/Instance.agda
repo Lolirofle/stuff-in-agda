@@ -14,10 +14,10 @@ resolve (_) ⦃ x ⦄ = x
 infer : ⦃ _ : T ⦄ → T
 infer ⦃ x ⦄ = x
 
-inst-fn : (X → Y) → (⦃ _ : X ⦄ → Y)
+inst-fn : (X → Y) → (⦃ inst : X ⦄ → Y)
 inst-fn P ⦃ x ⦄ = P(x)
 
-inst-fn₂ : (X → Y → Z) → (⦃ _ : X ⦄ → ⦃ _ : Y ⦄ → Z)
+inst-fn₂ : (X → Y → Z) → (⦃ inst₁ : X ⦄ → ⦃ inst₂ : Y ⦄ → Z)
 inst-fn₂ P ⦃ x ⦄ ⦃ y ⦄ = P(x)(y)
 
 inst-fnᵢ : ({_ : X} → Y → Z) → ({_ : X} → ⦃ _ : Y ⦄ → Z)

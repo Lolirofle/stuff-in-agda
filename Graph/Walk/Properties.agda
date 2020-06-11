@@ -8,7 +8,7 @@ import      Lvl
 open import Graph{ℓ₁}{ℓ₂}(V)
 open import Graph.Walk{ℓ₁}{ℓ₂}{V}
 open import Relator.Equals.Proofs.Equiv
-open import Type.Unit
+open import Type.Properties.MereProposition
 
 module _ (_⟶_ : Graph) where
   -- `Passes edge walk` states that the walk `walk` contains the edge `edge`.
@@ -34,14 +34,14 @@ module _ {_⟶_ : Graph} {a b : V} (walk : Walk(_⟶_) a b) where
   -- Note: Equality on edges must respect uniqueness. In other words, one edge must not have multiple constructions.
   record Trail : Type{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
-    field proof : ∀{v₁ v₂ : V}{edge : v₁ ⟶ v₂} → IsProp(Passes(_⟶_) edge walk)
+    field proof : ∀{v₁ v₂ : V}{edge : v₁ ⟶ v₂} → MereProposition(Passes(_⟶_) edge walk)
 
   -- A walk that never visits the same vertex twice.
   -- Also called "Simple path".
   -- Note: Equality on edges must respect uniqueness. In other words, one edge must not have multiple constructions.
   record Path : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
-    field proof : ∀{v : V} → IsProp(Visits(_⟶_) v walk)
+    field proof : ∀{v : V} → MereProposition(Visits(_⟶_) v walk)
   path = inst-fn Path.proof
 
   -- A walk that visits every vertex in the graph.

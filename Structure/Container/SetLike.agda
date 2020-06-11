@@ -14,11 +14,12 @@ open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
-open import Structure.Relator
+open import Structure.Relator hiding (module Names)
+open import Type.Properties.Inhabited
 open import Type
 
-private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ ℓ₇ ℓ₈ ℓ₉ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ : Lvl.Level
-private variable A B C Cₒ Cᵢ E : Type{ℓ}
+private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ ℓ₇ ℓ₈ ℓ₉ ℓ₁₀ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ : Lvl.Level
+private variable A B C C₁ C₂ Cₒ Cᵢ E E₁ E₂ : Type{ℓ}
 private variable _∈_ _∈ₒ_ _∈ᵢ_ : E → C
 
 module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}) where
@@ -48,6 +49,31 @@ module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}
 
     _≢_ : C → C → Stmt
     _≢_ = (¬_) ∘₂ (_≡_)
+
+  -- A type such that its inhabitants is the elements of the set `S`.
+  SetElement : C → Stmt
+  SetElement(S) = ∃(_∈ S)
+
+  module FunctionProperties where
+    module Names where
+      _closed-under₁_ : C → (E → E) → Stmt -- TODO: Maybe possible to generalize over n
+      S closed-under₁ f = (∀{x} → (x ∈ S) → (f(x) ∈ S))
+
+      _closed-under₂_ : C → (E → E → E) → Stmt
+      S closed-under₂ (_▫_) = (∀{x y} → (x ∈ S) → (y ∈ S) → ((x ▫ y) ∈ S))
+
+    open import Lang.Instance
+    module _ (S : C) (f : E → E) where
+      record _closed-under₁_ : Stmt{Lvl.of(S Names.closed-under₁ f)} where
+        constructor intro
+        field proof : S Names.closed-under₁ f
+      _closureUnder₁_ = inst-fn _closed-under₁_.proof
+
+    module _ (S : C) (_▫_ : E → E → E) where
+      record _closed-under₂_ : Stmt{Lvl.of(S Names.closed-under₂ (_▫_))} where
+        constructor intro
+        field proof : S Names.closed-under₂ (_▫_)
+      _closureUnder₂_ = inst-fn _closed-under₂_.proof
 
 module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ where
   open SetLike(setLike)
@@ -96,6 +122,14 @@ module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_)
   open ComplementOperator ⦃ ... ⦄ hiding (Membership ; membership) public
   module Complement ⦃ inst ⦄ = ComplementOperator(inst)
 
+  module _ {I : Type{ℓ}} ⦃ equiv-I : Equiv{ℓₗ₁}(I) ⦄ ⦃ equiv-E : Equiv{ℓₗ₂}(E) ⦄ where
+    record ImageOperator : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂} where
+      field ⊶ : (f : I → E) → ⦃ func : Function(f) ⦄ → C
+      Membership = ∀{f} ⦃ func : Function(f) ⦄ → ∀{y} → (y ∈ (⊶ f)) ↔ ∃(x ↦ f(x) ≡ₛ y)
+      field membership : Membership
+    open ImageOperator ⦃ ... ⦄ hiding (Membership ; membership) public
+    module Image ⦃ inst ⦄ = ImageOperator(inst)
+
   module _ ⦃ _ : Equiv{ℓₗ}(E) ⦄ where
     record SingletonSet : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓₗ} where
       field singleton : E → C
@@ -125,16 +159,9 @@ module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_)
     open RemoveFunction ⦃ ... ⦄ hiding (Membership ; membership) public
     module Remove ⦃ inst ⦄ = RemoveFunction(inst)
 
-    record MapFunction : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓₗ} where
-      field map : (E → E) → (C → C)
-      Membership = ∀{A}{f} ⦃ _ : Function(f) ⦄ {y} → (y ∈ map f(A)) ↔ ∃(x ↦ (x ∈ A) ∧ (y ≡ₛ f(x)))
-      field membership : Membership
-    open MapFunction ⦃ ... ⦄ hiding (Membership ; membership) public
-    module Map ⦃ inst ⦄ = MapFunction(inst)
-
     module _ {ℓ} where
       record FilterFunction : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ Lvl.𝐒(ℓ) Lvl.⊔ ℓₗ} where
-        field filter : (E → Stmt{ℓ}) → (C → C)
+        field filter : (P : E → Stmt{ℓ}) ⦃ unaryRelator : UnaryRelator(P) ⦄ → (C → C)
         Membership = ∀{A}{P} ⦃ unaryRelator : UnaryRelator(P) ⦄ {x} → (x ∈ filter P(A)) ↔ ((x ∈ A) ∧ P(x))
         field membership : Membership
       open FilterFunction ⦃ ... ⦄ hiding (Membership ; membership) public
@@ -146,6 +173,36 @@ module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_)
     field membership : Membership
   open BooleanFilterFunction ⦃ ... ⦄ hiding (Membership ; membership) public
   module BooleanFilter ⦃ inst ⦄ = BooleanFilterFunction(inst)
+
+module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ ⦃ equiv-E : Equiv{ℓₗ₁}(E) ⦄ {O : Type{ℓ₆}} ⦃ equiv-O : Equiv{ℓₗ₂}(O) ⦄ where
+  record UnapplyFunction : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₆ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂} where
+    field unapply : (f : E → O) ⦃ func : Function(f) ⦄ → O → C
+    Membership = ∀{f} ⦃ func : Function(f) ⦄ {y}{x} → (x ∈ unapply f(y)) ↔ (f(x) ≡ₛ y)
+    field membership : Membership
+  open UnapplyFunction ⦃ ... ⦄ hiding (Membership ; membership) public
+  module Unapply ⦃ inst ⦄ = UnapplyFunction(inst)
+
+module _
+  ⦃ equiv-E₁ : Equiv{ℓₗ₁}(E₁) ⦄
+  (_∈₁_ : _) ⦃ setLike₁ : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C₁}{E₁} (_∈₁_) {ℓ₄}{ℓ₅} ⦄
+  ⦃ equiv-E₂ : Equiv{ℓₗ₂}(E₂) ⦄
+  (_∈₂_ : _) ⦃ setLike₂ : SetLike{ℓ₆}{ℓ₇}{ℓ₈}{C₂}{E₂} (_∈₂_) {ℓ₉}{ℓ₁₀} ⦄
+  where
+
+  open SetLike ⦃ … ⦄
+  record MapFunction : Type{ℓₗ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₆ Lvl.⊔ ℓ₇ Lvl.⊔ ℓ₈} where
+    field map : (f : E₁ → E₂) ⦃ func : Function(f) ⦄ → (C₁ → C₂)
+    Membership = ∀{f} ⦃ func : Function(f) ⦄ {A}{y} → (y ∈₂ map f(A)) ↔ ∃(x ↦ (x ∈₁ A) ∧ (f(x) ≡ₛ y))
+    field membership : Membership
+  open MapFunction ⦃ ... ⦄ hiding (Membership ; membership) public
+  module Map ⦃ inst ⦄ = MapFunction(inst)
+
+  record UnmapFunction : Type{ℓₗ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₆ Lvl.⊔ ℓ₇ Lvl.⊔ ℓ₈} where
+    field unmap : (f : E₁ → E₂) ⦃ func : Function(f) ⦄ → (C₂ → C₁)
+    Membership = ∀{f} ⦃ func : Function(f) ⦄ {A}{x} → (x ∈₁ unmap f(A)) ↔ (f(x) ∈₂ A)
+    field membership : Membership
+  open UnmapFunction ⦃ ... ⦄ hiding (Membership ; membership) public
+  module Unmap ⦃ inst ⦄ = UnmapFunction(inst)
 
 module _ (_∈ₒ_ : _) ⦃ outer-setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{Cₒ}{Cᵢ} (_∈ₒ_) {ℓ₄}{ℓ₅} ⦄ (_∈ᵢ_ : _) ⦃ inner-setLike : SetLike{ℓ₂}{ℓ₆}{ℓ₇}{Cᵢ}{E} (_∈ᵢ_) {ℓ₈}{ℓ₉} ⦄ where
   open SetLike ⦃ … ⦄
@@ -170,6 +227,21 @@ module _ (_∈ₒ_ : _) ⦃ outer-setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{Cₒ
     field membership : Membership
   open BigIntersectionOperator ⦃ ... ⦄ hiding (Membership ; membership) public
   module BigIntersection ⦃ inst ⦄ = BigIntersectionOperator(inst)
+
+module _ {I : Type{ℓ}} ⦃ equiv-I : Equiv{ℓₗ₁}(I) ⦄ ⦃ equiv-E : Equiv{ℓₗ₂}(E) ⦄ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ where
+  record IndexedBigUnionOperator : Type{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    field ⋃ᵢ : (I → C) → C
+    Membership = ∀{Ai}{x} → (x ∈ (⋃ᵢ Ai)) ↔ ∃(i ↦ (x ∈ Ai(i)))
+    field membership : Membership
+  open IndexedBigUnionOperator ⦃ ... ⦄ hiding (Membership ; membership) public
+  module IndexedBigUnion ⦃ inst ⦄ = IndexedBigUnionOperator(inst)
+
+  record IndexedBigIntersectionOperator : Type{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    field ⋂ᵢ : (I → C) → C
+    Membership = ∀{Ai} → ◊(I) → ∀{x} → (x ∈ (⋂ᵢ Ai)) ↔ (∀{i} → (x ∈ Ai(i)))
+    field membership : Membership
+  open IndexedBigIntersectionOperator ⦃ ... ⦄ hiding (Membership ; membership) public
+  module IndexedBigIntersection ⦃ inst ⦄ = IndexedBigIntersectionOperator(inst)
 
 {-
 open SetLike ⦃ … ⦄
@@ -251,7 +323,7 @@ module Proofs where
         where
 
         filter-to-intersection : ⦃ _ : FilterFunction(_∈_){ℓ = ℓ₃} ⦄ → IntersectionOperator(_∈_)
-        IntersectionOperator._∩_ filter-to-intersection a b = filter (_∈ b) a
+        IntersectionOperator._∩_ filter-to-intersection a b = filter (_∈ b) ⦃ unaryRelator = BinaryRelator.left infer ⦄ a
         IntersectionOperator.membership filter-to-intersection = Filter.membership ⦃ unaryRelator = BinaryRelator.left infer ⦄
 
     module _ ⦃ equivalence : Equivalence(_≡_) ⦄ where
@@ -345,8 +417,8 @@ module Proofs where
           [∁]-function : Function(∁)
           Function.congruence [∁]-function xy =
             [↔]-to-[←] [≡]-membership (
-              Complement.membership ⦗ [↔]-transitivity ⦘
-              [¬]-unaryOperator ([↔]-to-[→] [≡]-membership xy) ⦗ [↔]-transitivity ⦘
+              Complement.membership                            ⦗ [↔]-transitivity ⦘ᵣ
+              [¬]-unaryOperator ([↔]-to-[→] [≡]-membership xy) ⦗ [↔]-transitivity ⦘ᵣ
               [↔]-symmetry Complement.membership
             )
 
@@ -354,8 +426,8 @@ module Proofs where
           [∁]-involution : ⦃ _ : ∀{x y} → Classical(x ∈ y) ⦄ → Involution(∁)
           Involution.proof [∁]-involution =
             [↔]-to-[←] [≡]-membership (
-              Complement.membership ⦗ [↔]-transitivity ⦘
-              [¬]-unaryOperator Complement.membership ⦗ [↔]-transitivity ⦘
+              Complement.membership                   ⦗ [↔]-transitivity ⦘ᵣ
+              [¬]-unaryOperator Complement.membership ⦗ [↔]-transitivity ⦘ᵣ
               [↔]-intro [¬¬]-intro [¬¬]-elim
             )
 
@@ -364,8 +436,8 @@ module Proofs where
           [∪]-binaryOperator : BinaryOperator(_∪_)
           BinaryOperator.congruence [∪]-binaryOperator xy₁ xy₂ =
             [↔]-to-[←] [≡]-membership (
-              Union.membership ⦗ [↔]-transitivity ⦘
-              [↔]-intro (Either.map2 ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₂))) (Either.map2 ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₂))) ⦗ [↔]-transitivity ⦘
+              Union.membership ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-intro (Either.map2 ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₂))) (Either.map2 ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₂))) ⦗ [↔]-transitivity ⦘ᵣ
               [↔]-symmetry Union.membership
             )
 
@@ -373,8 +445,8 @@ module Proofs where
           [∪]-commutativity : Commutativity(_∪_)
           Commutativity.proof [∪]-commutativity {x} {y} =
             [↔]-to-[←] [≡]-membership (
-              Union.membership                    ⦗ [↔]-transitivity ⦘
-              [↔]-intro [∨]-symmetry [∨]-symmetry ⦗ [↔]-transitivity ⦘
+              Union.membership                    ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-intro [∨]-symmetry [∨]-symmetry ⦗ [↔]-transitivity ⦘ᵣ
               [↔]-symmetry Union.membership
             )
 
@@ -382,10 +454,10 @@ module Proofs where
           [∪]-associativity : Associativity(_∪_)
           Associativity.proof [∪]-associativity {x} {y} =
             [↔]-to-[←] [≡]-membership (
-              Union.membership ⦗ [↔]-transitivity ⦘
-              [↔]-intro (Either.mapLeft ([↔]-to-[←] Union.membership)) (Either.mapLeft ([↔]-to-[→] Union.membership)) ⦗ [↔]-transitivity ⦘
-              [∨]-associativity ⦗ [↔]-transitivity ⦘
-              [↔]-symmetry([↔]-intro (Either.mapRight ([↔]-to-[←] Union.membership)) (Either.mapRight ([↔]-to-[→] Union.membership))) ⦗ [↔]-transitivity ⦘
+              Union.membership ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-intro (Either.mapLeft ([↔]-to-[←] Union.membership)) (Either.mapLeft ([↔]-to-[→] Union.membership)) ⦗ [↔]-transitivity ⦘ᵣ
+              [∨]-associativity ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-symmetry([↔]-intro (Either.mapRight ([↔]-to-[←] Union.membership)) (Either.mapRight ([↔]-to-[→] Union.membership))) ⦗ [↔]-transitivity ⦘ᵣ
               [↔]-symmetry Union.membership
             )
 
@@ -394,8 +466,8 @@ module Proofs where
             [∪]-identityₗ : Identityₗ(_∪_)(∅)
             Identityₗ.proof [∪]-identityₗ {x} =
               [↔]-to-[←] [≡]-membership (
-                Union.membership ⦗ [↔]-transitivity ⦘
-                [↔]-intro (Either.mapLeft [⊥]-elim) (Either.mapLeft Empty.membership) ⦗ [↔]-transitivity ⦘
+                Union.membership ⦗ [↔]-transitivity ⦘ᵣ
+                [↔]-intro (Either.mapLeft [⊥]-elim) (Either.mapLeft Empty.membership) ⦗ [↔]-transitivity ⦘ᵣ
                 [↔]-intro [∨]-introᵣ [∨]-identityₗ
               )
 
@@ -404,8 +476,8 @@ module Proofs where
           [∩]-binaryOperator : BinaryOperator(_∩_)
           BinaryOperator.congruence [∩]-binaryOperator xy₁ xy₂ =
             [↔]-to-[←] [≡]-membership (
-              Intersection.membership ⦗ [↔]-transitivity ⦘
-              [↔]-intro (Tuple.map ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₂))) (Tuple.map ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₂))) ⦗ [↔]-transitivity ⦘
+              Intersection.membership ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-intro (Tuple.map ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₂))) (Tuple.map ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₂))) ⦗ [↔]-transitivity ⦘ᵣ
               [↔]-symmetry Intersection.membership
             )
 
@@ -413,8 +485,8 @@ module Proofs where
           [∩]-commutativity : Commutativity(_∩_)
           Commutativity.proof [∩]-commutativity {x} {y} =
             [↔]-to-[←] [≡]-membership (
-              Intersection.membership             ⦗ [↔]-transitivity ⦘
-              [↔]-intro [∧]-symmetry [∧]-symmetry ⦗ [↔]-transitivity ⦘
+              Intersection.membership             ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-intro [∧]-symmetry [∧]-symmetry ⦗ [↔]-transitivity ⦘ᵣ
               [↔]-symmetry Intersection.membership
             )
 
@@ -422,10 +494,10 @@ module Proofs where
           [∩]-associativity : Associativity(_∩_)
           Associativity.proof [∩]-associativity {x} {y} =
             [↔]-to-[←] [≡]-membership (
-              Intersection.membership ⦗ [↔]-transitivity ⦘
-              [↔]-intro (Tuple.mapLeft ([↔]-to-[←] Intersection.membership)) (Tuple.mapLeft ([↔]-to-[→] Intersection.membership)) ⦗ [↔]-transitivity ⦘
-              [∧]-associativity ⦗ [↔]-transitivity ⦘
-              [↔]-symmetry([↔]-intro (Tuple.mapRight ([↔]-to-[←] Intersection.membership)) (Tuple.mapRight ([↔]-to-[→] Intersection.membership))) ⦗ [↔]-transitivity ⦘
+              Intersection.membership ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-intro (Tuple.mapLeft ([↔]-to-[←] Intersection.membership)) (Tuple.mapLeft ([↔]-to-[→] Intersection.membership)) ⦗ [↔]-transitivity ⦘ᵣ
+              [∧]-associativity ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-symmetry([↔]-intro (Tuple.mapRight ([↔]-to-[←] Intersection.membership)) (Tuple.mapRight ([↔]-to-[→] Intersection.membership))) ⦗ [↔]-transitivity ⦘ᵣ
               [↔]-symmetry Intersection.membership
             )
 
@@ -434,8 +506,8 @@ module Proofs where
             [∩]-identityₗ : Identityₗ(_∩_)(𝐔)
             Identityₗ.proof [∩]-identityₗ {x} =
               [↔]-to-[←] [≡]-membership (
-                Intersection.membership ⦗ [↔]-transitivity ⦘
-                [↔]-intro (Tuple.mapLeft {ℓ₁} (const Universal.membership)) (Tuple.mapLeft (const [⊤]-intro)) ⦗ [↔]-transitivity ⦘
+                Intersection.membership ⦗ [↔]-transitivity ⦘ᵣ
+                [↔]-intro (Tuple.mapLeft {ℓ₁} (const Universal.membership)) (Tuple.mapLeft (const [⊤]-intro)) ⦗ [↔]-transitivity ⦘ᵣ
                 [↔]-intro ([∧]-intro [⊤]-intro) [∧]-elimᵣ
               )
 
@@ -444,10 +516,10 @@ module Proofs where
           [∩][∪]-distributivityₗ : Distributivityₗ(_∩_)(_∪_)
           Distributivityₗ.proof [∩][∪]-distributivityₗ {x} {y} {z} =
             [↔]-to-[←] [≡]-membership (
-              Intersection.membership ⦗ [↔]-transitivity ⦘
-              [↔]-intro (Tuple.mapRight ([↔]-to-[←] Union.membership)) (Tuple.mapRight ([↔]-to-[→] Union.membership)) ⦗ [↔]-transitivity ⦘
-              [∧][∨]-distributivityₗ ⦗ [↔]-transitivity ⦘
-              [↔]-intro (Either.map2 ([↔]-to-[→] Intersection.membership) ([↔]-to-[→] Intersection.membership)) (Either.map2 ([↔]-to-[←] Intersection.membership) ([↔]-to-[←] Intersection.membership)) ⦗ [↔]-transitivity ⦘
+              Intersection.membership ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-intro (Tuple.mapRight ([↔]-to-[←] Union.membership)) (Tuple.mapRight ([↔]-to-[→] Union.membership)) ⦗ [↔]-transitivity ⦘ᵣ
+              [∧][∨]-distributivityₗ ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-intro (Either.map2 ([↔]-to-[→] Intersection.membership) ([↔]-to-[→] Intersection.membership)) (Either.map2 ([↔]-to-[←] Intersection.membership) ([↔]-to-[←] Intersection.membership)) ⦗ [↔]-transitivity ⦘ᵣ
               [↔]-symmetry Union.membership
             )
 
@@ -455,10 +527,10 @@ module Proofs where
           [∪][∩]-distributivityₗ : Distributivityₗ(_∪_)(_∩_)
           Distributivityₗ.proof [∪][∩]-distributivityₗ {x} {y} {z} =
             [↔]-to-[←] [≡]-membership (
-              Union.membership ⦗ [↔]-transitivity ⦘
-              [↔]-intro (Either.mapRight ([↔]-to-[←] Intersection.membership)) (Either.mapRight ([↔]-to-[→] Intersection.membership)) ⦗ [↔]-transitivity ⦘
-              [∨][∧]-distributivityₗ ⦗ [↔]-transitivity ⦘
-              [↔]-intro (Tuple.map ([↔]-to-[→] Union.membership) ([↔]-to-[→] Union.membership)) (Tuple.map ([↔]-to-[←] Union.membership) ([↔]-to-[←] Union.membership)) ⦗ [↔]-transitivity ⦘
+              Union.membership ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-intro (Either.mapRight ([↔]-to-[←] Intersection.membership)) (Either.mapRight ([↔]-to-[→] Intersection.membership)) ⦗ [↔]-transitivity ⦘ᵣ
+              [∨][∧]-distributivityₗ ⦗ [↔]-transitivity ⦘ᵣ
+              [↔]-intro (Tuple.map ([↔]-to-[→] Union.membership) ([↔]-to-[→] Union.membership)) (Tuple.map ([↔]-to-[←] Union.membership) ([↔]-to-[←] Union.membership)) ⦗ [↔]-transitivity ⦘ᵣ
               [↔]-symmetry Intersection.membership
             )
 

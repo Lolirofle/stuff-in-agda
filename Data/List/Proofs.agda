@@ -3,8 +3,10 @@ module Data.List.Proofs where
 import Lvl
 open import Functional
 open import Function.Names as Names using (_⊜_)
+import      Function.Equals as Fn
 open import Data.Boolean
-open import Data.Option hiding (map)
+open import Data.Option
+open import Data.Option.Proofs using ()
 open import Data.Either
 open import Data.Either.Proofs
 open import Data.List
@@ -16,15 +18,19 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Multi
+import      Structure.Function.Names as Names
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
+open import Structure.Operator
 open import Structure.Relator.Properties
+open import Structure.Setoid.WithLvl using (Equiv)
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓ : Lvl.Level
+private variable ℓ ℓₑ : Lvl.Level
 private variable T A B : Type{ℓ}
 private variable l l₁ l₂ : List(T)
 private variable a b x : T
@@ -107,7 +113,6 @@ module _ where
   length-postpend : ((length ∘ postpend a) ⊜ (𝐒 ∘ length))
   length-postpend {x = ∅}     = [≡]-intro
   length-postpend {x = x ⊰ l} = [≡]-with(𝐒) (length-postpend {x = l})
-  -- {-# REWRITE length-postpend #-}
 
   instance
     length-preserves-postpend : Preserving₁(length)(postpend a)(𝐒)
@@ -170,7 +175,7 @@ module _ where
     Cancellationᵣ.proof([⊰]-cancellationᵣ) = proof where
       proof : Names.Cancellationᵣ(_⊰_)
       proof {∅}     [≡]-intro = [≡]-intro
-      proof {x ⊰ l} p = injective(Right) ([≡]-with(firstElem) p)
+      proof {x ⊰ l} p = injective(Some) ([≡]-with(first) p)
 
   [⊰]-general-cancellationᵣ : ((a ⊰ l₁) ≡ (b ⊰ l₂)) → (l₁ ≡ l₂)
   [⊰]-general-cancellationᵣ p = [≡]-with(tail) p
@@ -178,7 +183,7 @@ module _ where
   [⊰]-general-cancellationₗ : ((a ⊰ l₁) ≡ (b ⊰ l₂)) → (a ≡ b)
   [⊰]-general-cancellationₗ {l₁ = ∅}     {l₂ = ∅}      [≡]-intro = [≡]-intro
   [⊰]-general-cancellationₗ {l₁ = ∅}     {l₂ = _ ⊰ _} p with () ← [⊰]-general-cancellationᵣ p
-  [⊰]-general-cancellationₗ {l₁ = _ ⊰ _} {l₂ = _ ⊰ _} p = injective(Right) ([≡]-with(firstElem) p)
+  [⊰]-general-cancellationₗ {l₁ = _ ⊰ _} {l₂ = _ ⊰ _} p = injective(Some) ([≡]-with(first) p)
 
   [∅][⊰]-unequal : (∅ ≢ x ⊰ l)
   [∅][⊰]-unequal ()
@@ -255,14 +260,14 @@ instance
   reverse-involution : Involution(reverse{T = T})
   Involution.proof reverse-involution = reverse-involution-raw
 
-first-0-length : (first(0)(l) ≡ ∅)
-first-0-length {l = ∅}     = [≡]-intro
-first-0-length {l = x ⊰ l} = [≡]-intro
-{-# REWRITE first-0-length #-}
+initial-0-length : (initial(0)(l) ≡ ∅)
+initial-0-length {l = ∅}     = [≡]-intro
+initial-0-length {l = x ⊰ l} = [≡]-intro
+{-# REWRITE initial-0-length #-}
 
-first-of-∅ : (first(n)(∅ {T = T}) ≡ ∅)
-first-of-∅ {n = 𝟎}    = [≡]-intro
-first-of-∅ {n = 𝐒(n)} = [≡]-intro
+initial-of-∅ : (initial(n)(∅ {T = T}) ≡ ∅)
+initial-of-∅ {n = 𝟎}    = [≡]-intro
+initial-of-∅ {n = 𝐒(n)} = [≡]-intro
 
 module _ {f g : A → B} where
   map-function-raw : (f ⊜ g) → (map f ⊜ map g)
@@ -278,9 +283,6 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{
   map-preserves-[∘] : (map(f ∘ g) ⊜ (map f ∘ map g))
   map-preserves-[∘] {x = ∅}     = [≡]-intro
   map-preserves-[∘] {x = x ⊰ l} = [≡]-with(f(g(x)) ⊰_) (map-preserves-[∘] {x = l})
-
-  -- map-preserves-[∘]-sym = \{l} → symmetry(_≡_) (map-preserves-[∘] {l})
-  -- {-# REWRITE map-preserves-[∘]-sym #-}
 
 map-preserves-id : (map id ⊜ id{T = List(T)})
 map-preserves-id {x = ∅} = [≡]-intro
@@ -309,3 +311,45 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{
 concatMap-singleton : (concatMap{A = T} singleton) ⊜ id
 concatMap-singleton {x = ∅} = [≡]-intro
 concatMap-singleton {x = x ⊰ l} = [≡]-with(x ⊰_) (concatMap-singleton {x = l})
+
+foldₗ-lastElem-equivalence : (last{T = T} ⊜ foldₗ (const Option.Some) Option.None)
+foldₗ-lastElem-equivalence {x = ∅}         = [≡]-intro
+foldₗ-lastElem-equivalence {x = x ⊰ ∅}     = [≡]-intro
+foldₗ-lastElem-equivalence {x = x ⊰ y ⊰ l} = foldₗ-lastElem-equivalence {x = y ⊰ l}
+
+{-
+foldₗ-reverse-equivalence : (reverse{T = T} ⊜ foldₗ (Functional.swap(_⊰_)) ∅)
+foldₗ-reverse-equivalence {x = ∅} = [≡]-intro
+foldₗ-reverse-equivalence {x = x ⊰ l} =
+  reverse (x ⊰ l)                                           🝖[ _≡_ ]-[]
+  (postpend x ∘ reverse) l                                  🝖[ _≡_ ]-[ {!!} ]
+  (postpend x ∘ foldₗ (Functional.swap(_⊰_)) ∅) l           🝖[ _≡_ ]-[ {!!} ]
+  foldₗ (Functional.swap(_⊰_)) (Functional.swap(_⊰_) ∅ x) l 🝖[ _≡_ ]-[]
+  foldₗ (Functional.swap(_⊰_)) (singleton(x)) l             🝖[ _≡_ ]-[]
+  foldₗ (Functional.swap(_⊰_)) ∅ (x ⊰ l)                    🝖-end
+-}
+
+foldᵣ-function : ⦃ equiv : Equiv{ℓₑ}(B) ⦄ → ∀{_▫_ : A → B → B} ⦃ oper : BinaryOperator(_▫_) ⦄ → Function ⦃ equiv-B = equiv ⦄ (foldᵣ(_▫_) a)
+foldᵣ-function {a = a} ⦃ equiv ⦄ {_▫_ = _▫_} ⦃ oper ⦄ = intro p where
+  p : Names.Congruence₁ ⦃ equiv-B = equiv ⦄ (foldᵣ(_▫_) a)
+  p {∅}       {∅}       xy = reflexivity(Equiv._≡_ equiv)
+  p {x₁ ⊰ l₁} {x₂ ⊰ l₂} xy =
+    foldᵣ(_▫_) a (x₁ ⊰ l₁) 🝖[ Equiv._≡_ equiv ]-[]
+    x₁ ▫ (foldᵣ(_▫_) a l₁) 🝖[ Equiv._≡_ equiv ]-[ congruence₂(_▫_) ⦃ oper ⦄ ([⊰]-general-cancellationₗ xy) (p {l₁} {l₂} ([⊰]-general-cancellationᵣ xy)) ]
+    x₂ ▫ (foldᵣ(_▫_) a l₂) 🝖[ Equiv._≡_ equiv ]-[]
+    foldᵣ(_▫_) a (x₂ ⊰ l₂) 🝖-end
+
+map-binaryOperator : BinaryOperator {A₁ = A → B} ⦃ equiv-A₁ = Fn.[⊜]-equiv ⦃ [≡]-equiv ⦄ ⦄ ⦃ equiv-A₂ = [≡]-equiv ⦄ (map)
+map-binaryOperator = intro p where
+  p : Names.Congruence₂(map)
+  p {f} {g} fg {∅}       {∅}       xy = reflexivity(_≡_)
+  p {f} {g} fg {x₁ ⊰ l₁} {x₂ ⊰ l₂} xy = congruence₂(_⊰_) ba rec where
+    ba : f(x₁) ≡ g(x₂)
+    ba =
+      f(x₁) 🝖[ _≡_ ]-[ Fn._⊜_.proof fg {x₁} ]
+      g(x₁) 🝖[ _≡_ ]-[ congruence₁(g) ([⊰]-general-cancellationₗ xy) ]
+      g(x₂) 🝖-end
+    rec : map f(l₁) ≡ map g(l₂)
+    rec =
+      map f(l₁) 🝖[ _≡_ ]-[ p fg ([⊰]-general-cancellationᵣ xy) ]
+      map g(l₂) 🝖-end

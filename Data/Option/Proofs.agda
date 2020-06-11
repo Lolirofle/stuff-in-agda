@@ -3,12 +3,12 @@ module Data.Option.Proofs where
 import      Lvl
 open import Data
 open import Data.Option
+open import Data.Option.Functions
 open import Data.Either
-open import Data.Either.Proofs
 open import Functional
 open import Structure.Setoid using (Equiv)
 open import Structure.Function.Domain
-open import Structure.Function using (Function)
+open import Structure.Function
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties
@@ -23,8 +23,9 @@ module _ where
   open import Relator.Equals
   open import Relator.Equals.Proofs.Equiv
 
-  Some-injectivity : Injective {B = Option(T)} (Some)
-  Some-injectivity = Right-injectivity
+  instance
+    Some-injectivity : Injective {B = Option(T)} (Some)
+    Injective.proof Some-injectivity [≡]-intro = [≡]-intro
 
 module _ where
   open Structure.Setoid
@@ -62,92 +63,49 @@ module _ where
     andThen-associativity {Some x} = reflexivity(_≡_)
 
 module _ where
-  open import Data.Either.Equiv
-  open import Data.Proofs
   open import Function.Equals
-  open import Relator.Equals
 
-  module _ ⦃ equiv-B : Equiv(B) ⦄ where
-    map-function-equiv : Function(map {T₁ = A}{T₂ = B})
-    Dependent._⊜_.proof (Function.congruence map-function-equiv (Dependent.intro p)) {None}   = Left [≡]-intro
-    Dependent._⊜_.proof (Function.congruence map-function-equiv (Dependent.intro p)) {Some x} = Right p
+  module _ ⦃ equiv-B : Equiv(B) ⦄ ⦃ equiv-option-B : Equiv(Option B) ⦄ ⦃ some-func : Function(Some) ⦄  where
+    map-function : Function(map {T₁ = A}{T₂ = B})
+    Dependent._⊜_.proof (Function.congruence map-function (Dependent.intro p)) {None}   = reflexivity _
+    Dependent._⊜_.proof (Function.congruence map-function (Dependent.intro p)) {Some x} = congruence₁(Some) p
 
-module _ where
-  open import Function.Equals
-  open import Relator.Equals
-  open import Relator.Equals.Proofs.Equiv
+  module _ ⦃ equiv-option-B : Equiv(Option B) ⦄ where
+    andThen-function : Function(Functional.swap(_andThen_ {T₁ = A}{T₂ = B}))
+    Dependent._⊜_.proof (Function.congruence andThen-function {f} {g} _)                   {None}   = reflexivity _
+    Dependent._⊜_.proof (Function.congruence andThen-function {f} {g} (Dependent.intro p)) {Some x} = p{x}
 
-  map-function-eq : Function ⦃ [⊜]-equiv ⦄ ⦃ [⊜]-equiv ⦃ [≡]-equiv ⦄ ⦄ (map {T₁ = A}{T₂ = B})
-  Dependent._⊜_.proof (Function.congruence map-function-eq (Dependent.intro p)) {None}   = [≡]-intro
-  Dependent._⊜_.proof (Function.congruence map-function-eq (Dependent.intro p)) {Some x} = [≡]-with(Some) p
-
-  andThen-function-eq : Function ⦃ [⊜]-equiv ⦄ ⦃ [⊜]-equiv ⦃ [≡]-equiv ⦄ ⦄ (Functional.swap(_andThen_ {T₁ = A}{T₂ = B}))
-  Dependent._⊜_.proof (Function.congruence andThen-function-eq {f} {g} _)                   {None}   = [≡]-intro
-  Dependent._⊜_.proof (Function.congruence andThen-function-eq {f} {g} (Dependent.intro p)) {Some x} = p{x}
-
-{-
 module _
-  ⦃ _ : ∀{T : Type{ℓ}} → Equiv(T) ⦄
-  ⦃ _ : ∀{T : Type{ℓ}} → Equiv(Option(T)) ⦄
-  ⦃ _ : Function(Some) ⦄
-  {_▫_ : ∀{T₁ T₂ T₃ : Type{ℓ}} → T₁ → T₂ → T₃}
+  ⦃ equiv-T     : Equiv(T) ⦄
+  ⦃ equiv-opt-T : Equiv(Option(T)) ⦄
+  ⦃ some-func   : Function(Some) ⦄
+  {_▫_ : T → T → T}
   where
 
-  open        Structure.Setoid
-  open import Structure.Category
-  open import Structure.Category.Properties
-
-{-
-  module _ (assoc : Names.Associativity(_▫_)) where
-    or-combine-associativity-raw : Names.Associativity(or-combine(_▫_))
-    or-combine-associativity-raw {None}   {None}   {None}   = reflexivity(_≡_)
-    or-combine-associativity-raw {None}   {None}   {Some _} = reflexivity(_≡_)
-    or-combine-associativity-raw {None}   {Some _} {None}   = reflexivity(_≡_)
-    or-combine-associativity-raw {None}   {Some _} {Some _} = reflexivity(_≡_)
-    or-combine-associativity-raw {Some _} {None}   {None}   = reflexivity(_≡_)
-    or-combine-associativity-raw {Some _} {None}   {Some _} = reflexivity(_≡_)
-    or-combine-associativity-raw {Some _} {Some _} {None}   = reflexivity(_≡_)
-    or-combine-associativity-raw {Some _} {Some _} {Some _} = congruence₁(Some) assoc
+  open Structure.Setoid
 
   instance
-    or-combine-associativity : ⦃ _ : Associativity(_▫_) ⦄ → Associativity(or-combine(_▫_))
-    or-combine-associativity = intro(or-combine-associativity-raw(associativity(_▫_)))
--}
+    and-combine-associativity : ⦃ _ : Associativity(_▫_) ⦄ → Associativity(and-combine(_▫_))
+    and-combine-associativity = intro p where
+      p : Names.Associativity(and-combine(_▫_))
+      p {None}   {None}   {None}   = reflexivity(_≡_)
+      p {None}   {None}   {Some _} = reflexivity(_≡_)
+      p {None}   {Some _} {None}   = reflexivity(_≡_)
+      p {None}   {Some _} {Some _} = reflexivity(_≡_)
+      p {Some _} {None}   {None}   = reflexivity(_≡_)
+      p {Some _} {None}   {Some _} = reflexivity(_≡_)
+      p {Some _} {Some _} {None}   = reflexivity(_≡_)
+      p {Some _} {Some _} {Some _} = congruence₁(Some) (associativity(_▫_))
 
-  module _ ⦃ assoc : Morphism.Associativity{Obj = Type{ℓ}}(_▫_) ⦄ where
-    instance
-      and-combine-associativity : Morphism.Associativity{Obj = Type{ℓ}} (and-combine(_▫_))
-      {-Morphism.Associativity.proof and-combine-associativity {_}{_}{_}{_} {Left x} {Left x₁} {Left x₂} = reflexivity(_≡_)
-      Morphism.Associativity.proof and-combine-associativity {_}{_}{_}{_} {Left x} {Left x₁} {Some x₂} = reflexivity(_≡_)
-      Morphism.Associativity.proof and-combine-associativity {_}{_}{_}{_} {Left x} {Some x₁} {Left x₂} = reflexivity(_≡_)
-      Morphism.Associativity.proof and-combine-associativity {_}{_}{_}{_} {Left x} {Some x₁} {Some x₂} = reflexivity(_≡_)
-      Morphism.Associativity.proof and-combine-associativity {_}{_}{_}{_} {Some x} {Left x₁} {Left x₂} = reflexivity(_≡_)
-      Morphism.Associativity.proof and-combine-associativity {_}{_}{_}{_} {Some x} {Left x₁} {Some x₂} = reflexivity(_≡_)
-      Morphism.Associativity.proof and-combine-associativity {_}{_}{_}{_} {Some x} {Some x₁} {Left x₂} = reflexivity(_≡_)
-      Morphism.Associativity.proof and-combine-associativity {X}{Y}{Z}{W} {Some x} {Some x₁} {Some x₂} = {!!} -- congruence₁(Some) (Morphism.associativity(_▫_) {x = X}{y = Y}{z = Z}{w = W})
--}
-  module _ {id : T} where
-    module _ ⦃ identₗ : Morphism.Identityₗ{Obj = Type{ℓ}}(_▫_)(id) ⦄ where
-      instance
-        and-combine-identityₗ : Morphism.Identityₗ{Obj = Type{ℓ}} (and-combine(_▫_))(Some id)
-        Morphism.Identityₗ.proof and-combine-identityₗ {_}{_} {None}   = reflexivity(_≡_)
-        Morphism.Identityₗ.proof and-combine-identityₗ {X}{Y} {Some x} = congruence₁(Some) (Morphism.identityₗ(_▫_)(id) {x = X}{y = Y})
-
-    module _ ⦃ identᵣ : Morphism.Identityᵣ{Obj = Type{ℓ}}(_▫_)(id) ⦄ where
-      instance
-        and-combine-identityᵣ : Morphism.Identityᵣ{Obj = Type{ℓ}}(and-combine(_▫_))(Some id)
-        Morphism.Identityᵣ.proof and-combine-identityᵣ {_}{_} {None}   = reflexivity(_≡_)
-        Morphism.Identityᵣ.proof and-combine-identityᵣ {X}{Y} {Some x} = congruence₁(Some) (Morphism.identityᵣ(_▫_)(id) {x = X}{y = Y})
-
-  module _
-    ⦃ morphism-equiv : ∀{x y} → Equiv(x →ᶠ y) ⦄
-    ⦃ cat : Category{Obj = Type{ℓ}}(_→ᶠ_) ⦄
-    where
-
-    and-combine-category : Category{Obj = Type{ℓ}}(_) -- ((_→ᶠ_) on₂ Option)
-    Category._∘_ and-combine-category = {!and-combine!}
-    Category.id and-combine-category = {!Some(Category.id (cat))!}
-    Category.binaryOperator and-combine-category = {!!}
-    Category.associativity and-combine-category = {!!}
-    Category.identity and-combine-category = {!!}
--}
+  module _ where --instance
+    or-combine-associativity : ∀{f} ⦃ idemp-f : Idempotent(f) ⦄ (_ : ∀{x y} → (f(x) ▫ y ≡ f(x ▫ y))) (_ : ∀{x y} → (x ▫ f(y) ≡ f(x ▫ y))) → ⦃ _ : Associativity(_▫_) ⦄ → Associativity(or-combine(_▫_) f f) -- TODO: What are the unnamed properties here in the assumptions called? Also, the constant function of an absorber have all these properties. The identity function also have it.
+    or-combine-associativity {f = f} compatₗ compatᵣ = intro p where
+      p : Names.Associativity(or-combine(_▫_) f f)
+      p {None}   {None}   {None}   = reflexivity(_≡_)
+      p {None}   {None}   {Some z} = congruence₁(Some) (symmetry(_≡_) (idempotent(f)))
+      p {None}   {Some y} {None}   = reflexivity(_≡_)
+      p {None}   {Some y} {Some z} = congruence₁(Some) compatₗ
+      p {Some x} {None}   {None}   = congruence₁(Some) (idempotent(f))
+      p {Some x} {None}   {Some z} = congruence₁(Some) (transitivity(_≡_) compatₗ (symmetry(_≡_) compatᵣ))
+      p {Some x} {Some y} {None}   = congruence₁(Some) (symmetry(_≡_) compatᵣ)
+      p {Some x} {Some y} {Some z} = congruence₁(Some) (associativity(_▫_))

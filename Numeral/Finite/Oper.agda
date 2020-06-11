@@ -15,12 +15,15 @@ open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
 
+-- Predecessor bounded at the minimum (0) for both the value and the maximum.
+-- Example: (𝐏₀(5): 𝕟(8)) = (4: 𝕟(7))
 𝐏₀ : ∀{n} → 𝕟(𝐒(𝐒(n))) → 𝕟(𝐒(n))
 𝐏₀(𝟎)    = 𝟎
 𝐏₀(𝐒(n)) = n
 
+-- Predecessor bounded at the minimum (0) for the value only.
+-- Example: (𝐏₀(5): 𝕟(8)) = (4: 𝕟(8))
 𝐏₀keep : ∀{n} → 𝕟(n) → 𝕟(n)
-𝐏₀keep {ℕ.𝟎}    ()
 𝐏₀keep {ℕ.𝐒(b)} (𝟎)       = 𝟎
 𝐏₀keep {ℕ.𝐒(b)} (𝐒(𝟎))    = 𝟎
 𝐏₀keep {ℕ.𝐒(b)} (𝐒(𝐒(n))) = 𝐒(𝐏₀keep {b} (𝐒(n)))
@@ -54,12 +57,12 @@ open import Relator.Equals.Proofs
 -- 𝐒(a) −small 𝟎    = 𝐒(a −small 𝟎)
 -- 𝐒(a) −small 𝐒(b) = a −small b
 
+-- Addition for both the value and the maximum.
+-- Example: (5: 𝕟(8)) + (4: 𝕟(6)) = ((5+4): 𝕟(8+6)) = (9: 𝕟(14))
 _+_ : ∀{b₁ b₂} → 𝕟(b₁) → 𝕟(b₂) → 𝕟(b₁ ℕ.+ b₂)
-_+_ {𝟎} {_}        ()
-_+_ {_} {𝟎}        (_) ()
-_+_ {𝐒(b₁)}{𝐒(b₂)} 𝟎       𝟎      = 𝟎
-_+_ {𝐒(b₁)}{𝐒(b₂)} (𝐒(a))  𝟎      = 𝐒(a + 𝟎{b₂})
-_+_ {𝐒(b₁)}{𝐒(b₂)} a       (𝐒(b)) = 𝐒(a + b)
+_+_ {𝐒(b₁)}{𝐒(b₂)} 𝟎      𝟎      = 𝟎
+_+_ {𝐒(b₁)}{𝐒(b₂)} 𝟎      (𝐒(b)) = 𝐒(𝟎{b₁} + b)
+_+_ {𝐒(b₁)}{𝐒(b₂)} (𝐒(a)) b      = 𝐒(a + b)
 
 -- Example: shrink-subtract(5) (7 : 𝕟(6 + 5)) = (2 : 𝕟(6))
 shrink-subtractₗ : ∀{b₁} → (b₂ : ℕ) → 𝕟(𝐒(b₁) ℕ.+ b₂) → 𝕟(𝐒(b₁))

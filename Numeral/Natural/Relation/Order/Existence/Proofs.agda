@@ -80,7 +80,7 @@ instance
 
 instance
   [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
-  Antisymmetry.proof [≤]-antisymmetry {a} {b} ([∃]-intro(n₁) ⦃ a+n₁≡b ⦄) ([∃]-intro(n₂) ⦃ b+n₂≡a ⦄) = [≡]-elimᵣ (n₁≡0) {n ↦ (a + n ≡ b)} (a+n₁≡b) where
+  Antisymmetry.proof [≤]-antisymmetry {a} {b} ([∃]-intro(n₁) ⦃ a+n₁≡b ⦄) ([∃]-intro(n₂) ⦃ b+n₂≡a ⦄) = [≡]-substitutionᵣ (n₁≡0) {n ↦ (a + n ≡ b)} (a+n₁≡b) where
     n₁+n₂≡0 : ((n₁ + n₂) ≡ 0)
     n₁+n₂≡0 =
       [+]ᵣ-injectivity-raw(

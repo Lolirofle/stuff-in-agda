@@ -14,6 +14,7 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
+open import Structure.Container.SetLike as SetLike using (SetLike)
 open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₑ_)
 open import Structure.Function.Domain
 open import Structure.Function
@@ -27,7 +28,7 @@ open import Type
 open import Type.Size
 
 private variable ℓ ℓₒ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
-private variable T A B : Type{ℓ}
+private variable T A A₁ A₂ B : Type{ℓ}
 
 -- A set of objects of a certain type where equality is based on setoids.
 -- This is defined by the containment predicate (_∋_) and a proof that it respects the setoid structure.
@@ -128,6 +129,10 @@ preserve-equiv (unmap f x) = [∘]-unaryRelator
 map : ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ → (f : A → B) → PredSet{ℓ}(A) → PredSet(B)
 map f(S) ∋ y = ∃(x ↦ (x ∈ S) ∧ (f(x) ≡ₑ y))
 preserve-equiv (map f S) = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-Q = binary-unaryRelatorₗ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄ ⦄
+
+map₂ : ⦃ _ : Equiv{ℓₑ₁}(A₁) ⦄ ⦃ _ : Equiv{ℓₑ₂}(A₂) ⦄ ⦃ _ : Equiv{ℓₑ₃}(B) ⦄ → (_▫_ : A₁ → A₂ → B) → PredSet{ℓ₁}(A₁) → PredSet{ℓ₂}(A₂) → PredSet(B)
+map₂(_▫_) S₁ S₂ ∋ y = ∃{Obj = _ ⨯ _}(\{(x₁ , x₂) → (x₁ ∈ S₁) ∧ (x₂ ∈ S₂) ∧ ((x₁ ▫ x₂) ≡ₑ y)})
+preserve-equiv (map₂ (_▫_) S₁ S₂) = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦄ ⦃ rel-Q = binary-unaryRelatorₗ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄ ⦄
 
 -- Set-set relations.
 module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
@@ -234,3 +239,65 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   instance
     singleton-function : ∀{A : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(A) ⦄ → Function{A = A}(•_)
     _≡_.proof (Function.congruence singleton-function {x} {y} xy) {a} = [↔]-intro (_🝖 symmetry(_≡ₑ_) xy) (_🝖 xy)
+
+module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  instance
+    PredSet-setLike : SetLike{C = PredSet{ℓ}(T) ⦃ equiv ⦄} (_∈_)
+    SetLike._⊆_ PredSet-setLike = _⊆_
+    SetLike._≡_ PredSet-setLike = _≡_
+    SetLike.[⊆]-membership PredSet-setLike = [↔]-intro intro _⊆_.proof
+    SetLike.[≡]-membership PredSet-setLike = [↔]-intro intro _≡_.proof
+
+  instance
+    PredSet-emptySet : SetLike.EmptySet{C = PredSet{ℓ}(T) ⦃ equiv ⦄} (_∈_)
+    SetLike.EmptySet.∅          PredSet-emptySet = ∅
+    SetLike.EmptySet.membership PredSet-emptySet ()
+
+  instance
+    PredSet-universalSet : SetLike.UniversalSet{C = PredSet{ℓ}(T) ⦃ equiv ⦄} (_∈_)
+    SetLike.UniversalSet.𝐔          PredSet-universalSet = 𝐔
+    SetLike.UniversalSet.membership PredSet-universalSet = record {}
+
+  instance
+    PredSet-unionOperator : SetLike.UnionOperator{C = PredSet{ℓ}(T) ⦃ equiv ⦄} (_∈_)
+    SetLike.UnionOperator._∪_        PredSet-unionOperator = _∪_
+    SetLike.UnionOperator.membership PredSet-unionOperator = [↔]-intro id id
+
+  instance
+    PredSet-intersectionOperator : SetLike.IntersectionOperator{C = PredSet{ℓ}(T) ⦃ equiv ⦄} (_∈_)
+    SetLike.IntersectionOperator._∩_        PredSet-intersectionOperator = _∩_
+    SetLike.IntersectionOperator.membership PredSet-intersectionOperator = [↔]-intro id id
+
+  instance
+    PredSet-complementOperator : SetLike.ComplementOperator{C = PredSet{ℓ}(T) ⦃ equiv ⦄} (_∈_)
+    SetLike.ComplementOperator.∁          PredSet-complementOperator = ∁_
+    SetLike.ComplementOperator.membership PredSet-complementOperator = [↔]-intro id id
+
+module _ {T : Type{ℓ}} ⦃ equiv : Equiv{ℓ}(T) ⦄ where -- TODO: Levels in SetLike
+  instance
+    PredSet-mapFunction : SetLike.MapFunction{C₁ = PredSet{ℓ}(T) ⦃ equiv ⦄}{C₂ = PredSet{ℓ}(T) ⦃ equiv ⦄} (_∈_)(_∈_)
+    SetLike.MapFunction.map        PredSet-mapFunction f = map f
+    SetLike.MapFunction.membership PredSet-mapFunction   = [↔]-intro id id
+
+  instance
+    PredSet-unmapFunction : SetLike.UnmapFunction{C₁ = PredSet{ℓ}(T) ⦃ equiv ⦄}{C₂ = PredSet{ℓ}(T) ⦃ equiv ⦄} (_∈_)(_∈_)
+    SetLike.UnmapFunction.unmap      PredSet-unmapFunction = unmap
+    SetLike.UnmapFunction.membership PredSet-unmapFunction = [↔]-intro id id
+
+  instance
+    PredSet-unapplyFunction : SetLike.UnapplyFunction{C = PredSet{ℓ}(T) ⦃ equiv ⦄} (_∈_) {O = T}
+    SetLike.UnapplyFunction.unapply    PredSet-unapplyFunction = unapply
+    SetLike.UnapplyFunction.membership PredSet-unapplyFunction = [↔]-intro id id
+
+  instance
+    PredSet-filterFunction : SetLike.FilterFunction{C = PredSet{ℓ}(T) ⦃ equiv ⦄} (_∈_) {ℓ}{ℓ}
+    SetLike.FilterFunction.filter     PredSet-filterFunction = filter
+    SetLike.FilterFunction.membership PredSet-filterFunction = [↔]-intro id id
+
+{- TODO: SetLike is not general enough
+module _ {T : Type{ℓ}} ⦃ equiv : Equiv{ℓ}(T) ⦄ where
+  instance
+    -- PredSet-bigUnionOperator : SetLike.BigUnionOperator{Cₒ = PredSet(PredSet(T) ⦃ {!!} ⦄) ⦃ {!!} ⦄} {Cᵢ = PredSet(T) ⦃ {!!} ⦄} (_∈_)(_∈_)
+    SetLike.BigUnionOperator.⋃          PredSet-bigUnionOperator = {!⋃!}
+    SetLike.BigUnionOperator.membership PredSet-bigUnionOperator = {!!}
+-}

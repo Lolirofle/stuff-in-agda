@@ -10,7 +10,7 @@ open import Relator.Equals.Proofs.Equiv
 open import Structure.Category
 open import Structure.Category.Properties
 open import Type
-open import Type.Unit
+open import Type.Properties.Singleton
 
 -- The set category but the equality on the morphisms/functions is pointwise/extensional.
 typeExtensionalFnCategory : Category{Obj = Type{ℓ}}(_→ᶠ_) ⦃ [⊜]-equiv ⦃ [≡]-equiv ⦄ ⦄

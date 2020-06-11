@@ -19,7 +19,7 @@ import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
 open import Structure.Setoid.WithLvl
 open import Syntax.Function
-open import Type.Unit
+open import Type.Properties.Singleton
 open import Type
 
 module _
@@ -52,6 +52,7 @@ module _
   -- • The relator is reflexive.
   -- • The reflexivity proof inside the transitivity proof does not result in a new proof.
   -- • Chains of the transitivity proofs can be applied in any order and the resulting proof will be the same.
+  -- See `Relator.Equals.Category` for an example of this kind of binary relation.
   --
   -- A more concrete interpretation of the binary relation one is that a category describes a graph.
   -- Vertices are objects and morphisms are paths between the vertices.

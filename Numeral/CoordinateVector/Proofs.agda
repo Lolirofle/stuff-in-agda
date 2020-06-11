@@ -2,9 +2,10 @@ module Numeral.CoordinateVector.Proofs where
 
 import      Lvl
 open import Data.Boolean
-open import Functional
+import      Functional as Fn
 open import Function.Equals
 open import Function.Names
+open import Logic.Predicate
 open import Logic.Propositional
 open import Numeral.CoordinateVector
 open import Numeral.Finite
@@ -12,53 +13,73 @@ open import Numeral.Finite.Bound
 open import Numeral.Finite.Oper
 open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Natural
-open import Structure.Setoid
--- open import Structure.Function.Domain
+open import Structure.Setoid.WithLvl
+open import Structure.Operator.Group
 open import Structure.Function.Multi
-open import Structure.Operator.Names -- Properties
+open import Structure.Function
+open import Structure.Operator.Monoid
+open import Structure.Operator.Properties
+open import Structure.Operator
 open import Structure.Relator.Properties
 open import Type
 
-module _ {ℓ} {T : Type{ℓ}} ⦃ _ : Equiv(T) ⦄ where
-  transfer-elem : ∀{n} → T → Vector(n)(T)
-  transfer-elem {n}(x) = fill(x)
-
-  transfer-fn : ∀{n} → (T → T) → (Vector(n)(T) → Vector(n)(T))
-  transfer-fn{n}(f) = map(f){n}
-
-  transfer-op : ∀{n} → (T → T → T) → (Vector(n)(T) → Vector(n)(T) → Vector(n)(T))
-  transfer-op {n}(_▫_) = map₂(_▫_)
-
+module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
   private variable _▫_ : T → T → T
+  private variable inv : T → T
+  private variable id : T
+  private variable n : ℕ
 
-  transfer-identityₗ : ∀{id} → Identityₗ(_▫_)(id) → ∀{n} → Identityₗ(transfer-op{n}(_▫_))(transfer-elem{n}(id))
-  transfer-identityₗ {id} (identity) = intro(identity)
+  instance
+    map₂-fill-identityₗ : ⦃ ident : Identityₗ(_▫_)(id) ⦄ → Identityₗ(map₂{d = n}(_▫_))(fill{d = n}(id))
+    map₂-fill-identityₗ = intro(intro(identityₗ _ _))
 
-  transfer-identityᵣ : ∀{id} → Identityᵣ(_▫_)(id) → ∀{n} → Identityᵣ(transfer-op{n}(_▫_))(transfer-elem{n}(id))
-  transfer-identityᵣ {id} (identity) = intro(identity)
+  instance
+    map₂-fill-identityᵣ : ⦃ ident : Identityᵣ(_▫_)(id) ⦄ → Identityᵣ(map₂{d = n}(_▫_))(fill{d = n}(id))
+    map₂-fill-identityᵣ = intro(intro(identityᵣ _ _))
 
-  transfer-identity : ∀{id} → Identity(_▫_)(id) → ∀{n} → Identity(transfer-op{n}(_▫_))(transfer-elem{n}(id))
-  transfer-identity {id} ([∧]-intro identityₗ identityᵣ) = [∧]-intro (intro(identityₗ)) (intro(identityᵣ))
+  instance
+    map₂-fill-identity : ⦃ ident : Identity(_▫_)(id) ⦄ → Identity(map₂{d = n}(_▫_))(fill{d = n}(id))
+    map₂-fill-identity = intro ⦃ _ ⦄ ⦃ map₂-fill-identityₗ ⦄ ⦃ map₂-fill-identityᵣ ⦄
 
-  transfer-inverseₗ : ∀{id}{inv} → InverseFunctionₗ(_▫_)(id)(inv) → ∀{n} → InverseFunctionₗ(transfer-op{n}(_▫_))(transfer-elem{n}(id))(transfer-fn{n}(inv))
-  transfer-inverseₗ {id}{inv} (inverse) {n} = intro(inverse)
+  instance
+    map₂-map-inverseₗ : ⦃ ident : Identityₗ(_▫_)(id) ⦄ ⦃ inver : InverseFunctionₗ(_▫_) ⦃ [∃]-intro _ ⦄ (inv) ⦄ → InverseFunctionₗ(map₂{d = n}(_▫_)) ⦃ [∃]-intro _ ⦄ (map(inv))
+    map₂-map-inverseₗ = intro(intro(inverseFunctionₗ _ ⦃ [∃]-intro _ ⦄ _))
 
-  transfer-inverseᵣ : ∀{id}{inv} → InverseFunctionᵣ(_▫_)(id)(inv) → ∀{n} → InverseFunctionᵣ(transfer-op{n}(_▫_))(transfer-elem{n}(id))(transfer-fn{n}(inv))
-  transfer-inverseᵣ {id}{inv} (inverse) {n} = intro(inverse)
+  instance
+    map₂-map-inverseᵣ : ⦃ ident : Identityᵣ(_▫_)(id) ⦄ ⦃ inver : InverseFunctionᵣ(_▫_) ⦃ [∃]-intro _ ⦄ (inv) ⦄ → InverseFunctionᵣ(map₂{d = n}(_▫_)) ⦃ [∃]-intro _ ⦄ (map(inv))
+    map₂-map-inverseᵣ = intro(intro(inverseFunctionᵣ _ ⦃ [∃]-intro _ ⦄ _))
 
-  transfer-inverse : ∀{id}{inv} → InverseFunction(_▫_)(id)(inv) → ∀{n} → InverseFunction(transfer-op{n}(_▫_))(transfer-elem{n}(id))(transfer-fn{n}(inv))
-  transfer-inverse {id}{inv} ([∧]-intro inverseₗ inverseᵣ) {n} = [∧]-intro (intro(inverseₗ)) (intro(inverseᵣ))
+  instance
+    map₂-map-inverse : ⦃ ident : Identity(_▫_)(id) ⦄ ⦃ inver : InverseFunction(_▫_) ⦃ [∃]-intro _ ⦄ (inv) ⦄ → InverseFunction(map₂{d = n}(_▫_)) ⦃ [∃]-intro _ ⦄ (map(inv))
+    map₂-map-inverse = intro ⦃ _ ⦄ ⦃ _ ⦄ ⦃ map₂-map-inverseₗ ⦄ ⦃ map₂-map-inverseᵣ ⦄
 
-  transfer-associativity : Associativity(_▫_) → ∀{n} → Associativity(transfer-op{n}(_▫_))
-  transfer-associativity (associativity) {n} = intro(associativity)
+  instance
+    map₂-associativity : ⦃ assoc : Associativity(_▫_) ⦄ → Associativity(map₂{d = n}(_▫_))
+    map₂-associativity = intro(intro(associativity _))
 
-  transfer-preserves : ∀{n} → Names.Preserving₂(transfer-elem{n}) (_▫_) (transfer-op{n}(_▫_))
-  _⊜_.proof (transfer-preserves {n = n} {x} {y}) {i} = reflexivity(_≡_)
-  -- ∀{x y} → (fill(x ▫ y) ≡ fill(x) ⦗ map₂ (_▫_) {n} ⦘ fill(y))
+  instance
+    map₂-preserves : Preserving₂(fill) (_▫_) (map₂{d = n}(_▫_))
+    map₂-preserves = intro(intro(reflexivity(_≡_)))
 
-  -- transfer-opposite-elem : ∀{n} → 𝕟(n) → Vector(n)(T) → T
-  -- transfer-opposite-elem {n}(i)(x) = Vector.proj(n)(i)
+  instance
+    map-function : ⦃ func : Function(inv) ⦄ → Function(map{d = n}(inv))
+    Function.congruence map-function (intro p) = intro (congruence₁ _ p)
 
-  -- transfer-opposite-preserves : ∀{n}{i} → Preserving2(transfer-opposite-elem{n}(i)) (transfer-op{n}(_▫_)) (_▫_)
+  instance
+    map₂-binaryOperator : ⦃ oper : BinaryOperator(_▫_) ⦄ → BinaryOperator(map₂{d = n}(_▫_))
+    BinaryOperator.congruence map₂-binaryOperator (intro p) (intro q) = intro (congruence₂ _ p q)
 
-  -- record PositionVector :  where
+  -- map₂ite-elem :{d = n} ∀ → 𝕟(n) → Vector(n)(T) → T
+  -- map₂ite{d = n}-elem (i)(x) = Vector.proj(n)(i)
+
+  -- map₂ite-preserves :{d = n} ∀{i} → Preserving2(map₂ite{d = n}-elem(i)) (map₂(_▫_)) (_▫_)
+
+  instance
+    map₂-monoid : ⦃ monoid : Monoid(_▫_) ⦄ → Monoid(map₂{d = n}(_▫_))
+    Monoid.identity-existence map₂-monoid = [∃]-intro _
+
+  instance
+    map₂-group : ⦃ group : Group(_▫_) ⦄ → Group(map₂{d = n}(_▫_))
+    Group.monoid map₂-group = map₂-monoid
+    Group.inverse-existence map₂-group = [∃]-intro _
+

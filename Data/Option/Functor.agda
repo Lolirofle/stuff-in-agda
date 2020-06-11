@@ -4,6 +4,7 @@ import Lvl
 import      Functional as Fn
 open import Function.Equals
 open import Data.Option
+open import Data.Option.Functions
 open import Data.Option.Proofs
 open import Lang.Instance
 open import Logic
@@ -26,7 +27,7 @@ private variable T : Type{ℓ}
 instance
   map-functor : Functor{ℓ}(Option)
   Functor.map           ⦃ map-functor ⦄ = map
-  Functor.map-function  ⦃ map-functor ⦄ = map-function-eq
+  Functor.map-function  ⦃ map-functor ⦄ = map-function
   Functor.op-preserving ⦃ map-functor ⦄ = map-preserves-[∘]
   Functor.id-preserving ⦃ map-functor ⦄ = map-preserves-id
 
@@ -35,7 +36,7 @@ instance
   andThen-monad : Monad{ℓ}(Option)
   Monad.η            ⦃ andThen-monad ⦄ _ = Some
   Monad.ext          ⦃ andThen-monad ⦄   = Fn.swap _andThen_
-  Monad.ext-function ⦃ andThen-monad ⦄ = andThen-function-eq
+  Monad.ext-function ⦃ andThen-monad ⦄ = andThen-function
   Monad.ext-inverse  ⦃ andThen-monad ⦄ = andThenᵣ-Some
   Dependent._⊜_.proof (Monad.ext-identity   ⦃ andThen-monad ⦄) = [≡]-intro
   Dependent._⊜_.proof (Monad.ext-distribute ⦃ andThen-monad ⦄ {f = f} {g}) {x} = andThen-associativity {f = g}{g = f}{o = x}

@@ -1,7 +1,6 @@
 module Type.Cubical where
 
 import      Agda.Primitive.Cubical
-open import Logic
 open import Type
 
 open Agda.Primitive.Cubical public
@@ -24,7 +23,7 @@ module Interval where
       itIsOne to 𝟏-is-𝟏 ; -- _ : Is-𝟏(𝟏). Proof of 𝟏 being 𝟏.
       primComp to comp ;
       primHComp to hComp ; -- _ : ∀{ℓ}{A : Type{ℓ}}{i : Interval} → (Interval → Partial(i)(A)) → A → A
-      primTransp to transp -- _ : ∀{ℓ}(A : Interval → Type{ℓ}) → Interval → A(𝟎)→ A(𝟏)
+      primTransp to transp -- _ : ∀{ℓ}(A : Interval → Type{ℓ}) → Interval → A(𝟎)→ A(𝟏). 
     )
 
   -- Proof of maximum of 𝟏 being 𝟏.
@@ -36,7 +35,7 @@ module Interval where
   maxᵣ-is-𝟏 {x}{y} = Agda.Primitive.Cubical.IsOne2 x y
 
   -- The predicate stating that a point is 𝟎.
-  Is-𝟎 : Interval → Stmtω
+  Is-𝟎 : Interval → Typeω
   Is-𝟎 i = Is-𝟏(flip i)
 
   -- Proof of 𝟎 being 𝟎.

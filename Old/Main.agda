@@ -192,16 +192,16 @@ import Type
 import Type.Cardinality
 import Type.Cardinality.Proofs
 import Type.Dependent
-import Type.Empty
-import Type.Empty.Proofs
+import Type.Properties.Empty
+import Type.Properties.Empty.Proofs
 import Type.Functions
 import Type.Functions.Inverse
 import Type.Functions.Inverse.Proofs
 import Type.Functions.Proofs
 import Type.Singleton
 import Type.Singleton.Proofs
-import Type.Unit
-import Type.Unit.Proofs
+import Type.Properties.Singleton
+import Type.Properties.Singleton.Proofs
 import Type.Univalence
 
 main : FFI.IO Data.Unit

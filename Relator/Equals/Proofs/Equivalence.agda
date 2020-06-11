@@ -2,6 +2,7 @@ module Relator.Equals.Proofs.Equivalence where
 
 import      Lvl
 open import Lang.Instance
+open import Logic.Propositional
 open import Logic
 open import Relator.Equals
 open import Structure.Setoid.WithLvl using (Equiv) renaming (_≡_ to _≡ₛ_)
@@ -59,6 +60,9 @@ module One {ℓ} {T : Type{ℓ}} where
   -- Replaces occurrences of an element in a function
   [≡]-substitutionₗ : ∀{ℓ₂}{x y} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → f(y) → f(x)
   [≡]-substitutionₗ [≡]-intro p = p
+
+  [≡]-substitution : ∀{ℓ₂}{x y} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → (f(x) ↔ f(y))
+  [≡]-substitution eq = [↔]-intro ([≡]-substitutionₗ eq) ([≡]-substitutionᵣ eq)
 
   [≡]-unary-relator : ∀{ℓ₂}{P : T → Stmt{ℓ₂}} → UnaryRelator ⦃ [≡]-equiv ⦄ (P)
   UnaryRelator.substitution([≡]-unary-relator {P = P}) xy = [≡]-substitutionᵣ xy {P}

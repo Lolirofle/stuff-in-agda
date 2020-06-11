@@ -3,8 +3,10 @@
 -- Note: This module is not meant to be imported.
 module Main where
 
--- import Automaton.DeterministicFinite
--- import Automaton.NonDeterministicFinite
+-- import Automaton.Deterministic
+-- import Automaton.Deterministic.FormalLanguage
+-- import Automaton.Deterministic.Oper
+-- import Automaton.NonDeterministic
 -- import Automaton.Pushdown
 -- import Automaton.TuringMachine
 import Data
@@ -22,6 +24,7 @@ import Data.Either.Proofs
 import Data.List
 -- import Data.List.Combinatorics
 import Data.List.Computability
+import Data.List.Functions
 import Data.List.FunctionsProven
 import Data.List.Functor
 import Data.List.Proofs
@@ -47,6 +50,8 @@ import Data.Tuple.Function
 -- import Data.Tuple.List
 import Data.Tuple.Proofs
 import Data.Tuple.Raise
+import Data.Tuple.RaiseTypeᵣ
+import Data.Tuple.RaiseTypeᵣ.Functions
 import Data.Tuple.Raiseᵣ
 import Data.Tuple.Raiseᵣ.Functions
 import Data.Tuple.Raiseₗ
@@ -59,6 +64,8 @@ import FFI.IO as FFI
 -- import Formalization.ClassicalPropositionalLogic
 -- import Formalization.FunctionalML
 -- import Formalization.LambdaCalculus
+-- import Formalization.Monoid
+-- import Formalization.Polynomial
 import Formalization.PrimitiveRecursion
 import Formalization.SKICombinatorCalculus
 import Formalization.SimplyTypedLambdaCalculus
@@ -77,6 +84,8 @@ import Function.Iteration.Order
 import Function.Iteration.Proofs
 import Function.Multi
 import Function.Multi.Functions
+import Function.Multi₌
+import Function.Multi₌.Functions
 import Function.Names
 import Function.Proofs
 import Functional
@@ -91,25 +100,33 @@ import Graph.Walk.Functions
 import Graph.Walk.Functions.Proofs
 import Graph.Walk.Proofs
 import Graph.Walk.Properties
+import Lang.Function
 import Lang.Inspect
 import Lang.Instance
 import Lang.Irrelevance
+import Lang.Reflection
 import Lang.Size
 import Logic
 import Logic.Classical
 import Logic.Classical.DoubleNegated
 import Logic.Computability
 import Logic.Computability.Binary
+-- import Logic.Decidable
 import Logic.IntroInstances
 import Logic.Names
 import Logic.Predicate
+import Logic.Predicate.Equiv
 import Logic.Predicate.Theorems
 import Logic.Propositional
 import Logic.Propositional.Proofs.Structures
 import Logic.Propositional.Theorems
 import Lvl
 import Lvl.Functions
+import Lvl.MultiFunctions
+import Lvl.MultiFunctions.Proofs
 import Lvl.Proofs
+import MachineWord
+-- import Miscellaneous.TypeInTypeInconsistency
 import Numeral.CoordinateVector
 import Numeral.CoordinateVector.Proofs
 import Numeral.Finite
@@ -175,21 +192,32 @@ import Numeral.Sign.Oper
 import Numeral.Sign.Oper0
 import Operator.Equals
 import ReductionSystem
+import Relator.Category
 import Relator.Congruence
 import Relator.Congruence.Proofs
 import Relator.Converse
 import Relator.Equals
+import Relator.Equals.Category
 import Relator.Equals.Heterogenous
 import Relator.Equals.Names
 import Relator.Equals.Proofs
 import Relator.Equals.Proofs.Equiv
+import Relator.Equals.Proofs.Equivalence
 import Relator.Ordering
 import Relator.Ordering.Proofs
 import Relator.ReflexiveTransitiveClosure
 import Sets.BoolSet
 import Sets.ExtensionalPredicateSet
+import Sets.ImageSet
+import Sets.ImageSet.Oper
 import Sets.IterativeSet
+import Sets.IterativeSet.Oper
+import Sets.IterativeSet.Oper.Proofs
+import Sets.IterativeSet.Relator
+import Sets.IterativeSet.Relator.Proofs
+import Sets.IterativeUSet
 import Sets.PredicateSet
+import Sized.Data.List
 import Stream
 import String
 import Structure.Arithmetic
@@ -200,8 +228,10 @@ import Structure.Category.Dual
 -- import Structure.Category.Equiv
 import Structure.Category.Functor
 -- import Structure.Category.Functor.Category
+import Structure.Category.Functor.Contravariant
 import Structure.Category.Functor.Equiv
 import Structure.Category.Functor.Functors
+import Structure.Category.Functor.Functors.Proofs
 import Structure.Category.Functor.Proofs
 import Structure.Category.Monad
 -- import Structure.Category.Monad.Category
@@ -212,6 +242,7 @@ import Structure.Category.Morphism.IdTransport
 import Structure.Category.Morphism.Transport
 import Structure.Category.Names
 import Structure.Category.NaturalTransformation
+import Structure.Category.NaturalTransformation.Equiv
 import Structure.Category.NaturalTransformation.NaturalTransformations
 import Structure.Category.Proofs
 import Structure.Category.Properties
@@ -236,6 +267,7 @@ import Structure.Operator.Monoid.Category
 import Structure.Operator.Monoid.Proofs
 import Structure.Operator.Names
 import Structure.Operator.Proofs
+import Structure.Operator.Proofs.Util
 import Structure.Operator.Properties
 import Structure.Operator.SetAlgebra
 import Structure.Operator.Vector
@@ -258,6 +290,8 @@ import Structure.Relator.Proofs
 import Structure.Relator.Properties
 import Structure.Relator.Properties.Proofs
 import Structure.Setoid
+import Structure.Setoid.Category
+import Structure.Setoid.Category.HomFunctor
 import Structure.Setoid.Names
 import Structure.Setoid.Proofs
 import Structure.Setoid.Size
@@ -269,30 +303,38 @@ import Structure.Topology
 -- import Structure.Topology.Proofs
 -- import Structure.Topology.Properties
 import Structure.Type.Quotient
+import Syntax.Do
 import Syntax.Function
+import Syntax.Idiom
 import Syntax.Implication
+import Syntax.List
 import Syntax.Number
 import Syntax.Transitivity
 import Syntax.Type
+import TestProp
 import Type
 import Type.Category
+import Type.Category.ExtensionalFunctionsCategory
+import Type.Category.ExtensionalFunctionsCategory.HomFunctor
+import Type.Category.IntensionalFunctionsCategory
+-- import Type.Category.IntensionalFunctionsCategory.HomFunctor
 -- import Type.Cubical
 -- import Type.Cubical.Equality
 -- import Type.Cubical.Path
 -- import Type.Cubical.Path.Proofs
 import Type.Dependent
 import Type.Dependent.Functions
-import Type.Empty
-import Type.Empty.Proofs
-import Type.Homotopy
+import Type.Properties.Empty
+import Type.Properties.Empty.Proofs
+import Type.Properties.Homotopy
 import Type.Singleton
 import Type.Singleton.Proofs
 import Type.Size
 import Type.Size.Countable
 import Type.Size.Finite
 import Type.Size.Proofs
-import Type.Unit
-import Type.Unit.Proofs
+import Type.Properties.Singleton
+import Type.Properties.Singleton.Proofs
 import Type.WellOrdering
 
 main : FFI.IO Data.Unit

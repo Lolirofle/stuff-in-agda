@@ -139,7 +139,7 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
 
     r : Identityₗ(_▫_)(id) → Identityᵣ(_▫_)(id)
     Identityᵣ.proof (r identₗ) {x} = commutativity(_▫_) 🝖 identityₗ(_▫_)(id) ⦃ identₗ ⦄
-    
+
   -- Cancellation is possible when the operator is associative and have an inverse
   cancellationₗ-by-associativity-inverse : let _ = op , assoc , inverₗ in Cancellationₗ(_▫_)
   Cancellationₗ.proof(cancellationₗ-by-associativity-inverse {idₗ} {invₗ} ) {x}{a}{b} (xa≡xb) =
@@ -514,17 +514,17 @@ module Two {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} ⦃ equiv-A : 
   private variable ⦃ inverₗ₂ ⦄ : InverseFunctionₗ ⦃ equiv-B ⦄ (_▫₂_) ⦃ [∃]-intro(id₂) ⦃ identₗ₂ ⦄ ⦄ (inv₂)
   private variable ⦃ inverᵣ₂ ⦄ : InverseFunctionᵣ ⦃ equiv-B ⦄ (_▫₂_) ⦃ [∃]-intro(id₂) ⦃ identᵣ₂ ⦄ ⦄ (inv₂)
 
-  module _ {θ : A → B} ⦃ func : Function ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ (θ) ⦄ (preserv : Names.Preserving₂ ⦃ equiv-B ⦄ (θ)(_▫₁_)(_▫₂_)) where
+  module _ {θ : A → B} ⦃ func : Function ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ (θ) ⦄ ⦃ preserv : Preserving₂ ⦃ equiv-B ⦄ (θ)(_▫₁_)(_▫₂_) ⦄ where
     preserving-identityₗ : let _ = cancᵣ₂ , select-idₗ(id₁)(identₗ₁) , select-idₗ(id₂)(identₗ₂) in (θ(id₁) ≡ id₂)
     preserving-identityₗ {id₁}{id₂} = cancellationᵣ(_▫₂_) $
-      θ(id₁) ▫₂ θ(id₁) 🝖-[ preserv ]-sym
+      θ(id₁) ▫₂ θ(id₁) 🝖-[ preserving₂(θ)(_▫₁_)(_▫₂_) ]-sym
       θ(id₁ ▫₁ id₁)    🝖-[ congruence₁(θ) (identityₗ(_▫₁_)(id₁)) ]
       θ(id₁)           🝖-[ identityₗ(_▫₂_)(id₂) ]-sym
       id₂ ▫₂ θ(id₁)    🝖-end
 
     preserving-inverseₗ : let _ = cancᵣ₂ , select-invₗ(id₁)(identₗ₁)(inv₁)(inverₗ₁) , select-invₗ(id₂)(identₗ₂)(inv₂)(inverₗ₂) in ∀{x} → (θ(inv₁(x)) ≡ inv₂(θ(x)))
     preserving-inverseₗ {id₁}{inv₁}{id₂}{inv₂} {x} = cancellationᵣ(_▫₂_) $
-      θ(inv₁ x) ▫₂ θ(x)  🝖-[ preserv ]-sym
+      θ(inv₁ x) ▫₂ θ(x)  🝖-[ preserving₂(θ)(_▫₁_)(_▫₂_) ]-sym
       θ(inv₁ x ▫₁ x)     🝖-[ congruence₁(θ) (inverseFunctionₗ(_▫₁_)(inv₁)) ]
       θ(id₁)             🝖-[ preserving-identityₗ ]
       id₂                🝖-[ inverseFunctionₗ(_▫₂_)(inv₂) ]-sym
@@ -532,18 +532,18 @@ module Two {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} ⦃ equiv-A : 
 
     preserving-identityᵣ : let _ = cancₗ₂ , select-idᵣ(id₁)(identᵣ₁) , select-idᵣ(id₂)(identᵣ₂) in (θ(id₁) ≡ id₂)
     preserving-identityᵣ {id₁}{id₂} = cancellationₗ(_▫₂_) $
-      θ(id₁) ▫₂ θ(id₁) 🝖-[ preserv ]-sym
+      θ(id₁) ▫₂ θ(id₁) 🝖-[ preserving₂(θ)(_▫₁_)(_▫₂_) ]-sym
       θ(id₁ ▫₁ id₁)    🝖-[ congruence₁(θ) (identityᵣ(_▫₁_)(id₁)) ]
       θ(id₁)           🝖-[ identityᵣ(_▫₂_)(id₂) ]-sym
       θ(id₁) ▫₂ id₂    🝖-end
 
     preserving-inverseᵣ : let _ = cancₗ₂ , select-invᵣ(id₁)(identᵣ₁)(inv₁)(inverᵣ₁) , select-invᵣ(id₂)(identᵣ₂)(inv₂)(inverᵣ₂) in ∀{x} → (θ(inv₁(x)) ≡ inv₂(θ(x)))
     preserving-inverseᵣ {id₁}{inv₁}{id₂}{inv₂} {x} = cancellationₗ(_▫₂_) $
-      θ(x) ▫₂ θ(inv₁(x)) 🝖-[ preserv ]-sym
+      θ(x) ▫₂ θ(inv₁(x)) 🝖-[ preserving₂(θ)(_▫₁_)(_▫₂_) ]-sym
       θ(x ▫₁ inv₁(x))    🝖-[ congruence₁(θ) (inverseFunctionᵣ(_▫₁_)(inv₁)) ]
       θ(id₁)             🝖-[ preserving-identityᵣ ]
       id₂                🝖-[ inverseFunctionᵣ(_▫₂_)(inv₂) ]-sym
-      θ(x) ▫₂ inv₂(θ(x)) 🝖-end 
+      θ(x) ▫₂ inv₂(θ(x)) 🝖-end
 
     injective-kernel : let _ = op₁ , op₂ , assoc₁ , assoc₂ , cancₗ₂ , select-inv(id₁)(ident₁)(inv₁)(inver₁) , select-inv(id₂)(ident₂)(inv₂)(inver₂) in Injective(θ) ↔ (∀{a} → (θ(a) ≡ id₂) → (a ≡ id₁))
     injective-kernel {id₁}{inv₁}{id₂}{inv₂} = [↔]-intro l (\inj → r ⦃ inj ⦄) where
@@ -551,7 +551,7 @@ module Two {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} ⦃ equiv-A : 
       Injective.proof(l(proof)) {a}{b} (θa≡θb) =
         One.equality-zeroₗ(
           proof(
-            θ (a ▫₁ inv₁(b))   🝖-[ preserv ]
+            θ (a ▫₁ inv₁(b))   🝖-[ preserving₂(θ)(_▫₁_)(_▫₂_) ]
             θ(a) ▫₂ θ(inv₁(b)) 🝖-[ congruence₂ᵣ(_▫₂_)(θ(a)) preserving-inverseᵣ ]
             θ(a) ▫₂ inv₂(θ(b)) 🝖-[ One.equality-zeroᵣ(θa≡θb) ]
             id₂                🝖-end

@@ -2,6 +2,7 @@ module Logic.Classical.DoubleNegated where
 
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
+open import Logic.Names
 open import Logic
 import      Lvl
 open import Syntax.Type
@@ -317,3 +318,39 @@ module _ where
 
   [[¬][∧]ₗ]-to-[weak-excluded-middle] : (∀{ℓ₁ ℓ₂}{P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} → ((¬ P) ∨ (¬ Q)) ← (¬ (P ∧ Q))) → (∀{ℓ}{P : Stmt{ℓ}} → (¬ P) ∨ (¬¬ P))
   [[¬][∧]ₗ]-to-[weak-excluded-middle] [¬][∧]ₗ {ℓ} {P} = [¬][∧]ₗ non-contradiction
+
+  [⊤]-doubleNegation : DoubleNegationOn(⊤)
+  [⊤]-doubleNegation = const [⊤]-intro
+
+  [⊥]-doubleNegation : DoubleNegationOn(⊥)
+  [⊥]-doubleNegation = apply id
+
+  [∧]-doubleNegation : DoubleNegationOn(X) → DoubleNegationOn(Y) → DoubleNegationOn(X ∧ Y)
+  [∧]-doubleNegation nnxx nnyy nnxy = [∧]-intro (nnxx(nx ↦ nnxy(nx ∘ [∧]-elimₗ))) (nnyy(ny ↦ nnxy(ny ∘ [∧]-elimᵣ)))
+
+  [→]-doubleNegation : DoubleNegationOn(Y) → DoubleNegationOn(X → Y)
+  [→]-doubleNegation nnyy nnxy x = nnyy(ny ↦ nnxy(xy ↦ (ny ∘ xy) x))
+
+  [∀]-doubleNegation-distribute : (∀{x} → DoubleNegationOn(P(x))) → (DoubleNegationOn(∀{x} → P(x)))
+  [∀]-doubleNegation-distribute annp nnap = annp(npx ↦ nnap(npx $_))
+
+  _∨ʷᵉᵃᵏ_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
+  X ∨ʷᵉᵃᵏ Y = ¬((¬ X) ∧ (¬ Y))
+
+  [∨ʷᵉᵃᵏ]-introₗ : X → (X ∨ʷᵉᵃᵏ Y)
+  [∨ʷᵉᵃᵏ]-introₗ = swap [∧]-elimₗ
+
+  [∨ʷᵉᵃᵏ]-introᵣ : Y → (X ∨ʷᵉᵃᵏ Y)
+  [∨ʷᵉᵃᵏ]-introᵣ = swap [∧]-elimᵣ
+
+  [∨ʷᵉᵃᵏ]-elim : (X → Z) → (Y → Z) → DoubleNegationOn(Z) → (X ∨ʷᵉᵃᵏ Y) → Z
+  [∨ʷᵉᵃᵏ]-elim xz yz nnzz xy = nnzz(nz ↦ xy([∧]-intro (nz ∘ xz) (nz ∘ yz)))
+
+  ∃ʷᵉᵃᵏ : (X → Stmt{ℓ}) → Stmt
+  ∃ʷᵉᵃᵏ P = ¬(∀{x} → (¬ P(x)))
+
+  [∃ʷᵉᵃᵏ]-intro : ∀(x) → ⦃ proof : P(x) ⦄ → (∃ʷᵉᵃᵏ P)
+  [∃ʷᵉᵃᵏ]-intro _ ⦃ px ⦄ axnpx = axnpx px
+
+  [∃ʷᵉᵃᵏ]-elim : (∀{x} → P(x) → X) → DoubleNegationOn(X) → (∃ʷᵉᵃᵏ P) → X
+  [∃ʷᵉᵃᵏ]-elim axpxx nnxx ep = nnxx(nx ↦ ep(nx ∘ axpxx))

@@ -10,7 +10,7 @@ open import Logic.Propositional.Theorems
 open import Structure.Relator.Properties
   hiding (antisymmetry ; asymmetry ; transitivity ; reflexivity ; irreflexivity)
 open import Type
-open import Type.Empty
+open import Type.Properties.Empty
 
 private variable ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
 

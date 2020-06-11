@@ -10,11 +10,12 @@ open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.Oper using (_+_ ; _⋅_ ; _𝄩_)
 open import Numeral.Natural.Oper.Proofs
+import      Structure.Function.Names as Names
 import      Structure.Function
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs.Util
 import      Structure.Operator.Names as Names
-import      Structure.Operator 
+import      Structure.Operator
 open import Structure.Relator.Properties
 open import Structure.Function.Domain
 open import Syntax.Transitivity

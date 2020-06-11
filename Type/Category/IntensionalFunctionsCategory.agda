@@ -9,7 +9,7 @@ open import Structure.Category
 open import Structure.Category.Properties
 open import Structure.Operator
 open import Type
-open import Type.Unit
+open import Type.Properties.Singleton
 
 -- The type category is a category containing all types of a single universe level in the language.
 -- The objects are all sets/types.

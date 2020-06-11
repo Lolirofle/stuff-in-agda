@@ -12,7 +12,7 @@ open import Graph
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Setoid.Uniqueness
 open import Structure.Relator.Properties
-open import Type.Unit
+open import Type.Properties.MereProposition
 
 module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) where
   -- An undirected graph always have for every edge an edge in the other direction which is the same edge.
@@ -35,8 +35,8 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) w
   -- Note: Equality on edges must respect uniqueness. In other words, one edge must not have multiple constructions.
   record Singular : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
-    field proof : ∀{a b : V} → IsProp(a ⟶ b)
-  singular = inst-fn(\inst {a}{b}{x}{y} → IsProp.uniqueness(Singular.proof inst {a}{b}) {x}{y})
+    field proof : ∀{a b : V} → MereProposition(a ⟶ b)
+  singular = inst-fn(\inst {a}{b}{x}{y} → MereProposition.uniqueness(Singular.proof inst {a}{b}) {x}{y})
 
   -- A complete graph have an edge for each pair of vertices from V. TODO: Exclude loops
   record Complete : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where

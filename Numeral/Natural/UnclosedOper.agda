@@ -4,6 +4,7 @@ import Lvl
 open import Data
 open import Data.Boolean.Stmt
 open import Data.Option as Option using (Option)
+open import Data.Option.Functions as Option
 open import Logic.Propositional
 open import Logic.Computability.Binary
 open import Numeral.Finite as 𝕟

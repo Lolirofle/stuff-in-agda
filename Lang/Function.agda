@@ -3,6 +3,7 @@ module Lang.Function where
 import      Lvl
 open import Data.Boolean
 open import Data.List as List using (List)
+open import Data.List.Functions.Positional as List
 open import Data.Option
 open import Data
 open import Lang.Reflection
@@ -41,9 +42,9 @@ default x hole = quoteTC x >>= unify hole
 --   test3 : ∀{T : TYPE} → {_ : T} → T
 --   test3 = idᵢwith
 --
---   It is useful in these kinds of scenarios because idᵢwithout would require writing the implicit argument explicitly, while idᵢwith always uses the given argument like how explicit arguments work.
+--   It is useful in these kinds of scenarios because idᵢwithout would require writing the implicit argument explicitly, while idᵢwith always uses the given argument in order like how explicit arguments work.
 no-infer : Term → TC(Unit{Lvl.𝟎})
-no-infer hole@(meta _ args) with List.lastElem(args)
+no-infer hole@(meta _ args) with List.last(args)
 ... | None                                   = typeError (List.singleton (strErr "Expected a parameter with \"hidden\" visibility when using \"no-infer\", found none."))
 ... | Some (arg (arg-info hidden    _) term) = unify hole term
 {-# CATCHALL #-}

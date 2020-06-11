@@ -84,13 +84,5 @@ module _ {ℓₒ₁ ℓₒ₂ : Lvl.Level} {X : Type{ℓₒ₁}} {Y : Type{ℓ�
   -- Represents the "set" of objects pointing to the value y of the function f.
   -- (Unapply f(y)) is also called "the fiber of the element y under the map f".
   -- Unapply(f) is similar to the inverse image or the preimage of f when their argument is a singleton set.
-  record Unapply (f : X → Y) (y : Y) : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂} where
-    constructor intro
-    field
-      obj : X
-      ⦃ proof ⦄ : (f(obj) ≡ y)
-
-  -- TODO: Temporary name. Use this instead and Unapply is Σ Unapply2
-  record Unapply2 (f : X → Y) (y : Y) (x : X) : Type{ℓₒ₂} where
-    constructor intro
-    field ⦃ proof ⦄ : (f(x) ≡ y)
+  Unapply : (X → Y) → Y → Type{ℓₒ₁ Lvl.⊔ ℓₒ₂}
+  Unapply f(y) = ∃(x ↦ f(x) ≡ y)

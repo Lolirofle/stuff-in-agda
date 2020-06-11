@@ -38,7 +38,8 @@ record MonoidObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
     {T} : Type{ℓ}
     ⦃ equiv ⦄ : Equiv{ℓₑ}(T)
     _▫_ : T → T → T
-    ⦃ monoid ⦄ : Monoid(_▫_) 
+    ⦃ monoid ⦄ : Monoid(_▫_)
+  open Monoid(monoid) public
 
 record Homomorphism
   {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂}
@@ -55,7 +56,7 @@ record Homomorphism
   field
     ⦃ function ⦄ : Function(f)
     ⦃ preserve-op ⦄ : Preserving₂(f)(_▫X_)(_▫Y_)
-    ⦃ preserve-id ⦄ : (f(idₗ) ≡ idᵣ)
+    ⦃ preserve-id ⦄ : Preserving₀(f)(idₗ)(idᵣ)
 
 _→ᵐᵒⁿᵒⁱᵈ_ : ∀{ℓₗ ℓₗₑ ℓᵣ ℓᵣₑ} → MonoidObject{ℓₗ}{ℓₗₑ} → MonoidObject{ℓᵣ}{ℓᵣₑ} → Type
 A →ᵐᵒⁿᵒⁱᵈ B = ∃(Homomorphism(MonoidObject.monoid A)(MonoidObject.monoid B))

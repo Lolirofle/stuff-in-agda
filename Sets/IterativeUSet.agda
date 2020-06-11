@@ -222,7 +222,7 @@ module Oper ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   -- The operation converting an IUset from a lower universe level to a higher universe level.
   IUset-level-up : let _ = ℓ₁ in IUset(T){ℓ₂} → IUset(T){ℓ₁ Lvl.⊔ ℓ₂}
   IUset-level-up          (atom x) = atom x
-  IUset-level-up {ℓ₁}{ℓ₂} (setc {Index} elem) = setc {Lvl.Up{ℓ₂}{ℓ₁}(Index)} \{(Lvl.up i) → IUset-level-up{ℓ₁}{ℓ₂}(elem(i))}
+  IUset-level-up {ℓ₁}{ℓ₂} (setc {Index} elem) = setc {Lvl.Up{ℓ₁}{ℓ₂}(Index)} \{(Lvl.up i) → IUset-level-up{ℓ₁}{ℓ₂}(elem(i))}
 
   -- The empty set, consisting of no elements.
   -- Index is the empty type, which means that there are no objects pointing to elements in the set.
@@ -343,6 +343,7 @@ module Oper ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     [⊆]-with-elem : ∀{SCₗ SCᵣ : SetContainer(T){ℓ}} → (xy : set SCₗ ⊆ set SCᵣ) → ∀{ix} → (elem (set SCₗ) ix ≡ elem (set SCᵣ) ([⊆]-map xy ix))
     [⊆]-with-elem (set map proof) {ix} = proof{ix}
 
+{-
     open import Lang.Inspect
     import      Relator.Equals as Equals
     import      Relator.Equals.Proofs.Equivalence as Equals
@@ -352,6 +353,7 @@ module Oper ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     Tuple.right ([⋃]-membership {A = A@(atom _)}) (set ([∃]-intro (intro iA ia))) = {!!}
     ∃.witness (Tuple.right ([⋃]-membership {A = A@(set _)}) (set ([∃]-intro (intro iA ia)))) = elem(A) iA
     ∃.proof (Tuple.right ([⋃]-membership {A = A@(set _)}) (set ([∃]-intro (intro iA ia) ⦃ proof ⦄))) = [∧]-intro ([∈]-of-elem {A = A}) {!set([∃]-intro ia ⦃ proof ⦄)!}
+-}
 
 {-  Σ.left  (∃.witness (Tuple.left ([⋃]-membership {A = A} {x}) ([∃]-intro a ⦃ [∧]-intro ([∃]-intro iA) _ ⦄))) = iA
   Σ.right (∃.witness (Tuple.left ([⋃]-membership {A = A} {x}) ([∃]-intro a ⦃ [∧]-intro ([∃]-intro iA ⦃ aA ⦄) ([∃]-intro ia) ⦄))) = _⊆_.map (_≡_.right aA) ia

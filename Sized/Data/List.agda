@@ -10,7 +10,7 @@ private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 private variable T A A₁ A₂ B B₁ B₂ Result : Type{ℓ}
 private variable s : Size
 
-infixl 1000 _++_
+-- infixl 1000 _++_
 infixr 1000 _⊰_
 
 data List {s}{ℓ} (T : Type{ℓ}) : Type{ℓ} where

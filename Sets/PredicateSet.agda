@@ -84,6 +84,8 @@ module _ where
   filter : (T → Bool) → PredSet{ℓ}(T) → PredSet(T)
   filter f S x = (S(x) ∧ IsTrue(f(x)))
 
+  -- TODO: Maybe move these to a separate "Relations" file?
+
   -- A statement of whether a set is a subset of a set
   _⊆_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → Stmt
   _⊆_ S₁ S₂ = (∀{x} → (x ∈ S₁) → (x ∈ S₂))

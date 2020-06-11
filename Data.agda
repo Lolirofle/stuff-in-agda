@@ -2,7 +2,6 @@ module Data where
 
 import      Lvl
 open import Type
-open import Type.Empty using (IsEmpty)
 
 -- An empty type which cannot be constructed.
 -- By default, this should be used to represent _the_ empty type.
