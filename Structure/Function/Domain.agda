@@ -48,6 +48,11 @@ module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B)
 
   Invertibleᵣ = ∃(Inverseᵣ)
 
+module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ (f : A → B) where
+  module _ (f⁻¹ : B → A) where
+    Inverse = Inverseₗ(f)(f⁻¹) ∧ Inverseᵣ(f)(f⁻¹)
+  Invertible = ∃(Inverse)
+
 module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ (f : A → B) where
   record Constant : Stmt{ℓₒ₁ Lvl.⊔ ℓₗ₂} where
     constructor intro

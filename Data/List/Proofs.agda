@@ -342,8 +342,8 @@ foldᵣ-function {a = a} ⦃ equiv ⦄ {_▫_ = _▫_} ⦃ oper ⦄ = intro p wh
 map-binaryOperator : BinaryOperator {A₁ = A → B} ⦃ equiv-A₁ = Fn.[⊜]-equiv ⦃ [≡]-equiv ⦄ ⦄ ⦃ equiv-A₂ = [≡]-equiv ⦄ (map)
 map-binaryOperator = intro p where
   p : Names.Congruence₂(map)
-  p {f} {g} fg {∅}       {∅}       xy = reflexivity(_≡_)
-  p {f} {g} fg {x₁ ⊰ l₁} {x₂ ⊰ l₂} xy = congruence₂(_⊰_) ba rec where
+  p {f} {g} {∅}       {∅}       fg xy = reflexivity(_≡_)
+  p {f} {g} {x₁ ⊰ l₁} {x₂ ⊰ l₂} fg xy = congruence₂(_⊰_) ba rec where
     ba : f(x₁) ≡ g(x₂)
     ba =
       f(x₁) 🝖[ _≡_ ]-[ Fn._⊜_.proof fg {x₁} ]

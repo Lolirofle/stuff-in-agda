@@ -114,7 +114,7 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   _⨯_.left (UnaryRelator.substitution (preserve-equiv (filter P A)) xy ([∧]-intro xA Px)) = substitute₁(A ∋_) xy xA
   _⨯_.right (UnaryRelator.substitution (preserve-equiv (filter P A)) xy ([∧]-intro xA Px)) = substitute₁(P) xy Px
 
-unapply : ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ → (f : A → B) ⦃ _ : Function(f) ⦄ → B → PredSet(A)
+unapply : ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ → (f : A → B) ⦃ func-f : Function(f) ⦄ → B → PredSet(A)
 unapply f(y) ∋ x = f(x) ≡ₑ y
 preserve-equiv (unapply f(y)) = [∘]-unaryRelator ⦃ rel = binary-unaryRelatorᵣ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄
 

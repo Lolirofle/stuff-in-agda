@@ -136,18 +136,18 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
       _⨯_.right proof ([∃]-intro (intro iA ([∃]-intro iB ⦃ pAB ⦄)) ⦃ pxAB ⦄) = [∧]-intro ([∃]-intro iA) ([∃]-intro iB ⦃ pxAB 🝖 pAB ⦄)
 
   instance
-    map-membership : Sets.MapFunction(_∈_ {T = T})
-    Sets.MapFunction.map        map-membership = map
+    map-membership : Sets.MapFunction(_∈_ {T = T})(_∈_ {T = T})
+    Sets.MapFunction.map        map-membership f = map f
     Sets.MapFunction.membership map-membership {f = f} ⦃ function ⦄ = proof where
-      proof : (y ∈ map f(A)) ↔ ∃(x ↦ (x ∈ A) ∧ (y ≡ₛ f(x)))
+      proof : (y ∈ map f(A)) ↔ ∃(x ↦ (x ∈ A) ∧ (f(x) ≡ₛ y))
       ∃.witness (Tuple.left  (proof)                         ([∃]-intro x ⦃ [∧]-intro xA fxy ⦄)) = [∃]-witness xA
       ∃.proof   (Tuple.left  (proof {y = y} {A = A}) ([∃]-intro x ⦃ [∧]-intro xA fxy ⦄)) =
-        y                                🝖[ _≡ₛ_ ]-[ fxy ]
+        y                                🝖[ _≡ₛ_ ]-[ fxy ]-sym
         f(x)                             🝖[ _≡ₛ_ ]-[ congruence₁(f) ⦃ function ⦄ ([∃]-proof xA) ]
         f(elem(A) ([∃]-witness xA))      🝖[ _≡ₛ_ ]-[]
         elem (map f(A)) ([∃]-witness xA) 🝖[ _≡ₛ_ ]-end
       ∃.witness (Tuple.right (proof {A = A}) ([∃]-intro iA))       = elem(A) iA
-      ∃.proof   (Tuple.right proof           ([∃]-intro iA ⦃ p ⦄)) = [∧]-intro ([∈]-of-elem {ia = iA}) p
+      ∃.proof   (Tuple.right proof           ([∃]-intro iA ⦃ p ⦄)) = [∧]-intro ([∈]-of-elem {ia = iA}) (symmetry(_≡ₛ_) p)
 
   indexFilter-membership : ∀{P : Index(A) → Stmt{ℓ}} → (x ∈ indexFilter A P) ↔ ∃(i ↦ (x ≡ₛ elem(A) i) ∧ P(i))
   _⨯_.left indexFilter-membership ([∃]-intro iA ⦃ [∧]-intro xe p ⦄) = [∃]-intro (intro iA p) ⦃ xe ⦄
@@ -164,7 +164,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   instance
     filter-membership : Sets.FilterFunction(_∈_ {T = T})
-    Sets.FilterFunction.filter     filter-membership         = filter{ℓ = ℓₑ}
+    Sets.FilterFunction.filter     filter-membership f       = filter{ℓ = ℓₑ} f
     Sets.FilterFunction.membership filter-membership {P = P} = proof where
       proof : (x ∈ filter P(A)) ↔ ((x ∈ A) ∧ P(x))
       Tuple.left proof ([∧]-intro ([∃]-intro i ⦃ p ⦄) pb) = [∃]-intro (intro i (substitute₁(P) p pb)) ⦃ p ⦄

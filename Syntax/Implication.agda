@@ -22,28 +22,26 @@
 --     D ⇒-end
 module Syntax.Implication where
 
-open import Functional using (id)
-open import Functional.Dependent
+open import Functional using (const ; id ; _∘_ ; _∘₂_ ; swap)
 import      Lvl
+import      Syntax.Implication.Dependent as Dependent
 open import Type
 
-private variable ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
+private variable ℓ₁ ℓ₂ ℓ₃ ℓ₄ : Lvl.Level
 
-_⇒-[_]_ : ∀(X : Type{ℓ₁}){Y : ∀{_ : X} → Type{ℓ₂}}{Z : ∀{x : X}{_ : Y{x}} → Type{ℓ₃}} → (P : (x : X) → Y{x}) → (∀{x : X} → (y : Y{x}) → Z{x}{y}) → ((x : X) → Z{x}{P(x)})
-_⇒-[_]_ = const(swap(_∘_))
+open Dependent using (_⇒-end ; _⇒_) public
+
+_⇒-[_]_ : ∀(X : Type{ℓ₁}){Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → (Y → Z) → (X → Z)
+_⇒-[_]_ _ = swap(_∘_)
 infixr 0.98 _⇒-[_]_
 {-# INLINE _⇒-[_]_ #-}
 
-_⇒-end : ∀(X : Type{ℓ₁}) → (X → X)
-_⇒-end = const id
-infixr 0.99 _⇒-end
-{-# INLINE _⇒-end #-}
+_⇒-[]_ : ∀(X : Type{ℓ₁}){Y : Type{ℓ₂}} → (X → Y) → (X → Y)
+_⇒-[]_ _ = id
+infixr 0.98 _⇒-[]_
+{-# INLINE _⇒-[]_ #-}
 
-_⇒_ = apply
-infixl 0.97 _⇒_
-{-# INLINE _⇒_ #-}
-
-•_•_⇒₂_ : ∀{X : Type{ℓ₁}}{Y : ∀{_ : X} → Type{ℓ₂}}{Z : ∀{x : X}{_ : Y{x}} → Type{ℓ₃}} → (x : X) → (y : Y{x}) → ((x : X) → (y : Y{x}) → Z{x}{y}) → Z{x}{y}
-• a • b ⇒₂ P = P ⇒ apply a ⇒ apply b
-infixl 0.97 •_•_⇒₂_
-{-# INLINE •_•_⇒₂_ #-}
+•_•_⇒₂-[_]_ : ∀{X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{Y : Type{ℓ₃}}{Z : Type{ℓ₄}} → X₁ → X₂ → (X₁ → X₂ → Y) → (Y → Z) → Z
+•_•_⇒₂-[_]_ x₁ x₂ g f = (f ∘₂ g) x₁ x₂
+infixr 0.97 •_•_⇒₂-[_]_
+{-# INLINE •_•_⇒₂-[_]_ #-}

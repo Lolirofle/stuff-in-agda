@@ -72,8 +72,8 @@ module _ ⦃ _ : let _ = A ; _ = B ; _ = C in Equiv{ℓₑ₃}(C) ⦄ where
   [⊜][∘]ₗ-function-raw : ∀{f₁ f₂ : B → C}{g : A → B} → (f₁ ⊜ f₂) → ((f₁ ∘ g) ⊜ (f₂ ∘ g))
   [⊜][∘]ₗ-function-raw {g = g} (intro feq) = intro(\{x} → feq{g(x)})
 
-module _ ⦃ _ : let _ = A in Equiv{ℓₑ₂}(B) ⦄ ⦃ _ : Equiv{ℓₑ₃}(C) ⦄ {f₁ f₂ : B → C} ⦃ _ : Function(f₂) ⦄ where
-  [⊜][∘]-binaryOperator-raw : (f₁ ⊜ f₂) → ∀{g₁ g₂ : A → B} → (g₁ ⊜ g₂) → (f₁ ∘ g₁ ⊜ f₂ ∘ g₂)
+module _ ⦃ _ : let _ = A in Equiv{ℓₑ₂}(B) ⦄ ⦃ _ : Equiv{ℓₑ₃}(C) ⦄ {f₁ f₂ : B → C} ⦃ _ : Function(f₂) ⦄ {g₁ g₂ : A → B} where
+  [⊜][∘]-binaryOperator-raw : (f₁ ⊜ f₂) → (g₁ ⊜ g₂) → (f₁ ∘ g₁ ⊜ f₂ ∘ g₂)
   [⊜][∘]-binaryOperator-raw feq (intro geq) = [⊜][∘]ₗ-function-raw feq 🝖 (intro(congruence₁(f₂) (geq)))
 
 module _ ⦃ _ : let _ = A in Equiv{ℓₑ₂}(B) ⦄ ⦃ _ : Equiv{ℓₑ₃}(C) ⦄ ⦃ function : ∀{f : B → C} → Function(f) ⦄ where

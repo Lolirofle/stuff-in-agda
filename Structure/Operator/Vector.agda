@@ -87,3 +87,33 @@ record VectorSpace {ℓᵥ ℓₛ ℓᵥₑ ℓₛₑ}
     [⋅ₛᵥ][+ₛ][+ᵥ]-distributivityᵣ : Names.DistributivityPatternᵣ(_⋅ₛᵥ_)(_+ₛ_)(_+ᵥ_) -- TODO: This is ∀? → Preserving₂
 
   _⋅ᵥₛ_ = swap(_⋅ₛᵥ_)
+
+record VectorSpaceVObject {ℓᵥ ℓₛ ℓᵥₑ ℓₛₑ}
+  {S : Type{ℓₛ}} ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
+  (_+ₛ_ : S → S → S)
+  (_⋅ₛ_ : S → S → S)
+  : Stmt{ℓₛₑ Lvl.⊔ ℓₛ Lvl.⊔ Lvl.𝐒(ℓᵥₑ Lvl.⊔ ℓᵥ)}
+  where
+
+  constructor intro
+  field
+    {Vector} : Type{ℓᵥ}
+    ⦃ Vector-equiv ⦄ : Equiv{ℓᵥₑ}(Vector)
+    _+ᵥ_ : Vector → Vector → Vector
+    _⋅ₛᵥ_ : S → Vector → Vector
+    ⦃ vectorSpace ⦄ : VectorSpace(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_)
+  open VectorSpace(vectorSpace) public
+
+record VectorSpaceObject {ℓᵥ ℓₛ ℓᵥₑ ℓₛₑ} : Stmt{Lvl.𝐒(ℓₛₑ Lvl.⊔ ℓₛ Lvl.⊔ ℓᵥₑ Lvl.⊔ ℓᵥ)} where
+  constructor intro
+  field
+    {Vector} : Type{ℓᵥ}
+    ⦃ equiv-Vector ⦄ : Equiv{ℓᵥₑ}(Vector)
+    {Scalar} : Type{ℓₛ}
+    ⦃ equiv-Scalar ⦄ : Equiv{ℓₛₑ}(Scalar)
+    _+ᵥ_  : Vector → Vector → Vector
+    _⋅ₛᵥ_ : Scalar → Vector → Vector
+    _+ₛ_  : Scalar → Scalar → Scalar
+    _⋅ₛ_  : Scalar → Scalar → Scalar
+    ⦃ vectorSpace ⦄ : VectorSpace(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_)
+  open VectorSpace(vectorSpace) public

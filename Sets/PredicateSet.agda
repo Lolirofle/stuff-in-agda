@@ -210,8 +210,9 @@ module _ where
     -- Disjoint-irreflexivity : ⦃ _ : NonEmpty(_) ⦄ → Irreflexivity(Disjoint{ℓ₁}{ℓ₂}{T})
     -- Irreflexivity.proof Disjoint-irreflexivity p = {!!}
 
-    SetType : PredSet{ℓ}(T) → Stmt
-    SetType(s) = ∃(_∈ s)
+    -- TODO: Duplicated in SetLike
+    -- SetType : PredSet{ℓ}(T) → Stmt
+    -- SetType(s) = ∃(_∈ s)
 
     {-
     choice : ∀{S : PredSet{ℓ₁}(PredSet{ℓ₂}(T))} → ∃{Obj = SetType(S) → SetType(⋃ S)}(f ↦ ∀{([∃]-intro x) : SetType(S)} → ([∃]-witness(f([∃]-intro x)) ∈ x))

@@ -4,6 +4,7 @@ import Lvl
 open import Data.Boolean.Stmt
 open import Functional
 open import Syntax.Number
+open import Logic.Classical
 open import Logic.Computability.Binary
 open import Logic.Propositional
 open import Logic.Predicate
@@ -74,3 +75,12 @@ instance
 instance
   [𝐒]-injective : ∀{N : ℕ} → Injective(𝕟.𝐒{N})
   Injective.proof [𝐒]-injective [≡]-intro = [≡]-intro
+
+[≡][≡?]-equivalence : ∀{n}{i j : 𝕟(n)} → (i ≡ j) ↔ IsTrue(i 𝕟.≡? j)
+[≡][≡?]-equivalence {𝐒 n} {𝟎}   {𝟎}   = [↔]-intro (const [≡]-intro) (const [⊤]-intro)
+[≡][≡?]-equivalence {𝐒 n} {𝟎}   {𝐒 j} = [↔]-intro (\()) (\())
+[≡][≡?]-equivalence {𝐒 n} {𝐒 i} {𝟎}   = [↔]-intro (\()) (\())
+[≡][≡?]-equivalence {𝐒 n} {𝐒 i} {𝐒 j} = [∧]-map ([≡]-with(𝐒) ∘_) (_∘ injective(𝐒)) ([≡][≡?]-equivalence {n} {i} {j})
+
+instance
+  postulate [≡][𝕟]-classical : ∀{n}{i j : 𝕟(n)} → Classical(i ≡ j) -- TODO: Use [≡][≡?]-equivalence and prove a general conversion from these kinds of equivalences to Classical

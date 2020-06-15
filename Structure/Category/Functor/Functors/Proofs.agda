@@ -34,10 +34,10 @@ module _ where
 
   -- TODO: Prove transport-of-congruenced-bifunctor
   [∘ᶠᵘⁿᶜᵗᵒʳ]-binaryOperator : BinaryOperator(_∘ᶠᵘⁿᶜᵗᵒʳ_ {A = A}{B = B}{C = C})
-  _≡ᶠᵘⁿᶜᵗᵒʳ_.functor-proof (BinaryOperator.congruence ([∘ᶠᵘⁿᶜᵗᵒʳ]-binaryOperator {A = A} {B = B} {C = C}) {[∃]-intro F₁} {[∃]-intro F₂} (intro fp₁ mp₁) {[∃]-intro G₁} {[∃]-intro G₂} (intro fp₂ mp₂)) = congruence₂(Fn._∘_) ⦃ [⊜][∘]-binaryOperator ⦃ function = [≡]-function ⦄ ⦄ fp₁ fp₂ where
+  _≡ᶠᵘⁿᶜᵗᵒʳ_.functor-proof (BinaryOperator.congruence ([∘ᶠᵘⁿᶜᵗᵒʳ]-binaryOperator {A = A} {B = B} {C = C}) {[∃]-intro F₁} {[∃]-intro F₂} {[∃]-intro G₁} {[∃]-intro G₂} (intro fp₁ mp₁) (intro fp₂ mp₂)) = congruence₂(Fn._∘_) ⦃ [⊜][∘]-binaryOperator ⦃ function = [≡]-function ⦄ ⦄ fp₁ fp₂ where
     instance _ = [≡]-equiv {T = Object(B)}
     instance _ = [≡]-equiv {T = Object(C)}
-  NaturalTransformation.natural (_≡ᶠᵘⁿᶜᵗᵒʳ_.map-proof (BinaryOperator.congruence ([∘ᶠᵘⁿᶜᵗᵒʳ]-binaryOperator {A = A} {B = B} {C = C}) {[∃]-intro F₁}{[∃]-intro F₂} (intro fp₁ mp₁) {[∃]-intro G₁}{[∃]-intro G₂} (intro fp₂ mp₂))) {x}{y} {f} = anything {-
+  NaturalTransformation.natural (_≡ᶠᵘⁿᶜᵗᵒʳ_.map-proof (BinaryOperator.congruence ([∘ᶠᵘⁿᶜᵗᵒʳ]-binaryOperator {A = A} {B = B} {C = C}) {[∃]-intro F₁}{[∃]-intro F₂} {[∃]-intro G₁}{[∃]-intro G₂} (intro fp₁ mp₁) (intro fp₂ mp₂))) {x}{y} {f} = anything {-
     transport C (_⊜_.proof (congruence₂(Fn._∘_) ⦃ [⊜][∘]-binaryOperator ⦃ function = [≡]-function _ ⦄ ⦄ fp₁ fp₂)) ∘ map(map f)      🝖-[ {!x₂ y₂!} ]
     map(map f) ∘ transport C ([≡]-with-op (Object C) (λ v v₁ → {!v!}) (_⊜_.proof fp₁) (_⊜_.proof fp₂)) 🝖-[ {!!} ]
     map(map f) ∘ transport C (_⊜_.proof (congruence₂(Fn._∘_) ⦃ [⊜][∘]-binaryOperator ⦃ function = [≡]-function _ ⦄ ⦄ fp₁ fp₂)) 🝖-end-}

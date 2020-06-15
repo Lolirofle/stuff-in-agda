@@ -122,5 +122,10 @@ module IsFalse where
     l : ∀{a} → IsFalse(a) ← (a ≡ 𝐹)
     l [≡]-intro = [⊤]-intro
 
--- true-false-opposites : ∀{a} → IsTrue(a) ↔ (¬ IsFalse(a))
--- false-true-opposites : ∀{a} → IsFalse(a) ↔ (¬ IsTrue(a))
+true-false-opposites : ∀{a} → IsTrue(a) ↔ (¬ IsFalse(a))
+true-false-opposites {𝑇} = [↔]-intro (const [⊤]-intro) (const id)
+true-false-opposites {𝐹} = [↔]-intro (_$    [⊤]-intro) const
+
+false-true-opposites : ∀{a} → IsFalse(a) ↔ (¬ IsTrue(a))
+false-true-opposites {𝑇} = [↔]-intro (_$    [⊤]-intro) const
+false-true-opposites {𝐹} = [↔]-intro (const [⊤]-intro) (const id)

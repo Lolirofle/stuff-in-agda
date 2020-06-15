@@ -34,52 +34,52 @@ module _ {ℓ₁}{ℓ₂} where
     infixl 1 ∃ₗ_
   -}
 
-module _ {ℓₒ}{ℓₗ₁}{ℓₗ₂} {X : Type{ℓₒ}}{P : X → Stmt{ℓₗ₁}}{Q : X → Stmt{ℓₗ₂}} where
-  [∃]-map-proof : (∀{x} → P(x) → Q(x)) → ((∃ P) → (∃ Q))
-  [∃]-map-proof (f) ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(x) ⦃ f(proof) ⦄
+private variable ℓ : Lvl.Level
+private variable Obj X Y Z W : Type{ℓ}
+private variable Pred P Q R : X → Type{ℓ}
 
-  [∃]-map : (f : X → X) → (∀{x} → P(x) → Q(f(x))) → ((∃ P) → (∃ Q))
-  [∃]-map f p ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(f(x)) ⦃ p(proof) ⦄
+[∃]-map-proof : (∀{x} → P(x) → Q(x)) → ((∃ P) → (∃ Q))
+[∃]-map-proof (f) ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(x) ⦃ f(proof) ⦄
+
+[∃]-map : (f : X → X) → (∀{x} → P(x) → Q(f(x))) → ((∃ P) → (∃ Q))
+[∃]-map f p ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(f(x)) ⦃ p(proof) ⦄
+
+[∃]-map₂ : (f : X → Y → Z) → (∀{x y} → P(x) → Q(y) → R(f x y)) → ((∃ P) → (∃ Q) → (∃ R))
+[∃]-map₂ f p ([∃]-intro(x) ⦃ proof₁ ⦄) ([∃]-intro(y) ⦃ proof₂ ⦄) = [∃]-intro(f x y) ⦃ p proof₁ proof₂ ⦄
 
 ------------------------------------------
 -- Universal quantification (Forall, All)
 
-module _ {ℓ₁}{ℓ₂} where
-  ∀ₗ : ∀{Obj : Type{ℓ₁}} → (Pred : Obj → Stmt{ℓ₂}) → Stmt
-  ∀ₗ (Pred) = (∀{x} → Pred(x))
+∀ₗ : (Pred : Obj → Stmt{ℓ}) → Stmt
+∀ₗ (Pred) = (∀{x} → Pred(x))
 
-  [∀]-intro : ∀{Obj : Type}{Pred : Obj → Stmt} → ((a : Obj) → Pred(a)) → ∀ₗ(x ↦ Pred(x))
-  [∀]-intro p{a} = p(a)
+[∀]-intro : ((a : Obj) → Pred(a)) → ∀ₗ(x ↦ Pred(x))
+[∀]-intro p{a} = p(a)
 
-  [∀]-elim : ∀{Obj : Type}{Pred : Obj → Stmt} → ∀ₗ(x ↦ Pred(x)) → (a : Obj) → Pred(a)
-  [∀]-elim p(a) = p{a}
+[∀]-elim : ∀ₗ(x ↦ Pred(x)) → (a : Obj) → Pred(a)
+[∀]-elim p(a) = p{a}
 
-  -- Eliminates universal quantification for a non-empty domain using a witnessed existence which proves that the domain is non-empty.
-  [∀ₑ]-elim : ∀{Obj : Type} → ⦃ _ : ◊ Obj ⦄ → ∀{P : Obj → Stmt} → ∀ₗ(x ↦ P(x)) → P([◊]-existence)
-  [∀ₑ]-elim {Obj} ⦃ proof ⦄ {P} apx = [∀]-elim {Obj}{P} apx(◊.existence(proof))
+-- Eliminates universal quantification for a non-empty domain using a witnessed existence which proves that the domain is non-empty.
+[∀ₑ]-elim : ⦃ _ : ◊ Obj ⦄ → ∀{P : Obj → Stmt{ℓ}} → ∀ₗ(x ↦ P(x)) → P([◊]-existence)
+[∀ₑ]-elim {Obj = Obj} ⦃ proof ⦄ {P} apx = [∀]-elim {Obj = Obj}{P} apx(◊.existence(proof))
 
-  syntax ∀ₗ{T}(λ x → y) = ∀❪ x ꞉ T ❫․ y
+syntax ∀ₗ{T}(λ x → y) = ∀❪ x ꞉ T ❫․ y
 
-module _ {ℓ} where
-  ∀⁰ : (Pred : Stmt{ℓ}) → Stmt
-  ∀⁰ = id
+∀⁰ : (Pred : Stmt{ℓ}) → Stmt
+∀⁰ = id
 
-module _ {ℓ₁}{ℓ} where
-  ∀¹ : ∀{X : Type{ℓ₁}} → (Pred : X → Stmt{ℓ}) → Stmt
-  ∀¹ (Pred) = ∀⁰(∀ₗ ∘₀ Pred)
-  -- ∀¹ (Pred) = (∀{x} → Pred(x))
+∀¹ : (Pred : X → Stmt{ℓ}) → Stmt
+∀¹ (Pred) = ∀⁰(∀ₗ ∘₀ Pred)
+-- ∀¹ (Pred) = (∀{x} → Pred(x))
 
-module _ {ℓ₁}{ℓ₂}{ℓ} where
-  ∀² : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}} → (Pred : X → Y → Stmt{ℓ}) → Stmt
-  ∀² (Pred) = ∀¹(∀ₗ ∘₁ Pred)
-  -- ∀² (Pred) = (∀{x}{y} → Pred(x)(y))
+∀² : (Pred : X → Y → Stmt{ℓ}) → Stmt
+∀² (Pred) = ∀¹(∀ₗ ∘₁ Pred)
+-- ∀² (Pred) = (∀{x}{y} → Pred(x)(y))
 
-module _ {ℓ₁}{ℓ₂}{ℓ₃}{ℓ} where
-  ∀³ : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Pred : X → Y → Z → Stmt{ℓ}) → Stmt
-  ∀³ (Pred) = ∀²(∀ₗ ∘₂ Pred)
-  -- ∀³ (Pred) = (∀{x}{y}{z} → Pred(x)(y)(z))
+∀³ : (Pred : X → Y → Z → Stmt{ℓ}) → Stmt
+∀³ (Pred) = ∀²(∀ₗ ∘₂ Pred)
+-- ∀³ (Pred) = (∀{x}{y}{z} → Pred(x)(y)(z))
 
-module _ {ℓ₁}{ℓ₂}{ℓ₃}{ℓ₄}{ℓ} where
-  ∀⁴ : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}}{W : Type{ℓ₄}} → (Pred : X → Y → Z → W → Stmt{ℓ}) → Stmt
-  ∀⁴ (Pred) = ∀³(∀ₗ ∘₃ Pred)
-  -- ∀⁴ (Pred) = (∀{x}{y}{z}{w} → Pred(x)(y)(z)(w))
+∀⁴ : (Pred : X → Y → Z → W → Stmt{ℓ}) → Stmt
+∀⁴ (Pred) = ∀³(∀ₗ ∘₃ Pred)
+-- ∀⁴ (Pred) = (∀{x}{y}{z}{w} → Pred(x)(y)(z)(w))

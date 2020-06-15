@@ -17,9 +17,9 @@ open import Type.Size
 record Monoid {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
-    instance ⦃ binary-operator ⦄    : BinaryOperator(_▫_)
-    instance ⦃ associativity ⦄      : Associativity(_▫_)
-    ⦃ identity-existence ⦄          : ∃(Identity(_▫_))
+    ⦃ binary-operator ⦄    : BinaryOperator(_▫_)
+    ⦃ associativity ⦄      : Associativity(_▫_)
+    ⦃ identity-existence ⦄ : ∃(Identity(_▫_))
 
   id = [∃]-witness identity-existence
 

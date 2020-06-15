@@ -2,9 +2,11 @@ module Structure.Operator.Vector.Proofs where
 
 open import Data.Tuple
 open import Functional
+open import Function.Equals
 import      Lvl
 open import Logic
 open import Logic.Propositional
+open import Logic.Predicate
 open import Structure.Setoid.WithLvl
 open import Structure.Operator
 open import Structure.Operator.Field
@@ -46,5 +48,12 @@ module _
       s ⋅ₛᵥ 𝟎ᵥ                 🝖-[ identityₗ(_+ᵥ_)(𝟎ᵥ) ]-sym
       𝟎ᵥ +ᵥ (s ⋅ₛᵥ 𝟎ᵥ)         🝖-end
 
-    postulate [⋅ₛᵥ]-negation : ∀{v} → ((−ₛ 𝟏ₛ) ⋅ₛᵥ v ≡ −ᵥ v)
-    -- [⋅ₛᵥ]-negation {v} = {!!}
+    [⋅ₛᵥ]-negation : ∀{v} → ((−ₛ 𝟏ₛ) ⋅ₛᵥ v ≡ −ᵥ v)
+    [⋅ₛᵥ]-negation {v} = _⊜_.proof (One.unique-inverseᵣ-by-id (intro p) [+ᵥ]-inverseᵣ) {v} where
+      p : Names.InverseFunctionᵣ(_+ᵥ_) 𝟎ᵥ ((−ₛ 𝟏ₛ) ⋅ₛᵥ_)
+      p{v} =
+        v +ᵥ ((−ₛ 𝟏ₛ) ⋅ₛᵥ v)          🝖-[ congruence₂ₗ(_+ᵥ_) _ (identityₗ(_⋅ₛᵥ_)(𝟏ₛ)) ]-sym
+        (𝟏ₛ ⋅ₛᵥ v) +ᵥ ((−ₛ 𝟏ₛ) ⋅ₛᵥ v) 🝖-[ [⋅ₛᵥ][+ₛ][+ᵥ]-distributivityᵣ ]-sym
+        (𝟏ₛ +ₛ (−ₛ 𝟏ₛ))⋅ₛᵥ v          🝖-[ congruence₂ₗ(_⋅ₛᵥ_) v (inverseFunctionᵣ(_+ₛ_) ⦃ [∃]-intro _ ⦃ [+ₛ]-identityᵣ ⦄ ⦄ (−ₛ_)) ]
+        𝟎ₛ ⋅ₛᵥ v                      🝖-[ [⋅ₛᵥ]-absorberₗ ]
+        𝟎ᵥ                            🝖-end

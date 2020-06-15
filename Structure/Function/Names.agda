@@ -59,4 +59,4 @@ module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₗ₁}(A) ⦄ {B : Type{�
 
   module _ {C : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₗ₃}(C) ⦄ where
     Congruence₂ : (A → B → C) → Stmt
-    Congruence₂(f) = (∀{x₁ y₁ : A} → (x₁ ≡ y₁) → ∀{x₂ y₂ : B} → (x₂ ≡ y₂) → (f x₁ x₂ ≡ f y₁ y₂))
+    Congruence₂(f) = (∀{x₁ y₁ : A}{x₂ y₂ : B} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (f x₁ x₂ ≡ f y₁ y₂))

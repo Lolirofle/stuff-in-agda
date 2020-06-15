@@ -329,6 +329,15 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{
           l ([∨]-introₗ pq) p = [∨]-introₗ (pq(p))
           l ([∨]-introᵣ pr) p = [∨]-introᵣ (pr(p))
 
+  [→ₗ][∨][∧]-preserving : ((P ∨ Q) → R) ↔ ((P → R) ∧ (Q → R))
+  [→ₗ][∨][∧]-preserving = [↔]-intro l r where
+    l : ((P ∨ Q) → R) ← ((P → R) ∧ (Q → R))
+    l ([∧]-intro pr qr) ([∨]-introₗ p) = pr p
+    l ([∧]-intro pr qr) ([∨]-introᵣ q) = qr q
+
+    r : ((P ∨ Q) → R) → ((P → R) ∧ (Q → R))
+    r pqr = [∧]-intro (pqr ∘ [∨]-introₗ) (pqr ∘ [∨]-introᵣ)
+
 module _ {ℓ} {P : Stmt{ℓ}} where
   non-contradiction : ¬(P ∧ (¬ P))
   non-contradiction(p , np) = np p
@@ -382,6 +391,49 @@ module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
 
   [→¬]-¬[∧] : (P → (¬ Q)) ↔ ¬(P ∧ Q)
   [→¬]-¬[∧] = currying
+
+------------------------------------------
+-- Equivalences (TODO: I remember these being defined somewhere else, but I am not sure. At least some special cases have been used somewhere else)
+
+module _ where
+  private variable ℓ : Lvl.Level
+  private variable A A₁ A₂ B B₁ B₂ : Type{ℓ}
+
+  [∧]-map-[↔] : (A₁ ↔ A₂) → (B₁ ↔ B₂) → ((A₁ ∧ B₁) ↔ (A₂ ∧ B₂))
+  [∧]-map-[↔] a b = [↔]-intro (Tuple.map ([↔]-to-[←] a) ([↔]-to-[←] b)) (Tuple.map ([↔]-to-[→] a) ([↔]-to-[→] b))
+
+  [∧]-mapₗ-[↔] : (A₁ ↔ A₂) → ((A₁ ∧ B) ↔ (A₂ ∧ B))
+  [∧]-mapₗ-[↔] a = [∧]-map-[↔] a [↔]-reflexivity
+
+  [∧]-mapᵣ-[↔] : (B₁ ↔ B₂) → ((A ∧ B₁) ↔ (A ∧ B₂))
+  [∧]-mapᵣ-[↔] b = [∧]-map-[↔] [↔]-reflexivity b
+
+  [∨]-map-[↔] : (A₁ ↔ A₂) → (B₁ ↔ B₂) → ((A₁ ∨ B₁) ↔ (A₂ ∨ B₂))
+  [∨]-map-[↔] a b = [↔]-intro (Either.map2 ([↔]-to-[←] a) ([↔]-to-[←] b)) (Either.map2 ([↔]-to-[→] a) ([↔]-to-[→] b))
+
+  [∨]-mapₗ-[↔] : (A₁ ↔ A₂) → ((A₁ ∨ B) ↔ (A₂ ∨ B))
+  [∨]-mapₗ-[↔] a = [∨]-map-[↔] a [↔]-reflexivity
+
+  [∨]-mapᵣ-[↔] : (B₁ ↔ B₂) → ((A ∨ B₁) ↔ (A ∨ B₂))
+  [∨]-mapᵣ-[↔] b = [∨]-map-[↔] [↔]-reflexivity b
+
+  [↔]-map-[↔] : (A₁ ↔ A₂) → (B₁ ↔ B₂) → ((A₁ ↔ B₁) ↔ (A₂ ↔ B₂))
+  [↔]-map-[↔] a b =
+    [↔]-intro
+      (Tuple.map
+        (b₂a₂ ↦ [↔]-to-[←] a ∘ b₂a₂ ∘ [↔]-to-[→] b)
+        (a₂b₂ ↦ [↔]-to-[←] b ∘ a₂b₂ ∘ [↔]-to-[→] a)
+      )
+      (Tuple.map
+        (b₁a₁ ↦ [↔]-to-[→] a ∘ b₁a₁ ∘ [↔]-to-[←] b)
+        (a₁b₁ ↦ [↔]-to-[→] b ∘ a₁b₁ ∘ [↔]-to-[←] a)
+      )
+
+  [↔]-mapₗ-[↔] : (A₁ ↔ A₂) → ((A₁ ↔ B) ↔ (A₂ ↔ B))
+  [↔]-mapₗ-[↔] a = [↔]-map-[↔] a [↔]-reflexivity
+
+  [↔]-mapᵣ-[↔] : (B₁ ↔ B₂) → ((A ↔ B₁) ↔ (A ↔ B₂))
+  [↔]-mapᵣ-[↔] b = [↔]-map-[↔] [↔]-reflexivity b
 
 ------------------------------------------
 -- Stuff related to classical logic

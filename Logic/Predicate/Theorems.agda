@@ -148,7 +148,7 @@ module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} ⦃ pos : ◊ X ⦄ {P : X → Stmt
   -- Note: If X would be empty, then this would be unprovable because [∀]-elim needs a constructed element.
   [∀ₑ]-to-[∃] : ∀ₗ(x ↦ P(x)) → ∃(x ↦ P(x))
   [∀ₑ]-to-[∃] (apx) =
-    [∃]-intro ([◊]-existence ⦃ pos ⦄) ⦃ [∀ₑ]-elim{Obj = X}{P}(apx) ⦄
+    [∃]-intro ([◊]-existence ⦃ pos ⦄) ⦃ [∀ₑ]-elim{Obj = X}{P = P}(apx) ⦄
 
 ------------------------------------------
 -- "Distributing" quantifiers into logical operators

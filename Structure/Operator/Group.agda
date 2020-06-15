@@ -17,7 +17,7 @@ open import Type.Size
 record Group {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
-    instance ⦃ monoid ⦄ : Monoid(_▫_)
+    ⦃ monoid ⦄ : Monoid(_▫_)
   open Monoid(monoid) public
 
   field
@@ -46,8 +46,8 @@ record Group {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : 
 record CommutativeGroup {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
-    instance ⦃ group ⦄         : Group (_▫_)
-    instance ⦃ commutativity ⦄ : Commutativity (_▫_)
+    ⦃ group ⦄         : Group (_▫_)
+    ⦃ commutativity ⦄ : Commutativity (_▫_)
   open Group(group) public
 
 {- TODO: See Monoid for how this should be rewritten to fit how it is done in Category

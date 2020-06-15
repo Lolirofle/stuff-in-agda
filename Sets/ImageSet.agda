@@ -40,7 +40,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     SetLike.[⊆]-membership ImageSet-setLike = [↔]-reflexivity
     SetLike.[≡]-membership ImageSet-setLike = [↔]-reflexivity
   private open module ImageSet-SetLike {ℓᵢ} = SetLike(ImageSet-setLike{ℓᵢ}) public
-  open Structure.Container.SetLike.Proofs using ([⊇]-membership) public
+  open import Structure.Container.SetLike.Proofs using ([⊇]-membership) public
   module _ {ℓᵢ} where
     instance [⊆]-binaryRelator  = Structure.Container.SetLike.Proofs.[⊆]-binaryRelator  ⦃ ImageSet-setLike{ℓᵢ} ⦄
     instance [⊇]-binaryRelator  = Structure.Container.SetLike.Proofs.[⊇]-binaryRelator  ⦃ ImageSet-setLike{ℓᵢ} ⦄
