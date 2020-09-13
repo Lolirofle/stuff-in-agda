@@ -23,6 +23,7 @@
 module Syntax.Implication where
 
 open import Functional using (const ; id ; _∘_ ; _∘₂_ ; swap)
+open import Logic.Propositional
 import      Lvl
 import      Syntax.Implication.Dependent as Dependent
 open import Type
@@ -45,3 +46,22 @@ infixr 0.98 _⇒-[]_
 •_•_⇒₂-[_]_ x₁ x₂ g f = (f ∘₂ g) x₁ x₂
 infixr 0.97 •_•_⇒₂-[_]_
 {-# INLINE •_•_⇒₂-[_]_ #-}
+
+_⇔-end : ∀(X : Type{ℓ₁}) → (X ↔ X)
+_⇔-end _ = [↔]-intro id id
+infixr 0.99 _⇔-end
+{-# INLINE _⇔-end #-}
+
+_⇔_ = Functional.apply
+infixl 0.97 _⇔_
+{-# INLINE _⇔_ #-}
+
+_⇔-[_]_ : ∀(X : Type{ℓ₁}){Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X ↔ Y) → (Y ↔ Z) → (X ↔ Z)
+_⇔-[_]_ _ ([↔]-intro pₗ pᵣ) ([↔]-intro qₗ qᵣ) = [↔]-intro (pₗ ∘ qₗ) (qᵣ ∘ pᵣ)
+infixr 0.98 _⇔-[_]_
+{-# INLINE _⇔-[_]_ #-}
+
+_⇔-[]_ : ∀(X : Type{ℓ₁}){Y : Type{ℓ₂}} → (X ↔ Y) → (X ↔ Y)
+_⇔-[]_ _ = id
+infixr 0.98 _⇔-[]_
+{-# INLINE _⇔-[]_ #-}

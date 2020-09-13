@@ -3,6 +3,7 @@ module Structure.Function.Domain where
 import      Lvl
 open import Functional
 import      Structure.Function.Names as Names
+open import Structure.Function
 open import Lang.Instance
 open import Logic
 open import Logic.Propositional
@@ -30,15 +31,6 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ�
     field proof : Names.Bijective(f)
   bijective = inst-fn Bijective.proof
 
-module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} (f : A → B) where
-  module _ (f⁻¹ : B → A) where
-    record Inverseₗ : Stmt{ℓₒ₁ Lvl.⊔ ℓₗ₁} where
-      constructor intro
-      field proof : Names.Inverses(f⁻¹)(f)
-    inverseₗ = inst-fn Inverseₗ.proof
-
-  Invertibleₗ = ∃(Inverseₗ)
-
 module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ (f : A → B) where
   module _ (f⁻¹ : B → A) where
     record Inverseᵣ : Stmt{ℓₒ₂ Lvl.⊔ ℓₗ₂} where
@@ -46,12 +38,29 @@ module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B)
       field proof : Names.Inverses(f)(f⁻¹)
     inverseᵣ = inst-fn Inverseᵣ.proof
 
-  Invertibleᵣ = ∃(Inverseᵣ)
+  module _ ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ where
+    Invertibleᵣ = ∃(f⁻¹ ↦ Function(f⁻¹) ∧ Inverseᵣ(f⁻¹))
+
+module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} (f : A → B) where
+  module _ (f⁻¹ : B → A) where
+    Inverseₗ : Stmt
+    Inverseₗ = Inverseᵣ(f⁻¹)(f)
+    module Inverseₗ(inverseₗ) = Inverseᵣ{f = f⁻¹}{f⁻¹ = f}(inverseₗ)
+    inverseₗ : ⦃ inverseₗ : Inverseₗ ⦄ → Names.Inverses(f⁻¹)(f)
+    inverseₗ = inst-fn Inverseₗ.proof
+
+  module _ ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ where
+    Invertibleₗ = ∃(f⁻¹ ↦ Function(f⁻¹) ∧ Inverseₗ(f⁻¹))
 
 module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ (f : A → B) where
   module _ (f⁻¹ : B → A) where
     Inverse = Inverseₗ(f)(f⁻¹) ∧ Inverseᵣ(f)(f⁻¹)
-  Invertible = ∃(Inverse)
+    inverse-left : ⦃ inverse : Inverse ⦄ → Names.Inverses(f⁻¹)(f)
+    inverse-left = inst-fn(Inverseₗ.proof ∘ [∧]-elimₗ)
+    inverse-right : ⦃ inverse : Inverse ⦄ → Names.Inverses(f)(f⁻¹)
+    inverse-right = inst-fn(Inverseᵣ.proof ∘ [∧]-elimᵣ)
+
+  Invertible = ∃(f⁻¹ ↦ Function(f⁻¹) ∧ Inverse(f⁻¹))
 
 module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ (f : A → B) where
   record Constant : Stmt{ℓₒ₁ Lvl.⊔ ℓₗ₂} where

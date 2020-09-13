@@ -14,7 +14,7 @@ open import Structure.Category.Functor.Equiv
 open import Structure.Category.Functor.Functors
 open import Structure.Category.Morphism.IdTransport
 open import Structure.Category.NaturalTransformation
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Properties

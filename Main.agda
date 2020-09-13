@@ -23,24 +23,33 @@ import Data.Either.Equiv.Proofs
 import Data.Either.Proofs
 import Data.List
 -- import Data.List.Combinatorics
+-- import Data.List.Combinatorics.Proofs
 import Data.List.Computability
 import Data.List.Functions
+import Data.List.Functions.Positional
 import Data.List.FunctionsProven
-import Data.List.Functor
+import Data.List.Categorical
 import Data.List.Proofs
 import Data.List.Relation
 import Data.List.Relation.Membership
 import Data.List.Relation.Membership.Proofs
 import Data.List.Relation.OrderedPairwise
 import Data.List.Relation.Permutation
+import Data.List.Relation.Quantification
 import Data.List.Relation.Sublist
 import Data.List.Relation.Sublist.Proofs
 import Data.List.SizeOrdering
-import Data.List.Sort
+import Data.List.Sorting
+import Data.List.Sorting.Functions
+import Data.List.Sorting.InsertionSort
+import Data.List.Sorting.MergeSort
+import Data.List.Sorting.Proofs
 -- import Data.ListNonEmpty
 import Data.ListSized
 import Data.Option
-import Data.Option.Functor
+import Data.Option.Equiv
+import Data.Option.Functions
+import Data.Option.Categorical
 import Data.Option.Proofs
 import Data.Proofs
 import Data.Tuple
@@ -70,6 +79,7 @@ import Formalization.PrimitiveRecursion
 import Formalization.SKICombinatorCalculus
 import Formalization.SimplyTypedLambdaCalculus
 import Function
+import Function.Axioms
 import Function.DomainRaise
 import Function.Domains
 import Function.Domains.Proofs
@@ -78,7 +88,7 @@ import Function.Equals
 import Function.Equals.Proofs
 import Function.Inverse
 import Function.Inverseᵣ
--- import Function.Inverseₗ
+import Function.Inverseₗ
 import Function.Iteration
 import Function.Iteration.Order
 import Function.Iteration.Proofs
@@ -87,9 +97,13 @@ import Function.Multi.Functions
 import Function.Multi₌
 import Function.Multi₌.Functions
 import Function.Names
+import Function.PointwiseStructure
 import Function.Proofs
 import Functional
+import Functional.Combinations
 import Functional.Dependent
+-- import Geometry.Axioms
+-- import Geometry.HilbertAxioms
 import Graph
 import Graph.Category
 import Graph.Oper
@@ -116,10 +130,12 @@ import Logic.IntroInstances
 import Logic.Names
 import Logic.Predicate
 import Logic.Predicate.Equiv
+import Logic.Predicate.Multi
 import Logic.Predicate.Theorems
 import Logic.Propositional
 import Logic.Propositional.Proofs.Structures
 import Logic.Propositional.Theorems
+import Logic.Propositional.Xor
 import Lvl
 import Lvl.Functions
 import Lvl.MultiFunctions
@@ -144,6 +160,9 @@ import Numeral.Integer
 -- import Numeral.Integer.Relation
 -- import Numeral.Integer.Sign
 import Numeral.Matrix
+-- import Numeral.Matrix.OverField
+-- import Numeral.Matrix.Proofs
+-- import Numeral.Matrix.Relations
 import Numeral.Natural
 import Numeral.Natural.Combinatorics
 import Numeral.Natural.Combinatorics.Proofs
@@ -166,7 +185,11 @@ import Numeral.Natural.Oper.Modulo.Proofs
 import Numeral.Natural.Oper.Proofs
 -- import Numeral.Natural.Oper.Proofs.Elemantary
 -- import Numeral.Natural.Oper.Proofs.Iteration
+-- import Numeral.Natural.Oper.Proofs.Structure
 import Numeral.Natural.Oper.Summation
+import Numeral.Natural.Oper.Summation.Proofs
+import Numeral.Natural.Oper.Summation.Range
+import Numeral.Natural.Oper.Summation.Range.Proofs
 import Numeral.Natural.Prime
 import Numeral.Natural.Relation
 import Numeral.Natural.Relation.Computability
@@ -221,7 +244,9 @@ import Sized.Data.List
 import Stream
 import String
 import Structure.Arithmetic
+import Structure.Categorical.Properties
 import Structure.Category
+import Structure.Category.Action
 import Structure.Category.Categories
 import Structure.Category.Category
 import Structure.Category.Dual
@@ -240,14 +265,16 @@ import Structure.Category.Monoid
 -- import Structure.Category.Monoidal
 import Structure.Category.Morphism.IdTransport
 import Structure.Category.Morphism.Transport
-import Structure.Category.Names
+import Structure.Categorical.Names
 import Structure.Category.NaturalTransformation
 import Structure.Category.NaturalTransformation.Equiv
 import Structure.Category.NaturalTransformation.NaturalTransformations
 import Structure.Category.Proofs
-import Structure.Category.Properties
-import Structure.Category.Semicategory
+import Structure.Semicategory
+-- import Structure.Container.List
+-- import Structure.Container.ListLike
 import Structure.Container.SetLike
+import Structure.Container.SetLike.Proofs
 import Structure.Function
 import Structure.Function.Domain
 import Structure.Function.Domain.Proofs
@@ -258,6 +285,7 @@ import Structure.Function.Names
 import Structure.Function.Ordering
 import Structure.Operator
 import Structure.Operator.Field
+import Structure.Operator.Field.VectorSpace
 import Structure.Operator.Functions
 import Structure.Operator.Group
 import Structure.Operator.Group.Proofs
@@ -271,7 +299,25 @@ import Structure.Operator.Proofs.Util
 import Structure.Operator.Properties
 import Structure.Operator.SetAlgebra
 import Structure.Operator.Vector
+import Structure.Operator.Vector.Eigen
+-- import Structure.Operator.Vector.Equiv
+import Structure.Operator.Vector.FiniteDimensional
+import Structure.Operator.Vector.FiniteDimensional.LinearMaps.ChangeOfBasis
+-- import Structure.Operator.Vector.FiniteDimensional.Proofs
+import Structure.Operator.Vector.InfiniteDimensional
+import Structure.Operator.Vector.LinearCombination
+-- import Structure.Operator.Vector.LinearCombination.Proofs
+import Structure.Operator.Vector.LinearMap
+-- import Structure.Operator.Vector.LinearMap.Category
+-- import Structure.Operator.Vector.LinearMap.Equiv
+import Structure.Operator.Vector.LinearMaps
 import Structure.Operator.Vector.Proofs
+import Structure.Operator.Vector.Subspace
+-- import Structure.Operator.Vector.Subspace.Proofs
+import Structure.Operator.Vector.Subspaces.DirectSum
+import Structure.Operator.Vector.Subspaces.Image
+import Structure.Operator.Vector.Subspaces.Kernel
+-- import Structure.Operator.Vector.Subspaces.Span
 import Structure.OrderedField
 import Structure.OrderedField.AbsoluteValue
 import Structure.Real
@@ -302,11 +348,14 @@ import Structure.Setoid.WithLvl
 import Structure.Topology
 -- import Structure.Topology.Proofs
 -- import Structure.Topology.Properties
+import Structure.Type.Identity
+import Structure.Type.Identity.Proofs
 import Structure.Type.Quotient
 import Syntax.Do
 import Syntax.Function
 import Syntax.Idiom
 import Syntax.Implication
+import Syntax.Implication.Dependent
 import Syntax.List
 import Syntax.Number
 import Syntax.Transitivity
@@ -320,6 +369,8 @@ import Type.Category.IntensionalFunctionsCategory
 -- import Type.Category.IntensionalFunctionsCategory.HomFunctor
 -- import Type.Cubical
 -- import Type.Cubical.Equality
+-- import Type.Cubical.InductiveInterval
+-- import Type.Cubical.InductivePath
 -- import Type.Cubical.Path
 -- import Type.Cubical.Path.Proofs
 import Type.Dependent
@@ -327,6 +378,10 @@ import Type.Dependent.Functions
 import Type.Properties.Empty
 import Type.Properties.Empty.Proofs
 import Type.Properties.Homotopy
+import Type.Properties.Inhabited
+import Type.Properties.MereProposition
+import Type.Properties.Singleton
+import Type.Properties.Singleton.Proofs
 import Type.Singleton
 import Type.Singleton.Proofs
 import Type.Size

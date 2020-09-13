@@ -74,7 +74,7 @@ module _
   instance _ = vectorSpace₃
 
   compose : LinearMap(vectorSpace₂)(vectorSpace₃)(f) → LinearMap(vectorSpace₁)(vectorSpace₂)(g) → LinearMap(vectorSpace₁)(vectorSpace₃)(f ∘ g)
-  LinearMap.function-f (compose {f} {g} F G) = [∘]-function {f = f}{g = g}
+  LinearMap.function (compose {f} {g} F G) = [∘]-function {f = f}{g = g}
   Preserving.proof (LinearMap.preserves-[+ᵥ] (compose {f} {g} F G)) {x}{y} =
     (f ∘ g)(x +ᵥ₁ y)          🝖[ _≡_ ]-[]
     f(g(x +ᵥ₁ y))             🝖[ _≡_ ]-[ congruence₁(f) (preserving₂(g) (_+ᵥ₁_)(_+ᵥ₂_)) ]

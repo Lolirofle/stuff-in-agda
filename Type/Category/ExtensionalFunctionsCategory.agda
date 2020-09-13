@@ -8,7 +8,7 @@ open import Logic.Propositional
 import      Relator.Equals as Eq
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Category
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Type
 open import Type.Properties.Singleton
 

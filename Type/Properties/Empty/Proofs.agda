@@ -10,7 +10,7 @@ open import Type.Properties.Empty
 open import Type
 
 private variable ℓ : Lvl.Level
-private variable T : Type{ℓ}
+private variable A B T : Type{ℓ}
 
 -- A type is never inhabited and empty at the same time.
 notInhabitedAndEmpty : (◊ T) → IsEmpty(T) → ⊥
@@ -20,3 +20,6 @@ notInhabitedAndEmpty (intro ⦃ obj ⦄) (intro empty) with () ← empty{Empty} 
 empty-negation-eq : IsEmpty(T) ↔ (T → Empty{ℓ})
 IsEmpty.empty (Data.Tuple.left empty-negation-eq nt) = empty ∘ nt
 Data.Tuple.right empty-negation-eq (intro e) t with () ← e {Empty} t
+
+empty-by-function : (f : A → B) → (IsEmpty{ℓ}(B) → IsEmpty{ℓ}(A))
+empty-by-function f (intro empty-B) = intro(empty-B ∘ f)

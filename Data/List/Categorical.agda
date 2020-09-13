@@ -1,4 +1,4 @@
-module Data.List.Functor where
+module Data.List.Categorical where
 
 import Lvl
 open import Functional

@@ -93,12 +93,12 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) w
     -- The existence of a path means that it is always possible to traverse the tree from every vertex along the edges to every vertex.
     record IsTree : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       constructor intro
-      field proof : ∀{x y : V} → ∃!{T = Walk(_⟶_) x y}(Path)
+      field proof : ∀{x y : V} → ∃!{Obj = Walk(_⟶_) x y}(Path)
     isTree = inst-fn IsTree.proof
 
     record IsForest : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       constructor intro
-      field proof : ∀{x y : V} → Unique{T = Walk(_⟶_) x y}(Path)
+      field proof : ∀{x y : V} → Unique{Obj = Walk(_⟶_) x y}(Path)
     isForest = inst-fn IsForest.proof
 
     record IsOutwardRootedTree : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where

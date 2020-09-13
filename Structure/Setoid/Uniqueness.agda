@@ -14,13 +14,13 @@ module _ {ℓ₁}{ℓ₂} where
   -- Definition of uniqueness of a property.
   -- This means that there is at most one element that satisfies this property.
   -- This is similiar to "Injective" for functions.
-  Unique : ∀{T : Type{ℓ₁}}{ℓₗ} → ⦃ _ : Equiv{ℓₗ}(T) ⦄ → (T → Stmt{ℓ₂}) → Stmt
-  Unique {T = T} property = ∀{x y : T} → property(x) → property(y) → (x ≡ y)
+  Unique : ∀{Obj : Type{ℓ₁}}{ℓₗ} → ⦃ equiv : Equiv{ℓₗ}(Obj) ⦄ → (Pred : Obj → Stmt{ℓ₂}) → Stmt
+  Unique {Obj = Obj} Pred = ∀{x y : Obj} → Pred(x) → Pred(y) → (x ≡ y)
 
   -- Definition of existence of an unique element satisfying a property.
   -- This means that there is one and only one element that satisfies this property.
-  ∃! : ∀{T : Type{ℓ₁}}{ℓₗ} → ⦃ _ : Equiv{ℓₗ}(T) ⦄ → (T → Stmt{ℓ₂}) → Stmt
-  ∃! {T} property = ∃(a ↦ property(a)) ∧ Unique{T}(property)
+  ∃! : ∀{Obj : Type{ℓ₁}}{ℓₗ} → ⦃ equiv : Equiv{ℓₗ}(Obj) ⦄ → (Pred : Obj → Stmt{ℓ₂}) → Stmt
+  ∃! {Obj} Pred = ∃(Pred) ∧ Unique(Pred)
 
   [∃!]-intro : ∀{T} → ⦃ _ : Equiv{ℓₗ}(T) ⦄ → ∀{property} → ∃(property) → Unique{T}(property) → ∃!(property)
   [∃!]-intro = [∧]-intro

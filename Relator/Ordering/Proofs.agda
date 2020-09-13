@@ -64,7 +64,7 @@ module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{�
     instance
       [<][≤]-subtransitivityₗ : Subtransitivityₗ(_<_)(_≤_)
       Subtransitivityₗ.proof [<][≤]-subtransitivityₗ xy yz zx = yz(transitivity(_≤_) zx xy)
-      
+
     instance
       [<][≤]-subtransitivityᵣ : Subtransitivityᵣ(_<_)(_≤_)
       Subtransitivityᵣ.proof [<][≤]-subtransitivityᵣ xy yz zx = xy(transitivity(_≤_) yz zx)

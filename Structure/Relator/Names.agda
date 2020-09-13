@@ -33,6 +33,12 @@ module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) 
   SwappedTransitivity : Stmt
   SwappedTransitivity = ∀{x y z : T} → (y ▫ z) → (x ▫ y) → (x ▫ z)
 
+  FlippedTransitivityₗ : Stmt
+  FlippedTransitivityₗ = ∀{x y z : T} → (x ▫ z) → (y ▫ z) → (x ▫ y)
+
+  FlippedTransitivityᵣ : Stmt
+  FlippedTransitivityᵣ = ∀{x y z : T} → (x ▫ y) → (x ▫ z) → (y ▫ z)
+
   Irreflexivity : Stmt
   Irreflexivity = ∀{x : T} → ¬(x ▫ x)
 

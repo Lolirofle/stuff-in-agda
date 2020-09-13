@@ -1,7 +1,7 @@
 module Lang.Inspect where
 
 open import Type
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Relator.Properties
 
 {-
@@ -14,8 +14,8 @@ module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : A → Type{ℓ₂}} ⦃ eqB : �
   {-# INLINE inspect #-}
 -}
 
-module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ eqB : Equiv(B) ⦄ (f : A → B) (x : A) where
-  data Inspect (y : B) : Type{ℓ₂} where
+module _ {ℓ₁ ℓ₂ ℓₑ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ (f : A → B) (x : A) where
+  data Inspect (y : B) : Type{ℓₑ₂} where
     intro : (f(x) ≡ y) → Inspect(y)
 
   inspect : Inspect(f(x))

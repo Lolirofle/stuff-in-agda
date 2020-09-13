@@ -1,10 +1,11 @@
 module Data.List.Relation.Permutation where
 
 import      Data
+open import Data.Boolean
 open import Data.List
 open import Data.List.Functions renaming (module LongOper to List)
 open import Data.List.Relation
-open import Functional using (id ; _∘_)
+open import Functional using (id ; _∘_ ; const)
 open import Logic.Propositional
 open import Logic
 import      Lvl
@@ -87,7 +88,10 @@ module Proofs where
     permutes-equivalence : Equivalence(_permutes_ {T = T})
     permutes-equivalence = intro
 
-  permutation-mapping-correctness : (p : (l₁ permutes l₂)) → ∀{i} → (index l₁(i) ≡ index l₂(permutation-mapping p i))
+  PermutationMappingCorrectness : (l₁ l₂ : List(T)) → (𝕟(length(l₁)) → 𝕟(length(l₂))) → Stmt
+  PermutationMappingCorrectness l₁ l₂ mapping = ∀{i} → (index l₁(i) ≡ index l₂(mapping i))
+
+  permutation-mapping-correctness : (p : (l₁ permutes l₂)) → PermutationMappingCorrectness l₁ l₂ (permutation-mapping p)
   permutation-mapping-correctness empty                 = reflexivity(_≡_)
   permutation-mapping-correctness (prepend p) {𝟎}       = reflexivity(_≡_)
   permutation-mapping-correctness (prepend p) {𝐒 i}     = permutation-mapping-correctness p {i}
@@ -126,9 +130,33 @@ module Proofs where
         (permutation-mapping q ∘ permutation-mapping (symmetry(_permutes_) q)) y 🝖[ _≡_ ]-[ ∃.proof (proof q {y}) ]
         y 🝖[ _≡_ ]-end
 
-  instance
-    permutation-mapping-bijective : ∀{p : (l₁ permutes l₂)} → Bijective(permutation-mapping p)
-    permutation-mapping-bijective {p = p} = injective-surjective-to-bijective(permutation-mapping p) ⦃ permutation-mapping-injective {p = p} ⦄ ⦃ permutation-mapping-surjective {p = p} ⦄
+  permutation-mapping-bijective : ∀{p : (l₁ permutes l₂)} → Bijective(permutation-mapping p)
+  permutation-mapping-bijective {p = p} = injective-surjective-to-bijective(permutation-mapping p) ⦃ permutation-mapping-injective {p = p} ⦄ ⦃ permutation-mapping-surjective {p = p} ⦄
+
+  {-
+  permutation-from-mapping : (p : 𝕟(length(l₁)) → 𝕟(length(l₂))) ⦃ bij : Bijective(p) ⦄ (correctness : PermutationMappingCorrectness l₁ l₂ p) → (l₁ permutes l₂)
+  permutation-from-mapping {l₁ = ∅} {l₂ = ∅} p _ = empty
+  permutation-from-mapping {l₁ = ∅} {l₂ = x₂ ⊰ l₂} p _ = {!!}
+  permutation-from-mapping {l₁ = x₁ ⊰ l₁} {l₂ = ∅} p _ = {!!}
+  permutation-from-mapping {l₁ = x₁ ⊰ l₁} {l₂ = x₂ ⊰ l₂} p correctness with p(𝟎) | correctness{𝟎}
+  ... | 𝟎   | [≡]-intro = prepend (permutation-from-mapping (forgetFirstCutoffOfBij p) ⦃ forgetFirstCutoffOfBij-bijective ⦄ {!!}) where
+    bijective-equinumerous : ∀{a b}{f : 𝕟(a) → 𝕟(b)} → Bijective(f) → (a ≡ b)
+    forgetFirstCutoff : ∀{a} → (𝕟(𝐒(a)) → 𝕟(𝐒(a))) → (𝕟(a) → 𝕟(a))
+    forgetFirstCutoff {𝐒(a)} f(x) with f(𝐒(x))
+    ... | 𝟎    = 𝟎
+    ... | 𝐒(y) = y
+
+    forgetFirstCutoffOfBij : ∀{a b} → (f : 𝕟(𝐒(a)) → 𝕟(𝐒(b))) ⦃ bij : Bijective(f) ⦄ → (𝕟(a) → 𝕟(b))
+    forgetFirstCutoffOfBij {𝐒 a} f ⦃ bij ⦄ with [≡]-intro ← bijective-equinumerous bij = forgetFirstCutoff f
+    forgetFirstCutoffOfBij-bijective : ∀{a b}{f : 𝕟(𝐒(a)) → 𝕟(𝐒(b))} ⦃ bij : Bijective(f) ⦄ → Bijective(forgetFirstCutoffOfBij f)
+
+    -- proof : ∀{l₁ l₂ : List(T)}{p : 𝕟(length(l₁)) → 𝕟(length(l₂))} → PermutationMappingCorrectness l₁ l₂ (forgetFirstCutoffOfBij p)
+    proof : PermutationMappingCorrectness l₁ l₂ (forgetFirstCutoffOfBij p)
+    proof {i} =
+      index l₁ i                            🝖[ _≡_ ]-[ {!correctness!} ]
+      index l₂ (forgetFirstCutoffOfBij p i) 🝖-end 
+  ... | 𝐒 w | _ = {!!}
+  -}
 
   permutes-with-postpend : (l₁ permutes l₂) → (postpend x l₁) permutes (postpend x l₂)
   permutes-with-postpend empty       = prepend empty
@@ -150,7 +178,25 @@ module Proofs where
   permutes-length swap        = [≡]-intro
   permutes-length (trans p q) = transitivity(_≡_) (permutes-length p) (permutes-length q)
 
-  -- permutes-count : (l₁ permutes l₂) → (count a l₁ ≡ count a l₂)
+  permutes-countᵣ : (l₁ permutes l₂) → ∀{P} → (count P l₁ ≡ count P l₂)
+  permutes-countᵣ empty = [≡]-intro
+  permutes-countᵣ {l₁ = x₁ ⊰ l₁} (prepend {x = x} p) {P} with P(x)
+  ... | 𝑇 = [≡]-with 𝐒(permutes-countᵣ {l₁ = l₁} p {P})
+  ... | 𝐹 = permutes-countᵣ {l₁ = l₁} p {P}
+  permutes-countᵣ (swap {x = x} {y = y}) {P} with P(x) | P(y)
+  ... | 𝑇 | 𝑇 = [≡]-intro
+  ... | 𝑇 | 𝐹 = [≡]-intro
+  ... | 𝐹 | 𝑇 = [≡]-intro
+  ... | 𝐹 | 𝐹 = [≡]-intro
+  permutes-countᵣ (trans p q) = permutes-countᵣ p 🝖 permutes-countᵣ q
+
+  {- TODO
+  permutes-countₗ : (∀{P} → count P l₁ ≡ count P l₂) → (l₁ permutes l₂)
+  permutes-countₗ {l₁ = ∅} {l₂ = ∅} p = empty
+  permutes-countₗ {l₁ = ∅} {l₂ = x ⊰ l₂} p with () ← p{const 𝑇}
+  permutes-countₗ {l₁ = x ⊰ l₁} {l₂ = ∅} p with () ← p{const 𝑇}
+  permutes-countₗ {l₁ = x ⊰ l₁} {l₂ = x₁ ⊰ l₂} p = {!!} -- TODO: The rest of the cases from _permutes_. Maybe decidable equality on the items are required?
+  -}
 
   permutes-with-[++]ₗ : (l₁ permutes l₂) → ((l₁ ++ l) permutes (l₂ ++ l))
   permutes-with-[++]ₗ {l = l} empty = reflexivity(_permutes_)
@@ -174,3 +220,7 @@ module Proofs where
     (x ⊰ l₂) ++ l₁        🝖[ _permutes_ ]-[ permutes-with-[++]ₗ {l = l₁} (postpend-prepend-permutes {l = l₂}) ]-sym
     (postpend x l₂) ++ l₁ 🝖[ _permutes_ ]-[ sub₂(_≡_)(_permutes_) ([++]-middle-prepend-postpend {l₁ = l₂}{l₂ = l₁}) ]
     l₂ ++ (x ⊰ l₁)        🝖[ _permutes_ ]-end
+
+  permutes-empty-not-empty : ¬(∅ permutes (x ⊰ l))
+  permutes-empty-not-empty (trans {l₂ = ∅}     p q) = permutes-empty-not-empty q
+  permutes-empty-not-empty (trans {l₂ = _ ⊰ _} p q) = permutes-empty-not-empty p

@@ -11,6 +11,9 @@ open import Numeral.Finite
 open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Sign
 open import Relator.Equals
+open import Relator.Equals.Proofs.Equivalence
+import      Structure.Operator.Names as Names
+open import Structure.Operator.Properties
 open import Syntax.Number
 
 ⋚-of-𝟎-not-+ : ∀{an bn}{b : 𝕟(bn)} → ⦃ _ : 𝟎 {an} ⋚? b ≡ ➕ ⦄ → ⊥
@@ -46,3 +49,12 @@ open import Syntax.Number
 ⋚-to-≡ : ∀{an bn}{a : 𝕟(an)}{b : 𝕟(bn)} → ⦃ _ : a ⋚? b ≡ 𝟎 ⦄ → (a ≡? b ≡ 𝑇)
 ⋚-to-≡ {a = 𝟎}   {𝟎}   = [≡]-intro
 ⋚-to-≡ {a = 𝐒 a} {𝐒 b} = ⋚-to-≡ {a = a} {b}
+
+instance
+  [≡?]-commutativity : ∀{n} → Commutativity{T₁ = 𝕟(n)} ⦃ [≡]-equiv ⦄ (_≡?_)
+  [≡?]-commutativity{n} = intro(\{x y} → p{n}{x}{y}) where
+    p : ∀{n} → Names.Commutativity{T₁ = 𝕟(n)} ⦃ [≡]-equiv ⦄ (_≡?_)
+    p{x = 𝟎}  {y = 𝟎}   = [≡]-intro
+    p{x = 𝟎}  {y = 𝐒 y} = [≡]-intro
+    p{x = 𝐒 x}{y = 𝟎}   = [≡]-intro
+    p{x = 𝐒 x}{y = 𝐒 y} = p {x = x}{y = y}

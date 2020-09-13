@@ -1,4 +1,4 @@
-module Structure.Category.Properties where -- TODO: Consider moving this to Structure.Categorical.Properties, and create a new Structure.Category.Properties that reimports
+module Structure.Categorical.Properties where
 
 import      Functional.Dependent as Fn
 open import Lang.Instance
@@ -7,7 +7,7 @@ open import Logic
 open import Logic.Predicate
 open import Logic.Propositional
 open import Structure.Setoid.WithLvl
-import      Structure.Category.Names as Names
+import      Structure.Categorical.Names as Names
 import      Structure.Operator.Names as Names
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
@@ -85,6 +85,14 @@ module Morphism where
             inverseᵣ = inst-fn Inverseᵣ.proof
 
             Inverse = Inverseₗ ∧ Inverseᵣ
+            module Inverse(inverse : Inverse) where
+              instance
+                left : Inverseₗ
+                left = [∧]-elimₗ inverse
+
+              instance
+                right : Inverseᵣ
+                right = [∧]-elimᵣ inverse
 
           Invertibleₗ = ∃(Inverseₗ)
           Invertibleᵣ = ∃(Inverseᵣ)
@@ -93,7 +101,6 @@ module Morphism where
           -- For the set and functions category, it means that f is bijective.
           Isomorphism : Stmt
           Isomorphism = ∃(Inverse)
-
           module Isomorphism ⦃ iso : Isomorphism ⦄ where
             instance inverse = [∃]-proof iso
             instance inverse-left  = [∧]-elimₗ inverse
@@ -157,6 +164,55 @@ module Polymorphism where
             constructor intro
             field proof : Names.Polymorphism.Involution{Morphism = Morphism}(_▫_)(id)(f)
           involution = inst-fn Involution.proof
+
+        module _ (inv : ∀{x y : Obj} → (x ⟶ y) → (y ⟶ x)) where
+          -- A morphism have a right inverse morphism.
+          -- Also called: Split monomorphism, retraction
+          record Inverterₗ : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
+            constructor intro
+            field proof : ∀{x y : Obj}{f : x ⟶ y} → Names.Morphism.Inverseₗ(_▫_)(\{a} → id{a})(f)(inv f)
+            instance
+              inverseₗ : ∀{x y : Obj}{f : x ⟶ y} → Morphism.Inverseₗ(_▫_)(\{x} → id{x})(f)(inv f)
+              inverseₗ = Morphism.intro proof
+
+          inverterₗ = inst-fn Inverterₗ.proof
+
+          -- A morphism have a right inverse morphism.
+          -- Also called: Split epimorphism, section
+          record Inverterᵣ : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
+            constructor intro
+            field proof : ∀{x y : Obj}{f : x ⟶ y} → Names.Morphism.Inverseᵣ(_▫_)(\{a} → id{a})(f)(inv f)
+            instance
+              inverseᵣ : ∀{x y : Obj}{f : x ⟶ y} → Morphism.Inverseᵣ(_▫_)(\{x} → id{x})(f)(inv f)
+              inverseᵣ = Morphism.intro proof
+          inverterᵣ = inst-fn Inverterᵣ.proof
+
+          Inverter = Inverterₗ ∧ Inverterᵣ
+          module Inverter(inverter : Inverter) where
+            instance
+              left : Inverterₗ
+              left = [∧]-elimₗ inverter
+            open Inverterₗ(left) public
+
+            instance
+              right : Inverterᵣ
+              right = [∧]-elimᵣ inverter
+            open Inverterᵣ(right) public
+
+            module _ {x y : Obj} {f : x ⟶ y} where
+              instance
+                inverse : Morphism.Inverse(_▫_)(\{x} → id{x})(f)(inv f)
+                inverse = [∧]-intro inverseₗ inverseᵣ
+              open Morphism.Inverse(_▫_)(\{x} → id{x})(f)(inv f)(inverse) renaming (left to inverseₗ ; right to inverseᵣ)
+
+            invertibleₗ : ∀{x y : Obj}{f : x ⟶ y} → Morphism.Invertibleₗ(_▫_)(\{x} → id{x})(f)
+            invertibleₗ {f = f} = [∃]-intro (inv f) ⦃ inverseₗ ⦄
+
+            invertibleᵣ : ∀{x y : Obj}{f : x ⟶ y} → Morphism.Invertibleᵣ(_▫_)(\{x} → id{x})(f)
+            invertibleᵣ {f = f} = [∃]-intro (inv f) ⦃ inverseᵣ ⦄
+
+            isomorphism : ∀{x y : Obj}{f : x ⟶ y} → Morphism.Isomorphism(_▫_)(\{x} → id{x})(f)
+            isomorphism {f = f} = [∃]-intro (inv f) ⦃ inverse ⦄
 
     open OperModule public
     open IdModule   public

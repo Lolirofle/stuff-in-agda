@@ -174,6 +174,6 @@ module _
   record Homeomorphism (f : X → Y) ⦃ func : Function(f) ⦄ : Stmt{Lvl.𝐒(ℓₗ₁ Lvl.⊔ ℓₗ₃ Lvl.⊔ ℓᵣ₁ Lvl.⊔ ℓᵣ₃) Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓᵣ₂} where
     constructor intro
     field
-      ⦃ bijective ⦄          : Bijective(f)
+      ⦃ invertible ⦄         : Invertible(f)
       ⦃ continuous ⦄         : Continuous(𝓣ₗ)(𝓣ᵣ) (f)
       ⦃ continuous-inverse ⦄ : Continuous(𝓣ᵣ)(𝓣ₗ) (inv f) ⦃ inv-function ⦄

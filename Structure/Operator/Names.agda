@@ -74,26 +74,26 @@ module _ {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
   WeakConverseAbsorber (_▫_)(a) = ∀{x y} → (x ▫ y ≡ a) → (x ≡ a)∨(y ≡ a)
 
 module _ {T₊ : Type{ℓ₁}} {T₋ : Type{ℓ₂}} {Tᵣ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑᵣ}(Tᵣ) ⦄ where
-  -- Definition of a left invertible element.
-  Invertibleₗ : (T₋ → T₊ → Tᵣ) → Tᵣ → T₊ → Stmt
-  Invertibleₗ (_▫_) id x = ∃(inv ↦ (inv ▫ x) ≡ id)
+  -- Definition of a left inverse element.
+  InverseElementₗ : (T₋ → T₊ → Tᵣ) → Tᵣ → T₊ → T₋ → Stmt
+  InverseElementₗ (_▫_) id x x⁻¹ = ((x⁻¹ ▫ x) ≡ id)
 
-  -- Definition of a right invertible element
-  Invertibleᵣ : (T₋ → T₊ → Tᵣ) → Tᵣ → T₋ → Stmt
-  Invertibleᵣ (_▫_) id x = ∃(inv ↦ (x ▫ inv) ≡ id)
+  -- Definition of a right inverse element
+  InverseElementᵣ : (T₊ → T₋ → Tᵣ) → Tᵣ → T₊ → T₋ → Stmt
+  InverseElementᵣ (_▫_) id x x⁻¹ = ((x ▫ x⁻¹) ≡ id)
 
   -- Definition of a left inverse function
   InverseFunctionₗ : (T₋ → T₊ → Tᵣ) → Tᵣ → (T₊ → T₋) → Stmt
-  InverseFunctionₗ (_▫_) id inv = ∀{x : T₊} → ((inv x) ▫ x) ≡ id
+  InverseFunctionₗ (_▫_) id inv = ∀{x : T₊} → InverseElementₗ(_▫_) id x (inv x)
 
   -- Definition of a right inverse function
   InverseFunctionᵣ : (T₊ → T₋ → Tᵣ) → Tᵣ → (T₊ → T₋) → Stmt
-  InverseFunctionᵣ (_▫_) id inv = ∀{x : T₊} → (x ▫ (inv x)) ≡ id
+  InverseFunctionᵣ (_▫_) id inv = ∀{x : T₊} → InverseElementᵣ(_▫_) id x (inv x)
 
 module _ {T : Type{ℓ₁}} {Tᵣ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑᵣ}(Tᵣ) ⦄ where
   -- Definition of an invertible element
-  Invertible : (T → T → Tᵣ) → Tᵣ → T → Stmt
-  Invertible (_▫_) id x = ∃(inv ↦ ((inv ▫ x) ≡ id) ∧ ((x ▫ inv) ≡ id))
+  InverseElement : (T → T → Tᵣ) → Tᵣ → T → T → Stmt
+  InverseElement (_▫_) id x x⁻¹ = (InverseElementₗ(_▫_) id x x⁻¹) ∧ (InverseElementᵣ(_▫_) id x x⁻¹)
 
   -- Definition of a function which returns the inverse element of the other side of the operation
   InverseFunction : (T → T → Tᵣ) → Tᵣ → (T → T) → Stmt

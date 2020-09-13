@@ -13,8 +13,8 @@ open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Category
-import      Structure.Category.Names as Names
-open import Structure.Category.Properties
+import      Structure.Categorical.Names as Names
+open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Properties

@@ -21,4 +21,6 @@ data _≤_ : ℕ → ℕ → Stmt{Lvl.𝟎} where
 _<_ : ℕ → ℕ → Stmt
 _<_ a b = (𝐒(a) ≤ b)
 
+pattern [<]-minimum {y} = [≤]-with-[𝐒] ⦃ [≤]-minimum {y} ⦄
+
 open From-[≤][<] (_≤_) (_<_) public

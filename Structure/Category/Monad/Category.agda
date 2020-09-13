@@ -24,7 +24,7 @@ open import Structure.Category.Monad.ExtensionSystem {cat = cat}
 open import Structure.Category.NaturalTransformation
 open import Structure.Category.NaturalTransformation.NaturalTransformations
 open import Structure.Category.Proofs
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties

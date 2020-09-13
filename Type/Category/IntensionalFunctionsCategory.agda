@@ -6,7 +6,7 @@ open import Logic.Propositional
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Category
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Operator
 open import Type
 open import Type.Properties.Singleton

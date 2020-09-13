@@ -10,7 +10,7 @@ private variable T : Type{ℓ}
 private variable n n₁ n₂ : ℕ
 
 module _ where
-  -- A polynomial of a finite degree represented as a list of its
+  -- A polynomial of a finite degree represented as a list of its coefficients.
   -- Examples:
   --   (a₀⋅x⁰ + a₁⋅x¹ + a₂⋅x² + a₃⋅x³ + a₄⋅x⁴) of degree 4 is [a₀,a₁,a₂,a₃,a₄]
   --   (5 + 7⋅x + x³) of maximal degree 3 is [5,7,0,1]
@@ -94,8 +94,8 @@ module _ where
     lr = [≡]-substitutionᵣ ([↔]-to-[→] max-defᵣ [≤]-of-[𝐒]) {Polynomial} (l + r)
 
   𝐷 : Polynomial(n) → Polynomial(ℕ.𝐏(n))
-  𝐷 {ℕ.𝟎}    (singleton _) = singleton ℕ.𝟎
-  𝐷 {ℕ.𝐒(n)} (a ⊰ b ⊰ p)   = {!!}
+  𝐷 {ℕ.𝟎}         (singleton _) = singleton ℕ.𝟎
+  𝐷 {ℕ.𝐒(ℕ.𝐒(n))} (a ⊰ b ⊰ p)   = ({!!} ℕ.⋅ b) ⊰ 𝐷 {ℕ.𝐒 n} (b ⊰ p)
 
 module Semantics  where
   open import Numeral.Finite as 𝕟 using (𝕟)
@@ -104,7 +104,8 @@ module Semantics  where
   open import Relator.Equals.Proofs.Equiv{T = ℕ}
   open import Structure.Function.Multi
   open import Structure.Operator
-  open import Structure.Operator.Proofs
+  -- open import Structure.Operator.Proofs
+  open import Structure.Operator.Proofs.Util
   open import Structure.Operator.Properties
   open import Structure.Relator.Properties
   open import Structure.Setoid.WithLvl

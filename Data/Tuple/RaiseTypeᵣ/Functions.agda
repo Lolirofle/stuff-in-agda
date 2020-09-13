@@ -47,6 +47,13 @@ map₂ {0}       _ _        _        = <>
 map₂ {1}       f x        y        = f x y
 map₂ {𝐒(𝐒(n))} f (x , xs) (y , ys) = (f x y , map₂{𝐒(n)} f xs ys)
 
+-- Similar to map₂ but the second is levels.
+-- TODO: This is probably a special case of something?
+mapWithLvls : ∀{n}{ℓ𝓈}{fℓ} → (∀{ℓ} → Type{ℓ} → (l : Lvl.Level) → Type{fℓ ℓ l}) → (Types{n}(ℓ𝓈) → (ls : Lvl.Level ^ n) → Types(Raise.map₂ fℓ ℓ𝓈 ls))
+mapWithLvls {0}       _ _        _        = <>
+mapWithLvls {1}       f x        y        = f x y
+mapWithLvls {𝐒(𝐒(n))} f (x , xs) (y , ys) = (f x y , mapWithLvls{𝐒(n)} f xs ys)
+
 -- Returns a element repeated a specified number of times in a tuple
 repeat : ∀{ℓ}(n : ℕ) → Type{ℓ} → Types(Raise.repeat n ℓ)
 repeat(0)       _ = <>
@@ -106,7 +113,7 @@ without {𝐒(n)} (𝐒 i) (x₁ , l) = (x₁ ⊰ without {n} i l)
 
 -- Concatenates two tuples.
 -- Example: (1,2,3,4) ++ (5,6) = (1,2,3,4,5,6)
-_++_ : ∀{a b}{ℓ𝓈₁}{ℓ𝓈₂} → Types{a}(ℓ𝓈₁) → Types{b}(ℓ𝓈₂) → Types(Raise._++_ {a = a}{b = b} ℓ𝓈₁ ℓ𝓈₂)
+_++_ : ∀{a b}{ℓ𝓈₁}{ℓ𝓈₂} → Types{a}(ℓ𝓈₁) → Types{b}(ℓ𝓈₂) → Types(Raise._++_ {n₁ = a}{n₂ = b} ℓ𝓈₁ ℓ𝓈₂)
 _++_ {a = 0}       _        ys = ys
 _++_ {a = 1}       x        ys = x ⊰ ys
 _++_ {a = 𝐒(𝐒(a))} (x , xs) ys = x ⊰ (xs ++ ys)

@@ -4,6 +4,7 @@ import      Lvl
 open import Data
 open import Data.Boolean
 open import Data.Boolean.Operators
+open import Lang.Instance
 open import Logic.Propositional using (⊥ ; [⊥]-elim)
 open import Logic.Predicate
 open import Numeral.Natural
@@ -60,7 +61,7 @@ module Transformations where
   depth-[≤] : ∀{d₁ d₂} → ⦃ _ : (d₁ ≤ d₂) ⦄ → Term(d₁) → Term(d₂)
   depth-[≤] (Apply t1 t2) = Apply(depth-[≤] t1) (depth-[≤] t2)
   depth-[≤] (Abstract t) = Abstract(depth-[≤] t)
-  depth-[≤] (Var x) = Var(bound-[≤] x)
+  depth-[≤] (Var x) = Var(bound-[≤] infer x)
 
   -- Increment the depth level of the given term by 1
   depth-𝐒 : ∀{d} → Term(d) → Term(𝐒(d))

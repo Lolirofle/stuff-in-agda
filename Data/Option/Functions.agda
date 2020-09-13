@@ -9,7 +9,7 @@ open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Type
 
 private variable ℓ : Lvl.Level
-private variable T T₁ T₂ T₃ : Type{ℓ}
+private variable T A B T₁ T₂ T₃ : Type{ℓ}
 
 -- Applies a function to the inner value of the option container.
 -- A functor map for options.
@@ -22,6 +22,12 @@ map f(None)   = None
 _or_ : Option(T) → T → T
 _or_ (Some x) _   = x
 _or_ None     def = def
+
+-- Either transforming the value inside the option container or the default value when it is none.
+-- An option eliminator.
+partialMap : B → (A → B) → (Option(A) → B)
+partialMap _   f (Some x) = f(x)
+partialMap def _ None     = def
 
 -- If the option have a value (is Some).
 isSome : Option(T) → Bool

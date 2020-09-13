@@ -40,7 +40,7 @@ open import Type
 ... | [∨]-introₗ a≤b = [∨]-introₗ a≤b
 ... | [∨]-introᵣ a≰b = [∨]-introᵣ ([≰]-to-[>] a≰b)
 
-[≥]-or-[<] : ∀{a b : ℕ} → (a < b)∨(a ≥ b)
+[≥]-or-[<] : ∀{a b : ℕ} → (a ≥ b)∨(a < b)
 [≥]-or-[<] with excluded-middle _  ⦃ ComputablyDecidable.classical(_≤_) ⦄
-... | [∨]-introₗ a≥b = [∨]-introᵣ a≥b
-... | [∨]-introᵣ a≱b = [∨]-introₗ ([≱]-to-[<] a≱b)
+... | [∨]-introₗ a≥b = [∨]-introₗ a≥b
+... | [∨]-introᵣ a≱b = [∨]-introᵣ ([≱]-to-[<] a≱b)

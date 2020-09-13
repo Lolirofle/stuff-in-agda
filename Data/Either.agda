@@ -2,7 +2,7 @@ module Data.Either where
 
 import      Lvl
 open import Data.Boolean
-open import Functional using (id)
+open import Functional using (id ; _∘_)
 open import Type
 
 infixl 100 _‖_
@@ -28,8 +28,7 @@ extract : (A ‖ A) → A
 extract = map1 id id
 
 map2 : (A₁ → A₂) → (B₁ → B₂) → (A₁ ‖ B₁) → (A₂ ‖ B₂)
-map2 fa _ (Left  a) = Left (fa(a))
-map2 _ fb (Right b) = Right(fb(b))
+map2 fa fb = map1 (Left ∘ fa) (Right ∘ fb)
 
 mapLeft : let _ = A ; _ = B ; _ = C in (A → C) → (A ‖ B) → (C ‖ B)
 mapLeft f = map2 f id

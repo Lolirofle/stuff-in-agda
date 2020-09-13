@@ -36,7 +36,7 @@ module _ (P : Stmt{ℓ}) where
       ⦃ excluded-middle ⦄ : ExcludedMiddleOn(P)
 
     -- Boolean value representing the truth value of the proposition P.
-    decide : Bool
+    decide : Bool -- TODO: Maybe use Logic.Decidable instead by proving (Classical(P) → Decidable(P))?
     decide = Either.isLeft(excluded-middle)
 
     -- TODO: Maybe use the generalized functions in Data.Boolean.Proofs to implement these. The either-bool-* functions.

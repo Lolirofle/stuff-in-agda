@@ -17,8 +17,8 @@ open import Logic.Predicate
 open import Relator.Equals using ([≡]-intro) renaming (_≡_ to _≡ₑ_)
 open import Relator.Equals.Proofs
 import      Structure.Category.Morphism.IdTransport as IdTransport
-import      Structure.Category.Names as Names
-open import Structure.Category.Properties
+import      Structure.Categorical.Names as Names
+open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Relator.Properties
 

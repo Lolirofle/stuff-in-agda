@@ -8,7 +8,7 @@ open import Functional
 open import Logic.Propositional
 open import Logic.Predicate
 open import Structure.Setoid
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Function.Domain
 open import Structure.Function.Multi
 open import Structure.Operator
@@ -23,7 +23,7 @@ module _ where
   open import Relator.Equals using ([≡]-intro)
   open import Relator.Equals.Proofs.Equiv
 
-  module _ ⦃ _ : Equiv(A) ⦄ ⦃ _ : Equiv(B) ⦄ where
+  module _ ⦃ equiv-A : Equiv(A) ⦄ ⦃ equiv-B : Equiv(B) ⦄ where
     instance
       Left-injectivity : Injective(Left {A = A}{B = B})
       Injective.proof Left-injectivity [≡]-intro = [≡]-intro
@@ -31,6 +31,12 @@ module _ where
     instance
       Right-injectivity : Injective(Right {A = A}{B = B})
       Injective.proof Right-injectivity [≡]-intro = [≡]-intro
+
+
+module _ ⦃ equiv-C : Equiv(C) ⦄ where
+  map1-values : {f : A → C}{g : B → C}{e : A ‖ B} → (∃(x ↦ map1 f g e ≡ f(x)) ∨ ∃(x ↦ map1 f g e ≡ g(x)))
+  map1-values {e = Either.Left  a} = [∨]-introₗ ([∃]-intro a ⦃ reflexivity(_≡_) ⦄)
+  map1-values {e = Either.Right b} = [∨]-introᵣ ([∃]-intro b ⦃ reflexivity(_≡_) ⦄)
 
 module _ where
   module _ ⦃ _ : Equiv(A ‖ B) ⦄ where

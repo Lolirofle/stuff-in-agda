@@ -17,6 +17,7 @@ open import Logic.Predicate
 open import Structure.Container.SetLike as SetLike using (SetLike)
 open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₑ_)
 open import Structure.Function.Domain
+open import Structure.Function.Domain.Proofs
 open import Structure.Function
 open import Structure.Relator.Equivalence
 import      Structure.Relator.Names as Names
@@ -91,23 +92,27 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   _∪_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → PredSet(T)
   (A ∪ B) ∋ x = (A ∋ x) ∨ (B ∋ x)
   UnaryRelator.substitution (preserve-equiv (A ∪ B)) xy = Either.map2 (substitute₁(A ∋_) xy) (substitute₁(B ∋_) xy)
+  infixr 1000 _∪_
 
   -- An intersection of two sets.
   -- Contains the elements that both of the both sets contain.
   _∩_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → PredSet(T)
   (A ∩ B) ∋ x = (A ∋ x) ∧ (B ∋ x)
   UnaryRelator.substitution (preserve-equiv (A ∩ B)) xy = Tuple.map (substitute₁(A ∋_) xy) (substitute₁(B ∋_) xy)
+  infixr 1001 _∩_
 
   -- A complement of a set.
   -- Contains the elements that the set does not contain.
   ∁_ : PredSet{ℓ}(T) → PredSet(T)
   (∁ A) ∋ x = A ∌ x
   UnaryRelator.substitution (preserve-equiv (∁ A)) xy = contrapositiveᵣ (substitute₁(A ∋_) (symmetry(_≡ₑ_) xy))
+  infixr 1002 ∁_
 
   -- A relative complement of a set.
   -- Contains the elements that the left set contains without the elements included in the right set..
   _∖_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → PredSet(T)
   A ∖ B = (A ∩ (∁ B))
+  infixr 1001 _∖_
 
   filter : (P : T → Stmt{ℓ₁}) ⦃ _ : UnaryRelator(P) ⦄ → PredSet{ℓ₂}(T) → PredSet(T)
   filter P(A) ∋ x = (x ∈ A) ∧ P(x)
@@ -226,14 +231,14 @@ module _
   where
 
   ⋃ᵢ-of-bijection : ∀{f : B → PredSet{ℓ}(T)} ⦃ _ : Function(f)⦄ → (([∃]-intro g) : A ≍ B) → (⋃ᵢ{I = A}(f ∘ g) ≡ ⋃ᵢ{I = B}(f))
-  ∃.witness (_⨯_.left (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = inv g(b)
-  ∃.proof (_⨯_.left (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = substitute₂(_∋_) (symmetry(_≡_) (congruence₁(f) inv-inverseᵣ)) (reflexivity(_≡ₑ_)) p
+  ∃.witness (_⨯_.left (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = inv g ⦃ bijective-to-invertible ⦄ (b)
+  ∃.proof (_⨯_.left (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = substitute₂(_∋_) (symmetry(_≡_) (congruence₁(f) (inverse-right(g)(inv g ⦃ bijective-to-invertible ⦄) ⦃ [∧]-elimᵣ([∃]-proof bijective-to-invertible) ⦄))) (reflexivity(_≡ₑ_)) p
   ∃.witness (_⨯_.right (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro a ⦃ p ⦄)) = g(a)
   ∃.proof (_⨯_.right (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = p
 
   ⋂ᵢ-of-bijection : ∀{A : Type{ℓ₁}} ⦃ _ : Equiv(A) ⦄ {B : Type{ℓ₂}} ⦃ _ : Equiv(B) ⦄ → ∀{f : B → PredSet{ℓ}(T)} ⦃ _ : Function(f)⦄ → (([∃]-intro g) : A ≍ B) → (⋂ᵢ{I = A}(f ∘ g) ≡ ⋂ᵢ{I = B}(f))
   _⨯_.left (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = p{g(b)}
-  _⨯_.right (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = substitute₂(_∋_) (congruence₁(f) inv-inverseᵣ) (reflexivity(_≡ₑ_)) (p{inv g(b)})
+  _⨯_.right (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = substitute₂(_∋_) (congruence₁(f) (inverse-right(g)(inv g ⦃ bijective-to-invertible ⦄) ⦃ [∧]-elimᵣ([∃]-proof bijective-to-invertible) ⦄)) (reflexivity(_≡ₑ_)) (p{inv g ⦃ bijective-to-invertible ⦄ (b)})
 
 module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   instance

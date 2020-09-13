@@ -6,6 +6,7 @@ import      Lvl
 open import Logic.Predicate
 open import Structure.Category
 open import Structure.Function
+open import Structure.Function.Multi
 import      Structure.Relator.Names as Names
 open import Structure.Setoid.WithLvl
 open import Syntax.Function
@@ -25,7 +26,9 @@ module _
   -- A covariant functor.
   -- A mapping which transforms objects and morphisms from one category to another while "preserving" the categorical structure.
   -- A homomorphism between categories.
+  -- In the context of equivalence relations instead of categories, this is the "function"/"congruence" property of the function `F`.
   record Functor (F : Objₗ → Objᵣ) : Type{Lvl.of(Type.of(Categoryₗ)) Lvl.⊔ Lvl.of(Type.of(Categoryᵣ))} where
+    constructor intro
     open Category ⦃ … ⦄
     open Category.ArrowNotation ⦃ … ⦄
     private instance _ = Categoryₗ
@@ -39,9 +42,9 @@ module _
     field
       ⦃ map-function ⦄     : ∀{x y} → Function(map{x}{y})
       ⦃ op-preserving ⦄    : ∀{x y z : Objₗ}{f : y ⟶ z}{g : x ⟶ y} → (map(f ∘ g) ≡ map(f) ∘ map(g))
-      ⦃ id-preserving ⦄    : ∀{x : Objₗ} → (map(id {x = x}) ≡ id)
+      ⦃ id-preserving ⦄    : ∀{x : Objₗ} → Names.Preserving₀(map{x})(id)(id) --(map(id {x = x}) ≡ id)
 
-    open import Structure.Category.Properties
+    open import Structure.Categorical.Properties
     open import Structure.Function.Domain
 
     Faithful      = ∀{x y} → Injective (map{x}{y}) -- TODO: F also? Not sure

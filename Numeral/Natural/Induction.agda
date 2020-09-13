@@ -7,6 +7,7 @@ open import Numeral.Natural
 
 -- The induction proof method on natural numbers
 -- TODO: There seems to be a problem making i implicit with unsolved metas.
+-- TODO: Maybe rename to elim because this is the elimination rule for ℕ
 [ℕ]-induction : ∀{φ : ℕ → Stmt{ℓ}} → φ(𝟎) → (∀(i : ℕ) → φ(i) → φ(𝐒(i))) → (∀{n} → φ(n))
 [ℕ]-induction {φ} (base) (next) {𝟎}    = base
 [ℕ]-induction {φ} (base) (next) {𝐒(n)} = next(n) ([ℕ]-induction {φ} (base) (next) {n})

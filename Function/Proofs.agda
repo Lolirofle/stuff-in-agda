@@ -11,7 +11,6 @@ open import Function.Inverseᵣ
 open import Function.Names using (_⊜_)
 open import Structure.Setoid.WithLvl using (Equiv) renaming (_≡_ to _≡ₛ_)
 open import Structure.Setoid.Uniqueness
-import      Structure.Relator.Function as Relator
 open import Structure.Relator.Properties
 open import Structure.Relator
 open import Structure.Function.Domain
@@ -22,59 +21,7 @@ open import Syntax.Transitivity
 open import Type
 open import Type.Properties.Empty
 
-private variable ℓ₁ ℓ₂ ℓ₃ ℓₗ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₒ₄ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ : Lvl.Level
-
-module _ {A : Type{ℓₒ₁}}{B : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ (φ : A → B → Stmt{ℓₗ}) ⦃ totality : Relator.Total(φ)⦄ ⦃ func : Relator.Function(φ)⦄ ⦃ _ : ∀{x} → UnaryRelator(φ(x)) ⦄ where
-  -- There is a function for a binary relation that is total and function-like.
-  relation-function-existence : ∃(f ↦ ∀{x}{y} → (f(x) ≡ₛ y) ↔ φ(x)(y))
-  relation-function-existence = [∃]-intro(f) ⦃ \{x y} → proof{x}{y} ⦄ where
-    -- The function
-    f : A → B
-    f(x) = [∃]-witness(Relator.total(φ){x})
-
-    -- Proof that the function returns the value that the binary relation defines the element from Y that an element from X is associated with.
-    proof : ∀{x}{y} → (f(x) ≡ₛ y) ↔ φ(x)(y)
-    proof{x}{y} = [↔]-intro l r where
-      r : (f(x) ≡ₛ y) → φ(x)(y)
-      r(fxy) = substitute₁(φ(x)) fxy ([∃]-proof(Relator.total(φ){x}))
-
-      l : (f(x) ≡ₛ y) ← φ(x)(y)
-      l(φxy) = [∃!]-existence-eq-any(Relator.totalFunction(φ)) φxy
-
-  -- Constructing a total function from a a binary operation with conditions.
-  relation-function : A → B
-  relation-function = [∃]-witness(relation-function-existence)
-
-module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ {f : A → B} where
-  -- A function is total
-  -- ∀{x} → ∃(y ↦ f(x) ≡ y)
-  Function-totality : Relator.Total(x ↦ y ↦ f(x) ≡ₛ y)
-  Relator.Total.proof(Function-totality) {x} = [∃]-intro(f(x)) ⦃ reflexivity(_≡ₛ_) ⦄
-
-module _ {X : Type{ℓₒ₁}} {Y : X → Type{ℓₒ₂}} {φ : (x : X) → Y(x) → Stmt{ℓₗ}} where
-  -- Every binary predicate that have its first argument defined for all values
-  -- have at least one choice function that can determine the second argument from the first.
-  -- Proposition: ∀(X: Type)∀(Y: Type)∀(φ: X → Y → Stmt). (∀(x: X)∃(y: Y). φ(x)(y)) → (∃(choice: X → Y)∀(x: X). φ(x)(choice(x)))
-  --   ∀(x: X)∃(y: Y). φ(x)(y) means that the predicate φ holds for every x and some y (which may depend on x). In other words: it associates every element in X with a subset of Y, a function (X → ℘(Y)).
-  --   ∃(choice: X → Y)∀(x: X). φ(x)(choice(x)) means that there is a function that picks out a particular y.
-  -- Note: This proposition can be recognised as one equivalent variant of "Axiom of Choice" from set theory when formulated in classical logic.
-  dependent-function-predicate-choice : (∀{x : X} → ∃{Obj = Y(x)}(y ↦ φ(x)(y))) → ∃{Obj = (x : X) → Y(x)}(choice ↦ ∀{x : X} → φ(x)(choice(x)))
-  dependent-function-predicate-choice(function) = [∃]-intro(x ↦ [∃]-witness(function{x})) ⦃ \{x} → [∃]-proof(function{x}) ⦄
-
-module _ {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} {φ : X → Y → Stmt{ℓₗ}} where
-  function-predicate-choice : (∀{x} → ∃(y ↦ φ(x)(y))) → ∃{Obj = X → Y}(choice ↦ ∀{x} → φ(x)(choice(x)))
-  function-predicate-choice = dependent-function-predicate-choice
-
-{-
-module _ {ℓₗ₁ ℓₗ₂ ℓₒ} {X : Type{ℓₒ}} {P : (X → Stmt{ℓₗ₁}) → Stmt{ℓₗ₂}} where
-  standard-choice : (∀{Q : X → Stmt{ℓₗ₁}} → P(Q) → (∃ P)) → ∃{Obj = (X → Stmt{ℓₗ₁}) → X}(f ↦ ∀{Q : X → Stmt{ℓₗ₁}} → P(Q) → Q(f(Q)))
-  standard-choice ep = [∃]-intro (choice) ⦃ \{x} → proof{x} ⦄ where
-    choice : (X → Stmt{ℓₗ₁}) → X
-    choice(R) = [∃]-witness(ep{R} (pr))
-
-    proof : ∀{Q : X → Stmt{ℓₗ₁}} → P(Q) → Q(choice(Q))
-    proof{Q} pq = [∃]-proof(surjective{x})
--}
+private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓₗ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₒ₄ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ : Lvl.Level
 
 module _ {T : Type{ℓₒ}} ⦃ eq : Equiv{ℓₑ}(T) ⦄ where
   instance
@@ -105,11 +52,28 @@ module _ {T : Type{ℓₒ}} ⦃ eq : Equiv{ℓₑ}(T) ⦄ where
     id-involution : Involution(id)
     id-involution = intro(reflexivity _)
 
+  instance
+    id-inverseₗ : Inverseₗ(id)(id)
+    id-inverseₗ = intro(reflexivity _)
+
+  instance
+    id-inverseᵣ : Inverseᵣ(id)(id)
+    id-inverseᵣ = intro(reflexivity _)
+
+  instance
+    id-inverse : Inverse(id)(id)
+    id-inverse = [∧]-intro id-inverseₗ id-inverseᵣ
+
 module _ {A : Type{ℓₒ₁}} ⦃ eq-a : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ eq-b : Equiv{ℓₑ₂}(B) ⦄ where
   instance
     -- Constant functions are functions.
     const-function : ∀{c : B} → Function {A = A}{B = B} (const(c))
     Function.congruence(const-function) _ = reflexivity(_≡ₛ_)
+
+  instance
+    -- Constant functions are constant.
+    const-constant : ∀{c : B} → Constant {A = A}{B = B} (const(c))
+    Constant.proof const-constant = reflexivity(_≡ₛ_)
 
 module _ {A : Type{ℓₒ₁}} ⦃ eq-a : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ eq-b : Equiv{ℓₑ₂}(B) ⦄ where
   open import Function.Equals
@@ -159,6 +123,7 @@ module _ {a : Type{ℓₒ₁}} {b : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(b)
   ... | [∃]-intro (x) ⦃ fgx≡y ⦄ = [∃]-intro (g(x)) ⦃ fgx≡y ⦄
 
 module _ {a : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(a) ⦄ {b : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(b) ⦄ {c : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₑ₃}(c) ⦄ where
+  -- Bijective functions are closed under function composition.
   -- The composition of bijective functions is bijective.
   [∘]-bijective : ∀{f : b → c} → ⦃ _ : Function(f) ⦄ → ∀{g : a → b} → ⦃ _ : Bijective(f) ⦄ → ⦃ _ : Bijective(g) ⦄ → Bijective(f ∘ g)
   [∘]-bijective {f = f} {g = g} =
@@ -226,4 +191,47 @@ module _ {X : Type{ℓₒ₁}} ⦃ eq-x : Equiv{ℓₑ₁}(X) ⦄ {Y : Type{ℓ�
   open import Function.Equals.Proofs
 
   s-combinator-injective : Injective(_∘ₛ_ {X = X}{Y = Y}{Z = Z})
-  _⊜_.proof (Injective.proof s-combinator-injective {f} {g} sxsy) {x} = Function.Equals.intro(\{a} → [⊜]-apply([⊜]-apply sxsy {const(a)}){x}) -- TODO: Left inverse (S⁻¹ ∘ S = id) is probably (S⁻¹ f a b = f (const b) a)
+  _⊜_.proof (Injective.proof s-combinator-injective {f} {g} sxsy) {x} = Function.Equals.intro(\{a} → [⊜]-apply([⊜]-apply sxsy {const(a)}){x})
+
+  s-combinator-inverseₗ : Inverseₗ(_∘ₛ_ {X = X}{Y = Y}{Z = Z})(f ↦ a ↦ b ↦ f (const b) a)
+  _⊜_.proof (Inverseᵣ.proof s-combinator-inverseₗ) = reflexivity(_≡ₛ_)
+
+module _ {A : Type{ℓ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ where
+  classical-constant-endofunction-existence : ⦃ classical : Classical(A) ⦄ → ∃{Obj = A → A}(Constant)
+  classical-constant-endofunction-existence with excluded-middle(A)
+  ... | [∨]-introₗ a  = [∃]-intro (const a)
+  ... | [∨]-introᵣ na = [∃]-intro id ⦃ intro(\{a} → [⊥]-elim(na a)) ⦄
+
+module _ {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  open import Logic.Propositional.Theorems
+  open import Structure.Operator.Properties
+
+  proj₂ₗ-associativity : Associativity{T = T}(x ↦ y ↦ x)
+  proj₂ₗ-associativity = intro(reflexivity(_))
+
+  proj₂ᵣ-associativity : Associativity{T = T}(x ↦ y ↦ y)
+  proj₂ᵣ-associativity = intro(reflexivity(_))
+
+  proj₂ₗ-identityₗ : ∀{id : T} → Identityₗ(x ↦ y ↦ x)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
+  proj₂ₗ-identityₗ = [↔]-intro intro Identityₗ.proof
+
+  proj₂ₗ-identityᵣ : ∀{id : T} → Identityᵣ(x ↦ y ↦ x)(id)
+  proj₂ₗ-identityᵣ = intro(reflexivity(_))
+
+  proj₂ₗ-identity : ∀{id : T} → Identity(x ↦ y ↦ x)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
+  proj₂ₗ-identity =
+    [↔]-transitivity
+      ([↔]-intro (l ↦ intro ⦃ left = l ⦄ ⦃ right = proj₂ₗ-identityᵣ ⦄) Identity.left)
+      proj₂ₗ-identityₗ
+
+  proj₂ᵣ-identityₗ : ∀{id : T} → Identityₗ(x ↦ y ↦ y)(id)
+  proj₂ᵣ-identityₗ = intro(reflexivity(_))
+
+  proj₂ᵣ-identityᵣ : ∀{id : T} → Identityᵣ(x ↦ y ↦ y)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
+  proj₂ᵣ-identityᵣ = [↔]-intro intro Identityᵣ.proof
+
+  proj₂ᵣ-identity : ∀{id : T} → Identity(x ↦ y ↦ y)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
+  proj₂ᵣ-identity =
+    [↔]-transitivity
+      ([↔]-intro (r ↦ intro ⦃ left = proj₂ᵣ-identityₗ ⦄ ⦃ right = r ⦄) Identity.right)
+      proj₂ᵣ-identityᵣ

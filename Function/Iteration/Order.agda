@@ -134,7 +134,10 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
           ord-non-zero-comp = [↔]-to-[→] (ComputablyDecidable.proof-istrue([≢]-computable)) (ord-non-zero ⦃ p ⦄)
 
         instance
-          postulate ord-positive : IsTrue(positive?(ord(x) ⦃ p ⦄))
+          ord-positive : IsTrue(positive?(ord(x) ⦃ p ⦄))
+          ord-positive with ord(x) ⦃ p ⦄ | [∃]-proof p
+          ... | 𝟎   | pp = finite-order-0 pp
+          ... | 𝐒 _ | _  = <>
 
         instance
           ord-n-ineq : ord(x) ⦃ p ⦄ ≤ 𝐒(n)
@@ -147,7 +150,7 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
           x ^ (𝐒(n) mod ord(x) ⦃ p ⦄)                                                      🝖-[ symmetry(_≡_) (identityₗ(_▫_)(id)) ]
           id ▫ (x ^ (𝐒(n) mod ord(x) ⦃ p ⦄))                                               🝖-[ congruence₂ₗ(_▫_)(_) (symmetry(_≡_) ([^]-by-id-multiple {ord(x) ⦃ p ⦄} ([^]-by-ord ⦃ p ⦄) {𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄})) ]
           (x ^ ((ord(x) ⦃ p ⦄) ⋅ (𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄))) ▫ (x ^ (𝐒(n) mod ord(x) ⦃ p ⦄)) 🝖-[ [^]-by-add {(ord(x) ⦃ p ⦄) ⋅ (𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄)} {𝐒(n) mod ord(x) ⦃ p ⦄} ]
-          x ^ (((ord(x) ⦃ p ⦄) ⋅ (𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄)) + (𝐒(n) mod ord(x) ⦃ p ⦄))       🝖-[ congruence₁(x ^_) ⦃ Relator.Equals.Proofs.Equiv.[≡]-to-function ⦄ ([≡]-to-equivalence(division-remainder{𝐒(n)}{ord(x) ⦃ p ⦄})) ]
+          x ^ (((ord(x) ⦃ p ⦄) ⋅ (𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄)) + (𝐒(n) mod ord(x) ⦃ p ⦄))       🝖-[ congruence₁(x ^_) ⦃ Relator.Equals.Proofs.Equiv.[≡]-to-function ⦄ ([≡]-to-equivalence([⌊/⌋][mod]-is-division-with-remainder-pred-commuted{𝐒(n)}{ord(x) ⦃ p ⦄})) ]
           x ^ 𝐒(n)                                                                         🝖-[ xnid ]
           id                                                                               🝖-end
 

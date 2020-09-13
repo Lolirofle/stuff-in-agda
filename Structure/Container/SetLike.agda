@@ -22,7 +22,7 @@ private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ ℓ₇ ℓ₈ ℓ
 private variable A B C C₁ C₂ Cₒ Cᵢ E E₁ E₂ : Type{ℓ}
 private variable _∈_ _∈ₒ_ _∈ᵢ_ : E → C
 
-module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}) where
+module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}) where -- TODO: Maybe generalize C so that it becomes "indexed": `(C : (i : I) → Type{ℓ₁(i)})`? Is it neccessary? Which set-like structures does not fit with the definitions below?
   record SetLike : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ Lvl.𝐒(ℓ₄ Lvl.⊔ ℓ₅)} where
     field
       _⊆_ : C → C → Stmt{ℓ₄}

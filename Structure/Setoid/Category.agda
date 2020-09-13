@@ -9,7 +9,7 @@ open import Function.Proofs
 open import Logic.Predicate
 import      Lvl
 open import Structure.Category
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Equivalence

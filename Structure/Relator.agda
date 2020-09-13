@@ -1,6 +1,7 @@
 module Structure.Relator where
 
 import Lvl
+open import Functional using (_∘₂_)
 open import Functional.Dependent
 open import Lang.Instance
 open import Logic
@@ -53,6 +54,10 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ�
     right = intro(\p → substitution (reflexivity(_≡_)) p)
     substitutionₗ = \{a x y} → UnaryRelator.substitution(left {a}) {x}{y}
     substitutionᵣ = \{a x y} → UnaryRelator.substitution(right{a}) {x}{y}
+    substitution-sym : ∀{x₁ y₁ : A}{x₂ y₂ : B} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → ((x₁ ▫ x₂) ← (y₁ ▫ y₂))
+    substitution-sym xy1 xy2 = substitution (Structure.Relator.Properties.symmetry(_≡_) xy1) (Structure.Relator.Properties.symmetry(_≡_) xy2)
+    substitution-equivalence : ∀{x₁ y₁ : A}{x₂ y₂ : B} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → ((x₁ ▫ x₂) ↔ (y₁ ▫ y₂))
+    substitution-equivalence xy1 xy2 = [↔]-intro (substitution-sym xy1 xy2) (substitution xy1 xy2)
   substitute₂ = inst-fn BinaryRelator.substitution
   substitute₂ₗ = inst-fn BinaryRelator.substitutionₗ
   substitute₂ᵣ = inst-fn BinaryRelator.substitutionᵣ

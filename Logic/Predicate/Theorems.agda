@@ -138,7 +138,7 @@ module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} {P : X → Stmt{ℓₗ}} where
   ∃.witness ([∀]-to-[∃]-conditional-by-existence p pq) = [∃]-witness p
   ∃.proof   ([∀]-to-[∃]-conditional-by-existence p pq) = [∧]-intro ([∃]-proof p) (pq{[∃]-witness p} ([∃]-proof p))
 
-  -- TODO: Probably unprovable because people said so. Not sure why. Maybe because (¬¬A is valid in constructive logic) ⇔ (A is valid in classical logic), and therefore this would not be possible because everything here is in constructive logic.
+  -- TODO: Probably unprovable. Not sure why. Maybe because (¬¬A is valid in constructive logic) ⇔ (A is valid in classical logic), and therefore this would not be possible because everything here is in constructive logic.
   -- [∀¬¬]-to-[¬¬∀] : ∀{X}{P : X → Stmt} → ¬¬∀ₗ(x ↦ (P(x))) ← ∀ₗ(x ↦ ¬¬(P(x)))
 
 ------------------------------------------
@@ -201,6 +201,9 @@ module _ {ℓₒ}{ℓₗ₁}{ℓₗ₂} {X : Type{ℓₒ}}{P : X → Stmt{ℓₗ
 
       rr : ∀ₗ(x ↦ (P(x) → Q(x)))
       rr{x} = [↔]-to-[→](apxqx{x})
+
+  [∀]-to-[∃]-[↔]-semidistributivity : ∀ₗ(x ↦ (P(x) ↔ Q(x))) → (∃(x ↦ P(x)) ↔ ∃(x ↦ Q(x)))
+  [∀]-to-[∃]-[↔]-semidistributivity apq = [↔]-intro ([∃]-map-proof ([↔]-to-[←] apq)) ([∃]-map-proof ([↔]-to-[→] apq))
 
 ------------------------------------------
 -- Quantifiers with logical operators inside, but one of the predicates are constant

@@ -75,6 +75,7 @@ module Propositional where
   --     Therefore it is at least a classical logic.
   -- This cannot be done with predicate logic because the translation for [∀] does not hold in both directions.
   DoubleNegated = Constructive.¬¬_
+  -- TODO: What should (¬¬ P → P) for a P be called? DoubleNegation? Stable proposition?
 
   module Opers where
     infixl 1010 ¬_

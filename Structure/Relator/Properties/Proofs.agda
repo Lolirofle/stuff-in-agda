@@ -11,8 +11,9 @@ open import Structure.Relator.Properties
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
-private variable T : Type{ℓ}
-private variable _<_ _≡_ _▫₁_ _▫₂_ : T → T → Stmt{ℓ}
+private variable T A B : Type{ℓ}
+private variable _<_ _≡_ _▫_ _▫₁_ _▫₂_ : T → T → Stmt{ℓ}
+private variable f : T → T
 
 [asymmetry]-to-irreflexivity : ⦃ _ : Asymmetry(_<_) ⦄ → Irreflexivity(_<_)
 Irreflexivity.proof([asymmetry]-to-irreflexivity {_<_ = _<_}) = [→]-redundancy(asymmetry(_<_))
@@ -54,3 +55,13 @@ subrelation-transitivity-to-subtransitivityᵣ : ⦃ _ : (_▫₁_) ⊆₂ (_▫
 Subtransitivityᵣ.proof (subrelation-transitivity-to-subtransitivityᵣ {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_}) xy yz = transitivity(_▫₂_) xy (sub₂(_▫₁_)(_▫₂_) yz)
 
 -- TODO: https://proofwiki.org/wiki/Definition%3aRelation_Compatible_with_Operation and substitution. Special case for (≡) and function application: ∀(x∊T)∀(y∊T). (x ≡ y) → (∀(f: T→T). f(x) ≡ f(y))
+
+instance
+  subrelation-reflexivity : (_⊆₂_ {ℓ₁ = ℓ}{T = T}) ⊆₂ ((_→ᶠ_) on₂ Reflexivity)
+  _⊆₂_.proof subrelation-reflexivity (intro ab) (intro ra) = intro (ab ra)
+
+on₂-reflexivity : ∀{_▫_ : B → B → Stmt{ℓ}}{f : A → B} → ⦃ refl : Reflexivity(_▫_) ⦄ → Reflexivity((_▫_) on₂ f)
+on₂-reflexivity {_▫_ = _▫_} = intro(reflexivity(_▫_))
+
+swap-reflexivity : ⦃ refl : Reflexivity(_▫_) ⦄ → Reflexivity(swap(_▫_))
+swap-reflexivity {_▫_ = _▫_} = intro(reflexivity(_▫_))

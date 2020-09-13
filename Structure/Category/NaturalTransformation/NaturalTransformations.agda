@@ -8,7 +8,7 @@ import      Lvl
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.NaturalTransformation
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Setoid.WithLvl

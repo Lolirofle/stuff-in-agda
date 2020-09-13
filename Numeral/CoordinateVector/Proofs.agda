@@ -8,6 +8,7 @@ import      Data.Either as Either
 import      Functional as Fn
 open import Function.Equals
 open import Function.Names
+open import Function.PointwiseStructure
 open import Logic.Classical
 open import Logic.Predicate
 open import Logic.Propositional
@@ -21,6 +22,7 @@ import      Relator.Equals as Eq
 open import Relator.Equals.Proofs.Equivalence
 open import Structure.Setoid.WithLvl
 open import Structure.Function.Multi
+import      Structure.Function.Names as Names
 open import Structure.Function
 open import Structure.Operator.Field
 open import Structure.Operator.Group
@@ -31,92 +33,95 @@ open import Structure.Operator
 open import Structure.Relator.Properties
 open import Type
 open import Syntax.Function
+open import Syntax.Transitivity
 
+-- Note: The structure stuff here is actually a specialization of Function.PointwiseStructure
 module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
   private variable _▫_ _▫₁_ _▫₂_ _+_ _⋅_ : T → T → T
   private variable f inv : T → T
-  private variable id : T
-  private variable n : ℕ
+  private variable id 𝟎ₛ 𝟏ₛ x init : T
+  private variable d n : ℕ
   private variable i j k : 𝕟(n)
+  private variable v : Vector(n)(T)
 
   instance
     -- A component-wise operator have a left identity of repeated elements when its underlying operator have a left identity.
     map₂-fill-identityₗ : ⦃ ident : Identityₗ(_▫_)(id) ⦄ → Identityₗ(map₂{d = n}(_▫_))(fill{d = n}(id))
-    map₂-fill-identityₗ = intro(intro(identityₗ _ _))
+    map₂-fill-identityₗ = pointwiseFunction-identityₗ
 
   instance
     -- A component-wise operator have a right identity of repeated elements when its underlying operator have a right identity.
     map₂-fill-identityᵣ : ⦃ ident : Identityᵣ(_▫_)(id) ⦄ → Identityᵣ(map₂{d = n}(_▫_))(fill{d = n}(id))
-    map₂-fill-identityᵣ = intro(intro(identityᵣ _ _))
+    map₂-fill-identityᵣ = pointwiseFunction-identityᵣ
 
   instance
     -- A component-wise operator have an identity of repeated elements when its underlying operator have an identity.
     map₂-fill-identity : ⦃ ident : Identity(_▫_)(id) ⦄ → Identity(map₂{d = n}(_▫_))(fill{d = n}(id))
-    map₂-fill-identity = intro ⦃ _ ⦄ ⦃ map₂-fill-identityₗ ⦄ ⦃ map₂-fill-identityᵣ ⦄
+    map₂-fill-identity = pointwiseFunction-identity
 
   instance
     map₂-map-inverseₗ : ⦃ ident : Identityₗ(_▫_)(id) ⦄ ⦃ inver : InverseFunctionₗ(_▫_) ⦃ [∃]-intro _ ⦄ (inv) ⦄ → InverseFunctionₗ(map₂{d = n}(_▫_)) ⦃ [∃]-intro _ ⦄ (map(inv))
-    map₂-map-inverseₗ = intro(intro(inverseFunctionₗ _ ⦃ [∃]-intro _ ⦄ _))
+    map₂-map-inverseₗ = pointwiseFunction-inverseFunctionₗ
 
   instance
     map₂-map-inverseᵣ : ⦃ ident : Identityᵣ(_▫_)(id) ⦄ ⦃ inver : InverseFunctionᵣ(_▫_) ⦃ [∃]-intro _ ⦄ (inv) ⦄ → InverseFunctionᵣ(map₂{d = n}(_▫_)) ⦃ [∃]-intro _ ⦄ (map(inv))
-    map₂-map-inverseᵣ = intro(intro(inverseFunctionᵣ _ ⦃ [∃]-intro _ ⦄ _))
+    map₂-map-inverseᵣ = pointwiseFunction-inverseFunctionᵣ
 
   instance
     map₂-map-inverse : ⦃ ident : Identity(_▫_)(id) ⦄ ⦃ inver : InverseFunction(_▫_) ⦃ [∃]-intro _ ⦄ (inv) ⦄ → InverseFunction(map₂{d = n}(_▫_)) ⦃ [∃]-intro _ ⦄ (map(inv))
-    map₂-map-inverse = intro ⦃ _ ⦄ ⦃ _ ⦄ ⦃ map₂-map-inverseₗ ⦄ ⦃ map₂-map-inverseᵣ ⦄
+    map₂-map-inverse = pointwiseFunction-inverseFunction
 
   instance
     -- A component-wise operator is commutative when its underlying operator is commutative.
     map₂-commutativity : ⦃ comm : Commutativity(_▫_) ⦄ → Commutativity(map₂{d = n}(_▫_))
-    map₂-commutativity = intro(intro(commutativity _))
+    map₂-commutativity = pointwiseFunction-commutativity
 
   instance
     -- A component-wise operator is associative when its underlying operator is associative.
     map₂-associativity : ⦃ assoc : Associativity(_▫_) ⦄ → Associativity(map₂{d = n}(_▫_))
-    map₂-associativity = intro(intro(associativity _))
+    map₂-associativity = pointwiseFunction-associativity
 
   instance
     -- A component-wise operator is left distributive over another component-wise operator when their underlying operators distribute.
     map₂-distributivityₗ : ⦃ distₗ : Distributivityₗ(_▫₁_)(_▫₂_) ⦄ → Distributivityₗ(map₂{d = n}(_▫₁_))(map₂{d = n}(_▫₂_))
-    map₂-distributivityₗ ⦃ distₗ = distₗ ⦄ = intro(intro(distributivityₗ _ _))
+    map₂-distributivityₗ = pointwiseFunction-distributivityₗ
 
   instance
     -- A component-wise operator is right distributive over another component-wise operator when their underlying operators distribute.
     map₂-distributivityᵣ : ⦃ distᵣ : Distributivityᵣ(_▫₁_)(_▫₂_) ⦄ → Distributivityᵣ(map₂{d = n}(_▫₁_))(map₂{d = n}(_▫₂_))
-    map₂-distributivityᵣ ⦃ distᵣ = distᵣ ⦄ = intro(intro(distributivityᵣ _ _))
+    map₂-distributivityᵣ = pointwiseFunction-distributivityᵣ
 
   instance
     map₂-preserves : Preserving₂(fill) (_▫_) (map₂{d = n}(_▫_))
-    map₂-preserves = intro(intro(reflexivity(_≡_)))
+    map₂-preserves = pointwiseFunction-const-preserves
 
   instance
     -- A component-wise function is a function when its underlying function is a function.
     map-function : ⦃ func : Function(f) ⦄ → Function(map{d = n}(f))
-    Function.congruence map-function (intro p) = intro (congruence₁ _ p)
+    map-function = pointwiseFunction-function
 
   instance
     -- A component-wise binary operator is a binary operator when its underlying binary operator is a binary operator.
     map₂-binaryOperator : ⦃ oper : BinaryOperator(_▫_) ⦄ → BinaryOperator(map₂{d = n}(_▫_))
-    BinaryOperator.congruence map₂-binaryOperator (intro p) (intro q) = intro (congruence₂ _ p q)
+    map₂-binaryOperator = pointwiseFunction-binaryOperator
 
   instance
     -- A component-wise operator is a monoid when its underlying operator is a monoid.
     map₂-monoid : ⦃ monoid : Monoid(_▫_) ⦄ → Monoid(map₂{d = n}(_▫_))
-    Monoid.identity-existence map₂-monoid = [∃]-intro _
+    map₂-monoid = pointwiseFunction-monoid
 
   instance
     -- A component-wise operator is a group when its underlying operator is a group.
     map₂-group : ⦃ group : Group(_▫_) ⦄ → Group(map₂{d = n}(_▫_))
-    Group.monoid            map₂-group = map₂-monoid
-    Group.inverse-existence map₂-group = [∃]-intro _
+    map₂-group = pointwiseFunction-group
 
   instance
     -- A component-wise operator is a commutative group when its underlying operator is a commutative group.
     map₂-commutativeGroup : ⦃ commutativeGroup : CommutativeGroup(_▫_) ⦄ → CommutativeGroup(map₂{d = n}(_▫_))
-    map₂-commutativeGroup = intro
+    map₂-commutativeGroup = pointwiseFunction-commutativeGroup
 
-  {-instance
+  {- TODO: Is this even possible?
+  instance
     -- Note: The reason for `d = 𝐒(n)` is so that one cannot shrink a field to the "trivial field" in this way (which is not a field).
     map₂-field : ⦃ field-structure : Field(_+_)(_⋅_) ⦄ → Field(map₂{d = 𝐒(n)}(_+_))(map₂{d = 𝐒(n)}(_⋅_))
     Field.[+]-commutative-group map₂-field = map₂-commutativeGroup
@@ -130,13 +135,7 @@ module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
   instance
     -- Component-wise operators constructs a vector space from a field when using the fields as scalars and coordinate vectors as vectors.
     CoordinateVector-vectorSpace : ⦃ field-structure : Field(_+_)(_⋅_) ⦄ → VectorSpace(map₂{d = n}(_+_)) (s ↦ map{d = n}(s ⋅_)) (_+_) (_⋅_)
-    VectorSpace.scalarField           (CoordinateVector-vectorSpace ⦃ f ⦄) = f
-    VectorSpace.vectorCommutativeGroup CoordinateVector-vectorSpace = map₂-commutativeGroup
-    BinaryOperator.congruence (VectorSpace.[⋅ₛᵥ]-binaryOperator  CoordinateVector-vectorSpace) p (intro q) = intro (congruence₂ _ p q)
-    VectorSpace.[⋅ₛ][⋅ₛᵥ]-compatibility       CoordinateVector-vectorSpace = intro (associativity _)
-    VectorSpace.[⋅ₛᵥ]-identity                CoordinateVector-vectorSpace = intro(intro (identityₗ _ _))
-    VectorSpace.[⋅ₛᵥ][+ᵥ]-distributivityₗ     CoordinateVector-vectorSpace = intro(intro (distributivityₗ _ _))
-    VectorSpace.[⋅ₛᵥ][+ₛ][+ᵥ]-distributivityᵣ CoordinateVector-vectorSpace = intro (distributivityᵣ _ _)
+    CoordinateVector-vectorSpace ⦃ field-structure ⦄ = pointwiseFunction-vectorSpace field-structure
 
   indexProject-values : ∀{true false : T} → (proj(indexProject i true false) j ≡ true) ∨ (proj(indexProject i true false) j ≡ false)
   indexProject-values {𝐒 n}{i = i}{j = j} with (i ≡? j)
@@ -184,3 +183,54 @@ module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
       r₂ {𝐒 n} {i = i}{j = j} p with (i ≡? j)
       ... | 𝑇 = symmetry(_≡_) p
       ... | 𝐹 = reflexivity(_≡_)
+
+  module _
+    ⦃ ident : Identityₗ(_⋅_)(𝟏ₛ) ⦄
+    ⦃ absor : Absorberₗ(_⋅_)(𝟎ₛ) ⦄
+    where
+    map₂-indexProject-identityₗ : map₂(_⋅_) (indexProject i 𝟏ₛ 𝟎ₛ) v ≡ indexProject i (v(i)) 𝟎ₛ
+    _⊜_.proof (map₂-indexProject-identityₗ {i = i}{v = v}) {x} with (i ≡? x) | [↔]-to-[←] ([≡][≡?]-equivalence {i = i}{j = x})
+    ... | 𝑇 | p = identityₗ(_⋅_)(𝟏ₛ) 🝖 congruence₁ ⦃ [≡]-equiv ⦄ (v) ⦃ [≡]-to-function ⦄ (symmetry(Eq._≡_) (p([⊤]-intro)))
+    ... | 𝐹 | _ = absorberₗ(_⋅_)(𝟎ₛ)
+
+  module _
+    ⦃ ident : Identityᵣ(_⋅_)(𝟏ₛ) ⦄
+    ⦃ absor : Absorberᵣ(_⋅_)(𝟎ₛ) ⦄
+    where
+    map₂-indexProject-identityᵣ : map₂(_⋅_) v (indexProject i 𝟏ₛ 𝟎ₛ) ≡ indexProject i (v(i)) 𝟎ₛ
+    _⊜_.proof (map₂-indexProject-identityᵣ {v = v}{i = i}) {x} with (i ≡? x) | [↔]-to-[←] ([≡][≡?]-equivalence {i = i}{j = x})
+    ... | 𝑇 | p = identityᵣ(_⋅_)(𝟏ₛ) 🝖 congruence₁ ⦃ [≡]-equiv ⦄ (v) ⦃ [≡]-to-function ⦄ (symmetry(Eq._≡_) (p([⊤]-intro)))
+    ... | 𝐹 | _ = absorberᵣ(_⋅_)(𝟎ₛ)
+
+  tail-function : Function(tail{d = 𝐒(d)}{T = T})
+  Function.congruence(tail-function{d = d}) (intro xy) = intro xy
+
+  instance
+    foldᵣ-function : ∀{ℓᵣ ℓₑᵣ}{R : Type{ℓᵣ}} ⦃ equiv-R : Equiv{ℓₑᵣ}(R)⦄ {f : T → R → R}{init} → ⦃ oper : BinaryOperator(f) ⦄ → Function(foldᵣ{d = d} f init)
+    foldᵣ-function {d} {f = f}{init = init} = intro(p{d = d}) where
+      p : ∀{d} → Names.Congruence₁(foldᵣ{d = d} f init)
+      p {𝟎}       _  = reflexivity(_≡_)
+      p {𝐒(𝟎)}    xy = congruence₂ₗ(f)(_) (_⊜_.proof xy)
+      p {𝐒(𝐒(d))} xy = congruence₂(f) (_⊜_.proof xy) (p {𝐒(d)} (congruence₁(tail) ⦃ tail-function ⦄ xy))
+
+  -- TODO: Generalize Numeral.Natural.Oper.Summation for these kinds of proofs
+  {-
+  module _
+    ⦃ oper : BinaryOperator(_▫_) ⦄
+    ⦃ ident : Identityᵣ(_▫_)(id) ⦄
+    ( neq : (id ≢ x) )
+    where
+    foldᵣ-indexProject-identityᵣ : foldᵣ(_▫_) init (indexProject i x id) ≡ x ▫ init
+    foldᵣ-indexProject-identityᵣ {init}{𝐒(𝟎)}    {i = 𝟎}   = reflexivity(_≡_)
+    foldᵣ-indexProject-identityᵣ {init}{𝐒(𝐒(n))} {i = 𝟎}   =
+      foldᵣ{d = 𝐒(𝐒(n))}(_▫_) init (indexProject 𝟎 x id)                                                🝖[ _≡_ ]-[]
+      proj(indexProject{d = 𝐒(𝐒(n))} 𝟎 x id)(𝟎) ▫ foldᵣ{d = 𝐒(n)}(_▫_) init (tail(indexProject 𝟎 x id)) 🝖[ _≡_ ]-[]
+      x ▫ foldᵣ{d = 𝐒(n)}(_▫_) init (tail(indexProject 𝟎 x id))                                         🝖[ _≡_ ]-[ {!!} ]
+      x ▫ init                                                                                          🝖-end
+      {-foldᵣ(_▫_) id (indexProject 𝟎 x id)                                        🝖[ _≡_ ]-[ {!!} ]
+      proj(indexProject 𝟎 x id)(𝟎) ▫ (foldᵣ(_▫_) id (tail(indexProject 𝟎 x id))) 🝖[ _≡_ ]-[ {!!} ]
+      id ▫ (foldᵣ(_▫_) id (tail(indexProject 𝟎 x id)))                           🝖[ _≡_ ]-[ {!!} ]
+      foldᵣ(_▫_) id (tail(indexProject 𝟎 x id))                                  🝖[ _≡_ ]-[ {!!} ]
+      x                                                                          🝖-end-}
+    foldᵣ-indexProject-identityᵣ {init}{𝐒(𝐒(n))} {i = 𝐒 i} = {!!}
+  -}

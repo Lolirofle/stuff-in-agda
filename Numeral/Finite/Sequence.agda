@@ -49,27 +49,26 @@ concat {a = 𝐒 a} {b = b}   af bf (𝐒 n) = concat {a = a} {b = b} (af ∘ �
 
 
 
-concat-is-left : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n : 𝕟(a)} → (concat af bf (bound-[+]ᵣ n) ≡ Either.Left(af(n)))
+concat-is-left : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n : 𝕟(a)} → (concat af bf (bound-[≤] [≤]-of-[+]ₗ n) ≡ Either.Left(af(n)))
 concat-is-left {a = 𝐒 a} {b = _} {n = 𝟎} = [≡]-intro
 concat-is-left {a = 𝐒 a} {b = b} {n = 𝐒 n} = concat-is-left {a = a} {b = b} {n = n}
 
 concat-is-left-on-0 : ∀{a}{af : 𝕟(a) → A}{bf : 𝕟(𝟎) → B}{n : 𝕟(a)} → (concat af bf n ≡ Either.Left(af(n)))
 concat-is-left-on-0 {a = 𝐒 a} {n = 𝟎} = [≡]-intro
 concat-is-left-on-0 {a = 𝐒 a} {n = 𝐒 n} = concat-is-left-on-0 {a = a} {n = n}
-{-# REWRITE concat-is-left-on-0 #-}
 
 -- concat-is-right : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(𝐒 b) → B}{n : 𝕟(b)} → (concat af bf (maximum{n = a} 𝕟.+ n) ≡ Either.Right(bf(bound-𝐒 n)))
 
 concat-left-pattern : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n : 𝕟(a ℕ.+ b)}{aa} → (concat af bf n ≡ Either.Left(aa)) → ∃(k ↦ (af(k) ≡ aa))
-concat-left-pattern {a = 𝟎} {𝟎} {af} {bf} {()} {aa} p
+concat-left-pattern {a = 𝟎} {𝟎} {af} {bf} {}
 concat-left-pattern {a = 𝐒 a} {b} {af} {bf} {𝟎} {aa} p = [∃]-intro 𝟎 ⦃ injective(Either.Left) p ⦄
-concat-left-pattern {a = 𝐒 a} {𝟎} {af} {bf} {𝐒 n} {aa} p = [∃]-intro (𝐒(n)) ⦃ injective(Either.Left) p ⦄
+concat-left-pattern {a = 𝐒 a} {𝟎} {af} {bf} {𝐒 n} {aa} p rewrite concat-is-left-on-0 {af = af}{bf = bf}{n = 𝐒 n} = [∃]-intro (𝐒(n)) ⦃ injective(Either.Left) p ⦄
 concat-left-pattern {a = 𝐒 a} {𝐒 b} {af} {bf} {𝐒 n} {aa} p with concat-left-pattern {a = a}{𝐒 b}{af ∘ 𝐒}{bf}{n}
 ... | q with q p
 ... | [∃]-intro witness ⦃ proof ⦄ = [∃]-intro (𝐒 witness) ⦃ proof ⦄
 
 concat-right-pattern : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n : 𝕟(a ℕ.+ b)}{bb} → (concat af bf n ≡ Either.Right(bb)) → ∃(k ↦ (bf(k) ≡ bb))
-concat-right-pattern {a = 𝟎} {𝟎} {af} {bf} {()} {bb} p
+concat-right-pattern {a = 𝟎} {𝟎} {af} {bf} {}
 concat-right-pattern {a = 𝟎} {𝐒 b} {af} {bf} {𝟎} {bb} p = [∃]-intro 𝟎 ⦃ injective(Either.Right) p ⦄
 concat-right-pattern {a = 𝟎} {𝐒 b} {af} {bf} {𝐒 n} {bb} p = [∃]-intro (𝐒(n)) ⦃ injective(Either.Right) p ⦄
 concat-right-pattern {a = 𝐒 a} {𝐒 b} {af} {bf} {𝐒 n} {bb} p with concat-right-pattern {a = a}{𝐒 b}{af ∘ 𝐒}{bf}{n}
@@ -85,8 +84,8 @@ instance
   concat-injective : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B} → ⦃ Injective(af) ⦄ → ⦃ Injective(bf) ⦄ → Injective(concat af bf)
   Injective.proof (concat-injective {a = 𝟎} {𝐒 b} {af} {bf}) {x} {y} p = injective(bf) (injective(Either.Right) p)
   Injective.proof (concat-injective {a = 𝐒 a} {b} {af} {bf}) {𝟎} {𝟎} p = [≡]-intro
-  Injective.proof (concat-injective {a = 𝐒 a} {𝟎} {af} {bf}) {𝟎} {𝐒 y} p with () ← injective(af) (injective(Either.Left) p)
-  Injective.proof (concat-injective {a = 𝐒 a} {𝟎} {af} {bf}) {𝐒 x} {𝟎} p with () ← injective(af) (injective(Either.Left) p)
+  Injective.proof (concat-injective {a = 𝐒 a} {𝟎} {af} {bf}) {𝟎} {𝐒 y} p rewrite concat-is-left-on-0 {af = af}{bf = bf}{n = 𝐒 y} with () ← injective(af) (injective(Either.Left) p)
+  Injective.proof (concat-injective {a = 𝐒 a} {𝟎} {af} {bf}) {𝐒 x} {𝟎} p rewrite concat-is-left-on-0 {af = af}{bf = bf}{n = 𝐒 x} with () ← injective(af) (injective(Either.Left) p)
   Injective.proof (concat-injective {a = 𝐒 a} {𝐒 b} {af} {bf}) {𝟎} {𝐒 y} p with concat-left-or-right{af = af ∘ 𝐒}{bf = bf}{n = y}
   ... | [∨]-introₗ ([∃]-intro _ ⦃ proof ⦄) with () ← injective(af) (injective(Either.Left) (p 🝖 proof))
   ... | [∨]-introᵣ ([∃]-intro _ ⦃ proof ⦄) with () ← p 🝖 proof
@@ -96,24 +95,28 @@ instance
   Injective.proof (concat-injective {a = 𝐒 a} {b} {af} {bf}) {𝐒 x} {𝐒 y} p = congruence₁(𝐒) (Injective.proof (concat-injective {a = a} {b} {af ∘ 𝐒} {bf} ⦃ [∘]-injective {f = af}{g = 𝐒} ⦄) {x} {y} p)
 
 instance
-  postulate concat-inverseᵣ : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B} → ⦃ ∃(Inverseᵣ(af)) ⦄ → ⦃ ∃(Inverseᵣ(bf)) ⦄ → ∃(Inverseᵣ(concat af bf))
-{-  concat-inverseᵣ {A = A}{B = B} {a = a} {𝟎}   {af} {bf} ⦃ [∃]-intro af⁻¹ ⦃ af-inv ⦄ ⦄  ⦃ [∃]-intro bf⁻¹ ⦃ bf-inv ⦄ ⦄ = [∃]-intro concat⁻¹ ⦃ inv ⦄ where
+  concat-inverseᵣ : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B} → ⦃ ∃(Inverseᵣ(af)) ⦄ → ⦃ ∃(Inverseᵣ(bf)) ⦄ → ∃(Inverseᵣ(concat af bf))
+  concat-inverseᵣ {A = A}{B = B} {a = a} {𝟎}   {af} {bf} ⦃ [∃]-intro af⁻¹ ⦃ af-inv ⦄ ⦄  ⦃ [∃]-intro bf⁻¹ ⦃ bf-inv ⦄ ⦄ = [∃]-intro concat⁻¹ ⦃ inv ⦄ where
     concat⁻¹ : (A ‖ B) → 𝕟(a)
     concat⁻¹ (Either.Left  aa) = af⁻¹(aa)
     concat⁻¹ (Either.Right bb) with () ← bf⁻¹(bb)
 
     inv : Inverseᵣ(concat af bf) concat⁻¹
-    Inverseᵣ.proof inv {Either.Left  aa} = congruence₁ Either.Left (Inverseᵣ.proof af-inv {aa})
+    Inverseᵣ.proof inv {Either.Left  aa} =
+      concat af bf (concat⁻¹ ([∨]-introₗ aa)) 🝖[ _≡_ ]-[]
+      concat af bf (af⁻¹(aa))                 🝖[ _≡_ ]-[ {!!} ]
+      [∨]-introₗ aa                           🝖-end
+    -- congruence₁ Either.Left (Inverseᵣ.proof af-inv {aa})
     Inverseᵣ.proof inv {Either.Right bb} with () ← bf⁻¹(bb)
   concat-inverseᵣ {A = A}{B = B} {a = a} {𝐒 b} {af} {bf} ⦃ [∃]-intro af⁻¹ ⦃ af-inv ⦄ ⦄  ⦃ [∃]-intro bf⁻¹ ⦃ bf-inv ⦄ ⦄ = [∃]-intro concat⁻¹ ⦃ inv ⦄ where
     concat⁻¹ : (A ‖ B) → 𝕟(a ℕ.+ 𝐒(b))
     concat⁻¹ (Either.Left  aa) = 𝕟._+_ {a}{𝐒(b)} (af⁻¹(aa)) maximum
-    concat⁻¹ (Either.Right bb) = bound-[+]ₗ {a}{𝐒 b} (bf⁻¹(bb))
+    concat⁻¹ (Either.Right bb) = bound-[≤] ([≤]-of-[+]ᵣ {a}{𝐒 b}) (bf⁻¹(bb))
 
     inv : Inverseᵣ(concat af bf) concat⁻¹
     Inverseᵣ.proof inv {Either.Left  aa} = {!!}
     Inverseᵣ.proof inv {Either.Right bb} = {!!}
--}
+
 instance
   postulate concat-surjective : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B} → ⦃ Surjective(af) ⦄ → ⦃ Surjective(bf) ⦄ → Surjective(concat af bf)
   {-Surjective.proof (concat-surjective {a = 𝟎}  {b}   {af}{bf}) {Either.Left  y} with () ← [∃]-witness(surjective(af){y})

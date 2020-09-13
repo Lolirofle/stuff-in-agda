@@ -3,6 +3,7 @@ module Type.Properties.Singleton.Proofs where
 import      Data.Tuple as Tuple
 open import Data.Proofs
 open import Function.Axioms
+open import Logic.Classical
 open import Logic
 import      Lvl
 open import Type.Properties.Empty
@@ -16,12 +17,13 @@ open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Structure.Type.Identity
 open import Syntax.Function
 open import Type.Dependent
 open import Type
 
 private variable ℓ : Lvl.Level
-private variable A B U P : Type{ℓ}
+private variable A B T U P : Type{ℓ}
 
 module _ ⦃ equiv : Equiv(U) ⦄ where
   unit-is-pos : ⦃ proof : IsUnit(U) ⦄ → ◊(U)

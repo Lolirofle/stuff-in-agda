@@ -1,13 +1,14 @@
 module Function.Multi.Functions where
 
 open import Data
+import      Data.Option.Functions as Option
 open import Data.Tuple renaming (curry to curry₁ ; uncurry to uncurry₁) using (_⨯_ ; _,_)
 open import Data.Tuple.Raise
 import      Data.Tuple.Raiseᵣ.Functions as Raise
 open import Data.Tuple.RaiseTypeᵣ
 open import Data.Tuple.RaiseTypeᵣ.Functions
 open import Function.Multi
-open import Functional using (_→ᶠ_ ; id ; _∘_ ; _⦗_⦘_) renaming (const to const₁ ; apply to apply₁ ; swap to swap₁ ; _$_ to _$₁_)
+open import Functional using (_→ᶠ_ ; id ; _∘_ ; _∘ᵢₙₛₜ_ ; _⦗_⦘_) renaming (const to const₁ ; apply to apply₁ ; swap to swap₁ ; _$_ to _$₁_)
 open import Logic
 import      Lvl
 import      Lvl.MultiFunctions as Lvl
@@ -71,6 +72,11 @@ compose(𝐒(𝐒(n))) f = compose(𝐒(n)) f ∘_
 _∘ᵣ_ : ∀{As : Types{n}(ℓ𝓈)}{B : Type{ℓ₁}}{C : Type{ℓ₂}} → (B → C) → (As ⇉ B) → (As ⇉ C)
 _∘ᵣ_ {n = n} = compose(n)
 
+composeᵢₙₛₜ : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ₁}{B : Type{ℓ₁}}{ℓ₂}{C : Type{ℓ₂}} → (B → C) → (As ⇉ᵢₙₛₜ B) → (As ⇉ᵢₙₛₜ C)
+composeᵢₙₛₜ(0)           = id
+composeᵢₙₛₜ(1)       f g = f(g)
+composeᵢₙₛₜ(𝐒(𝐒(n))) f g = composeᵢₙₛₜ(𝐒(n)) f g
+
 -- Puts the second function on every argument of the first function.
 -- Example:
 --   (f on g) x₁ x₂ x₃ .. = f (g x₁) (g x₂) (g x₃) ..
@@ -91,27 +97,29 @@ swap(n₁)(0)            = id
 swap(n₁)(1)        f b = (_$₁ b) ∘ᵣ f
 swap(n₁)(𝐒(𝐒(n₂))) f b = swap(n₁)(𝐒(n₂)) ((_$₁ b) ∘ᵣ f)
 
+-- Lifts a function/operator pointwise.
 -- A generalized variant of `(_∘ᵣ_)` that allows the left function to have multiple arguments.
 -- Example:
 --   (f ∘ₗ g₁ g₂ g₃ ...) x₁ x₂ x₃ ... = f (g₁ x₁ x₂ x₃ ...) (g₂ x₁ x₂ x₃ ...) (g₃ x₁ x₂ x₃ ...) ...
 --   (f ∘ₗ g) x₁ x₂ x₃ ... = (f ∘ᵣ g) x₁ x₂ x₃ ...
-composeMany : (n₁ n₂ : ℕ) → ∀{ℓ𝓈₁}{As : Types{n₁}(ℓ𝓈₁)}{ℓ𝓈₂}{Bs : Types{n₂}(ℓ𝓈₂)}{ℓ}{C : Type{ℓ}} → (Bs ⇉ C) → (map (As ⇉_) Bs) ⇉ (As ⇉ C)
-composeMany(n₁)(0)            = const(n₁)
-composeMany(n₁)(1)            = compose(n₁)
-composeMany(n₁)(𝐒(𝐒(n₂))) {As = As}{Bs = B , Bs}{C = C} f g = p{n = 𝐒(n₂)} (composeMany(n₁)(𝐒(n₂))) (f ∘ᵣ g) where
+--   pointwise(1)(2) (_+_) = (f ↦ g ↦ x ↦ f(x) + g(x))
+pointwise : (n₁ n₂ : ℕ) → ∀{ℓ𝓈₁}{As : Types{n₁}(ℓ𝓈₁)}{ℓ𝓈₂}{Bs : Types{n₂}(ℓ𝓈₂)}{ℓ}{C : Type{ℓ}} → (Bs ⇉ C) → (map (As ⇉_) Bs) ⇉ (As ⇉ C)
+pointwise(n₁)(0)            = const(n₁)
+pointwise(n₁)(1)            = compose(n₁)
+pointwise(n₁)(𝐒(𝐒(n₂))) {As = As}{Bs = B , Bs}{C = C} f g = p{n = 𝐒(n₂)} (pointwise(n₁)(𝐒(n₂))) (f ∘ᵣ g) where
   p : ∀{Ts : Types{n}(ℓ𝓈)} → ((Bs ⇉ C) → (Ts ⇉ As ⇉ C)) → ((As ⇉ Bs ⇉ C) → (Ts ⇉ As ⇉ C)) -- TODO: Is it possible to simplify this helper function?
   p{n = n}{Ts = Ts} f g = compose(n) (applyTwice(n₁)) (swap(n₁)(n) (compose(n₁) f g))
 _∘ₗ : ∀{As : Types{n₁}(ℓ𝓈₁)}{Bs : Types{n₂}(ℓ𝓈₂)}{C : Type{ℓ}} → (Bs ⇉ C) → (map (As ⇉_) Bs) ⇉ (As ⇉ C)
-_∘ₗ {n₁ = n₁}{n₂ = n₂} = composeMany(n₁)(n₂)
+_∘ₗ {n₁ = n₁}{n₂ = n₂} = pointwise(n₁)(n₂)
 
 -- Converts a function using a tuple to represent its arguments to a curried function (nested function types).
 -- Example:
 --   curry((x,y,z,...) ↦ φ) = (x ↦ y ↦ z ↦ ... ↦ φ)
+--   curry(0) = id                       : (A₁                  → B) → (A₁                → B)
+--   curry(1) = curry₁                   : ((A₁ ⨯ A₂)           → B) → (A₁ → A₂           → B)
+--   curry(2) = curry₁ ∘ curry₁          : ((A₁ ⨯ A₂ ⨯ A₃)      → B) → (A₁ → A₂ → A₃      → B)
+--   curry(3) = curry₁ ∘ curry₁ ∘ curry₁ : ((A₁ ⨯ A₂ ⨯ A₃ ⨯ A₄) → B) → (A₁ → A₂ → A₃ → A₄ → B)
 -- Note: If there is a nested uncurry and curry, one can often rewrite it using (_∘ᵣ_) instead (I think).
--- Note:
---   curry                 : ((a₁ , a₂) -> b) -> a₁ -> a₂ -> b
---   curry ∘ curry         : (((a₁ , a₂), a₃) -> b) -> a₁ -> a₂ -> a₃ -> b
---   curry ∘ curry ∘ curry : ((((a₁ , a₂) , a₃) , a₄) -> b) -> a₁ -> a₂ -> a₃ -> a₄ -> b
 curry : (n : ℕ) → ∀{ℓ𝓈}{As : Types{𝐒(n)}(ℓ𝓈)}{ℓ}{B : Type{ℓ}} → (reduceᵣ(_⨯_) As → B) → (As ⇉ B)
 curry(𝟎)        = id
 curry(𝐒(n)) f x = curry(n) (f ∘ (x ,_))
@@ -154,7 +162,7 @@ onEach(0)           = id
 onEach(1)           = _∘_
 onEach(𝐒(𝐒(n))) f g = curry(n) (gs ↦ x ↦ uncurry(n) (onEach(𝐒(n)) (f(g(x)))) gs)
 
--- TODO: Also a specialised (liftOn)? This is probably one of the parts of being an "applicative functor". The other being `const`
+-- Note: One of the parts of being an "applicative functor". The other being `const`
 liftedApply : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ₁}{B : Type{ℓ₁}}{ℓ₂}{C : Type{ℓ₂}} → (As ⇉ (B → C)) → ((As ⇉ B) → (As ⇉ C))
 liftedApply(0)             = id
 liftedApply(1)       f g x = f x (g x)
@@ -166,9 +174,15 @@ lifted-[,](n) f g = liftedApply(n) ((swap₁ _,_) ∘ᵣ g) f
 -- TODO: How to implement something like this
 --(F(x) ▫ F(y)) ▫ F(x . y) 
 --_aryᵣFromBinaryOperator_ : (n : ℕ) → ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}} → (_▫_ : X → Y → X) → 
--- _aryᵣFromBinaryOperator_ : (n : ℕ) → ∀{F}{_○_} → (_▫_ : ∀{x y} → F(x) → F(y) → F(x ○ y)) → 
+-- _aryᵣFromBinaryOperator_ : (n : ℕ) → ∀{F}{_○_} → (_▫_ : ∀{x y} → F(x) → F(y) → F(x ○ y)) →
+-- _aryᵣFromBinaryOperator_ : (n : ℕ) → ∀{F} → (_▫_ : ∀{x y z} → F(x)(y) → F(y)(z) → F(x)(z)) →
+-- CategoricalOperator₊ : ℕ → {Obj : Type{ℓ₁}} → (Obj → Obj → Type{ℓ₂}) → Type
+-- CategoricalOperator₊(0)       F = ∀{x₁ x₂} → F(x₁)(x₂) → F(x₁)(x₂)
+-- CategoricalOperator₊(1)       F = ∀{x₁ x₂ x₃} → F(x₂)(x₃) → F(x₁)(x₂) → F(x₁)(x₃)
+-- CategoricalOperator₊(𝐒(𝐒(n))) F = {!!}
 
 -- Nested quantifiers over multiple values.
+-- Used to defined 
 -- Example:
 --   quantifier₊(3) □(P) = □(x ↦ □(y ↦ □(z ↦ P(x)(y)(z))))
 quantifier₊ : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}} → (T → Stmt{ℓ₂}) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}) → (As ⇉ Stmt{ℓ}) → Stmt{ℓ Lvl.⊔ (Lvl.⨆(ℓ𝓈))}
@@ -176,33 +190,53 @@ quantifier₊(0)       □(P) = P
 quantifier₊(1)       □(P) = □(P)
 quantifier₊(𝐒(𝐒(n))) □(P) = □(x ↦ quantifier₊(𝐒(n)) □(P(x)))
 
--- TODO: Move these
-module _ where
-  open import Logic.Predicate
+quantifier₊ᵢₘₚₗ : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}} → (T → Stmt{ℓ₂}) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}) → (As ⇉ᵢₘₚₗ Stmt{ℓ}) → Stmt{ℓ Lvl.⊔ (Lvl.⨆(ℓ𝓈))}
+quantifier₊ᵢₘₚₗ(0)       □(P) = P
+quantifier₊ᵢₘₚₗ(1)       □(P) = □(x ↦ P{x})
+quantifier₊ᵢₘₚₗ(𝐒(𝐒(n))) □(P) = □(x ↦ quantifier₊ᵢₘₚₗ(𝐒(n)) □(P{x}))
 
-  ∀₊ : (n : ℕ) → ∀{ℓ}{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (As ⇉ Stmt{ℓ}) → Stmt
-  ∀₊(n) = quantifier₊(n) ∀ₗ
+quantifier₊ᵢₙₛₜ : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}} → (T → Stmt{ℓ₂}) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}) → (As ⇉ᵢₙₛₜ Stmt{ℓ}) → Stmt{ℓ Lvl.⊔ (Lvl.⨆(ℓ𝓈))}
+quantifier₊ᵢₙₛₜ(0)       □(P) = P
+quantifier₊ᵢₙₛₜ(1)       □(P) = □(x ↦ P ⦃ x ⦄)
+quantifier₊ᵢₙₛₜ(𝐒(𝐒(n))) □(P) = □(x ↦ quantifier₊ᵢₙₛₜ(𝐒(n)) □(P ⦃ x ⦄))
 
-  ∃₊ : (n : ℕ) → ∀{ℓ}{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (As ⇉ Stmt{ℓ}) → Stmt
-  ∃₊(n) = quantifier₊(n) ∃
+quantify : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (As ⇉ Stmt{ℓ}) → Stmt{ℓ Lvl.⊔ (Lvl.⨆(ℓ𝓈))}
+quantify(n) P = quantifier₊(n) (Pred ↦ (∀(x) → Pred(x))) P
 
-{-module _ where
-  postulate l1 l2 l3 l4 l5 l6 l7 l8 : Lvl.Level
-  postulate A : Type{l1}
-  postulate B : Type{l2}
-  postulate C : Type{l3}
-  postulate D : Type{l4}
-  postulate E : Type{l5}
-  postulate F : Type{l6}
-  postulate G : Type{l7}
-  postulate H : Type{l8}
-  postulate fn : A → B → C → D
-  postulate g1 : E → A
-  postulate g2 : F → B
-  postulate g3 : G → C
-  postulate e : E
-  postulate f : F
-  postulate g : G
-  test : D
-  test = onMany(3) fn g1 g2 g3 e f g
+quantifyᵢₘₚₗ : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (As ⇉ᵢₘₚₗ Stmt{ℓ}) → Stmt{ℓ Lvl.⊔ (Lvl.⨆(ℓ𝓈))}
+quantifyᵢₘₚₗ(n) P = quantifier₊ᵢₘₚₗ(n) (Pred ↦ (∀{x} → Pred(x))) P
+
+quantifyᵢₙₛₜ : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (As ⇉ᵢₙₛₜ Stmt{ℓ}) → Stmt{ℓ Lvl.⊔ (Lvl.⨆(ℓ𝓈))}
+quantifyᵢₙₛₜ(n) P = quantifier₊ᵢₙₛₜ(n) (Pred ↦ (∀ ⦃ x ⦄ → Pred(x))) P
+
+quantifierSpecific : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (∀{i} → (index i As → Stmt{ℓ}) → Stmt{ℓ}) → (As ⇉ Stmt{ℓ}) → Stmt{ℓ}
+quantifierSpecific(0)       □(P) = P
+quantifierSpecific(1)       □(P) = □{𝟎}(P)
+quantifierSpecific(𝐒(𝐒(n))) □(P) = □{𝟎}(x ↦ quantifierSpecific(𝐒(n)) (\{i} → □{𝐒(i)})(P(x)))
+
+{- TODO: MOre general levels
+quantifierSpecific : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (∀{i} → (index i As → Stmt{Raise.index i ℓ𝓈}) → Stmt{ℓ}) → (As ⇉ Stmt{Lvl.⨆(ℓ𝓈)}) → Stmt{(Raise.head₀ ℓ𝓈) Option.or ℓ}
+quantifierSpecific(0)       □(P) = {!!}
+quantifierSpecific(1)       □(P) = □{𝟎}(P)
+quantifierSpecific(𝐒(𝐒(n))) □(P) = □{𝟎}(x ↦ {!quantifierSpecific(𝐒(n)) (\{i} → □{𝐒(i)})(P(x))!})
 -}
+
+expl-to-impl : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ}{B : Type{ℓ}} → (As ⇉ B) → (As ⇉ᵢₘₚₗ B)
+expl-to-impl 0         f = f
+expl-to-impl 1         f{x} = f(x)
+expl-to-impl (𝐒(𝐒(n))) f{x} = expl-to-impl(𝐒(n)) (f(x))
+
+expl-to-inst : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ}{B : Type{ℓ}} → (As ⇉ B) → (As ⇉ᵢₙₛₜ B)
+expl-to-inst 0         f = f
+expl-to-inst 1         f ⦃ x ⦄ = f(x)
+expl-to-inst (𝐒(𝐒(n))) f ⦃ x ⦄ = expl-to-inst(𝐒(n)) (f(x))
+
+impl-to-expl : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ}{B : Type{ℓ}} → (As ⇉ᵢₘₚₗ B) → (As ⇉ B)
+impl-to-expl 0         f = f
+impl-to-expl 1         f(x) = f{x}
+impl-to-expl (𝐒(𝐒(n))) f(x) = impl-to-expl(𝐒(n)) (f{x})
+
+inst-to-expl : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ}{B : Type{ℓ}} → (As ⇉ᵢₙₛₜ B) → (As ⇉ B)
+inst-to-expl 0         f = f
+inst-to-expl 1         f(x) = f ⦃ x ⦄
+inst-to-expl (𝐒(𝐒(n))) f(x) = inst-to-expl(𝐒(n)) (f ⦃ x ⦄)

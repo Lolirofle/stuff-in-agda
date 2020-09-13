@@ -1,4 +1,4 @@
-module Structure.Category.Names where
+module Structure.Categorical.Names where
 
 import      Lvl
 open import Functional using (const ; swap)

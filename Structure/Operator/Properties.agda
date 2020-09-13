@@ -5,6 +5,7 @@ open import Functional
 open import Lang.Instance
 open import Logic
 open import Logic.Predicate
+open import Logic.Propositional
 import      Structure.Operator.Names as Names
 open import Structure.Setoid.WithLvl
 open import Syntax.Function
@@ -67,6 +68,14 @@ module _{T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) (id
   absorber-right = inst-fn (Absorberᵣ.proof ∘ Absorber.right)
 
 module _{T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃ identityₗ : ∃(Identityₗ(_▫_)) ⦄ where
+  module _ (x : T) where
+    module _ (inv : T) where
+      record InverseElementₗ : Stmt{Lvl.of(Type.of(_▫_)) Lvl.⊔ ℓₑ} where
+        constructor intro
+        field proof : Names.InverseElementₗ(_▫_)([∃]-witness identityₗ)(x)(inv)
+      inverseElementₗ = inst-fn InverseElementₗ.proof
+    InvertibleElementₗ = ∃(InverseElementₗ)
+
   module _ (inv : T → T) where
     record InverseFunctionₗ : Stmt{Lvl.of(Type.of(_▫_)) Lvl.⊔ ℓₑ} where
       constructor intro
@@ -75,6 +84,14 @@ module _{T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃
   Invertibleₗ = ∃(InverseFunctionₗ)
 
 module _{T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃ identityᵣ : ∃(Identityᵣ(_▫_)) ⦄ where
+  module _ (x : T) where
+    module _ (inv : T) where
+      record InverseElementᵣ : Stmt{Lvl.of(Type.of(_▫_)) Lvl.⊔ ℓₑ} where
+        constructor intro
+        field proof : Names.InverseElementᵣ(_▫_)([∃]-witness identityᵣ)(x)(inv)
+      inverseElementᵣ = inst-fn InverseElementᵣ.proof
+    InvertibleElementᵣ = ∃(InverseElementᵣ)
+
   module _ (inv : T → T) where
     record InverseFunctionᵣ : Stmt{Lvl.of(Type.of(_▫_)) Lvl.⊔ ℓₑ} where
       constructor intro
@@ -83,6 +100,14 @@ module _{T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃
   Invertibleᵣ = ∃(InverseFunctionᵣ)
 
 module _{T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃ identity : ∃(Identity(_▫_)) ⦄ where
+  module _ (x : T) where
+    module _ (inv : T) where
+      InverseElement : Stmt
+      InverseElement =
+        InverseElementₗ(_▫_) ⦃ [∃]-map-proof Identity.left  identity ⦄ (x)(inv) ∧
+        InverseElementᵣ(_▫_) ⦃ [∃]-map-proof Identity.right identity ⦄ (x)(inv)
+    InvertibleElement = ∃(InverseElement)
+
   module _ (inv : T → T) where
     import Logic.IntroInstances
 
@@ -94,6 +119,7 @@ module _{T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃
     inverseFunction-left  = inst-fn (InverseFunctionₗ.proof ∘ InverseFunction.left)
     inverseFunction-right = inst-fn (InverseFunctionᵣ.proof ∘ InverseFunction.right)
   Invertible = ∃(InverseFunction)
+  -- TODO: Add some kind of inverse function
 
 module _{T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃ absorberₗ : ∃(Absorberₗ(_▫_)) ⦄ where
   module _ (opp : T → T) where

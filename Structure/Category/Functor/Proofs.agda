@@ -5,7 +5,7 @@ open import Functional using (_$_)
 open import Logic.Predicate
 import      Lvl
 open import Structure.Category
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Category.Functor
 open import Structure.Category.Functor.Equiv
 open import Structure.Function

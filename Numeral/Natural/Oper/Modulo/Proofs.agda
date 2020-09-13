@@ -78,6 +78,12 @@ mod'-zero-succ-2 {r}{𝐒(b)} = mod'-zero-succ-2 {𝐒(r)}{b}
 [mod₀]-2-2 {_}{_} {𝐒(_)}{𝟎}    = [≡]-intro
 [mod₀]-2-2 {r}{b'}{𝐒(a)}{𝐒(b)} = [mod₀]-2-2 {𝐒(r)}{b'}{𝐒(a)}{b}
 
+[mod₀]-2-2ₗ : ∀{r b' a b} → ([ r , b' ] (𝐒(a) + b) mod' b) ≡ ([ 𝟎 , b' ] a mod' b')
+[mod₀]-2-2ₗ {_}{_} {𝟎}   {𝟎}    = [≡]-intro
+[mod₀]-2-2ₗ {r}{b'}{𝟎}   {𝐒(b)} = [mod₀]-2-2ₗ {𝐒(r)}{b'}{𝟎}{b}
+[mod₀]-2-2ₗ {_}{_} {𝐒(_)}{𝟎}    = [≡]-intro
+[mod₀]-2-2ₗ {r}{b'}{𝐒(a)}{𝐒(b)} = [mod₀]-2-2ₗ {𝐒(r)}{b'}{𝐒(a)}{b}
+
 [mod₀]-3-1 : ∀{r b' b} → [ r , b' ] b mod' b ≡ b + r
 [mod₀]-3-1 {_}{_} {𝟎}    = [≡]-intro
 [mod₀]-3-1 {r}{b'}{𝐒(b)} = [mod₀]-3-1 {𝐒(r)}{b'}{b}
@@ -215,7 +221,7 @@ mod-zero-cases {.(𝐒 (b + p))} {b} ab0 | [∨]-introᵣ ba | [∃]-intro p ⦃
 -}
 -}
 
-{-# TERMINATING #-} -- TODO: Write a general induction proof function for the divisibility relation which terminates
+{-# TERMINATING #-} -- TODO: Write a general induction proof function for the divisibility relation which terminates by for example using [ℕ]-strong-induction?
 mod-divisibility : ∀{a b} → ⦃ _ : IsTrue(positive?(b)) ⦄ → (a mod b ≡ 𝟎) ↔ (b ∣ a)
 mod-divisibility {a}{𝐒(b)} = [↔]-intro l r where
   l : ∀{a b} → (a mod 𝐒(b) ≡ 𝟎) ← (𝐒(b) ∣ a)
@@ -234,6 +240,23 @@ mod-divisibility {a}{𝐒(b)} = [↔]-intro l r where
         (𝐒(b) + p) mod 𝐒(b) 🝖-[ ab0 ]
         𝟎                   🝖-end
       ))
+
+postulate [⋅][mod]-distributivityₗ : ∀{a b c} → (c ⋅ (a mod₀ b) ≡ ((c ⋅ a) mod₀ (c ⋅ b)))
+{-[⋅][mod]-distributivityₗ {𝟎}   {𝟎}   {𝟎}   = [≡]-intro
+[⋅][mod]-distributivityₗ {𝟎}   {𝟎}   {𝐒 c} = [≡]-intro
+[⋅][mod]-distributivityₗ {𝟎}   {𝐒 b} {𝟎}   = [≡]-intro
+[⋅][mod]-distributivityₗ {𝟎}   {𝐒 b} {𝐒 c} = [≡]-intro
+[⋅][mod]-distributivityₗ {𝐒 a} {𝟎}   {𝟎}   = [≡]-intro
+[⋅][mod]-distributivityₗ {𝐒 a} {𝟎}   {𝐒 c} = [≡]-intro
+[⋅][mod]-distributivityₗ {𝐒 a} {𝐒 b} {𝟎}   = [≡]-intro
+[⋅][mod]-distributivityₗ {𝐒 a} {𝐒 b} {𝐒 c} = ?-}
+{- TODO: Above is true. Prove using the division theorem
+(((c ⋅ a) / (c ⋅ b)) ⋅ (c ⋅ b)) + ((c ⋅ a) mod₀ (c ⋅ b)) ≡ c ⋅ a //Division theorem on (c ⋅ a)
+  (((c ⋅ a) / (c ⋅ b)) ⋅ (c ⋅ b)) + (c ⋅ (a mod₀ b)) ≡
+  ((a / b) ⋅ (c ⋅ b)) + (c ⋅ (a mod₀ b)) ≡ //a/b = (c⋅a)/(c⋅b)
+  (c ⋅ ((a / b) ⋅ b)) + (c ⋅ (a mod₀ b)) ≡ //Commuting and associating ⋅
+  c ⋅ ((a / b) ⋅ b) + (a mod₀ b) ≡ c ⋅ a //...equal to LHS here by distributivity of (_⋅_) over (_+_), and this identity is division theorem on a with congruenced (c ⋅_)
+  ((a / b) ⋅ b) + (a mod₀ b) ≡ a-}
 
 {-
 mod-of-𝐒 : ∀{a b} → ((𝐒(a) mod 𝐒(b) ≡ 𝟎) ∨ (𝐒(a) mod 𝐒(b) ≡ 𝐒(a mod 𝐒(b))))

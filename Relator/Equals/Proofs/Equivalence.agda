@@ -1,5 +1,6 @@
 module Relator.Equals.Proofs.Equivalence where
 
+open import Functional
 import      Lvl
 open import Lang.Instance
 open import Logic.Propositional
@@ -12,29 +13,28 @@ open import Structure.Relator
 open import Structure.Relator.Equivalence
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
+open import Structure.Type.Identity
+open import Structure.Type.Identity.Proofs
 open import Type
 
+-- TODO: Consider using Structure.Type.Identity instead of these proofs
+
 module One {ℓ} {T : Type{ℓ}} where
-  [≡]-reflexivity-raw : Names.Reflexivity (_≡_ {T = T})
-  [≡]-reflexivity-raw = [≡]-intro
-
-  [≡]-symmetry-raw : Names.Symmetry (_≡_ {T = T})
-  [≡]-symmetry-raw [≡]-intro = [≡]-intro
-
-  [≡]-transitivity-raw : Names.Transitivity (_≡_ {T = T})
-  [≡]-transitivity-raw [≡]-intro [≡]-intro = [≡]-intro
-
   instance
     [≡]-reflexivity : Reflexivity (_≡_ {T = T})
-    Reflexivity.proof([≡]-reflexivity) = [≡]-reflexivity-raw
+    [≡]-reflexivity = intro [≡]-intro
+
+  instance
+    [≡]-identity-eliminator : ∀{ℓₚ} → IdentityEliminator{ℓₚ = ℓₚ}(_≡_ {T = T})
+    IdentityEliminator.proof [≡]-identity-eliminator _ proof {x = x}{y = .x} [≡]-intro = proof{x}
 
   instance
     [≡]-symmetry : Symmetry (_≡_ {T = T})
-    Symmetry.proof([≡]-symmetry) = [≡]-symmetry-raw
+    [≡]-symmetry = identity-eliminator-to-symmetry
 
   instance
     [≡]-transitivity : Transitivity (_≡_ {T = T})
-    Transitivity.proof([≡]-transitivity) = [≡]-transitivity-raw
+    [≡]-transitivity = identity-eliminator-to-transitivity
 
   instance
     [≡]-equivalence : Equivalence (_≡_ {T = T})
@@ -55,7 +55,7 @@ module One {ℓ} {T : Type{ℓ}} where
 
   -- Replaces occurrences of an element in a function
   [≡]-substitutionᵣ : ∀{ℓ₂}{x y} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → f(x) → f(y)
-  [≡]-substitutionᵣ [≡]-intro p = p
+  [≡]-substitutionᵣ [≡]-intro p = p -- TODO: Express in terms of sub-of-reflexive which is transport so that functors are automatically something
 
   -- Replaces occurrences of an element in a function
   [≡]-substitutionₗ : ∀{ℓ₂}{x y} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → f(y) → f(x)

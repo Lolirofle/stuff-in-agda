@@ -1,60 +1,20 @@
 module Numeral.Finite.Bound where
 
-import Lvl
-open import Syntax.Number
-open import Logic.Propositional
-open import Logic.Predicate
+open import Lang.Instance
 open import Numeral.Finite
-open import Numeral.Natural hiding (𝐏)
-open import Numeral.Natural.Function
-open import Numeral.Natural.Function.Proofs
-open import Numeral.Natural.Oper
-open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural
 open import Numeral.Natural.Relation.Order
-open import Numeral.Natural.Relation
-open import Relator.Equals
-open import Relator.Equals.Proofs
-open import Structure.Operator.Properties
+open import Numeral.Natural.Relation.Order.Proofs
 
-bound-[≤] : ∀{a b} → ⦃ _ : (a ≤ b) ⦄ → 𝕟(a) → 𝕟(b)
-bound-[≤] {𝐒 a} {𝐒 b} ⦃ _ ⦄            𝟎     = 𝟎
-bound-[≤] {𝐒 a} {𝐒 b} ⦃ [≤]-with-[𝐒] ⦄ (𝐒 n) = 𝐒(bound-[≤] n)
+-- For an arbitrary number `n`, `bound-[≤] n` is the same number as `n` semantically but with a different boundary on the type.
+-- Example: bound-[≤] p (3: 𝕟(10)) = 3: 𝕟(20) where p: (10 ≤ 20)
+bound-[≤] : ∀{a b} → (a ≤ b) → (𝕟(a) → 𝕟(b))
+bound-[≤] {𝐒 a} {𝐒 b} _            𝟎     = 𝟎
+bound-[≤] {𝐒 a} {𝐒 b} [≤]-with-[𝐒] (𝐒 n) = 𝐒(bound-[≤] infer n)
 
 bound-𝐒 : ∀{n} → 𝕟(n) → 𝕟(ℕ.𝐒(n))
-bound-𝐒 (𝟎)    = 𝟎
-bound-𝐒 (𝐒(n)) = 𝐒(bound-𝐒(n))
+bound-𝐒 = bound-[≤] [≤]-of-[𝐒]
 
-{-
-bound-𝐏 : ∀{n} → (a : 𝕟(ℕ.𝐒(n))) → ⦃ _ : a <? maximum ⦄ → 𝕟(n)
-bound-𝐏 (𝟎)    = ?
-bound-𝐏 (𝐒(n)) = ?
--}
-
-bound-[+]ᵣ : ∀{n₁ n₂} → 𝕟(n₁) → 𝕟(n₁ + n₂)
-bound-[+]ᵣ (𝟎) = 𝟎
-bound-[+]ᵣ {ℕ.𝐒(n₁)}{n₂}(𝐒(n)) = 𝐒(bound-[+]ᵣ {n₁}{n₂} (n))
-
-bound-[+]ₗ : ∀{n₁ n₂} → 𝕟(n₂) → 𝕟(n₁ + n₂)
-bound-[+]ₗ (𝟎) = 𝟎
-bound-[+]ₗ {n₁}{ℕ.𝐒(n₂)}(𝐒(n)) = 𝐒(bound-[+]ₗ {n₁}{n₂} (n))
-
-bound-maxₗ : ∀{n₁ n₂} → 𝕟(n₁) → 𝕟(max n₁ n₂)
-bound-maxₗ {n₁}{n₂} (n) = bound-[≤] n -- [≡]-substitutionₗ (max-elementary{n₁}{n₂}) {𝕟} (bound-[+] {n₁}{n₂ −₀ n₁} (n))
-
-bound-maxᵣ : ∀{n₁ n₂} → 𝕟(n₂) → 𝕟(max n₁ n₂)
-bound-maxᵣ {n₁}{n₂} (n) = bound-[≤] n -- [≡]-substitutionᵣ (commutativity(max) {n₂}{n₁}) {𝕟} (bound-maxₗ {n₂}{n₁} (n))
-
-bound-minₗ : ∀{n₁ n₂} → 𝕟(min n₁ n₂) → 𝕟(n₁)
-bound-minₗ {n₁}{n₂} (n) = bound-[≤] n
-
-bound-minᵣ : ∀{n₁ n₂} → 𝕟(min n₁ n₂) → 𝕟(n₂)
-bound-minᵣ {n₁}{n₂} (n) = bound-[≤] n
-
-{-instance
-  postulate downscale-instance : ∀{n} → ⦃ nfin : 𝕟(ℕ.𝐒(n)) ⦄ → ⦃ _ : [𝕟]-to-[ℕ]{ℕ.𝐒(n)}(nfin) lteq2 n ⦄ → 𝕟(n)
--}
-
--- TODO: bound-shrink : ∀{n} → (i : 𝕟(n)) → 𝕟(ℕ.𝐒([𝕟]-to-[ℕ](i)))
-
--- TODO: bound-𝐏 : ∀{n} → 𝕟(n) → 𝕟(ℕ.𝐏(n)). How to prove stuff inside if-statements? if(P) then (in here, how to prove that (P ≡ 𝑇)?)
--- or maybe instead: bound-𝐏 : ∀{n} → (nfin : 𝕟(𝐒(n))) → ⦃ _ : [𝕟]-to-[ℕ](nfin) < n ⦄ → 𝕟(n)
+bound-exact : ∀{a b} → (i : 𝕟(a)) → (𝕟-to-ℕ i < b) → 𝕟(b)
+bound-exact {𝐒 a} {𝐒 b} 𝟎     [≤]-with-[𝐒] = 𝟎
+bound-exact {𝐒 a} {𝐒 b} (𝐒 i) [≤]-with-[𝐒] = 𝐒(bound-exact i infer)

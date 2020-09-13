@@ -1,27 +1,21 @@
 import      Lvl
 
--- Obj is the collection of objects.
--- _⟶_ is the collection of morphisms.
 module Structure.Category {ℓₒ ℓₘ ℓₑ : Lvl.Level} where
 
-open import Data
-open import Functional using (const ; swap)
-open import Lang.Instance
+open import Functional using (swap)
 open import Logic
 open import Logic.Propositional
-open import Logic.Predicate
-open import Structure.Setoid.Uniqueness
-import      Structure.Category.Names as Names
-open import Structure.Category.Properties as Properties
-import      Structure.Operator.Names as Names
+import      Structure.Categorical.Names as Names
+open import Structure.Categorical.Properties
+open import Structure.Semicategory{ℓₒ}{ℓₘ}{ℓₑ}
 open import Structure.Operator
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
 open import Structure.Setoid.WithLvl
-open import Syntax.Function
-open import Type.Properties.Singleton
 open import Type
 
+-- Obj is the collection of objects.
+-- _⟶_ is the collection of morphisms.
 module _
   {Obj : Type{ℓₒ}}
   (_⟶_ : Obj → Obj → Type{ℓₘ})
@@ -59,7 +53,7 @@ module _
   -- The operator joins two paths into one, and the identity is a loop (the empty path).
   -- See `Graph.Category`.
   --
-  -- A category is the pattern seen in all the examples above.
+  -- A category is the common pattern seen in all the examples above.
   record Category : Stmt{ℓₒ Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
     field
       -- Existence of morphisms constructed by connecting two morphisms (The composition of two morphisms).
@@ -96,15 +90,16 @@ module _
       identityᵣ : Morphism.Identityᵣ(_∘_)(\{x} → id{x})
       identityᵣ = [∧]-elimᵣ identity
 
-    -- As stated in `id`, it can be interpreted as proof of reflexivity when `Morphism` is interpreted as a binary relation.
+    -- As stated in `id`, this can be interpreted as proof of reflexivity when `Morphism` is interpreted as a binary relation.
     morphism-reflexivity : Reflexivity(_⟶_)
     morphism-reflexivity = intro id
 
-    -- As stated in `_∘_`, it can be interpreted as proof of transitivity when `Morphism` is interpreted as a binary relation.
-    morphism-transitivity : Transitivity(_⟶_)
-    morphism-transitivity = intro(swap(_∘_))
+    semicategory : Semicategory(_⟶_)
+    Semicategory._∘_ semicategory = _∘_
+    Semicategory.binaryOperator semicategory = binaryOperator
+    Semicategory.associativity semicategory = associativity
 
-    module ArrowNotation = Names.ArrowNotation(_⟶_)
+    open Semicategory(semicategory) hiding (_∘_ ; binaryOperator ; associativity) public
 
 -- A category object can be used when one refers to a category as an object.
 -- Examples of usage are in functors (morphism between categories) or in equivalences of categories.

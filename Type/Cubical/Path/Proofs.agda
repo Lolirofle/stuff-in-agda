@@ -176,7 +176,7 @@ module _ where
   map : (f : X → Y) → ∀{a b} → Path a b → Path (f(a)) (f(b))
   map = mapP
 
-  map₂ : (f : X₁ → X₂ → Y) → ∀{a₁ b₁} → Path a₁ b₁ → ∀{a₂ b₂} → Path a₂ b₂ → Path (f a₁ a₂) (f b₁ b₂)
+  map₂ : (f : X₁ → X₂ → Y) → ∀{a₁ b₁}{a₂ b₂} → Path a₁ b₁ → Path a₂ b₂ → Path (f a₁ a₂) (f b₁ b₂)
   map₂ f ab1 ab2 i = map (map f ab1 i) ab2 i
 
   liftedSpaceMap : (S : X → Type{ℓ}) → ∀{a b} → Path a b → S(a) → S(b)

@@ -30,8 +30,8 @@ private variable ℓ : Lvl.Level
 record Decider (P : As ⇉ Stmt{ℓ}) (decide : As ⇉ Bool) : Stmt{ℓ Lvl.⊔ Lvl.⨆(ℓ𝓈)} where
   constructor intro
   field
-    decide-is-true  : ∀₊(n) (composeMany(n)(2) (_↔_) P         (IsTrue ∘ᵣ decide))
-    decide-is-false : ∀₊(n) (composeMany(n)(2) (_↔_) (¬_ ∘ᵣ P) (IsFalse ∘ᵣ decide))
+    decide-is-true  : ∀₊(n) (pointwise(n)(2) (_↔_) P         (IsTrue ∘ᵣ decide))
+    decide-is-false : ∀₊(n) (pointwise(n)(2) (_↔_) (¬_ ∘ᵣ P) (IsFalse ∘ᵣ decide))
     -- decidable : ∀₊(as ↦ P(as) ∨ (¬ P(as)))
 
 

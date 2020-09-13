@@ -4,8 +4,8 @@ import      Lvl
 open import Data.List
 open import Data.List.Functions
 open import Numeral.Natural
-open import Numeral.Natural.Oper
 open import Structure.Function
+open import Structure.Operator.Field
 open import Structure.Operator.Monoid
 open import Structure.Operator
 open import Structure.Setoid.WithLvl
@@ -19,10 +19,9 @@ open        Data.List.Functions.LongOper
 open import Data.List.Proofs
 open import Functional as Fn using (_$_ ; _∘_ ; const)
 import      Function.Equals as Fn
-open import Numeral.Natural.Oper.Proofs
-open import Numeral.Natural.Oper.Proofs.Structure
 import      Numeral.Natural.Oper.Summation
 open import Numeral.Natural.Oper.Summation.Range
+open import Numeral.Natural.Oper.Summation.Range.Proofs
 open import Numeral.Natural.Relation.Order
 import      Structure.Function.Names as Names
 open import Structure.Operator.Properties
@@ -31,77 +30,12 @@ open import Structure.Relator.Properties
 open import Syntax.Function
 open import Syntax.Transitivity
 
-module _ where
-  open import Relator.Equals hiding (_≡_)
-  open import Relator.Equals.Proofs.Equiv
-
-  Range-empty : ∀{a} → (a ‥ a ≡ ∅)
-  Range-empty {𝟎} = [≡]-intro
-  Range-empty {𝐒 a} rewrite Range-empty {a} = [≡]-intro
-  {-# REWRITE Range-empty #-}
-
-  Range-reversed : ∀{a b} → ⦃ _ : (a ≥ b) ⦄ → (a ‥ b ≡ ∅)
-  Range-reversed {a}   {𝟎}   ⦃ [≤]-minimum ⦄ = [≡]-intro
-  Range-reversed {𝐒 a} {𝐒 b} ⦃ [≤]-with-[𝐒] ⦃ p ⦄ ⦄
-    rewrite Range-reversed {a} {b} ⦃ p ⦄
-    = [≡]-intro
-
-  Range-succ : ∀{a b} → (map 𝐒(a ‥ b) ≡ 𝐒(a) ‥ 𝐒(b))
-  Range-succ = [≡]-intro
-
-  Range-prepend : ∀{a b} → ⦃ _ : (a < b) ⦄ → (a ‥ b ≡ prepend a (𝐒(a) ‥ b))
-  Range-prepend {𝟎}   {𝐒 b} = [≡]-intro
-  Range-prepend {𝐒 a} {𝐒 b} ⦃ [≤]-with-[𝐒] ⦃ ab ⦄ ⦄ rewrite Range-prepend {a} {b} ⦃ ab ⦄ = [≡]-intro
-
-  Range-postpend : ∀{a b} → ⦃ _ : (a < 𝐒(b)) ⦄ → (a ‥ 𝐒(b) ≡ postpend b (a ‥ b))
-  Range-postpend {𝟎}   {𝟎}   ⦃ [≤]-with-[𝐒] ⦄ = [≡]-intro
-  Range-postpend {𝟎}   {𝐒 b} ⦃ [≤]-with-[𝐒] ⦄  = congruence₁(prepend 𝟎) $
-    map 𝐒(𝟎 ‥ 𝐒(b))                 🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-postpend {𝟎}{b}) ]
-    map 𝐒(postpend b (𝟎 ‥ b))       🝖[ _≡_ ]-[ map-postpend ]
-    postpend (𝐒(b)) (map 𝐒(𝟎 ‥ b))  🝖-end
-  Range-postpend {𝐒 a} {𝐒 b} ⦃ [≤]-with-[𝐒] ⦃ 𝐒ab ⦄ ⦄
-    rewrite Range-postpend {a} {b} ⦃ 𝐒ab ⦄
-    = map-postpend
-
-  Range-length : ∀{a b} → (length(a ‥ b) ≡ b −₀ a)
-  Range-length {𝟎} {𝟎} = [≡]-intro
-  Range-length {𝟎} {𝐒 b}
-    rewrite length-map{f = 𝐒}{x = 𝟎 ‥ b}
-    rewrite Range-length {𝟎} {b}
-    = congruence₁(𝐒) [≡]-intro
-  Range-length {𝐒 a} {𝟎} = [≡]-intro
-  Range-length {𝐒 a} {𝐒 b}
-    rewrite length-map{f = 𝐒}{x = a ‥ b}
-    rewrite Range-length {a} {b}
-    = [≡]-intro
-
-  Range-length-zero : ∀{b} → (length(𝟎 ‥ b) ≡ b)
-  Range-length-zero {b} = Range-length {𝟎}{b}
-
-  Range-singleton : ∀{a} → (a ‥ 𝐒(a) ≡ singleton(a))
-  Range-singleton {𝟎} = [≡]-intro
-  Range-singleton {𝐒 a}
-    rewrite Range-singleton {a}
-    = [≡]-intro
-  {-# REWRITE Range-singleton #-}
-
-  Range-concat : ∀{a b c} → ⦃ ab : (a ≤ b) ⦄ ⦃ bc : (b < c) ⦄ → ((a ‥ b) ++ (b ‥ c) ≡ a ‥ c)
-  Range-concat {𝟎} {𝟎}   {𝐒 c} ⦃ [≤]-minimum ⦄ ⦃ [≤]-with-[𝐒] ⦄ = [≡]-intro
-  Range-concat {𝟎} {𝐒 b} {𝐒 c} ⦃ [≤]-minimum ⦄ ⦃ [≤]-with-[𝐒] ⦄ = congruence₁ (prepend 0) $
-    map 𝐒(𝟎 ‥ b) ++ map 𝐒 (b ‥ c) 🝖[ _≡_ ]-[ map-[++] {l₁ = 𝟎 ‥ b}{l₂ = b ‥ c} ]-sym
-    map 𝐒((𝟎 ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-concat {𝟎} {b} {c}) ]
-    map 𝐒(𝟎 ‥ c)                  🝖-end
-  Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with-[𝐒] ⦄ =
-    map 𝐒(a ‥ b) ++ map 𝐒 (b ‥ c) 🝖[ _≡_ ]-[ map-[++] {l₁ = a ‥ b}{l₂ = b ‥ c} ]-sym
-    map 𝐒((a ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-concat {a} {b} {c}) ]
-    map 𝐒(a ‥ c)                  🝖-end
-
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ where
   open Numeral.Natural.Oper.Summation ⦃ monoid = monoid ⦄
   open Monoid(monoid) using (id) renaming (binary-operator to [▫]-binary-operator)
   open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
-  private variable f : ℕ → T
+  private variable f g : ℕ → T
   private variable x a b c k n : ℕ
   private variable r r₁ r₂ : List(ℕ)
 
@@ -125,64 +59,103 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ 
     f(r₀) ▫ (∑(r) f ▫ f(x))    🝖[ _≡_ ]-[ associativity(_▫_) {f(r₀)}{∑(r) f}{f(x)} ]-sym
     (f(r₀) ▫ ∑(r) f) ▫ f(x)    🝖-end
 
+  ∑-compose : ∀{f : ℕ → T}{g : ℕ → ℕ} → (∑(r) (f ∘ g) ≡ ∑(map g r) f)
+  ∑-compose {r = r}{f = f}{g = g} =
+    ∑(r) (f ∘ g)                  🝖[ _≡_ ]-[]
+    foldᵣ(_▫_) id (map(f ∘ g) r)   🝖[ _≡_ ]-[ congruence₁(foldᵣ(_▫_) id) ⦃ foldᵣ-function ⦄ (map-preserves-[∘] {f = f}{g = g}{x = r}) ]
+    foldᵣ(_▫_) id (map f(map g r)) 🝖[ _≡_ ]-[]
+    ∑(map g r) f                  🝖-end
+
+  ∑-singleton : (∑(singleton(a)) f ≡ f(a))
+  ∑-singleton = identityᵣ ⦃ equiv ⦄ (_▫_)(id)
+
+  ∑-concat : (∑(r₁ ++ r₂) f ≡ ∑(r₁) f ▫ ∑(r₂) f)
+  ∑-concat {empty}        {r₂} {f} = symmetry(_≡_) (identityₗ(_▫_)(id))
+  ∑-concat {prepend x r₁} {r₂} {f} =
+    f(x) ▫ ∑(r₁ ++ r₂) f      🝖[ _≡_ ]-[ congruence₂ᵣ(_▫_)(f(x)) (∑-concat {r₁}{r₂}{f}) ]
+    f(x) ▫ (∑(r₁) f ▫ ∑ r₂ f) 🝖[ _≡_ ]-[ associativity(_▫_) {x = f(x)}{y = ∑(r₁) f}{z = ∑(r₂) f} ]-sym
+    (f(x) ▫ ∑(r₁) f) ▫ ∑ r₂ f 🝖-end
+
+  ∑-const-id : (∑(r) (const id) ≡ id)
+  ∑-const-id {empty}       = reflexivity(Equiv._≡_ equiv)
+  ∑-const-id {prepend x r} =
+    ∑(prepend x r) (const id) 🝖[ _≡_ ]-[]
+    id ▫ (∑(r) (const id))    🝖[ _≡_ ]-[ identityₗ(_▫_)(id) ]
+    ∑(r) (const id)           🝖[ _≡_ ]-[ ∑-const-id {r} ]
+    id                        🝖-end
+
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  private variable f g : ℕ → T
+  private variable k n : ℕ
+  private variable x a b c : T
+  private variable r r₁ r₂ : List(ℕ)
+  private variable _+_ _⋅_ : T → T → T
+
+  module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ comm : Commutativity(_+_) ⦄ where
+    open Numeral.Natural.Oper.Summation ⦃ monoid = monoid ⦄
+    open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
+    open import Relator.Equals.Proofs.Equiv {T = ℕ}
+
+    ∑-add : (∑(r) f + ∑(r) g ≡ ∑(r) (x ↦ f(x) + g(x)))
+    ∑-add {∅}      {f} {g} = identityₗ(_+_)(id)
+    ∑-add {r₀ ⊰ r} {f} {g} =
+      ∑(prepend r₀ r) f + ∑(prepend r₀ r) g    🝖[ _≡_ ]-[]
+      (f(r₀) + ∑(r) f) + (g(r₀) + ∑(r) g)      🝖[ _≡_ ]-[ One.associate-commute4 {a = f(r₀)}{b = ∑(r) f}{c = g(r₀)}{d = ∑(r) g} (commutativity(_+_){x = ∑(r) f}{y = g(r₀)}) ]
+      (f(r₀) + g(r₀)) + (∑(r) f + ∑(r) g)      🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(r₀) + g(r₀)) (∑-add {r} {f} {g}) ]
+      (f(r₀) + g(r₀)) + ∑(r) (x ↦ f(x) + g(x)) 🝖[ _≡_ ]-[]
+      ∑(prepend r₀ r) (x ↦ f(x) + g(x))        🝖-end
+
+  module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ distₗ : Distributivityₗ(_⋅_)(_+_) ⦄ ⦃ absorᵣ : Absorberᵣ(_⋅_)(Monoid.id monoid) ⦄ where
+    open Numeral.Natural.Oper.Summation ⦃ monoid = monoid ⦄
+    open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
+    open import Relator.Equals.Proofs.Equiv {T = ℕ}
+
+    ∑-scalar-multₗ : (∑(r) (x ↦ c ⋅ f(x)) ≡ c ⋅ (∑(r) f))
+    ∑-scalar-multₗ {empty}        {c} {f} = symmetry(_≡_) (absorberᵣ(_⋅_)(id))
+    ∑-scalar-multₗ {prepend r₀ r} {c} {f} =
+      (c ⋅ f(r₀)) + ∑(r) (x ↦ c ⋅ f(x)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(c ⋅ f(r₀)) (∑-scalar-multₗ {r}{c}{f}) ]
+      (c ⋅ f(r₀)) + (c ⋅ (∑(r) f))      🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) {c}{f(r₀)}{∑(r) f} ]-sym
+      c ⋅ (f(r₀) + (∑(r) f))            🝖-end
+
+  module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ distᵣ : Distributivityᵣ(_⋅_)(_+_) ⦄ ⦃ absorₗ : Absorberₗ(_⋅_)(Monoid.id monoid) ⦄ where
+    open Numeral.Natural.Oper.Summation ⦃ monoid = monoid ⦄
+    open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
+    open import Relator.Equals.Proofs.Equiv {T = ℕ}
+
+    ∑-scalar-multᵣ : (∑(r) (x ↦ f(x) ⋅ c) ≡ (∑(r) f) ⋅ c)
+    ∑-scalar-multᵣ {empty}        {f} {c} = symmetry(_≡_) (absorberₗ(_⋅_)(id))
+    ∑-scalar-multᵣ {prepend r₀ r} {f} {c} =
+      (f(r₀) ⋅ c) + ∑(r) (x ↦ f(x) ⋅ c) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(r₀) ⋅ c) (∑-scalar-multᵣ {r}{f}{c}) ]
+      (f(r₀) ⋅ c) + ((∑(r) f) ⋅ c)      🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) {f(r₀)}{∑(r) f}{c} ]-sym
+      (f(r₀) + (∑(r) f)) ⋅ c            🝖-end
+
+  module _ ⦃ field-structure : Field(_+_)(_⋅_) ⦄ where
+    open Field(field-structure)
+    open Numeral.Natural.Oper.Summation ⦃ monoid = [+]-monoid ⦄
+
 open import Relator.Equals hiding (_≡_)
 open import Relator.Equals.Proofs.Equiv
+open import Numeral.Natural.Oper
+open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Oper.Proofs.Structure
 open Numeral.Natural.Oper.Summation ⦃ monoid = [+]-monoid ⦄ -- TODO: Generalize all the proofs
 
 private variable f g : ℕ → ℕ
 private variable x a b c k n : ℕ
 private variable r r₁ r₂ : List(ℕ)
 
-∑-compose : ∑(r) (f ∘ g) ≡ ∑(map g r) f
-∑-compose {r = r}{f = f}{g = g} =
-  ∑(r) (f ∘ g)                   🝖[ _≡_ ]-[]
-  foldᵣ(_+_) 𝟎 (map(f ∘ g) r)   🝖[ _≡_ ]-[ congruence₁(foldᵣ(_+_) 𝟎) ⦃ foldᵣ-function ⦄ (map-preserves-[∘] {f = f}{g = g}{x = r}) ]
-  foldᵣ(_+_) 𝟎 (map f(map g r)) 🝖[ _≡_ ]-[]
-  ∑(map g r) f                   🝖-end
-
-∑-add : (∑(r) f + ∑(r) g ≡ ∑(r) (x ↦ f(x) + g(x)))
-∑-add {∅}      {f} {g} = reflexivity(_≡_)
-∑-add {r₀ ⊰ r} {f} {g} =
-  ∑(prepend r₀ r) f + ∑(prepend r₀ r) g    🝖[ _≡_ ]-[]
-  (f(r₀) + ∑(r) f) + (g(r₀) + ∑(r) g)      🝖[ _≡_ ]-[ One.associate-commute4 {a = f(r₀)}{b = ∑(r) f}{c = g(r₀)}{d = ∑(r) g} (commutativity(_+_){x = ∑(r) f}{y = g(r₀)}) ]
-  (f(r₀) + g(r₀)) + (∑(r) f + ∑(r) g)      🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(r₀) + g(r₀)) (∑-add {r} {f} {g}) ]
-  (f(r₀) + g(r₀)) + ∑(r) (x ↦ f(x) + g(x)) 🝖[ _≡_ ]-[]
-  ∑(prepend r₀ r) (x ↦ f(x) + g(x))        🝖-end
-
-∑-scalar-multₗ : (∑(r) (x ↦ c ⋅ f(x)) ≡ c ⋅ (∑(r) f))
-∑-scalar-multₗ {empty}        {c} {f} = [≡]-intro
-∑-scalar-multₗ {prepend r₀ r} {c} {f} =
-  (c ⋅ f(r₀)) + ∑(r) (x ↦ c ⋅ f(x)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(c ⋅ f(r₀)) (∑-scalar-multₗ {r}{c}{f}) ]
-  (c ⋅ f(r₀)) + (c ⋅ (∑(r) f))      🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) {c}{f(r₀)}{∑(r) f} ]-sym
-  c ⋅ (f(r₀) + (∑(r) f))            🝖-end
-
-∑-scalar-multᵣ : (∑(r) (x ↦ f(x) ⋅ c) ≡ (∑(r) f) ⋅ c)
-∑-scalar-multᵣ {empty}        {f} {c} = [≡]-intro
-∑-scalar-multᵣ {prepend r₀ r} {f} {c} =
-  (f(r₀) ⋅ c) + ∑(r) (x ↦ f(x) ⋅ c) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(r₀) ⋅ c) (∑-scalar-multᵣ {r}{f}{c}) ]
-  (f(r₀) ⋅ c) + ((∑(r) f) ⋅ c)      🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) {f(r₀)}{∑(r) f}{c} ]-sym
-  (f(r₀) + (∑(r) f)) ⋅ c            🝖-end
-
 ∑-const : (∑(r) (const c) ≡ c ⋅ length(r))
 ∑-const {empty}      {c} = reflexivity(_≡_)
 ∑-const {prepend x r}{c} = congruence₂ᵣ(_+_)(c) (∑-const {r}{c})
 
+-- TODO: Σ-const-id is a generalization of this
 ∑-zero : (∑(r) (const 𝟎) ≡ 𝟎)
 ∑-zero {r} = ∑-const {r}{𝟎}
 
-∑-singleton : (∑(singleton(a)) f ≡ f(a))
-∑-singleton = reflexivity(_≡_)
-
-∑-concat : (∑(r₁ ++ r₂) f ≡ ∑(r₁) f + ∑(r₂) f)
-∑-concat {empty}        {r₂} {f} = [≡]-intro
-∑-concat {prepend x r₁} {r₂} {f} =
-  f(x) + ∑(r₁ ++ r₂) f      🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(f(x)) (∑-concat {r₁}{r₂}{f}) ]
-  f(x) + (∑(r₁) f + ∑ r₂ f) 🝖[ _≡_ ]-[ associativity(_+_) {x = f(x)}{y = ∑(r₁) f}{z = ∑(r₂) f} ]-sym
-  (f(x) + ∑(r₁) f) + ∑ r₂ f 🝖-end
-
+-- TODO: map-binaryOperator is on the equality setoid, which blocks the generalization of this
 instance
   ∑-binaryOperator : BinaryOperator ⦃ equiv-A₂ = Fn.[⊜]-equiv ⦄ (∑)
-  BinaryOperator.congruence ∑-binaryOperator {r₁}{r₂} rr {f} {g} fg =
+  BinaryOperator.congruence ∑-binaryOperator {r₁}{r₂}{f}{g} rr fg =
     ∑(r₁) f  🝖[ _≡_ ]-[]
     foldᵣ(_+_) 𝟎 (map f(r₁))  🝖[ _≡_ ]-[ congruence₁(foldᵣ(_+_) 𝟎) (congruence₂(map) ⦃ map-binaryOperator ⦄ fg rr) ]
     foldᵣ(_+_) 𝟎 (map g(r₂))  🝖[ _≡_ ]-[]
@@ -251,7 +224,7 @@ instance
 ∑-single-range : (∑(a ‥ 𝐒(a)) f ≡ f(a))
 ∑-single-range {𝟎}  {f} = reflexivity(_≡_)
 ∑-single-range {𝐒 a}{f} =
-  ∑ (map 𝐒(a ‥ 𝐒(a))) f       🝖[ _≡_ ]-[ ∑-compose {r = a ‥ 𝐒(a)}{f}{𝐒} ]-sym
+  ∑ (map 𝐒(a ‥ 𝐒(a))) f       🝖[ _≡_ ]-[ ∑-compose ⦃ monoid = [+]-monoid ⦄ {r = a ‥ 𝐒(a)}{f}{𝐒} ]-sym
   ∑ (a ‥ 𝐒(a)) (x ↦ f(𝐒(x)))  🝖[ _≡_ ]-[ ∑-single-range {a}{f ∘ 𝐒} ]
   f(𝐒(a))                     🝖-end
 
@@ -369,3 +342,4 @@ binomial-power {𝐒 n} {a} {b} = {!!}
       (1 ⋅ (a ^ 𝐒(n))) + ∑(1 ‥₌ n) (i ↦ 𝑐𝐶(n)(i) ⋅ (a ⋅ (a ^ (n −₀ i))) ⋅ (b ^ i))                            🝖-end
 -- TODO: Maybe need another variant of ∑ where the index has a proof of it being in the range? And it is in this case used for a ⋅ (a ^ (n −₀ i)) ≡ a ^ (𝐒(n) −₀ i)
 -}
+

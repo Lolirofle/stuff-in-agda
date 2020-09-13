@@ -1,4 +1,4 @@
-module Data.Option.Functor where
+module Data.Option.Categorical where
 
 import Lvl
 import      Functional as Fn

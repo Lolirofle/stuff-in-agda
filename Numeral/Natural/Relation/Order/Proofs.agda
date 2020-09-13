@@ -23,9 +23,6 @@ open import Type
 
 -- TODO: A method for pattern matching: https://stackoverflow.com/questions/20682013/agda-why-am-i-unable-to-pattern-match-on-refl
 
-[<]-minimum : ∀{x : ℕ} → (0 < 𝐒(x))
-[<]-minimum {x} = [≤]-with-[𝐒] {0} ⦃ [≤]-minimum ⦄
-
 [≡]-to-[≤] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
 [≡]-to-[≤] {𝟎}   {_}    ([≡]-intro) = [≤]-minimum
 [≡]-to-[≤] {𝐒(x)}{𝐒(y)} ([≡]-intro) = [≤]-with-[𝐒] ⦃ [≡]-to-[≤] {x}{y} ([≡]-intro) ⦄
@@ -195,8 +192,6 @@ instance
   r{𝐒(x)} (𝟏≤𝐒x) (𝐒x≡𝟎) with [≡]-substitutionᵣ (𝐒x≡𝟎) {expr ↦ 1 ≤ expr} (𝟏≤𝐒x)
   ... | ()
 
- -- [≤]-with-[𝐒]
-
 [≤]-to-[<][≡] : ∀{a b : ℕ} → (a ≤ b) → (a < b)∨(a ≡ b)
 [≤]-to-[<][≡] {𝟎}   {𝟎}    ([≤]-minimum)    = [∨]-introᵣ([≡]-intro)
 [≤]-to-[<][≡] {𝟎}   {𝐒(b)} ([≤]-minimum)    = [∨]-introₗ([<]-minimum)
@@ -278,6 +273,8 @@ instance
 [<]-non-zero-existence : ∀{a b : ℕ} → (a < b) → (𝟎 < b)
 [<]-non-zero-existence [≤]-with-[𝐒] = [<]-of-[𝟎][𝐒]
 
+-- TODO: Move some of the stuff here to Numeral.Natrual.Oper.Proofs.Order
+
 {-
 [+][−₀]-commutativity : ∀{x y} → ⦃ _ : y ≥ z ⦄ → (x + (y −₀ z) ≡ (x −₀ z) + y)
 -}
@@ -313,14 +310,6 @@ instance
 [≤]-from-[+] {ℓ} {P} {𝟎}   anpxn {y}   ⦃ [≤]-minimum ⦄        = anpxn{y}
 [≤]-from-[+] {ℓ} {P} {𝐒 x} anpxn {𝐒 y} ⦃ [≤]-with-[𝐒] ⦃ xy ⦄ ⦄ = [≤]-from-[+] {ℓ} {P ∘ 𝐒} {x} anpxn {y} ⦃ xy ⦄
 
-[−₀]-move-[𝐒] : ∀{x y} → (x ≥ y) → ((𝐒(x) −₀ y) ≡ 𝐒(x −₀ y))
-[−₀]-move-[𝐒] {𝟎}   {𝟎}    _ = [≡]-intro
-[−₀]-move-[𝐒] {𝟎}   {𝐒(_)} ()
-[−₀]-move-[𝐒] {𝐒(_)}{𝟎}    _ = [≡]-intro
-[−₀]-move-[𝐒] {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [−₀]-move-[𝐒] {x}{y} proof
-  -- 𝐒𝐒x −₀ 𝐒y ≡ 𝐒(𝐒x −₀ 𝐒y)
-  -- 𝐒x −₀ y ≡ 𝐒(x −₀ y)
-
 [−₀][+]-nullify2 : ∀{x y} → (x ≤ y) ↔ (x + (y −₀ x) ≡ y)
 [−₀][+]-nullify2 {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
   l : ∀{x y} → (x ≤ y) ← (x + (y −₀ x) ≡ y)
@@ -333,13 +322,12 @@ instance
   r {𝟎}   {𝐒(_)} proof = [≡]-intro
   r {𝐒(_)}{𝟎}    ()
   r {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [≡]-with(𝐒) (r{x}{y} (proof))
-  -- x + (y −₀ x) ≡ y
-  -- ∃z. x + ((x + z) −₀ x) ≡ y
-  -- ∃z. x + z ≡ y
-  -- y ≡ y
 
-[−₀]-comparison : ∀{x y} → (x ≤ y) ↔ (x −₀ y ≡ 𝟎)
-[−₀]-comparison {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
+[−₀][+]-nullify2ᵣ : ∀{x y} → (x ≤ y) ↔ ((y −₀ x) + x ≡ y)
+[−₀][+]-nullify2ᵣ {x}{y} = [↔]-transitivity [−₀][+]-nullify2 ([≡]-substitution (commutativity(_+_) {x}{y −₀ x}) {_≡ y})
+
+[−₀]-when-0 : ∀{x y} → (x ≤ y) ↔ (x −₀ y ≡ 𝟎)
+[−₀]-when-0 {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
   l : ∀{x y} → (x ≤ y) ← (x −₀ y ≡ 𝟎)
   l {𝟎}   {_}    _     = [≤]-minimum
   l {𝐒(_)}{𝟎}    ()
@@ -349,10 +337,6 @@ instance
   r {𝟎}   {_}    proof = [≡]-intro
   r {𝐒(_)}{𝟎}    ()
   r {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = r{x}{y} (proof)
-
--- TODO: One way to prove this is contraposition of [−₀]-comparison. Another is by [≤]-with-[+]ᵣ and some other stuff, but it seems to require more work
-postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
--- [−₀]-when-non-zero {x}{y} 
 
 [−₀]-lesser-[𝐒]ₗ : ∀{x y} → ((x −₀ 𝐒(y)) ≤ (x −₀ y))
 [−₀]-lesser-[𝐒]ᵣ : ∀{x y} → ((x −₀ y) ≤ (𝐒(x) −₀ y))
@@ -370,38 +354,41 @@ postulate [−₀]-when-non-zero : ∀{x y} → (x > y) ↔ (x −₀ y > 𝟎)
 [≤][−₀][𝐒]ₗ {𝟎}   {𝐒(y)} = [≤]-minimum
 [≤][−₀][𝐒]ₗ {𝐒(x)}{𝐒(y)} = [≤][−₀][𝐒]ₗ {x}{y}
 
+[−₀][𝐒]ₗ-equality : ∀{x y} → (x ≥ y) ↔ ((𝐒(x) −₀ y) ≡ 𝐒(x −₀ y))
+[−₀][𝐒]ₗ-equality = [↔]-intro l r where
+  l : ∀{x y} → (x ≥ y) ← ((𝐒(x) −₀ y) ≡ 𝐒(x −₀ y))
+  l {𝟎}   {𝟎}   p = [≤]-minimum
+  l {𝐒 x} {𝟎}   p = [≤]-minimum
+  l {𝐒 x} {𝐒 y} p = [≤]-with-[𝐒] ⦃ l{x}{y} p ⦄
+
+  r : ∀{x y} → (x ≥ y) → ((𝐒(x) −₀ y) ≡ 𝐒(x −₀ y))
+  r {x}   {.𝟎}  [≤]-minimum           = [≡]-intro
+  r {𝐒 x} {𝐒 y} ([≤]-with-[𝐒] ⦃ xy ⦄) = r xy
+
 [−₀]-lesser : ∀{x y} → ((x −₀ y) ≤ x)
 [−₀]-lesser {𝟎}   {_}    = [≤]-minimum
 [−₀]-lesser {𝐒(x)}{𝟎}    = reflexivity(_≤_)
 [−₀]-lesser {𝐒(x)}{𝐒(y)} = ([−₀]-lesser-[𝐒]ₗ {𝐒(x)}{y}) 🝖 ([−₀]-lesser {𝐒(x)}{y})
 
-[−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0) -- TODO: Converse is probably also true
-[−₀]-positive {𝟎}   {𝟎}    ()
-[−₀]-positive {𝐒(x)}{𝟎}    ()
+
+-- TODO: Converse is probably also true. One way to prove the equivalence is contraposition of [−₀]-comparison. Another is by [≤]-with-[+]ᵣ and some other stuff, but it seems to require more work
+[−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0)
 [−₀]-positive {𝟎}   {𝐒(y)} (_) = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
 [−₀]-positive {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [−₀]-positive {x}{y} (proof)
-  -- (𝐒y > 𝐒x) → (𝐒y −₀ 𝐒x > 0)
-  -- (𝐒x < 𝐒y) → (0 < 𝐒y −₀ 𝐒x)
-  -- (𝐒𝐒x ≤ 𝐒y) → (𝐒0 ≤ 𝐒y −₀ 𝐒x)
-  -- (𝐒x ≤ y) → (𝐒0 ≤ 𝐒y −₀ 𝐒x)
-  -- (𝐒x ≤ y) → (𝐒0 ≤ y −₀ x)
-  -- (x < y) → (0 < y −₀ x)
-  -- (y > x) → (y −₀ x > 0)
 
 [−₀]-nested-sameₗ : ∀{x y} → (x ≥ y) ↔ (x −₀ (x −₀ y) ≡ y)
 [−₀]-nested-sameₗ {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
   l : ∀{x y} → (x ≥ y) ← (x −₀ (x −₀ y) ≡ y)
   l {x}{y} proof =
-    [≡]-to-[≤] (symmetry(_≡_) proof)
-    🝖 [−₀]-lesser {x}{x −₀ y}
+    y             🝖[ _≤_ ]-[ [≡]-to-[≤] (symmetry(_≡_) proof) ]
+    x −₀ (x −₀ y) 🝖[ _≤_ ]-[ [−₀]-lesser {x}{x −₀ y} ]
+    x             🝖[ _≤_ ]-end
 
   r : ∀{x y} → (x ≥ y) → (x −₀ (x −₀ y) ≡ y)
   r{x}{y} x≥y =
-    [≡]-with(_−₀ (x −₀ y)) (symmetry(_≡_) ([↔]-to-[→] ([−₀][+]-nullify2 {y}{x}) (x≥y)) 🝖 [+]-commutativity-raw{y}{x −₀ y})
-    🝖 [−₀]ₗ[+]ₗ-nullify {x −₀ y}{y}
-      -- x −₀ (x −₀ y)
-      -- ((x −₀ y) + y) −₀ (x −₀ y)
-      -- y
+    x −₀ (x −₀ y)              🝖[ _≡_ ]-[ [≡]-with(_−₀ (x −₀ y)) (symmetry(_≡_) ([↔]-to-[→] ([−₀][+]-nullify2 {y}{x}) (x≥y)) 🝖 [+]-commutativity-raw{y}{x −₀ y}) ]
+    ((x −₀ y) + y) −₀ (x −₀ y) 🝖[ _≡_ ]-[ [−₀]ₗ[+]ₗ-nullify {x −₀ y}{y} ]
+    y                          🝖-end
 
 [𝄩]-of-𝐒ₗ : ∀{x y} → (x ≥ y) → (𝐒(x) 𝄩 y ≡ 𝐒(x 𝄩 y))
 [𝄩]-of-𝐒ₗ {𝟎}   {𝟎}   xy = [≡]-intro

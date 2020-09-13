@@ -24,6 +24,5 @@ module _
     field congruence : Congruence₁(f)
   congruence₁ = inst-fn Function.congruence
 
--- TODO: Can this be chained? Like (A →ᶠⁿ B →ᶠⁿ C)
-_→ᶠⁿ_ : (A : Type{ℓₒ₁}) → (B : Type{ℓₒ₂}) → ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ → ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ → Type{ℓₒ₁ Lvl.⊔ ℓₒ₂ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂}
-A →ᶠⁿ B = ∃(Function{A = A}{B = B})
+_→ᶠⁿ_ : (A : Setoid{ℓₗ₁}{ℓₒ₁}) → (B : Setoid{ℓₗ₂}{ℓₒ₂}) → Type{ℓₒ₁ Lvl.⊔ ℓₒ₂ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂}
+([∃]-intro A) →ᶠⁿ ([∃]-intro B) = ∃(Function{A = A}{B = B})

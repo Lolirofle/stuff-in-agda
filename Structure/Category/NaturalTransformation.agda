@@ -8,7 +8,7 @@ open import Logic.Predicate
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Proofs
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Setoid.WithLvl
 open import Syntax.Function
 open import Type

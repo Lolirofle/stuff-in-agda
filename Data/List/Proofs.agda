@@ -23,10 +23,11 @@ open import Structure.Function.Domain
 open import Structure.Function.Multi
 import      Structure.Function.Names as Names
 import      Structure.Operator.Names as Names
+open import Structure.Operator.Proofs.Util
 open import Structure.Operator.Properties
 open import Structure.Operator
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl using (Equiv)
+open import Structure.Setoid.WithLvl using (Equiv) renaming (_≡_ to _≡ₛ_)
 open import Syntax.Transitivity
 open import Type
 
@@ -36,11 +37,11 @@ private variable l l₁ l₂ : List(T)
 private variable a b x : T
 private variable n : ℕ
 private variable f : A → B
+private variable P : List(T) → Stmt{ℓ}
 
-module _ {ℓ₁ ℓ₂ : Lvl.Level} where
-  List-induction : ∀{T : Type{ℓ₁}}{P : List(T) → Stmt{ℓ₂}} → P(∅) → (∀(x : T)(l : List(T)) → P(l) → P(x ⊰ l)) → (∀{l : List(T)} → P(l))
-  List-induction base next {∅} = base
-  List-induction base next {x ⊰ l} = next(x)(l)(List-induction base next {l})
+elim : P(∅) → (∀(x : T)(l : List(T)) → P(l) → P(x ⊰ l)) → (∀{l} → P(l))
+elim base next {∅}     = base
+elim base next {x ⊰ l} = next(x)(l)(elim base next {l})
 
 module _ where
   instance
@@ -57,7 +58,7 @@ module _ where
     Identityᵣ.proof([++]-identityᵣ) = [++]-identityᵣ-raw
 
   [++]-associativity-raw : Names.Associativity(_++_ {T = T})
-  [++]-associativity-raw {x = l₀} {y = l₁} {z = l₂} = List-induction [≡]-intro next {l₀} where
+  [++]-associativity-raw {x = l₀} {y = l₁} {z = l₂} = elim [≡]-intro next {l₀} where
     next : ∀(x)(l) → (((l ++ l₁) ++ l₂) ≡ (l ++ (l₁ ++ l₂))) → ((((x ⊰ l) ++ l₁) ++ l₂) ≡ ((x ⊰ l) ++ (l₁ ++ l₂)))
     next = \x _ → [≡]-with(x ⊰_)
 
@@ -119,15 +120,18 @@ module _ where
     Preserving.proof (length-preserves-postpend {a = a}) {x} = length-postpend {a = a}{x = x}
 
   length-[++] : (length{T = T}(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
-  length-[++] {T = T} {l₁ = l₁} {l₂} = List-induction base next {l₁} where
+  length-[++] {T = T} {l₁ = l₁} {l₂} = elim base next {l₁} where
     base : length(∅ ++ l₂) ≡ length{T = T}(∅) + length(l₂)
     base = symmetry(_≡_) (identityₗ(_+_)(0))
 
     next : ∀(x)(l) → (length(l ++ l₂) ≡ length(l) + length(l₂)) → (length((x ⊰ l) ++ l₂) ≡ length(x ⊰ l) + length(l₂))
-    next x l stmt = ([≡]-with(𝐒) stmt) 🝖 (symmetry(_≡_) ([+1]-commutativity {length(l)} {length(l₂)}))
-    -- length(l++l₂) = length(l)+length(l₂) = length(l₂)+length(l)
-    -- 𝐒(length(l++l₂)) = 𝐒(length(l₂)+length(l))  = length(l₂)+𝐒(length(l))  = 𝐒(length(l))+length(l₂)
-    -- length(x ⊰ (l++l₂)) = length(x ⊰ l)+length(l₂)
+    next x l stmt =
+      length((x ⊰ l) ++ l₂)      🝖[ _≡_ ]-[]
+      length(x ⊰ (l ++ l₂))      🝖[ _≡_ ]-[]
+      𝐒(length(l ++ l₂))         🝖[ _≡_ ]-[ [≡]-with(𝐒) stmt ]
+      𝐒(length(l) + length(l₂))  🝖[ _≡_ ]-[ [+1]-commutativity {length(l)} {length(l₂)} ]
+      𝐒(length(l)) + length(l₂)  🝖[ _≡_ ]-[]
+      length(x ⊰ l) + length(l₂) 🝖-end
 
   instance
     length-preserves-[++] : Preserving₂(length{T = T})(_++_)(_+_)
@@ -161,6 +165,29 @@ module _ where
     length-preserves-map : Preserving₁(length{T = T})(map f)(id)
     Preserving.proof (length-preserves-map {f = f}) {l} = length-map {f = f}{x = l}
 
+  length-foldᵣ : ∀{init}{f}{g} → (∀{x}{l} → (length(f x l) ≡ g x (length l))) → (length{T = T}(foldᵣ f init l) ≡ foldᵣ g (length init) l)
+  length-foldᵣ {l = ∅}                    _ = [≡]-intro
+  length-foldᵣ {l = x ⊰ l} {init} {f} {g} p =
+    length(foldᵣ f init (x ⊰ l))    🝖[ _≡_ ]-[]
+    length(f(x) (foldᵣ f init l))   🝖[ _≡_ ]-[ p ]
+    g(x) (length(foldᵣ f init l))   🝖[ _≡_ ]-[ [≡]-with(g(x)) (length-foldᵣ {l = l} {init} {f} {g} p) ]
+    g(x) (foldᵣ g (length init) l)  🝖[ _≡_ ]-[]
+    foldᵣ g (length init) (x ⊰ l)   🝖-end
+
+  foldᵣ-constant-[+]ᵣ : ∀{init step} → (foldᵣ (const(_+ step)) init l ≡ (step ⋅ length(l)) + init)
+  foldᵣ-constant-[+]ᵣ {l = ∅} = [≡]-intro
+  foldᵣ-constant-[+]ᵣ {l = x ⊰ l} {init}{step} =
+    const(_+ step) x (foldᵣ (const(_+ step)) init l) 🝖[ _≡_ ]-[]
+    (foldᵣ (const(_+ step)) init l) + step           🝖[ _≡_ ]-[ [≡]-with(_+ step) (foldᵣ-constant-[+]ᵣ {l = l} {init}{step}) ]
+    ((step ⋅ length(l)) + init) + step               🝖[ _≡_ ]-[ One.commuteᵣ-assocₗ {a = step ⋅ length(l)}{init}{step} ]
+    ((step ⋅ length(l)) + step) + init               🝖[ _≡_ ]-[ [≡]-with(_+ init) (commutativity(_+_) {step ⋅ length(l)}{step}) ]
+    (step + (step ⋅ length(l))) + init               🝖-end
+
+  postulate foldᵣ-constant-[+]ₗ : ∀{init step} → (foldᵣ (const(step +_)) init l ≡ (length(l) ⋅ step) + init)
+
+  length-concatMap : ∀{f} → (length{T = T}(concatMap f l) ≡ foldᵣ((_+_) ∘ length ∘ f) 𝟎 l)
+  length-concatMap {l = l} {f} = length-foldᵣ{l = l}{init = ∅}{f = (_++_) ∘ f} \{x l} → length-[++] {l₁ = f(x)}{l₂ = l}
+
   instance
     [⊰]-cancellationₗ : Cancellationₗ {T₁ = T} (_⊰_)
     Cancellationₗ.proof([⊰]-cancellationₗ) = proof where
@@ -177,13 +204,15 @@ module _ where
       proof {∅}     [≡]-intro = [≡]-intro
       proof {x ⊰ l} p = injective(Some) ([≡]-with(first) p)
 
-  [⊰]-general-cancellationᵣ : ((a ⊰ l₁) ≡ (b ⊰ l₂)) → (l₁ ≡ l₂)
-  [⊰]-general-cancellationᵣ p = [≡]-with(tail) p
+  [⊰]-general-cancellation : ((a ⊰ l₁) ≡ (b ⊰ l₂)) → (a ≡ b) ∧ (l₁ ≡ l₂)
+  [⊰]-general-cancellation p = [∧]-intro (L p) (R p) where
+    R : ((a ⊰ l₁) ≡ (b ⊰ l₂)) → (l₁ ≡ l₂)
+    R p = [≡]-with(tail) p
 
-  [⊰]-general-cancellationₗ : ((a ⊰ l₁) ≡ (b ⊰ l₂)) → (a ≡ b)
-  [⊰]-general-cancellationₗ {l₁ = ∅}     {l₂ = ∅}      [≡]-intro = [≡]-intro
-  [⊰]-general-cancellationₗ {l₁ = ∅}     {l₂ = _ ⊰ _} p with () ← [⊰]-general-cancellationᵣ p
-  [⊰]-general-cancellationₗ {l₁ = _ ⊰ _} {l₂ = _ ⊰ _} p = injective(Some) ([≡]-with(first) p)
+    L : ((a ⊰ l₁) ≡ (b ⊰ l₂)) → (a ≡ b)
+    L {l₁ = ∅}     {l₂ = ∅}      [≡]-intro = [≡]-intro
+    L {l₁ = ∅}     {l₂ = _ ⊰ _} p with () ← R p
+    L {l₁ = _ ⊰ _} {l₂ = _ ⊰ _} p = injective(Some) ([≡]-with(first) p)
 
   [∅][⊰]-unequal : (∅ ≢ x ⊰ l)
   [∅][⊰]-unequal ()
@@ -206,16 +235,18 @@ module _ where
 
   {-
   [⊰][++]-unequal : ∀{T : Type{ℓ}}{x : T}{a l} → ¬(a ++ (x ⊰ l) ≡ l)
-  [⊰][++]-unequal {x = x} {a} {l} p = {!congruence₁(_++ l) postpend-[++] 🝖 associativity(_++_) {x = a}{y = singleton x}{z = l} 🝖 p!} where
+  [⊰][++]-unequal {x = x} {a} {l} p = {!proof(congruence₁(_++ l) postpend-[++] 🝖 associativity(_++_) {x = a}{y = singleton x}{z = l} 🝖 p!} where
     proof : ∀{l} → ¬(postpend x a ++ l ≡ l)
     proof {∅}       = [∅]-postpend-unequal
     proof {x ⊰ l} p = proof {l} {!!}
-  -- associativity(_++_) {x = a}{y = singleton x}{z = l} 🝖 p
+
+  {-  -- associativity(_++_) {x = a}{y = singleton x}{z = l} 🝖 p
   -- [⊰][++]-unequal {T} {x} {x₁ ⊰ a} {x₂ ⊰ l} p = [⊰][++]-unequal {T} {x} {a} {x₂ ⊰ l} ({!!} 🝖 p)
 
   [++]-cancellation-of-[∅]l : ∀{T : Type{ℓ}}{a b : List(T)} → (a ++ b ≡ b) → (a ≡ ∅)
   [++]-cancellation-of-[∅]l {_} {∅}    {b}      _ = [≡]-intro
   [++]-cancellation-of-[∅]l {_} {x ⊰ a} {y ⊰ b} p = [⊥]-elim([⊰][++]-unequal([⊰]-general-cancellationᵣ p))
+  -}
   -}
 
   instance
@@ -230,12 +261,18 @@ module _ where
     [++]-cancellationᵣ : ∀{T : Type{ℓ}} → Cancellationᵣ {T₁ = List(T)} (_++_)
     Cancellationᵣ.proof([++]-cancellationᵣ) {a}{b} = proof {a}{b} where
       proof : Names.Cancellationᵣ(_++_)
-      proof {l}      {∅}     {∅}      p = [≡]-intro
-      proof {l}      {x ⊰ a} {x₁ ⊰ b} p = congruence₁-op(_⊰_) ([⊰]-general-cancellationₗ p) (proof{l}{a}{b} ([⊰]-general-cancellationᵣ p))
+      proof {_} {∅} {∅} p = [≡]-intro
+      proof {_} {∅} {x ⊰ l} p = {!!}
+      proof {xᵣ ⊰ r} {x ⊰ l} {∅} p = {![∧]-elimᵣ([⊰]-general-cancellation p)!}
+      proof {l} {x₁ ⊰ l₁} {x₂ ⊰ l₂} p = congruence₂(_⊰_) ([∧]-elimₗ([⊰]-general-cancellation p)) (proof{l}{l₁}{l₂} ([∧]-elimᵣ([⊰]-general-cancellation p)))
+      {-proof {l}      {∅}     {∅}      p = [≡]-intro
+      proof {l}      {x ⊰ a} {x₁ ⊰ b} p = congruence₂(_⊰_) ([∧]-elimₗ([⊰]-general-cancellation p)) (proof{l}{a}{b} ([∧]-elimᵣ([⊰]-general-cancellation p)))
       proof {∅}      {∅}     {x ⊰ b}  p = [++]-identityᵣ-raw 🝖 p
-      proof {x₁ ⊰ l} {∅}     {x ⊰ b}  p = [⊥]-elim([⊰][++]-unequal(symmetry(_≡_) ([⊰]-general-cancellationᵣ p)))
+      -- proof {x₁ ⊰ l} {∅}     {x ⊰ b}  p = [⊥]-elim([⊰][++]-unequal(symmetry(_≡_) ([⊰]-general-cancellationᵣ p)))
+      proof {x₁ ⊰ l} {∅}     {x ⊰ b}  p = {![∧]-elimᵣ([⊰]-general-cancellation p)!}
       proof {∅}      {x ⊰ a}  {∅}     p = p
-      proof {x₁ ⊰ l} {x ⊰ a}  {∅}     p = [⊥]-elim([⊰][++]-unequal([⊰]-general-cancellationᵣ p))
+      -- proof {x₁ ⊰ l} {x ⊰ a}  {∅}     p = [⊥]-elim([⊰][++]-unequal([⊰]-general-cancellationᵣ p))
+      proof {x₁ ⊰ l} {x ⊰ a}  {∅}     p = {!!}-}
   -}
 
   length-[++^] : (length(l ++^ n) ≡ length(l) ⋅ n)
@@ -303,7 +340,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{
     (concatMap(concatMap f ∘ g)) (x ⊰ l)                  🝖[ _≡_ ]-[]
     (concatMap f ∘ g) x ++ concatMap(concatMap f ∘ g) l   🝖-[ [≡]-with((concatMap f ∘ g) x ++_) (concatMap-[∘] {l}) ]
     (concatMap f ∘ g) x ++ (concatMap f ∘ concatMap g) l  🝖[ _≡_ ]-[]
-    (concatMap f (g(x))) ++ (concatMap f (concatMap g l)) 🝖-[ concatMap-[++] {l₁ = g(x)}{l₂ = concatMap g l} ]-sym
+    (concatMap f (g(x))) ++ (concatMap f (concatMap g l)) 🝖-[ concatMap-[++] {f = f}{l₁ = g(x)}{l₂ = concatMap g l} ]-sym
     concatMap f (g(x) ++ concatMap g l)                   🝖[ _≡_ ]-[]
     concatMap f (concatMap g (x ⊰ l))                     🝖[ _≡_ ]-[]
     (concatMap f ∘ concatMap g) (x ⊰ l)                   🝖-end
@@ -311,6 +348,15 @@ module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{
 concatMap-singleton : (concatMap{A = T} singleton) ⊜ id
 concatMap-singleton {x = ∅} = [≡]-intro
 concatMap-singleton {x = x ⊰ l} = [≡]-with(x ⊰_) (concatMap-singleton {x = l})
+
+concatMap-concat-map : (concatMap f l ≡ concat(map f l))
+concatMap-concat-map        {l = ∅} = [≡]-intro
+concatMap-concat-map {f = f}{l = x ⊰ l} =
+  concatMap f (x ⊰ l)     🝖[ _≡_ ]-[]
+  f(x) ++ concatMap f l   🝖[ _≡_ ]-[ congruence₂ᵣ(_++_)(f(x)) (concatMap-concat-map {l = l}) ]
+  f(x) ++ concat(map f l) 🝖[ _≡_ ]-[]
+  concat(f(x) ⊰ map f l)  🝖[ _≡_ ]-[]
+  concat(map f (x ⊰ l))   🝖-end
 
 foldₗ-lastElem-equivalence : (last{T = T} ⊜ foldₗ (const Option.Some) Option.None)
 foldₗ-lastElem-equivalence {x = ∅}         = [≡]-intro
@@ -322,7 +368,7 @@ foldₗ-reverse-equivalence : (reverse{T = T} ⊜ foldₗ (Functional.swap(_⊰_
 foldₗ-reverse-equivalence {x = ∅} = [≡]-intro
 foldₗ-reverse-equivalence {x = x ⊰ l} =
   reverse (x ⊰ l)                                           🝖[ _≡_ ]-[]
-  (postpend x ∘ reverse) l                                  🝖[ _≡_ ]-[ {!!} ]
+  (postpend x ∘ reverse) l                                  🝖[ _≡_ ]-[ [≡]-with(postpend x) (foldₗ-reverse-equivalence {x = l}) ]
   (postpend x ∘ foldₗ (Functional.swap(_⊰_)) ∅) l           🝖[ _≡_ ]-[ {!!} ]
   foldₗ (Functional.swap(_⊰_)) (Functional.swap(_⊰_) ∅ x) l 🝖[ _≡_ ]-[]
   foldₗ (Functional.swap(_⊰_)) (singleton(x)) l             🝖[ _≡_ ]-[]
@@ -335,9 +381,18 @@ foldᵣ-function {a = a} ⦃ equiv ⦄ {_▫_ = _▫_} ⦃ oper ⦄ = intro p wh
   p {∅}       {∅}       xy = reflexivity(Equiv._≡_ equiv)
   p {x₁ ⊰ l₁} {x₂ ⊰ l₂} xy =
     foldᵣ(_▫_) a (x₁ ⊰ l₁) 🝖[ Equiv._≡_ equiv ]-[]
-    x₁ ▫ (foldᵣ(_▫_) a l₁) 🝖[ Equiv._≡_ equiv ]-[ congruence₂(_▫_) ⦃ oper ⦄ ([⊰]-general-cancellationₗ xy) (p {l₁} {l₂} ([⊰]-general-cancellationᵣ xy)) ]
+    x₁ ▫ (foldᵣ(_▫_) a l₁) 🝖[ Equiv._≡_ equiv ]-[ congruence₂(_▫_) ⦃ oper ⦄ ([∧]-elimₗ([⊰]-general-cancellation xy)) (p {l₁} {l₂} ([∧]-elimᵣ([⊰]-general-cancellation xy))) ]
     x₂ ▫ (foldᵣ(_▫_) a l₂) 🝖[ Equiv._≡_ equiv ]-[]
     foldᵣ(_▫_) a (x₂ ⊰ l₂) 🝖-end
+
+foldᵣ-function₊-raw : ∀{l₁ l₂ : List(A)} ⦃ equiv : Equiv{ℓₑ}(B) ⦄ {_▫₁_ _▫₂_ : A → B → B} ⦃ oper₁ : BinaryOperator(_▫₁_) ⦄ ⦃ oper₂ : BinaryOperator ⦃ [≡]-equiv ⦄ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫₂_) ⦄ {a₁ a₂ : B} → (∀{x y} → (_≡ₛ_ ⦃ equiv ⦄ (x ▫₁ y) (x ▫₂ y))) → (_≡ₛ_ ⦃ equiv ⦄ a₁ a₂) → (l₁ ≡ l₂) → (foldᵣ(_▫₁_) a₁ l₁ ≡ₛ foldᵣ(_▫₂_) a₂ l₂)
+foldᵣ-function₊-raw {l₁ = ∅} {∅} ⦃ equiv ⦄ {_▫₁_} {_▫₂_} ⦃ oper₁ ⦄ ⦃ oper₂ ⦄ {a₁} {a₂} opeq aeq leq = aeq
+foldᵣ-function₊-raw {l₁ = x₁ ⊰ l₁} {x₂ ⊰ l₂} ⦃ equiv ⦄ {_▫₁_} {_▫₂_} ⦃ oper₁ ⦄ ⦃ oper₂ ⦄ {a₁} {a₂} opeq aeq leq =
+  foldᵣ(_▫₁_) a₁ (x₁ ⊰ l₁)  🝖[ Equiv._≡_ equiv ]-[]
+  x₁ ▫₁ (foldᵣ(_▫₁_) a₁ l₁) 🝖[ Equiv._≡_ equiv ]-[ congruence₂(_▫₁_) ⦃ oper₁ ⦄ ([∧]-elimₗ([⊰]-general-cancellation leq)) (foldᵣ-function₊-raw {l₁ = l₁} {l₂} ⦃ equiv ⦄ {_▫₁_}{_▫₂_} ⦃ oper₁ ⦄ ⦃ oper₂ ⦄ {a₁}{a₂} opeq aeq ([∧]-elimᵣ([⊰]-general-cancellation leq))) ]
+  x₂ ▫₁ (foldᵣ(_▫₂_) a₂ l₂) 🝖[ Equiv._≡_ equiv ]-[ opeq{x₂}{foldᵣ(_▫₂_) a₂ l₂} ]
+  x₂ ▫₂ (foldᵣ(_▫₂_) a₂ l₂) 🝖[ Equiv._≡_ equiv ]-[]
+  foldᵣ(_▫₂_) a₂ (x₂ ⊰ l₂)  🝖[ Equiv._≡_ equiv ]-end
 
 map-binaryOperator : BinaryOperator {A₁ = A → B} ⦃ equiv-A₁ = Fn.[⊜]-equiv ⦃ [≡]-equiv ⦄ ⦄ ⦃ equiv-A₂ = [≡]-equiv ⦄ (map)
 map-binaryOperator = intro p where
@@ -347,9 +402,17 @@ map-binaryOperator = intro p where
     ba : f(x₁) ≡ g(x₂)
     ba =
       f(x₁) 🝖[ _≡_ ]-[ Fn._⊜_.proof fg {x₁} ]
-      g(x₁) 🝖[ _≡_ ]-[ congruence₁(g) ([⊰]-general-cancellationₗ xy) ]
+      g(x₁) 🝖[ _≡_ ]-[ congruence₁(g) ([∧]-elimₗ([⊰]-general-cancellation xy)) ]
       g(x₂) 🝖-end
     rec : map f(l₁) ≡ map g(l₂)
     rec =
-      map f(l₁) 🝖[ _≡_ ]-[ p fg ([⊰]-general-cancellationᵣ xy) ]
+      map f(l₁) 🝖[ _≡_ ]-[ p fg ([∧]-elimᵣ([⊰]-general-cancellation xy)) ]
       map g(l₂) 🝖-end
+
+count-of-[++] : ∀{P} → (count P (l₁ ++ l₂) ≡ count P l₁ + count P l₂)
+count-of-[++] {l₁ = ∅}       {l₂ = l₂} {P = P} = [≡]-intro
+count-of-[++] {l₁ = x₁ ⊰ l₁} {l₂ = l₂} {P = P} with P(x₁) | count-of-[++] {l₁ = l₁} {l₂ = l₂} {P = P}
+... | 𝑇 | p = [≡]-with 𝐒(p)
+... | 𝐹 | p = p
+
+-- TODO Is this true?: count-single-equality-equivalence : (∀{P} → count P l₁ ≡ count P l₂) ↔ (∀{x} → (count (x ≡?_) l₁ ≡ count (x ≡?_) l₂))

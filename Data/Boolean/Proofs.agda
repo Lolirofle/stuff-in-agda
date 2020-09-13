@@ -445,18 +445,18 @@ module 𝑇 where
   [¬]-elim {𝑇} ()
   [¬]-elim {𝐹} [≡]-intro = [≡]-intro
 
-  [∧]-transfer : ∀{a b} → ((a && b) ≡ 𝑇) ↔ (a ≡ 𝑇)∧(b ≡ 𝑇)
-  [∧]-transfer = [↔]-intro
+  preserves-[&&][∧] : ∀{a b} → ((a && b) ≡ 𝑇) ↔ (a ≡ 𝑇)∧(b ≡ 𝑇)
+  preserves-[&&][∧] = [↔]-intro
     (\{(Logic.[∧]-intro l r) → [∧]-intro l r})
     (proof ↦ Logic.[∧]-intro ([∧]-elimₗ proof) ([∧]-elimᵣ proof))
 
-  [∨]-transfer : ∀{a b} → ((a || b) ≡ 𝑇) ↔ (a ≡ 𝑇)∨(b ≡ 𝑇)
-  [∨]-transfer = [↔]-intro
+  preserves-[||][∨] : ∀{a b} → ((a || b) ≡ 𝑇) ↔ (a ≡ 𝑇)∨(b ≡ 𝑇)
+  preserves-[||][∨] = [↔]-intro
     (Logic.[∨]-elim [∨]-introₗ [∨]-introᵣ)
     ([∨]-elim Logic.[∨]-introₗ Logic.[∨]-introᵣ)
 
-  [¬]-transfer : ∀{a} → (! a ≡ 𝑇) ↔ ¬(a ≡ 𝑇)
-  [¬]-transfer {a} = [↔]-intro (l{a}) (r{a}) where
+  preserves-[!][¬] : ∀{a} → (! a ≡ 𝑇) ↔ ¬(a ≡ 𝑇)
+  preserves-[!][¬] {a} = [↔]-intro (l{a}) (r{a}) where
     l : ∀{a} → (! a ≡ 𝑇) ← ¬(a ≡ 𝑇)
     l {𝐹} _ = [≡]-intro
     l {𝑇} f = [⊥]-elim (f [≡]-intro)

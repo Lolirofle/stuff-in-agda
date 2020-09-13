@@ -9,7 +9,7 @@ open import Logic.Predicate
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Functor.Functors
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Equivalence

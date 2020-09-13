@@ -31,7 +31,7 @@ module _
   record LinearMap : Type{Lvl.of(Vₗ) Lvl.⊔ ℓᵥₑₗ Lvl.⊔ ℓᵥₑᵣ Lvl.⊔ Lvl.of(S)} where
     constructor intro
     field
-      ⦃ function-f ⦄ : Function(f)
+      ⦃ function ⦄ : Function(f)
       ⦃ preserves-[+ᵥ]  ⦄ : Preserving₂(f)(_+ᵥₗ_)(_+ᵥᵣ_)
       ⦃ preserves-[⋅ₛᵥ] ⦄ : ∀{s} → Preserving₁(f)(s ⋅ₛᵥₗ_)(s ⋅ₛᵥᵣ_)
 

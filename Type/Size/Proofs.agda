@@ -63,8 +63,7 @@ module _ where
       ([∃]-intro(f) ⦃ bijective-to-surjective(f) ⦃ f-bijective ⦄ ⦄)
 
     [≽]-to-[≼] : (A ≽ B) → (B ≼ A)
-    [≽]-to-[≼] ([∃]-intro(f) ⦃ f-surjective ⦄) =
-      ([∃]-intro(invᵣ f) ⦃ invᵣ-injective{f = f} ⦃ f-surjective ⦄ ⦄)
+    [≽]-to-[≼] ([∃]-intro(f) ⦃ f-surjective ⦄) = ([∃]-intro(invᵣ f ⦃ surjective-to-invertibleᵣ ⦄) ⦃ inverseᵣ-injective{f = f} ⦃ [∧]-elimᵣ([∃]-proof surjective-to-invertibleᵣ) ⦄ ⦄)
 
     {-[≼]-to-[≽] : (A ≼ B) → (B ≽ A)
     [≼]-to-[≽] ([∃]-intro(f) ⦃ f-injective ⦄) =
@@ -79,9 +78,7 @@ module _ where
     instance
       [≍]-symmetry : Symmetry(_≍_ {ℓ})
       Symmetry.proof([≍]-symmetry) ([∃]-intro(f) ⦃ f-bijective ⦄)
-        = [∃]-intro(inv f ⦃ f-bijective ⦄) ⦃
-            (inv-bijective{f = f} ⦃ f-bijective ⦄)
-          ⦄
+        = [∃]-intro(inv f ⦃ bijective-to-invertible ⦄) ⦃ (inv-bijective{f = f} ⦃ inver = bijective-to-invertible ⦄) ⦄
 
     instance
       [≍]-transitivity : Transitivity(_≍_ {ℓ})

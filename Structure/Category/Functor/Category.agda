@@ -11,7 +11,7 @@ open import Structure.Category.Functor
 open import Structure.Category.NaturalTransformation
 open import Structure.Category.NaturalTransformation.Equiv
 open import Structure.Category.NaturalTransformation.NaturalTransformations
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Operator
 open import Syntax.Transitivity
 open import Type

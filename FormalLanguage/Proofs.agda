@@ -306,11 +306,11 @@ module _ {Σ : Alphabet{ℓ}} where
     UnionOperator._∪_ [∪]-membership = (_∪_)
     UnionOperator.membership [∪]-membership {A}{B}{w} = [↔]-intro (l{w = w}{A}{B}) (r{w = w}{A}{B}) where
       l : ∀{w}{A B} → ([ s ] w ∈ (A ∪ B)) ← (([ s ] w ∈ A) ∨ ([ s ] w ∈ B))
-      l {w = []}    = [↔]-to-[←] IsTrue.[∨]-transfer
+      l {w = []}    = [↔]-to-[←] IsTrue.preserves-[||][∨]
       l {w = c ⊰ w} = l {w = w}
 
       r : ∀{w}{A B} → ([ s ] w ∈ (A ∪ B)) → (([ s ] w ∈ A) ∨ ([ s ] w ∈ B))
-      r {w = []}    = [↔]-to-[→] IsTrue.[∨]-transfer
+      r {w = []}    = [↔]-to-[→] IsTrue.preserves-[||][∨]
       r {w = c ⊰ w} = r {w = w}
 
   instance
@@ -318,11 +318,11 @@ module _ {Σ : Alphabet{ℓ}} where
     IntersectionOperator._∩_ [∩]-membership = (_∩_)
     IntersectionOperator.membership [∩]-membership {A}{B}{w} = [↔]-intro (l{w = w}{A}{B}) (r{w = w}{A}{B}) where
       l : ∀{w}{A B} → ([ s ] w ∈ (A ∩ B)) ← (([ s ] w ∈ A) ∧ ([ s ] w ∈ B))
-      l {w = []}    = [↔]-to-[←] IsTrue.[∧]-transfer
+      l {w = []}    = [↔]-to-[←] IsTrue.preserves-[&&][∧]
       l {w = c ⊰ w} = l {w = w}
 
       r : ∀{w}{A B} → ([ s ] w ∈ (A ∩ B)) → (([ s ] w ∈ A) ∧ ([ s ] w ∈ B))
-      r {w = []}    = [↔]-to-[→] IsTrue.[∧]-transfer
+      r {w = []}    = [↔]-to-[→] IsTrue.preserves-[&&][∧]
       r {w = c ⊰ w} = r {w = w}
 
   instance
@@ -330,11 +330,11 @@ module _ {Σ : Alphabet{ℓ}} where
     ComplementOperator.∁ [∁]-membership = ∁_
     ComplementOperator.membership [∁]-membership {A}{w} = [↔]-intro (l{w = w}{A}) (r{w = w}{A}) where
       l : ∀{w}{A} → ([ s ] w ∈ (∁ A)) ← ¬([ s ] w ∈ A)
-      l {w = []}    = [↔]-to-[←] IsTrue.[¬]-transfer
+      l {w = []}    = [↔]-to-[←] IsTrue.preserves-[!][¬]
       l {w = c ⊰ w} = l {w = w}
 
       r : ∀{w}{A} → ([ s ] w ∈ (∁ A)) → ¬([ s ] w ∈ A)
-      r {w = []} = [↔]-to-[→] IsTrue.[¬]-transfer
+      r {w = []} = [↔]-to-[→] IsTrue.preserves-[!][¬]
       r {w = c ⊰ w} = r {w = w}
 
   instance

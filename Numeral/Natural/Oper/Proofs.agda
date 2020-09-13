@@ -203,10 +203,6 @@ instance
 
 -- [⋅]-product-is-coprime : ∀{a b} → Coprime(a ⋅ b) → ((a ≡ 1)∧(b ≡ a ⋅ b)) ∨ ((a ≡ a ⋅ b)∧(b ≡ 1))
 
--- Also called "The Division Algorithm" or "Euclides Algorithm"
--- TODO: Prove
--- [/]-uniqueness : ∀{a b} → ⦃ _ : b ≢ 0 ⦄ → ∃!{ℕ ⨯ ℕ}(\{(q , r) → ((a ≡ (b ⋅ q) + r) ∧ (0 ≤ r) ∧ (r < b))})
-
 [+]-cancellationᵣ-raw : Names.Cancellationᵣ(_+_)
 [+]-cancellationᵣ-raw {𝟎}    (rel) = rel
 [+]-cancellationᵣ-raw {𝐒(x)} (rel) = [+]-cancellationᵣ-raw {x} ([≡]-with(𝐏) rel)
@@ -277,10 +273,6 @@ postulate [⋅][−₀]-distributivityᵣ-raw : ∀{x y z : ℕ} → ((x −₀ 
 [−₀]-with-[𝐒]ᵣ {𝟎} {𝐒 y}   = [≡]-intro
 [−₀]-with-[𝐒]ᵣ {𝐒 x} {𝟎}   = [≡]-intro
 [−₀]-with-[𝐒]ᵣ {𝐒 x} {𝐒 y} = [−₀]-with-[𝐒]ᵣ {x} {y}
-
-[−₀]-self-[𝐒] : ∀{x} → ((𝐒(x) −₀ x) ≡ 𝐒(x −₀ x))
-[−₀]-self-[𝐒] {𝟎}    = [≡]-intro
-[−₀]-self-[𝐒] {𝐒(n)} = [−₀]-self-[𝐒] {n}
 
 [−₀]ₗ[+]ᵣ-nullify : ∀{x y} → ((x + y) −₀ y ≡ x)
 [−₀]ₗ[+]ᵣ-nullify{𝟎}   {𝟎}    = [≡]-intro
@@ -424,6 +416,14 @@ instance
   Distributivityᵣ.proof([⋅][+]-distributivityᵣ) {x}{y}{z} = [⋅][+]-distributivityᵣ-raw {x}{y}{z}
 
 instance
+  [⋅][−₀]-distributivityₗ : Distributivityₗ(_⋅_)(_−₀_)
+  Distributivityₗ.proof([⋅][−₀]-distributivityₗ) {x}{y}{z} = [⋅][−₀]-distributivityₗ-raw {x}{y}{z}
+
+instance
+  [⋅][−₀]-distributivityᵣ : Distributivityᵣ(_⋅_)(_−₀_)
+  Distributivityᵣ.proof([⋅][−₀]-distributivityᵣ) {x}{y}{z} = [⋅][−₀]-distributivityᵣ-raw {x}{y}{z}
+
+instance
   [⋅]-associativity : Associativity (_⋅_)
   Associativity.proof([⋅]-associativity) {x}{y}{z} = [⋅]-associativity-raw {x}{y}{z}
 
@@ -446,14 +446,6 @@ instance
 instance
   [𝄩]-identity : Identity (_𝄩_) (𝟎)
   [𝄩]-identity = intro
-
-instance
-  [⋅][−₀]-distributivityₗ : Distributivityₗ(_⋅_)(_−₀_)
-  Distributivityₗ.proof([⋅][−₀]-distributivityₗ) {x}{y}{z} = [⋅][−₀]-distributivityₗ-raw {x}{y}{z}
-
-instance
-  [⋅][−₀]-distributivityᵣ : Distributivityᵣ(_⋅_)(_−₀_)
-  Distributivityᵣ.proof([⋅][−₀]-distributivityᵣ) {x}{y}{z} = [⋅][−₀]-distributivityᵣ-raw {x}{y}{z}
 
 instance
   [−₀]-absorberₗ : Absorberₗ (_−₀_) (𝟎)

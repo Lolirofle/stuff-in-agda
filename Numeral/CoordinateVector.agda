@@ -3,18 +3,20 @@ module Numeral.CoordinateVector where
 import      Lvl
 open import Data.Boolean
 open import Functional
+open import Lang.Instance
 open import Numeral.Finite
 open import Numeral.Finite.Bound
 open import Numeral.Finite.Oper
 open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Natural
+import      Numeral.Natural.Oper as ℕ
 open import Numeral.Natural.Function
 open import Numeral.Natural.Function.Proofs
 open import Type
 
 private variable ℓ : Lvl.Level
 private variable T A B C : Type{ℓ}
-private variable d : ℕ
+private variable d d₁ d₂ : ℕ
 
 -- Accessor of data in 1-dimensional finite space (Implies bounded).
 -- Like a homogenous tuple or a fixed-size list.
@@ -77,7 +79,7 @@ map₂ : (A → B → C) → Vector(d)(A) → Vector(d)(B) → Vector(d)(C)
 (map₂(_▫_) (v₁)(v₂))(i) = v₁(i) ▫ v₂(i)
 
 map₂-min : (A → B → C) → ∀{d₁ d₂} → Vector(d₁)(A) → Vector(d₂)(B) → Vector(min d₁ d₂)(C)
-(map₂-min(_▫_) (v₁)(v₂))(i) = v₁(bound-[≤] i) ▫ v₂(bound-[≤] i)
+(map₂-min(_▫_) (v₁)(v₂))(i) = v₁(bound-[≤] infer i) ▫ v₂(bound-[≤] infer i)
 
 -- Example:
 --   foldₗ (_▫_) (0) [1,2,3,4]
@@ -131,18 +133,20 @@ reduceOrᵣ {d = 𝐒(d)} (_▫_) empty v = reduceᵣ(_▫_) v
 fill : T → Vector(d)(T)
 fill(elem) = const(elem)
 
+-- An empty vector.
+empty : Vector(𝟎)(T)
+empty()
+
 -- A vector with an additional element at the beginning
 prepend : T → Vector(d)(T) → Vector(𝐒(d))(T)
 (prepend(x)(_)) (𝟎)    = x
 (prepend(_)(v)) (𝐒(n)) = v(n)
 
 -- A vector concatenated with another vector
-{-
-_++_ : ∀{a b} → Vector(a)(T) → Vector(b)(T) → Vector(a + b)(T)
-Vector.proj(_++_ {𝟎}   {b} x y)        = Vector.proj(y)
-Vector.proj(_++_ {𝐒(a)}{b} x y) (𝟎)    = Vector.proj(x) (𝐒(a))
-Vector.proj(_++_ {𝐒(a)}{b} x y) (𝐒(n)) = Vector.proj(_++_ {a}{b} x y) (n)
--}
+_++_ : Vector(d₁)(T) → Vector(d₂)(T) → Vector(d₁ ℕ.+ d₂)(T)
+_++_ {d₁ = 𝟎}     {d₂ = d₂} v₁ v₂        = v₂
+_++_ {d₁ = 𝐒(d₁)} {d₂ = d₂} v₁ v₂ (𝟎)    = v₁(𝟎)
+_++_ {d₁ = 𝐒(d₁)} {d₂ = d₂} v₁ v₂ (𝐒(i)) = _++_ {d₁ = d₁} {d₂ = d₂} (v₁ ∘ 𝐒) v₂ i
 
 count : (T → Bool) → Vector(d)(T) → ℕ
 count {d = 𝟎}    (f)(v) = 𝟎
@@ -151,7 +155,7 @@ count {d = 𝐒(n)} (f)(v) =
   in  if f(head v) then 𝐒(next) else next
 
 reverse : Vector(d)(T) → Vector(d)(T)
-(reverse(v)) (n) = v([−] n)
+(reverse(v)) (n) = v(Wrapping.[−] n)
 
 indexProject : 𝕟(d) → T → T → Vector(d)(T)
 indexProject n true false i = if(n ≡? i) then true else false

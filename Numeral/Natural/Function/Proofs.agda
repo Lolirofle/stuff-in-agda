@@ -63,27 +63,7 @@ min-elementary : ∀{a b} → (min(a)(b) ≡ b −₀ (b −₀ a))
 min-elementary {𝟎}    {𝟎}    = [≡]-intro
 min-elementary {𝟎}    {𝐒(b)} = [≡]-intro
 min-elementary {𝐒(a)} {𝟎}    = [≡]-intro
-min-elementary {𝐒(a)} {𝐒(b)} = ([≡]-with(𝐒) (min-elementary {a} {b})) 🝖 (symmetry(_≡_) ([−₀]-move-[𝐒] ([−₀]-lesser {b}{a})))
-
--- 𝐒(b) −₀ (𝐒(b) −₀ 𝐒(a))
--- 𝐒(b) −₀ (b −₀ a)
-
-min-with-max : ∀{a b} → (min(a)(b) ≡ (a + b) −₀ max(a)(b))
-min-with-max {a}{b} =
-  min(a)(b)                 🝖-[ min-elementary{a}{b} ]
-  b −₀ (b −₀ a)             🝖-[ [−₀][+]ₗ-nullify {a}{b}{b −₀ a} ]-sym
-  (a + b) −₀ (a + (b −₀ a)) 🝖-[ [≡]-with((a + b) −₀_) (max-elementary{a}{b}) ]-sym
-  (a + b) −₀ max(a)(b)      🝖-end
-
-{-
-max-with-min : ∀{a b} → (max(a)(b) ≡ (a + b) −₀ min(a)(b))
-max-with-min {a}{b} =
-  max(a)(b)                  🝖-[ max-elementary{a}{b} ]
-  a + (b −₀ a)               🝖-[ [−₀][+]ᵣ-nullify {{!!}} ]-sym
-  (b + a) −₀ (b −₀ (b −₀ a)) 🝖-[ {!!} ]
-  (a + b) −₀ (b −₀ (b −₀ a)) 🝖-[ {!!} ]
-  (a + b) −₀ min(a)(b)       🝖-end
--}
+min-elementary {𝐒(a)} {𝐒(b)} = ([≡]-with(𝐒) (min-elementary {a} {b})) 🝖 (symmetry(_≡_) ([↔]-to-[→] [−₀][𝐒]ₗ-equality ([−₀]-lesser {b}{a})))
 
 instance
   min-commutativity : Commutativity(min)
@@ -213,6 +193,26 @@ max-defₗ {a}{b} = [↔]-intro (l{a}{b}) (r{a}{b}) where
 max-defᵣ : ∀{a b} → (b ≥ a) ↔ (max(a)(b) ≡ b)
 max-defᵣ {a}{b} = [≡]-substitutionᵣ (commutativity(max)) {expr ↦ (b ≥ a) ↔ (expr ≡ b)} (max-defₗ{b}{a})
 
+min-with-max : ∀{a b} → (min(a)(b) ≡ (a + b) −₀ max(a)(b))
+min-with-max {a}{b} =
+  min(a)(b)                 🝖-[ min-elementary{a}{b} ]
+  b −₀ (b −₀ a)             🝖-[ [−₀][+]ₗ-nullify {a}{b}{b −₀ a} ]-sym
+  (a + b) −₀ (a + (b −₀ a)) 🝖-[ [≡]-with((a + b) −₀_) (max-elementary{a}{b}) ]-sym
+  (a + b) −₀ max(a)(b)      🝖-end
+
+max-with-min : ∀{a b} → (max(a)(b) ≡ (a + b) −₀ min(a)(b))
+max-with-min {a}{b} with [≤][>]-dichotomy {a}{b}
+... | [∨]-introₗ ab =
+  max(a)(b)            🝖-[ [↔]-to-[→] max-defᵣ ab ]
+  b                    🝖-[ [−₀]ₗ[+]ₗ-nullify {a}{b} ]-sym
+  (a + b) −₀ a         🝖-[ [≡]-with((a + b) −₀_) ([↔]-to-[→] min-defₗ ab) ]-sym
+  (a + b) −₀ min(a)(b) 🝖-end
+... | [∨]-introᵣ 𝐒ba with ba ← [≤]-predecessor 𝐒ba =
+  max(a)(b)            🝖-[ [↔]-to-[→] max-defₗ ba ]
+  a                    🝖-[ [−₀]ₗ[+]ᵣ-nullify {a}{b} ]-sym
+  (a + b) −₀ b         🝖-[ [≡]-with((a + b) −₀_) ([↔]-to-[→] min-defᵣ ba) ]-sym
+  (a + b) −₀ min(a)(b) 🝖-end
+
 [≤]-conjunction-min : ∀{a b c} → ((a ≤ b) ∧ (a ≤ c)) ↔ (a ≤ min b c)
 [≤]-conjunction-min {a}{b}{c} = [↔]-intro (a≤bc ↦ [∧]-intro (a≤bc 🝖 min-orderₗ) (a≤bc 🝖 min-orderᵣ)) (uncurry r) where
   r : ∀{a b c} → (a ≤ b) → (a ≤ c) → (a ≤ min b c)
@@ -249,6 +249,11 @@ max-defᵣ {a}{b} = [≡]-substitutionᵣ (commutativity(max)) {expr ↦ (b ≥ 
     (_🝖 max-orderₗ)
     (_🝖 max-orderᵣ)
   )
+
+min-order-max : ∀{a b} → (min(a)(b) ≤ max(a)(b))
+min-order-max {𝟎}   {b}   = [≤]-minimum
+min-order-max {𝐒 a} {𝟎}   = [≤]-minimum
+min-order-max {𝐒 a} {𝐒 b} = [≤]-with-[𝐒] ⦃ min-order-max {a}{b} ⦄
 
 max-order-[+] : ∀{a b} → (max(a)(b) ≤ a + b)
 max-order-[+] {a}{b} = [↔]-to-[→] [≤]-conjunction-max ([∧]-intro [≤]-of-[+]ₗ ([≤]-of-[+]ᵣ {a}{b}))

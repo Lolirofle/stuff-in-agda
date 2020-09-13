@@ -19,8 +19,10 @@ open import Numeral.Natural.Oper.DivMod.Proofs
 open import Numeral.Natural.Oper.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
+import      Structure.Function.Names as Names
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type
@@ -55,37 +57,70 @@ interleave af bf (𝐒(𝐒 n)) = interleave (af ∘ 𝐒) (bf ∘ 𝐒) n
 {-# TERMINATING #-}
 pairIndexing : ℕ → ℕ → ℕ
 pairIndexing 𝟎     𝟎     = 𝟎
-pairIndexing 𝟎     (𝐒 b) = 𝐒(pairIndexing b 𝟎)
-pairIndexing (𝐒 a) b     = 𝐒(pairIndexing a (𝐒 b))
+pairIndexing (𝐒 a) 𝟎     = 𝐒(pairIndexing 𝟎 a)
+{-# CATCHALL #-}
+pairIndexing a     (𝐒 b) = 𝐒(pairIndexing (𝐒 a) b)
+
+-- A sequence which fills a discrete two dimensional grid (a space bounded in two directions and infinite in the other two).
+-- It is the inverse of an uncurried `pairIndexing`.
+-- Example:
+--   •-→-• ↗→• ↗→•
+--     ↙ ↗ ↙ ↗ ↙
+--   •→↗ • ↗ •   •
+--     ↙ ↗ ↙
+--   •→↗ •   •   •
+diagonalFilling : ℕ → (ℕ ⨯ ℕ)
+diagonalFilling 𝟎      = (𝟎 , 𝟎)
+diagonalFilling (𝐒(n)) with diagonalFilling n
+... | (𝟎    , b) = (𝐒(b) , 0)
+... | (𝐒(a) , b) = (a , 𝐒(b))
 
 
 
 private variable af : ℕ → A
 private variable bf : ℕ → B
 
+pairIndexing-def3 : ∀{a b} → (pairIndexing a (𝐒 b) ≡ 𝐒(pairIndexing (𝐒 a) b))
+pairIndexing-def3 {𝟎}   {b} = [≡]-intro
+pairIndexing-def3 {𝐒 a} {b} = [≡]-intro
+
 {-# TERMINATING #-}
-pairIndexing-injective-raw : ∀{a₁ b₁ a₂ b₂} → (pairIndexing a₁ b₁ ≡ pairIndexing a₂ b₂) → ((a₁ ≡ a₂) ∧ (b₁ ≡ b₂))
-pairIndexing-injective-raw {𝟎} {𝟎} {𝟎} {𝟎} p = [∧]-intro [≡]-intro [≡]-intro
-pairIndexing-injective-raw {𝟎} {𝐒 b₁} {𝟎} {𝐒 b₂} p = [∧]-intro [≡]-intro (congruence₁(𝐒) ([∧]-elimₗ(pairIndexing-injective-raw (injective(𝐒) p))))
-pairIndexing-injective-raw {𝟎} {𝐒 b₁} {𝐒 a₂} {b₂} p with [∧]-intro _ () ← pairIndexing-injective-raw {b₁} {𝟎} {a₂} {𝐒 b₂} (injective(𝐒) p)
-pairIndexing-injective-raw {𝐒 a₁} {b₁} {𝟎} {𝐒 b₂} p with [∧]-intro _ () ← pairIndexing-injective-raw {a₁} {𝐒 b₁} {b₂} {𝟎} (injective(𝐒) p)
-pairIndexing-injective-raw {𝐒 a₁} {b₁} {𝐒 a₂} {b₂} p = Tuple.map (congruence₁(𝐒)) (injective(𝐒)) (pairIndexing-injective-raw {a₁} {𝐒 b₁} {a₂} {𝐒 b₂} (injective(𝐒) p))
+pairIndexing-inverseₗ : Inverseₗ(Tuple.uncurry pairIndexing)(diagonalFilling)
+pairIndexing-inverseₗ = intro proof where
+  proof : Names.Inverses(diagonalFilling)(Tuple.uncurry pairIndexing)
+  proof {𝟎    , 𝟎}    = [≡]-intro
+  proof {𝐒(a) , 𝟎}    with diagonalFilling(pairIndexing 𝟎 a) | proof {𝟎 , a}
+  ... | 𝟎    , 𝟎    | [≡]-intro = [≡]-intro
+  ... | 𝟎    , 𝐒(d) | [≡]-intro = [≡]-intro
+  ... | 𝐒(c) , 𝟎    | ()
+  ... | 𝐒(c) , 𝐒(d) | ()
+  {-# CATCHALL #-}
+  proof {a    , 𝐒(b)} rewrite pairIndexing-def3 {a}{b} with diagonalFilling(pairIndexing (𝐒(a)) b) | proof {𝐒(a) , b}
+  ... | 𝟎    , 𝟎    | ()
+  ... | 𝟎    , 𝐒(d) | ()
+  ... | 𝐒(c) , 𝟎    | [≡]-intro = [≡]-intro
+  ... | 𝐒(c) , 𝐒(d) | [≡]-intro = [≡]-intro
 
-pairIndexing-injective : Injective(Tuple.uncurry pairIndexing)
-Injective.proof pairIndexing-injective {a₁ , b₁} {a₂ , b₂} p = Tuple.uncurry Tuple-equality (pairIndexing-injective-raw p)
+pairIndexing-inverseᵣ : Inverseᵣ(Tuple.uncurry pairIndexing)(diagonalFilling)
+pairIndexing-inverseᵣ = intro proof where
+  proof : Names.Inverses(Tuple.uncurry pairIndexing)(diagonalFilling)
+  proof {𝟎}    = [≡]-intro
+  proof {𝐒(n)} with diagonalFilling n | proof {n}
+  ... | (𝟎    , b) | q = congruence₁(𝐒) q
+  ... | (𝐒(a) , b) | q rewrite pairIndexing-def3 {a}{b} = congruence₁(𝐒) q
 
+instance
+  pairIndexing-bijective : Bijective(Tuple.uncurry pairIndexing)
+  pairIndexing-bijective = invertible-to-bijective ⦃ inver = [∃]-intro diagonalFilling ⦃ [∧]-intro [≡]-function ([∧]-intro pairIndexing-inverseₗ pairIndexing-inverseᵣ) ⦄ ⦄
 
-
-{-
 interleave-left : ∀{n} → (interleave af bf (2 ⋅ n) ≡ Either.Left(af(n)))
 interleave-left {n = 𝟎}   = [≡]-intro
 interleave-left {n = 𝐒 n} = interleave-left {n = n}
-{-# REWRITE interleave-left #-}
 
 interleave-right : ∀{n} → (interleave af bf (𝐒(2 ⋅ n)) ≡ Either.Right(bf(n)))
 interleave-right {n = 𝟎}   = [≡]-intro
 interleave-right {n = 𝐒 n} = interleave-right {n = n}
-{-# REWRITE interleave-right #-}
+
 
 interleave-values : ∀{n} → (interleave af bf n ≡ Either.Left(af(n ⌊/⌋ 2))) ∨ (interleave af bf n ≡ Either.Right(bf(n ⌊/⌋ 2)))
 interleave-values                    {n = 𝟎}      = [∨]-introₗ [≡]-intro
@@ -93,7 +128,7 @@ interleave-values                    {n = 𝐒 𝟎}    = [∨]-introᵣ [≡]-i
 interleave-values {af = af}{bf = bf} {n = 𝐒(𝐒 n)} = interleave-values {af = af ∘ 𝐒}{bf = bf ∘ 𝐒} {n = n}
 
 interleave-left-args : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) ↔ (m ≡ 2 ⋅ n)
-interleave-left-args {n = n} = [↔]-intro (\{[≡]-intro → [≡]-intro}) r where
+interleave-left-args {n = n} = [↔]-intro (\{[≡]-intro → interleave-left{n = n}}) r where
   r : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) → (m ≡ 2 ⋅ n)
   r {af = af} {m = 𝟎}{n = n} = congruence₁(2 ⋅_) ∘ injective(af) ∘ injective(Either.Left)
   r {af = af}{bf = bf} {m = 𝐒 (𝐒 m)}{n = 𝟎} p with interleave-values {af = af}{bf = bf}{n = 𝐒(𝐒 m)}
@@ -102,7 +137,7 @@ interleave-left-args {n = n} = [↔]-intro (\{[≡]-intro → [≡]-intro}) r wh
   r {af = af} {m = 𝐒 (𝐒 m)}{n = 𝐒 n} p = congruence₁(𝐒 ∘ 𝐒) (r ⦃ [∘]-injective {f = af} ⦄{m = m}{n = n} p)
 
 interleave-right-args : ⦃ _ : Injective(bf) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Right(bf(n))) ↔ (m ≡ 𝐒(2 ⋅ n))
-interleave-right-args {n = n} = [↔]-intro (\{[≡]-intro → [≡]-intro}) r where
+interleave-right-args {n = n} = [↔]-intro (\{[≡]-intro → interleave-right{n = n}}) r where
   r : ⦃ _ : Injective(bf) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Right(bf(n))) → (m ≡ 𝐒(2 ⋅ n))
   r {bf = bf} {m = 𝐒 𝟎}{n = n} = congruence₁(𝐒 ∘ (2 ⋅_)) ∘ injective(bf) ∘ injective(Either.Right)
   r {bf = bf}{af = af} {m = 𝐒 (𝐒 m)}{n = 𝟎} p with interleave-values {af = af}{bf = bf}{n = 𝐒(𝐒 m)}
@@ -126,28 +161,44 @@ interleave-step-left{af = iaf}{bf = ibf}{m = m}{n = n} = [↔]-intro (l{af = iaf
   ... | [∨]-introᵣ v with () ← symmetry(_≡_) v 🝖 p
   r {af = af}          {m = 𝐒(𝐒 m)} {𝐒 n} = r {af = af ∘ 𝐒} ⦃ [∘]-injective {f = af} ⦄ {m = m}{n}
 
-instance
-  interleave-injective : ⦃ Injective(af) ⦄ → ⦃ Injective(bf) ⦄ → Injective(interleave af bf)
-  Injective.proof interleave-injective                      {𝟎}     {𝟎}      fxfy = [≡]-intro
-  Injective.proof interleave-injective                      {𝐒 𝟎}   {𝐒 𝟎}    fxfy = [≡]-intro
-  Injective.proof (interleave-injective {af = af}{bf = bf}) {𝟎}     {𝐒(𝐒 y)} fxfy with interleave-values{af = af}{bf = bf} {n = 𝐒(𝐒 y)}
-  ... | [∨]-introₗ p with () ← injective(af) (injective(Either.Left) (fxfy 🝖 p))
-  ... | [∨]-introᵣ p with () ← fxfy 🝖 p
-  Injective.proof (interleave-injective {af = af}{bf = bf}) {𝐒(𝐒 x)}{𝟎}      fxfy with interleave-values{af = af}{bf = bf} {n = 𝐒(𝐒 x)}
-  ... | [∨]-introₗ p with () ← injective(af) (injective(Either.Left) (symmetry(_≡_) fxfy 🝖 p))
-  ... | [∨]-introᵣ p with () ← symmetry(_≡_) fxfy 🝖 p
-  Injective.proof (interleave-injective {af = af}{bf = bf}) {𝐒 𝟎}   {𝐒(𝐒 y)} fxfy with interleave-values{af = af}{bf = bf} {n = 𝐒(𝐒 y)}
-  ... | [∨]-introₗ p with () ← fxfy 🝖 p
-  ... | [∨]-introᵣ p with () ← injective(bf) (injective(Either.Right) (fxfy 🝖 p))
-  Injective.proof (interleave-injective {af = af}{bf = bf}) {𝐒(𝐒 x)}{𝐒 𝟎}    fxfy with interleave-values{af = af}{bf = bf} {n = 𝐒(𝐒 x)}
-  ... | [∨]-introₗ p with () ← symmetry(_≡_) fxfy 🝖 p
-  ... | [∨]-introᵣ p with () ← injective(bf) (injective(Either.Right) (symmetry(_≡_) fxfy 🝖 p))
-  Injective.proof (interleave-injective {af = af}{bf = bf}) {𝐒(𝐒 x)}{𝐒(𝐒 y)} fxfy = congruence₁(𝐒 ∘ 𝐒) (Injective.proof (interleave-injective {af = af}{bf = bf}) {x} {y} {!!})
+
+postulate interleave-injective-raw : ⦃ inj-af : Injective(af) ⦄ → ⦃ inj-bf : Injective(bf) ⦄ → Names.Injective(interleave af bf)
+{-interleave-injective-raw {af = af} {bf = bf} {x = 𝟎}       {y = 𝟎}       fxfy = [≡]-intro
+interleave-injective-raw {af = af} {bf = bf} {x = 𝟎}       {y = 𝐒 (𝐒 y)} fxfy = symmetry(_≡_) ([↔]-to-[→] (interleave-left-args {bf = bf}) (symmetry(_≡_) fxfy))
+interleave-injective-raw {af = af} {bf = bf} {x = 𝐒 (𝐒 x)} {y = 𝟎}       fxfy = [↔]-to-[→] (interleave-left-args {bf = bf}) fxfy
+interleave-injective-raw {af = af} {bf = bf} {x = 𝐒 𝟎} {y = 𝐒 𝟎} fxfy = [≡]-intro
+interleave-injective-raw {af = af} {bf = bf} {x = 𝐒 𝟎} {y = 𝐒 (𝐒 y)} fxfy = symmetry(_≡_) ([↔]-to-[→] (interleave-right-args {bf = bf}{af = af}) (symmetry(_≡_) fxfy))
+interleave-injective-raw {af = af} {bf = bf} {x = 𝐒 (𝐒 x)} {y = 𝐒 𝟎} fxfy = [↔]-to-[→] (interleave-right-args {bf = bf}{af = af}) fxfy
+interleave-injective-raw {af = af} {bf = bf} {x = 𝐒 (𝐒 x)} {y = 𝐒 (𝐒 y)} fxfy with interleave-values {af = af ∘ 𝐒}{bf = bf ∘ 𝐒}{n = x} | interleave-values {af = af ∘ 𝐒}{bf = bf ∘ 𝐒}{n = y}
+... | [∨]-introₗ p | [∨]-introₗ q = {!congruence₁(𝐒) (injective(af) (injective(Either.Left) (symmetry(_≡_) p 🝖 fxfy 🝖 q)))!} -- TODO: interleave-left and a proof of the division algorihm would work here instead of using interleave-values. Or alternatively, use this, multiply by 2, prove the divisibilities for both cases so that each case have division as inverse of multiplication
+... | [∨]-introₗ p | [∨]-introᵣ q = {!!}
+... | [∨]-introᵣ p | [∨]-introₗ q = {!!}
+... | [∨]-introᵣ p | [∨]-introᵣ q = {!congruence₁(𝐒) (injective(bf) (injective(Either.Right) (symmetry(_≡_) p 🝖 fxfy 🝖 q)))!}
+-}
 
 instance
-  interleave-surjective : ⦃ Surjective(af) ⦄ → ⦃ Surjective(bf) ⦄ → Surjective(interleave af bf)
+  interleave-injective : ⦃ inj-af : Injective(af) ⦄ → ⦃ inj-bf : Injective(bf) ⦄ → Injective(interleave af bf)
+  interleave-injective = intro interleave-injective-raw
+
+instance
+  interleave-surjective : ⦃ surj-af : Surjective(af) ⦄ → ⦃ surj-bf : Surjective(bf) ⦄ → Surjective(interleave af bf)
   Surjective.proof (interleave-surjective {af = af}{bf = bf}) {[∨]-introₗ y} with surjective(af){y}
-  ... | [∃]-intro n ⦃ [≡]-intro ⦄ = [∃]-intro(2 ⋅ n) ⦃ [≡]-intro ⦄
+  ... | [∃]-intro n ⦃ [≡]-intro ⦄ = [∃]-intro(2 ⋅ n) ⦃ interleave-left{n = n} ⦄
   Surjective.proof (interleave-surjective {af = af}{bf = bf}) {[∨]-introᵣ y} with surjective(bf){y}
-  ... | [∃]-intro n ⦃ [≡]-intro ⦄ = [∃]-intro(𝐒(2 ⋅ n)) ⦃ [≡]-intro ⦄
--}
+  ... | [∃]-intro n ⦃ [≡]-intro ⦄ = [∃]-intro(𝐒(2 ⋅ n)) ⦃ interleave-right{n = n} ⦄
+
+instance
+  interleave-bijective : ⦃ bij-af : Bijective(af) ⦄ → ⦃ bij-bf : Bijective(bf) ⦄ → Bijective(interleave af bf)
+  interleave-bijective {af = af}{bf = bf} = injective-surjective-to-bijective(interleave af bf) where
+    instance
+      inj-af : Injective(af)
+      inj-af = bijective-to-injective af
+    instance
+      inj-bf : Injective(bf)
+      inj-bf = bijective-to-injective bf
+    instance
+      surj-af : Surjective(af)
+      surj-af = bijective-to-surjective af
+    instance
+      surj-bf : Surjective(bf)
+      surj-bf = bijective-to-surjective bf

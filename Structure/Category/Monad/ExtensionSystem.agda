@@ -18,7 +18,7 @@ open import Structure.Category.Monad{cat = cat}
 open import Structure.Category.NaturalTransformation
 open import Structure.Category.NaturalTransformation.NaturalTransformations as NaturalTransformations
 open import Structure.Category.Proofs
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Equivalence

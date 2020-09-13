@@ -11,7 +11,7 @@ module Structure.Category.Monoid
   where
 
 open import Logic.Predicate
-open import Structure.Category.Properties
+open import Structure.Categorical.Properties
 open import Structure.Operator.Monoid
 open import Structure.Operator.Properties
 

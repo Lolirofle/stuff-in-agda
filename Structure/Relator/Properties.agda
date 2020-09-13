@@ -50,9 +50,6 @@ module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) 
     field proof : Names.ConverseDichotomy(_▫_)
   dichotomy = inst-fn ConverseDichotomy.proof
 
--- Trichotomy : {T : Type} → (T → T → Stmt) → Stmt
--- Trichotomy {T} (_▫₁_) (_▫₂_) = {x y : T} → (x ▫₁ y) ⊕ (y ▫₁ x) ⊕ (x ▫₂ y) -- TODO: Not correct. Should only be one of them
-
 -- Definition of a converse binary operation for a binary operation
 -- record Converse {T₁ T₂ : Type} (_▫₁_ : T₁ → T₂ → Stmt) (_▫₂_ : T₂ → T₁ → Stmt) : Stmt where
 --   constructor intro

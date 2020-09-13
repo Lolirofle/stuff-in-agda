@@ -130,7 +130,7 @@ module _ {ℓ} {w}{h} {T : Type{ℓ}} where
   cols : Matrix(w , h)(T) → Vector(w)(Vector(h)(T))
   ((cols(M))(x))(y) = Matrix.proj(M)(x , y)
 
-  -- Matrix with one row and one column removed
+  -- Matrix with one row and one column removed.
   minor : Matrix(𝐒(w) , 𝐒(h))(T) → (𝕟(𝐒(w)) ⨯ 𝕟(𝐒(h))) → Matrix(w , h)(T)
   Matrix.proj(minor(M)(X , Y))(x , y) = Matrix.proj(M)(new-x , new-y) where
     new-x = if(x <? X) then bound-𝐒(x) else 𝐒(x)

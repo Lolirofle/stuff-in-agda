@@ -5,8 +5,8 @@ module Structure.Category.Dual {ℓₒ ℓₘ ℓₑ : Lvl.Level} where
 open import Data.Tuple as Tuple using ()
 open import Functional using (swap)
 open import Structure.Category
-open import Structure.Category.Names
-open import Structure.Category.Properties
+open import Structure.Categorical.Names
+open import Structure.Categorical.Properties
 import      Structure.Operator.Properties as Properties
 open import Structure.Operator
 open import Structure.Relator.Equivalence

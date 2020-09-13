@@ -1,3 +1,4 @@
+-- TODO: Generalize and move to Structure.Categorical.Proofs
 module Structure.Category.Proofs where
 
 import      Lvl
@@ -9,8 +10,8 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 open import Structure.Category
-open import Structure.Category.Names
-open import Structure.Category.Properties
+open import Structure.Categorical.Names
+open import Structure.Categorical.Properties
 import      Structure.Operator.Properties as Properties
 open import Structure.Operator
 open import Structure.Relator.Equivalence

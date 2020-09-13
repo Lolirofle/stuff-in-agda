@@ -22,9 +22,6 @@ disjointness {𝑇} (Logic.[∧]-intro [⊤]-intro ())
 disjointness {𝐹} (Logic.[∧]-intro () [⊤]-intro)
 
 module IsTrue where
-  from-eq : ∀{a} → (a ≡ 𝑇) → IsTrue(a)
-  from-eq [≡]-intro = [⊤]-intro
-
   [∧]-intro : ∀{a b} → IsTrue(a) → IsTrue(b) → IsTrue(a && b)
   [∧]-intro {𝑇} {b} ta tb = tb
   [∧]-intro {𝐹} {b} ta tb = ta
@@ -71,18 +68,18 @@ module IsTrue where
     l : ∀ {a} → IsTrue(a) ← (a ≡ 𝑇)
     l [≡]-intro = [⊤]-intro
 
-  [∧]-transfer : ∀{a b} → IsTrue(a && b) ↔ IsTrue(a) ∧ IsTrue(b)
-  [∧]-transfer = [↔]-intro
+  preserves-[&&][∧] : ∀{a b} → IsTrue(a && b) ↔ IsTrue(a) ∧ IsTrue(b)
+  preserves-[&&][∧] = [↔]-intro
     (\{(Logic.[∧]-intro l r) → [∧]-intro l r})
     (proof ↦ Logic.[∧]-intro ([∧]-elimₗ proof) ([∧]-elimᵣ proof))
 
-  [∨]-transfer : ∀{a b} → IsTrue(a || b) ↔ IsTrue(a) ∨ IsTrue(b)
-  [∨]-transfer = [↔]-intro
+  preserves-[||][∨] : ∀{a b} → IsTrue(a || b) ↔ IsTrue(a) ∨ IsTrue(b)
+  preserves-[||][∨] = [↔]-intro
     (Logic.[∨]-elim [∨]-introₗ [∨]-introᵣ)
     ([∨]-elim Logic.[∨]-introₗ Logic.[∨]-introᵣ)
 
-  [¬]-transfer : ∀{a} → IsTrue(! a) ↔ (¬ IsTrue(a))
-  [¬]-transfer {a} = [↔]-intro (l{a}) (r{a}) where
+  preserves-[!][¬] : ∀{a} → IsTrue(! a) ↔ (¬ IsTrue(a))
+  preserves-[!][¬] {a} = [↔]-intro (l{a}) (r{a}) where
     l : ∀{a} → IsTrue(! a) ← (¬ IsTrue(a))
     l {𝐹} _ = [⊤]-intro
     l {𝑇} f = [⊥]-elim (f [⊤]-intro)
@@ -92,9 +89,6 @@ module IsTrue where
     r {𝐹} _ ()
 
 module IsFalse where
-  from-eq : ∀{a} → (a ≡ 𝐹) → IsFalse(a) -- TODO: Use is-[𝐹] instead
-  from-eq [≡]-intro = [⊤]-intro
-
   [∧]-introₗ : ∀{a b} → IsFalse(a) → IsFalse(a && b)
   [∧]-introₗ {_}{𝑇} = id
   [∧]-introₗ {_}{𝐹} _ = [⊤]-intro

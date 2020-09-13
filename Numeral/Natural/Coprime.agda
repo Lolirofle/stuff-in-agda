@@ -53,3 +53,9 @@ postulate Coprime-of-Prime : ∀{y} → Prime(y) → ∀{x} → (𝐒(x) < y) �
 
 -- coprime : ℕ → ℕ → (ℕ ⨯ ℕ)
 -- coprime(x)(y) = (x / gcd(x)(y) , y / gcd(x)(y))
+
+{-
+-- Also called: Euclid's lemma
+divides-coprime-product : ∀{a b c} → Coprime(b)(c) → (a ∣ (b ⋅ c)) → ((a ∣ b) ∨ (a ∣ c))
+divides-coprime-product co-bc abc = {!!}
+-}

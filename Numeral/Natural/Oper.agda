@@ -8,6 +8,8 @@ infixl 10020 _⋅_
 -- infix  10020 _/₀_
 infixl 10030 _^_
 
+-- TODO: It would require a great amount of work, but consider changing the induction to being on the left side instead of the right on _+_ and _⋅_. It will then mirror how lists (a similar structure) uses induction in its definition. The advantage of having it on the right side as it is now is that induction using the full operator name is easier: ℕ-induction(_+_ a) vs ℕ-induction(a ↦ _+_ a b)
+
 -- Addition
 _+_ : ℕ → ℕ → ℕ
 x + 𝟎 = x
