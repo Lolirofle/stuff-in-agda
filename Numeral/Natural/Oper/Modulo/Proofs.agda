@@ -11,6 +11,7 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Natural.Oper.Modulo
 open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Oper.Proofs.Order
 open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Divisibility
 open import Numeral.Natural.Relation.Divisibility.Proofs

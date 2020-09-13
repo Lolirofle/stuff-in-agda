@@ -7,6 +7,7 @@ open import Logic.Propositional
 open import Logic.Propositional.Proofs.Structures
 open import Structure.Categorical.Properties
 open import Structure.Function
+open import Structure.Operator
 open import Structure.Groupoid
 open import Structure.Setoid.WithLvl using (Equiv ; intro) renaming (_≡_ to _≡ₛ_)
 open import Structure.Relator.Equivalence
@@ -214,7 +215,7 @@ module _
   Groupoid._∘_ identity-eliminator-groupoid = swap(trans)
   Groupoid.id  identity-eliminator-groupoid = refl
   Groupoid.inv identity-eliminator-groupoid = sym
-  Groupoid.binaryOperator identity-eliminator-groupoid = {!!}
   Groupoid.associativity  identity-eliminator-groupoid = identity-eliminator-categorical-associativity
   Groupoid.identity       identity-eliminator-groupoid = identity-eliminator-categorical-identity
   Groupoid.inverter       identity-eliminator-groupoid = identity-eliminator-categorical-inverter
+  Groupoid.binaryOperator identity-eliminator-groupoid = intro a where postulate a : ∀{a} → a -- TODO

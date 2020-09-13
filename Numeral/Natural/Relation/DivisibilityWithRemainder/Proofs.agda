@@ -18,6 +18,7 @@ open import Numeral.Natural.Oper.FlooredDivision.Proofs
 open import Numeral.Natural.Oper.Modulo
 open import Numeral.Natural.Oper.Modulo.Proofs
 open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Oper.Proofs.Order
 open import Numeral.Natural.Relation.Divisibility
 open import Numeral.Natural.Relation.DivisibilityWithRemainder hiding (base₀ ; base₊ ; step)
 open import Numeral.Natural.Relation.Order.Computability

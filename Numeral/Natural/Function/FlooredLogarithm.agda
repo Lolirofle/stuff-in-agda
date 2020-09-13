@@ -7,6 +7,7 @@ open import Numeral.Natural.Inductions
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Natural.Oper.FlooredDivision
+open import Numeral.Natural.Oper.FlooredDivision.Proofs
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs

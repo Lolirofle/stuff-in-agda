@@ -10,6 +10,7 @@ open import Numeral.Natural.Function
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Oper.Proofs.Order
 open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs

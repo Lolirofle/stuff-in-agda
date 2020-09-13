@@ -9,6 +9,7 @@ open import Numeral.Natural
 import      Numeral.Natural.Induction
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Oper.Proofs.Order
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals

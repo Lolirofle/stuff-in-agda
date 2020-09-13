@@ -11,6 +11,7 @@ open import Relator.Equals.Proofs
 open import Type.Properties.Empty
 open import Type.Singleton
 open import Type.Properties.Singleton
+open import Structure.Type.Identity
 
 instance
   -- There is always a construction of a singleton type
@@ -28,7 +29,7 @@ instance
     f{x} = [≡]-intro {_}{_} {Singleton-existence{x}}
 
     Φ : ∀{y x : X}{xy-proof : (y ≡ x)} → ([∃]-intro y ⦃ xy-proof ⦄ ≡ Singleton-existence{x})
-    Φ {y}{x}{xy-proof} = [≡]-identity-eliminator {T = X} (A)(f) {y}{x}(xy-proof)
+    Φ {y}{x}{xy-proof} = idElim(_≡_ {T = X}) (A)(f) {y}{x}(xy-proof)
 
     g : ∀{x : X}{σ : Singleton(x)} → (σ ≡ Singleton-existence{x})
     g{x}{[∃]-intro y ⦃ proof ⦄} = Φ{y}{x}{proof}
