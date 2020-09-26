@@ -5,9 +5,11 @@ open import Data
 open import Data.Either as Either using (_‖_)
 open import Data.Either.Proofs
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
+import      Data.Tuple.Raise as Tuple
 open import Data.Tuple.Proofs
 open import Functional
 open import Function.Proofs
+open import Lang.Inspect
 open import Lang.Instance
 open import Logic
 open import Logic.Propositional
@@ -23,11 +25,13 @@ open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
 import      Structure.Function.Names as Names
+open import Structure.Operator
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+private variable n : ℕ
 private variable A : Type{ℓ}
 private variable B : Type{ℓ}
 
@@ -75,6 +79,16 @@ diagonalFilling (𝐒(n)) with diagonalFilling n
 ... | (𝟎    , b) = (𝐒(b) , 0)
 ... | (𝐒(a) , b) = (a , 𝐒(b))
 
+raiseIndexing : (ℕ Tuple.^ n) → ℕ
+raiseIndexing {𝟎}       <>      = 𝟎
+raiseIndexing {𝐒(𝟎)}    x       = x
+raiseIndexing {𝐒(𝐒(n))} (x , y) = pairIndexing x (raiseIndexing {𝐒(n)} y)
+
+spaceFilling : ℕ → (ℕ Tuple.^ n)
+spaceFilling {𝟎}          _ = <>
+spaceFilling {𝐒(𝟎)}       i = i
+spaceFilling {𝐒(𝐒(n))}    i = Tuple.mapRight (spaceFilling {𝐒(n)}) (diagonalFilling i)
+
 
 
 private variable af : ℕ → A
@@ -84,34 +98,55 @@ pairIndexing-def3 : ∀{a b} → (pairIndexing a (𝐒 b) ≡ 𝐒(pairIndexing 
 pairIndexing-def3 {𝟎}   {b} = [≡]-intro
 pairIndexing-def3 {𝐒 a} {b} = [≡]-intro
 
-{-# TERMINATING #-}
-pairIndexing-inverseₗ : Inverseₗ(Tuple.uncurry pairIndexing)(diagonalFilling)
-pairIndexing-inverseₗ = intro proof where
-  proof : Names.Inverses(diagonalFilling)(Tuple.uncurry pairIndexing)
-  proof {𝟎    , 𝟎}    = [≡]-intro
-  proof {𝐒(a) , 𝟎}    with diagonalFilling(pairIndexing 𝟎 a) | proof {𝟎 , a}
-  ... | 𝟎    , 𝟎    | [≡]-intro = [≡]-intro
-  ... | 𝟎    , 𝐒(d) | [≡]-intro = [≡]-intro
-  ... | 𝐒(c) , 𝟎    | ()
-  ... | 𝐒(c) , 𝐒(d) | ()
-  {-# CATCHALL #-}
-  proof {a    , 𝐒(b)} rewrite pairIndexing-def3 {a}{b} with diagonalFilling(pairIndexing (𝐒(a)) b) | proof {𝐒(a) , b}
-  ... | 𝟎    , 𝟎    | ()
-  ... | 𝟎    , 𝐒(d) | ()
-  ... | 𝐒(c) , 𝟎    | [≡]-intro = [≡]-intro
-  ... | 𝐒(c) , 𝐒(d) | [≡]-intro = [≡]-intro
+instance
+  {-# TERMINATING #-}
+  pairIndexing-inverseₗ : Inverseₗ(Tuple.uncurry pairIndexing)(diagonalFilling)
+  pairIndexing-inverseₗ = intro proof where
+    proof : Names.Inverses(diagonalFilling)(Tuple.uncurry pairIndexing)
+    proof {𝟎    , 𝟎}    = [≡]-intro
+    proof {𝐒(a) , 𝟎}    with diagonalFilling(pairIndexing 𝟎 a) | proof {𝟎 , a}
+    ... | 𝟎    , 𝟎    | [≡]-intro = [≡]-intro
+    ... | 𝟎    , 𝐒(d) | [≡]-intro = [≡]-intro
+    ... | 𝐒(c) , 𝟎    | ()
+    ... | 𝐒(c) , 𝐒(d) | ()
+    {-# CATCHALL #-}
+    proof {a    , 𝐒(b)} rewrite pairIndexing-def3 {a}{b} with diagonalFilling(pairIndexing (𝐒(a)) b) | proof {𝐒(a) , b}
+    ... | 𝟎    , 𝟎    | ()
+    ... | 𝟎    , 𝐒(d) | ()
+    ... | 𝐒(c) , 𝟎    | [≡]-intro = [≡]-intro
+    ... | 𝐒(c) , 𝐒(d) | [≡]-intro = [≡]-intro
 
-pairIndexing-inverseᵣ : Inverseᵣ(Tuple.uncurry pairIndexing)(diagonalFilling)
-pairIndexing-inverseᵣ = intro proof where
-  proof : Names.Inverses(Tuple.uncurry pairIndexing)(diagonalFilling)
-  proof {𝟎}    = [≡]-intro
-  proof {𝐒(n)} with diagonalFilling n | proof {n}
-  ... | (𝟎    , b) | q = congruence₁(𝐒) q
-  ... | (𝐒(a) , b) | q rewrite pairIndexing-def3 {a}{b} = congruence₁(𝐒) q
+instance
+  pairIndexing-inverseᵣ : Inverseᵣ(Tuple.uncurry pairIndexing)(diagonalFilling)
+  pairIndexing-inverseᵣ = intro proof where
+    proof : Names.Inverses(Tuple.uncurry pairIndexing)(diagonalFilling)
+    proof {𝟎}    = [≡]-intro
+    proof {𝐒(n)} with diagonalFilling n | proof {n}
+    ... | (𝟎    , b) | q = congruence₁(𝐒) q
+    ... | (𝐒(a) , b) | q rewrite pairIndexing-def3 {a}{b} = congruence₁(𝐒) q
 
 instance
   pairIndexing-bijective : Bijective(Tuple.uncurry pairIndexing)
   pairIndexing-bijective = invertible-to-bijective ⦃ inver = [∃]-intro diagonalFilling ⦃ [∧]-intro [≡]-function ([∧]-intro pairIndexing-inverseₗ pairIndexing-inverseᵣ) ⦄ ⦄
+
+spaceIndexing-inverseᵣ : Inverseᵣ(raiseIndexing{𝐒(n)})(spaceFilling{𝐒(n)})
+spaceIndexing-inverseᵣ{n} = intro(proof{n}) where
+  proof : ∀{n} → Names.Inverses(raiseIndexing{𝐒(n)})(spaceFilling{𝐒(n)})
+  proof {𝟎}   {_} = [≡]-intro
+  proof {𝐒(n)}{i} with (x , y) ← diagonalFilling i | intro [≡]-intro ← inspect diagonalFilling i =
+    pairIndexing x (raiseIndexing{𝐒(n)} (spaceFilling{𝐒(n)} y)) 🝖[ _≡_ ]-[ congruence₁(pairIndexing(x)) (proof{n}{y}) ]
+    pairIndexing x y                                            🝖[ _≡_ ]-[ inverseᵣ(Tuple.uncurry pairIndexing)(diagonalFilling) ]
+    i                                                           🝖-end
+
+spaceIndexing-inverseₗ : Inverseₗ(raiseIndexing{𝐒(n)})(spaceFilling{𝐒(n)})
+spaceIndexing-inverseₗ{n} = intro(proof{n}) where
+  proof : ∀{n} → Names.Inverses(spaceFilling{𝐒(n)})(raiseIndexing{𝐒(n)})
+  proof {𝟎}   {_}      = [≡]-intro
+  proof {𝐒(n)}{x , xs} =
+    Tuple.mapRight spaceFilling (diagonalFilling (pairIndexing x (raiseIndexing xs))) 🝖[ _≡_ ]-[ congruence₁(Tuple.mapRight spaceFilling) (inverseₗ(Tuple.uncurry pairIndexing)(diagonalFilling)) ]
+    Tuple.mapRight spaceFilling (x , raiseIndexing xs)                                🝖[ _≡_ ]-[]
+    (x , spaceFilling(raiseIndexing xs))                                              🝖[ _≡_ ]-[ congruence₂ᵣ(_,_)(x) (proof{n}{xs}) ]
+    (x , xs)                                                                          🝖-end
 
 interleave-left : ∀{n} → (interleave af bf (2 ⋅ n) ≡ Either.Left(af(n)))
 interleave-left {n = 𝟎}   = [≡]-intro

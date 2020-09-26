@@ -15,6 +15,7 @@ open import Numeral.Natural.Relation.Order
 open import Relator.Equals
 open import Relator.Equals.Proofs
 import      Structure.Relator.Names as Names
+open import Structure.Function.Domain
 open import Structure.Operator.Properties
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
@@ -24,8 +25,8 @@ open import Type
 -- TODO: A method for pattern matching: https://stackoverflow.com/questions/20682013/agda-why-am-i-unable-to-pattern-match-on-refl
 
 [≡]-to-[≤] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
-[≡]-to-[≤] {𝟎}   {_}    ([≡]-intro) = [≤]-minimum
-[≡]-to-[≤] {𝐒(x)}{𝐒(y)} ([≡]-intro) = [≤]-with-[𝐒] ⦃ [≡]-to-[≤] {x}{y} ([≡]-intro) ⦄
+[≡]-to-[≤] {𝟎}   {_}    _         = [≤]-minimum
+[≡]-to-[≤] {𝐒(x)}{𝐒(y)} [≡]-intro = [≤]-with-[𝐒] ⦃ [≡]-to-[≤] {x}{y} [≡]-intro ⦄
 
 [≡]-to-[≥] : ∀{x y : ℕ} → (x ≡ y) → (x ≥ y)
 [≡]-to-[≥] = [≡]-to-[≤] ∘ symmetry(_≡_)

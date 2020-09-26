@@ -188,6 +188,10 @@ module _ where
   length-concatMap : ∀{f} → (length{T = T}(concatMap f l) ≡ foldᵣ((_+_) ∘ length ∘ f) 𝟎 l)
   length-concatMap {l = l} {f} = length-foldᵣ{l = l}{init = ∅}{f = (_++_) ∘ f} \{x l} → length-[++] {l₁ = f(x)}{l₂ = l}
 
+  length-accumulateIterate₀ : ∀{n}{f}{init : T} → (length(accumulateIterate₀ n f init) ≡ n)
+  length-accumulateIterate₀ {n = 𝟎}      = [≡]-intro
+  length-accumulateIterate₀ {n = 𝐒 n}{f} = [≡]-with(𝐒) (length-accumulateIterate₀ {n = n}{f})
+
   instance
     [⊰]-cancellationₗ : Cancellationₗ {T₁ = T} (_⊰_)
     Cancellationₗ.proof([⊰]-cancellationₗ) = proof where

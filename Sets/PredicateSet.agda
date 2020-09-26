@@ -207,6 +207,9 @@ module _ where
     [⋃]-of-[𝐔] : ((⋃_ {ℓ₁}{ℓ₂} 𝐔) ≡ 𝐔 {ℓ₃}{ℓ₄}{T})
     [⋃]-of-[𝐔] {ℓ₁}{ℓ₂}{ℓ₃}{T} = [↔]-intro (const ([∃]-intro 𝐔 ⦃ [↔]-intro <> <> ⦄)) (const <>)
 
+    LvlUp-set-equality : (Lvl.Up{ℓ} ∘ S ≡ S)
+    LvlUp-set-equality = [↔]-intro Lvl.up Lvl.Up.obj
+
     -- Disjoint-irreflexivity : ⦃ _ : NonEmpty(_) ⦄ → Irreflexivity(Disjoint{ℓ₁}{ℓ₂}{T})
     -- Irreflexivity.proof Disjoint-irreflexivity p = {!!}
 

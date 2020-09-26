@@ -31,7 +31,7 @@ private variable T : Type{ℓ}
 --   sublists₊ [1,2,3,4] = [[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3],[4],[1,4],[2,4],[1,2,4],[3,4],[1,3,4],[2,3,4],[1,2,3,4]]
 sublists₊ : List(T) → List(List(T))
 sublists₊ ∅       = ∅
-sublists₊ (x ⊰ l) = singleton(x) ⊰ foldᵣ (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest)) ∅ (sublists₊ l)
+sublists₊ (x ⊰ l) = singleton(x) ⊰ concatMap(y ↦ (y ⊰ (x ⊰ y) ⊰ ∅)) (sublists₊ l)
 
 -- A list of all sublists of the specified list.
 -- This is also the list of all subsets when the given list is a set (distinct elements).
@@ -121,7 +121,7 @@ tuples (𝐒(𝐒(n))) l = concatMap(x ↦ map (Tuple₊.prepend x) (tuples (�
 --   rotations [a,b,c]   = [[a,b,c] , [b,c,a] , [c,a,b]]
 --   rotations [a,b,c,d] = [[a,b,c,d] , [b,c,d,a] , [c,d,a,b] , [d,a,b,c]]
 rotations : List(T) → List(List(T))
-rotations l = accumulateIterate₀(length l) (\{∅ → ∅ ; (x ⊰ l) → postpend x l}) l
+rotations l = accumulateIterate₀(length l) (rotateₗ(1)) l
 
 -- Accumulated `insertAt` for every position of the given list.
 -- Examples:

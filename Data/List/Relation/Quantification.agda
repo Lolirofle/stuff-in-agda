@@ -15,5 +15,5 @@ data AllElements (P : T → Stmt{ℓ}) : List(T) → Stmt{Lvl.of(T) Lvl.⊔ ℓ}
   _⊰_ : P(x) → AllElements(P)(l) → AllElements(P)(x ⊰ l)
 
 data ExistsElement (P : T → Stmt{ℓ}) : List(T) → Stmt{Lvl.of(T) Lvl.⊔ ℓ} where
-  _⊰… : P(x) → ExistsElement(P)(x ⊰ l)
-  _⊰_ : ExistsElement(P)(l) → ExistsElement(P)(x ⊰ l)
+  •_ : P(x) → ExistsElement(P)(x ⊰ l)
+  ⊰_ : ExistsElement(P)(l) → ExistsElement(P)(x ⊰ l)

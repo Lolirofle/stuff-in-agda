@@ -8,6 +8,7 @@ open import Type
 data Empty {ℓ} : Type{ℓ} where
 
 -- Empty functions.
+-- The empty type eliminator.
 -- Any type can be constructed from the empty type.
 empty : ∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}} → Empty{ℓ₂} → T
 empty ()

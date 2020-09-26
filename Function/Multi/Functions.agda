@@ -26,6 +26,7 @@ private variable A B C : Type{ℓ}
 private variable As Bs Cs : Types{n}(ℓ𝓈)
 
 -- TODO: Make all n, n₁, n₂ explicit. Find a way to do this while having generalized variables
+-- TODO: Some of these functions can be generalised to arbitrary categories instead of using the function type (_→_). This makes it possible to skip the specialized variants for different parameter types (e.g. compose and composeᵢₙₛₜ)
 
 -- A constant function of many variables.
 -- Lifts a value to being a number of nested functions.
@@ -119,7 +120,7 @@ _∘ₗ {n₁ = n₁}{n₂ = n₂} = pointwise(n₁)(n₂)
 --   curry(1) = curry₁                   : ((A₁ ⨯ A₂)           → B) → (A₁ → A₂           → B)
 --   curry(2) = curry₁ ∘ curry₁          : ((A₁ ⨯ A₂ ⨯ A₃)      → B) → (A₁ → A₂ → A₃      → B)
 --   curry(3) = curry₁ ∘ curry₁ ∘ curry₁ : ((A₁ ⨯ A₂ ⨯ A₃ ⨯ A₄) → B) → (A₁ → A₂ → A₃ → A₄ → B)
--- Note: If there is a nested uncurry and curry, one can often rewrite it using (_∘ᵣ_) instead (I think).
+-- Note: If there is a nested uncurry and curry, one can often use (_∘ᵣ_) instead (I think?).
 curry : (n : ℕ) → ∀{ℓ𝓈}{As : Types{𝐒(n)}(ℓ𝓈)}{ℓ}{B : Type{ℓ}} → (reduceᵣ(_⨯_) As → B) → (As ⇉ B)
 curry(𝟎)        = id
 curry(𝐒(n)) f x = curry(n) (f ∘ (x ,_))
@@ -182,7 +183,7 @@ lifted-[,](n) f g = liftedApply(n) ((swap₁ _,_) ∘ᵣ g) f
 -- CategoricalOperator₊(𝐒(𝐒(n))) F = {!!}
 
 -- Nested quantifiers over multiple values.
--- Used to defined 
+-- Used to define nested universal and existential quantifications.
 -- Example:
 --   quantifier₊(3) □(P) = □(x ↦ □(y ↦ □(z ↦ P(x)(y)(z))))
 quantifier₊ : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}} → (T → Stmt{ℓ₂}) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}) → (As ⇉ Stmt{ℓ}) → Stmt{ℓ Lvl.⊔ (Lvl.⨆(ℓ𝓈))}
