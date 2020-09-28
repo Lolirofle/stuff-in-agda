@@ -51,7 +51,7 @@ module _ where
   [++]-identityᵣ-raw : Names.Identityᵣ (Functional.swap(foldᵣ{T = T}(_⊰_))) ∅
   [++]-identityᵣ-raw {x = ∅}     = [≡]-intro
   [++]-identityᵣ-raw {x = x ⊰ l} = [≡]-with(x ⊰_) ([++]-identityᵣ-raw {x = l})
-  {-# REWRITE [++]-identityᵣ-raw #-}
+  -- {-# REWRITE [++]-identityᵣ-raw #-}
 
   instance
     [++]-identityᵣ : Identityᵣ{T₁ = List(T)} (_++_) ∅
@@ -89,7 +89,7 @@ module _ where
   map-postpend {f = f} {l = x ⊰ l} = [≡]-with (f(x) ⊰_) map-postpend
 
   reverse-[++] : (reverse(l₁ ++ l₂) ≡ reverse(l₂) ++ reverse(l₁))
-  reverse-[++] {l₁ = ∅}      {l₂} = [≡]-intro
+  reverse-[++] {l₁ = ∅}      {l₂} = [≡]-with(reverse) (identityₗ(_++_)(∅) {l₂}) 🝖 symmetry(_≡_) (identityᵣ(_++_)(∅) {reverse l₂})
   reverse-[++] {l₁ = x ⊰ l₁} {l₂} = [≡]-with(postpend x) (reverse-[++] {l₁ = l₁} {l₂}) 🝖 postpend-of-[++] {l₁ = reverse l₂} {l₂ = reverse l₁}
 
   map-[++] : (map f(l₁ ++ l₂) ≡ map f(l₁) ++ map f(l₂))

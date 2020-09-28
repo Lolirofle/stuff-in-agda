@@ -5,6 +5,7 @@ module Lang.Reflection where
 open import Data.Boolean
 open import Data.List
 open import Data
+open import Float
 import      Lvl
 open import MachineWord
 open import Numeral.Natural
@@ -152,8 +153,6 @@ data Pattern : TYPE where
 
 {-# BUILTIN AGDAPATTERN   Pattern #-}
 {-# BUILTIN AGDAPATCON    con     #-}
-{-# BUILTIN AGDAPATDOT    dot     #-}
-{-# BUILTIN AGDAPATVAR    var     #-}
 {-# BUILTIN AGDAPATLIT    lit     #-}
 {-# BUILTIN AGDAPATPROJ   proj    #-}
 {-# BUILTIN AGDAPATABSURD absurd  #-}
@@ -204,9 +203,6 @@ data Clause where
 {-# BUILTIN AGDASORTSET         set     #-}
 {-# BUILTIN AGDASORTLIT         lit     #-}
 {-# BUILTIN AGDASORTUNSUPPORTED unknown #-}
-
-{-# BUILTIN AGDACLAUSECLAUSE clause        #-}
-{-# BUILTIN AGDACLAUSEABSURD absurd-clause #-}
 
 -- Definitions --
 

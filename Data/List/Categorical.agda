@@ -33,5 +33,5 @@ instance
   Monad.ext ⦃ concatMap-monad ⦄   = concatMap
   _⊜_.proof (Function.congruence (Monad.ext-function ⦃ concatMap-monad ⦄) (intro proof)) {x} = concatMap-function-raw (proof) {x}
   Monad.ext-inverse    ⦃ concatMap-monad ⦄ = intro concatMap-singleton
-  Monad.ext-identity   ⦃ concatMap-monad ⦄ = intro [≡]-intro
+  Monad.ext-identity   ⦃ concatMap-monad ⦄ = intro (identityᵣ(_++_)(∅))
   Monad.ext-distribute ⦃ concatMap-monad ⦄ {f = f}{g = g} = intro (\{x} → concatMap-[∘] {f = f}{g = g}{x = x})

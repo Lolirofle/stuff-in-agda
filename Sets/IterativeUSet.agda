@@ -138,6 +138,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   [⊇]-reflexivity-raw : (set SC ⊇ set SC)
   [⊇]-reflexivity-raw = [⊆]-reflexivity-raw
 
+  {-# TERMINATING #-} -- TODO: Passed the termination checker before Agda 2.6.2-caeadac-dirty
   [≡]-reflexivity-raw {A = atom x} = atom(reflexivity(_≡ₛ_))
   [≡]-reflexivity-raw {A = set x}  = set [⊇]-reflexivity-raw [⊆]-reflexivity-raw
 

@@ -58,6 +58,7 @@ module Proofs where
   open import Structure.Function.Domain.Proofs
   import      Structure.Function.Names as Names
   open import Structure.Function
+  open import Structure.Operator.Properties
   import      Structure.Relator.Names as Names
   open import Structure.Relator.Equivalence
   open import Structure.Relator.Properties
@@ -212,7 +213,7 @@ module Proofs where
   permutes-with-[++] {l₃ = l₃} {l₂ = l₂} l13 l24 = transitivity(_permutes_) (permutes-with-[++]ₗ {l = l₂} l13) (permutes-with-[++]ᵣ {l = l₃} l24)
 
   permutes-swap-[++] : ((l₁ ++ l₂) permutes (l₂ ++ l₁))
-  permutes-swap-[++] {l₁ = ∅}      {l₂ = l₂} = reflexivity(_permutes_)
+  permutes-swap-[++] {l₁ = ∅}      {l₂ = l₂} rewrite identityᵣ(_++_)(∅) {l₂} = reflexivity(_permutes_)
   permutes-swap-[++] {l₁ = x ⊰ l₁} {l₂ = l₂} =
     (x ⊰ l₁) ++ l₂        🝖[ _permutes_ ]-[]
     x ⊰ (l₁ ++ l₂)        🝖[ _permutes_ ]-[ prepend (permutes-swap-[++] {l₁ = l₁} {l₂ = l₂}) ]

@@ -30,6 +30,7 @@ Y ←ᶠ X = Y ← X
 -- Returns the applied argument.
 id : T → T
 id(x) = x
+{-# INLINE id #-}
 
 -- The constant function.
 -- Returns the first argument independent of the second.
@@ -40,21 +41,27 @@ const(x)(_) = x
 -- Applies the first argument on the function on the second argument.
 apply : X → (X → Y) → Y
 apply(x)(f) = f(x)
+{-# INLINE apply #-}
 
 -- Function application as an operator
 _$_ : (X → Y) → X → Y
 _$_ = id
+{-# INLINE _$_ #-}
 
 -- Function application as an operator. Function to the left, value to the right.
 _⩹_ : (X → Y) → X → Y
 f ⩹ x = f(x)
+{-# INLINE _⩹_ #-}
+
 -- Function application as an operator. Value to the left, function to the right.
 _⩺_ : X → (X → Y) → Y
 x ⩺ f = f(x)
+{-# INLINE _⩺_ #-}
 
 -- Swapping the arguments of a binary operation
 swap : (X → Y → Z) → (Y → X → Z)
 swap f(y)(x) = f(x)(y)
+{-# INLINE swap  #-}
 
 -- Function composition
 _∘_ : let _ = X in (Y → Z) → (X → Y) → (X → Z)

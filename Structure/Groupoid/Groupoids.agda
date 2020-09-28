@@ -36,7 +36,7 @@ Groupoid.associativity (singleGroupoid{ℓ₁}{ℓ₂}{ℓₒ}{ℓᵢ}{ℓₚₐ
 Groupoid.identity      (singleGroupoid{ℓ₁}{ℓ₂}{ℓₒ}{ℓᵢ}{ℓₚₐ₁}{ℓₚₐ₂}{ℓₚᵢ₁}{ℓₚᵢ₂}{ℓₚᵢ₃}) = single-identity{ℓ₂}{ℓ₂}{ℓₚᵢ₁}{ℓ₁}{ℓₚᵢ₂}{ℓₚᵢ₃}
 Groupoid.inverter      (singleGroupoid{ℓ₁}{ℓ₂}{ℓₒ}{ℓᵢ}{ℓₚₐ₁}{ℓₚₐ₂}{ℓₚᵢ₁}{ℓₚᵢ₂}{ℓₚᵢ₃}{ℓᵢₙ}) = single-inverter{ℓ₂}{ℓ₂}{ℓₚᵢ₁}{ℓ₁}{ℓₚᵢ₂}{ℓₚᵢ₃}{ℓᵢₙ}
 
-on₂-groupoid : ⦃ morphism-equiv : ∀{x y} → Equiv{ℓₑ}(x ▫ y) ⦄ → Groupoid{Obj = B}(_▫_) ⦃ morphism-equiv ⦄ → (f : A → B) → Groupoid((_▫_) on₂ f)
+on₂-groupoid : ⦃ morphism-equiv : ∀{x y} → Equiv{ℓₑ}{ℓ}(x ▫ y) ⦄ → Groupoid{Obj = B}(_▫_) ⦃ morphism-equiv ⦄ → (f : A → B) → Groupoid((_▫_) on₂ f)
 Groupoid._∘_ (on₂-groupoid C _) = Groupoid._∘_ C
 Groupoid.id  (on₂-groupoid C _) = Groupoid.id  C
 Groupoid.inv (on₂-groupoid C _) = Groupoid.inv C

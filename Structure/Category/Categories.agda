@@ -38,7 +38,7 @@ BinaryOperator.congruence (Category.binaryOperator singleCategory) Eq.[≡]-intr
 Category.associativity (singleCategory{ℓ₁}{ℓ₂}{ℓₒ}{ℓᵢ}{ℓₚₐ₁}{ℓₚₐ₂}{ℓₚᵢ₁}{ℓₚᵢ₂}{ℓₚᵢ₃}) = single-associativity{ℓ₂}{ℓ₂}{ℓₚₐ₁}{ℓ₁}{ℓₚₐ₂}
 Category.identity      (singleCategory{ℓ₁}{ℓ₂}{ℓₒ}{ℓᵢ}{ℓₚₐ₁}{ℓₚₐ₂}{ℓₚᵢ₁}{ℓₚᵢ₂}{ℓₚᵢ₃}) = single-identity{ℓ₂}{ℓ₂}{ℓₚᵢ₁}{ℓ₁}{ℓₚᵢ₂}{ℓₚᵢ₃}
 
-on₂-category : ⦃ morphism-equiv : ∀{x y} → Equiv{ℓₑ}(x ▫ y) ⦄ → Category{Obj = B}(_▫_) ⦃ morphism-equiv ⦄ → (f : A → B) → Category((_▫_) on₂ f)
+on₂-category : ⦃ morphism-equiv : ∀{x y} → Equiv{ℓₑ}{ℓ}(x ▫ y) ⦄ → Category{Obj = B}(_▫_) ⦃ morphism-equiv ⦄ → (f : A → B) → Category((_▫_) on₂ f)
 Category._∘_ (on₂-category C _) = Category._∘_ C
 Category.id  (on₂-category C _) = Category.id  C
 BinaryOperator.congruence (Category.binaryOperator (on₂-category C _)) = BinaryOperator.congruence(Category.binaryOperator C)

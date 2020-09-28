@@ -11,9 +11,9 @@ module Main where
 -- import Automaton.TuringMachine
 import Data
 import Data.Any
-import Data.BinaryTree
-import Data.BinaryTree.Heap
-import Data.BinaryTree.Properties
+-- import Data.BinaryTree
+-- import Data.BinaryTree.Heap
+-- import Data.BinaryTree.Properties
 import Data.Boolean
 -- import Data.Boolean.Functions
 import Data.Boolean.Operators
