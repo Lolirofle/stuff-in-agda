@@ -35,13 +35,13 @@ open import Syntax.Transitivity
 
 [∣ᵣₑₘ]-is-division-with-remainder : ∀{x y}{r}{p : (𝐒(y) ∣ᵣₑₘ x)(r)} → ((([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + (𝕟-to-ℕ ([∣ᵣₑₘ]-remainder p)) ≡ x)
 [∣ᵣₑₘ]-is-division-with-remainder {𝟎}             {_}   {𝟎}   {DivRem𝟎} = [≡]-intro
-[∣ᵣₑₘ]-is-division-with-remainder {𝐒 .(𝕟-to-ℕ r)} {𝐒 y} {𝐒 r} {DivRem𝟎} = [≡]-intro
 [∣ᵣₑₘ]-is-division-with-remainder {𝐒 .(x + y)} {y} {𝟎}   {DivRem𝐒 {x = x} p} =
   𝐒([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)         🝖[ _≡_ ]-[ [⋅]-with-[𝐒]ₗ {[∣ᵣₑₘ]-quotient p}{𝐒(y)} ]
   (([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + 𝐒(y) 🝖[ _≡_ ]-[]
   𝐒((([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + y) 🝖[ _≡_ ]-[ congruence₁(𝐒) (congruence₂ₗ(_+_)(y) ([∣ᵣₑₘ]-is-division-with-remainder {p = p})) ]
   𝐒(x + y)                            🝖-end
-[∣ᵣₑₘ]-is-division-with-remainder {𝐒 .(x + y)} {y} {r} {DivRem𝐒 {x = x} p} =
+[∣ᵣₑₘ]-is-division-with-remainder {𝐒 .(𝕟-to-ℕ r)} {𝐒 y} {𝐒 r} {DivRem𝟎} = [≡]-intro
+[∣ᵣₑₘ]-is-division-with-remainder {𝐒 .(x + y)} {y@(𝐒 _)} {r@(𝐒 _)} {DivRem𝐒 {x = x} p} =
   (([∣ᵣₑₘ]-quotient (DivRem𝐒 p)) ⋅ 𝐒(y)) + (𝕟-to-ℕ r) 🝖[ _≡_ ]-[]
   (𝐒([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y))          + (𝕟-to-ℕ r) 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(𝕟-to-ℕ r) ([⋅]-with-[𝐒]ₗ {[∣ᵣₑₘ]-quotient p}{𝐒(y)}) ]
   ((([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + 𝐒(y))  + (𝕟-to-ℕ r) 🝖[ _≡_ ]-[ One.commuteᵣ-assocₗ {a = ([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)}{b = 𝐒(y)}{c = 𝕟-to-ℕ r} ]
@@ -62,6 +62,7 @@ open import Syntax.Transitivity
   ([ 0 , 0 ] x div 0) 🝖[ _≡_ ]-[ [⌊/⌋]-of-1ᵣ ]
   x                   🝖[ _≡_ ]-[ [∣ᵣₑₘ]-quotient-of-1 ]-sym
   [∣ᵣₑₘ]-quotient p   🝖-end
+{-# CATCHALL #-}
 [⌊/⌋][∣ᵣₑₘ]-quotient-equality {𝐒 .(x + y)} {y} {r} {DivRem𝐒 {x = x} p} =
   ([ 0 , (y) ] (𝐒(x) + y) div y) 🝖[ _≡_ ]-[ inddiv-step-denominator{0}{(y)}{𝐒(x)}{y} ]
   ([ 0 , (y) ] 𝐒(x) div 𝟎)       🝖[ _≡_ ]-[]
@@ -72,6 +73,7 @@ open import Syntax.Transitivity
 [mod][∣ᵣₑₘ]-remainder-equality {𝟎}             {_}   {𝟎}   {DivRem𝟎} = [≡]-intro
 [mod][∣ᵣₑₘ]-remainder-equality {𝐒 .(𝕟-to-ℕ r)} {𝐒 y} {𝐒 r} {DivRem𝟎} = mod'-result-lesser {1}{𝐒(y)}{𝕟-to-ℕ r}{y} ⦃ [≤]-without-[𝐒] 𝕟.bounded ⦄
 [mod][∣ᵣₑₘ]-remainder-equality {𝐒 x}        {𝟎} {𝟎} {DivRem𝐒 p}         = mod-of-1 {x}
+{-# CATCHALL #-}
 [mod][∣ᵣₑₘ]-remainder-equality {𝐒 .(x + y)} {y} {r} {DivRem𝐒 {x = x} p} =
   ([ 𝟎 , y ] 𝐒(x + y) mod' y)           🝖[ _≡_ ]-[]
   ([ 𝟎 , y ] (𝐒(x) + y) mod' y)         🝖[ _≡_ ]-[ [mod₀]-2-2ₗ {0}{y}{x}{y} ]

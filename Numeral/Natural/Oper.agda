@@ -52,7 +52,9 @@ x    −₀ 𝟎    = x
 {-# TERMINATING #-}
 _⌈/₀⌉_ : ℕ → ℕ → ℕ
 𝟎 ⌈/₀⌉ y = 𝟎
+{-# CATCHALL #-}
 x ⌈/₀⌉ 𝟎 = 𝟎
+{-# CATCHALL #-}
 x ⌈/₀⌉ y = 𝐒((x −₀ y) ⌈/₀⌉ y)
 
 -- Hyperoperation: (a ↑[n]↑ b) where (n=0)⇒(_ ↦ 𝐒) , (n=1)⇒(+) , (n=2)⇒(⋅) , (n=3)⇒(^)

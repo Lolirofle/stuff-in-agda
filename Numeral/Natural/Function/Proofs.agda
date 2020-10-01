@@ -223,7 +223,7 @@ max-with-min {a}{b} with [≤][>]-dichotomy {a}{b}
 [≤]-conjunction-max : ∀{a b c} → ((a ≤ c) ∧ (b ≤ c)) ↔ (max a b ≤ c)
 [≤]-conjunction-max {a}{b}{c} = [↔]-intro (ab≤c ↦ [∧]-intro (max-orderₗ 🝖 ab≤c) ((max-orderᵣ 🝖 ab≤c))) (uncurry r) where
   r : ∀{a b c} → (a ≤ c) → (b ≤ c) → (max a b ≤ c)
-  r {.0}     {b}      {c}      [≤]-minimum  bc           = bc
+  r {.0}     {b@(𝐒 _)}{c}      [≤]-minimum  bc           = bc
   r {a}      {.0}     {c}      ac           [≤]-minimum  = ac
   r {𝐒 a} {𝐒 b} {𝐒 c} ([≤]-with-[𝐒] ⦃ ac ⦄) ([≤]-with-[𝐒] ⦃ bc ⦄) = [≤]-with-[𝐒] ⦃ r {a}{b}{c} ac bc ⦄
 

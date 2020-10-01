@@ -1,6 +1,7 @@
 module Structure.Operator where
 
 import Lvl
+open import Functional using (_$_)
 open import Lang.Instance
 open import Logic.Predicate
 open import Logic
@@ -9,6 +10,7 @@ open import Structure.Function.Names
 open import Structure.Function
 open import Structure.Relator.Properties
 open import Syntax.Function
+open import Syntax.Transitivity
 open import Type
 
 private variable ℓ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ : Lvl.Level
@@ -54,3 +56,9 @@ module _
 
   congruence₂ᵣ : ⦃ inst : BinaryOperator ⦄ → (a : A₁) → ∀{x y : A₂} → (x ≡ y) → (a ▫ x ≡ a ▫ y)
   congruence₂ᵣ _ = inst-fn BinaryOperator.congruenceᵣ
+
+  functions-to-binaryOperator : ⦃ l : ∀{y} → Function(_▫ y) ⦄ ⦃ r : ∀{x} → Function(x ▫_) ⦄ → BinaryOperator
+  BinaryOperator.congruence functions-to-binaryOperator {x₁} {y₁} {x₂} {y₂} leq req =
+    (x₁ ▫ x₂) 🝖[ _≡_ ]-[ congruence₁(_▫ x₂) leq ]
+    (y₁ ▫ x₂) 🝖[ _≡_ ]-[ congruence₁(y₁ ▫_) req ]
+    (y₁ ▫ y₂) 🝖-end

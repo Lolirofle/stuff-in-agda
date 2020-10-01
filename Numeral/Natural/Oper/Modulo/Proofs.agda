@@ -55,10 +55,10 @@ mod'-zero-succ-2 {r}{𝐒(b)} = mod'-zero-succ-2 {𝐒(r)}{b}
 -- When the real modulus is 0 and the number is greater than counter modulus, then the result is zero.
 [mod₀]-1-3 : ∀{r a b} → ([ r , 𝟎 ] (b + 𝐒(a)) mod' b ≡ 𝟎)
 [mod₀]-1-3 {_}   {𝟎}   {𝟎}    = [≡]-intro
+[mod₀]-1-3 {r}   {𝐒(a)}{𝐒(b)} = [mod₀]-1-3 {𝐒(r)}{𝐒(a)}{b}
 [mod₀]-1-3 {𝟎}   {𝐒 a} {𝟎}    = mod'-zero-013 {𝟎 + 𝐒 a}
 [mod₀]-1-3 {𝐒 r} {𝐒 a} {𝟎}    = mod'-zero-013 {a}
 [mod₀]-1-3 {r}   {𝟎}   {𝐒(b)} = mod'-zero-succ-2 {𝐒 r} {b}
-[mod₀]-1-3 {r}   {𝐒(a)}{𝐒(b)} = [mod₀]-1-3 {𝐒(r)}{𝐒(a)}{b}
 
 -- When the number is the temporary modulus, the result is zero.
 [mod₀]-2-1 : ∀{r b' b} → ([ r , b' ] 𝐒(b) mod' b) ≡ 𝟎

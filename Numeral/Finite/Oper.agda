@@ -76,6 +76,7 @@ module Optional where
   _+₀ᵣ_ : ∀{b₁ b₂} → 𝕟(b₁) → Option(𝕟(b₂)) → 𝕟(b₁ ℕ.+ b₂)
   _+₀ᵣ_ 𝕟.𝟎      None     = 𝕟.𝟎
   _+₀ᵣ_ (𝕟.𝐒(a)) None     = 𝕟.𝐒(_+₀ᵣ_ a None)
+  {-# CATCHALL #-}
   _+₀ᵣ_ a        (Some b) = a Exact.+ b
 
 module Unclosed where

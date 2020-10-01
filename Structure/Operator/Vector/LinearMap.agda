@@ -1,5 +1,6 @@
 module Structure.Operator.Vector.LinearMap where
 
+open import Functional
 open import Logic
 open import Logic.Predicate
 open import Logic.Propositional
@@ -7,16 +8,19 @@ import      Lvl
 open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Multi
-open import Structure.Operator.Vector
+open import Structure.Operator
 open import Structure.Operator.Field.VectorSpace
+open import Structure.Operator.Properties using (Distributivityₗ ; Distributivityᵣ)
+open import Structure.Operator.Vector
 open import Structure.Setoid.WithLvl
 open import Type
 open import Syntax.Function
+open import Syntax.Transitivity
 
-private variable ℓ ℓᵥ ℓᵥₗ ℓᵥᵣ ℓₛ ℓᵥₑ ℓᵥₑₗ ℓᵥₑᵣ ℓₛₑ : Lvl.Level
-private variable V Vₗ Vᵣ S : Type{ℓ}
-private variable _+ᵥ_ _+ᵥₗ_ _+ᵥᵣ_ : V → V → V
-private variable _⋅ₛᵥ_ _⋅ₛᵥₗ_ _⋅ₛᵥᵣ_ : S → V → V
+private variable ℓ ℓᵥ ℓᵥₗ ℓᵥᵣ ℓₛ ℓᵥₑ ℓᵥₑₗ ℓᵥₑᵣ ℓᵥₑ₁ ℓᵥₑ₂ ℓᵥₑ₃ ℓₛₑ : Lvl.Level
+private variable V Vₗ Vᵣ V₁ V₂ V₃ S : Type{ℓ}
+private variable _+ᵥ_ _+ᵥₗ_ _+ᵥᵣ_ _+ᵥ₁_ _+ᵥ₂_ _+ᵥ₃_ : V → V → V
+private variable _⋅ₛᵥ_ _⋅ₛᵥₗ_ _⋅ₛᵥᵣ_ _⋅ₛᵥ₁_ _⋅ₛᵥ₂_ _⋅ₛᵥ₃_ : S → V → V
 private variable _+ₛ_ _⋅ₛ_ : S → S → S
 
 module _
@@ -58,3 +62,46 @@ module _
   where
 
   LinearFunctional = LinearMap(vectorSpace)(fieldVectorSpace(VectorSpace.scalarField(vectorSpace))) (f)
+
+module _
+  ⦃ equiv-V₁ : Equiv{ℓᵥₑ₁}(V₁) ⦄
+  ⦃ equiv-V₂ : Equiv{ℓᵥₑ₂}(V₂) ⦄
+  ⦃ equiv-V₃ : Equiv{ℓᵥₑ₃}(V₃) ⦄
+  ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
+  (vectorSpace₁ : VectorSpace{V = V₁}{S = S}(_+ᵥ₁_)(_⋅ₛᵥ₁_)(_+ₛ_)(_⋅ₛ_))
+  (vectorSpace₂ : VectorSpace{V = V₂}{S = S}(_+ᵥ₂_)(_⋅ₛᵥ₂_)(_+ₛ_)(_⋅ₛ_))
+  (vectorSpace₃ : VectorSpace{V = V₃}{S = S}(_+ᵥ₃_)(_⋅ₛᵥ₃_)(_+ₛ_)(_⋅ₛ_))
+  (f : V₁ → V₂ → V₃)
+  where
+
+  record BilinearMap : Type{Lvl.of(V₁) Lvl.⊔ Lvl.of(V₂) Lvl.⊔ ℓᵥₑ₁ Lvl.⊔ ℓᵥₑ₂ Lvl.⊔ ℓᵥₑ₃ Lvl.⊔ Lvl.of(S)} where
+    constructor intro
+    field
+      ⦃ linearMap₁ ⦄ : ∀{y} → LinearMap vectorSpace₁ vectorSpace₃ (x ↦ f(x)(y))
+      ⦃ linearMap₂ ⦄ : ∀{x} → LinearMap vectorSpace₂ vectorSpace₃ (y ↦ f(x)(y))
+
+    open module LinearMapₗ{y} = LinearMap(linearMap₁{y}) renaming (function to functionₗ ; preserves-[+ᵥ] to preserves-[+ᵥ]ₗ ; preserves-[⋅ₛᵥ] to preserves-[⋅ₛᵥ]ₗ) public
+    open module LinearMapᵣ{x} = LinearMap(linearMap₂{x}) renaming (function to functionᵣ ; preserves-[+ᵥ] to preserves-[+ᵥ]ᵣ ; preserves-[⋅ₛᵥ] to preserves-[⋅ₛᵥ]ᵣ) public
+
+    binaryOperator : BinaryOperator(f)
+    binaryOperator = functions-to-binaryOperator(f) ⦃ functionₗ ⦄ ⦃ functionᵣ ⦄
+
+module _
+  ⦃ equiv-V : Equiv{ℓᵥₑ}(V) ⦄
+  ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
+  (vectorSpace : VectorSpace{V = V}{S = S}(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_))
+  (_▫_ : V → V → V)
+  where
+
+  BilinearOperator = BilinearMap(vectorSpace)(vectorSpace)(vectorSpace) (_▫_)
+  module BilinearOperator(bilinearOper : BilinearOperator) where
+    -- TODO: Move the proof for distributivity from preserving
+    [+ᵥ]-distributivityₗ : Distributivityₗ(_▫_)(_+ᵥ_)
+    Distributivityₗ.proof [+ᵥ]-distributivityₗ {x}{y}{z} =
+      x ▫ (y +ᵥ z)       🝖[ _≡_ ]-[ preserving₂(x ▫_)(_+ᵥ_)(_+ᵥ_) ⦃ LinearMap.preserves-[+ᵥ] (BilinearMap.linearMap₂ bilinearOper) ⦄ ]
+      (x ▫ y) +ᵥ (x ▫ z) 🝖-end
+
+    [+ᵥ]-distributivityᵣ : Distributivityᵣ(_▫_)(_+ᵥ_)
+    Distributivityᵣ.proof [+ᵥ]-distributivityᵣ {x}{y}{z} =
+      (x +ᵥ y) ▫ z       🝖[ _≡_ ]-[ preserving₂(_▫ z)(_+ᵥ_)(_+ᵥ_) ⦃ LinearMap.preserves-[+ᵥ] (BilinearMap.linearMap₁ bilinearOper) ⦄ ]
+      (x ▫ z) +ᵥ (y ▫ z) 🝖-end

@@ -205,6 +205,7 @@ module _ (det : Deterministic) where
     deterministic-confluence = intro proof where
       proof : Names.Confluence
       proof {c = c} at ac = [∃]-intro c ⦃ [∧]-intro ac at ⦄
+      {-# CATCHALL #-}
       proof {b = b} ab at = [∃]-intro b ⦃ [∧]-intro at ab ⦄
       proof (prepend ab1 ab) (prepend ab2 ac) rewrite det ab1 ab2 = proof ab ac
 

@@ -339,6 +339,7 @@ module Oper ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     Tuple.left [∪]-membership ([∨]-introₗ (set ([∃]-intro ia))) = set ([∃]-intro (Either.Left  ia))
     Tuple.left [∪]-membership ([∨]-introᵣ (set ([∃]-intro ib))) = set ([∃]-intro (Either.Right ib))
     Tuple.right ([∪]-membership {A = set x}) (set ([∃]-intro ([∨]-introₗ ia))) = [∨]-introₗ (set ([∃]-intro ia))
+    {-# CATCHALL #-}
     Tuple.right ([∪]-membership {B = set x}) (set ([∃]-intro ([∨]-introᵣ ib))) = [∨]-introᵣ (set ([∃]-intro ib))
 
     [⊆]-with-elem : ∀{SCₗ SCᵣ : SetContainer(T){ℓ}} → (xy : set SCₗ ⊆ set SCᵣ) → ∀{ix} → (elem (set SCₗ) ix ≡ elem (set SCᵣ) ([⊆]-map xy ix))

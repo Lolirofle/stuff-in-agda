@@ -98,6 +98,7 @@ instance
   Injective.proof (concat-injective {a = 𝐒 a} {𝐒 b} {af} {bf}) {𝐒 x} {𝟎} p with concat-left-or-right{af = af ∘ 𝐒}{bf = bf}{n = x}
   ... | [∨]-introₗ ([∃]-intro _ ⦃ proof ⦄) with () ← injective(af) (injective(Either.Left) (symmetry(_≡_) p 🝖 proof))
   ... | [∨]-introᵣ ([∃]-intro _ ⦃ proof ⦄) with () ← symmetry(_≡_) p 🝖 proof
+  {-# CATCHALL #-}
   Injective.proof (concat-injective {a = 𝐒 a} {b} {af} {bf}) {𝐒 x} {𝐒 y} p = congruence₁(𝐒) (Injective.proof (concat-injective {a = a} {b} {af ∘ 𝐒} {bf} ⦃ [∘]-injective {f = af}{g = 𝐒} ⦄) {x} {y} p)
 
 concat-when-left : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(aa ↦ concat af bf n ≡ Either.Left(aa)) ↔ (𝕟-to-ℕ(n) < a)
@@ -164,6 +165,7 @@ concat-surjective-left {a = 𝐒 a} {b} {af} {bf} {x} with [∃]-intro x ⦃ q �
 -- TODO: Something is incorrect about this
 concat⁻¹ : (A → 𝕟(a)) → (B → 𝕟(b)) → ((A ‖ B) → 𝕟(a ℕ.+ b))
 concat⁻¹ {a = 𝟎}   {b = _}   af⁻¹ bf⁻¹ ([∨]-introₗ x) with () ← af⁻¹(x)
+{-# CATCHALL #-}
 concat⁻¹ {a = _}   {b = 𝟎}   af⁻¹ bf⁻¹ ([∨]-introᵣ x) with () ← bf⁻¹(x)
 concat⁻¹ {a = 𝟎}   {b = 𝐒 b} af⁻¹ bf⁻¹ ([∨]-introᵣ x) = bf⁻¹(x)
 concat⁻¹ {a = 𝐒 a} {b = 𝟎}   af⁻¹ bf⁻¹ ([∨]-introₗ x) = af⁻¹(x)
