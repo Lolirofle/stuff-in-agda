@@ -1,5 +1,7 @@
 module Numeral.Natural.Function.GreatestCommonDivisor.Proofs where
 
+open import Numeral.Natural.Function.GreatestCommonDivisor
+
 -- postulate gcd-identityₗ : ∀{b} → (gcd(𝟎)(b) ≡ b)
 -- gcd-identityₗ {𝟎}    = [≡]-intro
 -- gcd-identityₗ {𝐒(b)} = gcd-identityₗ {b}

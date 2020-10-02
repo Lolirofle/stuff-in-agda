@@ -52,6 +52,10 @@ module _ ⦃ _ : let _ = A in Equiv{ℓₑ₂}(B) ⦄ where
   [⊜]-identityᵣ : Identityᵣ {T₁ = A → B} (_∘_)(id)
   _⊜_.proof(Identityᵣ.proof([⊜]-identityᵣ)) = reflexivity(_≡_)
 
+module _ ⦃ _ : Equiv{ℓₑ}(A) ⦄ where
+  [⊜]-identity : Identity {T = A → A} (_∘_)(id)
+  [⊜]-identity = intro ⦃ left = [⊜]-identityₗ ⦄ ⦃ right = [⊜]-identityᵣ ⦄
+
 module _ ⦃ _ : let _ = A ; _ = B ; _ = C ; _ = D in Equiv{ℓₑ₄}(D) ⦄ where
   [⊜]-associativity : Names.AssociativityPattern {T₁ = C → D} {T₂ = B → C} {T₃ = A → B} (_∘_)(_∘_)(_∘_)(_∘_)
   _⊜_.proof ([⊜]-associativity {f} {g} {h}) {x} = reflexivity(_≡_)
