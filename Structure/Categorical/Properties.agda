@@ -112,6 +112,7 @@ module Morphism where
         -- Proposition stating that two objects are isomorphic.
         Isomorphic : Obj → Obj → Stmt
         Isomorphic(x)(y) = ∃(Isomorphism{x}{y})
+        _⤖_ = Isomorphic
 
         module _ {x : Obj} (f : ⟲ x) where
           -- A morphism is an automorphism when it is an endomorphism and an isomorphism.
@@ -137,6 +138,16 @@ module Morphism where
           field
             proof : ∀{z} → Names.CancellationOnᵣ {T₁ = y ⟶ z} (_▫_) (f)
         cancellationᵣ = inst-fn Epimorphism.proof
+        
+      -- Proposition stating that two objects are monomorphic.
+      Monomorphic : Obj → Obj → Stmt
+      Monomorphic(x)(y) = ∃(Monomorphism{x}{y})
+      _↣_ = Monomorphic
+
+      -- Proposition stating that two objects are epimorphic.
+      Epimorphic : Obj → Obj → Stmt
+      Epimorphic(x)(y) = ∃(Epimorphism{x}{y})
+      _↠_ = Epimorphic
 
     open OperModule public
     open IdModule   public

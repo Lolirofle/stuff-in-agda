@@ -273,3 +273,7 @@ module _ {ℓₒ₁}{ℓₒ₂}{ℓₗ} {X : Type{ℓₒ₁}}{Y : Type{ℓₒ₂
   ¬((¬ X) ∧ (¬ Y)) ↔ ¬(¬ (X ∨ Y))
   ∀{X} → ¬¬(X ∨ (¬ X))
   -}
+
+module _ {ℓₒ₁}{ℓₒ₂}{ℓₗ} {X : Type{ℓₒ₁}}{Y : Type{ℓₒ₂}}{P : X → Y → Stmt{ℓₗ}} where
+  [∀][∃]-to-function-existence : ∀ₗ(x ↦ ∃(y ↦ P(x)(y))) → ∃(f ↦ ∀ₗ(x ↦ P(x)(f(x))))
+  [∀][∃]-to-function-existence p = [∃]-intro (x ↦ [∃]-witness(p{x})) ⦃ \{x} → [∃]-proof(p{x}) ⦄

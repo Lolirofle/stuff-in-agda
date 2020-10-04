@@ -844,7 +844,7 @@ module NaturalDeduction where
                      in  (maxi2 Γ n) ∪ singleton(if Logic.decide(maxi2 Γ n ⊢ ψ) then ψ else (¬ ψ))
 
     maxi2-succ : let ψ = Logic.[∃]-witness (Formula-is-countably-infinite {P = P}) n in (((maxi2 Γ n) ∪ singleton(if Logic.decide(maxi2 Γ n ⊢ ψ) then ψ else (¬ ψ))) ≡ₛ maxi2 Γ (𝐒(n)))
-    maxi2-succ {n = n}{Γ = Γ} = Logic.[↔]-intro {!!} {!!}
+    -- maxi2-succ {n = n}{Γ = Γ} = Logic.[↔]-intro {!!} {!!}
 
     maxi2-zero : (Γ ≡ₛ maxi2 Γ 𝟎)
     maxi2-zero {Γ = Γ} = Logic.[↔]-symmetry (Sets.PredicateSet.LvlUp-set-equality {S = Γ})
@@ -868,7 +868,33 @@ module NaturalDeduction where
 
     instance
       max-consistent : Consistent(Γ) → Consistent(max Γ)
-      max-consistent con p = {!!}
+      max-consistent {Γ = Γ} con = [⊢]-subset-consistency (Logic.[∃]-proof test5) (maxi2-consistent con {Logic.[∃]-witness test5}) where
+        open import Numeral.Natural.Relation.Order
+        open import Type.Properties.Inhabited
+
+        test2 : (φ ∈ max Γ) → Logic.∃(n ↦ (φ ∈ maxi2 Γ n))
+        test2 p = p
+
+        test3a : ∀{φ} → Logic.∃(n ↦ ((φ ∈ max Γ) → (φ ∈ maxi2 Γ n)))
+        test3a = Logic.[∃]-unrelatedᵣ-[→]ₗ ⦃ pos = intro ⦃ 𝟎 ⦄ ⦄ test2
+
+        test3b : Logic.∃{Obj = Formula(P) → ℕ}(n ↦ (max Γ) ⊆ (φ ↦ φ ∈ maxi2 Γ (n(φ))))
+        test3b = Logic.[∀][∃]-to-function-existence test3a
+
+        test4 : ∀{a b} → (a ≤ b) → ∀{Γ : Formulas(P){ℓ}} → ((maxi2 Γ a) ⊆ (maxi2 Γ b))
+        test4 {a = 𝟎}   {𝟎}   [≤]-minimum                  p = p
+        test4 {a = 𝟎}   {𝐒 b} [≤]-minimum           {Γ}    p = Left(test4 {a = 𝟎}{b} [≤]-minimum {Γ} p)
+        test4 {a = 𝐒 a} {𝐒 b} ([≤]-with-[𝐒] ⦃ ab ⦄) {Γ}    (Left p)  = Left (test4 {a = a}{b} ab p)
+        test4 {a = 𝐒 a} {𝐒 b} ([≤]-with-[𝐒] ⦃ ab ⦄) {Γ}{φ} (Right p) = {!test4 {a = a}{b = b} ab {Γ ∪ singleton(if Logic.decide(maxi2 Γ b ⊢ β) then β else (¬ β))}{φ} ? !} where
+          β = Logic.[∃]-witness Formula-is-countably-infinite b
+        {-with Logic.excluded-middle(maxi2 Γ a ⊢ Logic.[∃]-witness Formula-is-countably-infinite a) | p
+        ... | Left x | [≡]-intro = {!!}
+        ... | Right x | q = test4 {a} {𝐒 b} {!!} {!!}-}
+
+        -- TODO: Because test3 and test4
+        test5 : Logic.∃(n ↦ (max Γ) ⊆ (maxi2 Γ n))
+
+      -- with [∃]-intro n ⦃ pn ⦄ ← max Γ = {!!}
       -- [⊢]-subset-consistency (\{φ} → {!maxi2-consistent con {n = 𝟎}!}) {!con!}
 
     instance

@@ -350,7 +350,7 @@ weak-excluded-middle-[¬]-preserves-[∧][∨]ᵣ = [↔]-intro l r where
 ------------------------------------------
 -- Predicate logic.
 
-module _ {P : Stmt{ℓ}} ⦃ classical-P : Classical(P) ⦄ {X : Type{ℓ₂}} ⦃ (intro ⦃ x ⦄) : (◊ X) ⦄ {Q : X → Stmt{ℓ₃}} where
+module _ {P : Stmt{ℓ}} ⦃ classical-P : Classical(P) ⦄ {X : Type{ℓ₂}} ⦃ pos@(intro ⦃ x ⦄) : (◊ X) ⦄ {Q : X → Stmt{ℓ₃}} where
   [∃]-unrelatedᵣ-[→]ₗ : ∃(x ↦ (P → Q(x))) ← (P → ∃(x ↦ Q(x)))
   [∃]-unrelatedᵣ-[→]ₗ pexqx with excluded-middle(P)
   ... | ([∨]-introₗ p)  = [∃]-map-proof (const) (pexqx(p))
