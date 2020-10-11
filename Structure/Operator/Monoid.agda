@@ -29,6 +29,12 @@ record Monoid {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ :
   identityᵣ : Identityᵣ (_▫_) id
   identityᵣ = Identity.right(identity)
 
+  identity-existenceₗ : ∃(Identityₗ(_▫_))
+  identity-existenceₗ = [∃]-intro id ⦃ identityₗ ⦄
+
+  identity-existenceᵣ : ∃(Identityᵣ(_▫_))
+  identity-existenceᵣ = [∃]-intro id ⦃ identityᵣ ⦄
+
 record MonoidObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
   constructor intro
   field

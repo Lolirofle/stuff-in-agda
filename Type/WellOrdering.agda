@@ -34,7 +34,7 @@ private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 --   N = W{A = Bool}(if_then Unit{Lvl.𝟎} else Empty{Lvl.𝟎}) -- Natural numbers using W.
 --   z : N                                                  -- Zero branch introduction.
 --   z = sup 𝐹 empty
---   z' : _ → N                                             -- Zero branch introduction.
+--   z' : _ → N                                             -- Zero branch introduction (defined like this because empty functions are not unique (from no function extensionality) resulting in more than one zero for this definition of the natural numbers).
 --   z' empty = sup 𝐹 empty
 --   s : N → N                                              -- Successor branch introduction.
 --   s n = sup 𝑇 (\{<> → n})
@@ -55,4 +55,3 @@ record W {A : Type{ℓ₁}} (B : A → Type{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ�
 -- TODO: Note that this is essentially Sets.IterativeSet
 V : ∀{ℓ₁} → Type{Lvl.𝐒(ℓ₁)}
 V {ℓ₁} = W {A = Type{ℓ₁}} id
-

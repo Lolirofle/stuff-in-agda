@@ -87,8 +87,8 @@ import FFI.IO as FFI
 -- import Formalization.ClassicalPropositionalLogic
 -- import Formalization.FunctionalML
 -- import Formalization.LambdaCalculus
--- import Formalization.Monoid
--- import Formalization.Polynomial
+import Formalization.Monoid
+import Formalization.Polynomial
 import Formalization.PrimitiveRecursion
 import Formalization.SKICombinatorCalculus
 import Formalization.SimplyTypedLambdaCalculus

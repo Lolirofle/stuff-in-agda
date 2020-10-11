@@ -15,7 +15,8 @@ open import Numeral.Natural using (ℕ)
 import      Numeral.Natural.Relation.Order as ℕ
 open import Relator.Ordering
 import      Relator.Ordering.Proofs as OrderingProofs
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Ordering
 open import Structure.Operator.Field
@@ -23,43 +24,53 @@ open import Structure.Operator.Monoid
 open import Structure.Operator.Group
 open import Structure.Operator.Proofs
 open import Structure.Operator.Properties
+open import Structure.Operator.Ring
 open import Structure.Operator
+open import Structure.Relator
 open import Structure.Relator.Ordering
 open        Structure.Relator.Ordering.Weak.Properties
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type
 
--- Theory defining the axioms of an ordered field (a field with a weak total order).
-record OrderedField {ℓ₁ ℓ₂} {F : Type{ℓ₁}} ⦃ _ : Equiv(F) ⦄ (_+_ _⋅_ : F → F → F) (_≤_ : F → F → Stmt{ℓ₂}) : Type{ℓ₁ Lvl.⊔ Lvl.𝐒(ℓ₂)} where
-  field
-    ⦃ [+][⋅]-field ⦄ : Field(_+_)(_⋅_)
+private variable ℓ ℓₗ ℓₑ : Lvl.Level
+private variable F : Type{ℓ}
 
-  open Field([+][⋅]-field) public
+-- TODO: Generalize so that this not neccessarily needs to be a ring
+record Ordered ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) ⦃ ring : Ring(_+_)(_⋅_) ⦄ (_≤_ : F → F → Stmt{ℓₗ}) : Type{Lvl.of(F) Lvl.⊔ ℓₗ Lvl.⊔ ℓₑ} where
   open From-[≤] (_≤_) public
+  open Ring(ring)
 
   field
-    ⦃ [≤]-totalOrder ⦄ : Weak.TotalOrder(_≤_)(_≡_)
-    [≤][+]ₗ-preserve   : ∀{x y z} → (x ≤ y) → ((x + z) ≤ (y + z))
-    [≤][⋅]-zero        : ∀{x y} → (𝟎 ≤ x) → (𝟎 ≤ y) → (𝟎 ≤ (x ⋅ y))
+    ⦃ [≤]-totalOrder ⦄    : Weak.TotalOrder(_≤_)(_≡_)
+    [≤][+]ₗ-preserve      : ∀{x y z} → (x ≤ y) → ((x + z) ≤ (y + z))
+    [≤][⋅]-zero           : ∀{x y} → (𝟎 ≤ x) → (𝟎 ≤ y) → (𝟎 ≤ (x ⋅ y))
+    ⦃ [≤]-binaryRelator ⦄ : BinaryRelator(_≤_)
 
-    -- TODO: Usually these would hold because of [≡]-substitution, but now?
-    -- TODO: Make _≤_ respect the equivalence
-    ⦃ [≡][≤]-sub ⦄ : (_≡_) ⊆₂ (_≤_)
+  -- TODO: Move this to Structure.Relator.Order or something
+  instance
+    [≡][≤]-sub : (_≡_) ⊆₂ (_≤_)
+    _⊆₂_.proof [≡][≤]-sub p = substitute₂ᵣ(_≤_) p (reflexivity(_≤_))
 
+  open Weak.TotalOrder([≤]-totalOrder) public
   open OrderingProofs.From-[≤] (_≤_) public
 
-  record NonNegative (x : F) : Stmt{ℓ₂} where
+  record NonNegative (x : F) : Stmt{ℓₗ} where
     constructor intro
     field proof : (x ≥ 𝟎)
 
-  record Positive (x : F) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+  record Positive (x : F) : Stmt{ℓₗ} where
     constructor intro
     field proof : (x > 𝟎)
 
   -- TODO: Stuff provable in fields
   instance
-    postulate [−]-binaryOperator : BinaryOperator(_−_)
+    [−]-binaryOperator : BinaryOperator(_−_)
+    BinaryOperator.congruence [−]-binaryOperator {x₁}{y₁}{x₂}{y₂} xy1 xy2 =
+      (x₁ − x₂)     🝖[ _≡_ ]-[]
+      (x₁ + (− x₂)) 🝖[ _≡_ ]-[ congruence₂(_+_) xy1 (congruence₁(−_) xy2) ]
+      (y₁ + (− y₂)) 🝖[ _≡_ ]-[]
+      (y₁ − y₂)     🝖-end
 
   instance
     [+]-cancellationₗ : Cancellationₗ(_+_)
@@ -100,7 +111,10 @@ record OrderedField {ℓ₁ ℓ₂} {F : Type{ℓ₁}} ⦃ _ : Equiv(F) ⦄ (_+_
 
   instance
     [⋅]-absorberᵣ : Absorberᵣ(_⋅_)(𝟎)
-    [⋅]-absorberᵣ = [↔]-to-[→] One.absorber-equivalence-by-commutativity [⋅]-absorberₗ
+    Absorberᵣ.proof [⋅]-absorberᵣ {x} = zero-when-redundant-addition $
+      x ⋅ 𝟎             🝖-[ congruence₂ᵣ(_⋅_)(x) (identityₗ(_+_)(𝟎)) ]-sym
+      x ⋅ (𝟎 + 𝟎)       🝖-[ distributivityₗ(_⋅_)(_+_) ]
+      (x ⋅ 𝟎) + (x ⋅ 𝟎) 🝖-end
 
   instance
      [+]-inversePropₗ : InversePropertyₗ(_+_)(−_)
@@ -126,12 +140,72 @@ record OrderedField {ℓ₁ ℓ₂} {F : Type{ℓ₁}} ⦃ _ : Equiv(F) ⦄ (_+_
     𝟎 + (− 𝟎) 🝖-[ inverseFunctionᵣ(_+_)(−_) ]
     𝟎         🝖-end
 
+  [−]-is-𝟎 : ∀{x} → ((− x) ≡ 𝟎) ↔ (x ≡ 𝟎)
+  [−]-is-𝟎 = [↔]-intro (p ↦ congruence₁(−_) p 🝖 [−]-of-𝟎) (p ↦ symmetry(_≡_) [−−]-elim 🝖 congruence₁(−_) p 🝖 [−]-of-𝟎)
+
+  module _ ⦃ unity : Unity(_+_)(_⋅_) ⦄ where
+    open import Type.Properties.MereProposition
+    open import Type.Properties.Singleton
+    open import Type.Properties.Singleton.Proofs
+
+    open Unity(unity)
+
+    singleton-when-identities-equal : (𝟎 ≡ 𝟏) ↔ IsUnit(F)
+    singleton-when-identities-equal = [↔]-intro l r where
+      l : (𝟎 ≡ 𝟏) ← IsUnit(F)
+      l p = uniqueness(_) ⦃ inst = unit-is-prop ⦃ proof = p ⦄ ⦄
+
+      r : (𝟎 ≡ 𝟏) → IsUnit(F)
+      IsUnit.unit       (r oi)     = 𝟎
+      IsUnit.uniqueness (r oi) {x} =
+        x     🝖[ _≡_ ]-[ identityᵣ(_⋅_)(𝟏) ]-sym
+        x ⋅ 𝟏 🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(x) oi ]-sym
+        x ⋅ 𝟎 🝖[ _≡_ ]-[ absorberᵣ(_⋅_)(𝟎) ]
+        𝟎     🝖-end
+
+    [⋅]ₗ-of-[−1] : ∀{x} → ((− 𝟏) ⋅ x ≡ − x)
+    [⋅]ₗ-of-[−1] {x} = One.unique-inverseᵣ-by-id $
+      x + ((− 𝟏) ⋅ x)       🝖-[ congruence₂ₗ(_+_)(_) (identityₗ(_⋅_)(𝟏)) ]-sym
+      (𝟏 ⋅ x) + ((− 𝟏) ⋅ x) 🝖-[ distributivityᵣ(_⋅_)(_+_) ]-sym
+      (𝟏 + (− 𝟏)) ⋅ x       🝖-[ congruence₂ₗ(_⋅_)(x) (inverseFunctionᵣ(_+_)(−_)) ]
+      𝟎 ⋅ x                 🝖-[ absorberₗ(_⋅_)(𝟎) ]
+      𝟎                     🝖-end
+
+    [⋅]ᵣ-of-[−1] : ∀{x} → (x ⋅ (− 𝟏) ≡ − x)
+    [⋅]ᵣ-of-[−1] {x} = One.unique-inverseₗ-by-id $
+      (x ⋅ (− 𝟏)) + x       🝖-[ congruence₂ᵣ(_+_)(_) (identityᵣ(_⋅_)(𝟏)) ]-sym
+      (x ⋅ (− 𝟏)) + (x ⋅ 𝟏) 🝖-[ distributivityₗ(_⋅_)(_+_) ]-sym
+      x ⋅ ((− 𝟏) + 𝟏)       🝖-[ congruence₂ᵣ(_⋅_)(x) (inverseFunctionₗ(_+_)(−_)) ]
+      x ⋅ 𝟎                 🝖-[ absorberᵣ(_⋅_)(𝟎) ]
+      𝟎                     🝖-end
+
+    [⋅]ₗ-of-[−] : ∀{x y} → ((− x) ⋅ y ≡ −(x ⋅ y))
+    [⋅]ₗ-of-[−] {x}{y} =
+      ((− x) ⋅ y)       🝖-[ congruence₂ₗ(_⋅_)(y) [⋅]ₗ-of-[−1] ]-sym
+      (((− 𝟏) ⋅ x) ⋅ y) 🝖-[ associativity(_⋅_) ]
+      ((− 𝟏) ⋅ (x ⋅ y)) 🝖-[ [⋅]ₗ-of-[−1] ]
+      (−(x ⋅ y))        🝖-end
+
+    [⋅]ᵣ-of-[−] : ∀{x y} → (x ⋅ (− y) ≡ −(x ⋅ y))
+    [⋅]ᵣ-of-[−] {x}{y} =
+      (x ⋅ (− y))       🝖-[ congruence₂ᵣ(_⋅_)(x) [⋅]ᵣ-of-[−1] ]-sym
+      (x ⋅ (y ⋅ (− 𝟏))) 🝖-[ associativity(_⋅_) ]-sym
+      ((x ⋅ y) ⋅ (− 𝟏)) 🝖-[ [⋅]ᵣ-of-[−1] ]
+      (−(x ⋅ y))        🝖-end
+
+    [⋅]-of-[−] : ∀{x y} → ((− x) ⋅ (− y) ≡ x ⋅ y)
+    [⋅]-of-[−] {x}{y} =
+      ((− x) ⋅ (− y)) 🝖[ _≡_ ]-[ [⋅]ᵣ-of-[−] ]
+      −((− x) ⋅ y)    🝖[ _≡_ ]-[ congruence₁(−_) [⋅]ₗ-of-[−] ]
+      −(−(x ⋅ y))     🝖[ _≡_ ]-[ [−−]-elim ]
+      (x ⋅ y)         🝖-end
+
   [≤][+]ᵣ-preserve : ∀{x y z} → (y ≤ z) → ((x + y) ≤ (x + z))
   [≤][+]ᵣ-preserve {x}{y}{z} yz =
-    x + y       🝖[ _≡_ ]-[ commutativity(_+_) ]-sub
-    y + x       🝖[ _≤_ ]-[ [≤][+]ₗ-preserve yz ]
-    z + x       🝖[ _≡_ ]-[ commutativity(_+_) ]-sub
-    x + z       🝖-end
+    x + y 🝖[ _≡_ ]-[ commutativity(_+_) ]-sub
+    y + x 🝖[ _≤_ ]-[ [≤][+]ₗ-preserve yz ]
+    z + x 🝖[ _≡_ ]-[ commutativity(_+_) ]-sub
+    x + z 🝖-end
 
   [≤][+]-preserve : ∀{x₁ x₂ y₁ y₂} → (x₁ ≤ x₂) → (y₁ ≤ y₂) → ((x₁ + y₁) ≤ (x₂ + y₂))
   [≤][+]-preserve {x₁}{x₂}{y₁}{y₂} px py =
@@ -223,3 +297,12 @@ record OrderedField {ℓ₁ ℓ₂} {F : Type{ℓ₁}} ⦃ _ : Equiv(F) ⦄ (_+_
   
   postulate [<][+]-preserve-subₗ : ∀{x₁ x₂ y₁ y₂} → (x₁ ≤ x₂) → (y₁ < y₂) → ((x₁ + y₁) < (x₂ + y₂))
   postulate [<][+]-preserve-subᵣ : ∀{x₁ x₂ y₁ y₂} → (x₁ < x₂) → (y₁ ≤ y₂) → ((x₁ + y₁) < (x₂ + y₂))
+
+-- Theory defining the axioms of an ordered field (a field with a weak total order).
+record OrderedField ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) (_≤_ : F → F → Stmt{ℓₗ}) : Type{Lvl.of(F) Lvl.⊔ ℓₗ Lvl.⊔ ℓₑ} where
+  field
+    ⦃ [+][⋅]-field ⦄ : Field(_+_)(_⋅_)
+    ⦃ ordered ⦄      : Ordered(_+_)(_⋅_)(_≤_)
+
+  open Field([+][⋅]-field) public
+  open Ordered(ordered) public

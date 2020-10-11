@@ -297,29 +297,31 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
     inv(inv y) ▫ x          🝖-[ congruence₂ₗ(_▫_)(_) (double-inverse ⦃ cancᵣ = cancellationᵣ-by-group ⦄) ]
     y ▫ x                   🝖-end
 
-  unique-inverseₗ-by-id : let _ = op , assoc , select-id(id)(ident) in Unique(InverseFunctionₗ(_▫_))
-  unique-inverseₗ-by-id {id = id} {x = inv₁} {inv₂} inverse₁ inverse₂ = intro \{x} →
-    (
-      inv₁(x)                             🝖-[ symmetry(_≡_) (identityᵣ(_▫_)(id)) ]
-      inv₁(x) ▫ id                        🝖-[ congruence₂ᵣ(_▫_)(_) (symmetry(_≡_) (inverseFunctionₗ(_▫_)(inv₂) ⦃ inverse₂ ⦄)) ]
-      inv₁(x) ▫ (inv₂(inv₂(x)) ▫ inv₂(x)) 🝖-[ symmetry(_≡_) (associativity(_▫_)) ]
-      (inv₁(x) ▫ inv₂(inv₂(x))) ▫ inv₂(x) 🝖-[ congruence₂ₗ(_▫_)(_) (congruence₂ᵣ(_▫_)(_) (double-inverseₗ-by-id ⦃ inverₗ = inverse₂ ⦄)) ]
-      (inv₁(x) ▫ x) ▫ inv₂(x)             🝖-[ congruence₂ₗ(_▫_)(_) (inverseFunctionₗ(_▫_)(inv₁) ⦃ inverse₁ ⦄) ]
-      id ▫ inv₂(x)                        🝖-[ identityₗ(_▫_)(id) ]
-      inv₂(x)                             🝖-end
-    )
+  unique-inverseₗ-by-id : let _ = op , assoc , select-id(id)(ident) , select-invₗ(id)(Identity.left ident)(inv)(inverₗ) in ∀{x x⁻¹} → (x⁻¹ ▫ x ≡ id) → (x⁻¹ ≡ inv(x))
+  unique-inverseₗ-by-id {id = id} {inv = inv} {x}{x⁻¹} inver-elem =
+    x⁻¹                          🝖-[ identityᵣ(_▫_)(id) ]-sym
+    x⁻¹ ▫ id                     🝖-[ congruence₂ᵣ(_▫_)(_) (inverseFunctionₗ(_▫_)(inv)) ]-sym
+    x⁻¹ ▫ (inv(inv(x)) ▫ inv(x)) 🝖-[ associativity(_▫_) ]-sym
+    (x⁻¹ ▫ inv(inv(x))) ▫ inv(x) 🝖-[ congruence₂ₗ(_▫_)(_) (congruence₂ᵣ(_▫_)(_) (double-inverseₗ-by-id)) ]
+    (x⁻¹ ▫ x) ▫ inv(x)           🝖-[ congruence₂ₗ(_▫_)(_) inver-elem ]
+    id ▫ inv(x)                  🝖-[ identityₗ(_▫_)(id) ]
+    inv(x)                       🝖-end
 
-  unique-inverseᵣ-by-id : let _ = op , assoc , select-id(id)(ident) in Unique(InverseFunctionᵣ(_▫_))
-  unique-inverseᵣ-by-id {id = id} {x = inv₁} {inv₂} inverse₁ inverse₂ = intro \{x} →
-    (
-      inv₁(x)                             🝖-[ symmetry(_≡_) (identityₗ(_▫_)(id)) ]
-      id ▫ inv₁(x)                        🝖-[ congruence₂ₗ(_▫_)(_) (symmetry(_≡_) (inverseFunctionᵣ(_▫_)(inv₂) ⦃ inverse₂ ⦄)) ]
-      (inv₂(x) ▫ inv₂(inv₂(x))) ▫ inv₁(x) 🝖-[ associativity(_▫_) ]
-      inv₂(x) ▫ (inv₂(inv₂(x)) ▫ inv₁(x)) 🝖-[ congruence₂ᵣ(_▫_)(_) (congruence₂ₗ(_▫_)(_) (double-inverseᵣ-by-id ⦃ inverᵣ = inverse₂ ⦄)) ]
-      inv₂(x) ▫ (x ▫ inv₁(x))             🝖-[ congruence₂ᵣ(_▫_)(_) (inverseFunctionᵣ(_▫_)(inv₁) ⦃ inverse₁ ⦄) ]
-      inv₂(x) ▫ id                        🝖-[ identityᵣ(_▫_)(id) ]
-      inv₂(x)                             🝖-end
-    )
+  unique-inverseᵣ-by-id : let _ = op , assoc , select-id(id)(ident) , select-invᵣ(id)(Identity.right ident)(inv)(inverᵣ) in ∀{x x⁻¹} → (x ▫ x⁻¹ ≡ id) → (x⁻¹ ≡ inv(x))
+  unique-inverseᵣ-by-id {id = id} {inv = inv} {x}{x⁻¹} inver-elem =
+    x⁻¹                          🝖-[ identityₗ(_▫_)(id) ]-sym
+    id ▫ x⁻¹                     🝖-[ congruence₂ₗ(_▫_)(_) (inverseFunctionᵣ(_▫_)(inv)) ]-sym
+    (inv(x) ▫ inv(inv(x))) ▫ x⁻¹ 🝖-[ associativity(_▫_) ]
+    inv(x) ▫ (inv(inv(x)) ▫ x⁻¹) 🝖-[ congruence₂ᵣ(_▫_)(_) (congruence₂ₗ(_▫_)(_) double-inverseᵣ-by-id) ]
+    inv(x) ▫ (x ▫ x⁻¹)           🝖-[ congruence₂ᵣ(_▫_)(_) inver-elem ]
+    inv(x) ▫ id                  🝖-[ identityᵣ(_▫_)(id) ]
+    inv(x)                       🝖-end
+
+  unique-inverseFunctionₗ-by-id : let _ = op , assoc , select-id(id)(ident) in Unique(InverseFunctionₗ(_▫_))
+  unique-inverseFunctionₗ-by-id {id = id} {x = inv₁} {inv₂} inverse₁ inverse₂ = intro \{x} → unique-inverseₗ-by-id ⦃ inverₗ = inverse₂ ⦄ (inverseFunctionₗ(_▫_)(inv₁) ⦃ inverse₁ ⦄)
+
+  unique-inverseFunctionᵣ-by-id : let _ = op , assoc , select-id(id)(ident) in Unique(InverseFunctionᵣ(_▫_))
+  unique-inverseFunctionᵣ-by-id {id = id} {x = inv₁} {inv₂} inverse₁ inverse₂ = intro \{x} → unique-inverseᵣ-by-id ⦃ inverᵣ = inverse₂ ⦄ (inverseFunctionᵣ(_▫_)(inv₁) ⦃ inverse₁ ⦄)
 
   unique-inverses : let _ = op , assoc , select-id(id)(ident) in ⦃ _ : InverseFunctionₗ(_▫_)(invₗ) ⦄ → ⦃ _ : InverseFunctionᵣ(_▫_)(invᵣ) ⦄ → (invₗ ≡ invᵣ)
   unique-inverses {id} {invₗ} {invᵣ} = intro \{x} →

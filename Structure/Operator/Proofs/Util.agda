@@ -61,6 +61,9 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
   associate4-321-231 : let _ = op , assoc in ∀{a b c d} → (a ▫ (b ▫ (c ▫ d)) ≡ a ▫ ((b ▫ c) ▫ d))
   associate4-321-231 {a}{b}{c}{d} = congruence₂ᵣ(_▫_)(_) (symmetry(_≡_) (associativity(_▫_)))
 
+  associate4-231-222 : let _ = op , assoc in ∀{a b c d} → (a ▫ ((b ▫ c) ▫ d) ≡ (a ▫ b) ▫ (c ▫ d))
+  associate4-231-222 {a}{b}{c}{d} = symmetry(_≡_) associate4-321-231 🝖 symmetry(_≡_) associate4-123-321 🝖 associativity(_▫_)
+
   commuteᵣ-assocₗ : let _ = op , assoc , comm in ∀{a b c} → (((a ▫ b) ▫ c) ≡ ((a ▫ c) ▫ b))
   commuteᵣ-assocₗ {a}{b}{c} =
     (a ▫ b) ▫ c 🝖-[ associativity(_▫_) ]
@@ -74,6 +77,9 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
     (a ▫ b) ▫ c 🝖-[ congruence₂ₗ(_▫_)(_) (commutativity(_▫_)) ]
     (b ▫ a) ▫ c 🝖-[ associativity(_▫_) ]
     b ▫ (a ▫ c) 🝖-end
+
+  commuteᵣ-assocᵣ : let _ = op , assoc , comm in ∀{a b c} → ((a ▫ (b ▫ c)) ≡ ((a ▫ c) ▫ b))
+  commuteᵣ-assocᵣ = symmetry(_≡_) (associativity(_▫_)) 🝖 commuteᵣ-assocₗ
 
   -- TODO: Rename and generalize this (See commuteBoth in Structure.Operator.Properties)
   commuteBothTemp : let _ = comm in ∀{a₁ a₂ b₁ b₂} → (a₁ ▫ a₂ ≡ b₁ ▫ b₂) → (a₂ ▫ a₁ ≡ b₂ ▫ b₁)

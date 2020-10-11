@@ -20,6 +20,7 @@ module Semigroup where
 
 module Monoid where
   open import Data.List
+  open import Data.List.Functions
 
   -- A term in the language of a monoid.
   -- It consists of a finite number of variables, an identity element, and a binary operator on its elements.
@@ -101,6 +102,7 @@ module CommutativeMonoid where
 
 module CommutativeRig where
   open import Data.ListSized
+  open import Formalization.Polynomial as Polynomial using (Polynomial)
 
   -- A term in the language of a commutative rig.
   -- It consists of a finite number of variables and a binary operator on its elements.
@@ -112,11 +114,13 @@ module CommutativeRig where
     𝟏 : Term(n)
 
   NormalForm : ℕ → Type
-  NormalForm = Polynomial.Polynomial
+  NormalForm = Polynomial
 
+  {-
   normalize : Term(n) → NormalForm(n)
   normalize (var x) = {!!}
   normalize (t ➕ t₁) = {!!}
   normalize (t ✖ t₁) = {!!}
   normalize 𝟎 = {!!}
   normalize 𝟏 = {!!}
+  -}

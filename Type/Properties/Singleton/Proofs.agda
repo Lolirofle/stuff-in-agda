@@ -12,7 +12,7 @@ open import Type.Properties.MereProposition
 open import Type.Properties.Singleton
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Equivalence
@@ -22,10 +22,10 @@ open import Syntax.Function
 open import Type.Dependent
 open import Type
 
-private variable ℓ : Lvl.Level
+private variable ℓ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ ℓₑ₅ : Lvl.Level
 private variable A B T U P : Type{ℓ}
 
-module _ ⦃ equiv : Equiv(U) ⦄ where
+module _ ⦃ equiv : Equiv{ℓₑ}(U) ⦄ where
   unit-is-pos : ⦃ proof : IsUnit(U) ⦄ → ◊(U)
   unit-is-pos ⦃ intro unit uniqueness ⦄ = intro ⦃ unit ⦄
 
@@ -35,26 +35,26 @@ module _ ⦃ equiv : Equiv(U) ⦄ where
   pos-prop-is-unit : ⦃ _ : (◊ U) ⦄ → ⦃ _ : MereProposition(U) ⦄ → IsUnit(U)
   pos-prop-is-unit ⦃ intro ⦃ unit ⦄ ⦄ ⦃ intro uniqueness ⦄ = intro unit (\{x} → uniqueness{x}{unit})
 
-module _ ⦃ equiv-p : Equiv(P) ⦄ ⦃ prop-p : MereProposition(P) ⦄ ⦃ equiv-a : Equiv(A) ⦄ where
+module _ ⦃ equiv-p : Equiv{ℓₑ}(P) ⦄ ⦃ prop-p : MereProposition(P) ⦄ ⦃ equiv-a : Equiv{ℓₑ₁}(A) ⦄ where
   prop-fn-unique-value : ∀{f : P → A} → ⦃ _ : Function(f) ⦄ → (∀{x y} → (f(x) ≡ f(y)))
   prop-fn-unique-value {f = f}{x}{y} = congruence₁(f) (MereProposition.uniqueness(prop-p){x}{y})
 
-module _ ⦃ equiv-u : Equiv(U) ⦄ ⦃ unit-u : IsUnit(U) ⦄ ⦃ equiv-a : Equiv(A) ⦄ where
+module _ ⦃ equiv-u : Equiv{ℓₑ}(U) ⦄ ⦃ unit-u : IsUnit(U) ⦄ ⦃ equiv-a : Equiv{ℓₑ₁}(A) ⦄ where
   unit-fn-unique-value : ∀{f : U → A} → ⦃ _ : Function(f) ⦄ → (∀{x y} → (f(x) ≡ f(y)))
   unit-fn-unique-value = prop-fn-unique-value ⦃ prop-p = unit-is-prop ⦃ proof = unit-u ⦄ ⦄
 
 module _
-  ⦃ equiv-a : Equiv(A) ⦄
-  ⦃ equiv-b : Equiv(B) ⦄
-  ⦃ equiv-ab : Equiv(A ∧ B) ⦄
+  ⦃ equiv-a : Equiv{ℓₑ₁}(A) ⦄
+  ⦃ equiv-b : Equiv{ℓₑ₂}(B) ⦄
+  ⦃ equiv-ab : Equiv{ℓₑ₃}(A ∧ B) ⦄
   ⦃ op : BinaryOperator([∧]-intro) ⦄ where
   instance
     prop-conjunction : ⦃ prop-a : MereProposition(A) ⦄ ⦃ prop-b : MereProposition(B) ⦄ → MereProposition(A ∧ B)
     MereProposition.uniqueness prop-conjunction {[∧]-intro a₁ b₁} {[∧]-intro a₂ b₂} = congruence₂([∧]-intro) (uniqueness(A)) (uniqueness(B))
 
 module _
-  ⦃ equiv-b : Equiv(B) ⦄
-  ⦃ equiv-ab : Equiv(A → B) ⦄
+  ⦃ equiv-b : Equiv{ℓₑ₁}(B) ⦄
+  ⦃ equiv-ab : Equiv{ℓₑ₂}(A → B) ⦄
   ⦃ funcExt : FunctionExtensionality(A)(B) ⦄
   where
   prop-implication : ⦃ prop-b : MereProposition(B) ⦄ → MereProposition(A → B)
@@ -62,37 +62,37 @@ module _
 
 module _
   {B : A → Type{ℓ}}
-  ⦃ equiv-b : ∀{a} → Equiv(B(a)) ⦄
-  ⦃ equiv-ab : Equiv((a : A) → B(a)) ⦄
+  ⦃ equiv-b : ∀{a} → Equiv{ℓₑ₁}(B(a)) ⦄
+  ⦃ equiv-ab : Equiv{ℓₑ₂}((a : A) → B(a)) ⦄
   ⦃ funcExt : DependentFunctionExtensionality(A)(B) ⦄
   where
   prop-dependent-implication : ⦃ prop-b : ∀{a} → MereProposition(B(a)) ⦄ → MereProposition((a : A) → B(a))
   MereProposition.uniqueness prop-dependent-implication = dependentFunctionExtensionality(A)(B)(\{a} → uniqueness(B(a)))
 
-module _ ⦃ equiv-top : Equiv(⊤) ⦄ where
+module _ ⦃ equiv-top : Equiv{ℓₑ}(⊤) ⦄ where
   instance
     prop-top : MereProposition(⊤)
     prop-top = unit-is-prop
 
-module _ ⦃ equiv-bottom : Equiv(⊥) ⦄ where
+module _ ⦃ equiv-bottom : Equiv{ℓₑ}(⊥) ⦄ where
   instance
     prop-bottom : MereProposition(⊥) ⦃ equiv-bottom ⦄
     MereProposition.uniqueness prop-bottom {}
 
 module _
-  {P : A → Type{ℓ}} ⦃ equiv-p : ∀{x} → Equiv(P(x)) ⦄
-  ⦃ equiv-ap : Equiv(∀ₗ P) ⦄
+  {P : A → Type{ℓ}} ⦃ equiv-p : ∀{x} → Equiv{ℓₑ₁}(P(x)) ⦄
+  ⦃ equiv-ap : Equiv{ℓₑ₂}(∀ₗ P) ⦄
   ⦃ funcExt : DependentImplicitFunctionExtensionality(A)(P) ⦄
   where
   prop-universal : ⦃ prop-p : ∀{x} → MereProposition(P(x)) ⦄ → MereProposition(∀ₗ P)
   MereProposition.uniqueness prop-universal = dependentImplicitFunctionExtensionality(A)(P) (\{x} → uniqueness(P(x)))
 
 module _
-  ⦃ equiv-a : Equiv(A) ⦄
-  ⦃ equiv-b : Equiv(B) ⦄
-  ⦃ equiv-ba : Equiv(A ← B) ⦄
-  ⦃ equiv-ab : Equiv(A → B) ⦄
-  ⦃ equiv-eq : Equiv(A ↔ B) ⦄
+  ⦃ equiv-a : Equiv{ℓₑ₁}(A) ⦄
+  ⦃ equiv-b : Equiv{ℓₑ₂}(B) ⦄
+  ⦃ equiv-ba : Equiv{ℓₑ₃}(A ← B) ⦄
+  ⦃ equiv-ab : Equiv{ℓₑ₄}(A → B) ⦄
+  ⦃ equiv-eq : Equiv{ℓₑ₅}(A ↔ B) ⦄
   ⦃ op : BinaryOperator([↔]-intro) ⦄
   ⦃ funcExtₗ : FunctionExtensionality(B)(A) ⦄
   ⦃ funcExtᵣ : FunctionExtensionality(A)(B) ⦄
@@ -101,16 +101,16 @@ module _
   prop-equivalence = prop-conjunction ⦃ prop-a = prop-implication ⦄ ⦃ prop-b = prop-implication ⦄
 
 module _
-  ⦃ equiv-na : Equiv(¬ A) ⦄
+  ⦃ equiv-na : Equiv{ℓₑ}(¬ A) ⦄
   ⦃ funcExt : FunctionExtensionality(A)(⊥) ⦄
   where
   prop-negation : MereProposition(¬ A)
   prop-negation = prop-implication
 
 module _
-  ⦃ equiv-a : Equiv(A) ⦄
-  ⦃ equiv-b : Equiv(B) ⦄
-  ⦃ equiv-ab : Equiv(A ∨ B) ⦄
+  ⦃ equiv-a : Equiv{ℓₑ₁}(A) ⦄
+  ⦃ equiv-b : Equiv{ℓₑ₂}(B) ⦄
+  ⦃ equiv-ab : Equiv{ℓₑ₃}(A ∨ B) ⦄
   (left-right-neq : ∀{a : A}{b : B} → ([∨]-introₗ a ≢ [∨]-introᵣ b))
   where
   not-prop-disjunction : MereProposition(A ∨ B) → IsEmpty(A ∧ B)

@@ -49,7 +49,7 @@ module _
       𝟎ᵥ +ᵥ (s ⋅ₛᵥ 𝟎ᵥ)         🝖-end
 
     [⋅ₛᵥ]-negation : ∀{v} → ((−ₛ 𝟏ₛ) ⋅ₛᵥ v ≡ −ᵥ v)
-    [⋅ₛᵥ]-negation {v} = _⊜_.proof (One.unique-inverseᵣ-by-id (intro p) [+ᵥ]-inverseᵣ) {v} where
+    [⋅ₛᵥ]-negation {v} = _⊜_.proof (One.unique-inverseFunctionᵣ-by-id (intro p) [+ᵥ]-inverseᵣ) {v} where
       p : Names.InverseFunctionᵣ(_+ᵥ_) 𝟎ᵥ ((−ₛ 𝟏ₛ) ⋅ₛᵥ_)
       p{v} =
         v +ᵥ ((−ₛ 𝟏ₛ) ⋅ₛᵥ v)          🝖-[ congruence₂ₗ(_+ᵥ_) _ (identityₗ(_⋅ₛᵥ_)(𝟏ₛ)) ]-sym

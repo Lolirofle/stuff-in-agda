@@ -73,10 +73,18 @@ module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ�
 module _
   {A : Type{ℓₒ₁}}
   {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄
+  where
+
+  invᵣ-surjective : (f : A → B) ⦃ surj : Surjective(f) ⦄ → (B → A)
+  invᵣ-surjective _ ⦃ surj ⦄ (y) = [∃]-witness(Surjective.proof surj{y})
+
+module _
+  {A : Type{ℓₒ₁}}
+  {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄
   {f : A → B}
   where
 
-  surjective-to-inverseᵣ : ⦃ surj : Surjective(f) ⦄ → Inverseᵣ(f)(y ↦ [∃]-witness(Surjective.proof surj{y}))
+  surjective-to-inverseᵣ : ⦃ surj : Surjective(f) ⦄ → Inverseᵣ(f)(invᵣ-surjective f)
   surjective-to-inverseᵣ ⦃ intro surj ⦄ = intro([∃]-proof surj)
 
 module _
@@ -106,11 +114,11 @@ module _
   -- Specifically the one that is used in the constructive proof of surjectivity for f.
   -- Without assuming that the value used in the proof of surjectivity constructs a function, this would be unprovable because it is not guaranteed in arbitrary setoids.
   -- Note: The usual formulation of this proposition (without assuming `inv-func`) is equivalent to the axiom of choice from set theory in classical logic.
-  surjective-to-invertibleᵣ : ⦃ surj : Surjective(f) ⦄ ⦃ inv-func : Function(y ↦ [∃]-witness(Surjective.proof surj{y})) ⦄ → Invertibleᵣ(f)
-  ∃.witness (surjective-to-invertibleᵣ ⦃ surj = intro surj ⦄)                         y = [∃]-witness(surj{y})
+  surjective-to-invertibleᵣ : ⦃ surj : Surjective(f) ⦄ ⦃ inv-func : Function(invᵣ-surjective f) ⦄ → Invertibleᵣ(f)
+  ∃.witness (surjective-to-invertibleᵣ)                                                 = invᵣ-surjective f
   ∃.proof   (surjective-to-invertibleᵣ ⦃ surj = intro surj ⦄ ⦃ inv-func = inv-func ⦄)   = [∧]-intro inv-func (intro([∃]-proof surj))
 
-  invertibleᵣ-when-surjective : Invertibleᵣ(f) ↔ Σ(Surjective(f)) (surj ↦ Function(y ↦ [∃]-witness(Surjective.proof surj{y})))
+  invertibleᵣ-when-surjective : Invertibleᵣ(f) ↔ Σ(Surjective(f)) (surj ↦ Function(invᵣ-surjective f ⦃ surj ⦄))
   invertibleᵣ-when-surjective =
     [↔]-intro
       (surj   ↦ surjective-to-invertibleᵣ ⦃ Σ.left surj ⦄ ⦃ Σ.right surj ⦄)
@@ -296,7 +304,7 @@ module _
   bijective-to-invertible : ⦃ bij : Bijective(f) ⦄ → Invertible(f)
   bijective-to-invertible {f = f} ⦃ bij = bij ⦄ = [∃]-intro f⁻¹ ⦃ [∧]-intro f⁻¹-function ([∧]-intro f⁻¹-inverseₗ f⁻¹-inverseᵣ) ⦄ where
     f⁻¹ : B → A
-    f⁻¹(y) = [∃]-witness(Surjective.proof(bijective-to-surjective(f)){y})
+    f⁻¹ = invᵣ-surjective f ⦃ bijective-to-surjective(f) ⦄
 
     f⁻¹-inverseᵣ : Inverseᵣ(f)(f⁻¹)
     f⁻¹-inverseᵣ = surjective-to-inverseᵣ ⦃ surj = bijective-to-surjective(f) ⦄

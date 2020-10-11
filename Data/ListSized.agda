@@ -50,6 +50,10 @@ module _ {ℓ} {T : Type{ℓ}} where
   tail : ∀{n} → List(T)(𝐒(n)) → List(T)(n)
   tail (_ ⊰ l) = l
 
+  tail₀ : ∀{n} → List(T)(n) → List(T)(𝐏(n))
+  tail₀ ∅       = ∅
+  tail₀ (_ ⊰ l) = l
+
   -- The nth element in the list
   index : ∀{n} → 𝕟(n) → List(T)(n) → T
   index 𝟎      (x ⊰ _) = x
@@ -134,3 +138,28 @@ map₂ f g₁ g₂ ∅          ∅          = ∅
 map₂ f g₁ g₂ ∅          l₂@(_ ⊰ _) = g₂ l₂
 map₂ f g₁ g₂ l₁@(_ ⊰ _) ∅          = g₁ l₁
 map₂ f g₁ g₂ (x₁ ⊰ l₁)  (x₂ ⊰ l₂)  = f x₁ x₂ ⊰ map₂ f (tail ∘ g₁ ∘ (x₁ ⊰_)) ((tail ∘ g₂ ∘ (x₂ ⊰_))) l₁ l₂
+
+map₂₌ : (A₁ → A₂ → B) → (List(A₁)(n) → List(A₂)(n) → List(B)(n))
+map₂₌ f ∅          ∅          = ∅
+map₂₌ f (x₁ ⊰ l₁)  (x₂ ⊰ l₂)  = f x₁ x₂ ⊰ map₂₌ f l₁ l₂
+
+-- Accumulates the results of every step in `_^_` into a list.
+-- Example:
+--   accumulateIterate₀ 0 f(x) = []
+--   accumulateIterate₀ 1 f(x) = [x]
+--   accumulateIterate₀ 2 f(x) = [x , f(x)]
+--   accumulateIterate₀ 3 f(x) = [x , f(x) , f(f(x))]
+--   accumulateIterate₀ 4 f(x) = [x , f(x) , f(f(x)) , f(f(f(x)))]
+accumulateIterate₀ : (n : ℕ) → (T → T) → (T → List(T)(n))
+accumulateIterate₀ 𝟎      f(x) = ∅
+accumulateIterate₀ (𝐒(n)) f(x) = x ⊰ accumulateIterate₀ n f (f(x))
+
+-- Accumulates the results of every step in `_^_` into a list.
+-- Example:
+--   accumulateIterate 0 f(x) = [x]
+--   accumulateIterate 1 f(x) = [x , f(x)]
+--   accumulateIterate 2 f(x) = [x , f(x) , f(f(x))]
+--   accumulateIterate 3 f(x) = [x , f(x) , f(f(x)) , f(f(f(x)))]
+--   accumulateIterate 4 f(x) = [x , f(x) , f(f(x)) , f(f(f(x))) , f(f(f(f(x))))]
+accumulateIterate : (n : ℕ) → (T → T) → (T → List(T)(𝐒(n)))
+accumulateIterate n = accumulateIterate₀(𝐒(n))

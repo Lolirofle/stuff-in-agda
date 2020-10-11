@@ -1,5 +1,6 @@
 module Relator.Ordering.Proofs where
 
+import      Lvl
 open import Functional
 open import Logic
 open import Logic.Classical
@@ -13,9 +14,12 @@ open import Structure.Relator.Properties
 open import Structure.Relator.Properties.Proofs
 open import Syntax.Transitivity
 
-module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
+private variable ℓ ℓₗ ℓₑ : Lvl.Level
+private variable T : Type{ℓ}
+
+module From-[≤] (_≤_ : T → T → Stmt{ℓₗ}) where
   open        Relator.Ordering.From-[≤] (_≤_)
-  open import Structure.Setoid
+  open import Structure.Setoid.WithLvl
 
   [≤][>]-not : ∀{a b} → (a ≤ b) → (a > b) → ⊥
   [≤][>]-not = apply
@@ -23,7 +27,7 @@ module From-[≤] {ℓ₁ ℓ₂} {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{�
   [≥][<]-not : ∀{a b} → (a ≥ b) → (a < b) → ⊥
   [≥][<]-not = apply
 
-  module _ ⦃ _ : Equiv(T) ⦄ ⦃ _ : Weak.TotalOrder(_≤_)(_≡_) ⦄ where
+  module _ ⦃ _ : Equiv{ℓₑ}(T) ⦄ ⦃ _ : Weak.TotalOrder(_≤_)(_≡_) ⦄ where
     [<]-to-[≤] : Names.Subrelation(_<_)(_≤_)
     [<]-to-[≤] {a} {b} nba with converseTotal(_≤_){a}{b}
     [<]-to-[≤] {a} {b} nba | [∨]-introₗ ab = ab
