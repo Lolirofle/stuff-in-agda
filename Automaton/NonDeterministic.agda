@@ -27,25 +27,25 @@ record NonDeterministic {ℓₚ ℓₛ ℓₑ ℓₐ} (State : Type{ℓₛ}) ⦃
   Word = List(Alphabet)
 
   -- Chained transition using a word (list of characters).
-  transitionWord : State → Word → PredSet{ℓₑ}(State)
-  transitionWord initialState ε       = • initialState
-  transitionWord initialState (a · l) = {!⋃ ?!} -- transitionWord (transition initialState a) l
+  wordTransition : State → Word → PredSet{ℓₑ}(State)
+  wordTransition initialState ε       = • initialState
+  wordTransition initialState (a · l) = {!⋃ ?!} -- wordTransition (transition initialState a) l
 {-
   module LetterNotation where
     Q  = State
     Σ  = Alphabet
     δ  = transition
-    δ̂  = transitionWord
+    δ̂  = wordTransition
     q₀ = start
     F  = Final
 
   -- A word is accepted by the automaton when it can transition from the start state to a final state.
   AcceptsWord : Word → Stmt
-  AcceptsWord = (_∈ Final) ∘ transitionWord start
+  AcceptsWord = (_∈ Final) ∘ wordTransition start
 
   -- The subset of State which are the accessible states from the start state by chained transitions.
   Accessible : PredSet(State)
-  Accessible = ⊶(transitionWord start)
+  Accessible = ⊶(wordTransition start)
 
   automatonTransition : Alphabet → NonDeterministic(State)(Alphabet)
   transition (automatonTransition _) = transition
@@ -54,6 +54,6 @@ record NonDeterministic {ℓₚ ℓₛ ℓₑ ℓₐ} (State : Type{ℓₛ}) ⦃
 
   automatonTransitionWord : Word → NonDeterministic(State)(Alphabet)
   transition (automatonTransitionWord _) = transition
-  start      (automatonTransitionWord w) = transitionWord start w
+  start      (automatonTransitionWord w) = wordTransition start w
   Final      (automatonTransitionWord _) = Final
 -}

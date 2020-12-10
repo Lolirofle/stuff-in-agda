@@ -70,6 +70,12 @@ module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ�
     surjective-relator : UnaryRelator(Surjective{A = A}{B = B})
     Surjective.proof (UnaryRelator.substitution surjective-relator {f₁}{f₂} (intro f₁f₂) (intro surj-f₁)) {y} = [∃]-map-proof (\{x} f₁xf₁y → symmetry(_≡_) (f₁f₂{x}) 🝖 f₁xf₁y) (surj-f₁{y})
 
+module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
+  instance
+    bijective-relator : UnaryRelator(Bijective{A = A}{B = B})
+    UnaryRelator.substitution bijective-relator {f₁}{f₂} f₁f₂ bij-f₁ = injective-surjective-to-bijective(f₂) ⦃ substitute₁(Injective) f₁f₂ (bijective-to-injective(f₁)) ⦄ ⦃ substitute₁(Surjective) f₁f₂ (bijective-to-surjective(f₁)) ⦄ where
+      instance _ = bij-f₁
+
 module _
   {A : Type{ℓₒ₁}}
   {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄

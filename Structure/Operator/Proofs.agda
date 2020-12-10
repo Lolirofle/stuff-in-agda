@@ -290,12 +290,18 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
       ) :of: (inv(x ▫ y) ▫ (x ▫ y) ≡ (inv(y) ▫ inv(x)) ▫ (x ▫ y)))
     ) :of: (inv(x ▫ y) ≡ inv(y) ▫ inv(x))
 
+  inverse-preserving : let _ = op , assoc , comm , select-inv(id)(ident)(inv)(inver) in Preserving₂(inv)(_▫_)(_▫_)
+  Preserving.proof (inverse-preserving {id}{inv}) {x}{y} = inverse-distribution {id}{inv} {x}{y} 🝖 commutativity(_▫_)
+
   inverse-distribute-to-inverse : let _ = op , assoc , select-inv(id)(ident)(inv)(inver) in ∀{x y} → inv(inv x ▫ inv y) ≡ y ▫ x
   inverse-distribute-to-inverse {id}{inv} {x}{y} =
     inv(inv x ▫ inv y)      🝖-[ inverse-distribution ]
     inv(inv y) ▫ inv(inv x) 🝖-[ congruence₂ᵣ(_▫_)(_) (double-inverse ⦃ cancᵣ = cancellationᵣ-by-group ⦄) ]
     inv(inv y) ▫ x          🝖-[ congruence₂ₗ(_▫_)(_) (double-inverse ⦃ cancᵣ = cancellationᵣ-by-group ⦄) ]
     y ▫ x                   🝖-end
+
+  inverse-preserving-to-inverse : let _ = op , assoc , comm , select-inv(id)(ident)(inv)(inver) in ∀{x y} → inv(inv x ▫ inv y) ≡ x ▫ y
+  inverse-preserving-to-inverse {id}{inv} {x}{y} = inverse-distribute-to-inverse {id}{inv} {x}{y} 🝖 commutativity(_▫_)
 
   unique-inverseₗ-by-id : let _ = op , assoc , select-id(id)(ident) , select-invₗ(id)(Identity.left ident)(inv)(inverₗ) in ∀{x x⁻¹} → (x⁻¹ ▫ x ≡ id) → (x⁻¹ ≡ inv(x))
   unique-inverseₗ-by-id {id = id} {inv = inv} {x}{x⁻¹} inver-elem =
@@ -386,6 +392,12 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
     id ▫ (x ▫ inv x) 🝖-[ associativity(_▫_) ]-sym
     (id ▫ x) ▫ inv x 🝖-[ inversePropᵣ(_▫_)(inv) ]
     id               🝖-end
+
+  zero-when-redundant-addition : let _ = select-idₗ(id)(identₗ) , cancᵣ in ∀{x} → (x ≡ x ▫ x) → (x ≡ id)
+  zero-when-redundant-addition {id = id} {x} p = cancellationᵣ(_▫_) $ symmetry(_≡_) $
+    id ▫ x 🝖-[ identityₗ(_▫_)(id) ]
+    x      🝖-[ p ]
+    x ▫ x  🝖-end
 
 module OneTypeTwoOp {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫₁_ _▫₂_ : T → T → T} where
   private variable {id} : T

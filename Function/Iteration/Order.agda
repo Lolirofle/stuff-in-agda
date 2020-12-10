@@ -62,12 +62,12 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
 
     -- An element power its order is the identity element.
     [^]-by-ord : ⦃ p : Ord(x) ⦄ → (x ^ ord(x) ⦃ p ⦄ ≡ id)
-    [^]-by-ord ⦃ [∃]-intro (𝐒(_)) ⦃ intro p ⦄ ⦄ = LE.Minimum.membership(p)
+    [^]-by-ord ⦃ [∃]-intro (𝐒(_)) ⦃ intro p ⦄ ⦄ = LE.Minimum.membership{_≤_ = _≤_}(p)
 
     -- When an element power something is the identity element, then the power is either zero or greater/equal its order.
     ord-is-minimum : ⦃ p : Ord(x) ⦄ → ∀{n} → (x ^ n ≡ id) → (n ≡ₑ 𝟎) ∨ (ord(x) ⦃ p ⦄ ≤ n)
     ord-is-minimum ⦃ [∃]-intro (_)     ⦃ intro p ⦄ ⦄      {𝟎}   x0id  = [∨]-introₗ [≡ₑ]-intro
-    ord-is-minimum ⦃ [∃]-intro .(𝐒 po) ⦃ intro {po} p ⦄ ⦄ {𝐒 n} xsnid = [∨]-introᵣ ([≤]-with-[𝐒] ⦃ LE.Minimum.proof(p) ⦃ xsnid ⦄ ⦄)
+    ord-is-minimum ⦃ [∃]-intro .(𝐒 po) ⦃ intro {po} p ⦄ ⦄ {𝐒 n} xsnid = [∨]-introᵣ ([≤]-with-[𝐒] ⦃ LE.Minimum.proof{_≤_ = _≤_}(p) ⦃ xsnid ⦄ ⦄)
 
     -- When an element power something less than its order and it is the identity element, then the power is 0.
     ord-is-minimum-but-0 : ⦃ p : Ord(x) ⦄ → ∀{n} → (x ^ n ≡ id) → (n < ord(x) ⦃ p ⦄) → (n ≡ₑ 𝟎)

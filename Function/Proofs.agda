@@ -15,13 +15,13 @@ open import Structure.Relator.Properties
 open import Structure.Relator
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
-open import Structure.Function renaming (congruence₁ to [≡ₛ]-with)
+open import Structure.Function
 open import Structure.Operator
 open import Syntax.Transitivity
 open import Type
 open import Type.Properties.Empty
 
-private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓₗ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₒ₄ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ : Lvl.Level
+private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓₗ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₒ₄ ℓₒ₅ ℓₒ₆ ℓₒ₇ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ ℓₑ₅ ℓₑ₆ ℓₑ₇ : Lvl.Level
 
 module _ {T : Type{ℓₒ}} ⦃ eq : Equiv{ℓₑ}(T) ⦄ where
   instance
@@ -107,7 +107,7 @@ module _ {a : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(a) ⦄ {b : Type{ℓₒ�
 
   -- RHS of composition is injective if the composition is injective.
   [∘]-injective-elim : ∀{f : b → c} → ⦃ func-f : Function(f) ⦄ → ∀{g : a → b} → ⦃ inj-fg : Injective(f ∘ g) ⦄ → Injective(g)
-  Injective.proof([∘]-injective-elim {f = f}{g = g} ⦃ inj-fg ⦄) {x₁}{x₂} (gx₁gx₂) = injective(f ∘ g) ⦃ inj-fg ⦄ {x₁} {x₂} ([≡ₛ]-with(f) (gx₁gx₂))
+  Injective.proof([∘]-injective-elim {f = f}{g = g} ⦃ inj-fg ⦄) {x₁}{x₂} (gx₁gx₂) = injective(f ∘ g) ⦃ inj-fg ⦄ {x₁} {x₂} (congruence₁(f) (gx₁gx₂))
 
 module _ {a : Type{ℓₒ₁}} {b : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(b) ⦄ {c : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₑ₃}(c) ⦄ where
   -- The composition of surjective functions is surjective.
@@ -115,17 +115,22 @@ module _ {a : Type{ℓₒ₁}} {b : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(b)
   Surjective.proof([∘]-surjective {f = f}{g = g}) {y}
     with [∃]-intro (a) ⦃ fa≡y ⦄ ← surjective(f) {y}
     with [∃]-intro (x) ⦃ gx≡a ⦄ ← surjective(g) {a}
-    = [∃]-intro (x) ⦃ [≡ₛ]-with(f) gx≡a 🝖 fa≡y ⦄
+    = [∃]-intro (x) ⦃ congruence₁(f) gx≡a 🝖 fa≡y ⦄
 
   -- LHS of composition is surjective if the composition is surjective.
   [∘]-surjective-elim : ∀{f : b → c}{g : a → b} → ⦃ _ : Surjective(f ∘ g) ⦄ → Surjective(f)
   Surjective.proof([∘]-surjective-elim {f = f}{g = g}) {y} with (surjective(f ∘ g) {y})
   ... | [∃]-intro (x) ⦃ fgx≡y ⦄ = [∃]-intro (g(x)) ⦃ fgx≡y ⦄
 
-module _ {a : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(a) ⦄ {b : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(b) ⦄ {c : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₑ₃}(c) ⦄ where
+module _
+  {a : Type{ℓₒ₁}} ⦃ equiv-a : Equiv{ℓₑ₁}(a) ⦄
+  {b : Type{ℓₒ₂}} ⦃ equiv-b : Equiv{ℓₑ₂}(b) ⦄
+  {c : Type{ℓₒ₃}} ⦃ equiv-c : Equiv{ℓₑ₃}(c) ⦄
+  where
+
   -- Bijective functions are closed under function composition.
   -- The composition of bijective functions is bijective.
-  [∘]-bijective : ∀{f : b → c} → ⦃ _ : Function(f) ⦄ → ∀{g : a → b} → ⦃ _ : Bijective(f) ⦄ → ⦃ _ : Bijective(g) ⦄ → Bijective(f ∘ g)
+  [∘]-bijective : ∀{f : b → c} → ⦃ func-f : Function(f) ⦄ → ∀{g : a → b} → ⦃ bij-f : Bijective(f) ⦄ → ⦃ bij-g : Bijective(g) ⦄ → Bijective(f ∘ g)
   [∘]-bijective {f = f} {g = g} =
     injective-surjective-to-bijective(f ∘ g)
       ⦃ [∘]-injective
@@ -139,17 +144,30 @@ module _ {a : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(a) ⦄ {b : Type{ℓₒ�
 
   -- The composition of functions is a function.
   [∘]-function : ∀{f : b → c}{g : a → b} → ⦃ func-f : Function(f) ⦄ → ⦃ func-g : Function(g) ⦄ → Function(f ∘ g)
-  Function.congruence([∘]-function {f = f}{g = g}) {x₁}{x₂} = ([≡ₛ]-with(f) {g(x₁)}{g(x₂)}) ∘ ([≡ₛ]-with(g) {x₁}{x₂})
+  Function.congruence([∘]-function {f = f}{g = g}) = congruence₁(f) ∘ congruence₁(g)
 
-module _ {a : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(a) ⦄ {b : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(b) ⦄ where
-  open import Function.Equals
-  open import Structure.Function.Domain.Proofs
+module _
+  {a₁ : Type{ℓₒ₁}} ⦃ equiv-a₁ : Equiv{ℓₑ₁}(a₁) ⦄
+  {b₁ : Type{ℓₒ₂}} ⦃ equiv-b₁ : Equiv{ℓₑ₂}(b₁) ⦄
+  {a₂ : Type{ℓₒ₃}} ⦃ equiv-a₂ : Equiv{ℓₑ₃}(a₂) ⦄
+  {b₂ : Type{ℓₒ₄}} ⦃ equiv-b₂ : Equiv{ℓₑ₄}(b₂) ⦄
+  {c  : Type{ℓₒ₅}} ⦃ equiv-c  : Equiv{ℓₑ₅}(c) ⦄
+  {f : a₂ → b₂ → c}  ⦃ func-f : BinaryOperator(f) ⦄
+  {g : a₁ → b₁ → a₂} ⦃ func-g : BinaryOperator(g) ⦄
+  {h : a₁ → b₁ → b₂} ⦃ func-h : BinaryOperator(h) ⦄
+  where
 
-  [∘]-inverse-to-injective : ∀{f : a → b} → ∃(g ↦ Function(g) ∧ Inverseₗ(f)(g)) → Injective(f)
-  [∘]-inverse-to-injective {f} ([∃]-intro g ⦃ [∧]-intro func-g gfid ⦄) = [∘]-injective-elim {f = g} ⦃ func-g ⦄ {g = f} ⦃ substitute₁ₗ(Injective) (intro(inverseₗ _ _ ⦃ gfid ⦄)) id-injective ⦄
+  [∘]-binaryOperator : BinaryOperator(x ↦ y ↦ f(g x y)(h x y))
+  BinaryOperator.congruence [∘]-binaryOperator xy1 xy2 = congruence₂(f) (congruence₂(g) xy1 xy2) (congruence₂(h) xy1 xy2)
 
-  [∘]-inverse-to-surjective : ∀{f : a → b} → ∃(g ↦ Function(g) ∧ Inverseᵣ(f)(g)) → Surjective(f)
-  [∘]-inverse-to-surjective {f} ([∃]-intro g ⦃ [∧]-intro func-g fgid ⦄) = [∘]-surjective-elim {f = f}{g = g} ⦃ substitute₁ₗ(Surjective) (intro(inverseᵣ _ _ ⦃ fgid ⦄)) id-surjective ⦄
+module _
+  {a : Type{ℓₒ₁}} ⦃ equiv-a : Equiv{ℓₑ₁}(a) ⦄
+  {b : Type{ℓₒ₂}} ⦃ equiv-b : Equiv{ℓₑ₂}(b) ⦄
+  {f : a → a → b}  ⦃ func-f : BinaryOperator(f) ⦄
+  where
+
+  [$₂]-function : Function(f $₂_)
+  Function.congruence [$₂]-function = congruence₂(f) $₂_
 
 module _ {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{ℓ₃}} where
   swap-involution : ⦃ _ : Equiv{ℓₑ}(X → Y → Z) ⦄ → ∀{f : X → Y → Z} → (swap(swap(f)) ≡ₛ f)
@@ -196,7 +214,7 @@ module _ {X : Type{ℓₒ₁}} ⦃ eq-x : Equiv{ℓₑ₁}(X) ⦄ {Y : Type{ℓ�
   s-combinator-inverseₗ : Inverseₗ(_∘ₛ_ {X = X}{Y = Y}{Z = Z})(f ↦ a ↦ b ↦ f (const b) a)
   _⊜_.proof (Inverseᵣ.proof s-combinator-inverseₗ) = reflexivity(_≡ₛ_)
 
-module _ {A : Type{ℓ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ where
+module _ {A : Type{ℓ}} ⦃ equiv-A : Equiv{ℓₑ}(A) ⦄ where
   classical-constant-endofunction-existence : ⦃ classical : Classical(A) ⦄ → ∃{Obj = A → A}(Constant)
   classical-constant-endofunction-existence with excluded-middle(A)
   ... | [∨]-introₗ a  = [∃]-intro (const a)
@@ -206,31 +224,31 @@ module _ {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   open import Logic.Propositional.Theorems
   open import Structure.Operator.Properties
 
-  proj₂ₗ-associativity : Associativity{T = T}(x ↦ y ↦ x)
+  proj₂ₗ-associativity : Associativity{T = T}(proj₂ₗ)
   proj₂ₗ-associativity = intro(reflexivity(_))
 
-  proj₂ᵣ-associativity : Associativity{T = T}(x ↦ y ↦ y)
+  proj₂ᵣ-associativity : Associativity{T = T}(proj₂ᵣ)
   proj₂ᵣ-associativity = intro(reflexivity(_))
 
-  proj₂ₗ-identityₗ : ∀{id : T} → Identityₗ(x ↦ y ↦ x)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
+  proj₂ₗ-identityₗ : ∀{id : T} → Identityₗ(proj₂ₗ)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
   proj₂ₗ-identityₗ = [↔]-intro intro Identityₗ.proof
 
-  proj₂ₗ-identityᵣ : ∀{id : T} → Identityᵣ(x ↦ y ↦ x)(id)
+  proj₂ₗ-identityᵣ : ∀{id : T} → Identityᵣ(proj₂ₗ)(id)
   proj₂ₗ-identityᵣ = intro(reflexivity(_))
 
-  proj₂ₗ-identity : ∀{id : T} → Identity(x ↦ y ↦ x)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
+  proj₂ₗ-identity : ∀{id : T} → Identity(proj₂ₗ)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
   proj₂ₗ-identity =
     [↔]-transitivity
       ([↔]-intro (l ↦ intro ⦃ left = l ⦄ ⦃ right = proj₂ₗ-identityᵣ ⦄) Identity.left)
       proj₂ₗ-identityₗ
 
-  proj₂ᵣ-identityₗ : ∀{id : T} → Identityₗ(x ↦ y ↦ y)(id)
+  proj₂ᵣ-identityₗ : ∀{id : T} → Identityₗ(proj₂ᵣ)(id)
   proj₂ᵣ-identityₗ = intro(reflexivity(_))
 
-  proj₂ᵣ-identityᵣ : ∀{id : T} → Identityᵣ(x ↦ y ↦ y)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
+  proj₂ᵣ-identityᵣ : ∀{id : T} → Identityᵣ(proj₂ᵣ)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
   proj₂ᵣ-identityᵣ = [↔]-intro intro Identityᵣ.proof
 
-  proj₂ᵣ-identity : ∀{id : T} → Identity(x ↦ y ↦ y)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
+  proj₂ᵣ-identity : ∀{id : T} → Identity(proj₂ᵣ)(id) ↔ (∀{x} → (Equiv._≡_ equiv id x))
   proj₂ᵣ-identity =
     [↔]-transitivity
       ([↔]-intro (r ↦ intro ⦃ left = proj₂ᵣ-identityₗ ⦄ ⦃ right = r ⦄) Identity.right)

@@ -22,6 +22,12 @@ disjointness {𝑇} (Logic.[∧]-intro [⊤]-intro ())
 disjointness {𝐹} (Logic.[∧]-intro () [⊤]-intro)
 
 module IsTrue where
+  [𝑇]-intro : IsTrue(𝑇)
+  [𝑇]-intro = [⊤]-intro
+
+  [𝐹]-elim : ¬ IsTrue(𝐹)
+  [𝐹]-elim ()
+
   [∧]-intro : ∀{a b} → IsTrue(a) → IsTrue(b) → IsTrue(a && b)
   [∧]-intro {𝑇} {b} ta tb = tb
   [∧]-intro {𝐹} {b} ta tb = ta
@@ -58,6 +64,48 @@ module IsTrue where
   [¬]-elim : ∀{a} → IsTrue(! a) → IsFalse(a)
   [¬]-elim {𝑇} ()
   [¬]-elim {𝐹} [⊤]-intro = [⊤]-intro
+
+  [→?]-intro : ∀{a b} → (IsTrue a → IsTrue b) → IsTrue (a →? b)
+  [→?]-intro {𝑇} {𝑇} _   = [⊤]-intro
+  [→?]-intro {𝑇} {𝐹} tab = tab [⊤]-intro
+  [→?]-intro {𝐹} {𝑇} _   = [⊤]-intro
+  [→?]-intro {𝐹} {𝐹} _   = [⊤]-intro
+
+  [→?]-elim : ∀{a b} → IsTrue (a →? b) → (IsTrue a → IsTrue b)
+  [→?]-elim {𝑇} {𝑇} tab ta = [⊤]-intro
+
+  [←?]-intro : ∀{a b} → (IsTrue b → IsTrue a) → IsTrue (a ←? b)
+  [←?]-intro {𝑇} {𝑇} tba = [⊤]-intro
+  [←?]-intro {𝑇} {𝐹} tba = [⊤]-intro
+  [←?]-intro {𝐹} {𝑇} tba = tba [⊤]-intro
+  [←?]-intro {𝐹} {𝐹} tba = [⊤]-intro
+
+  [←?]-elim : ∀{a b} → IsTrue (a ←? b) → (IsTrue b → IsTrue a)
+  [←?]-elim {𝑇} {𝑇} tab tb = [⊤]-intro
+
+  [==]-intro : ∀{a b} → (IsTrue b → IsTrue a) → (IsTrue a → IsTrue b) → IsTrue(a == b)
+  [==]-intro {𝑇} {𝑇} ba ab = [⊤]-intro
+  [==]-intro {𝑇} {𝐹} ba ab = ab [⊤]-intro
+  [==]-intro {𝐹} {𝑇} ba ab = ba [⊤]-intro
+  [==]-intro {𝐹} {𝐹} ba ab = [⊤]-intro
+
+  [==]-elimₗ : ∀{a b} → IsTrue(a == b) → (IsTrue b → IsTrue a)
+  [==]-elimₗ {𝑇} {𝑇} tab tb = [⊤]-intro
+
+  [==]-elimᵣ : ∀{a b} → IsTrue(a == b) → (IsTrue a → IsTrue b)
+  [==]-elimᵣ {𝑇} {𝑇} tab ta = [⊤]-intro
+
+  [!]-intro : ∀{a b} → (IsTrue a → IsTrue b) → (IsTrue a → IsTrue(not b)) → IsTrue(not a)
+  [!]-intro {𝑇} {𝑇} tab tanb = tanb [⊤]-intro
+  [!]-intro {𝑇} {𝐹} tab tanb = tab [⊤]-intro
+  [!]-intro {𝐹} {𝑇} tab tanb = [⊤]-intro
+  [!]-intro {𝐹} {𝐹} tab tanb = [⊤]-intro
+
+  [!]-elim : ∀{a b} → IsTrue a → IsTrue(not a) → IsTrue b
+  [!]-elim {𝑇} {𝑇} ta tnb = [⊤]-intro
+  [!]-elim {𝑇} {𝐹} ta tnb = tnb
+  [!]-elim {𝐹} {𝑇} ta tnb = [⊤]-intro
+  [!]-elim {𝐹} {𝐹} ta tnb = ta
 
   is-𝑇 : ∀{a} → IsTrue(a) ↔ (a ≡ 𝑇)
   is-𝑇 {a} = [↔]-intro (l{a}) (r{a}) where

@@ -21,7 +21,7 @@ _∋_ a x = (x ∈ a)
 _∌_ : BinaryRelator
 _∌_ a x = ¬(x ∈ a)
 
--- Element of
+-- Not element of
 _∉_ : BinaryRelator
 _∉_ x a = ¬(x ∈ a)
 

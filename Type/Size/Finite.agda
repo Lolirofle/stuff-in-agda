@@ -19,28 +19,30 @@ Finite(T) = ∃(n ↦ 𝕟(n) ≍ T)
 #_ : (T : Type{ℓ}) → ⦃ _ : Finite(T) ⦄ → ℕ
 #_ _ ⦃ [∃]-intro(n) ⦄ = n
 
-enum : ∀{T : Type{ℓ}} → ⦃ fin : Finite(T) ⦄ → 𝕟(#_ T ⦃ fin ⦄) → T
+enum : ∀{T : Type{ℓ}} → ⦃ fin : Finite(T) ⦄ → 𝕟(# T) → T
 enum ⦃ fin = [∃]-intro _ ⦃ [∃]-intro f ⦄ ⦄ = f
 
-module Finite where -- TODO: Use Numeral.Finite.Sequence and remove the unused imports
+module Finite where
   open import Data.Either as Either using (_‖_)
-  open import Data.Either.Proofs
-  open import Data.Tuple as Tuple using (_⨯_ ; _,_)
-  open import Function.Proofs
-  open import Numeral.Finite.Bound
-  import      Numeral.Finite.Oper as 𝕟
-  open import Numeral.Finite.Proofs
-  import      Numeral.Natural.Oper as ℕ
-  open import Numeral.Natural.Oper.Proofs
-  open import Relator.Equals
+  open import Data.Tuple  as Tuple  using (_⨯_ ; _,_)
+  open import Numeral.Finite.Sequence
   open import Structure.Function.Domain
-  open import Structure.Function.Domain.Proofs
+  import      Numeral.Natural.Oper as ℕ
 
   private variable ℓ₁ ℓ₂ : Lvl.Level
   private variable A : Type{ℓ₁}
   private variable B : Type{ℓ₂}
 
-  postulate _+_ : Finite(A) → Finite(B) → Finite(A ‖ B)
-  -- _+_ {A = A} {B = B} ([∃]-intro a ⦃ [∃]-intro af ⦄) ([∃]-intro b ⦃ [∃]-intro bf ⦄) = [∃]-intro (a ℕ.+ b) ⦃ {!!} ⦄ where
-  postulate _⋅_ : Finite(A) → Finite(B) → Finite(A ⨯ B)
-  postulate _^_ : Finite(A) → Finite(B) → Finite(B → A)
+  _+_ : Finite(A) → Finite(B) → Finite(A ‖ B)
+  _+_ ([∃]-intro a ⦃ [∃]-intro af ⦄) ([∃]-intro b ⦃ [∃]-intro bf ⦄) = [∃]-intro (a ℕ.+ b) ⦃ [∃]-intro (interleave af bf) ⦃ interleave-bijective ⦄ ⦄
+
+  -- TODO: Below
+  _⋅_ : Finite(A) → Finite(B) → Finite(A ⨯ B)
+  _⋅_ ([∃]-intro a ⦃ [∃]-intro af ⦄) ([∃]-intro b ⦃ [∃]-intro bf ⦄) = [∃]-intro (a ℕ.⋅ b) ⦃ [∃]-intro (f af bf) ⦃ p ⦄ ⦄ where
+    postulate f : (𝕟(a) → _) → (𝕟(b) → _) → 𝕟(a ℕ.⋅ b) → (_ ⨯ _)
+    postulate p : Bijective(f af bf)
+
+  _^_ : Finite(A) → Finite(B) → Finite(A ← B)
+  _^_ ([∃]-intro a ⦃ [∃]-intro af ⦄) ([∃]-intro b ⦃ [∃]-intro bf ⦄) = [∃]-intro (a ℕ.^ b) ⦃ [∃]-intro (f af bf) ⦃ p ⦄ ⦄ where
+    postulate f : (𝕟(a) → _) → (𝕟(b) → _) → 𝕟(a ℕ.^ b) → (_ ← _)
+    postulate p : Bijective(f af bf)

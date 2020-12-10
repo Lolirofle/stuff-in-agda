@@ -14,6 +14,8 @@ open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Classical
 open import Type
 
+-- TODO: Prove that gcd is the infimum in a lattice of ℕ with divisibility as its ordering
+
 {-# TERMINATING #-}
 gcdFold : ∀{ℓ}{T : Type{ℓ}} → ((a : ℕ) → (b : ℕ) → (a ≥ b) → (b > 𝟎) → T → T → T) → ((a : ℕ) → (b : ℕ) → (a < b) → (b > 𝟎) → T → T → T) → T → ℕ → ℕ → (ℕ ⨯ T)
 gcdFold f g x (a)(𝟎) = (a , x)

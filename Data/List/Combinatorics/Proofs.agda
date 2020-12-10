@@ -8,9 +8,12 @@ open import Data.List.Functions hiding (skip) renaming (module LongOper to List)
 open        Data.List.Functions.LongOper
 open import Data.List.Relation.Permutation
 open import Data.List.Relation.Quantification
+open import Data.List.Relation.Quantification.Proofs
 open import Data.List.Relation.Sublist
 open import Data.List.Relation.Sublist.Proofs
 open import Data.List.Proofs
+open import Data.List.Proofs.Id
+open import Data.List.Proofs.Length
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 import      Data.Tuple.Raiseᵣ as Tuple₊
 import      Data.Tuple.Raiseᵣ.Functions as Tuple₊
@@ -26,6 +29,7 @@ open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
+open import Structure.Function
 open import Structure.Operator
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties
@@ -33,9 +37,9 @@ open import Syntax.Function
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓ : Lvl.Level
-private variable T : Type{ℓ}
-private variable l : List(T)
+private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+private variable T A B : Type{ℓ}
+private variable l l₁ l₂ : List(T)
 private variable x : T
 private variable n k : ℕ
 
@@ -60,15 +64,34 @@ sublists-contains-all-sublists {l₁ = prepend x l₁} {prepend .x l₂} (use su
 sublists-contains-all-sublists {l₁ = prepend x l₁} {prepend x₁ l₂} (skip sub) = {!!}
 -}
 
-postulate permutations-contains-permutations : AllElements (_permutes l) (permutations(l))
-{-permutations-contains-permutations {l = ∅} = _permutes_.empty ⊰ ∅
-permutations-contains-permutations {l = x ⊰ ∅} = _permutes_.prepend _permutes_.empty ⊰ ∅
-permutations-contains-permutations {l = x ⊰ y ⊰ l} = {!!}-}
+permutes-insertedEverywhere : AllElements (_permutes (x ⊰ l)) (insertedEverywhere x l)
+permutes-insertedEverywhere {x = x} {∅}     = _permutes_.prepend _permutes_.empty ⊰ ∅
+permutes-insertedEverywhere {x = x} {y ⊰ l} = reflexivity(_permutes_) ⊰ AllElements-mapᵣ(y List.⊰_) (p ↦ trans (_permutes_.prepend p) _permutes_.swap) (permutes-insertedEverywhere {x = x} {l})
+
+{-
+AllElements-insertedEverywhere-function : ∀{P : List(T) → Type{ℓ}} → (∀{l₁ l₂}{x} → (l₁ permutes l₂) → (P(x ⊰ l₁) → P(x ⊰ l₂))) → (∀{l₁ l₂} → (l₁ permutes l₂) → (P(l₁) → P(l₂))) → (∀{l₁ l₂ : List(T)} → (l₁ permutes l₂) → (AllElements P (insertedEverywhere x l₁) → AllElements P (insertedEverywhere x l₂)))
+AllElements-insertedEverywhere-function _ pperm {l₁ = ∅}      {∅}       _permutes_.empty   p@(_ ⊰ _) = p
+AllElements-insertedEverywhere-function t pperm {l₁ = x ⊰ l₁} {.x ⊰ l₂} (_permutes_.prepend perm) (p ⊰ pl) =
+  pperm (_permutes_.prepend (_permutes_.prepend perm)) p ⊰
+  {!AllElements-insertedEverywhere-function t pperm {l₁ = l₁} {l₂} perm!} -- TODO: Probably needs more assumptions
+  -- AllElements-insertedEverywhere-function {l₁ = l₁} {l₂} pperm perm (AllElements-without-map {!!} {!!} pl)
+  -- AllElements-map (x List.⊰_) (\{l} → {!!}) (AllElements-insertedEverywhere-function {l₁ = l₁} {l₂} pperm perm {!!})
+AllElements-insertedEverywhere-function _ pperm {l₁ = x ⊰ .(x₁ ⊰ _)} {x₁ ⊰ .(x ⊰ _)} _permutes_.swap (p₁ ⊰ p₂ ⊰ pl) =
+  pperm (trans _permutes_.swap (_permutes_.prepend _permutes_.swap)) p₂ ⊰
+  pperm (trans (_permutes_.prepend _permutes_.swap) _permutes_.swap) p₁ ⊰
+  {!!}
+AllElements-insertedEverywhere-function t pperm (trans perm₁ perm₂) = AllElements-insertedEverywhere-function t pperm perm₂ ∘ AllElements-insertedEverywhere-function t pperm perm₁
+-}
+
+permutations-contains-permutations : AllElements (_permutes l) (permutations(l))
+permutations-contains-permutations {l = ∅}         = _permutes_.empty ⊰ ∅
+permutations-contains-permutations {l = x ⊰ ∅}     = _permutes_.prepend _permutes_.empty ⊰ ∅
+permutations-contains-permutations {l = x ⊰ y ⊰ l} = AllElements-concatMap(insertedEverywhere x) (perm ↦ AllElements-of-transitive-binary-relationₗ (_permutes_.prepend perm) permutes-insertedEverywhere) (permutations-contains-permutations {l = y ⊰ l})
 
 sublists₊-length : length(sublists₊ l) ≡ (2 ^ (length l)) −₀ 1
 sublists₊-length {l = ∅} = [≡]-intro
 sublists₊-length {l = x ⊰ l} =
-  length(sublists₊ (x ⊰ l)) 🝖[ _≡_ ]-[]
+  length(sublists₊ (x ⊰ l))                                                               🝖[ _≡_ ]-[]
   length(singleton(x) ⊰ foldᵣ (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest)) ∅ (sublists₊ l)) 🝖[ _≡_ ]-[]
   𝐒(length(foldᵣ (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest)) ∅ (sublists₊ l)))             🝖[ _≡_ ]-[ [≡]-with(𝐒) (length-foldᵣ {l = sublists₊(l)}{init = ∅}{f = (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest))}{g = const(𝐒 ∘ 𝐒)} [≡]-intro) ]
   𝐒(foldᵣ (prev ↦ rest ↦ 𝐒(𝐒(rest))) 𝟎 (sublists₊ l))                                     🝖[ _≡_ ]-[ [≡]-with(𝐒) (foldᵣ-constant-[+]ᵣ{l = sublists₊ l}{init = 𝟎}) ]
@@ -138,6 +161,9 @@ tuples-length {𝐒(𝐒(n))}{l = x ⊰ l} =
 rotations-length : length(rotations l) ≡ length(l)
 rotations-length{l = l} = length-accumulateIterate₀{f = rotateₗ(1)}{init = l}
 
+insertedEverywhere-contents-length : AllElements(p ↦ length(p) ≡ 𝐒(length(l))) (insertedEverywhere x l)
+insertedEverywhere-contents-length = AllElements-fn Proofs.permutes-length permutes-insertedEverywhere
+
 insertedEverywhere-length : length(insertedEverywhere x l) ≡ 𝐒(length(l))
 insertedEverywhere-length {x = x} {∅}     = [≡]-intro
 insertedEverywhere-length {x = x} {a ⊰ l} =
@@ -148,12 +174,20 @@ insertedEverywhere-length {x = x} {a ⊰ l} =
   𝐒(𝐒(length(l)))                                                       🝖[ _≡_ ]-[]
   𝐒(length(a ⊰ l))                                                      🝖-end
 
-postulate permutation-length : AllElements(p ↦ length p ≡ length l) (permutations l)
+permutation-length : AllElements(p ↦ length p ≡ length l) (permutations l)
+permutation-length{l = l} = AllElements-fn Proofs.permutes-length (permutations-contains-permutations{l = l})
 
-postulate permutations-length : length(permutations l) ≡ length(l) !
-{-permutations-length {l = ∅} = [≡]-intro
-permutations-length {l = x ⊰ ∅} = [≡]-intro
-permutations-length {l = x ⊰ y ⊰ l} with permutations(y ⊰ l) | permutations-length {l = y ⊰ l}
+permutations-length : length(permutations l) ≡ length(l) !
+permutations-length {l = ∅}         = [≡]-intro
+permutations-length {l = x ⊰ ∅}     = [≡]-intro
+permutations-length {l = x ⊰ y ⊰ l} =
+  length(permutations(x ⊰ y ⊰ l))                                🝖[ _≡_ ]-[]
+  length(concatMap(insertedEverywhere x) (permutations(y ⊰ l)))  🝖[ _≡_ ]-[ length-concatMap{l = permutations(y ⊰ l)}{f = insertedEverywhere x} ]
+  foldᵣ (_+_ ∘ length ∘ insertedEverywhere x) 𝟎 (permutations (y ⊰ l)) 🝖[ _≡_ ]-[ {!!} ]
+  foldᵣ (_+_ ∘ length) 𝟎 (map (insertedEverywhere x) (permutations (y ⊰ l))) 🝖[ _≡_ ]-[ {!!} ]
+  𝐒(𝐒(length l)) ⋅ (𝐒(length l) ⋅ (length(l)!)) 🝖[ _≡_ ]-[]
+  length(x ⊰ y ⊰ l)! 🝖-end
+{-permutations-length {l = x ⊰ y ⊰ l} with permutations(y ⊰ l) | permutations-length {l = y ⊰ l}
 ... | ∅       | p = {!!}
 ... | z ⊰ pyl | p =
   length(foldᵣ((_++_) ∘ insertedEverywhere x) ∅ (z ⊰ pyl))                            🝖[ _≡_ ]-[]

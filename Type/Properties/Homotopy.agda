@@ -20,7 +20,7 @@ private variable T A B : Type{ℓ}
 private variable P : A → Type{ℓ}
 private variable n : ℕ
 
-module _ ⦃ equiv : ∀{ℓ}{T : Type{ℓ}} → Equiv{ℓ}(T) ⦄ where
+module _ ⦃ equiv : ∀{ℓ}{T : Type{ℓ}} → Equiv{ℓ}(T) ⦄ where -- TODO: Maybe the requirements can be relaxed to a tower of equivalences?
   HomotopyLevel : ℕ → (A : Type{ℓ}) → Type
   HomotopyLevel(𝟎)      (A) = Σ(A)(x ↦ ∀{y} → (y ≡ x))
   HomotopyLevel(𝐒(𝟎))   (A) = ∀{x y : A} → (x ≡ y)

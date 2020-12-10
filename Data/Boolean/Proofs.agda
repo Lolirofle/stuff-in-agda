@@ -4,6 +4,7 @@ import      Lvl
 open import Data
 open import Data.Boolean
 import      Data.Boolean.Operators
+open        Data.Boolean.Operators.Logic using (_⊼_ ; _⊽_ ; _⊕_)
 open        Data.Boolean.Operators.Programming
 open import Data.Either as Either using (_‖_ ; Left ; Right)
 open import Functional
@@ -19,6 +20,12 @@ open import Type
 
 -- TODO: Instances for these algebraic properties
 -- TODO: More algebraic properties (associativity, commutativity and all the others)
+
+private variable a b c : Bool
+
+[!]-no-fixpoints : ∀{b} → (! b ≢ b)
+[!]-no-fixpoints {𝑇} ()
+[!]-no-fixpoints {𝐹} ()
 
 ---------------------------------------------
 -- Rewrite rules of classic logic
@@ -255,6 +262,97 @@ instance
     proof {𝐹}{𝐹}{𝐹} = [≡]-intro
 
 ---------------------------------------------
+-- Other
+
+[⊼]-pseudo-associativity : (!(a ⊼ b) ⊼ c ≡ a ⊼ !(b ⊼ c))
+[⊼]-pseudo-associativity {𝑇} {𝑇} {𝑇} = [≡]-intro
+[⊼]-pseudo-associativity {𝑇} {𝑇} {𝐹} = [≡]-intro
+[⊼]-pseudo-associativity {𝑇} {𝐹} {𝑇} = [≡]-intro
+[⊼]-pseudo-associativity {𝑇} {𝐹} {𝐹} = [≡]-intro
+[⊼]-pseudo-associativity {𝐹} {𝑇} {𝑇} = [≡]-intro
+[⊼]-pseudo-associativity {𝐹} {𝑇} {𝐹} = [≡]-intro
+[⊼]-pseudo-associativity {𝐹} {𝐹} {𝑇} = [≡]-intro
+[⊼]-pseudo-associativity {𝐹} {𝐹} {𝐹} = [≡]-intro
+
+[⊼]-to-conjunction : (!(a ⊼ b) ≡ a && b)
+[⊼]-to-conjunction {𝑇} {𝑇} = [≡]-intro
+[⊼]-to-conjunction {𝑇} {𝐹} = [≡]-intro
+[⊼]-to-conjunction {𝐹} {𝑇} = [≡]-intro
+[⊼]-to-conjunction {𝐹} {𝐹} = [≡]-intro
+
+[⊼]-to-negation : (b ⊼ b ≡ ! b)
+[⊼]-to-negation {𝑇} = [≡]-intro
+[⊼]-to-negation {𝐹} = [≡]-intro
+
+[⊼]-pseudo-absorptionₗ : (a ⊼ (a ⊼ b) ≡ a ⊼ (! b))
+[⊼]-pseudo-absorptionₗ {𝑇} {𝑇} = [≡]-intro
+[⊼]-pseudo-absorptionₗ {𝑇} {𝐹} = [≡]-intro
+[⊼]-pseudo-absorptionₗ {𝐹} {𝑇} = [≡]-intro
+[⊼]-pseudo-absorptionₗ {𝐹} {𝐹} = [≡]-intro
+
+[⊼]-pseudo-absorptionᵣ : ((a ⊼ b) ⊼ b ≡ (! a) ⊼ b)
+[⊼]-pseudo-absorptionᵣ {𝑇} {𝑇} = [≡]-intro
+[⊼]-pseudo-absorptionᵣ {𝑇} {𝐹} = [≡]-intro
+[⊼]-pseudo-absorptionᵣ {𝐹} {𝑇} = [≡]-intro
+[⊼]-pseudo-absorptionᵣ {𝐹} {𝐹} = [≡]-intro
+
+[⊼]-pseudo-pseudo-absorptionₗ : (((! a) ⊼ b) ⊼ (a ⊼ b) ≡ b)
+[⊼]-pseudo-pseudo-absorptionₗ {𝑇} {𝑇} = [≡]-intro
+[⊼]-pseudo-pseudo-absorptionₗ {𝑇} {𝐹} = [≡]-intro
+[⊼]-pseudo-pseudo-absorptionₗ {𝐹} {𝑇} = [≡]-intro
+[⊼]-pseudo-pseudo-absorptionₗ {𝐹} {𝐹} = [≡]-intro
+
+[⊼]-pseudo-pseudo-absorptionᵣ : ((a ⊼ (! b)) ⊼ (a ⊼ b) ≡ a)
+[⊼]-pseudo-pseudo-absorptionᵣ {𝑇} {𝑇} = [≡]-intro
+[⊼]-pseudo-pseudo-absorptionᵣ {𝑇} {𝐹} = [≡]-intro
+[⊼]-pseudo-pseudo-absorptionᵣ {𝐹} {𝑇} = [≡]-intro
+[⊼]-pseudo-pseudo-absorptionᵣ {𝐹} {𝐹} = [≡]-intro
+
+[⊽]-pseudo-associativity : (!(a ⊽ b) ⊽ c ≡ a ⊽ !(b ⊽ c))
+[⊽]-pseudo-associativity {𝑇} {𝑇} {𝑇} = [≡]-intro
+[⊽]-pseudo-associativity {𝑇} {𝑇} {𝐹} = [≡]-intro
+[⊽]-pseudo-associativity {𝑇} {𝐹} {𝑇} = [≡]-intro
+[⊽]-pseudo-associativity {𝑇} {𝐹} {𝐹} = [≡]-intro
+[⊽]-pseudo-associativity {𝐹} {𝑇} {𝑇} = [≡]-intro
+[⊽]-pseudo-associativity {𝐹} {𝑇} {𝐹} = [≡]-intro
+[⊽]-pseudo-associativity {𝐹} {𝐹} {𝑇} = [≡]-intro
+[⊽]-pseudo-associativity {𝐹} {𝐹} {𝐹} = [≡]-intro
+
+[⊽]-to-disjunction : (!(a ⊽ b) ≡ a || b)
+[⊽]-to-disjunction {𝑇} {𝑇} = [≡]-intro
+[⊽]-to-disjunction {𝑇} {𝐹} = [≡]-intro
+[⊽]-to-disjunction {𝐹} {𝑇} = [≡]-intro
+[⊽]-to-disjunction {𝐹} {𝐹} = [≡]-intro
+
+[⊽]-to-negation : (b ⊽ b ≡ ! b)
+[⊽]-to-negation {𝑇} = [≡]-intro
+[⊽]-to-negation {𝐹} = [≡]-intro
+
+[⊽]-pseudo-absorptionₗ : (a ⊽ (a ⊽ b) ≡ a ⊽ (! b))
+[⊽]-pseudo-absorptionₗ {𝑇} {𝑇} = [≡]-intro
+[⊽]-pseudo-absorptionₗ {𝑇} {𝐹} = [≡]-intro
+[⊽]-pseudo-absorptionₗ {𝐹} {𝑇} = [≡]-intro
+[⊽]-pseudo-absorptionₗ {𝐹} {𝐹} = [≡]-intro
+
+[⊽]-pseudo-absorptionᵣ : ((a ⊽ b) ⊽ b ≡ (! a) ⊽ b)
+[⊽]-pseudo-absorptionᵣ {𝑇} {𝑇} = [≡]-intro
+[⊽]-pseudo-absorptionᵣ {𝑇} {𝐹} = [≡]-intro
+[⊽]-pseudo-absorptionᵣ {𝐹} {𝑇} = [≡]-intro
+[⊽]-pseudo-absorptionᵣ {𝐹} {𝐹} = [≡]-intro
+
+[⊽]-pseudo-pseudo-absorptionₗ : (((! a) ⊽ b) ⊽ (a ⊽ b) ≡ b)
+[⊽]-pseudo-pseudo-absorptionₗ {𝑇} {𝑇} = [≡]-intro
+[⊽]-pseudo-pseudo-absorptionₗ {𝑇} {𝐹} = [≡]-intro
+[⊽]-pseudo-pseudo-absorptionₗ {𝐹} {𝑇} = [≡]-intro
+[⊽]-pseudo-pseudo-absorptionₗ {𝐹} {𝐹} = [≡]-intro
+
+[⊽]-pseudo-pseudo-absorptionᵣ : ((a ⊽ (! b)) ⊽ (a ⊽ b) ≡ a)
+[⊽]-pseudo-pseudo-absorptionᵣ {𝑇} {𝑇} = [≡]-intro
+[⊽]-pseudo-pseudo-absorptionᵣ {𝑇} {𝐹} = [≡]-intro
+[⊽]-pseudo-pseudo-absorptionᵣ {𝐹} {𝑇} = [≡]-intro
+[⊽]-pseudo-pseudo-absorptionᵣ {𝐹} {𝐹} = [≡]-intro
+
+---------------------------------------------
 -- Commutativity
 
 instance
@@ -288,6 +386,33 @@ instance
   [!=]-commutativity : Commutativity(_!=_)
   Commutativity.proof([!=]-commutativity) = proof where
     proof : Names.Commutativity(_!=_)
+    proof {𝑇}{𝑇} = [≡]-intro
+    proof {𝑇}{𝐹} = [≡]-intro
+    proof {𝐹}{𝑇} = [≡]-intro
+    proof {𝐹}{𝐹} = [≡]-intro
+
+instance
+  [⊼]-commutativity : Commutativity(_⊼_)
+  Commutativity.proof([⊼]-commutativity) = proof where
+    proof : Names.Commutativity(_⊼_)
+    proof {𝑇}{𝑇} = [≡]-intro
+    proof {𝑇}{𝐹} = [≡]-intro
+    proof {𝐹}{𝑇} = [≡]-intro
+    proof {𝐹}{𝐹} = [≡]-intro
+
+instance
+  [⊽]-commutativity : Commutativity(_⊽_)
+  Commutativity.proof([⊽]-commutativity) = proof where
+    proof : Names.Commutativity(_⊽_)
+    proof {𝑇}{𝑇} = [≡]-intro
+    proof {𝑇}{𝐹} = [≡]-intro
+    proof {𝐹}{𝑇} = [≡]-intro
+    proof {𝐹}{𝐹} = [≡]-intro
+
+instance
+  [⊕]-commutativity : Commutativity(_⊕_)
+  Commutativity.proof([⊕]-commutativity) = proof where
+    proof : Names.Commutativity(_⊕_)
     proof {𝑇}{𝑇} = [≡]-intro
     proof {𝑇}{𝐹} = [≡]-intro
     proof {𝐹}{𝑇} = [≡]-intro

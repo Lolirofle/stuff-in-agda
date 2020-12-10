@@ -266,7 +266,6 @@ import Sized.Data.List
 import Stream
 import Stream.Iterable
 import String
-import Structure.Arithmetic
 -- import Structure.Categorical.Multi
 import Structure.Categorical.Names
 import Structure.Categorical.Proofs
@@ -300,8 +299,8 @@ import Structure.Container.IndexedIterable
 import Structure.Container.Iterable
 -- import Structure.Container.List
 -- import Structure.Container.ListLike
-import Structure.Container.SetLike
-import Structure.Container.SetLike.Proofs
+-- import Structure.Container.SetLike
+-- import Structure.Container.SetLike.Proofs
 import Structure.Function
 import Structure.Function.Domain
 import Structure.Function.Domain.Proofs
@@ -342,11 +341,11 @@ import Structure.Operator.Vector.LinearMap
 -- import Structure.Operator.Vector.LinearMap.Equiv
 import Structure.Operator.Vector.LinearMaps
 import Structure.Operator.Vector.Proofs
-import Structure.Operator.Vector.Subspace
+-- import Structure.Operator.Vector.Subspace
 -- import Structure.Operator.Vector.Subspace.Proofs
-import Structure.Operator.Vector.Subspaces.DirectSum
-import Structure.Operator.Vector.Subspaces.Image
-import Structure.Operator.Vector.Subspaces.Kernel
+-- import Structure.Operator.Vector.Subspaces.DirectSum
+-- import Structure.Operator.Vector.Subspaces.Image
+-- import Structure.Operator.Vector.Subspaces.Kernel
 -- import Structure.Operator.Vector.Subspaces.Span
 import Structure.OrderedField
 import Structure.OrderedField.AbsoluteValue

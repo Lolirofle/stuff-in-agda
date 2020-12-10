@@ -9,7 +9,7 @@ open import Structure.Setoid.Uniqueness
 open import Structure.Setoid.WithLvl
 open import Type
 
-private variable ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ : Lvl.Level
+private variable ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₒ₄ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ ℓₗ₄ : Lvl.Level
 
 module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₗ₂}(B) ⦄ where
   Injective : (A → B) → Stmt
@@ -60,3 +60,7 @@ module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₗ₁}(A) ⦄ {B : Type{�
   module _ {C : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₗ₃}(C) ⦄ where
     Congruence₂ : (A → B → C) → Stmt
     Congruence₂(f) = (∀{x₁ y₁ : A}{x₂ y₂ : B} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (f x₁ x₂ ≡ f y₁ y₂))
+
+    module _ {D : Type{ℓₒ₄}} ⦃ _ : Equiv{ℓₗ₄}(D) ⦄ where
+      Congruence₃ : (A → B → C → D) → Stmt
+      Congruence₃(f) = (∀{x₁ y₁ : A}{x₂ y₂ : B}{x₃ y₃ : C} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (x₃ ≡ y₃) → (f x₁ x₂ x₃ ≡ f y₁ y₂ y₃))

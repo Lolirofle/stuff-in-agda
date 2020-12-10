@@ -1,5 +1,6 @@
 module Structure.Container.SetLike.Proofs where
 
+{-
 open import Data.Boolean
 open import Data.Boolean.Stmt
 open import Functional
@@ -340,3 +341,4 @@ module _ ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{�
           Lattice.Bounded.[∧]-identityₗ [∪][∩]-boundedLattice = [∩]-identityₗ
 
       module _ ⦃ _ : ComplementOperator(_∈_) ⦄ where
+-}

@@ -61,6 +61,7 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ�
   substitute₂ = inst-fn BinaryRelator.substitution
   substitute₂ₗ = inst-fn BinaryRelator.substitutionₗ
   substitute₂ᵣ = inst-fn BinaryRelator.substitutionᵣ
+  substitute₂ₗᵣ = inst-fn BinaryRelator.substitution-equivalence
   binaryRelator = resolve BinaryRelator
 
 module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ {C : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₗ₃}(C) ⦄ (_▫_▫_ : A → B → C → Stmt{ℓₗ₄}) where

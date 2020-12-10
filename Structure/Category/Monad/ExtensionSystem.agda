@@ -7,6 +7,7 @@ module Structure.Category.Monad.ExtensionSystem
   {cat : CategoryObject{ℓₒ}{ℓₘ}}
   where
 
+import      Data.Tuple as Tuple
 import      Function.Equals
 open        Function.Equals.Dependent
 open import Functional.Dependent using () renaming (_∘_ to _∘ᶠⁿ_)
@@ -97,6 +98,23 @@ record ExtensionSystem (T : Object → Object) : Type{Lvl.of(Type.of(cat))} wher
     μ(x) ∘ η(T(x))    🝖[ _≡_ ]-[]
     ext(id) ∘ η(T(x)) 🝖[ _≡_ ]-[ ext-identity ]
     id                🝖[ _≡_ ]-end
+
+  -- Also called: Kleisli composition.
+  _∘ₑₓₜ_ : ∀{x y z} → (y ⟶ T(z)) → (x ⟶ T(y)) → (x ⟶ T(z))
+  f ∘ₑₓₜ g = ext(f) ∘ g
+
+  idₑₓₜ : ∀{x} → (x ⟶ T(x))
+  idₑₓₜ{x} = η(x)
+
+  {-
+  categoryₑₓₜ : Category(\x y → (x ⟶ T(y)))
+  Category._∘_ categoryₑₓₜ = _∘ₑₓₜ_
+  Category.id categoryₑₓₜ = idₑₓₜ
+  BinaryOperator.congruence (Category.binaryOperator categoryₑₓₜ) xy1 xy2 = {!!}
+  Morphism.Associativity.proof (Category.associativity categoryₑₓₜ) = {!ext-distribute!}
+  Morphism.Identityₗ.proof (Tuple.left (Category.identity categoryₑₓₜ)) = {!ext-distribute!}
+  Morphism.Identityᵣ.proof (Tuple.right (Category.identity categoryₑₓₜ)) = ext-identity
+  -}
 
   module FunctionalNames where
     lift : ∀{x} → (x ⟶ T(x))

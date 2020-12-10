@@ -10,4 +10,4 @@ open import Logic.Predicate
 
 -- A type with only a single object
 Singleton : X → Type{ℓₑ Lvl.⊔ ℓ}
-Singleton(x) = ∃(Unapply(id) (x))
+Singleton(x) = ∃(Fiber(id) (x))

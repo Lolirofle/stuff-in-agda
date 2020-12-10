@@ -15,7 +15,6 @@ record Integer ⦃ equiv : Equiv{ℓₑ}(Z) ⦄ (_+_ : Z → Z → Z) (_⋅_ : Z
   constructor intro
   field
     ⦃ ring ⦄              : Ring(_+_)(_⋅_)
-    ⦃ [⋅]-commutativity ⦄ : Commutativity(_⋅_)
     ⦃ ordered ⦄           : Ordered(_+_)(_⋅_)(_≤_)
   open Ring(ring) public
   open Ordered(ordered) public
@@ -27,4 +26,5 @@ record Integer ⦃ equiv : Equiv{ℓₑ}(Z) ⦄ (_+_ : Z → Z → Z) (_⋅_ : Z
   𝐏 = _− 𝟏
 
   field
+    ⦃ distinct-identities ⦄ : DistinctIdentities
     positive-induction : ∀{ℓ}{P : Z → Type{ℓ}} ⦃ rel-p : UnaryRelator(P) ⦄ → P(𝟎) → (∀{n} → (𝟎 ≤ n) → P(n) → P(𝐒(n))) → (∀{n} → (𝟎 ≤ n) → P(n))

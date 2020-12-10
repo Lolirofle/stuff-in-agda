@@ -3,6 +3,7 @@ module Structure.Function.Multi where
 open import Data
 open import Data.Boolean
 open import Data.Tuple.Raise
+import      Data.Tuple.Raiseᵣ.Functions as Raise
 open import Data.Tuple.RaiseTypeᵣ
 import      Data.Tuple.RaiseTypeᵣ.Functions as RaiseType
 open import Function.DomainRaise as DomainRaise using (_→̂_)
@@ -59,20 +60,37 @@ module Names where
     Preserving₈ = Preserving(8)
     Preserving₉ = Preserving(9)
 
-  module _ {B : Type{ℓ}} ⦃ equiv-B : Equiv{ℓₑ}(B) ⦄ where
-    FunctionReplacement₊ : (n : ℕ) → ∀{ℓ𝓈 ℓ𝓈ₑ}{As : Types{n}(ℓ𝓈)} → (RaiseType.mapWithLvls(\A ℓₑ → Equiv{ℓₑ}(A)) As ℓ𝓈ₑ) ⇉ᵢₙₛₜ ((As ⇉ B) → (As ⇉ B) → Stmt{if positive?(n) then (Lvl.⨆(ℓ𝓈) Lvl.⊔ ℓₑ Lvl.⊔ Lvl.⨆(ℓ𝓈ₑ)) else (Lvl.⨆(ℓ𝓈) Lvl.⊔ ℓₑ)})
-    FunctionReplacement₊ 0         f g = f ≡ g
-    FunctionReplacement₊ 1         f g = ∀{x y} → (x ≡ y) → (f(x) ≡ g(y))
-    FunctionReplacement₊ (𝐒(𝐒(n))) = Multi.expl-to-inst(𝐒(n)) (Multi.compose(𝐒(n)) (r ↦ f ↦ g ↦  ∀{x y} → (x ≡ y) → r(f(x)) (g(y))) (Multi.inst-to-expl(𝐒(n)) (FunctionReplacement₊ (𝐒(n)))))
+  module _ {B : Type{ℓ}} (_▫_ : B → B → Stmt{ℓₑ}) where
+    FunctionReplacement : (n : ℕ) → ∀{ℓ𝓈 ℓ𝓈ₑ}{As : Types{n}(ℓ𝓈)} → (RaiseType.mapWithLvls(\A ℓₑ → Equiv{ℓₑ}(A)) As ℓ𝓈ₑ) ⇉ᵢₙₛₜ ((As ⇉ B) → (As ⇉ B) → Stmt{if positive?(n) then (Lvl.⨆(ℓ𝓈) Lvl.⊔ ℓₑ Lvl.⊔ Lvl.⨆(ℓ𝓈ₑ)) else (Lvl.⨆(ℓ𝓈) Lvl.⊔ ℓₑ)})
+    FunctionReplacement 0         f g = f ▫ g
+    FunctionReplacement 1         f g = ∀{x y} → (x ≡ y) → (f(x) ▫ g(y))
+    FunctionReplacement (𝐒(𝐒(n))) = Multi.expl-to-inst(𝐒(n)) (Multi.compose(𝐒(n)) (r ↦ f ↦ g ↦  ∀{x y} → (x ≡ y) → r(f(x)) (g(y))) (Multi.inst-to-expl(𝐒(n)) (FunctionReplacement (𝐒(n)))))
 
+  module _ {B : Type{ℓ}} ⦃ equiv-B : Equiv{ℓₑ}(B) ⦄ where
     -- Generalization of `Structure.Function.Function` for nested function types (or normally known as: functions of any number of arguments (n-ary functions)).
     -- Examples:
-    --   Function₊(0) f g = f ≡ g
-    --   Function₊(1) f g = ∀{x y} → (x ≡ y) → (f(x) ≡ g(y))
-    --   Function₊(2) f g = ∀{x y} → (x ≡ y) → ∀{x₁ y₁} → (x₁ ≡ y₁) → (f(x)(x₁) ≡ g(y)(y₁))
-    --   Function₊(3) f g = ∀{x y} → (x ≡ y) → ∀{x₁ y₁} → (x₁ ≡ y₁) → ∀{x₂ y₂} → (x₂ ≡ y₂) → (f(x)(x₁)(x₂) ≡ g(y)(y₁)(y₂))
-    Function₊ : (n : ℕ) → ∀{ℓ𝓈 ℓ𝓈ₑ}{As : Types{n}(ℓ𝓈)} → (RaiseType.mapWithLvls(\A ℓₑ → Equiv{ℓₑ}(A)) As ℓ𝓈ₑ) ⇉ᵢₙₛₜ ((As ⇉ B) → Stmt)
-    Function₊(n) = Multi.expl-to-inst(n) (Multi.compose(n) (_$₂_) (Multi.inst-to-expl(n) (FunctionReplacement₊(n))))
+    --   Function(0) f g = f ≡ g
+    --   Function(1) f g = ∀{x y} → (x ≡ y) → (f(x) ≡ g(y))
+    --   Function(2) f g = ∀{x y} → (x ≡ y) → ∀{x₁ y₁} → (x₁ ≡ y₁) → (f(x)(x₁) ≡ g(y)(y₁))
+    --   Function(3) f g = ∀{x y} → (x ≡ y) → ∀{x₁ y₁} → (x₁ ≡ y₁) → ∀{x₂ y₂} → (x₂ ≡ y₂) → (f(x)(x₁)(x₂) ≡ g(y)(y₁)(y₂))
+    Function : (n : ℕ) → ∀{ℓ𝓈 ℓ𝓈ₑ}{As : Types{n}(ℓ𝓈)} → (RaiseType.mapWithLvls(\A ℓₑ → Equiv{ℓₑ}(A)) As ℓ𝓈ₑ) ⇉ᵢₙₛₜ ((As ⇉ B) → Stmt)
+    Function(n) = Multi.expl-to-inst(n) (Multi.compose(n) (_$₂_) (Multi.inst-to-expl(n) (FunctionReplacement(_≡_)(n))))
+
+  module _ {B : Type{ℓ}} where
+    -- Generalizes `Function₊` and `Compatibility`.
+    GeneralCompatibilityReplacement : (n : ℕ) → ∀{ℓₗ}{ℓ𝓈 ℓ𝓈ₗ}{As : Types{n}(ℓ𝓈)} → (RaiseType.mapWithLvls(\A ℓₗ → (A → A → Stmt{ℓₗ})) As ℓ𝓈ₗ) ⇉ ((B → B → Stmt{ℓₗ}) → (As ⇉ B) → (As ⇉ B) → Stmt{ℓₗ Lvl.⊔ Lvl.⨆(ℓ𝓈) Lvl.⊔ Lvl.⨆(ℓ𝓈ₗ)})
+    GeneralCompatibilityReplacement 0         (_▫_)         f g = f ▫ g
+    GeneralCompatibilityReplacement 1         (_▫A_) (_▫B_) f g = ∀{x y} → (x ▫A y) → (f(x) ▫B g(y))
+    GeneralCompatibilityReplacement (𝐒(𝐒(n))) (_▫A_)            = Multi.compose(𝐒(n)) (r ↦ _▫B_ ↦ f ↦ g ↦ (∀{x y} → (x ▫A y) → r(_▫B_) (f(x)) (g(y)))) (GeneralCompatibilityReplacement (𝐒(n)))
+
+    -- Note: It should be possible to derive this from `GeneralCompatibilityReplacement` but many of the Raise/RaiseType functions does not compose properly.
+    CompatibilityReplacement : (n : ℕ) → ∀{ℓₗ} → (B → B → Stmt{ℓₗ}) → (RaiseType.repeat n B ⇉ B) → (RaiseType.repeat n B ⇉ B) → Stmt{ℓₗ Lvl.⊔ (if positive?(n) then ℓ else Lvl.𝟎)}
+    CompatibilityReplacement 0         (_▫_) f g = f ▫ g
+    CompatibilityReplacement 1         (_▫_) f g = ∀{x y} → (x ▫ y) → (f(x) ▫ g(y))
+    CompatibilityReplacement (𝐒(𝐒(n))) (_▫_) f g = ∀{x y} → (x ▫ y) → CompatibilityReplacement (𝐒(n)) (_▫_) (f(x)) (g(y)) 
+
+    Compatible : (n : ℕ) → ∀{ℓₗ} → (B → B → Stmt{ℓₗ}) → (RaiseType.repeat n B ⇉ B) → Stmt{ℓₗ Lvl.⊔ (if positive?(n) then ℓ else Lvl.𝟎)}
+    Compatible n (_▫_) f = CompatibilityReplacement n (_▫_) f f
 
   module _ {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
     -- Definition of the relation between a function and an operation that says:
@@ -115,3 +133,32 @@ module _ {X : Type{ℓ₁}} {Y : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ w
 
 module _ {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (n : ℕ) (f : T → T) (_▫_ : T → T → T) where
   _preserves_ = Preserving(2) (f)(_▫_)(_▫_)
+
+module _ {T : Type{ℓ}} where
+  module _ (n : ℕ) {ℓₗ} (_▫_ : T → T → Stmt{ℓₗ}) (f : RaiseType.repeat n T ⇉ T) where
+    record Compatible : Stmt{ℓₗ Lvl.⊔ (if positive?(n) then ℓ else Lvl.𝟎)} where
+      constructor intro
+      field proof : Names.Compatible(n) (_▫_)(f)
+    compatible = inst-fn Compatible.proof
+
+  Compatible₀ = Compatible(0)
+  Compatible₁ = Compatible(1)
+  Compatible₂ = Compatible(2)
+  Compatible₃ = Compatible(3)
+  Compatible₄ = Compatible(4)
+  Compatible₅ = Compatible(5)
+  Compatible₆ = Compatible(6)
+  Compatible₇ = Compatible(7)
+  Compatible₈ = Compatible(8)
+  Compatible₉ = Compatible(9)
+
+  compatible₀ = compatible(0)
+  compatible₁ = compatible(1)
+  compatible₂ = compatible(2)
+  compatible₃ = compatible(3)
+  compatible₄ = compatible(4)
+  compatible₅ = compatible(5)
+  compatible₆ = compatible(6)
+  compatible₇ = compatible(7)
+  compatible₈ = compatible(8)
+  compatible₉ = compatible(9)

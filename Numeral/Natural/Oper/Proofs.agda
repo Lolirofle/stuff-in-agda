@@ -25,7 +25,7 @@ open import Structure.Relator.Properties
 open import Syntax.Transitivity
 
 [+]-identityₗ-raw : Names.Identityₗ (_+_) (0)
-[+]-identityₗ-raw {x} = [ℕ]-inductionᵢ [≡]-intro (\{x} → [≡]-with(𝐒) {𝟎 + x}{x}) {x}
+[+]-identityₗ-raw {x} = ℕ-elim [≡]-intro (x ↦ [≡]-with(𝐒) {𝟎 + x}{x}) x
 {-# REWRITE [+]-identityₗ-raw #-}
 
 instance
@@ -33,25 +33,25 @@ instance
   Identityₗ.proof([+]-identityₗ) = [+]-identityₗ-raw
 
 [+]-identityᵣ-raw : Names.Identityᵣ (_+_) (0)
-[+]-identityᵣ-raw {x} = [ℕ]-inductionᵢ [≡]-intro (\{x} → [≡]-with(𝐒) {x + 𝟎}{x}) {x}
+[+]-identityᵣ-raw {x} = ℕ-elim [≡]-intro (x ↦ [≡]-with(𝐒) {x + 𝟎}{x}) x
 
 instance
   [+]-identityᵣ : Identityᵣ (_+_) (0)
   Identityᵣ.proof([+]-identityᵣ) = [+]-identityᵣ-raw
 
 [+]-associativity-raw : Names.Associativity (_+_)
-[+]-associativity-raw {x}{y}{z} = [ℕ]-inductionᵢ [≡]-intro (\{i} → [≡]-with(𝐒) {(x + y) + i} {x + (y + i)}) {z}
+[+]-associativity-raw {x}{y}{z} = ℕ-elim [≡]-intro (i ↦ [≡]-with(𝐒) {(x + y) + i} {x + (y + i)}) z
 
 instance
   [+]-associativity : Associativity (_+_)
   Associativity.proof([+]-associativity) {x}{y}{z} = [+]-associativity-raw {x}{y}{z}
 
 [+1]-commutativity : ∀{x y : ℕ} → (𝐒(x) + y) ≡ (x + 𝐒(y))
-[+1]-commutativity {x}{y} = [ℕ]-induction [≡]-intro (\i → [≡]-with(𝐒) {𝐒(x) + i} {x + 𝐒(i)}) {y}
+[+1]-commutativity {x}{y} = ℕ-elim [≡]-intro (i ↦ [≡]-with(𝐒) {𝐒(x) + i} {x + 𝐒(i)}) y
 {-# REWRITE [+1]-commutativity #-}
 
 [+]-commutativity-raw : Names.Commutativity (_+_)
-[+]-commutativity-raw {x}{y} = [ℕ]-induction base next {y} where
+[+]-commutativity-raw {x}{y} = ℕ-elim base next y where
   base = [+]-identityᵣ-raw 🝖 symmetry(_≡_) [+]-identityₗ-raw
   next = \i eq → ([≡]-with(𝐒) {x + i}{i + x} eq) 🝖 symmetry(_≡_) ([+1]-commutativity {i}{x})
 
@@ -62,28 +62,28 @@ instance
 [1+]-and-[𝐒] {x} = [+1]-and-[𝐒] {x} 🝖 [+]-commutativity-raw {x}{1}
 
 [⋅]-absorberₗ-raw : Names.Absorberₗ (_⋅_) (0)
-[⋅]-absorberₗ-raw {x} = [ℕ]-induction [≡]-intro (\i → [≡]-with(0 +_) {0 ⋅ i}{0}) {x}
+[⋅]-absorberₗ-raw {x} = ℕ-elim [≡]-intro (\i → [≡]-with(0 +_) {0 ⋅ i}{0}) x
 {-# REWRITE [⋅]-absorberₗ-raw #-}
 
 [⋅]-absorberᵣ-raw : Names.Absorberᵣ (_⋅_) (0)
 [⋅]-absorberᵣ-raw = [≡]-intro
 
 [⋅]-identityₗ-raw : Names.Identityₗ (_⋅_) (1)
-[⋅]-identityₗ-raw {x} = [ℕ]-induction [≡]-intro (\i eq → ([+]-commutativity-raw {1} {1 ⋅ i}) 🝖 ([≡]-with(𝐒) {_}{i} eq)) {x}
+[⋅]-identityₗ-raw {x} = ℕ-elim [≡]-intro (\i eq → ([+]-commutativity-raw {1} {1 ⋅ i}) 🝖 ([≡]-with(𝐒) {_}{i} eq)) x
 {-# REWRITE [⋅]-identityₗ-raw #-}
 
 [⋅]-identityᵣ-raw : Names.Identityᵣ (_⋅_) (1)
 [⋅]-identityᵣ-raw = [≡]-intro
 
 [⋅][+]-distributivityᵣ-raw : Names.Distributivityᵣ(_⋅_)(_+_)
-[⋅][+]-distributivityᵣ-raw {x}{y}{z} = [ℕ]-induction [≡]-intro next {z} where
+[⋅][+]-distributivityᵣ-raw {x}{y}{z} = ℕ-elim [≡]-intro next z where
   next : ∀(z : ℕ) → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z)) → ((x + y) ⋅ 𝐒(z)) ≡ ((x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)))
   next z proof = ([≡]-with((x + y) +_) proof) 🝖 (One.associate-commute4 {a = x}{y}{x ⋅ z}{y ⋅ z} ([+]-commutativity-raw{x = y}))
 
 [⋅]-with-[𝐒]ₗ : ∀{x y} → (𝐒(x) ⋅ y ≡ (x ⋅ y) + y)
 [⋅]-with-[𝐒]ₗ {x}{y} = ([⋅][+]-distributivityᵣ-raw{x}{1}{y}) 🝖 ([≡]-with(expr ↦ (x ⋅ y) + expr) ([⋅]-identityₗ-raw {y}))
 
-[⋅]-with-[𝐒]ᵣ : ∀{x y} → x ⋅ 𝐒(y) ≡ x + (x ⋅ y)
+[⋅]-with-[𝐒]ᵣ : ∀{x y} → (x ⋅ 𝐒(y) ≡ x + (x ⋅ y))
 [⋅]-with-[𝐒]ᵣ = [≡]-intro
 
 [⋅][+]-distributivityₗ-raw : Names.Distributivityₗ(_⋅_)(_+_)
@@ -126,45 +126,31 @@ instance
   y + (𝐒 y ⋅ x)     🝖-end
 
 [𝐒]-injectivity-raw : Names.Injective(𝐒)
-[𝐒]-injectivity-raw {0}    ([≡]-intro) = [≡]-intro
-[𝐒]-injectivity-raw {𝐒(n)} (𝐒x≡𝐒y)     = [≡]-with(𝐏) 𝐒x≡𝐒y
+[𝐒]-injectivity-raw = [≡]-with(𝐏)
 
 [𝐒]-not-0 : ∀{n} → (𝐒(n) ≢ 𝟎)
 [𝐒]-not-0 ()
+
+𝐒-not-self : ∀{n} → (𝐒(n) ≢ n)
+𝐒-not-self ()
 
 [𝐏][𝐒]-identity : ∀{n} → (𝐏(𝐒(n)) ≡ n)
 [𝐏][𝐒]-identity = [≡]-intro
 
 [+]ₗ-injectivity-raw : ∀{a} → Names.Injective (_+ a)
-[+]ₗ-injectivity-raw {0}    ( x₁+0≡x₂+0 ) = x₁+0≡x₂+0
-[+]ₗ-injectivity-raw {𝐒(n)} (x₁+𝐒n≡x₂+𝐒n) = [+]ₗ-injectivity-raw {n} ([≡]-with(𝐏) x₁+𝐒n≡x₂+𝐒n)
+[+]ₗ-injectivity-raw {a}{x}{y} = ℕ-elim{T = \a → (x + a ≡ y + a) → (x ≡ y)} id (\_ → _∘ [𝐒]-injectivity-raw) a
 
 [+]ᵣ-injectivity-raw : ∀{a} → Names.Injective (a +_)
-[+]ᵣ-injectivity-raw {0}    {x₁} {x₂} ( 0+x₁≡0+x₂ ) = One.commuteBothTemp ⦃ comm = intro(\{x y} → [+]-commutativity-raw {x}{y}) ⦄ {0} {x₁} {0} {x₂} 0+x₁≡0+x₂
-[+]ᵣ-injectivity-raw {𝐒(n)} {x₁} {x₂} (𝐒n+x₁≡𝐒n+x₂) =
-  [+]ᵣ-injectivity-raw {n} (
-    One.commuteBothTemp ⦃ comm = intro(\{x y} → [+]-commutativity-raw {x}{y}) ⦄ {x₁} {n} {x₂} {n} ([≡]-with(𝐏) (One.commuteBothTemp ⦃ comm = intro(\{x y} → [+]-commutativity-raw {x}{y}) ⦄ {𝐒(n)} {x₁} {𝐒(n)} {x₂} 𝐒n+x₁≡𝐒n+x₂))
-  )
+[+]ᵣ-injectivity-raw {a}{x}{y} = [+]ₗ-injectivity-raw ∘ One.commuteBothTemp ⦃ comm = intro(\{x y} → [+]-commutativity-raw {x}{y}) ⦄ {a}{x}{a}{y}
 
 [+]-sum-is-0ₗ : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)
-[+]-sum-is-0ₗ {a}{0}    a+0≡0 = a+0≡0
-[+]-sum-is-0ₗ {a}{𝐒(n)} a+𝐒n≡0 = [+]-sum-is-0ₗ {a} {n} ([≡]-with(𝐏) a+𝐒n≡0)
+[+]-sum-is-0ₗ {a}{b} = ℕ-elim{T = \b → (a + b ≡ 0) → (a ≡ 0)} id (\_ p → p ∘ [≡]-with(𝐏)) b
 
 [+]-sum-is-0ᵣ : ∀{a b} → (a + b ≡ 0) → (b ≡ 0)
-[+]-sum-is-0ᵣ {b}{a} (b+a≡0) =
-  ([+]-sum-is-0ₗ {a}{b}
-    (
-      ([+]-commutativity-raw {a}{b})
-      🝖 (b+a≡0)
-    )
-  )
+[+]-sum-is-0ᵣ {b}{a} = [+]-sum-is-0ₗ {a}{b} ∘ ([+]-commutativity-raw {a}{b} 🝖_)
 
 [+]-sum-is-0 : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)∧(b ≡ 0)
-[+]-sum-is-0 {a}{b} (proof) =
-  ([∧]-intro
-    ([+]-sum-is-0ₗ {a}{b} (proof))
-    ([+]-sum-is-0ᵣ {a}{b} (proof))
-  )
+[+]-sum-is-0 {a}{b} (proof) = [∧]-intro ([+]-sum-is-0ₗ {a}{b} proof) ([+]-sum-is-0ᵣ {a}{b} proof)
 
 [⋅]-product-is-1ₗ : ∀{a b} → (a ⋅ b ≡ 1) → (a ≡ 1)
 [⋅]-product-is-1ₗ {𝟎}   {_}   p = p
@@ -172,11 +158,11 @@ instance
 [⋅]-product-is-1ₗ {𝐒 a} {𝐒 b} p = [≡]-with(𝐒) ([+]-sum-is-0ₗ ([𝐒]-injectivity-raw p))
 
 [⋅]-product-is-1ᵣ : ∀{a b} → (a ⋅ b ≡ 1) → (b ≡ 1)
-[⋅]-product-is-1ᵣ {a}{b} p = [⋅]-product-is-1ₗ {b}{a} ([⋅]-commutativity-raw{b}{a} 🝖 p)
+[⋅]-product-is-1ᵣ {a}{b} = [⋅]-product-is-1ₗ {b}{a} ∘ ([⋅]-commutativity-raw{b}{a} 🝖_)
 
 [⋅]-product-is-0 : ∀{a b} → (a ⋅ b ≡ 0) → ((a ≡ 0)∨(b ≡ 0))
-[⋅]-product-is-0 {a}{0}    (_) = [∨]-introᵣ ([≡]-intro)
-[⋅]-product-is-0 {0}{𝐒(b)} (_) = [∨]-introₗ ([≡]-intro)
+[⋅]-product-is-0 {a}   {0}    _ = [∨]-introᵣ [≡]-intro
+[⋅]-product-is-0 {0}   {𝐒(b)} _ = [∨]-introₗ [≡]-intro
 [⋅]-product-is-0 {𝐒(a)}{𝐒(b)} (𝐒a⋅𝐒b≡0) =
   ([⊥]-elim
     ([𝐒]-not-0 {(𝐒(a) ⋅ b) + a}(
@@ -204,22 +190,10 @@ instance
 -- [⋅]-product-is-coprime : ∀{a b} → Coprime(a ⋅ b) → ((a ≡ 1)∧(b ≡ a ⋅ b)) ∨ ((a ≡ a ⋅ b)∧(b ≡ 1))
 
 [+]-cancellationᵣ-raw : Names.Cancellationᵣ(_+_)
-[+]-cancellationᵣ-raw {𝟎}    (rel) = rel
-[+]-cancellationᵣ-raw {𝐒(x)} (rel) = [+]-cancellationᵣ-raw {x} ([≡]-with(𝐏) rel)
+[+]-cancellationᵣ-raw = [+]ₗ-injectivity-raw
 
 [+]-cancellationₗ-raw : Names.Cancellationₗ(_+_)
-[+]-cancellationₗ-raw {𝟎}{a}{b} (rel) =
-  (symmetry(_≡_) [+]-identityₗ-raw)
-  🝖 (rel)
-  🝖 ([+]-identityₗ-raw)
-[+]-cancellationₗ-raw {𝐒(x)}{a}{b} (rel) =
-  ([+]-cancellationₗ-raw {x}{a}{b}
-    ([≡]-with(𝐏)(
-      (symmetry(_≡_) ([+1]-commutativity {x}{a}))
-      🝖 (rel)
-      🝖 ([+1]-commutativity {x}{b})
-    ))
-  )
+[+]-cancellationₗ-raw {a} = [+]ᵣ-injectivity-raw {a}
 
 postulate [⋅]-cancellationₗ : ∀{x} → ⦃ _ : Positive(x) ⦄ → (Names.CancellationOnₗ(_⋅_)(x))
 
@@ -241,13 +215,11 @@ postulate [⋅][−₀]-distributivityₗ-raw : ∀{x y z : ℕ} → (x ⋅ (y �
 postulate [⋅][−₀]-distributivityᵣ-raw : ∀{x y z : ℕ} → ((x −₀ y) ⋅ z) ≡ (x ⋅ z) −₀ (y ⋅ z)
 
 [−₀]-negative : ∀{x} → ((𝟎 −₀ x) ≡ 𝟎)
-[−₀]-negative {𝟎}    = [≡]-intro
-[−₀]-negative {𝐒(n)} = [≡]-intro
+[−₀]-negative {n} = ℕ-elim{T = \n → ((𝟎 −₀ n) ≡ 𝟎)} [≡]-intro (\_ _ → [≡]-intro) n
 {-# REWRITE [−₀]-negative #-}
 
 [−₀]-self : ∀{x} → ((x −₀ x) ≡ 𝟎)
-[−₀]-self {𝟎}    = [≡]-intro
-[−₀]-self {𝐒(n)} = [≡]-intro 🝖 ([−₀]-self{n})
+[−₀]-self {n} = ℕ-elim{T = \n → ((n −₀ n) ≡ 𝟎)} [≡]-intro (\_ p → p) n
 {-# REWRITE [−₀]-self #-}
 
 -- TODO: Is any of the directions true? Does not seem like

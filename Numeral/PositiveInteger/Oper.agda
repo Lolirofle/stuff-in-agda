@@ -25,3 +25,18 @@ x ^ 𝐒(y) = x ⋅ (x ^ y)
 _! : ℕ₊ → ℕ₊
 𝟏 !    = 𝟏
 𝐒(x) ! = 𝐒(x) ⋅ (x !)
+
+open import Data.Option
+open import Data.Option.Functions
+-- Truncated subtraction
+_−₀_ : ℕ₊ → ℕ₊ → Option(ℕ₊)
+𝟏    −₀ _    = None
+𝐒(x) −₀ 𝟏    = Some x
+𝐒(x) −₀ 𝐒(y) = x −₀ y
+
+open import Data.Boolean
+open import Type
+_≤?_ : ℕ₊ → ℕ₊ → Bool
+𝟏    ≤? _    = 𝑇
+𝐒(x) ≤? 𝟏    = 𝐹
+𝐒(x) ≤? 𝐒(y) = x ≤? y

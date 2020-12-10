@@ -20,6 +20,7 @@ module _ where
   Polynomial : ℕ → Type
   Polynomial(n) = List(ℕ)(ℕ.𝐒(n))
 
+  open import Data.ListSized.Functions
   import      Functional as Fn
   open import Logic.Propositional
   open import Logic.Predicate
@@ -128,6 +129,7 @@ module _ where
   ∫ {n} p = var⋅(map₂₌(ℕ._⌊/⌋₀_) p (accumulateIterate n ℕ.𝐒(ℕ.𝐒(ℕ.𝟎))))
 
 module Semantics where
+  open import Data.ListSized.Functions
   open import Logic.Propositional
   open import Numeral.Finite as 𝕟 using (𝕟)
   import      Numeral.Natural.Oper as ℕ

@@ -31,6 +31,7 @@ data ReflexiveTransitiveClosure : T → T → Type{ℓ₁ Lvl.⊔ ℓ₂} where
   super : Names.Subrelation(_▫_)(ReflexiveTransitiveClosure)
   refl  : Names.Reflexivity(ReflexiveTransitiveClosure)
   trans : Names.Transitivity(ReflexiveTransitiveClosure)
+infixl 1000 trans
 
 -- Transitive closure of a relation.
 -- Constructs a transitive relation from an existing relation.

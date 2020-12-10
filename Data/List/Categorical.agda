@@ -6,6 +6,7 @@ open import Function.Equals
 open import Data.List
 open import Data.List.Functions
 open import Data.List.Proofs
+open import Data.List.Proofs.Id
 open import Lang.Instance
 open import Logic
 open import Logic.Propositional

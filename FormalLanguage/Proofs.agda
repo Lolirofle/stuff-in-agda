@@ -275,36 +275,30 @@ module _ {Σ : Alphabet{ℓ}} where
   open Oper{ℓ}{Σ}
   open Language renaming (accepts-ε to accepts ; suffix-lang to suffix)
 
-  open import Structure.Container.SetLike hiding (_∪_ ; _∩_ ; ∁ ; ∅ ; 𝐔)
-
-  Language-equivalence-membershipₗ : ∀{A B : Language(Σ)} → (A ≅[ s ]≅ B) ← (∀{w} → ([ s ] w ∈ A) ↔ ([ s ] w ∈ B))
-  _≅[_]≅_.accepts-ε (Language-equivalence-membershipₗ {A = A} {B = B} p) with accepts A | accepts B | p{[]}
-  ... | 𝑇 | 𝑇 | _ = [≡]-intro
-  ... | 𝑇 | 𝐹 | q with () ← [↔]-to-[→] q <>
-  ... | 𝐹 | 𝑇 | q with () ← [↔]-to-[←] q <>
-  ... | 𝐹 | 𝐹 | _ = [≡]-intro
-  _≅[_]≅_.suffix-lang (Language-equivalence-membershipₗ {A = A} {B = B} p) {c} = Language-equivalence-membershipₗ {A = suffix A c}{B = suffix B c} (\{w} → p{c ⊰ w})
-
-  Language-equivalence-membershipᵣ : ∀{A B : Language(Σ)} → (A ≅[ s ]≅ B) → (∀{w} → ([ s ] w ∈ A) ↔ ([ s ] w ∈ B))
-  Tuple.left (Language-equivalence-membershipᵣ ab {[]}) wB = substitute₁ₗ(IsTrue) (_≅[_]≅_.accepts-ε ab) wB
-  Tuple.right (Language-equivalence-membershipᵣ ab {[]}) wA = substitute₁ᵣ(IsTrue) (_≅[_]≅_.accepts-ε ab) wA
-  Tuple.left (Language-equivalence-membershipᵣ {s = s} {A} {B} ab {_⊰_ {sₛ} x w}) wB = [↔]-to-[←] (Language-equivalence-membershipᵣ {s = sₛ} (_≅[_]≅_.suffix-lang {s = s} ab {sₛ = sₛ}) {w}) wB
-  Tuple.right (Language-equivalence-membershipᵣ {s = s} {A} {B} ab {_⊰_ {sₛ} x w}) wA = [↔]-to-[→] (Language-equivalence-membershipᵣ {s = sₛ} (_≅[_]≅_.suffix-lang {s = s} ab {sₛ = sₛ}) {w}) wA
-  
-  Language-equivalence-membership : ∀{A B : Language(Σ)} → (A ≅[ s ]≅ B) ↔ (∀{w} → ([ s ] w ∈ A) ↔ ([ s ] w ∈ B))
-  Language-equivalence-membership = [↔]-intro Language-equivalence-membershipₗ Language-equivalence-membershipᵣ
+  open import Logic.IntroInstances
+  open import Structure.Sets.Operator hiding (_∪_ ; _∩_ ; ∁ ; ∅ ; 𝐔)
+  open import Structure.Sets.Relator hiding (_≡_ ; _⊆_)
 
   instance
-    Language-setLike : SetLike(_∈_ {s = s})
-    SetLike._⊆_ (Language-setLike {s = s}) A B = ∀{x} → ([ s ] x ∈ A) → ([ s ] x ∈ B)
-    SetLike._≡_ (Language-setLike {s = s}) = _≅[ s ]≅_
-    SetLike.[⊆]-membership Language-setLike = [↔]-reflexivity
-    SetLike.[≡]-membership Language-setLike = Language-equivalence-membership
+    [≅]-set-equality : SetEqualityRelation([ s ]_∈_)([ s ]_∈_)(_≅[ s ]≅_)
+    SetEqualityRelation.membership [≅]-set-equality {A}{B} = [↔]-intro (l{A = A}{B = B}) (r{A = A}{B = B}) where
+      l : ∀{A B : Language(Σ)} → (A ≅[ s ]≅ B) ← (∀{w} → ([ s ] w ∈ A) ↔ ([ s ] w ∈ B))
+      _≅[_]≅_.accepts-ε (l {A = A} {B = B} p) with accepts A | accepts B | p{[]}
+      ... | 𝑇 | 𝑇 | _ = [≡]-intro
+      ... | 𝑇 | 𝐹 | q with () ← [↔]-to-[→] q <>
+      ... | 𝐹 | 𝑇 | q with () ← [↔]-to-[←] q <>
+      ... | 𝐹 | 𝐹 | _ = [≡]-intro
+      _≅[_]≅_.suffix-lang (l {A = A} {B = B} p) {c} = l {A = suffix A c}{B = suffix B c} (\{w} → p{c ⊰ w})
+
+      r : ∀{A B : Language(Σ)} → (A ≅[ s ]≅ B) → (∀{w} → ([ s ] w ∈ A) ↔ ([ s ] w ∈ B))
+      Tuple.left (r ab {[]}) wB = substitute₁ₗ(IsTrue) (_≅[_]≅_.accepts-ε ab) wB
+      Tuple.right (r ab {[]}) wA = substitute₁ᵣ(IsTrue) (_≅[_]≅_.accepts-ε ab) wA
+      Tuple.left (r {s = s} {A} {B} ab {_⊰_ {sₛ} x w}) wB = [↔]-to-[←] (r {s = sₛ} (_≅[_]≅_.suffix-lang {s = s} ab {sₛ = sₛ}) {w}) wB
+      Tuple.right (r {s = s} {A} {B} ab {_⊰_ {sₛ} x w}) wA = [↔]-to-[→] (r {s = sₛ} (_≅[_]≅_.suffix-lang {s = s} ab {sₛ = sₛ}) {w}) wA
 
   instance
-    [∪]-membership : UnionOperator(_∈_ {s = s})
-    UnionOperator._∪_ [∪]-membership = (_∪_)
-    UnionOperator.membership [∪]-membership {A}{B}{w} = [↔]-intro (l{w = w}{A}{B}) (r{w = w}{A}{B}) where
+    [∪]-operator : UnionOperator([ s ]_∈_)([ s ]_∈_)([ s ]_∈_)(_∪_)
+    UnionOperator.membership [∪]-operator {A}{B}{w} = [↔]-intro (l{w = w}{A}{B}) (r{w = w}{A}{B}) where
       l : ∀{w}{A B} → ([ s ] w ∈ (A ∪ B)) ← (([ s ] w ∈ A) ∨ ([ s ] w ∈ B))
       l {w = []}    = [↔]-to-[←] IsTrue.preserves-[||][∨]
       l {w = c ⊰ w} = l {w = w}
@@ -314,9 +308,8 @@ module _ {Σ : Alphabet{ℓ}} where
       r {w = c ⊰ w} = r {w = w}
 
   instance
-    [∩]-membership : IntersectionOperator(_∈_ {s = s})
-    IntersectionOperator._∩_ [∩]-membership = (_∩_)
-    IntersectionOperator.membership [∩]-membership {A}{B}{w} = [↔]-intro (l{w = w}{A}{B}) (r{w = w}{A}{B}) where
+    [∩]-operator : IntersectionOperator([ s ]_∈_)([ s ]_∈_)([ s ]_∈_)(_∩_)
+    IntersectionOperator.membership [∩]-operator {A}{B}{w} = [↔]-intro (l{w = w}{A}{B}) (r{w = w}{A}{B}) where
       l : ∀{w}{A B} → ([ s ] w ∈ (A ∩ B)) ← (([ s ] w ∈ A) ∧ ([ s ] w ∈ B))
       l {w = []}    = [↔]-to-[←] IsTrue.preserves-[&&][∧]
       l {w = c ⊰ w} = l {w = w}
@@ -326,9 +319,8 @@ module _ {Σ : Alphabet{ℓ}} where
       r {w = c ⊰ w} = r {w = w}
 
   instance
-    [∁]-membership : ComplementOperator(_∈_ {s = s})
-    ComplementOperator.∁ [∁]-membership = ∁_
-    ComplementOperator.membership [∁]-membership {A}{w} = [↔]-intro (l{w = w}{A}) (r{w = w}{A}) where
+    [∁]-operator : ComplementOperator([ s ]_∈_)([ s ]_∈_)(∁_)
+    ComplementOperator.membership [∁]-operator {A}{w} = [↔]-intro (l{w = w}{A}) (r{w = w}{A}) where
       l : ∀{w}{A} → ([ s ] w ∈ (∁ A)) ← ¬([ s ] w ∈ A)
       l {w = []}    = [↔]-to-[←] IsTrue.preserves-[!][¬]
       l {w = c ⊰ w} = l {w = w}
@@ -338,30 +330,29 @@ module _ {Σ : Alphabet{ℓ}} where
       r {w = c ⊰ w} = r {w = w}
 
   instance
-    [∅]-membership : EmptySet(_∈_ {s = s})
-    EmptySet.∅ [∅]-membership = ∅
-    EmptySet.membership [∅]-membership {x = w} = proof{w = w} where
-      proof : ∀{w} → ¬([ s ] w ∈ ∅)
-      proof {w = []} ()
-      proof {w = x ⊰ w} = proof {w = w}
+    [∅]-set : EmptySet([ s ]_∈_)(∅)
+    EmptySet.membership [∅]-set {x = w} = p{w = w} where
+      p : ∀{w} → ¬([ s ] w ∈ ∅)
+      p {w = []} ()
+      p {w = x ⊰ w} = p {w = w}
 
   instance
-    [𝐔]-membership : UniversalSet(_∈_ {s = s})
-    UniversalSet.𝐔 [𝐔]-membership = 𝐔
-    UniversalSet.membership [𝐔]-membership {x = w} = proof{w = w} where
-      proof : ∀{w} → ([ s ] w ∈ 𝐔)
-      proof {w = []}    = [⊤]-intro
-      proof {w = c ⊰ w} = proof {w = w}
+    [𝐔]-set : UniversalSet([ s ]_∈_)(𝐔)
+    UniversalSet.membership [𝐔]-set {x = w} = p{w = w} where
+      p : ∀{w} → ([ s ] w ∈ 𝐔)
+      p {w = []}    = [⊤]-intro
+      p {w = c ⊰ w} = p {w = w}
 
-  [ε]-membership : ∀{x} → (x ∈ ε) ↔ (x ≡ [])
-  [ε]-membership {x} = [↔]-intro (l{x}) (r{x}) where
+  [ε]-set : ∀{x} → (x ∈ ε) ↔ (x ≡ [])
+  [ε]-set {x} = [↔]-intro (l{x}) (r{x}) where
     l : ∀{x} → (x ∈ ε) ← (x ≡ [])
     l {[]} [≡]-intro = [⊤]-intro
 
     r : ∀{x} → (x ∈ ε) → (x ≡ [])
-    r {[]}    _       = [≡]-intro
-    r {a ⊰ l} (proof) = [⊥]-elim (([↔]-to-[→] ([↔]-intro [⊥]-elim (Empty.membership {x = l}))) (proof))
+    r {[]}    _     = [≡]-intro
+    r {a ⊰ l} proof with () ← [∅]-membership {x = l} proof
 
+  {-open import Structure.Container.SetLike hiding (_∪_ ; _∩_ ; ∁ ; ∅ ; 𝐔)
   -- TODO: Copy-pasted from the previous code that only used coinduction
   instance
     [𝁼][∪]-distributivityₗ : Distributivityₗ ⦃ [≅]-equiv {s = s} ⦄ (_𝁼_)(_∪_)
@@ -376,6 +367,9 @@ module _ {Σ : Alphabet{ℓ}} where
         (((suffix x c) 𝁼 y) ∪ ((suffix x c) 𝁼 z)) ∪ ((suffix y c) ∪ (suffix z c)) 🝖[ _≅[ s ]≅_ ]-[ One.associate-commute4 (commutativity(_∪_)) ]
         (((suffix x c) 𝁼 y) ∪ (suffix y c)) ∪ (((suffix x c) 𝁼 z) ∪ (suffix z c)) 🝖[ _≅[ s ]≅_ ]-end
       ... | 𝐹 = [𝁼][∪]-distributivityₗ-raw
+  -}
+
+
 
 {- -- TODO: Sizes and (_++_)
   [𝁼]-membershipₗ : ∀{x y}{A B : Language(Σ)} → ([ s ] x ∈ A) → ([ s ] y ∈ B) → ([ s ] (x ++ y) ∈ (A 𝁼 B))

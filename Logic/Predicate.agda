@@ -47,6 +47,9 @@ private variable Pred P Q R : X → Type{ℓ}
 [∃]-map₂ : (f : X → Y → Z) → (∀{x y} → P(x) → Q(y) → R(f x y)) → ((∃ P) → (∃ Q) → (∃ R))
 [∃]-map₂ f p ([∃]-intro(x) ⦃ proof₁ ⦄) ([∃]-intro(y) ⦃ proof₂ ⦄) = [∃]-intro(f x y) ⦃ p proof₁ proof₂ ⦄
 
+[∃]-map-proof-dependent : (ep : ∃ P) → (P(∃.witness ep) → Q(∃.witness ep)) → (∃ Q)
+[∃]-map-proof-dependent ([∃]-intro(x) ⦃ proof ⦄) f = [∃]-intro(x) ⦃ f(proof) ⦄
+
 ------------------------------------------
 -- Universal quantification (Forall, All)
 

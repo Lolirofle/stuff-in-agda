@@ -1,5 +1,8 @@
+{-# OPTIONS --sized-types #-}
+
 module Automaton.Deterministic.FormalLanguage where
 
+open import Automaton.Deterministic.Finite
 open import Automaton.Deterministic
 open import Data.Boolean
 import      Data.Boolean.Operators
@@ -8,32 +11,34 @@ open import Data.List renaming (∅ to [])
 open import Functional
 import      Lvl
 open import Type
+open import Type.Size.Finite
 
-private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+private variable ℓ ℓ₁ ℓ₂ ℓₚ : Lvl.Level
 private variable Q Q₁ Q₂ State : Type{ℓ}
 private variable Σ Σ₁ Σ₂ Alphabet : Type{ℓ}
 
-{-
+
 module Language where
   open import Logic.Propositional
   open import Logic.Predicate
   open import FormalLanguage
+  open import FormalLanguage.Equals
   open import Relator.Equals
   open import Relator.Equals.Proofs
+  import      Type.Dependent as Type
 
   -- The language accepted by a DFA.
   -- This is a linguistic interpretation of an automaton, that it is a grammar of the language.
   -- A language accepts the empty word when the start state is a final state.
   -- The language of a suffix is the transition function applied to the start state.
-  𝔏 : ∀{s} → DFA(Q)(Σ) → Language(Σ){s}
-  Language.accepts-ε   (𝔏(Dfa δ q₀ F))   = F(q₀)
-  Language.suffix-lang (𝔏(Dfa δ q₀ F)) c = 𝔏(Dfa δ (δ(q₀)(c)) F)
+  𝔏 : ∀{s} → DFA{ℓₚ = ℓₚ}(Q)(Σ) → Language(Σ){s}
+  Language.accepts-ε   (𝔏(d))   = DFA.isFinal d (DFA.start d)
+  Language.suffix-lang (𝔏(d)) c = 𝔏(DFA.transitionedAutomaton d c)
 
-  -- TODO
-  -- RegularLanguage : ∀{Σ}{s} → Language(Σ){s} → Stmt
-  -- RegularLanguage{Σ}{s}(L) = ∃(Q ↦ ∃{DFA(Q)(Σ)}(auto ↦ (𝔏{Q}{Σ}{s}(auto) ≡ L)))
+  RegularLanguage : ∀{s}{ℓₚ ℓₑ₁} → Language(Σ) → Type
+  RegularLanguage{Σ = Σ}{s = s}{ℓₚ = ℓₚ}{ℓₑ₁ = ℓₑ₁} L = ∃{Obj = Type.Σ(Type{ℓₑ₁})(Q ↦ DFA{ℓₚ = ℓₚ}(Q)(Σ))}(\(Type.intro _ auto) → (𝔏(auto) ≅[ s ]≅ L))
 
-module Theorems where
+module Proofs where
   open        Language
   open import Logic.Propositional
   open import Relator.Equals
@@ -47,18 +52,21 @@ module Theorems where
   -- step-isWordAccepted auto {c}{[]} = [≡]-intro
   -- step-isWordAccepted auto {c}{w} = congruence₁(DFA.F(auto)) [≡]-intro
 
+  Language-isWordAccepted : ∀{Q}{Σ} → (auto : DFA(Q)(Σ)) → ∀{w} → ({!DFA.isWordAccepted auto w!} ≡ (w ∈? 𝔏(auto)))
+
   {-
-  Language-isWordAccepted : ∀{Q}{Σ} → (auto : DFA(Q)(Σ)) → ∀{w} → (DFA.isWordAccepted(auto)(w) ≡ w ∈? (𝔏(auto)))
+  Language-isWordAccepted : ∀{Q}{Σ} → (auto : DFA(Q)(Σ)) → ∀{w} → (DFA.isWordAccepted(auto)(w) ≡ w ∈? 𝔏(auto))
   Language-isWordAccepted auto {[]}    = [≡]-intro
   Language-isWordAccepted auto {x ⊰ w} =
-    isWordAccepted(x ⊰ w)                 🝖[ _≡_ ]-[]
-    F(δ̂(q₀)(x ⊰ w))                       🝖[ _≡_ ]-[]
-    F(δ̂(δ(q₀) x) w)                       🝖[ _≡_ ]-[ {!Language-isWordAccepted (automatonTransition auto x) {w}!} ]
-    DFA.isWordAccepted (automatonTransition auto x) w                                     🝖[ _≡_ ]-[ Language-isWordAccepted (automatonTransition auto x) {w} ]
-    w ∈? Language.suffix-lang(𝔏(auto))(x) 🝖[ _≡_ ]-[] 
-    (x ⊰ w) ∈? 𝔏(auto)                    🝖-end
+    DFA.isWordAccepted(auto)(x ⊰ w)                    🝖[ _≡_ ]-[]
+    δ̂(q₀)(x ⊰ w) ∈ F                                   🝖[ _≡_ ]-[]
+    δ̂(δ(q₀) x) w ∈ F                                   🝖[ _≡_ ]-[ {!Language-isWordAccepted (transitionedAutomaton auto x) {w}!} ]
+    DFA.isWordAccepted(transitionedAutomaton auto x) w 🝖[ _≡_ ]-[ Language-isWordAccepted (transitionedAutomaton auto x) {w} ]
+    w ∈? Language.suffix-lang(𝔏(auto))(x)              🝖[ _≡_ ]-[] 
+    (x ⊰ w) ∈? 𝔏(auto)                                 🝖-end
     where
       open DFA(auto)
+      open LetterNotation
   -- [≡]-with {!DFA.F(auto)!} (Language-isWordAccepted {Σ = Σ} auto {w})
   -}
 
@@ -73,11 +81,11 @@ module Theorems where
     -- (c ⊰ w) ∈? (𝔏(Dfa δ q₀ F))
     -- w ∈? (Language.suffix-lang(𝔏(Dfa δ q₀ F))(c))
     -- w ∈? (𝔏(Dfa δ (δ(q₀)(c)) F))
-
-  module _ (auto : DFA(Q)(Σ)) where
-    δ̂-with-[++] : ∀{q : Q}{w₁ w₂ : Word(Σ)} → DFA.δ̂(auto)(q)(w₁ ++ w₂) ≡ DFA.δ̂(auto)(DFA.δ̂(auto)(q)(w₁))(w₂)
+{-
+  module _ (auto : Deterministic(Q)(Σ)) where
+    δ̂-with-[++] : ∀{q : Q}{w₁ w₂ : Word(Σ)} → Deterministic.δ̂(auto)(q)(w₁ ++ w₂) ≡ DFA.δ̂(auto)(DFA.δ̂(auto)(q)(w₁))(w₂)
     δ̂-with-[++] {_}{[]}         = [≡]-intro
-    δ̂-with-[++] {q}{a ⊰ w₁}{w₂} = δ̂-with-[++] {DFA.δ(auto)(q)(a)}{w₁}{w₂}
+    δ̂-with-[++] {q}{a ⊰ w₁}{w₂} = δ̂-with-[++] {Deterministic.δ(auto)(q)(a)}{w₁}{w₂}
 
     [∁]-δ̂ : ∀{q : Q}{w : Word(Σ)} → DFA.δ̂(∁ auto)(q)(w) ≡ DFA.δ̂(auto)(q)(w)
     [∁]-δ̂ {_}{[]}    = [≡]-intro

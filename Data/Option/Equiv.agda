@@ -9,7 +9,7 @@ open import Structure.Relator.Properties
 open import Structure.Setoid.WithLvl
 open import Type
 
-private variable ℓ ℓₑ : Lvl.Level
+private variable ℓ ℓₑ ℓₑₐ : Lvl.Level
 private variable A : Type{ℓ}
 
 instance

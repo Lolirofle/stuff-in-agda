@@ -5,6 +5,8 @@ open import Data.List
 open import Data.List.Functions
 open        Data.List.Functions.LongOper
 open import Data.List.Proofs
+open import Data.List.Proofs.Id
+open import Data.List.Proofs.Length
 open import Functional as Fn using (_$_ ; _∘_ ; const)
 open import Numeral.Natural
 open import Numeral.Natural.Oper
@@ -13,6 +15,7 @@ open import Numeral.Natural.Relation.Order
 open import Relator.Equals hiding (_≡_)
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Function
+open import Structure.Function.Multi
 open import Structure.Setoid.WithLvl
 open import Syntax.Transitivity
 open import Type
@@ -70,10 +73,10 @@ Range-singleton {𝐒 a}
 Range-concat : ∀{a b c} → ⦃ ab : (a ≤ b) ⦄ ⦃ bc : (b < c) ⦄ → ((a ‥ b) ++ (b ‥ c) ≡ a ‥ c)
 Range-concat {𝟎} {𝟎}   {𝐒 c} ⦃ [≤]-minimum ⦄ ⦃ [≤]-with-[𝐒] ⦄ = [≡]-intro
 Range-concat {𝟎} {𝐒 b} {𝐒 c} ⦃ [≤]-minimum ⦄ ⦃ [≤]-with-[𝐒] ⦄ = congruence₁ (prepend 0) $
-  map 𝐒(𝟎 ‥ b) ++ map 𝐒 (b ‥ c) 🝖[ _≡_ ]-[ map-[++] {l₁ = 𝟎 ‥ b}{l₂ = b ‥ c} ]-sym
+  map 𝐒(𝟎 ‥ b) ++ map 𝐒 (b ‥ c) 🝖[ _≡_ ]-[ preserving₂(map 𝐒)(_++_)(_++_) {𝟎 ‥ b}{b ‥ c} ]-sym
   map 𝐒((𝟎 ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-concat {𝟎} {b} {c}) ]
   map 𝐒(𝟎 ‥ c)                  🝖-end
 Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ [≤]-with-[𝐒] ⦄ ⦃ [≤]-with-[𝐒] ⦄ =
-  map 𝐒(a ‥ b) ++ map 𝐒 (b ‥ c) 🝖[ _≡_ ]-[ map-[++] {l₁ = a ‥ b}{l₂ = b ‥ c} ]-sym
+  map 𝐒(a ‥ b) ++ map 𝐒 (b ‥ c) 🝖[ _≡_ ]-[ preserving₂(map 𝐒)(_++_)(_++_) {a ‥ b}{b ‥ c} ]-sym
   map 𝐒((a ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-concat {a} {b} {c}) ]
   map 𝐒(a ‥ c)                  🝖-end

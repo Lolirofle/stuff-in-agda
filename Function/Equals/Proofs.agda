@@ -4,6 +4,7 @@ import      Lvl
 open import Data
 import      Functional
 import      Function.Equals
+open import Logic.Predicate
 open import Logic.Propositional
 open import Structure.Setoid.WithLvl
 open import Structure.Function

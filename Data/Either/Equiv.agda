@@ -6,19 +6,27 @@ open import Data.Either as Either
 open import Functional
 open import Logic
 open import Logic.Predicate
+open import Logic.Propositional
 open import Structure.Function.Domain
 open import Structure.Function
 open import Type
 
-module _ {ℓ₁ ℓ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} where
-  open import Structure.Setoid
+module _ {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} where
+  open import Structure.Setoid.WithLvl
   open import Structure.Relator.Equivalence
   open import Structure.Relator.Properties
 
-  module _ ⦃ equiv-A : Equiv(A) ⦄ ⦃ equiv-B : Equiv(B) ⦄ where
-    data EitherEquality : (A ‖ B) → (A ‖ B) → Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+  module _ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
+    data EitherEquality : (A ‖ B) → (A ‖ B) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓₑ₁ Lvl.⊔ ℓₑ₂} where
       Left  : ∀{x y} → (x ≡ y) → EitherEquality(Left  x)(Left  y)
       Right : ∀{x y} → (x ≡ y) → EitherEquality(Right x)(Right y)
+
+    EitherEquality-elim : ∀{ℓ}{P : ∀{ab₁ ab₂ : (A ‖ B)} → EitherEquality ab₁ ab₂ → Type{ℓ}} → (∀{x y : A} → (xy : (x ≡ y)) → P(Left xy)) → (∀{x y : B} → (xy : (x ≡ y)) → P(Right xy)) → ∀{ab₁ ab₂ : (A ‖ B)} → (eq : EitherEquality ab₁ ab₂) → P(eq)
+    EitherEquality-elim l r (Left  p) = l p
+    EitherEquality-elim l r (Right p) = r p
+
+    EitherEquality-not-Left-Right : ∀{a : A}{b : B} → ¬(EitherEquality (Left a) (Right b))
+    EitherEquality-not-Left-Right ()
 
     instance
       Either-equiv : Equiv(A ‖ B)

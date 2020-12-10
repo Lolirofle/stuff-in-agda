@@ -3,7 +3,6 @@ module Formalization.PrimitiveRecursion where
 import      Lvl
 open import Data
 open import Data.ListSized
-open import Functional
 open import Numeral.Finite
 open import Numeral.Natural
 open import Syntax.Number
@@ -25,6 +24,9 @@ Primitive : Type
 Primitive = ℕ
 
 module _ where
+  open import Data.ListSized.Functions
+  open import Functional
+
   private variable m n   : ℕ
   private variable i     : 𝕟(n)
   private variable x v   : Primitive
@@ -112,7 +114,7 @@ module _ where
   eval-to-[⟹] {fs = ∅}      [≡]-intro = base
   eval-to-[⟹] {fs = f ⊰ fs} [≡]-intro = step (eval-to-[⟶] [≡]-intro) (eval-to-[⟹] [≡]-intro)
 
-  -- TODO: Is it possible to prove that _⟶_ terminates and normalizes by using [⟶]-to-eval ?
+  -- TODO: Is it possible to prove that _⟶_ terminates and normalizes by using [⟶]-to-eval (total and deterministic)?
 
   open import Function.Equals
   open import Logic
@@ -242,8 +244,6 @@ module Proofs where
   open import Structure.Relator.Properties
   open import Syntax.Transitivity
 
-  -- TODO: Formalize "Function(1) is countably infinite". Maybe take some inspiration from https://proofwiki.org/wiki/Not_All_URM_Computable_Functions_are_Primitive_Recursive . Then prove that (ℕ → ℕ) is not countably infinite, and therefore not all computable functions are expressible primitive recursively (is this argument constructive?)
-
   addition-correctness : ∀{a b} → (evaluate Arithmetic.Addition (a ⊰ b ⊰ ∅) ≡ a + b)
   addition-correctness {𝟎}   {b} = [≡]-intro
   addition-correctness {𝐒 a} {b} = [≡]-with(𝐒) (addition-correctness {a}{b})
@@ -287,3 +287,40 @@ module Proofs where
   iszero-correctness : ∀{a} → (evaluate Arithmetic.IsZero (a ⊰ ∅) ≡ ℕbool(a ≡? 𝟎))
   iszero-correctness {𝟎}   = [≡]-intro
   iszero-correctness {𝐒 a} = [≡]-intro
+
+  -- TODO: Formalize "Function(1) is countably infinite". Maybe take some inspiration from https://proofwiki.org/wiki/Not_All_URM_Computable_Functions_are_Primitive_Recursive . Then prove that (ℕ → ℕ) is not countably infinite, and therefore not all computable functions are expressible primitive recursively (is this argument constructive?)
+
+  open import Data.Tuple
+  open import Function.Inverse
+  open import Logic.Predicate
+  open import Logic.Propositional
+  open import Type.Size.Countable
+  open import Structure.Function.Domain.Proofs
+  open import Structure.Function using (congruence₁)
+  open import Syntax.Function
+  open import Syntax.Transitivity
+
+  postulate Function-countablyInfinite : CountablyInfinite(Function(1))
+  encodeFunction : Function(1) → ℕ
+  encodeFunction = inv _ ⦃ bijective-to-invertible ⦃ bij = [∃]-proof Function-countablyInfinite ⦄ ⦄
+
+  -- TODO: Use a lifted Numeral.Natural.Sequence.pairIndexing as a witness directly (instead of encodePair). Another alternative is (a ↦ b ↦ 2ᵃ⋅3ᵇ) if it is easier to construct f that way.
+  postulate Function-value-pair-countablyInfinite : CountablyInfinite(Function(1) ⨯ ℕ)
+  encodePair : (Function(1) ⨯ ℕ) → ℕ
+  encodePair = inv _ ⦃ bijective-to-invertible ⦃ bij = [∃]-proof Function-value-pair-countablyInfinite ⦄ ⦄
+
+  -- TODO: Is it possible to use Logic.DiagonalMethod for this proof?
+  no-self-interpreter : ¬ ∃(interpret ↦ ∀{f}{n} → evaluate interpret (singleton (encodePair(f , n))) ≡ evaluate f (singleton n))
+  no-self-interpreter ([∃]-intro interpret ⦃ p ⦄) = 𝐒-not-self(symmetry(_≡_) x) where
+    postulate f : Function(1)
+    postulate f-correctness : ∀{g} → (evaluate f (singleton(encodeFunction g)) ≡ encodePair(g , encodeFunction g))
+
+    g : Function(1)
+    g = Composition Successor (singleton (Composition interpret (singleton f)))
+
+    x : evaluate g (singleton (encodeFunction g)) ≡ 𝐒(evaluate g (singleton (encodeFunction g)))
+    x =
+      evaluate g (singleton (encodeFunction g))                                   🝖[ _≡_ ]-[]
+      𝐒(evaluate interpret (singleton(evaluate f (singleton(encodeFunction g))))) 🝖[ _≡_ ]-[ congruence₁(𝐒) (congruence₁(evaluate interpret) (congruence₁(singleton) f-correctness)) ]
+      𝐒(evaluate interpret (singleton(encodePair(g , encodeFunction g))))         🝖[ _≡_ ]-[ congruence₁(𝐒) p ]
+      𝐒(evaluate g (singleton(encodeFunction g)))                                 🝖-end

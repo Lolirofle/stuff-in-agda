@@ -73,7 +73,13 @@ module From-[≤] (_≤_ : T → T → Stmt{ℓₗ}) where
       [<][≤]-subtransitivityᵣ : Subtransitivityᵣ(_<_)(_≤_)
       Subtransitivityᵣ.proof [<][≤]-subtransitivityᵣ xy yz zx = xy(transitivity(_≤_) yz zx)
 
-    module _ ⦃ _ : (_≡_) ⊆₂ (_≤_) ⦄ where -- TODO: Consider including this in weak orders
+    [≤][≢]-to-[<] : ∀{a b} → (a ≤ b) → (a ≢ b) → (a < b)
+    [≤][≢]-to-[<] le ne ba = ne(antisymmetry(_≤_)(_≡_) le ba)
+
+    [≥][≢]-to-[>] : ∀{a b} → (a ≥ b) → (a ≢ b) → (a > b)
+    [≥][≢]-to-[>] ge ne = [≤][≢]-to-[<] ge (ne ∘ symmetry(_≡_))
+
+    module _ ⦃ _ : (_≡_) ⊆₂ (_≤_) ⦄ where -- TODO: Consider including this in weak orders. Or just assume that (_≤_) is a relation and this will follow
       instance
         [≤][≡]-subtransitivityₗ : Subtransitivityₗ(_≤_)(_≡_)
         [≤][≡]-subtransitivityₗ = subrelation-transitivity-to-subtransitivityₗ

@@ -7,6 +7,7 @@ open import Data.Boolean
 open import Data.List as List using (List)
 import      Data.List.Functions as List
 import      Data.List.Proofs as List
+import      Data.List.Proofs.Id as List
 open import Functional
 open import Function.Iteration
 open import Function.Iteration.Proofs

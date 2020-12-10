@@ -1,0 +1,351 @@
+module Structure.Container.SetLike where
+
+open import Data.Boolean
+open import Data.Boolean.Stmt
+open import Functional
+open import Lang.Instance
+import      Lvl
+open import Logic
+open import Logic.Propositional
+open import Logic.Predicate
+open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₛ_ ; _≢_ to _≢ₛ_)
+open import Structure.Function.Domain
+open import Structure.Function
+open import Structure.Operator
+open import Structure.Relator.Equivalence
+open import Structure.Relator.Properties
+open import Structure.Relator hiding (module Names)
+open import Type.Properties.Inhabited
+open import Type
+
+private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ ℓ₇ ℓ₈ ℓ₉ ℓ₁₀ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ : Lvl.Level
+private variable A B C C₁ C₂ Cₒ Cᵢ E E₁ E₂ : Type{ℓ}
+private variable _∈_ _∈ₒ_ _∈ᵢ_ : E → C
+
+module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}) where -- TODO: Maybe generalize C so that it becomes "indexed": `(C : (i : I) → Type{ℓ₁(i)})`? Is it neccessary? Which set-like structures does not fit with the definitions below?
+  record SetLike : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ Lvl.𝐒(ℓ₄ Lvl.⊔ ℓ₅)} where
+    field
+      _⊆_ : C → C → Stmt{ℓ₄}
+      _≡_ : C → C → Stmt{ℓ₅}
+
+    field
+      [⊆]-membership : ∀{a b} → (a ⊆ b) ↔ (∀{x} → (x ∈ a) → (x ∈ b))
+      [≡]-membership : ∀{a b} → (a ≡ b) ↔ (∀{x} → (x ∈ a) ↔ (x ∈ b))
+
+    _∋_ : C → E → Stmt
+    _∋_ = swap(_∈_)
+
+    _⊇_ : C → C → Stmt
+    _⊇_ = swap(_⊆_)
+
+    _∉_ : E → C → Stmt
+    _∉_ = (¬_) ∘₂ (_∈_)
+
+    _⊈_ : C → C → Stmt
+    _⊈_ = (¬_) ∘₂ (_⊆_)
+
+    _⊉_ : C → C → Stmt
+    _⊉_ = (¬_) ∘₂ (_⊇_)
+
+    _≢_ : C → C → Stmt
+    _≢_ = (¬_) ∘₂ (_≡_)
+
+  -- A type such that its inhabitants is the elements of the set `S`.
+  SetElement : C → Stmt
+  SetElement(S) = ∃(_∈ S)
+
+  module FunctionProperties where
+    module Names where
+      _closed-under₁_ : C → (E → E) → Stmt -- TODO: Maybe possible to generalize over n
+      S closed-under₁ f = (∀{x} → (x ∈ S) → (f(x) ∈ S))
+
+      _closed-under₂_ : C → (E → E → E) → Stmt
+      S closed-under₂ (_▫_) = (∀{x y} → (x ∈ S) → (y ∈ S) → ((x ▫ y) ∈ S))
+
+    open import Lang.Instance
+    module _ (S : C) (f : E → E) where
+      record _closed-under₁_ : Stmt{Lvl.of(S Names.closed-under₁ f)} where
+        constructor intro
+        field proof : S Names.closed-under₁ f
+      _closureUnder₁_ = inst-fn _closed-under₁_.proof
+
+    module _ (S : C) (_▫_ : E → E → E) where
+      record _closed-under₂_ : Stmt{Lvl.of(S Names.closed-under₂ (_▫_))} where
+        constructor intro
+        field proof : S Names.closed-under₂ (_▫_)
+      _closureUnder₂_ = inst-fn _closed-under₂_.proof
+
+module Names where
+  module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ where
+    open SetLike(setLike)
+
+    EmptySet : C → Type
+    EmptySet(∅) = ∀{x} → (x ∉ ∅)
+
+    UniversalSet : C → Type
+    UniversalSet(𝐔) = ∀{x} → (x ∈ 𝐔)
+
+    UnionOperator : (C → C → C) → Type
+    UnionOperator(_∪_) = ∀{a b}{x} → (x ∈ (a ∪ b)) ↔ ((x ∈ a) ∨ (x ∈ b))
+
+    IntersectionOperator : (C → C → C) → Type
+    IntersectionOperator(_∩_) = ∀{a b}{x} → (x ∈ (a ∩ b)) ↔ ((x ∈ a) ∧ (x ∈ b))
+
+    WithoutOperator : (C → C → C) → Type
+    WithoutOperator(_∖_) = ∀{a b}{x} → (x ∈ (a ∖ b)) ↔ ((x ∈ a) ∧ (x ∉ b))
+
+    ComplementOperator : (C → C) → Type
+    ComplementOperator(∁) = ∀{a}{x} → (x ∈ (∁ a)) ↔ (x ∉ a)
+
+    module _ {I : Type{ℓ}} ⦃ equiv-I : Equiv{ℓₗ₁}(I) ⦄ ⦃ equiv-E : Equiv{ℓₗ₂}(E) ⦄ where
+      ImageOperator : ((f : I → E) → ⦃ func : Function(f) ⦄ → C) → Type
+      ImageOperator(⊶) = ∀{f} ⦃ func : Function(f) ⦄ → ∀{y} → (y ∈ (⊶ f)) ↔ ∃(x ↦ f(x) ≡ₛ y)
+
+    module _ ⦃ equiv-E : Equiv{ℓₗ}(E) ⦄ where
+      SingletonSet : (E → C) → Type
+      SingletonSet(singleton) = ∀{y}{x} → (x ∈ singleton(y)) ↔ (x ≡ₛ y)
+
+      PairSet : (E → E → C) → Type
+      PairSet(pair) = ∀{y₁ y₂}{x} → (x ∈ pair y₁ y₂) ↔ (x ≡ₛ y₁)∨(x ≡ₛ y₂)
+
+      AddFunction : (E → C → C) → Type
+      AddFunction(add) = ∀{y}{a}{x} → (x ∈ add y a) ↔ ((x ∈ a) ∨ (x ≡ₛ y))
+
+      RemoveFunction : (E → C → C) → Type
+      RemoveFunction(remove) = ∀{y}{a}{x} → (x ∈ remove y a) ↔ ((x ∈ a) ∧ (x ≢ₛ y))
+
+      FilterFunction : ((P : E → Stmt{ℓ}) ⦃ unaryRelator : UnaryRelator(P) ⦄ → (C → C)) → Type
+      FilterFunction(filter) = ∀{A}{P} ⦃ unaryRelator : UnaryRelator(P) ⦄ {x} → (x ∈ filter P(A)) ↔ ((x ∈ A) ∧ P(x))
+
+      BooleanFilterFunction : ((E → Bool) → (C → C)) → Type
+      BooleanFilterFunction(boolFilter) = ∀{A}{P}{x} → (x ∈ boolFilter P(A)) ↔ ((x ∈ A) ∧ IsTrue(P(x)))
+
+  module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ ⦃ equiv-E : Equiv{ℓₗ₁}(E) ⦄ {O : Type{ℓ₆}} ⦃ equiv-O : Equiv{ℓₗ₂}(O) ⦄ where
+    UnapplyFunction : ((f : E → O) ⦃ func : Function(f) ⦄ → O → C) → Type
+    UnapplyFunction(unapply) = ∀{f} ⦃ func : Function(f) ⦄ {y}{x} → (x ∈ unapply f(y)) ↔ (f(x) ≡ₛ y)
+
+  module _
+    ⦃ equiv-E₁ : Equiv{ℓₗ₁}(E₁) ⦄
+    (_∈₁_ : _) ⦃ setLike₁ : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C₁}{E₁} (_∈₁_) {ℓ₄}{ℓ₅} ⦄
+    ⦃ equiv-E₂ : Equiv{ℓₗ₂}(E₂) ⦄
+    (_∈₂_ : _) ⦃ setLike₂ : SetLike{ℓ₆}{ℓ₇}{ℓ₈}{C₂}{E₂} (_∈₂_) {ℓ₉}{ℓ₁₀} ⦄
+    where
+
+    open SetLike ⦃ … ⦄
+
+    MapFunction : ((f : E₁ → E₂) ⦃ func : Function(f) ⦄ → (C₁ → C₂)) → Type
+    MapFunction(map) = ∀{f} ⦃ func : Function(f) ⦄ {A}{y} → (y ∈₂ map f(A)) ↔ ∃(x ↦ (x ∈₁ A) ∧ (f(x) ≡ₛ y))
+
+    UnmapFunction : ((f : E₁ → E₂) ⦃ func : Function(f) ⦄ → (C₂ → C₁)) → Type
+    UnmapFunction(unmap) = ∀{f} ⦃ func : Function(f) ⦄ {A}{x} → (x ∈₁ unmap f(A)) ↔ (f(x) ∈₂ A)
+
+  module _ (_∈ₒ_ : _) ⦃ outer-setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{Cₒ}{Cᵢ} (_∈ₒ_) {ℓ₄}{ℓ₅} ⦄ (_∈ᵢ_ : _) ⦃ inner-setLike : SetLike{ℓ₂}{ℓ₆}{ℓ₇}{Cᵢ}{E} (_∈ᵢ_) {ℓ₈}{ℓ₉} ⦄ where
+    open SetLike ⦃ … ⦄
+
+    PowerFunction : (Cᵢ → Cₒ) → Type
+    PowerFunction(℘) = ∀{A x} → (x ∈ₒ ℘(A)) ↔ (x ⊆ A)
+
+    BigUnionOperator : (Cₒ → Cᵢ) → Type
+    BigUnionOperator(⋃) = ∀{A}{x} → (x ∈ᵢ (⋃ A)) ↔ ∃(a ↦ (a ∈ₒ A) ∧ (x ∈ᵢ a))
+
+    BigIntersectionOperator : (Cₒ → Cᵢ) → Type
+    BigIntersectionOperator(⋂) = ∀{A} → ∃(_∈ₒ A) → ∀{x} → (x ∈ᵢ (⋂ A)) ↔ (∀{a} → (a ∈ₒ A) → (x ∈ᵢ a))
+
+  module _ {I : Type{ℓ}} ⦃ equiv-I : Equiv{ℓₗ₁}(I) ⦄ ⦃ equiv-E : Equiv{ℓₗ₂}(E) ⦄ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ where
+    IndexedBigUnionOperator  : ((I → C) → C) → Type
+    IndexedBigUnionOperator(⋃ᵢ) = ∀{Ai}{x} → (x ∈ (⋃ᵢ Ai)) ↔ ∃(i ↦ (x ∈ Ai(i)))
+
+    IndexedBigIntersectionOperator : ((I → C) → C) → Type
+    IndexedBigIntersectionOperator(⋂ᵢ) = ∀{Ai} → ◊(I) → ∀{x} → (x ∈ (⋂ᵢ Ai)) ↔ (∀{i} → (x ∈ Ai(i)))
+
+module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ where
+  open SetLike(setLike)
+
+  record EmptySet(∅ : C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field membership : Names.EmptySet(_∈_)(∅)
+
+  record UniversalSet(𝐔 : C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field membership : Names.UniversalSet(_∈_)(𝐔)
+
+  record UnionOperator(_∪_ : C → C → C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field membership : Names.UnionOperator(_∈_)(_∪_)
+
+  record IntersectionOperator(_∩_ : C → C → C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field membership : Names.IntersectionOperator(_∈_)(_∩_)
+
+  record WithoutOperator(_∖_ : C → C → C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field membership : Names.WithoutOperator(_∈_)(_∖_)
+
+  record ComplementOperator(∁ : C → C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field membership : Names.ComplementOperator(_∈_)(∁)
+
+  module _ {I : Type{ℓ}} ⦃ equiv-I : Equiv{ℓₗ₁}(I) ⦄ ⦃ equiv-E : Equiv{ℓₗ₂}(E) ⦄ where
+    record ImageOperator(⊶ : (f : I → E) → ⦃ func : Function(f) ⦄ → C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂} where
+      constructor intro
+      field membership : Names.ImageOperator(_∈_)(⊶)
+
+  module _ ⦃ equiv-E : Equiv{ℓₗ}(E) ⦄ where
+    record SingletonSet(singleton : E → C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓₗ} where
+      constructor intro
+      field membership : Names.SingletonSet(_∈_)(singleton)
+
+    record PairSet(pair : E → E → C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓₗ} where
+      constructor intro
+      field membership : Names.PairSet(_∈_)(pair)
+
+    record AddFunction(add : E → C → C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓₗ} where
+      constructor intro
+      field membership : Names.AddFunction(_∈_)(add)
+
+    record RemoveFunction(remove : E → C → C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓₗ} where
+      constructor intro
+      field membership : Names.RemoveFunction(_∈_)(remove)
+
+    module _ {ℓ} where
+      record FilterFunction(filter : (P : E → Stmt{ℓ}) ⦃ unaryRelator : UnaryRelator(P) ⦄ → (C → C)) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ Lvl.𝐒(ℓ) Lvl.⊔ ℓₗ} where
+        constructor intro
+        field membership : Names.FilterFunction(_∈_)(filter)
+
+    record BooleanFilterFunction(boolFilter : (E → Bool) → (C → C)) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+      constructor intro
+      field membership : Names.BooleanFilterFunction(_∈_)(boolFilter)
+
+module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ ⦃ equiv-E : Equiv{ℓₗ₁}(E) ⦄ {O : Type{ℓ₆}} ⦃ equiv-O : Equiv{ℓₗ₂}(O) ⦄ where
+  record UnapplyFunction(unapply : (f : E → O) ⦃ func : Function(f) ⦄ → O → C) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₆ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂} where
+    constructor intro
+    field membership : Names.UnapplyFunction(_∈_)(unapply)
+
+module _
+  ⦃ equiv-E₁ : Equiv{ℓₗ₁}(E₁) ⦄
+  (_∈₁_ : _) ⦃ setLike₁ : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C₁}{E₁} (_∈₁_) {ℓ₄}{ℓ₅} ⦄
+  ⦃ equiv-E₂ : Equiv{ℓₗ₂}(E₂) ⦄
+  (_∈₂_ : _) ⦃ setLike₂ : SetLike{ℓ₆}{ℓ₇}{ℓ₈}{C₂}{E₂} (_∈₂_) {ℓ₉}{ℓ₁₀} ⦄
+  where
+
+  open SetLike ⦃ … ⦄
+  record MapFunction(map : (f : E₁ → E₂) ⦃ func : Function(f) ⦄ → (C₁ → C₂)) : Type{ℓₗ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₆ Lvl.⊔ ℓ₇ Lvl.⊔ ℓ₈} where
+    constructor intro
+    field membership : Names.MapFunction(_∈₁_)(_∈₂_)(map)
+
+  record UnmapFunction(unmap : (f : E₁ → E₂) ⦃ func : Function(f) ⦄ → (C₂ → C₁)) : Type{ℓₗ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₆ Lvl.⊔ ℓ₇ Lvl.⊔ ℓ₈} where
+    constructor intro
+    field membership : Names.UnmapFunction(_∈₁_)(_∈₂_)(unmap)
+
+module _ (_∈ₒ_ : _) ⦃ outer-setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{Cₒ}{Cᵢ} (_∈ₒ_) {ℓ₄}{ℓ₅} ⦄ (_∈ᵢ_ : _) ⦃ inner-setLike : SetLike{ℓ₂}{ℓ₆}{ℓ₇}{Cᵢ}{E} (_∈ᵢ_) {ℓ₈}{ℓ₉} ⦄ where
+  open SetLike ⦃ … ⦄
+
+  record PowerFunction(℘ : Cᵢ → Cₒ) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₈} where
+    constructor intro
+    field membership : Names.PowerFunction(_∈ₒ_)(_∈ᵢ_)(℘)
+
+  record BigUnionOperator(⋃ : Cₒ → Cᵢ) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₆ Lvl.⊔ ℓ₇} where
+    constructor intro
+    field membership : Names.BigUnionOperator(_∈ₒ_)(_∈ᵢ_)(⋃)
+
+  record BigIntersectionOperator(⋂ : Cₒ → Cᵢ) : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₆ Lvl.⊔ ℓ₇} where
+    constructor intro
+    field membership : Names.BigIntersectionOperator(_∈ₒ_)(_∈ᵢ_)(⋂)
+
+module _ {I : Type{ℓ}} ⦃ equiv-I : Equiv{ℓₗ₁}(I) ⦄ ⦃ equiv-E : Equiv{ℓₗ₂}(E) ⦄ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ where
+  record IndexedBigUnionOperator(⋃ᵢ : (I → C) → C) : Type{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field membership : Names.IndexedBigUnionOperator(_∈_)(⋃ᵢ)
+
+  record IndexedBigIntersectionOperator(⋂ᵢ : (I → C) → C) : Type{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field membership : Names.IndexedBigIntersectionOperator(_∈_)(⋂ᵢ)
+
+module Oper where
+  module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ where
+    ∅ : ⦃ ∃(EmptySet(_∈_)) ⦄ → _
+    ∅ = inst-fn [∃]-witness
+
+    𝐔 : ⦃ ∃(UniversalSet(_∈_)) ⦄ → _
+    𝐔 = inst-fn [∃]-witness
+
+    _∪_ : ⦃ ∃(UnionOperator(_∈_)) ⦄ → _
+    _∪_ = inst-fn [∃]-witness
+
+    _∩_ : ⦃ ∃(IntersectionOperator(_∈_)) ⦄ → _
+    _∩_ = inst-fn [∃]-witness
+
+    _∖_ : ⦃ ∃(WithoutOperator(_∈_)) ⦄ → _
+    _∖_ = inst-fn [∃]-witness
+
+    ∁ : ⦃ ∃(ComplementOperator(_∈_)) ⦄ → _
+    ∁ = inst-fn [∃]-witness
+
+    module _ {I : Type{ℓ}} ⦃ equiv-I : Equiv{ℓₗ₁}(I) ⦄ ⦃ equiv-E : Equiv{ℓₗ₂}(E) ⦄ where
+      ⊶ : ⦃ ∃(ImageOperator(_∈_){I = I}) ⦄ → _
+      ⊶ = inst-fn [∃]-witness
+
+    module _ ⦃ equiv-E : Equiv{ℓₗ}(E) ⦄ where
+      singleton : ⦃ ∃(SingletonSet(_∈_)) ⦄ → _
+      singleton = inst-fn [∃]-witness
+
+      pair : ⦃ ∃(PairSet(_∈_)) ⦄ → _
+      pair = inst-fn [∃]-witness
+
+      add : ⦃ ∃(AddFunction(_∈_)) ⦄ → _
+      add = inst-fn [∃]-witness
+
+      remove : ⦃ ∃(RemoveFunction(_∈_)) ⦄ → _
+      remove = inst-fn [∃]-witness
+
+      module _ {ℓ} where
+        filter : ⦃ ∃(FilterFunction(_∈_){ℓ = ℓ}) ⦄ → _
+        filter = inst-fn [∃]-witness
+
+      boolFilter : ⦃ ∃(BooleanFilterFunction(_∈_)) ⦄ → _
+      boolFilter = inst-fn [∃]-witness
+
+  module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ ⦃ equiv-E : Equiv{ℓₗ₁}(E) ⦄ {O : Type{ℓ₆}} ⦃ equiv-O : Equiv{ℓₗ₂}(O) ⦄ where
+    unapply : ⦃ ∃(UnapplyFunction(_∈_){O = O}) ⦄ → _
+    unapply = inst-fn [∃]-witness
+
+  module _
+    ⦃ equiv-E₁ : Equiv{ℓₗ₁}(E₁) ⦄
+    (_∈₁_ : _) ⦃ setLike₁ : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C₁}{E₁} (_∈₁_) {ℓ₄}{ℓ₅} ⦄
+    ⦃ equiv-E₂ : Equiv{ℓₗ₂}(E₂) ⦄
+    (_∈₂_ : _) ⦃ setLike₂ : SetLike{ℓ₆}{ℓ₇}{ℓ₈}{C₂}{E₂} (_∈₂_) {ℓ₉}{ℓ₁₀} ⦄
+    where
+
+    map : ⦃ ∃(MapFunction(_∈₁_)(_∈₂_)) ⦄ → _
+    map = inst-fn [∃]-witness
+
+    unmap : ⦃ ∃(UnmapFunction(_∈₁_)(_∈₂_)) ⦄ → _
+    unmap = inst-fn [∃]-witness
+
+  module _ (_∈ₒ_ : _) ⦃ outer-setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{Cₒ}{Cᵢ} (_∈ₒ_) {ℓ₄}{ℓ₅} ⦄ (_∈ᵢ_ : _) ⦃ inner-setLike : SetLike{ℓ₂}{ℓ₆}{ℓ₇}{Cᵢ}{E} (_∈ᵢ_) {ℓ₈}{ℓ₉} ⦄ where
+    ℘ : ⦃ ∃(PowerFunction(_∈ₒ_)(_∈ᵢ_)) ⦄ → _
+    ℘ = inst-fn [∃]-witness
+
+    ⋃ : ⦃ ∃(BigUnionOperator(_∈ₒ_)(_∈ᵢ_)) ⦄ → _
+    ⋃ = inst-fn [∃]-witness
+
+    ⋂ : ⦃ ∃(BigIntersectionOperator(_∈ₒ_)(_∈ᵢ_)) ⦄ → _
+    ⋂ = inst-fn [∃]-witness
+
+  module _ {I : Type{ℓ}} ⦃ equiv-I : Equiv{ℓₗ₁}(I) ⦄ ⦃ equiv-E : Equiv{ℓₗ₂}(E) ⦄ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ where
+    ⋃ᵢ : ⦃ ∃(IndexedBigUnionOperator{I = I}(_∈_)) ⦄ → _
+    ⋃ᵢ = inst-fn [∃]-witness
+
+    ⋂ᵢ : ⦃ ∃(IndexedBigIntersectionOperator{I = I}(_∈_)) ⦄ → _
+    ⋂ᵢ = inst-fn [∃]-witness
+
+{-
+open SetLike ⦃ … ⦄
+  using (
+    _∈_ ; _⊆_ ; _≡_ ;
+    _∋_ ; _⊇_ ;
+    _∉_ ; _⊈_ ; _⊉_ ; _≢_ ;
+    ∅ ; _∪_ ; _∩_ ; _∖_ ;
+    singleton ; add ; remove
+  )
+-}

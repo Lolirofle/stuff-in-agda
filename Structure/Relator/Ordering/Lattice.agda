@@ -12,71 +12,71 @@ open import Type
 
 private variable ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
 
-module _ {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
-  record Bottom (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
-    constructor intro
-    field
-      ⦃ membership ⦄ : P(m)
-      proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (m ≤ x)
-
-  record Top (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+module _ {T : Type{ℓ₁}} where
+  record Top (_≤_ : T → T → Stmt{ℓ₂}) (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
       ⦃ membership ⦄ : P(m)
       proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (x ≤ m)
 
-  record LeftBound (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
-    constructor intro
-    field proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (b ≤ x)
+  module _ (_≤_ : T → T → Stmt{ℓ₂}) where
+    Bottom : (P : T → Stmt{ℓ₃}) (m : T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+    Bottom = Top(swap(_≤_))
+    module Bottom{ℓ₂}{ℓ₃}{_≤_} = Top{ℓ₂}{ℓ₃}{swap(_≤_)}
 
-  record RightBound (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+  record RightBound (_≤_ : T → T → Stmt{ℓ₂}) (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (x ≤ b)
 
-  record Join (P : T → Stmt{ℓ₃}) (sup : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
-    constructor intro
-    field
-      bound : RightBound(P) (sup)
-      extreme : LeftBound(RightBound(P)) (sup)
+  module _ (_≤_ : T → T → Stmt{ℓ₂}) where
+    LeftBound : (P : T → Stmt{ℓ₃}) → (b : T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+    LeftBound = RightBound(swap(_≤_))
+    module LeftBound{ℓ₂}{ℓ₃}{_≤_} = RightBound{ℓ₂}{ℓ₃}{swap(_≤_)}
 
-  record Meet (P : T → Stmt{ℓ₃}) (inf : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+  record Meet (_≤_ : T → T → Stmt{ℓ₂}) (P : T → Stmt{ℓ₃}) (inf : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
-      bound : LeftBound(P) (inf)
-      extreme : RightBound(LeftBound(P)) (inf)
+      bound : LeftBound(_≤_)(P) (inf)
+      extreme : RightBound(_≤_)(LeftBound(_≤_)(P)) (inf)
+
+  module _ (_≤_ : T → T → Stmt{ℓ₂}) where
+    Join : (P : T → Stmt{ℓ₃}) → (sup : T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+    Join = Meet(swap(_≤_))
+    module Join{ℓ₂}{ℓ₃}{_≤_} = Meet{ℓ₂}{ℓ₃}{swap(_≤_)}
 
   module Complete {ℓ₃} where
-    record JoinSemilattice : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
+    record MeetSemilattice (_≤_ : T → T → Stmt{ℓ₂}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
       constructor intro
-      field proof : ∀{P : T → Stmt{ℓ₃}} → ∃(Join(P))
+      field proof : ∀{P : T → Stmt{ℓ₃}} → ∃(Meet(_≤_)(P))
 
-    record MeetSemilattice : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
-      constructor intro
-      field proof : ∀{P : T → Stmt{ℓ₃}} → ∃(Meet(P))
+    module _ (_≤_ : T → T → Stmt{ℓ₂}) where
+      JoinSemilattice : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)}
+      JoinSemilattice = MeetSemilattice(swap(_≤_))
+      module JoinSemilattice{ℓ₂}{_≤_} = MeetSemilattice{ℓ₂}{swap(_≤_)}
 
-    record Lattice : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
+    record Lattice (_≤_ : T → T → Stmt{ℓ₂}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
       constructor intro
       field
-        ⦃ meet-semilattice ⦄ : MeetSemilattice
-        ⦃ join-semilattice ⦄ : JoinSemilattice
+        ⦃ meet-semilattice ⦄ : MeetSemilattice(_≤_)
+        ⦃ join-semilattice ⦄ : JoinSemilattice(_≤_)
 
-      record Bounded (⊤ : T) (⊥ : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
+      record Bounded (_≤_ : T → T → Stmt{ℓ₂}) (⊤ : T) (⊥ : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
         constructor intro
         field
-          ⦃ bottom ⦄ : Weak.Properties.Extremumᵣ(_≤_)(⊥)
+          ⦃ bottom ⦄ : Weak.Properties.Extremumₗ(_≤_)(⊥)
           ⦃ top ⦄    : Weak.Properties.Extremumᵣ(_≤_)(⊤)
 
-  bottom : (P : T → Stmt{ℓ₃}) → ⦃ _ : ∃(Bottom(P)) ⦄ → T
-  bottom(P) ⦃ e ⦄ = [∃]-witness e
+  top : (_≤_ : T → T → Stmt{ℓ₂}) → (P : T → Stmt{ℓ₃}) → ⦃ _ : ∃(Top(_≤_)(P)) ⦄ → T
+  top _ (P) ⦃ e ⦄ = [∃]-witness e
 
-  top : (P : T → Stmt{ℓ₃}) → ⦃ _ : ∃(Top(P)) ⦄ → T
-  top(P) ⦃ e ⦄ = [∃]-witness e
+  bottom : (_≤_ : T → T → Stmt{ℓ₂}) → (P : T → Stmt{ℓ₃}) → ⦃ _ : ∃(Bottom(_≤_)(P)) ⦄ → T
+  bottom(_≤_) = top(swap(_≤_))
 
-  join : (P : T → Stmt{ℓ₃}) → ⦃ _ : ∃(Join(P)) ⦄ → T
-  join _ ⦃ e ⦄ = [∃]-witness e
-  
-  meet : (P : T → Stmt{ℓ₃}) → ⦃ _ : ∃(Meet(P)) ⦄ → T
-  meet _ ⦃ e ⦄ = [∃]-witness e
+  meet : (_≤_ : T → T → Stmt{ℓ₂}) → (P : T → Stmt{ℓ₃}) → ⦃ _ : ∃(Meet(_≤_)(P)) ⦄ → T
+  meet _ _ ⦃ e ⦄ = [∃]-witness e
+
+  join :  (_≤_ : T → T → Stmt{ℓ₂}) → (P : T → Stmt{ℓ₃}) → ⦃ _ : ∃(Join(_≤_)(P)) ⦄ → T
+  join(_≤_) = meet(swap(_≤_))
 
   module Oper where
     ⊥ = bottom
@@ -84,6 +84,7 @@ module _ {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
     ⋁ = join
     ⋀ = meet
 
+  -- LE is a module with synonyms when the order is interpreted as a (_≤_) (lesser than or equals) relation.
   module LE where
     Minimum    = Bottom
     Maximum    = Top

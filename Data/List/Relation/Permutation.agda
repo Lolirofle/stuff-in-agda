@@ -49,6 +49,7 @@ permutation-mapping (trans p q)          = permutation-mapping q ∘ permutation
 
 module Proofs where
   open import Data.List.Proofs
+  open import Data.List.Proofs.Id
   open import Logic.Predicate
   open import Numeral.Natural
   open import Numeral.Finite.Proofs
@@ -88,6 +89,12 @@ module Proofs where
   instance
     permutes-equivalence : Equivalence(_permutes_ {T = T})
     permutes-equivalence = intro
+
+
+  -- If permutation relation had empty, prepend and trans-swap
+  module _ where
+    swap-from-trans-swap : (x ⊰ y ⊰ l) permutes (y ⊰ x ⊰ l)
+    swap-from-trans-swap = trans-swap(reflexivity(_permutes_))
 
   PermutationMappingCorrectness : (l₁ l₂ : List(T)) → (𝕟(length(l₁)) → 𝕟(length(l₂))) → Stmt
   PermutationMappingCorrectness l₁ l₂ mapping = ∀{i} → (index l₁(i) ≡ index l₂(mapping i))
@@ -225,3 +232,11 @@ module Proofs where
   permutes-empty-not-empty : ¬(∅ permutes (x ⊰ l))
   permutes-empty-not-empty (trans {l₂ = ∅}     p q) = permutes-empty-not-empty q
   permutes-empty-not-empty (trans {l₂ = _ ⊰ _} p q) = permutes-empty-not-empty p
+
+  open import Data.List.Relation.Quantification
+
+  permutes-map : ∀{f : A → B} → (l₁ permutes l₂) → (map f(l₁) permutes map f(l₂))
+  permutes-map empty       = empty
+  permutes-map (prepend p) = prepend (permutes-map p)
+  permutes-map swap        = swap
+  permutes-map (trans p q) = trans(permutes-map p) (permutes-map q)

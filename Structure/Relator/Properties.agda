@@ -6,29 +6,32 @@ open import Logic
 import      Structure.Relator.Names as Names
 open import Type
 
+private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ : Lvl.Level
+private variable T A B C D E : Type{ℓ}
+
 -- Definition of a reflexive binary relation
-module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
+module _ {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
   record Reflexivity : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Reflexivity(_▫_)
   reflexivity = inst-fn Reflexivity.proof
 
 -- Definition of a transitive binary relation
-module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
+module _ {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
   record Transitivity : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Transitivity(_▫_)
   transitivity = inst-fn Transitivity.proof
 
 -- Definition of a antisymmetric binary relation
-module _ {ℓ₁}{ℓ₂}{ℓ₃} {T : Type{ℓ₁}} (_▫₁_ : T → T → Stmt{ℓ₂}) (_▫₂_ : T → T → Stmt{ℓ₃}) where
+module _ {T : Type{ℓ₁}} (_▫₁_ : T → T → Stmt{ℓ₂}) (_▫₂_ : T → T → Stmt{ℓ₃}) where
   record Antisymmetry : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field proof : Names.Antisymmetry(_▫₁_)(_▫₂_)
   antisymmetry = inst-fn Antisymmetry.proof
 
 -- Definition of a irreflexive binary relation
-module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
+module _ {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
   record Irreflexivity : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Irreflexivity(_▫_)
@@ -36,7 +39,7 @@ module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) 
 
 -- Definition of a total binary relation.
 -- Total in the sense that it, or its converse, holds.
-module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
+module _ {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
   record ConverseTotal : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.ConverseTotal(_▫_)
@@ -44,7 +47,7 @@ module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) 
 
 -- Definition of a converse dichotomy.
 -- It or its converse always holds, but never both at the same time.
-module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
+module _ {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
   record ConverseDichotomy : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.ConverseDichotomy(_▫_)
@@ -61,7 +64,7 @@ module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) 
 -- {x : T₁}{y : T₂} → (x ▫₁ y) ↔ (y ▫₂ x)
 
 -- Definition of a symmetric binary operation
-module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
+module _ {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
   record Symmetry : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Symmetry(_▫_)
@@ -69,26 +72,27 @@ module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) 
 -- {x y : T} → (x ▫ y) → (y ▫ x)
 
 -- Definition of an asymmetric binary operation
-module _ {ℓ₁}{ℓ₂} {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
+module _ {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
   record Asymmetry : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Asymmetry(_▫_)
   asymmetry = inst-fn Asymmetry.proof
 -- {x y : T} → (x ▫ y) → ¬(y ▫ x)
 
-module _ {ℓ ℓ₁ ℓ₂} {T : Type{ℓ}} (_▫₁_ : T → T → Stmt{ℓ₁}) (_▫₂_ : T → T → Stmt{ℓ₂}) where
-  record _⊆₂_ : Stmt{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
+module _ (_▫₁_ : A → B → Stmt{ℓ₁}) (_▫₂_ : A → B → Stmt{ℓ₂}) where
+  record _⊆₂_ : Stmt{Lvl.of(A) Lvl.⊔ Lvl.of(B) Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Subrelation(_▫₁_)(_▫₂_)
   sub₂ = inst-fn _⊆₂_.proof
 
-  record Subtransitivityₗ : Stmt{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
+module _ (_▫₁_ : A → B → Stmt{ℓ₁}) (_▫₂_ : A → A → Stmt{ℓ₂}) where
+  record Subtransitivityₗ : Stmt{Lvl.of(A) Lvl.⊔ Lvl.of(B) Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Subtransitivityₗ(_▫₁_)(_▫₂_)
   subtransitivityₗ = inst-fn Subtransitivityₗ.proof
 
-  record Subtransitivityᵣ : Stmt{ℓ Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
+module _ (_▫₁_ : A → B → Stmt{ℓ₁}) (_▫₂_ : B → B → Stmt{ℓ₂}) where
+  record Subtransitivityᵣ : Stmt{Lvl.of(A) Lvl.⊔ Lvl.of(B) Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Subtransitivityᵣ(_▫₁_)(_▫₂_)
   subtransitivityᵣ = inst-fn Subtransitivityᵣ.proof
-

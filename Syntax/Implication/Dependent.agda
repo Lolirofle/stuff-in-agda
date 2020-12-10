@@ -26,6 +26,10 @@ _⇒_ = apply
 infixl 0.97 _⇒_
 {-# INLINE _⇒_ #-}
 
+•_⇒₁_ = apply
+infixl 0.97 •_⇒₁_
+{-# INLINE •_⇒₁_ #-}
+
 •_•_⇒₂_ : ∀{X : Type{ℓ₁}}{Y : ∀{_ : X} → Type{ℓ₂}}{Z : ∀{x : X}{_ : Y{x}} → Type{ℓ₃}} → (x : X) → (y : Y{x}) → ((x : X) → (y : Y{x}) → Z{x}{y}) → Z{x}{y}
 • a • b ⇒₂ P = P ⇒ apply a ⇒ apply b
 infixl 0.97 •_•_⇒₂_

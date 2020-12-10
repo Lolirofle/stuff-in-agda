@@ -31,13 +31,13 @@ module _
   -- An inverse function of an injective function f.
   -- This is definable when the proposition "y is a value in f" for any y is decidable.
   -- Because f is not guaranteed to be surjective, all non-values in the codomain B use the fallback function to make the inverse a total (B → A).
-  invₗ-construction : (B → A) → (f : A → B) → ⦃ _ : ∀{y} → Classical(∃(Unapply f(y))) ⦄ → (B → A)
-  invₗ-construction(fallback) f(y) = Either.map1 [∃]-witness (const(fallback(y))) (excluded-middle(∃(Unapply f(y))))
+  invₗ-construction : (B → A) → (f : A → B) → ⦃ _ : ∀{y} → Classical(∃(Fiber f(y))) ⦄ → (B → A)
+  invₗ-construction(fallback) f(y) = Either.map1 [∃]-witness (const(fallback(y))) (excluded-middle(∃(Fiber f(y))))
 
-  module _ {fallback : B → A} {f : A → B} ⦃ classical-unapply : ∀{y} → Classical(∃(Unapply f(y))) ⦄ where
+  module _ {fallback : B → A} {f : A → B} ⦃ classical-unapply : ∀{y} → Classical(∃(Fiber f(y))) ⦄ where
     module _ ⦃ inj : Injective(f) ⦄ ⦃ func-fallback : Function(fallback) ⦄ where
       invₗ-construction-inverseₗ : Inverseₗ(f)(invₗ-construction(fallback) f)
-      Inverseₗ.proof invₗ-construction-inverseₗ{x} with excluded-middle(∃(Unapply f(f(x)))) | inspect(invₗ-construction(fallback) f) (f(x))
+      Inverseₗ.proof invₗ-construction-inverseₗ{x} with excluded-middle(∃(Fiber f(f(x)))) | inspect(invₗ-construction(fallback) f) (f(x))
       ... | [∨]-introₗ ([∃]-intro _ ⦃ p ⦄) | _ = injective(f) p
       ... | [∨]-introᵣ p | _ = [⊥]-elim(p ([∃]-intro x ⦃ reflexivity(_≡_) ⦄))
 
@@ -70,7 +70,7 @@ module _
     invₗ-inverseₗ : ⦃ inverₗ : Invertibleₗ(f) ⦄ → Inverseₗ(f)(invₗ f)
     invₗ-inverseₗ ⦃ inverₗ ⦄ = [∧]-elimᵣ([∃]-proof inverₗ)
 
-  module _ {f : A → B} ⦃ classical-unapply : ∀{y} → Classical(∃(Unapply f(y))) ⦄ where
+  module _ {f : A → B} ⦃ classical-unapply : ∀{y} → Classical(∃(Fiber f(y))) ⦄ where
     -- All left inverse functions are functionally equal to one of `invₗ-construction`.
     inverseₗ-is-construction : ⦃ inverₗ : Invertibleₗ(f) ⦄ ⦃ invₗ-func : Function(invₗ f) ⦄ → (invₗ f ⊜ invₗ-construction(invₗ f) f)
     inverseₗ-is-construction {y} with Classical.excluded-middle (classical-unapply {y})

@@ -24,6 +24,8 @@ open import Structure.Relator.Properties
 open import Syntax.Function
 open import Syntax.Transitivity
 
+open Graph.Properties using (intro) public
+
 -- The relation (_⟶_) is a function on the left argument.
 -- In terms of paths, it means that there are no forks on any paths.
 Deterministic = ∀{a} → Unique(a ⟶_)
@@ -161,7 +163,7 @@ instance
 instance
   -- When one reduces to the same term as the other, the other also reduces to the same term as the first one.
   Walk-Joinable-subrelation : Walk(_⟶_) ⊆₂ Joinable
-  ∃.witness (_⊆₂_.proof Walk-Joinable-subrelation {b = b} ab) = b
+  ∃.witness (_⊆₂_.proof Walk-Joinable-subrelation {y = y} ab) = y
   ∃.proof   (_⊆₂_.proof Walk-Joinable-subrelation ab) = [∧]-intro ab (reflexivity(Walk(_⟶_)))
 
 module _ ⦃ confl : Confluence ⦄ where

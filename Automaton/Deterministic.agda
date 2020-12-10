@@ -4,27 +4,26 @@ open import Type
 
 module Automaton.Deterministic where
 
-open import Data.Boolean
-import      Data.Boolean.Operators
-open        Data.Boolean.Operators.Programming
 open import Data.List renaming (∅ to ε ; _⊰_ to _·_)
--- open import Data.List.Proofs
+open import Data.List.Equiv
+open import Data.List.Functions using (postpend ; _++_)
+open import Data.List.Proofs
 open import Functional
 open import Logic
-open import Logic.Predicate
-open import Logic.Predicate.Equiv
-open import Relator.Equals.Proofs.Equivalence
 open import Sets.ExtensionalPredicateSet using (PredSet ; intro ; _∈_ ; _∋_ ; ⊶ ; [∋]-binaryRelator)
+import      Structure.Function.Names as Names
 open import Structure.Operator
-open import Structure.Relator
 open import Structure.Relator.Properties
-open import Syntax.Transitivity
 
 -- According to http://www.cse.chalmers.se/edu/course/TMV027/lec5.pdf
 
-module _ {ℓₚ ℓₛ ℓₑ ℓₐ} (State : Type{ℓₛ}) ⦃ equiv-state : Equiv{ℓₑ}(State) ⦄ (Alphabet : Type{ℓₐ}) where
-  private instance _ = [≡]-equiv {T = Alphabet}
-  private instance _ = [≡]-equiv {T = List(Alphabet)}
+private variable ℓₚ ℓₛ ℓₑ₁ ℓₐ ℓₑ₂ : Lvl.Level
+
+module _
+  {ℓₚ}
+  (State : Type{ℓₛ}) ⦃ equiv-state : Equiv{ℓₑ₁}(State) ⦄
+  (Alphabet : Type{ℓₐ}) ⦃ equiv-alphabet : Equiv{ℓₑ₂}(Alphabet) ⦄
+  where
 
   -- Deterministic Automata
   -- `State`      (Q)  is the set of states.
@@ -32,7 +31,7 @@ module _ {ℓₚ ℓₛ ℓₑ ℓₐ} (State : Type{ℓₛ}) ⦃ equiv-state : 
   -- `transition` (δ)  is the transition function.
   -- `start`      (q₀) is the start state.
   -- `Final`      (F)  is the subset of State which are the final/accepting states.
-  record Deterministic : Type{ℓₛ Lvl.⊔ ℓₑ Lvl.⊔ ℓₐ Lvl.⊔ Lvl.𝐒(ℓₚ)} where
+  record Deterministic : Type{ℓₛ Lvl.⊔ ℓₑ₁ Lvl.⊔ ℓₑ₂ Lvl.⊔ ℓₐ Lvl.⊔ Lvl.𝐒(ℓₚ)} where
     constructor deterministic
     field
       transition : State → Alphabet → State
@@ -43,69 +42,63 @@ module _ {ℓₚ ℓₛ ℓₑ ℓₐ} (State : Type{ℓₛ}) ⦃ equiv-state : 
     Word = List(Alphabet)
 
     -- Chained transition using a word (list of characters).
-    transitionWord : State → Word → State
-    transitionWord initialState ε       = initialState
-    transitionWord initialState (a · l) = transitionWord (transition initialState a) l
+    wordTransition : State → Word → State
+    wordTransition initialState ε       = initialState
+    wordTransition initialState (a · l) = wordTransition (transition initialState a) l
 
     module LetterNotation where
       Q  = State
       Σ  = Alphabet
       δ  = transition
-      δ̂  = transitionWord
+      δ̂  = wordTransition
       q₀ = start
       F  = Final
 
     -- A word is accepted by the automaton when it can transition from the start state to a final state.
     AcceptsWord : Word → Stmt
-    AcceptsWord = (_∈ Final) ∘ transitionWord start
+    AcceptsWord = (_∈ Final) ∘ wordTransition start
 
-    -- The subset of State which are the accessible states from the start state by chained transitions.
-    Accessible : PredSet(State)
-    Accessible = ⊶(transitionWord start)
+    transitionedAutomaton : Alphabet → Deterministic
+    transition (transitionedAutomaton _) = transition
+    start      (transitionedAutomaton c) = transition start c
+    Final      (transitionedAutomaton _) = Final
 
-    automatonTransition : Alphabet → Deterministic
-    transition (automatonTransition _) = transition
-    start      (automatonTransition c) = transition start c
-    Final      (automatonTransition _) = Final
+    wordTransitionedAutomaton : Word → Deterministic
+    transition (wordTransitionedAutomaton _) = transition
+    start      (wordTransitionedAutomaton w) = wordTransition start w
+    Final      (wordTransitionedAutomaton _) = Final
 
-    automatonTransitionWord : Word → Deterministic
-    transition (automatonTransitionWord _) = transition
-    start      (automatonTransitionWord w) = transitionWord start w
-    Final      (automatonTransitionWord _) = Final
+module _
+  {State : Type{ℓₛ}} ⦃ equiv-state : Equiv{ℓₑ₁}(State) ⦄
+  {Alphabet : Type{ℓₐ}} ⦃ equiv-alphabet : Equiv{ℓₑ₂}(Alphabet) ⦄
+  {d : Deterministic{ℓₚ = ℓₚ}(State)(Alphabet)}
+  where
 
-    instance
-      transitionWord-binaryOperator : BinaryOperator(transitionWord)
-      BinaryOperator.congruence transitionWord-binaryOperator xy1 {ε} {ε} xy2 = xy1
-      BinaryOperator.congruence transitionWord-binaryOperator xy1 {c₁ · w₁} {c₂ · w₂} xy2 = {!!} -- BinaryOperator.congruence transitionWord-binaryOperator {!!} {w₁} {w₂} {!!}
+  open import Data.List.Equiv.Correctness
+  open import Structure.Operator.Properties
+  open import Syntax.Transitivity
 
-  open Deterministic
-
-  transitionWord-postpend : ∀{d}{s}{w}{a} → ((transitionWord d s (postpend a w)) ≡ transition d (transitionWord d s w) a)
-  transitionWord-postpend {d}{s}{ε}    {a} = reflexivity(_≡_) {x = transition d s a}
-  transitionWord-postpend {d}{s}{x · w}{a} = transitionWord-postpend {d}{transition d s x}{w}{a}
+  open Deterministic(d)
 
   instance
-    accessible-start : ∀{d} → (start d ∈ Accessible d)
-    accessible-start {d} = [∃]-intro ε ⦃ reflexivity(_≡_) {x = start d} ⦄
+    wordTransition-binaryOperator : BinaryOperator(wordTransition)
+    wordTransition-binaryOperator = intro p where
+      p : Names.Congruence₂(wordTransition)
+      p {x₂ = ε}       {y₂ = ε}       xy1 xy2 = xy1
+      p {x₂ = c₁ · w₁} {y₂ = c₂ · w₂} xy1 xy2 = p{x₂ = w₁}{y₂ = w₂} (congruence₂(transition) xy1 ([⊰]-generalized-cancellationᵣ xy2)) ([⊰]-generalized-cancellationₗ xy2)
 
-  instance
-    accessible-transition : ∀{d}{s}{a} → ⦃ _ : (s ∈ Accessible d) ⦄ → (transition d s a ∈ Accessible d)
-    accessible-transition {d} {s} {a = a} ⦃ [∃]-intro w ⦃ p ⦄ ⦄ = [∃]-intro (postpend a w)
-      ⦃
-        transitionWord d (start d) (postpend a w)     🝖-[ transitionWord-postpend{d}{start d}{w}{a} ]
-        transition d (transitionWord d (start d) w) a 🝖-[ congruence₂ₗ(transition d) a p ]
-        transition d s a                              🝖-end
-      ⦄
+  wordTransition-postpend : ∀{s}{w}{a} → ((wordTransition s (postpend a w)) ≡ transition (wordTransition s w) a)
+  wordTransition-postpend {s}{ε}    {a} = reflexivity(_≡_) {x = transition s a}
+  wordTransition-postpend {s}{x · w}{a} = wordTransition-postpend {transition s x}{w}{a}
 
-module _ {ℓₚ ℓₛ ℓₐ} (State : Type{ℓₛ}) ⦃ equiv-state : Equiv{ℓₚ}(State) ⦄ (Alphabet : Type{ℓₐ}) where
-  open Deterministic
-
-  private instance _ = [≡]-equiv {T = Alphabet}
-  private instance _ = [≡]-equiv {T = List(Alphabet)}
-
-  accessibleAutomaton : (d : Deterministic{ℓₚ}(State)(Alphabet)) → Deterministic{ℓₚ}(∃(_∈ Accessible d)) (Alphabet)
-  transition (accessibleAutomaton d) ([∃]-intro s) a = [∃]-intro (transition d s a) ⦃ accessible-transition State Alphabet ⦄
-  BinaryOperator.congruence (transition-binaryOperator (accessibleAutomaton d)) = congruence₂(transition d)
-  start (accessibleAutomaton d) = [∃]-intro (start d) ⦃ accessible-start State Alphabet ⦄
-  Final (accessibleAutomaton d) PredSet.∋ [∃]-intro s = s ∈ Final d
-  UnaryRelator.substitution (PredSet.preserve-equiv (Final (accessibleAutomaton d))) {[∃]-intro x} {[∃]-intro y} = substitute₂ᵣ(_∋_) {intro (_∈ Final d)}
+  -- Note: ((swap ∘ wordTransition) d (w₁ ++ w₂) ⊜ (swap ∘ wordTransition) d w₂ ∘ (swap ∘ wordTransition) d w₁)
+  wordTransition-[++] : ∀{s}{w₁ w₂} → (wordTransition s (w₁ ++ w₂) ≡ (wordTransition (wordTransition s w₁) w₂))
+  wordTransition-[++] {s = s} {w₁ = w₁} {w₂ = ε} =
+    wordTransition s (w₁ ++ ε)             🝖[ _≡_ ]-[ congruence₂ᵣ(wordTransition)(s) (identityᵣ(_++_)(ε) {w₁}) ]
+    wordTransition s w₁                    🝖[ _≡_ ]-[]
+    wordTransition (wordTransition s w₁) ε 🝖-end
+  wordTransition-[++] {s = s} {w₁ = w₁} {w₂ = c₂ · w₂} =
+    wordTransition s (w₁ ++ (c₂ · w₂))                      🝖[ _≡_ ]-[ congruence₂ᵣ(wordTransition)(s) ([++]-middle-prepend-postpend{l₁ = w₁}) ]-sym
+    wordTransition s (postpend c₂ w₁ ++ w₂)                 🝖[ _≡_ ]-[ wordTransition-[++] {s = s}{w₁ = postpend c₂ w₁}{w₂ = w₂} ]
+    wordTransition (wordTransition s (postpend c₂ w₁)) w₂   🝖[ _≡_ ]-[ congruence₂ₗ(wordTransition)(w₂) (wordTransition-postpend{s = s}{w = w₁}) ]
+    wordTransition (transition (wordTransition s w₁) c₂) w₂ 🝖-end

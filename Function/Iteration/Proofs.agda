@@ -32,30 +32,38 @@ module _ where
     [^]-from-[∘]-proof {P = P} p {f} {𝟎}   = p{id}{id}
     [^]-from-[∘]-proof {P = P} p {f} {𝐒 n} = p{f}{f ^ n}
 
+    [^]-function-raw : ∀{f : X → X} → Names.Congruence₁(f) → ∀{n} → Names.Congruence₁(f ^ n)
+    [^]-function-raw func-f {𝟎}    xy = xy
+    [^]-function-raw func-f {𝐒(n)} xy = func-f([^]-function-raw func-f {n} xy)
+
+    -- Iterated function is a function when the function is.
+    [^]-function : ∀{f : X → X} → ⦃ func : Function(f) ⦄ → ∀{n} → Function(f ^ n)
+    Function.congruence ([^]-function ⦃ intro func-f ⦄ {n}) = [^]-function-raw func-f {n}
+
     [^]-injective-raw : ∀{f : X → X} → Names.Injective(f) → ∀{n} → Names.Injective(f ^ n)
     [^]-injective-raw inj-f {𝟎}    fnxfny = fnxfny
     [^]-injective-raw inj-f {𝐒(n)} fnxfny = [^]-injective-raw inj-f {n} (inj-f fnxfny)
 
     -- Iterated function is injective when the function is.
-    [^]-injective : ∀{f : X → X} → ⦃ _ : Injective(f) ⦄ → ∀{n} → Injective(f ^ n)
+    [^]-injective : ∀{f : X → X} → ⦃ inj : Injective(f) ⦄ → ∀{n} → Injective(f ^ n)
     Injective.proof ([^]-injective ⦃ intro inj-f ⦄ {n}) = [^]-injective-raw inj-f {n}
 
-    [^]-surjective-raw : ∀{f : X → X} → ⦃ _ : Function(f) ⦄ → Names.Surjective(f) → ∀{n} → Names.Surjective(f ^ n)
+    [^]-surjective-raw : ∀{f : X → X} → ⦃ func : Function(f) ⦄ → Names.Surjective(f) → ∀{n} → Names.Surjective(f ^ n)
     [^]-surjective-raw     surj-f {𝟎}    {y} = [∃]-intro y ⦃ reflexivity(_≡_) ⦄
     [^]-surjective-raw {f} surj-f {𝐒(n)} {y} = [∃]-map-proof (p ↦ (congruence₁(f) p) 🝖 [∃]-proof(surj-f {y})) ([^]-surjective-raw surj-f {n} {[∃]-witness(surj-f {y})})
 
     -- Iterated function is surjective when the function is.
-    [^]-surjective : ∀{f : X → X} → ⦃ _ : Function(f) ⦄ → ⦃ _ : Surjective(f) ⦄ → ∀{n} → Surjective(f ^ n)
+    [^]-surjective : ∀{f : X → X} → ⦃ func : Function(f) ⦄ → ⦃ surj : Surjective(f) ⦄ → ∀{n} → Surjective(f ^ n)
     Surjective.proof ([^]-surjective ⦃ _ ⦄ ⦃ intro surj-f ⦄ {n}) = [^]-surjective-raw surj-f {n}
 
     -- Argument applied to the iterated function is one extra iteration.
     -- Note: This implies: (f ^ n)(f x) ≡ f((f ^ n)(x))
-    [^]-inner-value : ∀{f : X → X} → ⦃ _ : Function(f) ⦄ → ∀{x}{n} → ((f ^ n)(f x) ≡ (f ^ (𝐒(n)))(x))
+    [^]-inner-value : ∀{f : X → X} → ⦃ func : Function(f) ⦄ → ∀{x}{n} → ((f ^ n)(f x) ≡ (f ^ (𝐒(n)))(x))
     [^]-inner-value {f} {x} {𝟎}   = reflexivity(_≡_)
     [^]-inner-value {f} {x} {𝐒 n} = congruence₁(f) ([^]-inner-value {f} {x} {n})
 
     -- A fixpoint of the function is also a fixpoint of the iterated function.
-    [^]-of-fixpoint : ∀{f : X → X} → ⦃ _ : Function(f) ⦄ → ∀{x : X} → ⦃ _ : Fixpoint f(x) ⦄ → ∀{n} → ((f ^ n)(x) ≡ x)
+    [^]-of-fixpoint : ∀{f : X → X} → ⦃ func : Function(f) ⦄ → ∀{x : X} → ⦃ fix : Fixpoint f(x) ⦄ → ∀{n} → ((f ^ n)(x) ≡ x)
     [^]-of-fixpoint {f} {x} {𝟎}    = reflexivity(_≡_)
     [^]-of-fixpoint {f} {x} {𝐒(n)} =
       (f ^ 𝐒(n))(x)    🝖-[ reflexivity(_≡_) ]

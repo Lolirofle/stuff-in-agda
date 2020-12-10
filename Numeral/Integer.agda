@@ -8,8 +8,8 @@ open import Type
 
 -- Integers
 data ℤ : Type{Lvl.𝟎} where
-  +ₙ_  : ℕ → ℤ -- Positive integers including zero (0,1,..)
-  −𝐒ₙ_ : ℕ → ℤ -- Negative integers (..,-1)
+  +ₙ_  : ℕ → ℤ -- Positive integers including zero from the naturals (0,1,..).
+  −𝐒ₙ_ : ℕ → ℤ -- Negative integers from the naturals (..,−2,−1).
 
 {-# BUILTIN INTEGER        ℤ  #-}
 {-# BUILTIN INTEGERPOS     +ₙ_ #-}
@@ -24,8 +24,14 @@ data ℤ : Type{Lvl.𝟎} where
 −ₙ (ℕ.𝐒(x)) = −𝐒ₙ(x)
 
 -- Intuitive constructor patterns
-pattern 𝟎     = +ₙ (ℕ.𝟎)    -- Zero
-pattern +𝐒ₙ n = +ₙ (ℕ.𝐒(n)) -- Positive integers (1,..)
+pattern 𝟎      = +ₙ(ℕ.𝟎)    -- Zero (0).
+pattern +𝐒ₙ_ n = +ₙ(ℕ.𝐒(n)) -- Positive integers from the naturals (1,2,..).
+pattern 𝟏      = +ₙ(ℕ.𝟏)    -- One (1).
+pattern −𝟏     = −𝐒ₙ(ℕ.𝟎)   -- Negative one (−1).
+{-# DISPLAY ℤ.+ₙ_ ℕ.𝟎  = 𝟎 #-}
+{-# DISPLAY ℤ.+ₙ_ ℕ.𝟏  = 𝟏 #-}
+{-# DISPLAY ℤ.−𝐒ₙ_ ℕ.𝟎 = −𝟏 #-}
+{-# DISPLAY ℤ.+ₙ_(ℕ.𝐒(n)) = +𝐒ₙ_ n #-}
 
 -- Absolute value
 absₙ : ℤ → ℕ

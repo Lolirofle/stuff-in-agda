@@ -253,6 +253,13 @@ module _ {ℓₒ}{ℓₗ₁}{ℓₗ₂} {X : Type{ℓₒ}}{P : Stmt{ℓₗ₁}}{
     r ([∃]-intro x ⦃ [∧]-intro p qx ⦄) = [∧]-intro p ([∃]-intro x ⦃ qx ⦄)
 
 ------------------------------------------
+-- Equivalences
+
+module _ {ℓₒ}{ℓₗ₁}{ℓₗ₂} {X : Type{ℓₒ}}{P : X → Stmt{ℓₗ₁}}{Q : X → Stmt{ℓₗ₂}} where
+  [∃]-map-proof-[↔] : (∀{x} → P(x) ↔ Q(x)) → ((∃ P) ↔ (∃ Q))
+  [∃]-map-proof-[↔] p = [↔]-intro ([∃]-map-proof ([↔]-to-[←] p)) ([∃]-map-proof ([↔]-to-[→] p))
+
+------------------------------------------
 -- Other rules
 
 module _ {ℓₒ}{ℓₗ₁}{ℓₗ₂} {X : Type{ℓₒ}}{P : X → Stmt{ℓₗ₁}}{Q : X → Stmt{ℓₗ₂}} where

@@ -1,16 +1,18 @@
 open import Logic
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Operator.Ring
 open import Structure.OrderedField
 open import Type
 
 module Structure.OrderedField.AbsoluteValue
-  {ℓ ℓₗ}
+  {ℓ ℓₗ ℓₑ}
   {F : Type{ℓ}}
-  ⦃ equiv : Equiv(F) ⦄
+  ⦃ equiv : Equiv{ℓₑ}(F) ⦄
   (_+_ _⋅_ : F → F → F)
   (_≤_ : F → F → Stmt{ℓₗ})
-  ⦃ ring : Ring(_+_)(_⋅_) ⦄
+  ⦃ ring : Ring(_+_)(_⋅_) ⦄ -- TODO: The definition does not require a ring, only some kind of total order compatible with an operation with an identity and an inverse
+  -- ⦃ identity : Identity(_+_) ⦄
+  -- ⦃ inverseFunction : InverseFunction(_+_)(−_) ⦄
   ⦃ ordered : Ordered(_+_)(_⋅_)(_≤_) ⦄
   where
 
@@ -22,6 +24,7 @@ open import Data.Boolean
 open import Data.Boolean.Proofs
 import      Data.Either as Either
 open import Functional
+open import Logic.IntroInstances
 open import Logic.Propositional
 open import Structure.Function.Domain
 open import Structure.Function.Ordering
@@ -29,7 +32,9 @@ open import Structure.Function
 open import Structure.Operator
 open import Structure.Operator.Proofs
 open import Structure.Operator.Properties
+open import Structure.Operator.Ring.Proofs
 open import Structure.Relator.Properties
+open import Syntax.Implication
 open import Syntax.Transitivity
 
 ‖_‖ : F → F
@@ -39,8 +44,8 @@ instance
   abs-function : Function(‖_‖)
   Function.congruence abs-function {x}{y} xy with converseTotal(_≤_){𝟎}{x} | converseTotal(_≤_){𝟎}{y}
   ... | Either.Left  p | Either.Left  q = xy
-  ... | Either.Left  p | Either.Right q = antisymmetry(_≤_)(_≡_) (sub₂(_≡_)(_≤_) xy 🝖 q) p 🝖 antisymmetry(_≤_)(_≡_) ([↔]-to-[→] [≤]-flip-negative q) ([≤]-flip-positive(p 🝖 sub₂(_≡_)(_≤_) xy))
-  ... | Either.Right p | Either.Left  q = antisymmetry(_≤_)(_≡_) ([≤]-flip-positive(q 🝖 sub₂(_≡_)(_≤_) (symmetry(_≡_) xy))) ([↔]-to-[→] [≤]-flip-negative p) 🝖 antisymmetry(_≤_)(_≡_) q (sub₂(_≡_)(_≤_) (symmetry(_≡_) xy) 🝖 p)
+  ... | Either.Left  p | Either.Right q = antisymmetry(_≤_)(_≡_) (sub₂(_≡_)(_≤_) xy 🝖 q) p 🝖 antisymmetry(_≤_)(_≡_) ([↔]-to-[→] [≤]-flip-negative q) ([↔]-to-[→] [≤]-flip-positive(p 🝖 sub₂(_≡_)(_≤_) xy))
+  ... | Either.Right p | Either.Left  q = antisymmetry(_≤_)(_≡_) ([↔]-to-[→] [≤]-flip-positive(q 🝖 sub₂(_≡_)(_≤_) (symmetry(_≡_) xy))) ([↔]-to-[→] [≤]-flip-negative p) 🝖 antisymmetry(_≤_)(_≡_) q (sub₂(_≡_)(_≤_) (symmetry(_≡_) xy) 🝖 p)
   ... | Either.Right p | Either.Right q = congruence₁(−_) xy
 
 abs-positive : ∀{x} → (‖ x ‖ ≥ 𝟎)
@@ -82,7 +87,7 @@ Idempotent.proof abs-idempotent {x} with abs-values{x}
 ... | Either.Right p = congruence₁(‖_‖) p 🝖 abs-of-negation
 
 abs-order : ∀{x} → ((− ‖ x ‖) ≤ ‖ x ‖)
-abs-order{x} = [≤]-flip-positive(abs-positive{x}) 🝖 abs-positive{x}
+abs-order{x} = [↔]-to-[→] [≤]-flip-positive(abs-positive{x}) 🝖 abs-positive{x}
 
 abs-order-pos : ∀{x} → (x ≤ ‖ x ‖)
 abs-order-pos {x} with converseTotal(_≤_){𝟎}{x}
@@ -91,7 +96,7 @@ abs-order-pos {x} with converseTotal(_≤_){𝟎}{x}
 
 abs-order-neg : ∀{x} → ((− x) ≤ ‖ x ‖)
 abs-order-neg {x} with converseTotal(_≤_){𝟎}{x}
-... | Either.Left  p = [≤]-flip-positive p 🝖 p
+... | Either.Left  p = [↔]-to-[→] [≤]-flip-positive p 🝖 p
 ... | Either.Right p = reflexivity(_≤_)
 
 abs-of-positive : ∀{x} → (𝟎 ≤ x) → (‖ x ‖ ≡ x)
@@ -99,7 +104,7 @@ abs-of-positive {x} ox = antisymmetry(_≤_)(_≡_) p abs-order-pos where
   p : ‖ x ‖ ≤ x
   p with converseTotal(_≤_){𝟎}{x}
   ... | Either.Left  _ = reflexivity(_≤_)
-  ... | Either.Right _ = [≤]-flip-positive ox 🝖 ox
+  ... | Either.Right _ = [↔]-to-[→] [≤]-flip-positive ox 🝖 ox
   -- Alternative 1:
   -- with abs-values{x}
   -- ... | Either.Left  p = p
@@ -145,6 +150,9 @@ _𝄩_ : F → F → F
 x 𝄩 y = ‖ x − y ‖
 
 instance
+  postulate [𝄩]-binaryOperator : BinaryOperator(_𝄩_)
+
+instance
   [𝄩]-commutativity : Commutativity(_𝄩_)
   Commutativity.proof [𝄩]-commutativity {x}{y} =
     ‖ x − y ‖    🝖-[ abs-of-negation ]-sym
@@ -153,4 +161,15 @@ instance
 
 postulate [𝄩]-triangle-inequality : ∀{x y z} → ((x 𝄩 z) ≤ ((x 𝄩 y) + (y 𝄩 z)))
 
-postulate [𝄩]-self : ∀{x y} → (x 𝄩 y ≡ 𝟎) ↔ (x ≡ y)
+[𝄩]-self : ∀{x y} → (x 𝄩 y ≡ 𝟎) ↔ (x ≡ y)
+[𝄩]-self {x}{y} = [↔]-intro l r where
+  l =
+    (x ≡ y)            ⇒-[ symmetry(_≡_) ∘ congruence₂ᵣ(_𝄩_)(x) ]
+    (x 𝄩 y ≡ x 𝄩 x)     ⇒-[]
+    (_     ≡ ‖ x − x ‖) ⇒-[ _🝖 congruence₁(‖_‖) (inverseFunctionᵣ(_+_)(−_)) ]
+    (_     ≡ ‖ 𝟎 ‖)     ⇒-[ _🝖 abs-of-zero ]
+    (_     ≡ 𝟎)         ⇒-end
+  r =
+    (x 𝄩 y ≡ 𝟎) ⇒-[ [↔]-to-[→] (abs-when-zero{x − y}) ]
+    (x − y ≡ 𝟎) ⇒-[ [↔]-to-[→] [−]-difference-is-𝟎 ]
+    (x ≡ y)     ⇒-end

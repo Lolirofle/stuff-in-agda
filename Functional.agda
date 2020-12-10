@@ -130,4 +130,10 @@ f $₂ x = f x x
 apply₂ : X → (X → X → Y) → Y
 apply₂ x f = f x x
 
+proj₂ₗ : X → Y → X
+proj₂ₗ = const
+
+proj₂ᵣ : X → Y → Y
+proj₂ᵣ = const id
+
 open import Syntax.Function public

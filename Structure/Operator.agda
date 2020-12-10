@@ -13,8 +13,8 @@ open import Syntax.Function
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ : Lvl.Level
-private variable A₁ A₂ B : Type{ℓ}
+private variable ℓ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₒ₄ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ ℓₗ₄ : Lvl.Level
+private variable A₁ A₂ A₃ B : Type{ℓ}
 
 module _
   ⦃ equiv-A₁ : Equiv{ℓₗ₁}(A₁) ⦄
@@ -62,3 +62,17 @@ module _
     (x₁ ▫ x₂) 🝖[ _≡_ ]-[ congruence₁(_▫ x₂) leq ]
     (y₁ ▫ x₂) 🝖[ _≡_ ]-[ congruence₁(y₁ ▫_) req ]
     (y₁ ▫ y₂) 🝖-end
+
+module _
+  ⦃ equiv-A₁ : Equiv{ℓₗ₁}(A₁) ⦄
+  ⦃ equiv-A₂ : Equiv{ℓₗ₂}(A₂) ⦄
+  ⦃ equiv-A₃ : Equiv{ℓₗ₃}(A₃) ⦄
+  ⦃ equiv-B : Equiv{ℓₗ₄}(B) ⦄
+  (_▫_▫_ : A₁ → A₂ → A₃ → B)
+  where
+
+  record TrinaryOperator : Type{Lvl.of(A₁) Lvl.⊔ Lvl.of(A₂) Lvl.⊔ Lvl.of(A₃) Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓₗ₃ Lvl.⊔ ℓₗ₄} where
+    constructor intro
+    field congruence : Congruence₃(_▫_▫_)
+
+  congruence₃ = inst-fn TrinaryOperator.congruence

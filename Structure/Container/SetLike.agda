@@ -1,5 +1,5 @@
 module Structure.Container.SetLike where
-
+{-
 open import Data.Boolean
 open import Data.Boolean.Stmt
 open import Functional
@@ -23,29 +23,18 @@ private variable A B C C₁ C₂ Cₒ Cᵢ E E₁ E₂ : Type{ℓ}
 private variable _∈_ _∈ₒ_ _∈ᵢ_ : E → C
 
 module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}) where -- TODO: Maybe generalize C so that it becomes "indexed": `(C : (i : I) → Type{ℓ₁(i)})`? Is it neccessary? Which set-like structures does not fit with the definitions below?
-  record SetLike : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ Lvl.𝐒(ℓ₄ Lvl.⊔ ℓ₅)} where
+  record SetLike {ℓ₄} : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ Lvl.𝐒(ℓ₄)} where
     field
-      _⊆_ : C → C → Stmt{ℓ₄}
-      _≡_ : C → C → Stmt{ℓ₅}
+      _≡_ : C → C → Stmt{ℓ₄}
 
     field
-      [⊆]-membership : ∀{a b} → (a ⊆ b) ↔ (∀{x} → (x ∈ a) → (x ∈ b))
       [≡]-membership : ∀{a b} → (a ≡ b) ↔ (∀{x} → (x ∈ a) ↔ (x ∈ b))
 
     _∋_ : C → E → Stmt
     _∋_ = swap(_∈_)
 
-    _⊇_ : C → C → Stmt
-    _⊇_ = swap(_⊆_)
-
     _∉_ : E → C → Stmt
     _∉_ = (¬_) ∘₂ (_∈_)
-
-    _⊈_ : C → C → Stmt
-    _⊈_ = (¬_) ∘₂ (_⊆_)
-
-    _⊉_ : C → C → Stmt
-    _⊉_ = (¬_) ∘₂ (_⊇_)
 
     _≢_ : C → C → Stmt
     _≢_ = (¬_) ∘₂ (_≡_)
@@ -53,6 +42,22 @@ module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}
   -- A type such that its inhabitants is the elements of the set `S`.
   SetElement : C → Stmt
   SetElement(S) = ∃(_∈ S)
+
+  record SubsetRelation {ℓ₄} : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ Lvl.𝐒(ℓ₄)} where
+    field _⊆_ : C → C → Stmt{ℓ₄}
+    Membership = ∀{a b} → (a ⊆ b) ↔ (∀{x} → (x ∈ a) → (x ∈ b))
+    field [⊆]-membership : Membership
+
+    _⊇_ : C → C → Stmt
+    _⊇_ = swap(_⊆_)
+
+    _⊈_ : C → C → Stmt
+    _⊈_ = (¬_) ∘₂ (_⊆_)
+
+    _⊉_ : C → C → Stmt
+    _⊉_ = (¬_) ∘₂ (_⊇_)
+  open SubsetRelation ⦃ ... ⦄ hiding (Membership ; membership) public
+  module Subset ⦃ inst ⦄ = SubsetRelation(inst)
 
   module FunctionProperties where
     module Names where
@@ -75,8 +80,10 @@ module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}
         field proof : S Names.closed-under₂ (_▫_)
       _closureUnder₂_ = inst-fn _closed-under₂_.proof
 
-module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ where
+module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄} ⦄ where
   open SetLike(setLike)
+
+  module Names where
 
   record EmptySet : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     field ∅ : C
@@ -174,7 +181,7 @@ module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_)
   open BooleanFilterFunction ⦃ ... ⦄ hiding (Membership ; membership) public
   module BooleanFilter ⦃ inst ⦄ = BooleanFilterFunction(inst)
 
-module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{ℓ₅} ⦄ ⦃ equiv-E : Equiv{ℓₗ₁}(E) ⦄ {O : Type{ℓ₆}} ⦃ equiv-O : Equiv{ℓₗ₂}(O) ⦄ where
+module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄} ⦄ ⦃ equiv-E : Equiv{ℓₗ₁}(E) ⦄ {O : Type{ℓ₆}} ⦃ equiv-O : Equiv{ℓₗ₂}(O) ⦄ where
   record UnapplyFunction : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₆ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂} where
     field unapply : (f : E → O) ⦃ func : Function(f) ⦄ → O → C
     Membership = ∀{f} ⦃ func : Function(f) ⦄ {y}{x} → (x ∈ unapply f(y)) ↔ (f(x) ≡ₛ y)
@@ -184,9 +191,9 @@ module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_)
 
 module _
   ⦃ equiv-E₁ : Equiv{ℓₗ₁}(E₁) ⦄
-  (_∈₁_ : _) ⦃ setLike₁ : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C₁}{E₁} (_∈₁_) {ℓ₄}{ℓ₅} ⦄
+  (_∈₁_ : _) ⦃ setLike₁ : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C₁}{E₁} (_∈₁_) {ℓ₄} ⦄
   ⦃ equiv-E₂ : Equiv{ℓₗ₂}(E₂) ⦄
-  (_∈₂_ : _) ⦃ setLike₂ : SetLike{ℓ₆}{ℓ₇}{ℓ₈}{C₂}{E₂} (_∈₂_) {ℓ₉}{ℓ₁₀} ⦄
+  (_∈₂_ : _) ⦃ setLike₂ : SetLike{ℓ₆}{ℓ₇}{ℓ₈}{C₂}{E₂} (_∈₂_) {ℓ₉} ⦄
   where
 
   open SetLike ⦃ … ⦄
@@ -204,10 +211,10 @@ module _
   open UnmapFunction ⦃ ... ⦄ hiding (Membership ; membership) public
   module Unmap ⦃ inst ⦄ = UnmapFunction(inst)
 
-module _ (_∈ₒ_ : _) ⦃ outer-setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{Cₒ}{Cᵢ} (_∈ₒ_) {ℓ₄}{ℓ₅} ⦄ (_∈ᵢ_ : _) ⦃ inner-setLike : SetLike{ℓ₂}{ℓ₆}{ℓ₇}{Cᵢ}{E} (_∈ᵢ_) {ℓ₈}{ℓ₉} ⦄ where
+module _ (_∈ₒ_ : _) ⦃ outer-setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{Cₒ}{Cᵢ} (_∈ₒ_) {ℓ₄} ⦄ (_∈ᵢ_ : _) ⦃ inner-setLike : SetLike{ℓ₂}{ℓ₆}{ℓ₇}{Cᵢ}{E} (_∈ᵢ_) {ℓ₈} ⦄ where
   open SetLike ⦃ … ⦄
 
-  record PowerFunction : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₈} where
+  record PowerFunction ⦃ subset : SubsetRelation(_∈ᵢ_){ℓ₄ = ℓ₉} ⦄ : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃ Lvl.⊔ ℓ₈} where
     field ℘ : Cᵢ → Cₒ
     Membership = ∀{A x} → (x ∈ₒ ℘(A)) ↔ (x ⊆ A)
     field membership : Membership
@@ -252,4 +259,5 @@ open SetLike ⦃ … ⦄
     ∅ ; _∪_ ; _∩_ ; _∖_ ;
     singleton ; add ; remove
   )
+-}
 -}

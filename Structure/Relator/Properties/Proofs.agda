@@ -57,7 +57,7 @@ Subtransitivityᵣ.proof (subrelation-transitivity-to-subtransitivityᵣ {_▫�
 -- TODO: https://proofwiki.org/wiki/Definition%3aRelation_Compatible_with_Operation and substitution. Special case for (≡) and function application: ∀(x∊T)∀(y∊T). (x ≡ y) → (∀(f: T→T). f(x) ≡ f(y))
 
 instance
-  subrelation-reflexivity : (_⊆₂_ {ℓ₁ = ℓ}{T = T}) ⊆₂ ((_→ᶠ_) on₂ Reflexivity)
+  subrelation-reflexivity : (_⊆₂_) ⊆₂ ((_→ᶠ_) on₂ Reflexivity{ℓ₂ = ℓ}{T = T})
   _⊆₂_.proof subrelation-reflexivity (intro ab) (intro ra) = intro (ab ra)
 
 on₂-reflexivity : ∀{_▫_ : B → B → Stmt{ℓ}}{f : A → B} → ⦃ refl : Reflexivity(_▫_) ⦄ → Reflexivity((_▫_) on₂ f)

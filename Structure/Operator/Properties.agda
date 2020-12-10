@@ -208,3 +208,8 @@ module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _
     constructor intro
     field proof : Names.InverseOperatorᵣ(_▫₁_)(_▫₂_)
   inverseOperᵣ = inst-fn InverseOperatorᵣ.proof
+
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ (_▫_ : T₁ → T₁ → T₂) where
+  record Central(x : T₁) : Stmt{ℓ₁ Lvl.⊔ ℓₑ₂} where
+    constructor intro
+    field proof : ∀{y : T₁} → (x ▫ y ≡ y ▫ x)

@@ -24,7 +24,7 @@ module _ {Σ : Alphabet{ℓ}} where
       accepts-ε   : Language.accepts-ε(A) ≡ₑ Language.accepts-ε(B)
       suffix-lang : ∀{c : Σ}{sₛ : <ˢⁱᶻᵉ s} → (Language.suffix-lang A c ≅[ sₛ ]≅ Language.suffix-lang B c)
 
-  _≅_ : ∀{s : Size} → Language(Σ){∞ˢⁱᶻᵉ} → Language(Σ){∞ˢⁱᶻᵉ} → Type{ℓ}
+  _≅_ : ∀{s : Size} → Language(Σ){∞ˢⁱᶻᵉ} → Language(Σ){∞ˢⁱᶻᵉ} → Type
   _≅_ {s} = _≅[ s ]≅_
 
   [≅]-reflexivity-raw : Names.Reflexivity(_≅[ s ]≅_)

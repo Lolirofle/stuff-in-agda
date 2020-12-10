@@ -66,6 +66,9 @@ module One {ℓ} {T : Type{ℓ}} where
 
   [≡]-unary-relator : ∀{ℓ₂}{P : T → Stmt{ℓ₂}} → UnaryRelator ⦃ [≡]-equiv ⦄ (P)
   UnaryRelator.substitution([≡]-unary-relator {P = P}) xy = [≡]-substitutionᵣ xy {P}
+
+  [≡]-binary-relator : ∀{ℓ₂}{P : T → T → Stmt{ℓ₂}} → BinaryRelator ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ (P)
+  BinaryRelator.substitution [≡]-binary-relator [≡]-intro [≡]-intro = id
 open One public
 
 module Two {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} where
@@ -90,3 +93,8 @@ module Three {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} {ℓ₃}{C : 
   [≡]-binary-operator : ∀{_▫_} → BinaryOperator ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ (_▫_)
   BinaryOperator.congruence([≡]-binary-operator {_▫_}) aeq beq = [≡]-with-op(_▫_) aeq beq
 open Three public
+
+module Four {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} {ℓ₃}{C : Type{ℓ₃}} {ℓ₄}{D : Type{ℓ₄}} where
+  [≡]-trinary-operator : ∀{_▫_▫_ : A → B → C → D} → TrinaryOperator ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ (_▫_▫_)
+  TrinaryOperator.congruence([≡]-trinary-operator {_▫_▫_}) [≡]-intro [≡]-intro [≡]-intro = [≡]-intro
+open Four public

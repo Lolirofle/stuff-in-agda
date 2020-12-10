@@ -20,33 +20,38 @@ private
       constructor intro
       field proof : (x ≢ 𝟎)
 
-record Ring {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
+-- An algebraic structure over two operators, in which the first one is a commutative group, and the second one is associative and distributes over the first one.
+-- Also called: Rg.
+record Rng {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
+  constructor intro
   field
     ⦃ [+]-commutative-group ⦄  : CommutativeGroup (_+_)
     ⦃ [⋅]-binary-operator ⦄    : BinaryOperator(_⋅_)
     ⦃ [⋅]-associativity ⦄      : Associativity(_⋅_)
-    ⦃ [⋅][+]-distributivityₗ ⦄ : Distributivityₗ (_⋅_) (_+_)
-    ⦃ [⋅][+]-distributivityᵣ ⦄ : Distributivityᵣ (_⋅_) (_+_)
+    ⦃ [⋅][+]-distributivityₗ ⦄ : Distributivityₗ(_⋅_)(_+_)
+    ⦃ [⋅][+]-distributivityᵣ ⦄ : Distributivityᵣ(_⋅_)(_+_)
 
   open CommutativeGroup([+]-commutative-group)
     using ()
     renaming(
-      group              to [+]-group ;
-      commutativity      to [+]-commutativity ;
-      monoid             to [+]-monoid ;
-      binary-operator    to [+]-binary-operator ;
-      associativity      to [+]-associativity ;
-      identity-existence to [+]-identity-existence ;
-      id                 to 𝟎 ;
-      identity           to [+]-identity ;
-      identityₗ          to [+]-identityₗ ;
-      identityᵣ          to [+]-identityᵣ ;
-      inverse-existence  to [+]-inverse-existence ;
-      inv                to −_ ;
-      inv-function       to [−]-function ;
-      inverse            to [+]-inverse ;
-      inverseₗ           to [+]-inverseₗ ;
-      inverseᵣ           to [+]-inverseᵣ
+      group               to [+]-group ;
+      commutativity       to [+]-commutativity ;
+      monoid              to [+]-monoid ;
+      binary-operator     to [+]-binary-operator ;
+      associativity       to [+]-associativity ;
+      identity-existence  to [+]-identity-existence ;
+      identity-existenceₗ to [+]-identity-existenceₗ ;
+      identity-existenceᵣ to [+]-identity-existenceᵣ ;
+      id                  to 𝟎 ;
+      identity            to [+]-identity ;
+      identityₗ           to [+]-identityₗ ;
+      identityᵣ           to [+]-identityᵣ ;
+      inverse-existence   to [+]-inverse-existence ;
+      inv                 to −_ ;
+      inv-function        to [−]-function ;
+      inverse             to [+]-inverse ;
+      inverseₗ            to [+]-inverseₗ ;
+      inverseᵣ            to [+]-inverseᵣ
     ) public
   open Impl(𝟎) public
 
@@ -60,13 +65,23 @@ record Ring {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T 
   ZeroDivisorᵣ(a) = ∃(x ↦ (x ≢ 𝟎) ∧ (x ⋅ a ≡ 𝟎))
 
   ZeroDivisor : T → Stmt
-  ZeroDivisor(a) = ∃(x ↦ (x ≢ 𝟎) ∧ (a ⋅ x ≡ 𝟎) ∧ (x ⋅ a ≡ 𝟎))
+  ZeroDivisor(a) = ∃(x ↦ (x ≢ 𝟎) ∧ ((a ⋅ x ≡ 𝟎) ∧ (x ⋅ a ≡ 𝟎)))
 
-  record Central(x : T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
-    constructor intro
-    field proof : ∀{y : T} → (x ⋅ y ≡ y ⋅ x)
+record RngObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
+  constructor intro
+  field
+    {T} : Type{ℓ}
+    ⦃ equiv ⦄ : Equiv{ℓₑ}(T)
+    _+_ : T → T → T
+    _⋅_ : T → T → T
+    ⦃ rng ⦄ : Rng(_+_)(_⋅_)
+  open Rng(rng) public
 
-record Unity {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) ⦃ ring : Ring(_+_)(_⋅_) ⦄ : Stmt{ℓ Lvl.⊔ ℓₑ} where
+
+
+record Unity {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) ⦃ rng : Rng(_+_)(_⋅_) ⦄ : Stmt{ℓ Lvl.⊔ ℓₑ} where
+  constructor intro
+  open Rng(rng)
   field
     ⦃ [⋅]-identity-existence ⦄ : ∃(Identity(_⋅_))
 
@@ -82,23 +97,17 @@ record Unity {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T
       identityᵣ          to [⋅]-identityᵣ
     ) public
 
-record DivisionRing {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) ⦃ ring : Ring(_+_)(_⋅_) ⦄ ⦃ unity : Unity(_+_)(_⋅_) ⦄ : Stmt{ℓ Lvl.⊔ ℓₑ} where
-  open Ring(ring)
-  open Unity(unity)
-  field
-    ⅟ : (x : T) → ⦃ NonZero(x) ⦄ → T
-    [⋅]-inverseₗ : ∀{x} → ⦃ non-zero : NonZero(x) ⦄ → (x ⋅ (⅟ x) ≡ 𝟏)
-    [⋅]-inverseᵣ : ∀{x} → ⦃ non-zero : NonZero(x) ⦄ → ((⅟ x) ⋅ x ≡ 𝟏)
+  DistinctIdentities = NonZero(𝟏)
 
-  _/_ : T → (y : T) → ⦃ NonZero(y) ⦄ → T
-  x / y = x ⋅ (⅟ y)
-
--- Note: Many definitions of integral domains also require unity and (𝟎 ≢ 𝟏).
-record Domain {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) ⦃ ring : Ring(_+_)(_⋅_) ⦄ : Stmt{ℓ Lvl.⊔ ℓₑ} where
+-- Rng with unity.
+-- Also called: Rig.
+record Ring {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
-  open Ring(ring)
   field
-    no-zero-divisors  : ∀{x y} → (x ⋅ y ≡ 𝟎) → ((x ≡ 𝟎) ∨ (y ≡ 𝟎))
+    ⦃ rng ⦄   : Rng(_+_)(_⋅_)
+    ⦃ unity ⦄ : Unity(_+_)(_⋅_)
+  open Rng(rng) public
+  open Unity(unity) public
 
 record RingObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
   constructor intro
@@ -110,6 +119,30 @@ record RingObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
     ⦃ ring ⦄ : Ring(_+_)(_⋅_)
   open Ring(ring) public
 
+
+
+record Division {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) ⦃ rng : Rng(_+_)(_⋅_) ⦄ ⦃ unity : Unity(_+_)(_⋅_) ⦄ : Stmt{ℓ Lvl.⊔ ℓₑ} where
+  constructor intro
+  open Rng(rng)
+  open Unity(unity)
+  field
+    ⅟ : (x : T) → ⦃ NonZero(x) ⦄ → T
+    [⋅]-inverseₗ : ∀{x} → ⦃ non-zero : NonZero(x) ⦄ → (x ⋅ (⅟ x) ≡ 𝟏)
+    [⋅]-inverseᵣ : ∀{x} → ⦃ non-zero : NonZero(x) ⦄ → ((⅟ x) ⋅ x ≡ 𝟏)
+
+  _/_ : T → (y : T) → ⦃ NonZero(y) ⦄ → T
+  x / y = x ⋅ (⅟ y)
+
+-- Ring with division.
+-- Also called: Ring.
+record DivisionRing {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
+  constructor intro
+  field
+    ⦃ ring ⦄     : Ring(_+_)(_⋅_)
+    ⦃ division ⦄ : Division(_+_)(_⋅_)
+  open Ring    (ring)     public
+  open Division(division) public
+
 record DivisionRingObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
   constructor intro
   field
@@ -117,24 +150,5 @@ record DivisionRingObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} wher
     ⦃ equiv ⦄ : Equiv{ℓₑ}(T)
     _+_ : T → T → T
     _⋅_ : T → T → T
-    ⦃ ring ⦄         : Ring(_+_)(_⋅_)
-    ⦃ unity ⦄        : Unity(_+_)(_⋅_)
     ⦃ divisionRing ⦄ : DivisionRing(_+_)(_⋅_)
-  open Ring(ring)                 public
-  open Unity(unity)               public
   open DivisionRing(divisionRing) public
-
-record IntegralDomainObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
-  constructor intro
-  field
-    {T} : Type{ℓ}
-    ⦃ equiv ⦄ : Equiv{ℓₑ}(T)
-    _+_ : T → T → T
-    _⋅_ : T → T → T
-    ⦃ ring ⦄              : Ring(_+_)(_⋅_)
-    ⦃ unity ⦄             : Unity(_+_)(_⋅_)
-    ⦃ domain ⦄            : Domain(_+_)(_⋅_)
-    ⦃ [⋅]-commutativity ⦄ : Commutativity(_⋅_)
-  open Ring(ring)     public
-  open Unity(unity)   public
-  open Domain(domain) public

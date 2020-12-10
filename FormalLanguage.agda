@@ -3,7 +3,7 @@
 module FormalLanguage {ℓ} where
 
 import      Lvl
-open import Sized.Data.List renaming (∅ to []) hiding (filter ; map)
+open import Sized.Data.List renaming (∅ to [])
 open import Lang.Size
 open import Logic.Computability.Binary
 open import Data.Boolean
@@ -138,16 +138,16 @@ module Oper {Σ} where
 
   -- Containment
   -- The relation of whether a word is in the language or not.
-  _∈_ : ∀{s} → Word{s = s}(Σ) → Language(Σ) → Type{Lvl.𝟎}
+  _∈_ : ∀{s} → Word{s = s}(Σ) → Language(Σ) → Type
   _∈_ {s} a b = IsTrue(_∈?_ {s} a b)
 
-  [_]_∈_ : ∀(s) → Word{s = s}(Σ) → Language(Σ) → Type{Lvl.𝟎}
+  [_]_∈_ : ∀(s) → Word{s = s}(Σ) → Language(Σ) → Type
   [ s ] a ∈ b = _∈_ {s} a b
 
   -- Uncontainment
   -- The relation of whether a word is not in the language or not.
-  _∉_ : ∀{s} → Word{s = s}(Σ) → Language(Σ) → Type{Lvl.𝟎}
+  _∉_ : ∀{s} → Word{s = s}(Σ) → Language(Σ) → Type
   _∉_ {s} a b = IsFalse(_∈?_ {s} a b)
 
-  [_]_∉_ : ∀(s) → Word{s = s}(Σ) → Language(Σ) → Type{Lvl.𝟎}
+  [_]_∉_ : ∀(s) → Word{s = s}(Σ) → Language(Σ) → Type
   [ s ] a ∉ b = _∉_ {s} a b

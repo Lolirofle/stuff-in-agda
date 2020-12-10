@@ -71,6 +71,7 @@ module _ where
   ⋂ As = indexFilter(⋃ As) (iUAs ↦ ∃{Obj = (iAs : Index(As)) → Index(elem(As) iAs)}(f ↦ ∀{iAs} → (elem(⋃ As) iUAs ≡ₛ elem(elem(As) iAs) (f iAs))))
   -- ⋂ As = indexFilter(⋃ As) (iUAs ↦ ∀{iAs} → (elem(⋃ As) iUAs ∈ elem(As) iAs))
 
+  {-
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   open import Data.Boolean
   open import Data.Either as Either using (_‖_)
@@ -201,3 +202,4 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
       r : (B ∈ ℘(A)) → (B ⊆ A)
       r ([∃]-intro _ ⦃ BA ⦄) xB with [↔]-to-[→] BA xB
       ... | [∃]-intro (intro iA _) ⦃ xe ⦄ = [∃]-intro iA ⦃ xe ⦄
+-}

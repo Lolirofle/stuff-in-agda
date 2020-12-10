@@ -19,9 +19,9 @@ module Weak {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
   record PartialOrder (_≡_ : T → T → Stmt{ℓ₃}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
-     ⦃ antisymmetry ⦄ : Antisymmetry (_≤_) (_≡_)
-     ⦃ transitivity ⦄ : Transitivity (_≤_)
-     ⦃ reflexivity ⦄  : Reflexivity  (_≤_)
+     ⦃ antisymmetry ⦄ : Antisymmetry(_≤_)(_≡_)
+     ⦃ transitivity ⦄ : Transitivity(_≤_)
+     ⦃ reflexivity ⦄  : Reflexivity (_≤_)
 
   -- A weak total order is a weak partial order where all objects are ordered.
   -- Also called: Weak Linear order

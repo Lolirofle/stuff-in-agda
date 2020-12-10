@@ -32,11 +32,11 @@ module _ where
   open Iset
 
   instance
-    [≡][⊆]-sub : (_≡_) ⊆₂ (_⊆_ {ℓ})
+    [≡][⊆]-sub : (_≡_) ⊆₂ (_⊆_ {ℓ₁}{ℓ₂})
     [≡][⊆]-sub = intro [∧]-elimᵣ
 
   instance
-    [≡][⊇]-sub : (_≡_) ⊆₂ (_⊇_ {ℓ})
+    [≡][⊇]-sub : (_≡_) ⊆₂ (_⊇_ {ℓ₁}{ℓ₂})
     [≡][⊇]-sub = intro [∧]-elimₗ
 
   [≡]-reflexivity-raw : ∀{A : Iset{ℓ}} → (A ≡ A)

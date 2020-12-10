@@ -435,6 +435,9 @@ module _ where
   [↔]-mapᵣ-[↔] : (B₁ ↔ B₂) → ((A ↔ B₁) ↔ (A ↔ B₂))
   [↔]-mapᵣ-[↔] b = [↔]-map-[↔] [↔]-reflexivity b
 
+  [→]-map-[↔] : (A₁ ↔ A₂) → (B₁ ↔ B₂) → ((A₁ → B₁) ↔ (A₂ → B₂))
+  [→]-map-[↔] a b = [↔]-intro (ab ↦ [↔]-to-[←] b ∘ ab ∘ [↔]-to-[→] a) (ab ↦ [↔]-to-[→] b ∘ ab ∘ [↔]-to-[←] a)
+
 ------------------------------------------
 -- Stuff related to classical logic
 

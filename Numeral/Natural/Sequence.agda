@@ -165,34 +165,34 @@ interleave-values {af = af}{bf = bf} {n = 𝐒(𝐒 n)} = interleave-values {af 
 interleave-left-args : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) ↔ (m ≡ 2 ⋅ n)
 interleave-left-args {n = n} = [↔]-intro (\{[≡]-intro → interleave-left{n = n}}) r where
   r : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) → (m ≡ 2 ⋅ n)
-  r {af = af} {m = 𝟎}{n = n} = congruence₁(2 ⋅_) ∘ injective(af) ∘ injective(Either.Left)
+  r {af = af} {m = 𝟎}{n = n} = congruence₁(2 ⋅_) ∘ injective(af) ∘ injective(Either.Left) ⦃ Left-injective ⦄
   r {af = af}{bf = bf} {m = 𝐒 (𝐒 m)}{n = 𝟎} p with interleave-values {af = af}{bf = bf}{n = 𝐒(𝐒 m)}
-  ... | [∨]-introₗ v with () ← injective(af) (injective(Either.Left) (symmetry(_≡_) v 🝖 p))
+  ... | [∨]-introₗ v with () ← injective(af) (injective(Either.Left) ⦃ Left-injective ⦄ (symmetry(_≡_) v 🝖 p))
   ... | [∨]-introᵣ v with () ← symmetry(_≡_) v 🝖 p
   r {af = af} {m = 𝐒 (𝐒 m)}{n = 𝐒 n} p = congruence₁(𝐒 ∘ 𝐒) (r ⦃ [∘]-injective {f = af} ⦄{m = m}{n = n} p)
 
 interleave-right-args : ⦃ _ : Injective(bf) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Right(bf(n))) ↔ (m ≡ 𝐒(2 ⋅ n))
 interleave-right-args {n = n} = [↔]-intro (\{[≡]-intro → interleave-right{n = n}}) r where
   r : ⦃ _ : Injective(bf) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Right(bf(n))) → (m ≡ 𝐒(2 ⋅ n))
-  r {bf = bf} {m = 𝐒 𝟎}{n = n} = congruence₁(𝐒 ∘ (2 ⋅_)) ∘ injective(bf) ∘ injective(Either.Right)
+  r {bf = bf} {m = 𝐒 𝟎}{n = n} = congruence₁(𝐒 ∘ (2 ⋅_)) ∘ injective(bf) ∘ injective(Either.Right) ⦃ Right-injective ⦄
   r {bf = bf}{af = af} {m = 𝐒 (𝐒 m)}{n = 𝟎} p with interleave-values {af = af}{bf = bf}{n = 𝐒(𝐒 m)}
   ... | [∨]-introₗ v with () ← symmetry(_≡_) v 🝖 p
-  ... | [∨]-introᵣ v with () ← injective(bf) (injective(Either.Right) (symmetry(_≡_) v 🝖 p))
+  ... | [∨]-introᵣ v with () ← injective(bf) (injective(Either.Right) ⦃ Right-injective ⦄ (symmetry(_≡_) v 🝖 p))
   r {bf = bf} {m = 𝐒 (𝐒 m)}{n = 𝐒 n} p = congruence₁(𝐒 ∘ 𝐒) (r ⦃ [∘]-injective {f = bf} ⦄{m = m}{n = n} p)
 
 interleave-step-left : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) ↔ (interleave af bf (𝐒(𝐒 m)) ≡ Either.Left(af(𝐒 n)))
 interleave-step-left{af = iaf}{bf = ibf}{m = m}{n = n} = [↔]-intro (l{af = iaf}{bf = ibf}{m = m}{n = n}) (r{af = iaf}{bf = ibf}{m = m}{n = n}) where
   l : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) ← (interleave af bf (𝐒(𝐒 m)) ≡ Either.Left(af(𝐒 n)))
-  l {af = af}          {m = 𝟎}      {n}   = congruence₁(Either.Left) ∘ congruence₁(af) ∘ injective(𝐒) ∘ injective(af) ∘ injective(Either.Left)
+  l {af = af}          {m = 𝟎}      {n}   = congruence₁(Either.Left) ∘ congruence₁(af) ∘ injective(𝐒) ∘ injective(af) ∘ injective(Either.Left) ⦃ Left-injective ⦄
   l {af = af}{bf = bf} {m = 𝐒 (𝐒 m)}{𝟎}   p with interleave-values {af = af}{bf = bf}{n = 𝐒(𝐒(𝐒(𝐒 m)))}
-  ... | [∨]-introₗ v with () ← injective(af) (injective(Either.Left) (symmetry(_≡_) v 🝖 p))
+  ... | [∨]-introₗ v with () ← injective(af) (injective(Either.Left) ⦃ Left-injective ⦄ (symmetry(_≡_) v 🝖 p))
   ... | [∨]-introᵣ v with () ← symmetry(_≡_) v 🝖 p
   l {af = af}          {m = 𝐒 (𝐒 m)}{𝐒 n} = l {af = af ∘ 𝐒} ⦃ [∘]-injective {f = af} ⦄ {m = m}{n}
 
   r : ⦃ _ : Injective(af) ⦄ → ∀{m n} → (interleave af bf m ≡ Either.Left(af(n))) → (interleave af bf (𝐒(𝐒 m)) ≡ Either.Left(af(𝐒 n)))
-  r {af = af}          {m = 𝟎}      {n}   = congruence₁(Either.Left) ∘ congruence₁(af) ∘ congruence₁(𝐒) ∘ injective(af) ∘ injective(Either.Left)
+  r {af = af}          {m = 𝟎}      {n}   = congruence₁(Either.Left) ∘ congruence₁(af) ∘ congruence₁(𝐒) ∘ injective(af) ∘ injective(Either.Left) ⦃ Left-injective ⦄
   r {af = af}{bf = bf} {m = 𝐒(𝐒 m)} {𝟎}   p with interleave-values {af = af}{bf = bf}{n = 𝐒(𝐒 m)}
-  ... | [∨]-introₗ v with () ← injective(af) (injective(Either.Left) (symmetry(_≡_) v 🝖 p))
+  ... | [∨]-introₗ v with () ← injective(af) (injective(Either.Left) ⦃ Left-injective ⦄ (symmetry(_≡_) v 🝖 p))
   ... | [∨]-introᵣ v with () ← symmetry(_≡_) v 🝖 p
   r {af = af}          {m = 𝐒(𝐒 m)} {𝐒 n} = r {af = af ∘ 𝐒} ⦃ [∘]-injective {f = af} ⦄ {m = m}{n}
 

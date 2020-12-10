@@ -8,6 +8,7 @@ open import Structure.Setoid.WithLvl
 open import Structure.Category
 open import Structure.Categorical.Properties
 open import Structure.Operator.Monoid
+open import Structure.Operator.Monoid.Homomorphism
 open import Structure.Operator.Properties using (associativity ; identityₗ ; identityᵣ)
 open import Structure.Operator
 open import Type
