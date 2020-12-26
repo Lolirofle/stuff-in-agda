@@ -1,5 +1,5 @@
 import      Lvl
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 module Structure.Operator.Vector.Subspaces.Image

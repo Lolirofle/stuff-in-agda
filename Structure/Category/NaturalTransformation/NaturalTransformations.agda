@@ -11,7 +11,7 @@ open import Structure.Category.NaturalTransformation
 open import Structure.Categorical.Properties
 open import Structure.Operator
 open import Structure.Relator.Equivalence
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 

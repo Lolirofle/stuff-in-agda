@@ -12,7 +12,7 @@ open import Type.Properties.MereProposition
 open import Type.Properties.Singleton
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Equivalence

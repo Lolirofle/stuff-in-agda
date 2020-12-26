@@ -2,7 +2,7 @@ module Structure.Operator.Ring.Rings where
 
 import      Lvl
 open import Structure.Operator.Ring
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 open import Type.Properties.Singleton
 

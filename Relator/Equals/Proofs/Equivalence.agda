@@ -6,7 +6,7 @@ open import Lang.Instance
 open import Logic.Propositional
 open import Logic
 open import Relator.Equals
-open import Structure.Setoid.WithLvl using (Equiv) renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_)
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator

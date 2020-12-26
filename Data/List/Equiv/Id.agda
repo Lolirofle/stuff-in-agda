@@ -22,7 +22,7 @@ import      Structure.Function.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Operator
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl using (Equiv) renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_)
 open import Syntax.Transitivity
 open import Type
 

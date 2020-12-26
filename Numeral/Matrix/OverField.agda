@@ -1,5 +1,5 @@
 open import Structure.Operator.Field
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 -- Operators for matrices over a field.

@@ -439,7 +439,6 @@ import Structure.Setoid.Size.Proofs
 import Structure.Setoid.Size
 import Structure.Setoid.Uniqueness.Proofs
 import Structure.Setoid.Uniqueness
-import Structure.Setoid.WithLvl
 import Structure.Setoid
 import Structure.Sets.Names
 import Structure.Sets.Operator

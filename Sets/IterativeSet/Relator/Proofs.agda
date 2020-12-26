@@ -16,7 +16,7 @@ open import Numeral.Natural
 open import Relator.Equals using () renaming (_≡_ to Id ; [≡]-intro to intro)
 open import Sets.IterativeSet.Relator
 open import Sets.IterativeSet
-open import Structure.Setoid.WithLvl using (Equiv)
+open import Structure.Setoid using (Equiv)
 open import Structure.Function.Domain
 open import Structure.Function
 open import Structure.Relator.Equivalence

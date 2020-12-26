@@ -1,6 +1,6 @@
 import      Lvl
 open import Structure.Category
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 -- TODO: Deprecate this file and use Relator.Equals.Category instead

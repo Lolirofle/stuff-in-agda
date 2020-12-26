@@ -25,7 +25,7 @@ private variable ℓ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ : Lvl.Level
 private variable T A B C X Y Z : Type{ℓ}
 
 module _ where
-  open import Structure.Setoid.WithLvl
+  open import Structure.Setoid
   open        Structure.Function
   open        Structure.Operator
 
@@ -208,7 +208,7 @@ module _ {X : Type{ℓ}} where
   raise-repeat-equality{𝐒(n)}{f} = [≡]-with(f ∘_) (raise-repeat-equality{n}{f})
 
 module _ where
-  open import Structure.Setoid.WithLvl
+  open import Structure.Setoid
   open        Structure.Function
   open        Structure.Operator
 

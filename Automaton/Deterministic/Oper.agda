@@ -13,7 +13,7 @@ open import Functional
 open import Sets.ExtensionalPredicateSet as PredSet using (PredSet ; _∈_)
 open import Structure.Operator
 open import Structure.Relator.Proofs
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₚ ℓₚ₁ ℓₚ₂ : Lvl.Level

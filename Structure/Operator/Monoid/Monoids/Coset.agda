@@ -19,7 +19,7 @@ open import Structure.Operator.Monoid.Submonoid
 open import Structure.Operator.Properties
 open import Structure.Operator
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₑ_)
+open import Structure.Setoid renaming (_≡_ to _≡ₑ_)
 open import Syntax.Transitivity
 open import Type
 

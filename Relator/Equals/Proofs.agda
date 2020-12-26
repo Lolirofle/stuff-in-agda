@@ -9,7 +9,7 @@ open import Logic.Propositional.Theorems
 open import Logic.Propositional.Proofs.Structures
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv public
-open import Structure.Setoid.WithLvl using (Equiv ; intro) renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid using (Equiv ; intro) renaming (_≡_ to _≡ₛ_)
 open import Structure.Relator.Properties
 open import Structure.Type.Identity
 open import Syntax.Function

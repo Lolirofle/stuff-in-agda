@@ -5,7 +5,7 @@ open import Functional using (_$_)
 open import Lang.Instance
 open import Logic.Predicate
 open import Logic
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function.Names
 open import Structure.Function
 open import Structure.Relator.Properties

@@ -10,7 +10,7 @@ open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 

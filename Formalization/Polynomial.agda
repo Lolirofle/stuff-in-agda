@@ -141,7 +141,7 @@ module Semantics where
   open import Structure.Operator.Proofs.Util
   open import Structure.Operator.Properties
   open import Structure.Relator.Properties
-  open import Structure.Setoid.WithLvl
+  open import Structure.Setoid
   open import Syntax.Function
   open import Syntax.Transitivity
 

@@ -6,7 +6,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Functional
 open import Structure.Relator.Function
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Setoid.Uniqueness
 open import Structure.Relator.Properties
 open import Structure.Relator

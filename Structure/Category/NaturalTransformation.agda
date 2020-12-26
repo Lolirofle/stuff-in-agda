@@ -9,7 +9,7 @@ open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Proofs
 open import Structure.Categorical.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Function
 open import Type
 

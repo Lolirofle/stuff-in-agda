@@ -9,7 +9,7 @@ open import Structure.Operator.Monoid
 open import Structure.Operator.Monoid.Invertible
 open import Structure.Operator.Properties hiding (InverseOperatorₗ ; InverseOperatorᵣ)
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 

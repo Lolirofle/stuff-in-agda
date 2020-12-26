@@ -9,7 +9,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Structure.Function
 open import Structure.Relator
-open import Structure.Setoid.WithLvl using (Equiv) renaming (_≡_ to _≡ₛ_ ; _≢_ to _≢ₛ_)
+open import Structure.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_ ; _≢_ to _≢ₛ_)
 import      Structure.Sets.Names as Names
 open import Structure.Sets.Relator using (SubsetRelation)
 open import Type

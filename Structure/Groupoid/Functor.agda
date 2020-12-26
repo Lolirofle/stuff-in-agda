@@ -9,7 +9,7 @@ import      Structure.Category.Functor as Category
 open import Structure.Function
 open import Structure.Groupoid
 import      Structure.Relator.Names as Names
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Function
 open import Type
 

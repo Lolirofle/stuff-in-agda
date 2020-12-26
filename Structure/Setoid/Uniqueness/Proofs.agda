@@ -5,7 +5,7 @@ open import Functional
 open import Logic.Propositional
 open import Logic.Predicate
 open import Structure.Setoid.Uniqueness
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function.Domain
 open import Structure.Relator.Properties
 open import Syntax.Transitivity

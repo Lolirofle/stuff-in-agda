@@ -21,7 +21,7 @@ open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Structure.Relator
-open import Structure.Setoid.WithLvl using (Equiv ; intro)
+open import Structure.Setoid using (Equiv ; intro)
 open import Structure.Type.Identity
 
 private variable ℓ ℓ₁ ℓ₂ ℓₚ : Lvl.Level

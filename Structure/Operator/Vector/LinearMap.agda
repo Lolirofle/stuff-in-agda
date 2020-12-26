@@ -12,7 +12,7 @@ open import Structure.Operator
 open import Structure.Operator.Field.VectorSpace
 open import Structure.Operator.Properties using (Distributivityₗ ; Distributivityᵣ)
 open import Structure.Operator.Vector
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 open import Syntax.Function
 open import Syntax.Transitivity

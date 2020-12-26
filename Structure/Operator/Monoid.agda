@@ -3,7 +3,7 @@ module Structure.Operator.Monoid where
 import      Lvl
 open import Logic
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator.Properties hiding (associativity ; identityₗ ; identityᵣ)
 open import Structure.Operator
 open import Type

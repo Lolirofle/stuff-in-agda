@@ -1,7 +1,7 @@
 module Structure.Operator.Field.VectorSpace where
 
 import      Lvl
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator.Field
 open import Structure.Operator.Properties using (associativity ; identityₗ ; distributivityᵣ)
 open import Structure.Operator.Vector

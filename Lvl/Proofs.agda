@@ -3,7 +3,7 @@ module Lvl.Proofs where
 open import Data.Tuple as Tuple using ()
 open import Logic.Predicate
 open import Lvl
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function.Domain
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties

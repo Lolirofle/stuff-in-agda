@@ -11,7 +11,7 @@ open import Structure.Semicategory{ℓₒ}{ℓₘ}{ℓₑ}
 open import Structure.Operator
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 -- Obj is the collection of objects.

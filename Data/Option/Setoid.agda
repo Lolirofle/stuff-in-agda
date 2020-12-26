@@ -6,7 +6,7 @@ open import Data.Option
 open import Functional
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 private variable ℓ ℓₑ ℓₑₐ : Lvl.Level

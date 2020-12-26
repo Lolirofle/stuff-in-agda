@@ -12,7 +12,7 @@ open import Structure.Function
 open import Type
 
 module _ {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} where
-  open import Structure.Setoid.WithLvl
+  open import Structure.Setoid
   open import Structure.Relator.Equivalence
   open import Structure.Relator.Properties
 

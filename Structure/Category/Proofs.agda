@@ -16,7 +16,7 @@ import      Structure.Operator.Properties as Properties
 open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Function
 open import Syntax.Transitivity
 open import Type

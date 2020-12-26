@@ -375,7 +375,7 @@ import Structure.Setoid.Size
 import Structure.Setoid.Size.Proofs
 import Structure.Setoid.Uniqueness
 import Structure.Setoid.Uniqueness.Proofs
-import Structure.Setoid.WithLvl
+import Structure.Setoid
 import Structure.Topology
 -- import Structure.Topology.Proofs
 -- import Structure.Topology.Properties

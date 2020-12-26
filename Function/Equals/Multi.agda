@@ -11,7 +11,7 @@ open import Logic.Predicate.Multi
 import      Lvl
 import      Lvl.MultiFunctions as Lvl
 open import Numeral.Natural
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Function
 open import Type
 

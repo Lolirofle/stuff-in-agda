@@ -12,7 +12,7 @@ open import Logic.Predicate.Multi
 open import Functional
 open import Numeral.Natural
 import      Structure.Function.Multi as Multi
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 private variable ℓ ℓₑ : Lvl.Level

@@ -1,6 +1,6 @@
 open import Type
 open import Structure.Relator
-open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₑ_)
+open import Structure.Setoid renaming (_≡_ to _≡ₑ_)
 
 module Structure.Sets.ZFC {ℓₛ ℓₗ ℓₑ} {S : Type{ℓₛ}} ⦃ equiv : Equiv{ℓₑ}(S) ⦄ (_∈_ : S → S → Type{ℓₗ}) ⦃ [∈]-binaryRelator : BinaryRelator(_∈_) ⦄ where
 

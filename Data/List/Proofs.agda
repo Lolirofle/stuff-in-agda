@@ -20,7 +20,7 @@ open import Structure.Operator.Proofs.Util
 open import Structure.Operator.Properties
 open import Structure.Operator
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 
@@ -178,7 +178,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List
       (𝐒(length(l)) ⋅ step) + init        🝖[ _≡_ ]-[]
       (length(x ⊰ l) ⋅ step) + init       🝖-end
 
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 module _
   ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-List₁ : Equiv{ℓₑₗ₁}(List(A)) ⦄ ⦃ extensionality-A : Extensionality(equiv-List₁) ⦄
   ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ ⦃ equiv-List₂ : Equiv{ℓₑₗ₂}(List(B)) ⦄ ⦃ extensionality-B : Extensionality(equiv-List₂) ⦄

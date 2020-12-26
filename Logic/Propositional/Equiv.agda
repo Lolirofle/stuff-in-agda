@@ -6,7 +6,7 @@ open import Logic.Propositional
 import      Logic.Propositional.Theorems as Theorems
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ ℓₑ ℓₑ₁ ℓₑ₂ : Lvl.Level

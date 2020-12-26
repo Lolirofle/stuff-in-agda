@@ -9,7 +9,7 @@ import      Logic.Propositional.Theorems as Theorems
 open import Structure.Operator.Properties
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 open import Logic.Propositional.Equiv public

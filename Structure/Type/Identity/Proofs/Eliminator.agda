@@ -9,7 +9,7 @@ open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Groupoid
-open import Structure.Setoid.WithLvl using (Equiv ; intro) renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid using (Equiv ; intro) renaming (_≡_ to _≡ₛ_)
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Structure.Relator.Properties.Proofs
@@ -149,7 +149,7 @@ module _
   instance _ = identity-eliminator-to-reflexive-subrelation
   instance _ = \{T} → identity-eliminator-to-symmetry     {_≡_ = _≡ₘ_ {T = T}} ⦃ refle = refle-eq ⦄ ⦃ identElim = identElim-eq ⦄
   instance _ = \{T} → identity-eliminator-to-transitivity {_≡_ = _≡ₘ_ {T = T}} ⦃ refle = refle-eq ⦄ ⦃ identElim = identElim-eq ⦄
-  instance _ = \{T} → Structure.Setoid.WithLvl.intro(_) ⦃ identity-eliminator-to-equivalence {_≡_ = _≡ₘ_ {T = T}} ⦃ refle = refle-eq ⦄ ⦃ identElim = identElim-eq ⦄ ⦄
+  instance _ = \{T} → Structure.Setoid.intro(_) ⦃ identity-eliminator-to-equivalence {_≡_ = _≡ₘ_ {T = T}} ⦃ refle = refle-eq ⦄ ⦃ identElim = identElim-eq ⦄ ⦄
 
   identity-eliminator-identityₗ : ∀{x y}{p : x ≡ y} → (trans refl p ≡ₘ p)
   identity-eliminator-identityₗ {p = p} = idElim(_≡_) (p ↦ (trans refl p ≡ₘ p)) identity-eliminator-transitivity-of-refl p

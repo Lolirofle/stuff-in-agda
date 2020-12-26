@@ -1,7 +1,7 @@
 module Lang.Inspect where
 
 open import Type
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Relator.Properties
 
 {-

@@ -8,7 +8,7 @@ open import Relator.Equals
 open import Relator.Equals.Proofs.Equivalence
 open import Structure.Function.Domain
 open import Structure.Operator.Properties
-open import Structure.Setoid.WithLvl hiding (_≢_)
+open import Structure.Setoid hiding (_≢_)
 
 instance
   [−|+]-equiv : Equiv(−|+)

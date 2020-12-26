@@ -2,7 +2,7 @@
 open import Logic
 open import Type
 open import Structure.Relator
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 
 module Geometry.HilbertAxioms
   {ℓₚ ℓₗ ℓₚₑ ℓₗₑ ℓₚₗ ℓₚₚₚ}

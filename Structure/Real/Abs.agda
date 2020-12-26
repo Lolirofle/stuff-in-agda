@@ -11,7 +11,7 @@ open import Logic
 open import Logic.Classical
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator.Field
 open import Structure.Operator.Monoid
 open import Structure.Operator.Group

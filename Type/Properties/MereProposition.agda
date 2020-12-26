@@ -2,7 +2,7 @@ module Type.Properties.MereProposition {ℓ ℓₑ} where
 
 import      Lvl
 open import Lang.Instance
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 -- A type is a mere proposition type when there is at most one inhabitant (there is at most one object with this type).

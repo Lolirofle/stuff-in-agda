@@ -2,7 +2,7 @@ module Type.Properties.Singleton {ℓ ℓₑ} where
 
 import      Lvl
 open import Lang.Instance
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 -- A type is a singleton type when it has exactly one inhabitant (there is only one object with this type).

@@ -5,7 +5,7 @@ open import Lang.Instance
 open import Logic.Propositional
 open import Logic
 open import Structure.Relator.Properties renaming (reflexivity to reflexivity')
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 open import Type.Properties.MereProposition
 open import Type.Size

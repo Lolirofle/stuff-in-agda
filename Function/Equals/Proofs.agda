@@ -6,7 +6,7 @@ import      Functional
 import      Function.Equals
 open import Logic.Predicate
 open import Logic.Propositional
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties

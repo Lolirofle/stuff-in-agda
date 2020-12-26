@@ -11,7 +11,7 @@ open import Structure.Operator.Ring
 open import Structure.Operator.Ring.Homomorphism
 open import Structure.Operator.Vector
 open import Structure.Operator.Vector.LinearMap
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 module _

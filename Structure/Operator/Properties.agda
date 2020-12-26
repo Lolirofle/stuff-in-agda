@@ -7,7 +7,7 @@ open import Logic
 open import Logic.Predicate
 open import Logic.Propositional
 import      Structure.Operator.Names as Names
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Function
 open import Type
 

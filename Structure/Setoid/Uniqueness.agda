@@ -5,7 +5,7 @@ open import Functional
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 private variable ℓₗ ℓₗ₁ ℓₗ₂ : Lvl.Level

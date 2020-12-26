@@ -15,7 +15,7 @@ open import Logic
 open import Logic.Classical
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Setoid.Size
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs

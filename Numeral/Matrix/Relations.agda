@@ -9,7 +9,7 @@ import      Relator.Equals as Eq
 open import Structure.Operator.Field
 open import Structure.Operator.Monoid
 open import Structure.Operator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Function
 open import Type
 

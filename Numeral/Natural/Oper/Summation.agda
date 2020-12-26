@@ -1,5 +1,5 @@
 open import Structure.Operator.Monoid
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 module Numeral.Natural.Oper.Summation {ℓ ℓₑ} {T : Type{ℓ}} {_▫_ : T → T → T} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ where

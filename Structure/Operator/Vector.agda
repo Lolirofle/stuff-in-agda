@@ -4,7 +4,7 @@ open import Functional using (swap)
 import      Lvl
 open import Logic
 open import Logic.Propositional
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator.Field
 open import Structure.Operator.Group
 open import Structure.Operator.Monoid

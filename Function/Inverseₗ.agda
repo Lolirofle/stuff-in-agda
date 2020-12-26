@@ -13,7 +13,7 @@ open import Function.Domains
 open import Function.Names using (_⊜_)
 import      Function.Equals as FunctionEq
 open import Function.Proofs
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs

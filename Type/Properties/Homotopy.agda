@@ -6,7 +6,7 @@ import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Numeral.Natural
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 open import Type.Dependent
 open import Type.Properties.Empty

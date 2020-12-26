@@ -6,7 +6,7 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Proofs.Structures
 open import Structure.Function
-open import Structure.Setoid.WithLvl using (Equiv ; intro) renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid using (Equiv ; intro) renaming (_≡_ to _≡ₛ_)
 open import Structure.Relator.Equivalence
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties

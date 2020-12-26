@@ -6,7 +6,7 @@ import      Lvl
 open import Logic
 open import Logic.Predicate
 open import Logic.Propositional
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 import      Structure.Categorical.Names as Names
 import      Structure.Operator.Names as Names
 import      Structure.Relator.Names as Names

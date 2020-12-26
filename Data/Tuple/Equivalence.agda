@@ -4,7 +4,7 @@ import      Lvl
 open import Data using (Unit ; <>)
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Logic.Propositional
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Relator.Equivalence

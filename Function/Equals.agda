@@ -5,7 +5,7 @@ open import Functional
 import      Function.Names as Names
 open import Logic
 open import Logic.Propositional
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type

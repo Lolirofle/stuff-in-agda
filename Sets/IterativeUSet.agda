@@ -3,7 +3,7 @@ module Sets.IterativeUSet where
 open import Data renaming (Empty to EmptyType)
 open import Functional
 import      Lvl
-open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid renaming (_≡_ to _≡ₛ_)
 open import Syntax.Function
 open import Type
 open import Type.Dependent

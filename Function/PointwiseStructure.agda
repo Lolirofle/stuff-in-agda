@@ -8,7 +8,7 @@ open import Logic.Propositional
 import      Lvl
 open import Structure.Function
 open import Structure.Function.Multi
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator.Field
 open import Structure.Operator.Group
 open import Structure.Operator.Monoid

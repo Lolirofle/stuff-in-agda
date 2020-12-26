@@ -5,7 +5,7 @@ import      Lvl
 open import Logic.Predicate
 open import Logic.Propositional
 -- open import Relator.Ordering
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 -- open import Structure.Relator.Ordering
 -- open import Structure.Relator.Properties
 open import Structure.Function.Domain

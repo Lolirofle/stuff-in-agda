@@ -20,7 +20,7 @@ import      Lvl.MultiFunctions as Lvl
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
 open import Structure.Setoid.Uniqueness
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Number
 open import Type
 

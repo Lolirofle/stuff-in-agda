@@ -13,7 +13,7 @@ open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
 -- open import Relator.Equals.Proofs.Equiv
-open import Structure.Setoid.WithLvl using (Equiv) renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_)
 open import Data.Any
 open import Structure.Function.Domain
 open import Type

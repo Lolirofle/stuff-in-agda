@@ -1,6 +1,6 @@
 import      Lvl
 open import Structure.Operator.Ring
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 module Structure.Operator.Ring.Characteristic {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ (_+_ _⋅_  : T → T → T) ⦃ ring : Ring(_+_)(_⋅_) ⦄ where

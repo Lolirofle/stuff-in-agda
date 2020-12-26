@@ -6,7 +6,7 @@ open import Functional
 open import Logic
 import      Lvl
 import      Relator.Equals as Eq
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Categorical.Proofs
 open import Structure.Categorical.Properties

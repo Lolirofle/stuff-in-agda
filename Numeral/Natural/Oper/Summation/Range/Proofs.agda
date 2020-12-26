@@ -16,7 +16,7 @@ open import Relator.Equals hiding (_≡_)
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Function
 open import Structure.Function.Multi
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 

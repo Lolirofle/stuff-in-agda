@@ -4,7 +4,7 @@ import      Lvl
 open import Data.Option
 open import Structure.Function
 open import Structure.Function.Domain
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 private variable ℓ ℓₑ ℓₑₐ : Lvl.Level

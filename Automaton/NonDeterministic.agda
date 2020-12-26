@@ -8,7 +8,7 @@ open import Data.List using (List) renaming (∅ to ε ; _⊰_ to _·_)
 open import Functional
 open import Logic
 open import Sets.ExtensionalPredicateSet
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 -- Non-deterministic Automata

@@ -4,7 +4,7 @@ import      Lvl
 open import Logic
 open import Logic.IntroInstances
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function
 open import Structure.Operator.Monoid using (Monoid)
 open import Structure.Operator.Properties hiding (commutativity)

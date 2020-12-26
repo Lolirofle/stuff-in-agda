@@ -19,7 +19,7 @@ private variable T : Type{ℓ}
 
 module From-[≤] (_≤_ : T → T → Stmt{ℓₗ}) where
   open        Relator.Ordering.From-[≤] (_≤_)
-  open import Structure.Setoid.WithLvl
+  open import Structure.Setoid
 
   [≤][>]-not : ∀{a b} → (a ≤ b) → (a > b) → ⊥
   [≤][>]-not = apply

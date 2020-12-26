@@ -5,7 +5,7 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 open import Structure.Function.Names
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Function
 open import Syntax.Transitivity
 open import Type

@@ -15,7 +15,7 @@ open import Numeral.Natural using (ℕ)
 import      Numeral.Natural.Relation.Order as ℕ
 open import Relator.Ordering
 import      Relator.Ordering.Proofs as OrderingProofs
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Ordering

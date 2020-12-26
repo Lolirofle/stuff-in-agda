@@ -16,7 +16,7 @@ open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Structure.Relator hiding (module Names)
-open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₛ_ ; _≢_ to _≢ₛ_)
+open import Structure.Setoid renaming (_≡_ to _≡ₛ_ ; _≢_ to _≢ₛ_)
 open import Type.Properties.Inhabited
 open import Type
 

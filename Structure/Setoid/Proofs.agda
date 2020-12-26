@@ -4,7 +4,7 @@ import Lvl
 open import Functional
 open import Logic
 open import Logic.Propositional
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties

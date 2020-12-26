@@ -13,7 +13,7 @@ open import Structure.Operator
 open import Structure.Relator.Equivalence
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 {- TODO: It would be nice if groupoids were defined using a category as a record field and if categories were defined using a semicategory as a record field (they are "substructures" of each other) so that no code-duplication is necessary, but the problem is how long the projections/copatterns become with this approach.

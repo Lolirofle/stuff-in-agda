@@ -1,4 +1,4 @@
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Category
 open import Type
 

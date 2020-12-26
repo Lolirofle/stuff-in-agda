@@ -4,7 +4,7 @@ import      Lvl
 open import Data
 open import Logic
 open import Logic.Propositional
-open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid renaming (_≡_ to _≡ₛ_)
 open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs

@@ -5,7 +5,7 @@ import      Lvl
 open import Structure.Category.Functor
 open import Structure.Category.Dual
 open import Structure.Category
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 private variable ℓ ℓₒ ℓₘ ℓₗₒ ℓₗₘ ℓᵣₒ ℓᵣₘ ℓₑ ℓₗₑ ℓᵣₑ : Lvl.Level

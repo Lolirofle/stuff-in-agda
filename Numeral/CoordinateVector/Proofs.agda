@@ -20,7 +20,7 @@ open import Numeral.Finite.Proofs
 open import Numeral.Natural
 import      Relator.Equals as Eq
 open import Relator.Equals.Proofs.Equivalence
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function.Multi
 import      Structure.Function.Names as Names
 open import Structure.Function

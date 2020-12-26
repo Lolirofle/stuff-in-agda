@@ -46,7 +46,7 @@ module Monoid where
   open import Structure.Operator.Monoid
   open import Structure.Operator.Properties
   open import Structure.Relator.Properties
-  open import Structure.Setoid.WithLvl
+  open import Structure.Setoid
   open import Syntax.Transitivity
 
   module Semantics ⦃ equiv : Equiv{ℓₑ}(T) ⦄ (_∙_ : T → T → T) ⦃ monoid : Monoid(_∙_) ⦄ where

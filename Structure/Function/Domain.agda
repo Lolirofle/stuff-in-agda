@@ -8,7 +8,7 @@ open import Lang.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 private variable ℓₒ ℓₒ₁ ℓₒ₂ ℓₗ ℓₗ₁ ℓₗ₂ : Lvl.Level

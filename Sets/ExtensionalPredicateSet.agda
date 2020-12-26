@@ -14,7 +14,7 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₑ_)
+open import Structure.Setoid renaming (_≡_ to _≡ₑ_)
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
 open import Structure.Function

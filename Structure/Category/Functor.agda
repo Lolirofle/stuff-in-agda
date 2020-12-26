@@ -8,7 +8,7 @@ open import Structure.Category
 open import Structure.Function
 open import Structure.Function.Multi
 import      Structure.Relator.Names as Names
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Function
 open import Type
 

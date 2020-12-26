@@ -6,7 +6,7 @@ import      Lvl
 open import Lang.Instance
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function.Domain
 open import Structure.Operator.Group
 open import Structure.Operator.Monoid

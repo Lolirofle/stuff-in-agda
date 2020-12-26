@@ -12,7 +12,7 @@ open import Structure.Operator.Ring
 open import Structure.Operator
 open import Structure.Operator.Proofs
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Implication
 open import Syntax.Transitivity
 open import Type.Properties.MereProposition

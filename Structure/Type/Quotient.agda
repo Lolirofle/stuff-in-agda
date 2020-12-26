@@ -6,7 +6,7 @@ open import Logic.Propositional
 open import Structure.Function hiding (intro)
 open import Structure.Function.Domain hiding (intro)
 open import Structure.Relator.Equivalence hiding (intro)
-open import Structure.Setoid.WithLvl hiding (intro)
+open import Structure.Setoid hiding (intro)
 import      Type
 open import Type.Properties.Empty hiding (intro)
 
@@ -17,8 +17,8 @@ record Quotient {ℓ₁ ℓ₂} {T : TYPE(ℓ₁)} (_≅_ : T → T → Stmt{ℓ
     {ℓₑ} : Lvl.Level
     ⦃ equiv ⦄ : Equiv{ℓₑ}(Type) -- TODO: Consider using Id instead of this because otherwise every type has a quotient by just using itself
     class : T → Type
-    ⦃ intro-function ⦄ : Function ⦃ Structure.Setoid.WithLvl.intro(_≅_) ⦃ equivalence ⦄ ⦄ (class)
-    ⦃ intro-bijective ⦄ : Bijective ⦃ Structure.Setoid.WithLvl.intro(_≅_) ⦃ equivalence ⦄ ⦄ (class)
+    ⦃ intro-function ⦄ : Function ⦃ Structure.Setoid.intro(_≅_) ⦃ equivalence ⦄ ⦄ (class)
+    ⦃ intro-bijective ⦄ : Bijective ⦃ Structure.Setoid.intro(_≅_) ⦃ equivalence ⦄ ⦄ (class)
     -- elim : Type → T -- TODO: Choice?
     -- inverseᵣ : ∀{q : Type} → (class(elim(q)) ≡ q)
     -- extensionality : ∀{a b : T} → (class(a) ≡ class(b)) ↔ (a ≅ b)

@@ -1,5 +1,5 @@
 open import Type
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 
 module Structure.Operator.Lattice {ℓ ℓₑ} (L : Type{ℓ}) ⦃ equiv-L : Equiv{ℓₑ}(L) ⦄ where
 

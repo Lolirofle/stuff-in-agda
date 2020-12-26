@@ -3,7 +3,7 @@ open import Logic.Classical
 open import Logic
 import      Lvl
 open import Type
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 
 -- Elementary Plane Geometry.
 -- An axiomatic approach to plane geometry in first order logic.

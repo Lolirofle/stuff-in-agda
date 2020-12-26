@@ -7,7 +7,7 @@ open import Functional hiding (id)
 open import Function.Equals
 import      Function.Names as Names
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function.Domain
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties

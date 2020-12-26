@@ -6,7 +6,7 @@ open import Data.Option
 open import Data.Option.Functions
 open import Data.Either
 open import Functional
-open import Structure.Setoid.WithLvl using (Equiv)
+open import Structure.Setoid using (Equiv)
 open import Structure.Function.Domain
 open import Structure.Function
 import      Structure.Operator.Names as Names
@@ -20,7 +20,7 @@ private variable x : T
 private variable o : Option(T)
 
 module _ where
-  open Structure.Setoid.WithLvl
+  open Structure.Setoid
   open import Function.Equals
 
   module _ ⦃ _ : let _ = A ; _ = B ; _ = C in Equiv{ℓₑ}(Option(C)) ⦄ {f : B → C}{g : A → B} where
@@ -74,7 +74,7 @@ module _
   {_▫_ : T → T → T}
   where
 
-  open Structure.Setoid.WithLvl
+  open Structure.Setoid
 
   instance
     and-combine-associativity : ⦃ _ : Associativity(_▫_) ⦄ → Associativity(and-combine(_▫_))

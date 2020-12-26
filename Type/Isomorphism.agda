@@ -2,7 +2,7 @@ module Type.Isomorphism where
 
 open import Functional
 import      Lvl
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function.Domain hiding (inverseₗ ; inverseᵣ)
 open import Type
 

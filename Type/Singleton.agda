@@ -1,6 +1,6 @@
 import      Lvl
 open import Type
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 
 module Type.Singleton {ℓ ℓₑ : Lvl.Level} {X : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(X) ⦄ where
 

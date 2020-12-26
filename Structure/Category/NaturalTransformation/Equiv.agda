@@ -8,7 +8,7 @@ open import Logic.Predicate
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.NaturalTransformation
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type

@@ -52,7 +52,7 @@ open import Structure.Relator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Structure.Relator.Proofs
-open import Structure.Setoid.WithLvl using (Equiv)
+open import Structure.Setoid using (Equiv)
 open import Syntax.Transitivity
 
 _≡_ : ISet → ISet → Set

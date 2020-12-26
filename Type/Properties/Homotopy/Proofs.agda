@@ -13,7 +13,7 @@ open import Type.Properties.Singleton
 open import Structure.Function.Domain
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Type.Identity
 open import Syntax.Function
 open import Syntax.Transitivity

@@ -5,7 +5,7 @@ open import Logic
 open import Logic.Predicate
 open import Structure.Function
 open import Structure.Function.Multi
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator.Ring
 open import Type
 

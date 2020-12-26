@@ -14,7 +14,7 @@ open import Structure.Numeral.Integer
 open import Structure.Relator
 open import Structure.Relator.Proofs
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator
 open import Structure.Operator.Properties
 open import Structure.Operator.Ring.Proofs

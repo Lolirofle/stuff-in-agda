@@ -10,7 +10,7 @@ open import Function.Equals
 open import Function.Equals.Proofs
 open import Function.Inverseₗ
 open import Function.Inverseᵣ
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Setoid.Uniqueness
 open import Structure.Function
 open import Structure.Function.Domain

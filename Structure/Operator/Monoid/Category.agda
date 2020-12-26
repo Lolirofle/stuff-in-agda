@@ -4,7 +4,7 @@ open import Data
 open import Data.Tuple as Tuple using (_,_)
 open import Functional
 import      Lvl
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Categorical.Properties
 open import Structure.Operator.Monoid

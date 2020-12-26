@@ -12,7 +12,7 @@ open import Logic
 open import Logic.IntroInstances
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs

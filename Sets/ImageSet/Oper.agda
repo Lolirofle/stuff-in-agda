@@ -8,7 +8,7 @@ open import Logic.Predicate
 import      Lvl
 open import Sets.ImageSet
 open import Structure.Function
-open import Structure.Setoid.WithLvl renaming (_≡_ to _≡ₛ_)
+open import Structure.Setoid renaming (_≡_ to _≡ₛ_)
 open import Type
 open import Type.Dependent
 

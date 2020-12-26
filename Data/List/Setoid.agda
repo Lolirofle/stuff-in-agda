@@ -6,7 +6,7 @@ open import Data.List.Equiv
 open import Data.List.Relation.Quantification
 open import Logic.Propositional
 open import Structure.Operator
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Relator.Equivalence
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties

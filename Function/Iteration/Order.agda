@@ -23,7 +23,7 @@ open import Numeral.Natural.Relation.Divisibility.Proofs
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals using () renaming (_≡_ to _≡ₑ_ ; _≢_ to _≢ₑ_ ; [≡]-intro to [≡ₑ]-intro)
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Function.Domain
 open import Structure.Function
 open import Structure.Operator.Properties

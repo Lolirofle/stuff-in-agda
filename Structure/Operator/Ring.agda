@@ -4,7 +4,7 @@ import      Lvl
 open import Logic
 open import Logic.Predicate
 open import Logic.Propositional
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator
 open import Structure.Operator.Group using (Group ; CommutativeGroup)
 open import Structure.Operator.Monoid using (Monoid)

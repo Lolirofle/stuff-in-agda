@@ -3,7 +3,7 @@ module Structure.Operator.Field where
 import      Lvl
 open import Logic
 open import Logic.Propositional
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator.Properties
 open import Structure.Operator.Ring
 open import Type

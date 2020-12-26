@@ -9,7 +9,7 @@ open import Structure.Function
 open import Structure.Operator.Field
 open import Structure.Operator.Monoid
 open import Structure.Operator
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 private variable ℓ ℓₑ : Lvl.Level

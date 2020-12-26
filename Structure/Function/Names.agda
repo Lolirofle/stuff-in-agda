@@ -6,7 +6,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 import      Lvl
 open import Structure.Setoid.Uniqueness
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 private variable ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₒ₄ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ ℓₗ₄ : Lvl.Level

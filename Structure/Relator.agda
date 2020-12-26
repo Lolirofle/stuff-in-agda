@@ -6,7 +6,7 @@ open import Functional.Dependent
 open import Lang.Instance
 open import Logic
 open import Logic.Propositional
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Relator.Names
 open import Structure.Relator.Properties
 open import Syntax.Function

@@ -5,7 +5,7 @@ open import Function.Equals
 import      Lvl
 open import Logic
 open import Logic.Predicate
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.NaturalTransformation

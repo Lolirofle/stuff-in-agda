@@ -3,7 +3,7 @@ module Structure.Categorical.Names where
 import      Lvl
 open import Functional using (const ; swap)
 open import Logic
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 import      Structure.Operator.Names as Names
 import      Structure.Relator.Names as Names
 open import Type

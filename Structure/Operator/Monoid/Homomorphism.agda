@@ -6,7 +6,7 @@ open import Logic.Predicate
 open import Structure.Function
 open import Structure.Function.Multi
 open import Structure.Operator.Monoid
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Type
 
 record Homomorphism

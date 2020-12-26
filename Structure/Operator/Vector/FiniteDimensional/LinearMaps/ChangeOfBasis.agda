@@ -13,7 +13,7 @@ open import Structure.Operator.Vector.LinearMap
 open import Structure.Operator.Vector.Proofs
 open import Structure.Operator.Vector
 open import Structure.Relator.Properties
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 

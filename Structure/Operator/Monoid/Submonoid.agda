@@ -5,7 +5,7 @@ open import Logic
 open import Logic.Predicate
 open import Logic.Predicate.Equiv
 open import Sets.PredicateSet renaming (_≡_ to _≡ₛ_)
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator.Monoid
 open import Structure.Operator.Properties
 open import Structure.Operator

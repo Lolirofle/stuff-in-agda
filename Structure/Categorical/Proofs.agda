@@ -4,7 +4,7 @@ open import Data
 open import Functional
 open import Logic.Propositional
 import      Lvl
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Categorical.Properties
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Properties

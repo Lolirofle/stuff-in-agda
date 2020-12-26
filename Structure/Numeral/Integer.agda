@@ -1,7 +1,7 @@
 module Structure.Numeral.Integer where
 
 import      Lvl
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator.Properties
 open import Structure.Operator.Ring
 open import Structure.OrderedField

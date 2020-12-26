@@ -23,7 +23,7 @@ open import Logic.Propositional.Theorems
 open import Relator.Equals using ([≡]-intro) renaming (_≡_ to _≡ₑ_)
 open import Relator.Equals.Proofs
 import      Function.Names as Names
-open import Structure.Setoid.WithLvl
+open import Structure.Setoid
 open import Structure.Operator.Monoid
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Proofs
