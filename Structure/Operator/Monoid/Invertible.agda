@@ -4,7 +4,7 @@ open import Functional
 import      Lvl
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Type
 
 private variable ℓ ℓₗ ℓₑ : Lvl.Level
@@ -15,12 +15,12 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) where
   -- Generalizes the following examples in ℕ:
   -- • Lesser than or equal: (5+? = 8)  ⇔ (5 ≤ 8)
   -- • Divides             : (5*? = 10) ⇔ (5 ∣ 10)
-  record InverseRelationᵣ(_⨞_ : T → T → Type{ℓₗ}) : Type{ℓₑ Lvl.⊔ ℓₗ} where
+  record InverseRelationᵣ(_⨞_ : T → T → Type{ℓₗ}) : Type{Lvl.of(T) Lvl.⊔ ℓₑ Lvl.⊔ ℓₗ} where
     constructor intro
     field proof : ∀{x y} → (x ⨞ y) ↔ ∃(z ↦ x ▫ z ≡ y)
 
   module _ ⦃ invRel : InverseRelationᵣ{ℓₗ}(_⨞_) ⦄ where
-    record InverseOperatorᵣ (_⋄_ : (x : T) → (y : T) → . ⦃ inv : (y ⨞ x) ⦄ → T) : Type{ℓₑ Lvl.⊔ ℓₗ} where
+    record InverseOperatorᵣ (_⋄_ : (x : T) → (y : T) → . ⦃ inv : (y ⨞ x) ⦄ → T) : Type{Lvl.of(T) Lvl.⊔ ℓₑ Lvl.⊔ ℓₗ} where
       constructor intro
       field proof : ∀{x y} ⦃ inv : (y ⨞ x) ⦄ → (x ⋄ y ≡ [∃]-witness([↔]-to-[→] (InverseRelationᵣ.proof invRel) inv))
 

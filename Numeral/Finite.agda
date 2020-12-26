@@ -6,7 +6,6 @@ open import Data.Boolean.Stmt
 open import Functional
 open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Natural hiding (𝐏)
-open import Numeral.Natural.Relation.Order
 open import Type
 
 -- A structure corresponding to a finite set of natural numbers (0,..,n−1).

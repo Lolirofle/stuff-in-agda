@@ -547,6 +547,14 @@ instance
   postulate [⋅][+]-distributivityᵣ : Distributivityᵣ(_⋅_)(_+_)
 
 instance
+  [+][⋅]-rng : Rng(_+_)(_⋅_)
+  [+][⋅]-rng = record{}
+
+instance
+  [+][⋅]-ring-unity : Unity(_+_)(_⋅_)
+  Unity.[⋅]-identity-existence [+][⋅]-ring-unity = [∃]-intro 𝟏 ⦃ intro ⦄
+    
+instance
   [+][⋅]-ring : Ring(_+_)(_⋅_)
   [+][⋅]-ring = record{}
   

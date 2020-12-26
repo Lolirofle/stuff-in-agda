@@ -1,10 +1,10 @@
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Category
 open import Type
 
 module Structure.Category.Monad
-  {ℓₒ ℓₘ}
-  {cat : CategoryObject{ℓₒ}{ℓₘ}}
+  {ℓₒ ℓₘ ℓₑ}
+  {cat : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}}
   where
 
 import      Function.Equals
@@ -49,6 +49,12 @@ record Monad (T : Object → Object) ⦃ functor : Functor(category)(category)(T
     μ-functor-[∘]-commutativity : (μ ∘ᴺᵀ (map ∘ᶠⁿ μ) ⊜ μ ∘ᴺᵀ (μ ∘ᶠⁿ T))
     μ-functor-[∘]-identityₗ     : (μ ∘ᴺᵀ (map ∘ᶠⁿ η) ⊜ idᴺᵀ)
     μ-functor-[∘]-identityᵣ     : (μ ∘ᴺᵀ (η   ∘ᶠⁿ T) ⊜ idᴺᵀ)
+
+  -- Extension operator
+  -- Also called: _*
+  -- Alternative implementation: (μ(_) ∘_) ∘ᶠⁿ map
+  ext : ∀{x y} → (x ⟶ T(y)) → (T(x) ⟶ T(y))
+  ext {x}{y} f = μ(y) ∘ map(f)
 
   module FunctionalNames where
     lift : ∀{x} → (x ⟶ T(x))

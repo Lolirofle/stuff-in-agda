@@ -1,12 +1,12 @@
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Category
 open import Type
 
 module Structure.Category.Monoid
-  {ℓₒ ℓₘ}
+  {ℓₒ ℓₘ ℓₑ}
   {Obj : Type{ℓₒ}}
   {Morphism : Obj → Obj → Type{ℓₘ}}
-  ⦃ morphism-equiv : ∀{x y} → Equiv(Morphism x y) ⦄
+  ⦃ morphism-equiv : ∀{x y} → Equiv{ℓₑ}(Morphism x y) ⦄
   (cat : Category(Morphism))
   where
 

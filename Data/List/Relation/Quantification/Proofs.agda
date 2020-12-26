@@ -3,7 +3,7 @@ module Data.List.Relation.Quantification.Proofs where
 import      Lvl
 open import Data.List
 open import Data.List.Functions
-open import Data.List.Proofs.Id
+open import Data.List.Equiv.Id
 open import Data.List.Relation.Permutation
 open import Data.List.Relation.Quantification
 open import Functional

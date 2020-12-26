@@ -13,6 +13,8 @@ record Up {ℓ₁ ℓ₂} (T : Type{ℓ₂}) : Type{ℓ₁ ⊔ ℓ₂} where
 
 of : ∀{ℓ} → Type{ℓ} → Level
 of {ℓ} _ = ℓ
+{-# INLINE of #-}
 
 ofType : ∀{ℓ} → Type{𝐒(ℓ)} → Level
 ofType {ℓ} _ = ℓ
+{-# INLINE ofType #-}

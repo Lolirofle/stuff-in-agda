@@ -1,6 +1,6 @@
 open import Logic
 open import Logic.Classical
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.OrderedField
 open import Type
 

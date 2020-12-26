@@ -30,10 +30,10 @@ CountablyInfinite(T) = (ℕ ≍' T) where
 module Countable where
   private variable A : Type{ℓ₁}
   private variable B : Type{ℓ₂}
-  private variable ⦃ equiv-A ⦄ : Equiv(A)
-  private variable ⦃ equiv-B ⦄ : Equiv(B)
-  private variable ⦃ equiv-A‖B ⦄ : Equiv(A ‖ B)
-  private variable ⦃ equiv-A⨯B ⦄ : Equiv(A ⨯ B)
+  private variable ⦃ equiv-A ⦄ : Equiv{ℓₑ}(A)
+  private variable ⦃ equiv-B ⦄ : Equiv{ℓₑ}(B)
+  private variable ⦃ equiv-A‖B ⦄ : Equiv{ℓₑ}(A ‖ B)
+  private variable ⦃ equiv-A⨯B ⦄ : Equiv{ℓₑ}(A ⨯ B)
 
   -- _+_ : Countable (A) ⦃ equiv-A ⦄ → Countable(B) ⦃ equiv-B ⦄ → Countable(A ‖ B) ⦃ equiv-A‖B ⦄
   -- [∃]-intro a ⦃ intro pa ⦄ + [∃]-intro b ⦃ intro pb ⦄ = [∃]-intro (Left ∘ a) ⦃ intro (\{y} → [∃]-intro ([∃]-witness pa) ⦃ {!!} ⦄) ⦄

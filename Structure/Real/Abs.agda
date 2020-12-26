@@ -1,7 +1,7 @@
 open import Logic.Classical
 open import Structure.Real
 
-module Structure.Real.Abs {ℓ₁ ℓ₂} {R} ⦃ R-equiv ⦄ (_+_) (_⋅_) (_≤_) ⦃ classical : ∀{ℓ}{P} → Classical{ℓ}(P) ⦄ ⦃ reals : RealTheory{ℓ₁}{ℓ₂} {R} ⦃ R-equiv ⦄ (_+_)(_⋅_)(_≤_) ⦄ where
+module Structure.Real.Abs {ℓ₁ ℓ₂ ℓₑ} {R} ⦃ R-equiv ⦄ (_+_) (_⋅_) (_≤_) ⦃ classical : ∀{ℓ}{P} → Classical{ℓ}(P) ⦄ ⦃ reals : RealTheory{ℓ₁}{ℓₑ}{ℓ₂} {R} ⦃ R-equiv ⦄ (_+_)(_⋅_)(_≤_) ⦄ where
 open RealTheory(reals)
 
 open import Data.Boolean
@@ -11,7 +11,7 @@ open import Logic
 open import Logic.Classical
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Operator.Field
 open import Structure.Operator.Monoid
 open import Structure.Operator.Group

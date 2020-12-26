@@ -1,1 +1,1 @@
-module Structure.Sets.Relator where
+module Structure.Sets.Relators where

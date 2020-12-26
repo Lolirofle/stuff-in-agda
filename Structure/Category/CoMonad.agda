@@ -1,10 +1,10 @@
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Category
 open import Type
 
 module Structure.Category.CoMonad
-  {ℓₒ ℓₘ}
-  {cat : CategoryObject{ℓₒ}{ℓₘ}}
+  {ℓₒ ℓₘ ℓₑ}
+  {cat : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}}
   where
 
 import      Function.Equals

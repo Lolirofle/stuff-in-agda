@@ -3,7 +3,7 @@ module Numeral.Natural.Oper.Summation.Proofs where
 import      Lvl
 open import Data.List
 open import Data.List.Functions
-open import Data.List.Proofs.Id
+open import Data.List.Equiv.Id
 open import Numeral.Natural
 open import Structure.Function
 open import Structure.Operator.Field

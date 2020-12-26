@@ -8,6 +8,7 @@ open import Structure.Operator.Field
 open import Structure.Operator.Monoid
 open import Structure.Operator.Properties
 open import Structure.Operator.Ring
+open import Structure.Operator.Ring.Homomorphism
 open import Structure.Operator.Vector
 open import Structure.Operator.Vector.LinearMap
 open import Structure.Setoid.WithLvl
@@ -34,12 +35,12 @@ module _
       public
 
     ringᵥ : ⦃ Associativity(_⋅ᵥ_) ⦄ → ⦃ ∃(Identity(_⋅ᵥ_)) ⦄ → Ring(_+ᵥ_)(_⋅ᵥ_)
-    Ring.[+]-commutative-group                 ringᵥ  = vectorCommutativeGroup
-    Monoid.binary-operator    (Ring.[⋅]-monoid ringᵥ) = BilinearMap.binaryOperator [⋅ᵥ]-bilinearity
-    Monoid.associativity      (Ring.[⋅]-monoid ringᵥ) = infer
-    Monoid.identity-existence (Ring.[⋅]-monoid ringᵥ) = infer
-    Ring.[⋅][+]-distributivityₗ                ringᵥ  = BilinearOperator.[+ᵥ]-distributivityₗ vectorSpace (_⋅ᵥ_) [⋅ᵥ]-bilinearity
-    Ring.[⋅][+]-distributivityᵣ                ringᵥ  = BilinearOperator.[+ᵥ]-distributivityᵣ vectorSpace (_⋅ᵥ_) [⋅ᵥ]-bilinearity
+    Rng.[+]-commutative-group    (Ring.rng   ringᵥ) = vectorCommutativeGroup
+    Rng.[⋅]-binary-operator      (Ring.rng   ringᵥ) = BilinearMap.binaryOperator [⋅ᵥ]-bilinearity
+    Rng.[⋅]-associativity        (Ring.rng   ringᵥ) = infer
+    Rng.[⋅][+]-distributivityₗ   (Ring.rng   ringᵥ) = BilinearOperator.[+ᵥ]-distributivityₗ vectorSpace (_⋅ᵥ_) [⋅ᵥ]-bilinearity
+    Rng.[⋅][+]-distributivityᵣ   (Ring.rng   ringᵥ) = BilinearOperator.[+ᵥ]-distributivityᵣ vectorSpace (_⋅ᵥ_) [⋅ᵥ]-bilinearity
+    Unity.[⋅]-identity-existence (Ring.unity ringᵥ) = infer
 
   -- TODO: I found some conflicting definitions for a star algebra from different sources. What is a reasonable definition?
   record ⋆-algebra (_⋆ᵥ : V → V) (_⋆ₛ : S → S) : Type{ℓₛₑ Lvl.⊔ ℓₛ Lvl.⊔ ℓᵥₑ Lvl.⊔ ℓᵥ} where

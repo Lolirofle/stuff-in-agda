@@ -1,11 +1,16 @@
+{-# OPTIONS --cubical #-}
+
 module Type.Cubical where
 
-import      Agda.Primitive.Cubical
+import      Lvl
 open import Type
 
-open Agda.Primitive.Cubical public
+open import Agda.Primitive public
+  using (SSet)
+
+open import Agda.Primitive.Cubical public
   using ()
-  renaming (I to Interval) -- _ : Typeω. Inhabitants can be seen as points on a closed unit interval.
+  renaming (I to Interval) -- _ : SSet(Lvl.𝟎). Inhabitants can be seen as points on a closed unit interval.
 
 module Interval where
   open Agda.Primitive.Cubical public
@@ -19,7 +24,7 @@ module Interval where
       primIMin to min ; -- _ : Interval → Interval → Interval. Chooses the point nearest 𝟎.
       primIMax to max ; -- _ : Interval → Interval → Interval. Chooses the point nearest 𝟏.
       primINeg to flip ; -- _ : Interval → Interval. Flips a point in the interval around the point of symmetry (the middle). Essentially (p ↦ 𝟏 − p).
-      IsOne to Is-𝟏 ; -- _ : Interval → Stmtω. The predicate stating that a point is 𝟏.
+      IsOne to Is-𝟏 ; -- _ : Interval → SSet(Lvl.𝟎). The predicate stating that a point is 𝟏.
       itIsOne to 𝟏-is-𝟏 ; -- _ : Is-𝟏(𝟏). Proof of 𝟏 being 𝟏.
       primComp to comp ;
       primHComp to hComp ; -- _ : ∀{ℓ}{A : Type{ℓ}}{i : Interval} → (Interval → Partial(i)(A)) → A → A
@@ -35,7 +40,7 @@ module Interval where
   maxᵣ-is-𝟏 {x}{y} = Agda.Primitive.Cubical.IsOne2 x y
 
   -- The predicate stating that a point is 𝟎.
-  Is-𝟎 : Interval → Typeω
+  Is-𝟎 : Interval → SSet(Lvl.𝟎)
   Is-𝟎 i = Is-𝟏(flip i)
 
   -- Proof of 𝟎 being 𝟎.

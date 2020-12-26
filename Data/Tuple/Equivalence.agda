@@ -1,4 +1,4 @@
-module Data.Tuple.Equiv where
+module Data.Tuple.Equivalence where
 
 import      Lvl
 open import Data using (Unit ; <>)

@@ -5,16 +5,17 @@ open import Functional
 open import Logic.Propositional
 open import Logic.Predicate
 open import Structure.Setoid.Uniqueness
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Function.Domain
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓ : Lvl.Level
+private variable ℓ ℓₑ₁ ℓₑ₂ : Lvl.Level
 private variable A B : Type{ℓ}
+private variable P : A → Type{ℓ}
 
-module _ ⦃ equiv-A : Equiv(A) ⦄ ⦃ equiv-B : Equiv(B) ⦄ {f : A → B} where
+module _ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ {f : A → B} where
   Uniqueness-Injectivity : (∀{y : B} → Unique(x ↦ y ≡ f(x))) ↔ Injective(f)
   Uniqueness-Injectivity = [↔]-intro l r where
     l : (∀{y : B} → Unique(x ↦ y ≡ f(x))) ← Injective(f)

@@ -13,6 +13,7 @@ open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
 open import Structure.Function.Multi
 open import Structure.Operator.Monoid
+open import Structure.Operator.Monoid.Homomorphism
 open import Structure.Operator.Monoid.Monoids.Function
 open import Structure.Operator.Monoid.Submonoid
 open import Structure.Operator.Properties

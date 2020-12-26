@@ -15,7 +15,7 @@ open import Logic
 open import Logic.Classical
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Setoid.Size
 open import Structure.Function.Domain
 open import Structure.Function.Domain.Proofs
@@ -28,17 +28,18 @@ open import Type.Properties.Empty
 open import Type.Properties.Inhabited
 open import Type
 
-private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
-private variable A B C : Setoid{ℓ}
+private variable ℓ ℓ₁ ℓ₂ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₗ : Lvl.Level
+private variable A B C : Setoid{ℓₑ}{ℓ}
+private variable X Y Z : Type{ℓ}
 
 module _ where
   instance
-    [≍]-to-[≼] : (_≍_ {ℓ₁}{ℓ₂}) ⊆₂ (_≼_)
+    [≍]-to-[≼] : (_≍_ {ℓₑ₁}{ℓ₁}{ℓₑ₂}{ℓ₂}) ⊆₂ (_≼_)
     _⊆₂_.proof [≍]-to-[≼] ([∃]-intro(f) ⦃ [∧]-intro f-function f-bijective ⦄) =
       ([∃]-intro(f) ⦃ [∧]-intro f-function (bijective-to-injective(f) ⦃ f-bijective ⦄) ⦄)
 
   instance
-    [≍]-to-[≽] : (_≍_ {ℓ₁}{ℓ₂}) ⊆₂ (_≽_)
+    [≍]-to-[≽] : (_≍_ {ℓₑ₁}{ℓ₁}{ℓₑ₂}{ℓ₂}) ⊆₂ (_≽_)
     _⊆₂_.proof [≍]-to-[≽] ([∃]-intro(f) ⦃ [∧]-intro f-function f-bijective ⦄) =
       ([∃]-intro(f) ⦃ [∧]-intro f-function (bijective-to-surjective(f) ⦃ f-bijective ⦄) ⦄)
 
@@ -99,7 +100,7 @@ module _ where
 
   open import Structure.Operator
   open import Structure.Setoid.Uniqueness
-  module _ {ℓ₁ ℓ₂ ℓₗ} {X : Type{ℓ₁}} {Y : Type{ℓ₂}} ⦃ equiv-X : Equiv(X) ⦄ ⦃ equiv-Y : Equiv(Y) ⦄ (P : X → Type{ℓₗ}) ⦃ classical-P : Classical(∃ P) ⦄ (c : ¬(∃ P) → Y) (f : X → Y) ⦃ func-f : Function(f) ⦄ where -- TODO: Maybe f should also be able to depend on P, so that (f : (x : X) → P(x) → Y)?
+  module _ ⦃ equiv-X : Equiv{ℓₑ₁}(X) ⦄ ⦃ equiv-Y : Equiv{ℓₑ₂}(Y) ⦄ (P : X → Type{ℓₗ}) ⦃ classical-P : Classical(∃ P) ⦄ (c : ¬(∃ P) → Y) (f : X → Y) ⦃ func-f : Function(f) ⦄ where -- TODO: Maybe f should also be able to depend on P, so that (f : (x : X) → P(x) → Y)?
     -- TODO: This is a generalization of both h in [≼][≍]-antisymmetry-raw and invₗ-construction from Function.Inverseₗ
     existence-decider : Y
     existence-decider = Either.map1 (f ∘ [∃]-witness) c (excluded-middle(∃ P))
@@ -114,7 +115,7 @@ module _ where
     ... | Either.Left  ep with () ← nep ep
     ... | Either.Right _ = constant(c)
 
-  module _ {ℓ₁ ℓ₂ ℓ₃ ℓₗ} {X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} ⦃ equiv-X : Equiv(X) ⦄ ⦃ equiv-Y : Equiv(Y) ⦄ ⦃ equiv-Z : Equiv(Z) ⦄ (P : X → Y → Type{ℓₗ}) ⦃ classical-P : ∀{x} → Classical(∃(P(x))) ⦄ (c : (x : X) → ¬(∃(P(x))) → Z) (f : X → Y → Z) ⦃ func-f : BinaryOperator(f) ⦄ where
+  module _ ⦃ equiv-X : Equiv{ℓₑ₁}(X) ⦄ ⦃ equiv-Y : Equiv{ℓₑ₂}(Y) ⦄ ⦃ equiv-Z : Equiv{ℓₑ₃}(Z) ⦄ (P : X → Y → Type{ℓₗ}) ⦃ classical-P : ∀{x} → Classical(∃(P(x))) ⦄ (c : (x : X) → ¬(∃(P(x))) → Z) (f : X → Y → Z) ⦃ func-f : BinaryOperator(f) ⦄ where
     existence-decider-fn : X → Z
     existence-decider-fn(x) = existence-decider (P(x)) (c(x)) (f(x)) ⦃ BinaryOperator.right func-f ⦄
 
@@ -297,15 +298,15 @@ module _ where
         })
 
   instance
-    [≼][≍]-antisymmetry : ⦃ _ : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ → Antisymmetry(_≼_ {ℓ})(_≍_)
+    [≼][≍]-antisymmetry : ⦃ _ : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ → Antisymmetry(_≼_ {ℓₑ}{ℓ})(_≍_)
     [≼][≍]-antisymmetry = intro [≼][≍]-antisymmetry-raw
 
   instance
-    [≍]-reflexivity : Reflexivity(_≍_ {ℓ})
+    [≍]-reflexivity : Reflexivity(_≍_ {ℓₑ}{ℓ})
     Reflexivity.proof([≍]-reflexivity) = [∃]-intro(id) ⦃ [∧]-intro id-function id-bijective ⦄
 
   instance
-    [≍]-symmetry : Symmetry(_≍_ {ℓ})
+    [≍]-symmetry : Symmetry(_≍_ {ℓₑ}{ℓ})
     Symmetry.proof [≍]-symmetry ([∃]-intro(f) ⦃ [∧]-intro f-function f-bijective ⦄) = ([∃]-intro(inv f) ⦃ [∧]-intro inv-function (inv-bijective ⦃ func = f-function ⦄) ⦄) where
       instance
         f-invertible : Invertible(f)
@@ -317,7 +318,7 @@ module _ where
         ∃.proof invf-invertible = [∧]-intro f-function (Inverse-symmetry ([∧]-elimᵣ([∃]-proof f-invertible)))
 
   instance
-    [≍]-transitivity : Transitivity(_≍_ {ℓ})
+    [≍]-transitivity : Transitivity(_≍_ {ℓₑ}{ℓ})
     Transitivity.proof([≍]-transitivity) ([∃]-intro(f) ⦃ [∧]-intro f-function f-bijective ⦄) ([∃]-intro(g) ⦃ [∧]-intro g-function g-bijective ⦄)
       = [∃]-intro(g ∘ f) ⦃ [∧]-intro
           ([∘]-function  {f = g}{g = f} ⦃ g-function ⦄ ⦃ f-function ⦄)
@@ -325,15 +326,15 @@ module _ where
         ⦄
 
   instance
-    [≍]-equivalence : Equivalence(_≍_ {ℓ})
+    [≍]-equivalence : Equivalence(_≍_ {ℓₑ}{ℓ})
     [≍]-equivalence = intro
 
   instance
-    [≼]-reflexivity : Reflexivity(_≼_ {ℓ})
+    [≼]-reflexivity : Reflexivity(_≼_ {ℓₑ}{ℓ})
     Reflexivity.proof([≼]-reflexivity) = [∃]-intro(id) ⦃ [∧]-intro id-function id-injective ⦄
 
   instance
-    [≼]-transitivity : Transitivity(_≼_ {ℓ})
+    [≼]-transitivity : Transitivity(_≼_ {ℓₑ}{ℓ})
     Transitivity.proof([≼]-transitivity) ([∃]-intro(f) ⦃ [∧]-intro f-function f-injective ⦄) ([∃]-intro(g) ⦃ [∧]-intro g-function g-injective ⦄)
       = [∃]-intro(g ∘ f) ⦃ [∧]-intro
           ([∘]-function  {f = g}{g = f} ⦃ g-function ⦄ ⦃ f-function ⦄)
@@ -341,11 +342,11 @@ module _ where
         ⦄
 
   instance
-    [≽]-reflexivity : Reflexivity(_≽_ {ℓ})
+    [≽]-reflexivity : Reflexivity(_≽_ {ℓₑ}{ℓ})
     Reflexivity.proof([≽]-reflexivity) = [∃]-intro(id) ⦃ [∧]-intro id-function id-surjective ⦄
 
   instance
-    [≽]-transitivity : Transitivity(_≽_ {ℓ})
+    [≽]-transitivity : Transitivity(_≽_ {ℓₑ}{ℓ})
     Transitivity.proof([≽]-transitivity) ([∃]-intro(f) ⦃ [∧]-intro f-function f-surjective ⦄) ([∃]-intro(g) ⦃ [∧]-intro g-function g-surjective ⦄)
       = [∃]-intro(g ∘ f) ⦃ [∧]-intro
           ([∘]-function  {f = g}{g = f} ⦃ g-function ⦄ ⦃ f-function ⦄)
@@ -384,12 +385,12 @@ module _ where
     --   This is a simplified example for finite sets, and a restriction of this proposition for finite sets is actually provable because it is possible to enumerate all functions up to function extensionality.
     --   The real problem comes when the sets are non-finite because then, there is no general way to enumerate the elements. How would an injection be chosen in this case?
     -- Note that if the surjection is injective, then it is a bijection, and therefore also an injection.
-    record SurjectionInjectionChoice (A : Setoid{ℓ₁}) (B : Setoid{ℓ₂}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    record SurjectionInjectionChoice (A : Setoid{ℓₑ₁}{ℓ₁}) (B : Setoid{ℓₑ₂}{ℓ₂}) : Stmt{ℓₑ₁ Lvl.⊔ ℓ₁ Lvl.⊔ ℓₑ₂ Lvl.⊔ ℓ₂} where
       constructor intro
       field proof : (A ≽ B) → (B ≼ A)
     open SurjectionInjectionChoice ⦃ … ⦄ using () renaming (proof to [≽]-to-[≼]) public
 
-    record SurjectionInvertibleFunctionChoice (A : Setoid{ℓ₁}) (B : Setoid{ℓ₂}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    record SurjectionInvertibleFunctionChoice (A : Setoid{ℓₑ₁}{ℓ₁}) (B : Setoid{ℓₑ₂}{ℓ₂}) : Stmt{ℓₑ₁ Lvl.⊔ ℓ₁ Lvl.⊔ ℓₑ₂ Lvl.⊔ ℓ₂} where
       constructor intro
       field
         invertibleᵣ : ∀{f : ∃.witness A → ∃.witness B} → Surjective(f) → Invertibleᵣ(f)
@@ -403,26 +404,26 @@ module _ where
     [≼][≽][≍]-antisymmetry-raw : (A ≼ B) → (A ≽ B) → (A ≍ B)
     [≼][≽][≍]-antisymmetry-raw lesser greater = [≼][≍]-antisymmetry-raw lesser ([≽]-to-[≼] greater)
       
-  module _ ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ ⦃ surjChoice : ∀{A B : Setoid{ℓ}} → SurjectionInjectionChoice A B ⦄ where
+  module _ ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ ⦃ surjChoice : ∀{ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂}{A : Setoid{ℓₑ₁}{ℓ₁}}{B : Setoid{ℓₑ₂}{ℓ₂}} → SurjectionInjectionChoice A B ⦄ where
     instance
-      [≽][≍]-antisymmetry : Antisymmetry(_≽_)(_≍_)
-      [≽][≍]-antisymmetry = intro [≽][≍]-antisymmetry-raw    
+      [≽][≍]-antisymmetry : Antisymmetry(_≽_ {ℓₑ}{ℓ})(_≍_)
+      [≽][≍]-antisymmetry = intro [≽][≍]-antisymmetry-raw
 
     -- TODO: Totality of (_≼_).  Is this difficult to prove?
     -- [≼]-total : ((A ≼ B) ∨ (B ≼ A))
   
   -- TODO: Move
-  global-equiv : ∀{ℓ}{T : Type{ℓ}} → Equiv(T)
+  global-equiv : ∀{ℓ}{T : Type{ℓ}} → Equiv{ℓₑ}(T)
   Equiv._≡_                                   global-equiv  = const(const Unit)
   Equivalence.reflexivity  (Equiv.equivalence global-equiv) = intro <>
   Equivalence.symmetry     (Equiv.equivalence global-equiv) = intro(const <>)
   Equivalence.transitivity (Equiv.equivalence global-equiv) = intro(const(const <>))
 
-  [≼]-to-[≽]-for-inhabited-to-excluded-middle : (∀{ℓ₁ ℓ₂}{A : Setoid{ℓ₁}}{B : Setoid{ℓ₂}} → ⦃ ◊([∃]-witness A) ⦄ → (A ≼ B) → (B ≽ A)) → (∀{P : Type{ℓ}} → Classical(P))
+  [≼]-to-[≽]-for-inhabited-to-excluded-middle : (∀{ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂}{A : Setoid{ℓₑ₁}{ℓ₁}}{B : Setoid{ℓₑ₂}{ℓ₂}} → ⦃ ◊([∃]-witness A) ⦄ → (A ≼ B) → (B ≽ A)) → (∀{P : Type{ℓ}} → Classical(P))
   Classical.excluded-middle ([≼]-to-[≽]-for-inhabited-to-excluded-middle p {P = P}) = proof where
     open import Data.Boolean
     open import Data.Option
-    open import Data.Option.Equiv
+    open import Data.Option.Setoid
     open import Relator.Equals.Proofs.Equivalence
     f : Option(◊ P) → Bool
     f (Option.Some _) = 𝑇
@@ -433,7 +434,7 @@ module _ where
       equiv-bool = [≡]-equiv
 
     instance
-      equiv-pos-P : Equiv(◊ P)
+      equiv-pos-P : Equiv{Lvl.𝟎}(◊ P)
       equiv-pos-P = global-equiv
 
     func-f : Function(f)

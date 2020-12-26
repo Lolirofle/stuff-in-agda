@@ -19,8 +19,3 @@ module _ {ℓ}{A B : Type{ℓ}}where
 
   [≡]-type : ∀{x : A}{y : B} → (x ≡ y) → (A ≡ B)
   [≡]-type [≡]-intro = [≡]-intro
-
--- TODO: Why is this not a very simple solution to not having function extensionality?
-data IdFn {ℓ} : ∀{T : Type{ℓ}} → T → T → Stmt{Lvl.𝐒(ℓ)} where
-  IdFn-intro : ∀{T}{x : T} → (IdFn x x)
-  IdFn-func : ∀{A B : Type{ℓ}}{f g : A → B} → (∀{x : A} → IdFn(f(x))(g(x))) → (IdFn f f)

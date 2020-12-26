@@ -18,17 +18,37 @@ import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 open import Type
 
--- TODO: Instances for these algebraic properties
--- TODO: More algebraic properties (associativity, commutativity and all the others)
+private variable ℓ : Lvl.Level
+private variable T : Type{ℓ}
+private variable P : Bool → Type{ℓ}
+private variable a b c t f : Bool
+private variable x y : Bool
+private variable pt pf : ∀{b} → P(b)
 
-private variable a b c : Bool
+---------------------------------------------
+-- Eliminator
+
+module _ {pt pf : T} where
+  elim-nested : (elim pt pf (elim t f b) ≡ elim{T = const T} (elim pt pf t) (elim pt pf f) b)
+  elim-nested{t = t}{f = f}{b = b} = elim{T = b ↦ (elim pt pf (elim t f b) ≡ elim(elim pt pf t) (elim pt pf f) b)} [≡]-intro [≡]-intro b
+
+module _ {x : T} where
+  elim-redundant : (elim{T = const T} x x b ≡ x)
+  elim-redundant{b = b} = elim{T = b ↦ elim x x b ≡ x} [≡]-intro [≡]-intro b
+
+elim-inverse : (elim 𝑇 𝐹 b ≡ b)
+elim-inverse{b = b} = elim{T = b ↦ elim 𝑇 𝐹 b ≡ b} [≡]-intro [≡]-intro b
+
+elim-anti-inverse : (elim 𝐹 𝑇 b ≡ ! b)
+elim-anti-inverse {𝑇} = [≡]-intro
+elim-anti-inverse {𝐹} = [≡]-intro
+
+---------------------------------------------
+-- Negation
 
 [!]-no-fixpoints : ∀{b} → (! b ≢ b)
 [!]-no-fixpoints {𝑇} ()
 [!]-no-fixpoints {𝐹} ()
-
----------------------------------------------
--- Rewrite rules of classic logic
 
 [!!]-elim : ∀{a} → (!(! a) ≡ a)
 [!!]-elim {𝑇} = [≡]-intro
@@ -447,7 +467,7 @@ instance
 instance
   [||]-oppositeFunctionₗ : ComplementFunctionₗ(_||_)(!)
   ComplementFunctionₗ.proof([||]-oppositeFunctionₗ) = proof where
-    proof : Names.InverseFunctionᵣ(_||_)(𝑇)(!)
+    proof : Names.InverseFunctionₗ(_||_)(𝑇)(!)
     proof {𝑇} = [≡]-intro
     proof {𝐹} = [≡]-intro
 
@@ -461,7 +481,7 @@ instance
 instance
   [&&]-oppositeFunctionₗ : ComplementFunctionₗ(_&&_)(!)
   ComplementFunctionₗ.proof([&&]-oppositeFunctionₗ) = proof where
-    proof : Names.InverseFunctionᵣ(_&&_)(𝐹)(!)
+    proof : Names.InverseFunctionₗ(_&&_)(𝐹)(!)
     proof {𝑇} = [≡]-intro
     proof {𝐹} = [≡]-intro
 
@@ -569,6 +589,10 @@ module 𝑇 where
   [¬]-elim : ∀{a} → (! a ≡ 𝑇) → (a ≡ 𝐹)
   [¬]-elim {𝑇} ()
   [¬]-elim {𝐹} [≡]-intro = [≡]-intro
+
+  [¬¬]-elim : ∀{a} → (!(! a) ≡ 𝑇) → (a ≡ 𝑇)
+  [¬¬]-elim {𝑇} [≡]-intro = [≡]-intro
+  [¬¬]-elim {𝐹} ()
 
   preserves-[&&][∧] : ∀{a b} → ((a && b) ≡ 𝑇) ↔ (a ≡ 𝑇)∧(b ≡ 𝑇)
   preserves-[&&][∧] = [↔]-intro
@@ -681,7 +705,7 @@ module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {T : Type{ℓ₁}} {P : T → Type{ℓ₂
   either-bool-rightₗ (Right y) | Left  t = const y
 
   if-not-either-bool-intro : ∀{x y : T} → (X → P(x)) → (Y → P(y)) → (xy : (X ∨ Y)) → P(if not(Either.isRight(xy)) then x else y)
-  if-not-either-bool-intro {x}{y} xp yp xy = if-intro {x = x}{y = y} (xp ∘ either-bool-leftₗ xy ∘ 𝑇.[¬]-elim) (yp ∘ either-bool-rightₗ xy ∘ 𝐹.[¬]-elim)
+  if-not-either-bool-intro {x}{y} xp yp xy = if-intro {x = x}{y = y} (xp ∘ either-bool-leftₗ xy ∘ 𝑇.[¬]-elim) (yp ∘ either-bool-rightₗ xy ∘ 𝑇.[¬¬]-elim ∘ 𝐹.[¬]-elim)
 
 module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {T : Type{ℓ₁}} {P : T → Type{ℓ₂}} {X : Type{ℓ₃}} {Y : Type{ℓ₄}} where
   if-either-bool-intro : ∀{x y : T} → (X → P(x)) → (Y → P(y)) → (xy : (X ∨ Y)) → P(if Either.isRight(xy) then y else x)
@@ -710,21 +734,13 @@ module _ {ℓ} {T : Type{ℓ}} {x y : T} where
 ---------------------------------------------
 -- The results of if-statements
 
-module _ {ℓ} {T : Type{ℓ}} {x : T} where
-  if-then-redundant : ∀{B} → (if B then x else x ≡ x)
-  if-then-redundant {𝐹} = [≡]-intro
-  if-then-redundant {𝑇} = [≡]-intro
+module _ {ℓ} {T : Type{ℓ}} {x : T} {B} where
+  if-then-redundant : (if B then x else x ≡ x)
+  if-then-redundant = elim-redundant{b = B}
 
-{-# REWRITE if-then-redundant #-}
+module _ {ℓ} {T : Type{ℓ}} {B} where
+  if-then-bool-inverse : (if B then 𝑇 else 𝐹 ≡ B)
+  if-then-bool-inverse = elim-inverse{b = B}
 
-module _ {ℓ} {T : Type{ℓ}} where
-  if-then-bool-redundant1 : ∀{B} → (if B then 𝑇 else 𝐹 ≡ B)
-  if-then-bool-redundant1 {𝐹} = [≡]-intro
-  if-then-bool-redundant1 {𝑇} = [≡]-intro
-
-  if-then-bool-redundant2 : ∀{B} → (if B then 𝐹 else 𝑇 ≡ ! B)
-  if-then-bool-redundant2 {𝐹} = [≡]-intro
-  if-then-bool-redundant2 {𝑇} = [≡]-intro
-
-{-# REWRITE if-then-bool-redundant1 #-}
-{-# REWRITE if-then-bool-redundant2 #-}
+  if-then-bool-anti-inverse : (if B then 𝐹 else 𝑇 ≡ ! B)
+  if-then-bool-anti-inverse = elim-anti-inverse{b = B}

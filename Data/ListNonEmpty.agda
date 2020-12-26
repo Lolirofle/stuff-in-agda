@@ -18,6 +18,8 @@ data List₊ {ℓ} (T : Type{ℓ}) : Type{ℓ} where
 _⊱_ : ∀{ℓ}{T : Type{ℓ}} → List₊(T) → T → List₊(T)
 _⊱_ = swap _⊰_
 
+import Data.List.Functions as List
+
 -- List concatenation
 _++_ : ∀{ℓ}{T : Type{ℓ}} → List₊(T) → List₊(T) → List₊(T)
 _++_ (singleton(elem)) b = elem ⊰ b

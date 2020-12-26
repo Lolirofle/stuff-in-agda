@@ -10,6 +10,7 @@ open import Logic.IntroInstances
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
+import      Lvl
 open import Numeral.Natural
 open import Numeral.Natural.Oper hiding (_^_)
 open import Numeral.Natural.Oper.Comparisons
@@ -22,7 +23,7 @@ open import Numeral.Natural.Relation.Divisibility.Proofs
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals using () renaming (_≡_ to _≡ₑ_ ; _≢_ to _≢ₑ_ ; [≡]-intro to [≡ₑ]-intro)
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Function.Domain
 open import Structure.Function
 open import Structure.Operator.Properties
@@ -36,7 +37,10 @@ open import Type
 open import Type.Properties.Empty
 open import Type.Size.Finite
 
-module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T) ⦃ op : BinaryOperator(_▫_) ⦄ {id} ⦃ ident : Identity(_▫_)(id) ⦄ ⦃ assoc : Associativity(_▫_) ⦄ where
+private variable ℓ ℓₑ : Lvl.Level
+private variable T : Type{ℓ}
+
+module _ ⦃ equiv-T : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃ op : BinaryOperator(_▫_) ⦄ {id} ⦃ ident : Identity(_▫_)(id) ⦄ ⦃ assoc : Associativity(_▫_) ⦄ where
   -- Operator alias for iterated application of an operator with an element.
   _^_ : T → ℕ → T
   x ^ n = Function.Iteration.repeatₗ(n)(_▫_)(id)(x)
@@ -44,11 +48,11 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
   -- `FiniteOrder(x)(n)` means that the element `x` is of order `n`.
   -- It is finite in the sense that it is a number and not infinite.
   -- An element's order is the smallest positive integer power of x such that the result is the identity element.
-  data FiniteOrder (x : T) : ℕ → Stmt{ℓ} where
+  data FiniteOrder (x : T) : ℕ → Stmt{ℓₑ} where
     intro : ∀{n} → LE.Minimum(_≤_)(n ↦ x ^ 𝐒(n) ≡ id)(n) → FiniteOrder(x)(𝐒(n))
 
   -- `Ord(x)` means that the element `x` has a finite order.
-  Ord : T → Stmt{ℓ}
+  Ord : T → Stmt
   Ord(x) = ∃(FiniteOrder(x))
 
   -- `ord(x)` is the order of x (when it is finite).
@@ -171,11 +175,11 @@ module _ {ℓ} {T : Type{ℓ}} ⦃ equiv-T : Equiv(T) ⦄ (_▫_ : T → T → T
   -- (∀{x} → (ord(x) ≡ 2)) → Commutativity(_▫_)
 
   -- One element in the group can "generate" any element element in the group by repeated application of the operator.
-  Generator : T → Stmt{ℓ}
+  Generator : T → Stmt
   Generator(x) = Surjective(x ^_)
 
   -- A group is cyclic when there is an element that can generate it.
-  Cyclic : Stmt{ℓ}
+  Cyclic : Stmt
   Cyclic = ∃(Generator)
 
   {- TODO: Because the thing exists, there is finitely many. Search for the first one

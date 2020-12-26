@@ -12,6 +12,8 @@ open import Structure.Relator.Properties
 open import Syntax.Function
 open import Type
 
+-- TODO: It seems possible to define UnaryRelator as a special case of Function, so let's do that
+
 private variable ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ ℓₗ₄ : Lvl.Level
 
 module Names where

@@ -49,7 +49,7 @@ permutation-mapping (trans p q)          = permutation-mapping q ∘ permutation
 
 module Proofs where
   open import Data.List.Proofs
-  open import Data.List.Proofs.Id
+  open import Data.List.Equiv.Id
   open import Logic.Predicate
   open import Numeral.Natural
   open import Numeral.Finite.Proofs

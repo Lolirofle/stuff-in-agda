@@ -21,12 +21,15 @@ open import Structure.Function.Domain
 open import Syntax.Transitivity
 open import Type
 
+private variable ℓ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ : Lvl.Level
+private variable T A B C X Y Z : Type{ℓ}
+
 module _ where
-  open import Structure.Setoid
+  open import Structure.Setoid.WithLvl
   open        Structure.Function
   open        Structure.Operator
 
-  module _ {ℓ} {X : Type{ℓ}} ⦃ _ : Equiv(X) ⦄ where
+  module _ ⦃ equiv-X : Equiv{ℓₑ}(X) ⦄ where
     -- Propositions that state something about arbitrary composed functions also apply to arbitrary function iterations of the first function.
     [^]-from-[∘]-proof : ∀{ℓ₂}{P : (X → X) → Type{ℓ₂}} → (∀{f g : X → X} → P(f ∘ g)) → (∀{f : X → X}{n} → P(f ^ n))
     [^]-from-[∘]-proof {P = P} p {f} {𝟎}   = p{id}{id}
@@ -72,7 +75,7 @@ module _ where
       f(x)             🝖-[ fixpoint f(x) ]
       x                🝖-end
 
-  module _ {ℓ} {X : Type{ℓ}} ⦃ _ : Equiv(X → X) ⦄ where
+  module _ ⦃ equiv-XX : Equiv{ℓₑ}(X → X) ⦄ where
     [^]-by-1 : ∀{f : X → X} → (f ^ 1 ≡ f)
     [^]-by-1 {f} = reflexivity(_≡_)
 
@@ -120,7 +123,7 @@ module _ where
     [^]-distanceᵣ {f} {𝐒 a} {𝟎}   = id
     [^]-distanceᵣ {f} {𝐒 a} {𝐒 b} p = [^]-distanceᵣ {f} {a} {b} (cancellationₗ(_∘_) {f} p)
 
-    module _ ⦃ op : BinaryOperator(_∘_) ⦄ ⦃ _ : Associativity(_∘_) ⦄ where
+    module _ ⦃ op : BinaryOperator(_∘_) ⦄ ⦃ assoc : Associativity(_∘_) ⦄ where
       [^]-commuting : ∀{f g : X → X} → Names.Commuting(_∘_)(f)(g) → ∀{a b} → Names.Commuting(_∘_)(f ^ a)(g ^ b)
       [^]-commuting {f} {g} com {𝟎}   {𝟎}   = reflexivity(_≡_)
       [^]-commuting {f} {g} com {𝟎}   {𝐒 b} = reflexivity(_≡_)
@@ -142,7 +145,7 @@ module _ where
         (f ∘ (f ^ n)) ∘ (g ∘ (g ^ n)) 🝖-[ reflexivity(_≡_) ]
         (f ^ 𝐒(n)) ∘ (g ^ 𝐒(n))       🝖-end
 
-  module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} ⦃ equiv-x : Equiv(X) ⦄ {Y : Type{ℓ₂}} ⦃ equiv-y : Equiv(Y) ⦄ where
+  module _ {ℓ₁}{ℓ₂} {X : Type{ℓ₁}} ⦃ equiv-x : Equiv{ℓₑ₁}(X) ⦄ {Y : Type{ℓ₂}} ⦃ equiv-y : Equiv{ℓₑ₂}(Y) ⦄ where
     private variable n : ℕ
     private variable x : X
     private variable init : Y
@@ -154,7 +157,7 @@ module _ where
     repeatₗᵣ-flip-equality : ∀{_▫_ : X → Y → Y} → ⦃ op : BinaryOperator(_▫_) ⦄ → (repeatₗ n (swap _▫_) init x ≡ repeatᵣ n (_▫_) x init)
     repeatₗᵣ-flip-equality {n = n}{init = init}{x = x}{_▫_ = _▫_} = symmetry(_≡_) (repeatᵣₗ-flip-equality {n = n}{x = x}{init = init}{_▫_ = swap(_▫_)} ⦃ op = swap-binaryOperator ⦄)
 
-  module _ {ℓ} {X : Type{ℓ}} ⦃ equiv-x : Equiv(X) ⦄ where
+  module _ ⦃ equiv-X : Equiv{ℓₑ}(X) ⦄ where
     private variable f : X → X
     private variable _▫_ : X → X → X
     private variable x elem init : X
@@ -169,7 +172,7 @@ module _ where
     [^]-from-repeatᵣ {f}{n = 𝐒 n} = congruence₁(f) ([^]-from-repeatᵣ {f}{n = n})
 
     -- TODO: Should also be provable using associativity? Prove (CommutingOn(_▫_)(x)(x) → AssociativityOn(_▫_)(x)). Is this helping?
-    repeat-swap-side : ⦃ op : BinaryOperator(_▫_) ⦄ ⦃ _ : Commutativity(_▫_) ⦄ → (repeatₗ n (_▫_) x x ≡ repeatᵣ n (_▫_) x x)
+    repeat-swap-side : ⦃ op : BinaryOperator(_▫_) ⦄ ⦃ comm : Commutativity(_▫_) ⦄ → (repeatₗ n (_▫_) x x ≡ repeatᵣ n (_▫_) x x)
     repeat-swap-side            {n = 𝟎}      = reflexivity(_≡_)
     repeat-swap-side {_▫_ = _▫_}{n = 𝐒 n}{x} = congruence₂ₗ(_▫_)(x) (repeat-swap-side {n = n}) 🝖 commutativity(_▫_)
 
@@ -187,7 +190,7 @@ module _ where
       x ▫ repeatᵣ (𝐒(n)) (_▫_) x x       🝖[ _≡_ ]-[]
       repeatᵣ (𝐒(𝐒(n))) (_▫_) x x        🝖[ _≡_ ]-end
 
-    repeat-with-id-swap-side : ⦃ op : BinaryOperator(_▫_) ⦄ ⦃ _ : Commutativity(_▫_) ⦄ ⦃ _ : Identity(_▫_)(init) ⦄ → (repeatₗ n (_▫_) init x ≡ repeatᵣ n (_▫_) x init)
+    repeat-with-id-swap-side : ⦃ op : BinaryOperator(_▫_) ⦄ ⦃ comm : Commutativity(_▫_) ⦄ ⦃ ident : Identity(_▫_)(init) ⦄ → (repeatₗ n (_▫_) init x ≡ repeatᵣ n (_▫_) x init)
     repeat-with-id-swap-side {n = 𝟎} = reflexivity(_≡_)
     repeat-with-id-swap-side {_▫_ = _▫_}{n = 𝐒 n}{x = x} = congruence₂ₗ(_▫_)(x) (repeat-with-id-swap-side {n = n}) 🝖 commutativity(_▫_)
 
@@ -196,7 +199,7 @@ module _ where
     repeat-raise-equality{_▫_ = _▫_}{n = 𝐒(n)}{elem}{x} = congruence₂ᵣ(_▫_)(elem) (repeat-raise-equality{_▫_ = _▫_}{n = n}{elem}{x})
 
 
-module _ {ℓ} {X : Type{ℓ}} where
+module _ {X : Type{ℓ}} where
   open import Relator.Equals
   open import Relator.Equals.Proofs
 
@@ -205,11 +208,11 @@ module _ {ℓ} {X : Type{ℓ}} where
   raise-repeat-equality{𝐒(n)}{f} = [≡]-with(f ∘_) (raise-repeat-equality{n}{f})
 
 module _ where
-  open import Structure.Setoid
+  open import Structure.Setoid.WithLvl
   open        Structure.Function
   open        Structure.Operator
 
-  module _ {ℓ} {X : Type{ℓ}} ⦃ equiv-X : Equiv(X) ⦄ where
+  module _ ⦃ equiv-X : Equiv{ℓₑ}(X) ⦄ where
     repeatₗ-by-0 : ∀{_▫_ : X → X → X}{x id} → ⦃ _ : Identityᵣ(_▫_)(id) ⦄ → (repeatᵣ 0 (_▫_) x id ≡ id)
     repeatₗ-by-0 {_▫_} {x}{id} ⦃ identᵣ ⦄ = reflexivity(_≡_)
 

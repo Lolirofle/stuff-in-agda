@@ -8,7 +8,7 @@ open import Automaton.Deterministic
 open import Data.Boolean
 open import Data.Boolean.Stmt
 open import Data.List renaming (∅ to ε ; _⊰_ to _·_)
-open import Data.List.Equiv
+open import Data.List.Setoid
 open import Data.List.Functions using (postpend ; _++_)
 open import Data.List.Proofs
 open import Functional

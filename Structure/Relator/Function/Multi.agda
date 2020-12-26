@@ -26,8 +26,7 @@ module _ (n : ℕ) {ℓ𝓈}{ℓ₁ ℓ₂} {Xs : Types{n}(ℓ𝓈)}{Y : Type{�
     module _ ⦃ equiv-Y : Equiv{ℓₑ}(Y) ⦄ where
       -- A relator is a function when every LHS have at least one RHS in which the relation holds.
       Function : ∀{ℓ𝓈ₑ} → (RaiseType.mapWithLvls(\X ℓₑ → Equiv{ℓₑ}(X)) Xs ℓ𝓈ₑ) ⇉ᵢₙₛₜ ((Xs ⇉ (Y → Type{ℓ₂})) → Stmt)
-      Function = Multi.expl-to-inst(n) (Multi.compose(n) (_$₂_) (Multi.inst-to-expl(n) (Multi.Names.FunctionReplacement(f ↦ g ↦ ∀{y₁ y₂} → f(y₁) → g(y₂) → (y₁ ≡ y₂))(n))))
-
+      Function = Multi.expl-to-inst(n) (Multi.compose(n) (_$₂_) (Multi.inst-to-expl(n) (Multi.Names.RelationReplacement(f ↦ g ↦ ∀{y₁ y₂} → f(y₁) → g(y₂) → (y₁ ≡ y₂))(n))))
 
   record Total(φ : Xs ⇉ (Y → Stmt{ℓ₂})) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ (Lvl.⨆ ℓ𝓈)} where
     constructor intro

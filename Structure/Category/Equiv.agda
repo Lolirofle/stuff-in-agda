@@ -1,7 +1,7 @@
 module Structure.Category.Equiv where
 
 import      Lvl
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Category
 
 -- TODO: https://en.wikipedia.org/wiki/Equivalence_of_categories

@@ -4,7 +4,7 @@ import Lvl
 open import Functional
 open import Function.Names as Names using (_⊜_)
 open import Data.Boolean
-open import Data.List
+open import Data.List as List
 open import Data.List.Functions
 open import Logic
 open import Logic.Propositional
@@ -40,14 +40,14 @@ instance
   Preserving.proof (length-preserves-prepend {a = a}) {x} = [≡]-intro
 
 length-postpend : ((length ∘ postpend a) ⊜ (𝐒 ∘ length))
-length-postpend {x = l} = elim [≡]-intro (\x l → [≡]-with(𝐒) {length(postpend _ l)}{𝐒(length l)}) l
+length-postpend {x = l} = List.elim [≡]-intro (\x l → [≡]-with(𝐒) {length(postpend _ l)}{𝐒(length l)}) l
 
 instance
   length-preserves-postpend : Preserving₁(length)(postpend a)(𝐒)
   Preserving.proof (length-preserves-postpend {a = a}) {x} = length-postpend {a = a}{x = x}
 
 length-[++] : (length{T = T}(l₁ ++ l₂) ≡ length(l₁) + length(l₂))
-length-[++] {T = T} {l₁ = l₁} {l₂} = elim base next l₁ where
+length-[++] {T = T} {l₁ = l₁} {l₂} = List.elim base next l₁ where
   base : length(∅ ++ l₂) ≡ length{T = T}(∅) + length(l₂)
   base = symmetry(_≡_) (identityₗ(_+_)(0))
 
@@ -56,7 +56,7 @@ length-[++] {T = T} {l₁ = l₁} {l₂} = elim base next l₁ where
     length((x ⊰ l) ++ l₂)      🝖[ _≡_ ]-[]
     length(x ⊰ (l ++ l₂))      🝖[ _≡_ ]-[]
     𝐒(length(l ++ l₂))         🝖[ _≡_ ]-[ [≡]-with(𝐒) stmt ]
-    𝐒(length(l) + length(l₂))  🝖[ _≡_ ]-[ [+1]-commutativity {length(l)} {length(l₂)} ]
+    𝐒(length(l) + length(l₂))  🝖[ _≡_ ]-[ [+]-stepₗ {length(l)} {length(l₂)} ]
     𝐒(length(l)) + length(l₂)  🝖[ _≡_ ]-[]
     length(x ⊰ l) + length(l₂) 🝖-end
 

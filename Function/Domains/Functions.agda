@@ -2,6 +2,7 @@ module Function.Domains.Functions where
 
 import      Lvl
 open import Function.Domains
+open import Function.Domains.Id
 open import Structure.Relator.Properties
 open import Structure.Setoid.WithLvl
 open import Type

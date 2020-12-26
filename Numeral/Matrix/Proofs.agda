@@ -190,16 +190,17 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     ⦃ absor₂ : Absorberᵣ(_⋅ₛ_)(𝟎ₛ) ⦄
     where
     instance
-      matrix-multPattern-identityᵣ : Identityᵣ{T₁ = Matrix(s) T}(Matrix.multPattern(_+ₛ_)(_⋅ₛ_) 𝟎ₛ) (SquareMatrix.scalarMat 𝟎ₛ 𝟏ₛ)
-      _⊜_.proof (Identityᵣ.proof (matrix-multPattern-identityᵣ ) {M}) {x , y} =
+      postulate matrix-multPattern-identityᵣ : Identityᵣ{T₁ = Matrix(s) T}(Matrix.multPattern(_+ₛ_)(_⋅ₛ_) 𝟎ₛ) (SquareMatrix.scalarMat 𝟎ₛ 𝟏ₛ)
+      {-_⊜_.proof (Identityᵣ.proof (matrix-multPattern-identityᵣ ) {M}) {x , y} =
         Matrix.proj (Matrix.multPattern(_+ₛ_)(_⋅ₛ_) 𝟎ₛ M (SquareMatrix.scalarMat 𝟎ₛ 𝟏ₛ)) (x , y)                   🝖[ _≡_ ]-[]
         Vector.foldᵣ(_+ₛ_) 𝟎ₛ (Vector.map₂(_⋅ₛ_) (Matrix.row(M)(y)) (Matrix.col(SquareMatrix.scalarMat 𝟎ₛ 𝟏ₛ)(x))) 🝖[ _≡_ ]-[ congruence₁(Vector.foldᵣ(_+ₛ_) 𝟎ₛ) (congruence₂ᵣ(Vector.map₂(_⋅ₛ_))(Matrix.row M(y)) (col-scalarMat-is-indexProject {false = 𝟎ₛ}{true = 𝟏ₛ}{i = x})) ]
         Vector.foldᵣ(_+ₛ_) 𝟎ₛ (Vector.map₂(_⋅ₛ_) (Matrix.row(M)(y)) (Vector.indexProject x 𝟏ₛ 𝟎ₛ))                 🝖[ _≡_ ]-[ congruence₁(Vector.foldᵣ(_+ₛ_) 𝟎ₛ) (Vector.map₂-indexProject-identityᵣ {v = Matrix.row(M)(y)}{i = x}) ]
         Vector.foldᵣ(_+ₛ_) 𝟎ₛ (Vector.indexProject x (Vector.proj(Matrix.row(M)(y))(x)) 𝟎ₛ)                        🝖[ _≡_ ]-[]
         Vector.foldᵣ(_+ₛ_) 𝟎ₛ (Vector.indexProject x (Matrix.proj M(x , y)) 𝟎ₛ)                                    🝖[ _≡_ ]-[ {!!} ]
-        Matrix.proj M(x , y) ⋅ₛ (Vector.foldᵣ(_+ₛ_) 𝟎ₛ (Vector.indexProject x 𝟏ₛ 𝟎ₛ))                               🝖[ _≡_ ]-[ {!!} ]
-        Matrix.proj M(x , y) ⋅ₛ 𝟏ₛ                                                                                  🝖[ _≡_ ]-[ {!!} ]
+        Matrix.proj M(x , y) ⋅ₛ (Vector.foldᵣ(_+ₛ_) 𝟎ₛ (Vector.indexProject x 𝟏ₛ 𝟎ₛ))                              🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅ₛ_)(_) {!!} ]
+        Matrix.proj M(x , y) ⋅ₛ 𝟏ₛ                                                                                 🝖[ _≡_ ]-[ identityᵣ(_⋅ₛ_)(𝟏ₛ) ]
         Matrix.proj M(x , y)                                                                                       🝖-end
+      -}
 
   module _
     ⦃ oper₁ : BinaryOperator(_+ₛ_) ⦄

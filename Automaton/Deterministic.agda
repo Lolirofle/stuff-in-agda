@@ -5,7 +5,7 @@ open import Type
 module Automaton.Deterministic where
 
 open import Data.List renaming (∅ to ε ; _⊰_ to _·_)
-open import Data.List.Equiv
+open import Data.List.Setoid
 open import Data.List.Functions using (postpend ; _++_)
 open import Data.List.Proofs
 open import Functional
@@ -74,7 +74,7 @@ module _
   {d : Deterministic{ℓₚ = ℓₚ}(State)(Alphabet)}
   where
 
-  open import Data.List.Equiv.Correctness
+  open import Data.List.Equiv
   open import Structure.Operator.Properties
   open import Syntax.Transitivity
 

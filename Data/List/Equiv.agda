@@ -2,34 +2,25 @@ module Data.List.Equiv where
 
 import      Lvl
 open import Data.List
-open import Data.List.Equiv.Correctness
-open import Data.List.Relation.Quantification
-open import Logic.Propositional
 open import Structure.Operator
 open import Structure.Setoid.WithLvl
-open import Structure.Relator.Equivalence
-import      Structure.Relator.Names as Names
-open import Structure.Relator.Properties
 open import Type
 
 private variable ℓ ℓₑ ℓₚ : Lvl.Level
 private variable T : Type{ℓ}
 
-instance
-  List-equiv : ⦃ Equiv{ℓₑ}(T) ⦄ → Equiv(List(T))
-  List-equiv = intro (AllElements₂(_≡_)) ⦃ intro ⦃ intro refl ⦄ ⦃ intro sym ⦄ ⦃ intro trans ⦄ ⦄ where
-    refl : Names.Reflexivity(AllElements₂(_≡_))
-    refl{∅}     = ∅
-    refl{x ⊰ l} = reflexivity(_≡_) ⊰ refl{l}
-
-    sym : Names.Symmetry(AllElements₂(_≡_))
-    sym ∅        = ∅
-    sym (p ⊰ ps) = symmetry(_≡_) p ⊰ sym ps
-
-    trans : Names.Transitivity(AllElements₂(_≡_))
-    trans ∅        ∅        = ∅
-    trans (p ⊰ ps) (q ⊰ qs) = (transitivity(_≡_) p q) ⊰ (trans ps qs)
-
-instance
-  List-equiv-correctness : ⦃ equiv : Equiv{ℓₑ}(T) ⦄ → Correctness(List-equiv ⦃ equiv ⦄)
-  List-equiv-correctness ⦃ equiv ⦄ = intro ⦃ binaryOperator = intro(_⊰_) ⦄ (\{(p ⊰ _) → p}) (\{(_ ⊰ pl) → pl}) \()
+-- A correct equality relation on lists should state that prepend is a function and have the generalized cancellation properties for lists.
+record Extensionality ⦃ equiv : Equiv{ℓₑ}(T) ⦄ (equiv-List : Equiv{ℓₚ}(List(T))) : Type{ℓₑ Lvl.⊔ Lvl.of(T) Lvl.⊔ ℓₚ} where
+  constructor intro
+  private instance _ = equiv-List
+  field
+    ⦃ binaryOperator ⦄ : BinaryOperator(List._⊰_)
+    generalized-cancellationᵣ : ∀{x y : T}{l₁ l₂ : List(T)} → (x ⊰ l₁ ≡ y ⊰ l₂) → (x ≡ y)
+    generalized-cancellationₗ : ∀{x y : T}{l₁ l₂ : List(T)} → (x ⊰ l₁ ≡ y ⊰ l₂) → (l₁ ≡ l₂)
+    case-unequality : ∀{x : T}{l : List(T)} → (∅ ≢ x ⊰ l)
+open Extensionality ⦃ … ⦄ renaming
+  ( binaryOperator to [⊰]-binaryOperator
+  ; generalized-cancellationₗ to [⊰]-generalized-cancellationₗ
+  ; generalized-cancellationᵣ to [⊰]-generalized-cancellationᵣ
+  ; case-unequality to [∅][⊰]-unequal
+  ) public

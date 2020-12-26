@@ -35,7 +35,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   open import Data
   open import Data.Proofs
   open import Data.Either as Either using (_‖_)
-  open import Data.Either.Equiv
+  open import Data.Either.Setoid
   open import Data.Boolean
   open import Data.Tuple as Tuple using (_⨯_ ; _,_)
   open import Functional

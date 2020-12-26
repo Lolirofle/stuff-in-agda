@@ -120,8 +120,8 @@ module _ (Proof : Formula → Type{ℓₘₗ}) where
   Tuple.left  [⟷]-preserving-type xy = ⟷.intro (Logic.[↔]-to-[←] xy) (Logic.[↔]-to-[→] xy)
   Tuple.right [⟷]-preserving-type xy = Logic.[↔]-intro (⟷.elimₗ xy) (⟷.elimᵣ xy)
 
-  module Test ⦃ logic : Logic ⦄ where
   {-
+  module Test ⦃ logic : Logic ⦄ where
     pure : ∀{A : Formula} → Proof(A) → Proof(A)
     pure = id
 

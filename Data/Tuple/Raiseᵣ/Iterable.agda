@@ -18,17 +18,17 @@ private variable T : Type{ℓ}
 
 instance
   Raiseᵣ-iterable : Iterable(T ^_)
-  Iterable.Element (Raiseᵣ-iterable {T = T}) = T
-  Iterable.isEmpty Raiseᵣ-iterable {𝟎}    _ = 𝑇
-  Iterable.isEmpty Raiseᵣ-iterable {𝐒(n)} _ = 𝐹
+  Iterable.Element   (Raiseᵣ-iterable {T = T}) = T
+  Iterable.isEmpty   Raiseᵣ-iterable {𝟎}    _ = 𝑇
+  Iterable.isEmpty   Raiseᵣ-iterable {𝐒(n)} _ = 𝐹
   Iterable.indexStep Raiseᵣ-iterable {𝟎}    _ = <>
   Iterable.indexStep Raiseᵣ-iterable {𝐒(n)} _ = n
-  Iterable.current Raiseᵣ-iterable {𝟎}       <>      = <>
-  Iterable.current Raiseᵣ-iterable {𝐒(𝟎)}    x       = x
-  Iterable.current Raiseᵣ-iterable {𝐒(𝐒(n))} (x , l) = x
-  Iterable.step Raiseᵣ-iterable {𝟎}       <>      = <>
-  Iterable.step Raiseᵣ-iterable {𝐒(𝟎)}    x       = <>
-  Iterable.step Raiseᵣ-iterable {𝐒(𝐒(n))} (x , l) = l
+  Iterable.current   Raiseᵣ-iterable {𝟎}       <>      = <>
+  Iterable.current   Raiseᵣ-iterable {𝐒(𝟎)}    x       = x
+  Iterable.current   Raiseᵣ-iterable {𝐒(𝐒(n))} (x , l) = x
+  Iterable.step      Raiseᵣ-iterable {𝟎}       <>      = <>
+  Iterable.step      Raiseᵣ-iterable {𝐒(𝟎)}    x       = <>
+  Iterable.step      Raiseᵣ-iterable {𝐒(𝐒(n))} (x , l) = l
 
 instance
   Raiseᵣ-finite-iterable : Iterable.Finite(Raiseᵣ-iterable{T = T})

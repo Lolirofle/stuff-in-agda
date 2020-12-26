@@ -8,14 +8,14 @@ open import Data.Boolean
 import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.Either as Either using (_‖_)
-open import Data.Either.Equiv
+open import Data.Either.Setoid
 open import Data.Option as Option
 open import Data.Option.Functions as Option
-open import Data.Option.Equiv
+open import Data.Option.Setoid
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
-open import Data.Tuple.Equiv
+open import Data.Tuple.Equivalence
 open import Data.List renaming (∅ to ε ; _⊰_ to _·_)
-open import Data.List.Equiv
+open import Data.List.Setoid
 open import Functional
 open import Logic
 open import Relator.Equals.Proofs.Equivalence

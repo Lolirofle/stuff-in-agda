@@ -246,6 +246,7 @@ module Typing
 
   -- TODO: Confluence, subject reduction
 
+  open import Data.Option.Equiv.Id
   open import Data.Option.Proofs
   open import Relator.Equals.Proofs
   open import Structure.Function

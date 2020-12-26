@@ -1,6 +1,6 @@
 import      Lvl
 open import Structure.Category
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Type
 
 module Structure.Category.Morphism.Transport

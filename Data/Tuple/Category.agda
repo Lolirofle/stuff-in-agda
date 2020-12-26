@@ -2,7 +2,7 @@ module Data.Tuple.Category where
 
 import      Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
-open import Data.Tuple.Equiv
+open import Data.Tuple.Equivalence
 import      Functional as Fn
 open import Logic.Propositional
 open import Logic.Predicate

@@ -5,25 +5,31 @@ DEBUG_OPTIONS=--show-implicit --confluence-check -W all --warning noUnknownFixit
 all: typecheck
 
 run: build
-	./Main
+	./gen/Main
 
 build:
-	agda ${OPTIONS} -c Main.agda
+	agda ${OPTIONS} -c --compile-dir=gen Main.agda
 
-typecheck:
-	agda ${OPTIONS} Main.agda
+js:
+	agda ${OPTIONS} --js --js-optimize --compile-dir=gen/Js Js.agda
+
+typecheck: generate
+	agda ${OPTIONS} All.agda
 
 debug:
-	agda ${OPTIONS} ${DEBUG_OPTIONS} Main.agda
+	agda ${OPTIONS} ${DEBUG_OPTIONS} All.agda
 
 test:
 	agda ${OPTIONS} Test.agda
 
 classic:
-	cd Mathematical && agda ${OPTIONS} --cubical --prop Main.agda
+	cd Mathematical && agda ${OPTIONS} --cubical --prop All.agda
 
 docs:
-	agda ${OPTIONS} --html Main.agda
+	agda ${OPTIONS} --html --html-dir=gen/html All.agda
 
 clean:
 	find . -type f -name '*.agdai' -delete
+
+generate:
+	env python3 generate_All.agda.py > All.agda

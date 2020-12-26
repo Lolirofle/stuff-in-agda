@@ -24,7 +24,7 @@ open import Type
 [≡]-to-[≤] x≡y = [∃]-intro 0 ⦃ x≡y ⦄
 
 [≤]-minimum : ∀{x : ℕ} → (0 ≤ x)
-[≤]-minimum {x} = [∃]-intro x ⦃ [+]-identityₗ-raw ⦄
+[≤]-minimum {x} = [∃]-intro x ⦃ identityₗ(_+_)(𝟎) ⦄
 -- [∃]-intro {ℕ} {\n → 0 + n ≡ x} (x) ⦃ [+]-identityₗ ⦄
 
 [≤][0]ᵣ : ∀{x : ℕ} → (x ≤ 0) ↔ (x ≡ 0)

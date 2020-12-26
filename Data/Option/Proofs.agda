@@ -6,7 +6,7 @@ open import Data.Option
 open import Data.Option.Functions
 open import Data.Either
 open import Functional
-open import Structure.Setoid using (Equiv)
+open import Structure.Setoid.WithLvl using (Equiv)
 open import Structure.Function.Domain
 open import Structure.Function
 import      Structure.Operator.Names as Names
@@ -14,29 +14,21 @@ open import Structure.Operator.Properties
 open import Structure.Relator.Properties
 open import Type
 
-private variable ℓ : Lvl.Level
+private variable ℓ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ : Lvl.Level
 private variable T A B C : Type{ℓ}
 private variable x : T
 private variable o : Option(T)
 
 module _ where
-  open import Relator.Equals
-  open import Relator.Equals.Proofs.Equiv
-
-  instance
-    Some-injectivity : Injective {B = Option(T)} (Some)
-    Injective.proof Some-injectivity [≡]-intro = [≡]-intro
-
-module _ where
-  open Structure.Setoid
+  open Structure.Setoid.WithLvl
   open import Function.Equals
 
-  module _ ⦃ _ : let _ = A ; _ = B ; _ = C in Equiv(Option(C)) ⦄ {f : B → C}{g : A → B} where
+  module _ ⦃ _ : let _ = A ; _ = B ; _ = C in Equiv{ℓₑ}(Option(C)) ⦄ {f : B → C}{g : A → B} where
     map-preserves-[∘] : (map(f ∘ g) ⊜ (map f) ∘ (map g))
     _⊜_.proof map-preserves-[∘] {None}   = reflexivity(_≡_)
     _⊜_.proof map-preserves-[∘] {Some x} = reflexivity(_≡_)
 
-  module _ ⦃ _ : Equiv(Option(A)) ⦄ where
+  module _ ⦃ _ : Equiv{ℓₑ}(Option(A)) ⦄ where
     map-preserves-id : (map id ⊜ id)
     _⊜_.proof map-preserves-id {None}   = reflexivity(_≡_)
     _⊜_.proof map-preserves-id {Some x} = reflexivity(_≡_)
@@ -45,19 +37,19 @@ module _ where
     _⊜_.proof andThenᵣ-Some {None}   = reflexivity(_≡_)
     _⊜_.proof andThenᵣ-Some {Some x} = reflexivity(_≡_)
 
-  module _ ⦃ _ : Equiv(Option(A)) ⦄ where
+  module _ ⦃ _ : Equiv{ℓₑ}(Option(A)) ⦄ where
     andThenᵣ-None : o andThen (const{Y = Option(A)} None) ≡ None
     andThenᵣ-None {o = None}   = reflexivity(_≡_)
     andThenᵣ-None {o = Some x} = reflexivity(_≡_)
 
-  module _ ⦃ _ : let _ = A in Equiv(Option(B)) ⦄ {f : A → Option(B)} where
+  module _ ⦃ _ : let _ = A in Equiv{ℓₑ}(Option(B)) ⦄ {f : A → Option(B)} where
     andThenₗ-None : (None andThen f ≡ None)
     andThenₗ-None = reflexivity(_≡_)
 
     andThenₗ-Some : (Some(x) andThen f ≡ f(x))
     andThenₗ-Some = reflexivity(_≡_)
 
-  module _ ⦃ _ : let _ = A ; _ = B in Equiv(Option(C)) ⦄ {f : A → Option(B)} {g : B → Option(C)} where
+  module _ ⦃ _ : let _ = A ; _ = B in Equiv{ℓₑ}(Option(C)) ⦄ {f : A → Option(B)} {g : B → Option(C)} where
     andThen-associativity : (o andThen (p ↦ f(p) andThen g) ≡ (o andThen f) andThen g)
     andThen-associativity {None}   = reflexivity(_≡_)
     andThen-associativity {Some x} = reflexivity(_≡_)
@@ -65,24 +57,24 @@ module _ where
 module _ where
   open import Function.Equals
 
-  module _ ⦃ equiv-B : Equiv(B) ⦄ ⦃ equiv-option-B : Equiv(Option B) ⦄ ⦃ some-func : Function(Some) ⦄  where
+  module _ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ ⦃ equiv-option-B : Equiv{ℓₑ}(Option B) ⦄ ⦃ some-func : Function(Some) ⦄  where
     map-function : Function(map {T₁ = A}{T₂ = B})
     Dependent._⊜_.proof (Function.congruence map-function (Dependent.intro p)) {None}   = reflexivity _
     Dependent._⊜_.proof (Function.congruence map-function (Dependent.intro p)) {Some x} = congruence₁(Some) p
 
-  module _ ⦃ equiv-option-B : Equiv(Option B) ⦄ where
+  module _ ⦃ equiv-option-B : Equiv{ℓₑ}(Option B) ⦄ where
     andThen-function : Function(Functional.swap(_andThen_ {T₁ = A}{T₂ = B}))
     Dependent._⊜_.proof (Function.congruence andThen-function {f} {g} _)                   {None}   = reflexivity _
     Dependent._⊜_.proof (Function.congruence andThen-function {f} {g} (Dependent.intro p)) {Some x} = p{x}
 
 module _
-  ⦃ equiv-T     : Equiv(T) ⦄
-  ⦃ equiv-opt-T : Equiv(Option(T)) ⦄
+  ⦃ equiv-T     : Equiv{ℓₑ₁}(T) ⦄
+  ⦃ equiv-opt-T : Equiv{ℓₑ₂}(Option(T)) ⦄
   ⦃ some-func   : Function(Some) ⦄
   {_▫_ : T → T → T}
   where
 
-  open Structure.Setoid
+  open Structure.Setoid.WithLvl
 
   instance
     and-combine-associativity : ⦃ _ : Associativity(_▫_) ⦄ → Associativity(and-combine(_▫_))

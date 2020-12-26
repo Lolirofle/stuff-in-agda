@@ -9,7 +9,7 @@ open import Functional using (id ; const ; apply)
 open import Functional.Dependent using (_∘_)
 open import Numeral.Natural
 open import Numeral.Natural.Oper using (_+_ ; _⋅_)
-open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Oper.Proofs.Rewrite
 open import Numeral.Natural.Relation.Order
 open import Numeral.Finite
 open import Syntax.Function
@@ -136,10 +136,10 @@ map₂ {1}       f x        y        = f x y
 map₂ {𝐒(𝐒(n))} f (x , xs) (y , ys) = (f x y , map₂{𝐒(n)} f xs ys)
 
 -- Transposes two tuples of the same length to one tuple of tuples containing the pairs.
-zip : let _ = n in (A ^ n) → (B ^ n) → ((A ⨯ B) ^ n)
-zip {0}       <>        <>        = <>
-zip {1}       a         b         = (a , b)
-zip {𝐒(𝐒(n))} (ah , at) (bh , bt) = ((ah , bh) , zip {𝐒(n)} at bt)
+transpose₂ : let _ = n in (A ^ n) → (B ^ n) → ((A ⨯ B) ^ n)
+transpose₂ {0}       <>        <>        = <>
+transpose₂ {1}       a         b         = (a , b)
+transpose₂ {𝐒(𝐒(n))} (ah , at) (bh , bt) = ((ah , bh) , transpose₂ {𝐒(n)} at bt)
 
 -- The first element of a tuple.
 -- Example: head(a,b,c) = a
@@ -210,4 +210,4 @@ concat {n₁}{𝐒(𝐒(n₂))} (xs , xss) = _++_ {n₁}{n₁ ⋅ 𝐒(n₂)} xs
 transpose : let _ = n₁ ; _ = n₂ in ((T ^ n₁) ^ n₂) → ((T ^ n₂) ^ n₁)
 transpose {n₁}       {0}        <>       = repeat n₁ <>
 transpose {_}        {1}        x        = x
-transpose {n₁}       {𝐒(𝐒(n₂))} (x , xs) = zip{n₁} x (transpose {n₁} {𝐒(n₂)} xs)
+transpose {n₁}       {𝐒(𝐒(n₂))} (x , xs) = transpose₂{n₁} x (transpose {n₁} {𝐒(n₂)} xs)

@@ -160,15 +160,18 @@ module _ where
   mappingPoint : ∀{f g : (x : X) → Y(x)} → Path f g → (∀{x} → Path(f(x)) (g(x)))
   mappingPoint pfg {x} i = pfg i x
 
-{-
 module _ where
   private variable X : Type{ℓ}
   private variable Y : X → Type{ℓ}
   private variable Z : (x : X) → Y(x) → Type{ℓ}
 
-  mapP₂ : (f : (x : X) → (y : Y(x)) → Z(x)(y)) → ∀{x₁ x₂} → (path : Path x₁ x₂) → PathP(\i → Y(path(i))) (f(x)) (f(y))
-  mapP₂(f) = ?
--}
+  -- mapP₂' : (f : (x : X) → (y : Y(x)) → Z(x)(y)) → ∀{a₁ b₁ : X}{a₂ : Y(a₁)}{b₂ : Y(b₁)} → (path₁ : Path a₁ b₁) → (path₂ : Path a₂ b₂) → PathP(\i → Z(path₁(i))(?)) (f a₁ a₂) (f b₁ b₂)
+
+  mapP₂ : (f : (x : X) → (y : (x : X) → Y(x)) → Z(x)(y)) → ∀{a₁ b₁ : X}{a₂ b₂ : (x : X) → Y(x)} → (path₁ : Path a₁ b₁) → (path₂ : Path a₂ b₂) → PathP(\i → Z(path₁(i))(path₂(i))) (f a₁ a₂) (f b₁ b₂)
+  mapP₂ f ab1 ab2 i = mapP (mapP f ab1 i) ab2 i
+
+  -- mapP₂ : (f : (x : X) → (y : Y(x)) → Z(x)(y)) → ∀{x₁ x₂} → (path : Path x₁ x₂) → PathP(\i → Y(path(i))) (f(x)) (f(y))
+  -- mapP₂(f) = ?
 
 module _ where
   private variable X X₁ X₂ Y Y₁ Y₂ : Type{ℓ}
@@ -177,7 +180,7 @@ module _ where
   map = mapP
 
   map₂ : (f : X₁ → X₂ → Y) → ∀{a₁ b₁}{a₂ b₂} → Path a₁ b₁ → Path a₂ b₂ → Path (f a₁ a₂) (f b₁ b₂)
-  map₂ f ab1 ab2 i = map (map f ab1 i) ab2 i
+  map₂ f ab1 ab2 i = mapP (mapP f ab1 i) ab2 i
 
   liftedSpaceMap : (S : X → Type{ℓ}) → ∀{a b} → Path a b → S(a) → S(b)
   liftedSpaceMap S p = spaceMap(map S p)

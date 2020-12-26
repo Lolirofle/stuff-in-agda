@@ -16,7 +16,7 @@ module Geometry.Axioms
   ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄
   where
 
-open import Data.Tuple.Equiv
+open import Data.Tuple.Equivalence
 open import Functional
 open import Functional.Combinations
 open import Logic.Predicate

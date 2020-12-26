@@ -8,7 +8,7 @@ import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.List renaming (∅ to [])
 open import Data.Tuple as Tuple using (_,_) renaming (_⨯_ to _⨯'_)
-open import Data.Tuple.Equiv
+open import Data.Tuple.Equivalence
 open import Functional
 open import Sets.ExtensionalPredicateSet as PredSet using (PredSet ; _∈_)
 open import Structure.Operator

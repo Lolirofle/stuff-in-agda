@@ -12,7 +12,7 @@ open import Data.List.Relation.Quantification.Proofs
 open import Data.List.Relation.Sublist
 open import Data.List.Relation.Sublist.Proofs
 open import Data.List.Proofs
-open import Data.List.Proofs.Id
+open import Data.List.Equiv.Id
 open import Data.List.Proofs.Length
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 import      Data.Tuple.Raiseᵣ as Tuple₊
@@ -177,7 +177,7 @@ insertedEverywhere-length {x = x} {a ⊰ l} =
 permutation-length : AllElements(p ↦ length p ≡ length l) (permutations l)
 permutation-length{l = l} = AllElements-fn Proofs.permutes-length (permutations-contains-permutations{l = l})
 
-permutations-length : length(permutations l) ≡ length(l) !
+{-permutations-length : length(permutations l) ≡ length(l) !
 permutations-length {l = ∅}         = [≡]-intro
 permutations-length {l = x ⊰ ∅}     = [≡]-intro
 permutations-length {l = x ⊰ y ⊰ l} =
@@ -187,6 +187,7 @@ permutations-length {l = x ⊰ y ⊰ l} =
   foldᵣ (_+_ ∘ length) 𝟎 (map (insertedEverywhere x) (permutations (y ⊰ l))) 🝖[ _≡_ ]-[ {!!} ]
   𝐒(𝐒(length l)) ⋅ (𝐒(length l) ⋅ (length(l)!)) 🝖[ _≡_ ]-[]
   length(x ⊰ y ⊰ l)! 🝖-end
+-}
 {-permutations-length {l = x ⊰ y ⊰ l} with permutations(y ⊰ l) | permutations-length {l = y ⊰ l}
 ... | ∅       | p = {!!}
 ... | z ⊰ pyl | p =

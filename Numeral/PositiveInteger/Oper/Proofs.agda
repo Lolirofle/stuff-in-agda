@@ -112,10 +112,10 @@ instance
 [1+]-𝐒 {𝐒 x} = congruence₁(𝐒) ([1+]-𝐒 {x})
 {-# REWRITE [1+]-𝐒 #-}
 
-[+1]-commutativity : ∀{x y : ℕ₊} → (𝐒(x) + y) ≡ (x + 𝐒(y))
-[+1]-commutativity {x} {𝟏}   = [≡]-intro
-[+1]-commutativity {x} {𝐒 y} = congruence₁(𝐒) ([+1]-commutativity {x} {y})
-{-# REWRITE [+1]-commutativity #-}
+[+]-step : ∀{x y : ℕ₊} → (𝐒(x) + y) ≡ (x + 𝐒(y))
+[+]-step {x} {𝟏}   = [≡]-intro
+[+]-step {x} {𝐒 y} = congruence₁(𝐒) ([+]-step {x} {y})
+{-# REWRITE [+]-step #-}
 
 
 [+]-commutativity-raw : Names.Commutativity(_+_)

@@ -21,7 +21,7 @@ open import Structure.Operator
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Structure.Relator
-open import Structure.Setoid using (Equiv ; intro)
+open import Structure.Setoid.WithLvl using (Equiv ; intro)
 open import Structure.Type.Identity
 
 private variable ℓ ℓ₁ ℓ₂ ℓₚ : Lvl.Level
@@ -90,8 +90,8 @@ instance
   [≡]-function-application : FunctionApplication A B
   [≡]-function-application = intro Path.mappingPoint
 
-[≡]-identity-eliminator : IdentityEliminator{ℓₚ = ℓₚ}(_≡_ {T = T}) (reflexivity(_≡_))
-[≡]-identity-eliminator P prefl eq  = sub₂(_≡_)(_→ᶠ_) ⦃ [≡][→]-sub ⦄ (\i → P(\j → eq(Interval.min i j))) prefl
+[≡]-identity-eliminator : IdentityEliminator{ℓₚ = ℓₚ}(_≡_ {T = T})
+IdentityEliminator.proof [≡]-identity-eliminator P prefl eq  = sub₂(_≡_)(_→ᶠ_) ⦃ [≡][→]-sub ⦄ (\i → P(\j → eq(Interval.min i j))) prefl
 
 -- TODO: Organize and move everything below
 
@@ -151,15 +151,28 @@ private variable Pred : Obj → Type{ℓ}
 [∃trunc]-elim : ⦃ prop-A : MereProposition(A) ⦄ → (∀{x : Obj} → Pred(x) → A) → HTrunc₁(∃(Pred)) → A
 [∃trunc]-elim = HTrunc₁-function ∘ [∃]-elim
 
-
 open import Structure.Setoid.Uniqueness
 open import Type.Dependent
 
 -- TODO
-{-
 -- ∀{eu₁ eu₂ : ∃!{Obj = Obj}(Pred)} → () → (eu₁ ≡ eu₂)
 
-test : MereProposition(Unique(P))
+{-
+Unique-MereProposition-equivalence : ⦃ prop : ∀{x} → MereProposition(P(x)) ⦄ → (Unique(P) ↔ MereProposition(∃ P))
+Unique-MereProposition-equivalence {P = P} = [↔]-intro l r where
+  l : Unique(P) ← MereProposition(∃ P)
+  l (intro p) {x} {y} px py = mapP([∃]-witness) (p{[∃]-intro x ⦃ px ⦄} {[∃]-intro y ⦃ py ⦄})
+  r : Unique(P) → MereProposition(∃ P)
+  MereProposition.uniqueness (r p) {[∃]-intro w₁ ⦃ p₁ ⦄} {[∃]-intro w₂ ⦃ p₂ ⦄} i = mapP (mapP (\w p → [∃]-intro w ⦃ p ⦄) (p p₁ p₂) i) {!!} i
+  -- mapP [∃]-intro (p p₁ p₂) i ⦃ {!!} ⦄
+
+Unique-prop : ⦃ prop : ∀{x} → MereProposition(P(x)) ⦄ → MereProposition(Unique(P))
+MereProposition.uniqueness Unique-prop {u₁} {u₂} i {x} {y} px py j = Interval.hComp d x where
+  d : Interval → Interval.Partial (Interval.max (Interval.max (Interval.flip i) i) (Interval.max (Interval.flip j) j)) A
+  d k (i = Interval.𝟎) = {!!}
+  d k (i = Interval.𝟏) = {!!}
+  d k (j = Interval.𝟎) = {!!}
+  d k (j = Interval.𝟏) = {!!}
 
 [∃!trunc]-to-existence : ⦃ prop : ∀{x} → MereProposition(Pred(x)) ⦄ → HTrunc₁(∃!{Obj = Obj}(Pred)) → HomotopyLevel(0)(∃{Obj = Obj}(Pred))
 [∃!trunc]-to-existence {Pred = Pred} (trunc ([∧]-intro e u)) = intro e (\{e₂} i → [∃]-intro (u ([∃]-proof e₂) ([∃]-proof e) i) ⦃ {!!} ⦄)
@@ -194,7 +207,7 @@ data Quotient(_▫_ : T → T → Type{ℓ}) : Type{Lvl.of(T) Lvl.⊔ ℓ} where
 
 module _ ⦃ prop-P : ∀{c : Quotient(_▫_)} → MereProposition(P(c)) ⦄ where
   Quotient-property-pathP : ∀{x y}{px : P(x)}{py : P(y)} → (xy : x ≡ y) → PathP(\i → P(xy i)) px py
-  Quotient-property-pathP {x}{y}{px}{py} xy = [≡]-identity-eliminator (xy ↦ (∀{px}{py} → PathP(\i → P(xy i)) px py)) (\{c} → uniqueness(P(c))) {x}{y} xy {px}{py}
+  Quotient-property-pathP {x}{y}{px}{py} xy = IdentityEliminator.proof [≡]-identity-eliminator (xy ↦ (∀{px}{py} → PathP(\i → P(xy i)) px py)) (\{c} → uniqueness(P(c))) {x}{y} xy {px}{py}
 
   class-property : (∀{a} → P(class a)) → (∀{c} → P(c))
   class-property p {class a} = p{a}

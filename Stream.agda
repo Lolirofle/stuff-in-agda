@@ -7,7 +7,7 @@ open import Data.Boolean
 open import Data.List as List using (List)
 import      Data.List.Functions as List
 import      Data.List.Proofs as List
-import      Data.List.Proofs.Id as List
+import      Data.List.Equiv.Id as List
 open import Functional
 open import Function.Iteration
 open import Function.Iteration.Proofs
@@ -45,7 +45,7 @@ module _ where
   head(repeat(x)) = x
   tail(repeat(x)) = repeat(x)
 
-  -- The stream consisting of a list repeated/concatenated.
+  -- The stream consisting of a list repeated (concatenated infinite many times).
   -- Example: loop(1,2,3) = (1,2,3 , 1,2,3 , 1,2,3 , …)
   loop : (l : List(T)) → (l ≢ List.∅) → Stream(T)
   loop List.∅       p with () ← p [≡]-intro
@@ -56,7 +56,7 @@ module _ where
   -- Example: interleave₂(1,2,3,‥)(a,b,c,…) = (1,a , 2,b , 3,c , …)
   interleave₂ : Stream(T) -> Stream(T) -> Stream(T)
   head(interleave₂(a)(b)) = head(a)
-  tail(interleave₂(a)(b)) = interleave₂(b)(a)
+  tail(interleave₂(a)(b)) = interleave₂(b)(tail a)
 
   -- A stream which skips the first n number of elements from the specified stream.
   -- From the stream of (index 0 l , index 1 l , index 2 l , ..), the stream of (index n l , index (n+1) l , index (n+2) l , ..)

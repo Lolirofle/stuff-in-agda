@@ -1,10 +1,10 @@
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Category
 open import Type
 
 module Structure.Category.Monad.ExtensionSystem
-  {ℓₒ ℓₘ}
-  {cat : CategoryObject{ℓₒ}{ℓₘ}}
+  {ℓₒ ℓₘ ℓₑ}
+  {cat : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}}
   where
 
 import      Data.Tuple as Tuple
@@ -137,7 +137,7 @@ module _ where
 
   monad-to-extensionSystem : ∀{T : Object → Object} → ⦃ functor : Functor(category)(category)(T) ⦄ → ⦃ monad : Monad(T) ⦄ → ExtensionSystem(T)
   ExtensionSystem.η   (monad-to-extensionSystem ⦃ functor ⦄ ⦃ monad ⦄) = η
-  ExtensionSystem.ext (monad-to-extensionSystem ⦃ functor ⦄ ⦃ monad ⦄) = (μ(_) ∘_) ∘ᶠⁿ map
+  ExtensionSystem.ext (monad-to-extensionSystem ⦃ functor ⦄ ⦃ monad ⦄) = ext
   Function.congruence (ExtensionSystem.ext-function monad-to-extensionSystem  {x} {y}) {f} {g} fg =
     ((μ(y) ∘_) ∘ᶠⁿ map) f 🝖[ _≡_ ]-[]
     μ(y) ∘ map f          🝖[ _≡_ ]-[ congruence₂ᵣ(_∘_) _ (congruence₁(map) fg) ]

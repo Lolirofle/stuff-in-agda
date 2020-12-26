@@ -7,7 +7,7 @@ open import Data.List
 open import Data
 open import Float
 import      Lvl
-open import MachineWord
+open import FFI.MachineWord
 open import Numeral.Natural
 open import String
 -- open import Agda.Builtin.Int

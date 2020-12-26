@@ -12,7 +12,7 @@ open import Logic.Predicate
 open import Numeral.Natural using (ℕ)
 import      Numeral.Natural.Relation.Order as ℕ
 open import Relator.Ordering
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Function.Ordering
 open import Structure.Operator.Field
 open import Structure.Operator.Monoid
@@ -27,11 +27,13 @@ import      Structure.OrderedField.AbsoluteValue
 open import Syntax.Transitivity
 open import Type
 
+private variable ℓ ℓ₁ ℓ₂ ℓₑ : Lvl.Level
+
 -- Theory defining the axioms of ℝ in classical logic.
 -- The axioms are the following:
 -- • An ordered field.
 -- • Monotone convergence.
-record RealTheory {ℓ₁ ℓ₂} {R : Type{ℓ₁}} ⦃ _ : Equiv(R) ⦄ (_+_ _⋅_ : R → R → R) (_≤_ : R → R → Stmt{ℓ₂}) ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ : Type{ℓ₁ Lvl.⊔ Lvl.𝐒(ℓ₂)} where
+record RealTheory {R : Type{ℓ₁}} ⦃ equiv-R : Equiv{ℓₑ}(R) ⦄ (_+_ _⋅_ : R → R → R) (_≤_ : R → R → Stmt{ℓ₂}) ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓₑ} where
   field
     ⦃ orderedField ⦄ : OrderedField(_+_)(_⋅_)(_≤_)
 

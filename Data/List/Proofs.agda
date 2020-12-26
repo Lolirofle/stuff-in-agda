@@ -2,9 +2,9 @@ module Data.List.Proofs where
 
 import Lvl
 open import Functional
-open import Data.Option
+open import Data.Option using (Option ; Some ; None)
 open import Data.List
-open import Data.List.Equiv.Correctness
+open import Data.List.Equiv
 open import Data.List.Functions
 open import Logic
 open import Numeral.Natural
@@ -28,7 +28,7 @@ private variable ℓ ℓₑ ℓₑₗ ℓₑₒ ℓₑ₁ ℓₑ₂ ℓₑₗ₁
 private variable T A B : Type{ℓ}
 private variable n : ℕ
 
-module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List(T)) ⦄ ⦃ correctness : Correctness(equiv-List) ⦄ where
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List(T)) ⦄ ⦃ extensionality : Extensionality(equiv-List) ⦄ where
   private variable l l₁ l₂ : List(T)
   private variable a b x : T
   private variable P : List(T) → Stmt{ℓ}
@@ -180,8 +180,8 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List
 
 open import Structure.Setoid.WithLvl
 module _
-  ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-List₁ : Equiv{ℓₑₗ₁}(List(A)) ⦄ ⦃ correctness-A : Correctness(equiv-List₁) ⦄
-  ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ ⦃ equiv-List₂ : Equiv{ℓₑₗ₂}(List(B)) ⦄ ⦃ correctness-B : Correctness(equiv-List₂) ⦄
+  ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-List₁ : Equiv{ℓₑₗ₁}(List(A)) ⦄ ⦃ extensionality-A : Extensionality(equiv-List₁) ⦄
+  ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ ⦃ equiv-List₂ : Equiv{ℓₑₗ₂}(List(B)) ⦄ ⦃ extensionality-B : Extensionality(equiv-List₂) ⦄
   where
 
   private variable l l₁ l₂ : List(T)

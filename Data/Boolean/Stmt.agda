@@ -8,11 +8,8 @@ open import Functional
 open import Logic.Propositional
 open import Type
 
--- IsTrue : ∀{ℓ₁ ℓ₂}{n}{X : Set(ℓ₁)} → (X →̂ Bool)(n) → (X →̂ Set(ℓ₂))(n)
--- IsTrue(f) = (if_then ⊤ else ⊥) [∘] f
-
-IsTrue : Bool → Type{Lvl.𝟎}
+IsTrue : Bool → Type
 IsTrue = if_then ⊤ else ⊥
 
-IsFalse : Bool → Type{Lvl.𝟎}
+IsFalse : Bool → Type
 IsFalse = IsTrue ∘ !

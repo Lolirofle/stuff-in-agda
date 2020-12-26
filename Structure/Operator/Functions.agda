@@ -2,11 +2,13 @@ module Structure.Operator.Functions where
 
 import      Lvl
 open import Logic
-open import Structure.Setoid
+open import Structure.Setoid.WithLvl
 open import Structure.Operator.Properties
 open import Type
 
-module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {X : Type{ℓ₂}} ⦃ _ : Equiv(X) ⦄ {Y : Type{ℓ₃}} ⦃ _ : Equiv(Y) ⦄ where
+private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ : Lvl.Level
+
+module _ {A : Type{ℓ₁}} {X : Type{ℓ₂}} ⦃ equiv-X : Equiv{ℓₑ₁}(X) ⦄ {Y : Type{ℓ₃}} ⦃ equiv-Y : Equiv{ℓₑ₂}(Y) ⦄ where
   -- `a` is a element which yields the left identity element in the function `f`.
   -- (a ∈ kernelₗ(f)) means (f(a) = id).
   kernelₗ : ∀{_▫_ : X → Y → Y}{id : X} → ⦃ _ : Identityₗ(_▫_)(id) ⦄ → (A → X) → A → Stmt

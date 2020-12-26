@@ -5,7 +5,7 @@ open import Data.List
 open import Data.List.Functions
 open        Data.List.Functions.LongOper
 open import Data.List.Proofs
-open import Data.List.Proofs.Id
+open import Data.List.Equiv.Id
 open import Data.List.Proofs.Length
 open import Functional as Fn using (_$_ ; _∘_ ; const)
 open import Numeral.Natural

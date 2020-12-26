@@ -21,6 +21,7 @@ open import Type
 private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ ℓₑ₅ ℓₑ₆ : Lvl.Level
 private variable A B C A₁ A₂ A₃ B₁ B₂ B₃ : Type{ℓ}
 
+-- TODO: Move to Data.Either.Equiv
 record Correctness ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ (equiv : Equiv{ℓₑ₃}(A ‖ B)) : Type{Lvl.of(A) Lvl.⊔ Lvl.of(B) Lvl.⊔ ℓₑ₁ Lvl.⊔ ℓₑ₂ Lvl.⊔ ℓₑ₃} where
   constructor intro
   private instance _ = equiv
@@ -35,6 +36,7 @@ module _ where
   open import Relator.Equals using ([≡]-intro)
   open import Relator.Equals.Proofs.Equiv
 
+  -- TODO: Move to Data.Either.Equiv.Id
   module _ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
     instance
       [≡]-Correctness : Correctness{A = A}{B = B} [≡]-equiv
@@ -84,7 +86,7 @@ module _ where
     _⊜_.proof map2-preserves-id {Right x} = reflexivity(_≡_)
 
 module _ where
-  open import Data.Either.Equiv
+  open import Data.Either.Setoid
   open import Function.Equals
 
   module _ ⦃ _ : Equiv{ℓₑ₁}(A₁) ⦄ ⦃ _ : Equiv{ℓₑ₂}(A₂) ⦄ ⦃ _ : Equiv{ℓₑ₃}(B₁) ⦄ ⦃ _ : Equiv{ℓₑ₄}(B₂) ⦄ where

@@ -3,7 +3,7 @@ module Structure.Category.Monoidal where
 import      Lvl
 open import Data.Tuple as Tuple using (_,_ ; _⨯_)
 open import Data.Tuple.Category
-open import Data.Tuple.Equiv
+open import Data.Tuple.Equivalence
 import      Functional as Fn
 open import Logic.Predicate
 open import Structure.Setoid.WithLvl

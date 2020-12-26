@@ -1,4 +1,4 @@
-module Data.Either.Equiv where
+module Data.Either.Setoid where
 
 import      Lvl
 open import Data

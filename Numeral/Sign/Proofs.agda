@@ -5,8 +5,18 @@ open import Numeral.Sign
 open import Numeral.Sign.Oper
 open import Numeral.Sign.Oper0 renaming (_+_ to _+₀_ ; _⨯_ to _⨯₀_ ; −_ to −₀_)
 open import Relator.Equals
-open import Relator.Equals.Proofs
+open import Relator.Equals.Proofs.Equivalence
+open import Structure.Function.Domain
 open import Structure.Operator.Properties
+open import Structure.Setoid.WithLvl hiding (_≢_)
+
+instance
+  [−|+]-equiv : Equiv(−|+)
+  [−|+]-equiv = [≡]-equiv
+
+instance
+  [−|0|+]-equiv : Equiv(−|0|+)
+  [−|0|+]-equiv = [≡]-equiv
 
 instance
   [+]-commutativity : Commutativity(_+_)
@@ -111,3 +121,12 @@ instance
 instance
   [⨯₀]-absorber : Absorber(_⨯₀_)(𝟎)
   [⨯₀]-absorber = intro
+
+instance
+  [−]-involution : Involution(−_)
+  Involution.proof [−]-involution {➕} = [≡]-intro
+  Involution.proof [−]-involution {➖} = [≡]-intro
+
+[−]-no-fixpoints : ∀{s} → (− s ≢ s)
+[−]-no-fixpoints {➕} ()
+[−]-no-fixpoints {➖} ()

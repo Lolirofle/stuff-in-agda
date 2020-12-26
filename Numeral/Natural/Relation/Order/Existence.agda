@@ -1,7 +1,6 @@
 module Numeral.Natural.Relation.Order.Existence where
 
 import      Lvl
-open import Functional
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
@@ -10,11 +9,10 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
 import      Numeral.Natural.Relation.Order as [≤def]
 open import Relator.Equals
-open import Relator.Equals.Proofs
+open import Relator.Equals.Proofs.Equiv
 open import Relator.Ordering
+open import Structure.Function
 open import Structure.Function.Domain
-open import Structure.Relator.Ordering
-open import Structure.Relator.Properties
 open import Syntax.Function
 open import Syntax.Transitivity
 
@@ -28,12 +26,11 @@ open From-[≤][<] (_≤_) (_<_) public
 
 [≤]-with-[𝐒] : ∀{a b : ℕ} → (a ≤ b) → (𝐒(a) ≤ 𝐒(b))
 [≤]-with-[𝐒] {a} {b} ([∃]-intro n ⦃ f ⦄) =
-  [∃]-intro
-    (n)
-    ⦃
-      ([+1]-commutativity {a} {n}) -- 𝐒(a)+n = a+𝐒(n)
-      🝖 ([≡]-with(𝐒) f) -- 𝐒(a+n)=a+𝐒(n) = 𝐒(b)
-    ⦄
+  [∃]-intro n ⦃
+    𝐒(a) + n 🝖[ _≡_ ]-[ [+]-stepₗ {a} {n} ]
+    𝐒(a + n) 🝖[ _≡_ ]-[ congruence₁(𝐒) f ]
+    𝐒(b) 🝖-end
+  ⦄
 
 [≤]-equivalence : ∀{x y} → (x ≤ y) ↔ (x [≤def].≤ y)
 [≤]-equivalence{x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where

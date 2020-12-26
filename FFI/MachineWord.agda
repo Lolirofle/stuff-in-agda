@@ -1,4 +1,4 @@
-module MachineWord where
+module FFI.MachineWord where
 
 import      Lvl
 open import Data.Boolean

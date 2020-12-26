@@ -5,7 +5,7 @@ open import Functional.Dependent
 import      Lvl
 open import Type
 
-private variable ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
+private variable ℓ₁ ℓ₂ ℓ₃ ℓ₄ : Lvl.Level
 
 _⇒-[_]_ : ∀(X : Type{ℓ₁}){Y : ∀{_ : X} → Type{ℓ₂}}{Z : ∀{x : X}{_ : Y{x}} → Type{ℓ₃}} → (P : (x : X) → Y{x}) → (∀{x : X} → (y : Y{x}) → Z{x}{y}) → ((x : X) → Z{x}{P(x)})
 _⇒-[_]_ = const(swap(_∘_))
@@ -26,6 +26,7 @@ _⇒_ = apply
 infixl 0.97 _⇒_
 {-# INLINE _⇒_ #-}
 
+-- TODO: Change these to be similar to the ones in Syntax.Implication
 •_⇒₁_ = apply
 infixl 0.97 •_⇒₁_
 {-# INLINE •_⇒₁_ #-}
@@ -34,3 +35,8 @@ infixl 0.97 •_⇒₁_
 • a • b ⇒₂ P = P ⇒ apply a ⇒ apply b
 infixl 0.97 •_•_⇒₂_
 {-# INLINE •_•_⇒₂_ #-}
+
+•_•_•_⇒₃_ : ∀{X : Type{ℓ₁}}{Y : ∀{_ : X} → Type{ℓ₂}}{Z : ∀{x : X}{_ : Y{x}} → Type{ℓ₃}}{W : ∀{x : X}{y : Y{x}}{_ : Z{x}{y}} → Type{ℓ₄}} → (x : X) → (y : Y{x}) → (z : Z{x}{y}) → ((x : X) → (y : Y{x}) → (z : Z{x}{y}) → W{x}{y}{z}) → W{x}{y}{z}
+• a • b • c ⇒₃ P = P ⇒ apply a ⇒ apply b ⇒ apply c
+infixl 0.97 •_•_•_⇒₃_
+{-# INLINE •_•_•_⇒₃_ #-}

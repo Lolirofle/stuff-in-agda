@@ -1,4 +1,4 @@
-module Data.List.Proofs.Id where
+module Data.List.Equiv.Id where
 
 import Lvl
 open import Functional
@@ -6,9 +6,10 @@ open import Function.Names as Names using (_⊜_)
 import      Function.Equals as Fn
 open import Data.Boolean
 open import Data.Option
+open import Data.Option.Equiv.Id
 open import Data.Option.Proofs using ()
 open import Data.List
-open import Data.List.Equiv.Correctness
+open import Data.List.Equiv
 open import Data.List.Functions
 open import Logic
 open import Logic.Propositional
@@ -48,10 +49,10 @@ private variable P : List(T) → Stmt{ℓ}
   L {l₁ = _ ⊰ _} {l₂ = _ ⊰ _} p = injective(Some) (congruence₁(first) p)
 
 instance
-  List-Id-correctness : Correctness([≡]-equiv {T = List(T)})
-  Correctness.generalized-cancellationᵣ List-Id-correctness = [∧]-elimₗ ∘ [⊰]-general-cancellation
-  Correctness.generalized-cancellationₗ List-Id-correctness = [∧]-elimᵣ ∘ [⊰]-general-cancellation
-  Correctness.case-unequality           List-Id-correctness ()
+  List-Id-extensionality : Extensionality([≡]-equiv {T = List(T)})
+  Extensionality.generalized-cancellationᵣ List-Id-extensionality = [∧]-elimₗ ∘ [⊰]-general-cancellation
+  Extensionality.generalized-cancellationₗ List-Id-extensionality = [∧]-elimᵣ ∘ [⊰]-general-cancellation
+  Extensionality.case-unequality           List-Id-extensionality ()
 
 open import Data.List.Proofs
 

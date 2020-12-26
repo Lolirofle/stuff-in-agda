@@ -24,36 +24,30 @@ import      Structure.Operator.Names as Names
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 
-[+]-identityₗ-raw : Names.Identityₗ (_+_) (0)
-[+]-identityₗ-raw {x} = ℕ-elim [≡]-intro (x ↦ [≡]-with(𝐒) {𝟎 + x}{x}) x
-{-# REWRITE [+]-identityₗ-raw #-}
+open import Numeral.Natural.Oper.Proofs.Rewrite public
 
 instance
-  [+]-identityₗ : Identityₗ (_+_) (0)
-  Identityₗ.proof([+]-identityₗ) = [+]-identityₗ-raw
+  [+]-identityₗ : Identityₗ(_+_)(0)
+  Identityₗ.proof([+]-identityₗ) = [+]-baseₗ
 
 [+]-identityᵣ-raw : Names.Identityᵣ (_+_) (0)
 [+]-identityᵣ-raw {x} = ℕ-elim [≡]-intro (x ↦ [≡]-with(𝐒) {x + 𝟎}{x}) x
 
 instance
-  [+]-identityᵣ : Identityᵣ (_+_) (0)
+  [+]-identityᵣ : Identityᵣ(_+_)(0)
   Identityᵣ.proof([+]-identityᵣ) = [+]-identityᵣ-raw
 
-[+]-associativity-raw : Names.Associativity (_+_)
+[+]-associativity-raw : Names.Associativity(_+_)
 [+]-associativity-raw {x}{y}{z} = ℕ-elim [≡]-intro (i ↦ [≡]-with(𝐒) {(x + y) + i} {x + (y + i)}) z
 
 instance
-  [+]-associativity : Associativity (_+_)
+  [+]-associativity : Associativity(_+_)
   Associativity.proof([+]-associativity) {x}{y}{z} = [+]-associativity-raw {x}{y}{z}
-
-[+1]-commutativity : ∀{x y : ℕ} → (𝐒(x) + y) ≡ (x + 𝐒(y))
-[+1]-commutativity {x}{y} = ℕ-elim [≡]-intro (i ↦ [≡]-with(𝐒) {𝐒(x) + i} {x + 𝐒(i)}) y
-{-# REWRITE [+1]-commutativity #-}
 
 [+]-commutativity-raw : Names.Commutativity (_+_)
 [+]-commutativity-raw {x}{y} = ℕ-elim base next y where
-  base = [+]-identityᵣ-raw 🝖 symmetry(_≡_) [+]-identityₗ-raw
-  next = \i eq → ([≡]-with(𝐒) {x + i}{i + x} eq) 🝖 symmetry(_≡_) ([+1]-commutativity {i}{x})
+  base = [+]-identityᵣ-raw 🝖 symmetry(_≡_) (identityₗ(_+_)(𝟎))
+  next = \i eq → ([≡]-with(𝐒) {x + i}{i + x} eq) 🝖 symmetry(_≡_) ([+]-stepₗ {i}{x})
 
 [+1]-and-[𝐒] : ∀{x : ℕ} → (x + 1 ≡ 𝐒(x))
 [+1]-and-[𝐒] {x} = [≡]-intro
@@ -61,18 +55,18 @@ instance
 [1+]-and-[𝐒] : ∀{x : ℕ} → (1 + x ≡ 𝐒(x))
 [1+]-and-[𝐒] {x} = [+1]-and-[𝐒] {x} 🝖 [+]-commutativity-raw {x}{1}
 
-[⋅]-absorberₗ-raw : Names.Absorberₗ (_⋅_) (0)
+[⋅]-absorberₗ-raw : Names.Absorberₗ(_⋅_)(0)
 [⋅]-absorberₗ-raw {x} = ℕ-elim [≡]-intro (\i → [≡]-with(0 +_) {0 ⋅ i}{0}) x
 {-# REWRITE [⋅]-absorberₗ-raw #-}
 
-[⋅]-absorberᵣ-raw : Names.Absorberᵣ (_⋅_) (0)
+[⋅]-absorberᵣ-raw : Names.Absorberᵣ(_⋅_)(0)
 [⋅]-absorberᵣ-raw = [≡]-intro
 
-[⋅]-identityₗ-raw : Names.Identityₗ (_⋅_) (1)
+[⋅]-identityₗ-raw : Names.Identityₗ(_⋅_)(1)
 [⋅]-identityₗ-raw {x} = ℕ-elim [≡]-intro (\i eq → ([+]-commutativity-raw {1} {1 ⋅ i}) 🝖 ([≡]-with(𝐒) {_}{i} eq)) x
 {-# REWRITE [⋅]-identityₗ-raw #-}
 
-[⋅]-identityᵣ-raw : Names.Identityᵣ (_⋅_) (1)
+[⋅]-identityᵣ-raw : Names.Identityᵣ(_⋅_)(1)
 [⋅]-identityᵣ-raw = [≡]-intro
 
 [⋅][+]-distributivityᵣ-raw : Names.Distributivityᵣ(_⋅_)(_+_)
@@ -96,7 +90,7 @@ instance
   x + ((𝐒 x ⋅ y) + (x + (𝐒 x ⋅ z))) 🝖[ _≡_ ]-[ [+]-associativity-raw {x = x}{y = 𝐒 x ⋅ y} ]-sym
   (x + (𝐒 x ⋅ y)) + (x + (𝐒 x ⋅ z)) 🝖-end
 
-[⋅]-associativity-raw : Names.Associativity (_⋅_)
+[⋅]-associativity-raw : Names.Associativity(_⋅_)
 [⋅]-associativity-raw {𝟎}   {𝟎}   {𝟎}   = [≡]-intro
 [⋅]-associativity-raw {𝟎}   {𝟎}   {𝐒 z} = [≡]-intro
 [⋅]-associativity-raw {𝟎}   {𝐒 y} {𝟎}   = [≡]-intro
@@ -112,7 +106,7 @@ instance
   x + ((𝐒 x ⋅ y) + (𝐒 x ⋅ (𝐒 y ⋅ z)))     🝖[ _≡_ ]-[ [≡]-with(x +_) ([⋅][+]-distributivityₗ-raw {x = 𝐒 x}{y = y}{z = 𝐒 y ⋅ z}) ]-sym
   x + (𝐒 x ⋅ (y + (𝐒 y ⋅ z)))             🝖-end
 
-[⋅]-commutativity-raw : Names.Commutativity (_⋅_)
+[⋅]-commutativity-raw : Names.Commutativity(_⋅_)
 [⋅]-commutativity-raw {𝟎} {𝟎} = [≡]-intro
 [⋅]-commutativity-raw {𝟎} {𝐒 y} = [≡]-intro
 [⋅]-commutativity-raw {𝐒 x} {𝟎} = [≡]-intro
@@ -137,10 +131,10 @@ instance
 [𝐏][𝐒]-identity : ∀{n} → (𝐏(𝐒(n)) ≡ n)
 [𝐏][𝐒]-identity = [≡]-intro
 
-[+]ₗ-injectivity-raw : ∀{a} → Names.Injective (_+ a)
+[+]ₗ-injectivity-raw : ∀{a} → Names.Injective(_+ a)
 [+]ₗ-injectivity-raw {a}{x}{y} = ℕ-elim{T = \a → (x + a ≡ y + a) → (x ≡ y)} id (\_ → _∘ [𝐒]-injectivity-raw) a
 
-[+]ᵣ-injectivity-raw : ∀{a} → Names.Injective (a +_)
+[+]ᵣ-injectivity-raw : ∀{a} → Names.Injective(a +_)
 [+]ᵣ-injectivity-raw {a}{x}{y} = [+]ₗ-injectivity-raw ∘ One.commuteBothTemp ⦃ comm = intro(\{x y} → [+]-commutativity-raw {x}{y}) ⦄ {a}{x}{a}{y}
 
 [+]-sum-is-0ₗ : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)
@@ -356,27 +350,27 @@ instance
   Cancellationᵣ.proof([+]-cancellationᵣ) {x}{y} = [+]-cancellationᵣ-raw {x}{y}
 
 instance
-  [⋅]-absorberₗ : Absorberₗ (_⋅_) (0)
+  [⋅]-absorberₗ : Absorberₗ(_⋅_)(0)
   Absorberₗ.proof([⋅]-absorberₗ) {x} = [⋅]-absorberₗ-raw {x}
 
 instance
-  [⋅]-absorberᵣ : Absorberᵣ (_⋅_) (0)
+  [⋅]-absorberᵣ : Absorberᵣ(_⋅_)(0)
   Absorberᵣ.proof([⋅]-absorberᵣ) {x} = [⋅]-absorberᵣ-raw {x}
 
 instance
-  [⋅]-absorber : Absorber (_⋅_) (0)
+  [⋅]-absorber : Absorber(_⋅_)(0)
   [⋅]-absorber = intro
 
 instance
-  [⋅]-identityₗ : Identityₗ (_⋅_) (1)
+  [⋅]-identityₗ : Identityₗ(_⋅_)(1)
   Identityₗ.proof([⋅]-identityₗ) {x} = [⋅]-identityₗ-raw {x}
 
 instance
-  [⋅]-identityᵣ : Identityᵣ (_⋅_) (1)
+  [⋅]-identityᵣ : Identityᵣ(_⋅_)(1)
   Identityᵣ.proof([⋅]-identityᵣ) {x} = [⋅]-identityᵣ-raw {x}
 
 instance
-  [⋅]-identity : Identity (_⋅_) (1)
+  [⋅]-identity : Identity(_⋅_)(1)
   [⋅]-identity = intro
 
 instance
