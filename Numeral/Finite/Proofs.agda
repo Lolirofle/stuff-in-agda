@@ -1,12 +1,12 @@
 module Numeral.Finite.Proofs where
 
 import Lvl
+open import Data
 open import Data.Boolean.Stmt
 open import Functional
-open import Syntax.Number
 open import Logic.Classical
-open import Logic.Computability.Binary
 open import Logic.Propositional
+open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Numeral.Finite
 import      Numeral.Finite.Oper.Comparisons as 𝕟
@@ -16,11 +16,14 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Relation.Order
-open import Numeral.Natural.Relation.Order.Computability
+open import Numeral.Natural.Relation.Order.Decidable
 open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Structure.Function.Domain
+open import Syntax.Number
+open import Type.Properties.Decidable
+open import Type.Properties.Decidable.Proofs
 
 bounded : ∀{N : ℕ}{n : 𝕟(𝐒(N))} → (𝕟-to-ℕ(n) < 𝐒(N))
 bounded{_}   {𝟎}    = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
@@ -61,7 +64,7 @@ bounded{𝐒(N)}{𝐒(n)} = [≤]-with-[𝐒] ⦃ bounded{N}{n} ⦄
 𝕟-ℕ-inverse {𝐒 N}{𝟎}   = [≡]-intro
 𝕟-ℕ-inverse {𝐒 N}{𝐒 n} = [≡]-with(𝐒) (𝕟-ℕ-inverse {N}{n})
 
-ℕ-𝕟-inverse : ∀{N}{n : 𝕟(𝐒(N))} → (ℕ-to-𝕟(𝕟-to-ℕ n) ⦃ [↔]-to-[→] (ComputablyDecidable.proof-istrue(_<_)) (bounded{N}{n}) ⦄ ≡ n)
+ℕ-𝕟-inverse : ∀{N}{n : 𝕟(𝐒(N))} → (ℕ-to-𝕟(𝕟-to-ℕ n) ⦃ [↔]-to-[→] (decider-true(_ < _)) (bounded{n = n}) ⦄ ≡ n)
 ℕ-𝕟-inverse {𝟎}   {𝟎}   = [≡]-intro
 ℕ-𝕟-inverse {𝐒 N} {𝟎}   = [≡]-intro
 ℕ-𝕟-inverse {𝐒 N} {𝐒 n} = [≡]-with(𝐒) (ℕ-𝕟-inverse{N}{n})
@@ -83,4 +86,8 @@ instance
 [≡][≡?]-equivalence {𝐒 n} {𝐒 i} {𝐒 j} = [∧]-map ([≡]-with(𝐒) ∘_) (_∘ injective(𝐒)) ([≡][≡?]-equivalence {n} {i} {j})
 
 instance
-  postulate [≡][𝕟]-classical : ∀{n}{i j : 𝕟(n)} → Classical(i ≡ j) -- TODO: Use [≡][≡?]-equivalence and prove a general conversion from these kinds of equivalences to Classical
+  [≡][𝕟]-decider : ∀{n} → Decider(2)(_≡_ {T = 𝕟(n)})(𝕟._≡?_)
+  [≡][𝕟]-decider {𝐒 n} {𝟎}   {𝟎}   = true [≡]-intro
+  [≡][𝕟]-decider {𝐒 n} {𝟎}   {𝐒 y} = false \()
+  [≡][𝕟]-decider {𝐒 n} {𝐒 x} {𝟎}   = false \()
+  [≡][𝕟]-decider {𝐒 n} {𝐒 x} {𝐒 y} = step{f = id} (true ∘ [≡]-with(𝐒)) (false ∘ contrapositiveᵣ(injective(𝐒))) ([≡][𝕟]-decider {n} {x} {y})

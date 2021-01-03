@@ -3,7 +3,6 @@ module Function.Proofs where
 import      Lvl
 open import Logic
 open import Logic.Classical
-open import Logic.Computability
 open import Logic.Propositional
 open import Logic.Predicate
 open import Functional

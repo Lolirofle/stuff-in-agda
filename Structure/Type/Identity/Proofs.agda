@@ -19,7 +19,7 @@ open import Type
 private variable ℓ ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂ ℓₑ ℓₘₑ ℓₚ ℓₒ : Lvl.Level
 private variable T A B : Type{ℓ}
 private variable x y : T
-private variable _≡_ _▫_ : T → T → Stmt{ℓ}
+private variable Id _≡_ _▫_ : T → T → Stmt{ℓ}
 
 module _ {_≡_ : Type{ℓ} → Type{ℓ} → Stmt{ℓₑ}} ⦃ minRefl : MinimalReflexiveRelation{ℓₚ = ℓ}(_≡_) ⦄ where
   minimal-reflection-coercion : ((_≡_) ⊆₂ (_→ᶠ_))
@@ -58,21 +58,21 @@ module _ ⦃ refl : Reflexivity(_≡_) ⦄ ⦃ minRefl : MinimalReflexiveRelatio
   Equivalence.symmetry     minimal-reflection-to-equivalence = minimal-reflection-to-symmetry
   Equivalence.transitivity minimal-reflection-to-equivalence = minimal-reflection-to-transitivity
 
-module _ ⦃ refle : Reflexivity(_≡_) ⦄ ⦃ identElim : IdentityEliminator{ℓₚ = ℓₚ}(_≡_) ⦄ where
-  identity-eliminator-to-reflexive-subrelation : MinimalReflexiveRelation(_≡_)
-  identity-eliminator-to-reflexive-subrelation {_▫_ = _▫_} = intro(idElim(_≡_) (\{x y} _ → (x ▫ y)) (reflexivity(_▫_)))
+module _ ⦃ refl-Id : Reflexivity(Id) ⦄ ⦃ identElim : IdentityEliminator{ℓₚ = ℓₚ}(Id) ⦄ where
+  identity-eliminator-to-reflexive-subrelation : MinimalReflexiveRelation(Id)
+  identity-eliminator-to-reflexive-subrelation {_▫_ = _▫_} = intro(idElim(Id) (\{x y} _ → (x ▫ y)) (reflexivity(_▫_)))
 
-module _ ⦃ refle : Reflexivity(_≡_) ⦄ ⦃ identElim : IdentityEliminator(_≡_) ⦄ where
-  identity-eliminator-to-symmetry : Symmetry(_≡_)
+module _ ⦃ refl : Reflexivity(Id) ⦄ ⦃ identElim : IdentityEliminator(Id) ⦄ where
+  identity-eliminator-to-symmetry : Symmetry(Id)
   identity-eliminator-to-symmetry = minimal-reflection-to-symmetry ⦃ minRefl = identity-eliminator-to-reflexive-subrelation ⦄
 
-  identity-eliminator-to-flipped-transitivityᵣ : Names.FlippedTransitivityᵣ(_≡_)
+  identity-eliminator-to-flipped-transitivityᵣ : Names.FlippedTransitivityᵣ(Id)
   identity-eliminator-to-flipped-transitivityᵣ = minimal-reflection-to-flipped-transitivityᵣ ⦃ minRefl = identity-eliminator-to-reflexive-subrelation ⦄
 
-  identity-eliminator-to-transitivity : Transitivity(_≡_)
+  identity-eliminator-to-transitivity : Transitivity(Id)
   identity-eliminator-to-transitivity = minimal-reflection-to-transitivity ⦃ minRefl = identity-eliminator-to-reflexive-subrelation ⦄
 
-  identity-eliminator-to-equivalence : Equivalence(_≡_)
-  Equivalence.reflexivity  identity-eliminator-to-equivalence = refle
+  identity-eliminator-to-equivalence : Equivalence(Id)
+  Equivalence.reflexivity  identity-eliminator-to-equivalence = refl
   Equivalence.symmetry     identity-eliminator-to-equivalence = identity-eliminator-to-symmetry
   Equivalence.transitivity identity-eliminator-to-equivalence = identity-eliminator-to-transitivity

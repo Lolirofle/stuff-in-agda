@@ -1,5 +1,6 @@
 module Structure.Relator.Properties where
 
+open import Functional
 import      Lvl
 open import Lang.Instance
 open import Logic
@@ -53,10 +54,16 @@ module _ {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
     field proof : Names.ConverseDichotomy(_▫_)
   dichotomy = inst-fn ConverseDichotomy.proof
 
+module _ {T : Type{ℓ₁}} (_▫₁_ : T → T → Stmt{ℓ₂}) (_▫₂_ : T → T → Stmt{ℓ₃}) where
+  record ConverseTrichotomy : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field proof : Names.ConverseTrichotomy(_▫₁_)(_▫₂_)
+  trichotomy = inst-fn ConverseTrichotomy.proof
+
 -- Definition of a converse binary operation for a binary operation
 -- record Converse {T₁ T₂ : Type} (_▫₁_ : T₁ → T₂ → Stmt) (_▫₂_ : T₂ → T₁ → Stmt) : Stmt where
 --   constructor intro
--- 
+--
 --   field
 --     converseₗ : Names.ConversePattern (_▫₂_) (_▫₁_)
 --     converseᵣ : Names.ConversePattern (_▫₁_) (_▫₂_)
@@ -85,6 +92,11 @@ module _ (_▫₁_ : A → B → Stmt{ℓ₁}) (_▫₂_ : A → B → Stmt{ℓ�
     field proof : Names.Subrelation(_▫₁_)(_▫₂_)
   sub₂ = inst-fn _⊆₂_.proof
 
+module _ (_▫₁_ : A → B → Stmt{ℓ₁}) (_▫₂_ : A → B → Stmt{ℓ₂}) where
+  _⊇₂_ = (_▫₂_) ⊆₂ (_▫₁_)
+  module _⊇₂_ inst = _⊆₂_ {_▫₁_ = _▫₂_}{_▫₂_ = _▫₁_} inst
+  super₂ = inst-fn _⊇₂_.proof
+
 module _ (_▫₁_ : A → B → Stmt{ℓ₁}) (_▫₂_ : A → A → Stmt{ℓ₂}) where
   record Subtransitivityₗ : Stmt{Lvl.of(A) Lvl.⊔ Lvl.of(B) Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
@@ -96,3 +108,10 @@ module _ (_▫₁_ : A → B → Stmt{ℓ₁}) (_▫₂_ : B → B → Stmt{ℓ�
     constructor intro
     field proof : Names.Subtransitivityᵣ(_▫₁_)(_▫₂_)
   subtransitivityᵣ = inst-fn Subtransitivityᵣ.proof
+
+-- Definition of a cotransitive binary relation
+module _ {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
+  record CoTransitivity : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field proof : Names.CoTransitivity(_▫_)
+  cotransitivity = inst-fn CoTransitivity.proof

@@ -5,7 +5,6 @@ module FormalLanguage {ℓ} where
 import      Lvl
 open import Sized.Data.List renaming (∅ to [])
 open import Lang.Size
-open import Logic.Computability.Binary
 open import Data.Boolean
 open import Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming

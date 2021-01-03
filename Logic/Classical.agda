@@ -179,11 +179,10 @@ module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
 -- Introduction/elimination rules for Classical when combined with logical connectives.
 
 module _ {P : Stmt{ℓ}} where
-  instance
-    [¬]-classical-intro : ⦃ classical : Classical(P) ⦄ → Classical(¬ P)
-    [¬]-classical-intro ⦃ classical-p ⦄ = intro ⦃ proof ⦄ where
-      proof : (¬ P) ∨ (¬¬ P)
-      proof = Either.swap(Either.mapLeft [¬¬]-intro (excluded-middle(P)))
+  [¬]-classical-intro : ⦃ classical : Classical(P) ⦄ → Classical(¬ P)
+  [¬]-classical-intro ⦃ classical-p ⦄ = intro ⦃ proof ⦄ where
+    proof : (¬ P) ∨ (¬¬ P)
+    proof = Either.swap(Either.mapLeft [¬¬]-intro (excluded-middle(P)))
 
   excluded-middle-classical-intro : ⦃ _ : Classical(P) ⦄ → Classical(P ∨ (¬ P))
   excluded-middle-classical-intro = intro ⦃ [∨]-introₗ (excluded-middle(P)) ⦄

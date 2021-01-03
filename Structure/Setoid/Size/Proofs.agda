@@ -244,7 +244,7 @@ module _ where
 
     -- What it means to not have a lonely descendent.
     not-lone-desc : ∀{a} → ¬ ∃(b ↦ Lone(b) ∧ Desc(f(a)) b) → (∀{b} → (∃(x ↦ f(x) ≡ b) ∨ (∀{n} → (f(a) ≢ ((f ∘ g) ^ n)(b)))))
-    not-lone-desc {z} = (\nepx {x} → (Either.map2 ([∃]-map-proof [¬¬]-elim ∘ [¬∀]-to-[∃¬] ⦃ classical ⦄ ⦃ classical ⦄) [¬∃]-to-[∀¬] ∘ [¬]-preserves-[∧][∨]ᵣ) (nepx{x})) ∘ [¬∃]-to-[∀¬]
+    not-lone-desc {z} = (\nepx {x} → (Either.map ([∃]-map-proof [¬¬]-elim ∘ [¬∀]-to-[∃¬] ⦃ classical ⦄ ⦃ classical ⦄) [¬∃]-to-[∀¬] ∘ [¬]-preserves-[∧][∨]ᵣ) (nepx{x})) ∘ [¬∃]-to-[∀¬]
 
     instance
       surj-h : Surjective(h)
@@ -269,7 +269,7 @@ module _ where
           ((\nepx → Either.map1
               ((\([∃]-intro x ⦃ p ⦄) → {!!}) ∘ [∃]-map-proof [¬¬]-elim)
               (\p → [⊥]-elim(p{1} (reflexivity(_≡_))))
-              (Either.map2 ([¬∀]-to-[∃¬] ⦃ classical ⦄ ⦃ classical ⦄) [¬∃]-to-[∀¬] ([¬]-preserves-[∧][∨]ᵣ (nepx{z})))
+              (Either.map ([¬∀]-to-[∃¬] ⦃ classical ⦄ ⦃ classical ⦄) [¬∃]-to-[∀¬] ([¬]-preserves-[∧][∨]ᵣ (nepx{z})))
           ) ∘ [¬∃]-to-[∀¬])
         ⦄)
       -}

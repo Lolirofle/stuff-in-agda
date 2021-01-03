@@ -47,6 +47,14 @@ map₂ {0}       _ _        _        = <>
 map₂ {1}       f x        y        = f x y
 map₂ {𝐒(𝐒(n))} f (x , xs) (y , ys) = (f x y , map₂{𝐒(n)} f xs ys)
 
+mapLvls : ∀{n}{fℓ} → ((ℓ : Lvl.Level) → Type{fℓ ℓ}) → ((ℓ𝓈 : Lvl.Level ^ n) → Types(Raise.map fℓ ℓ𝓈))
+mapLvls {0}       f <>      = <>
+mapLvls {1}       f ℓ       = f(ℓ)
+mapLvls {𝐒(𝐒(n))} f (ℓ , ℓ𝓈) = (f(ℓ) , mapLvls {𝐒(n)} f ℓ𝓈)
+
+TypesOfTypes : ∀{n} → (ℓ𝓈 : Lvl.Level ^ n) → Types(Raise.map Lvl.𝐒 ℓ𝓈)
+TypesOfTypes = mapLvls(\ℓ → Type{ℓ})
+
 -- Similar to map₂ but the second is levels.
 -- TODO: This is probably a special case of something?
 mapWithLvls : ∀{n}{ℓ𝓈}{fℓ} → (∀{ℓ} → Type{ℓ} → (l : Lvl.Level) → Type{fℓ ℓ l}) → (Types{n}(ℓ𝓈) → (ls : Lvl.Level ^ n) → Types(Raise.map₂ fℓ ℓ𝓈 ls))

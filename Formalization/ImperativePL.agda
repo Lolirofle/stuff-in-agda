@@ -71,3 +71,4 @@ data _⊢ₑ_,_=:_ where
   apply  : ∀{Γ₁ Γ₂ Γ₃}{f x}{A B} → (Γ₁ ⊢ₑ Γ₂ , x =: A) → (Γ₂ ⊢ₑ Γ₃ , f =: FnTy A B) → (Γ₁ ⊢ₑ Γ₃ , (apply f x) =: B)
   func   : ∀{Γ₁ Γ₂}{A B}{var}{body} → ((add var A Γ₁) ⊢ₑ Γ₂ , body =: B) → (Γ₁ ⊢ₑ Γ₁ , (func var A body) =: FnTy A B)
   ifelse : ∀{Γ₁ Γ₂ Γ₃ Γ₄}{b t f}{T} → (Γ₁ ⊢ₑ Γ₂ , b =: BoolTy) → (Γ₂ ⊢ₑ Γ₃ , t =: T) → (Γ₂ ⊢ₑ Γ₄ , f =: T) → (Γ₁ ⊢ₑ Γ₂ , (ifelse b t f) =: T)
+  -- stmts∅ : ∀{Γ}{n} → (Γ ⊢ₑ Γ , (stmts ) =: NatTy) 

@@ -208,3 +208,8 @@ instance
   Antisymmetry.proof divides-antisymmetry {𝟎} {𝐒 b}   ab ba with () ← [0]-divides-not ab
   Antisymmetry.proof divides-antisymmetry {𝐒 a} {𝟎}   ab ba with () ← [0]-divides-not ba
   Antisymmetry.proof divides-antisymmetry {𝐒 a} {𝐒 b} ab ba = antisymmetry(_≤_)(_≡_) (divides-upper-limit ab) (divides-upper-limit ba)
+
+open import Logic.Classical
+-- TODO: Use (x mod₀ y ≡ 𝟎) to decide and Numeral.Natural.Oper.Modulo.Proofs.mod-divisibility for the proof
+instance
+  postulate divides-classical : ∀{x y} → Classical(x ∣ y)

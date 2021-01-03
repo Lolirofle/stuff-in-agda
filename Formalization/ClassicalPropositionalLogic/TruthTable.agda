@@ -49,18 +49,18 @@ eval-to-models {φ = ⊤}     p = <>
 eval-to-models {φ = ⊥}     p = p
 eval-to-models {φ = ¬ φ}   p = Logic.[↔]-to-[→] IsTrue.preserves-[!][¬] p ∘ models-to-eval {φ = φ}
 eval-to-models {φ = φ ∧ ψ} p = Tuple.map (eval-to-models {φ = φ}) (eval-to-models {φ = ψ}) (Logic.[↔]-to-[→] IsTrue.preserves-[&&][∧] p)
-eval-to-models {φ = φ ∨ ψ} p = Either.map2 (eval-to-models {φ = φ}) (eval-to-models {φ = ψ}) (Logic.[↔]-to-[→] IsTrue.preserves-[||][∨] p)
-eval-to-models {φ = φ ⟶ ψ} p = Either.map2 (Logic.contrapositiveᵣ (models-to-eval {φ = φ}) ∘ Logic.[↔]-to-[→] IsTrue.preserves-[!][¬]) (eval-to-models {φ = ψ}) (Logic.[↔]-to-[→] IsTrue.preserves-[||][∨] ([≡]-substitutionᵣ Bool.[→?]-disjunctive-form {f = IsTrue} p))
-eval-to-models {φ = φ ⟷ ψ} p = Either.map2 (Tuple.map (eval-to-models {φ = φ}) (eval-to-models {φ = ψ}) ∘ (Logic.[↔]-to-[→] IsTrue.preserves-[&&][∧])) (Tuple.map (Logic.contrapositiveᵣ (models-to-eval {φ = φ}) ∘ Logic.[↔]-to-[→] IsTrue.preserves-[!][¬]) (Logic.contrapositiveᵣ (models-to-eval {φ = ψ}) ∘ Logic.[↔]-to-[→] IsTrue.preserves-[!][¬]) ∘ Logic.[↔]-to-[→] IsTrue.preserves-[&&][∧]) (Logic.[↔]-to-[→] IsTrue.preserves-[||][∨] ([≡]-substitutionᵣ Bool.[==]-disjunctive-form {f = IsTrue} p))
+eval-to-models {φ = φ ∨ ψ} p = Either.map (eval-to-models {φ = φ}) (eval-to-models {φ = ψ}) (Logic.[↔]-to-[→] IsTrue.preserves-[||][∨] p)
+eval-to-models {φ = φ ⟶ ψ} p = Either.map (Logic.contrapositiveᵣ (models-to-eval {φ = φ}) ∘ Logic.[↔]-to-[→] IsTrue.preserves-[!][¬]) (eval-to-models {φ = ψ}) (Logic.[↔]-to-[→] IsTrue.preserves-[||][∨] ([≡]-substitutionᵣ Bool.[→?]-disjunctive-form {f = IsTrue} p))
+eval-to-models {φ = φ ⟷ ψ} p = Either.map (Tuple.map (eval-to-models {φ = φ}) (eval-to-models {φ = ψ}) ∘ (Logic.[↔]-to-[→] IsTrue.preserves-[&&][∧])) (Tuple.map (Logic.contrapositiveᵣ (models-to-eval {φ = φ}) ∘ Logic.[↔]-to-[→] IsTrue.preserves-[!][¬]) (Logic.contrapositiveᵣ (models-to-eval {φ = ψ}) ∘ Logic.[↔]-to-[→] IsTrue.preserves-[!][¬]) ∘ Logic.[↔]-to-[→] IsTrue.preserves-[&&][∧]) (Logic.[↔]-to-[→] IsTrue.preserves-[||][∨] ([≡]-substitutionᵣ Bool.[==]-disjunctive-form {f = IsTrue} p))
 
 models-to-eval {φ = • x}   p = p
 models-to-eval {φ = ⊤}     p = <>
 models-to-eval {φ = ⊥}     p = p
 models-to-eval {φ = ¬ φ}   p = Logic.[↔]-to-[←] IsTrue.preserves-[!][¬] (p ∘ eval-to-models {φ = φ})
 models-to-eval {φ = φ ∧ ψ} p = Logic.[↔]-to-[←] IsTrue.preserves-[&&][∧] (Tuple.map (models-to-eval {φ = φ}) (models-to-eval {φ = ψ}) p)
-models-to-eval {φ = φ ∨ ψ} p = Logic.[↔]-to-[←] IsTrue.preserves-[||][∨] (Either.map2 (models-to-eval {φ = φ}) (models-to-eval {φ = ψ}) p)
-models-to-eval {φ = φ ⟶ ψ} p = [≡]-substitutionₗ Bool.[→?]-disjunctive-form {f = IsTrue} (Logic.[↔]-to-[←] IsTrue.preserves-[||][∨] (Either.map2 (Logic.[↔]-to-[←] IsTrue.preserves-[!][¬] ∘ Logic.contrapositiveᵣ (eval-to-models {φ = φ})) (models-to-eval {φ = ψ}) p))
-models-to-eval {φ = φ ⟷ ψ} p = [≡]-substitutionₗ Bool.[==]-disjunctive-form {f = IsTrue} (Logic.[↔]-to-[←] IsTrue.preserves-[||][∨] (Either.map2 (Logic.[↔]-to-[←] IsTrue.preserves-[&&][∧] ∘ Tuple.map (models-to-eval {φ = φ}) (models-to-eval {φ = ψ})) (Logic.[↔]-to-[←] IsTrue.preserves-[&&][∧] ∘ Tuple.map (Logic.[↔]-to-[←] IsTrue.preserves-[!][¬] ∘ Logic.contrapositiveᵣ (eval-to-models {φ = φ})) (Logic.[↔]-to-[←] IsTrue.preserves-[!][¬] ∘ Logic.contrapositiveᵣ (eval-to-models {φ = ψ}))) p))
+models-to-eval {φ = φ ∨ ψ} p = Logic.[↔]-to-[←] IsTrue.preserves-[||][∨] (Either.map (models-to-eval {φ = φ}) (models-to-eval {φ = ψ}) p)
+models-to-eval {φ = φ ⟶ ψ} p = [≡]-substitutionₗ Bool.[→?]-disjunctive-form {f = IsTrue} (Logic.[↔]-to-[←] IsTrue.preserves-[||][∨] (Either.map (Logic.[↔]-to-[←] IsTrue.preserves-[!][¬] ∘ Logic.contrapositiveᵣ (eval-to-models {φ = φ})) (models-to-eval {φ = ψ}) p))
+models-to-eval {φ = φ ⟷ ψ} p = [≡]-substitutionₗ Bool.[==]-disjunctive-form {f = IsTrue} (Logic.[↔]-to-[←] IsTrue.preserves-[||][∨] (Either.map (Logic.[↔]-to-[←] IsTrue.preserves-[&&][∧] ∘ Tuple.map (models-to-eval {φ = φ}) (models-to-eval {φ = ψ})) (Logic.[↔]-to-[←] IsTrue.preserves-[&&][∧] ∘ Tuple.map (Logic.[↔]-to-[←] IsTrue.preserves-[!][¬] ∘ Logic.contrapositiveᵣ (eval-to-models {φ = φ})) (Logic.[↔]-to-[←] IsTrue.preserves-[!][¬] ∘ Logic.contrapositiveᵣ (eval-to-models {φ = ψ}))) p))
 
 completeness : (Γ ⊨ φ) → (Γ ⊢ φ)
 completeness {φ = φ} Γφ {𝔐} a = models-to-eval {φ = φ} (Γφ (\{γ} → eval-to-models {φ = γ} ∘ a))

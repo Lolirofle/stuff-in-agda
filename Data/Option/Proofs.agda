@@ -4,7 +4,6 @@ import      Lvl
 open import Data
 open import Data.Option
 open import Data.Option.Functions
-open import Data.Either
 open import Functional
 open import Structure.Setoid using (Equiv)
 open import Structure.Function.Domain

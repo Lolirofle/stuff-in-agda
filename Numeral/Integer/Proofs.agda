@@ -587,10 +587,10 @@ instance
 
 instance
   [≤]-converseTotal : ConverseTotal(_≤_)
-  ConverseTotal.proof [≤]-converseTotal {+ₙ  x} {+ₙ  y} = Either.map2 pos pos (converseTotal(ℕ._≤_))
+  ConverseTotal.proof [≤]-converseTotal {+ₙ  x} {+ₙ  y} = Either.map pos pos (converseTotal(ℕ._≤_))
   ConverseTotal.proof [≤]-converseTotal {+ₙ  x} {−𝐒ₙ y} = Either.Right mix
   ConverseTotal.proof [≤]-converseTotal {−𝐒ₙ x} {+ₙ  y} = Either.Left  mix
-  ConverseTotal.proof [≤]-converseTotal {−𝐒ₙ x} {−𝐒ₙ y} = Either.map2 neg neg (converseTotal(ℕ._≤_))
+  ConverseTotal.proof [≤]-converseTotal {−𝐒ₙ x} {−𝐒ₙ y} = Either.map neg neg (converseTotal(ℕ._≤_))
 
 
 instance

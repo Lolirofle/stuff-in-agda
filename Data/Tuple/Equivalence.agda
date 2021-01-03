@@ -49,18 +49,16 @@ module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{�
 
 module _ {A : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(A) ⦄ where
   instance
-    repeat-function : Function(Tuple.repeat{X = A})
+    repeat-function : Function(Tuple.repeat{A = A})
     Function.congruence repeat-function = Tuple.repeat
 
 module _
-  {X₁ : Type{ℓₒ₁}} ⦃ equiv-X₁ : Equiv{ℓₑ₁}(X₁) ⦄
-  {X₂ : Type{ℓₒ₂}} ⦃ equiv-X₂ : Equiv{ℓₑ₂}(X₂) ⦄
-  {Y₁ : Type{ℓₒ₃}} ⦃ equiv-Y₁ : Equiv{ℓₑ₃}(Y₁) ⦄
-  {Y₂ : Type{ℓₒ₄}} ⦃ equiv-Y₂ : Equiv{ℓₑ₄}(Y₂) ⦄
-  {f : X₁ → X₂}
-  ⦃ func-f : Function(f) ⦄
-  {g : Y₁ → Y₂}
-  ⦃ func-g : Function(g) ⦄
+  {A₁ : Type{ℓₒ₁}} ⦃ equiv-A₁ : Equiv{ℓₑ₁}(A₁) ⦄
+  {A₂ : Type{ℓₒ₂}} ⦃ equiv-A₂ : Equiv{ℓₑ₂}(A₂) ⦄
+  {B₁ : Type{ℓₒ₃}} ⦃ equiv-B₁ : Equiv{ℓₑ₃}(B₁) ⦄
+  {B₂ : Type{ℓₒ₄}} ⦃ equiv-B₂ : Equiv{ℓₑ₄}(B₂) ⦄
+  {f : A₁ → A₂} ⦃ func-f : Function(f) ⦄
+  {g : B₁ → B₂} ⦃ func-g : Function(g) ⦄
   where
 
   instance
@@ -68,15 +66,15 @@ module _
     Function.congruence map-function = Tuple.map (congruence₁(f)) (congruence₁(g))
 
 module _
-  {X : Type{ℓₒ₁}} ⦃ equiv-X : Equiv{ℓₑ₁}(X) ⦄
-  {Y : Type{ℓₒ₂}} ⦃ equiv-Y : Equiv{ℓₑ₂}(Y) ⦄
-  {Z : Type{ℓₒ₃}} ⦃ equiv-Z : Equiv{ℓₑ₃}(Z) ⦄
+  {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄
+  {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄
+  {C : Type{ℓₒ₃}} ⦃ equiv-C : Equiv{ℓₑ₃}(C) ⦄
   where
 
   instance
-    associateLeft-function : Function(Tuple.associateLeft {X = X}{Y = Y}{Z = Z})
+    associateLeft-function : Function(Tuple.associateLeft {A = A}{B = B}{C = C})
     Function.congruence associateLeft-function = Tuple.associateLeft
 
   instance
-    associateRight-function : Function(Tuple.associateRight {X = X}{Y = Y}{Z = Z})
+    associateRight-function : Function(Tuple.associateRight {A = A}{B = B}{C = C})
     Function.congruence associateRight-function = Tuple.associateRight

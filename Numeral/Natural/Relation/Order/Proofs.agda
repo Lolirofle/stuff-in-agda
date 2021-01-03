@@ -152,8 +152,24 @@ instance
   Asymmetry.proof([<]-asymmetry) (l) (r) = Irreflexivity.proof([<]-irreflexivity) (Transitivity.proof([<]-transitivity) (l) (r))
 
 instance
-  [<]-strictOrder : Strict.PartialOrder (_<_)
-  [<]-strictOrder = record{}
+  [<]-converseTrichotomy : ConverseTrichotomy(_<_)(_≡_)
+  ConverseTrichotomy.proof [<]-converseTrichotomy = p where
+    p : Names.ConverseTrichotomy(_<_)(_≡_)
+    p {𝟎}   {𝟎}   = [∨]-introₗ ([∨]-introᵣ [≡]-intro)
+    p {𝟎}   {𝐒 y} = [∨]-introₗ ([∨]-introₗ [≤]-with-[𝐒])
+    p {𝐒 x} {𝟎}   = [∨]-introᵣ [≤]-with-[𝐒]
+    p {𝐒 x} {𝐒 y} with p {x} {y}
+    ... | [∨]-introₗ ([∨]-introₗ [≤]-with-[𝐒]) = [∨]-introₗ ([∨]-introₗ [≤]-with-[𝐒])
+    ... | [∨]-introₗ ([∨]-introᵣ [≡]-intro)    = [∨]-introₗ ([∨]-introᵣ [≡]-intro)
+    ... | [∨]-introᵣ [≤]-with-[𝐒]              = [∨]-introᵣ [≤]-with-[𝐒]
+
+instance
+  [<]-strictPartialOrder : Strict.PartialOrder (_<_)
+  [<]-strictPartialOrder = record{}
+
+instance
+  [<]-strictTotalOrder : Strict.TotalOrder (_<_)(_≡_)
+  [<]-strictTotalOrder = record{}
 
 instance
   [>]-irreflexivity : Irreflexivity (_>_)

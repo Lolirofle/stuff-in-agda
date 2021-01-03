@@ -503,8 +503,8 @@ module NaturalDeduction where
           [⊢][∈]-equivalence                    ⦗ Logic.[↔]-transitivity ⦘ₗ
           [∨]-maximal-membership                ⦗ Logic.[↔]-transitivity ⦘ₗ
           Logic.[↔]-intro
-            (Either.map2 (Logic.[↔]-to-[←] [∧]-maximal-membership) (Logic.[↔]-to-[←] [∧]-maximal-membership))
-            (Either.map2 (Logic.[↔]-to-[→] [∧]-maximal-membership) (Logic.[↔]-to-[→] [∧]-maximal-membership))
+            (Either.map (Logic.[↔]-to-[←] [∧]-maximal-membership) (Logic.[↔]-to-[←] [∧]-maximal-membership))
+            (Either.map (Logic.[↔]-to-[→] [∧]-maximal-membership) (Logic.[↔]-to-[→] [∧]-maximal-membership))
                                                 ⦗ Logic.[↔]-transitivity ⦘ₗ
           Logic.[↔]-intro
             (Either.mapRight (Tuple.map (Logic.[↔]-to-[←] [¬]-maximal-membership) (Logic.[↔]-to-[←] [¬]-maximal-membership)))
@@ -525,17 +525,17 @@ module NaturalDeduction where
           r {⊥}     = Logic.[↔]-to-[→] [⊥]-maximal-membership
           r {¬ φ}   = Logic.contrapositiveᵣ l ∘ Logic.[↔]-to-[→] [¬]-maximal-membership
           r {φ ∧ ψ} = Tuple.map r r ∘ Logic.[↔]-to-[→] [∧]-maximal-membership
-          r {φ ∨ ψ} = Either.map2 r r ∘ Logic.[↔]-to-[→] [∨]-maximal-membership
-          r {φ ⟶ ψ} = Either.map2 (Logic.contrapositiveᵣ l) r ∘ Logic.[↔]-to-[→] [⟶]-maximal-membership
-          r {φ ⟷ ψ} = Either.map2 (Tuple.map r r) (Tuple.map (Logic.contrapositiveᵣ l) (Logic.contrapositiveᵣ l)) ∘ Logic.[↔]-to-[→] [⟷]-maximal-membership
+          r {φ ∨ ψ} = Either.map r r ∘ Logic.[↔]-to-[→] [∨]-maximal-membership
+          r {φ ⟶ ψ} = Either.map (Logic.contrapositiveᵣ l) r ∘ Logic.[↔]-to-[→] [⟶]-maximal-membership
+          r {φ ⟷ ψ} = Either.map (Tuple.map r r) (Tuple.map (Logic.contrapositiveᵣ l) (Logic.contrapositiveᵣ l)) ∘ Logic.[↔]-to-[→] [⟷]-maximal-membership
       
           l {• x}   = Logic.[↔]-to-[←] Logic.decide-is-true
           l {⊤}     = Logic.[↔]-to-[←] [⊤]-maximal-membership
           l {¬ φ}   = Logic.[↔]-to-[←] [¬]-maximal-membership ∘ Logic.contrapositiveᵣ r
           l {φ ∧ ψ} = Logic.[↔]-to-[←] [∧]-maximal-membership ∘ Tuple.map l l
-          l {φ ∨ ψ} = Logic.[↔]-to-[←] [∨]-maximal-membership ∘ Either.map2 l l
-          l {φ ⟶ ψ} = Logic.[↔]-to-[←] [⟶]-maximal-membership ∘ Either.map2 (Logic.contrapositiveᵣ r) l
-          l {φ ⟷ ψ} = Logic.[↔]-to-[←] [⟷]-maximal-membership ∘ Either.map2 (Tuple.map l l) (Tuple.map (Logic.contrapositiveᵣ r) (Logic.contrapositiveᵣ r))
+          l {φ ∨ ψ} = Logic.[↔]-to-[←] [∨]-maximal-membership ∘ Either.map l l
+          l {φ ⟶ ψ} = Logic.[↔]-to-[←] [⟶]-maximal-membership ∘ Either.map (Logic.contrapositiveᵣ r) l
+          l {φ ⟷ ψ} = Logic.[↔]-to-[←] [⟷]-maximal-membership ∘ Either.map (Tuple.map l l) (Tuple.map (Logic.contrapositiveᵣ r) (Logic.contrapositiveᵣ r))
 
         satisfiable : Satisfiable(Γ)
         satisfiable = Logic.[∃]-map-proof (\eq {φ} → Logic.[↔]-to-[→] (eq{φ})) equal-model-existence
@@ -550,7 +550,7 @@ module NaturalDeduction where
         [⊢]-to-[∈]' {φ = φ} = Logic.[→]-disjunctive-formₗ {!!}
 
         consistentSubsetMaximality : ConsistentSubsetMaximality
-        consistentSubsetMaximality {Δ} conΔ ΓΔ {φ} φΔ = {!Logic.[¬→]-disjunctive-formₗ (Either.map2 (weaken ΓΔ) (weaken ΓΔ) (p{φ}))!}
+        consistentSubsetMaximality {Δ} conΔ ΓΔ {φ} φΔ = {!Logic.[¬→]-disjunctive-formₗ (Either.map (weaken ΓΔ) (weaken ΓΔ) (p{φ}))!}
         {-with p{φ} | Logic.excluded-middle((¬ φ) ∈ Δ)
         ... | Left  q | Left  r = {!!}
         ... | Left  q | Right r with () ← Logic.contrapositiveᵣ(weaken ΓΔ) {!!} {!!}
@@ -572,7 +572,7 @@ module NaturalDeduction where
         -- (r ∘ direct)
 
         completeMembership : CompleteMembership
-        completeMembership = Either.map2 [⊢]-to-[∈] [⊢]-to-[∈] p where
+        completeMembership = Either.map [⊢]-to-[∈] [⊢]-to-[∈] p where
           [⊢]-to-[∈] = (ConsistentElementMaximality.Consistent.[⊢]-to-[∈] consistentElementMaximality consistent)
 
   record MaximallyConsistent (Γ : Formulas(P){ℓ}) : Stmt{Lvl.𝐒(Lvl.of(P) Lvl.⊔ ℓ)} where
@@ -602,7 +602,7 @@ module NaturalDeduction where
     subset-maximal with maximal
     ... | subset-intro          p = p
     ... | element-intro         p = ConsistentElementMaximality.consistentSubsetMaximality Γ p
-    ... | complete-deriv-intro  p = CompleteMembership.consistentSubsetMaximality Γ (Either.map2 [⊢]-to-[∈] [⊢]-to-[∈] p)
+    ... | complete-deriv-intro  p = CompleteMembership.consistentSubsetMaximality Γ (Either.map [⊢]-to-[∈] [⊢]-to-[∈] p)
     ... | complete-member-intro p = CompleteMembership.consistentSubsetMaximality Γ p
 
     {-r : (term-model(max Γ con) ⊧ φ) → (φ ∈ max Γ con)

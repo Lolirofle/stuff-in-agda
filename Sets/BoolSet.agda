@@ -1,4 +1,4 @@
-module Sets.BoolSet {ℓ} where
+module Sets.BoolSet {ℓ ℓₑ} where
 
 import      Lvl
 open import Data.Boolean
@@ -12,7 +12,7 @@ import      Data.List.Functions as List
 open import Logic
 open import Functional
 open import Operator.Equals
-open import Relator.Equals
+open import Structure.Setoid
 open import Type
 
 -- A function from a type T to a boolean value.
@@ -20,17 +20,17 @@ open import Type
 BoolSet : ∀{ℓ} → Type{ℓ} → Type{ℓ}
 BoolSet(T) = (T → Bool)
 
-module _ {T : Type{ℓ}} where
+module _ {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   𝐔 : BoolSet(T)
   𝐔 = const(𝑇)
 
   ∅ : BoolSet(T)
   ∅ = const(𝐹)
 
-  singleton : ⦃ _ : BoolEquality(T) ⦄ → T → BoolSet(T)
+  singleton : ⦃ _ : DecidableEquiv(T) ⦄ → T → BoolSet(T)
   singleton(t) = (_== t)
 
-  enumeration : ⦃ _ : BoolEquality(T) ⦄ → List.List(T) → BoolSet(T)
+  enumeration : ⦃ _ : DecidableEquiv(T) ⦄ → List.List(T) → BoolSet(T)
   enumeration(l) = (x ↦ List.satisfiesAny(_== x)(l))
 
   _∈?_ : T → BoolSet(T) → Bool

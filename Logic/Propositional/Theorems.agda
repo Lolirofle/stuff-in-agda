@@ -268,7 +268,7 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃}{ℓ₄} {A : Stmt{ℓ₁}}{B : Stmt{ℓ₂}}{C
   [∧]-binaryOperator ([↔]-intro ca ac) ([↔]-intro db bd) = [↔]-intro (Tuple.map ca db) (Tuple.map ac bd)
 
   [∨]-binaryOperator : (A ↔ C) → (B ↔ D) → ((A ∨ B) ↔ (C ∨ D))
-  [∨]-binaryOperator ([↔]-intro ca ac) ([↔]-intro db bd) = [↔]-intro (Either.map2 ca db) (Either.map2 ac bd)
+  [∨]-binaryOperator ([↔]-intro ca ac) ([↔]-intro db bd) = [↔]-intro (Either.map ca db) (Either.map ac bd)
 
 module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [↔]-not-left : (P ↔ Q) → (¬ P) → (¬ Q)
@@ -409,7 +409,7 @@ module _ where
   [∧]-mapᵣ-[↔] b = [∧]-map-[↔] [↔]-reflexivity b
 
   [∨]-map-[↔] : (A₁ ↔ A₂) → (B₁ ↔ B₂) → ((A₁ ∨ B₁) ↔ (A₂ ∨ B₂))
-  [∨]-map-[↔] a b = [↔]-intro (Either.map2 ([↔]-to-[←] a) ([↔]-to-[←] b)) (Either.map2 ([↔]-to-[→] a) ([↔]-to-[→] b))
+  [∨]-map-[↔] a b = [↔]-intro (Either.map ([↔]-to-[←] a) ([↔]-to-[←] b)) (Either.map ([↔]-to-[→] a) ([↔]-to-[→] b))
 
   [∨]-mapₗ-[↔] : (A₁ ↔ A₂) → ((A₁ ∨ B) ↔ (A₂ ∨ B))
   [∨]-mapₗ-[↔] a = [∨]-map-[↔] a [↔]-reflexivity

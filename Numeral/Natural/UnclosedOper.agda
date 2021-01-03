@@ -6,7 +6,6 @@ open import Data.Boolean.Stmt
 open import Data.Option as Option using (Option)
 open import Data.Option.Functions as Option
 open import Logic.Propositional
-open import Logic.Computability.Binary
 open import Numeral.Finite as 𝕟
   using (𝕟)
 import      Numeral.Finite.Bound as 𝕟bound
@@ -18,9 +17,10 @@ open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Natural.Oper.Modulo
 open import Numeral.Natural.Oper.Modulo.Proofs
 open import Numeral.Natural.Relation.Order
-open import Numeral.Natural.Relation.Order.Computability
+open import Numeral.Natural.Relation.Order.Decidable
 open import Numeral.Natural.Relation.Order.Proofs
-import Numeral.Sign as Sign
+import      Numeral.Sign as Sign
+open import Type.Properties.Decidable.Proofs
 
 infix  10010 _−_
 
@@ -93,4 +93,4 @@ _−fin_ : (x : ℕ) → 𝕟(𝐒(x)) → 𝕟(𝐒(x))
 
 -- Modulo operation to upper bounded natural numbers.
 _modfin_ : ℕ → (b : ℕ) → ⦃ _ : IsTrue(b ≢? 𝟎) ⦄ → 𝕟(b)
-a modfin 𝐒 b = 𝕟.ℕ-to-𝕟 (a mod 𝐒(b)) ⦃ [↔]-to-[→] (ComputablyDecidable.proof-istrue(_<_)) (mod-maxᵣ{a}{𝐒 b}) ⦄
+a modfin 𝐒 b = 𝕟.ℕ-to-𝕟 (a mod 𝐒(b)) ⦃ [↔]-to-[→] (decider-true(_ < _)) (mod-maxᵣ{a}{𝐒 b}) ⦄

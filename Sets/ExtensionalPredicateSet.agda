@@ -90,7 +90,7 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   -- Contains the elements that any of the both sets contain.
   _∪_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → PredSet(T)
   (A ∪ B) ∋ x = (A ∋ x) ∨ (B ∋ x)
-  UnaryRelator.substitution (preserve-equiv (A ∪ B)) xy = Either.map2 (substitute₁(A ∋_) xy) (substitute₁(B ∋_) xy)
+  UnaryRelator.substitution (preserve-equiv (A ∪ B)) xy = Either.map (substitute₁(A ∋_) xy) (substitute₁(B ∋_) xy)
   infixr 1000 _∪_
 
   -- An intersection of two sets.

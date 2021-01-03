@@ -91,7 +91,7 @@ instance
   [≡]-function-application = intro Path.mappingPoint
 
 [≡]-identity-eliminator : IdentityEliminator{ℓₚ = ℓₚ}(_≡_ {T = T})
-IdentityEliminator.proof [≡]-identity-eliminator P prefl eq  = sub₂(_≡_)(_→ᶠ_) ⦃ [≡][→]-sub ⦄ (\i → P(\j → eq(Interval.min i j))) prefl
+IdentityEliminator.elim [≡]-identity-eliminator P prefl eq  = sub₂(_≡_)(_→ᶠ_) ⦃ [≡][→]-sub ⦄ (\i → P(\j → eq(Interval.min i j))) prefl
 
 -- TODO: Organize and move everything below
 
@@ -207,7 +207,7 @@ data Quotient(_▫_ : T → T → Type{ℓ}) : Type{Lvl.of(T) Lvl.⊔ ℓ} where
 
 module _ ⦃ prop-P : ∀{c : Quotient(_▫_)} → MereProposition(P(c)) ⦄ where
   Quotient-property-pathP : ∀{x y}{px : P(x)}{py : P(y)} → (xy : x ≡ y) → PathP(\i → P(xy i)) px py
-  Quotient-property-pathP {x}{y}{px}{py} xy = IdentityEliminator.proof [≡]-identity-eliminator (xy ↦ (∀{px}{py} → PathP(\i → P(xy i)) px py)) (\{c} → uniqueness(P(c))) {x}{y} xy {px}{py}
+  Quotient-property-pathP {x}{y}{px}{py} xy = IdentityEliminator.elim [≡]-identity-eliminator (xy ↦ (∀{px}{py} → PathP(\i → P(xy i)) px py)) (\{c} → uniqueness(P(c))) {x}{y} xy {px}{py}
 
   class-property : (∀{a} → P(class a)) → (∀{c} → P(c))
   class-property p {class a} = p{a}

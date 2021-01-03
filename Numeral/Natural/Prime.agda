@@ -129,13 +129,13 @@ PrimeMultiSet = ((p : ℕ) → ⦃ _ : Prime(p) ⦄ → ℕ)
 
 prime-only-divisors : ∀{n} → ⦃ _ : Prime(n) ⦄ → (∀{x} → (x ∣ n) → ((x ≡ 1) ∨ (x ≡ n)))
 prime-only-divisors {𝐒 (𝐒 n)} ⦃ intro prime ⦄ {𝟎}   = [⊥]-elim ∘ [0]-divides-not
-prime-only-divisors {𝐒 (𝐒 n)} ⦃ intro prime ⦄ {𝐒 x} = Either.map2 ([≡]-with(𝐒)) ([≡]-with(𝐒)) ∘ prime
+prime-only-divisors {𝐒 (𝐒 n)} ⦃ intro prime ⦄ {𝐒 x} = Either.map ([≡]-with(𝐒)) ([≡]-with(𝐒)) ∘ prime
 
 prime-when-only-divisors : ∀{n} → (n ≥ 2) → (∀{x} → (x ∣ n) → ((x ≡ 1) ∨ (x ≡ n))) → Prime(n)
 prime-when-only-divisors {𝐒(𝐒 n)} [≤]-with-[𝐒] proof = intro p where
   p : PrimeProof
   p {𝟎}   _ = [∨]-introₗ [≡]-intro
-  p {𝐒 x}   = Either.map2 (injective(𝐒)) (injective(𝐒)) ∘ proof
+  p {𝐒 x}   = Either.map (injective(𝐒)) (injective(𝐒)) ∘ proof
 
 prime-composite-not : ∀{n} → Prime(n) → Composite(n) → ⊥
 prime-composite-not {.(𝐒(𝐒(a)) ⋅ 𝐒(𝐒(b)))} p (intro a b) =

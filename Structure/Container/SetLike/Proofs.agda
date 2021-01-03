@@ -206,7 +206,7 @@ module _ ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{�
         BinaryOperator.congruence [∪]-binaryOperator xy₁ xy₂ =
           [↔]-to-[←] [≡]-membership (
             Union.membership ⦗ [↔]-transitivity ⦘ᵣ
-            [↔]-intro (Either.map2 ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₂))) (Either.map2 ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₂))) ⦗ [↔]-transitivity ⦘ᵣ
+            [↔]-intro (Either.map ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[←] ([↔]-to-[→] [≡]-membership xy₂))) (Either.map ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₁)) ([↔]-to-[→] ([↔]-to-[→] [≡]-membership xy₂))) ⦗ [↔]-transitivity ⦘ᵣ
             [↔]-symmetry Union.membership
           )
 
@@ -288,7 +288,7 @@ module _ ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{�
             Intersection.membership ⦗ [↔]-transitivity ⦘ᵣ
             [↔]-intro (Tuple.mapRight ([↔]-to-[←] Union.membership)) (Tuple.mapRight ([↔]-to-[→] Union.membership)) ⦗ [↔]-transitivity ⦘ᵣ
             [∧][∨]-distributivityₗ ⦗ [↔]-transitivity ⦘ᵣ
-            [↔]-intro (Either.map2 ([↔]-to-[→] Intersection.membership) ([↔]-to-[→] Intersection.membership)) (Either.map2 ([↔]-to-[←] Intersection.membership) ([↔]-to-[←] Intersection.membership)) ⦗ [↔]-transitivity ⦘ᵣ
+            [↔]-intro (Either.map ([↔]-to-[→] Intersection.membership) ([↔]-to-[→] Intersection.membership)) (Either.map ([↔]-to-[←] Intersection.membership) ([↔]-to-[←] Intersection.membership)) ⦗ [↔]-transitivity ⦘ᵣ
             [↔]-symmetry Union.membership
           )
 

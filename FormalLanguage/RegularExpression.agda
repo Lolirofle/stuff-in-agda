@@ -10,7 +10,6 @@ open import FormalLanguage
 open import FormalLanguage.Proofs
 open import Functional
 open import Logic
-open import Logic.Computability.Binary
 open import Logic.Propositional
 open import Numeral.Natural
 open import Relator.Equals

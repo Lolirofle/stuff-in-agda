@@ -5,16 +5,21 @@ open import Data.Boolean
 import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Numeral.Natural
+open import Numeral.Sign
 
 ℕbool : Bool → ℕ
 ℕbool = if_then 1 else 0
 
+-- Compare
+_⋚?_ : ℕ → ℕ → (−|0|+)
+𝟎    ⋚? 𝟎    = 𝟎
+𝟎    ⋚? 𝐒(b) = ➖
+𝐒(a) ⋚? 𝟎    = ➕
+𝐒(a) ⋚? 𝐒(b) = a ⋚? b
+
 -- Equality check
 _≡?_ : ℕ → ℕ → Bool
-𝟎    ≡? 𝟎    = 𝑇
-𝐒(x) ≡? 𝐒(y) = (x ≡? y)
-𝟎    ≡? 𝐒(_) = 𝐹
-𝐒(_) ≡? 𝟎    = 𝐹
+a ≡? b = elim₃ 𝐹 𝑇 𝐹 (a ⋚? b)
 {-# BUILTIN NATEQUALS _≡?_ #-}
 
 -- Non-equality check

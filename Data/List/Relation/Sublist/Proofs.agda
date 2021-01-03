@@ -4,7 +4,7 @@ open import Type
 module Data.List.Relation.Sublist.Proofs {ℓ} {T : Type{ℓ}} where
 
 open import Data.Boolean
-open import Data.Either as Either
+import      Data.Either as Either
 open import Data.List as List
 open import Data.List.Functions as List hiding (skip)
 open import Data.List.Proofs
@@ -229,5 +229,5 @@ module _ where
 
 [⊑]-to-[⊏] : (l₁ ⊑ l₂) → ((l₁ ⊏ l₂) ∨ (length(l₁) ≡ length(l₂)))
 [⊑]-to-[⊏] empty    = [∨]-introᵣ [≡]-intro
-[⊑]-to-[⊏] (use p)  = map2 use ([≡]-with(𝐒)) ([⊑]-to-[⊏] p)
+[⊑]-to-[⊏] (use p)  = Either.map use ([≡]-with(𝐒)) ([⊑]-to-[⊏] p)
 [⊑]-to-[⊏] (skip p) = [∨]-introₗ (skip p)

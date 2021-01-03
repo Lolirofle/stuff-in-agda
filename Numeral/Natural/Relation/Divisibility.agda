@@ -39,4 +39,4 @@ _∤_ : ℕ → ℕ → Stmt
 y ∤ x = ¬(y ∣ x)
 
 -- `Divisor(n)(d)` means that `d` is a divisor of `n`.
-Divisor = swap _∣_
+Divisor = swap(_∣_)

@@ -26,7 +26,7 @@ module One {ℓ} {T : Type{ℓ}} where
 
   instance
     [≡]-identity-eliminator : ∀{ℓₚ} → IdentityEliminator{ℓₚ = ℓₚ}(_≡_ {T = T})
-    IdentityEliminator.proof [≡]-identity-eliminator _ proof {x = x}{y = .x} [≡]-intro = proof{x}
+    IdentityEliminator.elim [≡]-identity-eliminator _ proof {x = x}{y = .x} [≡]-intro = proof{x}
 
   instance
     [≡]-symmetry : Symmetry (_≡_ {T = T})

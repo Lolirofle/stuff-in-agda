@@ -1,14 +1,13 @@
-open import Type
-
-module Operator.Equals {ℓ} where
+module Operator.Equals {ℓ ℓₑ} where
 
 open import Data.Boolean
 open import Logic
-open import Logic.Computability.Binary
-open import Relator.Equals
+open import Structure.Setoid
+open import Type.Properties.Decidable
+open import Type
 
-BoolEquality : (T : Type{ℓ}) → Stmt
-BoolEquality(T) = ComputablyDecidable {X = T} (_≡_)
+DecidableEquiv : (T : Type{ℓ}) ⦃ equiv : Equiv{ℓₑ}(T) ⦄ → Stmt
+DecidableEquiv(T) = Decidable(2)(_≡_)
 
-_==_ : ∀{T : Type{ℓ}} → ⦃ _ : BoolEquality(T) ⦄ → T → T → Bool
-_==_ = ComputablyDecidable.decide(_≡_)
+_==_ : ∀{T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ _ : DecidableEquiv(T) ⦄ → (T → T → Bool)
+_==_ = decide(2)(_≡_)

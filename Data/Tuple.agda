@@ -7,42 +7,45 @@ open import Syntax.Function
 infixr 200 _⨯_ _,_
 
 private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ : Lvl.Level
-private variable X Y Z X₁ X₂ Y₁ Y₂ : Type{ℓ}
+private variable A B C A₁ A₂ B₁ B₂ : Type{ℓ}
 
 -- Definition of a 2-tuple
-record _⨯_ (X : Type{ℓ₁}) (Y : Type{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂} where
+record _⨯_ (A : Type{ℓ₁}) (B : Type{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂} where
   constructor _,_
   field
-    left  : X
-    right : Y
+    left  : A
+    right : B
 open _⨯_ public
 
-map : (X₁ → X₂) → (Y₁ → Y₂) → (X₁ ⨯ Y₁) → (X₂ ⨯ Y₂)
+elim : ∀{P : (A ⨯ B) → Type{ℓ}} → ((a : A) → (b : B) → P(a , b)) → ((p : (A ⨯ B)) → P(p))
+elim f(a , b) = f a b
+
+map : (A₁ → A₂) → (B₁ → B₂) → (A₁ ⨯ B₁) → (A₂ ⨯ B₂)
 map f g (x , y) = (f(x) , g(y))
 
 -- Curries a function taking a 2-tuple, transforming it to a function returning a function instead
-curry : ((X ⨯ Y) → Z) → (X → Y → Z)
+curry : ((A ⨯ B) → C) → (A → B → C)
 curry f x y = f(x , y)
 
 -- Uncurries a function taking a function, transforming it to a function taking a 2-tuple instead
-uncurry : (X → Y → Z) → ((X ⨯ Y) → Z)
-uncurry f (x , y) = f x y
+uncurry : (A → B → C) → ((A ⨯ B) → C)
+uncurry = elim
 
-mapLeft : (X₁ → X₂) → (X₁ ⨯ Y) → (X₂ ⨯ Y)
+mapLeft : (A₁ → A₂) → (A₁ ⨯ B) → (A₂ ⨯ B)
 mapLeft f = map f (x ↦ x)
 
-mapRight : let _ = X in (Y₁ → Y₂) → (X ⨯ Y₁) → (X ⨯ Y₂)
+mapRight : let _ = A in (B₁ → B₂) → (A ⨯ B₁) → (A ⨯ B₂)
 mapRight f = map (x ↦ x) f
 
-associateLeft : (X ⨯ (Y ⨯ Z)) → ((X ⨯ Y) ⨯ Z)
+associateLeft : (A ⨯ (B ⨯ C)) → ((A ⨯ B) ⨯ C)
 associateLeft (x , (y , z)) = ((x , y) , z)
 
-associateRight : ((X ⨯ Y) ⨯ Z) → (X ⨯ (Y ⨯ Z))
+associateRight : ((A ⨯ B) ⨯ C) → (A ⨯ (B ⨯ C))
 associateRight ((x , y) , z) = (x , (y , z))
 
 -- Swaps the left and right elements of a 2-tuple
-swap : (X ⨯ Y) → (Y ⨯ X)
+swap : (A ⨯ B) → (B ⨯ A)
 swap(x , y) = (y , x)
 
-repeat : X → (X ⨯ X)
+repeat : A → (A ⨯ A)
 repeat x = (x , x)

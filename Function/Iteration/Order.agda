@@ -20,8 +20,9 @@ open import Numeral.Natural.Oper.Modulo
 open import Numeral.Natural.Oper.Modulo.Proofs
 open import Numeral.Natural.Relation.Divisibility
 open import Numeral.Natural.Relation.Divisibility.Proofs
-open import Numeral.Natural.Relation.Order
+open import Numeral.Natural.Relation.Order.Decidable
 open import Numeral.Natural.Relation.Order.Proofs
+open import Numeral.Natural.Relation.Order
 open import Relator.Equals using () renaming (_≡_ to _≡ₑ_ ; _≢_ to _≢ₑ_ ; [≡]-intro to [≡ₑ]-intro)
 open import Structure.Setoid
 open import Structure.Function.Domain
@@ -34,6 +35,7 @@ open import Structure.Relator.Ordering
 open import Structure.Relator.Ordering.Lattice
 open import Syntax.Transitivity
 open import Type
+open import Type.Properties.Decidable.Proofs
 open import Type.Properties.Empty
 open import Type.Size.Finite
 
@@ -129,13 +131,11 @@ module _ ⦃ equiv-T : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃ op : Bin
       r : ∀{n} → (x ^ n ≡ id) → (ord(x) ⦃ p ⦄ ∣ n)
       r {𝟎}    _    = Div𝟎
       r {𝐒(n)} xnid = [↔]-to-[→] mod-divisibility mod-is-0 where
-        open import Logic.Computability
-        open import Numeral.Natural.Relation.Computability
         open import Relator.Equals.Proofs.Equiv using ([≡]-to-equivalence)
 
         instance
           ord-non-zero-comp : IsTrue(ord(x) ⦃ p ⦄ ≢? 𝟎)
-          ord-non-zero-comp = [↔]-to-[→] (ComputablyDecidable.proof-istrue([≢]-computable)) (ord-non-zero ⦃ p ⦄)
+          ord-non-zero-comp = [↔]-to-[→] (decider-true(_ ≢ _)) (ord-non-zero ⦃ p ⦄)
 
         instance
           ord-positive : IsTrue(positive?(ord(x) ⦃ p ⦄))

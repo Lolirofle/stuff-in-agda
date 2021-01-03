@@ -8,7 +8,7 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Logic.Propositional.Theorems
 open import Structure.Relator.Properties
-  hiding (antisymmetry ; asymmetry ; transitivity ; reflexivity ; irreflexivity)
+  hiding (antisymmetry ; asymmetry ; transitivity ; reflexivity ; irreflexivity ; trichotomy)
 open import Type
 open import Type.Properties.Empty
 
@@ -72,11 +72,11 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
 
   -- A strict total order is a strict partial order where all objects are ordered.
   -- Also called: Strict linear order
-  record TotalOrder : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+  record TotalOrder(_≡_ : T → T → Stmt{ℓ₃}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
      ⦃ partialOrder ⦄ : PartialOrder
-     ⦃ totality ⦄     : ConverseTotal(_<_)
+     ⦃ trichotomy ⦄   : ConverseTrichotomy(_<_)(_≡_)
 
   module Properties where
     -- An ordering of a type is dense when there is an object inbetween every pair of objects with respect to its order.
@@ -130,8 +130,8 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
     wellfounded-recursion proof x = accessible-recursion proof x
 
   -- A well-ordering is a well-founded strict total order 
-  record WellOrder : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+  record WellOrder(_≡_ : T → T → Stmt{ℓ₃}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     instance constructor intro
     field
-     ⦃ totalOrder ⦄  : TotalOrder
+     ⦃ totalOrder ⦄  : TotalOrder(_≡_)
      ⦃ wellfounded ⦄ : Properties.WellFounded

@@ -16,7 +16,6 @@ open import FormalLanguage.Equals
 open import Functional using (id)
 open import Sized.Data.List renaming (∅ to [])
 open import Lang.Size
-open import Logic.Computability.Binary
 open import Logic.Predicate
 open import Logic.Propositional
 open import Logic.Propositional.Theorems

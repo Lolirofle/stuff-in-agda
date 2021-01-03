@@ -81,7 +81,7 @@ pattern [∨]-introᵣ r = Either.Right r
 [∨]-elim : ∀{ℓ₁ ℓ₂ ℓ₃}{P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{ℓ₃}} → (P → R) → (Q → R) → (P ∨ Q) → R
 [∨]-elim = Either.map1
 
-[∨]-elim2 = Either.map2
+[∨]-elim2 = Either.map
 
 ------------------------------------------
 -- Bottom (false, absurdity, empty, contradiction)

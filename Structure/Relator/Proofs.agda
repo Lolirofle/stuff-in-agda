@@ -27,6 +27,9 @@ BinaryRelator.substitution [≡]-binaryRelator {x₁} {y₁} {x₂} {y₂} xy1 x
   x₂ 🝖-[ xy2 ]
   y₂ 🝖-end
 
+reflexive-binaryRelator-sub : ∀ ⦃ equiv : Equiv{ℓₗ}(A) ⦄ {_▫_ : A → A → Type{ℓ}} ⦃ refl : Reflexivity(_▫_) ⦄ ⦃ rel : BinaryRelator ⦃ equiv ⦄ (_▫_) ⦄ → ((_≡_) ⊆₂ (_▫_))
+_⊆₂_.proof (reflexive-binaryRelator-sub {_▫_ = _▫_}) xy = substitute₂ᵣ(_▫_) xy (reflexivity(_▫_))
+
 module _
   ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄
   ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄
@@ -111,7 +114,7 @@ instance
 UnaryRelator.substitution [∧]-unaryRelator xy = Tuple.map (substitute₁(_) xy) (substitute₁(_) xy)
 
 [∨]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : A → Stmt{ℓₗ₁}}{Q : A → Stmt{ℓₗ₂}} → ⦃ rel-P : UnaryRelator(P) ⦄ → ⦃ rel-Q : UnaryRelator(Q) ⦄ → UnaryRelator(x ↦ P(x) ∨ Q(x))
-UnaryRelator.substitution [∨]-unaryRelator xy = Either.map2 (substitute₁(_) xy) (substitute₁(_) xy)
+UnaryRelator.substitution [∨]-unaryRelator xy = Either.map (substitute₁(_) xy) (substitute₁(_) xy)
 
 binary-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ {P : A → A → Stmt{ℓₗ₁}} → ⦃ rel-P : BinaryRelator(P) ⦄ → UnaryRelator(P $₂_)
 UnaryRelator.substitution (binary-unaryRelator {P = P}) xy pxx = substitute₂(P) xy xy pxx
@@ -128,3 +131,7 @@ BinaryRelator.substitution binaryRelator-from-unaryRelator xy1 xy2 = substitute�
 instance
   const-binaryRelator : ∀{P : Stmt{ℓₗ}} → ⦃ equiv-A : Equiv{ℓₗ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₗ₂}(B) ⦄ → BinaryRelator{A = A}{B = B}((const ∘ const) P)
   BinaryRelator.substitution const-binaryRelator = (const ∘ const) id
+
+-- TODO: Temporary until substitution is a specialization of congruence
+[¬]-binaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ ⦃ _ : Equiv{ℓₗ₃}(B) ⦄ {P : A → B → Stmt{ℓₗ₁}} → ⦃ rel-P : BinaryRelator(P) ⦄ → BinaryRelator(\x y → ¬ P(x)(y))
+BinaryRelator.substitution ([¬]-binaryRelator {P = P}) xy₁ xy₂ npx py = npx(substitute₂(P) (symmetry(_≡_) xy₁) (symmetry(_≡_) xy₂) py)

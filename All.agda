@@ -25,7 +25,9 @@ import Data.Boolean.Stmt.Proofs
 import Data.Boolean.Stmt
 import Data.Boolean
 import Data.DynamicTree
-import Data.Either.Equiv.Proofs
+import Data.Either.Equiv.Id
+import Data.Either.Equiv
+import Data.Either.Multi
 import Data.Either.Proofs
 import Data.Either.Setoid
 import Data.Either
@@ -35,7 +37,7 @@ import Data.Iterator
 import Data.List.Categorical
 import Data.List.Combinatorics.Proofs
 import Data.List.Combinatorics
-import Data.List.Computability
+import Data.List.Decidable
 import Data.List.Equiv.Id
 import Data.List.Equiv
 import Data.List.Functions.Multi
@@ -80,6 +82,8 @@ import Data.Option.Setoid
 import Data.Option
 import Data.Proofs
 import Data.Tuple.Category
+import Data.Tuple.Equiv.Id
+import Data.Tuple.Equiv
 import Data.Tuple.Equivalence
 import Data.Tuple.Function
 import Data.Tuple.List
@@ -171,9 +175,6 @@ import Lang.Reflection
 import Lang.Size
 import Logic.Classical.DoubleNegated
 import Logic.Classical
-import Logic.Computability.Binary
-import Logic.Computability
--- import Logic.Decidable
 import Logic.DiagonalMethod
 import Logic.IntroInstances
 import Logic.Names
@@ -198,6 +199,7 @@ import Numeral.CoordinateVector
 import Numeral.Finite.Bound
 import Numeral.Finite.Category
 import Numeral.Finite.Conversions
+import Numeral.Finite.Equiv
 import Numeral.Finite.Functions
 import Numeral.Finite.Oper.Comparisons.Proofs
 import Numeral.Finite.Oper.Comparisons
@@ -247,20 +249,20 @@ import Numeral.Natural.Oper.Summation.Range
 import Numeral.Natural.Oper.Summation
 import Numeral.Natural.Oper
 import Numeral.Natural.Prime
-import Numeral.Natural.Relation.Computability
 import Numeral.Natural.Relation.Divisibility.Proofs
 import Numeral.Natural.Relation.Divisibility
 import Numeral.Natural.Relation.DivisibilityWithRemainder.Proofs
 import Numeral.Natural.Relation.DivisibilityWithRemainder
 import Numeral.Natural.Relation.Order.Category
 import Numeral.Natural.Relation.Order.Classical
-import Numeral.Natural.Relation.Order.Computability
+import Numeral.Natural.Relation.Order.Decidable
 import Numeral.Natural.Relation.Order.Existence.Proofs
 import Numeral.Natural.Relation.Order.Existence
 import Numeral.Natural.Relation.Order.Proofs
 import Numeral.Natural.Relation.Order
 import Numeral.Natural.Relation.Properties
 import Numeral.Natural.Relation
+import Numeral.Natural.Sequence.Proofs
 import Numeral.Natural.Sequence
 import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
@@ -283,8 +285,6 @@ import Relator.Congruence.Proofs
 import Relator.Congruence
 import Relator.Converse
 import Relator.Equals.Category
-import Relator.Equals.Heterogenous
-import Relator.Equals.Names
 import Relator.Equals.Proofs.Equiv
 import Relator.Equals.Proofs.Equivalence
 import Relator.Equals.Proofs
@@ -418,6 +418,8 @@ import Structure.Real.Abs
 -- import Structure.Real.Derivative
 -- import Structure.Real.Limit
 import Structure.Real
+import Structure.Relator.Apartness.Proofs
+import Structure.Relator.Apartness
 import Structure.Relator.Equivalence
 import Structure.Relator.Function.Multi
 import Structure.Relator.Function.Proofs
@@ -477,8 +479,13 @@ import Type.Cubical.Path
 import Type.Cubical
 import Type.Dependent.Functions
 import Type.Dependent
+import Type.Identity.Heterogenous
+import Type.Identity.Proofs
+import Type.Identity
 import Type.Isomorphism
 import Type.Proofs
+import Type.Properties.Decidable.Proofs
+import Type.Properties.Decidable
 import Type.Properties.Empty.Proofs
 import Type.Properties.Empty
 -- import Type.Properties.Homotopy.Proofs

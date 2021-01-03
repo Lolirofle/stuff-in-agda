@@ -28,6 +28,7 @@ private variable n : ℕ
 private variable f : A → B
 private variable P : List(T) → Stmt{ℓ}
 
+-- TODO: Almost all of these can use Preserving instead
 
 length-[∅] : (length(∅ {T = T}) ≡ 0)
 length-[∅] = [≡]-intro

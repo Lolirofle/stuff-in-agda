@@ -177,10 +177,10 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   row-scalarMat-is-indexProject : ∀{false true : T}{i : 𝕟(n)} → (Matrix.row(SquareMatrix.scalarMat {d = n} false true)(i) ≡ Vector.indexProject i true false)
   _⊜_.proof (row-scalarMat-is-indexProject {i = i}) {x} with (i ≡? x) | (x ≡? i) | commutativity ⦃ [≡]-equiv ⦄ (_≡?_) {x = i}{y = x}
-  ... | 𝑇 | 𝑇 | _≡ₑ_.[≡]-intro = reflexivity(_≡_)
+  ... | 𝑇 | 𝑇 | [≡]-intro = reflexivity(_≡_)
   ... | 𝑇 | 𝐹 | ()
   ... | 𝐹 | 𝑇 | ()
-  ... | 𝐹 | 𝐹 | _≡ₑ_.[≡]-intro = reflexivity(_≡_)
+  ... | 𝐹 | 𝐹 | [≡]-intro = reflexivity(_≡_)
 
   module _
     ⦃ oper₁ : BinaryOperator(_+ₛ_) ⦄

@@ -182,6 +182,16 @@ lifted-[,](n) f g = liftedApply(n) ((swap₁ _,_) ∘ᵣ g) f
 -- CategoricalOperator₊(1)       F = ∀{x₁ x₂ x₃} → F(x₂)(x₃) → F(x₁)(x₂) → F(x₁)(x₃)
 -- CategoricalOperator₊(𝐒(𝐒(n))) F = {!!}
 
+-- Nested binary type relations that associate to the right.
+-- Used to define n-ary binary relations that accepts any types.
+-- Example:
+--   binaryTypeRelator₊(4)(_▫_) A B C D = A ▫ (B ▫ (C ▫ D))
+-- TODO: It is possible to generalize the levels
+binaryTypeRelator₊ : (n : ℕ) → (∀{ℓ₁ ℓ₂} → Type{ℓ₁} → Type{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}) → (∀{ℓ} → Type{ℓ}) → ∀{ℓ𝓈} → TypesOfTypes{n}(ℓ𝓈) ⇉ Type{Lvl.⨆(ℓ𝓈)}
+binaryTypeRelator₊(0)       (_▫_) id   = id
+binaryTypeRelator₊(1)       (_▫_) _  A = A
+binaryTypeRelator₊(𝐒(𝐒(n))) (_▫_) id A = compose(𝐒(n)) (A ▫_) (binaryTypeRelator₊(𝐒(n)) (_▫_) id)
+
 -- Nested quantifiers over multiple values.
 -- Used to define nested universal and existential quantifications.
 -- Example:
