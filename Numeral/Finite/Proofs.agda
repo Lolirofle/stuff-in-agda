@@ -64,7 +64,7 @@ bounded{𝐒(N)}{𝐒(n)} = [≤]-with-[𝐒] ⦃ bounded{N}{n} ⦄
 𝕟-ℕ-inverse {𝐒 N}{𝟎}   = [≡]-intro
 𝕟-ℕ-inverse {𝐒 N}{𝐒 n} = [≡]-with(𝐒) (𝕟-ℕ-inverse {N}{n})
 
-ℕ-𝕟-inverse : ∀{N}{n : 𝕟(𝐒(N))} → (ℕ-to-𝕟(𝕟-to-ℕ n) ⦃ [↔]-to-[→] (decider-true(_ < _)) (bounded{n = n}) ⦄ ≡ n)
+ℕ-𝕟-inverse : ∀{N}{n : 𝕟(𝐒(N))} → (ℕ-to-𝕟(𝕟-to-ℕ n) ⦃ [↔]-to-[→] decider-true (bounded{n = n}) ⦄ ≡ n)
 ℕ-𝕟-inverse {𝟎}   {𝟎}   = [≡]-intro
 ℕ-𝕟-inverse {𝐒 N} {𝟎}   = [≡]-intro
 ℕ-𝕟-inverse {𝐒 N} {𝐒 n} = [≡]-with(𝐒) (ℕ-𝕟-inverse{N}{n})

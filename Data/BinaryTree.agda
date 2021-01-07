@@ -10,6 +10,10 @@ data BinaryTree (L : Type{ℓₗ}) (N : Type{ℓₙ}) : Type{ℓₗ Lvl.⊔ ℓ�
   Leaf : L → BinaryTree L N
   Node : N → BinaryTree L N → BinaryTree L N → BinaryTree L N
 
+elim : (P : BinaryTree L N → Type{ℓ}) → ((l : L) → P(Leaf l)) → (∀{tl tr} → (n : N) → (pl : P(tl)) → (pr : P(tr)) → P(Node n tl tr)) → ((t : BinaryTree L N) → P(t))
+elim P pl pn (Leaf l)     = pl l
+elim P pl pn (Node n l r) = pn n (elim P pl pn l) (elim P pl pn r)
+
 open import Data using (Unit ; <>)
 open import Data.Boolean
 open import Data.Option

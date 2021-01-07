@@ -34,64 +34,20 @@ module _ (P : Stmt{ℓ}) where
     constructor intro
     field
       ⦃ excluded-middle ⦄ : ExcludedMiddleOn(P)
-
-    -- Boolean value representing the truth value of the proposition P.
-    decide : Bool -- TODO: Maybe use Logic.Decidable instead by proving (Classical(P) → Decidable(P))?
-    decide = Either.isLeft(excluded-middle)
-
-    -- TODO: Maybe use the generalized functions in Data.Boolean.Proofs to implement these. The either-bool-* functions.
-    decide-true : P ↔ (decide ≡ 𝑇)
-    decide-true with excluded-middle | bivalence{decide}
-    decide-true | [∨]-introₗ p  | [∨]-introₗ t = [↔]-intro (const p) (const t)
-    decide-true | [∨]-introᵣ np | [∨]-introᵣ f = [↔]-intro (\()) (empty ∘ np)
-
-    decide-false : (¬ P) ↔ (decide ≡ 𝐹)
-    decide-false with excluded-middle | bivalence{decide}
-    decide-false | [∨]-introₗ p  | [∨]-introₗ t = [↔]-intro (\()) (np ↦ empty(np p))
-    decide-false | [∨]-introᵣ np | [∨]-introᵣ f = [↔]-intro (const np) (const f)
-
-    decide-is-true : P ↔ IsTrue(decide)
-    decide-is-true = [↔]-transitivity decide-true ([↔]-symmetry IsTrue.is-𝑇)
-
-    decide-is-false : (¬ P) ↔ IsFalse(decide)
-    decide-is-false = [↔]-transitivity decide-false ([↔]-symmetry IsFalse.is-𝐹)
-
-    module _ {T : Type{ℓ₁}} {x y : T} {Q : T → Type{ℓ₂}} where
-      decide-if-intro : (P → Q(x)) → ((¬ P) → Q(y)) → Q(if decide then x else y)
-      decide-if-intro pq npq = if-intro{x = x}{y = y}{P = Q}{B = decide} (pq ∘ [↔]-to-[←] decide-true) (npq ∘ [↔]-to-[←] decide-false)
-
   excluded-middle = inst-fn Classical.excluded-middle
-  decide          = inst-fn Classical.decide
-open Classical ⦃ ... ⦄ hiding (excluded-middle ; decide) public
+open Classical ⦃ ... ⦄ hiding (excluded-middle) public
 
 ------------------------------------------
 -- Classical on predicates.
 
 Classical₁ : (X → Stmt{ℓₗ}) → Stmt
 Classical₁(P) = ∀¹(Classical ∘₁ P)
-decide₁ : (P : X → Stmt{ℓ}) → ⦃ _ : Classical₁(P) ⦄ → (X → Bool)
-decide₁ P x = decide(P x)
 
 Classical₂ : (X → Y → Stmt{ℓₗ}) → Stmt
 Classical₂(P) = ∀²(Classical ∘₂ P)
-decide₂ : (P : X → Y → Stmt{ℓ}) → ⦃ _ : Classical₂(P) ⦄ → (X → Y → Bool)
-decide₂ P x y = decide(P x y)
 
 Classical₃ : (X → Y → Z → Stmt{ℓₗ}) → Stmt
 Classical₃(P) = ∀³(Classical ∘₃ P)
-decide₃ : (P : X → Y → Z → Stmt{ℓ}) → ⦃ _ : Classical₃(P) ⦄ → (X → Y → Z → Bool)
-decide₃ P x y z = decide(P x y z)
-
-------------------------------------------
--- Changing classical propositions' universe levels by using their boolean representation.
-
-module _ (P : Stmt{ℓ}) ⦃ classical : Classical(P) ⦄ where
-  LvlConvert : Stmt{ℓ₁}
-  LvlConvert = Lvl.Up(IsTrue(decide(P)))
-
-  -- LvlConvert is satisfied whenever its proposition is.
-  LvlConvert-correctness : P ↔ LvlConvert{ℓ₁}
-  LvlConvert-correctness = [↔]-transitivity decide-is-true ([↔]-intro Lvl.Up.obj Lvl.up)
 
 ------------------------------------------
 -- Well-known classical rules.

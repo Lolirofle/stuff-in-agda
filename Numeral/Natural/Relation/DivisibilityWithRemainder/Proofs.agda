@@ -118,11 +118,11 @@ open import Type.Properties.Decidable.Proofs
 ∃.proof   ([∣ᵣₑₘ]-existence {x} {y}) = [↔]-to-[←] [∣ᵣₑₘ]-equivalence ([∃]-intro (x ⌊/⌋ 𝐒(y)) ⦃ {!TODO: Insert division theorem here!} ⦄)
 -}
 
-DivRem𝟎Alt : ∀{x y} → (xy : (x < y)) → (y ∣ᵣₑₘ x)(ℕ-to-𝕟 x ⦃ [↔]-to-[→] (decider-true (x < y)) xy ⦄)
+DivRem𝟎Alt : ∀{x y} → (xy : (x < y)) → (y ∣ᵣₑₘ x)(ℕ-to-𝕟 x ⦃ [↔]-to-[→] decider-true xy ⦄)
 DivRem𝟎Alt {x} {𝐒 y} ([≤]-with-[𝐒] ⦃ p ⦄) = [≡]-substitutionᵣ (𝕟.𝕟-ℕ-inverse) {expr ↦ (𝐒 y ∣ᵣₑₘ expr)(ℕ-to-𝕟 x)} ((DivRem𝟎{𝐒(y)}{ℕ-to-𝕟 x})) where
   instance
     x<𝐒y : IsTrue (x <? 𝐒(y))
-    x<𝐒y = [↔]-to-[→] (decider-true(_ < _)) ([≤]-with-[𝐒] ⦃ p ⦄)
+    x<𝐒y = [↔]-to-[→] decider-true ([≤]-with-[𝐒] ⦃ p ⦄)
 
 DivRem𝐒Alt : ∀{x y}{r : 𝕟(y)} → (x ≥ y) → (y ∣ᵣₑₘ x −₀ y)(r) → (y ∣ᵣₑₘ x)(r)
 DivRem𝐒Alt{x}{𝟎}{}
@@ -138,7 +138,7 @@ DivRem𝐒Alt{x}{𝐒(y)}{r} xy = [≡]-substitutionᵣ ([↔]-to-[→] ([−₀
   step : ∀{i} → (∀{j} → (j ≤ i) → ∃(𝐒(y) ∣ᵣₑₘ j)) → ∃(𝐒(y) ∣ᵣₑₘ 𝐒(i))
   step{i} p with [≤][>]-dichotomy {y}{i}
   ... | [∨]-introₗ yi = [∃]-map-proof (DivRem𝐒Alt([≤]-with-[𝐒] ⦃ yi ⦄)) (p{𝐒(i) −₀ 𝐒(y)} ([−₀]-lesser {i}{y}))
-  ... | [∨]-introᵣ 𝐒iy = [∃]-intro (ℕ-to-𝕟 (𝐒(i)) ⦃ [↔]-to-[→] (decider-true(_ < _)) 𝐒iy ⦄) ⦃ DivRem𝟎Alt ([≤]-with-[𝐒] ⦃ 𝐒iy ⦄) ⦄
+  ... | [∨]-introᵣ 𝐒iy = [∃]-intro (ℕ-to-𝕟 (𝐒(i)) ⦃ [↔]-to-[→] decider-true 𝐒iy ⦄) ⦃ DivRem𝟎Alt ([≤]-with-[𝐒] ⦃ 𝐒iy ⦄) ⦄
 
 {-
 open import Structure.Setoid.Uniqueness

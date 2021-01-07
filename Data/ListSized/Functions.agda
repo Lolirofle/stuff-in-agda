@@ -12,101 +12,98 @@ open import Type
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 private variable T A A₁ A₂ B B₁ B₂ Result : Type{ℓ}
-private variable n n₁ n₂ : ℕ
+private variable a b n n₁ n₂ : ℕ
 
 -- List concatenation
-_++_ : ∀{ℓ}{T : Type{ℓ}}{a b} → List(T)(a) → List(T)(b) → List(T)(a + b)
+_++_ : List(T)(a) → List(T)(b) → List(T)(a + b)
 _++_ ∅ b = b
 _++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
 infixl 1000 _++_
 
-module _ where
-  -- The first element of the list
-  head : List(T)(𝐒(n)) → T
-  head (x ⊰ _) = x
+-- The first element of the list
+head : List(T)(𝐒(n)) → T
+head (x ⊰ _) = x
 
-  -- The list without its first element
-  tail : List(T)(𝐒(n)) → List(T)(n)
-  tail (_ ⊰ l) = l
+-- The list without its first element
+tail : List(T)(𝐒(n)) → List(T)(n)
+tail (_ ⊰ l) = l
 
-  tail₀ : List(T)(n) → List(T)(𝐏(n))
-  tail₀ ∅       = ∅
-  tail₀ (_ ⊰ l) = l
+tail₀ : List(T)(n) → List(T)(𝐏(n))
+tail₀ ∅       = ∅
+tail₀ (_ ⊰ l) = l
 
-  -- The nth element in the list
-  index : 𝕟(n) → List(T)(n) → T
-  index 𝟎      (x ⊰ _) = x
-  index (𝐒(n)) (_ ⊰ l) = index n l
+-- The nth element in the list
+index : 𝕟(n) → List(T)(n) → T
+index 𝟎      (x ⊰ _) = x
+index (𝐒(n)) (_ ⊰ l) = index n l
 
-  -- The sublist with the first n elements in the list
-  first : (k : 𝕟₌(n)) → List(T)(n) → List(T)(𝕟-to-ℕ k)
-  first 𝟎      _       = ∅
-  first (𝐒(n)) (x ⊰ l) = x ⊰ (first n l)
+-- The sublist with the first n elements in the list
+first : (k : 𝕟₌(n)) → List(T)(n) → List(T)(𝕟-to-ℕ k)
+first 𝟎      _       = ∅
+first (𝐒(n)) (x ⊰ l) = x ⊰ (first n l)
 
-  -- skip : ∀{n} → (k : 𝕟₌(n)) → List(T)(n) → List(T)(n − k)
-  -- last : ∀{n} → (k : 𝕟₌(n)) → List(T)(n) → List(T)(𝕟-to-ℕ k)
+-- skip : ∀{n} → (k : 𝕟₌(n)) → List(T)(n) → List(T)(n − k)
+-- last : ∀{n} → (k : 𝕟₌(n)) → List(T)(n) → List(T)(𝕟-to-ℕ k)
 
-  -- Length of the list (number of elements in the list)
-  length : List(T)(n) → ℕ
-  length {n = n} _ = n
+-- Length of the list (number of elements in the list)
+length : List(T)(n) → ℕ
+length {n = n} _ = n
 
-  -- The list with an element repeated n times
-  repeat : T → (n : ℕ) → List(T)(n)
-  repeat _ 𝟎      = ∅
-  repeat x (𝐒(n)) = x ⊰ (repeat x n)
+-- The list with an element repeated n times
+repeat : T → (n : ℕ) → List(T)(n)
+repeat _ 𝟎      = ∅
+repeat x (𝐒(n)) = x ⊰ (repeat x n)
 
-  -- A list constructed from a function
-  fromFn : (𝕟(n) → T) → List(T)(n)
-  fromFn {n = 𝟎}    _ = ∅
-  fromFn {n = 𝐒(n)} f = f(𝟎) ⊰ fromFn {n = n} (f ∘ 𝐒)
+-- A list constructed from a function
+fromFn : (𝕟(n) → T) → List(T)(n)
+fromFn {n = 𝟎}    _ = ∅
+fromFn {n = 𝐒(n)} f = f(𝟎) ⊰ fromFn {n = n} (f ∘ 𝐒)
 
-  -- The list with a list concatenated (repeated) n times
-  _++^_ : List(T)(n) → (k : ℕ) → List(T)(n ⋅ k)
-  _++^_ _ 𝟎      = ∅
-  _++^_ l (𝐒(k)) = l ++ (l ++^ k)
+-- The list with a list concatenated (repeated) n times
+_++^_ : List(T)(n) → (k : ℕ) → List(T)(n ⋅ k)
+_++^_ _ 𝟎      = ∅
+_++^_ l (𝐒(k)) = l ++ (l ++^ k)
 
-module _ {ℓ₁}{ℓ₂} where
-  -- Applies a function to each element in the list
-  map : ∀{T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}}{n} → (T₁ → T₂) → List(T₁)(n) → List(T₂)(n)
-  map _ ∅       = ∅
-  map f (x ⊰ l) = f(x) ⊰ map f(l)
+-- Applies a function to each element in the list
+map : (A → B) → List(A)(n) → List(B)(n)
+map _ ∅       = ∅
+map f (x ⊰ l) = f(x) ⊰ map f(l)
 
-  -- Applies a binary operator to each element in the list starting with the initial element.
-  -- Example:
-  --   foldₗ(▫)(init)[]          = init
-  --   foldₗ(▫)(init)[a]         = init▫a
-  --   foldₗ(▫)(init)[a,b]       = (init▫a)▫b
-  --   foldₗ(▫)(init)[a,b,c,d,e] = ((((init▫a)▫b)▫c)▫d)▫e
-  foldₗ : ∀{T : Type{ℓ₁}}{Result : Type{ℓ₂}}{n} → (Result → T → Result) → Result → List(T)(n) → Result
-  foldₗ _    result ∅ = result
-  foldₗ(_▫_) result (elem ⊰ l) = foldₗ(_▫_) (result ▫ elem) l
+-- Applies a binary operator to each element in the list starting with the initial element.
+-- Example:
+--   foldₗ(▫)(init)[]          = init
+--   foldₗ(▫)(init)[a]         = init▫a
+--   foldₗ(▫)(init)[a,b]       = (init▫a)▫b
+--   foldₗ(▫)(init)[a,b,c,d,e] = ((((init▫a)▫b)▫c)▫d)▫e
+foldₗ : (Result → T → Result) → Result → List(T)(n) → Result
+foldₗ _    result ∅ = result
+foldₗ(_▫_) result (elem ⊰ l) = foldₗ(_▫_) (result ▫ elem) l
 
-  -- Applies a binary operator to each element in the list starting with the initial element.
-  -- Example:
-  --   foldᵣ(▫)(init)[]          = init
-  --   foldᵣ(▫)(init)[a]         = a▫init
-  --   foldᵣ(▫)(init)[a,b]       = a▫(b▫init)
-  --   foldᵣ(▫)(init)[a,b,c,d,e] = a▫(b▫(c▫(d▫(e▫init))))
-  foldᵣ : ∀{T : Type{ℓ₁}}{Result : Type{ℓ₂}}{n} → (T → Result → Result) → Result → List(T)(n) → Result
-  foldᵣ _    init ∅ = init
-  foldᵣ(_▫_) init (elem ⊰ l) = elem ▫ (foldᵣ(_▫_) init l)
+-- Applies a binary operator to each element in the list starting with the initial element.
+-- Example:
+--   foldᵣ(▫)(init)[]          = init
+--   foldᵣ(▫)(init)[a]         = a▫init
+--   foldᵣ(▫)(init)[a,b]       = a▫(b▫init)
+--   foldᵣ(▫)(init)[a,b,c,d,e] = a▫(b▫(c▫(d▫(e▫init))))
+foldᵣ : (T → Result → Result) → Result → List(T)(n) → Result
+foldᵣ _    init ∅ = init
+foldᵣ(_▫_) init (elem ⊰ l) = elem ▫ (foldᵣ(_▫_) init l)
 
-module _ {ℓ} {T : Type{ℓ}} where
-  -- Example:
-  --   reduceₗ(▫)[a]         = a
-  --   reduceₗ(▫)[a,b]       = a▫b
-  --   reduceₗ(▫)[a,b,c]     = (a▫b)▫c
-  --   reduceₗ(▫)[a,b,c,d,e] = (((a▫b)▫c)▫d)▫e
-  reduceₗ : ∀{n} → (T → T → T) → List(T)(𝐒(n)) → T
-  reduceₗ(_▫_) (elem ⊰ l) = foldₗ(_▫_) elem l
+-- Example:
+--   reduceₗ(▫)[a]         = a
+--   reduceₗ(▫)[a,b]       = a▫b
+--   reduceₗ(▫)[a,b,c]     = (a▫b)▫c
+--   reduceₗ(▫)[a,b,c,d,e] = (((a▫b)▫c)▫d)▫e
+reduceₗ : (T → T → T) → List(T)(𝐒(n)) → T
+reduceₗ(_▫_) (elem ⊰ l) = foldₗ(_▫_) elem l
 
-  -- Example:
-  --   reduceᵣ(▫)[a]         = a
-  --   reduceᵣ(▫)[a,b]       = a▫b
-  --   reduceᵣ(▫)[a,b,c]     = a▫(b▫c)
-  --   reduceᵣ(▫)[a,b,c,d,e] = a▫(b▫(c▫(d▫e)))
-  reduceᵣ : ∀{n} → (T → T → T) → List(T)(𝐒(n)) → T
-  reduceᵣ(_▫_) (elem ⊰ l) = foldᵣ(_▫_) elem l
+-- Example:
+--   reduceᵣ(▫)[a]         = a
+--   reduceᵣ(▫)[a,b]       = a▫b
+--   reduceᵣ(▫)[a,b,c]     = a▫(b▫c)
+--   reduceᵣ(▫)[a,b,c,d,e] = a▫(b▫(c▫(d▫e)))
+reduceᵣ : (T → T → T) → List(T)(𝐒(n)) → T
+reduceᵣ(_▫_) (elem ⊰ l) = foldᵣ(_▫_) elem l
 
 map₂ : (A₁ → A₂ → B) → (List(A₁)(n₁) → List(B)(n₁)) → (List(A₂)(n₂) → List(B)(n₂)) → (List(A₁)(n₁) → List(A₂)(n₂) → List(B)(max n₁ n₂))
 map₂ f g₁ g₂ ∅          ∅          = ∅

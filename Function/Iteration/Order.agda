@@ -135,7 +135,7 @@ module _ ⦃ equiv-T : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃ op : Bin
 
         instance
           ord-non-zero-comp : IsTrue(ord(x) ⦃ p ⦄ ≢? 𝟎)
-          ord-non-zero-comp = [↔]-to-[→] (decider-true(_ ≢ _)) (ord-non-zero ⦃ p ⦄)
+          ord-non-zero-comp = [↔]-to-[→] decider-true (ord-non-zero ⦃ p ⦄)
 
         instance
           ord-positive : IsTrue(positive?(ord(x) ⦃ p ⦄))

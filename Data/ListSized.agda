@@ -1,23 +1,16 @@
-module Data.ListSized where
-
 import      Lvl
-open import Numeral.Natural
 open import Type
 
-private variable ℓ : Lvl.Level
-private variable n : ℕ
-private variable T : Type{ℓ}
+module Data.ListSized {ℓ} (T : Type{ℓ}) where
+
+import      Data.IndexedList
+open import Functional
+open import Numeral.Natural
+
+open Data.IndexedList(T){ℕ} using (IndexedList ; intro)
 
 -- A list is a container/collection with elements in order and which allows multiples
-data List (T : Type{ℓ}) : ℕ → Type{ℓ} where
-  ∅   : List(T)(𝟎)                     -- An empty list
-  _⊰_ : T → List(T)(n) → List(T)(𝐒(n)) -- Cons
-infixr 1000 _⊰_
+List : ℕ → Type{ℓ}
+List(n) = IndexedList(intro 𝟎 (const 𝐒))(n)
 
-module LongOper where
-  pattern empty = ∅
-  pattern prepend elem list = elem ⊰ list
-
--- The list with only a single element
--- singleton : T → List(T)(1)
-pattern singleton x = x ⊰ ∅
+open Data.IndexedList(T){ℕ} using (∅ ; _⊰_ ; singleton) public

@@ -2,6 +2,7 @@ module Type.Properties.Decidable.Proofs where
 
 open import Data
 open import Data.Proofs
+open import Data.Boolean using (if_then_else_)
 open import Data.Boolean.Stmt
 open import Data.Either as Either using (_‖_)
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
@@ -24,12 +25,13 @@ open import Type.Properties.Singleton.Proofs
 open import Type
 
 private variable ℓ ℓₚ : Lvl.Level
-private variable A B C P Q : Type{ℓ}
-private variable b b₁ b₂ : Bool
+private variable A B C P Q R T : Type{ℓ}
+private variable b b₁ b₂ d : Bool
+private variable f : A → B
 
 module _ (P : Stmt{ℓ}) where
-  decider-classical : ∀{f} → ⦃ dec : Decider₀(P)(f) ⦄ → Classical(P)
-  Classical.excluded-middle (decider-classical ⦃ dec = d ⦄) = elim(\_ → (P ∨ (¬ P))) [∨]-introₗ [∨]-introᵣ d
+  decider-classical : ⦃ dec : Decider₀(P)(d) ⦄ → Classical(P)
+  Classical.excluded-middle (decider-classical ⦃ dec = dec ⦄) = elim(\_ → (P ∨ (¬ P))) [∨]-introₗ [∨]-introᵣ dec
 
   classical-decidable : ⦃ classical : Classical(P) ⦄ → Decidable(0)(P)
   ∃.witness classical-decidable = Either.isLeft(excluded-middle(P))
@@ -37,13 +39,27 @@ module _ (P : Stmt{ℓ}) where
   ... | Either.Left  p  | _ = true  p
   ... | Either.Right np | _ = false np
 
-  decider-true : ⦃ dec : Decider₀(P)(b) ⦄ → (P ↔ IsTrue(b))
-  decider-true ⦃ dec = true  p ⦄  = [↔]-intro (const p) (const <>)
-  decider-true ⦃ dec = false np ⦄ = [↔]-intro empty (empty ∘ np)
+  module _ {ℓ₂} {x y : R} {Pred : (P ∨ (¬ P)) → R → Type{ℓ₂}} where
+    decider-if-intro : ∀{f} ⦃ dec : Decider₀(P)(f) ⦄ → ((p : P) → Pred(Either.Left p)(x)) → ((np : (¬ P)) → Pred(Either.Right np)(y)) → Pred(excluded-middle(P) ⦃ decider-classical ⦄)(if f then x else y)
+    decider-if-intro {f = 𝑇} ⦃ true  p  ⦄ fp _   = fp  p
+    decider-if-intro {f = 𝐹} ⦃ false np ⦄ _  fnp = fnp np
 
-  decider-false : ⦃ dec : Decider₀(P)(b) ⦄ → ((P → Empty{ℓ}) ↔ IsFalse(b))
-  decider-false ⦃ dec = true  p ⦄  = [↔]-intro empty (empty ∘ apply p)
-  decider-false ⦃ dec = false np ⦄ = [↔]-intro (const(empty ∘ np)) (const <>)
+decider-to-classical : ⦃ dec : Decider₀(P)(d) ⦄ → Classical(P)
+decider-to-classical{P = P} = decider-classical(P)
+
+classical-to-decidable : ⦃ classical : Classical(P) ⦄ → Decidable(0)(P)
+classical-to-decidable{P = P} = classical-decidable(P)
+
+classical-to-decider : ⦃ classical : Classical(P) ⦄ → Decider(0)(P)([∃]-witness classical-to-decidable)
+classical-to-decider{P = P} = [∃]-proof classical-to-decidable
+
+decider-true : ⦃ dec : Decider₀(P)(b) ⦄ → (P ↔ IsTrue(b))
+decider-true ⦃ dec = true  p ⦄  = [↔]-intro (const p) (const <>)
+decider-true ⦃ dec = false np ⦄ = [↔]-intro empty (empty ∘ np)
+
+decider-false : ⦃ dec : Decider₀(P)(b) ⦄ → ((P → Empty{ℓ}) ↔ IsFalse(b))
+decider-false ⦃ dec = true  p ⦄  = [↔]-intro empty (empty ∘ apply p)
+decider-false ⦃ dec = false np ⦄ = [↔]-intro (const(empty ∘ np)) (const <>)
 
 isempty-decider : ⦃ empty : IsEmpty(P) ⦄ → Decider₀(P)(𝐹)
 isempty-decider ⦃ intro p ⦄ = false (empty ∘ p)

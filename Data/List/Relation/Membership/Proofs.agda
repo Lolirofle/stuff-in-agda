@@ -1,168 +1,177 @@
-open import Type
-
--- Finite sets represented by lists
-module Data.List.Relation.Membership.Proofs {ℓ} {T : Type{ℓ}} where
+module Data.List.Relation.Membership.Proofs where
 
 import Lvl
 open import Functional
 open import Data.List
 open import Data.List.Functions hiding (skip)
-open import Data.List.Proofs
-open import Data.List.Relation.Membership {ℓ}{T}
+open import Data.List.Relation.Membership
+open import Data.List.Relation.Quantification
+open import Data.List.Relation.Quantification.Proofs
 open import Logic
 open import Logic.Propositional
-open import Logic.Propositional.Theorems
-open import Logic.Predicate
 open import Numeral.Natural
-open import Numeral.Natural.Oper.Proofs
-open import Relator.Equals renaming (_≡_ to _[≡]_ ; _≢_ to _[≢]_)
-open import Relator.Equals.Proofs hiding ([≡]-substitutionₗ ; [≡]-substitutionᵣ ; [≡]-reflexivity ; [≡]-transitivity ; [≡]-symmetry)
-open import Structure.Operator.Properties
+open import Structure.Function
+open import Structure.Relator.Properties
+open import Structure.Setoid renaming (_≡_ to _≡ₛ_)
+open import Type
 
-pattern [∈]-id        {a}{L}          = use  {a}{L}
-pattern [∈][⊰]-expand {a}{x}{L} proof = skip {a}{x}{L} ⦃ proof ⦄
+private variable ℓ ℓₑ ℓₑ₁ ℓₑ₂ : Lvl.Level
+private variable T A B : Type{ℓ}
 
-[∉]-empty : ∀{a} → (a ∉ ∅)
-[∉]-empty ()
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  private variable l l₁ l₂ : List(T)
+  private variable a b c x : T
 
-[∈]-singleton : ∀{a} → (a ∈ singleton(a))
-[∈]-singleton = [∈]-id
+  [∈]-self : AllElements(_∈ l)(l)
+  [∈]-self {∅}     = ∅
+  [∈]-self {x ⊰ l} = (• reflexivity(_≡ₛ_)) ⊰ AllElements-fn (⊰_) ([∈]-self {l})
 
-[∈]-singleton-[≡] : ∀{a b} → (a ∈ singleton(b)) → (a [≡] b)
-[∈]-singleton-[≡] ([∈]-id)  = [≡]-intro
-[∈]-singleton-[≡] ([∈][⊰]-expand ())
+  [∉]-empty : (a ∉ ∅)
+  [∉]-empty ()
 
-[∉]-singleton-[≢] : ∀{a b} → (a [≢] b) → (a ∉ singleton(b))
-[∉]-singleton-[≢] = contrapositiveᵣ [∈]-singleton-[≡]
+  [∈]-singleton : (a ∈ singleton(a))
+  [∈]-singleton = use(reflexivity(_≡ₛ_))
 
-[∈]-of-[++]ᵣ : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → ((a ∈ L₁)∨(a ∈ L₂))
-[∈]-of-[++]ᵣ {_}{∅}{_} a∈L₂ = [∨]-introᵣ(a∈L₂)
-[∈]-of-[++]ᵣ {_}{_ ⊰ L₁}{L₂} ([∈]-id) = [∨]-introₗ([∈]-id)
-[∈]-of-[++]ᵣ {a}{x ⊰ L₁}{L₂} ([∈][⊰]-expand a∈L₁) with [∈]-of-[++]ᵣ {a}{L₁}{L₂} (a∈L₁)
-... | [∨]-introₗ(a∈L₁∖a) = [∨]-introₗ([∈][⊰]-expand(a∈L₁∖a))
-... | [∨]-introᵣ(a∈L₂) = [∨]-introᵣ(a∈L₂)
+  [∈]-singleton-[≡] : (a ∈ singleton(b)) → (a ≡ₛ b)
+  [∈]-singleton-[≡] (use p) = p
+  [∈]-singleton-[≡] (skip ())
 
-[∈]-of-[++]ₗ : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) ← ((a ∈ L₁)∨(a ∈ L₂))
-[∈]-of-[++]ₗ {_}{∅}{_} ([∨]-introₗ ())
-[∈]-of-[++]ₗ {_}{∅}{_} ([∨]-introᵣ(a∈L₂)) = (a∈L₂)
-[∈]-of-[++]ₗ {_}{_ ⊰ L₁}{L₂} ([∨]-introₗ([∈]-id)) = [∈]-id
-[∈]-of-[++]ₗ {a}{x ⊰ L₁}{L₂} ([∨]-introₗ([∈][⊰]-expand a∈L₁)) = [∈][⊰]-expand([∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introₗ(a∈L₁)))
-[∈]-of-[++]ₗ {a}{x ⊰ L₁}{L₂} ([∨]-introᵣ(a∈L₂)) = [∈][⊰]-expand{a}{x}([∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introᵣ(a∈L₂)))
+  [∈][++] : (a ∈ (l₁ ++ l₂)) ↔ ((a ∈ l₁) ∨ (a ∈ l₂))
+  [∈][++] = [↔]-intro L R where
+    L : (a ∈ (l₁ ++ l₂)) ← ((a ∈ l₁) ∨ (a ∈ l₂))
+    L {l₁ = ∅}      ([∨]-introᵣ p)     = p
+    L {l₁ = x ⊰ l₁} ([∨]-introₗ (• p)) = • p
+    L {l₁ = x ⊰ l₁} ([∨]-introₗ (⊰ p)) = ⊰ L {l₁ = l₁} ([∨]-introₗ p)
+    L {l₁ = x ⊰ l₁} ([∨]-introᵣ p)     = ⊰ L {l₁ = l₁} ([∨]-introᵣ p)
 
-[∈]-of-[++] : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) ↔ ((a ∈ L₁)∨(a ∈ L₂))
-[∈]-of-[++] = [↔]-intro [∈]-of-[++]ₗ [∈]-of-[++]ᵣ
+    R : (a ∈ (l₁ ++ l₂)) → ((a ∈ l₁) ∨ (a ∈ l₂))
+    R {l₁ = ∅}      p     = [∨]-introᵣ p
+    R {l₁ = x ⊰ l₁} (• p) = [∨]-introₗ (• p)
+    R {l₁ = x ⊰ l₁} (⊰ p) with R {l₁ = l₁} p
+    ... | [∨]-introₗ q = [∨]-introₗ (⊰ q)
+    ... | [∨]-introᵣ q = [∨]-introᵣ q
 
-[∈][++]-commute : ∀{a}{L₁ L₂} → (a ∈ (L₁ ++ L₂)) → (a ∈ (L₂ ++ L₁))
-[∈][++]-commute {a}{L₁}{L₂} (a∈L₁++L₂) = [∈]-of-[++]ₗ {a} {L₂}{L₁} ([∨]-symmetry([∈]-of-[++]ᵣ (a∈L₁++L₂)))
+  [∈]-postpend : (a ∈ postpend a l)
+  [∈]-postpend{l = ∅}     = use (reflexivity(_≡ₛ_))
+  [∈]-postpend{l = _ ⊰ l} = skip([∈]-postpend{l = l})
 
-[∈][++]-duplicate : ∀{a}{L} → (a ∈ (L ++ L)) → (a ∈ L)
-[∈][++]-duplicate {a}{L} (a∈LL) = [∨]-elim id id ([∈]-of-[++]ᵣ {a} {L}{L} (a∈LL))
+module _ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
+  private variable f : A → B
+  private variable l l₁ l₂ : List(T)
+  private variable a b c x : T
 
-[∈][++]-expandₗ : ∀{a}{L₁ L₂} → (a ∈ L₂) → (a ∈ (L₁ ++ L₂))
-[∈][++]-expandₗ {a}{L₁}{L₂} (a∈L₂) = [∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introᵣ (a∈L₂))
+  [∈]-map : ⦃ func-f : Function(f) ⦄ → (a ∈ l) → (f(a) ∈ (map f(l)))
+  [∈]-map {f = f} (use p)  = use (congruence₁(f) p)
+  [∈]-map         (skip p) = skip([∈]-map p)
 
-[∈][++]-expandᵣ : ∀{a}{L₁ L₂} → (a ∈ L₁) → (a ∈ (L₁ ++ L₂))
-[∈][++]-expandᵣ {a}{L₁}{L₂} (a∈L₁) = [∈]-of-[++]ₗ {a}{L₁}{L₂} ([∨]-introₗ (a∈L₁))
+{- TODO: Stuff below is supposed to be moved to Structure.Sets.Proofs
 
-[∈][⊰]-reorderₗ : ∀{a x}{L₁ L₂} → (a ∈ (L₁ ++ (x ⊰ L₂))) → (a ∈ (x ⊰ (L₁ ++ L₂)))
-[∈][⊰]-reorderₗ {a}{x}{L₁}{L₂} (a∈L₁++xL₂) = [∨]-elim left right ([∈]-of-[++]ᵣ (a∈L₁++xL₂)) where
-  left : (a ∈ L₁) → (a ∈ (x ⊰ (L₁ ++ L₂)))
-  left (a∈L₁) = [∈][⊰]-expand ([∈][++]-expandᵣ {a}{L₁}{L₂} (a∈L₁))
+[∈][++]-expandₗ : (a ∈ l₂) → (a ∈ (l₁ ++ l₂))
+[∈][++]-expandₗ {l₂ = l₂}{l₁ = l₁} = [↔]-to-[←] ([∈][++] {l₁ = l₁}{l₂ = l₂}) ∘ [∨]-introᵣ
 
-  right : ∀{a} → (a ∈ (x ⊰ L₂)) → (a ∈ (x ⊰ (L₁ ++ L₂)))
-  right (use)              = use
-  right ([∈][⊰]-expand (a∈L₂)) = [∈][⊰]-expand ([∈][++]-expandₗ {_}{L₁}{L₂} (a∈L₂))
+[∈][++]-expandᵣ : (a ∈ l₁) → (a ∈ (l₁ ++ l₂))
+[∈][++]-expandᵣ {l₁ = l₁}{l₂ = l₂} = [↔]-to-[←] ([∈][++] {l₁ = l₁}{l₂ = l₂}) ∘ [∨]-introₗ
 
--- [∈][⊰]-reorderᵣ : ∀{a x}{L₁ L₂} → (a ∈ (x ⊰ (L₁ ++ L₂))) → (a ∈ (L₁ ++ (x ⊰ L₂)))
--- [∈][⊰]-reorderᵣ {a}{x}{L₁}{L₂} ([∈]-id) = 
--- [∈][⊰]-reorderᵣ {a}{x}{L₁}{L₂} ([∈][⊰]-expand (a∈L₁++L₂)) = 
+[∈][⊰]-reorderₗ : (a ∈ (l₁ ++ (x ⊰ l₂))) → (a ∈ (x ⊰ (l₁ ++ l₂)))
+[∈][⊰]-reorderₗ (a∈l₁++xl₂) = [∨]-elim left right ([↔]-to-[→] [∈]-[++] (a∈l₁++xl₂)) where
+  left : (a ∈ l₁) → (a ∈ (x ⊰ (l₁ ++ l₂)))
+  left (a∈l₁) = [∈][⊰]-expand ([∈][++]-expandᵣ {a}{l₁}{l₂} (a∈l₁))
 
-[∈]-apply : ∀{a}{L} → (a ∈ L) → ∀{f} → (f(a) ∈ (map f(L)))
-[∈]-apply ([∈]-id)               = [∈]-id
-[∈]-apply ([∈][⊰]-expand(proof)) = [∈][⊰]-expand([∈]-apply(proof))
+  right : ∀{a} → (a ∈ (x ⊰ l₂)) → (a ∈ (x ⊰ (l₁ ++ l₂)))
+  {-right ([∈]-id)              = use
+  right ([∈][⊰]-expand (a∈l₂)) = [∈][⊰]-expand ([∈][++]-expandₗ {_}{l₁}{l₂} (a∈l₂))-}
 
+-- [∈][⊰]-reorderᵣ : ∀{a x}{l₁ l₂} → (a ∈ (x ⊰ (l₁ ++ l₂))) → (a ∈ (l₁ ++ (x ⊰ l₂)))
+-- [∈][⊰]-reorderᵣ {a}{x}{l₁}{l₂} ([∈]-id) = 
+-- [∈][⊰]-reorderᵣ {a}{x}{l₁}{l₂} ([∈][⊰]-expand (a∈l₁++l₂)) = 
 
-[∈]-at-last : ∀{L} → ∀{a} → (a ∈ (L ++ singleton(a)))
-[∈]-at-last{∅}        = [∈]-id
-[∈]-at-last{_ ⊰ rest} = [∈][⊰]-expand ([∈]-at-last{rest})
-
-
-[∈]-in-middle : ∀{L₁ L₂} → ∀{a} → (a ∈ (L₁ ++ singleton(a) ++ L₂))
-[∈]-in-middle{L₁}{L₂}{a} = [∈]-of-[++]ₗ {a}{L₁ ++ singleton(a)}{L₂} ([∨]-introₗ ([∈]-at-last{L₁}))
+[∈]-in-middle : (a ∈ (l₁ ++ singleton(a) ++ l₂))
+[∈]-in-middle{a}{l₁}{l₂} = [↔]-to-[←] ([∈]-[++] {a}{l₁ ++ singleton(a)}{l₂}) ([∨]-introₗ ([∈]-at-last{l = l₁}))
 
 module _ where
   private variable ℓ₂ : Lvl.Level
 
-  [⊆]-substitution : ∀{L₁ L₂ : List(T)} → (L₁ ⊆ L₂) → ∀{P : T → Stmt{ℓ₂}} → (∀{a} → (a ∈ L₂) → P(a)) → (∀{a} → (a ∈ L₁) → P(a))
-  [⊆]-substitution (L₁⊆L₂) proof = proof ∘ (L₁⊆L₂)
+  [⊆]-substitution : ∀{l₁ l₂ : List(T)} → (l₁ ⊆ l₂) → ∀{P : T → Stmt{ℓ₂}} → (∀{a} → (a ∈ l₂) → P(a)) → (∀{a} → (a ∈ l₁) → P(a))
+  [⊆]-substitution (l₁⊆l₂) proof = proof ∘ (l₁⊆l₂)
 
-  [⊇]-substitution : ∀{L₁ L₂ : List(T)} → (L₁ ⊇ L₂) → ∀{P : T → Stmt{ℓ₂}} → (∀{a} → (a ∈ L₁) → P(a)) → (∀{a} → (a ∈ L₂) → P(a))
-  [⊇]-substitution (L₁⊇L₂) proof = proof ∘ (L₁⊇L₂)
+  [⊇]-substitution : ∀{l₁ l₂ : List(T)} → (l₁ ⊇ l₂) → ∀{P : T → Stmt{ℓ₂}} → (∀{a} → (a ∈ l₁) → P(a)) → (∀{a} → (a ∈ l₂) → P(a))
+  [⊇]-substitution (l₁⊇l₂) proof = proof ∘ (l₁⊇l₂)
 
-  [≡]-substitutionₗ : ∀{L₁ L₂ : List(T)} → (L₁ ≡ L₂) → ∀{P : T → Stmt{ℓ₂}} → (∀{a} → (a ∈ L₁) → P(a)) → (∀{a} → (a ∈ L₂) → P(a))
-  [≡]-substitutionₗ (L₁≡L₂) = [⊆]-substitution ([↔]-to-[←] (L₁≡L₂))
+  [≡]-substitutionₗ : ∀{l₁ l₂ : List(T)} → (l₁ ≡ l₂) → ∀{P : T → Stmt{ℓ₂}} → (∀{a} → (a ∈ l₁) → P(a)) → (∀{a} → (a ∈ l₂) → P(a))
+  [≡]-substitutionₗ (l₁≡l₂) = [⊆]-substitution ([↔]-to-[←] (l₁≡l₂))
 
-  [≡]-substitutionᵣ : ∀{L₁ L₂ : List(T)} → (L₁ ≡ L₂) → ∀{P : T → Stmt{ℓ₂}} → (∀{a} → (a ∈ L₂) → P(a)) → (∀{a} → (a ∈ L₁) → P(a))
-  [≡]-substitutionᵣ (L₁≡L₂) = [⊆]-substitution ([↔]-to-[→] (L₁≡L₂))
+  [≡]-substitutionᵣ : ∀{l₁ l₂ : List(T)} → (l₁ ≡ l₂) → ∀{P : T → Stmt{ℓ₂}} → (∀{a} → (a ∈ l₂) → P(a)) → (∀{a} → (a ∈ l₁) → P(a))
+  [≡]-substitutionᵣ (l₁≡l₂) = [⊆]-substitution ([↔]-to-[→] (l₁≡l₂))
+-}
 
-[⊆]-reflexivity : ∀{L} → (L ⊆ L)
-[⊆]-reflexivity = id
+{-
+open import Structure.Relator.Properties
 
+instance
+  [⊆]-reflexivity : Reflexivity(_⊆_)
+  Reflexivity.proof [⊆]-reflexivity = id
 
-[⊆]-antisymmetry : ∀{L₁ L₂} → (L₁ ⊆ L₂) → (L₂ ⊆ L₁) → (L₁ ≡ L₂)
-[⊆]-antisymmetry a b = (swap [↔]-intro) a b
+instance
+  [⊆]-antisymmetry : Antisymmetry(_⊆_)(_≡_)
+  Antisymmetry.proof [⊆]-antisymmetry = swap [↔]-intro
 
+instance
+  [⊆]-transitivity : Transitivity(_⊆_)
+  Transitivity.proof [⊆]-transitivity xy yz = yz ∘ xy
 
-[⊆]-transitivity : ∀{L₁ L₂ L₃} → (L₁ ⊆ L₂) → (L₂ ⊆ L₃) → (L₁ ⊆ L₃)
-[⊆]-transitivity a b = (swap _∘_) a b
-
+instance
+  [⊆]-reflexivity : Reflexivity(_⊆_)
 
 [≡]-reflexivity : ∀{L} → (L ≡ L)
-[≡]-reflexivity = [↔]-intro [⊆]-reflexivity [⊆]-reflexivity
+-- [≡]-reflexivity = [↔]-intro [⊆]-reflexivity [⊆]-reflexivity
 
 
-[≡]-symmetry : ∀{L₁ L₂} → (L₁ ≡ L₂) → (L₂ ≡ L₁)
-[≡]-symmetry (L₁≡L₂) {x} with (L₁≡L₂){x}
+[≡]-symmetry : ∀{l₁ l₂} → (l₁ ≡ l₂) → (l₂ ≡ l₁)
+[≡]-symmetry (l₁≡l₂) {x} with (l₁≡l₂){x}
 ... | [↔]-intro l r = [↔]-intro r l
 
 
-[≡]-transitivity : ∀{L₁ L₂ L₃} → (L₁ ≡ L₂) → (L₂ ≡ L₃) → (L₁ ≡ L₃)
-[≡]-transitivity (L₁≡L₂) (L₂≡L₃) {x} with [∧]-intro ((L₁≡L₂){x}) ((L₂≡L₃){x})
+[≡]-transitivity : ∀{l₁ l₂ L₃} → (l₁ ≡ l₂) → (l₂ ≡ L₃) → (l₁ ≡ L₃)
+[≡]-transitivity (l₁≡l₂) (l₂≡L₃) {x} with [∧]-intro ((l₁≡l₂){x}) ((l₂≡L₃){x})
 ... | ([∧]-intro (lr₁) (lr₂)) = [↔]-transitivity  (lr₁) (lr₂)
 
--- [⊆]-application : ∀{L₁ L₂} → (L₁ ⊆ L₂) → ∀{f} → (map f(L₁))⊆(map f(L₂))
--- [⊆]-application proof fL₁ = [∈]-proof.application ∘ proof
--- (∀{x} → (x ∈ L₂) → (x ∈ L₁)) → ∀{f} → (∀{x} → (x ∈ map f(L₂)) → (x ∈ map f(L₁)))
+-- [⊆]-application : ∀{l₁ l₂} → (l₁ ⊆ l₂) → ∀{f} → (map f(l₁))⊆(map f(l₂))
+-- [⊆]-application proof fl₁ = [∈]-proof.application ∘ proof
+-- (∀{x} → (x ∈ l₂) → (x ∈ l₁)) → ∀{f} → (∀{x} → (x ∈ map f(l₂)) → (x ∈ map f(l₁)))
 
+{-
 [≡]-included-in : ∀{L : List(T)}{x} → (x ∈ L) → ((x ⊰ L) ≡ L)
-[≡]-included-in xL = [⊆]-antisymmetry (r xL) (l xL) where
-  l : ∀{L : List(T)}{x} → (x ∈ L) → ((x ⊰ L) ⊇ L)
-  l use  use  = use
-  l use  skip = skip
-  l skip use  = skip ⦃ use ⦄
-  l skip skip = skip ⦃ skip ⦄
+[≡]-included-in xL = [⊆]-antisymmetry (sub xL) (super xL) where
+  super : ∀{L : List(T)}{x} → (x ∈ L) → ((x ⊰ L) ⊇ L)
+  super [∈]-id  [∈]-id  = [∈]-id
+  super [∈]-id  (skip p) = skip ?
+  super (skip p) [∈]-id  = skip(use ?)
+  super (skip p ) (skip q) = skip(skip ?)
 
-  r : ∀{L : List(T)}{x} → (x ∈ L) → ((x ⊰ L) ⊆ L)
-  r use  use          = use
-  r use  (skip ⦃ p ⦄) = p
-  r skip use          = skip
-  r skip (skip ⦃ p ⦄) = p
+  sub : ∀{L : List(T)}{x} → (x ∈ L) → ((x ⊰ L) ⊆ L)
+  sub use  use          = use
+  sub use  (skip ⦃ p ⦄) = p
+  sub skip use          = skip
+  sub skip (skip ⦃ p ⦄) = p
+-}
 
-postulate [≡]-included-subset : ∀{L₁ L₂ : List(T)} → (L₁ ⊆ L₂) → ((L₁ ++ L₂) ≡ L₂)
+postulate [≡]-included-subset : ∀{l₁ l₂ : List(T)} → (l₁ ⊆ l₂) → ((l₁ ++ l₂) ≡ l₂)
 
-postulate [≡]-subset-[++] : ∀{L L₁ L₂ : List(T)} → (L₁ ⊆ L) → (L₂ ⊆ L) → (L₁ ++ L₂ ⊆ L)
-
-
-[⊆]-with-[⊰] : ∀{L₁ L₂ : List(T)} → (L₁ ⊆ L₂) → ∀{b} → (L₁ ⊆ (b ⊰ L₂))
-[⊆]-with-[⊰] (L₁⊆L₂) (x∈L₁) = [∈][⊰]-expand ((L₁⊆L₂) (x∈L₁))
+postulate [≡]-subset-[++] : ∀{L l₁ l₂ : List(T)} → (l₁ ⊆ L) → (l₂ ⊆ L) → (l₁ ++ l₂ ⊆ L)
 
 
-[⊆]-with-[++]ₗ : ∀{L₁ L₂ : List(T)} → (L₁ ⊆ L₂) → ∀{L₃} → (L₁ ⊆ (L₃ ++ L₂))
-[⊆]-with-[++]ₗ {L₁}{L₂} (L₁⊆L₂) {L₃} (x∈L₁) = [∈][++]-expandₗ {_}{L₃}{L₂} ((L₁⊆L₂) (x∈L₁))
+[⊆]-with-[⊰] : ∀{l₁ l₂ : List(T)} → (l₁ ⊆ l₂) → ∀{b} → (l₁ ⊆ (b ⊰ l₂))
+[⊆]-with-[⊰] (l₁⊆l₂) (x∈l₁) = [∈][⊰]-expand ((l₁⊆l₂) (x∈l₁))
 
 
-[⊆]-with-[++]ᵣ : ∀{L₁ L₂ : List(T)} → (L₁ ⊆ L₂) → ∀{L₃} → (L₁ ⊆ (L₂ ++ L₃))
-[⊆]-with-[++]ᵣ {L₁}{L₂} (L₁⊆L₂) {L₃} (x∈L₁) = [∈][++]-expandᵣ {_}{L₂}{L₃} ((L₁⊆L₂) (x∈L₁))
+[⊆]-with-[++]ₗ : ∀{l₁ l₂ : List(T)} → (l₁ ⊆ l₂) → ∀{L₃} → (l₁ ⊆ (L₃ ++ l₂))
+-- [⊆]-with-[++]ₗ {l₁}{l₂} (l₁⊆l₂) {L₃} (x∈l₁) = [∈][++]-expandₗ {_}{L₃}{l₂} ((l₁⊆l₂) (x∈l₁))
+
+
+[⊆]-with-[++]ᵣ : ∀{l₁ l₂ : List(T)} → (l₁ ⊆ l₂) → ∀{L₃} → (l₁ ⊆ (l₂ ++ L₃))
+[⊆]-with-[++]ᵣ {l₁}{l₂} (l₁⊆l₂) {L₃} (x∈l₁) = [∈][++]-expandᵣ {_}{l₂}{L₃} ((l₁⊆l₂) (x∈l₁))
 
 -- TODO: Does this work? It would be easier to "port" all (∈)-theorems to (⊆)-theorems then.
--- [∈]-to-[⊆]-property : ∀{L₂}{f : List(T) → List(T)} → (∀{a} → (a ∈ L₂) → (a ∈ f(L₂))) → (∀{L₁} → (L₁ ⊆ L₂) → (L₁ ⊆ f(L₂)))
+-- [∈]-to-[⊆]-property : ∀{l₂}{f : List(T) → List(T)} → (∀{a} → (a ∈ l₂) → (a ∈ f(l₂))) → (∀{l₁} → (l₁ ⊆ l₂) → (l₁ ⊆ f(l₂)))
+
+-}

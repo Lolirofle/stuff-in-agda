@@ -20,6 +20,7 @@ open        Data.List.Functions.LongOper
 open import Data.List.Proofs
 open import Functional as Fn using (_$_ ; _∘_ ; const)
 import      Function.Equals as Fn
+open import Lang.Instance
 import      Numeral.Natural.Oper.Summation
 open import Numeral.Natural.Oper.Summation.Range
 open import Numeral.Natural.Oper.Summation.Range.Proofs
@@ -32,7 +33,7 @@ open import Syntax.Function
 open import Syntax.Transitivity
 
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ where
-  open Numeral.Natural.Oper.Summation ⦃ monoid = monoid ⦄
+  open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = monoid ⦄
   open Monoid(monoid) using (id) renaming (binary-operator to [▫]-binary-operator)
   open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
@@ -93,7 +94,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   private variable _+_ _⋅_ : T → T → T
 
   module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ comm : Commutativity(_+_) ⦄ where
-    open Numeral.Natural.Oper.Summation ⦃ monoid = monoid ⦄
+    open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = monoid ⦄
     open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
     open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
@@ -107,7 +108,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
       ∑(prepend r₀ r) (x ↦ f(x) + g(x))        🝖-end
 
   module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ distₗ : Distributivityₗ(_⋅_)(_+_) ⦄ ⦃ absorᵣ : Absorberᵣ(_⋅_)(Monoid.id monoid) ⦄ where
-    open Numeral.Natural.Oper.Summation ⦃ monoid = monoid ⦄
+    open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = monoid ⦄
     open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
     open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
@@ -119,7 +120,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
       c ⋅ (f(r₀) + (∑(r) f))            🝖-end
 
   module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ distᵣ : Distributivityᵣ(_⋅_)(_+_) ⦄ ⦃ absorₗ : Absorberₗ(_⋅_)(Monoid.id monoid) ⦄ where
-    open Numeral.Natural.Oper.Summation ⦃ monoid = monoid ⦄
+    open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = monoid ⦄
     open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
     open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
@@ -132,14 +133,14 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   module _ ⦃ field-structure : Field(_+_)(_⋅_) ⦄ where
     open Field(field-structure)
-    open Numeral.Natural.Oper.Summation ⦃ monoid = [+]-monoid ⦄
+    open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = [+]-monoid ⦄
 
 open import Relator.Equals hiding (_≡_)
 open import Relator.Equals.Proofs.Equiv
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Oper.Proofs.Structure
-open Numeral.Natural.Oper.Summation ⦃ monoid = [+]-monoid ⦄ -- TODO: Generalize all the proofs
+open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = [+]-monoid ⦄ -- TODO: Generalize all the proofs
 
 private variable f g : ℕ → ℕ
 private variable x a b c k n : ℕ
@@ -302,7 +303,7 @@ module _ where
 
   mapDep : ∀{ℓ₁ ℓ₂}{A : Type{ℓ₁}}{B : Type{ℓ₂}} → (l : List(A)) → ((elem : A) → ⦃ _ : (elem ∈ l) ⦄ → B) → List(B)
   mapDep ∅ _ = ∅
-  mapDep (elem ⊰ l) f = (f elem ⦃ use ⦄) ⊰ (mapDep l (\x → f x ⦃ _∈_.skip ⦄))
+  mapDep (elem ⊰ l) f = (f elem ⦃ use [≡]-intro ⦄) ⊰ (mapDep l (\x → f x ⦃ _∈_.skip infer ⦄))
 
   -- ∑dep : (r : List(ℕ)) → ((i : ℕ) → ⦃ _ : (i ∈ r) ⦄ → ℕ) → ℕ
 

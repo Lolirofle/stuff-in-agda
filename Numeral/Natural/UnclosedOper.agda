@@ -93,4 +93,4 @@ _−fin_ : (x : ℕ) → 𝕟(𝐒(x)) → 𝕟(𝐒(x))
 
 -- Modulo operation to upper bounded natural numbers.
 _modfin_ : ℕ → (b : ℕ) → ⦃ _ : IsTrue(b ≢? 𝟎) ⦄ → 𝕟(b)
-a modfin 𝐒 b = 𝕟.ℕ-to-𝕟 (a mod 𝐒(b)) ⦃ [↔]-to-[→] (decider-true(_ < _)) (mod-maxᵣ{a}{𝐒 b}) ⦄
+a modfin 𝐒 b = 𝕟.ℕ-to-𝕟 (a mod 𝐒(b)) ⦃ [↔]-to-[→] decider-true (mod-maxᵣ{a}{𝐒 b}) ⦄

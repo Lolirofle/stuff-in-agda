@@ -33,6 +33,7 @@ import Data.Either.Setoid
 import Data.Either
 import Data.FixedTree.Properties
 import Data.FixedTree
+import Data.IndexedList
 import Data.Iterator
 import Data.List.Categorical
 import Data.List.Combinatorics.Proofs
@@ -188,6 +189,7 @@ import Logic.Propositional.Theorems
 import Logic.Propositional.Xor
 import Logic.Propositional
 import Logic
+import Lvl.Decidable
 import Lvl.Functions
 import Lvl.MultiFunctions.Proofs
 import Lvl.MultiFunctions
@@ -292,6 +294,7 @@ import Relator.Equals
 import Relator.Ordering.Proofs
 import Relator.Ordering
 import Relator.ReflexiveTransitiveClosure
+import Relator.Sets
 import Sets.BoolSet
 -- import Sets.ExtensionalPredicateSet.SetLike
 import Sets.ExtensionalPredicateSet

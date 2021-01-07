@@ -22,6 +22,8 @@ open import Structure.Relator
 open import Syntax.Function
 open import Syntax.Transitivity
 open import Type.Dependent
+open import Type.Properties.Decidable
+open import Type.Properties.Decidable.Proofs
 
 module _ where
   private variable {ℓ ℓ₁ ℓ₂} : Lvl.Level
@@ -103,6 +105,9 @@ module _ where
 
   open import Logic.Classical
   module _ ⦃ classical : ∀{ℓ}{P} → Classical{ℓ}(P) ⦄ where
+    instance _ = classical-to-decidable
+    instance _ = classical-to-decider
+
     indexFilterBool-subset : ∀{A : Iset{ℓ}}{P} → (indexFilterBool A P ⊆ A)
     _⊇_.map indexFilterBool-subset (intro iA _) = iA
     _⊇_.proof (indexFilterBool-subset {ℓ = ℓ}{A = A}{P = P}) {intro iA (Lvl.up PiA)} =
@@ -112,8 +117,8 @@ module _ where
       elem A iA                                                            🝖[ _≡_ ]-end
 
     ℘-membershipₗ : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (B ∈ ℘(A)) ← (B ⊆ A)
-    ∃.witness (℘-membershipₗ {A = A}{B = B} BA) iA = decide(∃(iB ↦ Id(_⊆_.map BA iB) iA))
-    _⊇_.map (Tuple.left (∃.proof (℘-membershipₗ {A = A} {B = B} _))) (intro iA (Lvl.up mapiBiA)) = [∃]-witness([↔]-to-[←] decide-is-true mapiBiA)
+    ∃.witness (℘-membershipₗ {A = A}{B = B} BA) iA = decide(0)(∃(iB ↦ Id(_⊆_.map BA iB) iA))
+    _⊇_.map (Tuple.left (∃.proof (℘-membershipₗ {A = A} {B = B} _))) (intro iA (Lvl.up mapiBiA)) = [∃]-witness([↔]-to-[←] decider-true mapiBiA)
     _⊇_.proof (Tuple.left (∃.proof (℘-membershipₗ {ℓ = ℓ} {A = A} {B = B} BA))) {intro iA (Lvl.up mapiBiA)} =
       elem (elem (℘ A) f) (intro iA (Lvl.up mapiBiA))                          🝖[ _≡_ ]-[]
       elem (indexFilterBool A f) (intro iA (Lvl.up mapiBiA))                   🝖[ _≡_ ]-[]
@@ -123,10 +128,10 @@ module _ where
       elem A (_⊆_.map BA ([∃]-witness emapiBiA))                               🝖[ _≡_ ]-[ _⊆_.proof BA {[∃]-witness emapiBiA} ]-sym
       elem B ([∃]-witness emapiBiA)                                            🝖[ _≡_ ]-end
       where
-        f = \iA → decide(∃(iB ↦ Id(_⊆_.map BA iB) iA))
-        emapiBiA = [↔]-to-[←] decide-is-true mapiBiA
+        f = \iA → decide(0)(∃(iB ↦ Id(_⊆_.map BA iB) iA))
+        emapiBiA = [↔]-to-[←] decider-true mapiBiA
         open import Relator.Equals.Proofs.Equiv using ([≡]-to-equivalence)
-    _⊇_.map (Tuple.right (∃.proof (℘-membershipₗ {A = A} {B = B} BA))) iB = intro (_⊆_.map BA iB) (Lvl.up ([↔]-to-[→] decide-is-true ([∃]-intro iB ⦃ intro ⦄)))
+    _⊇_.map (Tuple.right (∃.proof (℘-membershipₗ {A = A} {B = B} BA))) iB = intro (_⊆_.map BA iB) (Lvl.up ([↔]-to-[→] decider-true ([∃]-intro iB ⦃ intro ⦄)))
     _⊇_.proof (Tuple.right (∃.proof (℘-membershipₗ {A = A} {B = B} BA))) = _⊆_.proof BA
 
     ℘-membershipᵣ : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (B ∈ ℘(A)) → (B ⊆ A)

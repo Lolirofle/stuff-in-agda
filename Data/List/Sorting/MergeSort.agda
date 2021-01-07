@@ -7,7 +7,9 @@ module Data.List.Sorting.MergeSort {ℓ} {T : Type{ℓ}} (_≤?_ : T → T → B
 open import Data.List
 open import Data.List.Functions as List
 open import Data.List.Relation.Membership as Membership using (_∈_ ; use ; skip)
+open import Data.List.Relation.Membership.Proofs
 open import Data.List.Sorting.Functions(_≤?_)
+open import Relator.Equals.Proofs
 open import Structure.Relator.Ordering
 
 module _
@@ -25,8 +27,7 @@ module _
   merge-sort : List(T) → List(T)
   merge-sort = Strict.Properties.wellfounded-recursion(_<_) f where
     f : (l : List(T)) → ((prev : List(T)) → ⦃ _ : prev < l ⦄ → List(T)) → List(T)
-    f(l) rec = mergeAll(Listₚ.map (split l) (\ll → rec ll))
-
+    f(l) rec = mergeAll(Listₚ.map (\ll p → rec ll ⦃ shrinking-proof ⦃ p ⦄ ⦄) (split l) [∈]-self)
 
 module Proofs where
   open import Data.Boolean.Stmt

@@ -7,8 +7,10 @@ open import Data.List.Equiv.Id
 open import Data.List.Relation.Permutation
 open import Data.List.Relation.Quantification
 open import Functional
+open import Logic.Propositional
 open import Logic
 open import Structure.Relator.Properties
+open import Type.Dependent
 open import Type
 
 private variable ℓ : Lvl.Level
@@ -58,3 +60,15 @@ AllElements-of-transitive-binary-relationₗ {_▫_ = _▫_} p (a ⊰ al) = tran
 AllElements-of-transitive-binary-relationᵣ : ⦃ trans : Transitivity(_▫_) ⦄ → (l₂ ▫ l₁) → (AllElements (l₁ ▫_) ll → AllElements (l₂ ▫_) ll)
 AllElements-of-transitive-binary-relationᵣ             _ ∅        = ∅
 AllElements-of-transitive-binary-relationᵣ {_▫_ = _▫_} p (a ⊰ al) = (transitivity(_▫_) p a) ⊰ AllElements-of-transitive-binary-relationᵣ p al
+
+AllElements-sigma : Σ(List(T)) (AllElements(P)) ↔ List(Σ T P)
+AllElements-sigma = [↔]-intro L R where
+  L : Σ(List(T)) (AllElements(P)) ← List(Σ T P)
+  L ∅                 = intro ∅ ∅
+  L ((intro x p) ⊰ sl) =
+    let (intro l pl) = L sl
+    in  intro (x ⊰ l) (p ⊰ pl)
+
+  R : Σ(List(T)) (AllElements(P)) → List(Σ T P)
+  R (intro ∅       ∅)        = ∅
+  R (intro (x ⊰ l) (p ⊰ pl)) = intro x p ⊰ R(intro l pl)

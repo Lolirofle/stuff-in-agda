@@ -49,7 +49,7 @@ module _ (asym : ∀{x y} → (x ≤? y ≡ not(y ≤? x))) where
 
   mergeAll-sorted-proof : ∀{ls} → (∀{l} → ⦃ _ : (l ∈ ls) ⦄ → Sorted(l)) → Sorted(mergeAll ls)
   mergeAll-sorted-proof {∅}      p = Sorted.empty
-  mergeAll-sorted-proof {l ⊰ ls} p = merge-sorted-proof (p ⦃ use ⦄) (mergeAll-sorted-proof {ls} (\{l} ⦃ q ⦄ → p{l} ⦃ _∈_.skip ⦃ q ⦄ ⦄))
+  mergeAll-sorted-proof {l ⊰ ls} p = merge-sorted-proof (p ⦃ use (reflexivity(_≡_)) ⦄) (mergeAll-sorted-proof {ls} (\{l} ⦃ q ⦄ → p{l} ⦃ _∈_.skip q ⦄))
 
   {-
   split₂-sorted-proof : ∀{l} → Sorted(l) → let (a , b) = List.split₂(l) in (Sorted(a) ∧ Sorted(b))

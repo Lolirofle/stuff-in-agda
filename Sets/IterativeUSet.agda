@@ -3,6 +3,7 @@ module Sets.IterativeUSet where
 open import Data renaming (Empty to EmptyType)
 open import Functional
 import      Lvl
+import      Lvl.Decidable as Lvl
 open import Structure.Setoid renaming (_≡_ to _≡ₛ_)
 open import Syntax.Function
 open import Type
@@ -216,7 +217,10 @@ module Oper ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   open import Logic.Classical
   open import Type.Dependent
   open import Type.Dependent.Functions
+  open import Type.Properties.Decidable
+  open import Type.Properties.Decidable.Proofs
   open import Syntax.Function
+  instance _ = classical-to-decidable
 
   -- TODO: Many of these operations are simply copy-pasted from Sets.IterativeSet with small modifications.
 
@@ -244,11 +248,11 @@ module Oper ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   -- Filters a set to only contain set elements.
   sets-of : IUset(T){ℓ} → IUset(T){ℓ}
-  sets-of{ℓ} = set-operator₁(A ↦ intro (Σ(SetContainer.Index(A)) (ia ↦ LvlConvert(IsSet(SetContainer.elem(A)(ia))){ℓ})) \{(intro ia p) → SetContainer.elem(A)(ia)})
+  sets-of{ℓ} = set-operator₁(A ↦ intro (Σ(SetContainer.Index(A)) (ia ↦ Lvl.Convert(IsSet(SetContainer.elem(A)(ia))){ℓ})) \{(intro ia p) → SetContainer.elem(A)(ia)})
 
   -- Filters a set to only contain atomic elements.
   atoms-of : IUset(T){ℓ} → IUset(T){ℓ}
-  atoms-of{ℓ} = set-operator₁(A ↦ intro (Σ(SetContainer.Index(A)) (ia ↦ LvlConvert(IsAtom(SetContainer.elem(A)(ia))){ℓ})) \{(intro ia p) → SetContainer.elem(A)(ia)})
+  atoms-of{ℓ} = set-operator₁(A ↦ intro (Σ(SetContainer.Index(A)) (ia ↦ Lvl.Convert(IsAtom(SetContainer.elem(A)(ia))){ℓ})) \{(intro ia p) → SetContainer.elem(A)(ia)})
 
   -- The singleton set, consisting of one element.
   -- Index is the unit type, which means that there are a single object pointing to a single element in the set.

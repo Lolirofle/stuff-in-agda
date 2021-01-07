@@ -1,51 +1,56 @@
 module Data.ListNonEmpty where
 
 open import Data.Boolean
-import      Data.Boolean.Operators
-open        Data.Boolean.Operators.Programming
-open import Data hiding (empty)
+import      Data.IndexedList
 open import Functional
-import      Data.List as List
-open        List using (List)
+import      Lvl
 open import Numeral.Natural
 open import Type
 
--- A non-empty list
-data List₊ {ℓ} (T : Type{ℓ}) : Type{ℓ} where
-  singleton : T → List₊(T) -- The singleton list
-  _⊰_       : T → List₊(T) → List₊(T) -- Cons
+private variable ℓ : Lvl.Level
+private variable T : Type{ℓ}
 
-_⊱_ : ∀{ℓ}{T : Type{ℓ}} → List₊(T) → T → List₊(T)
-_⊱_ = swap _⊰_
+module _ (T : Type{ℓ}) where
+  open Data.IndexedList(T){Bool} using (IndexedList ; intro)
 
-import Data.List.Functions as List
+  -- A non-empty list.
+  List₊ : Type{ℓ}
+  List₊ = IndexedList(intro 𝐹 (const(const 𝑇)))(𝑇)
 
--- List concatenation
-_++_ : ∀{ℓ}{T : Type{ℓ}} → List₊(T) → List₊(T) → List₊(T)
-_++_ (singleton(elem)) b = elem ⊰ b
-_++_ (elem ⊰ rest)     b = elem ⊰ (rest ++ b)
+module _ {T : Type{ℓ}} where
+  open Data.IndexedList(T){Bool} using (∅ ; _⊰_ ; singleton) public
 
--- A list from a non-empty list
-list : ∀{ℓ}{T : Type{ℓ}} → List₊(T) → List(T)
+pattern ‥ = _ ⊰ _
+
+open import Data.List
+import      Data.List.Functions as List
+
+-- A list from a non-empty list.
+list : List₊(T) → List(T)
 list (singleton(x)) = List.singleton(x)
-list (x ⊰ l)        = x List.⊰ list(l)
+list (x ⊰ l@‥)      = x List.⊰ list(l)
 
--- The first element of the list
-head : ∀{ℓ}{T : Type{ℓ}} → List₊(T) → T
-head (singleton(x)) = x
-head (x ⊰ _)        = x
-
--- A list without its first element
-tail₀ : ∀{ℓ}{T : Type{ℓ}} → List₊(T) → List(T)
+-- A list without its first element.
+tail₀ : List₊(T) → List(T)
 tail₀ (singleton(_)) = List.∅
-tail₀ (_ ⊰ l)        = list(l)
+tail₀ (_ ⊰ l@‥)      = list(l)
+
+-- List concatenation.
+_++_ : List₊(T) → List₊(T) → List₊(T)
+singleton(x) ++ y = x ⊰ y
+(x ⊰ xl@‥)   ++ y = x ⊰ (xl ++ y)
+
+-- The first element of the list.
+head : List₊(T) → T
+head(singleton x)   = x
+head(x ⊰ l@‥) = x
 
 -- Applies a binary operator to each element in the list starting with the initial element.
 -- Example:
---   foldᵣ(▫)[a]         = a
---   foldᵣ(▫)[a,b]       = a▫b
---   foldᵣ(▫)[a,b,c]     = a▫(b▫c)
---   foldᵣ(▫)[a,b,c,d,e] = a▫(b▫(c▫(d▫e)))
-reduceᵣ : ∀{ℓ}{T : Type{ℓ}} → (T → T → T) → List₊(T) → T
-reduceᵣ _   (singleton(elem)) = elem
-reduceᵣ _▫_ (elem ⊰ l) = elem ▫ (reduceᵣ _▫_ l)
+--   reduceᵣ(_▫_) [a]         = a
+--   reduceᵣ(_▫_) [a,b]       = a ▫ b
+--   reduceᵣ(_▫_) [a,b,c]     = a ▫ (b ▫ c)
+--   reduceᵣ(_▫_) [a,b,c,d,e] = a ▫ (b ▫ (c ▫ (d ▫ e)))
+reduceᵣ : (T → T → T) → List₊(T) → T
+reduceᵣ(_)   (singleton(x)) = x
+reduceᵣ(_▫_) (x ⊰ l@‥)      = x ▫ (reduceᵣ(_▫_) l)
