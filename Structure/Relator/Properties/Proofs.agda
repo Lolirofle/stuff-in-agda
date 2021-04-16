@@ -58,8 +58,14 @@ instance
   swapped-negated-subrelation : (_⊆₂_ {A = A}{B = B}{ℓ₁ = ℓ}) ⊆₂ ((_⊇₂_) on₂ ((¬_) ∘₂_))
   _⊆₂_.proof (_⊆₂_.proof swapped-negated-subrelation (intro sub)) = _∘ sub
 
+swap-reflexivity : ⦃ refl : Reflexivity(_▫_) ⦄ → Reflexivity(swap(_▫_))
+swap-reflexivity {_▫_ = _▫_} = intro(reflexivity(_▫_))
+
 on₂-reflexivity : ∀{_▫_ : B → B → Stmt{ℓ}}{f : A → B} → ⦃ refl : Reflexivity(_▫_) ⦄ → Reflexivity((_▫_) on₂ f)
 on₂-reflexivity {_▫_ = _▫_} = intro(reflexivity(_▫_))
 
-swap-reflexivity : ⦃ refl : Reflexivity(_▫_) ⦄ → Reflexivity(swap(_▫_))
-swap-reflexivity {_▫_ = _▫_} = intro(reflexivity(_▫_))
+on₂-symmetry : ∀{_▫_ : B → B → Stmt{ℓ}}{f : A → B} → ⦃ sym : Symmetry(_▫_) ⦄ → Symmetry((_▫_) on₂ f)
+on₂-symmetry {_▫_ = _▫_} = intro(symmetry(_▫_))
+
+on₂-transitivity : ∀{_▫_ : B → B → Stmt{ℓ}}{f : A → B} → ⦃ trans : Transitivity(_▫_) ⦄ → Transitivity((_▫_) on₂ f)
+on₂-transitivity {_▫_ = _▫_} = intro(transitivity(_▫_))

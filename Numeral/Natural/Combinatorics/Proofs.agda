@@ -8,6 +8,7 @@ open import Numeral.Natural
 open import Numeral.Natural.Combinatorics
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Oper.Proofs.Multiplication
 open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
@@ -48,8 +49,8 @@ instance
 {-# REWRITE 𝑐𝐶-singleton-subsets #-}
 
 𝑐𝐶-larger-subsets : ∀{n k} → (n < k) → (𝑐𝐶 n k ≡ 𝟎)
-𝑐𝐶-larger-subsets {𝟎}         [≤]-with-[𝐒] = [≡]-intro
-𝑐𝐶-larger-subsets {𝐒 n} {𝐒 k} ([≤]-with-[𝐒] ⦃ p ⦄)
+𝑐𝐶-larger-subsets {𝟎}         (succ _) = [≡]-intro
+𝑐𝐶-larger-subsets {𝐒 n} {𝐒 k} (succ p)
   rewrite 𝑐𝐶-larger-subsets {n} {k} p
   rewrite 𝑐𝐶-larger-subsets {n} {𝐒 k} ([≤]-successor p)
   = [≡]-intro
@@ -165,7 +166,7 @@ instance
   𝑐𝑃 n k ⋅ 𝐒 n                                            🝖-end
   where
     l =
-      𝑐𝐶 n k ⋅ (𝐒 k ⋅ (k !)) 🝖-[ congruence₂ᵣ(_⋅_)(𝑐𝐶 n k) (commutativity(_⋅_) {x = 𝐒 k}{y = k !}) ]
+      𝑐𝐶 n k ⋅ (𝐒 k ⋅ (k !)) 🝖-[ congruence₂ᵣ(_⋅_)(𝑐𝐶 n k) (commutativity(_⋅_) {𝐒 k}{k !}) ]
       𝑐𝐶 n k ⋅ ((k !) ⋅ 𝐒 k) 🝖-[ associativity(_⋅_) {x = 𝑐𝐶 n k}{y = k !}{z = 𝐒 k} ]-sym
       (𝑐𝐶 n k ⋅ (k !)) ⋅ 𝐒 k 🝖-[ congruence₂ₗ(_⋅_)(𝐒 k) (𝑐𝐶-permutations-is-𝑐𝑃 {n} {k}) ]
       𝑐𝑃 n k ⋅ 𝐒 k           🝖-end

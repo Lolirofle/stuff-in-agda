@@ -44,12 +44,6 @@ module _ where
     Unit-equiv : Equiv(Unit{ℓ})
     Unit-equiv = General.Unit-equiv ⦃ [≡]-intro {x = <>} ⦄
 
-  instance
-    -- `Unit` is an unit type.
-    Unit-IsUnit : IsUnit{ℓ}(Unit)
-    IsUnit.unit       Unit-IsUnit = <>
-    IsUnit.uniqueness Unit-IsUnit = [≡]-intro
-
   {- TODO: So, why is this unprovable but Unit-IsUnit is? UIP? What is the difference?
   module _ where
     open import Relator.Equals.Proofs.Equiv
@@ -57,6 +51,12 @@ module _ where
     IsUnit.unit       testee     = [≡]-intro
     IsUnit.uniqueness testee {x} = {!!}
   -}
+
+instance
+  -- `Unit` is an unit type.
+  Unit-IsUnit : ⦃ equiv : Equiv{ℓₑ}(Unit) ⦄ → IsUnit{ℓ}(Unit)
+  IsUnit.unit       Unit-IsUnit = <>
+  IsUnit.uniqueness Unit-IsUnit = reflexivity(_≡ₛ_)
 
 instance
   -- `Empty` is an empty type.

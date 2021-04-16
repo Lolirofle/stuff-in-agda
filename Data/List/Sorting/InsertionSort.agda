@@ -5,7 +5,7 @@ open import Type
 module Data.List.Sorting.InsertionSort {ℓ} {T : Type{ℓ}} (_≤?_ : T → T → Bool) where
 
 open import Data.List
-open import Data.List.Functions as List
+import      Data.List.Functions as List
 open import Data.List.Sorting.Functions(_≤?_)
 
 insertion-sort : List(T) → List(T)
@@ -25,7 +25,7 @@ module Proofs where
   module _ (asym : ∀{x y} → (x ≤? y ≡ not(y ≤? x))) where -- TODO: Use Structure.Relator.Properties.Asymmetry by the relation (IsTrue ∘₂ (_≤?_))
     instance
       insertion-sort-sorted-proof : ∀{l} → Sorted(insertion-sort l)
-      insertion-sort-sorted-proof {∅}     = Sorted.empty
+      insertion-sort-sorted-proof {∅}     = empty
       insertion-sort-sorted-proof {x ⊰ l} = insert-sorted-proof asym (insertion-sort-sorted-proof {l})
 
     insert-permutation-proof : ∀{x}{l} → ((insert x l) permutes (x ⊰ l))

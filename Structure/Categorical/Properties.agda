@@ -138,7 +138,7 @@ module Morphism where
           field
             proof : ∀{z} → Names.CancellationOnᵣ {T₁ = y ⟶ z} (_▫_) (f)
         cancellationᵣ = inst-fn Epimorphism.proof
-        
+
       -- Proposition stating that two objects are monomorphic.
       Monomorphic : Obj → Obj → Stmt
       Monomorphic(x)(y) = ∃(Monomorphism{x}{y})

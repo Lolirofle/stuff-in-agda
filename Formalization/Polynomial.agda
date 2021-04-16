@@ -82,9 +82,9 @@ module _ where
   --   a₀⋅x⁰ + a₁⋅x¹ + a₂⋅x²
   --   = a₀⋅x⁰ + a₁⋅x¹ + a₂⋅x² + 0⋅x³ + 0⋅x⁴
   pad : ⦃ _ : (n₁ ≤ n₂)⦄ → Polynomial(n₁) → Polynomial(n₂)
-  pad {n₁ = ℕ.𝟎}     {n₂ = ℕ.𝟎}     ⦃ [≤]-minimum ⦄  (a ⊰ ∅)  = singleton a
-  pad {n₁ = ℕ.𝟎}     {n₂ = ℕ.𝐒(n₂)} ⦃ [≤]-minimum ⦄  (a ⊰ ∅)  = a ⊰ 𝟎
-  pad {n₁ = ℕ.𝐒(n₁)} {n₂ = ℕ.𝐒(n₂)} ⦃ [≤]-with-[𝐒] ⦄ (a ⊰ as) = a ⊰ pad as
+  pad {n₁ = ℕ.𝟎}     {n₂ = ℕ.𝟎}     ⦃ min ⦄  (a ⊰ ∅)  = singleton a
+  pad {n₁ = ℕ.𝟎}     {n₂ = ℕ.𝐒(n₂)} ⦃ min ⦄  (a ⊰ ∅)  = a ⊰ 𝟎
+  pad {n₁ = ℕ.𝐒(n₁)} {n₂ = ℕ.𝐒(n₂)} ⦃ succ p ⦄ (a ⊰ as) = a ⊰ pad ⦃ p ⦄ as
 
   -- Polynomial multiplication.
   -- Proof of step:
@@ -219,18 +219,18 @@ module Semantics where
       a ℕ.⋅ eval (b ⊰ bs) x                     🝖-end
 
     eval-preserves-pad : ∀{x}{a : Polynomial(n₁)} ⦃ ord : (n₁ ≤ n₂) ⦄ → (eval (pad ⦃ ord ⦄ a) x ≡ eval a x)
-    eval-preserves-pad {ℕ.𝟎}    {ℕ.𝟎}    {x} {a ⊰ ∅}          ⦃ ord@[≤]-minimum ⦄  = reflexivity(_≡_)
-    eval-preserves-pad {ℕ.𝟎}    {ℕ.𝐒 n₂} {x} {a ⊰ ∅}          ⦃ ord@[≤]-minimum ⦄  =
+    eval-preserves-pad {ℕ.𝟎}    {ℕ.𝟎}    {x} {a ⊰ ∅}          ⦃ ord@min ⦄  = reflexivity(_≡_)
+    eval-preserves-pad {ℕ.𝟎}    {ℕ.𝐒 n₂} {x} {a ⊰ ∅}          ⦃ ord@min ⦄  =
       eval (pad ⦃ ord ⦄ (a ⊰ ∅)) x  🝖[ _≡_ ]-[]
       a ℕ.+ (x ℕ.⋅ eval (𝟎 {n₂}) x) 🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a) (congruence₂ᵣ(ℕ._⋅_)(x) (eval-preserves-zero{n₂}{x})) ]
       a ℕ.+ (x ℕ.⋅ ℕ.𝟎)             🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a) (absorberᵣ(ℕ._⋅_)(ℕ.𝟎) {x}) ]
       a ℕ.+ ℕ.𝟎                     🝖[ _≡_ ]-[ identityᵣ(ℕ._+_)(ℕ.𝟎) ]
       a                             🝖[ _≡_ ]-[]
       eval (a ⊰ ∅) x                🝖-end
-    eval-preserves-pad {ℕ.𝐒 n₁} {ℕ.𝐒 n₂} {x} {a ⊰ as@(_ ⊰ _)} ⦃ ord@[≤]-with-[𝐒] ⦄ =
-      eval (pad (a ⊰ as)) x         🝖[ _≡_ ]-[]
-      eval (a ⊰ pad as) x           🝖[ _≡_ ]-[ eval-of-[⊰] {n₂}{x}{a}{pad as} ]
-      a ℕ.+ (x ℕ.⋅ eval (pad as) x) 🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a) (congruence₂ᵣ(ℕ._⋅_)(x) (eval-preserves-pad {n₁}{n₂}{x}{as})) ]
+    eval-preserves-pad {ℕ.𝐒 n₁} {ℕ.𝐒 n₂} {x} {a ⊰ as@(_ ⊰ _)} ⦃ ord@(succ p) ⦄ =
+      eval (pad ⦃ ord ⦄ (a ⊰ as)) x       🝖[ _≡_ ]-[]
+      eval (a ⊰ pad ⦃ _ ⦄ as) x           🝖[ _≡_ ]-[ eval-of-[⊰] {n₂}{x}{a}{pad ⦃ p ⦄ as} ]
+      a ℕ.+ (x ℕ.⋅ eval (pad ⦃ _ ⦄ as) x) 🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a) (congruence₂ᵣ(ℕ._⋅_)(x) (eval-preserves-pad {n₁}{n₂}{x}{as} ⦃ p ⦄)) ]
       a ℕ.+ (x ℕ.⋅ eval as x)       🝖[ _≡_ ]-[ eval-of-[⊰] {n₁}{x}{a}{as} ]-sym
       eval (a ⊰ as) x               🝖-end
 

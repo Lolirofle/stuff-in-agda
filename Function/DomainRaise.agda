@@ -4,13 +4,8 @@ open import Data
 open import Data.Boolean
 import      Functional as Fn
 import      Lvl
--- open import Numeral.Finite
--- open import Numeral.Finite.Bound
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
--- open import Numeral.Natural.Oper.Comparisons.Proofs
--- open import Numeral.Natural.Relation.Order
--- open import Numeral.Natural.Relation.Order.Proofs
 open import Syntax.Number
 open import Type
 
@@ -29,6 +24,18 @@ _→̂_ : Type{ℓ₁} → Type{ℓ₂} → (n : ℕ) → Type{if positive?(n) t
 (A →̂ B)(𝟎)       = B
 (A →̂ B)(𝐒(𝟎))    = A → B
 (A →̂ B)(𝐒(𝐒(n))) = A → (A →̂ B)(𝐒(n))
+
+open import Data.Tuple
+open import Data.Tuple.Raise
+
+apply₁ : let _ = n in X → (X →̂  Y)(𝐒(n)) → (X →̂  Y)(n)
+apply₁ {𝟎}   = Fn.apply
+apply₁ {𝐒 _} = Fn.apply
+
+apply₊ : let _ = n in (X ^ n) → (X →̂  Y)(n) → Y
+apply₊ {𝟎}       <>        f = f
+apply₊ {𝐒(𝟎)}    x         f = f(x)
+apply₊ {𝐒(𝐒(n))} (x , xs)  f = apply₊ {𝐒(n)} xs (f(x))
 
 -- Applies the same argument on all arguments.
 -- Examples:
@@ -102,10 +109,10 @@ _∘₉_ = _∘_ {9}
 --   = _on_ {1} f (g (f(y₂)) (f(y₁))) (y₀)
 --   = _on_ {0} f (g (f(y₂)) (f(y₁)) (f(y₀)))
 --   = g (f(y₂)) (f(y₁)) (f(y₀))
-_on_ : let _ = n ; _ = X ; _ = Y ; _ = Z in (Y →̂ Z)(n) → (X → Y) → (X →̂ Z)(n)
-_on_ {n = 𝟎}               = Fn.const
-_on_ {n = 𝐒(𝟎)}            = Fn._∘_
-_on_ {n = 𝐒(𝐒(n))} f g(yₙ) = _on_ {n = 𝐒(n)} (f(g(yₙ))) g
+on : let _ = n ; _ = X ; _ = Y ; _ = Z in (Y →̂ Z)(n) → (X → Y) → (X →̂ Z)(n)
+on {n = 𝟎}               = Fn.const
+on {n = 𝐒(𝟎)}            = Fn._∘_
+on {n = 𝐒(𝐒(n))} f g(yₙ) = on {n = 𝐒(n)} (f(g(yₙ))) g
 
 -- applyOnFn : ∀{n}{X}{Y} → (Y →̂ Y)(n) → ((X → Y) →̂ (X → Y))(n)
 -- applyOnFn

@@ -74,20 +74,18 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ w
   postulate zero-when-equal-negation : ∀{x} → (− x ≡ x) → (x ≡ 𝟎)
 
   instance
-     [+]-inversePropₗ : InversePropertyₗ(_+_)(−_)
-     [+]-inversePropₗ = One.inverse-propertyₗ-by-groupₗ
+    [+]-inversePropₗ : InversePropertyₗ(_+_)(−_)
+    [+]-inversePropₗ = One.inverse-propertyₗ-by-groupₗ
 
   instance
-     [+]-inversePropᵣ : InversePropertyᵣ(_+_)(−_)
-     [+]-inversePropᵣ = One.inverse-propertyᵣ-by-groupᵣ
+    [+]-inversePropᵣ : InversePropertyᵣ(_+_)(−_)
+    [+]-inversePropᵣ = One.inverse-propertyᵣ-by-groupᵣ
 
-  instance
-    [+][−]-inverseOperᵣ : InverseOperatorᵣ(_+_)(_−_)
-    [+][−]-inverseOperᵣ = One.standard-inverse-operatorᵣ-by-involuting-inverse-propᵣ
+  [+][−]-inverseOperᵣ : InverseOperatorᵣ(_+_)(_−_)
+  [+][−]-inverseOperᵣ = One.standard-inverse-inverse-operatorᵣ-by-inverse-propᵣ ⦃ inverPropᵣ = [+]-inversePropᵣ ⦄
 
-  instance
-    [−][+]-inverseOperᵣ : InverseOperatorᵣ(_−_)(_+_)
-    [−][+]-inverseOperᵣ = One.standard-inverse-inverse-operatorᵣ-by-inverse-propᵣ
+  [−][+]-inverseOperᵣ : InverseOperatorᵣ(_−_)(_+_)
+  [−][+]-inverseOperᵣ = One.standard-inverse-operatorᵣ-by-involuting-inverse-propᵣ ⦃ inverPropᵣ = [+]-inversePropᵣ ⦄
 
   -- TODO: Defined set subset of natural numbers and integers by using summation ∑. That is: (x ∈ ℕ) = ∃{Obj = ℕ}(n ↦ ∑(0 ‥ n) (const 𝟏))
 

@@ -162,14 +162,14 @@ module Arithmetic where -- TODO: Prove that these are correct by `evaluate`
   --   evaluate(Multiplication)[𝟎   ,b] = 𝟎
   --   evaluate(Multiplication)[𝐒(a),b] = evaluate(Multiplication)[a,b] + b
   Multiplication : Function(2)
-  Multiplication = Recursion(Const(Zero)) (Composition Addition (Projection(1) ⊰ Projection(2) ⊰ ∅))
+  Multiplication = Recursion (Const(Zero)) (Composition Addition (Projection(1) ⊰ Projection(2) ⊰ ∅))
 
   -- Exponentiation (^) in ℕ.
   -- It describes the following function:
-  --   evaluate(Exponentiation)[𝟎   ,b] = 1
-  --   evaluate(Exponentiation)[𝐒(a),b] = evaluate(Exponentiation)[a,b] ⋅ b
+  --   evaluate(Exponentiation)[a   ,0   ] = 1
+  --   evaluate(Exponentiation)[a   ,𝐒(b)] = evaluate(Exponentiation)[a,b] ⋅ a
   Exponentiation : Function(2)
-  Exponentiation = Recursion(Const(Zero)) (Composition Multiplication (Projection(1) ⊰ Projection(2) ⊰ ∅))
+  Exponentiation = Swap₂(Recursion (Composition Successor (Const Zero ⊰ ∅)) (Composition Multiplication (Projection(1) ⊰ Projection(2) ⊰ ∅)))
 
   -- Factorial (!) in ℕ.
   -- It describes the following function:
@@ -236,11 +236,14 @@ module Arithmetic where -- TODO: Prove that these are correct by `evaluate`
 -- TODO: http://ii.fmph.uniba.sk/cl/courses/1-AIN-625-lpp/0910zs/ln/doc/ch_p_gd.pdf
 
 module Proofs where
+  open import Functional
+  open import Logic.Propositional
   open import Numeral.Natural.Oper
   open import Numeral.Natural.Oper.Comparisons
   open import Numeral.Natural.Oper.Proofs
   open import Relator.Equals
   open import Relator.Equals.Proofs
+  open import Structure.Operator.Properties
   open import Structure.Relator.Properties
   open import Syntax.Transitivity
 
@@ -256,11 +259,11 @@ module Proofs where
     🝖 symmetry(_≡_) ([⋅]-with-[𝐒]ₗ {a}{b})
 
   exponentiation-correctness : ∀{a b} → (evaluate Arithmetic.Exponentiation (a ⊰ b ⊰ ∅) ≡ a ^ b)
-  exponentiation-correctness {𝟎}   {b} = symmetry(_≡_) ([^]-with-𝟎ₗ {b})
-  exponentiation-correctness {𝐒 a} {b} =
-    multiplication-correctness {evaluate Arithmetic.Exponentiation (a ⊰ b ⊰ ∅)}{b}
-    🝖 [≡]-with(_⋅ b) (exponentiation-correctness {a}{b})
-    🝖 symmetry(_≡_) ([^]-with-[𝐒]ₗ {a}{b})
+  exponentiation-correctness {a} {𝟎}   = [≡]-intro
+  exponentiation-correctness {a} {𝐒 b} =
+    multiplication-correctness {evaluate Arithmetic.Exponentiation (a ⊰ b ⊰ ∅)}{a}
+    🝖 [≡]-with(_⋅ a) (exponentiation-correctness {a}{b})
+    🝖 commutativity(_⋅_) {a ^ b}{a}
 
   factorial-correctness : ∀{a} → (evaluate Arithmetic.Factorial (a ⊰ ∅) ≡ a !)
   factorial-correctness {𝟎}   = [≡]-intro

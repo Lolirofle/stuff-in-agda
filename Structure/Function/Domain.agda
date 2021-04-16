@@ -62,6 +62,15 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ�
 
   Invertible = ∃(f⁻¹ ↦ Function(f⁻¹) ∧ Inverse(f⁻¹))
 
+module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ (([↔]-intro ba ab) : A ↔ B) where
+  record InversePair : Type{Lvl.of(A) Lvl.⊔ Lvl.of(B) Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂} where
+    constructor intro
+    l = ba
+    r = ab
+    field
+      ⦃ left ⦄ : Inverseₗ(l)(r)
+      ⦃ right ⦄ : Inverseᵣ(l)(r)
+
 module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ (f : A → B) where
   record Constant : Stmt{ℓₒ₁ Lvl.⊔ ℓₗ₂} where
     constructor intro

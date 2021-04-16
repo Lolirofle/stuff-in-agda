@@ -6,6 +6,7 @@ import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.Tuple
 open import Data.List
+open import Data.List.Functions
 open import Data.List.Equiv
 open import Functional
 open import Logic.Propositional
@@ -20,20 +21,15 @@ open import Type.Properties.Decidable.Proofs
 private variable ℓ ℓₑ ℓₑₗ : Lvl.Level
 private variable T : Type{ℓ}
 
-boolMap₂ : (T → T → Bool) → (List(T) → List(T) → Bool)
-boolMap₂(_▫_) ∅         ∅         = 𝑇
-boolMap₂(_▫_) (_ ⊰ _)   ∅         = 𝐹
-boolMap₂(_▫_) ∅         (_ ⊰ _)   = 𝐹
-boolMap₂(_▫_) (x₁ ⊰ l₁) (x₂ ⊰ l₂) = (x₁ ▫ x₂) && boolMap₂(_▫_)(l₁)(l₂)
-
 module _
   ⦃ equiv      : Equiv{ℓₑ}(T) ⦄
   ⦃ equiv-list : Equiv{ℓₑₗ}(List(T)) ⦄
   ⦃ ext        : Extensionality(equiv-list) ⦄
+  {_≡?_ : T → T → Bool}
   where
 
   instance
-    [≡]-decider : ∀{_≡?_ : T → T → Bool} → ⦃ dec : Decider(2)(_≡_ {T = T})(_≡?_) ⦄ → Decider(2)(_≡_ {T = List(T)})(boolMap₂(_≡?_))
+    [≡]-decider : ⦃ dec : Decider(2)(_≡_ {T = T})(_≡?_) ⦄ → Decider(2)(_≡_ {T = List(T)})(satisfiesAll₂(_≡?_) (const 𝐹) (const 𝐹))
     [≡]-decider {x = ∅}      {∅}      = true (reflexivity(_≡_))
     [≡]-decider {x = ∅}      {y ⊰ ys} = false [∅][⊰]-unequal
     [≡]-decider {x = x ⊰ xs} {∅}      = false ([∅][⊰]-unequal ∘ symmetry(_≡_))

@@ -30,6 +30,9 @@ data 𝕟 : ℕ → Type{Lvl.𝟎} where
 
 𝕟₌ = 𝕟 ∘ 𝐒
 
+bound : ∀{n} → 𝕟(n) → ℕ
+bound{n} _ = n
+
 minimum : ∀{n} → 𝕟(ℕ.𝐒(n))
 minimum{_} = 𝟎
 

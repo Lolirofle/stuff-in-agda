@@ -1,5 +1,6 @@
 module Logic.Names where
 
+open import Functional
 import      Lvl
 open import Logic
 open import Logic.Predicate
@@ -9,6 +10,9 @@ module _ {ℓ} where
   ExcludedMiddleOn : Stmt{ℓ} → Stmt
   ExcludedMiddleOn(X) = (X ∨ (¬ X))
   ExcludedMiddle = ∀ₗ(ExcludedMiddleOn)
+
+  WeakExcludedMiddleOn = ExcludedMiddleOn ∘ (¬_)
+  WeakExcludedMiddle = ∀ₗ(WeakExcludedMiddleOn)
 
   NonContradictionOn : Stmt{ℓ} → Stmt
   NonContradictionOn(X) = ¬(X ∧ (¬ X))

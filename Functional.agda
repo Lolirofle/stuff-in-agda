@@ -10,7 +10,7 @@ infixl 30 _→ᶠ_ _←_ _←ᶠ_
 infixr 0 _$_
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
-private variable T X X₁ X₂ X₃ Y Y₁ Y₂ Y₃ Z : Type{ℓ}
+private variable T X X₁ X₂ X₃ X₄ Y Y₁ Y₂ Y₃ Y₄ Z : Type{ℓ}
 
 -- Converse of a function type
 _←_ : Type{ℓ₁} → Type{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}
@@ -47,6 +47,14 @@ apply(x)(f) = f(x)
 _$_ : (X → Y) → X → Y
 _$_ = id
 {-# INLINE _$_ #-}
+
+_$ᵢₘₚₗ_ : ({ _ : X } → Y) → (X → Y)
+f $ᵢₘₚₗ x = f{x}
+{-# INLINE _$ᵢₘₚₗ_ #-}
+
+_$ᵢₙₛₜ_ : (⦃ _ : X ⦄ → Y) → (X → Y)
+f $ᵢₙₛₜ x = f ⦃ x ⦄
+{-# INLINE _$ᵢₙₛₜ_ #-}
 
 -- Function application as an operator. Function to the left, value to the right.
 _⩹_ : (X → Y) → X → Y
@@ -109,6 +117,10 @@ _∘₂_ f = (f ∘₁_) ∘_
 -- (f ∘₃ g)(x)(y)(z) = f(g(x)(y)(z))
 _∘₃_ : let _ = X₁ ; _ = X₂ ; _ = X₃ in (Y → Z) → (X₁ → X₂ → X₃ → Y) → (X₁ → X₂ → X₃ → Z)
 _∘₃_ f = (f ∘₂_) ∘_
+
+-- (f ∘₄ g)(x)(y)(z)(w) = f(g(x)(y)(z)(w))
+_∘₄_ : let _ = X₁ ; _ = X₂ ; _ = X₃ ; _ = X₄ in (Y → Z) → (X₁ → X₂ → X₃ → X₄ → Y) → (X₁ → X₂ → X₃ → X₄ → Z)
+_∘₄_ f = (f ∘₃_) ∘_
 
 -- map₂Arg₁ : let _ = X in (Y₁ → Y₂ → Z) → (X → Y₁) → (X → Y₂) → (X → Z)
 -- map₂Arg₁ f g₁ g₂ x = f(g₁ x)(g₂ x)

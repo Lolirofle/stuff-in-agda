@@ -23,7 +23,6 @@ _−_ 𝟎 (𝐒(b)) ⦃ 0≥𝐒b ⦄ with ([<]-to-[≱] ([<]-minimum{b})) (0�
 ... | ()
 _−_ (𝐒(a)) (𝐒(b)) ⦃ 𝐒b≤𝐒a ⦄ = _−_ a b ⦃ [≤]-without-[𝐒] {b} (𝐒b≤𝐒a) ⦄
 
--- Total division (Positive whole number division)
-_/_ : (a : ℕ) → (b : ℕ) → ⦃ _ : (b ∣ a) ⦄ → ⦃ _ : Positive(b) ⦄ → ℕ
-_/_ _ _ ⦃ b-div-a ⦄ ⦃ _ ⦄ with divides-elim (b-div-a)
-... | [∃]-intro (n) ⦃ b⋅n≡a ⦄ = n
+-- Total division (Whole number division)
+_/₀_ : (a : ℕ) → (b : ℕ) → ⦃ _ : (b ∣ a) ⦄ → ℕ
+_/₀_ _ _ ⦃ div ⦄ = divides-quotient div

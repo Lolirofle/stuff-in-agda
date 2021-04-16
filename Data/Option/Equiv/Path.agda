@@ -11,7 +11,7 @@ open import Functional
 open import Structure.Function.Domain
 open import Structure.Operator
 open import Structure.Relator
-open import Type.Cubical.Equality
+open import Type.Cubical.Path.Equality
 open import Type
 
 private variable ℓ : Lvl.Level
@@ -22,5 +22,5 @@ instance
   Injective.proof Some-injectivity {x}{y} = congruence₂ₗ(_or_)(x)
 
 instance
-  Path-Option-extensionality : Extensionality{A = T} ([≡]-equiv)
+  Path-Option-extensionality : Extensionality{A = T} (Path-equiv)
   Extensionality.cases-inequality (Path-Option-extensionality {T = T}) {x} p with () ← substitute₁(elim{A = T}{B = λ _ → Type}(Option(T)) (const Empty)) p (Some x)

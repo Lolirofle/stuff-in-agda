@@ -8,7 +8,7 @@ open import Data.Boolean.Proofs
 open import Data.Boolean.Stmt
 open import Data.Boolean.Stmt.Proofs
 open import Data.List
-open import Data.List.Functions as List
+import      Data.List.Functions as List
 open import Data.List.Relation.Membership as Membership using (_∈_ ; use ; skip)
 open import Data.List.Relation.Permutation
 open import Data.List.Sorting(_≤?_)
@@ -22,8 +22,8 @@ open import Structure.Relator.Properties
 
 -- If a list is sorted, then its tail is also sorted.
 tail-sorted-proof : ∀{l} → Sorted(l) → Sorted(List.tail l)
-tail-sorted-proof {.∅}           empty                = Sorted.empty
-tail-sorted-proof {_ ⊰ ∅}        single               = Sorted.empty
+tail-sorted-proof {.∅}           empty                = empty
+tail-sorted-proof {_ ⊰ ∅}        single               = empty
 tail-sorted-proof {a ⊰ b ⊰ l}    (step ⦃ ab ⦄ ⦃ sl ⦄) = sl
 
 module _ (asym : ∀{x y} → (x ≤? y ≡ not(y ≤? x))) where
@@ -48,7 +48,7 @@ module _ (asym : ∀{x y} → (x ≤? y ≡ not(y ≤? x))) where
   merge-sorted-proof {l₁} {x ⊰ y ⊰ l₂} s₁ (step ⦃ xy ⦄ ⦃ s₂ ⦄) = insert-sorted-proof (merge-sorted-proof s₁ s₂)
 
   mergeAll-sorted-proof : ∀{ls} → (∀{l} → ⦃ _ : (l ∈ ls) ⦄ → Sorted(l)) → Sorted(mergeAll ls)
-  mergeAll-sorted-proof {∅}      p = Sorted.empty
+  mergeAll-sorted-proof {∅}      p = empty
   mergeAll-sorted-proof {l ⊰ ls} p = merge-sorted-proof (p ⦃ use (reflexivity(_≡_)) ⦄) (mergeAll-sorted-proof {ls} (\{l} ⦃ q ⦄ → p{l} ⦃ _∈_.skip q ⦄))
 
   {-

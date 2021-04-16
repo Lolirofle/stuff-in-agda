@@ -196,9 +196,9 @@ Tuple.right ([⊑]-separate₂ {x ⊰ y ⊰ l}) = skip (use (Tuple.right [⊑]-s
 [⊏]-withoutIndex {𝐒 n} {x ⊰ l} p = use ([⊏]-withoutIndex ([≤]-without-[𝐒] p))
 
 [⊏]-separate₂ : let (l₁ , l₂) = separate₂(l) in (2 ≤ length(l)) → ((l₁ ⊏ l) ∧ (l₂ ⊏ l))
-[⊏]-separate₂ {x ⊰ ∅}     ([≤]-with-[𝐒] ⦃ ⦄)
-Tuple.left  ([⊏]-separate₂ {x ⊰ y ⊰ l} ([≤]-with-[𝐒] ⦃ [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄ ⦄)) = use (skip (Tuple.left  [⊑]-separate₂))
-Tuple.right ([⊏]-separate₂ {x ⊰ y ⊰ l} ([≤]-with-[𝐒] ⦃ [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄ ⦄)) = skip (use (Tuple.right [⊑]-separate₂))
+[⊏]-separate₂ {x ⊰ ∅}     (succ())
+Tuple.left  ([⊏]-separate₂ {x ⊰ y ⊰ l} (succ (succ min))) = use (skip (Tuple.left  [⊑]-separate₂))
+Tuple.right ([⊏]-separate₂ {x ⊰ y ⊰ l} (succ (succ min))) = skip (use (Tuple.right [⊑]-separate₂))
 
 [⊏]ᵣ-of-[++]ₗ : (∅ ⊏ l₂) → (l₁ ⊏ (l₂ ++ l₁))
 [⊏]ᵣ-of-[++]ₗ {a ⊰ l₂} {l₁} (skip p) = skip([⊑]ᵣ-of-[++]ₗ {l₁}{l₂})

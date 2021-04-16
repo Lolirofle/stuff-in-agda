@@ -25,8 +25,8 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) w
 
   -- [++]-visits : ∀{ae be a₁ b₁ a₂ b₂}{e : ae ⟶ be}{w₁ : Walk(_⟶_) a₁ b₁}{w₂ : Walk(_⟶_) a₂ b₂} → (Visits(_⟶_) e w₁) ∨ (Visits(_⟶_) e w₂) → Visits(_⟶_) e (w₁ ++ w₂)
 
-  complete-singular-is-undirected : ⦃ Complete(_⟶_) ⦄ → ⦃ Singular(_⟶_) ⦄ → Undirected(_⟶_)
-  Undirected.reversable         complete-singular-is-undirected = intro(const(complete(_⟶_)))
+  complete-singular-is-undirected : ⦃ CompleteWithLoops(_⟶_) ⦄ → ⦃ Singular(_⟶_) ⦄ → Undirected(_⟶_)
+  Undirected.reversable         complete-singular-is-undirected = intro(const (completeWithLoops(_⟶_)))
   Undirected.reverse-involution complete-singular-is-undirected = intro(singular(_⟶_))
 
   -- traceable-is-connected : ⦃ Traceable(_⟶_) ⦄ → Connected(_⟶_)

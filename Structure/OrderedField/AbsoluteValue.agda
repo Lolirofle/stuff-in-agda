@@ -81,10 +81,11 @@ abs-of-negation{x} with converseTotal(_≤_){𝟎}{x} | converseTotal(_≤_){�
   zx : 𝟎 ≤ x
   zx = [↔]-to-[→] [≤]-flip-negative nxz 🝖 (sub₂(_≡_)(_≤_) $ involution(−_))
 
-abs-idempotent : Idempotent(‖_‖)
-Idempotent.proof abs-idempotent {x} with abs-values{x}
-... | Either.Left  p = congruence₁(‖_‖) p
-... | Either.Right p = congruence₁(‖_‖) p 🝖 abs-of-negation
+instance
+  abs-idempotent : Idempotent(‖_‖)
+  Idempotent.proof abs-idempotent {x} with abs-values{x}
+  ... | Either.Left  p = congruence₁(‖_‖) p
+  ... | Either.Right p = congruence₁(‖_‖) p 🝖 abs-of-negation
 
 abs-order : ∀{x} → ((− ‖ x ‖) ≤ ‖ x ‖)
 abs-order{x} = [↔]-to-[→] [≤]-flip-positive(abs-positive{x}) 🝖 abs-positive{x}
@@ -149,8 +150,12 @@ abs-triangle-inequality {x}{y} with converseTotal(_≤_){𝟎}{x + y}
 _𝄩_ : F → F → F
 x 𝄩 y = ‖ x − y ‖
 
+open import Structure.Function.Proofs
+open import Structure.Operator.Proofs.Util
+
 instance
-  postulate [𝄩]-binaryOperator : BinaryOperator(_𝄩_)
+  [𝄩]-binaryOperator : BinaryOperator(_𝄩_)
+  [𝄩]-binaryOperator = [∘₂]-function {f = ‖_‖} ⦃ oper = [−]-binaryOperator ⦄
 
 instance
   [𝄩]-commutativity : Commutativity(_𝄩_)
@@ -159,7 +164,16 @@ instance
     ‖ −(x − y) ‖ 🝖-[ congruence₁(‖_‖) [−]-negation-distribution ]
     ‖ y − x ‖    🝖-end
 
-postulate [𝄩]-triangle-inequality : ∀{x y z} → ((x 𝄩 z) ≤ ((x 𝄩 y) + (y 𝄩 z)))
+[𝄩]-triangle-inequality : ∀{x y z} → ((x 𝄩 z) ≤ ((x 𝄩 y) + (y 𝄩 z)))
+[𝄩]-triangle-inequality {x}{y}{z} =
+  x 𝄩 z                     🝖[ _≤_ ]-[]
+  ‖ x − z ‖                 🝖[ _≡_ ]-[ congruence₁(‖_‖) (congruence₂ₗ(_−_) ⦃ [−]-binaryOperator ⦄ (z) (symmetry(_≡_) (identityᵣ(_+_)(𝟎)))) ]-sub
+  ‖ (x + 𝟎) − z ‖           🝖[ _≡_ ]-[ congruence₁(‖_‖) (congruence₂ₗ(_−_) ⦃ [−]-binaryOperator ⦄ (z) (congruence₂ᵣ(_+_)(x) (symmetry(_≡_) (inverseFunctionₗ(_+_)(−_))))) ]-sub
+  ‖ (x + ((− y) + y)) − z ‖ 🝖[ _≡_ ]-[ congruence₁(‖_‖) ((One.associate4-213-222 {_▫_ = _+_} {a = x}{− y}{y}{− z})) ]-sub
+  ‖ (x + (− y)) + (y − z) ‖ 🝖[ _≤_ ]-[]
+  ‖ (x − y) + (y − z) ‖     🝖[ _≤_ ]-[ abs-triangle-inequality ]
+  (‖ x − y ‖) + (‖ y − z ‖) 🝖[ _≤_ ]-[]
+  (x 𝄩 y) + (y 𝄩 z)          🝖-end
 
 [𝄩]-self : ∀{x y} → (x 𝄩 y ≡ 𝟎) ↔ (x ≡ y)
 [𝄩]-self {x}{y} = [↔]-intro l r where

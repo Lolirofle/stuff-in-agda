@@ -135,7 +135,7 @@ module _ where
     open import Structure.Relator.Equivalence
     open import Structure.Relator.Properties
 
-    private variable S : PredSet{ℓ}(T)
+    private variable S a b c a₁ a₂ b₁ b₂ : PredSet{ℓ}(T)
     private variable S₁ : PredSet{ℓ₁}(T)
     private variable S₂ : PredSet{ℓ₂}(T)
 
@@ -223,4 +223,21 @@ module _ where
     ∃.proof   (∃.witness (choice {S = S}) ([∃]-intro f ⦃ proof ⦄)) = {!!}
     ∃.proof              (choice {S = S}) {[∃]-intro f ⦃ proof ⦄}  = {!!}
     -}
-  
+
+    [∪]-subset : (a ⊆ c) → (b ⊆ c) → ((a ∪ b) ⊆ c)
+    [∪]-subset ac bc = [∨]-elim ac bc
+
+    [∪]-subset2 : (a₁ ⊆ a₂) → (b₁ ⊆ b₂) → ((a₁ ∪ b₁) ⊆ (a₂ ∪ b₂))
+    [∪]-subset2 aa bb = [∨]-elim2 aa bb
+
+    [∖][∪]-is-[∪]ᵣ : (((a ∖ b) ∪ b) ⊆ (a ∪ b))
+    [∖][∪]-is-[∪]ᵣ {a = A}{b = B}{x = x} = [∨]-elim ([∨]-introₗ ∘ [∧]-elimₗ) [∨]-introᵣ
+
+    open import Logic.Classical
+    [∖][∪]-is-[∪] : ⦃ ∀{x} → Classical(b(x)) ⦄ → (((a ∖ b) ∪ b) ≡ (a ∪ b))
+    [∖][∪]-is-[∪] {b = B}{a = A}{x = x} = [↔]-intro
+      ([∨]-elim (Ax ↦ [∨]-elim2 ([∧]-intro Ax) id ([∨]-symmetry(excluded-middle(B(x))))) [∨]-introᵣ)
+      ([∖][∪]-is-[∪]ᵣ {a = A}{b = B})
+
+    [∪][∖]-invertᵣ-[⊆] : (a ⊆ (b ∪ c)) → ((a ∖ c) ⊆ b)
+    [∪][∖]-invertᵣ-[⊆] abc ([∧]-intro a nc) = [∨]-elim id ([⊥]-elim ∘ nc) (abc a)

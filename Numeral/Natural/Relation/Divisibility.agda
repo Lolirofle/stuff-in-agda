@@ -8,14 +8,6 @@ open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Type
 
-data Even : ℕ → Stmt{Lvl.𝟎} where
-  Even0 : Even(𝟎)
-  Even𝐒 : ∀{x : ℕ} → Even(x) → Even(𝐒(𝐒(x)))
-
-data Odd : ℕ → Stmt{Lvl.𝟎} where
-  Odd0 : Odd(𝐒(𝟎))
-  Odd𝐒 : ∀{x : ℕ} → Odd(x) → Odd(𝐒(𝐒(x)))
-
 -- Divisibility relation of natural numbers.
 -- `(y ∣ x)` means that `y` is divisible by `x`.
 -- In other words: `x/y` is an integer.
@@ -31,8 +23,15 @@ data Odd : ℕ → Stmt{Lvl.𝟎} where
 --   Defining Div𝐒 with (x + y) inside would work, but then the definition of DivN becomes more complicated because (_⋅_) is defined in this order.
 -- Note on zero divisors:
 --   (0 ∣ 0) is true, and it is the only number divisible by 0.
+-- Example definitions of special cases of the divisibility relation and the divisibility with remainder relation:
+--   data Even : ℕ → Stmt{Lvl.𝟎} where
+--     Even0 : Even(𝟎)
+--     Even𝐒 : ∀{x : ℕ} → Even(x) → Even(𝐒(𝐒(x)))
+--   data Odd : ℕ → Stmt{Lvl.𝟎} where
+--     Odd0 : Odd(𝐒(𝟎))
+--     Odd𝐒 : ∀{x : ℕ} → Odd(x) → Odd(𝐒(𝐒(x)))
 data _∣_ : ℕ → ℕ → Stmt{Lvl.𝟎} where
-  instance Div𝟎 : ∀{y}   → (y ∣ 𝟎)
+  Div𝟎 : ∀{y}   → (y ∣ 𝟎)
   Div𝐒 : ∀{y x} → (y ∣ x) → (y ∣ (y + x))
 
 _∤_ : ℕ → ℕ → Stmt
@@ -40,3 +39,11 @@ y ∤ x = ¬(y ∣ x)
 
 -- `Divisor(n)(d)` means that `d` is a divisor of `n`.
 Divisor = swap(_∣_)
+
+-- `Multiple(n)(m)` means that `m` is a multiple of `n`.
+Multiple = _∣_
+
+-- Elimination rule for (_∣_).
+divides-elim : ∀{ℓ}{P : ∀{y x} → (y ∣ x) → Type{ℓ}} → (∀{y} → P(Div𝟎{y})) → (∀{y x}{p : y ∣ x} → P(p) → P(Div𝐒 p)) → (∀{y x} → (p : y ∣ x) → P(p))
+divides-elim        z s Div𝟎     = z
+divides-elim{P = P} z s (Div𝐒 p) = s(divides-elim{P = P} z s p)

@@ -76,8 +76,8 @@ module _ where
   Function.congruence (Category.Functor.map-function bound-functor) [≡]-intro = reflexivity(_⊜_)
   Category.Functor.op-preserving bound-functor {x}{y}{z} {p}{q} = proof{x}{y}{z} {p}{q} where
     proof : ∀{x y z}{p : (y ≤ z)}{q : (x ≤ y)} → (bound-[≤] (transitivity(_≤_) q p) ⊜ (bound-[≤] p) ∘ (bound-[≤] q))
-    _⊜_.proof (proof {𝐒 x} {𝐒 y} {𝐒 z} {[≤]-with-[𝐒]} {[≤]-with-[𝐒]}) {𝟎}   = [≡]-intro
-    _⊜_.proof (proof {𝐒 x} {𝐒 y} {𝐒 z} {[≤]-with-[𝐒]} {[≤]-with-[𝐒]}) {𝐒 n} = congruence₁(𝐒) (_⊜_.proof (proof {x} {y} {z}) {n})
+    _⊜_.proof (proof {𝐒 x} {𝐒 y} {𝐒 z} {succ _} {succ _}) {𝟎}   = [≡]-intro
+    _⊜_.proof (proof {𝐒 x} {𝐒 y} {𝐒 z} {succ _} {succ _}) {𝐒 n} = congruence₁(𝐒) (_⊜_.proof (proof {x} {y} {z}) {n})
   Category.Functor.id-preserving bound-functor {n} = proof{n} where
     proof : ∀{n} → (bound-[≤] (reflexivity(_≤_) {n}) ⊜ id)
     _⊜_.proof (proof {𝟎})   {()}

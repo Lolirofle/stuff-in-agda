@@ -5,7 +5,7 @@ open import Type
 module Data.List.Sorting.Functions {ℓ} {T : Type{ℓ}} (_≤?_ : T → T → Bool) where
 
 open import Data.List
-open import Data.List.Functions as List
+import      Data.List.Functions as List
 
 -- Inserts an element to a sorted list so that the resulting list is still sorted.
 insert : T → List(T) → List(T)

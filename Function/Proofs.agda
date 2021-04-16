@@ -4,6 +4,7 @@ import      Lvl
 open import Logic
 open import Logic.Classical
 open import Logic.Propositional
+open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Functional
 open import Function.Inverseᵣ
@@ -141,6 +142,14 @@ module _
         ⦃ surj-g = bijective-to-surjective(g) ⦄
       ⦄
 
+  [∘]-inverseᵣ : ∀{f : b → c} ⦃ func-f : Function(f) ⦄ {f⁻¹ : b ← c}{g : a → b}{g⁻¹ : a ← b} → ⦃ inv-f : Inverseᵣ(f)(f⁻¹) ⦄ ⦃ inv-g : Inverseᵣ(g)(g⁻¹) ⦄ → Inverseᵣ(f ∘ g)(g⁻¹ ∘ f⁻¹)
+  Inverseᵣ.proof ([∘]-inverseᵣ {f} {f⁻¹} {g} {g⁻¹}) {x} =
+    ((f ∘ g) ∘ (g⁻¹ ∘ f⁻¹))(x) 🝖[ _≡ₛ_ ]-[]
+    (f ∘ ((g ∘ g⁻¹) ∘ f⁻¹))(x) 🝖[ _≡ₛ_ ]-[ congruence₁(f) (inverseᵣ(g)(g⁻¹)) ]
+    (f ∘ (id ∘ f⁻¹))(x)        🝖[ _≡ₛ_ ]-[]
+    (f ∘ f⁻¹)(x)               🝖[ _≡ₛ_ ]-[ inverseᵣ(f)(f⁻¹) ]
+    x                          🝖-end
+
   -- The composition of functions is a function.
   [∘]-function : ∀{f : b → c}{g : a → b} → ⦃ func-f : Function(f) ⦄ → ⦃ func-g : Function(g) ⦄ → Function(f ∘ g)
   Function.congruence([∘]-function {f = f}{g = g}) = congruence₁(f) ∘ congruence₁(g)
@@ -252,3 +261,28 @@ module _ {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     [↔]-transitivity
       ([↔]-intro (r ↦ intro ⦃ left = proj₂ᵣ-identityₗ ⦄ ⦃ right = r ⦄) Identity.right)
       proj₂ᵣ-identityᵣ
+
+module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  instance
+    id-inversePair : InversePair{A = T}([↔]-reflexivity)
+    id-inversePair = intro ⦃ left = intro(reflexivity(_≡ₛ_)) ⦄ ⦃ right = intro(reflexivity(_≡ₛ_)) ⦄
+
+module _
+  {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄
+  {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄
+  {p : A ↔ B}
+  where
+
+  sym-inversePair : ⦃ InversePair(p) ⦄ → InversePair([↔]-symmetry p)
+  sym-inversePair = intro
+
+module _
+  {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄
+  {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄
+  {C : Type{ℓₒ₃}} ⦃ equiv-C : Equiv{ℓₑ₃}(C) ⦄
+  {p₁ : A ↔ B} ⦃ func-p₁ₗ : Function([↔]-to-[←] p₁) ⦄
+  {p₂ : B ↔ C} ⦃ func-p₂ᵣ : Function([↔]-to-[→] p₂) ⦄
+  where
+
+  trans-inversePair : ⦃ inv₁ : InversePair(p₁) ⦄ → ⦃ inv₂ : InversePair(p₂) ⦄ → InversePair([↔]-transitivity p₁ p₂)
+  trans-inversePair = intro ⦃ left = [∘]-inverseᵣ {f = [↔]-to-[→] p₂} ⦄ ⦃ right = [∘]-inverseᵣ {f = [↔]-to-[←] p₁} ⦄

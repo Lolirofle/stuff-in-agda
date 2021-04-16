@@ -1,5 +1,7 @@
 module Structure.Operator.Names where
 
+open import Functional.Dependent
+open import Function.Names
 import      Lvl
 open import Logic
 open import Logic.Propositional
@@ -17,13 +19,13 @@ module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T�
   -- The binary operation swapped yields the same result.
   -- Example: For any x, (x ▫ x) always commutes.
   Commuting : (T₁ → T₁ → T₂) → T₁ → T₁ → Stmt
-  Commuting (_▫_) x y = ((x ▫ y) ≡ (y ▫ x))
+  Commuting(_▫_) = pointwise₂,₂(_≡_) (_▫_) (swap(_▫_))
 
   -- Definition of commutativity.
   -- Order of application for the operation does not matter for equality.
   -- Example: Addition of the natural numbers (_+_ : ℕ → ℕ → ℕ).
   Commutativity : (T₁ → T₁ → T₂) → Stmt
-  Commutativity (_▫_) = ∀{x y : T₁} → Commuting(_▫_)(x)(y)
+  Commutativity = ∀² ∘ Commuting
 
   -- Definition of an left identity element.
   -- Example: Top implies a proposition in boolean logic (⊤ →_).
@@ -44,13 +46,13 @@ module _ {T₁ : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(T₁) ⦄ {T₂ : Type{�
   -- Definition of an right identity element
   -- Example: Subtracting 0 for integers (_− 0).
   Identityᵣ : (T₁ → T₂ → T₁) → T₂ → Stmt
-  Identityᵣ (_▫_) id = ∀{x : T₁} → (x ▫ id) ≡ x
+  Identityᵣ(_▫_) id = Identityₗ(swap(_▫_)) id
 
   -- Definition of a left absorber element
   -- Also called "left neutral element" or "left annihilator"
   -- Example: Subtraction (monus) of 0 for natural numbers (0 − ).
   Absorberₗ : (T₁ → T₂ → T₁) → T₁ → Stmt
-  Absorberₗ (_▫_) null = ∀{x : T₂} → (null ▫ x) ≡ null
+  Absorberₗ(_▫_) null = Absorberᵣ(swap(_▫_)) null
 
   ConverseAbsorberₗ : (T₁ → T₂ → T₁) → T₁ → Stmt
   ConverseAbsorberₗ (_▫_)(a) = ∀{x y} → (x ▫ y ≡ a) → (x ≡ a)
@@ -121,27 +123,28 @@ module _ {T₁ : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(T₁) ⦄ {T₂ : Type{�
   Cancellationᵣ : (T₁ → T₂ → T₃) → Stmt
   Cancellationᵣ (_▫_) = (∀{x : T₂} → CancellationOnᵣ (_▫_)(x))
 
-module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₃}(T₃) ⦄ where
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ where
   -- Definition of the left inverse property
-  InverseOperatorOnₗ : (T₁ → T₂ → T₃) → (T₁ → T₃ → T₂) → T₁ → T₃ → Stmt
-  InverseOperatorOnₗ (_▫₁_) (_▫₂_) x y = (x ▫₁ (x ▫₂ y) ≡ y)
-
-  -- Definition of the right inverse property
-  InverseOperatorOnᵣ : (T₁ → T₂ → T₃) → (T₃ → T₂ → T₁) → T₃ → T₂ → Stmt
-  InverseOperatorOnᵣ (_▫₁_) (_▫₂_) x y = ((x ▫₂ y) ▫₁ y ≡ x)
+  InverseOperatorOnₗ : (T₁ → T₂ → T₃) → (T₁ → T₃ → T₂) → T₁ → T₂ → Stmt
+  InverseOperatorOnₗ (_▫₁_) (_▫₂_) x y = (x ▫₂ (x ▫₁ y) ≡ y)
 
   InverseOperatorₗ : (T₁ → T₂ → T₃) → (T₁ → T₃ → T₂) → Stmt
-  InverseOperatorₗ (_▫₁_) (_▫₂_) = ∀{x y} → (x ▫₁ (x ▫₂ y) ≡ y)
+  InverseOperatorₗ (_▫₁_)(_▫₂_) = ∀{x y} → InverseOperatorOnₗ(_▫₁_)(_▫₂_) x y
+
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₁}(T₁) ⦄ where
+  -- Definition of the right inverse property
+  InverseOperatorOnᵣ : (T₁ → T₂ → T₃) → (T₃ → T₂ → T₁) → T₁ → T₂ → Stmt
+  InverseOperatorOnᵣ (_▫₁_) (_▫₂_) x y = ((x ▫₁ y) ▫₂ y ≡ x)
 
   InverseOperatorᵣ : (T₁ → T₂ → T₃) → (T₃ → T₂ → T₁) → Stmt
-  InverseOperatorᵣ (_▫₁_) (_▫₂_) = ∀{x y} → ((x ▫₂ y) ▫₁ y ≡ x)
+  InverseOperatorᵣ (_▫₁_)(_▫₂_) = ∀{x y} → InverseOperatorOnᵣ(_▫₁_)(_▫₂_) x y
 
 module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ where
   InversePropertyₗ : (T₁ → T₂ → T₂) → (T₁ → T₁) → Stmt
-  InversePropertyₗ (_▫_) inv = ∀{x y} → InverseOperatorOnₗ (a ↦ b ↦ inv(a) ▫ b) (_▫_) x y
+  InversePropertyₗ (_▫_) inv = InverseOperatorₗ(_▫_)(a ↦ b ↦ inv(a) ▫ b)
 
   InversePropertyᵣ : (T₂ → T₁ → T₂) → (T₁ → T₁) → Stmt
-  InversePropertyᵣ (_▫_) inv = ∀{x y} → InverseOperatorOnᵣ (a ↦ b ↦ a ▫ inv(b)) (_▫_) x y
+  InversePropertyᵣ (_▫_) inv = InverseOperatorᵣ(_▫_)(a ↦ b ↦ a ▫ inv(b))
 
 ---------------------------------------------------------
 -- Patterns

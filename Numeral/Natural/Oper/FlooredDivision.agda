@@ -27,7 +27,7 @@ infixl 10100 _⌊/⌋_
 {-# BUILTIN NATDIVSUCAUX [_,_]_div_ #-}
 
 -- Floored division operation.
-_⌊/⌋_ : ℕ → (m : ℕ) → ⦃ _ : IsTrue(positive?(m)) ⦄ → ℕ
+_⌊/⌋_ : ℕ → (m : ℕ) → .⦃ _ : IsTrue(positive?(m)) ⦄ → ℕ
 a ⌊/⌋ 𝐒(m) = [ 𝟎 , m ] a div m
 
 _⌊/⌋₀_ : ℕ → ℕ → ℕ

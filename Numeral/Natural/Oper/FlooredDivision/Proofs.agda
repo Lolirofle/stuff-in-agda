@@ -9,6 +9,7 @@ open import Numeral.Natural.Oper.Comparisons.Proofs
 open import Numeral.Natural.Oper.FlooredDivision
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Oper
+open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Order
 open import Relator.Equals
 open import Relator.Equals.Proofs
@@ -38,12 +39,15 @@ inddiv-step-denominator {_} {_} {_}  {𝟎}    = [≡]-intro
 inddiv-step-denominator {d} {b} {a'} {𝐒 b'} = inddiv-step-denominator {d} {b} {a'} {b'}
 
 inddiv-smaller : (a' ≤ b') → ([ d , b ] a' div b' ≡ d)
-inddiv-smaller [≤]-minimum = [≡]-intro
-inddiv-smaller {d = d}{b} ([≤]-with-[𝐒] {𝟎}   {𝟎}    ⦃ p ⦄) = [≡]-intro
-inddiv-smaller {d = d}{b} ([≤]-with-[𝐒] {𝟎}   {𝐒 b'} ⦃ p ⦄) = [≡]-intro
-inddiv-smaller {d = d}{b} ([≤]-with-[𝐒] {𝐒 a'}{𝐒 b'} ⦃ p ⦄) = inddiv-smaller {d = d}{b} p
+inddiv-smaller min = [≡]-intro
+inddiv-smaller {d = d}{b} (succ {𝟎}   {𝟎}    p) = [≡]-intro
+inddiv-smaller {d = d}{b} (succ {𝟎}   {𝐒 b'} p) = [≡]-intro
+inddiv-smaller {d = d}{b} (succ {𝐒 a'}{𝐒 b'} p) = inddiv-smaller {d = d}{b} p
 
 
+
+[⌊/⌋][⌊/⌋₀]-equality : ∀{a b} → ⦃ _ : IsTrue(positive?(b))⦄ → (a ⌊/⌋₀ b ≡ a ⌊/⌋ b)
+[⌊/⌋][⌊/⌋₀]-equality {b = 𝐒 b} = [≡]-intro
 
 [⌊/⌋]-of-0ₗ : ∀{n} → ⦃ _ : IsTrue(positive?(n))⦄ → (𝟎 ⌊/⌋ n ≡ 𝟎)
 [⌊/⌋]-of-0ₗ {𝐒 n} = [≡]-intro
@@ -57,6 +61,8 @@ inddiv-smaller {d = d}{b} ([≤]-with-[𝐒] {𝐒 a'}{𝐒 b'} ⦃ p ⦄) = ind
 
 [⌊/⌋]-of-same : ∀{n} → ⦃ _ : IsTrue(positive?(n))⦄ → (n ⌊/⌋ n ≡ 1)
 [⌊/⌋]-of-same {𝐒 n} = inddiv-of-denominator-successor {b' = n}
+
+postulate [⌊/⌋]-positive : ∀{a b} ⦃ _ : Positive(a) ⦄ ⦃ _ : Positive(b) ⦄ → Positive(a ⌊/⌋ b)
 
 {-
 [⌊/⌋]-of-[+]ₗ : ∀{m n} → ⦃ _ : IsTrue(n ≢? 𝟎)⦄ → ((m + n) ⌊/⌋ n ≡ 𝐒(m ⌊/⌋ n))
@@ -73,3 +79,9 @@ inddiv-smaller {d = d}{b} ([≤]-with-[𝐒] {𝐒 a'}{𝐒 b'} ⦃ p ⦄) = ind
 postulate [⌊/⌋]-leₗ : ∀{a b} ⦃ _ : IsTrue(positive?(b))⦄ → (a ⌊/⌋ b ≤ a)
 
 postulate [⌊/⌋]-ltₗ : ∀{a} ⦃ _ : IsTrue(positive?(a))⦄ {b} ⦃ b-proof : IsTrue(b >? 1)⦄ → ((a ⌊/⌋ b) ⦃ [<?]-positive-any {1}{b} ⦄ < a)
+
+postulate [⌊/⌋]-zero : ∀{a b} ⦃ _ : IsTrue(positive?(b))⦄ → (a < b) → (a ⌊/⌋ b ≡ 𝟎)
+
+postulate [⌊/⌋]-preserve-[<]ₗ : ∀{a b d} ⦃ _ : IsTrue(positive?(b))⦄ ⦃ _ : IsTrue(positive?(d))⦄ → (a < b) → (a ⌊/⌋ d < b)
+
+postulate [⌊/⌋][+]-distributivityᵣ : ∀{a b c} ⦃ _ : IsTrue(positive?(c))⦄ → ((a + b) ⌊/⌋ c ≡ (a ⌊/⌋ c) + (b ⌊/⌋ c))

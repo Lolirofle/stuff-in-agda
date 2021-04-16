@@ -8,6 +8,7 @@ open import Data.List as List
 open import Data.List.Functions
 open import Logic
 open import Logic.Propositional
+open import Numeral.Finite
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
@@ -118,3 +119,16 @@ length-[++^] {l = l}{𝐒(n)} =
 length-isEmpty : (length(l) ≡ 0) ↔ (isEmpty(l) ≡ 𝑇)
 length-isEmpty {l = ∅}     = [↔]-intro (const [≡]-intro) (const [≡]-intro)
 length-isEmpty {l = x ⊰ L} = [↔]-intro (\()) (\())
+
+instance
+  length-preserves-insert : Preserving₁(length)(insert n x)(𝐒)
+  Preserving.proof (length-preserves-insert {n = n}) = proof{n = n} where
+    proof : ∀{n} → (length(insert n x l) ≡ 𝐒(length l))
+    proof         {l = _}     {n = 𝟎}   = [≡]-intro
+    proof         {l = ∅}     {n = 𝐒 n} = [≡]-intro
+    proof {x = x} {l = y ⊰ l} {n = 𝐒 n} rewrite proof {x = x} {l = l} {n = n} = [≡]-intro
+
+length-insertIn : ∀{n} → (length(insertIn x l n) ≡ 𝐒(length l))
+length-insertIn         {l = _}     {n = 𝟎}   = [≡]-intro
+length-insertIn         {l = ∅}     {n = 𝐒 n} = [≡]-intro
+length-insertIn {x = x} {l = y ⊰ l} {n = 𝐒 n} rewrite length-insertIn {x = x} {l = l} {n = n} = [≡]-intro

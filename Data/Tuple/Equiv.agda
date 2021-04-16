@@ -14,6 +14,6 @@ record Extensionality ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{
   constructor intro
   private instance _ = equiv
   field
-     ⦃ [,]-function ⦄   : BinaryOperator(_,_)
-     ⦃ left-function ⦄  : Function(Tuple.left)
-     ⦃ right-function ⦄ : Function(Tuple.right)
+    ⦃ [,]-function ⦄   : BinaryOperator(_,_)
+    ⦃ left-function ⦄  : Function(Tuple.left)
+    ⦃ right-function ⦄ : Function(Tuple.right)

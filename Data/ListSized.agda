@@ -14,3 +14,5 @@ List : ℕ → Type{ℓ}
 List(n) = IndexedList(intro 𝟎 (const 𝐒))(n)
 
 open Data.IndexedList(T){ℕ} using (∅ ; _⊰_ ; singleton) public
+
+elim = Data.IndexedList.elim(T){ℕ} (intro 𝟎 (const 𝐒))

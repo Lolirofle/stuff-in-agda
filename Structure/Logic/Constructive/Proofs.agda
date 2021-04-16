@@ -201,17 +201,19 @@ module _ where
     PredicateLogic.existential (typeBoundedPredicateLogic {B = B}) = [∃]-intro (f ↦ Logic.∃(x ↦ Σ(B(x)) (bx ↦ f x ⦃ bx ⦄)) ) ⦃ record{intro = {!!} ; elim = {!!}} ⦄
   -}
 
-  open import Logic.Classical.DoubleNegated
+  import      Logic.Classical.DoubleNegated as DoubleNegated
+  open import Logic.Names
+  import      Logic.Propositional.Theorems as Logic
   instance
-    doubleNegatedTypeLogic : PropositionalLogic{ℓₘₗ = Lvl.𝟎} Propositional.DoubleNegated
-    PropositionalLogic.bottom      doubleNegatedTypeLogic = [∃]-intro Logic.⊥   ⦃ record{elim = Propositional.[⊥]-elim} ⦄
-    PropositionalLogic.top         doubleNegatedTypeLogic = [∃]-intro Logic.⊤   ⦃ record{intro = Propositional.[⊤]-intro} ⦄
-    PropositionalLogic.implication doubleNegatedTypeLogic = [∃]-intro _→ᶠ_      ⦃ record{intro = Propositional.[→]-intro ; elim = Propositional.[→]-elim} ⦄
-    PropositionalLogic.conjunction doubleNegatedTypeLogic = [∃]-intro Logic._∧_ ⦃ record{intro = Propositional.[∧]-intro ; elimₗ = Propositional.[∧]-elimₗ ; elimᵣ = Propositional.[∧]-elimᵣ} ⦄
-    PropositionalLogic.disjunction doubleNegatedTypeLogic = [∃]-intro Logic._∨_ ⦃ record{introₗ = Propositional.[∨]-introₗ ; introᵣ = Propositional.[∨]-introᵣ ; elim = Propositional.[∨]-elim} ⦄
-    PropositionalLogic.consequence doubleNegatedTypeLogic = [∃]-intro _←ᶠ_      ⦃ record{intro = Propositional.[→]-intro ; elim = Propositional.[→]-elim} ⦄
-    PropositionalLogic.equivalence doubleNegatedTypeLogic = [∃]-intro Logic._↔_ ⦃ record{intro = Propositional.[↔]-intro ; elimₗ = Propositional.[↔]-elimₗ ; elimᵣ = Propositional.[↔]-elimᵣ} ⦄
-    PropositionalLogic.negation    doubleNegatedTypeLogic = [∃]-intro Logic.¬_  ⦃ record{intro = xy ↦ xny ↦ Propositional.[¬]-intro (x ↦ Propositional.[⊥]-intro (xy x) (xny x)) ; elim = x ↦ nx ↦ Propositional.[⊥]-elim(Propositional.[→]-elim(Propositional.[¬]-elim nx) x)} ⦄
+    doubleNegatedTypeLogic : PropositionalLogic{ℓₘₗ = Lvl.𝟎}(Logic.¬¬_)
+    PropositionalLogic.bottom      doubleNegatedTypeLogic = Logic.[∃]-intro Logic.⊥     ⦃ record{elim = DoubleNegated.[⊥]-elim} ⦄
+    PropositionalLogic.top         doubleNegatedTypeLogic = Logic.[∃]-intro Logic.⊤     ⦃ record{intro = DoubleNegated.[⊤]-intro} ⦄
+    PropositionalLogic.implication doubleNegatedTypeLogic = Logic.[∃]-intro (_→ᶠ_)      ⦃ record{intro = DoubleNegated.[→]-intro ; elim = DoubleNegated.[→]-elim} ⦄
+    PropositionalLogic.conjunction doubleNegatedTypeLogic = Logic.[∃]-intro (Logic._∧_) ⦃ record{intro = DoubleNegated.[∧]-intro ; elimₗ = DoubleNegated.[∧]-elimₗ ; elimᵣ = DoubleNegated.[∧]-elimᵣ} ⦄
+    PropositionalLogic.disjunction doubleNegatedTypeLogic = Logic.[∃]-intro (Logic._∨_) ⦃ record{introₗ = DoubleNegated.[∨]-introₗ ; introᵣ = DoubleNegated.[∨]-introᵣ ; elim = DoubleNegated.[∨]-elim} ⦄
+    PropositionalLogic.consequence doubleNegatedTypeLogic = Logic.[∃]-intro (Logic._←_) ⦃ record{intro = DoubleNegated.[←]-intro ; elim = DoubleNegated.[→]-elim} ⦄
+    PropositionalLogic.equivalence doubleNegatedTypeLogic = Logic.[∃]-intro (Logic._↔_) ⦃ record{intro = DoubleNegated.[↔]-intro ; elimₗ = DoubleNegated.[↔]-elimₗ ; elimᵣ = DoubleNegated.[↔]-elimᵣ} ⦄
+    PropositionalLogic.negation    doubleNegatedTypeLogic = Logic.[∃]-intro (Logic.¬_)  ⦃ record{intro = Fn.swap(_∘ₛ_) ; elim = const ∘₂ apply} ⦄
 
   open import Data.Boolean
   import      Data.Boolean.Operators

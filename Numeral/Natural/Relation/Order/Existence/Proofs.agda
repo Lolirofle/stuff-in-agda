@@ -13,6 +13,8 @@ open import Numeral.Natural.Induction
 open import Numeral.Natural.Relation.Order.Existence
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function.Domain
+open import Structure.Operator
 open import Structure.Operator.Properties
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Ordering
@@ -25,39 +27,24 @@ open import Type
 
 [≤]-minimum : ∀{x : ℕ} → (0 ≤ x)
 [≤]-minimum {x} = [∃]-intro x ⦃ identityₗ(_+_)(𝟎) ⦄
--- [∃]-intro {ℕ} {\n → 0 + n ≡ x} (x) ⦃ [+]-identityₗ ⦄
 
 [≤][0]ᵣ : ∀{x : ℕ} → (x ≤ 0) ↔ (x ≡ 0)
-[≤][0]ᵣ {𝟎} = [↔]-intro l r where
-  l : (𝟎 ≤ 0) ← (𝟎 ≡ 0)
-  l refl = [≡]-to-[≤] refl
-
-  r : (𝟎 ≤ 0) → (𝟎 ≡ 0)
-  r _ = [≡]-intro
-[≤][0]ᵣ {𝐒(n)} = [↔]-intro l r where
-  l : (𝐒(n) ≤ 0) ← (𝐒(n) ≡ 0)
-  l ()
-
-  r : (𝐒(n) ≤ 0) → (𝐒(n) ≡ 0)
-  r ([∃]-intro _ ⦃ ⦄ )
+[≤][0]ᵣ {𝟎}    = [↔]-intro [≡]-to-[≤] (const [≡]-intro)
+[≤][0]ᵣ {𝐒(n)} = [↔]-intro (\()) (\{([∃]-intro _ ⦃ ⦄ )})
 
 [≤][0]ᵣ-negation : ∀{x : ℕ} → ¬(𝐒(x) ≤ 0)
 [≤][0]ᵣ-negation {x} (Sx≤0) = [𝐒]-not-0([↔]-to-[→] ([≤][0]ᵣ {𝐒(x)}) (Sx≤0))
 
 [≤]-successor : ∀{a b : ℕ} → (a ≤ b) → (a ≤ 𝐒(b))
 [≤]-successor ([∃]-intro(n) ⦃ proof ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with(𝐒) (proof) ⦄
--- a + n ≡ b //f
--- a + ? ≡ 𝐒(b) //What value works if f?
--- a + 𝐒(n) ≡ 𝐒(b)
--- 𝐒(a + n) ≡ 𝐒(b) //congruence₁(𝐒) f
 
 [≤]-predecessor : ∀{a b : ℕ} → (𝐒(a) ≤ b) → (a ≤ b)
-[≤]-predecessor ([∃]-intro(n) ⦃ proof ⦄) = [∃]-intro (𝐒(n)) ⦃ proof ⦄
+[≤]-predecessor ([∃]-intro n) = [∃]-intro(𝐒(n))
 
 [≤]-without-[𝐒] : ∀{a b : ℕ} → (a ≤ b) ← (𝐒(a) ≤ 𝐒(b))
-[≤]-without-[𝐒] {𝟎}   {b}    (_)                    = [≤]-minimum
+[≤]-without-[𝐒] {𝟎}   {b}    (_)                      = [≤]-minimum
 [≤]-without-[𝐒] {𝐒(a)}{𝟎}    ()
-[≤]-without-[𝐒] {𝐒(a)}{𝐒(b)} ([∃]-intro(n) ⦃ proof ⦄) = [≤]-with-[𝐒] {a}{b} ([≤]-without-[𝐒] {a}{b} ([∃]-intro(n) ⦃ [𝐒]-injectivity-raw proof ⦄))
+[≤]-without-[𝐒] {𝐒(a)}{𝐒(b)} ([∃]-intro(n) ⦃ proof ⦄) = [≤]-with-[𝐒] {a}{b} ([≤]-without-[𝐒] {a}{b} ([∃]-intro(n) ⦃ injective(𝐒) proof ⦄))
 
 [≤][𝐒]ₗ : ∀{x : ℕ} → ¬(𝐒(x) ≤ x)
 [≤][𝐒]ₗ {𝟎}    (1≤0)    = [≤][0]ᵣ-negation{0}(1≤0)
@@ -65,14 +52,12 @@ open import Type
 
 instance
   [≤]-transitivity : Transitivity (_≤_)
-  Transitivity.proof [≤]-transitivity {a}{b}{c} ([∃]-intro n₁ ⦃ a+n₁≡b ⦄) ([∃]-intro n₂ ⦃ b+n₂≡c ⦄) =
-    [∃]-intro
-      (n₁ + n₂)
-     ⦃
-        (symmetry(_≡_) ([+]-associativity-raw {a} {n₁} {n₂})) -- a+(n₁+n₂) = (a+n₁)+n₂
-        🝖 ([≡]-with(expr ↦ expr + n₂) (a+n₁≡b)) -- (a+n₁)+n₂ = b+n₂
-        🝖 (b+n₂≡c) -- b+n₂ = c
-      ⦄ -- a+(n₁+n₂) = c
+  Transitivity.proof [≤]-transitivity {a}{b}{c} ([∃]-intro n₁ ⦃ an₁b ⦄) ([∃]-intro n₂ ⦃ bn₂c ⦄) = [∃]-intro (n₁ + n₂) ⦃ p ⦄ where
+    p =
+      a + (n₁ + n₂) 🝖[ _≡_ ]-[ associativity(_+_) {a}{n₁}{n₂} ]-sym
+      (a + n₁) + n₂ 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(n₂) an₁b ]
+      b + n₂        🝖[ _≡_ ]-[ bn₂c ]
+      c             🝖-end
 
 instance
   [≤]-reflexivity : Reflexivity (_≤_)
@@ -80,37 +65,32 @@ instance
 
 instance
   [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
-  Antisymmetry.proof [≤]-antisymmetry {a} {b} ([∃]-intro(n₁) ⦃ a+n₁≡b ⦄) ([∃]-intro(n₂) ⦃ b+n₂≡a ⦄) = [≡]-substitutionᵣ (n₁≡0) {n ↦ (a + n ≡ b)} (a+n₁≡b) where
-    n₁+n₂≡0 : ((n₁ + n₂) ≡ 0)
-    n₁+n₂≡0 =
-      [+]ᵣ-injectivity-raw(
-        (symmetry(_≡_) ([+]-associativity-raw {a} {n₁} {n₂}))
-        🝖 ([≡]-with(expr ↦ expr + n₂) a+n₁≡b)
-        🝖 b+n₂≡a
-      )
-    n₁≡0 : (n₁ ≡ 0)
-    n₁≡0 = [+]-sum-is-0ₗ {n₁} {n₂} n₁+n₂≡0
-  -- a+n₁ = b
-  -- (a+n₁)+n₂ = b+n₂
-  -- (a+n₁)+n₂ = a
-  -- a+(n₁+n₂) = a
-  -- a+(n₁+n₂) = a+0
-  -- n₁+n₂ = 0
-  -- a = b
+  Antisymmetry.proof [≤]-antisymmetry {a} {b} ([∃]-intro(n₁) ⦃ an₁b ⦄) ([∃]-intro(n₂) ⦃ bn₂a ⦄) =
+    a      🝖[ _≡_ ]-[]
+    a + 𝟎  🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(a) n₁0 ]-sym
+    a + n₁ 🝖[ _≡_ ]-[ an₁b ]
+    b      🝖-end
+    where
+      n₁n₂0 : (n₁ + n₂ ≡ 0)
+      n₁n₂0 = cancellationₗ(_+_) $
+        a + (n₁ + n₂) 🝖[ _≡_ ]-[ associativity(_+_) {a}{n₁}{n₂} ]-sym
+        (a + n₁) + n₂ 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(n₂) an₁b ]
+        b + n₂        🝖[ _≡_ ]-[ bn₂a ]
+        a             🝖[ _≡_ ]-[]
+        a + 0         🝖-end
+
+      n₁0 : (n₁ ≡ 0)
+      n₁0 = [∧]-elimₗ ([+]-sum-is-0 {n₁} {n₂} n₁n₂0)
 
 instance
   [≤]-weakPartialOrder : Weak.PartialOrder (_≤_) (_≡_)
-  [≤]-weakPartialOrder = record{
-      antisymmetry = [≤]-antisymmetry;
-      transitivity = [≤]-transitivity;
-      reflexivity  = [≤]-reflexivity
-    }
+  [≤]-weakPartialOrder = record{}
 
 [<]-minimum : ∀{x : ℕ} → (0 < 𝐒(x))
-[<]-minimum {x} = [≤]-with-[𝐒] {0} ([≤]-minimum)
+[<]-minimum = [≤]-with-[𝐒] {0} [≤]-minimum
 
 [≥]-is-[≮] : ∀{a b : ℕ} → ¬(a < b) ← (a ≥ b)
-[≥]-is-[≮] {a}{b} (b≤a) (Sa≤b) = [≤][𝐒]ₗ (transitivity(_≤_) {x = 𝐒(a)}{y = b}{z = a} (Sa≤b) (b≤a))
+[≥]-is-[≮] {a}{b} b≤a Sa≤b = [≤][𝐒]ₗ (transitivity(_≤_) {x = 𝐒(a)}{y = b}{z = a} Sa≤b b≤a)
 
 -- [≤]-is-[≯] : ∀{a b : ℕ} → ¬(a > b) ← (a ≤ b)
 -- [≤]-is-[≯] {a}{b} = [≥]-is-[≮] {b}{a}
@@ -121,14 +101,13 @@ instance
 -- [<]-is-[≱] : ∀{a b : ℕ} → ¬(a ≥ b) ← (a < b)
 -- [<]-is-[≱] {a}{b} = [>]-is-[≰] {b}{a}
 
-[≤]-totality-raw : Names.ConverseTotal(_≤_)
-[≤]-totality-raw {𝟎}   {𝟎}    = [∨]-introₗ ([≡]-to-[≤] [≡]-intro)
-[≤]-totality-raw {𝐒(a)}{𝟎}    = [∨]-introᵣ ([≤]-minimum)
-[≤]-totality-raw {𝟎}   {𝐒(b)} = [∨]-introₗ ([≤]-minimum)
-[≤]-totality-raw {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ ([≤]-with-[𝐒] {a}{b})) ([∨]-introᵣ ∘ ([≤]-with-[𝐒] {b}{a})) ([≤]-totality-raw {a}{b})
-
-
 instance
   [≤]-totality : ConverseTotal(_≤_)
-  ConverseTotal.proof [≤]-totality = [≤]-totality-raw
+  [≤]-totality = intro p where
+    p : Names.ConverseTotal(_≤_)
+    p {𝟎}   {𝟎}    = [∨]-introₗ ([≡]-to-[≤] [≡]-intro)
+    p {𝐒(a)}{𝟎}    = [∨]-introᵣ ([≤]-minimum)
+    p {𝟎}   {𝐒(b)} = [∨]-introₗ ([≤]-minimum)
+    p {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ ([≤]-with-[𝐒] {a}{b})) ([∨]-introᵣ ∘ ([≤]-with-[𝐒] {b}{a})) (p {a}{b})
+
 

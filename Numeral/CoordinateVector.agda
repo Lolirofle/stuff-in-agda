@@ -52,7 +52,6 @@ head(v) = v(𝟎)
 
 -- The list without the first element of a non-empty vector
 tail : Vector(𝐒(d))(T) → Vector(d)(T)
-(tail{𝟎}   (v)) ()
 (tail{𝐒(_)}(v)) (i) = v(𝐒(i))
 
 -- The list without the first element if there were any
@@ -129,18 +128,58 @@ reduceOrᵣ : (T → T → T) → T → Vector(d)(T) → T
 reduceOrᵣ {d = 𝟎}    _     empty v = empty
 reduceOrᵣ {d = 𝐒(d)} (_▫_) empty v = reduceᵣ(_▫_) v
 
--- A vector filled with multiple copies of a single element
+-- A vector filled with multiple copies of a single element.
 fill : T → Vector(d)(T)
 fill(elem) = const(elem)
 
 -- An empty vector.
-empty : Vector(𝟎)(T)
+empty : Vector(0)(T)
 empty()
 
--- A vector with an additional element at the beginning
+-- A vector with a single element.
+singleton : T → Vector(1)(T)
+singleton x 𝟎 = x
+
+-- A vector with two elements.
+pair : T → T → Vector(2)(T)
+pair x _ (𝟎)   = x
+pair _ y (𝐒 𝟎) = y
+
+-- A vector with an additional element at the start.
 prepend : T → Vector(d)(T) → Vector(𝐒(d))(T)
 (prepend(x)(_)) (𝟎)    = x
 (prepend(_)(v)) (𝐒(n)) = v(n)
+
+-- A vector with an additional element inserted at an already existing position.
+-- Examples:
+--   insert 0 x [a,b,c] = [x,a,b,c]
+--   insert 1 x [a,b,c] = [a,x,b,c]
+--   insert 2 x [a,b,c] = [a,b,x,c]
+--   insert 3 x [a,b,c] is a type error because 3 is not an existing position.
+insert : 𝕟(d) → T → Vector(d)(T) → Vector(𝐒(d))(T)
+insert 𝟎               = prepend
+insert (𝐒 _) _ v 𝟎     = v(𝟎)
+insert (𝐒 i) x v (𝐒 n) = insert i x (tail v) n
+
+-- A vector with an additional element inserted at a position.
+-- Note: The difference compared to insert is that this includes the postpending operation.
+-- Examples:
+--   insert₊ 0 x [a,b] = [x,a,b]
+--     insert₊ 0 x [a,b] 0 ≟ [x,a,b] 0 = x
+--     insert₊ 0 x [a,b] 1 ≟ [x,a,b] 1 = a
+--     insert₊ 0 x [a,b] 2 ≟ [x,a,b] 2 = b
+--   insert₊ 1 x [a,b] = [a,x,b]
+--     insert₊ 1 x [a,b] 0 = a
+--     insert₊ 1 x [a,b] 1 = insert₊ 0 x [b] 0 = x
+--     insert₊ 1 x [a,b] 2 = insert₊ 0 x [b] 1 = [x,b] 1 = b
+--   insertv 2 x [a,b] = [a,b,x]
+--     insert₊ 2 x [a,b] 0 = a
+--     insert₊ 2 x [a,b] 1 = insert₊ 1 x [b] 0 = b
+--     insert₊ 2 x [a,b] 2 = insert₊ 1 x [b] 1 = insert₊ 0 x [] 0 = [x] 0 = x
+insert₊ : 𝕟₌(d) → T → Vector(d)(T) → Vector(𝐒(d))(T)
+insert₊{_}   𝟎               = prepend
+insert₊{𝐒 _} (𝐒 _) _ v 𝟎     = v(𝟎)
+insert₊{𝐒 _} (𝐒 i) x v (𝐒 n) = insert₊ i x (tail v) n
 
 -- A vector concatenated with another vector
 _++_ : Vector(d₁)(T) → Vector(d₂)(T) → Vector(d₁ ℕ.+ d₂)(T)
@@ -150,9 +189,7 @@ _++_ {d₁ = 𝐒(d₁)} {d₂ = d₂} v₁ v₂ (𝐒(i)) = _++_ {d₁ = d₁} 
 
 count : (T → Bool) → Vector(d)(T) → ℕ
 count {d = 𝟎}    (f)(v) = 𝟎
-count {d = 𝐒(n)} (f)(v) =
-  let next = count{d = n} (f)(tail v)
-  in  if f(head v) then 𝐒(next) else next
+count {d = 𝐒(n)} (f)(v) = (if f(head v) then 𝐒 else id) (count{d = n} (f)(tail v))
 
 reverse : Vector(d)(T) → Vector(d)(T)
 (reverse(v)) (n) = v(Wrapping.[−] n)

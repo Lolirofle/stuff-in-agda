@@ -5,7 +5,7 @@ open import Structure.Setoid renaming (_≡_ to _≡ₑ_)
 module Data.List.Relation.Membership {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T)⦄ where
 
 open import Data.List
-open import Data.List.Relation.Quantification
+open import Data.List.Relation.Quantification using (ExistsElement ; ExistsUniqueElement)
 open import Functional
 open import Logic
 
@@ -17,3 +17,6 @@ module _∈_ where
 
 open _∈_ public
 open import Relator.Sets(_∈_) public
+
+_∈!_ : T → List(T) → Stmt
+_∈!_ = ExistsUniqueElement ∘ (_≡ₑ_)

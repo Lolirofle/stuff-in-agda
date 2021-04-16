@@ -1,12 +1,28 @@
 module Numeral.Integer.Oper where
 
-open import Numeral.Natural              as ℕ using (ℕ)
-import      Numeral.Natural.Oper         as ℕ
-open import Numeral.Natural.UnclosedOper using () renaming (_−_ to _−ₙ_ ; signed0 to signedℕ)
+open import Numeral.Natural      as ℕ using (ℕ)
+import      Numeral.Natural.Oper as ℕ
 open import Numeral.Integer
 open import Numeral.Integer.Sign
 import      Numeral.Sign       as Sign
 import      Numeral.Sign.Oper0 as Sign
+
+-- Unclosed total subtraction from natural numbers to integers
+_−ₙ_ : ℕ → ℕ → ℤ
+x      −ₙ ℕ.𝟎    = ℤ.+ₙ x
+ℕ.𝟎    −ₙ ℕ.𝐒(x) = ℤ.−𝐒ₙ(x)
+ℕ.𝐒(x) −ₙ ℕ.𝐒(y) = x −ₙ y
+
+-- Construction of an integer with the sign and numeral components
+signed : (Sign.+|−) → ℕ → ℤ
+signed (Sign.➕) (n) = +ₙ n
+signed (Sign.➖) (n) = −ₙ n
+
+signed0 : (Sign.+|0|−) → ℕ → ℤ
+signed0(Sign.➕) (ℕ.𝐒(n)) = +𝐒ₙ(n)
+signed0(Sign.➖) (ℕ.𝐒(n)) = −𝐒ₙ(n)
+{-# CATCHALL #-}
+signed0(_)      (_)      = 𝟎
 
 ------------------------------------------
 -- Unary operations
@@ -57,7 +73,7 @@ x − y = x + (− y)
 
 -- Multiplication
 _⋅_ : ℤ → ℤ → ℤ
-x ⋅ y = signedℕ ((sign0 x) Sign.⨯ (sign0 y)) ((absₙ x) ℕ.⋅ (absₙ y))
+x ⋅ y = signed0 ((sign0 x) Sign.⨯ (sign0 y)) ((absₙ x) ℕ.⋅ (absₙ y))
 
 -- Distance
 _𝄩_ : ℤ → ℤ → ℕ

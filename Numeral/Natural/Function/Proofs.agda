@@ -7,7 +7,7 @@ open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Numeral.Natural
 open import Numeral.Natural.Function
-open import Numeral.Natural.Relation.Order
+open import Numeral.Natural.Relation.Order as ≤ using (_≤_ ; _≥_)
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Oper.Proofs.Order
@@ -126,7 +126,7 @@ min-defₗ {a}{b} = [↔]-intro (l{a}{b}) (r{a}{b}) where
   r {𝟎}   {𝟎}    _                     = [≡]-intro
   r {𝟎}   {𝐒(b)} _                     = [≡]-intro
   r {𝐒(_)}{𝟎}    ()
-  r {𝐒(a)}{𝐒(b)} ([≤]-with-[𝐒] ⦃ ab ⦄) = [≡]-with(𝐒) (r{a}{b} (ab))
+  r {𝐒(a)}{𝐒(b)} (≤.succ ab) = [≡]-with(𝐒) (r{a}{b} (ab))
 
 min-defᵣ : ∀{a b} → (b ≤ a) ↔ (min(a)(b) ≡ b)
 min-defᵣ {a}{b} = [≡]-substitutionᵣ (commutativity(min)) {expr ↦ (b ≤ a) ↔ (expr ≡ b)} (min-defₗ{b}{a})
@@ -189,7 +189,7 @@ max-defₗ {a}{b} = [↔]-intro (l{a}{b}) (r{a}{b}) where
   r {𝟎}   {𝟎}    _                     = [≡]-intro
   r {𝟎}   {𝐒(_)} ()
   r {𝐒(_)}{𝟎}    _                     = [≡]-intro
-  r {𝐒(a)}{𝐒(b)} ([≤]-with-[𝐒] ⦃ ab ⦄) = [≡]-with(𝐒) (r{a}{b} (ab))
+  r {𝐒(a)}{𝐒(b)} (≤.succ ab) = [≡]-with(𝐒) (r{a}{b} (ab))
 
 max-defᵣ : ∀{a b} → (b ≥ a) ↔ (max(a)(b) ≡ b)
 max-defᵣ {a}{b} = [≡]-substitutionᵣ (commutativity(max)) {expr ↦ (b ≥ a) ↔ (expr ≡ b)} (max-defₗ{b}{a})
@@ -217,15 +217,15 @@ max-with-min {a}{b} with [≤][>]-dichotomy {a}{b}
 [≤]-conjunction-min : ∀{a b c} → ((a ≤ b) ∧ (a ≤ c)) ↔ (a ≤ min b c)
 [≤]-conjunction-min {a}{b}{c} = [↔]-intro (a≤bc ↦ [∧]-intro (a≤bc 🝖 min-orderₗ) (a≤bc 🝖 min-orderᵣ)) (uncurry r) where
   r : ∀{a b c} → (a ≤ b) → (a ≤ c) → (a ≤ min b c)
-  r {.0}     {b}      {c}     [≤]-minimum  [≤]-minimum = [≤]-minimum
-  r {.(𝐒 a)} {.(𝐒 b)} {.(𝐒 c)} ([≤]-with-[𝐒] {a} {b} ⦃ ab ⦄) ([≤]-with-[𝐒] {y = c} ⦃ ac ⦄) = [≤]-with-[𝐒] ⦃ r {a}{b}{c} ab ac ⦄
+  r {.0}     {b}      {c}     ≤.min  ≤.min = ≤.min
+  r {.(𝐒 a)} {.(𝐒 b)} {.(𝐒 c)} (≤.succ {a} {b} ab) (≤.succ {y = c} ac) = [≤]-with-[𝐒] ⦃ r {a}{b}{c} ab ac ⦄
 
 [≤]-conjunction-max : ∀{a b c} → ((a ≤ c) ∧ (b ≤ c)) ↔ (max a b ≤ c)
 [≤]-conjunction-max {a}{b}{c} = [↔]-intro (ab≤c ↦ [∧]-intro (max-orderₗ 🝖 ab≤c) ((max-orderᵣ 🝖 ab≤c))) (uncurry r) where
   r : ∀{a b c} → (a ≤ c) → (b ≤ c) → (max a b ≤ c)
-  r {.0}     {b@(𝐒 _)}{c}      [≤]-minimum  bc           = bc
-  r {a}      {.0}     {c}      ac           [≤]-minimum  = ac
-  r {𝐒 a} {𝐒 b} {𝐒 c} ([≤]-with-[𝐒] ⦃ ac ⦄) ([≤]-with-[𝐒] ⦃ bc ⦄) = [≤]-with-[𝐒] ⦃ r {a}{b}{c} ac bc ⦄
+  r {.0}     {b@(𝐒 _)}{c}      ≤.min  bc     = bc
+  r {a}      {.0}     {c}      ac     ≤.min  = ac
+  r {𝐒 a} {𝐒 b} {𝐒 c} (≤.succ ac) (≤.succ bc) = [≤]-with-[𝐒] ⦃ r {a}{b}{c} ac bc ⦄
 
 [≤]-disjunction-min : ∀{a b c} → ((a ≤ c) ∨ (b ≤ c)) ↔ (min a b ≤ c)
 [≤]-disjunction-min = [↔]-intro

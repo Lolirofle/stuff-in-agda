@@ -10,9 +10,9 @@ open import Numeral.Integer.Oper
 open import Numeral.Integer.Sign
 open import Numeral.Natural.Induction
 open import Numeral.Natural as ℕ using (ℕ)
-open import Numeral.Natural.UnclosedOper using () renaming (_−_ to _−ₙ_ ; signed0 to signedℕ)
 import      Numeral.Natural.Oper as ℕ
 import      Numeral.Natural.Oper.Proofs as ℕ
+import      Numeral.Natural.Relation.Order as ℕ
 import      Numeral.Sign as Sign
 import      Numeral.Sign.Oper0 as Sign
 import      Numeral.Sign.Proofs as Sign
@@ -113,6 +113,38 @@ instance
     p {−𝐒ₙ ℕ.𝐒 x} {−𝐒ₙ ℕ.𝟎}       = [≡]-intro
     p {−𝐒ₙ ℕ.𝐒 x} {−𝐒ₙ ℕ.𝐒 y}     = [≡]-intro
     p {−𝐒ₙ ℕ.𝐒 x} {+ₙ ℕ.𝟎}        = [≡]-intro
+
+instance
+  [absₙ][⋅]-preserving : Preserving₂(absₙ)(_⋅_)(ℕ._⋅_)
+  Preserving.proof [absₙ][⋅]-preserving {+ₙ ℕ.𝟎}    {+ₙ ℕ.𝟎}    = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {+ₙ ℕ.𝟎}    {+ₙ ℕ.𝐒 y}  = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {+ₙ ℕ.𝐒 x}  {+ₙ ℕ.𝟎}    = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {+ₙ ℕ.𝐒 x}  {+ₙ ℕ.𝐒 y}  = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {−𝐒ₙ x}     {−𝐒ₙ y}     = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {+ₙ ℕ.𝟎}    {−𝐒ₙ ℕ.𝟎}   = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {+ₙ ℕ.𝟎}    {−𝐒ₙ ℕ.𝐒 y} = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {+ₙ ℕ.𝐒 x}  {−𝐒ₙ ℕ.𝟎}   = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {+ₙ ℕ.𝐒 x}  {−𝐒ₙ ℕ.𝐒 y} = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {−𝐒ₙ ℕ.𝟎}   {+ₙ ℕ.𝟎}    = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {−𝐒ₙ ℕ.𝟎}   {+ₙ ℕ.𝐒 y}  = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {−𝐒ₙ ℕ.𝐒 x} {+ₙ ℕ.𝟎}    = [≡]-intro
+  Preserving.proof [absₙ][⋅]-preserving {−𝐒ₙ ℕ.𝐒 x} {+ₙ ℕ.𝐒 y}  = [≡]-intro
+
+instance
+  [sign0][⋅]-preserving : Preserving₂(sign0)(_⋅_)(Sign._⨯_)
+  Preserving.proof [sign0][⋅]-preserving {+ₙ ℕ.𝟎}    {+ₙ ℕ.𝟎}    = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {+ₙ ℕ.𝟎}    {+ₙ ℕ.𝐒 y}  = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {+ₙ ℕ.𝐒 x}  {+ₙ ℕ.𝟎}    = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {+ₙ ℕ.𝐒 x}  {+ₙ ℕ.𝐒 y}  = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {−𝐒ₙ x}     {−𝐒ₙ y}     = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {+ₙ ℕ.𝟎}    {−𝐒ₙ ℕ.𝟎}   = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {+ₙ ℕ.𝟎}    {−𝐒ₙ ℕ.𝐒 y} = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {+ₙ ℕ.𝐒 x}  {−𝐒ₙ ℕ.𝟎}   = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {+ₙ ℕ.𝐒 x}  {−𝐒ₙ ℕ.𝐒 y} = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {−𝐒ₙ ℕ.𝟎}   {+ₙ ℕ.𝟎}    = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {−𝐒ₙ ℕ.𝟎}   {+ₙ ℕ.𝐒 y}  = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {−𝐒ₙ ℕ.𝐒 x} {+ₙ ℕ.𝟎}    = [≡]-intro
+  Preserving.proof [sign0][⋅]-preserving {−𝐒ₙ ℕ.𝐒 x} {+ₙ ℕ.𝐒 y}  = [≡]-intro
 
 
 
@@ -370,6 +402,20 @@ instance
 
 
 
+
+[−]-of-[+𝐒ₙ] : ∀{x y} → (+𝐒ₙ x) − (+𝐒ₙ y) ≡ (+ₙ x) − (+ₙ y)
+[−]-of-[+𝐒ₙ] {y = ℕ.𝟎}   = [≡]-intro
+[−]-of-[+𝐒ₙ] {y = ℕ.𝐒 _} = [≡]-intro
+
+[+ₙ][−₀][−]-preserving : ∀{x y} → (x ℕ.≥ y) → ((+ₙ(x ℕ.−₀ y)) ≡ ((+ₙ x) − (+ₙ y)))
+[+ₙ][−₀][−]-preserving ℕ.min = [≡]-intro
+[+ₙ][−₀][−]-preserving {ℕ.𝐒 x}{ℕ.𝐒 y} (ℕ.succ p) = [+ₙ][−₀][−]-preserving {x}{y} p 🝖 symmetry(_≡_) ([−]-of-[+𝐒ₙ] {x}{y})
+
+[−ₙ]-on-[+]ₗ-redundancy : ∀{a b c} → ((a ℕ.+ b) −ₙ (a ℕ.+ c) ≡ b −ₙ c)
+[−ₙ]-on-[+]ₗ-redundancy{ℕ.𝟎}  {b}{c} = [≡]-intro
+[−ₙ]-on-[+]ₗ-redundancy{ℕ.𝐒 a}{b}{c} = [−ₙ]-on-[+]ₗ-redundancy{a}{b}{c}
+
+
 instance
   [+]-associativity : Associativity(_+_)
   [+]-associativity = intro(\{x y z} → p{x}{y}{z}) where
@@ -438,17 +484,17 @@ sign-of-[⋅] {−𝐒ₙ ℕ.𝟎}   {+ₙ ℕ.𝐒 y}  = [≡]-intro
 sign-of-[⋅] {−𝐒ₙ ℕ.𝐒 x} {+ₙ ℕ.𝟎}    = [≡]-intro
 sign-of-[⋅] {−𝐒ₙ ℕ.𝐒 x} {+ₙ ℕ.𝐒 y}  = [≡]-intro
 
-signed-inverse : ∀{x} → (signedℕ (sign0 x) (absₙ x) ≡ x)
+signed-inverse : ∀{x} → (signed0 (sign0 x) (absₙ x) ≡ x)
 signed-inverse {+𝐒ₙ _} = [≡]-intro
 signed-inverse {𝟎}     = [≡]-intro
 signed-inverse {−𝐒ₙ _} = [≡]-intro
 
-sign0-inverse : ∀{x}{y} → (sign0(signedℕ x (ℕ.𝐒(y))) ≡ x)
+sign0-inverse : ∀{x}{y} → (sign0(signed0 x (ℕ.𝐒(y))) ≡ x)
 sign0-inverse {Sign.➕} {y} = [≡]-intro
 sign0-inverse {Sign.𝟎}  {y} = [≡]-intro
 sign0-inverse {Sign.➖} {y} = [≡]-intro
 
-absₙ-inverse : ∀{x}{y} → (x ≢ Sign.𝟎) → (absₙ(signedℕ x y) ≡ y)
+absₙ-inverse : ∀{x}{y} → (x ≢ Sign.𝟎) → (absₙ(signed0 x y) ≡ y)
 absₙ-inverse {Sign.➕} {ℕ.𝟎}   _ = [≡]-intro
 absₙ-inverse {Sign.➕} {ℕ.𝐒 y} _ = [≡]-intro
 absₙ-inverse {Sign.➖} {ℕ.𝟎}   _ = [≡]-intro
@@ -456,13 +502,17 @@ absₙ-inverse {Sign.➖} {ℕ.𝐒 y} _ = [≡]-intro
 absₙ-inverse {Sign.𝟎} {ℕ.𝟎}    _ = [≡]-intro
 absₙ-inverse {Sign.𝟎} {ℕ.𝐒 y}  p with () ← p [≡]-intro
 
+absₙ-of-[−ₙ] : ∀{x} → (absₙ(−ₙ x) ≡ x)
+absₙ-of-[−ₙ] {ℕ.𝟎}   = [≡]-intro
+absₙ-of-[−ₙ] {ℕ.𝐒 x} = [≡]-intro
+
 [⋅]-equality : ∀{x y z} → (x ⋅ y ≡ z) ↔ (sign0(x) Sign.⨯ sign0(y) ≡ sign0 z) ∧ (absₙ(x) ℕ.⋅ absₙ(y) ≡ absₙ(z))
 [⋅]-equality {x}{y}{z} = [↔]-intro (Tuple.uncurry l) r where
   l : ∀{x y z} → (sign0(x) Sign.⨯ sign0(y) ≡ sign0 z) → (absₙ(x) ℕ.⋅ absₙ(y) ≡ absₙ(z)) → (x ⋅ y ≡ z)
-  l{x}{y}{z} p q = congruence₂(signedℕ) p q 🝖 signed-inverse
+  l{x}{y}{z} p q = congruence₂(signed0) p q 🝖 signed-inverse
 
   r : ∀{x y z} → (x ⋅ y ≡ z) → (sign0(x) Sign.⨯ sign0(y) ≡ sign0 z) ∧ (absₙ(x) ℕ.⋅ absₙ(y) ≡ absₙ(z))
-  r{x}{y}{z} p = [∧]-intro (symmetry(_≡_) sign-of-[⋅] 🝖 congruence₁(sign0) p) (symmetry(_≡_) (absₙ-of-[⋅] {x}{y}) 🝖 congruence₁(absₙ) p)
+  r{x}{y}{z} p = [∧]-intro (symmetry(_≡_) (preserving₂(sign0)(_⋅_)(Sign._⨯_)) 🝖 congruence₁(sign0) p) (symmetry(_≡_) (preserving₂(absₙ)(_⋅_)(ℕ._⋅_) {x}{y}) 🝖 congruence₁(absₙ) p)
 
 instance
   [⋅]-identityₗ : Identityₗ(_⋅_)(𝟏)
@@ -492,12 +542,12 @@ instance
 
 instance
   [⋅]-commutativity : Commutativity(_⋅_)
-  Commutativity.proof [⋅]-commutativity {x}{y} = congruence₂(signedℕ) (commutativity(Sign._⨯_)) (commutativity(ℕ._⋅_) {absₙ x}{absₙ y})
+  Commutativity.proof [⋅]-commutativity {x}{y} = congruence₂(signed0) (commutativity(Sign._⨯_)) (commutativity(ℕ._⋅_) {absₙ x}{absₙ y})
 
 instance
   postulate [⋅]-associativity : Associativity(_⋅_)
   {-Associativity.proof [⋅]-associativity {x}{y}{z} =
-    congruence₂(signedℕ)
+    congruence₂(signed0)
       (congruence₂ₗ(Sign._⨯_)(sign0 z) sign0-inverse                                                  🝖 associativity(Sign._⨯_)                      🝖 symmetry(_≡_) (congruence₂ᵣ(Sign._⨯_)(sign0(x)) (sign-of-[⋅] {y}{z})))
       (congruence₂ₗ(ℕ._⋅_)   (absₙ(z)) (absₙ-inverse{sign0(x) Sign.⨯ sign0(y)}{absₙ(x) ℕ.⋅ absₙ(y)})  🝖 associativity(ℕ._⋅_){absₙ x}{absₙ y}{absₙ z} 🝖 symmetry(_≡_) (congruence₂ᵣ(ℕ._⋅_)   (absₙ (x)) (absₙ-of-[⋅] {y}{z})))
   -}
@@ -535,9 +585,9 @@ instance
     p {−𝐒ₙ x} {−𝐒ₙ y} {−𝐒ₙ z} = {!!}-}
   {-
     x ⋅ (y + z)                                                                                                                     🝖[ _≡_ ]-[]
-    signedℕ ((sign0 x) Sign.⨯ (sign0(y + z))) ((absₙ x) ℕ.⋅ (absₙ(y + z)))                                                          🝖[ _≡_ ]-[ {!congruence₂(signedℕ) ? ?!} ]
-    signedℕ ((sign0 x) Sign.⨯ sign0(y + z)) ((absₙ x) ℕ.⋅ (absₙ(y + z)))                                                          🝖[ _≡_ ]-[ {!!} ]
-    (signedℕ ((sign0 x) Sign.⨯ (sign0 y)) ((absₙ x) ℕ.⋅ (absₙ y))) + (signedℕ ((sign0 x) Sign.⨯ (sign0 z)) ((absₙ x) ℕ.⋅ (absₙ z))) 🝖[ _≡_ ]-[]
+    signed0 ((sign0 x) Sign.⨯ (sign0(y + z))) ((absₙ x) ℕ.⋅ (absₙ(y + z)))                                                          🝖[ _≡_ ]-[ {!congruence₂(signed0) ? ?!} ]
+    signed0 ((sign0 x) Sign.⨯ sign0(y + z)) ((absₙ x) ℕ.⋅ (absₙ(y + z)))                                                          🝖[ _≡_ ]-[ {!!} ]
+    (signed0 ((sign0 x) Sign.⨯ (sign0 y)) ((absₙ x) ℕ.⋅ (absₙ y))) + (signed0 ((sign0 x) Sign.⨯ (sign0 z)) ((absₙ x) ℕ.⋅ (absₙ z))) 🝖[ _≡_ ]-[]
     (x ⋅ y) + (x ⋅ z)                                                                                                               🝖-end
     where
       sign0-proof : ∀{x y z} → ((sign0 x) Sign.⨯ sign0(y + z) ≡ (sign0(x) + sign0(z)) Sign.⨯ (sign0(x) + sign0(z)))
@@ -547,17 +597,23 @@ instance
   postulate [⋅][+]-distributivityᵣ : Distributivityᵣ(_⋅_)(_+_)
 
 instance
+  postulate [⋅][−]-distributivityₗ : Distributivityₗ(_⋅_)(_−_)
+
+instance
+  postulate [⋅][−]-distributivityᵣ : Distributivityᵣ(_⋅_)(_−_)
+
+instance
   [+][⋅]-rng : Rng(_+_)(_⋅_)
   [+][⋅]-rng = record{}
 
 instance
   [+][⋅]-ring-unity : Unity(_+_)(_⋅_)
   Unity.[⋅]-identity-existence [+][⋅]-ring-unity = [∃]-intro 𝟏 ⦃ intro ⦄
-    
+
 instance
   [+][⋅]-ring : Ring(_+_)(_⋅_)
   [+][⋅]-ring = record{}
-  
+
 import      Numeral.Natural.Relation.Order as ℕ
 import      Numeral.Natural.Relation.Order.Proofs as ℕ
 import      Structure.Relator.Ordering as Structure
@@ -591,7 +647,6 @@ instance
   ConverseTotal.proof [≤]-converseTotal {+ₙ  x} {−𝐒ₙ y} = Either.Right mix
   ConverseTotal.proof [≤]-converseTotal {−𝐒ₙ x} {+ₙ  y} = Either.Left  mix
   ConverseTotal.proof [≤]-converseTotal {−𝐒ₙ x} {−𝐒ₙ y} = Either.map neg neg (converseTotal(ℕ._≤_))
-
 
 instance
   [≤]-weakPartialOrder : Structure.Weak.PartialOrder(_≤_)(_≡_)

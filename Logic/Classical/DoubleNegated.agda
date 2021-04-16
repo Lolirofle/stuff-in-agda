@@ -3,6 +3,8 @@ module Logic.Classical.DoubleNegated where
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Names
+open import Logic.Propositional as Constructive using (¬¬_)
+import      Logic.Predicate     as Constructive
 open import Logic
 import      Lvl
 open import Syntax.Type
@@ -12,346 +14,272 @@ private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 private variable X Y Z W : Stmt{ℓ}
 private variable P : X → Stmt{ℓ}
 
+-- Classical propositions are expressed as propositions wrapped in double negation.
+-- TODO: I am not sure, but I think this works? My reasoning is the following:
+-- • [¬¬]-elim ↔ excluded-middle
+--     Double negation elimination is equivalent to excluded middle in constructive logic.
+-- • Theory(ClassicalLogic) = Theory(ConstructiveLogic ∪ {excludedMiddle})
+--     Constructive logic is classical logic without EM.
+--     EM is the difference between classical and constructive.
+--     • Theory(ClassicalLogic) ⊈ Theory(ConstructiveLogic)
+--     • Theory(ClassicalLogic) ⊇ Theory(ConstructiveLogic)
+--     This seems to be a common description of constructive logic.
+-- • [¬¬]-intro ∈ Theory(ConstructiveLogic)
+--     Double negation introduction exists in constructive logic.
+-- • (∀φ. ¬¬¬¬φ → ¬¬φ) ∈ Theory(ConstructiveLogic)
+--     Double negation elimination exists inside a double negation in constructive logic.
+-- • Every natural deduction introduction/elimination rule in constructive logic can be expressed inside a double negation.
+-- Therefore:
+-- • Theory(ClassicalLogic) = Theory(ConstructiveLogic ∪ {[¬¬]-elim}).
+-- • The theory inside double negation in constructive logic is (at least) a classical logic.
+--     Because every intro/elim rule exists in there,
+--     the propositions inside a double negation are at least a constructive logic.
+--     But [¬¬]-elim also exists in there.
+--     Therefore it is at least a classical logic.
+-- This cannot be done with predicate logic because the translation for [∀] does not hold in both directions.
 module _ where
-  open import Logic.Propositional
-  open import Logic.Propositional.Theorems
+  infixl 1011 •_
+  infixl 1010 ¬_
+  infixl 1005 _∧_
+  infixl 1004 _∨_
+  infixl 1000 _⟵_ _⟷_ _⟶_
+
+  •_ : Stmt{ℓ} → Stmt
+  •_ = ¬¬_
+
+  _∧_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
+  _∧_ = (¬¬_) ∘₂ (Constructive._∧_)
+
+  _⟶_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
+  _⟶_ = (¬¬_) ∘₂ (_→ᶠ_)
+
+  _⟵_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
+  _⟵_ = (¬¬_) ∘₂ (_←_)
+
+  _⟷_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
+  _⟷_ = (¬¬_) ∘₂ (Constructive._↔_)
+
+  _∨_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
+  _∨_ = (¬¬_) ∘₂ (Constructive._∨_)
+
+  ⊥ : Stmt
+  ⊥ = ¬¬ Constructive.⊥
+
+  ⊤ : Stmt
+  ⊤ = ¬¬ Constructive.⊤
+
+  ¬_ : Stmt{ℓ} → Stmt
+  ¬_ = (¬¬_) ∘ Constructive.¬_
+
+  ∀ₗ : (X → Stmt{ℓ}) → Stmt
+  ∀ₗ = (¬¬_) ∘ Constructive.∀ₗ ∘ ((¬¬_) ∘_)
+
+  ∃ : (X → Stmt{ℓ}) → Stmt
+  ∃ = (¬¬_) ∘ Constructive.∃
+
+  import      Logic.Propositional.Theorems as Constructive
+  import      Logic.Predicate.Theorems     as Constructive
 
   [→]ₗ-[¬¬]-elim : ((¬¬ X) → Y) → (X → Y)
-  [→]ₗ-[¬¬]-elim = liftᵣ([¬¬]-intro)
+  [→]ₗ-[¬¬]-elim = liftᵣ(Constructive.[¬¬]-intro)
 
   [→]ᵣ-[¬¬]-move-out : (X → (¬¬ Y)) → ¬¬(X → Y)
-  [→]ᵣ-[¬¬]-move-out {X = X}{Y = Y} (xnny) =
-    (nxy ↦
-      ([→]-elim
-        ((x ↦
-          (([⊥]-elim
-            (([→]-elim
-              ((y ↦
-                (([→]-elim
-                  ((const y) :of: (X → Y))
-                  (nxy           :of: ¬(X → Y))
-                ) :of: ⊥)
-              ) :of: (¬ Y))
-              (([→]-elim x xnny) :of: (¬¬ Y))
-            ) :of: ⊥)
-          ) :of: Y)
-        ) :of: (X → Y))
-        (nxy :of: ¬(X → Y))
-      )
-    )
+  [→]ᵣ-[¬¬]-move-out xnny nxy = nxy (x ↦ Constructive.[⊥]-elim(xnny x (y ↦ nxy (const y))))
 
   double-contrapositiveᵣ : (X → Y) → ((¬¬ X) → (¬¬ Y)) -- DoubleNegated(X → Y) → DoubleNegated(¬¬ X → ¬¬ Y)
-  double-contrapositiveᵣ = contrapositiveᵣ ∘ contrapositiveᵣ
+  double-contrapositiveᵣ = Constructive.contrapositiveᵣ ∘ Constructive.contrapositiveᵣ
 
   [¬¬]-double-contrapositiveₗ : ¬¬(X → Y) ← ((¬¬ X) → (¬¬ Y))
-  [¬¬]-double-contrapositiveₗ {X = X}{Y = Y} p = [→]ᵣ-[¬¬]-move-out {X = X}{Y = Y} ([→]ₗ-[¬¬]-elim {X = X}{Y = ¬¬ Y} p)
-
-module Propositional where
-  import      Logic.Propositional          as Constructive
-  import      Logic.Propositional.Theorems as ConstructiveTheorems
-  import      Logic.Predicate              as Constructive1
-
-  -- Classical propositions are expressed as propositions wrapped in double negation.
-  -- TODO: I am not sure, but I think this works? My reasoning is the following:
-  -- • [¬¬]-elim ↔ excluded-middle
-  --     Double negation elimination is equivalent to excluded middle in constructive logic.
-  -- • Theory(ClassicalLogic) = Theory(ConstructiveLogic ∪ {excludedMiddle})
-  --     Constructive logic is classical logic without EM.
-  --     EM is the difference between classical and constructive.
-  --     • Theory(ClassicalLogic) ⊈ Theory(ConstructiveLogic)
-  --     • Theory(ClassicalLogic) ⊇ Theory(ConstructiveLogic)
-  --     This seems to be a common description of constructive logic.
-  -- • [¬¬]-intro ∈ Theory(ConstructiveLogic)
-  --     Double negation introduction exists in constructive logic.
-  -- • (∀φ. ¬¬¬¬φ → ¬¬φ) ∈ Theory(ConstructiveLogic)
-  --     Double negation elimination exists inside a double negation in constructive logic.
-  -- • Every natural deduction introduction/elimination rule in constructive logic can be expressed inside a double negation.
-  -- Therefore:
-  -- • Theory(ClassicalLogic) = Theory(ConstructiveLogic ∪ {[¬¬]-elim}).
-  -- • The theory inside double negation in constructive logic is (at least) a classical logic.
-  --     Because every intro/elim rule exists in there,
-  --     the propositions inside a double negation are at least a constructive logic.
-  --     But [¬¬]-elim also exists in there.
-  --     Therefore it is at least a classical logic.
-  -- This cannot be done with predicate logic because the translation for [∀] does not hold in both directions.
-  DoubleNegated = Constructive.¬¬_
-  -- TODO: What should (¬¬ P → P) for a P be called? DoubleNegation? Stable proposition?
-
-  module Opers where
-    infixl 1010 ¬_
-    infixl 1005 _∧_
-    infixl 1004 _∨_
-    infixl 1000 _⟵_ _⟷_ _⟶_
-
-    _∧_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
-    _∧_ X Y = DoubleNegated(Constructive._∧_ X Y)
-
-    _⟶_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
-    _⟶_ A B = DoubleNegated(A → B)
-
-    _⟵_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
-    _⟵_ A B = DoubleNegated(A ← B)
-
-    _⟷_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
-    _⟷_ A B = DoubleNegated(Constructive._↔_ A B)
-
-    _∨_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
-    _∨_ A B = DoubleNegated(Constructive._∨_ A B)
-
-    ⊥ : Stmt
-    ⊥ = DoubleNegated(Constructive.⊥)
-
-    ⊤ : Stmt
-    ⊤ = DoubleNegated(Constructive.⊤)
-
-    ¬_ : Stmt{ℓ} → Stmt
-    ¬_ A = DoubleNegated(Constructive.¬_ A)
-
-    ∀ₗ : (X → Stmt{ℓ}) → Stmt
-    ∀ₗ P = DoubleNegated(Constructive1.∀ₗ P)
-
-    ∃ : (X → Stmt{ℓ}) → Stmt
-    ∃ P = DoubleNegated(Constructive1.∃ P)
-
-  module _ where
-    open Constructive
-      using(_∧_ ; _∨_ ; _↔_ ; ⊥ ; ⊤ ; ¬_ ; ¬¬_ )
-    open Constructive1 -- TODO: Should be somewhere else. This is the "Propositional" module
-      using(∀ₗ ; ∃)
-
-    -- Also called: Double-negation shifts
-    [¬¬][→]-preserving : DoubleNegated(X → Y) ↔ (DoubleNegated(X) → DoubleNegated(Y))
-    [¬¬][→]-preserving{X = X}{Y = Y} = Constructive.[↔]-intro l r where
-      open Constructive
-      open ConstructiveTheorems
-
-      l : DoubleNegated(X → Y) ← (DoubleNegated(X) → DoubleNegated(Y))
-      l = [→]ᵣ-[¬¬]-move-out ∘ [→]ₗ-[¬¬]-elim
-
-      r : DoubleNegated(X → Y) → (DoubleNegated(X) → DoubleNegated(Y))
-      r(nnxy)(nnx)(ny) =
-        (([→]-elim
-          ((xy ↦
-            (([→]-elim
-              (([→]-elim
-                (([⊥]-elim
-                  (([→]-elim
-                    ((x ↦
-                      (([→]-elim
-                        (([→]-elim x xy) :of: Y)
-                        (ny :of: (Y → ⊥))
-                      ) :of: ⊥)
-                    ) :of: (X → ⊥))
-                    (nnx :of: ((X → ⊥) → ⊥))
-                  ) :of: ⊥)
-                ) :of: X)
-                (xy :of: (X → Y))
-              ) :of: Y)
-              (ny :of: (Y → ⊥))
-            ) :of: ⊥)
-          ) :of: ((X → Y) → ⊥))
-          (nnxy :of: ¬¬(X → Y))
-        ) :of: ⊥)
+  [¬¬]-double-contrapositiveₗ p = [→]ᵣ-[¬¬]-move-out ([→]ₗ-[¬¬]-elim p)
+
+  -- Also called: Double-negation shift.
+  [¬¬][→]-preserving : ¬¬(X → Y) Constructive.↔ ((¬¬ X) → (¬¬ Y))
+  [¬¬][→]-preserving{X = X}{Y = Y} = Constructive.[↔]-intro l r where
+    l : ¬¬(X → Y) ← ((¬¬ X) → (¬¬ Y))
+    l = [→]ᵣ-[¬¬]-move-out ∘ [→]ₗ-[¬¬]-elim
 
-    ------------------------------------------
-    -- Converting theorems with implication in constructive logic to classical logic
+    r : ¬¬(X → Y) → ((¬¬ X) → (¬¬ Y))
+    r(nnxy)(nnx)(ny) =
+      ((Constructive.[→]-elim
+        ((xy ↦
+          ((Constructive.[→]-elim
+            ((Constructive.[→]-elim
+              ((Constructive.[⊥]-elim
+                ((Constructive.[→]-elim
+                  ((x ↦
+                    ((Constructive.[→]-elim
+                      ((Constructive.[→]-elim x xy) :of: Y)
+                      (ny :of: (Y → Constructive.⊥))
+                    ) :of: Constructive.⊥)
+                  ) :of: (X → Constructive.⊥))
+                  (nnx :of: ((X → Constructive.⊥) → Constructive.⊥))
+                ) :of: Constructive.⊥)
+              ) :of: X)
+              (xy :of: (X → Y))
+            ) :of: Y)
+            (ny :of: (Y → Constructive.⊥))
+          ) :of: Constructive.⊥)
+        ) :of: ((X → Y) → Constructive.⊥))
+        (nnxy :of: ¬¬(X → Y))
+      ) :of: Constructive.⊥)
 
-    prop-intro : X → DoubleNegated(X)
-    prop-intro = ConstructiveTheorems.[¬¬]-intro
+  ------------------------------------------
+  -- Converting theorems with implication in constructive logic to classical logic
 
-    [→]₁-intro : (X → Y) → (DoubleNegated(X) → DoubleNegated(Y))
-    [→]₁-intro = double-contrapositiveᵣ
+  prop-intro : X → (¬¬ X)
+  prop-intro = Constructive.[¬¬]-intro
 
-    [→]₂-intro : (X → Y → Z) → (DoubleNegated(X) → DoubleNegated(Y) → DoubleNegated(Z))
-    [→]₂-intro(xyz) = (Constructive.[↔]-to-[→] [¬¬][→]-preserving) ∘ ([→]₁-intro(xyz))
+  [→]₁-intro : (X → Y) → ((¬¬ X) → (¬¬ Y))
+  [→]₁-intro = double-contrapositiveᵣ
 
-    [→]₃-intro : (X → Y → Z → W) → (DoubleNegated(X) → DoubleNegated(Y) → DoubleNegated(Z) → DoubleNegated(W))
-    [→]₃-intro(xyzw) = (Constructive.[↔]-to-[→] [¬¬][→]-preserving) ∘₂ ([→]₂-intro(xyzw))
+  [→]₂-intro : (X → Y → Z) → ((¬¬ X) → (¬¬ Y) → (¬¬ Z))
+  [→]₂-intro(xyz) = (Constructive.[↔]-to-[→] [¬¬][→]-preserving) ∘ ([→]₁-intro(xyz))
 
-    ------------------------------------------
-    -- Theorems
+  [→]₃-intro : (X → Y → Z → W) → ((¬¬ X) → (¬¬ Y) → (¬¬ Z) → (¬¬ W))
+  [→]₃-intro(xyzw) = (Constructive.[↔]-to-[→] [¬¬][→]-preserving) ∘₂ ([→]₂-intro(xyzw))
 
-    [→][∧]-assumptionₗ : DoubleNegated((X ∧ Y) → Z) ← DoubleNegated(X → Y → Z)
-    [→][∧]-assumptionₗ = [→]₁-intro(Tuple.uncurry)
+  ------------------------------------------
+  -- Theorems
 
-    [→][∧]-assumptionᵣ : DoubleNegated((X ∧ Y) → Z) → DoubleNegated(X → Y → Z)
-    [→][∧]-assumptionᵣ = [→]₁-intro(Tuple.curry)
+  [→][∧]-assumptionₗ : ¬¬((X Constructive.∧ Y) → Z) ← ¬¬(X → Y → Z)
+  [→][∧]-assumptionₗ = [→]₁-intro(Tuple.uncurry)
 
-    [¬¬]-intro : DoubleNegated(X) → DoubleNegated(¬¬ X)
-    [¬¬]-intro = ConstructiveTheorems.[¬¬]-intro
+  [→][∧]-assumptionᵣ : ¬¬((X Constructive.∧ Y) → Z) → ¬¬(X → Y → Z)
+  [→][∧]-assumptionᵣ = [→]₁-intro(Tuple.curry)
 
-    ------------------------------------------
-    -- Conjunction (AND)
+  [¬¬]-intro : (¬¬ X) → ¬¬(¬¬ X)
+  [¬¬]-intro = Constructive.[¬¬]-intro
 
-    [∧]-intro : DoubleNegated(X) → DoubleNegated(Y) → DoubleNegated(X ∧ Y)
-    [∧]-intro = [→]₂-intro(Constructive.[∧]-intro)
+  ------------------------------------------
+  -- Conjunction (AND)
 
-    [∧]-elimₗ : DoubleNegated(X ∧ Y) → DoubleNegated(X)
-    [∧]-elimₗ = [→]₁-intro(Constructive.[∧]-elimₗ)
+  [∧]-intro : (• X) → (• Y) → (X ∧ Y)
+  [∧]-intro = [→]₂-intro Constructive.[∧]-intro
 
-    [∧]-elimᵣ : DoubleNegated(X ∧ Y) → DoubleNegated(Y)
-    [∧]-elimᵣ = [→]₁-intro(Constructive.[∧]-elimᵣ)
+  [∧]-elimₗ : (X ∧ Y) → (• X)
+  [∧]-elimₗ = [→]₁-intro Constructive.[∧]-elimₗ
 
-    ------------------------------------------
-    -- Implication
+  [∧]-elimᵣ : (X ∧ Y) → (• Y)
+  [∧]-elimᵣ = [→]₁-intro Constructive.[∧]-elimᵣ
 
-    [→]-elim : DoubleNegated(X → Y) → DoubleNegated(X) → DoubleNegated(Y)
-    [→]-elim = [→]₂-intro(swap Constructive.[→]-elim)
+  ------------------------------------------
+  -- Implication
 
-    [→]-intro : (DoubleNegated(X) → DoubleNegated(Y)) → DoubleNegated(X → Y)
-    [→]-intro = [¬¬]-double-contrapositiveₗ
+  [→]-elim : (X ⟶ Y) → (• X) → (• Y)
+  [→]-elim = [→]₂-intro(swap Constructive.[→]-elim)
 
-    ------------------------------------------
-    -- Reverse implication
+  [→]-intro : ((• X) → (• Y)) → (X ⟶ Y)
+  [→]-intro = [¬¬]-double-contrapositiveₗ
 
-    [←]-intro : (DoubleNegated(Y) ← DoubleNegated(X)) → DoubleNegated(Y ← X)
-    [←]-intro = [¬¬]-double-contrapositiveₗ
+  ------------------------------------------
+  -- Reverse implication
 
-    [←]-elim : DoubleNegated(X) → DoubleNegated(Y ← X) → DoubleNegated(Y)
-    [←]-elim = [→]₂-intro(Constructive.[←]-elim)
+  [←]-intro : ((• Y) ← (• X)) → (Y ⟵ X)
+  [←]-intro = [¬¬]-double-contrapositiveₗ
 
-    ------------------------------------------
-    -- Equivalence
+  [←]-elim : (• X) → (Y ⟵ X) → (• Y)
+  [←]-elim = [→]₂-intro(Constructive.[←]-elim)
 
-    [↔]-intro : (DoubleNegated(X) ← DoubleNegated(Y)) → (DoubleNegated(X) → DoubleNegated(Y)) → DoubleNegated(X ↔ Y)
-    [↔]-intro yx xy = ([→]₂-intro(Constructive.[↔]-intro)) ([→]-intro yx) ([→]-intro xy)
+  ------------------------------------------
+  -- Equivalence
 
-    [↔]-elimₗ : DoubleNegated(X ↔ Y) → DoubleNegated(X) ← DoubleNegated(Y)
-    [↔]-elimₗ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-to-[←]))
+  [↔]-intro : ((• X) ← (• Y)) → ((• X) → (• Y)) → (X ⟷ Y)
+  [↔]-intro yx xy = ([→]₂-intro(Constructive.[↔]-intro)) ([→]-intro yx) ([→]-intro xy)
 
-    [↔]-elimᵣ : DoubleNegated(X ↔ Y) → DoubleNegated(X) → DoubleNegated(Y)
-    [↔]-elimᵣ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-to-[→]))
+  [↔]-elimₗ : (X ⟷ Y) → (• X) ← (• Y)
+  [↔]-elimₗ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-to-[←]))
 
-    ------------------------------------------
-    -- Disjunction (OR)
+  [↔]-elimᵣ : (X ⟷ Y) → (• X) → (• Y)
+  [↔]-elimᵣ = [→]-elim ∘ ([→]₁-intro(Constructive.[↔]-to-[→]))
 
-    [∨]-introₗ : DoubleNegated(X) → DoubleNegated(X ∨ Y)
-    [∨]-introₗ = [→]₁-intro(Constructive.[∨]-introₗ)
+  ------------------------------------------
+  -- Disjunction (OR)
 
-    [∨]-introᵣ : DoubleNegated(Y) → DoubleNegated(X ∨ Y)
-    [∨]-introᵣ = [→]₁-intro(Constructive.[∨]-introᵣ)
+  [∨]-introₗ : (• X) → (X ∨ Y)
+  [∨]-introₗ = [→]₁-intro(Constructive.[∨]-introₗ)
 
-    [∨]-elim : (DoubleNegated(X) → DoubleNegated(Z)) → (DoubleNegated(Y) → DoubleNegated(Z)) → DoubleNegated(X ∨ Y) → DoubleNegated(Z)
-    [∨]-elim xz yz = ([→]₃-intro(Constructive.[∨]-elim)) ([→]-intro xz) ([→]-intro yz)
+  [∨]-introᵣ : (• Y) → (X ∨ Y)
+  [∨]-introᵣ = [→]₁-intro(Constructive.[∨]-introᵣ)
 
-    ------------------------------------------
-    -- Bottom (false, absurdity, empty, contradiction)
+  [∨]-elim : ((• X) → (• Z)) → ((• Y) → (• Z)) → (X ∨ Y) → (¬¬ Z)
+  [∨]-elim xz yz = ([→]₃-intro(Constructive.[∨]-elim)) ([→]-intro xz) ([→]-intro yz)
 
-    [⊥]-intro : DoubleNegated(X) → DoubleNegated(¬ X) → DoubleNegated(⊥)
-    [⊥]-intro = [→]₂-intro(Constructive.[⊥]-intro)
+  ------------------------------------------
+  -- Bottom (false, absurdity, empty, contradiction)
 
-    [⊥]-elim : DoubleNegated(⊥) → DoubleNegated(X)
-    [⊥]-elim = [→]₁-intro(Constructive.[⊥]-elim)
+  [⊥]-intro : (• X) → (¬ X) → ⊥
+  [⊥]-intro = [→]₂-intro(Constructive.[⊥]-intro)
 
-    ------------------------------------------
-    -- Top (true, truth, unit, validity)
+  [⊥]-elim : ⊥ → (• X)
+  [⊥]-elim = [→]₁-intro(Constructive.[⊥]-elim)
 
-    [⊤]-intro : DoubleNegated(⊤)
-    [⊤]-intro = prop-intro(Constructive.[⊤]-intro)
+  ------------------------------------------
+  -- Top (true, truth, unit, validity)
 
-    ------------------------------------------
-    -- Negation
+  [⊤]-intro : ⊤
+  [⊤]-intro = prop-intro(Constructive.[⊤]-intro)
 
-    [¬]-intro : (DoubleNegated(X) → DoubleNegated(⊥)) → DoubleNegated(¬ X)
-    [¬]-intro = ([→]₁-intro(Constructive.[¬]-intro)) ∘ [→]-intro
+  ------------------------------------------
+  -- Negation
 
-    [¬]-elim : DoubleNegated(¬ X) → DoubleNegated(X → ⊥)
-    [¬]-elim = [→]₁-intro(Constructive.[¬]-elim)
+  [¬]-intro : ((• X) → ⊥) → (¬ X)
+  [¬]-intro = ([→]₁-intro(Constructive.[¬]-intro)) ∘ [→]-intro
 
-    ------------------------------------------
-    -- For-all quantification
+  [¬]-elim : ((¬ X) → ⊥) → (• X)
+  [¬]-elim nnx nx = nnx (apply nx) id
 
-    -- [∀]-intro : ∀{P : X → Stmt{ℓ}} → (∀{x} → DoubleNegated(P(x))) → DoubleNegated(∀{x} → P(x))
-    -- [∀]-intro {P} f g = [→]ᵣ-[¬¬]-move-out {!\x → f{x}!} {!g!}
-    -- ConstructiveTheorems.[→]ᵣ-[¬¬]-move-out (f) (g)
+  ------------------------------------------
+  -- For-all quantification
 
-    -- [∀]-elim : ∀{P} → DoubleNegated(∀{x} → P(x)) → ∀{x} → DoubleNegated(P(x))
-    -- TODO: [→]ₗ-[¬¬]-elim
+  [∀]-intro : (∀{x} → • P(x)) → (∀ₗ P)
+  [∀]-intro = apply
 
-    ------------------------------------------
-    -- Existential quantification
+  [∀]-elim : (∀ₗ P) → ∀{x} → • P(x)
+  [∀]-elim apx npx = apx(\px → apply npx px)
 
-    [∃]-intro : ∀{x} → DoubleNegated(P(x)) → DoubleNegated(∃ P)
-    [∃]-intro {x = x} = [→]₁-intro(proof ↦ Constructive1.[∃]-intro (x) ⦃ proof ⦄)
+  ------------------------------------------
+  -- Existential quantification
 
-    ------------------------------------------
-    -- Theorems exclusive to classic logic (compared to constructive logic)
+  [∃]-intro : ∀{x} → • P(x) → (∃ P)
+  [∃]-intro {x = x} = [→]₁-intro(proof ↦ Constructive.[∃]-intro (x) ⦃ proof ⦄)
 
-    [¬¬]-elim : DoubleNegated(¬¬ X) → DoubleNegated(X)
-    [¬¬]-elim = ConstructiveTheorems.[¬¬¬]-elim
+  [∃]-elim : (∀{x} → • P(x) → • X) → (∃ P) → • X
+  [∃]-elim apx nnep nx = nnep (Constructive.[∃]-elim (p ↦ apx (apply p) nx))
 
-    excluded-middle : DoubleNegated(X ∨ (¬ X))
-    excluded-middle{X = X} = ConstructiveTheorems.[¬¬]-excluded-middle
+  ------------------------------------------
+  -- Theorems exclusive to classic logic (compared to constructive logic)
 
-    [¬]-elim₂ : DoubleNegated((¬ X) → ⊥) → DoubleNegated(X)
-    [¬]-elim₂ = [¬¬]-elim ∘ [¬]-intro ∘ [→]-elim
+  [¬¬]-elim : ¬¬(¬¬ X) → (• X)
+  [¬¬]-elim = Constructive.[¬¬¬]-elim
 
-    [→]-disjunctive-formᵣ : DoubleNegated(X → Y) → DoubleNegated((¬ X) ∨ Y)
-    [→]-disjunctive-formᵣ n-n-x→y n-nx∨y = (n-nx∨y ∘ Constructive.[∨]-introₗ) (n-n-x→y ∘ (n-nx∨y ∘ Constructive.[∨]-introᵣ ∘₂ apply))
+  excluded-middle : (X ∨ (Constructive.¬ X))
+  excluded-middle{X = X} = Constructive.[¬¬]-excluded-middle
 
-    contrapositiveₗ : DoubleNegated(X → Y) ← DoubleNegated((¬ X) ← (¬ Y))
-    contrapositiveₗ n-n-ny→nx = [→]-intro ([¬¬]-elim ∘ ConstructiveTheorems.contrapositiveᵣ([→]-elim n-n-ny→nx) ∘ [¬¬]-intro)
+  [→]-disjunctive-formᵣ : (X ⟶ Y) → (Constructive.¬ X ∨ Y)
+  [→]-disjunctive-formᵣ n-n-x→y n-nx∨y = (n-nx∨y ∘ Constructive.[∨]-introₗ) (n-n-x→y ∘ (n-nx∨y ∘ Constructive.[∨]-introᵣ ∘₂ apply))
 
-    double-contrapositiveₗ : DoubleNegated(X → Y) ← DoubleNegated((¬¬ X) → (¬¬ Y))
-    double-contrapositiveₗ = contrapositiveₗ ∘ contrapositiveₗ
-
-    -- postulate callcc : DoubleNegated(((X → Y) → X) → X)
-    {-callcc =
-      ([→]-intro(xyx ↦
-        ([→]-disjunctive-formᵣ
-        )
-      ))
-    -}
-
-    -- postulate callcc2 : ∀{X Y Z} → ((X → Y) → Z) → X
+  -- contrapositiveₗ : (X ⟶ Y) ← ((Constructive.¬ X) ⟵ (Constructive.¬ Y))
+  -- contrapositiveₗ n-n-ny→nx = {!!}
+  -- Constructive.[→]-intro ([¬¬]-elim ∘ Constructive.contrapositiveᵣ(Constructive.[→]-elim n-n-ny→nx) ∘ Constructive.[¬¬]-intro)
 
 module _ where
-  open import Logic.Propositional
-  open import Logic.Propositional.Theorems
-
-  -- TODO: Does not have to be over all propositions P in assumption. Only wem P and wem Q are used.
-  [weak-excluded-middle]-to-[[¬][∧]ₗ] : (∀{ℓ}{P : Stmt{ℓ}} → (¬ P) ∨ (¬¬ P)) → (∀{ℓ₁ ℓ₂}{P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} → ((¬ P) ∨ (¬ Q)) ← (¬ (P ∧ Q)))
-  [weak-excluded-middle]-to-[[¬][∧]ₗ] wem {P = P} {Q = Q} npq with wem {P = P} | wem {P = Q}
-  [weak-excluded-middle]-to-[[¬][∧]ₗ] wem {P = P} {Q = Q} npq | [∨]-introₗ np  | [∨]-introₗ nq  = [∨]-introₗ np
-  [weak-excluded-middle]-to-[[¬][∧]ₗ] wem {P = P} {Q = Q} npq | [∨]-introₗ np  | [∨]-introᵣ nnq = [∨]-introₗ np
-  [weak-excluded-middle]-to-[[¬][∧]ₗ] wem {P = P} {Q = Q} npq | [∨]-introᵣ nnp | [∨]-introₗ nq  = [∨]-introᵣ nq
-  [weak-excluded-middle]-to-[[¬][∧]ₗ] wem {P = P} {Q = Q} npq | [∨]-introᵣ nnp | [∨]-introᵣ nnq = [⊥]-elim(Propositional.[∧]-intro nnp nnq npq)
-
-  [[¬][∧]ₗ]-to-[weak-excluded-middle] : (∀{ℓ₁ ℓ₂}{P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} → ((¬ P) ∨ (¬ Q)) ← (¬ (P ∧ Q))) → (∀{ℓ}{P : Stmt{ℓ}} → (¬ P) ∨ (¬¬ P))
-  [[¬][∧]ₗ]-to-[weak-excluded-middle] [¬][∧]ₗ {ℓ} {P} = [¬][∧]ₗ non-contradiction
-
-  [⊤]-doubleNegation : DoubleNegationOn(⊤)
-  [⊤]-doubleNegation = const [⊤]-intro
-
-  [⊥]-doubleNegation : DoubleNegationOn(⊥)
-  [⊥]-doubleNegation = apply id
-
-  [∧]-doubleNegation : DoubleNegationOn(X) → DoubleNegationOn(Y) → DoubleNegationOn(X ∧ Y)
-  [∧]-doubleNegation nnxx nnyy nnxy = [∧]-intro (nnxx(nx ↦ nnxy(nx ∘ [∧]-elimₗ))) (nnyy(ny ↦ nnxy(ny ∘ [∧]-elimᵣ)))
-
-  [→]-doubleNegation : DoubleNegationOn(Y) → DoubleNegationOn(X → Y)
-  [→]-doubleNegation nnyy nnxy x = nnyy(ny ↦ nnxy(xy ↦ (ny ∘ xy) x))
-
-  [∀]-doubleNegation-distribute : (∀{x} → DoubleNegationOn(P(x))) → (DoubleNegationOn(∀{x} → P(x)))
-  [∀]-doubleNegation-distribute annp nnap = annp(npx ↦ nnap(npx $_))
-
   _∨ʷᵉᵃᵏ_ : Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt
-  X ∨ʷᵉᵃᵏ Y = ¬((¬ X) ∧ (¬ Y))
+  X ∨ʷᵉᵃᵏ Y = Constructive.¬((Constructive.¬ X) Constructive.∧ (Constructive.¬ Y))
 
   [∨ʷᵉᵃᵏ]-introₗ : X → (X ∨ʷᵉᵃᵏ Y)
-  [∨ʷᵉᵃᵏ]-introₗ = swap [∧]-elimₗ
+  [∨ʷᵉᵃᵏ]-introₗ = swap Constructive.[∧]-elimₗ
 
   [∨ʷᵉᵃᵏ]-introᵣ : Y → (X ∨ʷᵉᵃᵏ Y)
-  [∨ʷᵉᵃᵏ]-introᵣ = swap [∧]-elimᵣ
+  [∨ʷᵉᵃᵏ]-introᵣ = swap Constructive.[∧]-elimᵣ
 
   [∨ʷᵉᵃᵏ]-elim : (X → Z) → (Y → Z) → DoubleNegationOn(Z) → (X ∨ʷᵉᵃᵏ Y) → Z
-  [∨ʷᵉᵃᵏ]-elim xz yz nnzz xy = nnzz(nz ↦ xy([∧]-intro (nz ∘ xz) (nz ∘ yz)))
+  [∨ʷᵉᵃᵏ]-elim xz yz nnzz xy = nnzz(nz ↦ xy(Constructive.[∧]-intro (nz ∘ xz) (nz ∘ yz)))
 
   ∃ʷᵉᵃᵏ : (X → Stmt{ℓ}) → Stmt
-  ∃ʷᵉᵃᵏ P = ¬(∀{x} → (¬ P(x)))
+  ∃ʷᵉᵃᵏ P = Constructive.¬(∀{x} → (Constructive.¬ P(x)))
 
   [∃ʷᵉᵃᵏ]-intro : ∀(x) → ⦃ proof : P(x) ⦄ → (∃ʷᵉᵃᵏ P)
   [∃ʷᵉᵃᵏ]-intro _ ⦃ px ⦄ axnpx = axnpx px
 
   [∃ʷᵉᵃᵏ]-elim : (∀{x} → P(x) → X) → DoubleNegationOn(X) → (∃ʷᵉᵃᵏ P) → X
-  [∃ʷᵉᵃᵏ]-elim axpxx nnxx ep = nnxx(nx ↦ ep(nx ∘ axpxx))
+  [∃ʷᵉᵃᵏ]-elim axpxx nnxx ep = nnxx(ep ∘ (_∘ axpxx))

@@ -9,6 +9,7 @@ open import Logic
 open import Logic.Propositional
 import      Lvl
 open import Graph
+open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Setoid.Uniqueness
 open import Structure.Relator.Properties
@@ -38,11 +39,16 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) w
     field proof : ∀{a b : V} → MereProposition(a ⟶ b)
   singular = inst-fn(\inst {a}{b}{x}{y} → MereProposition.uniqueness(Singular.proof inst {a}{b}) {x}{y})
 
-  -- A complete graph have an edge for each pair of vertices from V. TODO: Exclude loops
+  -- A complete graph have an edge for each pair of vertices from V. Loops are allowed.
   record Complete : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
-    field proof : ∀{x y : V} → (x ⟶ y)
+    field proof : ∀{x y : V} → (x ⟶ y) ↔ (x ≢ y)
   complete = inst-fn Complete.proof
+
+  record CompleteWithLoops : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+    constructor intro
+    field proof : ∀{x y : V} → (x ⟶ y)
+  completeWithLoops = inst-fn CompleteWithLoops.proof
 
   -- A linear graph contains vertices with a maximum of one outgoing edge and a maximum of one ingoing edge.
   record Linear : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
@@ -120,5 +126,5 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) w
   -- A connected graph have walks from every vertex to any vertex.
   -- For undirected graphs, this can be visually interpreted as disconnected islands of vertices.
   -- Note: Equality on edges must respect uniqueness. In other words, one edge must not have multiple constructions.
-  Connected = Complete(Walk(_⟶_))
-  connected = complete(Walk(_⟶_))
+  Connected = CompleteWithLoops(Walk(_⟶_))
+  connected = completeWithLoops(Walk(_⟶_))

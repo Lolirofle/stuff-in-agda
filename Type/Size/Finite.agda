@@ -13,10 +13,18 @@ open import Type.Size
 
 private variable ℓ ℓₑ : Lvl.Level
 
--- Definition of a finite type
+-- A finitely enumerable type is a type where its inhabitants are finitely enumerable (alternatively: listable, able to collect to a finite list (a list containing all inhabitants is constructible)).
+-- There is a finite upper bound on the number of inhabitants in the sense that the inverse of a mapping from a type of finite numbers is a function (TODO: Not sure if the implementation actually states this. Maybe Invertible should be used instead of Surjective?).
+-- Also called: Finitely indexed.
+FinitelyEnumerable : (T : Type{ℓ}) → ⦃ equiv : Equiv{ℓₑ}(T) ⦄ → Stmt
+FinitelyEnumerable(T) = ∃(n ↦ 𝕟(n) ≽ T)
+
+-- A finite type have a finite number of inhabitants, and this number is constructable.
 Finite : (T : Type{ℓ}) → ⦃ equiv : Equiv{ℓₑ}(T) ⦄ → Stmt
 Finite(T) = ∃(n ↦ 𝕟(n) ≍ T)
 
+-- Cardinality of a finite type in the form of a number. Number of inhabitants of a type.
+-- The witness of Finite is the exact number of inhabitants of the type (the count).
 #_ : (T : Type{ℓ}) → ⦃ equiv : Equiv{ℓₑ}(T) ⦄ → ⦃ fin : Finite(T) ⦄ → ℕ
 #_ _ ⦃ fin = [∃]-intro(n) ⦄ = n
 

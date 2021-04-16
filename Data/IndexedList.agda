@@ -18,6 +18,15 @@ module _ ((intro ∅ᵢ _⊰ᵢ_) : Index) where
 
   infixr 1000 _⊰_
 
+  private variable ℓₚ : Lvl.Level
+  private variable index : Index
+  private variable l : IndexedList i
+
+  module _ (P : ∀{i} → IndexedList i → Type{ℓₚ}) where
+    elim : P(∅) → (∀{i}(x)(l : IndexedList i) → P(l) → P(x ⊰ l)) → ((l : IndexedList i) → P(l))
+    elim base next ∅       = base
+    elim base next (x ⊰ l) = next x l (elim base next l)
+
 module LongOper where
   pattern empty = ∅
   pattern prepend elem list = elem ⊰ list

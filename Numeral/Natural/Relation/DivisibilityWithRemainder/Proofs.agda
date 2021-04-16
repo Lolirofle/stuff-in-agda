@@ -12,13 +12,8 @@ open import Numeral.Natural
 open import Numeral.Natural.Inductions
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Comparisons
-open import Numeral.Natural.Oper.FlooredDivision
-open import Numeral.Natural.Oper.FlooredDivision.Proofs
-open import Numeral.Natural.Oper.Modulo
-open import Numeral.Natural.Oper.Modulo.Proofs
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Oper.Proofs.Order
-open import Numeral.Natural.Relation.Divisibility
 open import Numeral.Natural.Relation.DivisibilityWithRemainder hiding (base₀ ; base₊ ; step)
 open import Numeral.Natural.Relation.Order.Decidable
 open import Numeral.Natural.Relation.Order.Proofs
@@ -49,6 +44,7 @@ open import Type.Properties.Decidable.Proofs
 -- [∣ᵣₑₘ]-remainder-dividend : ∀{x y}{r : 𝕟(y)} → (x < y) → (y ∣ᵣₑₘ x)(r) → (x ≡ 𝕟-to-ℕ r)
 
 -- How the arguments in the divisibility relation is related to each other by elementary functions.
+-- Note: The division theorem is proven using this. By proving that [∣ᵣₑₘ]-quotient and [∣ᵣₑₘ]-remainder is equal to the algorithmic functions of floored division and modulo, the theorem follows directly from this.
 [∣ᵣₑₘ]-is-division-with-remainder : ∀{x y}{r} → (p : (y ∣ᵣₑₘ x)(r)) → ((([∣ᵣₑₘ]-quotient p) ⋅ y) + (𝕟-to-ℕ ([∣ᵣₑₘ]-remainder p)) ≡ x)
 [∣ᵣₑₘ]-is-division-with-remainder {𝟎}             {_}   {𝟎}   DivRem𝟎 = [≡]-intro
 [∣ᵣₑₘ]-is-division-with-remainder {𝐒 .(x + y)}    {𝐒 y} {𝟎}   (DivRem𝐒 {x = x} p) =
@@ -65,7 +61,7 @@ open import Type.Properties.Decidable.Proofs
   𝐒(((([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + (𝕟-to-ℕ r)) + y)  🝖[ _≡_ ]-[ congruence₁(𝐒) (congruence₂ₗ(_+_)(y) ([∣ᵣₑₘ]-is-division-with-remainder p)) ]
   𝐒(x + y)                                                 🝖-end 
 
--- When the arguments in the divisibility relation is related to each other.
+-- When the arguments in the divisibility relation are related to each other.
 -- This also indicates that the divisibility relation actually states something about divisibility in the sense of the inverse of multiplication.
 [∣ᵣₑₘ]-equivalence : ∀{x y}{r} → (y ∣ᵣₑₘ x)(r) ↔ ∃(q ↦ (q ⋅ y) + (𝕟-to-ℕ r) ≡ x)
 [∣ᵣₑₘ]-equivalence = [↔]-intro (p ↦ l {q = [∃]-witness p} ([∃]-proof p)) (p ↦ [∃]-intro ([∣ᵣₑₘ]-quotient p) ⦃ [∣ᵣₑₘ]-is-division-with-remainder p ⦄) where
@@ -78,36 +74,6 @@ open import Type.Properties.Decidable.Proofs
       (𝐒(q) ⋅ y) + (𝕟-to-ℕ r)    🝖[ _≡_ ]-[ p ]
       x                          🝖-end
 
--- The quotient of the divisibility relation is given by the floored division operation.
-[⌊/⌋][∣ᵣₑₘ]-quotient-equality : ∀{x y r}{p : (𝐒(y) ∣ᵣₑₘ x)(r)} → ((x ⌊/⌋ 𝐒(y)) ≡ [∣ᵣₑₘ]-quotient p)
-[⌊/⌋][∣ᵣₑₘ]-quotient-equality {𝟎}             {_}   {𝟎}   {DivRem𝟎} = [≡]-intro
-[⌊/⌋][∣ᵣₑₘ]-quotient-equality {𝐒 .(𝕟-to-ℕ r)} {𝐒 y} {𝐒 r} {DivRem𝟎} =
-  ([ 0 , 𝐒(y) ] (𝕟-to-ℕ r) div y) 🝖[ _≡_ ]-[ inddiv-smaller(𝕟.bounded{y}{r}) ]
-  𝟎                               🝖-end
-[⌊/⌋][∣ᵣₑₘ]-quotient-equality {𝐒 x} {𝟎} {𝟎} {DivRem𝐒 p} = [≡]-with(𝐒) $
-  ([ 0 , 0 ] x div 0) 🝖[ _≡_ ]-[ [⌊/⌋]-of-1ᵣ ]
-  x                   🝖[ _≡_ ]-[ [∣ᵣₑₘ]-quotient-of-1 p ]-sym
-  [∣ᵣₑₘ]-quotient p   🝖-end
-{-# CATCHALL #-}
-[⌊/⌋][∣ᵣₑₘ]-quotient-equality {𝐒 .(x + y)} {y} {r} {DivRem𝐒 {x = x} p} =
-  ([ 0 , (y) ] (𝐒(x) + y) div y) 🝖[ _≡_ ]-[ inddiv-step-denominator{0}{(y)}{𝐒(x)}{y} ]
-  ([ 0 , (y) ] 𝐒(x) div 𝟎)       🝖[ _≡_ ]-[]
-  𝐒([ 0 , y ] x div y)           🝖[ _≡_ ]-[ [≡]-with(𝐒) ([⌊/⌋][∣ᵣₑₘ]-quotient-equality {p = p}) ]
-  𝐒([∣ᵣₑₘ]-quotient p)           🝖-end
-
--- The remainder of the divisibility relation is given by the modulo operation.
-[mod][∣ᵣₑₘ]-remainder-equality : ∀{x y r}{p : (𝐒(y) ∣ᵣₑₘ x)(r)} → ((x mod 𝐒(y)) ≡ 𝕟-to-ℕ ([∣ᵣₑₘ]-remainder p))
-[mod][∣ᵣₑₘ]-remainder-equality {𝟎}             {_}   {𝟎}   {DivRem𝟎} = [≡]-intro
-[mod][∣ᵣₑₘ]-remainder-equality {𝐒 .(𝕟-to-ℕ r)} {𝐒 y} {𝐒 r} {DivRem𝟎} = mod'-result-lesser {1}{𝐒(y)}{𝕟-to-ℕ r}{y} ⦃ [≤]-without-[𝐒] 𝕟.bounded ⦄
-[mod][∣ᵣₑₘ]-remainder-equality {𝐒 x}        {𝟎} {𝟎} {DivRem𝐒 p}         = mod-of-1 {x}
-{-# CATCHALL #-}
-[mod][∣ᵣₑₘ]-remainder-equality {𝐒 .(x + y)} {y} {r} {DivRem𝐒 {x = x} p} =
-  ([ 𝟎 , y ] 𝐒(x + y) mod' y)           🝖[ _≡_ ]-[]
-  ([ 𝟎 , y ] (𝐒(x) + y) mod' y)         🝖[ _≡_ ]-[ [mod₀]-2-2ₗ {0}{y}{x}{y} ]
-  ([ 𝟎 , y ] x mod' y)                  🝖[ _≡_ ]-[ [mod][∣ᵣₑₘ]-remainder-equality {p = p} ]
-  𝕟-to-ℕ ([∣ᵣₑₘ]-remainder p)           🝖[ _≡_ ]-[]
-  𝕟-to-ℕ ([∣ᵣₑₘ]-remainder (DivRem𝐒 p)) 🝖-end
-
 -- ⌊/⌋-when-zero : ∀{x y} → (x ⌊/⌋ 𝐒(y) ≡ 𝟎) → (x ≡ 0)
 -- ⌊/⌋-when-positive : ∀{x y q} → (x ⌊/⌋ 𝐒(y) ≡ 𝐒(q)) → ∃(x₀ ↦ (x ≡ x₀ + 𝐒(y)))
 
@@ -119,7 +85,7 @@ open import Type.Properties.Decidable.Proofs
 -}
 
 DivRem𝟎Alt : ∀{x y} → (xy : (x < y)) → (y ∣ᵣₑₘ x)(ℕ-to-𝕟 x ⦃ [↔]-to-[→] decider-true xy ⦄)
-DivRem𝟎Alt {x} {𝐒 y} ([≤]-with-[𝐒] ⦃ p ⦄) = [≡]-substitutionᵣ (𝕟.𝕟-ℕ-inverse) {expr ↦ (𝐒 y ∣ᵣₑₘ expr)(ℕ-to-𝕟 x)} ((DivRem𝟎{𝐒(y)}{ℕ-to-𝕟 x})) where
+DivRem𝟎Alt {x} {𝐒 y} (succ p) = [≡]-substitutionᵣ (𝕟.𝕟-ℕ-inverse) {expr ↦ (𝐒 y ∣ᵣₑₘ expr)(ℕ-to-𝕟 x)} ((DivRem𝟎{𝐒(y)}{ℕ-to-𝕟 x})) where
   instance
     x<𝐒y : IsTrue (x <? 𝐒(y))
     x<𝐒y = [↔]-to-[→] decider-true ([≤]-with-[𝐒] ⦃ p ⦄)
@@ -129,7 +95,7 @@ DivRem𝐒Alt{x}{𝟎}{}
 DivRem𝐒Alt{x}{𝐒(y)}{r} xy = [≡]-substitutionᵣ ([↔]-to-[→] ([−₀][+]-nullify2ᵣ{𝐒(y)}{x}) xy) {\expr → (𝐒(y) ∣ᵣₑₘ expr) r} ∘ DivRem𝐒{𝐒(y)}{x −₀ 𝐒(y)}{r}
 
 -- Every pair of numbers (positive divisor) when divided will yield a remainder and there is always a proof of it being the case.
--- This is an alternative way of defining the modulo operator.
+-- This is an alternative way of constructing the modulo operator.
 [∣ᵣₑₘ]-existence-alt : ∀{x y} → ∃(𝐒(y) ∣ᵣₑₘ x)
 [∣ᵣₑₘ]-existence-alt {x} {y} = [ℕ]-strong-induction {φ = x ↦ ∃(𝐒(y) ∣ᵣₑₘ x)} base step {x} where
   base : ∃(𝐒(y) ∣ᵣₑₘ 𝟎)

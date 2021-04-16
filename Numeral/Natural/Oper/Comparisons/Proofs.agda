@@ -5,8 +5,8 @@ open import Data.Boolean
 open import Logic.Propositional
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
+open import Numeral.Natural.Oper.Proofs
 open import Relator.Equals
-
 
 [≤?]-𝟎 : ∀{n} → IsTrue(𝟎 ≤? n)
 [≤?]-𝟎 = [⊤]-intro
@@ -49,3 +49,7 @@ open import Relator.Equals
 [<?]-to-[≤?] {𝟎}   {𝐒(_)} = [≡]-intro
 [<?]-to-[≤?] {𝐒(_)}{𝟎}    = [≡]-intro
 [<?]-to-[≤?] {𝐒(a)}{𝐒(b)} = [<?]-to-[≤?] {a}{b}
+
+[≡?]-zero : ∀{n} → (n ≡? 𝟎) ≡ zero?(n)
+[≡?]-zero {𝟎}    = [≡]-intro
+[≡?]-zero {𝐒(_)} = [≡]-intro

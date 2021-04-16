@@ -175,3 +175,4 @@ count-of-[++] {l₁ = x₁ ⊰ l₁} {l₂ = l₂} {P = P} with P(x₁) | count-
 ... | 𝐹 | p = p
 
 -- TODO Is this true?: count-single-equality-equivalence : (∀{P} → count P l₁ ≡ count P l₂) ↔ (∀{x} → (count (x ≡?_) l₁ ≡ count (x ≡?_) l₂))
+

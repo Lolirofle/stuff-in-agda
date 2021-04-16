@@ -71,7 +71,7 @@ module _
 
 module _ ⦃ equiv-top : Equiv{ℓₑ}(⊤) ⦄ where
   instance
-    prop-top : MereProposition(⊤)
+    prop-top : MereProposition(⊤) ⦃ equiv-top ⦄
     prop-top = unit-is-prop
 
 module _ ⦃ equiv-bottom : Equiv{ℓₑ}(⊥) ⦄ where
@@ -101,8 +101,10 @@ module _
   prop-equivalence = prop-conjunction ⦃ prop-a = prop-implication ⦄ ⦃ prop-b = prop-implication ⦄
 
 module _
-  ⦃ equiv-na : Equiv{ℓₑ}(¬ A) ⦄
-  ⦃ funcExt : FunctionExtensionality(A)(⊥) ⦄
+  ⦃ equiv-a      : Equiv{ℓₑ₁}(A) ⦄
+  ⦃ equiv-bottom : Equiv{ℓₑ₂}(⊥) ⦄
+  ⦃ equiv-na     : Equiv{ℓₑ₃}(¬ A) ⦄
+  ⦃ funcExt : FunctionExtensionality (A)(⊥) ⦃ equiv-bottom ⦄ ⦄
   where
   prop-negation : MereProposition(¬ A)
   prop-negation = prop-implication
@@ -115,6 +117,27 @@ module _
   where
   not-prop-disjunction : MereProposition(A ∨ B) → IsEmpty(A ∧ B)
   IsEmpty.empty (not-prop-disjunction (intro uniqueness)) ([∧]-intro a b) with () ← left-right-neq(uniqueness{[∨]-introₗ a}{[∨]-introᵣ b})
+
+{-
+module _ {B : A → Type{ℓ}} where
+  open import Type.Identity
+  open import Relator.Equals.Proofs.Equiv
+  open import Structure.Relator
+  open import Structure.Setoid.Uniqueness
+  open import Syntax.Transitivity
+
+  congruence₁-dependent : ∀{ℓ₁ ℓ₂}{A : Type{ℓ₁}}{B : A → Type{ℓ₂}}{a₁ a₂ : A} → (f : (a : A) → B(a)) → (pa : a₁ ≡ a₂) → (substitute₁(B) pa (f a₁) ≡ f a₂)
+  congruence₁-dependent _ intro = intro
+
+  -- congruence₂-dependent : ∀{C : (a : A) → B(a) → Type{ℓ}}{a₁ a₂ : A}{b₁ : B(a₁)}{b₂ : B(a₂)}{f : (a : A) → (b : B(a)) → C a b} → (pa : a₁ ≡ a₂) → (f a₁ b₁ ≡ f a₂ b₂)
+  -- (substitute₁(B) ? b₁)
+
+  prop-sigma : Unique(B) → (∀{a} → MereProposition(B(a))) → MereProposition(Σ A B)
+  MereProposition.uniqueness (prop-sigma unique-B prop-B) {intro xa xb} {intro ya yb} =
+    intro xa xb                                   🝖[ _≡_ ]-[ {!(congruence₁-dependent(intro) (unique-B xb yb))!} ]
+    intro ya (substitute₁(B) (unique-B xb yb) xb) 🝖[ _≡_ ]-[ {!intro xa xb!} ]
+    intro ya yb                                   🝖-end
+-}
 
 {- TODO
 module _

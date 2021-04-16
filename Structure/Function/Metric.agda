@@ -5,12 +5,12 @@ open import Structure.OrderedField
 open import Type
 
 module Structure.Function.Metric
-  {ℓF ℓ≤}
-  {F}
-  ⦃ equiv-F : Equiv(F) ⦄
+  {ℓF ℓₑF ℓ≤}
+  {F : Type{ℓF}}
+  ⦃ equiv-F : Equiv{ℓₑF}(F) ⦄
   {_+_}{_⋅_}
-  {_≤_}
-  ⦃ orderedField-F : OrderedField{ℓF}{ℓ≤}{F}(_+_)(_⋅_)(_≤_) ⦄
+  {_≤_ : _ → _ → Type{ℓ≤}}
+  ⦃ orderedField-F : OrderedField{F = F}(_+_)(_⋅_)(_≤_) ⦄
   ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄
   where
 
@@ -42,7 +42,7 @@ open import Syntax.Transitivity
 F₊ = ∃(Positive)
 
 module _ where
-  record MetricSpace {ℓ} {M : Type{ℓ}} ⦃ equiv-M : Equiv(M) ⦄ (d : M → M → F) : Type{ℓF Lvl.⊔ ℓ≤ Lvl.⊔ ℓ} where
+  record MetricSpace {ℓₘ ℓₑₘ} {M : Type{ℓₘ}} ⦃ equiv-M : Equiv{ℓₑₘ}(M) ⦄ (d : M → M → F) : Type{ℓF Lvl.⊔ ℓ≤ Lvl.⊔ ℓₘ Lvl.⊔ ℓₑₘ Lvl.⊔ ℓₑF} where
     field
       ⦃ distance-binary-operator ⦄ : BinaryOperator(d)
       self-distance : ∀{x y} → (d(x)(y) ≡ 𝟎) ↔ (x ≡ y)

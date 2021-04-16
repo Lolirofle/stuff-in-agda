@@ -10,6 +10,7 @@ open import Lang.Instance
 open import Logic
 open import Logic.Classical
 open import Logic.Propositional
+open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Structure.Setoid
 open import Structure.Setoid.Uniqueness
@@ -21,8 +22,8 @@ open import Syntax.Transitivity
 open import Type
 open import Type.Dependent
 
-private variable ℓ ℓ₁ ℓ₂ ℓₑ ℓₑ₁ ℓₑ₂ ℓₒ₁ ℓₒ₂ : Lvl.Level
-private variable A B : Type{ℓ}
+private variable ℓ ℓ₁ ℓ₂ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₒ₁ ℓₒ₂ : Lvl.Level
+private variable T A B C : Type{ℓ}
 
 module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ (f : A → B) where
   injective-to-unique : Injective(f) → ∀{y} → Unique(x ↦ f(x) ≡ y)

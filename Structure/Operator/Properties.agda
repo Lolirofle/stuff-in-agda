@@ -185,29 +185,27 @@ module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _
     field proof : Names.Absorptionᵣ(_▫₁_)(_▫₂_)
   absorptionᵣ = inst-fn Absorptionᵣ.proof
 
-module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ (_▫_ : T₁ → T₂ → T₂) (inv : T₁ → T₁) where
-  record InversePropertyₗ : Stmt{Lvl.of(Type.of(_▫_)) Lvl.⊔ ℓₑ₂} where
-    constructor intro
-    field proof : Names.InversePropertyₗ(_▫_)(inv)
-  inversePropₗ = inst-fn InversePropertyₗ.proof
-
-module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ (_▫_ : T₂ → T₁ → T₂) (inv : T₁ → T₁) where
-  record InversePropertyᵣ : Stmt{Lvl.of(Type.of(_▫_)) Lvl.⊔ ℓₑ₂} where
-    constructor intro
-    field proof : Names.InversePropertyᵣ(_▫_)(inv)
-  inversePropᵣ = inst-fn InversePropertyᵣ.proof
-
-module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₃}(T₃) ⦄ (_▫₁_ : T₁ → T₂ → T₃) (_▫₂_ : T₁ → T₃ → T₂) where
-  record InverseOperatorₗ : Stmt{Lvl.of(Type.of(_▫₁_)) Lvl.⊔ Lvl.of(Type.of(_▫₂_)) Lvl.⊔ ℓₑ₃} where
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ (_▫₁_ : T₁ → T₂ → T₃) (_▫₂_ : T₁ → T₃ → T₂) where
+  record InverseOperatorₗ : Stmt{Lvl.of(Type.of(_▫₁_)) Lvl.⊔ Lvl.of(Type.of(_▫₂_)) Lvl.⊔ ℓₑ₂} where
     constructor intro
     field proof : Names.InverseOperatorₗ(_▫₁_)(_▫₂_)
   inverseOperₗ = inst-fn InverseOperatorₗ.proof
 
-module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₃}(T₃) ⦄ (_▫₁_ : T₁ → T₂ → T₃) (_▫₂_ : T₃ → T₂ → T₁) where
-  record InverseOperatorᵣ : Stmt{Lvl.of(Type.of(_▫₁_)) Lvl.⊔ Lvl.of(Type.of(_▫₂_)) Lvl.⊔ ℓₑ₃} where
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₁}(T₁) ⦄ (_▫₁_ : T₁ → T₂ → T₃) (_▫₂_ : T₃ → T₂ → T₁) where
+  record InverseOperatorᵣ : Stmt{Lvl.of(Type.of(_▫₁_)) Lvl.⊔ Lvl.of(Type.of(_▫₂_)) Lvl.⊔ ℓₑ₁} where
     constructor intro
     field proof : Names.InverseOperatorᵣ(_▫₁_)(_▫₂_)
   inverseOperᵣ = inst-fn InverseOperatorᵣ.proof
+
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ (_▫_ : T₁ → T₂ → T₂) (inv : T₁ → T₁) where
+  InversePropertyₗ = InverseOperatorₗ(_▫_)(a ↦ b ↦ inv(a) ▫ b)
+  module InversePropertyₗ = InverseOperatorₗ{_▫₁_ = _▫_}{_▫₂_ = a ↦ b ↦ inv(a) ▫ b}
+  inversePropₗ = inverseOperₗ(_▫_)(a ↦ b ↦ inv(a) ▫ b)
+
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ (_▫_ : T₂ → T₁ → T₂) (inv : T₁ → T₁) where
+  InversePropertyᵣ = InverseOperatorᵣ(_▫_)(a ↦ b ↦ a ▫ inv(b))
+  module InversePropertyᵣ = InverseOperatorᵣ{_▫₁_ = _▫_}{_▫₂_ = a ↦ b ↦ a ▫ inv(b)}
+  inversePropᵣ = inverseOperᵣ(_▫_)(a ↦ b ↦ a ▫ inv(b))
 
 module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ (_▫_ : T₁ → T₁ → T₂) where
   record Central(x : T₁) : Stmt{ℓ₁ Lvl.⊔ ℓₑ₂} where

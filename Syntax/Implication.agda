@@ -32,6 +32,11 @@ private variable ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ : Lvl.Level
 
 open Dependent using (_⇒-end ; _⇒_) public
 
+_⇒-start_ : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}} → X → (X → Y) → Y
+_⇒-start_ x xy = xy x
+infixr 0.98 _⇒-start_
+{-# INLINE _⇒-start_ #-}
+
 _⇒-[_]_ : ∀(X : Type{ℓ₁}){Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X → Y) → (Y → Z) → (X → Z)
 _⇒-[_]_ _ = swap(_∘_)
 infixr 0.98 _⇒-[_]_
@@ -65,6 +70,11 @@ _⇔-[_]_ : ∀(X : Type{ℓ₁}){Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X ↔
 _⇔-[_]_ _ ([↔]-intro pₗ pᵣ) ([↔]-intro qₗ qᵣ) = [↔]-intro (pₗ ∘ qₗ) (qᵣ ∘ pᵣ)
 infixr 0.98 _⇔-[_]_
 {-# INLINE _⇔-[_]_ #-}
+
+_⇔-[_]-sym_ : ∀(X : Type{ℓ₁}){Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (Y ↔ X) → (Y ↔ Z) → (X ↔ Z)
+_⇔-[_]-sym_ X ([↔]-intro pₗ pᵣ) q = X ⇔-[ ([↔]-intro pᵣ pₗ) ] q
+infixr 0.98 _⇔-[_]-sym_
+{-# INLINE _⇔-[_]-sym_ #-}
 
 _⇔-[]_ : ∀(X : Type{ℓ₁}){Y : Type{ℓ₂}} → (X ↔ Y) → (X ↔ Y)
 _⇔-[]_ _ = id

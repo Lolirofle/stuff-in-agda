@@ -1,66 +1,250 @@
 module Numeral.FixedPositional where
 
+import      Lvl
+open import Data using (<>)
 open import Data.List
+open import Data.Boolean hiding (elim)
+open import Data.Boolean.Stmt
 open import Numeral.Finite
 open import Numeral.Natural
+open import Functional
+open import Syntax.Number
 open import Type
 
-FixedPositional : ℕ → Type
-FixedPositional(b) = List(𝕟(b))
+private variable ℓ : Lvl.Level
+private variable z : Bool
+private variable b n : ℕ
 
-open import Numeral.Natural.Oper
+-- A formalization of the fixed positional radix numeral system for the notation of numbers.
+-- Each number is represented by a list of digits.
+-- Digits are a finite set of ordered objects starting with zero (0), and a finite number of its successors.
+-- Examples using radix 10 (b = 10):
+--   ∅                               represents 0
+--   # 0                             represents 0
+--   # 0 · 0                         represents 0
+--   # 2                             represents 2
+--   # 1 · 3                         represents 13
+--   # 5 · 0 · 4 · 0 · 0             represents 50400
+--   # 0 · 5 · 0 · 4 · 0 · 0         represents 50400
+--   # 0 · 0 · 0 · 5 · 0 · 4 · 0 · 0 represents 50400
+--   # 5 · 0 · 4 · 0 · 0 · 0         represents 504000
+-- Example using radix 2 (b = 2):
+--   # 1 · 1             represents 3
+--   # 0 · 1 · 0 · 1 · 1 represents 11
+-- Note: The radix is also called base.
+-- Note: This representation is in little endian: The deepest digit in the list is the most significant digit (greatest), and the first position of the list is the least significant digit. Note that the (_·_) operator is a reversed list cons operator, so it constructs a list from right to left when written without parenthesis.
+Positional = List ∘ 𝕟
+pattern # n = n ⊰ ∅
+pattern _·_ a b = b ⊰ a
+infixl 100 _·_
 
-private variable b : ℕ
+private variable x y : Positional(b)
+private variable d : 𝕟(n)
 
-to-ℕ : FixedPositional(b) → ℕ
-to-ℕ {_} ∅       = 𝟎
-to-ℕ {b} (n ⊰ l) = 𝕟-to-ℕ (n) + (b ⋅ to-ℕ (l))
+-- Two positionals are equal when the sequence of digits in the lists are the same.
+-- But also, when there are zeroes at the most significant positions, they should be skipped.
+-- Examples:
+--   # 4 · 5         ≡ₚₒₛ # 4 · 5
+--   # 0 · 0 · 4 · 5 ≡ₚₒₛ # 4 · 5
+--   # 4 · 5         ≡ₚₒₛ # 0 · 0 · 4 · 5
+--   # 0 · 0 · 4 · 5 ≡ₚₒₛ # 0 · 4 · 5
+data _≡ₚₒₛ_ : Positional b → Positional b → Type{Lvl.𝟎} where
+  empty : (_≡ₚₒₛ_ {b} ∅ ∅)
+  skipₗ : (x ≡ₚₒₛ ∅) → (x · 𝟎 ≡ₚₒₛ ∅)
+  skipᵣ : (∅ ≡ₚₒₛ y) → (∅ ≡ₚₒₛ y · 𝟎)
+  step  : (x ≡ₚₒₛ y) → (x · d ≡ₚₒₛ y · d)
 
 module _ where
-  open import Functional
-  open import Function.Iteration using (repeatᵣ)
-  open import Numeral.Natural.Induction
-  open import Relator.Equals
-  open import Relator.Equals.Proofs
-  open import Syntax.Function
-  open import Syntax.Transitivity
+  open import Numeral.Natural.Oper
 
-  {- TODO: Attempt to prove `∀a∀b. aᵇ = 1 + ((a−1) ⋅ ∑(0‥b) (i ↦ aⁱ))` inductively. An intuitive example of this is: `10³ = 1000 = 1+999 = 1+(9⋅111) = 1+(9⋅(1+10+100)) = 1+((10−1)⋅(10⁰+10¹+10²))`. This can also be proved by using the binomial theorem?
-  powerSum : ℕ → ℕ → ℕ
-  powerSum a 0         = 0
-  powerSum a 1         = 1
-  powerSum a (𝐒(𝐒(b))) = (powerSum a (𝐒(b))) + (a ⋅ (powerSum a (𝐒(b))))
+  -- Converts a positional to a number by adding the first digit and multiplying the rest with the radix.
+  -- Examples in radix 10 (b = 10):
+  --   to-ℕ (# 1 · 2 · 3) = 10 ⋅ (10 ⋅ (10 ⋅ 0 + 1) + 2) + 3 = ((0 + 100) + 20) + 3 = 100 + 20 + 3 = 123
+  --   to-ℕ (# a · b · c) = 10 ⋅ (10 ⋅ (10 ⋅ 0 + a) + b) + c = (10² ⋅ a) + (10¹ ⋅ b) + c = (10² ⋅ a) + (10¹ ⋅ b) + (10⁰ ⋅ c)
+  to-ℕ : Positional b → ℕ
+  to-ℕ     ∅       = 𝟎
+  to-ℕ {b} (l · n) = (b ⋅ (to-ℕ l)) + (𝕟-to-ℕ n)
 
-  exponentiation-is-sum-of-parts : ∀{a b} → (𝐒(a) ^ b ≡ 𝐒(a ⋅ (powerSum (𝐒(a)) b)))
-  exponentiation-is-sum-of-parts {a} {0}       = [≡]-intro
-  exponentiation-is-sum-of-parts {a} {1}       = [≡]-intro
-  exponentiation-is-sum-of-parts {a} {𝐒(b@(𝐒(_)))} =
-    𝐒(a) ^ 𝐒(b)                     🝖[ _≡_ ]-[]
-    𝐒(a) ⋅ (𝐒(a) ^ b)               🝖[ _≡_ ]-[ {!!} ]
-    (𝐒(a) ^ b) + (𝐒(a) ⋅ (a ⋅ (powerSum (𝐒(a)) b)))                   🝖[ _≡_ ]-[ {!!} ]
-    (𝐒(a) ^ b) + (a ⋅ (𝐒(a) ⋅ (powerSum (𝐒(a)) b)))                   🝖[ _≡_ ]-[ {!!} ]
-    𝐒(a ⋅ (powerSum (𝐒(a)) b)) + (a ⋅ (𝐒(a) ⋅ (powerSum (𝐒(a)) b)))   🝖[ _≡_ ]-[ {!!} ]
-    𝐒((a ⋅ (powerSum (𝐒(a)) b)) + (a ⋅ (𝐒(a) ⋅ (powerSum (𝐒(a)) b)))) 🝖[ _≡_ ]-[ {!!} ]
-    𝐒(a ⋅ ((powerSum (𝐒(a)) b) + (𝐒(a) ⋅ (powerSum (𝐒(a)) b))))       🝖[ _≡_ ]-[]
-    𝐒(a ⋅ (powerSum (𝐒(a)) (𝐒(b))))                                   🝖-end
-  -}
-
-module _ where
-  open import Data.List.Functions
+  import      Data.List.Functions as List
+  open import Logic.Propositional
+  open import Numeral.Finite.Proofs
+  open import Numeral.Natural.Inductions
+  open import Numeral.Natural.Oper.Comparisons
+  open import Numeral.Natural.Oper.FlooredDivision
+  open import Numeral.Natural.Oper.FlooredDivision.Proofs
+  open import Numeral.Natural.Oper.Modulo
+  open import Numeral.Natural.Oper.Modulo.Proofs
   open import Numeral.Natural.Relation.Order
+  open import Numeral.Natural.Relation.Order.Decidable
   open import Numeral.Natural.Relation.Order.Proofs
+  open import Structure.Relator.Ordering
+  import      Structure.Relator.Names as Names
+  open import Structure.Relator.Equivalence
   open import Structure.Relator.Properties
   open import Syntax.Transitivity
+  open import Type.Properties.Decidable
+  open import Type.Properties.Decidable.Proofs
 
-  {-
-  FixedPositional-maximum : ∀{n : FixedPositional(b)} → (to-ℕ (n) < b ^ length(n))
-  FixedPositional-maximum {_}   {∅}     = reflexivity(_≤_)
-  FixedPositional-maximum {𝐒 b} {n ⊰ l} =
-    𝐒(𝕟-to-ℕ (n) + (𝐒(b) ⋅ to-ℕ (l)))                               🝖[ _≤_ ]-[ {!!} ]
-    𝐒(𝕟-to-ℕ (n) + (𝐒(b) ⋅ (b ^ length(l))))                        🝖[ _≤_ ]-[ {!!} ]
-    𝐒(𝕟-to-ℕ (n) + ((b ⋅ (b ^ length(l))) + (1 ⋅ (b ^ length(l))))) 🝖[ _≤_ ]-[ {!!} ]
-    𝐒(𝕟-to-ℕ (n) + ((b ^ 𝐒(length(l))) + (b ^ length(l))))          🝖[ _≤_ ]-[ {!!} ]
-    ?                                                               🝖[ _≤_ ]-[ {!!} 
-    (b ⋅ (𝐒(b) ^ length(l))) + (𝐒(b) ^ length(l))                   🝖[ _≤_ ]-[ {!!} ]
-    𝐒(b) ⋅ (𝐒(b) ^ length(l))                                       🝖-end
-  -}
+  -- Converts a number to its positional representation in the specified radix.
+  -- This is done by extracting the next digit using modulo of the radix and then dividing the rest.
+  -- This is the inverse of to-ℕ.
+  from-ℕ-rec : ⦃ b-size : IsTrue(b >? 1) ⦄ → (x : ℕ) → ((prev : ℕ) ⦃ _ : prev < x ⦄ → Positional(b)) → Positional(b)
+  from-ℕ-rec b@{𝐒(𝐒 _)} 𝟎       _    = ∅
+  from-ℕ-rec b@{𝐒(𝐒 _)} n@(𝐒 _) prev = (prev(n ⌊/⌋ b) ⦃ [⌊/⌋]-ltₗ {n}{b} ⦄) · (ℕ-to-𝕟 (n mod b) ⦃ [↔]-to-[→] decider-true (mod-maxᵣ{n}{b}) ⦄)
+  from-ℕ : ℕ → Positional(b)
+  from-ℕ {0}        = const ∅
+  from-ℕ {1}        = List.repeat 𝟎
+  from-ℕ b@{𝐒(𝐒 _)} = Strict.Properties.wellfounded-recursion(_<_) from-ℕ-rec
+
+  instance
+    [≡ₚₒₛ]-reflexivity : Reflexivity(_≡ₚₒₛ_ {b})
+    [≡ₚₒₛ]-reflexivity = intro p where
+      p : Names.Reflexivity(_≡ₚₒₛ_ {b})
+      p {x = ∅}     = empty
+      p {x = _ ⊰ _} = _≡ₚₒₛ_.step p
+
+  instance
+    [≡ₚₒₛ]-symmetry : Symmetry(_≡ₚₒₛ_ {b})
+    [≡ₚₒₛ]-symmetry = intro p where
+      p : Names.Symmetry(_≡ₚₒₛ_ {b})
+      p empty            = empty
+      p (skipₗ eq)       = skipᵣ (p eq)
+      p (skipᵣ eq)       = skipₗ (p eq)
+      p (_≡ₚₒₛ_.step eq) = _≡ₚₒₛ_.step (p eq)
+
+  instance
+    [≡ₚₒₛ]-transitivity : Transitivity(_≡ₚₒₛ_ {b})
+    [≡ₚₒₛ]-transitivity = intro p where
+      p : Names.Transitivity(_≡ₚₒₛ_ {b})
+      p empty           empty           = empty
+      p empty           (skipᵣ b)       = skipᵣ b
+      p (skipₗ a)       empty           = skipₗ a
+      p (skipₗ a)       (skipᵣ b)       = _≡ₚₒₛ_.step (p a b)
+      p (skipᵣ a)       (skipₗ b)       = p a b
+      p (skipᵣ a)       (_≡ₚₒₛ_.step b) = skipᵣ (p a b)
+      p (_≡ₚₒₛ_.step a) (skipₗ b)       = skipₗ (p a b)
+      p (_≡ₚₒₛ_.step a) (_≡ₚₒₛ_.step b) = _≡ₚₒₛ_.step (p a b)
+
+  instance
+    [≡ₚₒₛ]-equivalence : Equivalence(_≡ₚₒₛ_ {b})
+    [≡ₚₒₛ]-equivalence = intro
+
+  open import Structure.Setoid using (Equiv ; intro)
+
+  Positional-equiv : Equiv(Positional(b))
+  Positional-equiv {b} = intro _ ⦃ [≡ₚₒₛ]-equivalence {b} ⦄
+
+  open import Lang.Instance
+  open import Numeral.Natural.Relation.Proofs
+  open import Structure.Function
+  open import Structure.Operator
+  open import Relator.Equals
+  open import Relator.Equals.Proofs
+
+  from-ℕ-digit : ⦃ b-size : IsTrue(b >? 1) ⦄ → ⦃ _ : IsTrue(n <? b) ⦄ → (from-ℕ {b} n ≡ₚₒₛ ℕ-to-𝕟 n ⊰ ∅)
+  from-ℕ-digit b@{𝐒(𝐒 bb)} {n} = Strict.Properties.wellfounded-recursion-intro(_<_) {rec = from-ℕ-rec} {φ = \{n} expr → ⦃ _ : IsTrue(n <? b) ⦄ → (expr ≡ₚₒₛ (ℕ-to-𝕟 n ⊰ ∅))} p {n} where
+    p : (y : ℕ) → _ → _ → ⦃ _ : IsTrue(y <? b) ⦄ → (from-ℕ y ≡ₚₒₛ (ℕ-to-𝕟 y ⊰ ∅))
+    p 𝟎 prev eq = skipᵣ empty
+    p (𝐒 y) prev eq ⦃ ord ⦄ =
+      from-ℕ (𝐒(y))                                                         🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (eq{y} ⦃ reflexivity(_≤_) ⦄) ]
+      from-ℕ (𝐒(y) ⌊/⌋ b) · ℕ-to-𝕟 (𝐒(y) mod b) ⦃ yb-ord? ⦄                 🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (prev ⦃ [⌊/⌋]-ltₗ{𝐒 y}{b}  ⦄ ⦃ div-ord ⦄) ]
+      ∅ · ℕ-to-𝕟 (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · ℕ-to-𝕟 (𝐒(y) mod b) ⦃ yb-ord? ⦄ 🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂ᵣ(_·_)(_) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ yb-ord? ⦄ (mod-lesser-than-modulus {𝐒 y}{𝐒 bb} ⦃ yb-ord ⦄))) ]
+      ∅ · ℕ-to-𝕟 (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · ℕ-to-𝕟 (𝐒(y))                   🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂ᵣ(_·_)(_) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ div-ord ⦄ ([⌊/⌋]-zero {𝐒 y}{b} yb-ord2)))) ]
+      ∅ · 𝟎 · ℕ-to-𝕟 (𝐒(y))                                                 🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (skipₗ empty) ]
+      ∅ · ℕ-to-𝕟 (𝐒(y))                                                     🝖-end
+      where
+        yb-ord? = [↔]-to-[→] decider-true (mod-maxᵣ {𝐒(y)}{b} ⦃ infer ⦄)
+        yb-ord = [↔]-to-[←] (decider-true ⦃ [<]-decider ⦄) ord
+        yb-ord2 = [↔]-to-[←] (decider-true ⦃ [<]-decider ⦄) ord
+        div-ord = [↔]-to-[→] decider-true ([⌊/⌋]-preserve-[<]ₗ {𝐒 y}{b}{b} yb-ord2)
+
+  from-ℕ-step : ⦃ b-size : IsTrue(b >? 1) ⦄
+              → let pos = [↔]-to-[←] Positive-greater-than-zero ([≤]-predecessor ([↔]-to-[←] (decider-true ⦃ [<]-decider {1}{b} ⦄) b-size))
+                in (from-ℕ {b} n ≡ₚₒₛ (from-ℕ {b} ((n ⌊/⌋ b) ⦃ pos ⦄)) · (ℕ-to-𝕟 ((n mod b) ⦃ pos ⦄) ⦃ [↔]-to-[→] decider-true (mod-maxᵣ{n}{b} ⦃ pos ⦄) ⦄))
+  from-ℕ-step b@{𝐒(𝐒 bb)} {n} = Strict.Properties.wellfounded-recursion-intro(_<_) {rec = from-ℕ-rec} {φ = \{n} expr → (expr ≡ₚₒₛ from-ℕ {b} (n ⌊/⌋ b) · (ℕ-to-𝕟 (n mod b) ⦃ ord n ⦄))} p {n} where
+    ord = \n → [↔]-to-[→] decider-true (mod-maxᵣ{n}{b})
+    p : (y : ℕ) → _ → _ → Strict.Properties.accessible-recursion(_<_) from-ℕ-rec y ≡ₚₒₛ from-ℕ (y ⌊/⌋ b) · ℕ-to-𝕟 (y mod b) ⦃ ord y ⦄
+    p 𝟎     prev eq = skipᵣ empty
+    p (𝐒 y) prev eq = (sub₂(_≡_)(_≡ₚₒₛ_) (eq {y} ⦃ reflexivity(_≤_) ⦄))
+
+  open import Numeral.Natural.Oper.FlooredDivision.Proofs.Inverse
+  open import Numeral.Natural.Oper.Proofs
+  open import Structure.Operator.Properties
+  from-ℕ-step-invs : ⦃ b-size : IsTrue(b >? 1) ⦄ → (from-ℕ {b} ((b ⋅ n) + (𝕟-to-ℕ d)) ≡ₚₒₛ (from-ℕ {b} n) · d)
+  from-ℕ-step-invs b@{𝐒(𝐒 bb)} {n}{d} =
+    from-ℕ (b ⋅ n + 𝕟-to-ℕ d)                                                     🝖[ _≡ₚₒₛ_ ]-[ from-ℕ-step {n = b ⋅ n + 𝕟-to-ℕ d} ]
+    from-ℕ ((b ⋅ n + 𝕟-to-ℕ d) ⌊/⌋ b) · (ℕ-to-𝕟 ((b ⋅ n + 𝕟-to-ℕ d) mod b) ⦃ _ ⦄) 🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂(_·_) (congruence₁(from-ℕ) r) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ ord1 ⦄ ⦃ ord2 ⦄ q 🝖 ℕ-𝕟-inverse)) ]
+    from-ℕ n · d                                                                  🝖-end where
+      ord1 = [↔]-to-[→] decider-true (mod-maxᵣ{(b ⋅ n) + (𝕟-to-ℕ d)}{b})
+      ord2 = [↔]-to-[→] decider-true ([<]-of-𝕟-to-ℕ {b}{d})
+      q =
+        ((b ⋅ n) + 𝕟-to-ℕ d) mod b 🝖[ _≡_ ]-[ congruence₁(_mod b) (commutativity(_+_) {b ⋅ n}{𝕟-to-ℕ d}) ]
+        (𝕟-to-ℕ d + (b ⋅ n)) mod b 🝖[ _≡_ ]-[ mod-of-modulus-sum-multiple {𝕟-to-ℕ d}{b}{n} ]
+        (𝕟-to-ℕ d) mod b           🝖[ _≡_ ]-[ mod-lesser-than-modulus ⦃ [≤]-without-[𝐒] [<]-of-𝕟-to-ℕ ⦄ ]
+        𝕟-to-ℕ d                   🝖-end
+      r =
+        (b ⋅ n + 𝕟-to-ℕ d) ⌊/⌋ b             🝖[ _≡_ ]-[ [⌊/⌋][+]-distributivityᵣ {b ⋅ n}{𝕟-to-ℕ d}{b} ]
+        ((b ⋅ n) ⌊/⌋ b) + ((𝕟-to-ℕ d) ⌊/⌋ b) 🝖[ _≡_ ]-[ congruence₂(_+_) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {b}{n}) ([⌊/⌋]-zero ([<]-of-𝕟-to-ℕ {b}{d})) ]
+        n + 𝟎                                🝖[ _≡_ ]-[]
+        n                                    🝖-end
+
+  open import Numeral.Natural.Oper.DivMod.Proofs
+  open import Structure.Function.Domain
+  import      Structure.Function.Names as Names
+
+  instance
+    from-to-inverse : ⦃ b-size : IsTrue(b >? 1) ⦄ → Inverseᵣ ⦃ Positional-equiv{b} ⦄ from-ℕ to-ℕ
+    from-to-inverse b@{𝐒(𝐒 _)} = intro p where
+      p : Names.Inverses ⦃ Positional-equiv{b} ⦄ from-ℕ to-ℕ
+      p{x = ∅}     = empty
+      p{x = x · n} = from-ℕ-step-invs{b}{to-ℕ x}{n} 🝖 _≡ₚₒₛ_.step (p{x = x})
+
+  instance
+    to-from-inverse : ⦃ b-size : IsTrue(b >? 1) ⦄ → Inverseᵣ(to-ℕ{b}) (from-ℕ{b})
+    to-from-inverse {b@(𝐒(𝐒 bb))} = intro (\{n} → Strict.Properties.wellfounded-recursion-intro(_<_) {rec = from-ℕ-rec {b}} {φ = \{n} expr → (to-ℕ expr ≡ n)} p {n}) where
+      p : (y : ℕ) → _ → _ → (to-ℕ {b} (from-ℕ {b} y) ≡ y)
+      p 𝟎     _    _  = [≡]-intro
+      p (𝐒 y) prev eq =
+        to-ℕ {b} (from-ℕ (𝐒 y))                                                       🝖[ _≡_ ]-[ congruence₁(to-ℕ) (eq {𝐒(y) ⌊/⌋ b} ⦃ ord2 ⦄) ]
+        to-ℕ {b} ((from-ℕ (𝐒(y) ⌊/⌋ b)) · (ℕ-to-𝕟 (𝐒(y) mod b) ⦃ _ ⦄))                🝖[ _≡_ ]-[]
+        (b ⋅ to-ℕ {b} (from-ℕ {b} (𝐒(y) ⌊/⌋ b))) + 𝕟-to-ℕ (ℕ-to-𝕟 (𝐒(y) mod b) ⦃ _ ⦄) 🝖[ _≡_ ]-[ congruence₂(_+_) (congruence₂ᵣ(_⋅_)(b) (prev{𝐒(y) ⌊/⌋ b} ⦃ ord2 ⦄)) (𝕟-ℕ-inverse {b}{𝐒(y) mod b} ⦃ ord1 ⦄) ]
+        (b ⋅ (𝐒(y) ⌊/⌋ b)) + (𝐒(y) mod b)                                             🝖[ _≡_ ]-[ [⌊/⌋][mod]-is-division-with-remainder-pred-commuted {𝐒 y}{b} ]
+        𝐒(y)                                                                          🝖-end
+        where
+          ord1 = [↔]-to-[→] decider-true (mod-maxᵣ{𝐒(y)}{b})
+          ord2 = [⌊/⌋]-ltₗ {𝐒 y}{b}
+
+  instance
+    to-ℕ-function : ⦃ b-size : IsTrue(b >? 1) ⦄ → Function ⦃ Positional-equiv ⦄ ⦃ [≡]-equiv ⦄ (to-ℕ {b})
+    to-ℕ-function {b} = intro p where
+      p : Names.Congruence₁ ⦃ Positional-equiv ⦄ ⦃ [≡]-equiv ⦄ (to-ℕ {b})
+      p empty                          = reflexivity(_≡_)
+      p (skipₗ xy) rewrite p xy        = reflexivity(_≡_)
+      p (skipᵣ {y = ∅} xy)             = reflexivity(_≡_)
+      p (skipᵣ {y = 𝟎 ⊰ y} (skipᵣ xy))
+        rewrite symmetry(_≡_) (p xy)   = reflexivity(_≡_)
+      p (_≡ₚₒₛ_.step xy)
+        rewrite p xy = reflexivity(_≡_)
+
+  open import Logic.Predicate
+  open import Structure.Function.Domain.Proofs
+
+  instance
+    from-ℕ-bijective : ⦃ b-size : IsTrue(b >? 1) ⦄ → Bijective ⦃ [≡]-equiv ⦄ ⦃ Positional-equiv ⦄ (from-ℕ {b})
+    from-ℕ-bijective = [↔]-to-[→] (invertible-when-bijective ⦃ _ ⦄ ⦃ _ ⦄) ([∃]-intro to-ℕ ⦃ [∧]-intro infer ([∧]-intro infer infer) ⦄)
+
+  instance
+    to-ℕ-bijective : ⦃ b-size : IsTrue(b >? 1) ⦄ → Bijective ⦃ Positional-equiv ⦄ ⦃ [≡]-equiv ⦄ (to-ℕ {b})
+    to-ℕ-bijective = [↔]-to-[→] (invertible-when-bijective ⦃ _ ⦄ ⦃ _ ⦄) ([∃]-intro from-ℕ ⦃ [∧]-intro ([≡]-to-function ⦃ Positional-equiv ⦄) ([∧]-intro infer infer) ⦄)
+
+  import      Data.Option.Functions as Option
+  open import Function.Names
+  open import Numeral.Natural.Relation.Order.Proofs
+
+  -- TODO: Trying to define a bijection, but not really possible because not all functions
+  PositionalSequence : List(𝕟(𝐒 b)) → (ℕ → 𝕟(𝐒 b))
+  PositionalSequence l n = (List.index₀ n l) Option.or 𝟎
+
+  sequencePositional : (f : ℕ → 𝕟(𝐒 b)) → ∃(N ↦ (f ∘ (_+ N) ⊜ const 𝟎)) → List(𝕟(𝐒 b))
+  sequencePositional f ([∃]-intro 𝟎)           = ∅
+  sequencePositional f ([∃]-intro (𝐒 N) ⦃ p ⦄) = f(𝟎) ⊰ sequencePositional (f ∘ 𝐒) ([∃]-intro N ⦃ \{n} → p{n} ⦄)

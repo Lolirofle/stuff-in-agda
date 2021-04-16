@@ -35,11 +35,11 @@ open From-[≤][<] (_≤_) (_<_) public
 [≤]-equivalence : ∀{x y} → (x ≤ y) ↔ (x [≤def].≤ y)
 [≤]-equivalence{x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
   l : ∀{x y} → (x ≤ y) ← (x [≤def].≤ y)
-  l{𝟎}   {y}    ([≤def].[≤]-minimum)      = [∃]-intro(y) ⦃ [≡]-intro ⦄
+  l{𝟎}   {y}    ([≤def].min)      = [∃]-intro(y) ⦃ [≡]-intro ⦄
   l{𝐒(x)}{𝟎}    ()
-  l{𝐒(x)}{𝐒(y)} ([≤def].[≤]-with-[𝐒] ⦃ proof ⦄) = [≤]-with-[𝐒] {x}{y} (l{x}{y} (proof))
+  l{𝐒(x)}{𝐒(y)} ([≤def].succ proof) = [≤]-with-[𝐒] {x}{y} (l{x}{y} (proof))
 
   r : ∀{x y} → (x ≤ y) → (x [≤def].≤ y)
-  r{𝟎}   {y}    ([∃]-intro(z) ⦃ 𝟎+z≡y   ⦄) = [≤def].[≤]-minimum
+  r{𝟎}   {y}    ([∃]-intro(z) ⦃ 𝟎+z≡y   ⦄) = [≤def].min
   r{𝐒(x)}{𝟎}    ([∃]-intro(z) ⦃ ⦄)
-  r{𝐒(x)}{𝐒(y)} ([∃]-intro(z) ⦃ 𝐒x+z≡𝐒y ⦄) = [≤def].[≤]-with-[𝐒] ⦃ r{x}{y} ([∃]-intro(z) ⦃ injective(𝐒)(𝐒x+z≡𝐒y) ⦄ ) ⦄
+  r{𝐒(x)}{𝐒(y)} ([∃]-intro(z) ⦃ 𝐒x+z≡𝐒y ⦄) = [≤def].succ (r{x}{y} ([∃]-intro(z) ⦃ injective(𝐒)(𝐒x+z≡𝐒y) ⦄))

@@ -127,7 +127,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   Perfect(A) = ∀{p} → (¬ IsolatedPoint(A)(p))
 
   open import Numeral.Natural
-  open import Numeral.Natural.Relation.Order
+  open import Numeral.Natural.Relation.Order using (_>_)
 
   record _converges-to_ (f : ℕ → X) (L : X) : Stmt{Lvl.𝐒(ℓ₁) Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
     constructor intro

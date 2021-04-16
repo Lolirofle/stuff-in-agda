@@ -12,7 +12,7 @@ open import Structure.Relator.Properties
 open import Type
 open import Type.Properties.Empty
 
-private variable ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
+private variable ℓ₁ ℓ₂ ℓ₃ ℓ₄ : Lvl.Level
 
 -- A weak order formalizes both "less or equals"-relations and "greater or equals"-relations.
 module Weak {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
@@ -108,6 +108,19 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
     accessible-recursion : ∀{U : T → Type{ℓ₃}} → ((x : T) → ((prev : T) → ⦃ _ : (prev < x) ⦄ → U(prev)) → U(x)) → ((x : T) → ⦃ _ : Accessibleₗ(x) ⦄ → U(x))
     accessible-recursion previous x ⦃ intro ⦄ = previous x (\x → accessible-recursion previous x)
 
+    open import Relator.Equals
+    accessible-recursion-intro : ∀{P : T → Type{ℓ₃}}{rec : ∀(x) → _ → P(x)}{φ : ∀{x} → P(x) → Type{ℓ₄}}
+                               → (∀(y) ⦃ acc-y : Accessibleₗ(y)⦄
+                                 → (∀{x} → ⦃ xy : x < y ⦄ → φ{x}(accessible-recursion rec x ⦃ Accessibleₗ.proof acc-y {x} ⦄))
+                                 → (∀{x} → ⦃ xy : x < y ⦄ → (accessible-recursion rec y ≡ rec y (\x → accessible-recursion rec x ⦃ Accessibleₗ.proof acc-y {x} ⦄)))
+                                 → φ{y}(accessible-recursion rec y)
+                               )
+                               → (∀{x} → ⦃ acc : Accessibleₗ(x) ⦄ → φ(accessible-recursion{U = P} rec x))
+                               -- accessible-recursion rec x ⦃ Accessibleₗ.proof acc-y {x} ⦄
+    accessible-recursion-intro{φ = φ} step {x} acc-x@⦃ intro ⦃ prev ⦄ ⦄ = step x ⦃ acc-x ⦄
+      (\{y} ⦃ xy ⦄ → accessible-recursion-intro{φ = φ} step {y} ⦃ prev{y} ⦃ xy ⦄ ⦄)
+      [≡]-intro
+
     -- TODO: When proving stuff about a function defined using accessible-recursion? accessible-recursion-all-proof : ∀{U}{x} → ⦃ _ : Accessibleₗ(x) ⦄ → P(accessible-recursion)
 
     -- An order is well-founded when all objects have a left-most element in the order relative to themselves.
@@ -123,13 +136,22 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
     wellfounded-induction proof = accessible-induction proof
 
     -- A helper function that helps defining a recursive function which is able to depend on all its preceding values without explicit recursion.
-    -- Note: When non-dependent 
+    -- Note: When non-dependent
     --   If the function to be defined is not a dependent function, then the type is:
     --   wellfounded-recursion : ∀{U : Type{ℓ₃}} → ((x : T) → ((prev : T) → ⦃ _ : (prev < x) ⦄ → U) → U) → (T → U)
     wellfounded-recursion : ⦃ WellFounded ⦄ → ∀{P : T → Type{ℓ₃}} → ((x : T) → ((prev : T) → ⦃ _ : (prev < x) ⦄ → P(prev)) → P(x)) → ((x : T) → P(x))
     wellfounded-recursion proof x = accessible-recursion proof x
 
-  -- A well-ordering is a well-founded strict total order 
+    wellfounded-recursion-intro : ⦃ wf : WellFounded ⦄ → ∀{P : T → Type{ℓ₃}}{rec : ∀(x) → _ → P(x)}{φ : ∀{x} → P(x) → Type{ℓ₄}}
+                                → (∀(y)
+                                  → (∀{x} → ⦃ xy : x < y ⦄ → φ{x}(wellfounded-recursion rec x))
+                                  → (∀{x} → ⦃ xy : x < y ⦄ → (accessible-recursion rec y ≡ rec y (\x → wellfounded-recursion rec x)))
+                                  → φ{y}(accessible-recursion rec y)
+                                )
+                                → (∀{x} → φ(accessible-recursion{U = P} rec x))
+    wellfounded-recursion-intro{φ = φ} step = accessible-recursion-intro{φ = φ} (\x → step x)
+
+  -- A well-ordering is a well-founded strict total order
   record WellOrder(_≡_ : T → T → Stmt{ℓ₃}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     instance constructor intro
     field

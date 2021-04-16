@@ -1,10 +1,10 @@
 module Function.Axioms where
 
-import      Function.Names as Names
 open import Lang.Instance
 open import Logic.Predicate
 open import Logic
 import      Lvl
+import      Structure.Function.Names as Names
 open import Structure.Setoid
 open import Type
 

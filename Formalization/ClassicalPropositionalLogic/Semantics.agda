@@ -72,3 +72,9 @@ module _ where
   -- A set of formulas is closed when it includes all formulas that it entails.
   Closed : Formulas(P){ℓ} → Stmt
   Closed(Γ) = Γ axiomatizes Γ
+
+  _⊨₊_ : Formulas(P){ℓ} → Formulas(P){ℓ} → Stmt
+  Γ₁ ⊨₊ Γ₂ = ∀{𝔐} → (𝔐 ⊧₊ Γ₁) → (𝔐 ⊧₊ Γ₂)
+
+  _⊭₊_ : Formulas(P){ℓ} → Formulas(P){ℓ} → Stmt
+  _⊭₊_ = Logic.¬_ ∘₂ _⊨₊_

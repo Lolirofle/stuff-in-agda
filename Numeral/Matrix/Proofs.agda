@@ -176,7 +176,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   ... | 𝐹 = reflexivity(_≡_)
 
   row-scalarMat-is-indexProject : ∀{false true : T}{i : 𝕟(n)} → (Matrix.row(SquareMatrix.scalarMat {d = n} false true)(i) ≡ Vector.indexProject i true false)
-  _⊜_.proof (row-scalarMat-is-indexProject {i = i}) {x} with (i ≡? x) | (x ≡? i) | commutativity ⦃ [≡]-equiv ⦄ (_≡?_) {x = i}{y = x}
+  _⊜_.proof (row-scalarMat-is-indexProject {i = i}) {x} with (i ≡? x) | (x ≡? i) | commutativity ⦃ [≡]-equiv ⦄ (_≡?_) {i}{x}
   ... | 𝑇 | 𝑇 | [≡]-intro = reflexivity(_≡_)
   ... | 𝑇 | 𝐹 | ()
   ... | 𝐹 | 𝑇 | ()

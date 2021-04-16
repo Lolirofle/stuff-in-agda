@@ -24,6 +24,7 @@ open import Numeral.Natural.Combinatorics
 open import Numeral.Natural.Combinatorics.Proofs
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Oper.Proofs.Multiplication
 open import Numeral.Natural.Oper.Proofs.Order
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
@@ -108,7 +109,7 @@ sublists-length {l = l} =
   length(sublists l)      🝖[ _≡_ ]-[]
   length(∅ ⊰ sublists₊ l) 🝖[ _≡_ ]-[]
   𝐒(length(sublists₊ l))  🝖[ _≡_ ]-[ [≡]-with(𝐒) (sublists₊-length {l = l}) ]
-  𝐒((2 ^ length(l)) −₀ 1) 🝖[ _≡_ ]-[ [↔]-to-[→] [−₀][𝐒]ₗ-equality ([^]ₗ-growing {2}{0}{length l} [≤]-minimum) ]-sym
+  𝐒((2 ^ length(l)) −₀ 1) 🝖[ _≡_ ]-[ [↔]-to-[→] [−₀][𝐒]ₗ-equality ([^]ₗ-growing {2}{0}{length l} (\()) [≤]-minimum) ]-sym
   𝐒(2 ^ length(l)) −₀ 1   🝖[ _≡_ ]-[]
   2 ^ length(l)           🝖-end
 
@@ -162,7 +163,7 @@ rotations-length : length(rotations l) ≡ length(l)
 rotations-length{l = l} = length-accumulateIterate₀{f = rotateₗ(1)}{init = l}
 
 insertedEverywhere-contents-length : AllElements(p ↦ length(p) ≡ 𝐒(length(l))) (insertedEverywhere x l)
-insertedEverywhere-contents-length = AllElements-fn Proofs.permutes-length permutes-insertedEverywhere
+insertedEverywhere-contents-length = AllElements-fn (Function.congruence ⦃ _ ⦄ Proofs.permutes-length-function) permutes-insertedEverywhere
 
 insertedEverywhere-length : length(insertedEverywhere x l) ≡ 𝐒(length(l))
 insertedEverywhere-length {x = x} {∅}     = [≡]-intro
@@ -175,7 +176,7 @@ insertedEverywhere-length {x = x} {a ⊰ l} =
   𝐒(length(a ⊰ l))                                                      🝖-end
 
 permutation-length : AllElements(p ↦ length p ≡ length l) (permutations l)
-permutation-length{l = l} = AllElements-fn Proofs.permutes-length (permutations-contains-permutations{l = l})
+permutation-length{l = l} = AllElements-fn (Function.congruence ⦃ _ ⦄ Proofs.permutes-length-function) (permutations-contains-permutations{l = l})
 
 {-permutations-length : length(permutations l) ≡ length(l) !
 permutations-length {l = ∅}         = [≡]-intro

@@ -1,5 +1,6 @@
 module Structure.Function.Names where
 
+open import Function.Names
 open import Functional
 open import Logic
 open import Logic.Propositional
@@ -64,3 +65,41 @@ module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₗ₁}(A) ⦄ {B : Type{�
     module _ {D : Type{ℓₒ₄}} ⦃ _ : Equiv{ℓₗ₄}(D) ⦄ where
       Congruence₃ : (A → B → C → D) → Stmt
       Congruence₃(f) = (∀{x₁ y₁ : A}{x₂ y₂ : B}{x₃ y₃ : C} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (x₃ ≡ y₃) → (f x₁ x₂ x₃ ≡ f y₁ y₂ y₃))
+
+module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ ⦃ _ : Equiv{ℓₗ₃}(A → B) ⦄ where
+  FunctionExtensionalityOn : (A → B) → (A → B) → Stmt
+  FunctionExtensionalityOn(f)(g) = ((f ⊜ g) → (f ≡ g))
+
+  FunctionApplicationOn : (A → B) → (A → B) → Stmt
+  FunctionApplicationOn(f)(g) = ((f ≡ g) → (f ⊜ g))
+
+module _ (A : Type{ℓₒ₁}) (B : Type{ℓₒ₂}) ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ ⦃ _ : Equiv{ℓₗ₃}(A → B) ⦄ where
+  FunctionExtensionality : Stmt
+  FunctionExtensionality = ∀²(FunctionExtensionalityOn{ℓₒ₁}{ℓₒ₂}{ℓₗ₂}{ℓₗ₃}{A}{B})
+
+  FunctionApplication : Stmt
+  FunctionApplication = ∀²(FunctionApplicationOn{ℓₒ₁}{ℓₒ₂}{ℓₗ₂}{ℓₗ₃}{A}{B})
+
+module _ {A : Type{ℓₒ₁}} {B : A → Type{ℓₒ₂}} ⦃ _ : ∀{a} → Equiv{ℓₗ₂}(B(a)) ⦄ ⦃ _ : Equiv{ℓₗ₃}((a : A) → B(a)) ⦄ where
+  DependentFunctionExtensionalityOn : ((a : A) → B(a)) → ((a : A) → B(a)) → Stmt
+  DependentFunctionExtensionalityOn(f)(g) = ((f ⊜ g) → (f ≡ g))
+
+module _ (A : Type{ℓₒ₁}) (B : A → Type{ℓₒ₂}) ⦃ _ : ∀{a} → Equiv{ℓₗ₂}(B(a)) ⦄ ⦃ _ : Equiv{ℓₗ₃}((a : A) → B(a)) ⦄ where
+  DependentFunctionExtensionality : Stmt
+  DependentFunctionExtensionality = ∀²(DependentFunctionExtensionalityOn{ℓₒ₁}{ℓₒ₂}{ℓₗ₂}{ℓₗ₃}{A}{B})
+
+module _ {A : Type{ℓₒ₁}} {B : A → Type{ℓₒ₂}} ⦃ _ : ∀{a} → Equiv{ℓₗ₂}(B(a)) ⦄ ⦃ _ : Equiv{ℓₗ₃}({a : A} → B(a)) ⦄ where
+  DependentImplicitFunctionExtensionalityOn : ({a : A} → B(a)) → ({a : A} → B(a)) → Stmt
+  DependentImplicitFunctionExtensionalityOn(f)(g) = (((\{a} → f{a}) ⊜ᵢ (\{a} → g{a})) → ((\{a} → f{a}) ≡ (\{a} → g{a})))
+
+module _ (A : Type{ℓₒ₁}) (B : A → Type{ℓₒ₂}) ⦃ _ : ∀{a} → Equiv{ℓₗ₂}(B(a)) ⦄ ⦃ _ : Equiv{ℓₗ₃}({a : A} → B(a)) ⦄ where
+  DependentImplicitFunctionExtensionality : Stmt
+  DependentImplicitFunctionExtensionality = ∀²(DependentImplicitFunctionExtensionalityOn{ℓₒ₁}{ℓₒ₂}{ℓₗ₂}{ℓₗ₃}{A}{B})
+
+module _ {A : Type{ℓₒ₁}} {B : A → Type{ℓₒ₂}} ⦃ _ : ∀{a} → Equiv{ℓₗ₂}(B(a)) ⦄ ⦃ _ : Equiv{ℓₗ₃}(⦃ a : A ⦄ → B(a)) ⦄ where
+  DependentInstanceFunctionExtensionalityOn : (⦃ a : A ⦄ → B(a)) → (⦃ a : A ⦄ → B(a)) → Stmt
+  DependentInstanceFunctionExtensionalityOn(f)(g) = (((\ ⦃ a ⦄ → f ⦃ a ⦄) ⦃⊜⦄ (\ ⦃ a ⦄ → g ⦃ a ⦄)) → ((\ ⦃ a ⦄ → f ⦃ a ⦄) ≡ (\ ⦃ a ⦄ → g ⦃ a ⦄)))
+
+module _ (A : Type{ℓₒ₁}) (B : A → Type{ℓₒ₂}) ⦃ _ : ∀{a} → Equiv{ℓₗ₂}(B(a)) ⦄ ⦃ _ : Equiv{ℓₗ₃}(⦃ a : A ⦄ → B(a)) ⦄ where
+  DependentInstanceFunctionExtensionality : Stmt
+  DependentInstanceFunctionExtensionality = ∀²(DependentInstanceFunctionExtensionalityOn{ℓₒ₁}{ℓₒ₂}{ℓₗ₂}{ℓₗ₃}{A}{B})

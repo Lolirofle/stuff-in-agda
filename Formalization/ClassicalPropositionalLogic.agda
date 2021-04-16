@@ -25,286 +25,33 @@ open import Sets.PredicateSet using (PredSet ; _∈_ ; _∉_ ; _∪_ ; _∪•_ 
 open        Sets.PredicateSet.BoundedQuantifiers
 open import Structure.Relator.Properties
 open import Syntax.Function
+open import Type.Properties.Decidable.Proofs
+open import Type.Properties.Decidable
 open import Type.Size.Countable
 
 private variable ℓₚ ℓ ℓ₁ ℓ₂ : Lvl.Level
 
+open import Formalization.ClassicalPropositionalLogic.NaturalDeduction
+open import Formalization.ClassicalPropositionalLogic.NaturalDeduction.Proofs
 open import Formalization.ClassicalPropositionalLogic.Syntax
 open import Formalization.ClassicalPropositionalLogic.Syntax.Proofs
 open import Formalization.ClassicalPropositionalLogic.Semantics
 open import Formalization.ClassicalPropositionalLogic.Semantics.Proofs
 import      Formalization.ClassicalPropositionalLogic.TruthTable as TruthTable
 
+instance _ = classical-to-decidable
+instance _ = classical-to-decider
+
 module NaturalDeduction where
-  data _⊢_ {ℓ ℓₚ} {P : Type{ℓₚ}} : Formulas(P){ℓ} → Formula(P) → Stmt{Lvl.𝐒(ℓₚ Lvl.⊔ ℓ)}
-  {-data Tree {ℓ ℓₚ} {P : Type{ℓₚ}} : Formula(P) → Stmt{Lvl.𝐒(ℓₚ Lvl.⊔ ℓ)} where
-    [⊤]-intro : Tree(⊤)
-
-    [⊥]-intro : ∀{φ} → Tree(φ) → Tree(¬ φ) → Tree(⊥)
-    [⊥]-elim  : ∀{φ} → Tree(⊥) → Tree(φ)
-
-    [¬]-intro : ∀{Γ : Formulas(P)}{φ} → ((Γ ∪ singleton(φ)) ⊢ ⊥) → Tree(¬ φ)
-    [¬]-elim  : ∀{Γ : Formulas(P)}{φ} → ((Γ ∪ singleton(¬ φ)) ⊢ ⊥) → Tree(φ)
-
-    [∧]-intro : ∀{φ ψ} → Tree(φ) → Tree(ψ) → Tree(φ ∧ ψ)
-    [∧]-elimₗ : ∀{φ ψ} → Tree(φ ∧ ψ) → Tree(φ)
-    [∧]-elimᵣ : ∀{φ ψ} → Tree(φ ∧ ψ) → Tree(ψ)
-
-    [∨]-introₗ : ∀{φ ψ} → Tree(φ) → Tree(φ ∨ ψ)
-    [∨]-introᵣ : ∀{φ ψ} → Tree(ψ) → Tree(φ ∨ ψ)
-    [∨]-elim   : ∀{Γ : Formulas(P)}{φ ψ χ} → ((Γ ∪ singleton(φ)) ⊢ χ) → ((Γ ∪ singleton(ψ)) ⊢ χ) → Tree(φ ∨ ψ) → Tree(χ)
-
-    [⟶]-intro : ∀{Γ : Formulas(P)}{φ ψ} → ((Γ ∪ singleton(φ)) ⊢ ψ) → Tree(φ ⟶ ψ)
-    [⟶]-elim  : ∀{Γ : Formulas(P)}{φ ψ} → Tree(φ) → Tree(φ ⟶ ψ) → Tree(ψ)
-
-    [⟷]-intro : ∀{Γ : Formulas(P)}{φ ψ} → ((Γ ∪ singleton(ψ)) ⊢ φ) → ((Γ ∪ singleton(φ)) ⊢ ψ) → Tree(ψ ⟷ φ)
-    [⟷]-elimₗ : ∀{φ ψ} → Tree(φ) → Tree(ψ ⟷ φ) → Tree(ψ)
-    [⟷]-elimᵣ : ∀{φ ψ} → Tree(ψ) → Tree(ψ ⟷ φ) → Tree(φ)
-  -}
-
-  data _⊢_ where
-    direct : ∀{Γ} → (Γ ⊆ (Γ ⊢_))
-
-    [⊤]-intro : ∀{Γ} → (Γ ⊢ ⊤)
-
-    [⊥]-intro : ∀{Γ}{φ} → (Γ ⊢ φ) → (Γ ⊢ (¬ φ)) → (Γ ⊢ ⊥)
-    [⊥]-elim  : ∀{Γ}{φ} → (Γ ⊢ ⊥) → (Γ ⊢ φ)
-
-    [¬]-intro : ∀{Γ}{φ} → ((Γ ∪ singleton(φ)) ⊢ ⊥) → (Γ ⊢ (¬ φ))
-    [¬]-elim  : ∀{Γ}{φ} → ((Γ ∪ singleton(¬ φ)) ⊢ ⊥) → (Γ ⊢ φ)
-
-    [∧]-intro : ∀{Γ}{φ ψ} → (Γ ⊢ φ) → (Γ ⊢ ψ) → (Γ ⊢ (φ ∧ ψ))
-    [∧]-elimₗ : ∀{Γ}{φ ψ} → (Γ ⊢ (φ ∧ ψ)) → (Γ ⊢ φ)
-    [∧]-elimᵣ : ∀{Γ}{φ ψ} → (Γ ⊢ (φ ∧ ψ)) → (Γ ⊢ ψ)
-
-    [∨]-introₗ : ∀{Γ}{φ ψ} → (Γ ⊢ φ) → (Γ ⊢ (φ ∨ ψ))
-    [∨]-introᵣ : ∀{Γ}{φ ψ} → (Γ ⊢ ψ) → (Γ ⊢ (φ ∨ ψ))
-    [∨]-elim   : ∀{Γ}{φ ψ χ} → ((Γ ∪ singleton(φ)) ⊢ χ) → ((Γ ∪ singleton(ψ)) ⊢ χ) → (Γ ⊢ (φ ∨ ψ)) → (Γ ⊢ χ)
-
-    [⟶]-intro : ∀{Γ}{φ ψ} → ((Γ ∪ singleton(φ)) ⊢ ψ) → (Γ ⊢ (φ ⟶ ψ))
-    [⟶]-elim  : ∀{Γ}{φ ψ} → (Γ ⊢ φ) → (Γ ⊢ (φ ⟶ ψ)) → (Γ ⊢ ψ)
-
-    [⟷]-intro : ∀{Γ}{φ ψ} → ((Γ ∪ singleton(ψ)) ⊢ φ) → ((Γ ∪ singleton(φ)) ⊢ ψ) → (Γ ⊢ (φ ⟷ ψ))
-    [⟷]-elimₗ : ∀{Γ}{φ ψ} → (Γ ⊢ ψ) → (Γ ⊢ (φ ⟷ ψ)) → (Γ ⊢ φ)
-    [⟷]-elimᵣ : ∀{Γ}{φ ψ} → (Γ ⊢ φ) → (Γ ⊢ (φ ⟷ ψ)) → (Γ ⊢ ψ)
-
-  {-
-  Tree-to-[⊢]-tautologies : ∀{φ} → Tree(φ) → (∅ ⊢ φ)
-  Tree-to-[⊢]-tautologies {.⊤} [⊤]-intro = [⊤]-intro
-  Tree-to-[⊢]-tautologies {.⊥} ([⊥]-intro tφ tφ₁) =
-    ([⊥]-intro
-      (Tree-to-[⊢]-tautologies tφ)
-      (Tree-to-[⊢]-tautologies tφ₁)
-    )
-  Tree-to-[⊢]-tautologies {φ} ([⊥]-elim tφ) =
-    ([⊥]-elim
-      (Tree-to-[⊢]-tautologies tφ)
-    )
-  Tree-to-[⊢]-tautologies {.(¬ _)} ([¬]-intro x) = {!!}
-  Tree-to-[⊢]-tautologies {φ} ([¬]-elim x) = {!!}
-  Tree-to-[⊢]-tautologies {.(_ ∧ _)} ([∧]-intro tφ tφ₁) =
-    ([∧]-intro
-      (Tree-to-[⊢]-tautologies tφ)
-      (Tree-to-[⊢]-tautologies tφ₁)
-    )
-  Tree-to-[⊢]-tautologies {φ} ([∧]-elimₗ tφ) =
-    ([∧]-elimₗ
-      (Tree-to-[⊢]-tautologies tφ)
-    )
-  Tree-to-[⊢]-tautologies {φ} ([∧]-elimᵣ tφ) =
-    ([∧]-elimᵣ
-      (Tree-to-[⊢]-tautologies tφ)
-    )
-  Tree-to-[⊢]-tautologies {.(_ ∨ _)} ([∨]-introₗ tφ) =
-    ([∨]-introₗ
-      (Tree-to-[⊢]-tautologies tφ)
-    )
-  Tree-to-[⊢]-tautologies {.(_ ∨ _)} ([∨]-introᵣ tφ) =
-    ([∨]-introᵣ
-      (Tree-to-[⊢]-tautologies tφ)
-    )
-  Tree-to-[⊢]-tautologies {φ} ([∨]-elim x x₁ tφ) = {!!}
-  Tree-to-[⊢]-tautologies {.(_ ⟶ _)} ([⟶]-intro x) = {!!}
-  Tree-to-[⊢]-tautologies {φ} ([⟶]-elim tφ tφ₁) =
-    ([⟶]-elim
-      (Tree-to-[⊢]-tautologies tφ)
-      (Tree-to-[⊢]-tautologies tφ₁)
-    )
-  Tree-to-[⊢]-tautologies {.(_ ⟷ _)} ([⟷]-intro x x₁) = {!!}
-  Tree-to-[⊢]-tautologies {φ} ([⟷]-elimₗ tφ tφ₁) =
-    ([⟷]-elimₗ
-      (Tree-to-[⊢]-tautologies tφ)
-      (Tree-to-[⊢]-tautologies tφ₁)
-    )
-  Tree-to-[⊢]-tautologies {φ} ([⟷]-elimᵣ tφ tφ₁) =
-    ([⟷]-elimᵣ
-      (Tree-to-[⊢]-tautologies tφ)
-      (Tree-to-[⊢]-tautologies tφ₁)
-    )
-
-  Tree-to-[⊢] : ∀{P : Type{ℓₚ}}{Γ : Formulas(P)}{φ} → ((Γ ⊆ Tree) → Tree(φ)) → (Γ ⊢ φ)
-  Tree-to-[⊢] {Γ} {φ} t = {!!}
-  -}
-
   private variable P : Type{ℓₚ}
   private variable Γ Γ₁ Γ₂ : Formulas(P){ℓ}
   private variable φ ψ : Formula(P)
-
-  weaken-union-singleton : (Γ₁ ⊆ Γ₂) → (((Γ₁ ∪ singleton(φ)) ⊢_) ⊆ ((Γ₂ ∪ singleton(φ)) ⊢_))
-
-  weaken : (Γ₁ ⊆ Γ₂) → ((Γ₁ ⊢_) ⊆ (Γ₂ ⊢_))
-  weaken Γ₁Γ₂ {φ}        (direct p)         = direct (Γ₁Γ₂ p)
-  weaken Γ₁Γ₂ {.⊤}       [⊤]-intro          = [⊤]-intro
-  weaken Γ₁Γ₂ {.⊥}       ([⊥]-intro  p q)   = [⊥]-intro  (weaken Γ₁Γ₂ p) (weaken Γ₁Γ₂ q)
-  weaken Γ₁Γ₂ {φ}        ([⊥]-elim   p)     = [⊥]-elim   (weaken Γ₁Γ₂ p)
-  weaken Γ₁Γ₂ {.(¬ _)}   ([¬]-intro  p)     = [¬]-intro  (weaken-union-singleton Γ₁Γ₂ p)
-  weaken Γ₁Γ₂ {φ}        ([¬]-elim   p)     = [¬]-elim   (weaken-union-singleton Γ₁Γ₂ p)
-  weaken Γ₁Γ₂ {.(_ ∧ _)} ([∧]-intro  p q)   = [∧]-intro  (weaken Γ₁Γ₂ p) (weaken Γ₁Γ₂ q)
-  weaken Γ₁Γ₂ {φ}        ([∧]-elimₗ  p)     = [∧]-elimₗ  (weaken Γ₁Γ₂ p)
-  weaken Γ₁Γ₂ {φ}        ([∧]-elimᵣ  p)     = [∧]-elimᵣ  (weaken Γ₁Γ₂ p)
-  weaken Γ₁Γ₂ {.(_ ∨ _)} ([∨]-introₗ p)     = [∨]-introₗ (weaken Γ₁Γ₂ p)
-  weaken Γ₁Γ₂ {.(_ ∨ _)} ([∨]-introᵣ p)     = [∨]-introᵣ (weaken Γ₁Γ₂ p)
-  weaken Γ₁Γ₂ {φ}        ([∨]-elim   p q r) = [∨]-elim   (weaken-union-singleton Γ₁Γ₂ p) (weaken-union-singleton Γ₁Γ₂ q) (weaken Γ₁Γ₂ r)
-  weaken Γ₁Γ₂ {.(_ ⟶ _)} ([⟶]-intro  p)     = [⟶]-intro  (weaken-union-singleton Γ₁Γ₂ p)
-  weaken Γ₁Γ₂ {φ}        ([⟶]-elim   p q)   = [⟶]-elim   (weaken Γ₁Γ₂ p) (weaken Γ₁Γ₂ q)
-  weaken Γ₁Γ₂ {.(_ ⟷ _)} ([⟷]-intro  p q)   = [⟷]-intro  (weaken-union-singleton Γ₁Γ₂ p) (weaken-union-singleton Γ₁Γ₂ q)
-  weaken Γ₁Γ₂ {φ}        ([⟷]-elimₗ  p q)   = [⟷]-elimₗ  (weaken Γ₁Γ₂ p) (weaken Γ₁Γ₂ q)
-  weaken Γ₁Γ₂ {φ}        ([⟷]-elimᵣ  p q)   = [⟷]-elimᵣ  (weaken Γ₁Γ₂ p) (weaken Γ₁Γ₂ q)
-
-  weaken-union-singleton Γ₁Γ₂ p = weaken (Either.mapLeft Γ₁Γ₂) p
-
-  weaken-union : (Γ₁ ⊢_) ⊆ ((Γ₁ ∪ Γ₂) ⊢_)
-  weaken-union = weaken Either.Left
-
-  [⟵]-intro : ((Γ ∪ singleton(φ)) ⊢ ψ) → (Γ ⊢ (ψ ⟵ φ))
-  [⟵]-intro = [⟶]-intro
-
-  [⟵]-elim : (Γ ⊢ φ) → (Γ ⊢ (ψ ⟵ φ)) → (Γ ⊢ ψ)
-  [⟵]-elim = [⟶]-elim
-
-  [¬¬]-elim : (Γ ⊢ ¬(¬ φ)) → (Γ ⊢ φ)
-  [¬¬]-elim nnφ =
-    ([¬]-elim
-      ([⊥]-intro
-        (direct(Right [≡]-intro))
-        (weaken-union nnφ)
-      )
-    )
-
-  [¬¬]-intro : (Γ ⊢ φ) → (Γ ⊢ ¬(¬ φ))
-  [¬¬]-intro Γφ =
-    ([¬]-intro
-      ([⊥]-intro
-        (weaken-union Γφ)
-        (direct (Right [≡]-intro))
-      )
-    )
-
-  _⊬_ : Formulas(P){ℓ} → Formula(P) → Stmt
-  _⊬_ = Logic.¬_ ∘₂ _⊢_
-
-  [¬]-intro-converse : ((Γ ∪ singleton(φ)) ⊢ ⊥) ← (Γ ⊢ (¬ φ))
-  [¬]-intro-converse {Γ = Γ}{φ = φ} Γ¬φ = [⊥]-intro (direct (Right [≡]-intro)) (weaken-union Γ¬φ)
-
-  excluded-middle : Γ ⊢ (φ ∨ (¬ φ))
-  excluded-middle =
-    ([¬¬]-elim
-      ([¬]-intro
-        ([⊥]-intro
-          ([∨]-introᵣ
-            ([¬]-intro
-              ([⊥]-intro
-                ([∨]-introₗ (direct (Right [≡]-intro)))
-                (direct (Left (Right [≡]-intro)))
-              )
-            )
-          )
-          (direct (Right [≡]-intro))
-        )
-      )
-    )
-
-  [→]-disjunctive-form : (Γ ⊢ (φ ⟶ ψ)) Logic.↔ (Γ ⊢ ((¬ φ) ∨ ψ))
-  [→]-disjunctive-form = Logic.[↔]-intro l r where
-    l = [∨]-elim
-      ([⟶]-intro ([⊥]-elim ([⊥]-intro
-        (direct (Right [≡]-intro))
-        (direct (Left (Right [≡]-intro)))
-      )))
-      ([⟶]-intro (direct (Left (Right [≡]-intro))))
-    r = pq ↦
-      ([∨]-elim
-        ([∨]-introᵣ ([⟶]-elim (direct (Right [≡]-intro)) (weaken Left pq)))
-        ([∨]-introₗ (direct (Right [≡]-intro)))
-        excluded-middle
-      )
-
-  [⟷]-negated : (Γ ⊢ (φ ⟷ ψ)) → (Γ ⊢ ((¬ φ) ⟷ (¬ ψ)))
-  [⟷]-negated p = [⟷]-intro
-    ([¬]-intro ([⊥]-intro ([⟷]-elimᵣ (direct (Right [≡]-intro)) (weaken (Left ∘ Left) p)) (direct (Left (Right [≡]-intro)))))
-    (([¬]-intro ([⊥]-intro ([⟷]-elimₗ (direct (Right [≡]-intro)) (weaken (Left ∘ Left) p)) (direct (Left (Right [≡]-intro))))))
-
-  [⟷]-conjunction-disjunction-negation : (Γ ⊢ (φ ⟷ ψ)) Logic.↔ (Γ ⊢ ((φ ∧ ψ) ∨ ((¬ φ) ∧ (¬ ψ))))
-  [⟷]-conjunction-disjunction-negation = Logic.[↔]-intro l r where
-    l = [∨]-elim
-      ([⟷]-intro
-        ([∧]-elimₗ (direct (Left (Right [≡]-intro))))
-        ([∧]-elimᵣ (direct (Left (Right [≡]-intro))))
-      )
-      ([⟷]-intro
-        ([⊥]-elim ([⊥]-intro (direct (Right [≡]-intro)) ([∧]-elimᵣ (direct (Left (Right [≡]-intro))))))
-        ([⊥]-elim ([⊥]-intro (direct (Right [≡]-intro)) ([∧]-elimₗ (direct (Left (Right [≡]-intro))))))
-      )
-    r = p ↦ [∨]-elim
-      ([∨]-introₗ ([∧]-intro
-        (direct (Right [≡]-intro))
-        ([⟷]-elimᵣ (direct (Right [≡]-intro)) (weaken Left p))
-      ))
-      ([∨]-introᵣ ([∧]-intro
-        (direct (Right [≡]-intro))
-        ([⟷]-elimᵣ (direct (Right [≡]-intro)) (weaken Left ([⟷]-negated p)))
-      ))
-      excluded-middle
-
-  Inconsistent : Formulas(P){ℓ} → Stmt
-  Inconsistent(Γ) = Γ ⊢ ⊥
-
-  Consistent : Formulas(P){ℓ} → Stmt
-  Consistent(Γ) = Γ ⊬ ⊥ 
-
-  consistency-of-[∪]ₗ : Consistent(Γ₁ ∪ Γ₂) → Consistent(Γ₁)
-  consistency-of-[∪]ₗ con z = con (weaken-union z)
-
-  -- TODO: Replace all occurrences of "consistence" with "consistency", and "deriviability" with "derivability"
-  [⊢]-deriviability-inconsistence : (Γ ⊢ φ) Logic.↔ Inconsistent(Γ ∪ singleton(¬ φ))
-  [⊢]-deriviability-inconsistence = Logic.[↔]-intro [¬]-elim ([¬]-intro-converse ∘ [¬¬]-intro)
-
-  [⊢]-deriviability-consistenceᵣ : Consistent(Γ) → ((Γ ⊢ φ) → Consistent(Γ ∪ singleton(φ)))
-  [⊢]-deriviability-consistenceᵣ con Γφ Γφ⊥ = con([⊥]-intro Γφ ([¬]-intro Γφ⊥))
-
-  [⊢]-explosion-inconsistence : (∀{φ} → (Γ ⊢ φ)) Logic.↔ Inconsistent(Γ)
-  [⊢]-explosion-inconsistence {Γ} = Logic.[↔]-intro (λ z → [⊥]-elim z) (λ z → z)
 
   [⊢]-functionₗ : (Γ₁ ≡ₛ Γ₂) → ((Γ₁ ⊢_) ≡ₛ (Γ₂ ⊢_))
   [⊢]-functionₗ Γ₁Γ₂ = Logic.[↔]-intro (weaken (Logic.[↔]-to-[←] Γ₁Γ₂)) (weaken (Logic.[↔]-to-[→] Γ₁Γ₂))
 
   [⊢]-compose : (Γ ⊢ φ) → ((Γ ∪ singleton(φ)) ⊢ ψ) → (Γ ⊢ ψ)
   [⊢]-compose Γφ Γφψ = [∨]-elim Γφψ Γφψ ([∨]-introₗ Γφ)
-
-  [⊢]-compose-inconsistence : (Γ ⊢ φ) → Inconsistent(Γ ∪ singleton(φ)) → Inconsistent(Γ)
-  [⊢]-compose-inconsistence Γφ Γφ⊥ = [⊥]-intro Γφ ([¬]-intro Γφ⊥)
-
-  [⊢]-compose-consistence : (Γ ⊢ φ) → Consistent(Γ) → Consistent(Γ ∪ singleton(φ))
-  [⊢]-compose-consistence Γφ = Logic.contrapositiveᵣ ([⊢]-compose-inconsistence Γφ)
-
-  [⊢]-subset-consistency : (Γ₁ ⊆ Γ₂) → (Consistent(Γ₂) → Consistent(Γ₁))
-  [⊢]-subset-consistency sub con = con ∘ weaken sub
-
-  [⊢]-subset-inconsistency : (Γ₁ ⊆ Γ₂) → (Inconsistent(Γ₁) → Inconsistent(Γ₂))
-  [⊢]-subset-inconsistency sub = weaken sub
-
-  [⊬]-derives-negation-consistency : (Γ ⊬ (¬ φ)) → Consistent(Γ ∪ singleton(φ))
-  [⊬]-derives-negation-consistency = _∘ [¬]-intro
 
   -- TODO: Is this provable? Does one need to include it in the definition of (_⊢_)? Is it even possible to include it?
   -- [⊢]-hypothesis : ((Γ ⊢ φ) → (Γ ⊢ ψ)) → ((Γ ∪ singleton(φ)) ⊢ ψ)
@@ -313,9 +60,6 @@ module NaturalDeduction where
   [⊢][→]-intro-from-[∨] : (Γ ⊢ ¬ φ) Logic.∨ (Γ ⊢ ψ) → (Γ ⊢ (φ ⟶ ψ))
   [⊢][→]-intro-from-[∨] {Γ = Γ}{φ}{ψ} (Left x) = [⟶]-intro ([⊥]-elim ([⊥]-intro (direct (Right [≡]-intro)) (weaken-union {Γ₂ = singleton φ} x)))
   [⊢][→]-intro-from-[∨] (Right x) = [⟶]-intro (weaken-union x)
-
-  [¬]-maximal-membershipᵣ : Consistent(Γ) → ((¬ φ) ∈ Γ) → (φ ∉ Γ)
-  [¬]-maximal-membershipᵣ con Γ¬φ Γφ = con([⊥]-intro (direct Γφ) (direct Γ¬φ))
 
   -- A smallest finite set of assumptions that is able to derive a formula.
   finiteAssumptions : ∀{φ : Formula(P)} → (Γ ⊢ φ) → Formulas(P){Lvl.of(P)}
@@ -336,26 +80,6 @@ module NaturalDeduction where
   finiteAssumptions {φ = .(_ ⟷ _)} ([⟷]-intro{φ = φ}{ψ} p q)   = (finiteAssumptions p ∖ singleton(ψ)) ∪ (finiteAssumptions q ∖ singleton(φ))
   finiteAssumptions {φ = φ}        ([⟷]-elimₗ           p q)   = finiteAssumptions p ∪ finiteAssumptions q
   finiteAssumptions {φ = φ}        ([⟷]-elimᵣ           p q)   = finiteAssumptions p ∪ finiteAssumptions q
-
-  -- TODO: These should be in SetLike
-  module _ where
-    private variable X : Type{ℓ}
-    private variable A A₁ A₂ B B₁ B₂ C : X → Type{ℓ}
-
-    [∪]-subset : (A ⊆ C) → (B ⊆ C) → ((A ∪ B) ⊆ C)
-    [∪]-subset ac bc = Logic.[∨]-elim ac bc
-
-    [∪]-subset2 : (A₁ ⊆ A₂) → (B₁ ⊆ B₂) → ((A₁ ∪ B₁) ⊆ (A₂ ∪ B₂))
-    [∪]-subset2 aa bb = Logic.[∨]-elim2 aa bb
-
-    [∖][∪]-is-[∪] : (((A ∖ B) ∪ B) ≡ₛ (A ∪ B))
-    [∖][∪]-is-[∪] {A = A}{B = B}{x = x} =
-      Logic.[↔]-intro
-        (Logic.[∨]-elim (Ax ↦ Logic.[∨]-elim2 (Logic.[∧]-intro Ax) id (Logic.[∨]-symmetry(Logic.excluded-middle(B(x))))) Logic.[∨]-introᵣ)
-        (Logic.[∨]-elim (Logic.[∨]-introₗ ∘ Logic.[∧]-elimₗ) Logic.[∨]-introᵣ) -- TODO: This direction does not require a classical setting
-
-    [∪][∖]-invertᵣ-[⊆] : (A ⊆ (B ∪ C)) → ((A ∖ C) ⊆ B)
-    [∪][∖]-invertᵣ-[⊆] abc (Logic.[∧]-intro a nc) = Logic.[∨]-elim id (Logic.[⊥]-elim ∘ nc) (abc a)
 
   finiteAssumptions-correctness : (p : (Γ ⊢ φ)) → (finiteAssumptions p ⊢ φ)
   finiteAssumptions-correctness (direct x)         = direct [≡]-intro
@@ -448,12 +172,12 @@ module NaturalDeduction where
       element-maximal-contra : (φ ∉ Γ) → Inconsistent(Γ ∪ singleton(φ))
       element-maximal-contra = Logic.[↔]-to-[←] Logic.contrapositive-variant2 element-maximal
 
-      [⊢]-deriviability-consistenceₗ : ((Γ ⊢ φ) ← Consistent(Γ ∪ singleton(φ)))
-      [⊢]-deriviability-consistenceₗ = direct ∘ element-maximal
+      [⊢]-derivability-consistencyₗ : ((Γ ⊢ φ) ← Consistent(Γ ∪ singleton(φ)))
+      [⊢]-derivability-consistencyₗ = direct ∘ element-maximal
 
       module Consistent(consistent : Consistent(Γ)) where
         [⊢]-to-[∈] : (Γ ⊢ φ) → (φ ∈ Γ)
-        [⊢]-to-[∈] = Logic.[→]-from-contrary (\Γφ φ∉Γ → consistent ([⊢]-compose-inconsistence Γφ (element-maximal-contra φ∉Γ)))
+        [⊢]-to-[∈] = Logic.[→]-from-contrary (\Γφ φ∉Γ → consistent ([⊢]-compose-inconsistency Γφ (element-maximal-contra φ∉Γ)))
 
         [⊢][∈]-equivalence : (Γ ⊢ φ) Logic.↔ (φ ∈ Γ)
         [⊢][∈]-equivalence = Logic.[↔]-intro direct [⊢]-to-[∈]
@@ -463,7 +187,7 @@ module NaturalDeduction where
 
         [⊤]-maximal-membership : (⊤ ∈ Γ) Logic.↔ Logic.⊤
         [⊤]-maximal-membership = Logic.[↔]-intro l r where
-          l = const (element-maximal (Γ⊤-incons ↦ consistent([⊢]-compose-inconsistence [⊤]-intro Γ⊤-incons)))
+          l = const (element-maximal (Γ⊤-incons ↦ consistent([⊢]-compose-inconsistency [⊤]-intro Γ⊤-incons)))
           r = const Logic.[⊤]-intro
 
         [⊥]-maximal-membership : (⊥ ∈ Γ) Logic.↔ Logic.⊥
@@ -474,7 +198,7 @@ module NaturalDeduction where
         [¬]-maximal-membership : ((¬ φ) ∈ Γ) Logic.↔ (φ ∉ Γ)
         [¬]-maximal-membership = Logic.[↔]-intro l r where
           l = [⊢]-to-[∈] ∘ [¬]-intro ∘ element-maximal-contra
-          r = [¬]-maximal-membershipᵣ consistent
+          r = [⊢]-consistent-noncontradicting-membership consistent
 
         [∧]-maximal-membership : ((φ ∧ ψ) ∈ Γ) Logic.↔ ((φ ∈ Γ) Logic.∧ (ψ ∈ Γ))
         [∧]-maximal-membership = Logic.[↔]-intro l r where
@@ -515,12 +239,12 @@ module NaturalDeduction where
 
         equal-model-existence : Logic.∃(𝔐 ↦ (Γ ≡ₛ (𝔐 ⊧_)))
         equal-model-existence = Logic.[∃]-intro witness ⦃ Logic.[↔]-intro l r ⦄ where
-          witness = (p ↦ Classical.decide{P = (• p) ∈ Γ} classical)
+          witness = (p ↦ decide(0)((• p) ∈ Γ))
 
           l : (witness ⊧ φ) → (φ ∈ Γ)
           r : witness ⊧₊ Γ
 
-          r {• x}   = Logic.[↔]-to-[→] Logic.decide-is-true
+          r {• x}   = Logic.[↔]-to-[→] decider-true
           r {⊤}     = Logic.[↔]-to-[→] [⊤]-maximal-membership
           r {⊥}     = Logic.[↔]-to-[→] [⊥]-maximal-membership
           r {¬ φ}   = Logic.contrapositiveᵣ l ∘ Logic.[↔]-to-[→] [¬]-maximal-membership
@@ -529,7 +253,7 @@ module NaturalDeduction where
           r {φ ⟶ ψ} = Either.map (Logic.contrapositiveᵣ l) r ∘ Logic.[↔]-to-[→] [⟶]-maximal-membership
           r {φ ⟷ ψ} = Either.map (Tuple.map r r) (Tuple.map (Logic.contrapositiveᵣ l) (Logic.contrapositiveᵣ l)) ∘ Logic.[↔]-to-[→] [⟷]-maximal-membership
       
-          l {• x}   = Logic.[↔]-to-[←] Logic.decide-is-true
+          l {• x}   = Logic.[↔]-to-[←] decider-true
           l {⊤}     = Logic.[↔]-to-[←] [⊤]-maximal-membership
           l {¬ φ}   = Logic.[↔]-to-[←] [¬]-maximal-membership ∘ Logic.contrapositiveᵣ r
           l {φ ∧ ψ} = Logic.[↔]-to-[←] [∧]-maximal-membership ∘ Tuple.map l l
@@ -561,14 +285,14 @@ module NaturalDeduction where
         consistentElementMaximality : ConsistentElementMaximality
         consistentElementMaximality {φ} conΓφ with p{φ} | Logic.excluded-middle((¬ φ) ∈ Γ)
         ... | Left  q | Left  r with () ← consistent([⊥]-intro q (direct r))
-        ... | Left  q | Right r = Logic.[¬¬]-elim (¬Γφ ↦ {![¬]-maximal-membershipᵣ consistent !})
+        ... | Left  q | Right r = Logic.[¬¬]-elim (¬Γφ ↦ {![⊢]-consistent-noncontradicting-membership consistent !})
         ... | Right q | _       with () ← conΓφ([¬]-intro-converse q)
         -- ConsistentSubsetMaximality.consistentElementMaximality {!!}
-        -- [⊢]-deriviability-consistenceᵣ consistent q
-        -- [¬]-intro(Logic.[↔]-to-[→] [⊢]-deriviability-inconsistence q)
+        -- [⊢]-derivability-consistencyᵣ consistent q
+        -- [¬]-intro(Logic.[↔]-to-[→] [⊢]-derivability-inconsistency q)
         -- Logic.contrapositiveᵣ direct conΓφ
         -- (¬φΓ ↦ Logic.contrapositiveᵣ direct (conΓφ ∘ [¬]-intro-converse) {!r ∘ direct!})
-        -- [¬]-maximal-membershipᵣ consistent
+        -- [⊢]-consistent-noncontradicting-membership consistent
         -- (r ∘ direct)
 
         completeMembership : CompleteMembership
@@ -591,7 +315,7 @@ module NaturalDeduction where
 
     open ConsistentElementMaximality Γ element-maximal using
       ( element-maximal-contra
-      ; [⊢]-deriviability-consistenceₗ
+      ; [⊢]-derivability-consistencyₗ
       ) public
 
     open ConsistentElementMaximality.Consistent Γ element-maximal consistent using
@@ -607,10 +331,10 @@ module NaturalDeduction where
 
     {-r : (term-model(max Γ con) ⊧ φ) → (φ ∈ max Γ con)
     r {• x}   modelsφ Γφ-incons = Logic.[↔]-to-[←] Logic.decide-is-true modelsφ Γφ-incons
-    r {⊤}     modelsφ Γφ-incons = con([⊢]-compose-inconsistence [⊤]-intro Γφ-incons)-}
+    r {⊤}     modelsφ Γφ-incons = con([⊢]-compose-inconsistency [⊤]-intro Γφ-incons)-}
 
   open MaximallyConsistent ⦃ … ⦄ using
-    ( [⊢]-deriviability-consistenceₗ
+    ( [⊢]-derivability-consistencyₗ
     ; [⊤]-maximal-membership
     ; [⊥]-maximal-membership
     ; [¬]-maximal-membership
@@ -657,16 +381,16 @@ module NaturalDeduction where
         p = Logic.[∃]-witness (Formula-is-countably-infinite {P = P}) n
         con-eq : Consistent((maxi Γ n) ∪ singleton(if Logic.decide(maxi Γ n ⊢ p) then p else (¬ p)))
         con-eq with Logic.excluded-middle(maxi Γ n ⊢ p) | Logic.decide(maxi Γ n ⊢ p)
-        ... | Left  derp  | _ = [⊢]-compose-consistence derp (maxi-consistent con {n = n})
-        ... | Right dernp | _ = [⊬]-derives-negation-consistency(dernp ∘ [¬¬]-elim)
+        ... | Left  derp  | _ = [⊢]-compose-consistency derp (maxi-consistent con {n = n})
+        ... | Right dernp | _ = [⊬]-negation-consistency(dernp ∘ [¬¬]-elim)
     -}
 
     maxi2 : Formulas(P){ℓ} → ℕ → Formulas(P){Lvl.of(P) Lvl.⊔ ℓ}
     maxi2 Γ 𝟎      = Lvl.Up{Lvl.of(P)} ∘ Γ
     maxi2 Γ (𝐒(n)) = let ψ = CountablyInfinite.index(Formula P) n
-                     in  (maxi2 Γ n) ∪ singleton(if Logic.decide(maxi2 Γ n ⊢ ψ) then ψ else (¬ ψ))
+                     in  (maxi2 Γ n) ∪ singleton(if decide(0)(maxi2 Γ n ⊢ ψ) then ψ else (¬ ψ))
 
-    maxi2-succ : let ψ = CountablyInfinite.index(Formula P) n in (((maxi2 Γ n) ∪ singleton(if Logic.decide(maxi2 Γ n ⊢ ψ) then ψ else (¬ ψ))) ≡ₛ maxi2 Γ (𝐒(n)))
+    maxi2-succ : let ψ = CountablyInfinite.index(Formula P) n in (((maxi2 Γ n) ∪ singleton(if decide(0)(maxi2 Γ n ⊢ ψ) then ψ else (¬ ψ))) ≡ₛ maxi2 Γ (𝐒(n)))
     -- maxi2-succ {n = n}{Γ = Γ} = Logic.[↔]-intro {!!} {!!}
 
     maxi2-zero : (Γ ≡ₛ maxi2 Γ 𝟎)
@@ -681,10 +405,10 @@ module NaturalDeduction where
       maxi2-consistent {Γ = Γ} con {n = 𝟎}   = [⊢]-subset-consistency (Logic.[↔]-to-[←] (maxi2-zero {Γ = Γ})) con
       maxi2-consistent {Γ = Γ} con {n = 𝐒 n} = [⊢]-subset-consistency (Logic.[↔]-to-[←] (maxi2-succ {Γ = Γ})) con-eq where
         p = CountablyInfinite.index(Formula P) n
-        con-eq : Consistent((maxi2 Γ n) ∪ singleton(if Logic.decide(maxi2 Γ n ⊢ p) then p else (¬ p)))
-        con-eq with Logic.excluded-middle(maxi2 Γ n ⊢ p) | Logic.decide(maxi2 Γ n ⊢ p)
-        ... | Left  derp  | _ = [⊢]-compose-consistence derp (maxi2-consistent con {n = n})
-        ... | Right dernp | _ = [⊬]-derives-negation-consistency(dernp ∘ [¬¬]-elim)
+        con-eq : Consistent((maxi2 Γ n) ∪ singleton(if decide(0)(maxi2 Γ n ⊢ p) then p else (¬ p)))
+        con-eq with Logic.excluded-middle(maxi2 Γ n ⊢ p) | decide(0)(maxi2 Γ n ⊢ p)
+        ... | Left  derp  | _ = [⊢]-compose-consistency derp (maxi2-consistent con {n = n})
+        ... | Right dernp | _ = [⊬]-negation-consistency(dernp ∘ [¬¬]-elim)
 
     max : (Γ : Formulas(P){ℓ}) → Formulas(P){Lvl.of(P) Lvl.⊔ ℓ}
     max(Γ) φ = Logic.∃(n ↦ φ ∈ maxi2 Γ n)
@@ -771,7 +495,7 @@ module NaturalDeduction where
   max-inconsistency-membership2 = Logic.[↔]-intro Logic.[¬¬]-elim apply
 
   test : ∀{con} → (φ ∉ max Γ con) → ((¬ φ) ∈ max Γ con)
-  test {con = con} p = [⊢]-compose-consistence ([¬]-intro(Logic.[¬¬]-elim p)) con
+  test {con = con} p = [⊢]-compose-consistency ([¬]-intro(Logic.[¬¬]-elim p)) con
 
   max-consistent : ∀{con : Consistent(Γ)} → Consistent(max Γ con)
   max-consistent {Γ = Γ} {con = con} = Logic.contrapositiveᵣ {!!} con
@@ -917,7 +641,7 @@ module _ where
       maximally-consistent-is-modelSet maxCon {φ ⟷ ψ} = {!!}-}
 
     term-model : Formulas(P){ℓ} → Model(P)
-    term-model(Γ) p = Classical.decide {P = (• p) ∈ Γ} classical
+    term-model(Γ) p = decide(0)((• p) ∈ Γ)
 
   module _ ⦃ countable-P : CountablyInfinite(P) ⦄ where
     private variable Γ Γ₁ Γ₂ : Formulas(P){ℓₚ}
@@ -931,6 +655,6 @@ module _ where
 
     completeness : (Γ ⊨ φ) → (Γ ⊢ φ)
     completeness {Γ = Γ}{φ = φ} =
-      (Logic.[↔]-to-[←] [⊢]-deriviability-inconsistence)
+      (Logic.[↔]-to-[←] [⊢]-derivability-inconsistency)
       ∘ (Logic.[↔]-to-[←] Logic.contrapositive-variant2 consistent-satisfiable)
       ∘ (Logic.[↔]-to-[→] [⊨]-entailment-unsatisfiability)

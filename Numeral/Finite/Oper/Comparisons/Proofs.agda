@@ -10,6 +10,7 @@ open import Logic.Predicate
 open import Numeral.Finite
 open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Sign
+open import Numeral.Sign.Oper0
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equivalence
 import      Structure.Operator.Names as Names
@@ -54,7 +55,25 @@ instance
   [≡?]-commutativity : ∀{n} → Commutativity{T₁ = 𝕟(n)} ⦃ [≡]-equiv ⦄ (_≡?_)
   [≡?]-commutativity{n} = intro(\{x y} → p{n}{x}{y}) where
     p : ∀{n} → Names.Commutativity{T₁ = 𝕟(n)} ⦃ [≡]-equiv ⦄ (_≡?_)
-    p{x = 𝟎}  {y = 𝟎}   = [≡]-intro
-    p{x = 𝟎}  {y = 𝐒 y} = [≡]-intro
-    p{x = 𝐒 x}{y = 𝟎}   = [≡]-intro
-    p{x = 𝐒 x}{y = 𝐒 y} = p {x = x}{y = y}
+    p{_}{𝟎}  {𝟎}   = [≡]-intro
+    p{_}{𝟎}  {𝐒 y} = [≡]-intro
+    p{_}{𝐒 x}{𝟎}   = [≡]-intro
+    p{_}{𝐒 x}{𝐒 y} = p{_}{x}{y}
+
+⋚-anticommutativity : ∀{xn yn}{x : 𝕟(xn)}{y : 𝕟(yn)} → (−(x ⋚? y) ≡ y ⋚? x)
+⋚-anticommutativity {x = 𝟎}  {y = 𝟎}   = [≡]-intro
+⋚-anticommutativity {x = 𝟎}  {y = 𝐒 y} = [≡]-intro
+⋚-anticommutativity {x = 𝐒 x}{y = 𝟎}   = [≡]-intro
+⋚-anticommutativity {x = 𝐒 x}{y = 𝐒 y} = ⋚-anticommutativity {x = x}{y = y}
+
+⋚-elim₃-negation-flip : ∀{xn yn}{x : 𝕟(xn)}{y : 𝕟(yn)}{b₁ b₂ b₃} → (elim₃{P = \_ → Bool} b₁ b₂ b₃ (−(x ⋚? y)) ≡ elim₃ b₃ b₂ b₁ (x ⋚? y))
+⋚-elim₃-negation-flip {x = 𝟎}  {y = 𝟎}   = [≡]-intro
+⋚-elim₃-negation-flip {x = 𝟎}  {y = 𝐒 y} = [≡]-intro
+⋚-elim₃-negation-flip {x = 𝐒 x}{y = 𝟎}   = [≡]-intro
+⋚-elim₃-negation-flip {x = 𝐒 x}{y = 𝐒 y} = ⋚-elim₃-negation-flip {x = x}{y = y}
+
+⋚-elim₃-negation-distribution : ∀{xn yn}{x : 𝕟(xn)}{y : 𝕟(yn)}{b₁ b₂ b₃ : Bool} → (!(elim₃ b₁ b₂ b₃ (x ⋚? y)) ≡ elim₃ (! b₁) (! b₂) (! b₃) (x ⋚? y))
+⋚-elim₃-negation-distribution {x = 𝟎}  {y = 𝟎}   = [≡]-intro
+⋚-elim₃-negation-distribution {x = 𝟎}  {y = 𝐒 y} = [≡]-intro
+⋚-elim₃-negation-distribution {x = 𝐒 x}{y = 𝟎}   = [≡]-intro
+⋚-elim₃-negation-distribution {x = 𝐒 x}{y = 𝐒 y} = ⋚-elim₃-negation-distribution {x = x}{y = y}

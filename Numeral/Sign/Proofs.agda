@@ -123,6 +123,20 @@ instance
   [⨯₀]-absorber = intro
 
 instance
+  [⨯]-identityₗ : Identityₗ(_⨯_)(➕)
+  Identityₗ.proof [⨯]-identityₗ {➕} = [≡]-intro
+  Identityₗ.proof [⨯]-identityₗ {➖} = [≡]-intro
+
+instance
+  [⨯]-identityᵣ : Identityᵣ(_⨯_)(➕)
+  Identityᵣ.proof [⨯]-identityᵣ {➕} = [≡]-intro
+  Identityᵣ.proof [⨯]-identityᵣ {➖} = [≡]-intro
+
+instance
+  [⨯]-identity : Identity(_⨯_)(➕)
+  [⨯]-identity = intro
+
+instance
   [−]-involution : Involution(−_)
   Involution.proof [−]-involution {➕} = [≡]-intro
   Involution.proof [−]-involution {➖} = [≡]-intro

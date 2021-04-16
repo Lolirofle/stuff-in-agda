@@ -24,23 +24,6 @@ open import Type.Properties.Decidable.Proofs
 
 infix  10010 _−_
 
--- Unclosed total subtraction from natural numbers to integers
-_−_ : ℕ → ℕ → ℤ
-x − 𝟎       = ℤ.+ₙ x
-𝟎 − 𝐒(x)    = ℤ.−𝐒ₙ(x)
-𝐒(x) − 𝐒(y) = x − y
-
--- Construction of an integer with the sign and numeral components
-signed : (Sign.+|−) → ℕ → ℤ
-signed (Sign.➕) (n) = ℤ.+ₙ n
-signed (Sign.➖) (n) = ℤ.−ₙ n
-
-signed0 : (Sign.+|0|−) → ℕ → ℤ
-signed0(Sign.➕) (ℕ.𝐒(n)) = ℤ.+𝐒ₙ(n)
-signed0(Sign.➖) (ℕ.𝐒(n)) = ℤ.−𝐒ₙ(n)
-{-# CATCHALL #-}
-signed0(_)      (_)      = ℤ.𝟎
-
 -- TODO _/_ : ℕ → ℕ → ℚ
 
 -- Unclosed total subtraction from natural numbers to an optional natural number.

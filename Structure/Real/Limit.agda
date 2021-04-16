@@ -1,6 +1,6 @@
 module Limit where
   -- Statement that the limit of the function f at point l exists (and its value is L)
-  -- This is expressed by converting the standard (ε,δ)-limit definition to Skolem normal form (TODO: ...I think? Is this correct? I am just having a hunch)
+  -- This is expressed by converting the standard (ε,δ)-limit definition to Skolem normal form (TODO: ...I think? Is this correct?
   record Lim (f : ℝ → ℝ) (p : ℝ) (L : ℝ) : Stmt where
     field
       δ : ℝ₊ → ℝ₊ -- The delta function that is able to depend on epsilon

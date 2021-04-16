@@ -106,23 +106,23 @@ record ExtensionSystem (T : Object → Object) : Type{Lvl.of(Type.of(cat))} wher
   idₑₓₜ : ∀{x} → (x ⟶ T(x))
   idₑₓₜ{x} = η(x)
 
-  {-
-  categoryₑₓₜ : Category(\x y → (x ⟶ T(y)))
-  Category._∘_ categoryₑₓₜ = _∘ₑₓₜ_
-  Category.id categoryₑₓₜ = idₑₓₜ
-  BinaryOperator.congruence (Category.binaryOperator categoryₑₓₜ) xy1 xy2 = {!!}
-  Morphism.Associativity.proof (Category.associativity categoryₑₓₜ) = {!ext-distribute!}
-  Morphism.Identityₗ.proof (Tuple.left (Category.identity categoryₑₓₜ)) = {!ext-distribute!}
-  Morphism.Identityᵣ.proof (Tuple.right (Category.identity categoryₑₓₜ)) = ext-identity
-  -}
-
   module FunctionalNames where
+    -- Name sources:
+    --   https://wiki.haskell.org/Lifting
+    -- Also called: unit.
     lift : ∀{x} → (x ⟶ T(x))
     lift{x} = η(x)
 
+    -- Name sources:
+    --   Javascript: Array.prototype.flat
+    --   Scala: scala.collection.IterableOnceOps.flatten
     flatten : ∀{x} → (T(T(x)) ⟶ T(x))
     flatten{x} = μ(x)
 
+    -- Name sources:
+    --   Javascript: Array.prototype.flatMap
+    --   Java: Stream.flatMap
+    --   Scala: scala.collection.IterableOnceOps.flatMap
     flatMap : ∀{x y} → (x ⟶ T(y)) → (T(x) ⟶ T(y))
     flatMap = ext
 
@@ -153,7 +153,7 @@ module _ where
     μ(y) ∘ ((map f) ∘ η(x))       🝖[ _≡_ ]-[ congruence₂ᵣ(_∘_) _ η-natural ]-sym
     μ(y) ∘ (η(T(y)) ∘ f)          🝖[ _≡_ ]-[ Morphism.associativity(_∘_) ]-sym
     (μ(y) ∘ η(T(y))) ∘ f          🝖[ _≡_ ]-[ congruence₂ₗ(_∘_) _ (_⊜_.proof μ-functor-[∘]-identityᵣ) ]
-    id ∘ f                        🝖[ _≡_ ]-[ Morphism.identityₗ(_∘_)(id) ]    
+    id ∘ f                        🝖[ _≡_ ]-[ Morphism.identityₗ(_∘_)(id) ]
     f                             🝖[ _≡_ ]-end
   ExtensionSystem.ext-distribute (monad-to-extensionSystem {T = T}) {x} {y} {z} {f} {g} =
     ((μ(z) ∘_) ∘ᶠⁿ map)(((μ(z) ∘_) ∘ᶠⁿ map)(f) ∘ g) 🝖[ _≡_ ]-[]

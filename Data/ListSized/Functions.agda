@@ -16,8 +16,7 @@ private variable a b n n₁ n₂ : ℕ
 
 -- List concatenation
 _++_ : List(T)(a) → List(T)(b) → List(T)(a + b)
-_++_ ∅ b = b
-_++_ (elem ⊰ rest) b = elem ⊰ (rest ++ b)
+_++_ x y = elim _ (\{a} → const(List _ (a + _))) y (const ∘ (_⊰_)) x
 infixl 1000 _++_
 
 -- The first element of the list
@@ -66,8 +65,7 @@ _++^_ l (𝐒(k)) = l ++ (l ++^ k)
 
 -- Applies a function to each element in the list
 map : (A → B) → List(A)(n) → List(B)(n)
-map _ ∅       = ∅
-map f (x ⊰ l) = f(x) ⊰ map f(l)
+map f = elim _ (\{n} _ → List(_)(n)) ∅ (const ∘ (_⊰_) ∘ f)
 
 -- Applies a binary operator to each element in the list starting with the initial element.
 -- Example:
@@ -86,8 +84,7 @@ foldₗ(_▫_) result (elem ⊰ l) = foldₗ(_▫_) (result ▫ elem) l
 --   foldᵣ(▫)(init)[a,b]       = a▫(b▫init)
 --   foldᵣ(▫)(init)[a,b,c,d,e] = a▫(b▫(c▫(d▫(e▫init))))
 foldᵣ : (T → Result → Result) → Result → List(T)(n) → Result
-foldᵣ _    init ∅ = init
-foldᵣ(_▫_) init (elem ⊰ l) = elem ▫ (foldᵣ(_▫_) init l)
+foldᵣ(_▫_) init = elim _ _ init (const ∘ (_▫_))
 
 -- Example:
 --   reduceₗ(▫)[a]         = a

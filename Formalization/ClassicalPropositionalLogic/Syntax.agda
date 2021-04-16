@@ -27,11 +27,11 @@ module _ (P : Type{ℓₚ}) where
   Formulas : Type{ℓₚ Lvl.⊔ Lvl.𝐒(ℓ)}
   Formulas{ℓ} = PredSet{ℓ}(Formula)
 
-  infixl 1011 •_
-  infixl 1010 ¬_
-  infixl 1005 _∧_
-  infixl 1004 _∨_
-  infixl 1000 _⟷_ _⟶_
+  infix 1011 •_
+  infix 1010 ¬_ ¬¬_
+  infixr 1005 _∧_
+  infixr 1004 _∨_
+  infixr 1000 _⟷_ _⟶_
 
 module _ {P : Type{ℓₚ}} where
   -- Double negation

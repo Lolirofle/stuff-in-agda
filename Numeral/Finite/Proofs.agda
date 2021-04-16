@@ -25,6 +25,8 @@ open import Syntax.Number
 open import Type.Properties.Decidable
 open import Type.Properties.Decidable.Proofs
 
+private variable N : ℕ
+
 bounded : ∀{N : ℕ}{n : 𝕟(𝐒(N))} → (𝕟-to-ℕ(n) < 𝐒(N))
 bounded{_}   {𝟎}    = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
 bounded{𝐒(N)}{𝐒(n)} = [≤]-with-[𝐒] ⦃ bounded{N}{n} ⦄
@@ -60,6 +62,9 @@ bounded{𝐒(N)}{𝐒(n)} = [≤]-with-[𝐒] ⦃ bounded{N}{n} ⦄
 𝕟-to-ℕ-preserve-ne {𝐒 M} {𝐒 N} {𝐒 m} {𝟎}   _ ()
 𝕟-to-ℕ-preserve-ne {𝐒 M} {𝐒 N} {𝐒 m} {𝐒 n} x p = 𝕟-to-ℕ-preserve-ne {M} {N} {m} {n} x (injective(𝐒) p)
 
+congruence-ℕ-to-𝕟 : ∀ ⦃ pos : IsTrue(positive? N) ⦄ {x} ⦃ px : IsTrue(x <? N) ⦄ {y} ⦃ py : IsTrue(y <? N) ⦄ → (x ≡ y) → (ℕ-to-𝕟 x {N} ⦃ px ⦄ ≡ ℕ-to-𝕟 y ⦃ py ⦄)
+congruence-ℕ-to-𝕟 [≡]-intro = [≡]-intro
+
 𝕟-ℕ-inverse : ∀{N n} ⦃ nN : IsTrue(n <? N) ⦄ → (𝕟-to-ℕ {n = N}(ℕ-to-𝕟 n) ≡ n)
 𝕟-ℕ-inverse {𝐒 N}{𝟎}   = [≡]-intro
 𝕟-ℕ-inverse {𝐒 N}{𝐒 n} = [≡]-with(𝐒) (𝕟-ℕ-inverse {N}{n})
@@ -91,3 +96,6 @@ instance
   [≡][𝕟]-decider {𝐒 n} {𝟎}   {𝐒 y} = false \()
   [≡][𝕟]-decider {𝐒 n} {𝐒 x} {𝟎}   = false \()
   [≡][𝕟]-decider {𝐒 n} {𝐒 x} {𝐒 y} = step{f = id} (true ∘ [≡]-with(𝐒)) (false ∘ contrapositiveᵣ(injective(𝐒))) ([≡][𝕟]-decider {n} {x} {y})
+
+maximum-0 : (maximum{N} ≡ 𝟎) → (N ≡ 𝟎)
+maximum-0 {𝟎} _ = [≡]-intro

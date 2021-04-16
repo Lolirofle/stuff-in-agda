@@ -125,7 +125,7 @@ module Wrapping where
   -- Wrapping negation (Flipping around the symmetric point).
   -- Essentially: [−]_ {b} n = (−ℤ n) mod b
   [−]_ : ∀{b} → 𝕟(b) → 𝕟(b)
-  [−]_ {ℕ.𝐒 b} n = _[−]_ {ℕ.𝐒 b}{ℕ.𝐒 b} 𝕟.𝟎 n
+  [−]_ {ℕ.𝐒 b} n = 𝕟.maximum {b} [−] n
 
 {- TODO: Cannot solve first. Unsure why
 [𝐒]-not-0 : ∀{b : ℕ}{n : 𝕟(ℕ.𝐒(b))} → (𝐒{b}(n) ≢ 𝟎{ℕ.𝐒(b)})

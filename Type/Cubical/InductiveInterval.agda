@@ -17,6 +17,11 @@ data Interval : Type{Lvl.𝟎} where
   𝟏 : Interval
   segment : Cubical.Path 𝟎 𝟏
 
+elim : (P : Interval → Type{ℓ}) → (p0 : P(𝟎)) → (p1 : P(𝟏)) → (Cubical.PathP(\i → P(segment i)) p0 p1) → ((i : Interval) → P(i))
+elim(P) p0 _  _  𝟎           = p0
+elim(P) _  p1 _  𝟏           = p1
+elim(P) _  _  ps (segment i) = ps(i)
+
 flip : Interval → Interval
 flip 𝟎 = 𝟏
 flip 𝟏 = 𝟎
@@ -34,16 +39,18 @@ min (segment i) 𝟏           = segment i
 min (segment i) (segment j) = segment(Cubical.Interval.min i j)
 
 max : Interval → Interval → Interval
-max 𝟎 𝟎 = 𝟎
-max 𝟎 𝟏 = 𝟏
-max 𝟏 𝟎 = 𝟏
-max 𝟏 𝟏 = 𝟏
-max 𝟎           (segment i) = segment i
-max 𝟏           (segment i) = 𝟏
-max (segment i) 𝟎           = segment i
-max (segment i) 𝟏           = 𝟏
-max (segment i) (segment j) = segment(Cubical.Interval.max i j)
+max = flip ∘₂ (min on₂ flip)
 
--- TODO: What?
--- transp : (f : Interval → Type{ℓ}) → f(𝟎) → f(𝟏)
--- transp f a0 = Cubical.Path-to-[→] (Cubical.map-path f segment) a0
+open import Structure.Relator.Properties
+open import Type.Cubical.Path.Equality
+open import Type.Properties.Singleton
+
+instance
+  Interval-unit : IsUnit(Interval)
+  IsUnit.unit Interval-unit = 𝟏
+  IsUnit.uniqueness Interval-unit {𝟎} = segment
+  IsUnit.uniqueness Interval-unit {𝟏} = reflexivity(Cubical.Path)
+  IsUnit.uniqueness Interval-unit {segment i} j = segment(Cubical.Interval.max i j)
+
+transp : (P : Interval → Type{ℓ}) → P(𝟎) → P(𝟏)
+transp(P) = sub₂(Cubical.Path)(_→ᶠ_) (Cubical.map P(segment))

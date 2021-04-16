@@ -14,19 +14,37 @@ open import Numeral.Natural.Induction
 open import Numeral.Natural.Relation.Order
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Relator
 import      Structure.Relator.Names as Names
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Operator.Properties
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
+open import Structure.Relator.Properties.Proofs
 open import Syntax.Transitivity
+open import Type.Properties.MereProposition
 open import Type
 
 -- TODO: A method for pattern matching: https://stackoverflow.com/questions/20682013/agda-why-am-i-unable-to-pattern-match-on-refl
 
+instance
+  [≤]-succ-injectivity : ∀{x y} → Injective(succ{x}{y})
+  Injective.proof [≤]-succ-injectivity [≡]-intro = [≡]-intro
+
+instance
+  [≤]-mereProposition : ∀{x y} → MereProposition(x ≤ y)
+  MereProposition.uniqueness [≤]-mereProposition {min}    {min}    = [≡]-intro
+  MereProposition.uniqueness [≤]-mereProposition {succ x} {succ y} = congruence₁(succ) (MereProposition.uniqueness [≤]-mereProposition {x}{y})
+
+instance
+  [≤]-minimum = \{y} → _≤_.min {y}
+  [≤]-with-[𝐒] = \{x}{y} ⦃ xy ⦄ → _≤_.succ {x}{y} xy
+[<]-minimum = \{y} → succ([≤]-minimum {y})
+
 [≡]-to-[≤] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
 [≡]-to-[≤] {𝟎}   {_}    _         = [≤]-minimum
-[≡]-to-[≤] {𝐒(x)}{𝐒(y)} [≡]-intro = [≤]-with-[𝐒] ⦃ [≡]-to-[≤] {x}{y} [≡]-intro ⦄
+[≡]-to-[≤] {𝐒(x)}{𝐒(y)} [≡]-intro = succ([≡]-to-[≤] {x}{y} [≡]-intro)
 
 [≡]-to-[≥] : ∀{x y : ℕ} → (x ≡ y) → (x ≥ y)
 [≡]-to-[≥] = [≡]-to-[≤] ∘ symmetry(_≡_)
@@ -47,15 +65,15 @@ open import Type
 [≤]-successor : ∀{x y : ℕ} → (x ≤ y) → (x ≤ 𝐒(y))
 [≤]-successor {𝟎}   {_}    (_) = [≤]-minimum
 [≤]-successor {𝐒(x)}{𝟎}    ()
-[≤]-successor {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [≤]-with-[𝐒] ⦃ [≤]-successor {x}{y} (proof) ⦄
+[≤]-successor {𝐒(x)}{𝐒(y)} (succ proof) = succ([≤]-successor {x}{y} (proof))
 
 [≤]-predecessor : ∀{x y : ℕ} → (𝐒(x) ≤ y) → (x ≤ y)
 [≤]-predecessor {x}   {𝟎}    ()
 [≤]-predecessor {𝟎}   {𝐒(y)} (_) = [≤]-minimum
-[≤]-predecessor {𝐒(x)}{𝐒(y)} ([≤]-with-[𝐒] ⦃ proof ⦄) = [≤]-with-[𝐒] ⦃ [≤]-predecessor {x}{y} (proof) ⦄
+[≤]-predecessor {𝐒(x)}{𝐒(y)} (succ proof) = succ([≤]-predecessor {x}{y} (proof))
 
 [≤]-without-[𝐒] : ∀{x y : ℕ} → (𝐒(x) ≤ 𝐒(y)) → (x ≤ y)
-[≤]-without-[𝐒] ([≤]-with-[𝐒] ⦃ proof ⦄) = proof
+[≤]-without-[𝐒] (succ proof) = proof
 
 [≤][𝐒]ₗ : ∀{x : ℕ} → ¬(𝐒(x) ≤ x)
 [≤][𝐒]ₗ {𝟎}    (1≤0)    = [≤][0]ᵣ-negation{0}(1≤0)
@@ -70,8 +88,8 @@ instance
   Transitivity.proof([≤]-transitivity) = proof where
     proof : Names.Transitivity (_≤_)
     proof {𝟎}   {_}   {_} (_)(_) = [≤]-minimum
-    proof {𝐒(a)}{𝐒(b)}{𝐒(c)} ([≤]-with-[𝐒] ⦃ proofₗ ⦄) ([≤]-with-[𝐒] ⦃ proofᵣ ⦄ ) =
-      [≤]-with-[𝐒] ⦃ proof {a}{b}{c} (proofₗ) (proofᵣ) ⦄
+    proof {𝐒(a)}{𝐒(b)}{𝐒(c)} (succ proofₗ) (succ proofᵣ ) =
+      succ(proof {a}{b}{c} (proofₗ) (proofᵣ))
 
 instance
   [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
@@ -80,7 +98,7 @@ instance
     proof {𝟎}    {𝟎}    (_) (_) = [≡]-intro
     proof {𝐒(_)} {𝟎}    ()
     proof {𝟎}    {𝐒(_)} (_) ()
-    proof {𝐒(a)} {𝐒(b)} ([≤]-with-[𝐒] ⦃ proofₗ ⦄) ([≤]-with-[𝐒] ⦃ proofᵣ ⦄) =
+    proof {𝐒(a)} {𝐒(b)} (succ proofₗ) (succ proofᵣ) =
       [≡]-with(𝐒) (proof {a}{b} proofₗ proofᵣ)
 
 instance
@@ -136,6 +154,12 @@ instance
 [<]-to-[≱] : ∀{a b : ℕ} → (a ≱ b) ← (a < b)
 [<]-to-[≱] {a}{b} (𝐒a≤b) (b≤a) = [≥]-to-[≮] (b≤a) (𝐒a≤b)
 
+[<]-to-[≢] : ∀{a b : ℕ} → (a < b) → (a ≢ b)
+[<]-to-[≢] = [≱]-to-[≢] ∘ [<]-to-[≱]
+
+[>]-to-[≢] : ∀{a b : ℕ} → (a > b) → (a ≢ b)
+[>]-to-[≢] = [≰]-to-[≢] ∘ [>]-to-[≰]
+
 [<][0]ᵣ : ∀{x : ℕ} → (x ≮ 0)
 [<][0]ᵣ = [≤][0]ᵣ-negation
 
@@ -159,9 +183,9 @@ instance
     p {𝟎}   {𝐒 y} = [∨]-introₗ ([∨]-introₗ [≤]-with-[𝐒])
     p {𝐒 x} {𝟎}   = [∨]-introᵣ [≤]-with-[𝐒]
     p {𝐒 x} {𝐒 y} with p {x} {y}
-    ... | [∨]-introₗ ([∨]-introₗ [≤]-with-[𝐒]) = [∨]-introₗ ([∨]-introₗ [≤]-with-[𝐒])
-    ... | [∨]-introₗ ([∨]-introᵣ [≡]-intro)    = [∨]-introₗ ([∨]-introᵣ [≡]-intro)
-    ... | [∨]-introᵣ [≤]-with-[𝐒]              = [∨]-introᵣ [≤]-with-[𝐒]
+    ... | [∨]-introₗ ([∨]-introₗ (succ xy)) = [∨]-introₗ ([∨]-introₗ (succ (succ xy)))
+    ... | [∨]-introₗ ([∨]-introᵣ [≡]-intro) = [∨]-introₗ ([∨]-introᵣ [≡]-intro)
+    ... | [∨]-introᵣ (succ xy)              = [∨]-introᵣ (succ (succ xy))
 
 instance
   [<]-strictPartialOrder : Strict.PartialOrder (_<_)
@@ -192,7 +216,7 @@ instance
 
 [<]-of-[𝟎][𝐒] : ∀{x : ℕ} → (𝟎 < 𝐒(x))
 [<]-of-[𝟎][𝐒] {𝟎} = [<]-of-[𝐒]
-[<]-of-[𝟎][𝐒] {𝐒 x} = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
+[<]-of-[𝟎][𝐒] {𝐒 x} = succ([≤]-minimum)
 
 instance
   [≤]-of-[𝐒] : ∀{x : ℕ} → (x ≤ 𝐒(x))
@@ -202,7 +226,7 @@ instance
 [<][≢]-equivalence {x} = [↔]-intro (l{x}) (r{x}) where
   l : ∀{x} → (x > 0) ← (x ≢ 0)
   l{𝟎}    (x≢𝟎)  = [⊥]-elim((x≢𝟎)([≡]-intro))
-  l{𝐒(x)} (𝐒x≢𝟎) = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
+  l{𝐒(x)} (𝐒x≢𝟎) = succ([≤]-minimum)
 
   r : ∀{x} → (x > 0) → (x ≢ 0)
   r{𝟎}    ()
@@ -212,8 +236,8 @@ instance
 [≤]-to-[<][≡] : ∀{a b : ℕ} → (a ≤ b) → (a < b)∨(a ≡ b)
 [≤]-to-[<][≡] {𝟎}   {𝟎}    ([≤]-minimum)    = [∨]-introᵣ([≡]-intro)
 [≤]-to-[<][≡] {𝟎}   {𝐒(b)} ([≤]-minimum)    = [∨]-introₗ([<]-minimum)
-[≤]-to-[<][≡] {𝐒(a)}{𝐒(b)} ([≤]-with-[𝐒] ⦃ a≤b ⦄) with [≤]-to-[<][≡] {a}{b} (a≤b)
-... | [∨]-introₗ(a<b) = [∨]-introₗ([≤]-with-[𝐒] ⦃ a<b ⦄)
+[≤]-to-[<][≡] {𝐒(a)}{𝐒(b)} (succ(a≤b)) with [≤]-to-[<][≡] {a}{b} (a≤b)
+... | [∨]-introₗ(a<b) = [∨]-introₗ(succ(a<b))
 ... | [∨]-introᵣ(a≡b) = [∨]-introᵣ([≡]-with(𝐒) (a≡b))
 
 [≮][≢]-to-[≰] : ∀{a b : ℕ} → (a ≮ b) → (a ≢ b) → (a ≰ b)
@@ -225,11 +249,16 @@ instance
 [<][≡]-to-[≤] {a}   {.a}   ([∨]-introᵣ([≡]-intro)) = [≡]-to-[≤] ([≡]-intro)
 [<][≡]-to-[≤] {a}   {b}    ([∨]-introₗ(a<b))       = [≤]-predecessor (a<b)
 
-[<]-to-[≤] : ∀{a b : ℕ} → (a < b) → (a ≤ b)
-[<]-to-[≤] = [≤]-predecessor
+instance
+  [<][≤]-sub : (_<_) ⊆₂ (_≤_)
+  [<][≤]-sub = intro [≤]-predecessor
+
+instance
+  [>][≥]-sub : (_>_) ⊆₂ (_≥_)
+  [>][≥]-sub = intro(sub₂(_<_)(_≤_))
 
 [≰]-to-[≮] : ∀{x y : ℕ} → (x ≰ y) → (x ≮ y)
-[≰]-to-[≮] = contrapositiveᵣ [<]-to-[≤]
+[≰]-to-[≮] = contrapositiveᵣ (sub₂(_<_)(_≤_))
 
 [≥]-to-[>][≡] : ∀{a b : ℕ} → (a ≥ b) → (a > b)∨(a ≡ b)
 [≥]-to-[>][≡] {a}{b} (proof) with [≤]-to-[<][≡] {b}{a} (proof)
@@ -247,8 +276,8 @@ instance
 
 [≤][>]-dichotomy : ∀{x y} → (x ≤ y) ∨ (x > y)
 [≤][>]-dichotomy {x}{y} with [<]-trichotomy {x}{y}
-[≤][>]-dichotomy {x} {y} | [∨]-introₗ ([∨]-introₗ x<y) = [∨]-introₗ([<]-to-[≤] x<y)
-[≤][>]-dichotomy {x} {y} | [∨]-introₗ ([∨]-introᵣ x≡y) = [∨]-introₗ([≡]-to-[≤] x≡y)
+[≤][>]-dichotomy {x} {y} | [∨]-introₗ ([∨]-introₗ x<y) = [∨]-introₗ(sub₂(_<_)(_≤_) x<y)
+[≤][>]-dichotomy {x} {y} | [∨]-introₗ ([∨]-introᵣ x≡y) = [∨]-introₗ(sub₂(_≡_)(_≤_) x≡y)
 [≤][>]-dichotomy {x} {y} | [∨]-introᵣ x>y              = [∨]-introᵣ(x>y)
 
 [<][≥]-dichotomy : ∀{x y} → (x < y) ∨ (x ≥ y)
@@ -288,4 +317,60 @@ instance
 [≮][≱]-not {a}{b} (a≮b) (a≱b) = [≮][≢][≯]-not (a≮b) ([≱]-to-[≢] a≱b) ([≱]-to-[≯] a≱b)
 
 [<]-non-zero-existence : ∀{a b : ℕ} → (a < b) → (𝟎 < b)
-[<]-non-zero-existence [≤]-with-[𝐒] = [<]-of-[𝟎][𝐒]
+[<]-non-zero-existence (succ _) = [<]-of-[𝟎][𝐒]
+
+[≢]-to-[<]-of-0ᵣ : ∀{n} → (n ≢ 0) → (0 < n)
+[≢]-to-[<]-of-0ᵣ {𝟎}   p with () ← p [≡]-intro
+[≢]-to-[<]-of-0ᵣ {𝐒 n} p = succ min
+
+[≤][≢]-to-[<] : ∀{a b : ℕ} → (a ≤ b) → (a ≢ b) → (a < b)
+[≤][≢]-to-[<] {.𝟎}     {b}      min       ne = [≢]-to-[<]-of-0ᵣ (ne ∘ symmetry(_≡_))
+[≤][≢]-to-[<] {.(𝐒 _)} {.(𝐒 _)} (succ lt) ne = succ([≤][≢]-to-[<] lt (ne ∘ congruence₁(𝐒)))
+
+instance
+  [≤][≡]-subtransitivityₗ : Subtransitivityₗ(_≤_)(_≡_)
+  [≤][≡]-subtransitivityₗ = subrelation-transitivity-to-subtransitivityₗ
+
+instance
+  [≤][≡]-subtransitivityᵣ : Subtransitivityᵣ(_≤_)(_≡_)
+  [≤][≡]-subtransitivityᵣ = subrelation-transitivity-to-subtransitivityᵣ
+
+instance
+  [≥][≡]-subtransitivityₗ : Subtransitivityₗ(_≥_)(_≡_)
+  [≥][≡]-subtransitivityₗ = subrelation-transitivity-to-subtransitivityₗ
+
+instance
+  [≥][≡]-subtransitivityᵣ : Subtransitivityᵣ(_≥_)(_≡_)
+  [≥][≡]-subtransitivityᵣ = subrelation-transitivity-to-subtransitivityᵣ
+
+instance
+  [<][≤]-subtransitivityₗ : Subtransitivityₗ(_≤_)(_<_)
+  [<][≤]-subtransitivityₗ = subrelation-transitivity-to-subtransitivityₗ
+
+instance
+  [<][≤]-subtransitivityᵣ : Subtransitivityᵣ(_≤_)(_<_)
+  [<][≤]-subtransitivityᵣ = subrelation-transitivity-to-subtransitivityᵣ
+
+instance
+  [>][≥]-subtransitivityₗ : Subtransitivityₗ(_≥_)(_>_)
+  [>][≥]-subtransitivityₗ = subrelation-transitivity-to-subtransitivityₗ
+
+instance
+  [>][≥]-subtransitivityᵣ : Subtransitivityᵣ(_≥_)(_>_)
+  [>][≥]-subtransitivityᵣ = subrelation-transitivity-to-subtransitivityᵣ
+
+instance
+  [>][≡]-subtransitivityₗ : Subtransitivityₗ(_>_)(_≡_)
+  Subtransitivityₗ.proof [>][≡]-subtransitivityₗ = substitute₂ₗ(_>_) ∘ symmetry(_≡_)
+
+instance
+  [>][≡]-subtransitivityᵣ : Subtransitivityᵣ(_>_)(_≡_)
+  Subtransitivityᵣ.proof [>][≡]-subtransitivityᵣ = swap(substitute₂ᵣ(_>_))
+
+instance
+  [<][≡]-subtransitivityₗ : Subtransitivityₗ(_<_)(_≡_)
+  Subtransitivityₗ.proof [<][≡]-subtransitivityₗ = substitute₂ₗ(_<_) ∘ symmetry(_≡_)
+
+instance
+  [<][≡]-subtransitivityᵣ : Subtransitivityᵣ(_<_)(_≡_)
+  Subtransitivityᵣ.proof [<][≡]-subtransitivityᵣ = swap(substitute₂ᵣ(_<_))

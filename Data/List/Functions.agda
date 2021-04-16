@@ -152,7 +152,7 @@ _++_ = swap(foldᵣ (_⊰_))
 concat : List(List(T)) → List(T)
 concat = foldᵣ(_++_) ∅
 
--- Postpends an element on a list, inserting it to the end of the list.
+-- Postpends an element to a list, inserting it to the end of the list.
 -- Examples:
 --   postpend a []      = [a]
 --   postpend b [a]     = [a,b]
@@ -161,6 +161,19 @@ concat = foldᵣ(_++_) ∅
 postpend : T → List(T) → List(T)
 postpend a ∅       = a ⊰ ∅
 postpend a (x ⊰ l) = x ⊰ postpend a l
+
+-- Inserts an element to a list, inserting it at the given position of the list.
+-- If the given position is out of range, then the element is postpended to the list.
+-- Examples:
+--   insert 2 x []        = [x]
+--   insert 2 x [a]       = [a,x]
+--   insert 2 x [a,b]     = [a,b,x]
+--   insert 2 x [a,b,c]   = [a,b,x,c]
+--   insert 2 x [a,b,c,d] = [a,b,x,c,d]
+insert : ℕ → T → List(T) → List(T)
+insert 𝟎                = _⊰_
+insert (𝐒(_)) a ∅       = singleton a
+insert (𝐒(i)) a (x ⊰ l) = x ⊰ insert i a l
 
 module LongOper where
   pattern empty = ∅
@@ -336,6 +349,15 @@ satisfiesAll pred (x ⊰ l) with pred(x)
 ... | 𝑇 = satisfiesAll(pred)(l)
 ... | 𝐹 = 𝐹
 
+satisfiesAll₂ : (T → T → Bool) → (T → Bool) → (T → Bool) → (List(T) → List(T) → Bool)
+satisfiesAll₂(_▫_) l r ∅          ∅          = 𝑇
+satisfiesAll₂(_▫_) l r l₁@(_ ⊰ _) ∅          = satisfiesAll l l₁
+satisfiesAll₂(_▫_) l r ∅          l₂@(_ ⊰ _) = satisfiesAll r l₂
+satisfiesAll₂(_▫_) l r (x₁ ⊰ l₁)  (x₂ ⊰ l₂)  = (x₁ ▫ x₂) && satisfiesAll₂(_▫_) l r l₁ l₂
+{-satisfiesAll₂(_▫_) l r (x₁ ⊰ l₁)  (x₂ ⊰ l₂)  with (x₁ ▫ x₂)
+... | 𝑇 = satisfiesAll₂(_▫_) l r l₁ l₂
+... | 𝐹 = 𝐹-}
+
 -- TODO
 -- List-apply : ∀{L : List(Type{ℓ})} → (foldᵣ (_⨯_) (Out) (L)) → ∀{Out : Type{ℓ}} → (foldᵣ (_→ᶠ_) (Out) (L)) → Out
 -- List-apply(∅)           (f) = f
@@ -492,3 +514,8 @@ every (𝐒(n)) = impl 𝟎 where
 --   separate 11 [0,1,2,3,4,5,6,7,8] = [[0],[1],[2],[3],[4],[5],[6],[7],[8],[],[]]
 separate : ℕ → List(T) → List(List(T))
 separate n l = map (every n) (accumulateIterate₀ n tail l)
+
+insertIn : T → (l : List(T)) → 𝕟₌(length l) → List(T)
+insertIn a l       𝟎      = a ⊰ l
+insertIn a ∅       (𝐒(_)) = singleton a
+insertIn a (x ⊰ l) (𝐒(i)) = x ⊰ insertIn a l i

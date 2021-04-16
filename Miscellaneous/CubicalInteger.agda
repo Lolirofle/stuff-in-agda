@@ -6,7 +6,7 @@ import      Lvl
 open import Numeral.Natural as ℕ using (ℕ)
 open import Numeral.Sign as Sign using (−|+ ; −|0|+ ; ➖ ; ➕)
 open import Type.Cubical
-open import Type.Cubical.Equality
+open import Type.Cubical.Path.Equality
 open import Type
 
 apply : ∀{ℓ}{T : Type{ℓ}}{x y : T} → Interval → (x ≡ y) → T
@@ -34,9 +34,9 @@ open import Structure.Relator.Properties
 open import Type.Cubical.Path
 open import Type.Cubical.Path.Proofs
 
-module _ where
-  open import Type.Isomorphism
-  postulate univalence : ∀{ℓ}{A B : Type{ℓ}} → (A ≅ B) ≅ (A ≡ B)
+-- module _ where
+--   open import Type.Isomorphism
+--   postulate univalence : ∀{ℓ}{A B : Type{ℓ}} → (A ≅ B) ≅ (A ≡ B)
 
 elim : ∀{ℓ} → (P : ℤ → Type{ℓ}) → (neg : (n : ℕ) → P(−ₙ n)) → (pos : (n : ℕ) → P(+ₙ n)) → PathP(pointOn(map P 𝟎-sign)) (neg ℕ.𝟎) (pos ℕ.𝟎) → ((n : ℤ) → P(n))
 elim(P) neg _   eq (−ₙ n) = neg n
@@ -70,6 +70,7 @@ open import Data.Either
 open import Functional using (_$_)
 open import Logic.Propositional
 import      Numeral.Sign.Oper as Sign
+import      Numeral.Natural.Oper as ℕ
 open import Relator.Equals using () renaming (_≡_ to Id ; [≡]-intro to Id-intro)
 open import Relator.Equals.Proofs.Equivalence using () renaming ([≡]-equiv to Id-equiv ; [≡]-symmetry to Id-symmetry ; [≡]-to-function to Id-to-function ; [≡]-function to Id-function)
 open import Syntax.Transitivity
@@ -85,8 +86,8 @@ step s₁ (signed s₂ n) with Sign-decidable-eq s₁ s₂
 step _  (signed s n)         | Left  _ = signed s (ℕ.𝐒(n))
 step s₁ (signed s₂ ℕ.𝟎)      | Right _ = signed s₁ (ℕ.𝐒(ℕ.𝟎))
 step s₁ (signed s₂ (ℕ.𝐒(n))) | Right _ = signed s₂ n
-step ➕ (𝟎-sign i) = reflexivity (_≡_) {𝟏} i
-step ➖ (𝟎-sign i) = reflexivity (_≡_) {−𝟏} i
+step ➕ (𝟎-sign i) = 𝟏
+step ➖ (𝟎-sign i) = −𝟏
 
 -- Predecessor.
 -- Alternative implementation:
@@ -114,17 +115,22 @@ step ➖ (𝟎-sign i) = reflexivity (_≡_) {−𝟏} i
 -- Absolute value.
 abs : ℤ → ℤ
 abs(signed _ n) = signed ➕ n
-abs(𝟎-sign i) = reflexivity(_≡_) {𝟎} i
+abs(𝟎-sign i) = 𝟎
 
 -- Addition.
 _+_ : ℤ → ℤ → ℤ
 x + (signed _ ℕ.𝟎)      = x
 x + (signed s (ℕ.𝐒(y))) = step s (x + (signed s y))
-x + 𝟎-sign i = reflexivity(_≡_) {x} i
+x + 𝟎-sign i = x
 
 -- Subtraction.
 _−_ : ℤ → ℤ → ℤ
 x − y = x + (− y)
+
+import Numeral.Natural.Oper.Proofs as ℕ
+
+_⋅_ : ℤ → ℤ → ℤ
+x ⋅ y = signed ((sign x) Sign.⨯ (sign y)) ((absₙ x) ℕ.⋅ (absₙ y))
 
 𝟎-signs : ∀{s₁ s₂} → (signed s₁ ℕ.𝟎 ≡ signed s₂ ℕ.𝟎)
 𝟎-signs {➕} {➕} = reflexivity(_≡_)
@@ -252,7 +258,7 @@ instance
     p {𝟎-sign i}          {signed ➖ ℕ.𝟎}     j = 𝟎-sign (Interval.min i (Interval.flip j))
     p {𝟎-sign i}          {signed ➕ (ℕ.𝐒 n)} j = {!!}
     p {𝟎-sign i}          {signed ➖ (ℕ.𝐒 n)} j = {!!}
-    p {𝟎-sign i}          {𝟎-sign j}         k = {!!}
+    p {𝟎-sign i}          {𝟎-sign j}          k = {!!}
 
 instance
   [+]-identityᵣ : Identityᵣ(_+_)(𝟎)
@@ -262,6 +268,10 @@ instance
 instance
   [+]-identityₗ : Identityₗ(_+_)(𝟎)
   Identityₗ.proof [+]-identityₗ {x} = commutativity(_+_) {𝟎}{x} 🝖 identityᵣ(_+_)(𝟎)
+
+instance
+  [+]-identity : Identity(_+_)(𝟎)
+  [+]-identity = intro
 
 open import Logic.IntroInstances
 
@@ -280,7 +290,15 @@ instance
       signed s n + signed (Sign.− s) n                            🝖[ _≡_ ]-[]
       signed s n + (− signed s n)                                 🝖[ _≡_ ]-[ p{signed s n} ]
       𝟎                                                           🝖-end
-    p {𝟎-sign i} j = {!!}
+    p {𝟎-sign i} j = 𝟎-sign (Interval.max i j)
+
+instance
+  [+][−]-inverseFunctionₗ : InverseFunctionₗ(_+_)(−_)
+  InverseFunctionₗ.proof [+][−]-inverseFunctionₗ {x} = commutativity(_+_) {− x}{x} 🝖 inverseFunctionᵣ(_+_)(−_) {x}
+
+instance
+  [+][−]-inverseFunction : InverseFunction(_+_)(−_)
+  [+][−]-inverseFunction = intro
 
 instance
   [+]-associativity : Associativity(_+_)
@@ -300,17 +318,151 @@ instance
 Stepᵣ-injective : ∀{s}{x y} → (step s x ≡ step s y) → (x ≡ y)
 Stepᵣ-injective {s} {x} {y} p = symmetry(_≡_) (step-inverses Sign.[−]-no-fixpoints) 🝖 congruence₂ᵣ(step)(Sign.− s) p 🝖 step-inverses Sign.[−]-no-fixpoints
 
-ℕ-Path-to-Id : ∀{x y : ℕ} → (Path x y) → (Id x y)
-ℕ-Path-to-Id {ℕ.𝟎} {ℕ.𝟎} p = Id-intro
-ℕ-Path-to-Id {ℕ.𝟎} {ℕ.𝐒 y} p = {!!}
-ℕ-Path-to-Id {ℕ.𝐒 x} {ℕ.𝟎} p = {!!}
-ℕ-Path-to-Id {ℕ.𝐒 x} {ℕ.𝐒 y} p = {!ℕ-Path-to-Id {x}{y}!}
+open import Numeral.Natural.Equiv.Path
+
+instance
+  absₙ-signed-inverses : ∀{s} → Inverseᵣ(absₙ)(signed s)
+  Inverseᵣ.proof (absₙ-signed-inverses {➕}) = reflexivity(Path)
+  Inverseᵣ.proof (absₙ-signed-inverses {➖}) = reflexivity(Path)
 
 Signedᵣ-injective : ∀{s}{x y} → (signed s x ≡ signed s y) → (Id x y)
-Signedᵣ-injective {s} {ℕ.𝟎}   {ℕ.𝟎}   p = Id-intro
-Signedᵣ-injective {s} {ℕ.𝟎}   {ℕ.𝐒 y} p = {!!}
-Signedᵣ-injective {s} {ℕ.𝐒 x} {ℕ.𝟎}   p = {!!}
-Signedᵣ-injective {s} {ℕ.𝐒 x} {ℕ.𝐒 y} p = congruence₁ ⦃ Id-equiv ⦄ ⦃ Id-equiv ⦄ (ℕ.𝐒) ⦃ Id-function ⦄ (Signedᵣ-injective (Stepᵣ-injective(symmetry(_≡_) 𝐒-to-step 🝖 p 🝖 𝐒-to-step)))
+Signedᵣ-injective {s} p = ℕ-Path-to-Id (symmetry(Path) (inverseᵣ(absₙ)(signed s)) 🝖 congruence₁(absₙ) p 🝖 inverseᵣ(absₙ)(signed s))
 
 ℤ-different-identities : ¬(𝟎 ≡ 𝟏)
 ℤ-different-identities p with () ← Signedᵣ-injective p
+
+open import Structure.Relator
+
+instance
+  postulate [⋅]-commutativity : Commutativity(_⋅_)
+  {-Commutativity.proof [⋅]-commutativity {signed s₁ x} {signed s₂ y} = congruence₂(signed) (sub₂(Id)(Path) (commutativity ⦃ Id-equiv ⦄ (Sign._⨯_) {s₁}{s₂})) (sub₂(Id)(Path) (commutativity ⦃ Id-equiv ⦄ (ℕ._⋅_) {x}{y}))
+  Commutativity.proof [⋅]-commutativity {signed ➕ x} {𝟎-sign i} j    = {!!}
+  -- {!substitute₁(\expr → ((signed ➕ x) ⋅ expr) ≡ (expr ⋅ (signed ➕ x))) ? ?!}
+  Commutativity.proof [⋅]-commutativity {signed ➖ x} {𝟎-sign i}    = {!sub₂(Id)(Path) ?!}
+  Commutativity.proof [⋅]-commutativity {𝟎-sign i}    {signed s y}  = {!𝟎-sign i!}
+  Commutativity.proof [⋅]-commutativity {𝟎-sign i}    {𝟎-sign i₁}   = {!!}-}
+  {-Commutativity.proof [⋅]-commutativity {signed s₁ x} {signed s₂ y}
+    rewrite commutativity ⦃ Id-equiv ⦄ (ℕ._⋅_) {x}{y}
+    rewrite commutativity ⦃ Id-equiv ⦄ (Sign._⨯_) {s₁}{s₂}
+    = reflexivity(Path)
+  Commutativity.proof [⋅]-commutativity {signed ➕ x} {𝟎-sign i}    = {!substitute₁(\expr → ((signed ➕ x) ⋅ expr) ≡ (expr ⋅ (signed ➕ x))) ? ?!}
+  Commutativity.proof [⋅]-commutativity {signed ➖ x} {𝟎-sign i}    = {!sub₂(Id)(Path) ?!}
+  Commutativity.proof [⋅]-commutativity {𝟎-sign i}    {signed s y}  = {!𝟎-sign i!}
+  Commutativity.proof [⋅]-commutativity {𝟎-sign i}    {𝟎-sign i₁}   = {!!}-}
+-- (signed ➕ x) ⋅ -0 ≡ -0 ⋅ (signed ➕ x)
+-- (signed ➕ x) ⋅ +0 ≡ +0 ⋅ (signed ➕ x)
+
+instance
+  postulate [⋅]-associativity : Associativity(_⋅_)
+
+open import Numeral.Sign.Proofs
+open import Structure.Operator
+
+instance
+  [⋅]-identityᵣ : Identityᵣ(_⋅_)(𝟏)
+  Identityᵣ.proof [⋅]-identityᵣ {signed s x} rewrite identityᵣ(Sign._⨯_)(➕) {s} = {!!}
+  -- rewrite identityᵣ(Sign._⨯_)(➕) {s} = {!!} -- reflexivity(Path) -- congruence₂ₗ(signed)(x) {!!}
+  Identityᵣ.proof [⋅]-identityᵣ {𝟎-sign i} = {!!} -- reflexivity(Path)
+
+instance
+  [⋅]-identityₗ : Identityₗ(_⋅_)(𝟏)
+  Identityₗ.proof [⋅]-identityₗ {signed s x} = {!!}
+  -- rewrite identityₗ(Sign._⨯_)(➕) {s} = {!!} -- reflexivity(Path)
+  Identityₗ.proof [⋅]-identityₗ {𝟎-sign i} = {!!} -- reflexivity(Path)
+
+instance
+  [⋅]-identity : Identity(_⋅_)(𝟏)
+  [⋅]-identity = intro
+
+instance
+  postulate [⋅][+]-distributivityₗ : Distributivityₗ(_⋅_)(_+_)
+
+instance
+  postulate [⋅][+]-distributivityᵣ : Distributivityᵣ(_⋅_)(_+_)
+
+open import Logic.Predicate
+open import Structure.Operator.Field
+open import Structure.Operator.Group
+open import Structure.Operator.Monoid
+open import Structure.Operator.Ring
+
+instance
+  [+]-monoid : Monoid(_+_)
+  Monoid.identity-existence [+]-monoid = [∃]-intro 𝟎
+
+instance
+  [+]-group : Group(_+_)
+  Group.monoid            [+]-group = [+]-monoid
+  Group.inverse-existence [+]-group = [∃]-intro (−_) ⦃ [+][−]-inverseFunction ⦄
+
+instance
+  [+]-commutativeGroup : CommutativeGroup(_+_)
+  [+]-commutativeGroup = intro
+
+instance
+  [⋅]-monoid : Monoid(_⋅_)
+  Monoid.identity-existence [⋅]-monoid = [∃]-intro 𝟏
+
+instance
+  [⋅]-rng : Rng(_+_)(_⋅_)
+  [⋅]-rng = intro
+
+instance
+  [⋅]-unity : Unity(_+_)(_⋅_)
+  Unity.[⋅]-identity-existence [⋅]-unity = [∃]-intro 𝟏
+
+instance
+  [⋅]-ring : Ring(_+_)(_⋅_)
+  [⋅]-ring = intro
+
+instance
+  [⋅]-ringNonZero : Unity.DistinctIdentities [⋅]-unity
+  Ring.NonZero.proof [⋅]-ringNonZero = ℤ-different-identities ∘ symmetry(_≡_)
+
+open import Data
+open import Data.Boolean
+import      Data.Boolean.Operators
+open        Data.Boolean.Operators.Programming
+open import Data.Boolean.Stmt
+open import Functional
+import      Numeral.Natural.Oper.Comparisons as ℕ
+import      Numeral.Natural.Oper.Comparisons.Proofs as ℕ
+
+test : (−|+) → (−|+) → (ℕ → ℕ → Bool)
+test ➕ ➕ = (ℕ._≤?_)
+test ➕ ➖ = ((_&&_) on₂ ((!) ∘ ℕ.positive?))
+test ➖ ➕ = (const ∘ const) 𝑇
+test ➖ ➖ = (ℕ._≥?_)
+
+_≤_ : ℤ → ℤ → Type{Lvl.𝟎}
+signed s₁ x ≤ signed s₂ y = IsTrue(test s₁ s₂ x y)
+signed ➕ ℕ.𝟎     ≤ 𝟎-sign _ = ⊤
+signed ➕ (ℕ.𝐒 x) ≤ 𝟎-sign _ = ⊥
+signed ➖ _       ≤ 𝟎-sign _ = ⊤
+𝟎-sign _ ≤ signed ➕ _       = ⊤
+𝟎-sign _ ≤ signed ➖ ℕ.𝟎     = ⊤
+𝟎-sign _ ≤ signed ➖ (ℕ.𝐒 y) = ⊥
+𝟎-sign _ ≤ 𝟎-sign _ = ⊤
+
+{-data _≤_ : ℤ → ℤ → Type{Lvl.𝟎} where
+  neg : ∀{x y} → (x ℕ.≥ y) → ((signed ➖ x) ≤ (signed ➖ y))
+  mix : ∀{x y} → ((signed ➖ x) ≤ (signed ➕ y))
+  pos : ∀{x y} → (x ℕ.≤ y) → ((signed ➕ x) ≤ (signed ➕ y))
+-}
+
+instance
+  [≤]-reflexivity : Reflexivity(_≤_)
+  Reflexivity.proof [≤]-reflexivity {signed ➕ ℕ.𝟎} = <>
+  Reflexivity.proof [≤]-reflexivity {signed ➕ (ℕ.𝐒 x)} = ℕ.[≤?]-reflexivity {x}
+  Reflexivity.proof [≤]-reflexivity {signed ➖ ℕ.𝟎} = <>
+  Reflexivity.proof [≤]-reflexivity {signed ➖ (ℕ.𝐒 x)} = ℕ.[≤?]-reflexivity {x}
+  Reflexivity.proof [≤]-reflexivity {𝟎-sign i} = <>
+
+{-
+instance
+  [≤]-antisymmetry : Antisymmetry(_≤_)(_≡_)
+  Antisymmetry.proof [≤]-antisymmetry {signed x x₁} {signed x₂ x₃} lt gt = ?
+  Antisymmetry.proof [≤]-antisymmetry {signed x x₁} {𝟎-sign i} lt gt = ?
+  Antisymmetry.proof [≤]-antisymmetry {𝟎-sign i} {signed x x₁} lt gt = ?
+  Antisymmetry.proof [≤]-antisymmetry {𝟎-sign i} {𝟎-sign i₁} lt gt = ?
+-}

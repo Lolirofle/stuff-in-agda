@@ -672,8 +672,8 @@ module _ {ℓ₁ ℓ₂} {T : Type{ℓ₁}} {x y : T} {P : T → Type{ℓ₂}} w
   if-intro {𝑇} px py = px [≡]-intro
   if-intro {𝐹} px py = py [≡]-intro
 
-module _ {ℓ₁ ℓ₂ ℓ₃} {T : Type{ℓ₁}} {x y : T} {P : T → Type{ℓ₂}} {Q : Type{ℓ₃}} where
-  if-elim : ∀{B} → P(if B then x else y) → (P(x) → Q) → (P(y) → Q) → Q
+module _ {ℓ₁ ℓ₂ ℓ₃} {T : Type{ℓ₁}} {x y : T} {P : T → Type{ℓ₂}} {Q : Bool → Type{ℓ₃}} where
+  if-elim : ∀{B} → P(if B then x else y) → (P(x) → Q(𝑇)) → (P(y) → Q(𝐹)) → Q(B)
   if-elim{𝑇} p pxq pyq = pxq p
   if-elim{𝐹} p pxq pyq = pyq p
 

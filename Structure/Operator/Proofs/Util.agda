@@ -6,6 +6,9 @@ open import Data.Tuple
 open import Functional hiding (id)
 open import Function.Equals
 import      Function.Names as Names
+import      Lang.Vars.Structure.Operator
+open        Lang.Vars.Structure.Operator.Select
+open import Logic.IntroInstances
 open import Logic.Predicate
 open import Structure.Setoid
 open import Structure.Function.Domain
@@ -17,25 +20,7 @@ open import Syntax.Transitivity
 open import Type
 
 module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : T → T → T} where
-  private variable {id idₗ idᵣ ab abₗ abᵣ} : T
-  private variable {inv invₗ invᵣ} : T → T
-  private variable ⦃ op ⦄ : BinaryOperator ⦃ equiv ⦄ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫_)
-  private variable ⦃ comm ⦄ : Commutativity ⦃ equiv ⦄ (_▫_)
-  private variable ⦃ cancₗ ⦄ : Cancellationₗ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫_)
-  private variable ⦃ cancᵣ ⦄ : Cancellationᵣ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫_)
-  private variable ⦃ assoc ⦄ : Associativity ⦃ equiv ⦄ (_▫_)
-  private variable ⦃ ident  ⦄ : Identity ⦃ equiv ⦄ (_▫_)(id)
-  private variable ⦃ identₗ ⦄ : Identityₗ ⦃ equiv ⦄ (_▫_)(id)
-  private variable ⦃ identᵣ ⦄ : Identityᵣ ⦃ equiv ⦄ (_▫_)(id)
-  private variable ⦃ inver  ⦄ : InverseFunction ⦃ equiv ⦄ (_▫_) ⦃ [∃]-intro(id) ⦃ ident ⦄ ⦄ (inv)
-  private variable ⦃ inverₗ ⦄ : InverseFunctionₗ ⦃ equiv ⦄ (_▫_) ⦃ [∃]-intro(idₗ) ⦃ identₗ ⦄ ⦄ (invₗ)
-  private variable ⦃ inverᵣ ⦄ : InverseFunctionᵣ ⦃ equiv ⦄ (_▫_) ⦃ [∃]-intro(idᵣ) ⦃ identᵣ ⦄ ⦄ (invᵣ)
-  private variable ⦃ inverPropₗ ⦄ : InversePropertyₗ ⦃ equiv ⦄ (_▫_) (invₗ)
-  private variable ⦃ inverPropᵣ ⦄ : InversePropertyᵣ ⦃ equiv ⦄ (_▫_) (invᵣ)
-  private variable ⦃ invol ⦄ : Involution ⦃ equiv ⦄ (inv)
-  private variable ⦃ absorb  ⦄ : Absorber ⦃ equiv ⦄ (_▫_)(ab)
-  private variable ⦃ absorbₗ ⦄ : Absorberₗ ⦃ equiv ⦄ (_▫_)(ab)
-  private variable ⦃ absorbᵣ ⦄ : Absorberᵣ ⦃ equiv ⦄ (_▫_)(ab)
+  open Lang.Vars.Structure.Operator.One ⦃ equiv = equiv ⦄ {_▫_ = _▫_}
 
   -- TODO: Rename this to associate-commute4-commuting
   associate-commute4 : let _ = op , assoc in ∀{a b c d} → Names.Commuting(_▫_)(b)(c) → ((a ▫ b) ▫ (c ▫ d) ≡ (a ▫ c) ▫ (b ▫ d))
@@ -64,6 +49,9 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
   associate4-231-222 : let _ = op , assoc in ∀{a b c d} → (a ▫ ((b ▫ c) ▫ d) ≡ (a ▫ b) ▫ (c ▫ d))
   associate4-231-222 {a}{b}{c}{d} = symmetry(_≡_) associate4-321-231 🝖 symmetry(_≡_) associate4-123-321 🝖 associativity(_▫_)
 
+  associate4-213-222 : let _ = op , assoc in ∀{a b c d} → ((a ▫ (b ▫ c)) ▫ d ≡ (a ▫ b) ▫ (c ▫ d))
+  associate4-213-222 {a}{b}{c}{d} = associativity(_▫_) 🝖 associate4-231-222
+
   commuteᵣ-assocₗ : let _ = op , assoc , comm in ∀{a b c} → (((a ▫ b) ▫ c) ≡ ((a ▫ c) ▫ b))
   commuteᵣ-assocₗ {a}{b}{c} =
     (a ▫ b) ▫ c 🝖-[ associativity(_▫_) ]
@@ -89,45 +77,55 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
     b₁ ▫ b₂ 🝖-[ commutativity(_▫_) ]
     b₂ ▫ b₁ 🝖-end
 
+  moveₗ-to-inv : let _ = op , assoc , select-invₗ(idₗ)(identₗ)(invₗ)(inverₗ) in ∀{a b c} → (a ▫ b ≡ c) → (b ≡ invₗ(a) ▫ c)
+  moveₗ-to-inv {idₗ = idₗ} {invₗ = invₗ} {a = a} {b} {c} abc =
+    b                🝖-[ identityₗ(_▫_)(idₗ) ]-sym
+    idₗ ▫ b          🝖-[ congruence₂ₗ(_▫_)(b) (inverseFunctionₗ(_▫_)(invₗ)) ]-sym
+    (invₗ a ▫ a) ▫ b 🝖-[ associativity(_▫_) ]
+    invₗ a ▫ (a ▫ b) 🝖-[ congruence₂ᵣ(_▫_)(invₗ a) abc ]
+    invₗ a ▫ c       🝖-end
+
+  moveᵣ-to-inv : let _ = op , assoc , select-invᵣ(idᵣ)(identᵣ)(invᵣ)(inverᵣ) in ∀{a b c} → (a ▫ b ≡ c) → (a ≡ c ▫ invᵣ(b))
+  moveᵣ-to-inv {idᵣ = idᵣ} {invᵣ = invᵣ} {a = a} {b} {c} abc =
+    a                🝖-[ identityᵣ(_▫_)(idᵣ) ]-sym
+    a ▫ idᵣ          🝖-[ congruence₂ᵣ(_▫_)(a) (inverseFunctionᵣ(_▫_)(invᵣ)) ]-sym
+    a ▫ (b ▫ invᵣ b) 🝖-[ associativity(_▫_) ]-sym
+    (a ▫ b) ▫ invᵣ b 🝖-[ congruence₂ₗ(_▫_)(invᵣ b) abc ]
+    c ▫ invᵣ b       🝖-end
+
+  moveₗ-from-inv : let _ = op , assoc , select-idₗ(id)(identₗ) , select-invᵣ(id)(identᵣ)(invᵣ)(inverᵣ) in ∀{a b c} → (a ▫ b ≡ c) ← (b ≡ invᵣ(a) ▫ c)
+  moveₗ-from-inv {id = id} {invᵣ = invᵣ} {a = a} {b} {c} bac =
+    a ▫ b            🝖-[ congruence₂ᵣ(_▫_)(a) bac ]
+    a ▫ (invᵣ a ▫ c) 🝖-[ associativity(_▫_) ]-sym
+    (a ▫ invᵣ a) ▫ c 🝖-[ congruence₂ₗ(_▫_)(c) (inverseFunctionᵣ(_▫_)(invᵣ)) ]
+    id ▫ c           🝖-[ identityₗ(_▫_)(id) ]
+    c                🝖-end
+
+  moveᵣ-from-inv : let _ = op , assoc , select-idᵣ(id)(identᵣ) , select-invₗ(id)(identₗ)(invₗ)(inverₗ) in ∀{a b c} → (a ▫ b ≡ c) ← (a ≡ c ▫ invₗ(b))
+  moveᵣ-from-inv {id = id} {invₗ = invₗ} {a = a} {b} {c} acb =
+    a ▫ b            🝖-[ congruence₂ₗ(_▫_)(b) acb ]
+    (c ▫ invₗ b) ▫ b 🝖-[ associativity(_▫_) ]
+    c ▫ (invₗ b ▫ b) 🝖-[ congruence₂ᵣ(_▫_)(c) (inverseFunctionₗ(_▫_)(invₗ)) ]
+    c ▫ id           🝖-[ identityᵣ(_▫_)(id) ]
+    c                🝖-end
+
 module OneTypeTwoOp {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫₁_ _▫₂_ : T → T → T} where
-  private variable {id} : T
-  private variable {inv} : T → T
-
-  private variable ⦃ op₁ ⦄ : BinaryOperator ⦃ equiv ⦄ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫₁_)
-  private variable ⦃ comm₁ ⦄ : Commutativity ⦃ equiv ⦄ (_▫₁_)
-  private variable ⦃ cancₗ₁ ⦄ : Cancellationₗ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫₁_)
-  private variable ⦃ cancᵣ₁ ⦄ : Cancellationᵣ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫₁_)
-  private variable ⦃ assoc₁ ⦄ : Associativity ⦃ equiv ⦄ (_▫₁_)
-  private variable ⦃ ident₁  ⦄ : Identity ⦃ equiv ⦄ (_▫₁_)(id)
-  private variable ⦃ identₗ₁ ⦄ : Identityₗ ⦃ equiv ⦄ (_▫₁_)(id)
-  private variable ⦃ identᵣ₁ ⦄ : Identityᵣ ⦃ equiv ⦄ (_▫₁_)(id)
-  private variable ⦃ inver₁  ⦄ : InverseFunction ⦃ equiv ⦄ (_▫₁_) ⦃ [∃]-intro(id) ⦃ ident₁ ⦄ ⦄ (inv)
-  private variable ⦃ inverₗ₁ ⦄ : InverseFunctionₗ ⦃ equiv ⦄ (_▫₁_) ⦃ [∃]-intro(id) ⦃ identₗ₁ ⦄ ⦄ (inv)
-  private variable ⦃ inverᵣ₁ ⦄ : InverseFunctionᵣ ⦃ equiv ⦄ (_▫₁_) ⦃ [∃]-intro(id) ⦃ identᵣ₁ ⦄ ⦄ (inv)
-  private variable ⦃ absorbₗ₁ ⦄ : Absorberₗ ⦃ equiv ⦄ (_▫₁_)(id)
-  private variable ⦃ absorbᵣ₁ ⦄ : Absorberᵣ ⦃ equiv ⦄ (_▫₁_)(id)
-
-  private variable ⦃ op₂ ⦄ : BinaryOperator ⦃ equiv ⦄ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫₂_)
-  private variable ⦃ comm₂ ⦄ : Commutativity ⦃ equiv ⦄ (_▫₂_)
-  private variable ⦃ cancₗ₂ ⦄ : Cancellationₗ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫₂_)
-  private variable ⦃ cancᵣ₂ ⦄ : Cancellationᵣ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫₂_)
-  private variable ⦃ assoc₂ ⦄ : Associativity ⦃ equiv ⦄ (_▫₂_)
-  private variable ⦃ ident₂  ⦄ : Identity ⦃ equiv ⦄ (_▫₂_)(id)
-  private variable ⦃ identₗ₂ ⦄ : Identityₗ ⦃ equiv ⦄ (_▫₂_)(id)
-  private variable ⦃ identᵣ₂ ⦄ : Identityᵣ ⦃ equiv ⦄ (_▫₂_)(id)
-  private variable ⦃ inver₂  ⦄ : InverseFunction ⦃ equiv ⦄ (_▫₂_) ⦃ [∃]-intro(id) ⦃ ident₂ ⦄ ⦄ (inv)
-  private variable ⦃ inverₗ₂ ⦄ : InverseFunctionₗ ⦃ equiv ⦄ (_▫₂_) ⦃ [∃]-intro(id) ⦃ identₗ₂ ⦄ ⦄ (inv)
-  private variable ⦃ inverᵣ₂ ⦄ : InverseFunctionᵣ ⦃ equiv ⦄ (_▫₂_) ⦃ [∃]-intro(id) ⦃ identᵣ₂ ⦄ ⦄ (inv)
-  private variable ⦃ absorbₗ₂ ⦄ : Absorberₗ ⦃ equiv ⦄ (_▫₂_)(id)
-  private variable ⦃ absorbᵣ₂ ⦄ : Absorberᵣ ⦃ equiv ⦄ (_▫₂_)(id)
-
-  private variable ⦃ distriₗ ⦄ : Distributivityₗ ⦃ equiv ⦄ (_▫₁_)(_▫₂_)
-  private variable ⦃ distriᵣ ⦄ : Distributivityᵣ ⦃ equiv ⦄ (_▫₁_)(_▫₂_)
-  private variable ⦃ absorpₗ ⦄ : Absorptionₗ ⦃ equiv ⦄ (_▫₁_)(_▫₂_)
-  private variable ⦃ absorpᵣ ⦄ : Absorptionᵣ ⦃ equiv ⦄ (_▫₁_)(_▫₂_)
+  open Lang.Vars.Structure.Operator.OneTypeTwoOp ⦃ equiv = equiv ⦄ {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_}
 
   cross-distribute : let _ = op₂ , distriₗ , distriᵣ in ∀{a b c d} → (a ▫₂ b) ▫₁ (c ▫₂ d) ≡ ((a ▫₁ c) ▫₂ (b ▫₁ c)) ▫₂ ((a ▫₁ d) ▫₂ (b ▫₁ d))
   cross-distribute {a = a}{b}{c}{d} =
     (a ▫₂ b) ▫₁ (c ▫₂ d)                             🝖-[ distributivityₗ(_▫₁_)(_▫₂_) ]
     ((a ▫₂ b) ▫₁ c) ▫₂ ((a ▫₂ b) ▫₁ d)               🝖-[ congruence₂(_▫₂_) (distributivityᵣ(_▫₁_)(_▫₂_)) (distributivityᵣ(_▫₁_)(_▫₂_)) ]
     ((a ▫₁ c) ▫₂ (b ▫₁ c)) ▫₂ ((a ▫₁ d) ▫₂ (b ▫₁ d)) 🝖-end
+
+  moveₗ-to-invOp : let _ = op₂ , inverOpₗ in ∀{a b c} → (a ▫₁ b ≡ c) → (b ≡ a ▫₂ c)
+  moveₗ-to-invOp {a = a} {b} {c} abc =
+    b             🝖[ _≡_ ]-[ inverseOperₗ(_▫₁_)(_▫₂_) ]-sym
+    a ▫₂ (a ▫₁ b) 🝖[ _≡_ ]-[ congruence₂ᵣ(_▫₂_)(a) abc ]
+    a ▫₂ c        🝖-end
+
+  moveᵣ-to-invOp : let _ = op₂ , inverOpᵣ in ∀{a b c} → (a ▫₁ b ≡ c) → (a ≡ c ▫₂ b)
+  moveᵣ-to-invOp {a = a} {b} {c} abc =
+    a             🝖[ _≡_ ]-[ inverseOperᵣ(_▫₁_)(_▫₂_) ]-sym
+    (a ▫₁ b) ▫₂ b 🝖[ _≡_ ]-[ congruence₂ₗ(_▫₂_)(b) abc ]
+    c ▫₂ b        🝖-end

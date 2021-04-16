@@ -17,6 +17,8 @@ private variable ℓ : Lvl.Level
 private variable T A B : Type{ℓ}
 private variable l l₁ l₂ l₃ l₄ : List(T)
 private variable x y z : T
+private variable f : A → B
+private variable P : T → Bool
 
 -- The relation for two lists that are permutations of each other.
 -- This means that they contain the same elements and the same number of them but possibly in a different order.
@@ -38,7 +40,7 @@ trans-swap p = trans swap (prepend (prepend p))
 -- Example:
 --   p : [a,b,c,d,e,f] permutes [a,f,e,d,b,c]
 --   map(permutation-mapping(p)) [0,1,2,3,4,5] = [0,4,5,3,2,1]
-permutation-mapping : (l₁ permutes l₂) → 𝕟(length(l₁)) → 𝕟(length(l₂))
+permutation-mapping : (l₁ permutes l₂) → (𝕟(length(l₁)) → 𝕟(length(l₂)))
 permutation-mapping empty                = id
 permutation-mapping (prepend p) 𝟎        = 𝟎
 permutation-mapping (prepend p) (𝐒 n)    = 𝐒(permutation-mapping p n)
@@ -47,9 +49,12 @@ permutation-mapping swap        (𝐒 𝟎)    = 𝟎
 permutation-mapping swap        (𝐒(𝐒 n)) = 𝐒 (𝐒 n)
 permutation-mapping (trans p q)          = permutation-mapping q ∘ permutation-mapping p
 
+-- TODO: It should be possible to make (_permutes_) the morphism of a category with some correct notion of equivalence (maybe trans swap swap ≡ refl for example?). Then permutation-mapping would be an instance of Functor(length) for the ((_→_) on₂ 𝕟) category?
+
 module Proofs where
   open import Data.List.Proofs
   open import Data.List.Equiv.Id
+  open import Lang.Inspect
   open import Logic.Predicate
   open import Numeral.Natural
   open import Numeral.Finite.Proofs
@@ -58,11 +63,15 @@ module Proofs where
   open import Structure.Function.Domain
   open import Structure.Function.Domain.Proofs
   import      Structure.Function.Names as Names
+  open import Structure.Function.Proofs
   open import Structure.Function
+  import      Structure.Operator.Names as Names
   open import Structure.Operator.Properties
+  open import Structure.Operator
   import      Structure.Relator.Names as Names
   open import Structure.Relator.Equivalence
   open import Structure.Relator.Properties
+  open import Structure.Setoid using (Equiv)
   open import Syntax.Function
   open import Syntax.Transitivity
 
@@ -90,6 +99,9 @@ module Proofs where
     permutes-equivalence : Equivalence(_permutes_ {T = T})
     permutes-equivalence = intro
 
+  permutes-equiv : Equiv(List(T))
+  Equiv._≡_         permutes-equiv = _permutes_
+  Equiv.equivalence permutes-equiv = permutes-equivalence
 
   -- If permutation relation had empty, prepend and trans-swap
   module _ where
@@ -166,11 +178,16 @@ module Proofs where
   ... | 𝐒 w | _ = {!!}
   -}
 
-  permutes-with-postpend : (l₁ permutes l₂) → (postpend x l₁) permutes (postpend x l₂)
-  permutes-with-postpend empty       = prepend empty
-  permutes-with-postpend (prepend x) = prepend (permutes-with-postpend x)
-  permutes-with-postpend swap        = swap
-  permutes-with-postpend (trans x y) = trans (permutes-with-postpend x) (permutes-with-postpend y)
+  permutes-prepend-function : Function ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ (List.prepend x)
+  permutes-prepend-function = intro prepend
+
+  permutes-postpend-function : Function ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ (postpend x)
+  permutes-postpend-function = intro proof where
+    proof : (l₁ permutes l₂) → (postpend x l₁) permutes (postpend x l₂)
+    proof empty       = prepend empty
+    proof (prepend x) = prepend (proof x)
+    proof swap        = swap
+    proof (trans x y) = trans (proof x) (proof y)
 
   postpend-prepend-permutes : (postpend x l) permutes (List.prepend x l)
   postpend-prepend-permutes {l = ∅} = prepend empty
@@ -178,25 +195,43 @@ module Proofs where
 
   permutes-reverse : (reverse l) permutes l
   permutes-reverse {l = ∅} = empty
-  permutes-reverse {l = x ⊰ l} = trans (permutes-with-postpend(permutes-reverse {l = l})) postpend-prepend-permutes
+  permutes-reverse {l = x ⊰ l} = trans (Function.congruence ⦃ _ ⦄ ⦃ _ ⦄ permutes-postpend-function(permutes-reverse {l = l})) postpend-prepend-permutes
 
-  permutes-length : (l₁ permutes l₂) → (length l₁ ≡ length l₂)
-  permutes-length empty       = [≡]-intro
-  permutes-length (prepend p) = congruence₁(𝐒) (permutes-length p)
-  permutes-length swap        = [≡]-intro
-  permutes-length (trans p q) = transitivity(_≡_) (permutes-length p) (permutes-length q)
+  permutes-length-function : Function ⦃ permutes-equiv {T = T} ⦄ (length)
+  permutes-length-function = intro proof where
+    proof : (l₁ permutes l₂) → (length l₁ ≡ length l₂)
+    proof empty       = [≡]-intro
+    proof (prepend p) = congruence₁(𝐒) (proof p)
+    proof swap        = [≡]-intro
+    proof (trans p q) = transitivity(_≡_) (proof p) (proof q)
 
-  permutes-countᵣ : (l₁ permutes l₂) → ∀{P} → (count P l₁ ≡ count P l₂)
-  permutes-countᵣ empty = [≡]-intro
-  permutes-countᵣ {l₁ = x₁ ⊰ l₁} (prepend {x = x} p) {P} with P(x)
-  ... | 𝑇 = [≡]-with 𝐒(permutes-countᵣ {l₁ = l₁} p {P})
-  ... | 𝐹 = permutes-countᵣ {l₁ = l₁} p {P}
-  permutes-countᵣ (swap {x = x} {y = y}) {P} with P(x) | P(y)
-  ... | 𝑇 | 𝑇 = [≡]-intro
-  ... | 𝑇 | 𝐹 = [≡]-intro
-  ... | 𝐹 | 𝑇 = [≡]-intro
-  ... | 𝐹 | 𝐹 = [≡]-intro
-  permutes-countᵣ (trans p q) = permutes-countᵣ p 🝖 permutes-countᵣ q
+  permutes-countᵣ-function : Function ⦃ permutes-equiv ⦄ (count P)
+  permutes-countᵣ-function = intro proof where
+    proof : (l₁ permutes l₂) → (count P l₁ ≡ count P l₂)
+    proof empty = [≡]-intro
+    proof {l₁ = x₁ ⊰ l₁} {P = P} (prepend {x = x} p) with P(x)
+    ... | 𝑇 = [≡]-with 𝐒(proof {l₁ = l₁} {P = P} p)
+    ... | 𝐹 = proof {l₁ = l₁} {P = P} p
+    proof {P = P} (swap {x = x} {y = y}) with P(x) | P(y)
+    ... | 𝑇 | 𝑇 = [≡]-intro
+    ... | 𝑇 | 𝐹 = [≡]-intro
+    ... | 𝐹 | 𝑇 = [≡]-intro
+    ... | 𝐹 | 𝐹 = [≡]-intro
+    proof (trans p q) = proof p 🝖 proof q
+
+  permutes-satisfiesAny-functionᵣ : Function ⦃ permutes-equiv ⦄ (satisfiesAny f)
+  permutes-satisfiesAny-functionᵣ = intro proof where
+    proof : (l₁ permutes l₂) → (satisfiesAny f l₁ ≡ satisfiesAny f l₂)
+    proof empty = [≡]-intro
+    proof {f = f} (prepend{x = x} p) with f(x)
+    ... | 𝑇 = [≡]-intro
+    ... | 𝐹 = proof p
+    proof {l₁ = x ⊰ y ⊰ l₁}{y ⊰ x ⊰ l₂}{f = f} (swap{x = x}{y = y}) with f(x) | f(y) | inspect f(x) | inspect f(y)
+    ... | 𝑇 | 𝑇 | intro _ | intro _ = [≡]-intro
+    ... | 𝑇 | 𝐹 | intro _ | intro _ with 𝑇 ← f(x) = [≡]-intro
+    ... | 𝐹 | 𝑇 | intro _ | intro _ with 𝑇 ← f(y) = [≡]-intro
+    ... | 𝐹 | 𝐹 | intro _ | intro _ with 𝐹 ← f(x) | 𝐹 ← f(y)= reflexivity(_≡_)
+    proof (trans p q) = proof p 🝖 proof q
 
   {- TODO
   permutes-countₗ : (∀{P} → count P l₁ ≡ count P l₂) → (l₁ permutes l₂)
@@ -206,37 +241,166 @@ module Proofs where
   permutes-countₗ {l₁ = x ⊰ l₁} {l₂ = x₁ ⊰ l₂} p = {!!} -- TODO: The rest of the cases from _permutes_. Maybe decidable equality on the items are required?
   -}
 
-  permutes-with-[++]ₗ : (l₁ permutes l₂) → ((l₁ ++ l) permutes (l₂ ++ l))
-  permutes-with-[++]ₗ {l = l} empty = reflexivity(_permutes_)
-  permutes-with-[++]ₗ {l = l} (prepend l12) = prepend (permutes-with-[++]ₗ {l = l} l12)
-  permutes-with-[++]ₗ {l = l} swap = swap
-  permutes-with-[++]ₗ {l = l} (trans l13 l32) = transitivity(_permutes_) (permutes-with-[++]ₗ {l = l} l13) (permutes-with-[++]ₗ {l = l} l32)
+  permutes-[++]-function : BinaryOperator ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ (_++_ {T = T})
+  permutes-[++]-function = binaryOperator-from-function ⦃ _ ⦄ ⦃ _ ⦄ ⦃ _ ⦄ ⦃ \{l} → intro(R{l = l}) ⦄ ⦃ intro L ⦄ where
+    L : Names.Congruence₁ ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ (_++ l)
+    L {l = l} empty = reflexivity(_permutes_)
+    L {l = l} (prepend l12) = prepend (L {l = l} l12)
+    L {l = l} swap = swap
+    L {l = l} (trans l13 l32) = transitivity(_permutes_) (L {l = l} l13) (L {l = l} l32)
 
-  permutes-with-[++]ᵣ : (l₁ permutes l₂) → ((l ++ l₁) permutes (l ++ l₂))
-  permutes-with-[++]ᵣ {l = ∅}     l12 = l12
-  permutes-with-[++]ᵣ {l = x ⊰ l} l12 = prepend (permutes-with-[++]ᵣ {l = l} l12)
+    R : Names.Congruence₁ ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ (l ++_)
+    R {l = ∅}     l12 = l12
+    R {l = x ⊰ l} l12 = prepend (R {l = l} l12)
 
-  permutes-with-[++] : (l₁ permutes l₃) → (l₂ permutes l₄) → ((l₁ ++ l₂) permutes (l₃ ++ l₄))
-  permutes-with-[++] {l₃ = l₃} {l₂ = l₂} l13 l24 = transitivity(_permutes_) (permutes-with-[++]ₗ {l = l₂} l13) (permutes-with-[++]ᵣ {l = l₃} l24)
-
-  permutes-swap-[++] : ((l₁ ++ l₂) permutes (l₂ ++ l₁))
-  permutes-swap-[++] {l₁ = ∅}      {l₂ = l₂} rewrite identityᵣ(_++_)(∅) {l₂} = reflexivity(_permutes_)
-  permutes-swap-[++] {l₁ = x ⊰ l₁} {l₂ = l₂} =
-    (x ⊰ l₁) ++ l₂        🝖[ _permutes_ ]-[]
-    x ⊰ (l₁ ++ l₂)        🝖[ _permutes_ ]-[ prepend (permutes-swap-[++] {l₁ = l₁} {l₂ = l₂}) ]
-    x ⊰ (l₂ ++ l₁)        🝖[ _permutes_ ]-[]
-    (x ⊰ l₂) ++ l₁        🝖[ _permutes_ ]-[ permutes-with-[++]ₗ {l = l₁} (postpend-prepend-permutes {l = l₂}) ]-sym
-    (postpend x l₂) ++ l₁ 🝖[ _permutes_ ]-[ sub₂(_≡_)(_permutes_) ([++]-middle-prepend-postpend {l₁ = l₂}{l₂ = l₁}) ]
-    l₂ ++ (x ⊰ l₁)        🝖[ _permutes_ ]-end
+  permutes-[++]-commutativity : Commutativity ⦃ permutes-equiv {T = T} ⦄ (_++_)
+  permutes-[++]-commutativity = intro(\{l₁}{l₂} → proof{l₁}{l₂}) where
+    proof : Names.Commutativity ⦃ permutes-equiv ⦄ (_++_)
+    proof {∅}      {l₂} rewrite identityᵣ(_++_)(∅) {l₂} = reflexivity(_permutes_)
+    proof {x ⊰ l₁} {l₂} =
+      (x ⊰ l₁) ++ l₂        🝖[ _permutes_ ]-[]
+      x ⊰ (l₁ ++ l₂)        🝖[ _permutes_ ]-[ prepend (proof {l₁} {l₂}) ]
+      x ⊰ (l₂ ++ l₁)        🝖[ _permutes_ ]-[]
+      (x ⊰ l₂) ++ l₁        🝖[ _permutes_ ]-[ BinaryOperator.congruence ⦃ _ ⦄ ⦃ _ ⦄ ⦃ _ ⦄ permutes-[++]-function (postpend-prepend-permutes {l = l₂}) (reflexivity(_permutes_)) ]-sym
+      (postpend x l₂) ++ l₁ 🝖[ _permutes_ ]-[ sub₂(_≡_)(_permutes_) ([++]-middle-prepend-postpend {l₁ = l₂}{l₂ = l₁}) ]
+      l₂ ++ (x ⊰ l₁)        🝖[ _permutes_ ]-end
 
   permutes-empty-not-empty : ¬(∅ permutes (x ⊰ l))
   permutes-empty-not-empty (trans {l₂ = ∅}     p q) = permutes-empty-not-empty q
   permutes-empty-not-empty (trans {l₂ = _ ⊰ _} p q) = permutes-empty-not-empty p
 
-  open import Data.List.Relation.Quantification
+  permutes-map : ∀{f : A → B} → Function ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ (map f)
+  permutes-map {f = f} = intro proof where
+    proof : Names.Congruence₁ ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ (map f)
+    proof empty       = empty
+    proof (prepend p) = prepend (proof p)
+    proof swap        = swap
+    proof (trans p q) = trans(proof p) (proof q)
 
-  permutes-map : ∀{f : A → B} → (l₁ permutes l₂) → (map f(l₁) permutes map f(l₂))
-  permutes-map empty       = empty
-  permutes-map (prepend p) = prepend (permutes-map p)
-  permutes-map swap        = swap
-  permutes-map (trans p q) = trans(permutes-map p) (permutes-map q)
+  permutes-on-empty : (l permutes ∅) → (l ≡ ∅)
+  permutes-on-empty empty = [≡]-intro
+  permutes-on-empty (trans p q)
+    rewrite permutes-on-empty q
+    rewrite permutes-on-empty p
+    = [≡]-intro
+
+  permutes-on-singleton : (l permutes (singleton x)) → (l ≡ singleton x)
+  permutes-on-singleton (prepend empty) = [≡]-intro
+  permutes-on-singleton (prepend (trans p q))
+    rewrite permutes-on-empty q
+    rewrite permutes-on-empty p
+    = [≡]-intro
+  permutes-on-singleton (trans p q)
+    rewrite permutes-on-singleton q
+    rewrite permutes-on-singleton p
+    = [≡]-intro
+
+  permutes-insertIn : ∀{n} → ((insertIn x l n) permutes (x ⊰ l))
+  permutes-insertIn {n = 𝟎}               = reflexivity(_permutes_)
+  permutes-insertIn {l = x ⊰ l} {n = 𝐒 n} = trans (prepend (permutes-insertIn {n = n})) swap
+
+module InsertionPermutation where
+  data _insertion-permutes_ {ℓ} : List{ℓ}(T) → List{ℓ}(T) → Stmt{Lvl.𝐒(ℓ)} where
+    empty : ∅ insertion-permutes (∅ {T = T})
+    ins : (n : 𝕟₌(length l₁)) → (l₁ insertion-permutes l₂) → ((insertIn x l₁ n) insertion-permutes (x ⊰ l₂))
+
+  open import Data.List.Proofs.Length
+  open import Relator.Equals.Proofs
+  open import Structure.Relator
+
+  insertion-permutation-mapping : (l₁ insertion-permutes l₂) → (𝕟(length(l₁)) → 𝕟(length(l₂)))
+  insertion-permutation-mapping empty              ()
+  insertion-permutation-mapping (ins 𝟎 p)          𝟎              = 𝟎
+  insertion-permutation-mapping (ins 𝟎 p)          (𝐒 i)          = 𝐒(insertion-permutation-mapping p i)
+  insertion-permutation-mapping (ins {l₁ = x ⊰ l₁} (𝐒 n) p) 𝟎     = 𝟎
+  insertion-permutation-mapping (ins {l₁ = x ⊰ l₁} (𝐒 n) p) (𝐒 i) = 𝐒(insertion-permutation-mapping p (substitute₁(𝕟) (length-insertIn {l = l₁} {n = n}) i))
+
+  open import Data using ()
+  open import Numeral.Natural
+  open import Relator.Equals
+  open import Syntax.Number
+
+  insertion-permutes-prepend : (l₁ insertion-permutes l₂) → ((x ⊰ l₁) insertion-permutes (x ⊰ l₂))
+  insertion-permutes-prepend p = ins 𝟎 p
+
+  insertion-permutes-refl : l insertion-permutes l
+  insertion-permutes-refl {l = ∅} = empty
+  insertion-permutes-refl {l = x ⊰ l} = insertion-permutes-prepend insertion-permutes-refl
+
+  insertion-permutes-swap : (x ⊰ y ⊰ l) insertion-permutes (y ⊰ x ⊰ l)
+  insertion-permutes-swap = ins 1 (insertion-permutes-prepend insertion-permutes-refl)
+
+  insertion-permutes-to-permutes : (l₁ insertion-permutes l₂) → (l₁ permutes l₂)
+  insertion-permutes-to-permutes empty     = empty
+  insertion-permutes-to-permutes (ins n p) = trans Proofs.permutes-insertIn (prepend (insertion-permutes-to-permutes p))
+
+  insertion-permutes-flipped-ins : ∀{n} → (l₁ insertion-permutes l₂) → ((x ⊰  l₁) insertion-permutes (insertIn x l₂ n))
+  insertion-permutes-flipped-ins {n = 𝟎}   empty      = insertion-permutes-refl
+  insertion-permutes-flipped-ins {n = 𝟎}   (ins k p)  = insertion-permutes-prepend (ins k p)
+  insertion-permutes-flipped-ins {n = 𝐒 n} (ins k p) = ins (𝐒 k) (insertion-permutes-flipped-ins {n = n} p)
+
+  insertion-permutes-sym : (l₁ insertion-permutes l₂) → (l₂ insertion-permutes l₁)
+  insertion-permutes-sym empty = empty
+  insertion-permutes-sym (ins n p) = insertion-permutes-flipped-ins(insertion-permutes-sym p)
+
+  {-
+  insertion-permutes-trans : (l₁ insertion-permutes l₂) → (l₃ insertion-permutes l₂) → (l₁ insertion-permutes l₃)
+  ins2 : ∀{n₁ n₂} → (l₁ insertion-permutes l₂) → ((insertIn x l₁ n₁) insertion-permutes (insertIn x l₂ n₂))
+
+  ins2 {l₁ = l₁} {l₂} {n₁ = n₁} {𝟎} p = ins n₁ p
+  ins2 {l₁ = .(insertIn x _ n)} {x ⊰ l₂} {n₁ = 𝟎} {𝐒 n₂} (ins n p) = insertion-permutes-trans (insertion-permutes-prepend (ins n p)) (ins(𝐒 n₂) insertion-permutes-refl)
+  ins2 {l₁ = .(insertIn x _ n)} {x ⊰ l₂} {n₁ = 𝐒 n₁} {𝐒 n₂} (ins n p) = {!!}
+
+  insertion-permutes-trans empty     empty     = empty
+  insertion-permutes-trans (ins m p) (ins n q) = {!!}
+  -- ins2(insertion-permutes-trans p q)
+  -}
+
+  {-
+  insertion-permutation-mapping-correctness : (p : (l₁ insertion-permutes l₂)) → Proofs.PermutationMappingCorrectness l₁ l₂ (insertion-permutation-mapping p)
+  insertion-permutation-mapping-correctness (ins {l₁ = ∅} 𝟎 p) {𝟎} = [≡]-intro
+  insertion-permutation-mapping-correctness (ins {l₁ = x ⊰ l₁} 𝟎 p) {𝟎} = [≡]-intro
+  insertion-permutation-mapping-correctness (ins {l₁ = x ⊰ l₁} 𝟎 p) {𝐒 i} = insertion-permutation-mapping-correctness p
+  insertion-permutation-mapping-correctness (ins {l₁ = x ⊰ l₁} (𝐒 n) p) {𝟎} = {!!}
+  insertion-permutation-mapping-correctness (ins {l₁ = x ⊰ l₁} (𝐒 n) p) {𝐒 i} = {!!}
+  -}
+
+  -- test : (p : (l₁ insertion-permutes l₂)) → (∀{i} → (index l₁(insertion-permutation-mapping p i) ≡ index l₂(i)))
+  -- test p = ?
+
+  {-
+  open import Data.Boolean.Stmt
+  open import Numeral.Finite.Oper.Comparisons
+  test : ∀{l : List(T)}{n₁ : 𝕟(𝐒(length l))}{n₂ : 𝕟(𝐒(length (insertIn y l n₁)))} → IsTrue(n₁ >? n₂) → (insertIn y (insertIn x l n₁) n₂ ≡ insertIn x (insertIn y l n₁) n₂)
+  test p = {!!}
+  -}
+
+  {-
+  ins2 : ∀{n₁ n₂} → (l₁ insertion-permutes l₂) → ((insertIn x l₁ n₁) insertion-permutes (insertIn x l₂ n₂))
+  ins2 {n₁ = 𝟎} {𝟎} empty = insertion-permutes-refl
+  ins2 {n₁ = n₁} {𝟎} (ins n p) = ins n₁ (ins n p)
+  ins2 {x = x} {n₁ = n₁} {𝐒 n₂} (ins {x = y} n p) = {!(ins2 {x = x}{n₁ = n}{n₂ = n₂} p)!}
+
+  insertion-permutes-trans : (l₁ insertion-permutes l₂) → (l₃ insertion-permutes l₂) → (l₁ insertion-permutes l₃)
+  insertion-permutes-trans empty empty = empty
+  insertion-permutes-trans (ins m p) (ins n q) = {!!}
+  -}
+
+  {-
+  test : ∀{n} → (l₁ insertion-permutes (y ⊰ insertIn x l₂ n)) → (l₁ insertion-permutes (x ⊰ insertIn y l₂ n))
+  test {l₂ = l₂} (ins {l₁ = l₁} n p) = {!!}
+
+  ins2 : ∀{n₁ n₂} → (l₁ insertion-permutes l₂) → ((insertIn x l₁ n₁) insertion-permutes (insertIn x l₂ n₂))
+  ins2 {n₁ = n₁} {𝟎} p = ins n₁ p
+  ins2 {n₁ = n₁} {𝐒 n₂} (ins {x = x} n p) = test(ins n₁ (ins2{x = x}{n}{n₂} p))
+
+  -- insertIn x₁ (insertIn x l₁ n) n₁
+  -- x ⊰ insertIn x₁ l₂ n₂
+
+  tr : (l₁ insertion-permutes l₂) → (l₃ insertion-permutes l₂) → (l₁ insertion-permutes l₃)
+  tr {l₂ = ∅}       empty      empty      = empty
+  tr {l₂ = x₂ ⊰ l₂} (ins n₁ p) (ins n₂ q) = ins2(tr p q)
+
+  sym : (l₁ insertion-permutes l₂) → (l₂ insertion-permutes l₁)
+  sym = tr insertion-permutes-refl
+  -}

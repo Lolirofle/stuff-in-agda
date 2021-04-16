@@ -18,12 +18,3 @@ module _ ⦃ equiv-S : let _ = E ; _ = S ; _ = ℓₗ in Equiv{ℓₑ}(S) ⦄ wh
     SetExtensionality = SetEqualityRelation(_∈_)(_∈_) (Equiv._≡_ equiv-S)
     module SetExtensionality = SetEqualityRelation{_∈ₗ_ = _∈_}{_∈ᵣ_ = _∈_}{_≡_ = Equiv._≡_ equiv-S}
     set-extensionality = inst-fn SetExtensionality.membership
-
-  module _ (setExt : ∃(SetExtensionality)) where
-    open ∃(setExt) using () renaming (witness to _∈_) public
-
-    _∋_ : S → E → Stmt
-    _∋_ = swap(_∈_)
-
-    _∉_ : E → S → Stmt
-    _∉_ = (¬_) ∘₂ (_∈_)

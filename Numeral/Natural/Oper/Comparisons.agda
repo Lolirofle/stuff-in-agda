@@ -31,6 +31,10 @@ positive? : ℕ → Bool
 positive? (𝟎)    = 𝐹
 positive? (𝐒(_)) = 𝑇
 
+-- Zero check
+zero? : ℕ → Bool
+zero? n = !(positive? n)
+
 -- Lesser-than check
 _<?_ : ℕ → ℕ → Bool
 _    <? 𝟎    = 𝐹

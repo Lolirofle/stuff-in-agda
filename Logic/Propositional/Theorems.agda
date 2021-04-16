@@ -347,14 +347,14 @@ module _ {ℓ} {P : Stmt{ℓ}} where
 
 module _ {ℓ₁}{ℓ₂} {A : Stmt{ℓ₁}}{B : Stmt{ℓ₂}} where
   [→]-redundancy : (A → A → B) → (A → B)
-  [→]-redundancy(f)(a) = f(a)(a)
+  [→]-redundancy = _$₂_
 
 module _ {ℓ} {A : Stmt{ℓ}} where
   [∧]-redundancy : (A ∧ A) ↔ A
-  [∧]-redundancy = [↔]-intro (p ↦ [∧]-intro(p)(p)) [∧]-elimₗ
+  [∧]-redundancy = [↔]-intro ([∧]-intro $₂_) [∧]-elimₗ
 
   [∨]-redundancy : (A ∨ A) ↔ A
-  [∨]-redundancy = [↔]-intro [∨]-introₗ (p ↦ [∨]-elim id id p)
+  [∨]-redundancy = [↔]-intro [∨]-introₗ ([∨]-elim id id)
 
 ------------------------------------------
 -- Disjunctive forms
@@ -493,6 +493,19 @@ module _ {ℓ} where
 
   [callcc]-[excluded-middle]-eqᵣ : (∀{P : Stmt{ℓ}}{Q : Stmt{Lvl.𝟎}} → (((P → Q) → P) → P)) → (∀{P : Stmt{ℓ}} → (P ∨ (¬ P)))
   [callcc]-[excluded-middle]-eqᵣ (callcc) {P} = callcc{P ∨ (¬ P)}{⊥} (nor ↦ [⊥]-elim ([¬¬]-excluded-middle (nor)))
+
+  -- TODO: Does not have to be over all propositions P in assumption. Only wem P and wem Q are used.
+  weak-excluded-middle-[¬][∧]ₗ : (∀{P : Stmt{ℓ}} → (¬ P) ∨ (¬¬ P)) ↔ (∀{P : Stmt{ℓ}}{Q : Stmt{ℓ}} → ((¬ P) ∨ (¬ Q)) ← (¬ (P ∧ Q)))
+  weak-excluded-middle-[¬][∧]ₗ = [↔]-intro l r where
+    l : (∀{P : Stmt{ℓ}} → (¬ P) ∨ (¬¬ P)) ← (∀{P : Stmt{ℓ}}{Q : Stmt{ℓ}} → ((¬ P) ∨ (¬ Q)) ← (¬ (P ∧ Q)))
+    l [¬][∧]ₗ = [¬][∧]ₗ non-contradiction
+
+    r : (∀{P : Stmt{ℓ}} → (¬ P) ∨ (¬¬ P)) → (∀{P : Stmt{ℓ}}{Q : Stmt{ℓ}} → ((¬ P) ∨ (¬ Q)) ← (¬ (P ∧ Q)))
+    r wem {P = P} {Q = Q} npq with wem {P = P} | wem {P = Q}
+    r wem {P = P} {Q = Q} npq | [∨]-introₗ np  | [∨]-introₗ nq  = [∨]-introₗ np
+    r wem {P = P} {Q = Q} npq | [∨]-introₗ np  | [∨]-introᵣ nnq = [∨]-introₗ np
+    r wem {P = P} {Q = Q} npq | [∨]-introᵣ nnp | [∨]-introₗ nq  = [∨]-introᵣ nq
+    r wem {P = P} {Q = Q} npq | [∨]-introᵣ nnp | [∨]-introᵣ nnq = [∨]-introᵣ (q ↦ nnp (p ↦ npq ([∧]-intro p q)))
 
 ------------------------------------------
 -- XOR

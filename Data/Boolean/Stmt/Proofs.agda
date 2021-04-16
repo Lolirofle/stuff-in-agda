@@ -7,7 +7,7 @@ import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.Boolean.Stmt
 open import Functional
-open import Logic.Propositional as Logic using (_∨_ ; _∧_ ; ¬_ ; _↔_ ; [⊤]-intro ; [↔]-intro ; [⊥]-elim)
+open import Logic.Propositional as Logic using (⊥ ; _∨_ ; _∧_ ; ¬_ ; _↔_ ; [⊤]-intro ; [↔]-intro ; [⊥]-elim)
 open import Relator.Equals
 open import Type
 
@@ -17,9 +17,9 @@ bivalence {𝑇} = Logic.[∨]-introₗ [⊤]-intro
 bivalence {𝐹} = Logic.[∨]-introᵣ [⊤]-intro
 
 -- A boolean operation is not both true and false at the same time
-disjointness : ∀{a} → ¬(IsTrue(a) ∧ IsFalse(a))
-disjointness {𝑇} (Logic.[∧]-intro [⊤]-intro ())
-disjointness {𝐹} (Logic.[∧]-intro () [⊤]-intro)
+disjointness : ∀{a} → IsTrue(a) → IsFalse(a) → ⊥
+disjointness {𝑇} [⊤]-intro ()
+disjointness {𝐹} () [⊤]-intro
 
 module IsTrue where
   [𝑇]-intro : IsTrue(𝑇)
