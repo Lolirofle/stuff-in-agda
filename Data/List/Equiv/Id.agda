@@ -19,6 +19,7 @@ open import Relator.Equals
 open import Structure.Function
 open import Structure.Function.Domain
 import      Structure.Function.Names as Names
+import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Operator
 open import Structure.Relator.Properties
@@ -176,3 +177,18 @@ count-of-[++] {l₁ = x₁ ⊰ l₁} {l₂ = l₂} {P = P} with P(x₁) | count-
 
 -- TODO Is this true?: count-single-equality-equivalence : (∀{P} → count P l₁ ≡ count P l₂) ↔ (∀{x} → (count (x ≡?_) l₁ ≡ count (x ≡?_) l₂))
 
+foldᵣ-preserves-[++] : ∀{ℓ₁ ℓ₂}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{_▫₁_ : A → B → B}{_▫₂_ : B → B → B}{id} ⦃ ident : Identityₗ(_▫₂_)(id) ⦄ {a b} → (Names.AssociativityPattern(_▫₁_)(_▫₂_)(_▫₁_)(_▫₂_)) → (foldᵣ(_▫₁_) id (a ++ b) ≡ (foldᵣ(_▫₁_) id a) ▫₂ (foldᵣ(_▫₁_) id b))
+foldᵣ-preserves-[++] {_▫₁_ = _▫₁_}{_▫₂_ = _▫₂_}{id} {∅}      {b} p =
+  foldᵣ(_▫₁_) id (∅ ++ b)                 🝖[ _≡_ ]-[]
+  foldᵣ(_▫₁_) id b                        🝖[ _≡_ ]-[ identityₗ(_▫₂_)(id) ]-sym
+  id ▫₂ foldᵣ(_▫₁_) id b                  🝖[ _≡_ ]-[]
+  (foldᵣ(_▫₁_) id ∅) ▫₂ (foldᵣ _▫₁_ id b) 🝖-end
+foldᵣ-preserves-[++] {_▫₁_ = _▫₁_}{_▫₂_ = _▫₂_}{id} {a ⊰ al} {b} p =
+  foldᵣ(_▫₁_) id (a ⊰ (al ++ b))                   🝖[ _≡_ ]-[]
+  a ▫₁ (foldᵣ(_▫₁_) id (al ++ b))                  🝖[ _≡_ ]-[ congruence₂ᵣ(_▫₁_)(a) (foldᵣ-preserves-[++] {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_} {id} {al} {b} p) ]
+  a ▫₁ ((foldᵣ(_▫₁_) id al) ▫₂ (foldᵣ(_▫₁_) id b)) 🝖[ _≡_ ]-[ p ]-sym
+  (a ▫₁ (foldᵣ(_▫₁_) id al)) ▫₂ (foldᵣ(_▫₁_) id b) 🝖[ _≡_ ]-[]
+  (foldᵣ(_▫₁_) id (a ⊰ al)) ▫₂ (foldᵣ(_▫₁_) id b)  🝖-end
+
+foldᵣ-preserves-[++]-by-assoc : ∀{ℓ}{T : Type{ℓ}}{_▫_ : T → T → T} ⦃ assoc : Associativity(_▫_) ⦄ {id} ⦃ ident : Identityₗ(_▫_)(id) ⦄ {a b : List(T)} → (foldᵣ(_▫_) id (a ++ b) ≡ (foldᵣ(_▫_) id a) ▫ (foldᵣ(_▫_) id b))
+foldᵣ-preserves-[++]-by-assoc {_▫_ = _▫_} {id} {a}{b} = foldᵣ-preserves-[++] {_▫₁_ = _▫_}{_▫₂_ = _▫_}{id} {a}{b} (associativity(_▫_))

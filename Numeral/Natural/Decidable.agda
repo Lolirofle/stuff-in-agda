@@ -121,6 +121,7 @@ module _ where
   open import Data.Tuple as Tuple using (_⨯_ ; _,_)
   open import Logic.Propositional.Theorems
   open import Numeral.Natural.Oper
+  open import Numeral.Natural.Oper.Comparisons
   open import Numeral.Natural.Oper.Proofs
   open import Numeral.Natural.Proofs
   open import Numeral.Natural.Relation.Order.Existence using ([≤]-equivalence)
@@ -137,31 +138,36 @@ module _ where
       (prime-only-divisors p {𝐒(𝐒(a))} (divides-with-[⋅] {c = 𝐒(𝐒(b))} ([∨]-introₗ divides-reflexivity)))
 
   -- Using Numeral.Natural.Decidable.prime?, when it is false, there is a divisor d between 2 and n for n. This means that (d ∣ n). Equivalently ∃(k ↦ d ⋅ k ≡ n). The proof of Composite uses these d and k.
-  prime-or-composite : ∀{n} → Prime(𝐒(𝐒(n))) ∨ Composite(𝐒(𝐒(n)))
-  prime-or-composite{n} = [¬→]-disjunctive-formᵣ ⦃ decider-to-classical ⦃ Prime-decider ⦄ ⦄ $
-    ¬ Prime(𝐒(𝐒(n)))                                                                ⇒-[ [↔]-to-[→] (decider-false ⦃ Prime-decider ⦄) ]
-    IsFalse(prime? (𝐒(𝐒(n))))                                                       ⇒-[ [↔]-to-[←] (decider-false ⦃ List.[≡]-decider ⦃ dec = [≡?]-decider ⦄ ⦄) ]
-    findBoundedAll 2 (𝐒(𝐒(n))) (_∣₀? 𝐒(𝐒(n))) ≢ ∅                                   ⇒-[ non-empty-inclusion-existence ]
-    ∃(_∈ findBoundedAll 2 (𝐒(𝐒(n))) (_∣₀? 𝐒(𝐒(n))))                                 ⇒-[ [∃]-map-proof ([↔]-to-[→] (findBoundedAll-membership {f = _∣₀? 𝐒(𝐒(n))})) ]
-    ∃(d ↦ (2 ≤ d) ∧ (d < 𝐒(𝐒(n))) ∧ IsTrue(d ∣₀? 𝐒(𝐒(n))))                          ⇒-[ [∃]-map-proof ([∧]-map id ([↔]-to-[←] (decider-true ⦃ [∣]-decider ⦄))) ]
-    ∃(d ↦ (2 ≤ d) ∧ (d < 𝐒(𝐒(n))) ∧ (d ∣ 𝐒(𝐒(n))))                                  ⇒-[ (\{([∃]-intro (𝐒 𝟎) ⦃ [∧]-intro ([∧]-intro (succ()) _) _ ⦄) ; ([∃]-intro (𝐒(𝐒 d)) ⦃ [∧]-intro ([∧]-intro d2 dn) div ⦄) → [∃]-intro d ⦃ [∧]-intro dn div ⦄}) ]
-    ∃(d ↦ (𝐒(𝐒(d)) < 𝐒(𝐒(n))) ∧ (𝐒(𝐒(d)) ∣ 𝐒(𝐒(n))))                                ⇒-[ (\{([∃]-intro d ⦃ [∧]-intro dn div ⦄) → [∃]-intro d ⦃ [∧]-intro dn ([∃]-intro div ⦃ divides-quotient-correctness {yx = div} ⦄) ⦄}) ]
-    ∃(d ↦ (𝐒(𝐒(d)) < 𝐒(𝐒(n))) ∧ ∃{Obj = 𝐒(𝐒(d)) ∣ 𝐒(𝐒(n))}(q ↦ (𝐒(𝐒(d)) ⋅ divides-quotient q ≡ 𝐒(𝐒(n))))) ⇒-[ (\{([∃]-intro d ⦃ [∧]-intro dn ([∃]-intro q ⦃ prod ⦄) ⦄) → [∃]-intro (d , [∃]-witness ([↔]-to-[←] [≤]-equivalence (divides-quotient-composite (succ (succ min)) dn {q}))) ⦃ congruence₂ᵣ(_⋅_)(𝐒(𝐒(d))) (([∃]-proof ([↔]-to-[←] [≤]-equivalence (divides-quotient-composite (succ (succ min)) dn {q})))) 🝖 prod ⦄}) ]
-    ∃{Obj = ℕ ⨯ ℕ}(\(a , b) → (𝐒(𝐒(a)) ⋅ 𝐒(𝐒(b)) ≡ 𝐒(𝐒(n))))                        ⇒-[ [↔]-to-[←] composite-existence ]
-    Composite(𝐒(𝐒 n))                                                               ⇒-end
+  -- TODO: Is this actually constructing the pair of the smallest and greatest divisor when the number is composite? Maybe separating the function that does this could be useful in the future?
+  abstract
+    prime-or-composite : ∀{n} → ⦃ _ : IsTrue(n >? 1) ⦄ → Prime(n) ∨ Composite(n)
+    prime-or-composite{𝐒(𝐒 n)} = [¬→]-disjunctive-formᵣ ⦃ decider-to-classical ⦃ Prime-decider ⦄ ⦄ $
+      ¬ Prime(𝐒(𝐒(n)))                                                                ⇒-[ [↔]-to-[→] (decider-false ⦃ Prime-decider ⦄) ]
+      IsFalse(prime? (𝐒(𝐒(n))))                                                       ⇒-[ [↔]-to-[←] (decider-false ⦃ List.[≡]-decider ⦃ dec = [≡?]-decider ⦄ ⦄) ]
+      findBoundedAll 2 (𝐒(𝐒(n))) (_∣₀? 𝐒(𝐒(n))) ≢ ∅                                   ⇒-[ non-empty-inclusion-existence ]
+      ∃(_∈ findBoundedAll 2 (𝐒(𝐒(n))) (_∣₀? 𝐒(𝐒(n))))                                 ⇒-[ [∃]-map-proof ([↔]-to-[→] (findBoundedAll-membership {f = _∣₀? 𝐒(𝐒(n))})) ]
+      ∃(d ↦ (2 ≤ d) ∧ (d < 𝐒(𝐒(n))) ∧ IsTrue(d ∣₀? 𝐒(𝐒(n))))                          ⇒-[ [∃]-map-proof ([∧]-map id ([↔]-to-[←] (decider-true ⦃ [∣]-decider ⦄))) ]
+      ∃(d ↦ (2 ≤ d) ∧ (d < 𝐒(𝐒(n))) ∧ (d ∣ 𝐒(𝐒(n))))                                  ⇒-[ (\{([∃]-intro (𝐒 𝟎) ⦃ [∧]-intro ([∧]-intro (succ()) _) _ ⦄) ; ([∃]-intro (𝐒(𝐒 d)) ⦃ [∧]-intro ([∧]-intro d2 dn) div ⦄) → [∃]-intro d ⦃ [∧]-intro dn div ⦄}) ]
+      ∃(d ↦ (𝐒(𝐒(d)) < 𝐒(𝐒(n))) ∧ (𝐒(𝐒(d)) ∣ 𝐒(𝐒(n))))                                ⇒-[ (\{([∃]-intro d ⦃ [∧]-intro dn div ⦄) → [∃]-intro d ⦃ [∧]-intro dn ([∃]-intro div ⦃ divides-quotient-correctness {yx = div} ⦄) ⦄}) ]
+      ∃(d ↦ (𝐒(𝐒(d)) < 𝐒(𝐒(n))) ∧ ∃{Obj = 𝐒(𝐒(d)) ∣ 𝐒(𝐒(n))}(q ↦ (𝐒(𝐒(d)) ⋅ divides-quotient q ≡ 𝐒(𝐒(n))))) ⇒-[ (\{([∃]-intro d ⦃ [∧]-intro dn ([∃]-intro q ⦃ prod ⦄) ⦄) → [∃]-intro (d , [∃]-witness ([↔]-to-[←] [≤]-equivalence (divides-quotient-composite (succ (succ min)) dn {q}))) ⦃ congruence₂ᵣ(_⋅_)(𝐒(𝐒(d))) (([∃]-proof ([↔]-to-[←] [≤]-equivalence (divides-quotient-composite (succ (succ min)) dn {q})))) 🝖 prod ⦄}) ]
+      ∃{Obj = ℕ ⨯ ℕ}(\(a , b) → (𝐒(𝐒(a)) ⋅ 𝐒(𝐒(b)) ≡ 𝐒(𝐒(n))))                        ⇒-[ [↔]-to-[←] composite-existence ]
+      Composite(𝐒(𝐒 n))                                                               ⇒-end
 
   prime-xor-composite : ∀{n} → Prime(𝐒(𝐒(n))) ⊕ Composite(𝐒(𝐒(n)))
   prime-xor-composite {n} = [⊕]-or-not-both prime-or-composite (Tuple.uncurry prime-composite-not)
 
   open import Data.Tuple
-  -- open import Numeral.Natural.Inductions
-  {-# TERMINATING #-}
-  -- TODO: Use strong induction. (a < n) because (a ⋅ b = n).
-  prime-factor-existence : ∀{n} → ∃(PrimeFactor(𝐒(𝐒(n))))
-  prime-factor-existence {n} with prime-or-composite{n}
-  ... | Either.Left  p = [∃]-intro (𝐒(𝐒(n))) ⦃ intro ⦃ p ⦄ ⦄
-  ... | Either.Right c
-    with [∃]-intro(a , b) ⦃ p ⦄ ← [↔]-to-[→] composite-existence c
-    with [∃]-intro d ⦃ pa ⦄ ← prime-factor-existence{a}
-    = [∃]-intro d ⦃ divisor-primeFactors ([↔]-to-[→] divides-[⋅]-existence ([∃]-intro (𝐒 (𝐒 b)) ⦃ p ⦄)) pa ⦄
-  
+  open import Numeral.Natural.Inductions
+  open import Numeral.Natural.Oper.Proofs.Order
+  open import Structure.Relator.Ordering
+
+  abstract
+    prime-factor-existence : ∀{n} → ⦃ _ : IsTrue(n >? 1) ⦄ → ∃(PrimeFactor(n))
+    prime-factor-existence {𝐒(𝐒(n))} = Strict.Properties.wellfounded-induction(_<_) {P = \n → ∃(PrimeFactor(𝐒(𝐒(n))))} p {n} where
+      p : ∀{n} → ({prev : ℕ} ⦃ _ : prev < n ⦄ → ∃(PrimeFactor (𝐒(𝐒 prev)))) → ∃(PrimeFactor(𝐒(𝐒 n)))
+      p{n} prev with prime-or-composite{𝐒(𝐒(n))}
+      ... | Either.Left  p = [∃]-intro (𝐒(𝐒(n))) ⦃ intro ⦃ p ⦄ ⦄
+      ... | Either.Right c
+        with [∃]-intro(a , b) ⦃ p ⦄ ← [↔]-to-[→] composite-existence c
+        with [∃]-intro d ⦃ pa ⦄ ← prev{a} ⦃ [≤]-without-[𝐒] ([≤]-without-[𝐒] (subtransitivityᵣ(_≤_)(_≡_) ([⋅]ₗ-strictly-growing {𝐒 a}{𝐒(𝐒(b))} (succ (succ min))) p)) ⦄
+        = [∃]-intro d ⦃ divisor-primeFactors ([↔]-to-[→] divides-[⋅]-existence ([∃]-intro (𝐒(𝐒 b)) ⦃ p ⦄)) pa ⦄

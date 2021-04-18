@@ -1,8 +1,10 @@
 module Numeral.Natural.Prime.Proofs.Representation where
 
+-- TODO: Clean up the import list
 import      Lvl
+open import Data
 open import Data.Either as Either using ()
-open import Data.Tuple as Tuple using ()
+open import Data.Tuple as Tuple using (_,_)
 open import Functional
 open import Function.Equals
 open import Lang.Instance
@@ -29,36 +31,60 @@ open import Type.Dependent
 
 private variable a b : ℕ
 
-record PrimePowers(f : ℕ → ℕ) : Type{Lvl.𝟎} where
-  constructor intro
-  field
-    positive-powers : Σ ℕ (n ↦ Vector(n)(ℕ))
-    zeroes-correctness : ∀{n} → Positive(f(n)) ↔ ∃(i ↦ (Σ.right positive-powers(i) ≡ n))
-    prime-correctness : ∀{i} → Prime(Σ.right positive-powers(i))
+open import Logic.Classical
+open import Numeral.Natural.Decidable
 
-  product : ℕ
-  product = foldᵣ(_⋅_)(1) (map(n ↦ n ^ f(n)) (Σ.right positive-powers))
+open import Numeral.Natural.Inductions
+open import Numeral.Natural.Oper.Proofs.Order
+open import Numeral.Natural.Prime.Proofs
+open import Numeral.Natural.Relation.Order
+open import Numeral.Natural.Relation.Order.Proofs
+open import Structure.Relator.Ordering
 
-  powers-is-positive : ∀{i} → Positive(f(Σ.right positive-powers(i)))
-  powers-is-positive = [↔]-to-[←] zeroes-correctness ([∃]-intro _ ⦃ [≡]-intro ⦄)
+open import Data.List
+open import Data.List.Equiv.Id
+open import Data.List.Functions as List using (_++_)
+open import Numeral.Natural.Oper.Proofs
+open import Structure.Operator
 
-  -- postulate power-divide-product : ∀{i} → (Σ.right positive-powers i ∣ product)
-  {-power-divide-product {pp}{i = 𝟎} = divides-with-[⋅]
-    {b = (PrimePowers.positive-powers pp 𝟎) ^ (PrimePowers.power pp (PrimePowers.positive-powers pp 𝟎))}
-    {c = foldᵣ(_⋅_)(1) (tail(map(n ↦ n ^ PrimePowers.power pp(n)) (PrimePowers.positive-powers pp)))}
-    ([∨]-introₗ (divides-withᵣ-[^] ⦃ PrimePowers.powers-is-positive pp ⦄ (reflexivity(_∣_))))
-  power-divide-product {pp}{i = 𝐒 i} = divides-with-[⋅]
-    {b = (PrimePowers.positive-powers pp 𝟎) ^ (PrimePowers.power pp (PrimePowers.positive-powers pp 𝟎))}
-    {c = foldᵣ(_⋅_)(1) (tail(map(n ↦ n ^ PrimePowers.power pp(n)) (PrimePowers.positive-powers pp)))}
-    ([∨]-introᵣ {!!})
-  -}
+open import Structure.Operator.Properties
 
-instance
-  PrimePowers-equiv : Equiv(∃ PrimePowers)
-  Equiv._≡_         PrimePowers-equiv = (_⊜_) on₂ [∃]-witness
-  Equiv.equivalence PrimePowers-equiv = on₂-equivalence ⦃ Equiv.equivalence [⊜]-equiv ⦄
+open import Numeral.Natural.Relation.Order.Decidable
+open import Numeral.Natural.Relation.Order.Classical
+open import Syntax.Implication
+open import Type.Properties.Decidable.Proofs
 
-{-
+-- Note: This proof is very similar to the proof of prime factor existence (prime-factor-existence).
+prime-representation-existence : ∀{n} → ∃{Obj = List(∃ Prime)}(l ↦ (𝐒(𝐒 n) ≡ List.foldᵣ((_⋅_) ∘ [∃]-witness) 𝟏 l))
+prime-representation-existence {n} = Strict.Properties.wellfounded-induction(_<_) {P = \n → ∃(l ↦ (𝐒(𝐒(n)) ≡ List.foldᵣ((_⋅_) ∘ [∃]-witness) 𝟏 l))} rec {n} where
+  rec : ∀{n} → ({prev : ℕ} ⦃ _ : prev < n ⦄ → ∃(l ↦ (𝐒(𝐒 prev) ≡ List.foldᵣ((_⋅_) ∘ [∃]-witness) 𝟏 l))) → ∃(l ↦ (𝐒(𝐒 n) ≡ List.foldᵣ((_⋅_) ∘ [∃]-witness) 𝟏 l))
+  rec {n} prev with prime-or-composite{𝐒(𝐒(n))}
+  ... | Either.Left  p = [∃]-intro (List.singleton([∃]-intro _ ⦃ p ⦄)) ⦃ [≡]-intro ⦄
+  ... | Either.Right c
+    with [∃]-intro(a , b) ⦃ p ⦄ ← [↔]-to-[→] composite-existence c
+    with [∃]-intro da ⦃ pa ⦄ ← prev{a} ⦃ [≤]-without-[𝐒] ([≤]-without-[𝐒] (subtransitivityᵣ(_≤_)(_≡_) ([⋅]ₗ-strictly-growing {𝐒 a}{𝐒(𝐒(b))} (succ (succ min))) p)) ⦄
+    with [∃]-intro db ⦃ pb ⦄ ← prev{b} ⦃ [≤]-without-[𝐒] ([≤]-without-[𝐒] (subtransitivityᵣ(_≤_)(_≡_) ([⋅]ₗ-strictly-growing {𝐒 b}{𝐒(𝐒(a))} (succ (succ min))) (commutativity(_⋅_) {𝐒(𝐒 b)}{𝐒(𝐒 a)} 🝖 p))) ⦄
+    = [∃]-intro (da List.++ db) ⦃ pab ⦄ where
+      pab =
+        𝐒(𝐒 n)                                                                      🝖[ _≡_ ]-[ p ]-sym
+        𝐒(𝐒 a) ⋅ 𝐒(𝐒 b)                                                             🝖[ _≡_ ]-[ congruence₂(_⋅_) pa pb ]
+        (List.foldᵣ((_⋅_) ∘ ∃.witness) 1 da) ⋅ (List.foldᵣ((_⋅_) ∘ ∃.witness) 1 db) 🝖[ _≡_ ]-[ foldᵣ-preserves-[++] {_▫₁_ = (_⋅_) ∘ [∃]-witness}{_▫₂_ = _⋅_}{1} {da}{db} (\{x}{y}{z} → associativity(_⋅_) {[∃]-witness x}{y}{z})  ]-sym
+        List.foldᵣ((_⋅_) ∘ ∃.witness) 1 (da List.++ db)                             🝖-end
+
+open import Data.List.Relation.Permutation
+
+-- TODO: Are there any easy ways to prove that two lists permutes each other?
+-- TODO: Probably should include some kind of reasoning for ((a ▫ b ≡ id) → ((a ≡ id) ∨ (b ≡ id))) and of course, commutativity of (_▫_).
+postulate product-permutation : ∀{ℓ}{T : Type{ℓ}}{_▫_ : T → T → T}{id}{a b} → (List.foldᵣ(_▫_) id a ≡ List.foldᵣ(_▫_) id b) → (a permutes b)
+-- product-permutation{_▫_ = _▫_}{id}{a}{b} = ?
+{-product-permutation {a = ∅} {b = ∅} p = _permutes_.empty
+product-permutation {a = ∅} {b = b ⊰ bl} p = {!!}
+product-permutation {a = a ⊰ al} {b = ∅} p = {!!}
+product-permutation {a = a ⊰ al} {b = b ⊰ bl} p = {!!}
+-}
+
+postulate prime-representation-uniqueness : ∀{n} → Unique{Obj = List(∃ Prime)} ⦃ Proofs.permutes-equiv ⦄ (l ↦ (𝐒(𝐒 n) ≡ List.foldᵣ((_⋅_) ∘ [∃]-witness) 𝟏 l))
+
 -- Each positive number have a corresponding finite multiset of prime numbers such that it is equal to the product of the numbers in the multiset.
 -- Examples:
 --   n = (p₁ ^ n₁) ⋅ (p₂ ^ n₂) ⋅ … ⋅ (pₖ ^ nₖ)
@@ -66,24 +92,7 @@ instance
 -- • Fundamental theorem of arithmetic.
 -- • Canonical representation of positive integers by primes.
 -- • Unique prime factorization theorem.
-prime-representation : ∀{n} → ⦃ pos : Positive(n) ⦄ → ∃! ⦃ PrimePowers-equiv ⦄ (pp ↦ (n ≡ PrimePowers.product pp))
-∃.witness (Tuple.left prime-representation) = {!!}
-∃.proof (Tuple.left prime-representation) = {!!}
-_⊜_.proof (Tuple.right (prime-representation {𝐒 n}) {pp1} {pp2} p1 p2) {p} = {!!}
--}
+prime-representation : ∀{n} → ∃!{Obj = List(∃ Prime)} ⦃ Proofs.permutes-equiv ⦄ (l ↦ (𝐒(𝐒 n) ≡ List.foldᵣ((_⋅_) ∘ [∃]-witness) 𝟏 l))
+prime-representation = [∧]-intro prime-representation-existence prime-representation-uniqueness
 
-open import Logic.Classical
-open import Numeral.Natural.Decidable
-{-
-prime-representation : ∀{n} → ⦃ pos : Positive(n) ⦄ → ∃! ⦃ PrimePowers-equiv ⦄ (pp ↦ (n ≡ PrimePowers.product([∃]-proof pp)))
-prime-representation {𝐒 n} ⦃ pos ⦄ = [∧]-intro p1 (\{x}{y} → p2{x}{y}) where
-  p1 : ∃(pp ↦ (𝐒(n) ≡ PrimePowers.product ([∃]-proof pp)))
-  p2 : Unique(pp ↦ (𝐒(n) ≡ PrimePowers.product ([∃]-proof pp)))
-  p2 {[∃]-intro x ⦃ ppx ⦄}{[∃]-intro y ⦃ ppy ⦄} px py with PrimePowers.positive-powers ppx | PrimePowers.positive-powers ppy
-  p2 {[∃]-intro x ⦃ ppx ⦄} {[∃]-intro y ⦃ ppy ⦄} px py | intro 𝟎 b | intro 𝟎 d = intro {!!}
-  p2 {[∃]-intro x ⦃ ppx ⦄} {[∃]-intro y ⦃ ppy ⦄} px py | intro 𝟎 b | intro (𝐒 c) d = {!!}
-  p2 {[∃]-intro x ⦃ ppx ⦄} {[∃]-intro y ⦃ ppy ⦄} px py | intro (𝐒 a) b | intro 𝟎 d = {!!}
-  p2 {[∃]-intro x ⦃ ppx ⦄} {[∃]-intro y ⦃ ppy ⦄} px py | intro (𝐒 a) b | intro (𝐒 c) d = {!!}
---    let xy = symmetry(_≡_) px 🝖 py
---    in intro \{p} → {!PrimePowers.power-divide-product ppx!}
--}
+-- TODO: This also means that this is a bijection between List(∃ Prime) and ℕ, and also between List(ℕ) and ℕ if one is successful in proving that there are countably infinite many primes (a constructive proof of the latter)

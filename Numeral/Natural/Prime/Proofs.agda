@@ -102,6 +102,12 @@ open import Type
   p {9} (Div𝐒 ())
   p {10} d = [∨]-introᵣ [≡]-intro
 
+prime-lower-bound : ∀{n} → Prime(n) → (n ≥ 2)
+prime-lower-bound {𝐒(𝐒 _)} p = succ (succ min)
+
+composite-lower-bound : ∀{n} → Composite(n) → (n ≥ 2)
+composite-lower-bound {𝐒(𝐒 _)} c = succ (succ min)
+
 prime-only-divisors : ∀{n} → Prime(n) → (∀{x} → (x ∣ n) → ((x ≡ 1) ∨ (x ≡ n)))
 prime-only-divisors {𝐒 (𝐒 n)} (intro prime) {𝟎}   = [⊥]-elim ∘ [0]-divides-not
 prime-only-divisors {𝐒 (𝐒 n)} (intro prime) {𝐒 x} = Either.map ([≡]-with(𝐒)) ([≡]-with(𝐒)) ∘ prime

@@ -75,6 +75,19 @@ module Proofs where
   open import Syntax.Function
   open import Syntax.Transitivity
 
+  module _ {ℓ} (P : ∀{l₁ l₂ : List(T)} → (l₁ permutes l₂) → Type{ℓ})
+    (pe : P(empty))
+    (pp : ∀{x}{l₁ l₂}{p : l₁ permutes l₂} → P(p) → P(prepend{x = x} p))
+    (ps : ∀{x y}{l} → P(swap{x = x}{y = y}{l = l}))
+    (pt : ∀{l₁ l₂ l₃}{p : l₁ permutes l₂}{q : l₂ permutes l₃} → P(p) → P(q) → P(trans p q))
+    where
+
+    permutes-elim : ∀{l₁ l₂} → (p : l₁ permutes l₂) → P(p)
+    permutes-elim empty       = pe
+    permutes-elim (prepend p) = pp(permutes-elim p)
+    permutes-elim swap        = ps
+    permutes-elim (trans p q) = pt (permutes-elim p) (permutes-elim q)
+
   instance
     permutes-reflexivity : Reflexivity(_permutes_ {T = T})
     permutes-reflexivity = intro proof where

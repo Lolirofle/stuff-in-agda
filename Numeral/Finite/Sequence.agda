@@ -173,11 +173,14 @@ module _
     concat-bijective = [∘]-bijective ⦃ bij-f = Either.map-bijective ⦄ ⦃ bij-g = Concatenation.split-bijective ⦄
 
 module LinearSpaceFilling where
+  open import Numeral.Natural.Oper.FlooredDivision
+  open import Numeral.Natural.Oper.Modulo
+
   join : (𝕟(a) ⨯ 𝕟(b)) → 𝕟(a ℕ.⋅ b)
   join = Tuple.uncurry(𝕟.Exact._⋅_)
 
   -- split : 𝕟(a ℕ.⋅ b) → (𝕟(a) ⨯ 𝕟(b))
-  -- split {a}{b} n = ({!n mod a!} , {!n / a!})
+  -- split a@{𝐒 _}{b} n = (ℕ-to-𝕟 ((𝕟-to-ℕ n) mod₀ a) ⦃ {!!} ⦄ , ℕ-to-𝕟 ((𝕟-to-ℕ n) ⌊/⌋₀ a) ⦃ {!!} ⦄) -- TODO: Some kind of division for 𝕟 or a proof that a 𝕟(a ⋅ b) divided by a 𝕟(b) is a 𝕟(a)?
 
 module BaseNumerals where -- TODO: Maybe try to use Numeral.FixedPositional
   -- When interpreting the function as a numeral in a certain base, the parameters mean the following:

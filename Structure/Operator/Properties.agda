@@ -211,3 +211,9 @@ module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T�
   record Central(x : T₁) : Stmt{ℓ₁ Lvl.⊔ ℓₑ₂} where
     constructor intro
     field proof : ∀{y : T₁} → (x ▫ y ≡ y ▫ x)
+
+module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ (_▫₁_ : T₁ → T₁ → T₁) (_▫₂_ : T₁ → T₂ → T₂) where
+  record Compatibility : Stmt{Lvl.of(Type.of(_▫₁_)) Lvl.⊔ Lvl.of(Type.of(_▫₂_)) Lvl.⊔ ℓₑ₂} where
+    constructor intro
+    field proof : Names.Compatibility(_▫₁_)(_▫₂_)
+  compatibility = inst-fn Compatibility.proof

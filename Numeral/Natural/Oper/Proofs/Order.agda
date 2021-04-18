@@ -196,12 +196,22 @@ open import Syntax.Transitivity
   rewrite commutativity(_⋅_) {𝐒(a)}{c}
   = [<]-with-[⋅]ᵣ {c = a}
 
+[≤]-with-[⋅] : ∀{a₁ b₁ a₂ b₂} → (a₁ ≤ a₂) → (b₁ ≤ b₂) → ((a₁ ⋅ b₁) ≤ (a₂ ⋅ b₂))
+[≤]-with-[⋅] {a₁}{b₁}{a₂}{b₂} ab1 ab2 = [≤]-with-[⋅]ₗ {a = a₁} ab2 🝖 [≤]-with-[⋅]ᵣ {c = b₂} ab1
+
 [⋅]ᵣ-growing : ∀{n c} → (1 ≤ c) → (n ≤ (c ⋅ n))
 [⋅]ᵣ-growing {n}{𝐒 c} = [≤]-with-[⋅]ᵣ {1}{𝐒(c)}{n}
 
 [⋅]ᵣ-strictly-growing : ∀{n c} → (2 ≤ c) → (𝐒(n) < (c ⋅ 𝐒(n)))
 [⋅]ᵣ-strictly-growing {n} {1} (succ())
 [⋅]ᵣ-strictly-growing {n} {𝐒(𝐒 c)} = [<]-with-[⋅]ᵣ {1}{𝐒(𝐒(c))}{n}
+
+[⋅]ₗ-growing : ∀{n c} → (1 ≤ c) → (n ≤ (n ⋅ c))
+[⋅]ₗ-growing {n}{𝐒 c} = [≤]-with-[⋅]ₗ {n}{1}{𝐒(c)}
+
+[⋅]ₗ-strictly-growing : ∀{n c} → (2 ≤ c) → (𝐒(n) < (𝐒(n) ⋅ c))
+[⋅]ₗ-strictly-growing {n} {1} (succ())
+[⋅]ₗ-strictly-growing {n} {𝐒(𝐒 c)} = [<]-with-[⋅]ₗ {n}{1}{𝐒(𝐒(c))}
 
 [^]-positive : ∀{a b} → ((𝐒(a) ^ b) > 0)
 [^]-positive {a}{𝟎} = reflexivity(_≤_)
@@ -225,3 +235,8 @@ open import Syntax.Transitivity
 [^]ₗ-growing {𝐒 (𝐒 n)}{a}{b} _ ab with [≤]-to-[<][≡] ab
 ... | [∨]-introₗ p         = sub₂(_<_)(_≤_) ([^]ₗ-strictly-growing {n}{a}{b} p)
 ... | [∨]-introᵣ [≡]-intro = reflexivity(_≤_)
+
+[≤]-of-[!] : ∀{n} → (1 ≤ (n !))
+[≤]-of-[!] {𝟎}   = succ min
+[≤]-of-[!] {𝐒 n} = [≤]-with-[⋅] {1}{1}{𝐒(n)}{n !} (succ min) ([≤]-of-[!] {n})
+
