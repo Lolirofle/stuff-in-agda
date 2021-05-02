@@ -50,8 +50,17 @@ Coprime-of-0-condition {𝐒(𝐒(x))} (intro n1) = n1 Div𝟎 divides-reflexivi
 Coprime-of-1 : Coprime(1)(x)
 Coprime.proof (Coprime-of-1 {x}) {n} n1 nx = [1]-only-divides-[1] n1
 
+Coprime-without-operator : ∀{_▫_ : ℕ → ℕ → ℕ} → (∀{n} → (n ∣ x) → (n ∣ y) → (n ∣ (x ▫ y))) → Coprime(x)(x ▫ y) → Coprime(x)(y)
+Coprime.proof (Coprime-without-operator div (intro proof)) nx ny = proof nx (div nx ny)
+
+Coprime-of-operator : ∀{_▫_ : ℕ → ℕ → ℕ} → (∀{n} → (n ∣ (x ▫ y)) → (n ∣ x) → (n ∣ y)) → Coprime(x)(y) → Coprime(x)(x ▫ y)
+Coprime.proof (Coprime-of-operator {x}{y} div (intro proof)) {n} nx nxy = proof {n} nx (div nxy nx)
+
 Coprime-of-[+] : Coprime(x)(y) → Coprime(x)(x + y)
-Coprime.proof (Coprime-of-[+] {x}{y} (intro proof)) {n} nx nxy = proof {n} nx ([↔]-to-[→] (divides-without-[+] nxy) nx)
+Coprime-of-[+] = Coprime-of-operator{_▫_ = _+_} ([↔]-to-[→] ∘ divides-without-[+])
+
+Coprime-of-[−₀] : (x ≥ y) → Coprime(x)(y) → Coprime(x)(x −₀ y)
+Coprime-of-[−₀] ord = Coprime-of-operator{_▫_ = _−₀_} ([↔]-to-[→] ∘ divides-without-[−₀] ord)
 
 -- Coprimality is obviously equivalent to the greatest common divisor being 1 by definition.
 Coprime-gcd : Coprime(x)(y) ↔ (gcd(x)(y) ≡ 1)

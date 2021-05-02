@@ -7,6 +7,7 @@ open import Data.List.Combinatorics
 open import Data.List.Functions hiding (skip) renaming (module LongOper to List)
 open        Data.List.Functions.LongOper
 open import Data.List.Relation.Permutation
+open import Data.List.Relation.Membership using (_∈_)
 open import Data.List.Relation.Quantification
 open import Data.List.Relation.Quantification.Proofs
 open import Data.List.Relation.Sublist
@@ -44,6 +45,7 @@ private variable l l₁ l₂ : List(T)
 private variable x : T
 private variable n k : ℕ
 
+-- sublists₊(l) are all sublists of l.
 sublists₊-contains-sublists : AllElements (_⊑ l) (sublists₊(l))
 sublists₊-contains-sublists {l = ∅} = ∅
 sublists₊-contains-sublists {l = x ⊰ l} with sublists₊(l) | sublists₊-contains-sublists {l = l}
@@ -53,8 +55,8 @@ sublists₊-contains-sublists {l = x ⊰ l} with sublists₊(l) | sublists₊-co
   p {sl = ∅}     ∅            = ∅
   p {sl = _ ⊰ _} (sll ⊰ alsl) = (skip sll) ⊰ (use sll) ⊰ (p alsl)
 
-{-
-sublists₊-contains-all-nonempty-sublists : ∀{x}{l₁ l₂ : List(T)} → (x ⊰ l₁ ⊑ l₂) → ExistsElement (_≡ x ⊰ l₁) (sublists(l₂))
+{- TODO: Prove [∈]-concat and [∈]-concatMap and all that first
+sublists₊-contains-all-nonempty-sublists : ∀{l₁ l₂ : List(T)} → (l₁ ⊑ l₂) → (l₁ ≡ ∅) ∨ (l₁ ∈ sublists(l₂))
 sublists₊-contains-all-nonempty-sublists {l₁ = l₁} {prepend x l₂} (use p) = ⊰ (• {!!})
 sublists₊-contains-all-nonempty-sublists {l₁ = l₁} {prepend x l₂} (skip p) = ⊰ (⊰ {!sublists₊-contains-all-nonempty-sublists ?!})
 
@@ -65,6 +67,7 @@ sublists-contains-all-sublists {l₁ = prepend x l₁} {prepend .x l₂} (use su
 sublists-contains-all-sublists {l₁ = prepend x l₁} {prepend x₁ l₂} (skip sub) = {!!}
 -}
 
+-- (insertedEverywhere x l) are all permutations of x inserted into l.
 permutes-insertedEverywhere : AllElements (_permutes (x ⊰ l)) (insertedEverywhere x l)
 permutes-insertedEverywhere {x = x} {∅}     = _permutes_.prepend _permutes_.empty ⊰ ∅
 permutes-insertedEverywhere {x = x} {y ⊰ l} = reflexivity(_permutes_) ⊰ AllElements-mapᵣ(y List.⊰_) (p ↦ trans (_permutes_.prepend p) _permutes_.swap) (permutes-insertedEverywhere {x = x} {l})
@@ -84,11 +87,13 @@ AllElements-insertedEverywhere-function _ pperm {l₁ = x ⊰ .(x₁ ⊰ _)} {x�
 AllElements-insertedEverywhere-function t pperm (trans perm₁ perm₂) = AllElements-insertedEverywhere-function t pperm perm₂ ∘ AllElements-insertedEverywhere-function t pperm perm₁
 -}
 
+-- permutations(l) are all permutations of l.
 permutations-contains-permutations : AllElements (_permutes l) (permutations(l))
 permutations-contains-permutations {l = ∅}         = _permutes_.empty ⊰ ∅
 permutations-contains-permutations {l = x ⊰ ∅}     = _permutes_.prepend _permutes_.empty ⊰ ∅
 permutations-contains-permutations {l = x ⊰ y ⊰ l} = AllElements-concatMap(insertedEverywhere x) (perm ↦ AllElements-of-transitive-binary-relationₗ (_permutes_.prepend perm) permutes-insertedEverywhere) (permutations-contains-permutations {l = y ⊰ l})
 
+-- The number of unique sublists excluding the empty list.
 sublists₊-length : length(sublists₊ l) ≡ (2 ^ (length l)) −₀ 1
 sublists₊-length {l = ∅} = [≡]-intro
 sublists₊-length {l = x ⊰ l} =
@@ -104,6 +109,7 @@ sublists₊-length {l = x ⊰ l} =
   𝐒(2 ^ length(x ⊰ l)) −₀ 2      🝖[ _≡_ ]-[]
   (2 ^ length (x ⊰ l)) −₀ 1      🝖-end
 
+-- The number of unique sublists.
 sublists-length : length(sublists l) ≡ 2 ^ (length l)
 sublists-length {l = l} =
   length(sublists l)      🝖[ _≡_ ]-[]
@@ -113,6 +119,7 @@ sublists-length {l = l} =
   𝐒(2 ^ length(l)) −₀ 1   🝖[ _≡_ ]-[]
   2 ^ length(l)           🝖-end
 
+-- The number of unique combinations is computed by 𝑐𝐶.
 combinations-length : length(combinations k l) ≡ 𝑐𝐶(length(l))(k)
 combinations-length {0}   {l = _} = [≡]-intro
 combinations-length {𝐒 k} {l = ∅} = [≡]-intro
@@ -135,7 +142,7 @@ combinations-length {𝐒(𝐒 k)} {l = x ⊰ l} =
 
 repeatableCombinations-length : length(repeatableCombinations k l) ≡ 𝑐𝐶((length(l) + k) −₀ 1)(k)
 repeatableCombinations-length {0}      {l = _} = [≡]-intro
-repeatableCombinations-length {1}      {l = x ⊰ l} = [≡]-intro
+repeatableCombinations-length {1}      {l = x ⊰ l} = congruence₁(𝐒) (symmetry(_≡_) (𝑐𝐶-singleton-subsets{length l}))
 repeatableCombinations-length {𝐒 k}    {l = ∅} = symmetry(_≡_) (𝑐𝐶-larger-subsets{k}{𝐒(k)} (reflexivity(_≤_)))
 repeatableCombinations-length {𝐒(𝐒 k)} {l = x ⊰ l} =
   length (repeatableCombinations (𝐒(𝐒 k)) (x ⊰ l))                                                        🝖[ _≡_ ]-[]

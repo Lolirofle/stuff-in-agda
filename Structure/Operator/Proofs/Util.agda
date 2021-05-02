@@ -66,6 +66,12 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
     (b ▫ a) ▫ c 🝖-[ associativity(_▫_) ]
     b ▫ (a ▫ c) 🝖-end
 
+  commuteₗ-assocₗ : let _ = op , assoc , comm in ∀{a b c} → (((a ▫ b) ▫ c) ≡ ((b ▫ c) ▫ a))
+  commuteₗ-assocₗ {a}{b}{c} =
+    (a ▫ b) ▫ c 🝖-[ associativity(_▫_) ]
+    a ▫ (b ▫ c) 🝖-[ commutativity(_▫_) ]
+    (b ▫ c) ▫ a 🝖-end
+
   commuteᵣ-assocᵣ : let _ = op , assoc , comm in ∀{a b c} → ((a ▫ (b ▫ c)) ≡ ((a ▫ c) ▫ b))
   commuteᵣ-assocᵣ = symmetry(_≡_) (associativity(_▫_)) 🝖 commuteᵣ-assocₗ
 

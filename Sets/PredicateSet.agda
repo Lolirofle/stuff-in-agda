@@ -26,7 +26,7 @@ module _ where
   PredSet{ℓ}{ℓₒ} (T) = (T → Stmt{ℓ})
 
   private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓₒ ℓₑ : Lvl.Level
-  private variable T A B : Type{ℓₒ}
+  private variable T A B I : Type{ℓₒ}
 
   -- The statement of whether an element is in a set
   -- TODO: Maybe define this using a equivalence relation instead? (Alternatively a Setoid: x ∈ S = ∃(y ↦ (x ≡_T y) ∧ S(y)))
@@ -75,8 +75,12 @@ module _ where
   _∩_ S₁ S₂ x = (S₁(x) ∧ S₂(x))
 
   -- A complement of a set
-  ∁_ : PredSet{ℓ}(T) → PredSet(T)
-  ∁_ = (¬_) ∘_ -- ∁_ S x = (¬ S(x))
+  ∁ : PredSet{ℓ}(T) → PredSet(T)
+  ∁ = (¬_) ∘_ -- ∁_ S x = (¬ S(x))
+
+  -- A symmetric difference of two sets.
+  _▵_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → PredSet(T)
+  _▵_ S₁ S₂ x = (S₁(x) ⊕ S₂(x))
 
   _∖_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → PredSet(T)
   _∖_ S₁ S₂ = (S₁ ∩ (∁ S₂))
@@ -110,11 +114,17 @@ module _ where
   Overlapping : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → Stmt
   Overlapping S₁ S₂ = ∃(S₁ ∩ S₂)
 
-  ⋃_ : PredSet{ℓ₁}(PredSet{ℓ₂}(T)) → PredSet(T)
-  ⋃_ S x = ∃(s ↦ (s ∈ S) ∧ (x ∈ s))
+  ⋃ : PredSet{ℓ₁}(PredSet{ℓ₂}(T)) → PredSet(T)
+  ⋃ S x = ∃(s ↦ (s ∈ S) ∧ (x ∈ s))
 
-  ⋂_ : PredSet{ℓ₁}(PredSet{ℓ₂}(T)) → PredSet(T)
-  ⋂_ S x = ∀{s} → (s ∈ S) → (x ∈ s)
+  ⋂ : PredSet{ℓ₁}(PredSet{ℓ₂}(T)) → PredSet(T)
+  ⋂ S x = ∀{s} → (s ∈ S) → (x ∈ s)
+
+  ⋃ᵢ : (I → PredSet{ℓ}(T)) → PredSet(T)
+  ⋃ᵢ f x = ∃(i ↦ x ∈ f(i))
+
+  ⋂ᵢ : (I → PredSet{ℓ}(T)) → PredSet(T)
+  ⋂ᵢ f x = ∀ₗ(i ↦ x ∈ f(i))
 
   ℘ : PredSet{ℓ₁}(T) → PredSet(PredSet{ℓ₁}(T))
   ℘ S x = x ⊆ S
@@ -162,6 +172,9 @@ module _ where
       Equiv.equivalence [≡]-equiv = {![≡]-equivalence!}
     -}
 
+    [⊇][⊆]-to-[≡] : (S₁ ⊇ S₂) → (S₁ ⊆ S₂) → (S₁ ≡ S₂)
+    [⊇][⊆]-to-[≡] super sub {x} = [↔]-intro (super{x}) (sub{x})
+
     [≡]-to-[⊆] : (S₁ ≡ S₂) → (S₁ ⊆ S₂)
     [≡]-to-[⊆] S₁S₂ {x} = [↔]-to-[→] (S₁S₂{x})
 
@@ -195,16 +208,16 @@ module _ where
     -- map-containmentᵣ : ⦃ _ : Relation(S) ⦄ → ∀{f : A → B} → ⦃ _ : Injective(f) ⦄ → ∀{x : A} → (f(x) ∈ map f(S)) → (x ∈ S)
     -- map-containmentᵣ {x = x} = ([∃]-intro a ⦃ [∧]-intro p q ⦄) ↦ {!!}
 
-    [⋂]-of-[∅] : ((⋂_ {ℓ₁}{ℓ₂} ∅) ≡ 𝐔 {ℓ₃}{ℓ₄}{T})
+    [⋂]-of-[∅] : ((⋂ {ℓ₁}{ℓ₂} ∅) ≡ 𝐔 {ℓ₃}{ℓ₄}{T})
     [⋂]-of-[∅] = [↔]-intro (const empty) (const <>)
 
-    [⋂]-of-[𝐔] : ((⋂_ {ℓ₁}{ℓ₂} 𝐔) ≡ ∅ {ℓ₂}{ℓ₃}{T})
+    [⋂]-of-[𝐔] : ((⋂ {ℓ₁}{ℓ₂} 𝐔) ≡ ∅ {ℓ₂}{ℓ₃}{T})
     [⋂]-of-[𝐔] {ℓ₁}{ℓ₂}{ℓ₃}{T} = [↔]-intro empty (inters ↦ inters([𝐔]-containment{x = ∅ {ℓ₂}{ℓ₃}{T}}))
 
-    [⋃]-of-[∅] : ((⋃_ {ℓ₁}{ℓ₂} ∅) ≡ ∅ {ℓ₁}{ℓ₃}{T})
+    [⋃]-of-[∅] : ((⋃ {ℓ₁}{ℓ₂} ∅) ≡ ∅ {ℓ₁}{ℓ₃}{T})
     [⋃]-of-[∅] = [↔]-intro empty (([∃]-intro s ⦃ [∧]-intro p _ ⦄) ↦ p)
 
-    [⋃]-of-[𝐔] : ((⋃_ {ℓ₁}{ℓ₂} 𝐔) ≡ 𝐔 {ℓ₃}{ℓ₄}{T})
+    [⋃]-of-[𝐔] : ((⋃ {ℓ₁}{ℓ₂} 𝐔) ≡ 𝐔 {ℓ₃}{ℓ₄}{T})
     [⋃]-of-[𝐔] {ℓ₁}{ℓ₂}{ℓ₃}{T} = [↔]-intro (const ([∃]-intro 𝐔 ⦃ [↔]-intro <> <> ⦄)) (const <>)
 
     LvlUp-set-equality : (Lvl.Up{ℓ} ∘ S ≡ S)
@@ -233,6 +246,7 @@ module _ where
     [∖][∪]-is-[∪]ᵣ : (((a ∖ b) ∪ b) ⊆ (a ∪ b))
     [∖][∪]-is-[∪]ᵣ {a = A}{b = B}{x = x} = [∨]-elim ([∨]-introₗ ∘ [∧]-elimₗ) [∨]-introᵣ
 
+    import      Data.Tuple as Tuple
     open import Logic.Classical
     [∖][∪]-is-[∪] : ⦃ ∀{x} → Classical(b(x)) ⦄ → (((a ∖ b) ∪ b) ≡ (a ∪ b))
     [∖][∪]-is-[∪] {b = B}{a = A}{x = x} = [↔]-intro
@@ -241,3 +255,40 @@ module _ where
 
     [∪][∖]-invertᵣ-[⊆] : (a ⊆ (b ∪ c)) → ((a ∖ c) ⊆ b)
     [∪][∖]-invertᵣ-[⊆] abc ([∧]-intro a nc) = [∨]-elim id ([⊥]-elim ∘ nc) (abc a)
+
+    overlapping-super : (a₁ ⊆ a₂) → (b₁ ⊆ b₂) → Overlapping(a₁)(b₁) → Overlapping(a₂)(b₂)
+    overlapping-super sub-a sub-b = [∃]-map-proof ([∧]-map sub-a sub-b)
+
+    disjoint-sub : (a₁ ⊇ a₂) → (b₁ ⊇ b₂) → Disjoint(a₁)(b₁) → Disjoint(a₂)(b₂)
+    disjoint-sub sub13 sub24 disj = disj ∘ [∧]-map sub13 sub24
+
+    [∩]-commutativity : (a ∩ b) ≡ (b ∩ a)
+    [∩]-commutativity = [↔]-intro [∧]-symmetry [∧]-symmetry
+
+    Overlapping-symmetry : Overlapping(a)(b) → Overlapping(b)(a)
+    Overlapping-symmetry {a = a}{b = b} = [∃]-map-proof (\{x} → [↔]-to-[→] ([∩]-commutativity {a = a}{b = b}{x = x}))
+
+    module _ ⦃ classical : ∀{ℓ}{P : Type{ℓ}} → Classical(P) ⦄ where
+      disjoint-xor-overlapping : Disjoint(a)(b) ⊕ Overlapping(a)(b)
+      disjoint-xor-overlapping {a = a}{b = b} = [⊕]-or-not-both or (Tuple.uncurry nand) where
+        or : Disjoint(a)(b) ∨ Overlapping(a)(b)
+        or = [¬→]-disjunctive-formᵣ \nd → [∃]-map-proof ([¬¬]-elim ⦃ classical ⦄) ([¬∀]-to-[∃¬] ⦃ classical ⦄ nd) -- TODO: Not really neccessary to use classical so many times
+        nand : Disjoint(a)(b) → Overlapping(a)(b) → ⊥
+        nand d o = d([∃]-proof o)
+
+      [⊆]-to-disjoint-complement : (a ⊆ b) ↔ Disjoint(a)(∁ b)
+      [⊆]-to-disjoint-complement = [↔]-intro left right where
+        left : (a ⊆ b) ← Disjoint(a)(∁ b)
+        left disj xE₁ = [¬¬]-elim (nxE₂ ↦ disj([∧]-intro xE₁ nxE₂))
+
+        right : (a ⊆ b) → Disjoint(a)(∁ b)
+        right pe ([∧]-intro xE₁ x∁E₂) = x∁E₂(pe xE₁)
+
+      [⊆]-complement-to-disjoint : (a ⊆ (∁ b)) ↔ Disjoint(a)(b)
+      [⊆]-complement-to-disjoint {a = a}{b = b} = [↔]-transitivity ([⊆]-to-disjoint-complement{a = a}{b = ∁ b}) ([↔]-intro (disjoint-sub id [¬¬]-elim) (disjoint-sub id [¬¬]-intro))
+
+      [⊈]-to-overlapping-complement : ¬(a ⊆ b) ↔ Overlapping(a)(∁ b)
+      [⊈]-to-overlapping-complement = [↔]-transitivity ([¬]-unaryOperator [⊆]-to-disjoint-complement) ([⊕]-right-[↔] disjoint-xor-overlapping)
+
+      [⊈]-complement-to-overlapping : ¬(a ⊆ (∁ b)) ↔ Overlapping(a)(b)
+      [⊈]-complement-to-overlapping = [↔]-transitivity ([¬]-unaryOperator [⊆]-complement-to-disjoint) ([⊕]-right-[↔] disjoint-xor-overlapping)

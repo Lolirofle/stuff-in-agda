@@ -26,8 +26,6 @@ open import Syntax.Transitivity
 open import Type.Properties.MereProposition
 open import Type
 
--- TODO: A method for pattern matching: https://stackoverflow.com/questions/20682013/agda-why-am-i-unable-to-pattern-match-on-refl
-
 instance
   [≤]-succ-injectivity : ∀{x y} → Injective(succ{x}{y})
   Injective.proof [≤]-succ-injectivity [≡]-intro = [≡]-intro
@@ -111,11 +109,11 @@ instance
     proof {𝐒(a)}{𝐒(b)} = [∨]-elim ([∨]-introₗ ∘ (proof ↦ [≤]-with-[𝐒] {a}{b} ⦃ proof ⦄)) ([∨]-introᵣ ∘ (proof ↦ [≤]-with-[𝐒] {b}{a} ⦃ proof ⦄)) (proof {a}{b})
 
 instance
-  [≤]-weakPartialOrder : Weak.PartialOrder (_≤_) (_≡_)
+  [≤]-weakPartialOrder : Weak.PartialOrder(_≤_)
   [≤]-weakPartialOrder = record{}
 
 instance
-  [≤]-weakTotalOrder : Weak.TotalOrder (_≤_) (_≡_)
+  [≤]-weakTotalOrder : Weak.TotalOrder(_≤_)
   [≤]-weakTotalOrder = record{}
 
 instance
@@ -135,11 +133,11 @@ instance
   ConverseTotal.proof([≥]-totality) = ConverseTotal.proof([≤]-totality)
 
 instance
-  [≥]-weakPartialOrder : Weak.PartialOrder (_≥_) (_≡_)
+  [≥]-weakPartialOrder : Weak.PartialOrder(_≥_)
   [≥]-weakPartialOrder = record{}
 
 instance
-  [≥]-weakTotalOrder : Weak.TotalOrder (_≥_) (_≡_)
+  [≥]-weakTotalOrder : Weak.TotalOrder(_≥_)
   [≥]-weakTotalOrder = record{}
 
 [≥]-to-[≮] : ∀{a b : ℕ} → (a ≮ b) ← (a ≥ b)
@@ -192,7 +190,7 @@ instance
   [<]-strictPartialOrder = record{}
 
 instance
-  [<]-strictTotalOrder : Strict.TotalOrder (_<_)(_≡_)
+  [<]-strictTotalOrder : Strict.TotalOrder(_<_)
   [<]-strictTotalOrder = record{}
 
 instance

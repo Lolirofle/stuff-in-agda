@@ -97,7 +97,7 @@ DivRem𝐒Alt{x}{𝐒(y)}{r} xy = [≡]-substitutionᵣ ([↔]-to-[→] ([−₀
 -- Every pair of numbers (positive divisor) when divided will yield a remainder and there is always a proof of it being the case.
 -- This is an alternative way of constructing the modulo operator.
 [∣ᵣₑₘ]-existence-alt : ∀{x y} → ∃(𝐒(y) ∣ᵣₑₘ x)
-[∣ᵣₑₘ]-existence-alt {x} {y} = [ℕ]-strong-induction {φ = x ↦ ∃(𝐒(y) ∣ᵣₑₘ x)} base step {x} where
+[∣ᵣₑₘ]-existence-alt {x} {y} = ℕ-strong-induction {φ = x ↦ ∃(𝐒(y) ∣ᵣₑₘ x)} base step {x} where
   base : ∃(𝐒(y) ∣ᵣₑₘ 𝟎)
   base = [∃]-intro 𝟎 ⦃ DivRem𝟎 ⦄
 

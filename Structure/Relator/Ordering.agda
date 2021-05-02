@@ -7,8 +7,10 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 open import Logic.Propositional.Theorems
+open import Structure.Relator
 open import Structure.Relator.Properties
   hiding (antisymmetry ; asymmetry ; transitivity ; reflexivity ; irreflexivity ; trichotomy)
+open import Structure.Setoid
 open import Type
 open import Type.Properties.Empty
 
@@ -16,20 +18,22 @@ private variable ℓ₁ ℓ₂ ℓ₃ ℓ₄ : Lvl.Level
 
 -- A weak order formalizes both "less or equals"-relations and "greater or equals"-relations.
 module Weak {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
-  record PartialOrder (_≡_ : T → T → Stmt{ℓ₃}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+  record PartialOrder ⦃ equiv : Equiv{ℓ₃}(T) ⦄ : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
-     ⦃ antisymmetry ⦄ : Antisymmetry(_≤_)(_≡_)
-     ⦃ transitivity ⦄ : Transitivity(_≤_)
-     ⦃ reflexivity ⦄  : Reflexivity (_≤_)
+      ⦃ relator ⦄      : BinaryRelator(_≤_)
+      ⦃ antisymmetry ⦄ : Antisymmetry(_≤_)(_≡_)
+      ⦃ transitivity ⦄ : Transitivity(_≤_)
+      ⦃ reflexivity ⦄  : Reflexivity (_≤_)
 
   -- A weak total order is a weak partial order where all objects are ordered.
   -- Also called: Weak Linear order
-  record TotalOrder (_≡_ : T → T → Stmt{ℓ₃}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+  record TotalOrder ⦃ equiv : Equiv{ℓ₃}(T) ⦄ : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
-     ⦃ partialOrder ⦄ : PartialOrder(_≡_)
-     ⦃ totality ⦄     : ConverseTotal(_≤_)
+      ⦃ partialOrder ⦄ : PartialOrder
+      ⦃ totality ⦄     : ConverseTotal(_≤_)
+    open PartialOrder(partialOrder) public
 
   module Properties where
     -- A left extremum is an object which is one of the left-most in the order of all objects.
@@ -63,20 +67,22 @@ module Weak {T : Type{ℓ₁}} (_≤_ : T → T → Stmt{ℓ₂}) where
     max = extremeᵣ
 
 module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
-  record PartialOrder : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+  record PartialOrder ⦃ equiv : Equiv{ℓ₃}(T) ⦄ : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
-     ⦃ transitivity ⦄  : Transitivity  (_<_)
-     ⦃ asymmetry ⦄     : Asymmetry     (_<_)
-     ⦃ irreflexivity ⦄ : Irreflexivity (_<_)
+      ⦃ relator ⦄      : BinaryRelator(_<_)
+      ⦃ transitivity ⦄  : Transitivity  (_<_)
+      ⦃ asymmetry ⦄     : Asymmetry     (_<_)
+      ⦃ irreflexivity ⦄ : Irreflexivity (_<_)
 
   -- A strict total order is a strict partial order where all objects are ordered.
   -- Also called: Strict linear order
-  record TotalOrder(_≡_ : T → T → Stmt{ℓ₃}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+  record TotalOrder ⦃ equiv : Equiv{ℓ₃}(T) ⦄ : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
-     ⦃ partialOrder ⦄ : PartialOrder
-     ⦃ trichotomy ⦄   : ConverseTrichotomy(_<_)(_≡_)
+      ⦃ partialOrder ⦄ : PartialOrder
+      ⦃ trichotomy ⦄   : ConverseTrichotomy(_<_)(_≡_)
+    open PartialOrder(partialOrder) public
 
   module Properties where
     -- An ordering of a type is dense when there is an object inbetween every pair of objects with respect to its order.
@@ -108,11 +114,11 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
     accessible-recursion : ∀{U : T → Type{ℓ₃}} → ((x : T) → ((prev : T) → ⦃ _ : (prev < x) ⦄ → U(prev)) → U(x)) → ((x : T) → ⦃ _ : Accessibleₗ(x) ⦄ → U(x))
     accessible-recursion previous x ⦃ intro ⦄ = previous x (\x → accessible-recursion previous x)
 
-    open import Relator.Equals
+    open import Relator.Equals renaming (_≡_ to _≡ₑ_)
     accessible-recursion-intro : ∀{P : T → Type{ℓ₃}}{rec : ∀(x) → _ → P(x)}{φ : ∀{x} → P(x) → Type{ℓ₄}}
                                → (∀(y) ⦃ acc-y : Accessibleₗ(y)⦄
                                  → (∀{x} → ⦃ xy : x < y ⦄ → φ{x}(accessible-recursion rec x ⦃ Accessibleₗ.proof acc-y {x} ⦄))
-                                 → (∀{x} → ⦃ xy : x < y ⦄ → (accessible-recursion rec y ≡ rec y (\x → accessible-recursion rec x ⦃ Accessibleₗ.proof acc-y {x} ⦄)))
+                                 → (∀{x} → ⦃ xy : x < y ⦄ → (accessible-recursion rec y ≡ₑ rec y (\x → accessible-recursion rec x ⦃ Accessibleₗ.proof acc-y {x} ⦄)))
                                  → φ{y}(accessible-recursion rec y)
                                )
                                → (∀{x} → ⦃ acc : Accessibleₗ(x) ⦄ → φ(accessible-recursion{U = P} rec x))
@@ -145,15 +151,16 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
     wellfounded-recursion-intro : ⦃ wf : WellFounded ⦄ → ∀{P : T → Type{ℓ₃}}{rec : ∀(x) → _ → P(x)}{φ : ∀{x} → P(x) → Type{ℓ₄}}
                                 → (∀(y)
                                   → (∀{x} → ⦃ xy : x < y ⦄ → φ{x}(wellfounded-recursion rec x))
-                                  → (∀{x} → ⦃ xy : x < y ⦄ → (accessible-recursion rec y ≡ rec y (\x → wellfounded-recursion rec x)))
+                                  → (∀{x} → ⦃ xy : x < y ⦄ → (accessible-recursion rec y ≡ₑ rec y (\x → wellfounded-recursion rec x)))
                                   → φ{y}(accessible-recursion rec y)
                                 )
                                 → (∀{x} → φ(accessible-recursion{U = P} rec x))
     wellfounded-recursion-intro{φ = φ} step = accessible-recursion-intro{φ = φ} (\x → step x)
 
   -- A well-ordering is a well-founded strict total order
-  record WellOrder(_≡_ : T → T → Stmt{ℓ₃}) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+  record WellOrder ⦃ equiv : Equiv{ℓ₃}(T) ⦄ : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     instance constructor intro
     field
-     ⦃ totalOrder ⦄  : TotalOrder(_≡_)
-     ⦃ wellfounded ⦄ : Properties.WellFounded
+      ⦃ totalOrder ⦄  : TotalOrder
+      ⦃ wellfounded ⦄ : Properties.WellFounded
+    open TotalOrder(totalOrder) public

@@ -124,7 +124,6 @@ open import Structure.Relator
 
 -- TODO: Move the postulates below
 postulate divides-[⌊/⌋] : ∀{a b c} ⦃ pos : Positive(c) ⦄ → (c ∣ a) → (a ∣ b) → ((a ⌊/⌋ c) ∣ (b ⌊/⌋ c))
-postulate [⋅]-positive : ∀{a b} → ⦃ Positive(a) ⦄ → ⦃ Positive(b) ⦄ → Positive(a ⋅ b)
 postulate [⌊/⌋][⋅]ₗ-compatibility : ∀{a b c} ⦃ pos : Positive(c) ⦄ → (c ∣ a) → (((a ⋅ b) ⌊/⌋ c) ≡ (a ⌊/⌋ c) ⋅ b)
 postulate [⌊/⌋][⋅]ᵣ-compatibility : ∀{a b c} ⦃ pos : Positive(c) ⦄ → (c ∣ a) → (((a ⋅ b) ⌊/⌋ c) ≡ a ⋅ (b ⌊/⌋ c))
 
@@ -154,7 +153,7 @@ mod-congruence-scale-modulus {m} ⦃ pos ⦄ {a}{b}{c} = [↔]-transitivity  ([�
     (m ⌊/⌋ gcd c m) ⦃ _ ⦄ ∣ ((c ⌊/⌋ gcd c m) ⦃ pgcd ⦄ ⋅ (a 𝄩 b)) ⇒-[ swap(coprime-divides-of-[⋅] {(m ⌊/⌋ gcd c m) ⦃ _ ⦄}{(c ⌊/⌋ gcd c m) ⦃ _ ⦄}{a 𝄩 b}) (symmetry(Coprime) ([⌊/⌋]-gcd-coprime{c}{m} ([∨]-introᵣ pos))) ]
     ((m ⌊/⌋ gcd c m) ⦃ _ ⦄ ∣ (a 𝄩 b))                            ⇒-end
 
-postulate mod-congruence-scale : ∀{m} ⦃ pos-m : Positive(m) ⦄ {c} ⦃ pos-c : Positive(c) ⦄ → ∀{a b} → (a ≡ b [mod m ]) → (c ⋅ a ≡ c ⋅ b [mod(c ⋅ m)]) ⦃ [⋅]-positive {c}{m} ⦄
+postulate mod-congruence-scale : ∀{m} ⦃ pos-m : Positive(m) ⦄ {c} ⦃ pos-c : Positive(c) ⦄ → ∀{a b} → (a ≡ b [mod m ]) → (c ⋅ a ≡ c ⋅ b [mod(c ⋅ m)]) ⦃ [⋅]-positive {c}{m} infer infer ⦄
 
 postulate mod-congruence-divide : ∀{m} ⦃ pos-m : Positive(m) ⦄ {c} ⦃ pos-c : Positive(c) ⦄ → (c ∣ m) → ∀{a b} → (c ∣ a) → (c ∣ b) → (a ≡ b [mod m ]) → (a ⌊/⌋ c ≡ b ⌊/⌋ c [mod(m ⌊/⌋ c)]) ⦃ [⌊/⌋]-positive {m}{c} ⦄
 

@@ -33,14 +33,15 @@ module _
     open VectorSpace(vectorSpace)
       renaming (ring to ringₛ)
       public
+    -- TODO: open BilinearOperator([⋅ᵥ]-bilinearity) public
+
+    instance
+      preRgᵥ : PreRg(_+ᵥ_)(_⋅ᵥ_)
+      PreRg.[⋅][+]-distributivityₗ preRgᵥ = BilinearOperator.[+ᵥ]-distributivityₗ vectorSpace (_⋅ᵥ_) [⋅ᵥ]-bilinearity
+      PreRg.[⋅][+]-distributivityᵣ preRgᵥ = BilinearOperator.[+ᵥ]-distributivityᵣ vectorSpace (_⋅ᵥ_) [⋅ᵥ]-bilinearity
 
     ringᵥ : ⦃ Associativity(_⋅ᵥ_) ⦄ → ⦃ ∃(Identity(_⋅ᵥ_)) ⦄ → Ring(_+ᵥ_)(_⋅ᵥ_)
-    Rng.[+]-commutative-group    (Ring.rng   ringᵥ) = vectorCommutativeGroup
-    Rng.[⋅]-binary-operator      (Ring.rng   ringᵥ) = BilinearMap.binaryOperator [⋅ᵥ]-bilinearity
-    Rng.[⋅]-associativity        (Ring.rng   ringᵥ) = infer
-    Rng.[⋅][+]-distributivityₗ   (Ring.rng   ringᵥ) = BilinearOperator.[+ᵥ]-distributivityₗ vectorSpace (_⋅ᵥ_) [⋅ᵥ]-bilinearity
-    Rng.[⋅][+]-distributivityᵣ   (Ring.rng   ringᵥ) = BilinearOperator.[+ᵥ]-distributivityᵣ vectorSpace (_⋅ᵥ_) [⋅ᵥ]-bilinearity
-    Unity.[⋅]-identity-existence (Ring.unity ringᵥ) = infer
+    Monoid.binary-operator (Ring.[⋅]-monoid ringᵥ) = BilinearMap.binaryOperator [⋅ᵥ]-bilinearity
 
   -- TODO: I found some conflicting definitions for a star algebra from different sources. What is a reasonable definition?
   record ⋆-algebra (_⋆ᵥ : V → V) (_⋆ₛ : S → S) : Type{ℓₛₑ Lvl.⊔ ℓₛ Lvl.⊔ ℓᵥₑ Lvl.⊔ ℓᵥ} where

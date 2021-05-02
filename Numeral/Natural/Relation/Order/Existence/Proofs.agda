@@ -60,11 +60,11 @@ instance
       c             🝖-end
 
 instance
-  [≤]-reflexivity : Reflexivity (_≤_)
+  [≤]-reflexivity : Reflexivity(_≤_)
   Reflexivity.proof [≤]-reflexivity = [≡]-to-[≤] [≡]-intro
 
 instance
-  [≤]-antisymmetry : Antisymmetry (_≤_) (_≡_)
+  [≤]-antisymmetry : Antisymmetry(_≤_)(_≡_)
   Antisymmetry.proof [≤]-antisymmetry {a} {b} ([∃]-intro(n₁) ⦃ an₁b ⦄) ([∃]-intro(n₂) ⦃ bn₂a ⦄) =
     a      🝖[ _≡_ ]-[]
     a + 𝟎  🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(a) n₁0 ]-sym
@@ -83,7 +83,7 @@ instance
       n₁0 = [∧]-elimₗ ([+]-sum-is-0 {n₁} {n₂} n₁n₂0)
 
 instance
-  [≤]-weakPartialOrder : Weak.PartialOrder (_≤_) (_≡_)
+  [≤]-weakPartialOrder : Weak.PartialOrder(_≤_)
   [≤]-weakPartialOrder = record{}
 
 [<]-minimum : ∀{x : ℕ} → (0 < 𝐒(x))

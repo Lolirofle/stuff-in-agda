@@ -17,6 +17,7 @@ open import Logic.Classical
 open import Logic.Predicate
 open import Logic.Propositional
 open import Numeral.Natural
+open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
 open import Type.Properties.Decidable
 open import Type.Properties.Empty
@@ -27,7 +28,7 @@ open import Type
 private variable ℓ ℓₚ : Lvl.Level
 private variable A B C P Q R T : Type{ℓ}
 private variable b b₁ b₂ d : Bool
-private variable f : A → B
+private variable f g : A → B
 
 module _ (P : Stmt{ℓ}) where
   decider-classical : ⦃ dec : Decider₀(P)(d) ⦄ → Classical(P)
@@ -102,3 +103,8 @@ instance
   IsTrue-decider : Decider₀(IsTrue(b))(b)
   IsTrue-decider {𝑇} = true <>
   IsTrue-decider {𝐹} = false id
+
+decider-relator : (P ↔ Q) → (b₁ ≡ b₂) → Decider₀(P)(b₁) ↔ Decider₀(Q)(b₂)
+decider-relator pq [≡]-intro  = [↔]-intro
+  (\{(true q) → true([↔]-to-[←] pq q) ; (false nq) → false(nq ∘ [↔]-to-[→] pq)})
+  (\{(true p) → true([↔]-to-[→] pq p) ; (false np) → false(np ∘ [↔]-to-[←] pq)})

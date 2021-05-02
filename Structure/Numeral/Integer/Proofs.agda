@@ -49,7 +49,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(Z) ⦄ ⦃ int : Integer ⦃ equiv ⦄ (_+_)(
   ... | Right pos = positive-induction pz ps pos
 
   [⋅]-commutativity : Commutativity(_⋅_)
-  [⋅]-commutativity = intro(induction{P = x ↦ ∀{y} → (x ⋅ y ≡ y ⋅ x)} ⦃ {!!} ⦄ base (const pred) (const succ)) where
+  [⋅]-commutativity = intro(induction{P = x ↦ ∀{y} → (x ⋅ y ≡ y ⋅ x)} ⦃ {![∘]-unaryRelator!} ⦄ base (const pred) (const succ)) where
     base : ∀{y} → (𝟎 ⋅ y ≡ y ⋅ 𝟎)
     base{y} =
       𝟎 ⋅ y 🝖[ _≡_ ]-[ absorberₗ(_⋅_)(𝟎) ]
@@ -78,19 +78,6 @@ module _ ⦃ equiv : Equiv{ℓₑ}(Z) ⦄ ⦃ int : Integer ⦃ equiv ⦄ (_+_)(
       y ⋅ (x + 𝟏)       🝖[ _≡_ ]-[]
       y ⋅ 𝐒(x)          🝖-end
 
-  [≤]-identities : (𝟎 ≤ 𝟏)
-  [≤]-identities with converseTotal(_≤_) {𝟎}{− 𝟏}
-  ... | Left omi =
-    omi ⇒
-    (𝟎 ≤ (− 𝟏))           ⇒-[ swap apply₂ [≤][⋅]-zero ]
-    (𝟎 ≤ ((− 𝟏) ⋅ (− 𝟏))) ⇒-[ _🝖 sub₂(_≡_)(_≤_) [⋅]-of-[−]  ]
-    (𝟎 ≤ (𝟏 ⋅ 𝟏))         ⇒-[ _🝖 sub₂(_≡_)(_≤_) (identityₗ(_⋅_)(𝟏))  ]
-    (𝟎 ≤ 𝟏)               ⇒-end
-  ... | Right mio = [↔]-to-[←] [≤]-flip-positive mio
-
-  [<]-identities : (𝟎 < 𝟏)
-  [<]-identities = [≤][≢]-to-[<] [≤]-identities (NonZero.proof distinct-identities ∘ symmetry(_≡_))
-
   𝐒-of-𝟎 : 𝐒(𝟎) ≡ 𝟏
   𝐒-of-𝟎 =
     𝐒(𝟎)  🝖[ _≡_ ]-[]
@@ -101,8 +88,6 @@ module _ ⦃ equiv : Equiv{ℓₑ}(Z) ⦄ ⦃ int : Integer ⦃ equiv ⦄ (_+_)(
     postulate 𝐒-function : Function(𝐒)
     -- 𝐒-function = {!!}
 
-  instance
-    postulate [<]-relator : BinaryRelator(_<_)
     -- [<]-relator = {![¬]-binaryRelator!}
 
   [≤]-with-𝐒 : ∀{x y} → (x ≤ y) → (𝐒(x) ≤ 𝐒(y))

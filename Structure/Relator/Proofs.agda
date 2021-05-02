@@ -97,6 +97,9 @@ module _
 [→]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : A → Stmt{ℓₗ₁}}{Q : A → Stmt{ℓₗ₂}} → ⦃ rel-P : UnaryRelator(P) ⦄ → ⦃ rel-Q : UnaryRelator(Q) ⦄ → UnaryRelator(\x → P(x) → Q(x))
 UnaryRelator.substitution ([→]-unaryRelator {P = P}{Q = Q}) xy pxqx py = substitute₁(Q) xy (pxqx(substitute₁(P) (symmetry(_≡_) xy) py))
 
+[→]-dependent-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : B → A → Stmt{ℓₗ₁}} → ((b : B) → UnaryRelator(P(b))) → UnaryRelator(\a → (b : B) → P(b)(a))
+UnaryRelator.substitution ([→]-dependent-unaryRelator rel) xy px b = UnaryRelator.substitution (rel b) xy (px b)
+
 [∀]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : B → A → Stmt{ℓₗ₁}} → ⦃ rel-P : ∀{x} → UnaryRelator(P(x)) ⦄ → UnaryRelator(\y → ∀{x} → P(x)(y))
 UnaryRelator.substitution ([∀]-unaryRelator {P = P}) {x} {a} xy px {b} = substitute₁ (P b) xy px
 
@@ -135,3 +138,6 @@ instance
 -- TODO: Temporary until substitution is a specialization of congruence
 [¬]-binaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ ⦃ _ : Equiv{ℓₗ₃}(B) ⦄ {P : A → B → Stmt{ℓₗ₁}} → ⦃ rel-P : BinaryRelator(P) ⦄ → BinaryRelator(\x y → ¬ P(x)(y))
 BinaryRelator.substitution ([¬]-binaryRelator {P = P}) xy₁ xy₂ npx py = npx(substitute₂(P) (symmetry(_≡_) xy₁) (symmetry(_≡_) xy₂) py)
+
+swap-binaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ ⦃ _ : Equiv{ℓₗ₃}(B) ⦄ {P : A → B → Stmt{ℓₗ₁}} → ⦃ rel-P : BinaryRelator(P) ⦄ → BinaryRelator(swap P)
+BinaryRelator.substitution (swap-binaryRelator {P = P}) = swap(substitute₂(P))

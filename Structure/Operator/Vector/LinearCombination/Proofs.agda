@@ -44,9 +44,9 @@ instance
   linearCombination-binaryOperator : BinaryOperator(linearCombination{n})
   linearCombination-binaryOperator = intro p where
     p : Names.Congruence₂(linearCombination{n})
-    p {𝟎}       {vf₁} {vf₂} (intro vfeq) {sf₁} {sf₂} (intro sfeq) = reflexivity(_≡_)
-    p {𝐒(𝟎)}    {vf₁} {vf₂} (intro vfeq) {sf₁} {sf₂} (intro sfeq) = congruence₂(_⋅ₛᵥ_) sfeq vfeq
-    p {𝐒(𝐒(n))} {vf₁} {vf₂} (intro vfeq) {sf₁} {sf₂} (intro sfeq) =
+    p {𝟎}       {vf₁} {vf₂} {sf₁} {sf₂} (intro vfeq) (intro sfeq) = reflexivity(_≡_)
+    p {𝐒(𝟎)}    {vf₁} {vf₂} {sf₁} {sf₂} (intro vfeq) (intro sfeq) = congruence₂(_⋅ₛᵥ_) sfeq vfeq
+    p {𝐒(𝐒(n))} {vf₁} {vf₂} {sf₁} {sf₂} (intro vfeq) (intro sfeq) =
       (sf₁(𝟎) ⋅ₛᵥ vf₁(𝟎)) +ᵥ linearCombination(Vec.tail vf₁) (Vec.tail sf₁) 🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) (congruence₂(_⋅ₛᵥ_) sfeq vfeq) (p {𝐒(n)} (intro vfeq) (intro sfeq)) ]
       (sf₂(𝟎) ⋅ₛᵥ vf₂(𝟎)) +ᵥ linearCombination(Vec.tail vf₂) (Vec.tail sf₂) 🝖-end
 
@@ -59,11 +59,11 @@ instance
       𝟎ᵥ +ᵥ 𝟎ᵥ 🝖-end
     p {𝐒(𝟎)}{vf} {sf₁} {sf₂} =
       (Vec.map₂(_+ₛ_) sf₁ sf₂ 𝟎) ⋅ₛᵥ vf(𝟎)     🝖[ _≡_ ]-[]
-      (sf₁(𝟎) +ₛ sf₂(𝟎)) ⋅ₛᵥ vf(𝟎)             🝖[ _≡_ ]-[ [⋅ₛᵥ][+ₛ][+ᵥ]-distributivityᵣ ]
+      (sf₁(𝟎) +ₛ sf₂(𝟎)) ⋅ₛᵥ vf(𝟎)             🝖[ _≡_ ]-[ preserving₂(_⋅ₛᵥ _)(_+ₛ_)(_+ᵥ_) ]
       (sf₁(𝟎) ⋅ₛᵥ vf(𝟎)) +ᵥ (sf₂(𝟎) ⋅ₛᵥ vf(𝟎)) 🝖-end
     p {𝐒(𝐒(n))}{vf} {sf₁} {sf₂} =
       ((Vec.map₂(_+ₛ_) sf₁ sf₂ 𝟎) ⋅ₛᵥ vf(𝟎)) +ᵥ (linearCombination {𝐒(n)} (Vec.tail vf) (Vec.tail(Vec.map₂(_+ₛ_) sf₁ sf₂)))                                                🝖[ _≡_ ]-[]
-      ((sf₁(𝟎) +ₛ sf₂(𝟎)) ⋅ₛᵥ vf(𝟎)) +ᵥ (linearCombination {𝐒(n)} (Vec.tail vf) (Vec.tail(Vec.map₂(_+ₛ_) sf₁ sf₂)))                                                        🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) [⋅ₛᵥ][+ₛ][+ᵥ]-distributivityᵣ (p {𝐒(n)}{Vec.tail vf} {Vec.tail sf₁} {Vec.tail sf₂}) ]
+      ((sf₁(𝟎) +ₛ sf₂(𝟎)) ⋅ₛᵥ vf(𝟎)) +ᵥ (linearCombination {𝐒(n)} (Vec.tail vf) (Vec.tail(Vec.map₂(_+ₛ_) sf₁ sf₂)))                                                        🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) (preserving₂(_⋅ₛᵥ _)(_+ₛ_)(_+ᵥ_)) (p {𝐒(n)}{Vec.tail vf} {Vec.tail sf₁} {Vec.tail sf₂}) ]
       ((sf₁(𝟎) ⋅ₛᵥ vf(𝟎)) +ᵥ (sf₂(𝟎) ⋅ₛᵥ vf(𝟎))) +ᵥ ((linearCombination {𝐒(n)} (Vec.tail vf) (Vec.tail sf₁)) +ᵥ (linearCombination {𝐒(n)} (Vec.tail vf) (Vec.tail sf₂)))   🝖[ _≡_ ]-[ One.associate-commute4 (commutativity(_+ᵥ_)) ]
       (((sf₁(𝟎) ⋅ₛᵥ vf(𝟎)) +ᵥ (linearCombination {𝐒(n)} (Vec.tail vf) (Vec.tail sf₁))) +ᵥ ((sf₂(𝟎) ⋅ₛᵥ vf(𝟎)) +ᵥ (linearCombination {𝐒(n)} (Vec.tail vf) (Vec.tail sf₂)))) 🝖-end
 
@@ -75,11 +75,11 @@ instance
       𝟎ᵥ       🝖[ _≡_ ]-[ [⋅ₛᵥ]-absorberᵣ ]-sym
       s ⋅ₛᵥ 𝟎ᵥ 🝖-end
     p {𝐒(𝟎)} {vf} {sf} =
-      (s ⋅ₛ sf(𝟎)) ⋅ₛᵥ vf(𝟎)  🝖[ _≡_ ]-[ [⋅ₛ][⋅ₛᵥ]-compatibility ]
+      (s ⋅ₛ sf(𝟎)) ⋅ₛᵥ vf(𝟎)  🝖[ _≡_ ]-[ preserving₁(_⋅ₛᵥ _)(_ ⋅ₛ_)(_ ⋅ₛᵥ_) ]
       s ⋅ₛᵥ (sf(𝟎) ⋅ₛᵥ vf(𝟎)) 🝖-end
     p {𝐒(𝐒(n))} {vf} {sf} =
       linearCombination vf (Vec.map (s ⋅ₛ_) sf)                                                     🝖[ _≡_ ]-[]
-      ((s ⋅ₛ sf(𝟎)) ⋅ₛᵥ vf(𝟎)) +ᵥ (linearCombination (Vec.tail vf) (Vec.map (s ⋅ₛ_) (Vec.tail sf))) 🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) ⦃ [+ᵥ]-binary-operator ⦄ [⋅ₛ][⋅ₛᵥ]-compatibility (p {𝐒(n)} {Vec.tail vf} {Vec.tail sf}) ]
+      ((s ⋅ₛ sf(𝟎)) ⋅ₛᵥ vf(𝟎)) +ᵥ (linearCombination (Vec.tail vf) (Vec.map (s ⋅ₛ_) (Vec.tail sf))) 🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) ⦃ [+ᵥ]-binary-operator ⦄ (preserving₁(_⋅ₛᵥ _)(_ ⋅ₛ_)(_ ⋅ₛᵥ_)) (p {𝐒(n)} {Vec.tail vf} {Vec.tail sf}) ]
       (s ⋅ₛᵥ (sf(𝟎) ⋅ₛᵥ vf(𝟎))) +ᵥ (s ⋅ₛᵥ (linearCombination (Vec.tail vf) (Vec.tail sf)))          🝖[ _≡_ ]-[ distributivityₗ(_⋅ₛᵥ_)(_+ᵥ_) ]-sym
       s ⋅ₛᵥ ((sf(𝟎) ⋅ₛᵥ vf(𝟎)) +ᵥ (linearCombination (Vec.tail vf) (Vec.tail sf)))                  🝖[ _≡_ ]-[]
       s ⋅ₛᵥ (linearCombination vf sf)                                                               🝖-end

@@ -24,6 +24,21 @@ private variable ℓ ℓₑ : Lvl.Level
 private variable T : Type{ℓ}
 private variable _+_ _⋅_ : T → T → T
 
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rg : Rg{T = T}(_+_)(_⋅_) ⦄ where
+  open Rg(rg)
+
+  [⋅]-absorberₗ-by-cancellationᵣ : ⦃ canc : Cancellationᵣ(_+_) ⦄ → Absorberₗ(_⋅_)(𝟎)
+  Absorberₗ.proof [⋅]-absorberₗ-by-cancellationᵣ {x} = One.zero-when-redundant-addition $
+    𝟎 ⋅ x             🝖-[ congruence₂ₗ(_⋅_)(x) (identityₗ(_+_)(𝟎)) ]-sym
+    (𝟎 + 𝟎) ⋅ x       🝖-[ distributivityᵣ(_⋅_)(_+_) ]
+    (𝟎 ⋅ x) + (𝟎 ⋅ x) 🝖-end
+
+  [⋅]-absorberᵣ-by-cancellationᵣ : ⦃ canc : Cancellationᵣ(_+_) ⦄ → Absorberᵣ(_⋅_)(𝟎)
+  Absorberᵣ.proof [⋅]-absorberᵣ-by-cancellationᵣ {x} = One.zero-when-redundant-addition $
+    x ⋅ 𝟎             🝖-[ congruence₂ᵣ(_⋅_)(x) (identityₗ(_+_)(𝟎)) ]-sym
+    x ⋅ (𝟎 + 𝟎)       🝖-[ distributivityₗ(_⋅_)(_+_) ]
+    (x ⋅ 𝟎) + (x ⋅ 𝟎) 🝖-end
+
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ where
   open Rng(rng)
 
@@ -37,17 +52,11 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ w
 
   instance
     [⋅]-absorberₗ : Absorberₗ(_⋅_)(𝟎)
-    Absorberₗ.proof [⋅]-absorberₗ {x} = One.zero-when-redundant-addition $
-      𝟎 ⋅ x             🝖-[ congruence₂ₗ(_⋅_)(x) (identityₗ(_+_)(𝟎)) ]-sym
-      (𝟎 + 𝟎) ⋅ x       🝖-[ distributivityᵣ(_⋅_)(_+_) ]
-      (𝟎 ⋅ x) + (𝟎 ⋅ x) 🝖-end
+    [⋅]-absorberₗ = [⋅]-absorberₗ-by-cancellationᵣ
 
   instance
     [⋅]-absorberᵣ : Absorberᵣ(_⋅_)(𝟎)
-    Absorberᵣ.proof [⋅]-absorberᵣ {x} = One.zero-when-redundant-addition $
-      x ⋅ 𝟎             🝖-[ congruence₂ᵣ(_⋅_)(x) (identityₗ(_+_)(𝟎)) ]-sym
-      x ⋅ (𝟎 + 𝟎)       🝖-[ distributivityₗ(_⋅_)(_+_) ]
-      (x ⋅ 𝟎) + (x ⋅ 𝟎) 🝖-end
+    [⋅]-absorberᵣ = [⋅]-absorberᵣ-by-cancellationᵣ
 
   -- TODO: Stuff provable in groups
   [−]-binaryOperator : BinaryOperator(_−_)
@@ -56,9 +65,6 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ w
     (x₁ + (− x₂)) 🝖[ _≡_ ]-[ congruence₂(_+_) xy1 (congruence₁(−_) xy2) ]
     (y₁ + (− y₂)) 🝖[ _≡_ ]-[]
     (y₁ − y₂)     🝖-end
-
-  postulate [⋅][−]-distributivityₗ : Distributivityₗ(_⋅_)(_−_)
-  postulate [⋅][−]-distributivityᵣ : Distributivityᵣ(_⋅_)(_−_)
 
   instance
     [−]-involution : Involution(−_)
@@ -114,6 +120,55 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ w
       (x + 𝟎           ≡ 𝟎 + y) ⇒-[ (\p → symmetry(_≡_) (identityᵣ(_+_)(𝟎)) 🝖 p 🝖 identityₗ(_+_)(𝟎)) ]
       (x               ≡ y    ) ⇒-end
 
+  -- Alternative proof using (− 𝟏):
+  --   [⋅]ₗ-of-[−] {x}{y} =
+  --     ((− x) ⋅ y)       🝖-[ congruence₂ₗ(_⋅_)(y) [⋅]ₗ-of-[−1] ]-sym
+  --     (((− 𝟏) ⋅ x) ⋅ y) 🝖-[ associativity(_⋅_) ]
+  --     ((− 𝟏) ⋅ (x ⋅ y)) 🝖-[ [⋅]ₗ-of-[−1] ]
+  --     (−(x ⋅ y))        🝖-end
+  [⋅]ₗ-of-[−] : ∀{x y} → ((− x) ⋅ y ≡ −(x ⋅ y))
+  [⋅]ₗ-of-[−] {x}{y} = One.unique-inverseᵣ-by-id $
+    (x ⋅ y) + ((− x) ⋅ y) 🝖-[ distributivityᵣ(_⋅_)(_+_) ]-sym
+    (x + (− x)) ⋅ y       🝖-[ congruence₂ₗ(_⋅_)(y) (inverseFunctionᵣ(_+_)(−_)) ]
+    𝟎 ⋅ y                 🝖-[ absorberₗ(_⋅_)(𝟎) ]
+    𝟎                     🝖-end
+
+  -- Alternative proof using (− 𝟏):
+  --   [⋅]ᵣ-of-[−] {x}{y} =
+  --     (x ⋅ (− y))       🝖-[ congruence₂ᵣ(_⋅_)(x) [⋅]ᵣ-of-[−1] ]-sym
+  --     (x ⋅ (y ⋅ (− 𝟏))) 🝖-[ associativity(_⋅_) ]-sym
+  --     ((x ⋅ y) ⋅ (− 𝟏)) 🝖-[ [⋅]ᵣ-of-[−1] ]
+  --     (−(x ⋅ y))        🝖-end
+  [⋅]ᵣ-of-[−] : ∀{x y} → (x ⋅ (− y) ≡ −(x ⋅ y))
+  [⋅]ᵣ-of-[−] {x}{y} = One.unique-inverseᵣ-by-id $
+    (x ⋅ y) + (x ⋅ (− y)) 🝖-[ distributivityₗ(_⋅_)(_+_) ]-sym
+    x ⋅ (y + (− y))       🝖-[ congruence₂ᵣ(_⋅_)(x) (inverseFunctionᵣ(_+_)(−_)) ]
+    x ⋅ 𝟎                 🝖-[ absorberᵣ(_⋅_)(𝟎) ]
+    𝟎                     🝖-end
+
+  [⋅]-of-[−] : ∀{x y} → ((− x) ⋅ (− y) ≡ x ⋅ y)
+  [⋅]-of-[−] {x}{y} =
+    ((− x) ⋅ (− y)) 🝖[ _≡_ ]-[ [⋅]ᵣ-of-[−] ]
+    −((− x) ⋅ y)    🝖[ _≡_ ]-[ congruence₁(−_) [⋅]ₗ-of-[−] ]
+    −(−(x ⋅ y))     🝖[ _≡_ ]-[ involution(−_) ]
+    (x ⋅ y)         🝖-end
+
+  [⋅][−]-distributivityₗ : Distributivityₗ(_⋅_)(_−_)
+  Distributivityₗ.proof [⋅][−]-distributivityₗ {x}{y}{z} =
+    (x ⋅ (y − z))           🝖[ _≡_ ]-[]
+    (x ⋅ (y + (− z)))       🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) ]
+    ((x ⋅ y) + (x ⋅ (− z))) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x ⋅ y) [⋅]ᵣ-of-[−] ]
+    ((x ⋅ y) + (−(x ⋅ z)))  🝖[ _≡_ ]-[]
+    ((x ⋅ y) − (x ⋅ z))     🝖-end
+
+  [⋅][−]-distributivityᵣ : Distributivityᵣ(_⋅_)(_−_)
+  Distributivityᵣ.proof [⋅][−]-distributivityᵣ {x}{y}{z} =
+    ((x − y) ⋅ z)           🝖[ _≡_ ]-[]
+    ((x + (− y)) ⋅ z)       🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) ]
+    ((x ⋅ z) + ((− y) ⋅ z)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x ⋅ z) [⋅]ₗ-of-[−] ]
+    ((x ⋅ z) + (−(y ⋅ z)))  🝖[ _≡_ ]-[]
+    ((x ⋅ z) − (y ⋅ z))     🝖-end
+
   module _ ⦃ unity : Unity(_+_)(_⋅_) ⦄ where
     open import Type.Properties.MereProposition
     open import Type.Properties.Singleton
@@ -149,24 +204,3 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ w
       x ⋅ ((− 𝟏) + 𝟏)       🝖-[ congruence₂ᵣ(_⋅_)(x) (inverseFunctionₗ(_+_)(−_)) ]
       x ⋅ 𝟎                 🝖-[ absorberᵣ(_⋅_)(𝟎) ]
       𝟎                     🝖-end
-
-    [⋅]ₗ-of-[−] : ∀{x y} → ((− x) ⋅ y ≡ −(x ⋅ y))
-    [⋅]ₗ-of-[−] {x}{y} =
-      ((− x) ⋅ y)       🝖-[ congruence₂ₗ(_⋅_)(y) [⋅]ₗ-of-[−1] ]-sym
-      (((− 𝟏) ⋅ x) ⋅ y) 🝖-[ associativity(_⋅_) ]
-      ((− 𝟏) ⋅ (x ⋅ y)) 🝖-[ [⋅]ₗ-of-[−1] ]
-      (−(x ⋅ y))        🝖-end
-
-    [⋅]ᵣ-of-[−] : ∀{x y} → (x ⋅ (− y) ≡ −(x ⋅ y))
-    [⋅]ᵣ-of-[−] {x}{y} =
-      (x ⋅ (− y))       🝖-[ congruence₂ᵣ(_⋅_)(x) [⋅]ᵣ-of-[−1] ]-sym
-      (x ⋅ (y ⋅ (− 𝟏))) 🝖-[ associativity(_⋅_) ]-sym
-      ((x ⋅ y) ⋅ (− 𝟏)) 🝖-[ [⋅]ᵣ-of-[−1] ]
-      (−(x ⋅ y))        🝖-end
-
-    [⋅]-of-[−] : ∀{x y} → ((− x) ⋅ (− y) ≡ x ⋅ y)
-    [⋅]-of-[−] {x}{y} =
-      ((− x) ⋅ (− y)) 🝖[ _≡_ ]-[ [⋅]ᵣ-of-[−] ]
-      −((− x) ⋅ y)    🝖[ _≡_ ]-[ congruence₁(−_) [⋅]ₗ-of-[−] ]
-      −(−(x ⋅ y))     🝖[ _≡_ ]-[ involution(−_) ]
-      (x ⋅ y)         🝖-end

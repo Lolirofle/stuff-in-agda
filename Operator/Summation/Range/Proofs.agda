@@ -1,4 +1,4 @@
-module Numeral.Natural.Oper.Summation.Range.Proofs where
+module Operator.Summation.Range.Proofs where
 
 import      Lvl
 open import Data.List
@@ -10,9 +10,9 @@ open import Data.List.Proofs.Length
 open import Functional as Fn using (_$_ ; _∘_ ; const)
 open import Numeral.Natural
 open import Numeral.Natural.Oper
-open import Numeral.Natural.Oper.Summation.Range
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
+open import Operator.Summation.Range
 open import Relator.Equals hiding (_≡_)
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Function

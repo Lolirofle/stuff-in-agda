@@ -27,10 +27,10 @@ module _ {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   ∅ : BoolSet(T)
   ∅ = const(𝐹)
 
-  singleton : ⦃ _ : DecidableEquiv(T) ⦄ → T → BoolSet(T)
+  singleton : ⦃ _ : EquivDecidable(T) ⦄ → T → BoolSet(T)
   singleton(t) = (_== t)
 
-  enumeration : ⦃ _ : DecidableEquiv(T) ⦄ → List.List(T) → BoolSet(T)
+  enumeration : ⦃ _ : EquivDecidable(T) ⦄ → List.List(T) → BoolSet(T)
   enumeration(l) = (x ↦ List.satisfiesAny(_== x)(l))
 
   _∈?_ : T → BoolSet(T) → Bool

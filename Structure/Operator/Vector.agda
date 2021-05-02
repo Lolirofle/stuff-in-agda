@@ -4,13 +4,14 @@ open import Functional using (swap)
 import      Lvl
 open import Logic
 open import Logic.Propositional
-open import Structure.Setoid
+open import Structure.Function.Multi
 open import Structure.Operator.Field
 open import Structure.Operator.Group
 open import Structure.Operator.Monoid
 import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Operator
+open import Structure.Setoid
 open import Type
 
 record VectorSpace {ℓᵥ ℓₛ ℓᵥₑ ℓₛₑ}
@@ -81,10 +82,10 @@ record VectorSpace {ℓᵥ ℓₛ ℓᵥₑ ℓₛₑ}
 
   field
     ⦃ [⋅ₛᵥ]-binaryOperator ⦄      : BinaryOperator(_⋅ₛᵥ_)
-    [⋅ₛ][⋅ₛᵥ]-compatibility       : Names.Compatibility(_⋅ₛ_)(_⋅ₛᵥ_) -- TODO: This is semigroup action
     ⦃ [⋅ₛᵥ]-identity ⦄            : Identityₗ(_⋅ₛᵥ_)(𝟏ₛ)
     ⦃ [⋅ₛᵥ][+ᵥ]-distributivityₗ ⦄ : Distributivityₗ(_⋅ₛᵥ_)(_+ᵥ_)
-    [⋅ₛᵥ][+ₛ][+ᵥ]-distributivityᵣ : Names.DistributivityPatternᵣ(_⋅ₛᵥ_)(_+ₛ_)(_+ᵥ_) -- TODO: This is ∀? → Preserving₂
+    ⦃ [⋅ₛᵥ]ₗ[⋅]ᵣ-preserving ⦄     : ∀{s}{v} → Preserving₁(_⋅ₛᵥ v)(s ⋅ₛ_)(s ⋅ₛᵥ_) -- Note: This is also called: Semigroup action
+    ⦃ [⋅ₛᵥ]ₗ[+]-preserving ⦄      : ∀{v} → Preserving₂(_⋅ₛᵥ v)(_+ₛ_)(_+ᵥ_)
 
   _⋅ᵥₛ_ = swap(_⋅ₛᵥ_)
 

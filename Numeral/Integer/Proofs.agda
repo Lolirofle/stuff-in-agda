@@ -34,6 +34,7 @@ import      Structure.Operator.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
 open import Structure.Operator.Ring
+open import Structure.Operator.Semi
 open import Structure.OrderedField
 open import Structure.Relator.Properties
 open import Syntax.Number
@@ -443,6 +444,10 @@ instance
     -}
 
 instance
+  [+]-semi : Semi(_+_)
+  [+]-semi = intro
+
+instance
   [+]-monoid : Monoid(_+_)
   [+]-monoid = intro
 
@@ -541,6 +546,10 @@ instance
   ... | Sign.➖ | −𝐒ₙ _ = [≡]-intro
 
 instance
+  [⋅]-identity : Identity(_⋅_)(𝟏)
+  [⋅]-identity = intro
+
+instance
   [⋅]-commutativity : Commutativity(_⋅_)
   Commutativity.proof [⋅]-commutativity {x}{y} = congruence₂(signed0) (commutativity(Sign._⨯_)) (commutativity(ℕ._⋅_) {absₙ x}{absₙ y})
 
@@ -594,7 +603,18 @@ instance
   -}
 
 instance
+  [⋅]-semi : Semi(_⋅_)
+  [⋅]-semi = intro
+
+instance
+  [⋅]-monoid : Monoid(_⋅_)
+  [⋅]-monoid = intro
+
+instance
   postulate [⋅][+]-distributivityᵣ : Distributivityᵣ(_⋅_)(_+_)
+  -- [⋅][+]-distributivityᵣ = intro (\{x}{y}{z} → p{x}{y}{z}) where
+  --   p : Names.Distributivityᵣ(_⋅_)(_+_)
+    
 
 instance
   postulate [⋅][−]-distributivityₗ : Distributivityₗ(_⋅_)(_−_)
@@ -603,12 +623,8 @@ instance
   postulate [⋅][−]-distributivityᵣ : Distributivityᵣ(_⋅_)(_−_)
 
 instance
-  [+][⋅]-rng : Rng(_+_)(_⋅_)
-  [+][⋅]-rng = record{}
-
-instance
-  [+][⋅]-ring-unity : Unity(_+_)(_⋅_)
-  Unity.[⋅]-identity-existence [+][⋅]-ring-unity = [∃]-intro 𝟏 ⦃ intro ⦄
+  [+][⋅]-preRg : PreRg(_+_)(_⋅_)
+  [+][⋅]-preRg = intro
 
 instance
   [+][⋅]-ring : Ring(_+_)(_⋅_)
@@ -649,16 +665,16 @@ instance
   ConverseTotal.proof [≤]-converseTotal {−𝐒ₙ x} {−𝐒ₙ y} = Either.map neg neg (converseTotal(ℕ._≤_))
 
 instance
-  [≤]-weakPartialOrder : Structure.Weak.PartialOrder(_≤_)(_≡_)
+  [≤]-weakPartialOrder : Structure.Weak.PartialOrder(_≤_)
   [≤]-weakPartialOrder = record{}
 
 instance
-  [≤]-totalOrder : Structure.Weak.TotalOrder(_≤_)(_≡_)
+  [≤]-totalOrder : Structure.Weak.TotalOrder(_≤_)
   [≤]-totalOrder = record{}
 
 instance
-  [+][⋅][≤]-orderedRing : Ordered(_+_)(_⋅_)(_≤_)
-  Ordered.[≤][+]ₗ-preserve  [+][⋅][≤]-orderedRing = p where
+  [+][⋅][≤]-orderedRing : let open Ring ⦃ … ⦄ in Ordered(_+_)(_⋅_)(_≤_)
+  Ordered.[≤][+]ₗ-preserve [+][⋅][≤]-orderedRing = p where
     postulate p : ∀{x y z} → (x ≤ y) → ((x + z) ≤ (y + z))
     {-p {+ₙ x}    {+ₙ y}     {+ₙ  z} (pos xy) = pos {!!}
     p {−𝐒ₙ x}   {−𝐒ₙ y}    {−𝐒ₙ z} (neg xy) = neg {!!}
@@ -667,7 +683,7 @@ instance
     p {+ₙ ℕ.𝐒 x} {+ₙ ℕ.𝐒 y}{−𝐒ₙ z} (pos xy) = {!!}
     p {.(−𝐒ₙ _)} {.(+ₙ _)} {+ₙ  z} mix = {!!}
     p {.(−𝐒ₙ _)} {.(+ₙ _)} {−𝐒ₙ z} mix = {!!}-}
-  Ordered.[≤][⋅]-zero       [+][⋅][≤]-orderedRing = p where
+  Ordered.[≤][⋅]-preserve-positive [+][⋅][≤]-orderedRing = p where
     p : ∀{x y} → (𝟎 ≤ x) → (𝟎 ≤ y) → (𝟎 ≤ (x ⋅ y))
     p {+ₙ ℕ.𝟎}   {+ₙ ℕ.𝟎}   (pos px) (pos py) = pos py
     p {+ₙ ℕ.𝟎}   {+ₙ ℕ.𝐒 y} (pos px) (pos py) = pos px

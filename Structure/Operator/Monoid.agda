@@ -4,8 +4,9 @@ import      Lvl
 open import Logic
 open import Logic.Predicate
 open import Structure.Setoid
-open import Structure.Operator.Properties hiding (associativity ; identityₗ ; identityᵣ)
 open import Structure.Operator
+open import Structure.Operator.Properties hiding (associativity ; identityₗ ; identityᵣ)
+open import Structure.Operator.Semi
 open import Type
 
 -- A type and a binary operator using this type is a monoid when:
@@ -17,6 +18,10 @@ record Monoid {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ :
     ⦃ binary-operator ⦄    : BinaryOperator(_▫_)
     ⦃ associativity ⦄      : Associativity(_▫_)
     ⦃ identity-existence ⦄ : ∃(Identity(_▫_))
+
+  instance
+    semi : Semi(_▫_)
+    semi = intro
 
   id = [∃]-witness identity-existence
 

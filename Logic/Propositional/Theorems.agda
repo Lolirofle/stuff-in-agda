@@ -547,3 +547,17 @@ module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [⊕]-or-not-both or nand with or
   ... | [∨]-introₗ p = [⊕]-introₗ p (q ↦ nand([↔]-intro p q))
   ... | [∨]-introᵣ q = [⊕]-introᵣ q (p ↦ nand([↔]-intro p q))
+
+  [⊕]-not-not-right : (P ⊕ Q) → (¬ P) → Q
+  [⊕]-not-not-right ([⊕]-introₗ p nq) = [⊥]-elim ∘ apply p
+  [⊕]-not-not-right ([⊕]-introᵣ q np) = const q
+
+  [⊕]-not-not-left : (P ⊕ Q) → (¬ Q) → P
+  [⊕]-not-not-left ([⊕]-introₗ p nq) = const p
+  [⊕]-not-not-left ([⊕]-introᵣ q np) = [⊥]-elim ∘ apply q
+
+  [⊕]-right-[↔] : (P ⊕ Q) → (¬ P) ↔ Q
+  [⊕]-right-[↔] pq = [↔]-intro ([⊕]-not-right pq) ([⊕]-not-not-right pq)
+
+  [⊕]-left-[↔] : (P ⊕ Q) → P ↔ (¬ Q)
+  [⊕]-left-[↔] pq = [↔]-intro ([⊕]-not-not-left pq) ([⊕]-not-left pq)

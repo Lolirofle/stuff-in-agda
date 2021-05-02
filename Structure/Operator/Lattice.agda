@@ -17,6 +17,7 @@ open import Structure.Operator.Monoid
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
 open import Structure.Operator
+open import Structure.Relator
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
@@ -32,7 +33,12 @@ record Semilattice (_▫_ : L → L → L) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   order : L → L → Stmt
   order x y = (x ▫ y ≡ y)
 
-  partialOrder : Weak.PartialOrder(order)(_≡_)
+  partialOrder : Weak.PartialOrder(order)
+  BinaryRelator.substitution (Weak.PartialOrder.relator partialOrder) {x₁}{y₁}{x₂}{y₂} xy1 xy2 p =
+    (y₁ ▫ y₂) 🝖[ _≡_ ]-[ congruence₂(_▫_) xy1 xy2 ]-sym
+    (x₁ ▫ x₂) 🝖[ _≡_ ]-[ p ]
+    x₂        🝖[ _≡_ ]-[ xy2 ]
+    y₂        🝖-end
   Antisymmetry.proof (Weak.PartialOrder.antisymmetry partialOrder) {x}{y} xy yx =
     x     🝖-[ symmetry(_≡_) yx ]
     y ▫ x 🝖-[ commutativity(_▫_) ]

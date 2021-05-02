@@ -55,6 +55,15 @@ findAll : (𝕟(n) → Bool) → List(𝕟(n))
 findAll{𝟎}    f = ∅
 findAll{𝐒(n)} f = (if f(𝟎) then (𝟎 ⊰_) else id) (List.map 𝐒 (findAll{n} (f ∘ 𝐒)))
 
+{-
+open import Data
+open import Numeral.Finite.Oper
+open import Syntax.Number
+findMax' : (𝕟(n) → Bool) → Option(𝕟(n))
+findMax' f = Option.map (Wrapping.[−]_) (findMin(f ∘ Wrapping.[−]_))
+test : ∀{x y : 𝕟(n)} → (x Wrapping.[−] (x Wrapping.[−] y) ≡ y)
+-}
+
 open import Data
 open import Data.Boolean.Stmt.Proofs
 open import Data.List.Relation.Membership using (_∈_)

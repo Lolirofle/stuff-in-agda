@@ -13,7 +13,7 @@ module Structure.OrderedField.AbsoluteValue
   ⦃ ring : Ring(_+_)(_⋅_) ⦄ -- TODO: The definition does not require a ring, only some kind of total order compatible with an operation with an identity and an inverse
   -- ⦃ identity : Identity(_+_) ⦄
   -- ⦃ inverseFunction : InverseFunction(_+_)(−_) ⦄
-  ⦃ ordered : Ordered(_+_)(_⋅_)(_≤_) ⦄
+  ⦃ ordered : let open Ring(ring) in Ordered(_+_)(_⋅_)(_≤_) ⦄
   where
 
 open Ring(ring)

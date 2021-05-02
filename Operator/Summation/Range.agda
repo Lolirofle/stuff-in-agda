@@ -1,4 +1,4 @@
-module Numeral.Natural.Oper.Summation.Range where
+module Operator.Summation.Range where
 
 import      Lvl
 open import Data.List

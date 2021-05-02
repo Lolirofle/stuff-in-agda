@@ -86,9 +86,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   -- A component-wise operator is a group when its underlying operator is a group.
   pointwiseFunction-group : ⦃ group : Group(_▫_) ⦄ → Group(pointwise(1)(2) {As = I} (_▫_))
-  Group.monoid            pointwiseFunction-group = pointwiseFunction-monoid
-  Group.inverse-existence pointwiseFunction-group = [∃]-intro _ ⦃ pointwiseFunction-inverseFunction ⦄
-  Group.inv-function      pointwiseFunction-group = pointwiseFunction-function
+  pointwiseFunction-group{_▫_ = _▫_} ⦃ group ⦄ = Group-from-monoid(pointwise(1)(2) (_▫_)) ⦃ monoid = pointwiseFunction-monoid ⦄ _ ⦃ pointwiseFunction-function ⦄ ⦃ pointwiseFunction-inverseFunction ⦄ where open Group(group)
 
   -- A component-wise operator is a commutative group when its underlying operator is a commutative group.
   pointwiseFunction-commutativeGroup : ⦃ commutativeGroup : CommutativeGroup(_▫_) ⦄ → CommutativeGroup(pointwise(1)(2) {As = I} (_▫_))
@@ -104,9 +102,9 @@ module _
   -- Component-wise operators constructs a vector space from a field when using the fields as scalars and coordinate vectors as vectors.
   pointwiseFunction-vectorSpace : VectorSpace(pointwise(1)(2) {As = I} (_+_))(pointwise(1)(1) ∘ (_⋅_))(_+_)(_⋅_)
   VectorSpace.scalarField pointwiseFunction-vectorSpace = field-structure
-  VectorSpace.vectorCommutativeGroup pointwiseFunction-vectorSpace = pointwiseFunction-commutativeGroup
-  _⊜_.proof (BinaryOperator.congruence (VectorSpace.[⋅ₛᵥ]-binaryOperator pointwiseFunction-vectorSpace) p (intro q)) = congruence₂(_⋅_) p q
-  _⊜_.proof (VectorSpace.[⋅ₛ][⋅ₛᵥ]-compatibility pointwiseFunction-vectorSpace) = associativity(_⋅_)
-  _⊜_.proof (Identityₗ.proof (VectorSpace.[⋅ₛᵥ]-identity pointwiseFunction-vectorSpace)) = identityₗ(_⋅_)(𝟏)
-  _⊜_.proof (Distributivityₗ.proof (VectorSpace.[⋅ₛᵥ][+ᵥ]-distributivityₗ pointwiseFunction-vectorSpace)) = distributivityₗ(_⋅_)(_+_)
-  _⊜_.proof (VectorSpace.[⋅ₛᵥ][+ₛ][+ᵥ]-distributivityᵣ pointwiseFunction-vectorSpace) = distributivityᵣ(_⋅_)(_+_)
+  VectorSpace.vectorCommutativeGroup                                          pointwiseFunction-vectorSpace = pointwiseFunction-commutativeGroup
+  _⊜_.proof (BinaryOperator.congruence (VectorSpace.[⋅ₛᵥ]-binaryOperator      pointwiseFunction-vectorSpace) p (intro q)) = congruence₂(_⋅_) p q
+  _⊜_.proof (Preserving.proof          (VectorSpace.[⋅ₛᵥ]ₗ[⋅]ᵣ-preserving     pointwiseFunction-vectorSpace)) = associativity(_⋅_)
+  _⊜_.proof (Identityₗ.proof           (VectorSpace.[⋅ₛᵥ]-identity            pointwiseFunction-vectorSpace)) = identityₗ(_⋅_)(𝟏)
+  _⊜_.proof (Distributivityₗ.proof     (VectorSpace.[⋅ₛᵥ][+ᵥ]-distributivityₗ pointwiseFunction-vectorSpace)) = distributivityₗ(_⋅_)(_+_)
+  _⊜_.proof (Preserving.proof          (VectorSpace.[⋅ₛᵥ]ₗ[+]-preserving      pointwiseFunction-vectorSpace)) = distributivityᵣ(_⋅_)(_+_)

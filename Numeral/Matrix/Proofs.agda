@@ -116,8 +116,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   instance
     matrix-map₂-group : ⦃ group : Group(_▫_) ⦄ → Group(Matrix.map₂{s = s}(_▫_))
-    Group.monoid matrix-map₂-group = matrix-map₂-monoid
-    Group.inverse-existence matrix-map₂-group = [∃]-intro _
+    matrix-map₂-group {_▫_ = _▫_} ⦃ group ⦄ = Group-from-monoid(Matrix.map₂(_▫_)) _ where open Group(group)
 
   diagMat-element-zero : (Matrix.proj (SquareMatrix.diagMat zero v) (x , y) ≡ zero) ↔ ((x ≢ₑ y) ∨ (Vector.proj v(x) ≡ zero))
   diagMat-element-zero {zero = zero}{𝐒 n}{v = v}{x = x}{y = y} =

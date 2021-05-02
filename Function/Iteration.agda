@@ -3,6 +3,7 @@ module Function.Iteration where
 open import Data
 open import Functional
 open import Numeral.Natural
+open import Numeral.Natural.Induction
 open import Type
 open import Syntax.Number
 
@@ -14,9 +15,11 @@ module _ {ℓ} {T : Type{ℓ}} where
   --   f ^ 2 = f ∘ f
   --   f ^ 3 = f ∘ f ∘ f
   --   f ^ 4 = f ∘ f ∘ f ∘ f
+  -- Alternative implementation:
+  --   _^_ f 𝟎      = id
+  --   _^_ f (𝐒(n)) = f ∘ (f ^ n)
   _^_ : (T → T) → ℕ → (T → T)
-  _^_ f 𝟎      = id
-  _^_ f (𝐒(n)) = f ∘ (f ^ n)
+  _^_ f = ℕ-elim id (const(f ∘_))
 
   _⁰ : (T → T) → (T → T)
   _⁰ = _^ 0
@@ -69,8 +72,8 @@ module _ {ℓ} {X : Type{ℓ}} where
   --   repeatₗ 1 def (_∘_) f = f
   --   repeatₗ 4 def (_∘_) f = ((f ∘ f) ∘ f) ∘ f
   repeatₗ-default : ℕ → (X → X → X) → X → (X → X)
-  repeatₗ-default 𝟎      _     def  _    = def
-  repeatₗ-default (𝐒(n)) (_▫_) _    elem = repeatₗ(n) (_▫_) elem elem
+  repeatₗ-default 𝟎     _     def  _    = def
+  repeatₗ-default(𝐒(n)) (_▫_) _    elem = repeatₗ(n) (_▫_) elem elem
 
   -- Repeat a binary operation n times for the same element and using the default element on zero.
   -- Examples:

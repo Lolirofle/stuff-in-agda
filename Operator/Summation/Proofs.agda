@@ -1,4 +1,4 @@
-module Numeral.Natural.Oper.Summation.Proofs where
+module Operator.Summation.Proofs where
 
 import      Lvl
 open import Data.List
@@ -12,8 +12,8 @@ open import Structure.Operator
 open import Structure.Setoid
 open import Type
 
-private variable ℓ ℓₑ : Lvl.Level
-private variable T A B : Type{ℓ}
+private variable ℓ ℓᵢ ℓₑ ℓₑᵢ ℓₑₗ ℓₑₗ₁ ℓₑₗ₂ : Lvl.Level
+private variable T A B I : Type{ℓ}
 private variable _▫_ : T → T → T
 
 open        Data.List.Functions.LongOper
@@ -21,10 +21,10 @@ open import Data.List.Proofs
 open import Functional as Fn using (_$_ ; _∘_ ; const)
 import      Function.Equals as Fn
 open import Lang.Instance
-import      Numeral.Natural.Oper.Summation
-open import Numeral.Natural.Oper.Summation.Range
-open import Numeral.Natural.Oper.Summation.Range.Proofs
 open import Numeral.Natural.Relation.Order
+import      Operator.Summation
+open import Operator.Summation.Range
+open import Operator.Summation.Range.Proofs
 import      Structure.Function.Names as Names
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs.Util
@@ -32,14 +32,13 @@ open import Structure.Relator.Properties
 open import Syntax.Function
 open import Syntax.Transitivity
 
-module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ where
-  open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = monoid ⦄
+module _ {I : Type{ℓᵢ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ where
+  open Operator.Summation {I = I} ⦃ monoid = monoid ⦄
   open Monoid(monoid) using (id) renaming (binary-operator to [▫]-binary-operator)
-  open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
-  private variable f g : ℕ → T
-  private variable x a b c k n : ℕ
-  private variable r r₁ r₂ : List(ℕ)
+  private variable f g : I → T
+  private variable x a b c k n : I
+  private variable r r₁ r₂ : List(I)
 
   ∑-empty : (∑(∅) f ≡ id)
   ∑-empty = reflexivity(Equiv._≡_ equiv)
@@ -61,13 +60,6 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ 
     f(r₀) ▫ (∑(r) f ▫ f(x))    🝖[ _≡_ ]-[ associativity(_▫_) {f(r₀)}{∑(r) f}{f(x)} ]-sym
     (f(r₀) ▫ ∑(r) f) ▫ f(x)    🝖-end
 
-  ∑-compose : ∀{f : ℕ → T}{g : ℕ → ℕ} → (∑(r) (f ∘ g) ≡ ∑(map g r) f)
-  ∑-compose {r = r}{f = f}{g = g} =
-    ∑(r) (f ∘ g)                  🝖[ _≡_ ]-[]
-    foldᵣ(_▫_) id (map(f ∘ g) r)   🝖[ _≡_ ]-[ congruence₁(foldᵣ(_▫_) id) ⦃ foldᵣ-function ⦄ (map-preserves-[∘] {f = f}{g = g}{x = r}) ]
-    foldᵣ(_▫_) id (map f(map g r)) 🝖[ _≡_ ]-[]
-    ∑(map g r) f                  🝖-end
-
   ∑-singleton : (∑(singleton(a)) f ≡ f(a))
   ∑-singleton = identityᵣ ⦃ equiv ⦄ (_▫_)(id)
 
@@ -86,6 +78,33 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ 
     ∑(r) (const id)           🝖[ _≡_ ]-[ ∑-const-id {r} ]
     id                        🝖-end
 
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ where
+  open Operator.Summation {I = ℕ} ⦃ monoid = monoid ⦄
+  open Monoid(monoid) using (id) renaming (binary-operator to [▫]-binary-operator)
+
+  private variable f g : ℕ → T
+  private variable x a b c k n : ℕ
+  private variable r r₁ r₂ : List(ℕ)
+  {-
+  open import Data.List.Equiv
+  module _
+    ⦃ equiv-I : Equiv{ℓₑᵢ}(I) ⦄
+    ⦃ equiv-ListI : Equiv{ℓₑₗ₁}(List I) ⦄
+    ⦃ extensionality-I : Extensionality equiv-ListI ⦄
+    ⦃ equiv-ListT : Equiv{ℓₑₗ₂}(List T) ⦄
+    ⦃ extensionality-T : Extensionality equiv-ListT ⦄
+    where
+  -}
+  module _ where
+    open import Relator.Equals.Proofs.Equiv {T = ℕ}
+
+    ∑-compose : ∀{f : ℕ → T}{g : ℕ → ℕ} → (∑(r) (f ∘ g) ≡ ∑(map g r) f)
+    ∑-compose {r = r}{f = f}{g = g} =
+      ∑(r) (f ∘ g)                   🝖[ _≡_ ]-[]
+      foldᵣ(_▫_) id (map(f ∘ g) r)   🝖[ _≡_ ]-[ congruence₁(foldᵣ(_▫_) id) ⦃ foldᵣ-function ⦄ (map-preserves-[∘] {f = f}{g = g}{x = r}) ]
+      foldᵣ(_▫_) id (map f(map g r)) 🝖[ _≡_ ]-[]
+      ∑(map g r) f                   🝖-end
+
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   private variable f g : ℕ → T
   private variable k n : ℕ
@@ -94,7 +113,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   private variable _+_ _⋅_ : T → T → T
 
   module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ comm : Commutativity(_+_) ⦄ where
-    open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = monoid ⦄
+    open Operator.Summation {I = ℕ} ⦃ monoid = monoid ⦄
     open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
     open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
@@ -108,7 +127,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
       ∑(prepend r₀ r) (x ↦ f(x) + g(x))        🝖-end
 
   module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ distₗ : Distributivityₗ(_⋅_)(_+_) ⦄ ⦃ absorᵣ : Absorberᵣ(_⋅_)(Monoid.id monoid) ⦄ where
-    open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = monoid ⦄
+    open Operator.Summation {I = ℕ} ⦃ monoid = monoid ⦄
     open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
     open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
@@ -120,7 +139,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
       c ⋅ (f(r₀) + (∑(r) f))            🝖-end
 
   module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ distᵣ : Distributivityᵣ(_⋅_)(_+_) ⦄ ⦃ absorₗ : Absorberₗ(_⋅_)(Monoid.id monoid) ⦄ where
-    open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = monoid ⦄
+    open Operator.Summation {I = ℕ} ⦃ monoid = monoid ⦄
     open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
     open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
@@ -133,14 +152,14 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   module _ ⦃ field-structure : Field(_+_)(_⋅_) ⦄ where
     open Field(field-structure)
-    open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = [+]-monoid ⦄
+    open Operator.Summation {I = ℕ} ⦃ monoid = [+]-monoid ⦄
 
 open import Relator.Equals hiding (_≡_)
 open import Relator.Equals.Proofs.Equiv
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Oper.Proofs.Structure
-open Numeral.Natural.Oper.Summation {I = ℕ} ⦃ monoid = [+]-monoid ⦄ -- TODO: Generalize all the proofs
+open        Operator.Summation {I = ℕ} ⦃ monoid = [+]-monoid ⦄ -- TODO: Generalize all the proofs
 
 private variable f g : ℕ → ℕ
 private variable x a b c k n : ℕ
@@ -258,17 +277,28 @@ instance
 
 
 
-∑-of-succ : (∑(r) (𝐒 ∘ f) ≡ (∑(r) f) + length(r))
-∑-of-succ {empty}      {f} = [≡]-intro
-∑-of-succ {prepend x r}{f} =
+∑-of-𝐒 : (∑(r) (𝐒 ∘ f) ≡ (∑(r) f) + length(r))
+∑-of-𝐒 {empty}      {f} = [≡]-intro
+∑-of-𝐒 {prepend x r}{f} =
   ∑(x ⊰ r) (𝐒 ∘ f)                 🝖[ _≡_ ]-[]
   𝐒(f(x)) + ∑(r) (𝐒 ∘ f)           🝖[ _≡_ ]-[]
-  𝐒(f(x) + ∑(r) (𝐒 ∘ f))           🝖[ _≡_ ]-[ congruence₁(𝐒) (congruence₂ᵣ(_+_)(f(x)) (∑-of-succ {r}{f})) ]
+  𝐒(f(x) + ∑(r) (𝐒 ∘ f))           🝖[ _≡_ ]-[ congruence₁(𝐒) (congruence₂ᵣ(_+_)(f(x)) (∑-of-𝐒 {r}{f})) ]
   𝐒(f(x) + ((∑(r) f) + length(r))) 🝖[ _≡_ ]-[ congruence₁(𝐒) (symmetry(_≡_) (associativity(_+_) {x = f(x)}{y = ∑(r) f}{z = length(r)})) ]
   𝐒((f(x) + (∑(r) f)) + length(r)) 🝖[ _≡_ ]-[]
   𝐒((∑(x ⊰ r) f) + length(r))      🝖[ _≡_ ]-[]
   (∑(x ⊰ r) f) + 𝐒(length(r))      🝖[ _≡_ ]-[]
   (∑(x ⊰ r) f) + length(x ⊰ r)     🝖-end
+
+∑-of-[+] : (∑(r) ((_+ n) ∘ f) ≡ (∑(r) f) + (length(r) ⋅ n))
+∑-of-[+] {_}{𝟎}   {_} = [≡]-intro
+∑-of-[+] {r}{𝐒(n)}{f} =
+  ∑(r) ((_+ 𝐒(n)) ∘ f)                     🝖[ _≡_ ]-[]
+  ∑(r) (𝐒 ∘ (_+ n) ∘ f)                    🝖[ _≡_ ]-[ ∑-of-𝐒 {r}{(_+ n) ∘ f} ]
+  ∑(r) ((_+ n) ∘ f) + length(r)            🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(length(r)) (∑-of-[+] {r}{n}{f}) ]
+  ((∑(r) f) + (length(r) ⋅ n)) + length(r) 🝖[ _≡_ ]-[ associativity(_+_) {∑(r) f}{length(r) ⋅ n}{length(r)} ]
+  (∑(r) f) + ((length(r) ⋅ n) + length(r)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(∑(r) f) (commutativity(_+_) {length(r) ⋅ n}{length(r)}) ]
+  (∑(r) f) + (length(r) + (length(r) ⋅ n)) 🝖[ _≡_ ]-[]
+  (∑(r) f) + (length(r) ⋅ 𝐒(n))            🝖-end
 
 ∑-even-sum : (∑(𝟎 ‥₌ n) (k ↦ 2 ⋅ k) ≡ n ⋅ 𝐒(n))
 ∑-even-sum {𝟎}   = [≡]-intro
@@ -291,7 +321,7 @@ instance
 ∑-odd-sum {𝟎}   = [≡]-intro
 ∑-odd-sum {𝐒 n} =
   ∑(𝟎 ‥ 𝐒(n)) (k ↦ 𝐒(2 ⋅ k))               🝖[ _≡_ ]-[]
-  ∑(𝟎 ‥₌ n) (k ↦ 𝐒(2 ⋅ k))                 🝖[ _≡_ ]-[ ∑-of-succ {r = 𝟎 ‥ 𝐒(n)}{f = 2 ⋅_} ]
+  ∑(𝟎 ‥₌ n) (k ↦ 𝐒(2 ⋅ k))                 🝖[ _≡_ ]-[ ∑-of-𝐒 {r = 𝟎 ‥ 𝐒(n)}{f = 2 ⋅_} ]
   ∑(𝟎 ‥₌ n) (k ↦ 2 ⋅ k) + length(𝟎 ‥ 𝐒(n)) 🝖[ _≡_ ]-[ congruence₂(_+_) (∑-even-sum {n}) (Range-length-zero {𝐒(n)}) ]
   (n ⋅ 𝐒(n)) + 𝐒(n)                        🝖[ _≡_ ]-[ [⋅]-with-[𝐒]ₗ {x = n}{y = 𝐒(n)} ]-sym
   𝐒(n) ⋅ 𝐒(n)                              🝖[ _≡_ ]-[]
@@ -309,6 +339,12 @@ module _ where
   -- ∑dep : (r : List(ℕ)) → ((i : ℕ) → ⦃ _ : (i ∈ r) ⦄ → ℕ) → ℕ
 
   -- ∑dep-test : ∑dep ∅ id ≡ 0
+
+  open import Type.Dependent
+  open import Type.Dependent.Functions
+  proofList : ∀{ℓ}{T : Type{ℓ}} → (l : List(T)) → List(Σ T (_∈ l))
+  proofList ∅       = ∅
+  proofList (x ⊰ l) = intro x (_∈_.use [≡]-intro) ⊰ map ([Σ]-map Fn.id _∈_.skip) (proofList l)
 
 -- Also called: The binomial theorem
 {-
@@ -343,6 +379,5 @@ binomial-power {𝐒 n} {a} {b} = {!!}
       (𝑐𝐶(n)(𝟎) ⋅ (a ⋅ (a ^ (n −₀ 𝟎))) ⋅ (b ^ 𝟎)) + ∑(1 ‥₌ n) (i ↦ 𝑐𝐶(n)(i) ⋅ (a ⋅ (a ^ (n −₀ i))) ⋅ (b ^ i)) 🝖[ _≡_ ]-[ {!!} ]
       (1 ⋅ (a ^ 𝐒(n)) ⋅ 1) + ∑(1 ‥₌ n) (i ↦ 𝑐𝐶(n)(i) ⋅ (a ⋅ (a ^ (n −₀ i))) ⋅ (b ^ i))                        🝖[ _≡_ ]-[ {!!} ]
       (1 ⋅ (a ^ 𝐒(n))) + ∑(1 ‥₌ n) (i ↦ 𝑐𝐶(n)(i) ⋅ (a ⋅ (a ^ (n −₀ i))) ⋅ (b ^ i))                            🝖-end
--- TODO: Maybe need another variant of ∑ where the index has a proof of it being in the range? And it is in this case used for a ⋅ (a ^ (n −₀ i)) ≡ a ^ (𝐒(n) −₀ i)
+-- TODO: Maybe need another variant of ∑ where the index has a proof of it being in the range? It is in this case used for a ⋅ (a ^ (n −₀ i)) ≡ a ^ (𝐒(n) −₀ i)
 -}
-

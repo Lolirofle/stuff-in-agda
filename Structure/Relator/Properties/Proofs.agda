@@ -53,13 +53,31 @@ instance
   _⊆₂_.proof subrelation-reflexivity (intro ab) (intro ra) = intro (ab ra)
 
 instance
-  -- The negation of a subrelation is a superrelation.
+  -- The negation of a subrelation is a superrelation (contrapositive of binary relations).
   -- ∀{_□_ _△_ : T → T → Type} → ((_□_) ⊆₂ (_△_)) → (((¬_) ∘₂ (_△_)) ⊆₂ ((¬_) ∘₂ (_□_)))
   swapped-negated-subrelation : (_⊆₂_ {A = A}{B = B}{ℓ₁ = ℓ}) ⊆₂ ((_⊇₂_) on₂ ((¬_) ∘₂_))
   _⊆₂_.proof (_⊆₂_.proof swapped-negated-subrelation (intro sub)) = _∘ sub
 
 swap-reflexivity : ⦃ refl : Reflexivity(_▫_) ⦄ → Reflexivity(swap(_▫_))
 swap-reflexivity {_▫_ = _▫_} = intro(reflexivity(_▫_))
+
+swap-asymmetry : ⦃ asym : Asymmetry(_▫_) ⦄ → Asymmetry(swap(_▫_))
+swap-asymmetry {_▫_ = _▫_} = intro(asymmetry(_▫_))
+
+swap-antisymmetry : ⦃ antisym : Antisymmetry(_▫₁_)(_▫₂_) ⦄ → Antisymmetry(swap(_▫₁_))(_▫₂_)
+swap-antisymmetry {_▫₁_ = _▫₁_}{_▫₂_ = _▫₂_} = intro(swap(antisymmetry(_▫₁_)(_▫₂_)))
+
+swap-transitivity : ⦃ trans : Transitivity(_▫_) ⦄ → Transitivity(swap(_▫_))
+swap-transitivity {_▫_ = _▫_} = intro(swap(transitivity(_▫_)))
+
+swap-converseTotal : ⦃ tot : ConverseTotal(_▫_) ⦄ → ConverseTotal(swap(_▫_))
+swap-converseTotal {_▫_ = _▫_} = intro([∨]-symmetry(converseTotal(_▫_)))
+
+swap-irreflexivity : ⦃ irrefl : Irreflexivity(_▫_) ⦄ → Irreflexivity(swap(_▫_))
+swap-irreflexivity {_▫_ = _▫_} = intro(irreflexivity(_▫_))
+
+swap-converseTrichotomy : ⦃ tri : ConverseTrichotomy(_▫₁_)(_▫₂_) ⦄ → ⦃ sym : Symmetry(_▫₂_) ⦄ → ConverseTrichotomy(swap(_▫₁_))(_▫₂_)
+swap-converseTrichotomy {_▫₁_ = _▫₁_}{_▫₂_ = _▫₂_} = intro([∨]-symmetry ([∨]-elim2 id ([∨]-elim2 id (symmetry(_▫₂_))) ([∨]-symmetry (trichotomy(_▫₁_)(_▫₂_)))))
 
 on₂-reflexivity : ∀{_▫_ : B → B → Stmt{ℓ}}{f : A → B} → ⦃ refl : Reflexivity(_▫_) ⦄ → Reflexivity((_▫_) on₂ f)
 on₂-reflexivity {_▫_ = _▫_} = intro(reflexivity(_▫_))

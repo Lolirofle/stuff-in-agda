@@ -38,25 +38,28 @@ open import Type
 
 private variable ℓ ℓₗ ℓₑ : Lvl.Level
 private variable F : Type{ℓ}
+private variable _+_ _⋅_ : F → F → F
+private variable _≤_ : F → F → Stmt{ℓₗ}
 
 -- TODO: Generalize so that this does not neccessarily need a rng. See linearly ordered groups and partially ordered groups. See also ordered semigroups and monoids where the property is called "compatible".
 record Ordered ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) ⦃ rng : Rng(_+_)(_⋅_) ⦄ (_≤_ : F → F → Stmt{ℓₗ}) : Type{Lvl.of(F) Lvl.⊔ ℓₗ Lvl.⊔ ℓₑ} where
-  open From-[≤] (_≤_) public
+  open From-[≤](_≤_) public
   open Rng(rng)
 
   field
-    ⦃ [≤]-totalOrder ⦄    : Weak.TotalOrder(_≤_)(_≡_)
-    [≤][+]ₗ-preserve      : ∀{x y z} → (x ≤ y) → ((x + z) ≤ (y + z))
-    [≤][⋅]-zero           : ∀{x y} → (𝟎 ≤ x) → (𝟎 ≤ y) → (𝟎 ≤ (x ⋅ y)) -- TODO: Rename to preserve-sign
-    ⦃ [≤]-binaryRelator ⦄ : BinaryRelator(_≤_)
+    ⦃ [≤]-totalOrder ⦄        : Weak.TotalOrder(_≤_)
+    [≤][+]ₗ-preserve          : ∀{x y z} → (x ≤ y) → ((x + z) ≤ (y + z))
+    [≤][⋅]-preserve-positive  : ∀{x y} → (𝟎 ≤ x) → (𝟎 ≤ y) → (𝟎 ≤ (x ⋅ y))
 
-  -- TODO: Move this to Structure.Relator.Order or something
-  instance
-    [≡][≤]-sub : (_≡_) ⊆₂ (_≤_)
-    _⊆₂_.proof [≡][≤]-sub p = substitute₂ᵣ(_≤_) p (reflexivity(_≤_))
-
-  open Weak.TotalOrder([≤]-totalOrder) public
-  open OrderingProofs.From-[≤] (_≤_) public
+  open Weak.TotalOrder([≤]-totalOrder)
+    renaming(
+      relator      to [≤]-relator ;
+      reflexivity  to [≤]-reflexivity ;
+      antisymmetry to [≤]-antisymmetry ;
+      transitivity to [≤]-transitivity ;
+      totality     to [≤]-totality
+    ) public
+  open OrderingProofs.From-[≤].ByTotalOrder (_≤_) ⦃ equiv ⦄ ⦃ [≤]-totalOrder ⦄ public
 
   record NonNegative (x : F) : Stmt{ℓₗ} where
     constructor intro
@@ -101,6 +104,8 @@ record Ordered ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) ⦃ 
     y + ((− x) + x) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(_) (inverseFunctionₗ(_+_)(−_)) ]-sub
     y + 𝟎           🝖[ _≡_ ]-[ identityᵣ(_+_)(𝟎) ]-sub
     y               🝖-end
+
+  postulate [<]-positive-difference : ∀{x y} → (𝟎 < (y − x)) ↔ (x < y)
 
   [≤]-non-positive-difference : ∀{x y} → ((x − y) ≤ 𝟎) → (x ≤ y)
   [≤]-non-positive-difference {x}{y} xy𝟎 =
@@ -166,15 +171,56 @@ record Ordered ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) ⦃ 
     x₁ + y₁ 🝖[ _<_ ]-[ [<][+]-preserveₗ px ]
     x₂ + y₁ 🝖-semiend
     x₂ + y₂ 🝖[ _<_ ]-end-from-[ [<][+]-preserveᵣ py ]
-  
-  postulate [<][+]-preserve-subₗ : ∀{x₁ x₂ y₁ y₂} → (x₁ ≤ x₂) → (y₁ < y₂) → ((x₁ + y₁) < (x₂ + y₂))
-  postulate [<][+]-preserve-subᵣ : ∀{x₁ x₂ y₁ y₂} → (x₁ < x₂) → (y₁ ≤ y₂) → ((x₁ + y₁) < (x₂ + y₂))
+
+  [<][+]-preserve-subₗ : ∀{x₁ x₂ y₁ y₂} → (x₁ ≤ x₂) → (y₁ < y₂) → ((x₁ + y₁) < (x₂ + y₂))
+  [<][+]-preserve-subₗ {x₁}{x₂}{y₁}{y₂} px py =
+    x₁ + y₁ 🝖[ _≤_ ]-[ [≤][+]ₗ-preserve px ]-sub
+    x₂ + y₁ 🝖-semiend
+    x₂ + y₂ 🝖[ _<_ ]-end-from-[ [<][+]-preserveᵣ py ]
+
+  [<][+]-preserve-subᵣ : ∀{x₁ x₂ y₁ y₂} → (x₁ < x₂) → (y₁ ≤ y₂) → ((x₁ + y₁) < (x₂ + y₂))
+  [<][+]-preserve-subᵣ {x₁}{x₂}{y₁}{y₂} px py =
+    x₁ + y₁ 🝖[ _≤_ ]-[ [≤][+]ᵣ-preserve py ]-sub
+    x₁ + y₂ 🝖-semiend
+    x₂ + y₂ 🝖[ _<_ ]-end-from-[ [<][+]-preserveₗ px ]
+
+  [≤][⋅]-antipreserve-negative  : ∀{x y} → (𝟎 ≥ x) → (𝟎 ≥ y) → (𝟎 ≤ (x ⋅ y))
+  [≤][⋅]-antipreserve-negative {x}{y} px py =
+    • (
+      px ⇒
+      (x ≤ 𝟎)     ⇒-[ [↔]-to-[→] [≤]-flip-negative ]
+      (𝟎 ≤ (− x)) ⇒-end
+    )
+    • (
+      py ⇒
+      (y ≤ 𝟎)     ⇒-[ [↔]-to-[→] [≤]-flip-negative ]
+      (𝟎 ≤ (− y)) ⇒-end
+    )
+    ⇒₂-[ [≤][⋅]-preserve-positive ]
+    (𝟎 ≤ ((− x) ⋅ (− y))) ⇒-[ Functional.swap(subtransitivityᵣ(_≤_)(_≡_)) [⋅]-of-[−] ]
+    (𝟎 ≤ (x ⋅ y))         ⇒-end
+
+  [≤]-positive-by-self-negativity : ∀{x} → (𝟎 ≤ x) ↔ ((− x) ≤ x)
+  [≤]-positive-by-self-negativity {x} = [↔]-intro
+    (p ↦ [∨]-elim id (neg ↦ [↔]-to-[→] [≤]-flip-negative neg 🝖 p) (converseTotal(_≤_) {𝟎}{x}))
+    (p ↦ [↔]-to-[→] [≤]-flip-positive p 🝖 p)
+
+  module _ ⦃ unity : Unity(_+_)(_⋅_) ⦄ where
+    open Unity(unity)
+
+    [≤]-identities : 𝟎 ≤ 𝟏
+    [≤]-identities = [∨]-elim id (io ↦ subtransitivityᵣ(_≤_)(_≡_) ([≤][⋅]-antipreserve-negative io io) (identityᵣ(_⋅_)(𝟏))) (converseTotal(_≤_) {𝟎}{𝟏})
+
+    module _ ⦃ distinct-identities : NonZero(𝟏) ⦄ where
+      [<]-identities : 𝟎 < 𝟏
+      [<]-identities = [≤][≢]-to-[<] [≤]-identities (NonZero.proof distinct-identities ∘ symmetry(_≡_))
+
+open import Lang.Instance
+open import Structure.Relator.Ordering.Proofs
 
 -- Theory defining the axioms of an ordered field (a field with a weak total order).
 record OrderedField ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) (_≤_ : F → F → Stmt{ℓₗ}) : Type{Lvl.of(F) Lvl.⊔ ℓₗ Lvl.⊔ ℓₑ} where
-  field
-    ⦃ [+][⋅]-field ⦄ : Field(_+_)(_⋅_)
-    ⦃ ordered ⦄      : Ordered(_+_)(_⋅_)(_≤_)
-
+  field ⦃ [+][⋅]-field ⦄ : Field(_+_)(_⋅_)
   open Field([+][⋅]-field) public
+  field ⦃ ordered ⦄ : Ordered(_+_)(_⋅_)(_≤_)
   open Ordered(ordered) public

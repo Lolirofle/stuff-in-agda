@@ -1,13 +1,15 @@
 module Numeral.Natural.Oper.Proofs where
 
 import Lvl
+open import Data
 open import Functional
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Natural
-open import Numeral.Natural.Oper
 open import Numeral.Natural.Induction
+open import Numeral.Natural.Oper
+open import Numeral.Natural.Relation
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Structure.Function
@@ -149,6 +151,14 @@ instance
   l = \{a b} → ℕ-elim{T = \b → (a + b ≡ 0) → (a ≡ 0)} id (\_ p → p ∘ [≡]-with(𝐏)) b
   r = l{b}{a} (commutativity(_+_) {b}{a} 🝖 proof)
 
+[+]-positive : ∀{a b} → Positive(a) → Positive(b) → Positive(a + b)
+[+]-positive {𝐒 a} {𝐒 b} <> <> = <>
+
+[+]-terms-positive : ∀{a b} → Positive(a + b) → (Positive(a) ∨ Positive(b))
+[+]-terms-positive {𝐒 a} {𝟎}   pab = [∨]-introₗ <>
+[+]-terms-positive {𝟎}   {𝐒 b} pab = [∨]-introᵣ <>
+[+]-terms-positive {𝐒 a} {𝐒 b} pab = [∨]-introₗ <>
+
 [⋅]-product-is-1ₗ : ∀{a b} → (a ⋅ b ≡ 1) → (a ≡ 1)
 [⋅]-product-is-1ₗ {𝟎}   {_}   p = p
 [⋅]-product-is-1ₗ {𝐒 a} {𝟎}   ()
@@ -162,10 +172,11 @@ instance
 [⋅]-product-is-0 {0}   {𝐒(_)} _   = [∨]-introₗ [≡]-intro
 [⋅]-product-is-0 {𝐒(a)}{𝐒(b)} ab0 with () ← [𝐒]-not-0 {(𝐒(a) ⋅ b) + a} (commutativity(_+_) {𝐒(a) ⋅ b}{𝐒(a)} 🝖 ab0)
 
-[⋅]-product-is-positive : ∀{a b n} → (a ⋅ b ≡ 𝐒(n)) → (∃(n₁ ↦ a ≡ 𝐒(n₁)) ∧ ∃(n₂ ↦ b ≡ 𝐒(n₂)))
-[⋅]-product-is-positive {_}   {0}    p with () ← [𝐒]-not-0 (symmetry(_≡_) p)
-[⋅]-product-is-positive {0}   {𝐒(_)} p with () ← [𝐒]-not-0 (symmetry(_≡_) p)
-[⋅]-product-is-positive {𝐒(a)}{𝐒(b)} p = [∧]-intro ([∃]-intro a) ([∃]-intro b)
+[⋅]-positive : ∀{a b} → Positive(a) → Positive(b) → Positive(a ⋅ b)
+[⋅]-positive {𝐒 a} {𝐒 b} <> <> = <>
+
+[⋅]-factors-positive : ∀{a b} → Positive(a ⋅ b) → (Positive(a) ∧ Positive(b))
+[⋅]-factors-positive {𝐒 a} {𝐒 b} pab = [∧]-intro <> <>
 
 instance
   [+]-cancellationᵣ : Cancellationᵣ(_+_)
@@ -362,3 +373,4 @@ instance
     (y 𝄩 z) ⋅ x       🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_𝄩_) {y}{z}{x} ]
     (y ⋅ x) 𝄩 (z ⋅ x) 🝖[ _≡_ ]-[ congruence₂(_𝄩_) (commutativity(_⋅_) {y}{x}) (commutativity(_⋅_) {z}{x}) ]
     (x ⋅ y) 𝄩 (x ⋅ z) 🝖-end
+

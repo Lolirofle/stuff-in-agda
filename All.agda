@@ -204,6 +204,7 @@ import Lang.Instance
 import Lang.Irrelevance
 import Lang.Reflection
 import Lang.Size
+import Lang.Templates.Order
 import Lang.Vars.Structure.Operator
 import Logic.Classical.DoubleNegated
 import Logic.Classical
@@ -233,6 +234,8 @@ import Numeral.CoordinateVector
 import Numeral.Finite.Bound
 import Numeral.Finite.Category
 import Numeral.Finite.Conversions
+import Numeral.Finite.Decidable.Quantifiers
+import Numeral.Finite.Decidable
 import Numeral.Finite.Equiv
 import Numeral.Finite.Functions
 import Numeral.Finite.LinearSearch
@@ -257,9 +260,11 @@ import Numeral.Integer
 import Numeral.Matrix.Proofs
 -- import Numeral.Matrix.Relations
 import Numeral.Matrix
+import Numeral.Natural.Combinatorics.Multi
 import Numeral.Natural.Combinatorics.Proofs
 import Numeral.Natural.Combinatorics
 import Numeral.Natural.Coprime.Proofs
+import Numeral.Natural.Coprime.Tree
 import Numeral.Natural.Coprime
 import Numeral.Natural.Decidable
 import Numeral.Natural.Equiv.Path
@@ -294,16 +299,14 @@ import Numeral.Natural.Oper.Proofs.Order
 import Numeral.Natural.Oper.Proofs.Rewrite
 -- import Numeral.Natural.Oper.Proofs.Structure
 import Numeral.Natural.Oper.Proofs
-import Numeral.Natural.Oper.Summation.Proofs
-import Numeral.Natural.Oper.Summation.Range.Proofs
-import Numeral.Natural.Oper.Summation.Range
-import Numeral.Natural.Oper.Summation
 import Numeral.Natural.Oper
 import Numeral.Natural.Prime.Proofs.Product
 import Numeral.Natural.Prime.Proofs.Representation
+import Numeral.Natural.Prime.Proofs.Size
 import Numeral.Natural.Prime.Proofs
 import Numeral.Natural.Prime
 import Numeral.Natural.Proofs
+import Numeral.Natural.Relation.Divisibility.Proofs.FlooredDivision
 import Numeral.Natural.Relation.Divisibility.Proofs.Modulo
 import Numeral.Natural.Relation.Divisibility.Proofs.Product
 import Numeral.Natural.Relation.Divisibility.Proofs
@@ -338,6 +341,11 @@ import Numeral.Sign.Oper0
 import Numeral.Sign.Proofs
 import Numeral.Sign
 import Operator.Equals
+import Operator.Summation.Proofs
+import Operator.Summation.Range.Proofs
+import Operator.Summation.Range
+import Operator.Summation
+import Operator.Summation2
 import ReductionSystem
 import Relator.Category
 import Relator.Congruence.Proofs
@@ -406,7 +414,12 @@ import Structure.Container.Iterable
 import Structure.Function.Domain.Proofs
 import Structure.Function.Domain
 import Structure.Function.Linear
--- import Structure.Function.Metric
+import Structure.Function.Metric.Proofs
+import Structure.Function.Metric.Subspace.Proofs
+import Structure.Function.Metric.Subspace.Properties.Proofs
+import Structure.Function.Metric.Subspace.Properties
+import Structure.Function.Metric.Subspace
+import Structure.Function.Metric
 import Structure.Function.Multi
 import Structure.Function.Names
 import Structure.Function.Ordering
@@ -447,9 +460,12 @@ import Structure.Operator.Proofs
 import Structure.Operator.Properties
 import Structure.Operator.Ring.Characteristic
 import Structure.Operator.Ring.Homomorphism
+import Structure.Operator.Ring.Numerals.Proofs
+import Structure.Operator.Ring.Numerals
 import Structure.Operator.Ring.Proofs
 import Structure.Operator.Ring.Rings
 import Structure.Operator.Ring
+import Structure.Operator.Semi
 import Structure.Operator.SetAlgebra
 import Structure.Operator.Vector.Eigen
 -- import Structure.Operator.Vector.Equiv
@@ -473,6 +489,8 @@ import Structure.Operator.Vector.Proofs
 import Structure.Operator.Vector
 import Structure.Operator
 import Structure.OrderedField.AbsoluteValue
+import Structure.OrderedField.Max
+import Structure.OrderedField.Min
 import Structure.OrderedField
 import Structure.Real.Abs
 -- import Structure.Real.Continuity

@@ -24,6 +24,7 @@ open import Structure.Operator.Properties
 open import Structure.Operator
 open import Structure.Relator.Properties
 open import Structure.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_)
+open import Syntax.Implication
 open import Syntax.Transitivity
 open import Type
 
@@ -158,16 +159,18 @@ map-binaryOperator : BinaryOperator {A₁ = A → B} ⦃ equiv-A₁ = Fn.[⊜]-e
 map-binaryOperator = intro p where
   p : Names.Congruence₂(map)
   p {f} {g} {∅}       {∅}       fg xy = reflexivity(_≡_)
-  p {f} {g} {x₁ ⊰ l₁} {x₂ ⊰ l₂} fg xy = congruence₂(_⊰_) ba rec where
-    ba : f(x₁) ≡ g(x₂)
-    ba =
+  p {f} {g} {x₁ ⊰ l₁} {x₂ ⊰ l₂} fg xy =
+    • (
       f(x₁) 🝖[ _≡_ ]-[ Fn._⊜_.proof fg {x₁} ]
       g(x₁) 🝖[ _≡_ ]-[ congruence₁(g) ([∧]-elimₗ([⊰]-general-cancellation xy)) ]
       g(x₂) 🝖-end
-    rec : map f(l₁) ≡ map g(l₂)
-    rec =
+    )
+    • (
       map f(l₁) 🝖[ _≡_ ]-[ p fg ([∧]-elimᵣ([⊰]-general-cancellation xy)) ]
       map g(l₂) 🝖-end
+    )
+    ⇒₂-[ congruence₂(_⊰_) ]
+    (f(x₁) ⊰ map f(l₁) ≡ g(x₂) ⊰ map g(l₂)) ⇒-end
 
 count-of-[++] : ∀{P} → (count P (l₁ ++ l₂) ≡ count P l₁ + count P l₂)
 count-of-[++] {l₁ = ∅}       {l₂ = l₂} {P = P} = reflexivity(_≡_)

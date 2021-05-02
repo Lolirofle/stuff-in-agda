@@ -19,41 +19,55 @@ open import Type.Properties.Singleton.Proofs
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ ℓₑ : Lvl.Level
-private variable T A B P Q : Type{ℓ}
+private variable T : Type{ℓ}
 
-{-
-module _ {P Q : T → Type} ⦃ prop-P : ∀{x} → MereProposition{ℓ}(P(x)) ⦄ ⦃ prop-Q : ∀{x} → MereProposition{ℓ}(Q(x)) ⦄ where
-  prop-set-extensionalityₗ : (P ≡ Q) ← (∀{x} → P(x) ↔ Q(x))
-  prop-set-extensionalityₗ pq = functionExtensionalityOn P Q (propositional-extensionalityₗ pq)
--}
+module _ where
+  {-
+  module _ {P Q : T → Type} ⦃ prop-P : ∀{x} → MereProposition{ℓ}(P(x)) ⦄ ⦃ prop-Q : ∀{x} → MereProposition{ℓ}(Q(x)) ⦄ where
+    prop-set-extensionalityₗ : (P ≡ Q) ← (∀{x} → P(x) ↔ Q(x))
+    prop-set-extensionalityₗ pq = functionExtensionalityOn P Q (propositional-extensionalityₗ pq)
+  -}
 
---data Prop{ℓ} : Type{Lvl.𝐒(ℓ)} where
---  intro : (T : Type{ℓ}) → ⦃ MereProposition(T) ⦄ → Prop
-Prop = \{ℓ} → PTLogic.∃{Obj = Type{ℓ}} (T ↦ MereProposition(T))
+  --data Prop{ℓ} : Type{Lvl.𝐒(ℓ)} where
+  --  intro : (T : Type{ℓ}) → ⦃ MereProposition(T) ⦄ → Prop
+  Prop = \{ℓ} → PTLogic.∃{Obj = Type{ℓ}} (T ↦ MereProposition(T))
 
-⊤ : Prop
-⊤ = intro(Logic.⊤) ⦃ prop-top ⦄
+  private variable P Q : Prop{ℓ}
 
-⊥ : Prop
-⊥ = intro(Logic.⊥) ⦃ prop-bottom ⦄
+  ⊤ : Prop
+  ⊤ = intro(Logic.⊤) ⦃ prop-top ⦄
 
-¬_ : Prop{ℓ} → Prop
-¬(intro A) = intro(Logic.¬ A) ⦃ prop-negation ⦄
+  ⊥ : Prop
+  ⊥ = intro(Logic.⊥) ⦃ prop-bottom ⦄
 
-_⟶_ : Prop{ℓ₁} → Prop{ℓ₂} → Prop
-(intro A) ⟶ (intro B) = intro(A → B) ⦃ prop-implication ⦄
+  ¬_ : Prop{ℓ} → Prop
+  ¬(intro A) = intro(Logic.¬ A) ⦃ prop-negation ⦄
 
-_∨_ : Prop{ℓ₁} → Prop{ℓ₂} → Prop
-(intro A) ∨ (intro B) = intro(A Logic.∨ B)
+  _⟶_ : Prop{ℓ₁} → Prop{ℓ₂} → Prop
+  (intro A) ⟶ (intro B) = intro(A → B) ⦃ prop-implication ⦄
 
-_∧_ : Prop{ℓ₁} → Prop{ℓ₂} → Prop
-(intro A) ∧ (intro B) = intro(A Logic.∧ B) ⦃ prop-conjunction ⦄
+  _∨_ : Prop{ℓ₁} → Prop{ℓ₂} → Prop
+  (intro A) ∨ (intro B) = intro(A Logic.∨ B)
 
-∃ : (T → Prop{ℓ}) → Prop
-∃ P = intro(Logic.∃(PTLogic.[∃]-witness ∘ P))
+  _∧_ : Prop{ℓ₁} → Prop{ℓ₂} → Prop
+  (intro A) ∧ (intro B) = intro(A Logic.∧ B) ⦃ prop-conjunction ⦄
 
--- ∀ₚ : (T → Prop{ℓ}) → Prop
--- ∀ₚ P = intro(PTLogic.∀ₗ(PTLogic.[∃]-witness ∘ P)) ⦃ {!prop-universal!} ⦄
+  ∃ : (T → Prop{ℓ}) → Prop
+  ∃ P = intro(Logic.∃(PTLogic.[∃]-witness ∘ P))
+
+  -- ∀ₚ : (T → Prop{ℓ}) → Prop
+  -- ∀ₚ P = intro(PTLogic.∀ₗ(PTLogic.[∃]-witness ∘ P)) ⦃ {!prop-universal!} ⦄
+
+  Proof : Prop{ℓ} → Type
+  Proof = PTLogic.[∃]-witness
+
+  [⊤]-intro : Proof(⊤)
+  [⊤]-intro = Logic.[⊤]-intro
+
+  [∧]-intro : Proof(P) → Proof(Q) → Proof(P ∧ Q)
+  [∧]-intro = Logic.[∧]-intro
+
+private variable A B P Q : Type{ℓ}
 
 record SubtypeSet {ℓₑ ℓ} (T : Type{ℓ}) : Type{ℓ Lvl.⊔ Lvl.𝐒(ℓₑ)} where
   constructor filter

@@ -17,9 +17,9 @@ open import Numeral.Natural.Relation.Order.Classical
 open import Syntax.Number
 open import Type
 
--- TODO: Does the same algorithm work in the naturals? https://math.stackexchange.com/questions/237372/finding-positive-b%C3%A9zout-coefficients https://math.stackexchange.com/questions/1230224/positive-solutions-of-893x-2432y-19?rq=1
-gcdExt : ℕ → ℕ → (ℕ ⨯ ℤ ⨯ ℤ)
-gcdExt a b = gcdFold(\{a (𝐒 b) _ (succ min) _ (x , y) → (y , (x − ((+ₙ(a ⌊/⌋ ℕ.𝐒(b))) ⋅ y)))}) (\_ _ _ _ _ → Tuple.swap) (1 , 0) a b
+-- TODO: Does the same algorithm work in the naturals? https://math.stackexchange.com/questions/237372/finding-positive-b%C3%A9zout-coefficients https://math.stackexchange.com/questions/1230224/positive-solutions-of-893x-2432y-19?rq=1 Probably not
+-- gcdExt : ℕ → ℕ → (ℕ ⨯ ℤ ⨯ ℤ)
+-- gcdExt a b = gcdFold(\{a (𝐒 b) _ (succ min) _ (x , y) → (y , (x − ((+ₙ(a ⌊/⌋ ℕ.𝐒(b))) ⋅ y)))}) (\_ _ _ _ _ → Tuple.swap) (1 , 0) a b
 
 open import Logic.IntroInstances
 open import Logic.Predicate
@@ -41,12 +41,12 @@ open import Syntax.Transitivity
 
 private variable a b d : ℕ
 
-gcd-gcdExt-equal : (gcd a b ≡ Tuple.left(gcdExt a b))
-gcd-gcdExt-equal {a}{b} = Gcd-unique {a}{b} Gcd-gcd Gcd-gcdFold
+-- gcd-gcdExt-equal : (gcd a b ≡ Tuple.left(gcdExt a b))
+-- gcd-gcdExt-equal {a}{b} = Gcd-unique {a}{b} Gcd-gcd Gcd-gcdFold
 
 -- Also called: Bézout's identity, extended Euclid's algorithm.
 gcd-linearCombination-existence : ∃{Obj = ℤ ⨯ ℤ}(\{(x , y) → (((+ₙ a) ⋅ x) + ((+ₙ b) ⋅ y) ≡ +ₙ(gcd a b))})
-gcd-linearCombination-existence {a}{b} = [ℕ]-strong-induction {φ = b ↦ ∀{a} → ∃{Obj = ℤ ⨯ ℤ}(\{(x , y) → (((+ₙ a) ⋅ x) + ((+ₙ b) ⋅ y) ≡ +ₙ(gcd a b))})} base step {b}{a} where
+gcd-linearCombination-existence {a}{b} = ℕ-strong-induction {φ = b ↦ ∀{a} → ∃{Obj = ℤ ⨯ ℤ}(\{(x , y) → (((+ₙ a) ⋅ x) + ((+ₙ b) ⋅ y) ≡ +ₙ(gcd a b))})} base step {b}{a} where
   base : ∀{a} → ∃{Obj = ℤ ⨯ ℤ}(\{(x , y) → (((+ₙ a) ⋅ x) + (0 ⋅ y) ≡ +ₙ(gcd a 0))})
   ∃.witness (base {a})     = (1 , 0)
   ∃.proof   (base {ℕ.𝟎})   = [≡]-intro
@@ -86,3 +86,22 @@ gcd-linearCombination-existence {a}{b} = [ℕ]-strong-induction {φ = b ↦ ∀{
         0 + (+ₙ(a mod ℕ.𝐒(i)))                        🝖[ _≡_ ]-[ identityₗ(_+_)(0) ]
         +ₙ(a mod ℕ.𝐒(i))                              🝖[ _≡_ ]-end
   ... | [∨]-introᵣ (succ ai) with [∃]-intro (x , y) ⦃ p ⦄ ← prev{a} ai {ℕ.𝐒(i)} = commutativity(_+_) {(+ₙ a) ⋅ y}{(+ₙ ℕ.𝐒(i)) ⋅ x} 🝖 p
+
+{-
+open import Functional
+open import Numeral.Natural.Relation.Divisibility
+open import Numeral.Natural.Relation.Divisibility.Proofs
+
+linear-combination-is-multiple-of-gcd : ∀{x y}{a b c} → (((+ₙ a) ⋅ x) + ((+ₙ b) ⋅ y) ≡ +ₙ c) → (gcd a b ∣ c)
+linear-combination-is-multiple-of-gcd {x} {y} {a} {b} {c} eq
+  with [∃]-intro p ⦃ gcdpa ⦄ ← [↔]-to-[←] divides-[⋅]-existence (Gcd.divisorₗ{a}{b} Gcd-gcd)
+  with [∃]-intro q ⦃ gcdqb ⦄ ← [↔]-to-[←] divides-[⋅]-existence (Gcd.divisorᵣ{a}{b} Gcd-gcd)
+  = [↔]-to-[→] divides-[⋅]-existence
+    ([∃]-intro (absₙ(((+ₙ p) ⋅ x) + ((+ₙ q) ⋅ y))) ⦃ injective(+ₙ_) $
+      (+ₙ ((gcd a b) ℕ.⋅ absₙ(((+ₙ p) ⋅ x) + ((+ₙ q) ⋅ y))))                 🝖[ _≡_ ]-[ {!!} ]
+      (+ₙ (absₙ(((+ₙ((gcd a b) ℕ.⋅ p)) ⋅ x) + ((+ₙ((gcd a b) ℕ.⋅ q)) ⋅ y)))) 🝖[ _≡_ ]-[ {!!} ]
+      (((+ₙ((gcd a b) ℕ.⋅ p)) ⋅ x) + ((+ₙ((gcd a b) ℕ.⋅ q)) ⋅ y))            🝖[ _≡_ ]-[ congruence₂(_+_) {!!} {!!} ]
+      (((+ₙ a) ⋅ x) + ((+ₙ b) ⋅ y))                                          🝖[ _≡_ ]-[ eq ]
+      (+ₙ c)                                                                 🝖-end
+    ⦄)
+-}

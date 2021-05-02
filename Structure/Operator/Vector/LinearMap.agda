@@ -95,6 +95,7 @@ module _
 
   BilinearOperator = BilinearMap(vectorSpace)(vectorSpace)(vectorSpace) (_▫_)
   module BilinearOperator(bilinearOper : BilinearOperator) where
+    -- TODO: open BilinearMap
     -- TODO: Move the proof for distributivity from preserving
     [+ᵥ]-distributivityₗ : Distributivityₗ(_▫_)(_+ᵥ_)
     Distributivityₗ.proof [+ᵥ]-distributivityₗ {x}{y}{z} =

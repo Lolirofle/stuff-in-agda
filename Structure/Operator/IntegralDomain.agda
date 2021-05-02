@@ -29,14 +29,12 @@ record Domain {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : 
 -- Non-trivial commutative ring and domain.
 record IntegralDomain {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
+  field ⦃ ring ⦄ : Ring(_+_)(_⋅_)
+  open Ring(ring) public
+  field ⦃ domain ⦄ : Domain(_+_)(_⋅_)
+  open Domain ⦃ rng = rng ⦄ (domain) public
   field
-    ⦃ ring ⦄              : Ring(_+_)(_⋅_)
-    ⦃ domain ⦄            : Domain(_+_)(_⋅_)
     ⦃ [⋅]-commutativity ⦄ : Commutativity(_⋅_)
-  open Ring  (ring)   public
-  open Domain(domain) public
-
-  field
     ⦃ distinct-identities ⦄ : DistinctIdentities
 
 record IntegralDomainObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where

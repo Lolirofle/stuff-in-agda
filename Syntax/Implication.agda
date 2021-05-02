@@ -47,6 +47,11 @@ _⇒-[]_ _ = id
 infixr 0.98 _⇒-[]_
 {-# INLINE _⇒-[]_ #-}
 
+•_⇒₁_ : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}} → X → (X → Y) → Y
+•_⇒₁_ x f = f x
+infixr 0.97 •_⇒₁_
+{-# INLINE •_⇒₁_ #-}
+
 •_•_⇒₂-[_]_ : ∀{X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{Y : Type{ℓ₃}}{Z : Type{ℓ₄}} → X₁ → X₂ → (X₁ → X₂ → Y) → (Y → Z) → Z
 •_•_⇒₂-[_]_ x₁ x₂ g f = (f ∘₂ g) x₁ x₂
 infixr 0.97 •_•_⇒₂-[_]_

@@ -26,6 +26,7 @@ private variable T A B C : Type{ℓ}
 
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   private variable l l₁ l₂ : List(T)
+  private variable ll : List(List(T))
   private variable a b c x : T
 
   instance
@@ -89,6 +90,20 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     postulate R₂ : (a ∈ filter f(l)) → IsTrue(f(a))
   -}
 
+{-
+module _ ⦃ equiv : Equiv{ℓₑ₁}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑ₂}(List(T)) ⦄ where
+  private variable l l₁ l₂ : List(T)
+  private variable ll : List(List(T))
+  private variable a b c x : T
+
+  [∈]-concat : (x ∈ concat ll) ↔ ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
+  [∈]-concat = [↔]-intro L R where
+    L : (x ∈ concat ll) ← ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
+    L {ll = ll0 ⊰ ll} ([∃]-intro l ⦃ [∧]-intro lll xl ⦄) = {!L{ll = ll}!} -- [↔]-to-[←] [∈][++] ([∨]-introₗ lll)
+
+    R : (x ∈ concat ll) → ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
+-}
+
 module _ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
   private variable f : A → B
   private variable l l₁ l₂ : List(T)
@@ -97,6 +112,10 @@ module _ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B)
   [∈]-map : ⦃ func-f : Function(f) ⦄ → (a ∈ l) → (f(a) ∈ (map f(l)))
   [∈]-map {f = f} (use p)  = use (congruence₁(f) p)
   [∈]-map         (skip p) = skip([∈]-map p)
+
+  [∈]-mapₗ : ⦃ func-f : Function(f) ⦄ → ∃(a ↦ (b ≡ₛ f(a)) ∧ (a ∈ l)) ← (b ∈ map f(l))
+  [∈]-mapₗ {l = a ⊰ l} (• p) = [∃]-intro a ⦃ [∧]-intro p (• reflexivity(_≡ₛ_)) ⦄
+  [∈]-mapₗ {l = a ⊰ l} (⊰ p) = [∃]-map-proof ([∧]-map id (⊰_)) ([∈]-mapₗ p)
 
 {- TODO: Stuff below is supposed to be moved to Structure.Sets.Proofs
 

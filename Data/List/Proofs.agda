@@ -24,8 +24,8 @@ open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓ ℓₑ ℓₑₗ ℓₑₒ ℓₑ₁ ℓₑ₂ ℓₑₗ₁ ℓₑₗ₂ : Lvl.Level
-private variable T A B : Type{ℓ}
+private variable ℓ ℓₑ ℓₑₗ ℓₑₒ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑₗ₁ ℓₑₗ₂ ℓₑₗ₃ : Lvl.Level
+private variable T A B C : Type{ℓ}
 private variable n : ℕ
 
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List(T)) ⦄ ⦃ extensionality : Extensionality(equiv-List) ⦄ where
@@ -188,7 +188,7 @@ module _
   private variable a b x : T
   private variable P : List(T) → Stmt{ℓ}
 
-  private variable f : A → B
+  private variable f g : A → B
 
   map-postpend : (map f(postpend a l) ≡ postpend (f(a)) (map f(l)))
   map-postpend {f = f} {a = a}{l = l} = elim (reflexivity(_≡_)) (\x l → congruence₂ᵣ(_⊰_)(f(x)) {map f (postpend a l)}{postpend (f(a)) (map f l)}) l
@@ -196,3 +196,43 @@ module _
   instance
     map-preserves-[++] : Preserving₂(map f)(_++_)(_++_)
     Preserving.proof (map-preserves-[++] {f = f}) {l₁} {l₂} = elim (reflexivity(_≡_)) (\x l₁ → congruence₂ᵣ(_⊰_)(f(x)) {map f(l₁ ++ l₂)}{(map f l₁) ++ (map f l₂)}) l₁
+
+  open import Function.Equals using (_⊜_)
+  open import Logic.Propositional
+  open import Syntax.Implication
+  map-operator-raw : ∀ ⦃ func-f : Function(f) ⦄ → (f ⊜ g) → (l₁ ≡ l₂) → (map f(l₁) ≡ map g(l₂))
+  map-operator-raw {f} {g} {∅}       {∅}       fg xy = reflexivity(_≡_)
+  map-operator-raw {f} {g} {∅}       {x₂ ⊰ l₂} fg xy with () ← [∅][⊰]-unequal xy
+  map-operator-raw {f} {g} {x₁ ⊰ l₁} {∅}       fg xy with () ← [∅][⊰]-unequal (symmetry(_≡_) xy)
+  map-operator-raw {f} {g} {x₁ ⊰ l₁} {x₂ ⊰ l₂} fg xy =
+    • (
+      f(x₁) 🝖[ _≡_ ]-[ congruence₁(f) ([∧]-elimₗ([⊰]-generalized-cancellation xy)) ]
+      f(x₂) 🝖[ _≡_ ]-[ _⊜_.proof fg {x₂} ]
+      g(x₂) 🝖-end
+    )
+    • (
+      map f(l₁) 🝖[ _≡_ ]-[ map-operator-raw fg ([∧]-elimᵣ([⊰]-generalized-cancellation xy)) ]
+      map g(l₂) 🝖-end
+    )
+    ⇒₂-[ congruence₂(_⊰_) ]
+    (f(x₁) ⊰ map f(l₁) ≡ g(x₂) ⊰ map g(l₂)) ⇒-end
+
+module _
+  ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-List₁ : Equiv{ℓₑₗ₁}(List(A)) ⦄ ⦃ extensionality-A : Extensionality(equiv-List₁) ⦄
+  ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄
+  where
+
+  private variable _▫₁_ _▫₂_ : A → B → B
+  private variable id₁ id₂ : T
+  private variable l l₁ l₂ : List(T)
+
+  foldᵣ-operator-raw : ∀ ⦃ oper₁ : BinaryOperator(_▫₁_) ⦄ → (∀{x y} → (x ▫₁ y) ≡ (x ▫₂ y)) → (id₁ ≡ id₂) → (l₁ ≡ l₂) → (foldᵣ(_▫₁_) id₁ l₁ ≡ foldᵣ(_▫₂_) id₂ l₂)
+  foldᵣ-operator-raw {l₁ = ∅} {l₂ = ∅} op-eq id-eq l-eq = id-eq
+  foldᵣ-operator-raw {l₁ = ∅} {l₂ = x ⊰ l₂} op-eq id-eq l-eq with () ← [∅][⊰]-unequal l-eq
+  foldᵣ-operator-raw {l₁ = x ⊰ l₁} {l₂ = ∅} op-eq id-eq l-eq with () ← [∅][⊰]-unequal (symmetry(_≡_) l-eq)
+  foldᵣ-operator-raw {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_} {id₁}{id₂} {x₁ ⊰ l₁} {x₂ ⊰ l₂} op-eq id-eq l-eq =
+    foldᵣ(_▫₁_) id₁ (x₁ ⊰ l₁) 🝖[ _≡_ ]-[]
+    x₁ ▫₁ foldᵣ(_▫₁_) id₁ l₁ 🝖[ _≡_ ]-[ congruence₂(_▫₁_) ([⊰]-generalized-cancellationᵣ l-eq) (foldᵣ-operator-raw {l₁ = l₁}{l₂ = l₂} op-eq id-eq ([⊰]-generalized-cancellationₗ l-eq)) ]
+    x₂ ▫₁ foldᵣ(_▫₂_) id₂ l₂ 🝖[ _≡_ ]-[ op-eq ]
+    x₂ ▫₂ foldᵣ(_▫₂_) id₂ l₂ 🝖[ _≡_ ]-[]
+    foldᵣ(_▫₂_) id₂ (x₂ ⊰ l₂) 🝖-end

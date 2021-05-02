@@ -130,9 +130,9 @@ Gcd-swap p = Gcd.intro₂
   (Gcd.divisorₗ p)
   (swap(Gcd.maximum₂ p))
 
--- Note: The construction for the existence is following the same steps as in the definition of the function `gcd`, but unlike `gcd` which does not pass the termination checker, this uses [ℕ]-strong-induction to pass it.
+-- Note: The construction for the existence is following the same steps as in the definition of the function `gcd`, but unlike `gcd` which does not pass the termination checker, this uses ℕ-strong-induction to pass it.
 Gcd-existence : ∃(Gcd a b)
-Gcd-existence{a}{b} = [ℕ]-strong-induction {φ = b ↦ ∀{a} → ∃(Gcd a b)} base step {b}{a} where
+Gcd-existence{a}{b} = ℕ-strong-induction {φ = b ↦ ∀{a} → ∃(Gcd a b)} base step {b}{a} where
   base : ∀{a} → ∃(Gcd a 𝟎)
   base{a} = [∃]-intro a ⦃ Gcd-base ⦄
 
@@ -142,7 +142,7 @@ Gcd-existence{a}{b} = [ℕ]-strong-induction {φ = b ↦ ∀{a} → ∃(Gcd a b)
   ... | [∨]-introᵣ (succ ai) = [∃]-map-proof Gcd-swap(prev {a} ai {𝐒(i)})
 
 Gcd-gcdFold : ∀{a b}{ℓ}{T : Type{ℓ}}{f}{g}{x : T} → Gcd a b (Tuple.left(gcdFold f g x a b))
-Gcd-gcdFold{a}{b}{f = f}{g}{x} = [ℕ]-strong-induction {φ = b ↦ ∀{a} → Gcd a b (Tuple.left(gcdFold f g x a b))} base step {b}{a} where
+Gcd-gcdFold{a}{b}{f = f}{g}{x} = ℕ-strong-induction {φ = b ↦ ∀{a} → Gcd a b (Tuple.left(gcdFold f g x a b))} base step {b}{a} where
   base : ∀{a} → Gcd a 𝟎 (Tuple.left(gcdFold f g x a 𝟎))
   base{a} = Gcd-base
 

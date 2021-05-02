@@ -23,6 +23,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   Closed : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X) → Stmt
   Closed(A) = Open(∁ A)
 
+  -- `Neighborhood p N` states that the set `N` is a neighborhood around the point `p`.
   record Neighborhood (p : X) (N : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X)) : Stmt{Lvl.𝐒(ℓ₁) Lvl.⊔ ℓ₂ Lvl.⊔ Lvl.𝐒(ℓ₃)} where
     constructor intro
     eta-equality

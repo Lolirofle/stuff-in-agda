@@ -13,11 +13,10 @@ private variable Z : Type{ℓₒ}
 
 record Integer ⦃ equiv : Equiv{ℓₑ}(Z) ⦄ (_+_ : Z → Z → Z) (_⋅_ : Z → Z → Z) (_≤_ : Z → Z → Type{ℓₗ}) : Typeω where
   constructor intro
-  field
-    ⦃ ring ⦄              : Ring(_+_)(_⋅_)
-    ⦃ ordered ⦄           : Ordered(_+_)(_⋅_)(_≤_)
+  field ⦃ ring ⦄    : Ring(_+_)(_⋅_)
   open Ring(ring) public
-  open Ordered(ordered) public
+  field ⦃ ordered ⦄ : Ordered(_+_)(_⋅_)(_≤_)
+  open Ordered ⦃ rng = rng ⦄ (ordered) public
 
   𝐒 : Z → Z
   𝐒 = _+ 𝟏

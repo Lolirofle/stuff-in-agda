@@ -27,6 +27,7 @@ open import Type.Properties.Decidable.Proofs
 -- Note: This is a variant of Euclid's proof, using factorial instead of a list of all previous prime numbers.
 -- Also called: Euclid's theorem, the infinitude of prime numbers (note that this does not actually state that they are infinite by the usual definition. It is intuitively implied).
 -- TODO: So, which prime is this actually returning? The smallest? The answer depends on prime-factor-existence. It would be useful if it returned the least upper bound so that each prime is enumerated in this constructive proof (then the witnessing function results in a bijection between ℕ, and that would be nice). If not, an alternative would be to use this function to retrieve the maximal number for a linear upper bounded searchfor a prime greater than the given one.
+-- TODO: Separate the proof method and try to construct the function described here (alternative to the factorial): https://math.stackexchange.com/questions/30127/is-there-an-intuitionist-i-e-constructive-proof-of-the-infinitude-of-primes
 prime-greater-existence : (n : ℕ) → ⦃ Prime(n) ⦄ → ∃(s ↦ Prime(s) ∧ (n < s))
 prime-greater-existence n@(𝐒(𝐒(N))) ⦃ p ⦄ with prime-or-composite{𝐒(n !)} ⦃ [↔]-to-[→] decider-true (succ ([≤]-of-[!] {n})) ⦄
 ... | Either.Left  p₊ = [∃]-intro (𝐒(n !)) ⦃ [∧]-intro p₊ (succ ([⋅]ₗ-growing {𝐒(𝐒 N)}{𝐒(N)!} ([≤]-with-[⋅] {1}{1}{𝐒 N}{N !} (succ min) ([≤]-of-[!] {N})))) ⦄

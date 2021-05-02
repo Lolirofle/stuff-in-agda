@@ -7,7 +7,7 @@ import      Lvl
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid
+open import Structure.Function.Multi
 open import Structure.Operator
 open import Structure.Operator.Field
 open import Structure.Operator.Group
@@ -17,6 +17,7 @@ open import Structure.Operator.Proofs
 open import Structure.Operator.Properties
 open import Structure.Operator.Vector
 open import Structure.Relator.Properties
+open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 
@@ -36,7 +37,7 @@ module _
 
     [⋅ₛᵥ]-absorberₗ : ∀{v} → (𝟎ₛ ⋅ₛᵥ v ≡ 𝟎ᵥ)
     [⋅ₛᵥ]-absorberₗ {v} = cancellationᵣ(_+ᵥ_) ⦃ One.cancellationᵣ-by-associativity-inverse ⦄ $
-      (𝟎ₛ ⋅ₛᵥ v) +ᵥ (𝟎ₛ ⋅ₛᵥ v) 🝖-[ [⋅ₛᵥ][+ₛ][+ᵥ]-distributivityᵣ ]-sym
+      (𝟎ₛ ⋅ₛᵥ v) +ᵥ (𝟎ₛ ⋅ₛᵥ v) 🝖-[ preserving₂(_⋅ₛᵥ v)(_+ₛ_)(_+ᵥ_) ]-sym
       (𝟎ₛ +ₛ 𝟎ₛ) ⋅ₛᵥ v         🝖-[ congruence₂ₗ(_⋅ₛᵥ_)(v) (identityₗ(_+ₛ_)(𝟎ₛ)) ]
       𝟎ₛ ⋅ₛᵥ v                 🝖-[ identityₗ(_+ᵥ_)(𝟎ᵥ) ]-sym
       𝟎ᵥ +ᵥ (𝟎ₛ ⋅ₛᵥ v)         🝖-end
@@ -53,7 +54,7 @@ module _
       p : Names.InverseFunctionᵣ(_+ᵥ_) 𝟎ᵥ ((−ₛ 𝟏ₛ) ⋅ₛᵥ_)
       p{v} =
         v +ᵥ ((−ₛ 𝟏ₛ) ⋅ₛᵥ v)          🝖-[ congruence₂ₗ(_+ᵥ_) _ (identityₗ(_⋅ₛᵥ_)(𝟏ₛ)) ]-sym
-        (𝟏ₛ ⋅ₛᵥ v) +ᵥ ((−ₛ 𝟏ₛ) ⋅ₛᵥ v) 🝖-[ [⋅ₛᵥ][+ₛ][+ᵥ]-distributivityᵣ ]-sym
+        (𝟏ₛ ⋅ₛᵥ v) +ᵥ ((−ₛ 𝟏ₛ) ⋅ₛᵥ v) 🝖-[ preserving₂(_⋅ₛᵥ v)(_+ₛ_)(_+ᵥ_) ]-sym
         (𝟏ₛ +ₛ (−ₛ 𝟏ₛ))⋅ₛᵥ v          🝖-[ congruence₂ₗ(_⋅ₛᵥ_) v (inverseFunctionᵣ(_+ₛ_) ⦃ [∃]-intro _ ⦃ [+ₛ]-identityᵣ ⦄ ⦄ (−ₛ_)) ]
         𝟎ₛ ⋅ₛᵥ v                      🝖-[ [⋅ₛᵥ]-absorberₗ ]
         𝟎ᵥ                            🝖-end

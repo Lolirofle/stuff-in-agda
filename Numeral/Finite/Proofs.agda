@@ -90,12 +90,5 @@ instance
 [≡][≡?]-equivalence {𝐒 n} {𝐒 i} {𝟎}   = [↔]-intro (\()) (\())
 [≡][≡?]-equivalence {𝐒 n} {𝐒 i} {𝐒 j} = [∧]-map ([≡]-with(𝐒) ∘_) (_∘ injective(𝐒)) ([≡][≡?]-equivalence {n} {i} {j})
 
-instance
-  [≡][𝕟]-decider : ∀{n} → Decider(2)(_≡_ {T = 𝕟(n)})(𝕟._≡?_)
-  [≡][𝕟]-decider {𝐒 n} {𝟎}   {𝟎}   = true [≡]-intro
-  [≡][𝕟]-decider {𝐒 n} {𝟎}   {𝐒 y} = false \()
-  [≡][𝕟]-decider {𝐒 n} {𝐒 x} {𝟎}   = false \()
-  [≡][𝕟]-decider {𝐒 n} {𝐒 x} {𝐒 y} = step{f = id} (true ∘ [≡]-with(𝐒)) (false ∘ contrapositiveᵣ(injective(𝐒))) ([≡][𝕟]-decider {n} {x} {y})
-
 maximum-0 : (maximum{N} ≡ 𝟎) → (N ≡ 𝟎)
 maximum-0 {𝟎} _ = [≡]-intro

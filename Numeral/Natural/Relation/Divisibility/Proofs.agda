@@ -156,6 +156,11 @@ divides-without-[+] {a}{b}{c} abc = [↔]-intro (l abc) (r abc) where
   r : ∀{a b c} → (a ∣ (b + c)) → (a ∣ b) → (a ∣ c)
   r{a}{b}{c} abc ab = l {a}{c}{b} ([≡]-substitutionᵣ (commutativity(_+_) {b}{c}) {expr ↦ a ∣ expr} abc) ab
 
+divides-without-[−₀] : ∀{a b c} → (b ≥ c) → (a ∣ (b −₀ c)) → ((a ∣ b) ↔ (a ∣ c))
+divides-without-[−₀] ord abc = [↔]-intro
+  (\ac → substitute₂ᵣ(_∣_) ([↔]-to-[→] [−₀][+]-nullify2ᵣ ord) (divides-with-[+] abc ac))
+  (\ab → substitute₂ᵣ(_∣_) ([↔]-to-[→] [−₀]-nested-sameₗ ord) (divides-with-[−₀] ab abc))
+
 divides-with-[𝄩] : ∀{a b c} → (a ∣ b) → (a ∣ c) → (a ∣ (b 𝄩 c))
 divides-with-[𝄩] {a} ab ac
  with [∃]-intro n₁ ⦃ p ⦄ ← [↔]-to-[←] divides-[⋅]-existence ab
@@ -287,3 +292,10 @@ divides-quotient-composite : ∀{d n} → (d ≥ 2) → (d < n) → ∀{dn : (d 
 divides-quotient-composite l g {Div𝐒 {x = 𝟎}   dn} with () ← irreflexivity(_<_) g
 divides-quotient-composite l g {Div𝐒 {x = 𝐒 x} dn} = succ (divides-quotient-positive {dn = dn})
 
+divides-of-[⋅]ₗ : ∀{a b c} → (Positive(a) ↔ Positive(b)) → ((a ⋅ b) ∣ c) → ((a ∣ c) ∧ (b ∣ c))
+divides-of-[⋅]ₗ {𝟎}   {𝟎}   {c} pos abc = [∧]-intro abc abc
+divides-of-[⋅]ₗ {𝟎}   {𝐒 b} {c} pos abc with () ← [↔]-to-[←] pos <>
+divides-of-[⋅]ₗ {𝐒 a} {𝟎}   {c} pos abc with () ← [↔]-to-[→] pos <>
+divides-of-[⋅]ₗ {𝐒 a} {𝐒 b} {c} pos abc = [∧]-intro
+  (divides-without-[⋅]ᵣ-both'{z = 𝐒 b} (succ _≤_.min) (divides-with-[⋅] {c = 𝐒(b)} ([∨]-introₗ abc)))
+  (divides-without-[⋅]ₗ-both'{z = 𝐒 a} (succ _≤_.min) (divides-with-[⋅] {b = 𝐒(a)} ([∨]-introᵣ abc)))
