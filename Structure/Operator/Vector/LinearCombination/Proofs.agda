@@ -79,7 +79,7 @@ instance
       s ⋅ₛᵥ (sf(𝟎) ⋅ₛᵥ vf(𝟎)) 🝖-end
     p {𝐒(𝐒(n))} {vf} {sf} =
       linearCombination vf (Vec.map (s ⋅ₛ_) sf)                                                     🝖[ _≡_ ]-[]
-      ((s ⋅ₛ sf(𝟎)) ⋅ₛᵥ vf(𝟎)) +ᵥ (linearCombination (Vec.tail vf) (Vec.map (s ⋅ₛ_) (Vec.tail sf))) 🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) ⦃ [+ᵥ]-binary-operator ⦄ (preserving₁(_⋅ₛᵥ _)(_ ⋅ₛ_)(_ ⋅ₛᵥ_)) (p {𝐒(n)} {Vec.tail vf} {Vec.tail sf}) ]
+      ((s ⋅ₛ sf(𝟎)) ⋅ₛᵥ vf(𝟎)) +ᵥ (linearCombination (Vec.tail vf) (Vec.map (s ⋅ₛ_) (Vec.tail sf))) 🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) ⦃ [+ᵥ]-binaryOperator ⦄ (preserving₁(_⋅ₛᵥ _)(_ ⋅ₛ_)(_ ⋅ₛᵥ_)) (p {𝐒(n)} {Vec.tail vf} {Vec.tail sf}) ]
       (s ⋅ₛᵥ (sf(𝟎) ⋅ₛᵥ vf(𝟎))) +ᵥ (s ⋅ₛᵥ (linearCombination (Vec.tail vf) (Vec.tail sf)))          🝖[ _≡_ ]-[ distributivityₗ(_⋅ₛᵥ_)(_+ᵥ_) ]-sym
       s ⋅ₛᵥ ((sf(𝟎) ⋅ₛᵥ vf(𝟎)) +ᵥ (linearCombination (Vec.tail vf) (Vec.tail sf)))                  🝖[ _≡_ ]-[]
       s ⋅ₛᵥ (linearCombination vf sf)                                                               🝖-end

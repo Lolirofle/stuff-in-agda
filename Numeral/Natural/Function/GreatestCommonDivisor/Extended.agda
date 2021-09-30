@@ -5,8 +5,10 @@ open import Data
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Logic.Propositional
 open import Numeral.Integer as ℤ
-open import Numeral.Integer.Oper
-open import Numeral.Integer.Proofs hiding (_≤_)
+open import Numeral.Integer.Function using (−_)
+open import Numeral.Integer.Oper using (_+_ ; _−_ ; _⋅_)
+open import Numeral.Integer.Oper.Proofs
+open import Numeral.Integer.Proofs
 open import Numeral.Natural as ℕ
 open import Numeral.Natural.Function.GreatestCommonDivisor
 import      Numeral.Natural.Oper as ℕ

@@ -146,7 +146,7 @@ module _ where
     p : (y : ℕ) → _ → _ → ⦃ _ : IsTrue(y <? b) ⦄ → (from-ℕ y ≡ₚₒₛ (ℕ-to-𝕟 y ⊰ ∅))
     p 𝟎 prev eq = skipᵣ empty
     p (𝐒 y) prev eq ⦃ ord ⦄ =
-      from-ℕ (𝐒(y))                                                         🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (eq{y} ⦃ reflexivity(_≤_) ⦄) ]
+      from-ℕ (𝐒(y))                                                         🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) eq ]
       from-ℕ (𝐒(y) ⌊/⌋ b) · ℕ-to-𝕟 (𝐒(y) mod b) ⦃ yb-ord? ⦄                 🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (prev ⦃ [⌊/⌋]-ltₗ{𝐒 y}{b}  ⦄ ⦃ div-ord ⦄) ]
       ∅ · ℕ-to-𝕟 (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · ℕ-to-𝕟 (𝐒(y) mod b) ⦃ yb-ord? ⦄ 🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂ᵣ(_·_)(_) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ yb-ord? ⦄ (mod-lesser-than-modulus {𝐒 y}{𝐒 bb} ⦃ yb-ord ⦄))) ]
       ∅ · ℕ-to-𝕟 (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · ℕ-to-𝕟 (𝐒(y))                   🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂ᵣ(_·_)(_) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ div-ord ⦄ ([⌊/⌋]-zero {𝐒 y}{b} yb-ord2)))) ]
@@ -156,7 +156,7 @@ module _ where
         yb-ord? = [↔]-to-[→] decider-true (mod-maxᵣ {𝐒(y)}{b} ⦃ infer ⦄)
         yb-ord = [↔]-to-[←] (decider-true ⦃ [<]-decider ⦄) ord
         yb-ord2 = [↔]-to-[←] (decider-true ⦃ [<]-decider ⦄) ord
-        div-ord = [↔]-to-[→] decider-true ([⌊/⌋]-preserve-[<]ₗ {𝐒 y}{b}{b} yb-ord2)
+        div-ord = [↔]-to-[→] (decider-true ⦃ [<]-decider ⦄) (subtransitivityₗ(_<_)(_≤_) ([⌊/⌋]-leₗ {b = b}) yb-ord2)
 
   from-ℕ-step : ⦃ b-size : IsTrue(b >? 1) ⦄
               → let pos = [↔]-to-[←] Positive-greater-than-zero ([≤]-predecessor ([↔]-to-[←] (decider-true ⦃ [<]-decider {1}{b} ⦄) b-size))
@@ -165,7 +165,7 @@ module _ where
     ord = \n → [↔]-to-[→] decider-true (mod-maxᵣ{n}{b})
     p : (y : ℕ) → _ → _ → Strict.Properties.accessible-recursion(_<_) from-ℕ-rec y ≡ₚₒₛ from-ℕ (y ⌊/⌋ b) · ℕ-to-𝕟 (y mod b) ⦃ ord y ⦄
     p 𝟎     prev eq = skipᵣ empty
-    p (𝐒 y) prev eq = (sub₂(_≡_)(_≡ₚₒₛ_) (eq {y} ⦃ reflexivity(_≤_) ⦄))
+    p (𝐒 y) prev eq = (sub₂(_≡_)(_≡ₚₒₛ_) eq)
 
   open import Numeral.Natural.Oper.FlooredDivision.Proofs.Inverse
   open import Numeral.Natural.Oper.Proofs
@@ -205,7 +205,7 @@ module _ where
       p : (y : ℕ) → _ → _ → (to-ℕ {b} (from-ℕ {b} y) ≡ y)
       p 𝟎     _    _  = [≡]-intro
       p (𝐒 y) prev eq =
-        to-ℕ {b} (from-ℕ (𝐒 y))                                                       🝖[ _≡_ ]-[ congruence₁(to-ℕ) (eq {𝐒(y) ⌊/⌋ b} ⦃ ord2 ⦄) ]
+        to-ℕ {b} (from-ℕ (𝐒 y))                                                       🝖[ _≡_ ]-[ congruence₁(to-ℕ) eq ]
         to-ℕ {b} ((from-ℕ (𝐒(y) ⌊/⌋ b)) · (ℕ-to-𝕟 (𝐒(y) mod b) ⦃ _ ⦄))                🝖[ _≡_ ]-[]
         (b ⋅ to-ℕ {b} (from-ℕ {b} (𝐒(y) ⌊/⌋ b))) + 𝕟-to-ℕ (ℕ-to-𝕟 (𝐒(y) mod b) ⦃ _ ⦄) 🝖[ _≡_ ]-[ congruence₂(_+_) (congruence₂ᵣ(_⋅_)(b) (prev{𝐒(y) ⌊/⌋ b} ⦃ ord2 ⦄)) (𝕟-ℕ-inverse {b}{𝐒(y) mod b} ⦃ ord1 ⦄) ]
         (b ⋅ (𝐒(y) ⌊/⌋ b)) + (𝐒(y) mod b)                                             🝖[ _≡_ ]-[ [⌊/⌋][mod]-is-division-with-remainder-pred-commuted {𝐒 y}{b} ]

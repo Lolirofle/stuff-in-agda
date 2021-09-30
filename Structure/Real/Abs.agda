@@ -1,3 +1,6 @@
+module Structure.Real.Abs where
+
+{-
 open import Logic.Classical
 open import Structure.Real
 
@@ -28,3 +31,4 @@ open import Type
 -- abs : R → R
 -- abs(x) = if(decide{P = x ≤ 𝟎}) then (− x) else x
 
+-}

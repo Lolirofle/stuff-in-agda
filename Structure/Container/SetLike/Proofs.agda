@@ -39,8 +39,8 @@ module _ ⦃ setLike : SetLike{ℓ₁}{ℓ₁}{ℓ₂}{C}{C} (_∈_) {ℓ₄}{�
   module _ ⦃ _ : Equiv{ℓₗ}(C) ⦄ where
     private
       instance
-        big-intersection-filter-unary-relator : ⦃ _ : Equiv{ℓₗ}(E) ⦄ ⦃ _ : BinaryRelator{B = C}(_∈_) ⦄ → ∀{As} → UnaryRelator(\a → ∀{A} → (A ∈ As) → (a ∈ A))
-        big-intersection-filter-unary-relator ⦃ [∈]-binaryRelator ⦄ = [∀]-unaryRelator ⦃ rel-P = \{A} → [→]-unaryRelator ⦃ rel-P = const-unaryRelator ⦄ ⦃ rel-Q = BinaryRelator.left (binaryRelator(_∈_)) {A} ⦄ ⦄
+        big-intersection-filter-unaryRelator : ⦃ _ : Equiv{ℓₗ}(E) ⦄ ⦃ _ : BinaryRelator{B = C}(_∈_) ⦄ → ∀{As} → UnaryRelator(\a → ∀{A} → (A ∈ As) → (a ∈ A))
+        big-intersection-filter-unaryRelator ⦃ [∈]-binaryRelator ⦄ = [∀]-unaryRelator ⦃ rel-P = \{A} → [→]-unaryRelator ⦃ rel-P = const-unaryRelator ⦄ ⦃ rel-Q = BinaryRelator.left (binaryRelator(_∈_)) {A} ⦄ ⦄
 
     filter-big-union-to-big-intersection : ⦃ _ : BinaryRelator(_∈_) ⦄ ⦃ _ : FilterFunction(_∈_){ℓ = ℓ₁ Lvl.⊔ ℓ₂} ⦄ ⦃ _ : BigUnionOperator(_∈_)(_∈_) ⦄ → BigIntersectionOperator(_∈_)(_∈_)
     BigIntersectionOperator.⋂ filter-big-union-to-big-intersection As = filter(\a → ∀{A} → (A ∈ As) → (a ∈ A))(⋃ As)
@@ -56,8 +56,8 @@ module _ ⦃ setLike : SetLike{ℓ₁}{ℓ₁}{ℓ₂}{C}{C} (_∈_) {ℓ₄}{�
     filter-universal-contradiction : ⦃ _ : FilterFunction(_∈_){ℓ = ℓ₂} ⦄ ⦃ _ : UniversalSet(_∈_) ⦄ → ⊥
     filter-universal-contradiction = proof-not-in proof-in where
       instance
-        filter-unary-relator : UnaryRelator(x ↦ (x ∉ x))
-        filter-unary-relator = [¬]-unaryRelator ⦃ rel-P = binary-unaryRelator ⦄
+        filter-unaryRelator : UnaryRelator(x ↦ (x ∉ x))
+        filter-unaryRelator = [¬]-unaryRelator ⦃ rel-P = binary-unaryRelator ⦄
 
       notInSelf : C
       notInSelf = filter (x ↦ (x ∉ x))(𝐔)

@@ -31,11 +31,19 @@ open import Syntax.Transitivity
   (x ⌊/⌋ 𝐒(y) ⋅ 𝐒(y)) + (x mod 𝐒(y)) 🝖[ _≡_ ]-[ [⌊/⌋][mod]-is-division-with-remainder {x}{y} ]
   x                                  🝖-end
 
+[⋅][⌊/⌋]-inverseOperatorₗ : ∀{x y} ⦃ pos : Positive(y) ⦄ → (y ∣ x) → (y ⋅ (x ⌊/⌋ y) ≡ x)
+[⋅][⌊/⌋]-inverseOperatorₗ {x}{y} div = commutativity(_⋅_) {y}{x ⌊/⌋ y} 🝖 [⋅][⌊/⌋]-inverseOperatorᵣ div
+
 [⌊/⌋][⋅]-inverseOperatorᵣ : ∀{x y} ⦃ pos : Positive(y) ⦄ → ((x ⋅ y) ⌊/⌋ y ≡ x)
 [⌊/⌋][⋅]-inverseOperatorᵣ {x}{𝐒 y} = [⋅]-cancellationᵣ {𝐒(y)} ([⋅][⌊/⌋]-inverseOperatorᵣ (divides-with-[⋅] {𝐒(y)}{x} ([∨]-introᵣ (reflexivity(_∣_)))))
 
 [⌊/⌋][swap⋅]-inverseOperatorᵣ : ∀{x y} ⦃ pos : Positive(x) ⦄ → ((x ⋅ y) ⌊/⌋ x ≡ y)
 [⌊/⌋][swap⋅]-inverseOperatorᵣ {x}{y} = congruence₁(_⌊/⌋ x) (commutativity(_⋅_) {x}{y}) 🝖 [⌊/⌋][⋅]-inverseOperatorᵣ {y}{x}
 
-[⋅][⌊/⌋₀]-inverseOperatorᵣ : ∀{x y} → (y > 0) → (y ∣ x) → ((x ⌊/⌋₀ y) ⋅ y ≡ x)
-[⋅][⌊/⌋₀]-inverseOperatorᵣ {x}{𝐒 y} _ = [⋅][⌊/⌋]-inverseOperatorᵣ {x}{𝐒 y}
+[⋅][⌊/⌋₀]-inverseOperatorᵣ : ∀{x y} → (y ∣ x) → ((x ⌊/⌋₀ y) ⋅ y ≡ x)
+[⋅][⌊/⌋₀]-inverseOperatorᵣ {x}{𝟎}   = symmetry(_≡_) ∘ [0]-only-divides-[0]
+[⋅][⌊/⌋₀]-inverseOperatorᵣ {x}{𝐒 y} = [⋅][⌊/⌋]-inverseOperatorᵣ {x}{𝐒 y}
+
+[⋅][⌊/⌋₀]-inverseOperatorₗ : ∀{x y} → (y ∣ x) → (y ⋅ (x ⌊/⌋₀ y) ≡ x)
+[⋅][⌊/⌋₀]-inverseOperatorₗ {x}{𝟎}   = symmetry(_≡_) ∘ [0]-only-divides-[0]
+[⋅][⌊/⌋₀]-inverseOperatorₗ {x}{𝐒 y} = [⋅][⌊/⌋]-inverseOperatorₗ {x}{𝐒 y}

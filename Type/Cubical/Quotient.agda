@@ -48,6 +48,7 @@ module _ where
   open import Structure.Function
   open import Structure.Setoid
 
+  -- Constructs a function on a quotient type from a function on a setoid.
   Quotient-function : ∀{ℓₑ₁ ℓₑ₂}{equiv-A : Equiv{ℓₑ₁}(A)}{equiv-B : Equiv{ℓₑ₂}(B)} ⦃ sub : (Equiv._≡_ equiv-B) ⊆₂ Path ⦄ (f : A → B) ⦃ func : Function ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ f ⦄ → (Quotient(Equiv._≡_ equiv-A) → B)
   Quotient-function {equiv-B = equiv-B} f(x) = Quotient-recursion f (sub₂(Equiv._≡_ equiv-B)(Path) ∘ congruence₁ ⦃ _ ⦄ ⦃ _ ⦄ (f)) x
 

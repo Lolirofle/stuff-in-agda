@@ -2,6 +2,7 @@ module Logic.Propositional.Proofs.Structures where
 
 import      Data.Tuple as Tuple
 import      Lvl
+open import Function
 open import Functional
 open import Logic
 open import Logic.Propositional

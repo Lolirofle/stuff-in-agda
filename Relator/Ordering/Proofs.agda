@@ -241,6 +241,21 @@ module From-[≤][<]
       [<][≢]-sub : (_<_) ⊆₂ (_≢_)
       _⊆₂_.proof [<][≢]-sub = [∧]-elimᵣ ∘ [↔]-to-[→] [<]-def-[≤][≢]
 
+    module By-antisymmetry ⦃ antisym : Antisymmetry(_≤_)(_≡_) ⦄ where
+      [≤][>]-not : ∀{a b : T} → (a ≤ b) → (a > b) → ⊥
+      [≤][>]-not le gt =
+        let [∧]-intro ge ne = [↔]-to-[→] [<]-def-[≤][≢] gt
+        in ne(antisymmetry(_≤_)(_≡_) ge le)
+
+      [≥][<]-not : ∀{a b : T} → (a ≥ b) → (a < b) → ⊥
+      [≥][<]-not = [≤][>]-not
+
+      [<]-asymmetry : Asymmetry(_<_)
+      Asymmetry.proof [<]-asymmetry xy yx =
+        let [∧]-intro xy-le nxy = [↔]-to-[→] [<]-def-[≤][≢] xy
+            [∧]-intro yx-le nyx = [↔]-to-[→] [<]-def-[≤][≢] yx
+        in  nxy(antisymmetry(_≤_)(_≡_) xy-le yx-le)
+
     module _ ⦃ [≡]-classical : ∀{a b : T} → Classical(a ≡ b) ⦄ where
       [≤]-def-[<][≡]ᵣ-by-classical : (a ≤ b) → ((a < b) ∨ (a ≡ b))
       [≤]-def-[<][≡]ᵣ-by-classical {a}{b} le with excluded-middle(a ≡ b)
@@ -254,12 +269,6 @@ module From-[≤][<]
       ... | [∨]-introₗ ([∨]-introᵣ eq) = [∨]-introᵣ eq
       ... | [∨]-introᵣ             gt  = [∨]-introᵣ (antisymmetry(_≤_)(_≡_) le ([∧]-elimₗ ([↔]-to-[→] [<]-def-[≤][≢] gt)))
 
-    [<]-asymmetry-by-antisym : ⦃ antisym : Antisymmetry(_≤_)(_≡_) ⦄ → Asymmetry(_<_)
-    Asymmetry.proof [<]-asymmetry-by-antisym xy yx =
-      let [∧]-intro xy-le nxy = [↔]-to-[→] [<]-def-[≤][≢] xy
-          [∧]-intro yx-le nyx = [↔]-to-[→] [<]-def-[≤][≢] yx
-      in  nxy(antisymmetry(_≤_)(_≡_) xy-le yx-le)
-
     instance
       [<]-irreflexivity : Irreflexivity(_<_)
       Irreflexivity.proof [<]-irreflexivity xx = [∧]-elimᵣ ([↔]-to-[→] [<]-def-[≤][≢] xx) (reflexivity(_≡_))
@@ -269,6 +278,32 @@ module From-[≤][<]
       let [∧]-intro xy-le nxy = [↔]-to-[→] [<]-def-[≤][≢] xy
           [∧]-intro yz-le nyz = [↔]-to-[→] [<]-def-[≤][≢] yz
       in  [↔]-to-[←] [<]-def-[≤][≢] ([∧]-intro (transitivity(_≤_) xy-le yz-le) (xz ↦ asymmetry(_<_) (substitute₂ₗ(_<_) xz xy) yz))
+
+    module By-transitivity ⦃ trans : Transitivity(_≤_) ⦄ where
+      instance
+        [≤][<]-subtransitivityₗ : Subtransitivityₗ(_≤_)(_<_)
+        Subtransitivityₗ.proof [≤][<]-subtransitivityₗ xy yz = [∧]-elimₗ ([↔]-to-[→] [<]-def-[≤][≢] xy) 🝖 yz
+
+      instance
+        [≤][<]-subtransitivityᵣ : Subtransitivityᵣ(_≤_)(_<_)
+        Subtransitivityᵣ.proof [≤][<]-subtransitivityᵣ xy yz = xy 🝖 [∧]-elimₗ ([↔]-to-[→] [<]-def-[≤][≢] yz)
+
+    module By-weakPartialOrder ⦃ refl : Reflexivity(_≤_) ⦄ ⦃ antisym : Antisymmetry(_≤_)(_≡_) ⦄ ⦃ trans : Transitivity(_≤_) ⦄ where
+      instance
+        [<][≤]-subtransitivityₗ : Subtransitivityₗ(_<_)(_≤_)
+        Subtransitivityₗ.proof [<][≤]-subtransitivityₗ x≤y y<z =
+          let [∧]-intro y≤z y≢z = [↔]-to-[→] [<]-def-[≤][≢] y<z
+          in  [↔]-to-[←] [<]-def-[≤][≢] ([∧]-intro
+            (x≤y 🝖 y≤z)
+            (xz ↦ By-antisymmetry.[≤][>]-not (subtransitivityₗ(_≤_)(_≡_) ⦃ subrelation-transitivity-to-subtransitivityₗ ⦃ sub = reflexive-binaryRelator-sub ⦄ ⦄ (symmetry(_≡_) xz) x≤y) y<z))
+
+      instance
+        [<][≤]-subtransitivityᵣ : Subtransitivityᵣ(_<_)(_≤_)
+        Subtransitivityᵣ.proof [<][≤]-subtransitivityᵣ x<y y≤z =
+          let [∧]-intro x≤y x≢y = [↔]-to-[→] [<]-def-[≤][≢] x<y
+          in  [↔]-to-[←] [<]-def-[≤][≢] ([∧]-intro
+            (x≤y 🝖 y≤z)
+            (xz ↦ By-antisymmetry.[≤][>]-not (subtransitivityᵣ(_≤_)(_≡_) ⦃ subrelation-transitivity-to-subtransitivityᵣ ⦃ sub = reflexive-binaryRelator-sub ⦄ ⦄ y≤z (symmetry(_≡_) xz)) x<y))
 
   module By-[<] ([≤]-def-[<][≡] : ∀{a b} → (a ≤ b) ↔ ((a < b) ∨ (a ≡ b))) where
     instance

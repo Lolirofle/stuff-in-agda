@@ -3,6 +3,7 @@ module Numeral.Finite.LinearSearch where -- TODO: Maybe move to Numeral.Coordina
 open import Data.Boolean
 open import Data.Boolean.Stmt
 open import Data.List
+open import Data.List.Proofs
 import      Data.List.Functions as List
 open import Data.Option
 import      Data.Option.Functions as Option
@@ -12,6 +13,7 @@ open import Numeral.Finite
 open import Numeral.Finite.Bound
 open import Numeral.Natural
 open import Structure.Relator.Ordering
+open import Syntax.Transitivity
 
 private variable n : ℕ
 private variable i j min max : 𝕟(n)
@@ -66,6 +68,7 @@ test : ∀{x y : 𝕟(n)} → (x Wrapping.[−] (x Wrapping.[−] y) ≡ y)
 
 open import Data
 open import Data.Boolean.Stmt.Proofs
+import      Data.List.Functions as List
 open import Data.List.Relation.Membership using (_∈_)
 open import Data.List.Relation.Membership.Proofs
 open import Data.List.Relation.Pairwise
@@ -126,12 +129,6 @@ findMax-None-correctness = [↔]-intro l r where
   r {𝐒 𝟎}     {f} p {𝟎}   | 𝐹 | intro fmax = [↔]-to-[←] IsFalse.is-𝐹 fmax
   r {𝐒 (𝐒 n)} {f} p {𝟎}   | 𝐹 | intro fmax = r {𝐒 n} {f ∘ bound-𝐒} (map-None p) {𝟎}
 
-findMax-Some-correctness : (findMax f ≡ Some(i)) → IsTrue(f(i))
-findMax-Some-correctness {𝐒 n} {f} {i}        eq with f(maximum) | inspect f(maximum)
-findMax-Some-correctness {𝐒 n} {f} {.maximum} [≡]-intro | 𝑇 | intro fmax = [↔]-to-[←] IsTrue.is-𝑇 fmax
-findMax-Some-correctness {𝐒 n} {f} {i}        eq        | 𝐹 | intro fmax with findMax(f ∘ bound-𝐒) | inspect findMax(f ∘ bound-𝐒)
-findMax-Some-correctness {𝐒 n} {f} {.(_)}     [≡]-intro | 𝐹 | intro fmax | Some x | intro p = findMax-Some-correctness {f = f ∘ bound-𝐒} p
-
 findMin-None-correctness : (findMin f ≡ None) ↔ (∀{i} → IsFalse(f(i)))
 findMin-None-correctness = [↔]-intro l r where
   l : (findMin f ≡ None) ← (∀{i} → IsFalse(f(i)))
@@ -144,6 +141,12 @@ findMin-None-correctness = [↔]-intro l r where
   r {𝐒 n} {f} p {i} with f(𝟎) | inspect f(𝟎)
   r {𝐒 n} {f} p {𝟎}   | 𝐹 | intro f0 = [↔]-to-[←] IsFalse.is-𝐹 f0
   r {𝐒 n} {f} p {𝐒 i} | 𝐹 | intro f0 = r {f = f ∘ 𝐒} (injective(Option.map 𝐒) ⦃ map-injectivity ⦄ p)
+
+findMax-Some-correctness : (findMax f ≡ Some(i)) → IsTrue(f(i))
+findMax-Some-correctness {𝐒 n} {f} {i}        eq with f(maximum) | inspect f(maximum)
+findMax-Some-correctness {𝐒 n} {f} {.maximum} [≡]-intro | 𝑇 | intro fmax = [↔]-to-[←] IsTrue.is-𝑇 fmax
+findMax-Some-correctness {𝐒 n} {f} {i}        eq        | 𝐹 | intro fmax with findMax(f ∘ bound-𝐒) | inspect findMax(f ∘ bound-𝐒)
+findMax-Some-correctness {𝐒 n} {f} {.(_)}     [≡]-intro | 𝐹 | intro fmax | Some x | intro p = findMax-Some-correctness {f = f ∘ bound-𝐒} p
 
 findMin-Some-correctness : (findMin f ≡ Some(min)) → IsTrue(f(min))
 findMin-Some-correctness {𝐒 n} {f} {min} eq with f(𝟎) | inspect f(𝟎)
@@ -169,6 +172,14 @@ findMin-minimal-false {n}{f}{min}{i} eq =
   ∘ [↔]-to-[←] decider-true ∘ substitute₁ₗ(IsTrue) (⋚-elim₃-negation-distribution {x = min}{y = i})
 
 {-
+findMax-maximal : (findMax f ≡ Some(max)) → IsTrue(f(i)) → (i ≤ max)
+findMax-maximal {𝐒 n}{f} {max} {i} eq fi with f(maximum) | inspect f(maximum)
+findMax-maximal {𝐒 n} {f} {.maximum} {i} [≡]-intro fi | 𝑇 | intro fmax = [≤]-maximum {𝐒 n}{i} (reflexivity(ℕ._≤_))
+findMax-maximal {𝐒 n}{f} {max} {i} eq fi | 𝐹 | intro fmax with findMax(f ∘ bound-𝐒) | inspect findMax(f ∘ bound-𝐒)
+... | Some x | intro p = {!findMax-maximal {n}{f ∘ bound-𝐒} {?} {?}!}
+-}
+
+{-
 instance
   [≤]-with-[𝐒]-injective : ∀{a b} → Injective(\p → ℕ.[≤]-with-[𝐒] {a}{b} ⦃ p ⦄)
   Injective.proof [≤]-with-[𝐒]-injective [≡]-intro = [≡]-intro
@@ -190,7 +201,7 @@ Injective.proof bound-𝐒-injective {𝐒 x} {𝐒 y} p = congruence₁(𝐒) (
 -}
 
 -- TODO
-postulate findMax-maximal-true : (findMax f ≡ Some(max)) → IsTrue(f(i)) → (i ≤ max)
+--postulate findMax-maximal-true : (findMax f ≡ Some(max)) → IsTrue(f(i)) → (i ≤ max)
 {-findMax-maximal {𝐒 n}{f} eq p with f(maximum) | inspect f(maximum)
 findMax-maximal {𝐒 n} {f} {i = i} [≡]-intro p | 𝑇 | intro m = [≤]-maximum {𝐒 n}{i} (reflexivity(ℕ._≤_))
 findMax-maximal {𝐒 n} {f} {i = i} eq p | 𝐹 | intro m with findMax{n} (f ∘ bound-𝐒) | inspect (findMax{n}) (f ∘ bound-𝐒)
@@ -261,9 +272,9 @@ findAll-correctness {𝐒 n} {f} with f(𝟎) | inspect f(𝟎)
 findAll-completeness : IsTrue(f(i)) → (i ∈ findAll f)
 findAll-completeness {𝐒 n} {f} {i}   p with f(𝟎) | inspect f(𝟎)
 findAll-completeness {𝐒 n} {f} {𝟎}   p | 𝑇 | intro _  = • [≡]-intro
-findAll-completeness {𝐒 n} {f} {𝐒 i} p | 𝑇 | intro _  = ⊰ [∈]-map (findAll-completeness{n}{f ∘ 𝐒}{i} p)
+findAll-completeness {𝐒 n} {f} {𝐒 i} p | 𝑇 | intro _  = ⊰ [∈]-mapᵣ (findAll-completeness{n}{f ∘ 𝐒}{i} p)
 findAll-completeness {𝐒 n} {f} {𝟎}   p | 𝐹 | intro f0 with () ← disjointness p ([↔]-to-[←] IsFalse.is-𝐹 f0)
-findAll-completeness {𝐒 n} {f} {𝐒 i} p | 𝐹 | intro _  = [∈]-map (findAll-completeness {n} {f ∘ 𝐒} {i} p)
+findAll-completeness {𝐒 n} {f} {𝐒 i} p | 𝐹 | intro _  = [∈]-mapᵣ (findAll-completeness {n} {f ∘ 𝐒} {i} p)
 
 findAll-sorted : Sorted(_≤?_)(findAll f)
 findAll-sorted {𝟎}      {f} = AdjacentlyPairwise.empty
@@ -275,3 +286,13 @@ findAll-sorted {𝐒(𝐒 n)} {f} with f(𝟎) | f(𝐒 𝟎) | AdjacentlyPairwi
 ... | 𝑇 | 𝐹 | prev = AdjacentlyPairwise-prepend (\{ {𝟎} → <> ; {𝐒 _} → <>}) prev
 ... | 𝐹 | 𝑇 | prev = prev
 ... | 𝐹 | 𝐹 | prev = prev
+
+findAll-first-findMin : (List.first(findAll f) ≡ findMin f)
+findAll-first-findMin {𝟎} {f} = [≡]-intro
+findAll-first-findMin {𝐒 n} {f} with f(𝟎)
+... | 𝑇 = [≡]-intro
+... | 𝐹 =
+  List.first((if 𝐹 then (_⊰_ 𝟎) else id) (List.map 𝐒(findAll(f ∘ 𝐒)))) 🝖[ _≡_ ]-[]
+  List.first(List.map 𝐒(findAll(f ∘ 𝐒)))                               🝖[ _≡_ ]-[ first-preserve-map ]
+  Option.map 𝐒(List.first(findAll(f ∘ 𝐒)))                             🝖[ _≡_ ]-[ congruence₁(Option.map 𝐒) (findAll-first-findMin {n}{f ∘ 𝐒}) ]
+  Option.map 𝐒(findMin(f ∘ 𝐒))                                         🝖-end

@@ -13,6 +13,7 @@ open import Numeral.Natural.Oper.FlooredDivision.Proofs.DivisibilityWithRemainde
 open import Numeral.Natural.Oper.Modulo
 open import Numeral.Natural.Oper.Modulo.Proofs.DivisibilityWithRemainder
 open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.DivisibilityWithRemainder
 open import Numeral.Natural.Relation.DivisibilityWithRemainder.Proofs
 open import Relator.Equals
@@ -29,7 +30,7 @@ open import Syntax.Transitivity
   (([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + (𝕟-to-ℕ ([∣ᵣₑₘ]-remainder p)) 🝖[ _≡_ ]-[ [∣ᵣₑₘ]-is-division-with-remainder {x}{𝐒(y)}{r} p ]
   x                                                            🝖-end
 
-[⌊/⌋][mod]-is-division-with-remainder-pred-commuted : ∀{x y} ⦃ _ : IsTrue(positive?(y)) ⦄ → ((y ⋅ (x ⌊/⌋ y)) + (x mod y) ≡ x)
+[⌊/⌋][mod]-is-division-with-remainder-pred-commuted : ∀{x y} ⦃ _ : Positive(y) ⦄ → ((y ⋅ (x ⌊/⌋ y)) + (x mod y) ≡ x)
 [⌊/⌋][mod]-is-division-with-remainder-pred-commuted {x} {𝐒 y} = [≡]-with(_+ (x mod 𝐒(y))) (commutativity(_⋅_) {𝐒(y)}{x ⌊/⌋ 𝐒(y)}) 🝖 [⌊/⌋][mod]-is-division-with-remainder {x}{y}
 
 -- Floored division and multiplication is not inverse operators for all numbers.

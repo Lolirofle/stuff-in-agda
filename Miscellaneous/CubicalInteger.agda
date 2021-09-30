@@ -75,7 +75,7 @@ open import Relator.Equals using () renaming (_≡_ to Id ; [≡]-intro to Id-in
 open import Relator.Equals.Proofs.Equivalence using () renaming ([≡]-equiv to Id-equiv ; [≡]-symmetry to Id-symmetry ; [≡]-to-function to Id-to-function ; [≡]-function to Id-function)
 open import Syntax.Transitivity
 
-Sign-decidable-eq : ∀(s₁ s₂ : (−|+)) → (Id s₁ s₂ ∨ ¬(Id s₁ s₂))
+Sign-decidable-eq : ∀(s₁ s₂ : (−|+)) → ((Id s₁ s₂) ∨ ¬(Id s₁ s₂))
 Sign-decidable-eq ➕ ➕ = [∨]-introₗ Id-intro
 Sign-decidable-eq ➕ ➖ = [∨]-introᵣ \()
 Sign-decidable-eq ➖ ➕ = [∨]-introᵣ \()
@@ -326,7 +326,7 @@ instance
   Inverseᵣ.proof (absₙ-signed-inverses {➖}) = reflexivity(Path)
 
 Signedᵣ-injective : ∀{s}{x y} → (signed s x ≡ signed s y) → (Id x y)
-Signedᵣ-injective {s} p = ℕ-Path-to-Id (symmetry(Path) (inverseᵣ(absₙ)(signed s)) 🝖 congruence₁(absₙ) p 🝖 inverseᵣ(absₙ)(signed s))
+Signedᵣ-injective {s} p = sub₂(_≡_)(Id) (symmetry(Path) (inverseᵣ(absₙ)(signed s)) 🝖 congruence₁(absₙ) p 🝖 inverseᵣ(absₙ)(signed s))
 
 ℤ-different-identities : ¬(𝟎 ≡ 𝟏)
 ℤ-different-identities p with () ← Signedᵣ-injective p
@@ -352,23 +352,31 @@ instance
 -- (signed ➕ x) ⋅ -0 ≡ -0 ⋅ (signed ➕ x)
 -- (signed ➕ x) ⋅ +0 ≡ +0 ⋅ (signed ➕ x)
 
-instance
-  postulate [⋅]-associativity : Associativity(_⋅_)
-
 open import Numeral.Sign.Proofs
 open import Structure.Operator
 
+absₙ-of-signed : ∀{s x} → Id (absₙ(signed s x)) x
+absₙ-of-signed {➕} = reflexivity(Id)
+absₙ-of-signed {➖} = reflexivity(Id)
+
+signed-inverse : ∀{x} → (signed(sign x) (absₙ x) ≡ x)
+signed-inverse {signed ➕ ℕ.𝟎}     = reflexivity(Path)
+signed-inverse {signed ➕ (ℕ.𝐒 n)} = reflexivity(Path)
+signed-inverse {signed ➖ ℕ.𝟎}     = symmetry(Path) 𝟎-sign
+signed-inverse {signed ➖ (ℕ.𝐒 n)} = reflexivity(Path)
+signed-inverse {𝟎-sign i} j = 𝟎-sign (Interval.max i (Interval.flip j))
+
+instance
+  postulate [⋅]-associativity : Associativity(_⋅_)
+  -- Associativity.proof [⋅]-associativity {x} {y} {z} = {!(x ⋅ y) ⋅ z!}
+
 instance
   [⋅]-identityᵣ : Identityᵣ(_⋅_)(𝟏)
-  Identityᵣ.proof [⋅]-identityᵣ {signed s x} rewrite identityᵣ(Sign._⨯_)(➕) {s} = {!!}
-  -- rewrite identityᵣ(Sign._⨯_)(➕) {s} = {!!} -- reflexivity(Path) -- congruence₂ₗ(signed)(x) {!!}
-  Identityᵣ.proof [⋅]-identityᵣ {𝟎-sign i} = {!!} -- reflexivity(Path)
+  Identityᵣ.proof [⋅]-identityᵣ {x} rewrite identityᵣ(Sign._⨯_)(➕) {sign(x)} = signed-inverse
 
 instance
   [⋅]-identityₗ : Identityₗ(_⋅_)(𝟏)
-  Identityₗ.proof [⋅]-identityₗ {signed s x} = {!!}
-  -- rewrite identityₗ(Sign._⨯_)(➕) {s} = {!!} -- reflexivity(Path)
-  Identityₗ.proof [⋅]-identityₗ {𝟎-sign i} = {!!} -- reflexivity(Path)
+  Identityₗ.proof [⋅]-identityₗ {x} rewrite identityₗ(Sign._⨯_)(➕) {sign(x)} = signed-inverse
 
 instance
   [⋅]-identity : Identity(_⋅_)(𝟏)
@@ -392,8 +400,7 @@ instance
 
 instance
   [+]-group : Group(_+_)
-  Group.monoid            [+]-group = [+]-monoid
-  Group.inverse-existence [+]-group = [∃]-intro (−_) ⦃ [+][−]-inverseFunction ⦄
+  [+]-group = Group-from-monoid(_+_)(−_)
 
 instance
   [+]-commutativeGroup : CommutativeGroup(_+_)
@@ -402,18 +409,21 @@ instance
 instance
   [⋅]-monoid : Monoid(_⋅_)
   Monoid.identity-existence [⋅]-monoid = [∃]-intro 𝟏
+open Monoid([⋅]-monoid) using() renaming(semi to [⋅]-semi)
 
 instance
-  [⋅]-rng : Rng(_+_)(_⋅_)
-  [⋅]-rng = intro
-
-instance
-  [⋅]-unity : Unity(_+_)(_⋅_)
-  Unity.[⋅]-identity-existence [⋅]-unity = [∃]-intro 𝟏
+  [⋅]-preRg : PreRg(_+_)(_⋅_)
+  [⋅]-preRg = intro
 
 instance
   [⋅]-ring : Ring(_+_)(_⋅_)
   [⋅]-ring = intro
+open Ring([⋅]-ring) using()
+  renaming(
+    unity to [⋅]-unity ;
+    rg    to [⋅]-rg ;
+    rng   to [⋅]-rng
+  )
 
 instance
   [⋅]-ringNonZero : Unity.DistinctIdentities [⋅]-unity

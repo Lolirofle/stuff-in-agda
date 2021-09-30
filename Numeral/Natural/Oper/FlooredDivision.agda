@@ -2,13 +2,8 @@ module Numeral.Natural.Oper.FlooredDivision where
 
 import Lvl
 open import Data
-open import Data.Boolean.Stmt
-open import Logic.Propositional.Theorems
 open import Numeral.Natural
-open import Numeral.Natural.Oper.Comparisons
-open import Numeral.Natural.Oper.Comparisons.Proofs
-open import Numeral.Natural.Relation.Order
-open import Relator.Equals
+open import Numeral.Natural.Relation
 
 infixl 10100 _⌊/⌋_
 
@@ -26,8 +21,8 @@ infixl 10100 _⌊/⌋_
 [ d , b ] 𝐒(a') div 𝐒(b') = [ d   , b ] a' div b'
 {-# BUILTIN NATDIVSUCAUX [_,_]_div_ #-}
 
--- Floored division operation.
-_⌊/⌋_ : ℕ → (m : ℕ) → .⦃ _ : IsTrue(positive?(m)) ⦄ → ℕ
+-- Floored division operation (rounding down).
+_⌊/⌋_ : ℕ → (m : ℕ) → .⦃ _ : Positive(m) ⦄ → ℕ
 a ⌊/⌋ 𝐒(m) = [ 𝟎 , m ] a div m
 
 _⌊/⌋₀_ : ℕ → ℕ → ℕ

@@ -8,25 +8,10 @@ open import Structure.Setoid
 open import Structure.Operator
 open import Structure.Operator.Semi using (Semi)
 open import Structure.Operator.Group using (Group ; CommutativeGroup ; intro)
-open import Structure.Operator.Monoid using (Monoid ; intro)
+open import Structure.Operator.Monoid using (Monoid ; intro ; NonIdentityRelation)
 open import Structure.Operator.Properties hiding (distributivityₗ ; distributivityᵣ ; commutativity)
 open import Syntax.Function
 open import Type
-
--- TODO: Not sure about the way the definitions handle the hiearchies
-
-private
-  module Impl {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (𝟎 : T) where
-    record NonZero (x : T) : Stmt{ℓₑ} where
-      constructor intro
-      field proof : (x ≢ 𝟎)
-
-record PreRg {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
-  constructor intro
-  field
-    ⦃ [+]-commutativity ⦄      : Commutativity(_+_)
-    ⦃ [⋅][+]-distributivityₗ ⦄ : Distributivityₗ(_⋅_)(_+_)
-    ⦃ [⋅][+]-distributivityᵣ ⦄ : Distributivityᵣ(_⋅_)(_+_)
 
 -- An algebraic structure over two operators, in which the first one is a commutative semigroup and the second one is a semigroup which distributes over the first one.
 -- Also called: Semiring, hemiring, pre-semiring.
@@ -34,29 +19,34 @@ record PreRg {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T
 record SemiRg {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
-    ⦃ [+]-semi ⦄ : Semi(_+_)
-    ⦃ [⋅]-semi ⦄ : Semi(_⋅_)
-    ⦃ preRg ⦄    : PreRg(_+_)(_⋅_)
+    ⦃ [+]-semi ⦄              : Semi(_+_)
+    ⦃ [⋅]-semi ⦄              : Semi(_⋅_)
+    ⦃ [⋅][+]-distributivity ⦄ : Distributivity(_⋅_)(_+_)
   open Semi([+]-semi)
     using()
     renaming(
-      binary-operator     to [+]-binary-operator ;
+      binaryOperator     to [+]-binaryOperator ;
       associativity       to [+]-associativity
     ) public
   open Semi([⋅]-semi)
     using()
     renaming(
-      binary-operator     to [⋅]-binary-operator ;
+      binaryOperator     to [⋅]-binaryOperator ;
       associativity       to [⋅]-associativity
     ) public
-  open PreRg(preRg) public
+  open Distributivity([⋅][+]-distributivity) public
+    renaming(
+      left  to [⋅][+]-distributivityₗ ;
+      right to [⋅][+]-distributivityᵣ
+    )
 
-record Rg {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
+record Rg {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) {ℓₙ₀} : Stmt{ℓ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₙ₀)} where
   constructor intro
   field
-    ⦃ [+]-monoid ⦄ : Monoid(_+_)
-    ⦃ [⋅]-semi ⦄   : Semi(_⋅_)
-    ⦃ preRg ⦄      : PreRg(_+_)(_⋅_)
+    ⦃ [+]-monoid ⦄            : Monoid(_+_)
+    ⦃ [⋅]-semi ⦄              : Semi(_⋅_)
+    ⦃ [⋅][+]-distributivity ⦄ : Distributivity(_⋅_)(_+_)
+    ⦃ non-zero-relation ⦄     : NonIdentityRelation([+]-monoid) {ℓₙ₀}
   open Monoid([+]-monoid)
     using()
     renaming(
@@ -69,41 +59,59 @@ record Rg {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T �
       identityₗ           to [+]-identityₗ ;
       identityᵣ           to [+]-identityᵣ
     ) public
-  semiRg : SemiRg(_+_)(_⋅_)
-  semiRg = intro
+  open NonIdentityRelation(non-zero-relation)
+    using()
+    renaming(NonIdentity to NonZero ; proof to nonZero)
+    public
+  instance
+    semiRg : SemiRg(_+_)(_⋅_)
+    semiRg = intro
   open SemiRg(semiRg)
     hiding(
       [+]-semi ;
       [⋅]-semi ;
-      preRg
+      [⋅][+]-distributivity
     )public
 
-  open Impl(𝟎) public
+  {-
+  record NonZero(x : T) : Stmt{ℓₑ} where
+    constructor intro
+    field proof : (x ≢ 𝟎)
+  -}
 
   ZeroDivisorₗ : T → Stmt
-  ZeroDivisorₗ(a) = ∃(x ↦ (x ≢ 𝟎) ∧ (a ⋅ x ≡ 𝟎))
+  ZeroDivisorₗ(a) = ∃(x ↦ NonZero(x) ∧ (a ⋅ x ≡ 𝟎))
 
   ZeroDivisorᵣ : T → Stmt
-  ZeroDivisorᵣ(a) = ∃(x ↦ (x ≢ 𝟎) ∧ (x ⋅ a ≡ 𝟎))
+  ZeroDivisorᵣ(a) = ∃(x ↦ NonZero(x) ∧ (x ⋅ a ≡ 𝟎))
 
   ZeroDivisor : T → Stmt
-  ZeroDivisor(a) = ∃(x ↦ (x ≢ 𝟎) ∧ ((a ⋅ x ≡ 𝟎) ∧ (x ⋅ a ≡ 𝟎)))
+  ZeroDivisor(a) = ∃(x ↦ NonZero(x) ∧ ((a ⋅ x ≡ 𝟎) ∧ (x ⋅ a ≡ 𝟎)))
 
--- An algebraic structure over two operators, in which the first one is a commutative group, and the second one is associative and distributes over the first one.
+  record RegularDivisorₗ (a : T) : Stmt{Lvl.of(T) Lvl.⊔ ℓₑ} where
+    constructor intro
+    field proof : ∀{x} → (a ⋅ x ≡ 𝟎) → (x ≡ 𝟎)
+
+  record RegularDivisorᵣ (a : T) : Stmt{Lvl.of(T) Lvl.⊔ ℓₑ} where
+    constructor intro
+    field proof : ∀{x} → (x ⋅ a ≡ 𝟎) → (x ≡ 𝟎)
+
+-- An algebraic structure over two operators, in which the first one is a group, and the second one is associative and distributes over the first one.
 -- Also called: Rg.
-record Rng {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
+record Rng {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) {ℓₙ₀} : Stmt{ℓ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₙ₀)} where
   constructor intro
   field
-    ⦃ [+]-group ⦄  : Group(_+_)
-    ⦃ [⋅]-semi ⦄   : Semi(_⋅_)
-    ⦃ preRg ⦄      : PreRg(_+_)(_⋅_)
+    ⦃ [+]-group ⦄             : Group(_+_)
+    ⦃ [⋅]-semi ⦄              : Semi(_⋅_)
+    ⦃ [⋅][+]-distributivity ⦄ : Distributivity(_⋅_)(_+_)
+    ⦃ non-zero-relation ⦄     : NonIdentityRelation(Group.monoid [+]-group) {ℓₙ₀}
   instance
     rg : Rg(_+_)(_⋅_)
     rg = let open Group([+]-group) ; open Semi([⋅]-semi) in intro
   open Rg(rg)
     hiding(
       [⋅]-semi ;
-      preRg
+      [⋅][+]-distributivity
     ) public
   open Group([+]-group)
     using ()
@@ -116,24 +124,20 @@ record Rng {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T �
       inverseᵣ            to [+]-inverseᵣ
     ) public
 
-  instance
-    [+]-commutativeGroup : CommutativeGroup(_+_)
-    [+]-commutativeGroup = intro
-
   _−_ : T → T → T
   x − y = x + (− y)
 
-record RngObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
+record RngObject {ℓ ℓₑ ℓₙ₀} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ Lvl.⊔ ℓₙ₀)} where
   constructor intro
   field
     {T} : Type{ℓ}
     ⦃ equiv ⦄ : Equiv{ℓₑ}(T)
     _+_ : T → T → T
     _⋅_ : T → T → T
-    ⦃ rng ⦄ : Rng(_+_)(_⋅_)
+    ⦃ rng ⦄ : Rng(_+_)(_⋅_){ℓₙ₀}
   open Rng(rng) public
 
-record Unity {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) ⦃ rg : Rg(_+_)(_⋅_) ⦄ : Stmt{ℓ Lvl.⊔ ℓₑ} where
+record Unity {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) {ℓₙ₀} ⦃ rg : Rg(_+_)(_⋅_) {ℓₙ₀} ⦄ : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   open Rg(rg)
   field
@@ -151,24 +155,26 @@ record Unity {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T
       identityᵣ          to [⋅]-identityᵣ
     ) public
 
+  -- The property of having distinct additive and multiplicative identities.
   DistinctIdentities = NonZero(𝟏)
 
 -- An algebraic structure over two operators, in which the first one is a commutative monoid and the second one is a monoid which distributes over the first one.
 -- Also called: Semiring.
 -- Note: It is called "rig" because it is a ring without the "n" (the negative element, inverse of addition).
-record Rig {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
+record Rig {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) {ℓₙ₀} : Stmt{ℓ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₙ₀)} where
   constructor intro
   field
-    ⦃ [+]-monoid ⦄ : Monoid(_+_)
-    ⦃ [⋅]-monoid ⦄ : Monoid(_⋅_)
-    ⦃ preRg ⦄      : PreRg(_+_)(_⋅_)
+    ⦃ [+]-monoid ⦄            : Monoid(_+_)
+    ⦃ [⋅]-monoid ⦄            : Monoid(_⋅_)
+    ⦃ [⋅][+]-distributivity ⦄ : Distributivity(_⋅_)(_+_)
+    ⦃ non-zero-relation ⦄     : NonIdentityRelation([+]-monoid){ℓₙ₀}
   instance
     rg : Rg(_+_)(_⋅_)
     rg = let open Monoid([+]-monoid) ; open Monoid([⋅]-monoid) in intro
   open Rg(rg)
     hiding(
       [+]-monoid ;
-      preRg
+      [⋅][+]-distributivity
     ) public
   instance
     unity : Unity(_+_)(_⋅_)
@@ -183,19 +189,20 @@ record Rig {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T �
     ⦃ [⋅]-absorberᵣ ⦄ : Absorberᵣ(_⋅_)(𝟎)
 
 -- Rng with unity.
-record Ring {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
+record Ring {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) {ℓₙ₀} : Stmt{ℓ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₙ₀)} where
   constructor intro
   field
-    ⦃ [+]-group ⦄  : Group(_+_)
-    ⦃ [⋅]-monoid ⦄ : Monoid(_⋅_)
-    ⦃ preRg ⦄      : PreRg(_+_)(_⋅_)
+    ⦃ [+]-group ⦄             : Group(_+_)
+    ⦃ [⋅]-monoid ⦄            : Monoid(_⋅_)
+    ⦃ [⋅][+]-distributivity ⦄ : Distributivity(_⋅_)(_+_)
+    ⦃ non-zero-relation ⦄     : NonIdentityRelation(Group.monoid [+]-group) {ℓₙ₀}
   instance
     rng : Rng(_+_)(_⋅_)
     rng = let open Monoid([⋅]-monoid) in intro
   open Rng(rng)
     hiding(
       [+]-group ;
-      preRg
+      [⋅][+]-distributivity
     ) public
   instance
     unity : Unity(_+_)(_⋅_)
@@ -205,43 +212,43 @@ record Ring {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T 
       [⋅]-monoid
     ) public
 
-record RingObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
+record RingObject {ℓ ℓₑ ℓₙ₀} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ Lvl.⊔ ℓₙ₀)} where
   constructor intro
   field
     {T} : Type{ℓ}
     ⦃ equiv ⦄ : Equiv{ℓₑ}(T)
     _+_ : T → T → T
     _⋅_ : T → T → T
-    ⦃ ring ⦄ : Ring(_+_)(_⋅_)
+    ⦃ ring ⦄ : Ring(_+_)(_⋅_){ℓₙ₀}
   open Ring(ring) public
 
-record Division {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) ⦃ rg : Rg(_+_)(_⋅_) ⦄ ⦃ unity : Unity(_+_)(_⋅_) ⦄ : Stmt{ℓ Lvl.⊔ ℓₑ} where
+record Division {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) {ℓₙ₀} ⦃ rg : Rg(_+_)(_⋅_){ℓₙ₀} ⦄ ⦃ unity : Unity(_+_)(_⋅_) ⦄ : Stmt{ℓ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₙ₀)} where
   constructor intro
   open Rg(rg)
   open Unity(unity)
   field
-    ⅟ : (x : T) → ⦃ NonZero(x) ⦄ → T
+    ⅟ : (x : T) → .⦃ NonZero(x) ⦄ → T
     [⋅]-inverseₗ : ∀{x} → ⦃ non-zero : NonZero(x) ⦄ → (x ⋅ (⅟ x) ≡ 𝟏)
     [⋅]-inverseᵣ : ∀{x} → ⦃ non-zero : NonZero(x) ⦄ → ((⅟ x) ⋅ x ≡ 𝟏)
 
-  _/_ : T → (y : T) → ⦃ NonZero(y) ⦄ → T
+  _/_ : T → (y : T) → .⦃ NonZero(y) ⦄ → T
   x / y = x ⋅ (⅟ y)
 
 -- Ring with division.
 -- Also called: Ring.
-record DivisionRing {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
+record DivisionRing {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T → T → T) (_⋅_  : T → T → T) {ℓₙ₀} : Stmt{ℓ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₙ₀)} where
   constructor intro
-  field ⦃ ring ⦄ : Ring(_+_)(_⋅_)
+  field ⦃ ring ⦄ : Ring(_+_)(_⋅_) {ℓₙ₀}
   open Ring(ring) public
   field ⦃ division ⦄ : Division(_+_)(_⋅_)
   open Division(division) public
 
-record DivisionRingObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
+record DivisionRingObject {ℓ ℓₑ ℓₙ₀} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ Lvl.⊔ ℓₙ₀)} where
   constructor intro
   field
     {T} : Type{ℓ}
     ⦃ equiv ⦄ : Equiv{ℓₑ}(T)
     _+_ : T → T → T
     _⋅_ : T → T → T
-    ⦃ divisionRing ⦄ : DivisionRing(_+_)(_⋅_)
+    ⦃ divisionRing ⦄ : DivisionRing(_+_)(_⋅_) {ℓₙ₀}
   open DivisionRing(divisionRing) public

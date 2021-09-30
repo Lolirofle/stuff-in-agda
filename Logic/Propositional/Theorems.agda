@@ -1,8 +1,10 @@
 module Logic.Propositional.Theorems where
 
+import      BidirectionalFunction
 open import Data
 open import Data.Either as Either using (_‖_)
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
+open import Function
 open import Functional
 open import Logic
 open import Logic.Propositional
@@ -15,7 +17,7 @@ open import Type
 
 module _ {ℓ} {P : Stmt{ℓ}} where
   [↔]-reflexivity : (P ↔ P)
-  [↔]-reflexivity = [↔]-intro id id
+  [↔]-reflexivity = BidirectionalFunction.id
 
   [→]-reflexivity : (P → P)
   [→]-reflexivity = id
@@ -28,7 +30,7 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{
   [→]-transitivity = liftᵣ
 
   [↔]-transitivity : (P ↔ Q) → (Q ↔ R) → (P ↔ R)
-  [↔]-transitivity ([↔]-intro qp pq) ([↔]-intro rq qr) = [↔]-intro (qp ∘ rq) (qr ∘ pq)
+  [↔]-transitivity pq qr = BidirectionalFunction.map pq BidirectionalFunction.id BidirectionalFunction.$ₗ qr
 
   [∧]-transitivity : (P ∧ Q) → (Q ∧ R) → (P ∧ R)
   [∧]-transitivity ([∧]-intro p _) ([∧]-intro _ r) = [∧]-intro p r
@@ -45,7 +47,7 @@ module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
 
 module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [↔]-symmetry : (P ↔ Q) → (Q ↔ P)
-  [↔]-symmetry = [∧]-symmetry
+  [↔]-symmetry = BidirectionalFunction.rev BidirectionalFunction.$ᵣ_
 
 ------------------------------------------
 -- Operators that implies other ones
@@ -66,6 +68,9 @@ module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [∨]-to-[←][→] : (P ∨ Q) → (P ← Q)∨(P → Q)
   [∨]-to-[←][→] ([∨]-introₗ p) = [∨]-introₗ (const p)
   [∨]-to-[←][→] ([∨]-introᵣ q) = [∨]-introᵣ (const q)
+
+  [¬∧¬]-to-[↔] : ((¬ P) ∧ (¬ Q)) → (P ↔ Q)
+  [¬∧¬]-to-[↔] ([∧]-intro np nq) = [↔]-intro ([⊥]-elim ∘ nq) ([⊥]-elim ∘ np)
 
 ------------------------------------------
 -- Associativity (with respect to ↔)
@@ -90,36 +95,6 @@ module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{
           r ([∨]-introₗ([∨]-introₗ p)) = [∨]-introₗ p
           r ([∨]-introₗ([∨]-introᵣ q)) = [∨]-introᵣ([∨]-introₗ q)
           r ([∨]-introᵣ r) = [∨]-introᵣ([∨]-introᵣ r)
-
--- TODO: According to https://math.stackexchange.com/questions/440261/associativity-of-iff , this is unprovable
-{-[↔]-associativity : ∀{P Q R : Stmt} → ((P ↔ Q) ↔ R) ↔ (P ↔ (Q ↔ R))
-[↔]-associativity {P}{Q}{R} = [↔]-intro [↔]-associativityₗ [↔]-associativityᵣ where
-  [↔]-associativityₗ : ((P ↔ Q) ↔ R) ← (P ↔ (Q ↔ R))
-  [↔]-associativityₗ ([↔]-intro yz2x x2yz) = [↔]-intro z2xy xy2z where
-    z2xy : (P ↔ Q) ← R
-    z2xy r = [↔]-intro y2x x2y where
-      y2x : Q → P
-      y2x q = yz2x([∧]-to-[↔]([∧]-intro q r))
-
-      x2y : P → Q
-      x2y p = [↔]-elimₗ (x2yz(p)) (r)
-
-    xy2z : (P ↔ Q) → R -- TODO: How?
-    xy2z ([↔]-intro y2x x2y) = ?
-
-  [↔]-associativityᵣ : ((P ↔ Q) ↔ R) → (P ↔ (Q ↔ R))
-  [↔]-associativityᵣ ([↔]-intro z2xy xy2z) = [↔]-intro yz2x x2yz where
-    yz2x : P ← (Q ↔ R)
-    yz2x ([↔]-intro z2y y2z) = ?
-
-    x2yz : P → (Q ↔ R)
-    x2yz p = [↔]-intro z2y y2z where
-      z2y : R → Q
-      z2y r = [↔]-elimᵣ (z2xy(r)) (p)
-
-      y2z : Q → R
-      y2z q = xy2z([∧]-to-[↔]([∧]-intro p q))
--}
 
 ------------------------------------------
 -- Distributivity

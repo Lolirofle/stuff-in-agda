@@ -1,5 +1,6 @@
 module Numeral.Natural.Coprime.Proofs where
 
+open import Data
 open import Functional
 open import Logic
 open import Logic.Classical
@@ -9,12 +10,13 @@ import      Lvl
 open import Numeral.Finite
 open import Numeral.Natural
 open import Numeral.Natural.Coprime
-open import Numeral.Natural.Decidable
 open import Numeral.Natural.Function.GreatestCommonDivisor
+open import Numeral.Natural.Relation.Divisibility.Decidable
 open import Numeral.Natural.Relation.Divisibility.Proofs
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Prime
 open import Numeral.Natural.Prime.Proofs
+open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Divisibility
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
@@ -34,7 +36,7 @@ Coprime-reflexivity-condition {n} = [↔]-intro l (r{n}) where
   r : ∀{n} → Coprime(n)(n) → (n ≡ 1)
   r {𝟎}       (intro z1)   = z1 Div𝟎 Div𝟎
   r {𝐒(𝟎)}    _            = [≡]-intro
-  r {𝐒(𝐒(n))} (intro ssn1) = ssn1 {𝐒(𝐒(n))} divides-reflexivity divides-reflexivity
+  r {𝐒(𝐒(n))} (intro ssn1) = ssn1 {𝐒(𝐒(n))} (reflexivity(_∣_)) (reflexivity(_∣_))
 
 instance
   Coprime-symmetry : Symmetry(Coprime)
@@ -44,7 +46,7 @@ instance
 Coprime-of-0-condition : ∀{x} → Coprime(0)(x) → (x ≡ 1)
 Coprime-of-0-condition {0}       (intro n1) = n1 Div𝟎 Div𝟎
 Coprime-of-0-condition {1}       (intro n1) = [≡]-intro
-Coprime-of-0-condition {𝐒(𝐒(x))} (intro n1) = n1 Div𝟎 divides-reflexivity
+Coprime-of-0-condition {𝐒(𝐒(x))} (intro n1) = n1 Div𝟎 (reflexivity(_∣_))
 
 -- 1 is coprime to all numbers because only 1 divides 1.
 Coprime-of-1 : Coprime(1)(x)
@@ -96,5 +98,17 @@ Prime-to-div-or-coprime {y = y} (intro {x} prim) = [¬→]-disjunctive-formᵣ �
   ... | [∨]-introₗ [≡]-intro = [≡]-intro
   ... | [∨]-introᵣ [≡]-intro with () ← nxy ny
 
-divides-to-converse-coprime : ∀{x y z} → (x ∣ y) → Coprime(y)(z) → Coprime(x)(z)
-divides-to-converse-coprime xy (intro yz) = intro(nx ↦ nz ↦ yz (transitivity(_∣_) nx xy) nz)
+divides-to-converse-coprimeₗ : ∀{x y z} → (x ∣ y) → Coprime(y)(z) → Coprime(x)(z)
+divides-to-converse-coprimeₗ xy (intro yz) = intro(nx ↦ nz ↦ yz (transitivity(_∣_) nx xy) nz)
+
+divides-to-converse-coprimeᵣ : ∀{x y z} → (x ∣ y) → Coprime(z)(y) → Coprime(z)(x)
+divides-to-converse-coprimeᵣ div cop = symmetry(Coprime) (divides-to-converse-coprimeₗ div (symmetry(Coprime) cop))
+
+divides-to-converse-coprime : ∀{x₁ x₂ y₁ y₂} → (x₁ ∣ x₂) → (y₁ ∣ y₂) → Coprime(x₂)(y₂) → Coprime(x₁)(y₁)
+divides-to-converse-coprime div1 div2 coprim = divides-to-converse-coprimeₗ div1 (divides-to-converse-coprimeᵣ div2 coprim)
+
+Coprime-positive : ∀{x y} → Coprime x y → (Positive(x) ∨ Positive(y))
+Coprime-positive {𝟎}   {𝟎}   coprim with () ← Coprime-of-0-condition coprim
+Coprime-positive {𝟎}   {𝐒 y} coprim = [∨]-introᵣ <>
+Coprime-positive {𝐒 x} {𝟎}   coprim = [∨]-introₗ <>
+Coprime-positive {𝐒 x} {𝐒 y} coprim = [∨]-introᵣ <>

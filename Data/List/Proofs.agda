@@ -1,8 +1,9 @@
 module Data.List.Proofs where
 
 import Lvl
-open import Functional
+open import Functional as Fn using (_∘_ ; const)
 open import Data.Option using (Option ; Some ; None)
+import      Data.Option.Functions as Option
 open import Data.List
 open import Data.List.Equiv
 open import Data.List.Functions
@@ -217,6 +218,16 @@ module _
     ⇒₂-[ congruence₂(_⊰_) ]
     (f(x₁) ⊰ map f(l₁) ≡ g(x₂) ⊰ map g(l₂)) ⇒-end
 
+  map-injective : ⦃ inj : Injective(f) ⦄ → Injective(map f)
+  map-injective {f = f} = intro proof where
+    proof : Names.Injective(map f)
+    proof {∅}      {∅}      p = reflexivity(_≡_)
+    proof {∅}      {y ⊰ yl} p with () ← [∅][⊰]-unequal p
+    proof {x ⊰ xl} {∅}      p with () ← [∅][⊰]-unequal (symmetry(_≡_) p)
+    proof {x ⊰ xl} {y ⊰ yl} p = congruence₂(_⊰_)
+      (injective(f) ([∧]-elimₗ([⊰]-generalized-cancellation p)))
+      (proof {xl} {yl} ([∧]-elimᵣ([⊰]-generalized-cancellation p)))
+
 module _
   ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-List₁ : Equiv{ℓₑₗ₁}(List(A)) ⦄ ⦃ extensionality-A : Extensionality(equiv-List₁) ⦄
   ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄
@@ -236,3 +247,20 @@ module _
     x₂ ▫₁ foldᵣ(_▫₂_) id₂ l₂ 🝖[ _≡_ ]-[ op-eq ]
     x₂ ▫₂ foldᵣ(_▫₂_) id₂ l₂ 🝖[ _≡_ ]-[]
     foldᵣ(_▫₂_) id₂ (x₂ ⊰ l₂) 🝖-end
+
+module _ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
+  private variable _▫_ : A → B → C
+  private variable f : A → B
+  private variable id : T
+
+  foldᵣ-map-preserve : ⦃ oper : BinaryOperator(_▫_) ⦄ → ∀{l} → (foldᵣ((_▫_) ∘ f) id l ≡ foldᵣ(_▫_) id (map f(l)))
+  foldᵣ-map-preserve                  {l = ∅}     = reflexivity(_≡_)
+  foldᵣ-map-preserve{_▫_ = _▫_}{f = f}{l = x ⊰ l} = congruence₂ᵣ(_▫_)(f(x)) (foldᵣ-map-preserve{_▫_ = _▫_}{f = f}{l = l})
+
+module _ ⦃ equiv-B : Equiv{ℓₑ}(Option(B)) ⦄ where
+  private variable f : A → B
+  private variable l : List(A)
+
+  first-preserve-map : first(map f(l)) ≡ Option.map f(first l)
+  first-preserve-map {l = ∅}     = reflexivity(_≡_)
+  first-preserve-map {l = _ ⊰ _} = reflexivity(_≡_)

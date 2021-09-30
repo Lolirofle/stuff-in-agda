@@ -1,7 +1,8 @@
 module Structure.Type.Identity.Proofs where
 
 import      Lvl
-open import Functional using (_→ᶠ_ ; id ; _on₂_ ; swap ; _$_ ; apply)
+open import Function using (_→ᶠ_)
+open import Functional using (id ; _on₂_ ; swap ; _$_ ; apply)
 open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Proofs.Structures

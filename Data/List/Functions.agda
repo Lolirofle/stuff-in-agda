@@ -398,6 +398,12 @@ filter : (T → Bool) → List(T) → List(T)
 filter f(∅)     = ∅
 filter f(x ⊰ l) = (if f(x) then (x ⊰_) else id) (filter f(l))
 
+filterFirst : (T → Bool) → List(T) → List(T)
+filterFirst f(∅)     = ∅
+filterFirst f(x ⊰ l) with f(x)
+... | 𝑇 = l
+... | 𝐹 = x ⊰ filterFirst f(l)
+
 -- Finds the first element that satisfies the given predicate in the given list.
 find : (T → Bool) → List(T) → Option(T)
 find f(∅)     = Option.None

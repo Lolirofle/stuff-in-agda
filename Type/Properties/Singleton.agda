@@ -16,4 +16,4 @@ record IsUnit (T : Type{ℓ}) ⦃ _ : Equiv{ℓₑ}(T) ⦄ : Type{ℓ Lvl.⊔ �
   field
     unit : T
     uniqueness : ∀{x : T} → (x ≡ unit)
-open IsUnit ⦃ ... ⦄ using (unit)
+open IsUnit ⦃ ... ⦄ using (unit) public

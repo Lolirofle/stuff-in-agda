@@ -1,8 +1,9 @@
-module Structure.Operator.Monoid where
+module Structure.Operator.Monoid {ℓ}{ℓₑ} where
 
 import      Lvl
 open import Logic
 open import Logic.Predicate
+open import Logic.Propositional
 open import Structure.Setoid
 open import Structure.Operator
 open import Structure.Operator.Properties hiding (associativity ; identityₗ ; identityᵣ)
@@ -12,10 +13,10 @@ open import Type
 -- A type and a binary operator using this type is a monoid when:
 -- • The operator is associative.
 -- • The operator have an identity in both directions.
-record Monoid {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
+record Monoid  {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
-    ⦃ binary-operator ⦄    : BinaryOperator(_▫_)
+    ⦃ binaryOperator ⦄    : BinaryOperator(_▫_)
     ⦃ associativity ⦄      : Associativity(_▫_)
     ⦃ identity-existence ⦄ : ∃(Identity(_▫_))
 
@@ -40,7 +41,7 @@ record Monoid {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ :
   identity-existenceᵣ : ∃(Identityᵣ(_▫_))
   identity-existenceᵣ = [∃]-intro id ⦃ identityᵣ ⦄
 
-record MonoidObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
+record MonoidObject : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
   constructor intro
   field
     {T} : Type{ℓ}
@@ -48,3 +49,10 @@ record MonoidObject {ℓ ℓₑ} : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
     _▫_ : T → T → T
     ⦃ monoid ⦄ : Monoid(_▫_)
   open Monoid(monoid) public
+
+record NonIdentityRelation {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ {_▫_ : T → T → T} (monoid : Monoid(_▫_)) {ℓₙᵢ} : Stmt{ℓ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₙᵢ)} where
+  constructor intro
+  open Monoid(monoid)
+  field
+    NonIdentity : T → Stmt{ℓₙᵢ}
+    proof : ∀{x} → NonIdentity(x) ↔ (x ≢ id)

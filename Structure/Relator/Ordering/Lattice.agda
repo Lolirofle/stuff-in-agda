@@ -13,25 +13,25 @@ open import Type
 private variable ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
 
 module _ {T : Type{ℓ₁}} where
+  record RightBound (_≤_ : T → T → Stmt{ℓ₂}) (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
+    constructor intro
+    field proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (x ≤ b)
+
   record Top (_≤_ : T → T → Stmt{ℓ₂}) (P : T → Stmt{ℓ₃}) (m : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro
     field
       ⦃ membership ⦄ : P(m)
-      proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (x ≤ m)
-
-  module _ (_≤_ : T → T → Stmt{ℓ₂}) where
-    Bottom : (P : T → Stmt{ℓ₃}) (m : T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
-    Bottom = Top(swap(_≤_))
-    module Bottom{ℓ₂}{ℓ₃}{_≤_} = Top{ℓ₂}{ℓ₃}{swap(_≤_)}
-
-  record RightBound (_≤_ : T → T → Stmt{ℓ₂}) (P : T → Stmt{ℓ₃}) (b : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
-    constructor intro
-    field proof : ∀{x : T} → ⦃ _ : P(x) ⦄ → (x ≤ b)
+      ⦃ bound ⦄      : RightBound(_≤_) P m
 
   module _ (_≤_ : T → T → Stmt{ℓ₂}) where
     LeftBound : (P : T → Stmt{ℓ₃}) → (b : T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
     LeftBound = RightBound(swap(_≤_))
     module LeftBound{ℓ₂}{ℓ₃}{_≤_} = RightBound{ℓ₂}{ℓ₃}{swap(_≤_)}
+
+  module _ (_≤_ : T → T → Stmt{ℓ₂}) where
+    Bottom : (P : T → Stmt{ℓ₃}) (m : T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃}
+    Bottom = Top(swap(_≤_))
+    module Bottom{ℓ₂}{ℓ₃}{_≤_} = Top{ℓ₂}{ℓ₃}{swap(_≤_)}
 
   record Meet (_≤_ : T → T → Stmt{ℓ₂}) (P : T → Stmt{ℓ₃}) (inf : T) : Stmt{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓ₃} where
     constructor intro

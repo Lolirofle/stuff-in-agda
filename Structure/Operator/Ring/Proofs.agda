@@ -3,6 +3,7 @@ module Structure.Operator.Ring.Proofs where
 import      Data.Tuple as Tuple
 open import Functional
 open import Logic.IntroInstances
+open import Logic.Predicate
 open import Logic.Propositional
 import      Lvl
 open import Structure.Function
@@ -10,7 +11,9 @@ open import Structure.Function.Domain
 open import Structure.Operator.Properties
 open import Structure.Operator.Ring
 open import Structure.Operator
+open import Structure.Operator.InverseOperatorFromFunction.Proofs
 open import Structure.Operator.Proofs
+open import Structure.Operator.Proofs.Util
 open import Structure.Relator.Properties
 open import Structure.Setoid
 open import Syntax.Implication
@@ -20,11 +23,11 @@ open import Type.Properties.Singleton
 open import Type.Properties.Singleton.Proofs
 open import Type
 
-private variable ℓ ℓₑ : Lvl.Level
+private variable ℓ ℓₑ ℓₙ₀ : Lvl.Level
 private variable T : Type{ℓ}
 private variable _+_ _⋅_ : T → T → T
 
-module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rg : Rg{T = T}(_+_)(_⋅_) ⦄ where
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rg : Rg{T = T}(_+_)(_⋅_){ℓₙ₀} ⦄ where
   open Rg(rg)
 
   [⋅]-absorberₗ-by-cancellationᵣ : ⦃ canc : Cancellationᵣ(_+_) ⦄ → Absorberₗ(_⋅_)(𝟎)
@@ -39,7 +42,72 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rg : Rg{T = T}(_+_)(_⋅_) ⦄ whe
     x ⋅ (𝟎 + 𝟎)       🝖-[ distributivityₗ(_⋅_)(_+_) ]
     (x ⋅ 𝟎) + (x ⋅ 𝟎) 🝖-end
 
-module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ where
+  module _ ⦃ unity : Unity(_+_)(_⋅_) ⦄ where
+    open Unity(unity)
+
+    -- TODO: The following is contained in the proof below: [2⋅][+]-preserving : (x+y)² = x²+y²
+
+    [+]-commutativity-by-cancellation-unity : ⦃ cancₗ : Cancellationₗ(_+_) ⦄ → ⦃ cancᵣ : Cancellationᵣ(_+_) ⦄ → Commutativity(_+_)
+    Commutativity.proof [+]-commutativity-by-cancellation-unity {x}{y} = cancellationᵣ(_+_) {y} $ cancellationₗ(_+_) {x} $
+      x + ((x + y) + y)                         🝖[ _≡_ ]-[ One.associate4-231-222 ]
+      (x + x) + (y + y)                         🝖[ _≡_ ]-[ congruence₂(_+_) (congruence₂(_+_) (identityₗ(_⋅_)(𝟏)) (identityₗ(_⋅_)(𝟏))) (congruence₂(_+_) (identityₗ(_⋅_)(𝟏)) (identityₗ(_⋅_)(𝟏))) ]-sym
+      ((𝟏 ⋅ x) + (𝟏 ⋅ x)) + ((𝟏 ⋅ y) + (𝟏 ⋅ y)) 🝖[ _≡_ ]-[ congruence₂(_+_) (distributivityᵣ(_⋅_)(_+_)) (distributivityᵣ(_⋅_)(_+_)) ]-sym
+      ((𝟏 + 𝟏) ⋅ x) + ((𝟏 + 𝟏) ⋅ y)             🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) ]-sym
+      (𝟏 + 𝟏) ⋅ (x + y)                         🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) ]
+      (𝟏 ⋅ (x + y)) + (𝟏 ⋅ (x + y))             🝖[ _≡_ ]-[ congruence₂(_+_) (identityₗ(_⋅_)(𝟏)) (identityₗ(_⋅_)(𝟏)) ]
+      (x + y) + (x + y)                         🝖[ _≡_ ]-[ One.associate4-231-222 ]-sym
+      x + ((y + x) + y)                         🝖-end
+
+    module _ ⦃ ident : DistinctIdentities ⦄ ⦃ canc : Cancellationᵣ(_+_) ⦄ where
+      [𝟎]-zero-divisorₗ : ZeroDivisorₗ(𝟎)
+      [𝟎]-zero-divisorₗ = [∃]-intro 𝟏 ⦃ [∧]-intro ident (absorberₗ(_⋅_)(𝟎) ⦃ [⋅]-absorberₗ-by-cancellationᵣ ⦄) ⦄
+
+      [𝟎]-zero-divisorᵣ : ZeroDivisorᵣ(𝟎)
+      [𝟎]-zero-divisorᵣ = [∃]-intro 𝟏 ⦃ [∧]-intro ident (absorberᵣ(_⋅_)(𝟎) ⦃ [⋅]-absorberᵣ-by-cancellationᵣ ⦄) ⦄
+
+      [𝟎]-zero-divisor : ZeroDivisor(𝟎)
+      [𝟎]-zero-divisor = [∃]-intro 𝟏 ⦃ [∧]-intro ident ([∧]-intro (absorberₗ(_⋅_)(𝟎) ⦃ [⋅]-absorberₗ-by-cancellationᵣ ⦄) (absorberᵣ(_⋅_)(𝟎) ⦃ [⋅]-absorberᵣ-by-cancellationᵣ ⦄)) ⦄
+
+    module _ ⦃ division : Division(_+_)(_⋅_) ⦄ where
+      open Division(division)
+
+      [⋅]-cancellationₗ : ∀{x y z} ⦃ nonzero : NonZero(x) ⦄ → (x ⋅ y ≡ x ⋅ z) → (y ≡ z)
+      [⋅]-cancellationₗ {x}{y}{z} xyxz =
+        y               🝖[ _≡_ ]-[ identityₗ(_⋅_)(𝟏) ]-sym
+        𝟏 ⋅ y           🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(y) [⋅]-inverseᵣ ]-sym
+        ((⅟ x) ⋅ x) ⋅ y 🝖[ _≡_ ]-[ associativity(_⋅_) ]
+        (⅟ x) ⋅ (x ⋅ y) 🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(⅟ x) xyxz ]
+        (⅟ x) ⋅ (x ⋅ z) 🝖[ _≡_ ]-[ associativity(_⋅_) ]-sym
+        ((⅟ x) ⋅ x) ⋅ z 🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(z) [⋅]-inverseᵣ ]
+        𝟏 ⋅ z           🝖[ _≡_ ]-[ identityₗ(_⋅_)(𝟏) ]
+        z               🝖-end
+
+      [⋅]-cancellationᵣ : ∀{x y z} ⦃ nonzero : NonZero(z) ⦄ → (x ⋅ z ≡ y ⋅ z) → (x ≡ y)
+      [⋅]-cancellationᵣ {x}{y}{z} xzyz =
+        x               🝖[ _≡_ ]-[ identityᵣ(_⋅_)(𝟏) ]-sym
+        x ⋅ 𝟏           🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(x) [⋅]-inverseₗ ]-sym
+        x ⋅ (z ⋅ (⅟ z)) 🝖[ _≡_ ]-[ associativity(_⋅_) ]-sym
+        (x ⋅ z) ⋅ (⅟ z) 🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(⅟ z) xzyz ]
+        (y ⋅ z) ⋅ (⅟ z) 🝖[ _≡_ ]-[ associativity(_⋅_) ]
+        y ⋅ (z ⋅ (⅟ z)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(y) [⋅]-inverseₗ ]
+        y ⋅ 𝟏           🝖[ _≡_ ]-[ identityᵣ(_⋅_)(𝟏) ]
+        y               🝖-end
+
+      [⋅][/]-inverseOperᵣ : ∀{x y} ⦃ nonzero : NonZero(y) ⦄ → ((x ⋅ y) / y ≡ x)
+      [⋅][/]-inverseOperᵣ {x}{y} =
+        ((x ⋅ y) / y)     🝖[ _≡_ ]-[]
+        ((x ⋅ y) ⋅ (⅟ y)) 🝖[ _≡_ ]-[ associativity(_⋅_) ]
+        x ⋅ (y ⋅ (⅟ y))   🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(x) [⋅]-inverseₗ ]
+        x ⋅ 𝟏             🝖[ _≡_ ]-[ identityᵣ(_⋅_)(𝟏) ]
+        x                 🝖-end
+
+      [swap⋅][/]-inverseOperᵣ : ⦃ comm : Commutativity(_⋅_) ⦄ → ∀{x y} ⦃ nonzero : NonZero(x) ⦄ → ((x ⋅ y) / x ≡ y)
+      [swap⋅][/]-inverseOperᵣ {x}{y} =
+        ((x ⋅ y) / x)     🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(⅟ x) (commutativity(_⋅_)) ]
+        ((y ⋅ x) / x)     🝖[ _≡_ ]-[ [⋅][/]-inverseOperᵣ ]
+        y                 🝖-end
+
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_){ℓₙ₀} ⦄ where
   open Rng(rng)
 
   instance
@@ -58,26 +126,24 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ w
     [⋅]-absorberᵣ : Absorberᵣ(_⋅_)(𝟎)
     [⋅]-absorberᵣ = [⋅]-absorberᵣ-by-cancellationᵣ
 
-  -- TODO: Stuff provable in groups
   [−]-binaryOperator : BinaryOperator(_−_)
-  BinaryOperator.congruence [−]-binaryOperator {x₁}{y₁}{x₂}{y₂} xy1 xy2 =
-    (x₁ − x₂)     🝖[ _≡_ ]-[]
-    (x₁ + (− x₂)) 🝖[ _≡_ ]-[ congruence₂(_+_) xy1 (congruence₁(−_) xy2) ]
-    (y₁ + (− y₂)) 🝖[ _≡_ ]-[]
-    (y₁ − y₂)     🝖-end
+  [−]-binaryOperator = invOpᵣ-binaryOperator
 
   instance
     [−]-involution : Involution(−_)
     [−]-involution = intro One.double-inverse
 
-  [+]-negation-distribution : ∀{x y} → (−(x + y) ≡ (− x) + (− y))
-  [+]-negation-distribution = One.inverse-distribution 🝖 commutativity(_+_)
+  [+]-negation-distribution-commuted : ∀{x y} → (−(x + y) ≡ (− y) − x)
+  [+]-negation-distribution-commuted = One.inverse-distribution
+
+  [+]-negation-distribution : ⦃ comm : Commutativity(_+_) ⦄ → ∀{x y} → (−(x + y) ≡ (− x) + (− y))
+  [+]-negation-distribution = [+]-negation-distribution-commuted 🝖 commutativity(_+_)
 
   [−]-negation-distribution : ∀{x y} → (−(x − y) ≡ y − x)
   [−]-negation-distribution = One.inverse-distribution 🝖 congruence₂ₗ(_−_) ⦃ [−]-binaryOperator ⦄ (_) (involution(−_))
 
-  -- TODO: See abs-of-negation for a similiar proof
-  postulate zero-when-equal-negation : ∀{x} → (− x ≡ x) → (x ≡ 𝟎)
+  -- TODO: Use abs-of-negation when ordered. Otherwise, assume multiplicative cancellation first. −x=x is x+x=0 which means x is its own inverse
+  -- zero-when-equal-negation : ∀{x} → (− x ≡ x) → (x ≡ 𝟎)
 
   instance
     [+]-inversePropₗ : InversePropertyₗ(_+_)(−_)
@@ -88,37 +154,25 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ w
     [+]-inversePropᵣ = One.inverse-propertyᵣ-by-groupᵣ
 
   [+][−]-inverseOperᵣ : InverseOperatorᵣ(_+_)(_−_)
-  [+][−]-inverseOperᵣ = One.standard-inverse-inverse-operatorᵣ-by-inverse-propᵣ ⦃ inverPropᵣ = [+]-inversePropᵣ ⦄
+  [+][−]-inverseOperᵣ = inverse-inverse-operatorᵣ-by-inverse-propᵣ ⦃ inverPropᵣ = [+]-inversePropᵣ ⦄
 
   [−][+]-inverseOperᵣ : InverseOperatorᵣ(_−_)(_+_)
-  [−][+]-inverseOperᵣ = One.standard-inverse-operatorᵣ-by-involuting-inverse-propᵣ ⦃ inverPropᵣ = [+]-inversePropᵣ ⦄
+  [−][+]-inverseOperᵣ = inverse-operatorᵣ-by-involuting-inverse-propᵣ ⦃ inverPropᵣ = [+]-inversePropᵣ ⦄
 
-  -- TODO: Defined set subset of natural numbers and integers by using summation ∑. That is: (x ∈ ℕ) = ∃{Obj = ℕ}(n ↦ ∑(0 ‥ n) (const 𝟏))
+  [−][swap+]-inverseOperᵣ : ⦃ comm : Commutativity(_+_) ⦄ → InverseOperatorᵣ(_−_)(swap(_+_))
+  [−][swap+]-inverseOperᵣ = intro (commutativity(_+_) 🝖 inverseOperᵣ(_−_)(_+_) ⦃ [−][+]-inverseOperᵣ ⦄)
+
+  [swap+][−]-inverseOperᵣ : ⦃ comm : Commutativity(_+_) ⦄ → InverseOperatorᵣ(swap(_+_))(_−_)
+  [swap+][−]-inverseOperᵣ = intro (congruence₂ₗ(_+_)(− _) (commutativity(_+_)) 🝖 inverseOperᵣ(_+_)(_−_) ⦃ [+][−]-inverseOperᵣ ⦄)
 
   [−]-of-𝟎 : ((− 𝟎) ≡ 𝟎)
-  [−]-of-𝟎 =
-    − 𝟎       🝖-[ symmetry(_≡_) (identityₗ(_+_)(𝟎)) ]
-    𝟎 + (− 𝟎) 🝖-[ inverseFunctionᵣ(_+_)(−_) ]
-    𝟎         🝖-end
+  [−]-of-𝟎 = One.inv-of-id
 
   [−]-is-𝟎 : ∀{x} → ((− x) ≡ 𝟎) ↔ (x ≡ 𝟎)
-  [−]-is-𝟎 = [↔]-intro (p ↦ congruence₁(−_) p 🝖 [−]-of-𝟎) (p ↦ symmetry(_≡_) (involution(−_)) 🝖 congruence₁(−_) p 🝖 [−]-of-𝟎)
+  [−]-is-𝟎 = One.inv-is-id
 
   [−]-difference-is-𝟎 : ∀{x y} → ((x − y) ≡ 𝟎) ↔ (x ≡ y)
-  [−]-difference-is-𝟎 {x}{y} = [↔]-intro l r where
-    l =
-      (x     ≡ y    ) ⇒-[ congruence₂ᵣ(_−_) ⦃ [−]-binaryOperator ⦄ (x) ]
-      (x − x ≡ x − y) ⇒-[ symmetry(_≡_) ]
-      (x − y ≡ x − x) ⇒-[ _🝖 inverseFunctionᵣ(_+_)(−_) ]
-      (x − y ≡ 𝟎    ) ⇒-end
-
-    r =
-      (x − y           ≡ 𝟎    ) ⇒-[]
-      (x + (− y)       ≡ 𝟎    ) ⇒-[ congruence₂ₗ(_+_)(y) ]
-      ((x + (− y)) + y ≡ 𝟎 + y) ⇒-[ symmetry(_≡_) (associativity(_+_)) 🝖_ ]
-      (x + ((− y) + y) ≡ 𝟎 + y) ⇒-[ congruence₂ᵣ(_+_)(x) (symmetry(_≡_) (inverseFunctionₗ(_+_)(−_))) 🝖_ ]
-      (x + 𝟎           ≡ 𝟎 + y) ⇒-[ (\p → symmetry(_≡_) (identityᵣ(_+_)(𝟎)) 🝖 p 🝖 identityₗ(_+_)(𝟎)) ]
-      (x               ≡ y    ) ⇒-end
+  [−]-difference-is-𝟎 = One.equality-zero
 
   -- Alternative proof using (− 𝟏):
   --   [⋅]ₗ-of-[−] {x}{y} =
@@ -127,11 +181,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ w
   --     ((− 𝟏) ⋅ (x ⋅ y)) 🝖-[ [⋅]ₗ-of-[−1] ]
   --     (−(x ⋅ y))        🝖-end
   [⋅]ₗ-of-[−] : ∀{x y} → ((− x) ⋅ y ≡ −(x ⋅ y))
-  [⋅]ₗ-of-[−] {x}{y} = One.unique-inverseᵣ-by-id $
-    (x ⋅ y) + ((− x) ⋅ y) 🝖-[ distributivityᵣ(_⋅_)(_+_) ]-sym
-    (x + (− x)) ⋅ y       🝖-[ congruence₂ₗ(_⋅_)(y) (inverseFunctionᵣ(_+_)(−_)) ]
-    𝟎 ⋅ y                 🝖-[ absorberₗ(_⋅_)(𝟎) ]
-    𝟎                     🝖-end
+  [⋅]ₗ-of-[−] {x}{y} = OneTypeTwoOp.distributeₗ-inv
 
   -- Alternative proof using (− 𝟏):
   --   [⋅]ᵣ-of-[−] {x}{y} =
@@ -140,34 +190,16 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ w
   --     ((x ⋅ y) ⋅ (− 𝟏)) 🝖-[ [⋅]ᵣ-of-[−1] ]
   --     (−(x ⋅ y))        🝖-end
   [⋅]ᵣ-of-[−] : ∀{x y} → (x ⋅ (− y) ≡ −(x ⋅ y))
-  [⋅]ᵣ-of-[−] {x}{y} = One.unique-inverseᵣ-by-id $
-    (x ⋅ y) + (x ⋅ (− y)) 🝖-[ distributivityₗ(_⋅_)(_+_) ]-sym
-    x ⋅ (y + (− y))       🝖-[ congruence₂ᵣ(_⋅_)(x) (inverseFunctionᵣ(_+_)(−_)) ]
-    x ⋅ 𝟎                 🝖-[ absorberᵣ(_⋅_)(𝟎) ]
-    𝟎                     🝖-end
+  [⋅]ᵣ-of-[−] {x}{y} = OneTypeTwoOp.distributeᵣ-inv
 
   [⋅]-of-[−] : ∀{x y} → ((− x) ⋅ (− y) ≡ x ⋅ y)
-  [⋅]-of-[−] {x}{y} =
-    ((− x) ⋅ (− y)) 🝖[ _≡_ ]-[ [⋅]ᵣ-of-[−] ]
-    −((− x) ⋅ y)    🝖[ _≡_ ]-[ congruence₁(−_) [⋅]ₗ-of-[−] ]
-    −(−(x ⋅ y))     🝖[ _≡_ ]-[ involution(−_) ]
-    (x ⋅ y)         🝖-end
+  [⋅]-of-[−] {x}{y} = OneTypeTwoOp.op-on-inv-cancel
 
   [⋅][−]-distributivityₗ : Distributivityₗ(_⋅_)(_−_)
-  Distributivityₗ.proof [⋅][−]-distributivityₗ {x}{y}{z} =
-    (x ⋅ (y − z))           🝖[ _≡_ ]-[]
-    (x ⋅ (y + (− z)))       🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) ]
-    ((x ⋅ y) + (x ⋅ (− z))) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x ⋅ y) [⋅]ᵣ-of-[−] ]
-    ((x ⋅ y) + (−(x ⋅ z)))  🝖[ _≡_ ]-[]
-    ((x ⋅ y) − (x ⋅ z))     🝖-end
+  [⋅][−]-distributivityₗ = invᵣ-distributivityₗ
 
   [⋅][−]-distributivityᵣ : Distributivityᵣ(_⋅_)(_−_)
-  Distributivityᵣ.proof [⋅][−]-distributivityᵣ {x}{y}{z} =
-    ((x − y) ⋅ z)           🝖[ _≡_ ]-[]
-    ((x + (− y)) ⋅ z)       🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) ]
-    ((x ⋅ z) + ((− y) ⋅ z)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x ⋅ z) [⋅]ₗ-of-[−] ]
-    ((x ⋅ z) + (−(y ⋅ z)))  🝖[ _≡_ ]-[]
-    ((x ⋅ z) − (y ⋅ z))     🝖-end
+  [⋅][−]-distributivityᵣ = invᵣ-distributivityᵣ
 
   module _ ⦃ unity : Unity(_+_)(_⋅_) ⦄ where
     open import Type.Properties.MereProposition
@@ -176,6 +208,10 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ w
 
     open Unity(unity)
 
+    [+]-commutativity : Commutativity(_+_)
+    [+]-commutativity = [+]-commutativity-by-cancellation-unity
+
+    -- The ring is a trivial ring when its identities are equal.
     singleton-when-identities-equal : (𝟎 ≡ 𝟏) ↔ IsUnit(T)
     singleton-when-identities-equal = [↔]-intro l r where
       l : (𝟎 ≡ 𝟏) ← IsUnit(T)
@@ -204,3 +240,32 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_) ⦄ w
       x ⋅ ((− 𝟏) + 𝟏)       🝖-[ congruence₂ᵣ(_⋅_)(x) (inverseFunctionₗ(_+_)(−_)) ]
       x ⋅ 𝟎                 🝖-[ absorberᵣ(_⋅_)(𝟎) ]
       𝟎                     🝖-end
+
+    [⋅]-cancellationₗ-on-regular-divisor : ∀{x y z} ⦃ div : RegularDivisorₗ(x) ⦄ → (x ⋅ y ≡ x ⋅ z) → (y ≡ z)
+    [⋅]-cancellationₗ-on-regular-divisor {x}{y}{z} ⦃ intro div ⦄ =
+      (x ⋅ y             ≡ x ⋅ z) ⇒-[ [↔]-to-[←] [−]-difference-is-𝟎 ]
+      ((x ⋅ y) − (x ⋅ z) ≡ 𝟎    ) ⇒-[ distributivityₗ(_⋅_)(_−_) ⦃ [⋅][−]-distributivityₗ ⦄ 🝖_ ]
+      (x ⋅ (y − z)       ≡ 𝟎    ) ⇒-[ div ]
+      (y − z             ≡ 𝟎    ) ⇒-[ [↔]-to-[→] [−]-difference-is-𝟎 ]
+      (y                 ≡ z    ) ⇒-end
+
+    [⋅]-cancellationᵣ-on-regular-divisor : ∀{x y z} ⦃ div : RegularDivisorᵣ(z) ⦄ → (x ⋅ z ≡ y ⋅ z) → (x ≡ y)
+    [⋅]-cancellationᵣ-on-regular-divisor {x}{y}{z} ⦃ intro div ⦄ =
+      (x ⋅ z             ≡ y ⋅ z) ⇒-[ [↔]-to-[←] [−]-difference-is-𝟎 ]
+      ((x ⋅ z) − (y ⋅ z) ≡ 𝟎    ) ⇒-[ distributivityᵣ(_⋅_)(_−_) ⦃ [⋅][−]-distributivityᵣ ⦄ 🝖_ ]
+      ((x − y) ⋅ z       ≡ 𝟎    ) ⇒-[ div ]
+      (x − y             ≡ 𝟎    ) ⇒-[ [↔]-to-[→] [−]-difference-is-𝟎 ]
+      (x                 ≡ y    ) ⇒-end
+
+    regular-zero-divisorₗ-not : ∀{x} → RegularDivisorₗ(x) → ZeroDivisorₗ(x) → ⊥
+    regular-zero-divisorₗ-not (intro div) ([∃]-intro y ⦃ [∧]-intro ny0 xy0 ⦄) = [↔]-to-[→] nonZero ny0(div xy0)
+
+    regular-zero-divisorᵣ-not : ∀{x} → RegularDivisorᵣ(x) → ZeroDivisorᵣ(x) → ⊥
+    regular-zero-divisorᵣ-not (intro div) ([∃]-intro y ⦃ [∧]-intro ny0 yx0 ⦄) = [↔]-to-[→] nonZero ny0(div yx0)
+
+    module _ ⦃ ident : DistinctIdentities ⦄ where
+      regular-divisorₗ-non-zero-sub : ∀{x} → RegularDivisorₗ(x) → NonZero(x)
+      regular-divisorₗ-non-zero-sub (intro div) = [↔]-to-[←] nonZero \x0 → [↔]-to-[→] nonZero ident(div(congruence₂ₗ(_⋅_)(𝟏) x0 🝖 absorberₗ(_⋅_)(𝟎)))
+
+      regular-divisorᵣ-non-zero-sub : ∀{x} → RegularDivisorᵣ(x) → NonZero(x)
+      regular-divisorᵣ-non-zero-sub (intro div) = [↔]-to-[←] nonZero \x0 → [↔]-to-[→] nonZero ident(div(congruence₂ᵣ(_⋅_)(𝟏) x0 🝖 absorberᵣ(_⋅_)(𝟎)))

@@ -34,7 +34,7 @@ open import Syntax.Transitivity
 
 module _ {I : Type{ℓᵢ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ where
   open Operator.Summation {I = I} ⦃ monoid = monoid ⦄
-  open Monoid(monoid) using (id) renaming (binary-operator to [▫]-binary-operator)
+  open Monoid(monoid) using (id) renaming (binaryOperator to [▫]-binaryOperator)
 
   private variable f g : I → T
   private variable x a b c k n : I
@@ -80,7 +80,7 @@ module _ {I : Type{ℓᵢ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid
 
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ where
   open Operator.Summation {I = ℕ} ⦃ monoid = monoid ⦄
-  open Monoid(monoid) using (id) renaming (binary-operator to [▫]-binary-operator)
+  open Monoid(monoid) using (id) renaming (binaryOperator to [▫]-binaryOperator)
 
   private variable f g : ℕ → T
   private variable x a b c k n : ℕ
@@ -114,7 +114,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ comm : Commutativity(_+_) ⦄ where
     open Operator.Summation {I = ℕ} ⦃ monoid = monoid ⦄
-    open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
+    open Monoid(monoid) using (id) renaming (binaryOperator to [+]-binaryOperator)
     open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
     ∑-add : (∑(r) f + ∑(r) g ≡ ∑(r) (x ↦ f(x) + g(x)))
@@ -128,7 +128,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ distₗ : Distributivityₗ(_⋅_)(_+_) ⦄ ⦃ absorᵣ : Absorberᵣ(_⋅_)(Monoid.id monoid) ⦄ where
     open Operator.Summation {I = ℕ} ⦃ monoid = monoid ⦄
-    open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
+    open Monoid(monoid) using (id) renaming (binaryOperator to [+]-binaryOperator)
     open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
     ∑-scalar-multₗ : (∑(r) (x ↦ c ⋅ f(x)) ≡ c ⋅ (∑(r) f))
@@ -140,7 +140,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   module _ ⦃ monoid : Monoid(_+_) ⦄ ⦃ distᵣ : Distributivityᵣ(_⋅_)(_+_) ⦄ ⦃ absorₗ : Absorberₗ(_⋅_)(Monoid.id monoid) ⦄ where
     open Operator.Summation {I = ℕ} ⦃ monoid = monoid ⦄
-    open Monoid(monoid) using (id) renaming (binary-operator to [+]-binary-operator)
+    open Monoid(monoid) using (id) renaming (binaryOperator to [+]-binaryOperator)
     open import Relator.Equals.Proofs.Equiv {T = ℕ}
 
     ∑-scalar-multᵣ : (∑(r) (x ↦ f(x) ⋅ c) ≡ (∑(r) f) ⋅ c)

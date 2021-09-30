@@ -45,8 +45,8 @@ module _ where
         l₂ = (V₂ closureUnder₂(_+ᵥ_)) a₂V₂ b₂V₂
         r : (a₁ +ᵥ b₁) +ᵥ (a₂ +ᵥ b₂) ≡ a +ᵥ b
         r =
-          (a₁ +ᵥ b₁) +ᵥ (a₂ +ᵥ b₂) 🝖[ _≡_ ]-[ One.associate-commute4-c {_▫_ = _+ᵥ_} ⦃ op = [+ᵥ]-binary-operator ⦄ ⦃ assoc = [+ᵥ]-associativity ⦄ ⦃ comm = [+ᵥ]-commutativity ⦄ ] -- TODO: Why are the instances not inferred?
-          (a₁ +ᵥ a₂) +ᵥ (b₁ +ᵥ b₂) 🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) ⦃ [+ᵥ]-binary-operator ⦄ a₁a₂a b₁b₂b ]
+          (a₁ +ᵥ b₁) +ᵥ (a₂ +ᵥ b₂) 🝖[ _≡_ ]-[ One.associate-commute4-c {_▫_ = _+ᵥ_} ⦃ op = [+ᵥ]-binaryOperator ⦄ ⦃ assoc = [+ᵥ]-associativity ⦄ ⦃ comm = [+ᵥ]-commutativity ⦄ ] -- TODO: Why are the instances not inferred?
+          (a₁ +ᵥ a₂) +ᵥ (b₁ +ᵥ b₂) 🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) ⦃ [+ᵥ]-binaryOperator ⦄ a₁a₂a b₁b₂b ]
           a +ᵥ b                   🝖-end
       ∃.witness (Structure.Container.SetLike.FunctionProperties._closed-under₁_.proof (Subspace.mul-closure p {s}) ([∃]-intro(v₁ , v₂))) = ((s ⋅ₛᵥ v₁) , (s ⋅ₛᵥ v₂))
       ∃.proof (Structure.Container.SetLike.FunctionProperties._closed-under₁_.proof (Subspace.mul-closure p {s}) {v} ([∃]-intro(v₁ , v₂) ⦃ [∧]-intro ([∧]-intro v₁V₁ v₂V₂) v₁v₂v ⦄)) = [∧]-intro ([∧]-intro l₁ l₂) r where

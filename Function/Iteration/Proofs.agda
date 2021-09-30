@@ -10,6 +10,7 @@ open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.Oper using (_+_ ; _⋅_ ; _𝄩_)
 open import Numeral.Natural.Oper.Proofs
+open import Relator.Equals renaming (_≡_ to _≡ₑ_)
 import      Structure.Function.Names as Names
 import      Structure.Function
 open import Structure.Operator.Properties
@@ -256,3 +257,33 @@ module _ where
     repeatₗ-by-distanceᵣ {_▫_} {x} {id} {𝟎}   {𝐒 b} p = symmetry(_≡_) p
     repeatₗ-by-distanceᵣ {_▫_} {x} {id} {𝐒 a} {𝟎}   p = p
     repeatₗ-by-distanceᵣ {_▫_} {x} {id} {𝐒 a} {𝐒 b} p = repeatₗ-by-distanceᵣ {_▫_} {x} {id} {a} {b} (cancellationᵣ(_▫_) {x} p)
+
+    module _ {_▫₁_ _▫₂_ : X → X → X}{id} ⦃ op₂ : BinaryOperator(_▫₂_) ⦄ ⦃ distₗ : Distributivityₗ(_▫₁_)(_▫₂_) ⦄ ⦃ absᵣ : Absorberᵣ(_▫₁_)(id) ⦄ where
+      repeatₗ-distributivityₗ : ∀{x y}{n} → (x ▫₁ (repeatₗ n (_▫₂_) id y) ≡ repeatₗ n (_▫₂_) id (x ▫₁ y))
+      repeatₗ-distributivityₗ       {n = 𝟎}    = absorberᵣ(_▫₁_)(id)
+      repeatₗ-distributivityₗ {x}{y}{n = 𝐒(n)} =
+        x ▫₁ (repeatₗ(𝐒(n)) (_▫₂_) id y)           🝖[ _≡_ ]-[]
+        x ▫₁ ((repeatₗ n (_▫₂_) id y) ▫₂ y)        🝖[ _≡_ ]-[ distributivityₗ(_▫₁_)(_▫₂_) ]
+        (x ▫₁ (repeatₗ n (_▫₂_) id y)) ▫₂ (x ▫₁ y) 🝖[ _≡_ ]-[ congruence₂ₗ(_▫₂_)(x ▫₁ y) (repeatₗ-distributivityₗ {x}{y}{n = n}) ]
+        (repeatₗ n (_▫₂_) id (x ▫₁ y)) ▫₂ (x ▫₁ y) 🝖[ _≡_ ]-[]
+        repeatₗ(𝐒(n)) (_▫₂_) id (x ▫₁ y)           🝖-end
+
+    module _ {_▫₁_ _▫₂_ : X → X → X}{id} ⦃ op₂ : BinaryOperator(_▫₂_) ⦄ ⦃ distₗ : Distributivityᵣ(_▫₁_)(_▫₂_) ⦄ ⦃ absₗ : Absorberₗ(_▫₁_)(id) ⦄ where
+      repeatₗ-distributivityᵣ : ∀{x y}{n} → ((repeatₗ n (_▫₂_) id x) ▫₁ y ≡ repeatₗ n (_▫₂_) id (x ▫₁ y))
+      repeatₗ-distributivityᵣ       {n = 𝟎}    = absorberₗ(_▫₁_)(id)
+      repeatₗ-distributivityᵣ {x}{y}{n = 𝐒(n)} =
+        (repeatₗ(𝐒(n)) (_▫₂_) id x) ▫₁ y           🝖[ _≡_ ]-[]
+        ((repeatₗ n (_▫₂_) id x) ▫₂ x) ▫₁ y        🝖[ _≡_ ]-[ distributivityᵣ(_▫₁_)(_▫₂_) ]
+        ((repeatₗ n (_▫₂_) id x) ▫₁ y) ▫₂ (x ▫₁ y) 🝖[ _≡_ ]-[ congruence₂ₗ(_▫₂_)(x ▫₁ y) (repeatₗ-distributivityᵣ {x}{y}{n = n}) ]
+        (repeatₗ n (_▫₂_) id (x ▫₁ y)) ▫₂ (x ▫₁ y) 🝖[ _≡_ ]-[]
+        repeatₗ(𝐒(n)) (_▫₂_) id (x ▫₁ y)           🝖-end
+
+    module _ {_▫₁_ _▫₂_ : X → X → X} ⦃ op₂ : BinaryOperator(_▫₂_) ⦄ {id₁ id₂}{x₁ x₂} where
+      repeatₗ-function : ∀{n₁ n₂} → (n₁ ≡ₑ n₂) → (∀{x y} → (x ▫₁ y ≡ x ▫₂ y)) → (id₁ ≡ id₂) → (x₁ ≡ x₂) → (repeatₗ n₁ (_▫₁_) id₁ x₁ ≡ repeatₗ n₂ (_▫₂_) id₂ x₂)
+      repeatₗ-function {n₁ = 𝟎}   [≡]-intro eq-op eq-id eq-x = eq-id
+      repeatₗ-function {n₁ = 𝐒 n} [≡]-intro eq-op eq-id eq-x =
+        repeatₗ (𝐒 n) (_▫₁_) id₁ x₁     🝖[ _≡_ ]-[]
+        (repeatₗ n (_▫₁_) id₁ x₁) ▫₁ x₁ 🝖[ _≡_ ]-[ eq-op ]
+        (repeatₗ n (_▫₁_) id₁ x₁) ▫₂ x₁ 🝖[ _≡_ ]-[ congruence₂(_▫₂_) (repeatₗ-function {n₁ = n} [≡]-intro eq-op eq-id eq-x) eq-x ]
+        (repeatₗ n (_▫₂_) id₂ x₂) ▫₂ x₂ 🝖[ _≡_ ]-[]
+        repeatₗ (𝐒 n) (_▫₂_) id₂ x₂     🝖-end

@@ -14,17 +14,17 @@ open import Type
 
 private variable ℓ : Lvl.Level
 
-ℕ-strong-recursion : (P : ℕ → Type{ℓ}) → P(𝟎) → ((n : ℕ) → ((i : ℕ) → (i < n) → P(i)) → P(n)) → ((n : ℕ) → P(n))
-ℕ-strong-recursion P base step n = ℕ-elim{T = n ↦ ((i : ℕ) → (i < n) → P(i))}
+ℕ-strong-recursion : (P : ℕ → Type{ℓ}) → ((n : ℕ) → ((i : ℕ) → (i < n) → P(i)) → P(n)) → ((n : ℕ) → P(n))
+ℕ-strong-recursion P step n = ℕ-elim{T = n ↦ ((i : ℕ) → (i < n) → P(i))}
   (\_ ())
   (n ↦ prev ↦ i ↦ i𝐒n ↦ step i (j ↦ ji ↦ prev j (transitivity(_≤_) ji ([≤]-without-[𝐒] i𝐒n))))
   (𝐒(n)) n (reflexivity(_≤_))
 
 ℕ-split-strong-recursion : (P : ℕ → Type{ℓ}) → (s : ℕ) → ((i : ℕ) → (i ≤ s) → P(i)) → ((n : ℕ) → ((i : ℕ) → (s < i < n) → P(i)) → P(n)) → ((n : ℕ) → P(n))
-ℕ-split-strong-recursion P s base step = ℕ-strong-recursion P (base 𝟎 min) (n ↦ prev ↦ step n (i ↦ prev i ∘ [∧]-elimᵣ))
+ℕ-split-strong-recursion P s base step = ℕ-strong-recursion P (n ↦ prev ↦ step n (i ↦ prev i ∘ [∧]-elimᵣ))
 
 ℕ-strong-induction : ∀{φ : ℕ → Stmt{ℓ}} → φ(𝟎) → (∀{i : ℕ} → (∀{j : ℕ} → (j ≤ i) → φ(j)) → φ(𝐒(i))) → (∀{n} → φ(n))
-ℕ-strong-induction {φ = φ} base step {n} = ℕ-strong-recursion φ base (\{𝟎 _ → base ; (𝐒(n)) prev → step{n} (\{i} → prev i ∘ succ)}) n
+ℕ-strong-induction {φ = φ} base step {n} = ℕ-strong-recursion φ (\{𝟎 _ → base ; (𝐒(n)) prev → step{n} (\{i} → prev i ∘ succ)}) n
 
 module _ where
   open Strict.Properties

@@ -7,6 +7,7 @@ open import Data.List.Equiv.Id
 open import Data.List.Relation.Permutation
 open import Data.List.Relation.Quantification
 open import Functional
+open import Logic.Predicate
 open import Logic.Propositional
 open import Logic
 open import Structure.Relator.Properties
@@ -72,3 +73,11 @@ AllElements-sigma = [↔]-intro L R where
   R : Σ(List(T)) (AllElements(P)) → List(Σ T P)
   R (intro ∅       ∅)        = ∅
   R (intro (x ⊰ l) (p ⊰ pl)) = intro x p ⊰ R(intro l pl)
+
+AllElements-[∃]-proof : ∀{P : T → Type{ℓ}}{l} → AllElements (P ∘ [∃]-witness{Pred = P})(l)
+AllElements-[∃]-proof {l = ∅}     = ∅
+AllElements-[∃]-proof {l = x ⊰ l} = ([∃]-proof x) ⊰ (AllElements-[∃]-proof {l = l})
+
+foldᵣ-property-all : ∀{ℓ₁ ℓ₂ ℓₗ₁ ℓₗ₂}{A : Type{ℓ₁}}{B : Type{ℓ₂}}{P : A → Type{ℓₗ₁}}{Q : B → Type{ℓₗ₂}}{_▫_}{id} → ((∀{a b} → P(a) → Q(b) → Q(a ▫ b)) → Q(id) → ∀{l} → AllElements P(l) → Q(foldᵣ(_▫_) id l))
+foldᵣ-property-all                _   pid {∅}     _        = pid
+foldᵣ-property-all {P = P}{Q = Q} pop pid {x ⊰ l} (p ⊰ ap) = pop p (foldᵣ-property-all {P = P}{Q = Q} pop pid {l} ap)

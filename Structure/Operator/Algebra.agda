@@ -1,15 +1,12 @@
 module Structure.Operator.Algebra where
 
-open import Lang.Instance
 open import Logic.Predicate
 import      Lvl
-open import Structure.Function.Domain
-open import Structure.Operator.Field
 open import Structure.Operator.Monoid
 open import Structure.Operator.Properties
 open import Structure.Operator.Ring
-open import Structure.Operator.Ring.Homomorphism
 open import Structure.Operator.Vector
+open import Structure.Operator.Vector.BilinearOperator
 open import Structure.Operator.Vector.LinearMap
 open import Structure.Setoid
 open import Type
@@ -23,39 +20,17 @@ module _
   (_⋅ₛᵥ_ : S → V → V)
   (_+ₛ_ : S → S → S)
   (_⋅ₛ_ : S → S → S)
+  {ℓᵥₙ₀ ℓₛₙ₀}
   where
 
-  record Algebra : Type{ℓₛₑ Lvl.⊔ ℓₛ Lvl.⊔ ℓᵥₑ Lvl.⊔ ℓᵥ} where
+  record Algebra : Type{ℓₛₑ Lvl.⊔ ℓₛ Lvl.⊔ ℓᵥₑ Lvl.⊔ ℓᵥ Lvl.⊔ Lvl.𝐒(ℓᵥₙ₀ Lvl.⊔ ℓₛₙ₀)} where
     constructor intro
     field
-      ⦃ vectorSpace ⦄      : VectorSpace(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_)
+      ⦃ vectorSpace ⦄      : VectorSpace(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) {ℓₛₙ₀}
       ⦃ [⋅ᵥ]-bilinearity ⦄ : BilinearOperator vectorSpace (_⋅ᵥ_)
-    open VectorSpace(vectorSpace)
-      renaming (ring to ringₛ)
-      public
-    -- TODO: open BilinearOperator([⋅ᵥ]-bilinearity) public
+      ⦃ non-zero-vector-relation ⦄ : NonIdentityRelation(VectorSpace.[+ᵥ]-monoid vectorSpace) {ℓᵥₙ₀}
+    open VectorSpace(vectorSpace) public
+    open BilinearOperator _ _ ([⋅ᵥ]-bilinearity) public
 
-    instance
-      preRgᵥ : PreRg(_+ᵥ_)(_⋅ᵥ_)
-      PreRg.[⋅][+]-distributivityₗ preRgᵥ = BilinearOperator.[+ᵥ]-distributivityₗ vectorSpace (_⋅ᵥ_) [⋅ᵥ]-bilinearity
-      PreRg.[⋅][+]-distributivityᵣ preRgᵥ = BilinearOperator.[+ᵥ]-distributivityᵣ vectorSpace (_⋅ᵥ_) [⋅ᵥ]-bilinearity
-
-    ringᵥ : ⦃ Associativity(_⋅ᵥ_) ⦄ → ⦃ ∃(Identity(_⋅ᵥ_)) ⦄ → Ring(_+ᵥ_)(_⋅ᵥ_)
-    Monoid.binary-operator (Ring.[⋅]-monoid ringᵥ) = BilinearMap.binaryOperator [⋅ᵥ]-bilinearity
-
-  -- TODO: I found some conflicting definitions for a star algebra from different sources. What is a reasonable definition?
-  record ⋆-algebra (_⋆ᵥ : V → V) (_⋆ₛ : S → S) : Type{ℓₛₑ Lvl.⊔ ℓₛ Lvl.⊔ ℓᵥₑ Lvl.⊔ ℓᵥ} where
-    constructor intro
-    field
-      ⦃ algebra ⦄ : Algebra
-    open Algebra(algebra) public
-
-    field
-      ⦃ [⋅ᵥ]-commutativity ⦄             : Commutativity(_⋅ᵥ_)
-      ⦃ [⋅ᵥ]-associativity ⦄             : Associativity(_⋅ᵥ_)
-      ⦃ [⋅ᵥ]-identity ⦄                  : ∃(Identity(_⋅ᵥ_))
-      ⦃ [⋆ₛ]-involution ⦄                : Involution(_⋆ᵥ)
-      ⦃ [⋆ᵥ]-involution ⦄                : Involution(_⋆ᵥ)
-      [⋆ᵥ]-distribute-over-[⋅ₛᵥ]-to-[⋆ₛ] : ∀{s}{v} → ((s ⋅ₛᵥ v)⋆ᵥ ≡ (s ⋆ₛ) ⋅ₛᵥ (v ⋆ᵥ))
-      ⦃ [⋆ₛ]-antihomomorphism ⦄          : Antihomomorphism ringₛ ringₛ (_⋆ₛ)
-      ⦃ [⋆ᵥ]-antihomomorphism ⦄          : Antihomomorphism ringᵥ ringᵥ (_⋆ᵥ)
+    vectorRing : ⦃ Associativity(_⋅ᵥ_) ⦄ → ⦃ ∃(Identity(_⋅ᵥ_)) ⦄ → Ring(_+ᵥ_)(_⋅ᵥ_) {ℓᵥₙ₀}
+    Monoid.binaryOperator (Ring.[⋅]-monoid vectorRing) = BilinearMap.binaryOperator [⋅ᵥ]-bilinearity

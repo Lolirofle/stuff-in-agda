@@ -14,7 +14,7 @@ data Id {T : Type{ℓ}} : T → T → Type{ℓ} where
   -- Interpretation:
   --   The only way to construct something of type Id is to use identical objects for both arguments.
   --   When matching on the constructor, the type checker "unifies" the two terms making them the same.
-  --   This is how the builtin pattern matching by intro works, and therefore many propositions for identity becomes "trivial" syntactically.
+  --   This is how the builtin pattern matching by intro works and how identity proofs become "trivial" syntactically.
 
 {-# BUILTIN EQUALITY Id #-}
 {-# BUILTIN REWRITE  Id #-}

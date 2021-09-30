@@ -19,7 +19,7 @@ open import Type.Size
 record Group : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
-    ⦃ binary-operator ⦄    : BinaryOperator(_▫_)
+    ⦃ binaryOperator ⦄    : BinaryOperator(_▫_)
     ⦃ associativity ⦄      : Associativity(_▫_)
     ⦃ identity-existence ⦄ : ∃(Identity(_▫_))
 
@@ -28,7 +28,7 @@ record Group : Stmt{ℓ Lvl.⊔ ℓₑ} where
     monoid = intro ⦃ identity-existence = identity-existence ⦄
   open Monoid(monoid)
     hiding(
-      binary-operator ;
+      binaryOperator ;
       associativity ;
       identity-existence
     ) public

@@ -7,7 +7,9 @@ open import Data.List.Combinatorics
 open import Data.List.Functions hiding (skip) renaming (module LongOper to List)
 open        Data.List.Functions.LongOper
 open import Data.List.Relation.Permutation
+open import Data.List.Relation.Permutation.Proofs
 open import Data.List.Relation.Membership using (_∈_)
+open import Data.List.Relation.Membership.Proofs
 open import Data.List.Relation.Quantification
 open import Data.List.Relation.Quantification.Proofs
 open import Data.List.Relation.Sublist
@@ -19,6 +21,7 @@ open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 import      Data.Tuple.Raiseᵣ as Tuple₊
 import      Data.Tuple.Raiseᵣ.Functions as Tuple₊
 open import Functional
+open import Logic.Predicate
 open import Logic.Propositional
 open import Numeral.Natural
 open import Numeral.Natural.Combinatorics
@@ -34,8 +37,10 @@ open import Relator.Equals.Proofs.Equiv
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Operator.Properties
+open import Structure.Relator
 open import Structure.Relator.Properties
 open import Syntax.Function
+open import Syntax.Implication
 open import Syntax.Transitivity
 open import Type
 
@@ -45,30 +50,40 @@ private variable l l₁ l₂ : List(T)
 private variable x : T
 private variable n k : ℕ
 
--- sublists₊(l) are all sublists of l.
-sublists₊-contains-sublists : AllElements (_⊑ l) (sublists₊(l))
-sublists₊-contains-sublists {l = ∅} = ∅
-sublists₊-contains-sublists {l = x ⊰ l} with sublists₊(l) | sublists₊-contains-sublists {l = l}
-... | ∅       | _       = use [⊑]-minimum ⊰ ∅
-... | sx ⊰ sl | px ⊰ pl = use [⊑]-minimum ⊰ skip px ⊰ use px ⊰ p pl where
-  p : ∀{x : T}{l}{sl} → AllElements (_⊑ l) sl → AllElements (_⊑ (x ⊰ l)) (concatMap(y ↦ y ⊰ (x ⊰ y) ⊰ ∅) sl)
+-- sublists₊(l) contains non-empty sublists of l.
+sublists₊-correctness : AllElements(_⊑ l) (sublists₊(l))
+sublists₊-correctness {l = ∅} = ∅
+sublists₊-correctness {l = x ⊰ l} with sublists₊(l) | sublists₊-correctness {l = l}
+... | ∅       | _       = use [≡]-intro [⊑]-minimum ⊰ ∅
+... | sx ⊰ sl | px ⊰ pl = use [≡]-intro [⊑]-minimum ⊰ skip px ⊰ use [≡]-intro px ⊰ p pl where
+  p : ∀{x : T}{l}{sl} → AllElements(_⊑ l) sl → AllElements(_⊑ (x ⊰ l)) (concatMap(y ↦ y ⊰ (x ⊰ y) ⊰ ∅) sl)
   p {sl = ∅}     ∅            = ∅
-  p {sl = _ ⊰ _} (sll ⊰ alsl) = (skip sll) ⊰ (use sll) ⊰ (p alsl)
+  p {sl = _ ⊰ _} (sll ⊰ alsl) = (skip sll) ⊰ (use [≡]-intro sll) ⊰ (p alsl)
 
-{- TODO: Prove [∈]-concat and [∈]-concatMap and all that first
-sublists₊-contains-all-nonempty-sublists : ∀{l₁ l₂ : List(T)} → (l₁ ⊑ l₂) → (l₁ ≡ ∅) ∨ (l₁ ∈ sublists(l₂))
-sublists₊-contains-all-nonempty-sublists {l₁ = l₁} {prepend x l₂} (use p) = ⊰ (• {!!})
-sublists₊-contains-all-nonempty-sublists {l₁ = l₁} {prepend x l₂} (skip p) = ⊰ (⊰ {!sublists₊-contains-all-nonempty-sublists ?!})
+-- sublists₊(l) lists all non-empty sublists of l.
+sublists₊-completeness : (l₁ ⊑ l₂) → (l₁ ≡ ∅) ∨ (l₁ ∈ sublists₊(l₂))
+sublists₊-completeness _⊑_.empty = [∨]-introₗ [≡]-intro
+sublists₊-completeness {l₁ = x ⊰ l₁}{l₂ = y ⊰ l₂} (use xy p) = [∨]-introᵣ $ [∨]-elim
+  (l₁∅ ↦ (• congruence₂(_⊰_) xy l₁∅))
+  (⊰_ ∘ [↔]-to-[←] ([∈]-concatMap {f = x ↦ x ⊰ (y ⊰ x) ⊰ ∅}{l = sublists₊ l₂}) ∘ (l₁l₂ ↦ [∃]-intro l₁ ⦃ [∧]-intro l₁l₂ (⊰ • congruence₂ₗ(_⊰_)(l₁) xy) ⦄))
+  (sublists₊-completeness p)
+sublists₊-completeness {l₁ = l₁}{l₂ = x ⊰ l₂}(skip p) = [∨]-elim2
+  id
+  (⊰_ ∘ [↔]-to-[←] ([∈]-concatMap {f = y ↦ y ⊰ (x ⊰ y) ⊰ ∅}{l = sublists₊ l₂}) ∘ (l₁l₂ ↦ [∃]-intro l₁ ⦃ [∧]-intro l₁l₂ (• reflexivity(_≡_)) ⦄))
+  (sublists₊-completeness p)
 
-sublists-contains-all-sublists : ∀{l₁ l₂ : List(T)} → (l₁ ⊑ l₂) → ExistsElement (_≡ l₁) (sublists(l₂))
-sublists-contains-all-sublists {l₁ = ∅} {∅} _⊑_.empty = • [≡]-intro
-sublists-contains-all-sublists {l₁ = ∅} {prepend x l₂} (skip sub) = • [≡]-intro
-sublists-contains-all-sublists {l₁ = prepend x l₁} {prepend .x l₂} (use sub) = ⊰ (⊰ {!!})
-sublists-contains-all-sublists {l₁ = prepend x l₁} {prepend x₁ l₂} (skip sub) = {!!}
--}
+-- sublists(l) contains sublists of l.
+sublists-correctness : AllElements(_⊑ l) (sublists(l))
+sublists-correctness = [⊑]-minimum ⊰ sublists₊-correctness
 
--- (insertedEverywhere x l) are all permutations of x inserted into l.
-permutes-insertedEverywhere : AllElements (_permutes (x ⊰ l)) (insertedEverywhere x l)
+-- sublists(l) lists all sublists of l.
+sublists-completeness : (l₁ ⊑ l₂) → (l₁ ∈ sublists(l₂))
+sublists-completeness sub with sublists₊-completeness sub
+... | [∨]-introₗ p = • p
+... | [∨]-introᵣ p = ⊰ p
+
+-- (insertedEverywhere x l) contains permutations of x inserted into l.
+permutes-insertedEverywhere : AllElements(_permutes (x ⊰ l)) (insertedEverywhere x l)
 permutes-insertedEverywhere {x = x} {∅}     = _permutes_.prepend _permutes_.empty ⊰ ∅
 permutes-insertedEverywhere {x = x} {y ⊰ l} = reflexivity(_permutes_) ⊰ AllElements-mapᵣ(y List.⊰_) (p ↦ trans (_permutes_.prepend p) _permutes_.swap) (permutes-insertedEverywhere {x = x} {l})
 
@@ -87,11 +102,32 @@ AllElements-insertedEverywhere-function _ pperm {l₁ = x ⊰ .(x₁ ⊰ _)} {x�
 AllElements-insertedEverywhere-function t pperm (trans perm₁ perm₂) = AllElements-insertedEverywhere-function t pperm perm₂ ∘ AllElements-insertedEverywhere-function t pperm perm₁
 -}
 
--- permutations(l) are all permutations of l.
-permutations-contains-permutations : AllElements (_permutes l) (permutations(l))
-permutations-contains-permutations {l = ∅}         = _permutes_.empty ⊰ ∅
-permutations-contains-permutations {l = x ⊰ ∅}     = _permutes_.prepend _permutes_.empty ⊰ ∅
-permutations-contains-permutations {l = x ⊰ y ⊰ l} = AllElements-concatMap(insertedEverywhere x) (perm ↦ AllElements-of-transitive-binary-relationₗ (_permutes_.prepend perm) permutes-insertedEverywhere) (permutations-contains-permutations {l = y ⊰ l})
+-- permutations(l) contains permutations of l.
+permutations-correctness : AllElements(_permutes l) (permutations(l))
+permutations-correctness {l = ∅}         = _permutes_.empty ⊰ ∅
+permutations-correctness {l = x ⊰ ∅}     = _permutes_.prepend _permutes_.empty ⊰ ∅
+permutations-correctness {l = x ⊰ y ⊰ l} = AllElements-concatMap(insertedEverywhere x) (perm ↦ AllElements-of-transitive-binary-relationₗ (_permutes_.prepend perm) permutes-insertedEverywhere) (permutations-correctness {l = y ⊰ l})
+
+permutations-of-[⊰] : permutations (x ⊰ l) ≡ concatMap (insertedEverywhere x) (permutations l)
+permutations-of-[⊰] {l = ∅}     = [≡]-intro
+permutations-of-[⊰] {l = x ⊰ l} = [≡]-intro
+
+open import Data.Option
+insertedEverywhere-first : first(insertedEverywhere x l) ≡ Option.Some(x ⊰ l)
+insertedEverywhere-first {l = ∅}     = [≡]-intro
+insertedEverywhere-first {l = x ⊰ l} = [≡]-intro
+
+{- TODO: Transitivity is a problem. Maybe prove that _permutes_ and _insertion-permutes_ are equivalent first, and then count insertion-permutes which is much closer to the usual counting proof
+permutations-completeness : (l₁ permutes l₂) → (l₁ ∈ permutations(l₂))
+permutations-completeness _permutes_.empty          = • [≡]-intro
+permutations-completeness (_permutes_.prepend {l₁ = l₁} {l₂} {x} perm) =
+  [∃]-intro l₁ ⦃ [∧]-intro (permutations-completeness perm) {!insertIn!} ⦄ ⇒
+  ∃(y ↦ (y ∈ permutations l₂) ∧ ((x ⊰ l₁) ∈ insertedEverywhere x y)) ⇒-[ [↔]-to-[←] [∈]-concatMap ]
+  ((x ⊰ l₁) ∈ concatMap (insertedEverywhere x) (permutations l₂))    ⇒-[ substitute₁ₗ((x ⊰ l₁) ∈_) ⦃ [∈]-relatorᵣ ⦄ (permutations-of-[⊰] {x = x}{l = l₂}) ]
+  ((x ⊰ l₁) ∈ permutations (x ⊰ l₂))                                 ⇒-end
+permutations-completeness _permutes_.swap           = {!!}
+permutations-completeness (trans perm₁ perm₂)       = {!permutations-completeness perm₁!}
+-}
 
 -- The number of unique sublists excluding the empty list.
 sublists₊-length : length(sublists₊ l) ≡ (2 ^ (length l)) −₀ 1
@@ -170,7 +206,7 @@ rotations-length : length(rotations l) ≡ length(l)
 rotations-length{l = l} = length-accumulateIterate₀{f = rotateₗ(1)}{init = l}
 
 insertedEverywhere-contents-length : AllElements(p ↦ length(p) ≡ 𝐒(length(l))) (insertedEverywhere x l)
-insertedEverywhere-contents-length = AllElements-fn (Function.congruence ⦃ _ ⦄ Proofs.permutes-length-function) permutes-insertedEverywhere
+insertedEverywhere-contents-length = AllElements-fn (Function.congruence ⦃ _ ⦄ permutes-length-function) permutes-insertedEverywhere
 
 insertedEverywhere-length : length(insertedEverywhere x l) ≡ 𝐒(length(l))
 insertedEverywhere-length {x = x} {∅}     = [≡]-intro
@@ -182,8 +218,9 @@ insertedEverywhere-length {x = x} {a ⊰ l} =
   𝐒(𝐒(length(l)))                                                       🝖[ _≡_ ]-[]
   𝐒(length(a ⊰ l))                                                      🝖-end
 
+-- All permutations of a list are of the same length, and is also the same as the length of the list itself.
 permutation-length : AllElements(p ↦ length p ≡ length l) (permutations l)
-permutation-length{l = l} = AllElements-fn (Function.congruence ⦃ _ ⦄ Proofs.permutes-length-function) (permutations-contains-permutations{l = l})
+permutation-length{l = l} = AllElements-fn (Function.congruence ⦃ _ ⦄ permutes-length-function) (permutations-correctness{l = l})
 
 {-permutations-length : length(permutations l) ≡ length(l) !
 permutations-length {l = ∅}         = [≡]-intro

@@ -33,7 +33,7 @@ private variable n : ℕ
 
 record MetricSpace(d : M → M → F) : Type{ℓF Lvl.⊔ ℓ≤ Lvl.⊔ ℓₘ Lvl.⊔ ℓₑₘ Lvl.⊔ ℓₑF} where
   field
-    ⦃ distance-binary-operator ⦄ : BinaryOperator(d)
+    ⦃ distance-binaryOperator ⦄ : BinaryOperator(d)
     self-distance : (d(x)(y) ≡ 𝟎) ↔ (x ≡ y)
     ⦃ distance-commutativity ⦄ : Commutativity(d)
     triangle-inequality : ((d(x)(y) + d(y)(z)) ≥ d(x)(z))

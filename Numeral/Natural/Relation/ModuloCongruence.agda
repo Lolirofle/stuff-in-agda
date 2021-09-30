@@ -122,13 +122,8 @@ open import Numeral.Natural.Relation.Divisibility.Proofs
 open import Numeral.Natural.Relation.Divisibility.Proofs.Product
 open import Structure.Relator
 
--- TODO: Move the postulates below
-postulate divides-[⌊/⌋] : ∀{a b c} ⦃ pos : Positive(c) ⦄ → (c ∣ a) → (a ∣ b) → ((a ⌊/⌋ c) ∣ (b ⌊/⌋ c))
-postulate [⌊/⌋][⋅]ₗ-compatibility : ∀{a b c} ⦃ pos : Positive(c) ⦄ → (c ∣ a) → (((a ⋅ b) ⌊/⌋ c) ≡ (a ⌊/⌋ c) ⋅ b)
-postulate [⌊/⌋][⋅]ᵣ-compatibility : ∀{a b c} ⦃ pos : Positive(c) ⦄ → (c ∣ a) → (((a ⋅ b) ⌊/⌋ c) ≡ a ⋅ (b ⌊/⌋ c))
-
 mod-congruence-scale-modulus : ∀{m} → ⦃ pos : Positive(m) ⦄ → ∀{a b c} → (c ⋅ a ≡ c ⋅ b [mod m ]) ↔ (a ≡ b [mod((m ⌊/⌋ gcd c m) ⦃ _ ⦄)]) ⦃ _ ⦄
-mod-congruence-scale-modulus {m} ⦃ pos ⦄ {a}{b}{c} = [↔]-transitivity  ([↔]-transitivity mod-congruence-[𝄩] ([↔]-intro l r)) ([↔]-symmetry (mod-congruence-[𝄩] ⦃ [⌊/⌋]-positive ⦃ pos ⦄ ⦃ pgcd ⦄ ⦄)) where
+mod-congruence-scale-modulus {m} ⦃ pos ⦄ {a}{b}{c} = [↔]-transitivity  ([↔]-transitivity mod-congruence-[𝄩] ([↔]-intro l r)) ([↔]-symmetry (mod-congruence-[𝄩] ⦃ [↔]-to-[→] ([⌊/⌋]-positive ⦃ pgcd ⦄) (divides-upper-limit (Gcd.divisorᵣ Gcd-gcd)) ⦄)) where
   instance
     pgcd : Positive(gcd c m)
     pgcd = [↔]-to-[→] gcd-positive ([∨]-introᵣ pos)
@@ -139,7 +134,7 @@ mod-congruence-scale-modulus {m} ⦃ pos ⦄ {a}{b}{c} = [↔]-transitivity  ([�
     ((m ⌊/⌋ gcd c m) ⋅ gcd c m) ∣ ((a 𝄩 b) ⋅ gcd c m) ⇒-[ substitute₂ₗ(_∣_) ([⋅][⌊/⌋]-inverseOperatorᵣ (Gcd.divisorᵣ Gcd-gcd)) ]
     m ∣ ((a 𝄩 b) ⋅ gcd c m)                           ⇒-[ divides-with-[⋅] {c = (c ⌊/⌋ gcd c m) ⦃ _ ⦄} ∘ [∨]-introₗ ]
     m ∣ ((a 𝄩 b) ⋅ gcd c m) ⋅ (c ⌊/⌋ gcd c m)         ⇒-[ substitute₂ᵣ(_∣_) (associativity(_⋅_) {a 𝄩 b}{gcd c m}{(c ⌊/⌋ gcd c m) ⦃ _ ⦄}) ]
-    m ∣ (a 𝄩 b) ⋅ (gcd c m ⋅ (c ⌊/⌋ gcd c m))         ⇒-[ substitute₂ᵣ(_∣_) (congruence₂ᵣ(_⋅_)(a 𝄩 b) (symmetry(_≡_) ([⌊/⌋][⋅]ᵣ-compatibility {gcd c m}{c}{gcd c m} (reflexivity(_∣_))))) ]
+    m ∣ (a 𝄩 b) ⋅ (gcd c m ⋅ (c ⌊/⌋ gcd c m))         ⇒-[ substitute₂ᵣ(_∣_) (congruence₂ᵣ(_⋅_)(a 𝄩 b) (symmetry(_≡_) ([⌊/⌋][⋅]ᵣ-compatibility {gcd c m}{c}{gcd c m} (Gcd.divisorₗ{c}{m} Gcd-gcd)))) ]
     m ∣ (a 𝄩 b) ⋅ ((gcd c m ⋅ c) ⌊/⌋ gcd c m)         ⇒-[ substitute₂ᵣ(_∣_) (congruence₂ᵣ(_⋅_)(a 𝄩 b) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {gcd c m}{c})) ]
     m ∣ (a 𝄩 b) ⋅ c                                   ⇒-[ substitute₂ᵣ(_∣_) (commutativity(_⋅_) {a 𝄩 b}{c}) ]
     m ∣ c ⋅ (a 𝄩 b)                                   ⇒-[ substitute₂ᵣ(_∣_) (distributivityₗ(_⋅_)(_𝄩_) {c}{a}{b}) ]
@@ -153,9 +148,9 @@ mod-congruence-scale-modulus {m} ⦃ pos ⦄ {a}{b}{c} = [↔]-transitivity  ([�
     (m ⌊/⌋ gcd c m) ⦃ _ ⦄ ∣ ((c ⌊/⌋ gcd c m) ⦃ pgcd ⦄ ⋅ (a 𝄩 b)) ⇒-[ swap(coprime-divides-of-[⋅] {(m ⌊/⌋ gcd c m) ⦃ _ ⦄}{(c ⌊/⌋ gcd c m) ⦃ _ ⦄}{a 𝄩 b}) (symmetry(Coprime) ([⌊/⌋]-gcd-coprime{c}{m} ([∨]-introᵣ pos))) ]
     ((m ⌊/⌋ gcd c m) ⦃ _ ⦄ ∣ (a 𝄩 b))                            ⇒-end
 
-postulate mod-congruence-scale : ∀{m} ⦃ pos-m : Positive(m) ⦄ {c} ⦃ pos-c : Positive(c) ⦄ → ∀{a b} → (a ≡ b [mod m ]) → (c ⋅ a ≡ c ⋅ b [mod(c ⋅ m)]) ⦃ [⋅]-positive {c}{m} infer infer ⦄
+postulate mod-congruence-scale : ∀{m} ⦃ pos-m : Positive(m) ⦄ {c} ⦃ pos-c : Positive(c) ⦄ → ∀{a b} → (a ≡ b [mod m ]) → (c ⋅ a ≡ c ⋅ b [mod(c ⋅ m)]) ⦃ [⋅]-positiveᵣ {c}{m} infer infer ⦄
 
-postulate mod-congruence-divide : ∀{m} ⦃ pos-m : Positive(m) ⦄ {c} ⦃ pos-c : Positive(c) ⦄ → (c ∣ m) → ∀{a b} → (c ∣ a) → (c ∣ b) → (a ≡ b [mod m ]) → (a ⌊/⌋ c ≡ b ⌊/⌋ c [mod(m ⌊/⌋ c)]) ⦃ [⌊/⌋]-positive {m}{c} ⦄
+postulate mod-congruence-divide : ∀{m} ⦃ pos-m : Positive(m) ⦄ {c} ⦃ pos-c : Positive(c) ⦄ → (div : (c ∣ m)) → ∀{a b} → (c ∣ a) → (c ∣ b) → (a ≡ b [mod m ]) → (a ⌊/⌋ c ≡ b ⌊/⌋ c [mod(m ⌊/⌋ c)]) ⦃ [↔]-to-[→] [⌊/⌋]-positive (divides-upper-limit div) ⦄
 
 postulate mod-congruence-smaller-modulus : ∀{m₁} ⦃ pos-m₁ : Positive(m₁) ⦄ {m₂} ⦃ pos-m₂ : Positive(m₂) ⦄ → (m₂ ∣ m₁) → ∀{a b} → (a ≡ b [mod m₁ ]) → (a ≡ b [mod m₂ ])
 

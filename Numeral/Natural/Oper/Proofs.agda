@@ -2,6 +2,7 @@ module Numeral.Natural.Oper.Proofs where
 
 import Lvl
 open import Data
+import      Data.Tuple as Tuple
 open import Functional
 open import Logic
 open import Logic.Propositional
@@ -87,7 +88,11 @@ instance
   [⋅][+]-distributivityᵣ : Distributivityᵣ(_⋅_)(_+_)
   Distributivityᵣ.proof([⋅][+]-distributivityᵣ) {x}{y}{z} = ℕ-elim [≡]-intro next z where
     next : ∀(z : ℕ) → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z)) → ((x + y) ⋅ 𝐒(z)) ≡ ((x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)))
-    next z proof = ([≡]-with((x + y) +_) proof) 🝖 (One.associate-commute4 {a = x}{y}{x ⋅ z}{y ⋅ z} (commutativity(_+_){x = y}))
+    next z prev =
+      (x + y) ⋅ 𝐒(z)                🝖[ _≡_ ]-[]
+      (x + y) + ((x + y) ⋅ z)       🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x + y) prev ]
+      (x + y) + ((x ⋅ z) + (y ⋅ z)) 🝖[ _≡_ ]-[ One.associate-commute4 {a = x}{y}{x ⋅ z}{y ⋅ z} (commutativity(_+_){x = y}) ]
+      (x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z))       🝖-end
 
 [⋅]-with-[𝐒]ₗ : ∀{x y} → (𝐒(x) ⋅ y ≡ (x ⋅ y) + y)
 [⋅]-with-[𝐒]ₗ {x}{y} = (distributivityᵣ(_⋅_)(_+_) {x}{1}{y}) 🝖 ([≡]-with(expr ↦ (x ⋅ y) + expr) ([⋅]-identityₗ-raw {y}))
@@ -97,67 +102,57 @@ instance
 
 instance
   [⋅][+]-distributivityₗ : Distributivityₗ(_⋅_)(_+_)
-  Distributivityₗ.proof([⋅][+]-distributivityₗ) {x}{y}{z} = p{x}{y}{z} where
-    p : Names.Distributivityₗ(_⋅_)(_+_)
-    p {𝟎}   {y}   {z}   = [≡]-intro
-    p {𝐒 x} {𝟎}   {z}   = [≡]-intro
-    p {𝐒 x} {𝐒 y} {𝟎}   = [≡]-intro
-    p {𝐒 x} {𝐒 y} {𝐒 z} = [≡]-with(𝐒 ∘ 𝐒) $
-      x + (x + (𝐒 x ⋅ (y + z)))         🝖[ _≡_ ]-[ [≡]-with((x +_) ∘ (x +_)) (p {𝐒 x} {y} {z}) ]
-      x + (x + ((𝐒 x ⋅ y) + (𝐒 x ⋅ z))) 🝖[ _≡_ ]-[ [≡]-with(x +_) (One.commuteₗ-assocᵣ ⦃ comm = intro(\{x y} → commutativity(_+_) {x}{y}) ⦄ {a = x}{b = 𝐒 x ⋅ y}{c = 𝐒 x ⋅ z}) ]
-      x + ((𝐒 x ⋅ y) + (x + (𝐒 x ⋅ z))) 🝖[ _≡_ ]-[ associativity(_+_) {x = x}{y = 𝐒 x ⋅ y} ]-sym
-      (x + (𝐒 x ⋅ y)) + (x + (𝐒 x ⋅ z)) 🝖-end
+  Distributivityₗ.proof([⋅][+]-distributivityₗ) {x}{y}{z} = ℕ-elim [≡]-intro next z where
+    next : ∀(z : ℕ) → Names.DistributiveOnₗ(_⋅_)(_+_) x y z → Names.DistributiveOnₗ(_⋅_)(_+_) x y (𝐒(z))
+    next z prev =
+      x ⋅ (y + 𝐒(z))          🝖[ _≡_ ]-[]
+      x + (x ⋅ (y + z))       🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x) prev ]
+      x + ((x ⋅ y) + (x ⋅ z)) 🝖[ _≡_ ]-[ One.commuteₗ-assocᵣ {a = x}{b = x ⋅ y}{c = x ⋅ z} ]
+      (x ⋅ y) + (x + (x ⋅ z)) 🝖[ _≡_ ]-[]
+      (x ⋅ y) + (x ⋅ 𝐒(z))    🝖-end
 
 instance
-  [⋅]-associativity : Associativity (_⋅_)
-  Associativity.proof([⋅]-associativity) {x}{y}{z} = p{x}{y}{z} where
-    p : Names.Associativity(_⋅_)
-    p {𝟎}   {𝟎}   {𝟎}   = [≡]-intro
-    p {𝟎}   {𝟎}   {𝐒 z} = [≡]-intro
-    p {𝟎}   {𝐒 y} {𝟎}   = [≡]-intro
-    p {𝟎}   {𝐒 y} {𝐒 z} = [≡]-intro
-    p {𝐒 x} {𝟎}   {𝟎}   = [≡]-intro
-    p {𝐒 x} {𝟎}   {𝐒 z} = [≡]-intro
-    p {𝐒 x} {𝐒 y} {𝟎}   = [≡]-intro
-    p {𝐒 x} {𝐒 y} {𝐒 z} = [≡]-with(𝐒) $
-      (x + (𝐒 x ⋅ y)) + (𝐒(x + 𝐒 x ⋅ y) ⋅ z)  🝖[ _≡_ ]-[ associativity(_+_) {x = x}{y = 𝐒 x ⋅ y} ]
-      x + ((𝐒 x ⋅ y) + (𝐒(x + 𝐒 x ⋅ y) ⋅ z))  🝖[ _≡_ ]-[]
-      x + ((𝐒 x ⋅ y) + ((𝐒 x + 𝐒 x ⋅ y) ⋅ z)) 🝖[ _≡_ ]-[]
-      x + ((𝐒 x ⋅ y) + ((𝐒 x ⋅ 𝐒 y) ⋅ z))     🝖[ _≡_ ]-[ [≡]-with(expr ↦ x + ((𝐒 x ⋅ y) + expr)) (p{𝐒 x}{𝐒 y}{z}) ]
-      x + ((𝐒 x ⋅ y) + (𝐒 x ⋅ (𝐒 y ⋅ z)))     🝖[ _≡_ ]-[ [≡]-with(x +_) (distributivityₗ(_⋅_)(_+_) {x = 𝐒 x}{y = y}{z = 𝐒 y ⋅ z}) ]-sym
-      x + (𝐒 x ⋅ (y + (𝐒 y ⋅ z)))             🝖-end
+  [⋅]-associativity : Associativity(_⋅_)
+  Associativity.proof([⋅]-associativity) {x}{y}{z} = ℕ-elim [≡]-intro next z where
+    next : ∀(z : ℕ) → Names.AssociativeOn(_⋅_) x y z → Names.AssociativeOn(_⋅_) x y (𝐒(z))
+    next z prev =
+      (x ⋅ y) ⋅ 𝐒(z)          🝖[ _≡_ ]-[]
+      (x ⋅ y) + ((x ⋅ y) ⋅ z) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x ⋅ y) prev ]
+      (x ⋅ y) + (x ⋅ (y ⋅ z)) 🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) {x}{y}{y ⋅ z} ]-sym
+      x ⋅ (y + (y ⋅ z))       🝖[ _≡_ ]-[]
+      x ⋅ (y ⋅ 𝐒(z))          🝖-end
 
 instance
-  [⋅]-commutativity : Commutativity (_⋅_)
-  Commutativity.proof([⋅]-commutativity) {x}{y} = p {x}{y} where
-    p : Names.Commutativity(_⋅_)
-    p {𝟎} {𝟎} = [≡]-intro
-    p {𝟎} {𝐒 y} = [≡]-intro
-    p {𝐒 x} {𝟎} = [≡]-intro
-    p {𝐒 x} {𝐒 y} = [≡]-with(𝐒) $
-      x + (𝐒 x ⋅ y)     🝖-[ [≡]-with(x +_) ([⋅]-with-[𝐒]ₗ {x}{y}) ]
-      x + ((x ⋅ y) + y) 🝖-[ [≡]-with(x +_) (commutativity(_+_) {x ⋅ y}{y}) ]
-      x + (y + (x ⋅ y)) 🝖-[ One.commuteₗ-assocᵣ ⦃ comm = intro(\{x y} → commutativity(_+_) {x}{y}) ⦄ {a = x}{b = y}{c = x ⋅ y} ]
-      y + (x + (x ⋅ y)) 🝖-[ [≡]-with(expr ↦ y + (x + expr)) (p {x} {y}) ]
-      y + (x + (y ⋅ x)) 🝖-[ [≡]-with(y +_) (commutativity(_+_) {x}{y ⋅ x}) ]
-      y + ((y ⋅ x) + x) 🝖-[ [≡]-with(y +_) ([⋅]-with-[𝐒]ₗ {y}{x}) ]-sym
-      y + (𝐒 y ⋅ x)     🝖-end
+  [⋅]-commutativity : Commutativity(_⋅_)
+  Commutativity.proof([⋅]-commutativity) {x}{y} = ℕ-elim [≡]-intro next y where
+    next : ∀(y : ℕ) → Names.Commuting(_⋅_) x y → Names.Commuting(_⋅_) x (𝐒(y))
+    next y prev =
+      x ⋅ 𝐒(y)    🝖[ _≡_ ]-[]
+      x + (x ⋅ y) 🝖[ _≡_ ]-[ commutativity(_+_) {x}{x ⋅ y} ]
+      (x ⋅ y) + x 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(x) prev ]
+      (y ⋅ x) + x 🝖[ _≡_ ]-[ [⋅]-with-[𝐒]ₗ {y}{x} ]-sym
+      𝐒(y) ⋅ x    🝖-end
 
 [𝐏][𝐒]-inverses : ∀{n} → (𝐏(𝐒(n)) ≡ n)
 [𝐏][𝐒]-inverses = [≡]-intro
 
-[+]-sum-is-0 : ∀{a b} → (a + b ≡ 0) → (a ≡ 0)∧(b ≡ 0)
+[+]-sum-is-0 : ∀{a b} → (a + b ≡ 0) → ((a ≡ 0) ∧ (b ≡ 0))
 [+]-sum-is-0 {a}{b} proof = [∧]-intro (l{a}{b} proof) r where
   l = \{a b} → ℕ-elim{T = \b → (a + b ≡ 0) → (a ≡ 0)} id (\_ p → p ∘ [≡]-with(𝐏)) b
   r = l{b}{a} (commutativity(_+_) {b}{a} 🝖 proof)
 
-[+]-positive : ∀{a b} → Positive(a) → Positive(b) → Positive(a + b)
-[+]-positive {𝐒 a} {𝐒 b} <> <> = <>
+[+]-positive : ∀{a b} → (Positive(a) ∨ Positive(b)) ↔ Positive(a + b)
+[+]-positive = [↔]-intro l r where
+  r : ∀{a b} → (Positive(a) ∨ Positive(b)) → Positive(a + b)
+  r {𝐒 _}{𝟎}   ([∨]-introₗ <>) = <>
+  r {𝟎}  {𝐒 _} ([∨]-introᵣ <>) = <>
+  r {𝐒 _}{𝐒 _} ([∨]-introₗ <>) = <>
+  r {𝐒 _}{𝐒 _} ([∨]-introᵣ <>) = <>
 
-[+]-terms-positive : ∀{a b} → Positive(a + b) → (Positive(a) ∨ Positive(b))
-[+]-terms-positive {𝐒 a} {𝟎}   pab = [∨]-introₗ <>
-[+]-terms-positive {𝟎}   {𝐒 b} pab = [∨]-introᵣ <>
-[+]-terms-positive {𝐒 a} {𝐒 b} pab = [∨]-introₗ <>
+  l : ∀{a b} → Positive(a + b) → (Positive(a) ∨ Positive(b))
+  l {𝐒 a} {𝟎}   pab = [∨]-introₗ <>
+  l {𝟎}   {𝐒 b} pab = [∨]-introᵣ <>
+  l {𝐒 a} {𝐒 b} pab = [∨]-introₗ <>
 
 [⋅]-product-is-1ₗ : ∀{a b} → (a ⋅ b ≡ 1) → (a ≡ 1)
 [⋅]-product-is-1ₗ {𝟎}   {_}   p = p
@@ -167,24 +162,26 @@ instance
 [⋅]-product-is-1ᵣ : ∀{a b} → (a ⋅ b ≡ 1) → (b ≡ 1)
 [⋅]-product-is-1ᵣ {a}{b} = [⋅]-product-is-1ₗ {b}{a} ∘ (commutativity(_⋅_) {b}{a} 🝖_)
 
-[⋅]-product-is-0 : ∀{a b} → (a ⋅ b ≡ 0) → ((a ≡ 0)∨(b ≡ 0))
+[⋅]-product-is-0 : ∀{a b} → (a ⋅ b ≡ 0) → ((a ≡ 0) ∨ (b ≡ 0))
 [⋅]-product-is-0 {_}   {0}    _   = [∨]-introᵣ [≡]-intro
 [⋅]-product-is-0 {0}   {𝐒(_)} _   = [∨]-introₗ [≡]-intro
 [⋅]-product-is-0 {𝐒(a)}{𝐒(b)} ab0 with () ← [𝐒]-not-0 {(𝐒(a) ⋅ b) + a} (commutativity(_+_) {𝐒(a) ⋅ b}{𝐒(a)} 🝖 ab0)
 
-[⋅]-positive : ∀{a b} → Positive(a) → Positive(b) → Positive(a ⋅ b)
-[⋅]-positive {𝐒 a} {𝐒 b} <> <> = <>
+[⋅]-positiveᵣ : ∀{a b} → Positive(a) → Positive(b) → Positive(a ⋅ b)
+[⋅]-positiveᵣ {𝐒 a} {𝐒 b} <> <> = <>
 
-[⋅]-factors-positive : ∀{a b} → Positive(a ⋅ b) → (Positive(a) ∧ Positive(b))
-[⋅]-factors-positive {𝐒 a} {𝐒 b} pab = [∧]-intro <> <>
+[⋅]-positive : ∀{a b} → (Positive(a) ∧ Positive(b)) ↔ Positive(a ⋅ b)
+[⋅]-positive = [↔]-intro l (Tuple.uncurry [⋅]-positiveᵣ) where
+  l : ∀{a b} → Positive(a ⋅ b) → (Positive(a) ∧ Positive(b))
+  l {𝐒 a} {𝐒 b} pab = [∧]-intro <> <>
 
 instance
   [+]-cancellationᵣ : Cancellationᵣ(_+_)
-  Cancellationᵣ.proof([+]-cancellationᵣ) {a}{x}{y} = ℕ-elim{T = \a → (x + a ≡ y + a) → (x ≡ y)} id (\_ → _∘ injective(𝐒)) a
+  Cancellationᵣ.proof([+]-cancellationᵣ) {a} {x}{y} = ℕ-elim{T = \a → (x + a ≡ y + a) → (x ≡ y)} id (\_ → _∘ injective(𝐒)) a
 
 instance
   [+]-cancellationₗ : Cancellationₗ(_+_)
-  Cancellationₗ.proof([+]-cancellationₗ) {a}{x}{y} = cancellationᵣ(_+_) ∘ One.commuteBothTemp {a₁ = a}{x}{a}{y}
+  Cancellationₗ.proof([+]-cancellationₗ) {a} {x}{y} = cancellationᵣ(_+_) ∘ One.commuteBothTemp {a₁ = a}{x}{a}{y}
 
 [^]-of-𝟎ₗ : ∀{x} → (𝟎 ^ 𝐒(x) ≡ 𝟎)
 [^]-of-𝟎ₗ = [≡]-intro
@@ -234,6 +231,9 @@ instance
 
 [−₀]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) −₀ x ≡ y)
 [−₀]ₗ[+]ₗ-nullify {x}{y} = [≡]-substitutionᵣ (commutativity(_+_) {y}{x}) {expr ↦ (expr −₀ x ≡ y)} ([−₀]ₗ[+]ᵣ-nullify {y}{x})
+instance
+  [swap+][−₀]-inverseOperatorᵣ : InverseOperatorᵣ(swap(_+_))(_−₀_)
+  InverseOperatorᵣ.proof [swap+][−₀]-inverseOperatorᵣ {x} {y} = [−₀]ₗ[+]ₗ-nullify {y}{x}
 
 [−₀][+]ᵣ-nullify : ∀{x₁ x₂ y} → ((x₁ + y) −₀ (x₂ + y) ≡ x₁ −₀ x₂)
 [−₀][+]ᵣ-nullify {_} {_} {𝟎}    = [≡]-intro
@@ -373,4 +373,3 @@ instance
     (y 𝄩 z) ⋅ x       🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_𝄩_) {y}{z}{x} ]
     (y ⋅ x) 𝄩 (z ⋅ x) 🝖[ _≡_ ]-[ congruence₂(_𝄩_) (commutativity(_⋅_) {y}{x}) (commutativity(_⋅_) {z}{x}) ]
     (x ⋅ y) 𝄩 (x ⋅ z) 🝖-end
-

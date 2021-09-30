@@ -110,20 +110,20 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
     b                🝖-end
 
   -- When something and something else's inverse is the identity element, they are equal
-  equality-zeroₗ : let _ = op , assoc , select-inv(id)(ident)(inv)(inver) in ∀{x y} → (x ≡ y) ← (x ▫ inv(y) ≡ id)
-  equality-zeroₗ {id}{inv} {x}{y} (proof) =
-    x                🝖-[ symmetry(_≡_) (identity-right(_▫_)(id)) ]
-    x ▫ id           🝖-[ symmetry(_≡_) (congruence₂ᵣ(_▫_)(x) (inverseFunction-left(_▫_)(inv))) ]
-    x ▫ (inv(y) ▫ y) 🝖-[ symmetry(_≡_) (associativity(_▫_)) ]
-    (x ▫ inv(y)) ▫ y 🝖-[ congruence₂ₗ(_▫_)(y) (proof) ]
-    id ▫ y           🝖-[ identity-left(_▫_)(id) ]
-    y                🝖-end
+  equality-zero : let _ = op , assoc , select-inv(id)(ident)(inv)(inver) in ∀{x y} → (x ▫ inv(y) ≡ id) ↔ (x ≡ y)
+  equality-zero {id}{inv} {x}{y} = [↔]-intro l r where
+    r = \proof →
+      x                🝖-[ symmetry(_≡_) (identity-right(_▫_)(id)) ]
+      x ▫ id           🝖-[ symmetry(_≡_) (congruence₂ᵣ(_▫_)(x) (inverseFunction-left(_▫_)(inv))) ]
+      x ▫ (inv(y) ▫ y) 🝖-[ symmetry(_≡_) (associativity(_▫_)) ]
+      (x ▫ inv(y)) ▫ y 🝖-[ congruence₂ₗ(_▫_)(y) (proof) ]
+      id ▫ y           🝖-[ identity-left(_▫_)(id) ]
+      y                🝖-end
 
-  equality-zeroᵣ : let _ = op , assoc , select-inv(id)(ident)(inv)(inver) in ∀{x y} → (x ≡ y) → (x ▫ inv(y) ≡ id)
-  equality-zeroᵣ {id}{inv} {x}{y} (proof) =
-    x ▫ inv(y) 🝖-[ congruence₂ₗ(_▫_)(inv(y)) proof ]
-    y ▫ inv(y) 🝖-[ inverseFunctionᵣ(_▫_)(inv) ]
-    id         🝖-end
+    l = \proof →
+      x ▫ inv(y) 🝖-[ congruence₂ₗ(_▫_)(inv(y)) proof ]
+      y ▫ inv(y) 🝖-[ inverseFunctionᵣ(_▫_)(inv) ]
+      id         🝖-end
 
   commuting-id : let _ = select-id(id)(ident) in ∀{x} → (id ▫ x ≡ x ▫ id)
   commuting-id {id} {x} =
@@ -298,6 +298,14 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
       x ▫ ab 🝖-[ absorberᵣ(_▫_)(ab) ⦃ absoᵣ ⦄ ]
       ab     🝖-end
 
+  cancellation-equivalence-by-commutativity : let _ = comm in Cancellationₗ(_▫_) ↔ Cancellationᵣ(_▫_)
+  cancellation-equivalence-by-commutativity = [↔]-intro l r where
+    r : Cancellationₗ(_▫_) → Cancellationᵣ(_▫_)
+    Cancellationᵣ.proof (r cancₗ) {a}{b}{x} p = cancellationₗ _ ⦃ cancₗ ⦄ (commutativity(_▫_) 🝖 p 🝖 commutativity(_▫_))
+
+    l : Cancellationₗ(_▫_) ← Cancellationᵣ(_▫_)
+    Cancellationₗ.proof (l cancᵣ) {a}{b}{x} p = cancellationᵣ _ ⦃ cancᵣ ⦄ (commutativity(_▫_) 🝖 p 🝖 commutativity(_▫_))
+
   inverse-propertyₗ-by-groupₗ : let _ = op , assoc , select-invₗ(id)(identₗ)(inv)(inverₗ) in InversePropertyₗ(_▫_)(inv)
   InverseOperatorₗ.proof (inverse-propertyₗ-by-groupₗ {id = id}{inv = inv}) {x} {y} =
     inv(x) ▫ (x ▫ y) 🝖-[ associativity(_▫_) ]-sym
@@ -312,24 +320,6 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
     x ▫ id           🝖-[ identityᵣ(_▫_)(id) ]
     x                🝖-end
 
-  standard-inverse-operatorₗ-by-involuting-inverse-propₗ : let _ = op , select-invol(inv)(invol) , select-invPropₗ(inv)(inverPropₗ) in InverseOperatorₗ(x ↦ y ↦ inv(x) ▫ y)(_▫_)
-  InverseOperatorₗ.proof (standard-inverse-operatorₗ-by-involuting-inverse-propₗ {inv = inv}) {x} {y} =
-    x ▫ (inv x ▫ y)            🝖-[ congruence₂ₗ(_▫_)((inv x ▫ y)) (involution(inv)) ]-sym
-    inv(inv(x)) ▫ (inv x ▫ y)  🝖-[ inversePropₗ(_▫_)(inv) ]
-    y                          🝖-end
-
-  standard-inverse-inverse-operatorₗ-by-inverse-propₗ : let _ = select-invPropₗ(inv)(inverPropₗ) in InverseOperatorₗ(_▫_)(x ↦ y ↦ inv(x) ▫ y)
-  InverseOperatorₗ.proof (standard-inverse-inverse-operatorₗ-by-inverse-propₗ {inv = inv}) {x} {y} = inversePropₗ(_▫_)(inv)
-
-  standard-inverse-operatorᵣ-by-involuting-inverse-propᵣ : let _ = op , select-invol(inv)(invol) , select-invPropᵣ(inv)(inverPropᵣ) in InverseOperatorᵣ(x ↦ y ↦ x ▫ inv(y))(_▫_)
-  InverseOperatorᵣ.proof (standard-inverse-operatorᵣ-by-involuting-inverse-propᵣ {inv = inv}) {x} {y} =
-    (x ▫ inv y) ▫ y           🝖-[ congruence₂ᵣ(_▫_)((x ▫ inv y)) (involution(inv)) ]-sym
-    (x ▫ inv y) ▫ inv(inv(y)) 🝖-[ inversePropᵣ(_▫_)(inv) ]
-    x                         🝖-end
-
-  standard-inverse-inverse-operatorᵣ-by-inverse-propᵣ : let _ = select-invPropᵣ(inv)(inverPropᵣ) in InverseOperatorᵣ(_▫_)(x ↦ y ↦ x ▫ inv(y))
-  InverseOperatorᵣ.proof (standard-inverse-inverse-operatorᵣ-by-inverse-propᵣ {inv = inv}) {x} {y} = inversePropᵣ(_▫_)(inv)
-
   inverseᵣ-by-assoc-inv-propᵣ : let _ = op , assoc , select-idₗ(id)(identₗ) , select-invPropᵣ(inv)(inverPropᵣ) in InverseFunctionᵣ(_▫_) ⦃ [∃]-intro(id) ⦃ identᵣ ⦄ ⦄ (inv)
   InverseFunctionᵣ.proof (inverseᵣ-by-assoc-inv-propᵣ {id = id} {inv = inv}) {x} =
     x ▫ inv x        🝖-[ identityₗ(_▫_)(id) ]-sym
@@ -342,6 +332,17 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
     id ▫ x 🝖-[ identityₗ(_▫_)(id) ]
     x      🝖-[ p ]
     x ▫ x  🝖-end
+
+  inv-of-id : let _ = select-id(id)(ident) , select-inv(id)(ident)(inv)(inver) in (inv(id) ≡ id)
+  inv-of-id {id = id}{inv = inv} =
+    inv id       🝖-[ identityₗ(_▫_)(id) ]-sym
+    id ▫ inv(id) 🝖-[ inverseFunctionᵣ(_▫_)(inv) ]
+    id           🝖-end
+
+  inv-is-id : let _ = select-func ⦃ equiv ⦄ ⦃ equiv ⦄ (inv)(func) , select-id(id)(ident) , select-inv(id)(ident)(inv)(inver) , select-invol ⦃ equiv ⦄(inv)(invol) in ∀{x} → (inv(x) ≡ id) ↔ (x ≡ id)
+  inv-is-id {inv = inv}{id = id} = [↔]-intro
+    (p ↦ congruence₁(inv) p 🝖 inv-of-id)
+    (p ↦ symmetry(_≡_) (involution(inv)) 🝖 congruence₁(inv) p 🝖 inv-of-id)
 
 module OneTypeTwoOp {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫₁_ _▫₂_ : T → T → T} where
   open Lang.Vars.Structure.Operator.OneTypeTwoOp ⦃ equiv = equiv ⦄ {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_}
@@ -408,6 +409,41 @@ module OneTypeTwoOp {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) �
     (x ▫₂ id) ▫₁ id 🝖-[ absorptionᵣ(_▫₁_)(_▫₂_) ]
     id              🝖-end
 
+  distributeₗ-inv : let _ = op₁ , op₂ , assoc₂ , distriᵣ , select-inv(id₂)(ident₂)(inv₂)(inver₂) , select-absₗ(id₂)(absorbₗ₁) in ∀{x y} → (inv₂(x) ▫₁ y ≡ inv₂(x ▫₁ y))
+  distributeₗ-inv {id₂ = id₂}{inv₂ = inv₂} {x}{y} = One.unique-inverseᵣ-by-id $
+    (x ▫₁ y) ▫₂ (inv₂(x) ▫₁ y) 🝖-[ distributivityᵣ(_▫₁_)(_▫₂_) ]-sym
+    (x ▫₂ inv₂(x)) ▫₁ y        🝖-[ congruence₂ₗ(_▫₁_)(y) (inverseFunctionᵣ(_▫₂_)(inv₂)) ]
+    id₂ ▫₁ y                   🝖-[ absorberₗ(_▫₁_)(id₂) ]
+    id₂                        🝖-end
+
+  distributeᵣ-inv :  let _ = op₁ , op₂ , assoc₂ , distriₗ , select-inv(id₂)(ident₂)(inv₂)(inver₂) , select-absᵣ(id₂)(absorbᵣ₁) in ∀{x y} → (x ▫₁ inv₂(y) ≡ inv₂(x ▫₁ y))
+  distributeᵣ-inv {id₂ = id₂}{inv₂ = inv₂} {x}{y} = One.unique-inverseᵣ-by-id $
+    (x ▫₁ y) ▫₂ (x ▫₁ inv₂(y)) 🝖-[ distributivityₗ(_▫₁_)(_▫₂_) ]-sym
+    x ▫₁ (y ▫₂ inv₂(y))        🝖-[ congruence₂ᵣ(_▫₁_)(x) (inverseFunctionᵣ(_▫₂_)(inv₂)) ]
+    x ▫₁ id₂                   🝖-[ absorberᵣ(_▫₁_)(id₂) ]
+    id₂                        🝖-end
+
+  op-on-inv-cancel : let _ = op₁ , op₂ , assoc₂ , distriₗ , distriᵣ , select-inv(id₂)(ident₂)(inv₂)(inver₂) , select-absₗ(id₂)(absorbₗ₁) , select-absᵣ(id₂)(absorbᵣ₁) , select-invol ⦃ equiv ⦄(inv₂)(invol) , select-func ⦃ equiv ⦄ ⦃ equiv ⦄ (inv₂)(func) in ∀{x y} → (inv₂(x) ▫₁ inv₂(y) ≡ x ▫₁ y)
+  op-on-inv-cancel {id₂ = id₂}{inv₂ = inv₂} {x}{y} =
+    (inv₂(x) ▫₁ inv₂(y)) 🝖[ _≡_ ]-[ distributeᵣ-inv ]
+    inv₂(inv₂(x) ▫₁ y)   🝖[ _≡_ ]-[ congruence₁(inv₂) distributeₗ-inv ]
+    inv₂(inv₂(x ▫₁ y))   🝖[ _≡_ ]-[ involution(inv₂) ]
+    (x ▫₁ y)             🝖-end
+
+  cancellationₗ-by-inverseOper : let _ = op₂ , inverOpₗ in Cancellationₗ(_▫₁_)
+  Cancellationₗ.proof cancellationₗ-by-inverseOper {x}{a}{b} (xa≡xb) =
+    a             🝖-[ inverseOperₗ(_▫₁_)(_▫₂_) ]-sym
+    x ▫₂ (x ▫₁ a) 🝖-[ congruence₂ᵣ(_▫₂_)(x) (xa≡xb) ]
+    x ▫₂ (x ▫₁ b) 🝖-[ inverseOperₗ(_▫₁_)(_▫₂_) ]
+    b             🝖-end
+
+  cancellationᵣ-by-inverseOper : let _ = op₂ , inverOpᵣ in Cancellationᵣ(_▫₁_)
+  Cancellationᵣ.proof cancellationᵣ-by-inverseOper {x}{a}{b} (ax≡bx) =
+    a             🝖-[ inverseOperᵣ(_▫₁_)(_▫₂_) ]-sym
+    (a ▫₁ x) ▫₂ x 🝖-[ congruence₂ₗ(_▫₂_)(x) (ax≡bx) ]
+    (b ▫₁ x) ▫₂ x 🝖-[ inverseOperᵣ(_▫₁_)(_▫₂_) ]
+    b             🝖-end
+
 module Two {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {_▫₁_ : A → A → A} {B : Type{ℓ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ {_▫₂_ : B → B → B} where
   open Lang.Vars.Structure.Operator.Two ⦃ equiv-A = equiv-A ⦄ {_▫₁_ = _▫₁_} ⦃ equiv-B = equiv-B ⦄ {_▫₂_ = _▫₂_}
 
@@ -446,11 +482,11 @@ module Two {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} ⦃ equiv-A : 
     injective-kernel {id₁}{inv₁}{id₂}{inv₂} = [↔]-intro l (\inj → r ⦃ inj ⦄) where
       l : Injective(θ) ← (∀{a} → (θ(a) ≡ id₂) → (a ≡ id₁))
       Injective.proof(l(proof)) {a}{b} (θa≡θb) =
-        One.equality-zeroₗ(
+        [↔]-to-[→] One.equality-zero(
           proof(
             θ (a ▫₁ inv₁(b))   🝖-[ preserving₂(θ)(_▫₁_)(_▫₂_) ]
             θ(a) ▫₂ θ(inv₁(b)) 🝖-[ congruence₂ᵣ(_▫₂_)(θ(a)) preserving-inverseᵣ ]
-            θ(a) ▫₂ inv₂(θ(b)) 🝖-[ One.equality-zeroᵣ(θa≡θb) ]
+            θ(a) ▫₂ inv₂(θ(b)) 🝖-[ [↔]-to-[←] One.equality-zero(θa≡θb) ]
             id₂                🝖-end
           ) :of: (a ▫₁ inv₁(b) ≡ id₁)
         ) :of: (a ≡ b)

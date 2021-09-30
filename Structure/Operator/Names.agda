@@ -30,7 +30,7 @@ module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T�
   -- Definition of an left identity element.
   -- Example: Top implies a proposition in boolean logic (⊤ →_).
   Identityₗ : (T₁ → T₂ → T₂) → T₁ → Stmt
-  Identityₗ (_▫_) id = ∀{x : T₂} → (id ▫ x) ≡ x
+  Identityₗ (_▫_) id = ∀¹(Fixpoint(id ▫_))
 
   -- Definition of a right absorber element
   -- Also called "right neutral element" or "right annihilator"
@@ -41,6 +41,9 @@ module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T�
 
   ConverseAbsorberᵣ : (T₁ → T₂ → T₂) → T₂ → Stmt
   ConverseAbsorberᵣ (_▫_)(a) = ∀{x y} → (x ▫ y ≡ a) → (y ≡ a)
+
+  Anticommutativity : (T₁ → T₁ → T₂) → (T₂ → T₂) → Stmt
+  Anticommutativity(_▫_)(inv) = ∀{x y} → (x ▫ y ≡ inv(y ▫ x))
 
 module _ {T₁ : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(T₁) ⦄ {T₂ : Type{ℓ₂}} where
   -- Definition of an right identity element
@@ -150,27 +153,48 @@ module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T�
 -- Patterns
 
 module _ {T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}}{T₃ : Type{ℓ₃}}{Tᵣ₂ : Type{ℓᵣ₂}}{Tᵣ₃ : Type{ℓᵣ₃}}{Tᵣ : Type{ℓᵣ}} ⦃ _ : Equiv{ℓₑᵣ}(Tᵣ) ⦄ where
+  AssociativeOnPattern : (T₁ → T₂ → Tᵣ₃) → (Tᵣ₃ → T₃ → Tᵣ)  → (T₁ → Tᵣ₂ → Tᵣ) → (T₂ → T₃ → Tᵣ₂) → T₁ → T₂ → T₃ → Stmt
+  AssociativeOnPattern (_▫₁_) (_▫₂_) (_▫₃_) (_▫₄_) x y z = ((x ▫₁ y) ▫₂ z) ≡ (x ▫₃ (y ▫₄ z))
+
   AssociativityPattern : (T₁ → T₂ → Tᵣ₃) → (Tᵣ₃ → T₃ → Tᵣ)  → (T₁ → Tᵣ₂ → Tᵣ) → (T₂ → T₃ → Tᵣ₂)→ Stmt
-  AssociativityPattern (_▫₁_) (_▫₂_) (_▫₃_) (_▫₄_) =
-    ∀{x : T₁}{y : T₂}{z : T₃} → ((x ▫₁ y) ▫₂ z) ≡ (x ▫₃ (y ▫₄ z))
+  AssociativityPattern (_▫₁_) (_▫₂_) (_▫₃_) (_▫₄_) = ∀{x : T₁}{y : T₂}{z : T₃} → AssociativeOnPattern (_▫₁_) (_▫₂_) (_▫₃_) (_▫₄_) x y z
 
 module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₃}(T₃) ⦄ where
+  DistributiveOnPatternₗ : (T₁ → T₂ → T₃) → (T₂ → T₂ → T₂) → (T₃ → T₃ → T₃) → T₁ → T₂ → T₂ → Stmt
+  DistributiveOnPatternₗ (_▫₁_) (_▫₂_) (_▫₃_) x y z = (x ▫₁ (y ▫₂ z)) ≡ ((x ▫₁ y) ▫₃ (x ▫₁ z))
+
+  DistributiveOnPatternᵣ : (T₁ → T₂ → T₃) → (T₁ → T₁ → T₁) → (T₃ → T₃ → T₃) → T₁ → T₁ → T₂ → Stmt
+  DistributiveOnPatternᵣ (_▫₁_) (_▫₂_) (_▫₃_) x y z = ((x ▫₂ y) ▫₁ z) ≡ ((x ▫₁ z) ▫₃ (y ▫₁ z))
+
   DistributivityPatternₗ : (T₁ → T₂ → T₃) → (T₂ → T₂ → T₂) → (T₃ → T₃ → T₃) → Stmt
-  DistributivityPatternₗ (_▫₁_) (_▫₂_) (_▫₃_) =
-    ∀{x : T₁} {y z : T₂} → (x ▫₁ (y ▫₂ z)) ≡ ((x ▫₁ y) ▫₃ (x ▫₁ z))
+  DistributivityPatternₗ (_▫₁_) (_▫₂_) (_▫₃_) = ∀{x : T₁} {y z : T₂} → DistributiveOnPatternₗ (_▫₁_) (_▫₂_) (_▫₃_) x y z
 
   DistributivityPatternᵣ : (T₁ → T₂ → T₃) → (T₁ → T₁ → T₁) → (T₃ → T₃ → T₃) → Stmt
-  DistributivityPatternᵣ (_▫₁_) (_▫₂_) (_▫₃_) =
-    ∀{x y : T₁} {z : T₂} → ((x ▫₂ y) ▫₁ z) ≡ ((x ▫₁ z) ▫₃ (y ▫₁ z))
+  DistributivityPatternᵣ (_▫₁_) (_▫₂_) (_▫₃_) = ∀{x y : T₁} {z : T₂} → DistributiveOnPatternᵣ (_▫₁_) (_▫₂_) (_▫₃_) x y z
 
 ---------------------------------------------------------
 -- Derived
 
 module _ {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
+  AssociativeOn : (T → T → T) → T → T → T → Stmt
+  AssociativeOn (_▫_) = AssociativeOnPattern (_▫_) (_▫_) (_▫_) (_▫_)
+
   -- Definition of associativity for a binary operation
   Associativity : (T → T → T) → Stmt
   Associativity (_▫_) = AssociativityPattern (_▫_) (_▫_) (_▫_) (_▫_)
   -- {x y z : T} → ((x ▫ y) ▫ z) ≡ (x ▫ (y ▫ z))
+
+  Alternativeₗ : (T → T → T) → Stmt
+  Alternativeₗ(_▫_) = ∀{x y} → AssociativeOnPattern(_▫_)(_▫_)(_▫_)(_▫_) x x y
+  -- ∀{x y} → ((x ▫ x) ▫ y ≡ x ▫ (x ▫ y))
+
+  Alternativeᵣ : (T → T → T) → Stmt
+  Alternativeᵣ(_▫_) = ∀{x y} → AssociativeOnPattern(_▫_)(_▫_)(_▫_)(_▫_) x y y
+  -- ∀{x y} → ((x ▫ y) ▫ y ≡ x ▫ (y ▫ y))
+
+  Flexibility : (T → T → T) → Stmt
+  Flexibility(_▫_) = ∀{x y} → AssociativeOnPattern(_▫_)(_▫_)(_▫_)(_▫_) x y x
+  -- ∀{x y} → ((x ▫ y) ▫ x ≡ x ▫ (y ▫ x))
 
 module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ where
   -- Definition of compatibility for a binary operation
@@ -178,14 +202,20 @@ module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T�
   Compatibility (_▫₁_) (_▫₂_) = AssociativityPattern (_▫₁_) (_▫₂_) (_▫₂_) (_▫₂_)
   -- {x₁ x₂ : T₁}{y : T₂} → ((x₁ ▫₁ x₂) ▫₂ y) ≡ (x₁ ▫₂ (x₂ ▫₂ y))
 
+  DistributiveOnₗ : (T₁ → T₂ → T₂) → (T₂ → T₂ → T₂) → T₁ → T₂ → T₂ → Stmt
+  DistributiveOnₗ (_▫₁_) (_▫₂_) = DistributiveOnPatternₗ(_▫₁_)(_▫₂_)(_▫₂_)
+
+  DistributiveOnᵣ : (T₂ → T₁ → T₂) → (T₂ → T₂ → T₂) → T₂ → T₂ → T₁ → Stmt
+  DistributiveOnᵣ (_▫₁_) (_▫₂_) = DistributiveOnPatternᵣ(_▫₁_)(_▫₂_)(_▫₂_)
+
   -- Definition of left distributivity for a binary operation
   Distributivityₗ : (T₁ → T₂ → T₂) → (T₂ → T₂ → T₂) → Stmt
-  Distributivityₗ (_▫₁_) (_▫₂_) = DistributivityPatternₗ (_▫₁_) (_▫₂_) (_▫₂_)
+  Distributivityₗ (_▫₁_) (_▫₂_) = DistributivityPatternₗ(_▫₁_)(_▫₂_)(_▫₂_)
   -- ∀{x : T₁} {y z : T₂} → (x ▫₁ (y ▫₂ z)) ≡ (x ▫₁ y) ▫₂ (x ▫₁ z)
 
   -- Definition of right distributivity for a binary operation
   Distributivityᵣ : (T₂ → T₁ → T₂) → (T₂ → T₂ → T₂) → Stmt
-  Distributivityᵣ (_▫₁_) (_▫₂_) = DistributivityPatternᵣ (_▫₁_) (_▫₂_) (_▫₂_)
+  Distributivityᵣ (_▫₁_) (_▫₂_) = DistributivityPatternᵣ(_▫₁_)(_▫₂_)(_▫₂_)
   -- ∀{x y : T₂} {z : T₁} → ((x ▫₂ y) ▫₁ z) ≡ (x ▫₁ z) ▫₂ (y ▫₁ z)
 
 module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₁}(T₁) ⦄ where
@@ -197,27 +227,3 @@ module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} {T₃ : Type{ℓ₃}} ⦃ _
   -- Definition of right absorption for two binary operators
   Absorptionᵣ : (T₃ → T₂ → T₂) → (T₁ → T₂ → T₃) → Stmt
   Absorptionᵣ (_▫₁_)(_▫₂_) = ∀{x : T₁}{y : T₂} → ((x ▫₂ y) ▫₁ y ≡ y)
-
----------------------------------------------------------
--- Functions (TODO: Move to Structure.Operator.Proofs)
-{-
-open import Relator.Equals{ℓ₁}{ℓ₂}
-open import Relator.Equals.Proofs{ℓ₁}{ℓ₂}
-
--- Returns a commuted LHS of an equality
-commuteₗ : ∀{T}{_▫_}{x y z} → ⦃ _ : Commutativity {T} {T} (_▫_) ⦄ → ((x ▫ y) ≡ z) → ((y ▫ x) ≡ z)
-commuteₗ ⦃ comm ⦄ stmt = comm 🝖 stmt
-
--- Returns a commuted RHS of an equality
-commuteᵣ : ∀{T}{_▫_}{x y z} → ⦃ _ : Commutativity {T} {T} (_▫_) ⦄ → (z ≡ (x ▫ y)) → (z ≡ (y ▫ x))
-commuteᵣ ⦃ comm ⦄ stmt = stmt 🝖 comm
-
-commuteBoth : ∀{T₁ T₂}{_▫_}{a₁ a₂ b₁ b₂} → Commutativity{T₁}{T₂}(_▫_) → (a₁ ▫ a₂ ≡ b₁ ▫ b₂) → (a₂ ▫ a₁ ≡ b₂ ▫ b₁)
-commuteBoth {_}{_} {a₁} {a₂} {b₁} {b₂} commutativity (a₁▫a₂≡b₁▫b₂) =
-    (symmetry ⦃ [≡]-symmetry ⦄ (commutativity {a₁} {a₂}))
-    🝖' (a₁▫a₂≡b₁▫b₂)
-    🝖' (commutativity {b₁} {b₂})
-    where
-      _🝖'_ = _🝖_ ⦃ [≡]-transitivity ⦄
-      infixl 1000 _🝖'_
--}

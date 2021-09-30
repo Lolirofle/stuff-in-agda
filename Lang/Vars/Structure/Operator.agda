@@ -4,6 +4,7 @@ import Lvl
 open import Data
 open import Logic.Predicate
 open import Structure.Setoid
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Operator.Properties
 open import Structure.Operator
@@ -11,9 +12,19 @@ open import Type
 
 -- TODO: These are to make the generalized variables work when they depend on each other. Are there any better ways?
 module Select where
+  module _ {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂} {A : Type{ℓ₁}} {B : Type{ℓ₂}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
+    select-func : ∀(f : A → B) → Function(f) → Type{Lvl.𝟎}
+    select-func _ _ = Data.Unit
+
+    module _ {f : A → B} where
+      variable ⦃ func ⦄ : Function ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ (f)
+
   module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     select-invol : ∀(f : T → T) → Involution(f) → Type{Lvl.𝟎}
     select-invol _ _ = Data.Unit
+
+    module _ {f : T → T} where
+      variable ⦃ invol ⦄ : Involution ⦃ equiv ⦄ f
 
   module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : T → T → T} where
     select-id : ∀(id) → Identity(_▫_)(id) → Type{Lvl.𝟎}
@@ -65,14 +76,13 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
   variable ⦃ inverᵣ ⦄ : InverseFunctionᵣ ⦃ equiv ⦄ (_▫_) ⦃ [∃]-intro(idᵣ) ⦃ identᵣ ⦄ ⦄ (invᵣ)
   variable ⦃ inverPropₗ ⦄ : InversePropertyₗ ⦃ equiv ⦄ (_▫_) (invₗ)
   variable ⦃ inverPropᵣ ⦄ : InversePropertyᵣ ⦃ equiv ⦄ (_▫_) (invᵣ)
-  variable ⦃ invol ⦄ : Involution ⦃ equiv ⦄ (inv)
   variable ⦃ absorb  ⦄ : Absorber ⦃ equiv ⦄ (_▫_)(ab)
   variable ⦃ absorbₗ ⦄ : Absorberₗ ⦃ equiv ⦄ (_▫_)(ab)
   variable ⦃ absorbᵣ ⦄ : Absorberᵣ ⦃ equiv ⦄ (_▫_)(ab)
 
 module OneTypeTwoOp {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫₁_ _▫₂_ : T → T → T} where
-  variable {id} : T
-  variable {inv} : T → T
+  variable {id id₁ id₂} : T
+  variable {inv inv₁ inv₂} : T → T
 
   variable ⦃ op₁ ⦄ : BinaryOperator ⦃ equiv ⦄ ⦃ equiv ⦄ ⦃ equiv ⦄ (_▫₁_)
   variable ⦃ comm₁ ⦄ : Commutativity ⦃ equiv ⦄ (_▫₁_)

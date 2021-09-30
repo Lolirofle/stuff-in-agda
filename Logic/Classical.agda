@@ -1,5 +1,6 @@
 module Logic.Classical where
 
+open import BidirectionalFunction as ↔ using (_$ₗ_ ; _$ᵣ_)
 import      Lvl
 open import Data
 open import Data.Boolean
@@ -201,11 +202,11 @@ module _ {P : Stmt{ℓ₁}} {Q : Stmt{ℓ₂}} where
 
 instance
   [⊤]-classical-intro : Classical(⊤)
-  [⊤]-classical-intro = intro ⦃ [∨]-introₗ ([⊤]-intro) ⦄
+  [⊤]-classical-intro = intro ⦃ [∨]-introₗ [⊤]-intro ⦄
 
 instance
   [⊥]-classical-intro : Classical(⊥)
-  [⊥]-classical-intro = intro ⦃ [∨]-introᵣ (id) ⦄
+  [⊥]-classical-intro = intro ⦃ [∨]-introᵣ id ⦄
 
 module _ {X : Type{ℓ₁}} ⦃ _ : (◊ X) ⦄ {P : X → Stmt{ℓ₂}} where
   instance
@@ -269,6 +270,23 @@ module _ {P : Stmt{ℓ₁}} ⦃ classic-p : Classical(P) ⦄ {Q : Stmt{ℓ₂}} 
 classical-topOrBottom : ∀{P : Stmt{ℓ}} → (Classical(P) ↔ TopOrBottom(_↔_)(P))
 _⨯_.left  (classical-topOrBottom {P = P}) tb        = intro ⦃ [∨]-elim2 ([↔]-elimₗ [⊤]-intro) [↔]-to-[→] tb ⦄
 _⨯_.right (classical-topOrBottom {P = P}) classical = excluded-middle-elim P ⦃ classical ⦄ ([∨]-introₗ ∘ provable-top-equivalence) (([∨]-introᵣ ∘ unprovable-bottom-equivalence))
+
+module _ {P : Stmt{ℓ₁}} ⦃ classic-p : Classical(P) ⦄ {Q : Stmt{ℓ₂}} {R : Stmt{ℓ₃}} ⦃ classic-r : Classical(R) ⦄ where
+  -- According to https://math.stackexchange.com/questions/440261/associativity-of-iff , this is unprovable in constructive logic.
+  [↔]-associativity : ((P ↔ Q) ↔ R) ↔ (P ↔ (Q ↔ R))
+  [↔]-associativity = [↔]-intro (\pqr → ↔.map ↔.rev ↔.id $ᵣ (↔.rev $ᵣ (right (↔.map ↔.rev ↔.id $ᵣ (↔.rev $ᵣ pqr))))) right where
+    module _ {ℓ₁ ℓ₂ ℓ₃} {P : Stmt{ℓ₁}} ⦃ classic-p : Classical(P) ⦄ {Q : Stmt{ℓ₂}} {R : Stmt{ℓ₃}} ⦃ classic-r : Classical(R) ⦄ where
+      rightₗ : ((P ↔ Q) ↔ R) → (P ← (Q ↔ R))
+      rightₗ pqr ([↔]-intro rq qr) with excluded-middle(P) | excluded-middle(R)
+      ... | [∨]-introₗ p  | _             = p
+      ... | [∨]-introᵣ np | [∨]-introᵣ nr with () ← nr ([↔]-to-[→] pqr ([↔]-intro ([⊥]-elim ∘ nr ∘ qr) ([⊥]-elim ∘ np)))
+      ... | [∨]-introᵣ np | [∨]-introₗ r  = [↔]-to-[←] ([↔]-to-[←] pqr r) (rq r)
+
+      rightᵣ = pqr ↦ p ↦ [↔]-intro
+        ((pq ↦ [↔]-to-[→] pq p) ∘ [↔]-to-[←] pqr)
+        ([↔]-to-[→] pqr ∘ (q ↦ [↔]-intro (const p) (const q)))
+
+      right = pqr ↦ [↔]-intro (rightₗ pqr) (rightᵣ pqr)
 
 ------------------------------------------
 -- Negation is almost preserved over the conjunction-dijunction dual (De-morgan's laws).

@@ -4,6 +4,7 @@ module Type.Cubical.Path.Equality where
 
 open import Functional
 open import Function.Axioms
+open import Logic.Propositional
 import      Lvl
 open import Type
 open import Type.Cubical
@@ -26,6 +27,9 @@ private variable x y : T
 
 _≡_ : T → T → Type
 _≡_ = Path
+
+_≢_ : T → T → Type
+_≢_ = (¬_) ∘₂ (_≡_)
 
 instance
   Path-reflexivity : Reflexivity{T = T}(Path)

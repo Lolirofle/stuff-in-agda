@@ -5,6 +5,7 @@ open import Logic.Predicate
 open import Lvl
 open import Structure.Setoid
 open import Structure.Function.Domain
+open import Structure.Operator.Properties
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
 open import Type
@@ -24,3 +25,29 @@ instance
   Up.obj (∃.witness (Tuple.left (Bijective.proof LvlUpObj-bijective {y}))) = y
   ∃.proof (Tuple.left (Bijective.proof LvlUpObj-bijective)) = reflexivity(_≡_)
   Up.obj (Tuple.right (Bijective.proof LvlUpObj-bijective) p q) = transitivity(_≡_) p (symmetry(_≡_) q)
+
+open import Lvl.Order
+open import Relator.Equals
+open import Relator.Equals.Proofs.Equiv
+open import Structure.Operator.Lattice
+open import Structure.Relator.Ordering
+
+instance
+  [⊔]-commutativity : Commutativity(_⊔_)
+  Commutativity.proof [⊔]-commutativity = [≡]-intro
+
+instance
+  [⊔]-associativity : Associativity(_⊔_)
+  Associativity.proof [⊔]-associativity = [≡]-intro
+
+instance
+  [⊔]-idempotent : Idempotence(_⊔_)
+  Idempotence.proof [⊔]-idempotent = [≡]-intro
+
+instance
+  [⊔]-semiLattice : Semilattice(Level)(_⊔_)
+  [⊔]-semiLattice = intro
+
+instance
+  [≤]-partialOrder : Weak.PartialOrder(_≤_)
+  [≤]-partialOrder = Semilattice.partialOrder [⊔]-semiLattice

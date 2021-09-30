@@ -6,6 +6,7 @@ module Structure.Sets.ZFC.Classical {ℓₛ ℓₗ ℓₑ} {S : Type{ℓₛ}} �
 
 open import Data.Either as Either using ()
 open import Functional
+open import Functional.Instance
 open import Logic.Classical
 open import Logic.Predicate
 open import Logic.Propositional
@@ -31,7 +32,7 @@ module _ ⦃ zfc : ZFC ⦄ where
 
   -- ZFC implies excluded middle.
   -- Note that this only requires the following set related axioms:
-  -- • Set extensionality (Not really neccessary if every equality is replaced with set equality instead).
+  -- • Set extensionality (An alternative would be to replace every equality with set equality).
   -- • Axiom of choice (TODO: Is this really neccessary? The proof only uses the choice function on finite sets? Further investigation on choice functions for finite sets would clear this up).
   -- • Choice functions are functions.
   -- • Restricted set comprehension.
@@ -39,7 +40,7 @@ module _ ⦃ zfc : ZFC ⦄ where
   -- • Existence of a set containing the two different sets, and the existence of all subsets of this set.
   -- Also called: Diaconescu's theorem, Goodman–Myhill theorem.
   excluded-middle-by-choice : ∀{P : Type{ℓ}} → Classical(P)
-  excluded-middle-by-choice{P = P} = intro $ᵢₙₛₜ
+  excluded-middle-by-choice{P = P} = intro ⦃$⦄
     let
       instance
         pos-rel : UnaryRelator(x ↦ P ∨ (x ≡ 𝑇))

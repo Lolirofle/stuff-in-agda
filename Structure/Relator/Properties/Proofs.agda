@@ -2,6 +2,7 @@ module Structure.Relator.Properties.Proofs where
 
 import      Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
+open import Function
 open import Functional
 open import Logic
 -- open import Logic.Classical

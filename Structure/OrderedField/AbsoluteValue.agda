@@ -1,5 +1,6 @@
 open import Logic
 open import Structure.Setoid
+open import Structure.Operator.Properties
 open import Structure.Operator.Ring
 open import Structure.OrderedField
 open import Type
@@ -11,6 +12,7 @@ module Structure.OrderedField.AbsoluteValue
   (_+_ _⋅_ : F → F → F)
   (_≤_ : F → F → Stmt{ℓₗ})
   ⦃ ring : Ring(_+_)(_⋅_) ⦄ -- TODO: The definition does not require a ring, only some kind of total order compatible with an operation with an identity and an inverse
+  ⦃ [+]-commutativity : Commutativity(_+_) ⦄
   -- ⦃ identity : Identity(_+_) ⦄
   -- ⦃ inverseFunction : InverseFunction(_+_)(−_) ⦄
   ⦃ ordered : let open Ring(ring) in Ordered(_+_)(_⋅_)(_≤_) ⦄
@@ -31,7 +33,6 @@ open import Structure.Function.Ordering
 open import Structure.Function
 open import Structure.Operator
 open import Structure.Operator.Proofs
-open import Structure.Operator.Properties
 open import Structure.Operator.Ring.Proofs
 open import Structure.Relator.Properties
 open import Syntax.Implication

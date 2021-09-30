@@ -25,7 +25,7 @@ default x hole = quoteTC x >>= unify hole
 -- This makes implicit arguments work like explicit arguments by throwing an error when the hole does not match perfectly while still maintaining its implicit visibility status.
 -- It works by always selecting the last argument in the hole, and the last argument is the one closest to the value, which is the argument one expects it to choose.
 -- Examples:
---   idᵢwith : ∀{T : TYPE} → {@(tactic no-infer) x :  T} → T
+--   idᵢwith : ∀{T : TYPE} → {@(tactic no-infer) x : T} → T
 --   idᵢwith {x = x} = x
 --
 --   idᵢwithout : ∀{T : TYPE} → {x :  T} → T
@@ -50,6 +50,6 @@ no-infer hole@(meta _ args) with List.last(args)
 {-# CATCHALL #-}
 ... | Some (arg (arg-info _         _) term) = typeError (List.singleton (strErr "Wrong visibility of argument. Expected \"hidden\" when using \"no-infer\"."))
 {-# CATCHALL #-}
-no-infer _ = typeError (List.singleton (strErr "TODO: In what situations is this error occurring?"))
+no-infer _ = typeError (List.singleton (strErr "TODO: In what situations are this error occurring?"))
 
 -- TODO: Implement idᵢwith, rename it to idᵢ, and put it in Functional. Also, try to refactor Data.Boolean, Data.List and Data.Option so that they only contain the type definition and its constructors. This minimizes the amount of dependencies this module requires (which should help in case of circular dependencies when importing this module).

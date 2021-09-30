@@ -42,7 +42,7 @@ Span-subspace : ∀{vf} → Subspace(Span{n}(vf))
 ∃.witness (_closed-under₂_.proof (Subspace.add-closure (Span-subspace {vf = vf})) ([∃]-intro sf₁) ([∃]-intro sf₂)) = Vec.map₂(_+ₛ_) sf₁ sf₂
 ∃.proof (_closed-under₂_.proof (Subspace.add-closure (Span-subspace {vf = vf})) {v₁} {v₂} ([∃]-intro sf₁ ⦃ p₁ ⦄) ([∃]-intro sf₂ ⦃ p₂ ⦄)) =
   linearCombination vf (Vec.map₂(_+ₛ_) sf₁ sf₂)            🝖[ _≡_ ]-[ preserving₂(linearCombination vf) (Vec.map₂(_+ₛ_)) (_+ᵥ_) ]
-  (linearCombination vf sf₁) +ᵥ (linearCombination vf sf₂) 🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) ⦃ [+ᵥ]-binary-operator ⦄ p₁ p₂ ]
+  (linearCombination vf sf₁) +ᵥ (linearCombination vf sf₂) 🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) ⦃ [+ᵥ]-binaryOperator ⦄ p₁ p₂ ]
   v₁ +ᵥ v₂                                                 🝖-end
 ∃.witness (_closed-under₁_.proof (Subspace.mul-closure Span-subspace {s}) ([∃]-intro sf)) = Vec.map(s ⋅ₛ_) sf
 ∃.proof (_closed-under₁_.proof (Subspace.mul-closure (Span-subspace {vf = vf}) {s}) {v} ([∃]-intro sf ⦃ p ⦄)) =

@@ -20,6 +20,7 @@ open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.DivMod.Proofs
 open import Numeral.Natural.Oper.FlooredDivision
+open import Numeral.Natural.Oper.FlooredDivision.Proofs.Algorithm
 open import Numeral.Natural.Sequence
 open import Relator.Equals renaming (_≡_ to Id)
 open import Relator.Equals.Proofs.Equiv{T = ℕ}
@@ -46,7 +47,9 @@ alternate₂-args {𝐒(𝐒(n))} with [∧]-intro l r ← alternate₂-args {n}
 alternate₂-values : ∀{n} → (alternate₂(n) ≡ Either.Left(n ⌊/⌋ 2)) ∨ (alternate₂(n) ≡ Either.Right(n ⌊/⌋ 2))
 alternate₂-values {0}       = Either.Left  [≡]-intro
 alternate₂-values {1}       = Either.Right [≡]-intro
-alternate₂-values {𝐒(𝐒(n))} with alternate₂-values {n}
+alternate₂-values {𝐒(𝐒(n))}
+  rewrite inddiv-result-𝐒 {0}{1}{n}{1}
+  with alternate₂-values {n}
 ... | Either.Left  eq rewrite eq = Either.Left  [≡]-intro
 ... | Either.Right eq rewrite eq = Either.Right [≡]-intro
 

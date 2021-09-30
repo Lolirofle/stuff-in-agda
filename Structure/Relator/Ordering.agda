@@ -118,7 +118,7 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
     accessible-recursion-intro : ∀{P : T → Type{ℓ₃}}{rec : ∀(x) → _ → P(x)}{φ : ∀{x} → P(x) → Type{ℓ₄}}
                                → (∀(y) ⦃ acc-y : Accessibleₗ(y)⦄
                                  → (∀{x} → ⦃ xy : x < y ⦄ → φ{x}(accessible-recursion rec x ⦃ Accessibleₗ.proof acc-y {x} ⦄))
-                                 → (∀{x} → ⦃ xy : x < y ⦄ → (accessible-recursion rec y ≡ₑ rec y (\x → accessible-recursion rec x ⦃ Accessibleₗ.proof acc-y {x} ⦄)))
+                                 → (accessible-recursion rec y ≡ₑ rec y (\x → accessible-recursion rec x ⦃ Accessibleₗ.proof acc-y {x} ⦄))
                                  → φ{y}(accessible-recursion rec y)
                                )
                                → (∀{x} → ⦃ acc : Accessibleₗ(x) ⦄ → φ(accessible-recursion{U = P} rec x))
@@ -151,7 +151,7 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
     wellfounded-recursion-intro : ⦃ wf : WellFounded ⦄ → ∀{P : T → Type{ℓ₃}}{rec : ∀(x) → _ → P(x)}{φ : ∀{x} → P(x) → Type{ℓ₄}}
                                 → (∀(y)
                                   → (∀{x} → ⦃ xy : x < y ⦄ → φ{x}(wellfounded-recursion rec x))
-                                  → (∀{x} → ⦃ xy : x < y ⦄ → (accessible-recursion rec y ≡ₑ rec y (\x → wellfounded-recursion rec x)))
+                                  → (accessible-recursion rec y ≡ₑ rec y (\x → wellfounded-recursion rec x))
                                   → φ{y}(accessible-recursion rec y)
                                 )
                                 → (∀{x} → φ(accessible-recursion{U = P} rec x))

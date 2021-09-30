@@ -96,11 +96,11 @@ module _ {Σ : Alphabet{ℓ}} where
     [∪]-absorber = intro
 
   instance
-    [∪]-binary-operator : BinaryOperator ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ (_∪_)
-    BinaryOperator.congruence([∪]-binary-operator {s = s}) = [∪]-binary-operator-raw {s = s} where
-      [∪]-binary-operator-raw : ∀{s} → Names.Congruence₂ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ (_∪_)
-      _≅[_]≅_.accepts-ε   ([∪]-binary-operator-raw aeq beq) = [≡]-with-op(_||_) (_≅[_]≅_.accepts-ε aeq) (_≅[_]≅_.accepts-ε beq)
-      _≅[_]≅_.suffix-lang ([∪]-binary-operator-raw aeq beq) = [∪]-binary-operator-raw (_≅[_]≅_.suffix-lang aeq) (_≅[_]≅_.suffix-lang beq)
+    [∪]-binaryOperator : BinaryOperator ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ (_∪_)
+    BinaryOperator.congruence([∪]-binaryOperator {s = s}) = [∪]-binaryOperator-raw {s = s} where
+      [∪]-binaryOperator-raw : ∀{s} → Names.Congruence₂ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ (_∪_)
+      _≅[_]≅_.accepts-ε   ([∪]-binaryOperator-raw aeq beq) = [≡]-with-op(_||_) (_≅[_]≅_.accepts-ε aeq) (_≅[_]≅_.accepts-ε beq)
+      _≅[_]≅_.suffix-lang ([∪]-binaryOperator-raw aeq beq) = [∪]-binaryOperator-raw (_≅[_]≅_.suffix-lang aeq) (_≅[_]≅_.suffix-lang beq)
 
   instance
     [∪]-monoid : Monoid ⦃ [≅]-equiv {s = s} ⦄ (_∪_)
@@ -157,11 +157,11 @@ module _ {Σ : Alphabet{ℓ}} where
     [∩]-absorber = intro
 
   instance
-    [∩]-binary-operator : BinaryOperator ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ (_∩_)
-    BinaryOperator.congruence([∩]-binary-operator {s = s}) = [∩]-binary-operator-raw {s = s} where
-      [∩]-binary-operator-raw : ∀{s} → Names.Congruence₂ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄(_∩_)
-      _≅[_]≅_.accepts-ε   ([∩]-binary-operator-raw aeq beq) = [≡]-with-op(_&&_) (_≅[_]≅_.accepts-ε aeq) (_≅[_]≅_.accepts-ε beq)
-      _≅[_]≅_.suffix-lang ([∩]-binary-operator-raw aeq beq) = [∩]-binary-operator-raw (_≅[_]≅_.suffix-lang aeq) (_≅[_]≅_.suffix-lang beq)
+    [∩]-binaryOperator : BinaryOperator ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ (_∩_)
+    BinaryOperator.congruence([∩]-binaryOperator {s = s}) = [∩]-binaryOperator-raw {s = s} where
+      [∩]-binaryOperator-raw : ∀{s} → Names.Congruence₂ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄(_∩_)
+      _≅[_]≅_.accepts-ε   ([∩]-binaryOperator-raw aeq beq) = [≡]-with-op(_&&_) (_≅[_]≅_.accepts-ε aeq) (_≅[_]≅_.accepts-ε beq)
+      _≅[_]≅_.suffix-lang ([∩]-binaryOperator-raw aeq beq) = [∩]-binaryOperator-raw (_≅[_]≅_.suffix-lang aeq) (_≅[_]≅_.suffix-lang beq)
 
   instance
     [∩]-monoid : Monoid ⦃ [≅]-equiv {s = s} ⦄ (_∩_)

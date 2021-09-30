@@ -18,6 +18,7 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Prime
+open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
@@ -141,7 +142,7 @@ module _ where
 
   -- The only prime factors of a prime number is itself.
   prime-primeFactors : ⦃ _ : Prime(p) ⦄ → (PrimeFactor(p) ≡ₛ (• p))
-  prime-primeFactors {p}{x} = [↔]-intro (\{[≡]-intro → intro}) (\{intro → symmetry(_≡_) (prime-prime-divisor infer infer infer)})
+  prime-primeFactors {p}{x} = [↔]-intro (\{[≡]-intro → intro ⦃ factor = reflexivity(_∣_) ⦄}) (\{intro → symmetry(_≡_) (prime-prime-divisor infer infer infer)})
 
   -- When a number is a prime factor of itself, it is a prime number.
   -- A very obvious fact (it follows by definition).
@@ -153,3 +154,6 @@ module _ where
 
 composite-existence : ∀{n} → Composite(n) ↔ ∃{Obj = ℕ ⨯ ℕ}(\(a , b) → (a + 2) ⋅ (b + 2) ≡ n)
 composite-existence = [↔]-intro (\{([∃]-intro (a , b) ⦃ [≡]-intro ⦄) → intro a b}) \{(intro a b) → [∃]-intro (a , b) ⦃ [≡]-intro ⦄}
+
+prime-positive : ∀{p} → Prime(p) → Positive(p)
+prime-positive {𝐒 p} _ = <>

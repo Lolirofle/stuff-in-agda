@@ -22,6 +22,10 @@ debug:
 test:
 	agda ${OPTIONS} Test.agda
 
+dependency-graph:
+	agda ${OPTIONS} --dependency-graph=All.dependency-graph.dot All.agda
+	dot -Goverlap=scale All.dependency-graph.dot -o All.dependency-graph.svg -Tsvg -GK=10.9 -Gsplines=false -Ksfdp -Ecolor=lightgray -Nshape=box -Nstyle=rounded
+
 classic:
 	cd Mathematical && agda ${OPTIONS} --cubical --prop All.agda
 

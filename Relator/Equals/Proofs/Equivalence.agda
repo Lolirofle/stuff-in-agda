@@ -20,38 +20,21 @@ open import Type
 -- TODO: Consider using Structure.Type.Identity instead of these proofs
 
 module One {ℓ} {T : Type{ℓ}} where
-  instance
-    [≡]-reflexivity : Reflexivity (_≡_ {T = T})
-    [≡]-reflexivity = intro [≡]-intro
-
-  instance
-    [≡]-identity-eliminator : ∀{ℓₚ} → IdentityEliminator{ℓₚ = ℓₚ}(_≡_ {T = T})
-    IdentityEliminator.elim [≡]-identity-eliminator _ proof {x = x}{y = .x} [≡]-intro = proof{x}
-
-  instance
-    [≡]-symmetry : Symmetry (_≡_ {T = T})
-    [≡]-symmetry = identity-eliminator-to-symmetry
-
-  instance
-    [≡]-transitivity : Transitivity (_≡_ {T = T})
-    [≡]-transitivity = identity-eliminator-to-transitivity
-
-  instance
-    [≡]-equivalence : Equivalence (_≡_ {T = T})
-    [≡]-equivalence = intro
+  import Type.Identity.Proofs
+  open   Type.Identity.Proofs.One{T = T}
+    using()
+    renaming(
+      Id-identityEliminator    to [≡]-identity-eliminator ;
+      Id-reflexivity           to [≡]-reflexivity ;
+      Id-symmetry              to [≡]-symmetry ;
+      Id-transitivity          to [≡]-transitivity ;
+      Id-equivalence           to [≡]-equivalence ;
+      Id-equiv                 to [≡]-equiv ;
+      Id-reflexive-relator-sub to [≡]-sub-of-reflexive
+    ) public
 
   [≡]-to-equivalence : ∀{ℓₗ}{x y : T} → (x ≡ y) → ⦃ equiv-T : Equiv{ℓₗ}(T) ⦄ → (_≡ₛ_ ⦃ equiv-T ⦄ x y)
   [≡]-to-equivalence([≡]-intro) = reflexivity(_≡ₛ_)
-
-  [≡]-equiv : Equiv{ℓ}(T)
-  Equiv._≡_ [≡]-equiv = _≡_
-  Equiv.equivalence [≡]-equiv = [≡]-equivalence
-
-  -- Equality is a subrelation to every reflexive relation.
-  -- One interpretation of this is that identity is the smallest reflexive relation when a relation is interpreted as a set of tuples and size is the cardinality of the set.
-  instance
-    [≡]-sub-of-reflexive : ∀{ℓₗ}{_▫_ : T → T → Stmt{ℓₗ}} → ⦃ _ : Reflexivity(_▫_) ⦄ → ((_≡_) ⊆₂ (_▫_))
-    _⊆₂_.proof [≡]-sub-of-reflexive [≡]-intro = reflexivity(_)
 
   -- Replaces occurrences of an element in a function
   [≡]-substitutionᵣ : ∀{ℓ₂}{x y} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → f(x) → f(y)
@@ -64,11 +47,8 @@ module One {ℓ} {T : Type{ℓ}} where
   [≡]-substitution : ∀{ℓ₂}{x y} → (x ≡ y) → ∀{f : T → Type{ℓ₂}} → (f(x) ↔ f(y))
   [≡]-substitution eq = [↔]-intro ([≡]-substitutionₗ eq) ([≡]-substitutionᵣ eq)
 
-  [≡]-unary-relator : ∀{ℓ₂}{P : T → Stmt{ℓ₂}} → UnaryRelator ⦃ [≡]-equiv ⦄ (P)
-  UnaryRelator.substitution([≡]-unary-relator {P = P}) xy = [≡]-substitutionᵣ xy {P}
-
-  [≡]-binary-relator : ∀{ℓ₂}{P : T → T → Stmt{ℓ₂}} → BinaryRelator ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ (P)
-  BinaryRelator.substitution [≡]-binary-relator [≡]-intro [≡]-intro = id
+  [≡]-unaryRelator : ∀{ℓ₂}{P : T → Stmt{ℓ₂}} → UnaryRelator ⦃ [≡]-equiv ⦄ (P)
+  UnaryRelator.substitution([≡]-unaryRelator {P = P}) xy = [≡]-substitutionᵣ xy {P}
 open One public
 
 module Two {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} where
@@ -81,6 +61,9 @@ module Two {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} where
 
   [≡]-to-function : ∀{ℓₗ} → ⦃ equiv-B : Equiv{ℓₗ}(B) ⦄ → ∀{f : A → B} → Function ⦃ [≡]-equiv ⦄ ⦃ equiv-B ⦄ (f)
   Function.congruence ([≡]-to-function) [≡]-intro = reflexivity(_≡ₛ_)
+
+  [≡]-binaryRelator : ∀{ℓ}{P : A → B → Stmt{ℓ}} → BinaryRelator ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ (P)
+  BinaryRelator.substitution [≡]-binaryRelator [≡]-intro [≡]-intro = id
 open Two public
 
 module Three {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} {ℓ₃}{C : Type{ℓ₃}} where
@@ -90,11 +73,11 @@ module Three {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} {ℓ₃}{C : 
   -- [≡]-with-op-[_] (_▫_) {a₁}{a₂} {b₁}{b₂} (a₁≡a₂) (b₁≡b₂) =
   --   [≡]-elimᵣ (b₁≡b₂) {\x → (a₁ ▫ b₁) ≡ (a₂ ▫ x)} ([≡]-with(x ↦ (x ▫ b₁)) (a₁≡a₂))
 
-  [≡]-binary-operator : ∀{_▫_} → BinaryOperator ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ (_▫_)
-  BinaryOperator.congruence([≡]-binary-operator {_▫_}) aeq beq = [≡]-with-op(_▫_) aeq beq
+  [≡]-binaryOperator : ∀{_▫_} → BinaryOperator ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ (_▫_)
+  BinaryOperator.congruence([≡]-binaryOperator {_▫_}) aeq beq = [≡]-with-op(_▫_) aeq beq
 open Three public
 
 module Four {ℓ₁}{A : Type{ℓ₁}} {ℓ₂}{B : Type{ℓ₂}} {ℓ₃}{C : Type{ℓ₃}} {ℓ₄}{D : Type{ℓ₄}} where
-  [≡]-trinary-operator : ∀{_▫_▫_ : A → B → C → D} → TrinaryOperator ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ (_▫_▫_)
-  TrinaryOperator.congruence([≡]-trinary-operator {_▫_▫_}) [≡]-intro [≡]-intro [≡]-intro = [≡]-intro
+  [≡]-trinaryOperator : ∀{_▫_▫_ : A → B → C → D} → TrinaryOperator ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ (_▫_▫_)
+  TrinaryOperator.congruence([≡]-trinaryOperator {_▫_▫_}) [≡]-intro [≡]-intro [≡]-intro = [≡]-intro
 open Four public

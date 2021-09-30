@@ -14,13 +14,6 @@ open import Structure.Function.Domain
 open import Type.Properties.Decidable
 
 instance
-  [≡]-decider : Decider(2)(_≡_)(_≡?_)
-  [≡]-decider {𝟎}  {𝟎}   = true [≡]-intro
-  [≡]-decider {𝟎}  {𝐒 y} = false \()
-  [≡]-decider {𝐒 x}{𝟎}   = false \()
-  [≡]-decider {𝐒 x}{𝐒 y} = step{f = id} (true ∘ [≡]-with(𝐒)) (false ∘ contrapositiveᵣ (injective(𝐒))) ([≡]-decider {x}{y})
-
-instance
   [≤]-decider : Decider(2)(_≤_)(_≤?_)
   [≤]-decider {𝟎} {𝟎} = true [≤]-minimum
   [≤]-decider {𝟎} {𝐒 y} = true [≤]-minimum
@@ -32,3 +25,9 @@ instance
 [<]-decider {𝟎} {𝐒 y} = true (succ min)
 [<]-decider {𝐒 x} {𝟎} = false (λ ())
 [<]-decider {𝐒 x} {𝐒 y} = step{f = id} (true ∘ succ) (false ∘ contrapositiveᵣ [≤]-without-[𝐒]) ([<]-decider {x} {y})
+
+[≥]-decider : Decider(2)(_≥_)(_≥?_)
+[≥]-decider = [≤]-decider
+
+[>]-decider : Decider(2)(_>_)(_>?_)
+[>]-decider = [<]-decider

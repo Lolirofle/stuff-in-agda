@@ -23,6 +23,7 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
   open Lang.Vars.Structure.Operator.One ⦃ equiv = equiv ⦄ {_▫_ = _▫_}
 
   -- TODO: Rename this to associate-commute4-commuting
+  -- TODO: Also https://en.wikipedia.org/wiki/Medial_magma https://math.stackexchange.com/questions/609364/why-is-ring-addition-commutative?noredirect=1&lq=1
   associate-commute4 : let _ = op , assoc in ∀{a b c d} → Names.Commuting(_▫_)(b)(c) → ((a ▫ b) ▫ (c ▫ d) ≡ (a ▫ c) ▫ (b ▫ d))
   associate-commute4 {a}{b}{c}{d} com =
     (a ▫ b) ▫ (c ▫ d) 🝖-[ symmetry(_≡_) (associativity(_▫_) {a ▫ b} {c} {d}) ]
@@ -51,6 +52,9 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
 
   associate4-213-222 : let _ = op , assoc in ∀{a b c d} → ((a ▫ (b ▫ c)) ▫ d ≡ (a ▫ b) ▫ (c ▫ d))
   associate4-213-222 {a}{b}{c}{d} = associativity(_▫_) 🝖 associate4-231-222
+
+  associate4-321-222 : let _ = op , assoc in ∀{a b c d} → (a ▫ (b ▫ (c ▫ d)) ≡ (a ▫ b) ▫ (c ▫ d))
+  associate4-321-222 {a}{b}{c}{d} = associate4-321-231 🝖 associate4-231-222
 
   commuteᵣ-assocₗ : let _ = op , assoc , comm in ∀{a b c} → (((a ▫ b) ▫ c) ≡ ((a ▫ c) ▫ b))
   commuteᵣ-assocₗ {a}{b}{c} =

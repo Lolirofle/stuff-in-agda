@@ -128,7 +128,7 @@ UnaryRelator.substitution binary-unaryRelatorₗ xy x1x2 = substitute₂ _ (refl
 binary-unaryRelatorᵣ : ∀ ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ {_▫_ : A → B → Stmt{ℓₗ₃}} → ⦃ rel-P : BinaryRelator(_▫_) ⦄ → ∀{x} → UnaryRelator(_▫ x)
 UnaryRelator.substitution binary-unaryRelatorᵣ xy x1x2 = substitute₂ _ xy (reflexivity(_≡_)) x1x2
 
-binaryRelator-from-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ {_▫_ : A → A → Stmt{ℓₗ₁}} → ⦃ relₗ : ∀{x} → UnaryRelator(_▫ x) ⦄ → ⦃ relᵣ : ∀{x} → UnaryRelator(x ▫_) ⦄ → BinaryRelator(_▫_)
+binaryRelator-from-unaryRelator : ∀ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ {_▫_ : A → B → Stmt{ℓₗ}} → ⦃ relₗ : ∀{x} → UnaryRelator(_▫ x) ⦄ → ⦃ relᵣ : ∀{x} → UnaryRelator(x ▫_) ⦄ → BinaryRelator(_▫_)
 BinaryRelator.substitution binaryRelator-from-unaryRelator xy1 xy2 = substitute₁ _ xy1 ∘ substitute₁ _ xy2
 
 instance

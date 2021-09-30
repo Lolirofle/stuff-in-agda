@@ -117,7 +117,7 @@ record Iterable (Iter : Index → Type{ℓ}) {ℓₑ} : Type{ℓ Lvl.⊔ ℓᵢ 
     last : ∀{i} → Iter(i) → Option(Element)
     last = foldₗ(const Some) None
 
-    -- Note: Below are possibly inefficient implementations of functions because if they were guaranteed to exit early, the number of computations would be reduced.
+    -- Note: Below are possibly inefficient implementations of functions because if they were guaranteed to exit early, the number of computation steps would be reduced (assuming there are no optimization).
     first : ∀{i} → Iter(i) → Option(Element)
     first = foldᵣ(const ∘ Some) None
 

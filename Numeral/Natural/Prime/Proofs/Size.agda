@@ -6,10 +6,10 @@ open import Functional
 open import Logic.Predicate
 open import Logic.Propositional
 open import Numeral.Natural
-open import Numeral.Natural.Decidable
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs.Order
 open import Numeral.Natural.Prime
+open import Numeral.Natural.Prime.Decidable
 open import Numeral.Natural.Prime.Proofs
 open import Numeral.Natural.Relation.Divisibility
 open import Numeral.Natural.Relation.Divisibility.Proofs

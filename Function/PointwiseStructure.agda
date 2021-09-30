@@ -80,7 +80,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   -- A component-wise operator is a monoid when its underlying operator is a monoid.
   pointwiseFunction-monoid : ⦃ monoid : Monoid(_▫_) ⦄ → Monoid(pointwise(1)(2) {As = I} (_▫_))
-  Monoid.binary-operator    pointwiseFunction-monoid = pointwiseFunction-binaryOperator
+  Monoid.binaryOperator     pointwiseFunction-monoid = pointwiseFunction-binaryOperator
   Monoid.associativity      pointwiseFunction-monoid = pointwiseFunction-associativity
   Monoid.identity-existence pointwiseFunction-monoid = [∃]-intro _ ⦃ pointwiseFunction-identity ⦄
 
@@ -102,7 +102,7 @@ module _
   -- Component-wise operators constructs a vector space from a field when using the fields as scalars and coordinate vectors as vectors.
   pointwiseFunction-vectorSpace : VectorSpace(pointwise(1)(2) {As = I} (_+_))(pointwise(1)(1) ∘ (_⋅_))(_+_)(_⋅_)
   VectorSpace.scalarField pointwiseFunction-vectorSpace = field-structure
-  VectorSpace.vectorCommutativeGroup                                          pointwiseFunction-vectorSpace = pointwiseFunction-commutativeGroup
+  VectorSpace.vectorCommutativeGroup                                          pointwiseFunction-vectorSpace = pointwiseFunction-commutativeGroup ⦃ commutativeGroup = intro ⦄
   _⊜_.proof (BinaryOperator.congruence (VectorSpace.[⋅ₛᵥ]-binaryOperator      pointwiseFunction-vectorSpace) p (intro q)) = congruence₂(_⋅_) p q
   _⊜_.proof (Preserving.proof          (VectorSpace.[⋅ₛᵥ]ₗ[⋅]ᵣ-preserving     pointwiseFunction-vectorSpace)) = associativity(_⋅_)
   _⊜_.proof (Identityₗ.proof           (VectorSpace.[⋅ₛᵥ]-identity            pointwiseFunction-vectorSpace)) = identityₗ(_⋅_)(𝟏)

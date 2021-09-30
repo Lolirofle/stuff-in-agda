@@ -1,5 +1,6 @@
 module Numeral.Natural.Oper.Proofs.Order where
 
+open import Data
 open import Functional
 open import Logic
 open import Logic.Propositional
@@ -7,6 +8,7 @@ open import Logic.Propositional.Theorems
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Classical
 open import Numeral.Natural.Relation.Order.Proofs
@@ -18,6 +20,7 @@ open import Structure.Operator
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
+open import Type
 
 [≤]ₗ[+] : ∀{x y : ℕ} → (x + y ≤ x) → (y ≡ 𝟎)
 [≤]ₗ[+] {𝟎}               = [≤][0]ᵣ
@@ -110,10 +113,47 @@ open import Syntax.Transitivity
 [−₀]-lesser {𝐒(x)}{𝟎}    = reflexivity(_≤_)
 [−₀]-lesser {𝐒(x)}{𝐒(y)} = ([−₀]-lesser-[𝐒]ₗ {𝐒(x)}{y}) 🝖 ([−₀]-lesser {𝐒(x)}{y})
 
--- TODO: Converse is probably also true. One way to prove the equivalence is contraposition of [−₀]-comparison. Another is by [≤]-with-[+]ᵣ and some other stuff, but it seems to require more work
-[−₀]-positive : ∀{x y} → (y > x) → (y −₀ x > 0)
-[−₀]-positive {𝟎}   {𝐒(y)} _        = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
-[−₀]-positive {𝐒(x)}{𝐒(y)} (succ p) = [−₀]-positive {x}{y} p
+[−₀]-strictly-lesser : ∀{x y} ⦃ pos-y : Positive(y) ⦄ → (x ≥ y) → ((x −₀ y) < x)
+[−₀]-strictly-lesser {.(𝐒 y)} {.(𝐒 x)} (succ {x} {y} xy) = succ ([−₀]-lesser {y}{x})
+
+[≤][−₀]ₗ-preserving : ∀{a₁ a₂ b} → (a₁ ≤ a₂) → (a₁ −₀ b ≤ a₂ −₀ b)
+[≤][−₀]ₗ-preserving {b = 𝟎}   ord        = ord
+[≤][−₀]ₗ-preserving {b = 𝐒 _} min        = min
+[≤][−₀]ₗ-preserving {b = 𝐒 b} (succ ord) = [≤][−₀]ₗ-preserving {b = b} ord
+
+[≤][−₀]ᵣ-antipreserving : ∀{a b₁ b₂} → (b₁ ≥ b₂) → (a −₀ b₁ ≤ a −₀ b₂)
+[≤][−₀]ᵣ-antipreserving {a}   {b₁}     {.𝟎}     min       = [−₀]-lesser {a}{b₁}
+[≤][−₀]ᵣ-antipreserving {𝟎}   {.(𝐒 _)} {.(𝐒 _)} (succ pb) = min
+[≤][−₀]ᵣ-antipreserving {𝐒 a} {.(𝐒 _)} {.(𝐒 _)} (succ pb) = [≤][−₀]ᵣ-antipreserving {a} pb
+
+[<][−₀]ₗ-preserving : ∀{a₁ a₂ b} → (b ≤ a₁) → (a₁ < a₂) → (a₁ −₀ b < a₂ −₀ b)
+[<][−₀]ₗ-preserving {b = 𝟎}   ord1        (succ ord2) = succ ord2
+[<][−₀]ₗ-preserving {b = 𝐒 b} (succ ord1) (succ ord2) = [<][−₀]ₗ-preserving {b = b} ord1 ord2
+
+[≤][−₀]ₗ-preserving-converse : ∀{a₁ a₂ b} → (a₁ ≥ b) → (a₂ ≥ b) → (a₁ −₀ b ≤ a₂ −₀ b) → (a₁ ≤ a₂)
+[≤][−₀]ₗ-preserving-converse {𝟎}    {a₂}   {𝟎}   a1b        a2b        ord = min
+[≤][−₀]ₗ-preserving-converse {𝐒 a₁} {𝐒 a₂} {𝟎}   a1b        a2b        ord = ord
+[≤][−₀]ₗ-preserving-converse {𝐒 a₁} {𝐒 a₂} {𝐒 b} (succ a1b) (succ a2b) ord = succ ([≤][−₀]ₗ-preserving-converse {a₁} {a₂} {b} a1b a2b ord)
+
+[<][−₀]ₗ-preserving-converse : ∀{a₁ a₂ b} → (a₁ ≥ b) → (a₂ ≥ b) → (a₁ −₀ b < a₂ −₀ b) → (a₁ < a₂)
+[<][−₀]ₗ-preserving-converse {𝐒 a₁} {𝐒 a₂} {𝐒 b} (succ a1b) (succ a2b) ord = succ ([<][−₀]ₗ-preserving-converse {a₁} {a₂} {b} a1b a2b ord)
+{-# CATCHALL #-}
+[<][−₀]ₗ-preserving-converse {a₁}   {𝐒 a₂} {𝟎}   a1b        a2b        ord = ord
+
+-- TODO: Converse is probably also true. One way to prove the equivalence is contraposition of [−₀]-comparison. Another is by [≤]-with-[+]ᵣ and some other stuff, but it seems to require more work. Also, this is [−₀]-positive
+[<][−₀]-transfer : ∀{x y} → (y > x) → (y −₀ x > 0)
+[<][−₀]-transfer {𝟎}   {𝐒(y)} _        = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
+[<][−₀]-transfer {𝐒(x)}{𝐒(y)} (succ p) = [<][−₀]-transfer {x}{y} p
+
+[−₀]-positive : ∀{x y} → (y > x) ↔ Positive(y −₀ x)
+[−₀]-positive = [↔]-intro l r where
+  l : ∀{x y} → (y > x) ← Positive(y −₀ x)
+  l {𝟎}   {𝐒 y} pos = succ min
+  l {𝐒 x} {𝐒 y} pos = succ(l{x}{y} pos)
+
+  r : ∀{x y} → (y > x) → Positive(y −₀ x)
+  r{𝟎}   (succ {y = y} yx) = <>
+  r{𝐒 x} (succ {y = y} yx) = r yx
 
 [−₀]-nested-sameₗ : ∀{x y} → (x ≥ y) ↔ (x −₀ (x −₀ y) ≡ y)
 [−₀]-nested-sameₗ {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
@@ -143,8 +183,8 @@ open import Syntax.Transitivity
   r min = [≡]-intro
   r (succ p) = r p
 
-[𝄩]-intro-by[−₀] : ∀{ℓ}{P : ℕ → TYPE(ℓ)} → ∀{x y} → P(x −₀ y) → P(y −₀ x) → P(x 𝄩 y)
-[𝄩]-intro-by[−₀] {x = x}{y = y} p1 p2 with [≤][>]-dichotomy {x}{y}
+[𝄩]-intro-by[−₀] : ∀{ℓ} (P : ℕ → Type{ℓ}) → ∀{x y} → P(x −₀ y) → P(y −₀ x) → P(x 𝄩 y)
+[𝄩]-intro-by[−₀] _ {x = x}{y = y} p1 p2 with [≤][>]-dichotomy {x}{y}
 ... | [∨]-introₗ le
   rewrite [↔]-to-[→] [−₀][𝄩]-equality-condition le
   rewrite commutativity(_𝄩_) {x}{y}
@@ -152,6 +192,9 @@ open import Syntax.Transitivity
 ... | [∨]-introᵣ gt
   rewrite [↔]-to-[→] [−₀][𝄩]-equality-condition ([≤]-predecessor gt)
   = p1
+
+[𝄩]-lesser : ∀{x y} → ((x 𝄩 y) ≤ x) ∨ ((x 𝄩 y) ≤ y)
+[𝄩]-lesser {x}{y} = [𝄩]-intro-by[−₀] (d ↦ (d ≤ x) ∨ (d ≤ y)) {x}{y} ([∨]-introₗ ([−₀]-lesser {x}{y})) ([∨]-introᵣ ([−₀]-lesser {y}{x}))
 
 [𝄩]-of-𝐒ₗ : ∀{x y} → (x ≥ y) → (𝐒(x) 𝄩 y ≡ 𝐒(x 𝄩 y))
 [𝄩]-of-𝐒ₗ {𝟎}   {𝟎}   = const [≡]-intro
@@ -245,3 +288,5 @@ open import Syntax.Transitivity
 [≤]-of-[!] {𝟎}   = succ min
 [≤]-of-[!] {𝐒 n} = [≤]-with-[⋅] {1}{1}{𝐒(n)}{n !} (succ min) ([≤]-of-[!] {n})
 
+[<]-of-[+]ₗ : ∀{x y} ⦃ pos : Positive(y) ⦄ → (x < x + y)
+[<]-of-[+]ₗ {y = 𝐒 y} = succ [≤]-of-[+]ₗ

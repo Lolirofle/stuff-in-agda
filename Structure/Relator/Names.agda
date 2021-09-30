@@ -2,6 +2,7 @@ module Structure.Relator.Names where
 
 import      Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
+open import Function
 open import Functional
 open import Lang.Instance
 open import Logic
@@ -13,14 +14,12 @@ open import Type
 private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ : Lvl.Level
 private variable T A B C D E : Type{ℓ}
 
-ConversePattern : (Stmt{ℓ₁} → Stmt{ℓ₂} → Stmt{ℓ}) → (A → B → Stmt) → (B → A → Stmt) → Stmt
-ConversePattern(_▫_)(_▫₁_)(_▫₂_) = ∀{x}{y} → (x ▫₁ y) ▫ (y ▫₂ x)
-
-Subrelation : (A → B → Stmt{ℓ₁}) → (A → B → Stmt{ℓ₂}) → Stmt
-Subrelation(_▫₁_)(_▫₂_) = ∀{x}{y} → (x ▫₁ y) → (x ▫₂ y)
+-- Expanded definition: ∀{x}{y} → ((x ▫₁ y) ▫ (x ▫₂ y))
+SubPattern : (C → D → Stmt{ℓ}) → (A → B → C) → (A → B → D) → Stmt
+SubPattern(_▫_)(_▫₁_)(_▫₂_) = ∀{x}{y} → pointwise₂,₂(_▫_)(_▫₁_)(_▫₂_) x y
 
 TransitivityPattern : (A → B → Stmt{ℓ₁}) → (B → C → Stmt{ℓ₂}) → (A → C → Stmt{ℓ₃}) → Stmt
-TransitivityPattern(_▫₁_)(_▫₂_)(_▫₃_) = ∀{x}{y}{z} → (x ▫₁ y) → (y ▫₂ z) → (x ▫₃ z)
+TransitivityPattern(_▫₁_)(_▫₂_)(_▫₃_) = ∀{x}{y}{z} → (x ▫₁ y) → (y ▫₂ z) → (x ▫₃ z) -- TODO: If written (∀{x}{y}{z} → ((x ▫₁ y) ▫₄ (y ▫₂ z)) ▫₅ (x ▫₃ z)) (similar to how SubPattern is generalized from Subrelation), then triangle inquality is also a special case. But that is a special case from (∀{x}{y}{z} → ((▫₁ x y z) ▫₄ (▫₂ x y z)) ▫₅ (▫₃ x y z)) (generalizing flipped transitivity), which is a special case from (∀{x}{y}{z} → (▫₁ x y z) ▫₅ (▫₂ x y z)) (generalizing cotransitivity and everything using three variables).
 
 FlippedTransitivityₗPattern : (A → C → Stmt{ℓ₁}) → (B → C → Stmt{ℓ₂}) → (A → B → Stmt{ℓ₃}) → Stmt
 FlippedTransitivityₗPattern(_▫₁_)(_▫₂_)(_▫₃_) = ∀{x}{y}{z} → (x ▫₁ z) → (y ▫₂ z) → (x ▫₃ y)
@@ -28,16 +27,27 @@ FlippedTransitivityₗPattern(_▫₁_)(_▫₂_)(_▫₃_) = ∀{x}{y}{z} → (
 FlippedTransitivityᵣPattern : (A → B → Stmt{ℓ₁}) → (A → C → Stmt{ℓ₂}) → (B → C → Stmt{ℓ₃}) → Stmt
 FlippedTransitivityᵣPattern(_▫₁_)(_▫₂_)(_▫₃_) = ∀{x}{y}{z} → (x ▫₁ y) → (x ▫₂ z) → (y ▫₃ z)
 
+Subrelation : (A → B → Stmt{ℓ₁}) → (A → B → Stmt{ℓ₂}) → Stmt
+Subrelation = SubPattern(_→ᶠ_)
+
 module _ (_▫_ : T → T → Stmt{ℓ}) where
+  -- Expanded definition: ∀{x y} → (x ▫ y) → (y ▫ x)
   Symmetry : Stmt
-  Symmetry = ConversePattern(_→ᶠ_)(_▫_)(_▫_)
+  Symmetry = Subrelation(_▫_)(swap(_▫_))
 
+  -- Expanded definition: ∀{x y} → (x ▫ y) → ¬(y ▫ x)
   Asymmetry : Stmt
-  Asymmetry = ConversePattern(_→ᶠ_)(_▫_)((¬_) ∘₂ (_▫_))
+  Asymmetry = Subrelation(_▫_)(swap((¬_) ∘₂ (_▫_)))
 
+  -- Expanded definition: ∀{x : T} → (x ▫ x)
   Reflexivity : Stmt
-  Reflexivity = ∀{x : T} → (x ▫ x)
+  Reflexivity = ∀{x} → ((_▫_) $₂ x)
 
+  -- Expanded definition: ∀{x : T} → ¬(x ▫ x)
+  Irreflexivity : Stmt
+  Irreflexivity = ∀{x} → (((¬_) ∘₂ (_▫_)) $₂ x)
+
+  -- Expanded definition: ∀{x y} → (x ▫ y) → (y ▫ z) → (x ▫ z)
   Transitivity : Stmt
   Transitivity = TransitivityPattern(_▫_)(_▫_)(_▫_)
 
@@ -52,15 +62,12 @@ module _ (_▫_ : T → T → Stmt{ℓ}) where
   FlippedTransitivityᵣ : Stmt
   FlippedTransitivityᵣ = FlippedTransitivityᵣPattern(_▫_)(_▫_)(_▫_)
 
-  Irreflexivity : Stmt
-  Irreflexivity = ∀{x : T} → ¬(x ▫ x)
-
   -- Also called: Total, complete, connex.
   ConverseTotal : Stmt
-  ConverseTotal = ConversePattern(_∨_)(_▫_)(_▫_)
+  ConverseTotal = SubPattern(_∨_)(_▫_)(swap(_▫_))
 
   ConverseDichotomy : Stmt
-  ConverseDichotomy = ConversePattern(_⊕_)(_▫_)(_▫_)
+  ConverseDichotomy = SubPattern(_⊕_)(_▫_)(swap(_▫_))
 
   -- Also called: Comparison.
   CoTransitivity : Stmt

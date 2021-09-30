@@ -28,7 +28,7 @@ private variable T A B C : Type{ℓ}
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   open Type.Size
 
-  [≼]-maximum : (_≼_ T (T → T) ⦃ [⊜]-equiv ⦄)
+  [≼]-maximum : (T ≼ (T → T)) ⦃ equiv-B =  [⊜]-equiv ⦄
   [≼]-maximum = [∃]-intro(const) ⦃ intro(proof) ⦄ where
     proof : ∀{x y} → (const(x) ⊜ const(y)) → (x ≡ y)
     proof{x}{y} (intro fneq) = fneq{x}
@@ -42,7 +42,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   [≽]-reflexivity-raw : (T ≽ T)
   [≽]-reflexivity-raw = [∃]-intro(id) ⦃ id-surjective ⦄
 
-  [≼]-minimum-raw : ⦃ equiv-empty : Equiv{ℓₑ₁}(Empty{ℓ}) ⦄ → (_≼_ Empty ⦃ equiv-empty ⦄ T)
+  [≼]-minimum-raw : ⦃ equiv-empty : Equiv{ℓₑ₁}(Empty{ℓ}) ⦄ → (Empty ≼ T) ⦃ equiv-empty ⦄
   [≼]-minimum-raw = [∃]-intro(empty) ⦃ empty-injective ⦄
 
     -- TODO: Impossible because there are no functions of type (T → ⊥)?

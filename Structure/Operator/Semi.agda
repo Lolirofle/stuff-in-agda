@@ -12,5 +12,5 @@ open import Type
 record Semi {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   constructor intro
   field
-    ⦃ binary-operator ⦄ : BinaryOperator(_▫_)
+    ⦃ binaryOperator ⦄ : BinaryOperator(_▫_)
     ⦃ associativity ⦄   : Associativity(_▫_)

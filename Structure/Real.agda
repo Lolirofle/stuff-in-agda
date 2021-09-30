@@ -1,47 +1,50 @@
-module Structure.Real where
-
-import      Lvl
-open import Data.Boolean
-open import Data.Boolean.Proofs
-import      Data.Either as Either
-open import Functional
 open import Logic
 open import Logic.Classical
+
+module Structure.Real ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ where
+
+open import Functional
+import      Lvl
 open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Natural using (ℕ)
 import      Numeral.Natural.Relation.Order as ℕ
-open import Relator.Ordering
-open import Structure.Setoid
 open import Structure.Function.Ordering
-open import Structure.Operator.Field
-open import Structure.Operator.Monoid
-open import Structure.Operator.Group
-open import Structure.Operator.Proofs
-open import Structure.Operator.Properties
-open import Structure.Relator.Ordering
-open        Structure.Relator.Ordering.Weak.Properties
-open import Structure.Relator.Properties
 open import Structure.OrderedField
 import      Structure.OrderedField.AbsoluteValue
-open import Syntax.Transitivity
+open import Structure.Relator.Properties
+open import Structure.Setoid
+open import Syntax.Function
 open import Type
 
-private variable ℓ ℓ₁ ℓ₂ ℓₑ : Lvl.Level
+private variable ℓ ℓₗₑ ℓₑ : Lvl.Level
+private variable R : Type{ℓ}
 
--- Theory defining the axioms of ℝ in classical logic.
+-- One way of defining the axioms of ℝ in classical logic.
 -- The axioms are the following:
 -- • An ordered field.
 -- • Monotone convergence.
-record RealTheory {R : Type{ℓ₁}} ⦃ equiv-R : Equiv{ℓₑ}(R) ⦄ (_+_ _⋅_ : R → R → R) (_≤_ : R → R → Stmt{ℓ₂}) ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ : Type{ℓ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓₑ} where
+record RealTheory ⦃ equiv-R : Equiv{ℓₑ}(R) ⦄ (_+_ _⋅_ : R → R → R) (_≤_ : R → R → Stmt{ℓₗₑ}) : Type{Lvl.of(R) Lvl.⊔ ℓₗₑ Lvl.⊔ ℓₑ} where
   field
     ⦃ orderedField ⦄ : OrderedField(_+_)(_⋅_)(_≤_)
 
   open OrderedField(orderedField) public
   open Structure.OrderedField.AbsoluteValue(_+_)(_⋅_)(_≤_)
 
-  field
-    sup-fn : (f : ℕ → R) → ⦃ Increasing(ℕ._≤_)(_≤_)(f) ⦄ → ⦃ UpperBounded(ℕ._≤_)(_≤_)(f) ⦄ → R
-    monotone-convergence : ∀{f} → ⦃ inc : Increasing(ℕ._≤_)(_≤_)(f) ⦄ → ⦃ bound : UpperBounded(ℕ._≤_)(_≤_)(f) ⦄ → ∃{Obj = R → ℕ}(N ↦ ∀{ε} → (ε > 𝟎) → ∀{n} → (n ℕ.> N(ε)) → (‖ f(n) − sup-fn (f) ⦃ inc ⦄ ⦃ bound ⦄ ‖ < ε))
+  _≡ₗᵢₘ_ : (ℕ → R) → (ℕ → R) → Stmt
+  _≡ₗᵢₘ_ f g = ∃{Obj = R → ℕ}(N ↦ ∀{ε} → (ε > 𝟎) → ∀{n} → (n ℕ.> N(ε)) → (‖ f(n) − g(n) ‖ < ε))
 
-  -- TODO: Consider adding something that relates addition and multiplication so that it conform to the axioms of arithmetic and their definitions of addition and multiplication. This is so that one should be able to prove (x + x ≡ 𝐒(𝐒(𝟎)) ⋅ x) or (2.5 ⋅ x = x + x + x/2) (when 𝐒, the successor function is defined as (1 +_)) for easier to write statements. In other words: add ((1 + x) ⋅ y = x + (x ⋅ y)) as an axiom. (20201210 Is this TODO outdated?)
+  -- Completeness.
+  -- TODO: Is this equivalent to the usual formalization using Dedekind completeness or Cauchy sequences?
+  field
+    supFn : (f : ℕ → R) → ⦃ Increasing(ℕ._≤_)(_≤_)(f) ⦄ → ⦃ UpperBounded(ℕ._≤_)(_≤_)(f) ⦄ → R
+    supFn-convergence : ∀{f} → ⦃ inc : Increasing(ℕ._≤_)(_≤_)(f) ⦄ → ⦃ bound : UpperBounded(ℕ._≤_)(_≤_)(f) ⦄
+                      → (f ≡ₗᵢₘ const(supFn(f)))
+    supFn-extensionality : ∀{f} ⦃ inc-f : Increasing(ℕ._≤_)(_≤_)(f) ⦄ ⦃ bound-f : UpperBounded(ℕ._≤_)(_≤_)(f) ⦄
+                         → ∀{g} ⦃ inc-g : Increasing(ℕ._≤_)(_≤_)(g) ⦄ ⦃ bound-g : UpperBounded(ℕ._≤_)(_≤_)(g) ⦄
+                         → (supFn(f) ≡ supFn(g)) ↔ (f ≡ₗᵢₘ g)
+
+  {-
+  infFn : (f : ℕ → R) → ⦃ Decreasing(ℕ._≤_)(_≤_)(f) ⦄ → ⦃ LowerBounded(ℕ._≤_)(_≤_)(f) ⦄ → R
+  infFn(f) = − supFn((−_) ∘ f) ⦃ {!!} ⦄ ⦃ {!!} ⦄
+  -}

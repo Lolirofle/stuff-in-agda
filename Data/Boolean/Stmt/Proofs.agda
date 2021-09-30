@@ -6,6 +6,7 @@ open import Data.Boolean.Proofs hiding (bivalence ; disjointness)
 import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.Boolean.Stmt
+open import Function
 open import Functional
 open import Logic.Propositional as Logic using (⊥ ; _∨_ ; _∧_ ; ¬_ ; _↔_ ; [⊤]-intro ; [↔]-intro ; [⊥]-elim)
 open import Relator.Equals

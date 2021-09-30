@@ -12,7 +12,7 @@ open import Type
 private variable ℓ ℓᵢ ℓᵢ₁ ℓᵢ₂ ℓᵢ₃ ℓd ℓd₁ ℓd₂ ℓᵣ ℓᵣ₁ ℓᵣ₂ ℓₑ ℓₑ₁ ℓₑ₂ : Lvl.Level
 private variable n : ℕ
 
--- A signature consists of a countable family of sets of function and relation symbols.
+-- A signature consists of a family of sets of function and relation symbols over a set.
 -- `functions(n)` and `relations(n)` should be interpreted as the indices for functions/relations of arity `n`.
 record Signature : Type{Lvl.𝐒(ℓᵢ₁ Lvl.⊔ ℓᵢ₂)} where
   field

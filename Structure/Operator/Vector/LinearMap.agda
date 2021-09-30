@@ -17,7 +17,7 @@ open import Type
 open import Syntax.Function
 open import Syntax.Transitivity
 
-private variable ℓ ℓᵥ ℓᵥₗ ℓᵥᵣ ℓₛ ℓᵥₑ ℓᵥₑₗ ℓᵥₑᵣ ℓᵥₑ₁ ℓᵥₑ₂ ℓᵥₑ₃ ℓₛₑ : Lvl.Level
+private variable ℓ ℓᵥ ℓᵥₗ ℓᵥᵣ ℓₛ ℓᵥₑ ℓᵥₑₗ ℓᵥₑᵣ ℓᵥₑ₁ ℓᵥₑ₂ ℓᵥₑ₃ ℓₛₑ ℓₙ₀ ℓₙ₀ₗ ℓₙ₀ᵣ ℓₙ₀₁ ℓₙ₀₂ ℓₙ₀₃ : Lvl.Level
 private variable V Vₗ Vᵣ V₁ V₂ V₃ S : Type{ℓ}
 private variable _+ᵥ_ _+ᵥₗ_ _+ᵥᵣ_ _+ᵥ₁_ _+ᵥ₂_ _+ᵥ₃_ : V → V → V
 private variable _⋅ₛᵥ_ _⋅ₛᵥₗ_ _⋅ₛᵥᵣ_ _⋅ₛᵥ₁_ _⋅ₛᵥ₂_ _⋅ₛᵥ₃_ : S → V → V
@@ -27,8 +27,8 @@ module _
   ⦃ equiv-Vₗ : Equiv{ℓᵥₑₗ}(Vₗ) ⦄
   ⦃ equiv-Vᵣ : Equiv{ℓᵥₑᵣ}(Vᵣ) ⦄
   ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
-  (vectorSpaceₗ : VectorSpace{V = Vₗ}{S = S}(_+ᵥₗ_)(_⋅ₛᵥₗ_)(_+ₛ_)(_⋅ₛ_))
-  (vectorSpaceᵣ : VectorSpace{V = Vᵣ}{S = S}(_+ᵥᵣ_)(_⋅ₛᵥᵣ_)(_+ₛ_)(_⋅ₛ_))
+  (vectorSpaceₗ : VectorSpace{V = Vₗ}{S = S}(_+ᵥₗ_)(_⋅ₛᵥₗ_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀ₗ})
+  (vectorSpaceᵣ : VectorSpace{V = Vᵣ}{S = S}(_+ᵥᵣ_)(_⋅ₛᵥᵣ_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀ᵣ})
   (f : Vₗ → Vᵣ)
   where
 
@@ -39,16 +39,16 @@ module _
       ⦃ preserves-[+ᵥ]  ⦄ : Preserving₂(f)(_+ᵥₗ_)(_+ᵥᵣ_)
       ⦃ preserves-[⋅ₛᵥ] ⦄ : ∀{s} → Preserving₁(f)(s ⋅ₛᵥₗ_)(s ⋅ₛᵥᵣ_)
 
-_→ˡⁱⁿᵉᵃʳᵐᵃᵖ_ : ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄ → VectorSpaceVObject{ℓᵥ = ℓᵥₗ}{ℓᵥₑ = ℓᵥₑₗ}{S = S}(_+ₛ_)(_⋅ₛ_) → VectorSpaceVObject{ℓᵥ = ℓᵥᵣ}{ℓᵥₑ = ℓᵥₑᵣ}{S = S}(_+ₛ_)(_⋅ₛ_) → Stmt
+_→ˡⁱⁿᵉᵃʳᵐᵃᵖ_ : ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄ → VectorSpaceVObject{ℓᵥ = ℓᵥₗ}{ℓᵥₑ = ℓᵥₑₗ}{S = S}(_+ₛ_)(_⋅ₛ_) {ℓₙ₀ₗ} → VectorSpaceVObject{ℓᵥ = ℓᵥᵣ}{ℓᵥₑ = ℓᵥₑᵣ}{S = S}(_+ₛ_)(_⋅ₛ_) {ℓₙ₀ᵣ} → Stmt
 V₁ →ˡⁱⁿᵉᵃʳᵐᵃᵖ V₂ = ∃(LinearMap(VectorSpaceVObject.vectorSpace(V₁)) (VectorSpaceVObject.vectorSpace(V₂)))
 
-_↔ˡⁱⁿᵉᵃʳᵐᵃᵖ_ : ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄ → VectorSpaceVObject{ℓᵥ = ℓᵥₗ}{ℓᵥₑ = ℓᵥₑₗ}{S = S}(_+ₛ_)(_⋅ₛ_) → VectorSpaceVObject{ℓᵥ = ℓᵥᵣ}{ℓᵥₑ = ℓᵥₑᵣ}{S = S}(_+ₛ_)(_⋅ₛ_) → Stmt
+_↔ˡⁱⁿᵉᵃʳᵐᵃᵖ_ : ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄ → VectorSpaceVObject{ℓᵥ = ℓᵥₗ}{ℓᵥₑ = ℓᵥₑₗ}{S = S}(_+ₛ_)(_⋅ₛ_) {ℓₙ₀ₗ} → VectorSpaceVObject{ℓᵥ = ℓᵥᵣ}{ℓᵥₑ = ℓᵥₑᵣ}{S = S}(_+ₛ_)(_⋅ₛ_) {ℓₙ₀ᵣ} → Stmt
 V₁ ↔ˡⁱⁿᵉᵃʳᵐᵃᵖ V₂ = ∃(f ↦ Invertible(f) ∧ LinearMap(VectorSpaceVObject.vectorSpace(V₁)) (VectorSpaceVObject.vectorSpace(V₂))(f))
 
 module _
   ⦃ equiv-V : Equiv{ℓᵥₑ}(V) ⦄
   ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
-  (vectorSpace : VectorSpace{V = V}{S = S}(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_))
+  (vectorSpace : VectorSpace{V = V}{S = S}(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀})
   (f : V → V)
   where
 
@@ -57,7 +57,7 @@ module _
 module _
   ⦃ equiv-V : Equiv{ℓᵥₑ}(V) ⦄
   ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
-  (vectorSpace : VectorSpace{V = V}{S = S}(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_))
+  (vectorSpace : VectorSpace{V = V}{S = S}(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀})
   (f : V → S)
   where
 
@@ -68,9 +68,9 @@ module _
   ⦃ equiv-V₂ : Equiv{ℓᵥₑ₂}(V₂) ⦄
   ⦃ equiv-V₃ : Equiv{ℓᵥₑ₃}(V₃) ⦄
   ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
-  (vectorSpace₁ : VectorSpace{V = V₁}{S = S}(_+ᵥ₁_)(_⋅ₛᵥ₁_)(_+ₛ_)(_⋅ₛ_))
-  (vectorSpace₂ : VectorSpace{V = V₂}{S = S}(_+ᵥ₂_)(_⋅ₛᵥ₂_)(_+ₛ_)(_⋅ₛ_))
-  (vectorSpace₃ : VectorSpace{V = V₃}{S = S}(_+ᵥ₃_)(_⋅ₛᵥ₃_)(_+ₛ_)(_⋅ₛ_))
+  (vectorSpace₁ : VectorSpace{V = V₁}{S = S}(_+ᵥ₁_)(_⋅ₛᵥ₁_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀₁})
+  (vectorSpace₂ : VectorSpace{V = V₂}{S = S}(_+ᵥ₂_)(_⋅ₛᵥ₂_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀₂})
+  (vectorSpace₃ : VectorSpace{V = V₃}{S = S}(_+ᵥ₃_)(_⋅ₛᵥ₃_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀₃})
   (f : V₁ → V₂ → V₃)
   where
 
@@ -85,24 +85,3 @@ module _
 
     binaryOperator : BinaryOperator(f)
     binaryOperator = functions-to-binaryOperator(f) ⦃ functionₗ ⦄ ⦃ functionᵣ ⦄
-
-module _
-  ⦃ equiv-V : Equiv{ℓᵥₑ}(V) ⦄
-  ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
-  (vectorSpace : VectorSpace{V = V}{S = S}(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_))
-  (_▫_ : V → V → V)
-  where
-
-  BilinearOperator = BilinearMap(vectorSpace)(vectorSpace)(vectorSpace) (_▫_)
-  module BilinearOperator(bilinearOper : BilinearOperator) where
-    -- TODO: open BilinearMap
-    -- TODO: Move the proof for distributivity from preserving
-    [+ᵥ]-distributivityₗ : Distributivityₗ(_▫_)(_+ᵥ_)
-    Distributivityₗ.proof [+ᵥ]-distributivityₗ {x}{y}{z} =
-      x ▫ (y +ᵥ z)       🝖[ _≡_ ]-[ preserving₂(x ▫_)(_+ᵥ_)(_+ᵥ_) ⦃ LinearMap.preserves-[+ᵥ] (BilinearMap.linearMap₂ bilinearOper) ⦄ ]
-      (x ▫ y) +ᵥ (x ▫ z) 🝖-end
-
-    [+ᵥ]-distributivityᵣ : Distributivityᵣ(_▫_)(_+ᵥ_)
-    Distributivityᵣ.proof [+ᵥ]-distributivityᵣ {x}{y}{z} =
-      (x +ᵥ y) ▫ z       🝖[ _≡_ ]-[ preserving₂(_▫ z)(_+ᵥ_)(_+ᵥ_) ⦃ LinearMap.preserves-[+ᵥ] (BilinearMap.linearMap₁ bilinearOper) ⦄ ]
-      (x ▫ z) +ᵥ (y ▫ z) 🝖-end

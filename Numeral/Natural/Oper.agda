@@ -48,15 +48,6 @@ x    −₀ 𝟎    = x
 𝐒(x) −₀ 𝐒(y) = x −₀ y
 {-# BUILTIN NATMINUS _−₀_ #-}
 
--- Closed total ceiled division (rounding up)
-{-# TERMINATING #-}
-_⌈/₀⌉_ : ℕ → ℕ → ℕ
-𝟎 ⌈/₀⌉ y = 𝟎
-{-# CATCHALL #-}
-x ⌈/₀⌉ 𝟎 = 𝟎
-{-# CATCHALL #-}
-x ⌈/₀⌉ y = 𝐒((x −₀ y) ⌈/₀⌉ y)
-
 -- Hyperoperation: (a ↑[n]↑ b) where (n=0)⇒(_ ↦ 𝐒) , (n=1)⇒(+) , (n=2)⇒(⋅) , (n=3)⇒(^)
 _↑[_]↑_ : ℕ → ℕ → ℕ → ℕ
 _ ↑[ 0          ]↑ b = 𝐒(b)

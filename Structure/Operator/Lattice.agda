@@ -13,6 +13,7 @@ open import Logic.Predicate
 open import Structure.Function.Domain using (Involution ; involution)
 open import Structure.Function.Multi
 open import Structure.Function
+import      Structure.Operator.Lattice.OrderRelation
 open import Structure.Operator.Monoid
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
@@ -31,7 +32,7 @@ record Semilattice (_▫_ : L → L → L) : Stmt{ℓ Lvl.⊔ ℓₑ} where
     ⦃ idempotent ⦄   : Idempotence(_▫_)
 
   order : L → L → Stmt
-  order x y = (x ▫ y ≡ y)
+  order = Structure.Operator.Lattice.OrderRelation.order(L)(_▫_)
 
   partialOrder : Weak.PartialOrder(order)
   BinaryRelator.substitution (Weak.PartialOrder.relator partialOrder) {x₁}{y₁}{x₂}{y₂} xy1 xy2 p =

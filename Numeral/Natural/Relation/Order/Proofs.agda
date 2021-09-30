@@ -11,9 +11,11 @@ open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Induction
+open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Order
 open import Relator.Equals
 open import Relator.Equals.Proofs
+import      Relator.Ordering.Proofs
 open import Structure.Relator
 import      Structure.Relator.Names as Names
 open import Structure.Function
@@ -342,33 +344,44 @@ instance
   [≥][≡]-subtransitivityᵣ = subrelation-transitivity-to-subtransitivityᵣ
 
 instance
-  [<][≤]-subtransitivityₗ : Subtransitivityₗ(_≤_)(_<_)
-  [<][≤]-subtransitivityₗ = subrelation-transitivity-to-subtransitivityₗ
+  [≤][<]-subtransitivityₗ : Subtransitivityₗ(_≤_)(_<_)
+  [≤][<]-subtransitivityₗ = subrelation-transitivity-to-subtransitivityₗ
 
 instance
-  [<][≤]-subtransitivityᵣ : Subtransitivityᵣ(_≤_)(_<_)
-  [<][≤]-subtransitivityᵣ = subrelation-transitivity-to-subtransitivityᵣ
+  [≤][<]-subtransitivityᵣ : Subtransitivityᵣ(_≤_)(_<_)
+  [≤][<]-subtransitivityᵣ = subrelation-transitivity-to-subtransitivityᵣ
 
 instance
-  [>][≥]-subtransitivityₗ : Subtransitivityₗ(_≥_)(_>_)
-  [>][≥]-subtransitivityₗ = subrelation-transitivity-to-subtransitivityₗ
+  [≥][>]-subtransitivityₗ : Subtransitivityₗ(_≥_)(_>_)
+  [≥][>]-subtransitivityₗ = subrelation-transitivity-to-subtransitivityₗ
 
 instance
-  [>][≥]-subtransitivityᵣ : Subtransitivityᵣ(_≥_)(_>_)
-  [>][≥]-subtransitivityᵣ = subrelation-transitivity-to-subtransitivityᵣ
+  [≥][>]-subtransitivityᵣ : Subtransitivityᵣ(_≥_)(_>_)
+  [≥][>]-subtransitivityᵣ = subrelation-transitivity-to-subtransitivityᵣ
 
 instance
   [>][≡]-subtransitivityₗ : Subtransitivityₗ(_>_)(_≡_)
-  Subtransitivityₗ.proof [>][≡]-subtransitivityₗ = substitute₂ₗ(_>_) ∘ symmetry(_≡_)
+  [>][≡]-subtransitivityₗ = intro(substitute₂ₗ(_>_) ∘ symmetry(_≡_))
 
 instance
   [>][≡]-subtransitivityᵣ : Subtransitivityᵣ(_>_)(_≡_)
-  Subtransitivityᵣ.proof [>][≡]-subtransitivityᵣ = swap(substitute₂ᵣ(_>_))
+  [>][≡]-subtransitivityᵣ = intro(swap(substitute₂ᵣ(_>_)))
 
 instance
   [<][≡]-subtransitivityₗ : Subtransitivityₗ(_<_)(_≡_)
-  Subtransitivityₗ.proof [<][≡]-subtransitivityₗ = substitute₂ₗ(_<_) ∘ symmetry(_≡_)
+  [<][≡]-subtransitivityₗ = intro(substitute₂ₗ(_<_) ∘ symmetry(_≡_))
 
 instance
   [<][≡]-subtransitivityᵣ : Subtransitivityᵣ(_<_)(_≡_)
-  Subtransitivityᵣ.proof [<][≡]-subtransitivityᵣ = swap(substitute₂ᵣ(_<_))
+  [<][≡]-subtransitivityᵣ = intro(swap(substitute₂ᵣ(_<_)))
+
+instance
+  [<][≤]-subtransitivityₗ : Subtransitivityₗ(_<_)(_≤_)
+  [<][≤]-subtransitivityₗ = intro((_🝖_) ∘ succ)
+
+instance
+  [<][≤]-subtransitivityᵣ : Subtransitivityᵣ(_<_)(_≤_)
+  [<][≤]-subtransitivityᵣ = intro(_🝖_)
+
+[≤]-to-positive : ∀{a b} → (a ≤ b) → (Positive(a) → Positive(b))
+[≤]-to-positive {𝐒 a} {𝐒 b} _ <> = <>

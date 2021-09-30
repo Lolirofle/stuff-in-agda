@@ -114,7 +114,7 @@ Gcd-unique p q = antisymmetry(_∣_)(_≡_)
 
 Gcd-base : (a ∈ Gcd(a)(𝟎))
 Gcd-base = Gcd.intro₂
-  divides-reflexivity
+  (reflexivity(_∣_))
   Div𝟎
   const
 

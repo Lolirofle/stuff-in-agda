@@ -29,6 +29,7 @@ open import Structure.Operator
 open import Structure.Operator.Proofs.Util
 open import Structure.Operator.Properties
 open import Structure.Relator
+open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type
@@ -180,14 +181,12 @@ instance
       {expr ↦ (1 ∣ expr)}
       (Div𝐒([1]-divides{n}))
 
--- TODO: Rename these reflexivity proofs
-instance
-  divides-reflexivity : ∀{n} → (n ∣ n)
-  divides-reflexivity = Div𝐒(Div𝟎)
+[∣][1]-minimal : Weak.Properties.LE.Minimum(_∣_)(𝟏)
+[∣][1]-minimal = Weak.Properties.intro [1]-divides
 
 instance
-  divides-reflexivity-instance : Reflexivity(_∣_)
-  divides-reflexivity-instance = intro divides-reflexivity
+  divides-reflexivity : Reflexivity(_∣_)
+  divides-reflexivity = intro(Div𝐒 Div𝟎)
 
 instance
   [0]-divides-[0] : (0 ∣ 0)
@@ -218,9 +217,9 @@ divides-with-[⋅] {a}{b}{c} = [∨]-elim (l{a}{b}{c}) (r{a}{b}{c}) where
   r : ∀{a b c} → (a ∣ c) → (a ∣ (b ⋅ c))
   r {a}{b}{c} ac = [≡]-substitutionᵣ (commutativity(_⋅_) {c}{b}) {a ∣_} (l {a}{c}{b} ac)
 
-divides-upper-limit : ∀{a b} → (a ∣ 𝐒(b)) → (a ≤ 𝐒(b))
-divides-upper-limit {𝟎}   {_} (proof) = [⊥]-elim ([0]-divides-not (proof))
-divides-upper-limit {𝐒(a)}{b} (proof) = ([↔]-to-[→] [≤]-equivalence) (existence2) where
+divides-upper-limit : ∀{a b} ⦃ pos : Positive(b) ⦄ → (a ∣ b) → (a ≤ b)
+divides-upper-limit {𝟎}   {𝐒 _}  proof = [⊥]-elim ([0]-divides-not proof)
+divides-upper-limit {𝐒(a)}{𝐒(b)} proof = ([↔]-to-[→] [≤]-equivalence) (existence2) where
   existence1 : ∃(n ↦ 𝐒(a) + (𝐒(a) ⋅ n) ≡ 𝐒(b))
   existence1 = divides-[⋅]-existence₊(proof)
 
@@ -228,10 +227,10 @@ divides-upper-limit {𝐒(a)}{b} (proof) = ([↔]-to-[→] [≤]-equivalence) (e
   existence2 = [∃]-intro(𝐒(a) ⋅ [∃]-witness(existence1)) ⦃ [∃]-proof(existence1) ⦄
 
 divides-not-lower-limit : ∀{a b} → (a > 𝐒(b)) → (a ∤ 𝐒(b))
-divides-not-lower-limit {a}{b} = (contrapositiveᵣ (divides-upper-limit {a}{b})) ∘ [>]-to-[≰]
+divides-not-lower-limit {a}{b} = (contrapositiveᵣ (divides-upper-limit {a}{𝐒 b})) ∘ [>]-to-[≰]
 
 Div𝐏 : ∀{x y : ℕ} → (y ∣ (y + x)) → (y ∣ x)
-Div𝐏 {x}{y} proof = [↔]-to-[→] (divides-without-[+] {y}{y}{x} proof) (divides-reflexivity)
+Div𝐏 {x}{y} proof = [↔]-to-[→] (divides-without-[+] {y}{y}{x} proof) (reflexivity(_∣_))
 
 Div𝐏-monus : ∀{x y : ℕ} → (y ∣ x) → (y ∣ (x −₀ y))
 Div𝐏-monus Div𝟎 = Div𝟎
@@ -266,11 +265,11 @@ divides-without-[⋅]ᵣ-both {x}{y}{z} p
 divides-without-[⋅]ₗ-both : ∀{x y z} → (𝐒(z) ⋅ x ∣ 𝐒(z) ⋅ y) → (x ∣ y)
 divides-without-[⋅]ₗ-both {x}{y}{z} p = divides-without-[⋅]ᵣ-both {x}{y}{z} (substitute₂(_∣_) (commutativity(_⋅_) {𝐒(z)}{x}) (commutativity(_⋅_) {𝐒(z)}{y}) p)
 
-divides-without-[⋅]ᵣ-both' : ∀{x y z} → (z > 0) → (x ⋅ z ∣ y ⋅ z) → (x ∣ y)
-divides-without-[⋅]ᵣ-both' {x}{y}{𝐒(z)} _ = divides-without-[⋅]ᵣ-both {x}{y}{z}
+divides-without-[⋅]ᵣ-both' : ∀{x y z} ⦃ pos : Positive(z) ⦄ → (x ⋅ z ∣ y ⋅ z) → (x ∣ y)
+divides-without-[⋅]ᵣ-both' {x}{y}{𝐒(z)} = divides-without-[⋅]ᵣ-both {x}{y}{z}
 
-divides-without-[⋅]ₗ-both' : ∀{x y z} → (z > 0) → (z ⋅ x ∣ z ⋅ y) → (x ∣ y)
-divides-without-[⋅]ₗ-both' {x}{y}{𝐒(z)} _ = divides-without-[⋅]ₗ-both {x}{y}{z}
+divides-without-[⋅]ₗ-both' : ∀{x y z} ⦃ pos : Positive(z) ⦄ → (z ⋅ x ∣ z ⋅ y) → (x ∣ y)
+divides-without-[⋅]ₗ-both' {x}{y}{𝐒(z)} = divides-without-[⋅]ₗ-both {x}{y}{z}
 
 divides-factorial : ∀{n x} → (𝐒(x) ≤ n) → (𝐒(x) ∣ (n !))
 divides-factorial {.(𝐒 y)}{.x} (succ {x}{y} xy) with [≥]-or-[<] {x}{y}
@@ -283,6 +282,10 @@ instance
   Antisymmetry.proof divides-antisymmetry {𝟎} {𝐒 b}   ab ba with () ← [0]-divides-not ab
   Antisymmetry.proof divides-antisymmetry {𝐒 a} {𝟎}   ab ba with () ← [0]-divides-not ba
   Antisymmetry.proof divides-antisymmetry {𝐒 a} {𝐒 b} ab ba = antisymmetry(_≤_)(_≡_) (divides-upper-limit ab) (divides-upper-limit ba)
+
+instance
+  divides-weakPartialOrder : Weak.PartialOrder(_∣_)
+  divides-weakPartialOrder = record{}
 
 divides-quotient-positive : ∀{d n}{dn : (d ∣ 𝐒(n))} → (divides-quotient dn ≥ 1)
 divides-quotient-positive {𝟎}   {n}        {dn = dn}      with () ← [0]-divides-not dn
@@ -297,5 +300,9 @@ divides-of-[⋅]ₗ {𝟎}   {𝟎}   {c} pos abc = [∧]-intro abc abc
 divides-of-[⋅]ₗ {𝟎}   {𝐒 b} {c} pos abc with () ← [↔]-to-[←] pos <>
 divides-of-[⋅]ₗ {𝐒 a} {𝟎}   {c} pos abc with () ← [↔]-to-[→] pos <>
 divides-of-[⋅]ₗ {𝐒 a} {𝐒 b} {c} pos abc = [∧]-intro
-  (divides-without-[⋅]ᵣ-both'{z = 𝐒 b} (succ _≤_.min) (divides-with-[⋅] {c = 𝐒(b)} ([∨]-introₗ abc)))
-  (divides-without-[⋅]ₗ-both'{z = 𝐒 a} (succ _≤_.min) (divides-with-[⋅] {b = 𝐒(a)} ([∨]-introᵣ abc)))
+  (divides-without-[⋅]ᵣ-both'{z = 𝐒 b} (divides-with-[⋅] {c = 𝐒(b)} ([∨]-introₗ abc)))
+  (divides-without-[⋅]ₗ-both'{z = 𝐒 a} (divides-with-[⋅] {b = 𝐒(a)} ([∨]-introᵣ abc)))
+
+divides-positive : ∀{a b} → (a ∣ b) → (Positive(a) ← Positive(b))
+divides-positive {𝟎}   {𝐒 b} (Div𝐒 ab) <> with () ← [0]-divides-not ab
+divides-positive {𝐒 a} {𝐒 b} ab        <> = <>

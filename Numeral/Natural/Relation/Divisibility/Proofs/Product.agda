@@ -8,17 +8,17 @@ open import Logic.Propositional
 import      Lvl
 open import Numeral.Integer
 import      Numeral.Integer.Oper as ℤ
-open import Numeral.Integer.Proofs
+open import Numeral.Integer.Oper.Proofs
 import      Numeral.Integer.Relation.Divisibility as ℤ
 import      Numeral.Integer.Relation.Divisibility.Proofs as ℤ
 open import Numeral.Natural
 open import Numeral.Natural.Coprime
 open import Numeral.Natural.Coprime.Proofs
 open import Numeral.Natural.Function.GreatestCommonDivisor.Extended
-open import Numeral.Natural.Relation.Divisibility.Proofs
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Prime
 open import Numeral.Natural.Relation.Divisibility
+open import Numeral.Natural.Relation.Divisibility.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Function
@@ -28,9 +28,11 @@ open import Structure.Operator.Proofs.Util
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties
 open import Structure.Relator
+open import Syntax.Implication
 open import Syntax.Transitivity
+open import Syntax.Type
 
-private variable n x y d p : ℕ
+private variable n x y d p x₁ x₂ y₁ y₂ : ℕ
 
 -- When d and x does not have any common divisors, thus no common prime divisors, it means that all common prime divisors lies in d and y.
 -- Also called: Generalized Euclid's lemma.
@@ -55,6 +57,9 @@ coprime-divides-of-[⋅] {d}{x}{y} dxy coprim
       (ℤ.divides-with-[⋅] {+ₙ d}{(+ₙ d) ℤ.⋅ a} ([∨]-introₗ (ℤ.divides-with-[⋅] {+ₙ d}{+ₙ d} ([∨]-introₗ (reflexivity(_∣_))))))
       (substitute₂ᵣ(ℤ._∣_) {+ₙ d} r-eq (ℤ.divides-with-[⋅] {+ₙ d}{+ₙ(x ⋅ y)} ([∨]-introₗ dxy)))
 
+coprime-divides-is-unit : (d ∣ x) → Coprime(d)(x) → (d ≡ 1)
+coprime-divides-is-unit = [1]-only-divides-[1] ∘₂ coprime-divides-of-[⋅]
+
 -- A prime number dividing a product means that the prime divides one of its factors.
 -- Obvious intuitively because prime numbers are the "smallest units" in the context of divisibility.
 -- Also called: Euclid's lemma.
@@ -64,7 +69,7 @@ prime-divides-of-[⋅] {p}{x}{y} prim pxy with Prime-to-div-or-coprime {y = x} p
 ... | [∨]-introᵣ coprim = [∨]-introᵣ (coprime-divides-of-[⋅] pxy coprim)
 
 Coprime-of-[⋅] : ∀{x y z} → Coprime(x)(y) → Coprime(x)(z) → Coprime(x)(y ⋅ z)
-Coprime-of-[⋅] {x}{y}{z} xy (intro xz) = intro (\{n} → nx ↦ nyz ↦ xz nx (coprime-divides-of-[⋅] {n}{y}{z} nyz (divides-to-converse-coprime nx xy)))
+Coprime-of-[⋅] {x}{y}{z} xy (intro xz) = intro (\{n} → nx ↦ nyz ↦ xz nx (coprime-divides-of-[⋅] {n}{y}{z} nyz (divides-to-converse-coprimeₗ nx xy)))
 
 Coprime-of-[^]ₗ : Coprime(x)(y) ← Coprime(x)(y ^ 𝐒(n))
 Coprime-of-[^]ₗ {x}{y}{ℕ.𝟎}   p         = p

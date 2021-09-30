@@ -5,6 +5,7 @@ open import Functional
 open import Data.Boolean
 open import Data.Boolean.Stmt
 open import Data.List
+open import Data.List.Equiv
 open import Data.List.Functions hiding (skip)
 open import Data.List.Relation.Membership
 open import Data.List.Relation.Quantification hiding (use ; skip)
@@ -15,8 +16,9 @@ open import Logic.Predicate
 open import Logic.Propositional
 open import Numeral.Natural
 open import Structure.Function
-open import Structure.Relator.Properties
 open import Structure.Relator
+open import Structure.Relator.Proofs
+open import Structure.Relator.Properties
 open import Structure.Setoid renaming (_≡_ to _≡ₛ_)
 open import Syntax.Transitivity
 open import Type
@@ -74,48 +76,138 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   [∈]-postpend{l = ∅}     = use (reflexivity(_≡ₛ_))
   [∈]-postpend{l = _ ⊰ l} = skip([∈]-postpend{l = l})
 
-  {-
-  open import Data.Boolean.Proofs
-  [∈]-filter : ∀{f} ⦃ func : Function(f) ⦄ → (a ∈ filter f(l)) ↔ ((a ∈ l) ∧ IsTrue(f(a)))
+  open import Data
+  open import Data.Boolean.Stmt.Proofs
+  open import Lang.Inspect
+  open import Relator.Equals using() renaming (_≡_ to _≡ₑ_)
+  open import Relator.Equals.Proofs.Equivalence
+  [∈]-filter : ∀{f} ⦃ func : Function ⦃ equiv-B = [≡]-equiv ⦄ (f) ⦄ → (a ∈ filter f(l)) ↔ ((a ∈ l) ∧ IsTrue(f(a)))
   [∈]-filter{l = ll}{f = f} = [↔]-intro (Tuple.uncurry L) (x ↦ [∧]-intro (R₁ x) (R₂{l = ll} x)) where
-    postulate L : (a ∈ l) → IsTrue(f(a)) → (a ∈ filter f(l))
-    {-L {a = a}{l = x ⊰ ∅}     (• p) t with _ ← substitute₁ ⦃ {![≡]-equiv {T = Bool}!} ⦄ (IsTrue) ⦃ {!!} ⦄ p t | 𝑇 ← f(x) = {!!}
-    L {a = a}{l = x ⊰ y ⊰ l} (• p) _ = {!!}
-    L {a = a}{l = x ⊰ y ⊰ l} (⊰ p) _ = {!!}-}
+    instance _ = [≡]-equiv {T = Bool}
 
-    postulate R₁ : (a ∈ filter f(l)) → (a ∈ l)
-    -- R₁ {l = x ⊰ ∅} p = {!p!}
-    -- R₁ {l = x ⊰ x₁ ⊰ l} p = {!!}
+    L : (a ∈ l) → IsTrue(f(a)) → (a ∈ filter f(l))
+    L{a}{x ⊰ l} p fa with f(x) | inspect f(x)
+    L{a}{x ⊰ l} (• p) fa | 𝑇 | _        = • p
+    L{a}{x ⊰ l} (⊰ p) fa | 𝑇 | _        = ⊰ L {a} {l} p fa
+    L{a}{x ⊰ l} (• p) fa | 𝐹 | intro fx with () ← disjointness (substitute₁(IsTrue) ⦃ [≡]-unaryRelator ⦄ (congruence₁(f) p) fa) ([↔]-to-[←] IsFalse.is-𝐹 fx)
+    L{a}{x ⊰ l} (⊰ p) fa | 𝐹 | intro _  = L {a} {l} p fa
+
+    R₁ : (a ∈ filter f(l)) → (a ∈ l)
+    R₁{l = x ⊰ l} p with f(x)
+    R₁{l = x ⊰ l} (• p) | 𝑇 = • p
+    R₁{l = x ⊰ l} (⊰ p) | 𝑇 = ⊰ R₁{l = l} p
+    R₁{l = x ⊰ l} p     | 𝐹 = ⊰ R₁{l = l} p
     
-    postulate R₂ : (a ∈ filter f(l)) → IsTrue(f(a))
-  -}
-
-{-
-module _ ⦃ equiv : Equiv{ℓₑ₁}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑ₂}(List(T)) ⦄ where
-  private variable l l₁ l₂ : List(T)
-  private variable ll : List(List(T))
-  private variable a b c x : T
-
-  [∈]-concat : (x ∈ concat ll) ↔ ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
-  [∈]-concat = [↔]-intro L R where
-    L : (x ∈ concat ll) ← ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
-    L {ll = ll0 ⊰ ll} ([∃]-intro l ⦃ [∧]-intro lll xl ⦄) = {!L{ll = ll}!} -- [↔]-to-[←] [∈][++] ([∨]-introₗ lll)
-
-    R : (x ∈ concat ll) → ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
--}
+    R₂ : (a ∈ filter f(l)) → IsTrue(f(a))
+    R₂{a}{x ⊰ l} p with f(a) | inspect f(a)
+    R₂{a}{x ⊰ l} p     | 𝑇 | _ = <>
+    R₂{a}{x ⊰ l} p     | 𝐹 | _ with f(x) | inspect f(x)
+    R₂{a}{x ⊰ l} (• p) | 𝐹 | intro fa | 𝑇 | intro fx with () ← symmetry(_≡ₑ_) fa 🝖 congruence₁(f) p 🝖 fx
+    R₂{a}{x ⊰ l} (⊰ p) | 𝐹 | intro fa | 𝑇 | intro fx with () ← disjointness ([↔]-to-[←] IsFalse.is-𝐹 fa) (R₂{a}{l} p)
+    R₂{a}{x ⊰ l} p     | 𝐹 | intro fa | 𝐹 | intro fx with () ← disjointness ([↔]-to-[←] IsFalse.is-𝐹 fa) (R₂{a}{l} p)
 
 module _ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
   private variable f : A → B
   private variable l l₁ l₂ : List(T)
   private variable a b c x : T
 
-  [∈]-map : ⦃ func-f : Function(f) ⦄ → (a ∈ l) → (f(a) ∈ (map f(l)))
-  [∈]-map {f = f} (use p)  = use (congruence₁(f) p)
-  [∈]-map         (skip p) = skip([∈]-map p)
+  [∈]-mapᵣ : ⦃ func-f : Function(f) ⦄ → (a ∈ l) → (f(a) ∈ (map f(l)))
+  [∈]-mapᵣ {f = f} (use p)  = use (congruence₁(f) p)
+  [∈]-mapᵣ         (skip p) = skip([∈]-mapᵣ p)
 
   [∈]-mapₗ : ⦃ func-f : Function(f) ⦄ → ∃(a ↦ (b ≡ₛ f(a)) ∧ (a ∈ l)) ← (b ∈ map f(l))
   [∈]-mapₗ {l = a ⊰ l} (• p) = [∃]-intro a ⦃ [∧]-intro p (• reflexivity(_≡ₛ_)) ⦄
   [∈]-mapₗ {l = a ⊰ l} (⊰ p) = [∃]-map-proof ([∧]-map id (⊰_)) ([∈]-mapₗ p)
+
+  [∈]-map : ⦃ func-f : Function(f) ⦄ → ∃(a ↦ (b ≡ₛ f(a)) ∧ (a ∈ l)) ↔ (b ∈ map f(l))
+  [∈]-map {f = f}{l = l} = [↔]-intro [∈]-mapₗ \([∃]-intro a ⦃ [∧]-intro eq al ⦄) → substitute₁(_∈ map f(l)) (symmetry(_≡ₛ_) eq) ([∈]-mapᵣ al)
+
+module _ ⦃ equiv : Equiv{ℓₑ₁}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑ₂}(List(T)) ⦄ ⦃ ext : Extensionality(equiv-List) ⦄ where
+  private variable l l₁ l₂ : List(T)
+  private variable ll : List(List(T))
+  private variable a b c x : T
+  private variable f : A → B
+
+  instance
+    [∈]-relatorᵣ : UnaryRelator(x ∈_)
+    [∈]-relatorᵣ {x} = intro p where
+      p : Names.Substitution₁(x ∈_)
+      p {x₁ ⊰ l₁} {∅}       eq mem with () ← [∅][⊰]-unequal (symmetry(Equiv._≡_ equiv-List) eq)
+      p {x₁ ⊰ l₁} {x₂ ⊰ l₂} eq (• mem) = • (mem 🝖 [⊰]-generalized-cancellationᵣ eq)
+      p {x₁ ⊰ l₁} {x₂ ⊰ l₂} eq (⊰ mem) = ⊰ p{l₁}{l₂} ([⊰]-generalized-cancellationₗ eq) mem
+
+  instance
+    [∈]-relator : BinaryRelator(_∈_)
+    [∈]-relator = binaryRelator-from-unaryRelator ⦃ relₗ = [∈]-relatorₗ ⦄ ⦃ relᵣ = [∈]-relatorᵣ ⦄
+
+  [∈]-concat : (x ∈ concat ll) ↔ ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
+  [∈]-concat = [↔]-intro L R where
+    L : (x ∈ concat ll) ← ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
+    L {x}{ll = ll0 ⊰ ll} ([∃]-intro l ⦃ [∧]-intro (• lll) xl ⦄) = [↔]-to-[←] ([∈][++] {a = x}{ll0}{concat ll}) ([∨]-introₗ (substitute₂ᵣ(_∈_) lll xl))
+    L {x}{ll = ll0 ⊰ ll} ([∃]-intro l ⦃ [∧]-intro (⊰ lll) xl ⦄) = [↔]-to-[←] ([∈][++] {a = x}{ll0}{concat ll}) ([∨]-introᵣ (L{ll = ll} ([∃]-intro l ⦃ [∧]-intro lll xl ⦄)))
+
+    R : (x ∈ concat ll) → ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
+    R {x} {l ⊰ ll} p with [↔]-to-[→] ([∈][++] {a = x}{l}{concat ll}) p
+    ... | [∨]-introₗ xl = [∃]-intro l ⦃ [∧]-intro (• reflexivity(_≡ₛ_)) xl ⦄
+    ... | [∨]-introᵣ xl
+      with [∃]-intro l2 ⦃ [∧]-intro l₁ll xl₁ ⦄ ← R{x}{ll} xl
+      = [∃]-intro l2 ⦃ [∧]-intro (⊰ l₁ll) xl₁ ⦄
+
+  open import Data.List.Equiv.Id
+  open import Logic.Propositional.Theorems
+  [∈]-concatMap : ⦃ func : Function(f) ⦄ → (x ∈ concatMap f(l)) ↔ ∃(y ↦ (y ∈ l) ∧ (x ∈ f(y)))
+  [∈]-concatMap{f}{x}{l}
+    rewrite concatMap-concat-map{f = f}{l}
+    = [↔]-transitivity
+      ([∈]-concat {x}{map f(l)})
+      ([↔]-intro
+        (\([∃]-intro y ⦃ [∧]-intro p q ⦄) → [∃]-intro (f(y)) ⦃ [∧]-intro ([∈]-mapᵣ p) q ⦄)
+        (\([∃]-intro y ⦃ [∧]-intro p q ⦄) →
+          let ([∃]-intro z ⦃ [∧]-intro r s ⦄) = [∈]-mapₗ {f = f}{l = l} p
+          in [∃]-intro z ⦃ [∧]-intro s (substitute₁(x ∈_) r q) ⦄
+        )
+      )
+
+module _ where
+  open import Data.List.Relation.Permutation
+  open import Data.List.Relation.Permutation.Proofs  
+  open import Relator.Equals.Proofs.Equiv
+
+  private variable l : List(T)
+  private variable x : T
+
+  [∈]-relatorᵣ-by-permutation : UnaryRelator ⦃ permutes-equiv ⦄ (x ∈_)
+  [∈]-relatorᵣ-by-permutation {x = x} = intro p where
+      p : Names.Substitution₁ ⦃ permutes-equiv ⦄ (x ∈_)
+      p (prepend perm)      (• xl)     = • xl
+      p (prepend perm)      (⊰ xl)     = ⊰ p perm xl
+      p _permutes_.swap     (• xl)     = ⊰ (• xl)
+      p _permutes_.swap     (⊰ (• xl)) = • xl
+      p _permutes_.swap     (⊰ (⊰ xl)) = ⊰ (⊰ xl)
+      p (trans perm₁ perm₂) xl         = p perm₂ (p perm₁ xl)
+
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  open import Data.List.Relation.Sublist
+  open import Data.List.Relation.Sublist.Proofs
+
+  private variable l l₁ l₂ : List(T)
+  private variable ll : List(List(T))
+  private variable a b c x : T
+
+  [⊑]-to-[∈] : (l₁ ⊑ l₂) → (∀{x} → (x ∈ l₁) → (x ∈ l₂))
+  [⊑]-to-[∈] (_⊑_.use eq sub) (• xin) = • (xin 🝖 eq)
+  [⊑]-to-[∈] (_⊑_.use eq sub) (⊰ xin) = ⊰ [⊑]-to-[∈] sub xin
+  [⊑]-to-[∈] (_⊑_.skip sub)   xin     = ⊰ [⊑]-to-[∈] sub xin
+
+  AllElements-[∈] : ∀{P : _ → Type{ℓ}} ⦃ rel : UnaryRelator(P) ⦄ → AllElements P(l) ↔ (∀{x} → (x ∈ l) → P(x))
+  AllElements-[∈] {P = P} = [↔]-intro L R where
+    L : AllElements P(l) ← (∀{x} → (x ∈ l) → P(x))
+    L{∅}     p = ∅
+    L{x ⊰ l} p = p(• reflexivity(_≡ₛ_)) ⊰ L{l} (p ∘ ⊰_)
+
+    R : AllElements P(l) → (∀{x} → (x ∈ l) → P(x))
+    R (px ⊰ pl) (• elem) = substitute₁ₗ(P) elem px
+    R (px ⊰ pl) (⊰ elem) = R pl elem
 
 {- TODO: Stuff below is supposed to be moved to Structure.Sets.Proofs
 

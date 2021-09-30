@@ -19,8 +19,8 @@ module _ {ℓₛ} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : T → T → T} (M : 
     constructor intro
     open Monoid(M) using (id)
     field
-      ⦃ contains-identity ⦄ : (id ∈ S)
-      ⦃ operator-closure ⦄  : ∀{x y} → ⦃ x ∈ S ⦄ → ⦃ y ∈ S ⦄ → ((x ▫ y) ∈ S)
+      identity-closure : (id ∈ S)
+      operator-closure : ∀{x y} → (x ∈ S) → (y ∈ S) → ((x ▫ y) ∈ S)
 
     Object = ∃(S)
 
@@ -29,7 +29,7 @@ module _ {ℓₛ} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : T → T → T} (M : 
 
     instance
       monoid : Monoid(_▫ₛ_)
-      BinaryOperator.congruence                (Monoid.binary-operator    monoid)   = congruence₂(_▫_)
+      BinaryOperator.congruence                (Monoid.binaryOperator    monoid)   = congruence₂(_▫_)
       Associativity.proof                      (Monoid.associativity      monoid)   = associativity(_▫_)
       ∃.witness                                (Monoid.identity-existence monoid)   = [∃]-intro id
       Identityₗ.proof (Identity.left  (∃.proof (Monoid.identity-existence monoid))) = identityₗ(_▫_)(id)

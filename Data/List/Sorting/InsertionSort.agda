@@ -14,6 +14,7 @@ insertion-sort = List.foldᵣ insert ∅
 module Proofs where
   open import Data.Boolean.Stmt
   open import Data.List.Relation.Permutation
+  open import Data.List.Relation.Permutation.Proofs
   open import Data.List.Sorting(_≤?_)
   open import Data.List.Sorting.Proofs(_≤?_)
   open import Functional using (_∘₂_)

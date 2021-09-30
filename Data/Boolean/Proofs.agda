@@ -7,6 +7,7 @@ import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Logic using (_⊼_ ; _⊽_ ; _⊕_)
 open        Data.Boolean.Operators.Programming
 open import Data.Either as Either using (_‖_ ; Left ; Right)
+open import Function
 open import Functional
 open import Logic.IntroInstances
 open import Logic.Propositional as Logic using (_∨_ ; _∧_ ; ¬_ ; _↔_ ; [⊤]-intro ; [↔]-intro ; [⊥]-elim ; [↔]-to-[←] ; [↔]-to-[→])

@@ -28,60 +28,60 @@ open import Type
 -- TODO: Move stuff related to ℕ₊-to-ℕ
 
 instance
-  ℕ-ℕ₊-preserves-𝐒 : Preserving₁(ℕ₊-to-ℕ)(𝐒)(ℕ.𝐒)
+  ℕ-ℕ₊-preserves-𝐒 : Preserving₁(toℕ)(𝐒)(ℕ.𝐒)
   Preserving.proof ℕ-ℕ₊-preserves-𝐒 = p where
-    p : Names.Preserving₁(ℕ₊-to-ℕ)(𝐒)(ℕ.𝐒)
+    p : Names.Preserving₁(toℕ)(𝐒)(ℕ.𝐒)
     p {𝟏}   = [≡]-intro
     p {𝐒 x} = congruence₁(ℕ.𝐒) p
 
 instance
-  ℕ-ℕ₊-preserves-[+] : Preserving₂(ℕ₊-to-ℕ)(_+_)(ℕ._+_)
-  Preserving.proof ℕ-ℕ₊-preserves-[+] = p where
-    p : Names.Preserving₂(ℕ₊-to-ℕ)(_+_)(ℕ._+_)
+  ℕ-ℕ₊-preserves-[+] : Preserving₂(toℕ)(_+_)(ℕ._+_)
+  Preserving.proof ℕ-ℕ₊-preserves-[+] {x}{y} = p{x}{y} where
+    p : Names.Preserving₂(toℕ)(_+_)(ℕ._+_)
     p {x} {𝟏}   = [≡]-intro
-    p {x} {𝐒 y} = congruence₁(ℕ.𝐒) p
+    p {x} {𝐒 y} = congruence₁(ℕ.𝐒) (p{x}{y})
 
 instance
-  ℕ-ℕ₊-preserves-[⋅] : Preserving₂(ℕ₊-to-ℕ)(_⋅_)(ℕ._⋅_)
+  ℕ-ℕ₊-preserves-[⋅] : Preserving₂(toℕ)(_⋅_)(ℕ._⋅_)
   Preserving.proof ℕ-ℕ₊-preserves-[⋅] {x}{y} = p{x}{y} where
-    p : Names.Preserving₂(ℕ₊-to-ℕ)(_⋅_)(ℕ._⋅_)
+    p : Names.Preserving₂(toℕ)(_⋅_)(ℕ._⋅_)
     p {x} {𝟏}   = [≡]-intro
     p {x} {𝐒 y} =
-      ℕ₊-to-ℕ (x + (x ⋅ y))                         🝖[ _≡_ ]-[ preserving₂(ℕ₊-to-ℕ)(_+_)(ℕ._+_) ]
-      (ℕ₊-to-ℕ x) ℕ.+ (ℕ₊-to-ℕ (x ⋅ y))             🝖[ _≡_ ]-[ congruence₁((ℕ₊-to-ℕ x) ℕ.+_) (p{x}{y}) ]
-      (ℕ₊-to-ℕ x) ℕ.+ ((ℕ₊-to-ℕ x) ℕ.⋅ (ℕ₊-to-ℕ y)) 🝖[ _≡_ ]-end
+      toℕ (x + (x ⋅ y))                 🝖[ _≡_ ]-[ preserving₂(toℕ)(_+_)(ℕ._+_) {x}{x ⋅ y} ]
+      (toℕ x) ℕ.+ (toℕ (x ⋅ y))         🝖[ _≡_ ]-[ congruence₁((toℕ x) ℕ.+_) (p{x}{y}) ]
+      (toℕ x) ℕ.+ ((toℕ x) ℕ.⋅ (toℕ y)) 🝖[ _≡_ ]-end
 
 instance
-  𝐒-from-ℕ-preserves-𝐒 : Preserving₁(𝐒-from-ℕ)(ℕ.𝐒)(𝐒)
-  Preserving.proof 𝐒-from-ℕ-preserves-𝐒 = [≡]-intro
+  𝐒ₙ-preserves-𝐒 : Preserving₁(𝐒ₙ)(ℕ.𝐒)(𝐒)
+  Preserving.proof 𝐒ₙ-preserves-𝐒 = [≡]-intro
 
 instance
-  𝐒-from-ℕ-preserves-[+] : Preserving₂(𝐒-from-ℕ)(ℕ.𝐒 ∘₂ ℕ._+_)(_+_)
-  Preserving.proof 𝐒-from-ℕ-preserves-[+] = p where
-    p : Names.Preserving₂(𝐒-from-ℕ)(ℕ.𝐒 ∘₂ ℕ._+_)(_+_)
+  𝐒ₙ-preserves-[+] : Preserving₂(𝐒ₙ)(ℕ.𝐒 ∘₂ ℕ._+_)(_+_)
+  Preserving.proof 𝐒ₙ-preserves-[+] {x}{y} = p{x}{y} where
+    p : Names.Preserving₂(𝐒ₙ)(ℕ.𝐒 ∘₂ ℕ._+_)(_+_)
     p {x}{ℕ.𝟎}   = [≡]-intro
     p {x}{ℕ.𝐒 y} = congruence₁(𝐒) (p {x}{y})
 
 {-instance
-  𝐒-from-ℕ-preserves-[⋅] : Preserving₂(𝐒-from-ℕ)(ℕ.𝐒 ∘₂ ℕ._⋅_ )(_⋅_)
-  Preserving.proof 𝐒-from-ℕ-preserves-[⋅] = p where
-    p : Names.Preserving₂(𝐒-from-ℕ)(ℕ.𝐒 ∘₂ ℕ._⋅_ )(_⋅_)
+  𝐒ₙ-preserves-[⋅] : Preserving₂(𝐒ₙ)(ℕ.𝐒 ∘₂ ℕ._⋅_ )(_⋅_)
+  Preserving.proof 𝐒ₙ-preserves-[⋅] = p where
+    p : Names.Preserving₂(𝐒ₙ)(ℕ.𝐒 ∘₂ ℕ._⋅_ )(_⋅_)
     p {x}{ℕ.𝟎}   = {!!}
     p {x}{ℕ.𝐒 y} = {!!} 
 -}
-{-      𝐒-from-ℕ (ℕ.𝐒(x ℕ.+ (x ℕ.⋅ ℕ.𝐒(y))))         🝖[ _≡_ ]-[ preserving₂(𝐒-from-ℕ)(ℕ.𝐒 ∘₂ ℕ._+_)(_+_) ]
-      (𝐒-from-ℕ x) + (𝐒-from-ℕ (x ℕ.⋅ ℕ.𝐒(y)))     🝖[ _≡_ ]-[]
-      (𝐒-from-ℕ x) + (𝐒-from-ℕ (x ℕ.+ (x ℕ.⋅ y)))  🝖[ _≡_ ]-[ congruence₁((𝐒-from-ℕ x) +_) (p{x}{y}) ]
-      (𝐒-from-ℕ x) + ((𝐒-from-ℕ x) ⋅ (𝐒-from-ℕ y)) 🝖[ _≡_ ]-end
+{-      𝐒ₙ (ℕ.𝐒(x ℕ.+ (x ℕ.⋅ ℕ.𝐒(y))))         🝖[ _≡_ ]-[ preserving₂(𝐒ₙ)(ℕ.𝐒 ∘₂ ℕ._+_)(_+_) ]
+      (𝐒ₙ x) + (𝐒ₙ (x ℕ.⋅ ℕ.𝐒(y)))     🝖[ _≡_ ]-[]
+      (𝐒ₙ x) + (𝐒ₙ (x ℕ.+ (x ℕ.⋅ y)))  🝖[ _≡_ ]-[ congruence₁((𝐒ₙ x) +_) (p{x}{y}) ]
+      (𝐒ₙ x) + ((𝐒ₙ x) ⋅ (𝐒ₙ y)) 🝖[ _≡_ ]-end
 -}
 
 {-
 instance
-  ℕ₊-to-ℕ-injective : Injective(ℕ₊-to-ℕ)
-  Injective.proof ℕ₊-to-ℕ-injective {𝟏}   {𝟏}   p = [≡]-intro
-  Injective.proof ℕ₊-to-ℕ-injective {𝟏}   {𝐒 y} p = {!congruence₁(\x → ℕ-to-ℕ₊ x ⦃ ? ⦄) p!}
-  Injective.proof ℕ₊-to-ℕ-injective {𝐒 x} {𝟏}   p = {!preserving₁(ℕ₊-to-ℕ)(𝐒)(ℕ.𝐒) 🝖 p!}
-  Injective.proof ℕ₊-to-ℕ-injective {𝐒 x} {𝐒 y} p = {!!}
+  toℕ-injective : Injective(toℕ)
+  Injective.proof toℕ-injective {𝟏}   {𝟏}   p = [≡]-intro
+  Injective.proof toℕ-injective {𝟏}   {𝐒 y} p = {!congruence₁(\x → ℕ-to-ℕ₊ x ⦃ ? ⦄) p!}
+  Injective.proof toℕ-injective {𝐒 x} {𝟏}   p = {!preserving₁(toℕ)(𝐒)(ℕ.𝐒) 🝖 p!}
+  Injective.proof toℕ-injective {𝐒 x} {𝐒 y} p = {!!}
 -}
 
 {-
@@ -110,13 +110,10 @@ instance
 [1+]-𝐒 : ∀{x : ℕ₊} → (𝟏 + x ≡ 𝐒(x))
 [1+]-𝐒 {𝟏}   = [≡]-intro
 [1+]-𝐒 {𝐒 x} = congruence₁(𝐒) ([1+]-𝐒 {x})
-{-# REWRITE [1+]-𝐒 #-}
 
 [+]-step : ∀{x y : ℕ₊} → (𝐒(x) + y) ≡ (x + 𝐒(y))
 [+]-step {x} {𝟏}   = [≡]-intro
 [+]-step {x} {𝐒 y} = congruence₁(𝐒) ([+]-step {x} {y})
-{-# REWRITE [+]-step #-}
-
 
 [+]-commutativity-raw : Names.Commutativity(_+_)
 [+]-commutativity-raw {𝟏}   {𝟏}   = [≡]-intro
@@ -126,7 +123,7 @@ instance
 
 instance
   [+]-commutativity : Commutativity(_+_)
-  [+]-commutativity = intro [+]-commutativity-raw
+  [+]-commutativity = intro(\{x}{y} → [+]-commutativity-raw {x}{y})
 
 [+]-associativity-raw : Names.Associativity(_+_)
 [+]-associativity-raw {x} {y} {𝟏} = [≡]-intro
@@ -134,12 +131,11 @@ instance
 
 instance
   [+]-associativity : Associativity(_+_)
-  [+]-associativity = intro [+]-associativity-raw
+  [+]-associativity = intro(\{x}{y}{z} → [+]-associativity-raw {x}{y}{z})
 
 [⋅]-identityₗ-raw : Names.Identityₗ(_⋅_)(𝟏)
 [⋅]-identityₗ-raw {𝟏}   = [≡]-intro
 [⋅]-identityₗ-raw {𝐒 x} = congruence₁(𝐒) ([⋅]-identityₗ-raw {x}) -- commutativity(_+_) 🝖 congruence₁(𝐒) ([⋅]-identityₗ-raw {x})
-{-# REWRITE [⋅]-identityₗ-raw #-}
 
 [⋅]-identityᵣ-raw : Names.Identityᵣ(_⋅_)(𝟏)
 [⋅]-identityᵣ-raw = [≡]-intro
@@ -164,11 +160,11 @@ instance
   𝐒 x + (𝐒 x ⋅ y)     🝖-[ congruence₁(𝐒) (congruence₂ᵣ(_+_)(x) ([⋅]-commutativity-raw {𝐒 x} {y})) ]
   𝐒 x + (y ⋅ 𝐒 x)     🝖[ _≡_ ]-[]
   𝐒 x + (y ⋅ 𝐒 x)     🝖[ _≡_ ]-[]
-  𝐒 x + (y + (y ⋅ x)) 🝖-[ congruence₁(𝐒) (associativity(_+_)) ]-sym
+  𝐒 x + (y + (y ⋅ x)) 🝖-[ congruence₁(𝐒) (associativity(_+_) {x}{y}{y ⋅ x}) ]-sym
   (𝐒 x + y) + (y ⋅ x) 🝖[ _≡_ ]-[]
   𝐒(x + y) + (y ⋅ x)  🝖-[ congruence₁(𝐒) (congruence₂(_+_) ([+]-commutativity-raw {x}{y}) ([⋅]-commutativity-raw {y}{x})) ]
   𝐒(y + x) + (x ⋅ y)  🝖[ _≡_ ]-[]
-  (𝐒 y + x) + (x ⋅ y) 🝖-[ congruence₁(𝐒) (associativity(_+_)) ]
+  (𝐒 y + x) + (x ⋅ y) 🝖-[ congruence₁(𝐒) (associativity(_+_) {y}{x}{x ⋅ y}) ]
   𝐒 y + (x + (x ⋅ y)) 🝖[ _≡_ ]-[]
   𝐒 y + (x ⋅ 𝐒 y)     🝖-[ congruence₁(𝐒) (congruence₂ᵣ(_+_)(y) ([⋅]-commutativity-raw {𝐒 y} {x})) ]-sym
   𝐒 y + (𝐒 y ⋅ x)     🝖[ _≡_ ]-[]
@@ -207,12 +203,12 @@ instance
 
 instance
   ℕ₊-multiplicative-monoid : Monoid(_⋅_)
-  Monoid.binary-operator    ℕ₊-multiplicative-monoid = [≡]-binary-operator
+  Monoid.binaryOperator     ℕ₊-multiplicative-monoid = [≡]-binaryOperator
   Monoid.identity-existence ℕ₊-multiplicative-monoid = [∃]-intro(𝟏)
 
 [⋅]-with-[𝐒]ₗ : ∀{x y} → (𝐒(x) ⋅ y ≡ (x ⋅ y) + y)
 [⋅]-with-[𝐒]ₗ {x}{y} =
-  𝐒(x) ⋅ y          🝖[ _≡_ ]-[ congruence₁(_⋅ y) [1+]-𝐒 ]-sym
+  𝐒(x) ⋅ y          🝖[ _≡_ ]-[ congruence₁(_⋅ y) ([1+]-𝐒 {x}) ]-sym
   (x + 𝟏) ⋅ y       🝖[ _≡_ ]-[ [⋅][+]-distributivityᵣ-raw{x}{𝟏}{y} ]
   (x ⋅ y) + (𝟏 ⋅ y) 🝖[ _≡_ ]-[ congruence₁((x ⋅ y) +_) ([⋅]-identityₗ-raw {y}) ]
   (x ⋅ y) + y       🝖[ _≡_ ]-end

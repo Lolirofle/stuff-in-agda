@@ -36,13 +36,13 @@ open import Syntax.Implication
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓ ℓₗ ℓₑ : Lvl.Level
+private variable ℓ ℓₗ ℓₑ ℓₙ₀ : Lvl.Level
 private variable F : Type{ℓ}
 private variable _+_ _⋅_ : F → F → F
 private variable _≤_ : F → F → Stmt{ℓₗ}
 
 -- TODO: Generalize so that this does not neccessarily need a rng. See linearly ordered groups and partially ordered groups. See also ordered semigroups and monoids where the property is called "compatible".
-record Ordered ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) ⦃ rng : Rng(_+_)(_⋅_) ⦄ (_≤_ : F → F → Stmt{ℓₗ}) : Type{Lvl.of(F) Lvl.⊔ ℓₗ Lvl.⊔ ℓₑ} where
+record Ordered ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) ⦃ rng : Rng(_+_)(_⋅_){ℓₙ₀} ⦄ ⦃ comm : Commutativity(_+_) ⦄ (_≤_ : F → F → Stmt{ℓₗ}) : Type{Lvl.of(F) Lvl.⊔ ℓₗ Lvl.⊔ ℓₑ} where
   open From-[≤](_≤_) public
   open Rng(rng)
 
@@ -213,14 +213,14 @@ record Ordered ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) ⦃ 
 
     module _ ⦃ distinct-identities : NonZero(𝟏) ⦄ where
       [<]-identities : 𝟎 < 𝟏
-      [<]-identities = [≤][≢]-to-[<] [≤]-identities (NonZero.proof distinct-identities ∘ symmetry(_≡_))
+      [<]-identities = [≤][≢]-to-[<] [≤]-identities ([↔]-to-[→] nonZero distinct-identities ∘ symmetry(_≡_))
 
 open import Lang.Instance
 open import Structure.Relator.Ordering.Proofs
 
 -- Theory defining the axioms of an ordered field (a field with a weak total order).
-record OrderedField ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) (_≤_ : F → F → Stmt{ℓₗ}) : Type{Lvl.of(F) Lvl.⊔ ℓₗ Lvl.⊔ ℓₑ} where
-  field ⦃ [+][⋅]-field ⦄ : Field(_+_)(_⋅_)
+record OrderedField ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) (_≤_ : F → F → Stmt{ℓₗ}) : Type{Lvl.of(F) Lvl.⊔ ℓₗ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₙ₀)} where
+  field ⦃ [+][⋅]-field ⦄ : Field(_+_)(_⋅_){ℓₙ₀}
   open Field([+][⋅]-field) public
   field ⦃ ordered ⦄ : Ordered(_+_)(_⋅_)(_≤_)
   open Ordered(ordered) public

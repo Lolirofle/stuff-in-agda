@@ -23,7 +23,7 @@ open import Structure.Operator.Properties
 open import Syntax.Number
 open import Syntax.Transitivity
 
-private variable a b c d d₁ d₂ : ℕ
+private variable a b c d d₁ d₂ n a₁ a₂ b₁ b₂ : ℕ
 
 gcd-same : (gcd(a)(a) ≡ a)
 gcd-same = [↔]-to-[→] Gcd-gcd-value (Gcd.intro₂ (reflexivity(_∣_)) (reflexivity(_∣_)) (const id))
@@ -100,21 +100,24 @@ gcd-with-[+] {a}{b} = [↔]-to-[→] Gcd-gcd-value (p Gcd-gcd) where
 gcd-with₁-[⋅] : (gcd(a ⋅ b)(b) ≡ b)
 gcd-with₁-[⋅] {a}{b} = [↔]-to-[→] (Gcd-gcd-value {a ⋅ b}{b}) (Gcd.intro₂ (divides-with-[⋅] {b}{a} ([∨]-introᵣ (reflexivity(_∣_)))) (reflexivity(_∣_)) (const id))
 
-gcd-with-[⋅] : (gcd(a ⋅ c)(b ⋅ c) ≡ gcd(a)(b) ⋅ c)
-gcd-with-[⋅] {a}{𝟎}   {b} = [≡]-intro
-gcd-with-[⋅] {a}{𝐒(c)}{b} =
-  gcd(a ⋅ 𝐒(c)) (b ⋅ 𝐒(c))                 🝖[ _≡_ ]-[ q ]-sym
-  gcd(a ⋅ 𝐒(c)) (b ⋅ 𝐒(c)) ⌊/⌋ 𝐒(c) ⋅ 𝐒(c) 🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(𝐒(c)) ([↔]-to-[→] Gcd-gcd-value (p{gcd(a ⋅ 𝐒(c))(b ⋅ 𝐒(c)) ⌊/⌋ 𝐒(c)} ([↔]-to-[←] Gcd-gcd-value (symmetry(_≡_) q)))) ]-sym
-  gcd(a)(b) ⋅ 𝐒(c)                         🝖-end
-  where
-    p : Gcd a b d ← Gcd(a ⋅ 𝐒(c))(b ⋅ 𝐒(c))(d ⋅ 𝐒(c))
-    p acbcdc =
-      let dcac = Gcd.divisorₗ acbcdc
-          dcbc = Gcd.divisorᵣ acbcdc
-          m    = Gcd.maximum₂ acbcdc
-      in Gcd.intro₂ (divides-without-[⋅]ᵣ-both {z = c} dcac) (divides-without-[⋅]ᵣ-both {z = c} dcbc) (\{D} → Da ↦ Db ↦ divides-without-[⋅]ᵣ-both {z = c} (m{D ⋅ 𝐒(c)} (divides-with-[⋅]ᵣ-both {z = 𝐒(c)} Da) (divides-with-[⋅]ᵣ-both {z = 𝐒(c)} Db)))
+instance
+  [⋅]-gcd-distributivityᵣ : Distributivityᵣ(_⋅_)(gcd)
+  [⋅]-gcd-distributivityᵣ = intro(\{x}{y}{z} → proof{x}{y}{z}) where
+    proof : (gcd(a)(b) ⋅ c ≡ gcd(a ⋅ c)(b ⋅ c))
+    proof {a}{b}{𝟎}    = [≡]-intro
+    proof {a}{b}{𝐒(c)} =
+      gcd(a)(b) ⋅ 𝐒(c)                         🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(𝐒(c)) ([↔]-to-[→] Gcd-gcd-value (p{gcd(a ⋅ 𝐒(c))(b ⋅ 𝐒(c)) ⌊/⌋ 𝐒(c)} ([↔]-to-[←] Gcd-gcd-value (symmetry(_≡_) q)))) ]
+      gcd(a ⋅ 𝐒(c)) (b ⋅ 𝐒(c)) ⌊/⌋ 𝐒(c) ⋅ 𝐒(c) 🝖[ _≡_ ]-[ q ]
+      gcd(a ⋅ 𝐒(c)) (b ⋅ 𝐒(c))                 🝖-end
+      where
+        p : Gcd a b d ← Gcd(a ⋅ 𝐒(c))(b ⋅ 𝐒(c))(d ⋅ 𝐒(c))
+        p acbcdc =
+          let dcac = Gcd.divisorₗ acbcdc
+              dcbc = Gcd.divisorᵣ acbcdc
+              m    = Gcd.maximum₂ acbcdc
+          in Gcd.intro₂ (divides-without-[⋅]ᵣ-both {z = c} dcac) (divides-without-[⋅]ᵣ-both {z = c} dcbc) (\{D} → Da ↦ Db ↦ divides-without-[⋅]ᵣ-both {z = c} (m{D ⋅ 𝐒(c)} (divides-with-[⋅]ᵣ-both {z = 𝐒(c)} Da) (divides-with-[⋅]ᵣ-both {z = 𝐒(c)} Db)))
 
-    q = [⋅][⌊/⌋]-inverseOperatorᵣ (gcd-divisors{𝐒(c)}{a ⋅ 𝐒(c)}{b ⋅ 𝐒(c)} (divides-with-[⋅] {𝐒(c)}{a} ([∨]-introᵣ (reflexivity(_∣_)))) (divides-with-[⋅]  {𝐒(c)}{b} ([∨]-introᵣ (reflexivity(_∣_)))))
+        q = [⋅][⌊/⌋]-inverseOperatorᵣ (gcd-divisors{𝐒(c)}{a ⋅ 𝐒(c)}{b ⋅ 𝐒(c)} (divides-with-[⋅] {𝐒(c)}{a} ([∨]-introᵣ (reflexivity(_∣_)))) (divides-with-[⋅]  {𝐒(c)}{b} ([∨]-introᵣ (reflexivity(_∣_)))))
 
 gcd-0 : ((a ≡ 𝟎) ∧ (b ≡ 𝟎)) ↔ (gcd a b ≡ 𝟎)
 gcd-0 = [↔]-intro l r where
@@ -152,30 +155,40 @@ open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Relation.Order.Proofs
 open import Syntax.Implication
 
+instance
+  [⋅]-gcd-distributivityₗ : Distributivityₗ(_⋅_)(gcd)
+  Distributivityₗ.proof [⋅]-gcd-distributivityₗ {x}{y}{z} =
+    x ⋅ gcd y z        🝖[ _≡_ ]-[ commutativity(_⋅_) {x}{gcd y z} ]
+    gcd y z ⋅ x        🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(gcd) {y}{z}{x} ]
+    gcd(y ⋅ x)(z ⋅ x)  🝖[ _≡_ ]-[ congruence₂(gcd) (commutativity(_⋅_) {y}{x}) (commutativity(_⋅_) {z}{x}) ]
+    gcd(x ⋅ y)(x ⋅ z)  🝖-end
+
+-- Two numbers without their common divisors are coprime.
+-- gcd returns the product of all the common divisors (the greatest). Dividing the numbers by this product will therefore remove all the common divisors by division being an inverse.
 [⌊/⌋₀]-gcd-coprime : (Positive(a) ∨ Positive(b)) → Coprime(a ⌊/⌋₀ gcd(a)(b)) (b ⌊/⌋₀ gcd(a)(b))
 [⌊/⌋₀]-gcd-coprime {a}{b} nz =
   let d = gcd(a)(b)
       D = gcd(a ⌊/⌋₀ d) (b ⌊/⌋₀ d)
       gcd-D = Gcd-gcd {a ⌊/⌋₀ d} {b ⌊/⌋₀ d}
-      d-pos = [↔]-to-[→] Positive-greater-than-zero ([↔]-to-[→] gcd-positive nz)
+      instance d-pos = [↔]-to-[→] gcd-positive nz
   in
     • (
       Gcd.divisorₗ gcd-D ⇒
       (D ∣ (a ⌊/⌋₀ d))         ⇒-[ divides-with-[⋅]ᵣ-both {z = d} ]
-      (D ⋅ d ∣ (a ⌊/⌋₀ d) ⋅ d) ⇒-[ substitute₂ᵣ(_∣_) ([⋅][⌊/⌋₀]-inverseOperatorᵣ d-pos (gcd-dividesₗ {b = b})) ]
+      (D ⋅ d ∣ (a ⌊/⌋₀ d) ⋅ d) ⇒-[ substitute₂ᵣ(_∣_) ([⋅][⌊/⌋₀]-inverseOperatorᵣ (gcd-dividesₗ {b = b})) ]
       (D ⋅ d ∣ a)              ⇒-[ substitute₂ₗ(_∣_) (commutativity(_⋅_) {D}{d}) ]
       (d ⋅ D ∣ a)              ⇒-end
     )
     • (
       Gcd.divisorᵣ gcd-D ⇒
       (D ∣ (b ⌊/⌋₀ d))         ⇒-[ divides-with-[⋅]ᵣ-both {z = d} ]
-      (D ⋅ d ∣ (b ⌊/⌋₀ d) ⋅ d) ⇒-[ substitute₂ᵣ(_∣_) ([⋅][⌊/⌋₀]-inverseOperatorᵣ d-pos gcd-dividesᵣ) ]
+      (D ⋅ d ∣ (b ⌊/⌋₀ d) ⋅ d) ⇒-[ substitute₂ᵣ(_∣_) ([⋅][⌊/⌋₀]-inverseOperatorᵣ (gcd-dividesᵣ {a = a})) ]
       (D ⋅ d ∣ b)              ⇒-[ substitute₂ₗ(_∣_) (commutativity(_⋅_) {D}{d}) ]
       (d ⋅ D ∣ b)              ⇒-end
     )
     ⇒₂-[ Gcd.maximum₂ Gcd-gcd ]
     ((d ⋅ D) ∣ d)                ⇒-[]
-    ((d ⋅ D) ∣ (d ⋅ 1))          ⇒-[ divides-without-[⋅]ₗ-both' d-pos ]
+    ((d ⋅ D) ∣ (d ⋅ 1))          ⇒-[ divides-without-[⋅]ₗ-both' ]
     (D ∣ 1)                      ⇒-[ [1]-only-divides-[1] ]
     (D ≡ 1)                      ⇒-[ [↔]-to-[←] Coprime-gcd ]
     Coprime(a ⌊/⌋₀ d) (b ⌊/⌋₀ d) ⇒-end
@@ -185,3 +198,120 @@ open import Syntax.Implication
   ([⌊/⌋][⌊/⌋₀]-equality ⦃ [↔]-to-[→] gcd-positive nz ⦄)
   ([⌊/⌋][⌊/⌋₀]-equality ⦃ [↔]-to-[→] gcd-positive nz ⦄)
   ([⌊/⌋₀]-gcd-coprime nz)
+
+import      Numeral.Natural.Function as ℕ
+
+gcd-of-powers-min : (gcd(n ^ a)(n ^ b) ≡ n ^ ℕ.min(a)(b))
+gcd-of-powers-min {n}{𝟎}  {𝟎}   = [≡]-intro
+gcd-of-powers-min {n}{𝟎}  {𝐒 b} = absorberₗ(gcd)(1) {n ^ 𝐒(b)}
+gcd-of-powers-min {n}{𝐒 a}{𝟎}   = absorberᵣ(gcd)(1) {n ^ 𝐒(a)}
+gcd-of-powers-min {n}{𝐒 a}{𝐒 b} =
+  gcd (n ^ 𝐒(a)) (n ^ 𝐒(b))       🝖[ _≡_ ]-[]
+  gcd (n ⋅ (n ^ a)) (n ⋅ (n ^ b)) 🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(gcd) {n}{n ^ a}{n ^ b} ]-sym
+  n ⋅ gcd (n ^ a) (n ^ b)         🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(n) (gcd-of-powers-min {n}{a}{b}) ]
+  n ⋅ n ^ ℕ.min(a)(b)             🝖[ _≡_ ]-[]
+  n ^ 𝐒(ℕ.min(a)(b))              🝖[ _≡_ ]-[]
+  n ^ ℕ.min(𝐒(a))(𝐒(b))           🝖-end
+
+open import Logic.Predicate
+open import Numeral.Natural.Relation.Divisibility.Proofs.Product
+open import Structure.Function
+open import Structure.Operator.Proofs.Util
+
+-- (a ⋅ b ≡ c) → (c ⌊/⌋ a)
+
+postulate Lcm-lcm : Lcm a b (lcm a b)
+-- Lcm-lcm = Lcm.intro₂ {!!} {!!} {!!}
+
+[⋅]-gcd-lcm : gcd a b ⋅ lcm a b ≡ a ⋅ b
+[⋅]-gcd-lcm {a}{b} = [⋅][⌊/⌋₀]-inverseOperatorₗ {a ⋅ b}{gcd a b} (divides-with-[⋅] {c = b} ([∨]-introₗ (Gcd.divisorₗ(Gcd-gcd{a}{b}))))
+
+[⋅]-lcm-coprim : Coprime a b → (lcm a b ≡ a ⋅ b)
+[⋅]-lcm-coprim {a}{b} coprim =
+  lcm a b                🝖[ _≡_ ]-[ identityₗ(_⋅_)(𝟏) {lcm a b} ]-sym
+  𝟏 ⋅ lcm a b            🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(lcm a b) ([↔]-to-[→] Coprime-gcd coprim) ]-sym
+  gcd a b ⋅ lcm a b      🝖[ _≡_ ]-[ [⋅]-gcd-lcm {a}{b} ]
+  a ⋅ b                  🝖-end
+
+divides-[⋅]-lcm : lcm a b ∣ (a ⋅ b)
+divides-[⋅]-lcm {a}{b} = Lcm.minimum₂(Lcm-lcm{a}{b}) (divides-with-[⋅] {c = b} ([∨]-introₗ (reflexivity(_∣_)))) (divides-with-[⋅] {b = a} ([∨]-introᵣ (reflexivity(_∣_))))
+
+divides-with-[⋅]ₗ : Coprime a b → (a ∣ c) → (b ∣ c) → ((a ⋅ b) ∣ c)
+divides-with-[⋅]ₗ {a}{b}{𝟎} _ _ _ = Div𝟎
+divides-with-[⋅]ₗ {a}{b}{c@(𝐒 _)} coprim = substitute₂ₗ(_∣_) ([⋅]-lcm-coprim coprim) ∘₂ Lcm.minimum₂ (Lcm-lcm{a}{b}) {c}
+
+coprime-divides-only-when-1 : Coprime a b → (a ∣ b) → (a ≡ 1)
+coprime-divides-only-when-1 (intro cop) div = cop (reflexivity(_∣_)) div
+
+{-
+c = x ⋅ a
+c = y ⋅ b
+
+c ⋅ c = (x ⋅ a) ⋅ (y ⋅ b)
+c ⋅ c = (x ⋅ y) ⋅ (a ⋅ b)
+c     = ((x ⋅ y) ⋅ (a ⋅ b)) / c
+c     = ((x ⋅ y) / c) ⋅ (a ⋅ b)
+
+
+
+a ⋅ b = (c / (x ⋅ y)) ⋅ c
+c ∣ (x ⋅ y)
+-}
+
+-- Coprime a b → (d ∣ (a ⋅ b)) → ((d ∣ a) ⊕ (d ∣ b) ⊕ (d ∣ (gcd d a) ⋅ (gcd d b)))
+
+-- TODO: The purpose of this is to use it for gcd(a)(b) = gcd(p₁^na₁ ⋅ p₂^na₂)(p₁^nb₁ ⋅ p₂^nb₂) = p^min(na₁)(nb₁) ⋅ p^min(na₂)(nb₂)
+postulate gcdₗ-multiplicative : Coprime a₁ a₂ → (gcd(a₁ ⋅ a₂)(b) ≡ (gcd a₁ b) ⋅ (gcd a₂ b))
+{-gcdₗ-multiplicative {a₁}{a₂}{b} coprim = [↔]-to-[→] Gcd-gcd-value (p Gcd-gcd Gcd-gcd) where
+  p : Gcd a₁ b d₁ → Gcd a₂ b d₂ → Gcd(a₁ ⋅ a₂)(b)(d₁ ⋅ d₂)
+  p {d₁}{d₂} g1 g2 =
+    let d₁a₁ = Gcd.divisorₗ g1
+        d₁b  = Gcd.divisorᵣ g1
+        ad₁m = Gcd.maximum₂ g1
+        d₂a₂ = Gcd.divisorₗ g2
+        d₂b  = Gcd.divisorᵣ g2
+        bd₂m = Gcd.maximum₂ g2
+    in Gcd.intro₂
+      (divides-with-[⋅]-both d₁a₁ d₂a₂)
+      (divides-with-[⋅]ₗ (divides-to-converse-coprime d₁a₁ d₂a₂ coprim) d₁b d₂b)
+      (\{d} da₁a₂ db → divides-with-[⋅] ([∨]-elim2 (\p → ad₁m p db) (\p → bd₂m p db)
+        let dlcm = substitute₂ᵣ(_∣_) (symmetry(_≡_) ([⋅]-lcm-coprim coprim)) da₁a₂
+        in {!Lcm.minimum₂(Lcm-lcm{a₁}{a₂})!}
+      ))
+      -- [∨]-elim (\p → ad₁m p db) (\p → bd₂m p db)
+      -- Gcd.maximum₂ (Gcd-gcd{d₁}{d₂}) {(d ⌊/⌋ lcm d₁ d₂) ⦃ ? ⦄}
+      -- Lcm.minimum₂ (Lcm-lcm{d₁}{d₂}) {d}
+-}
+
+-- d ∣ lcm a₁ a₂
+
+{-
+d ∣ (a₁ ⋅ a₂)
+d / (gcd d a₁) ∣ (a₁ / (gcd d a₁) ⋅ a₂)
+d / (gcd d a₁) / (gcd d a₂) ∣ (a₁ / (gcd d a₁) ⋅ a₂ / (gcd d a₂))
+
+d / (gcd d a₁) / (gcd d a₂) ∣ d₁
+d / (gcd d a₁) / (gcd d a₂) ∣ d₂
+
+
+(b ∣ c) → (a ∣ (b ⋅ c)) → (a ∣ c)
+-}
+
+{- TODO: Is this true?
+gcd-[⋅]-cross-distribute : Coprime a₁ b₁ → Coprime a₂ b₂ → (gcd(a₁ ⋅ b₁)(a₂ ⋅ b₂) ≡ (gcd a₁ a₂) ⋅ (gcd b₁ b₂))
+gcd-[⋅]-cross-distribute{a₁}{b₁}{a₂}{b₂} coprim1 coprim2 = [↔]-to-[→] Gcd-gcd-value (p Gcd-gcd Gcd-gcd) where
+  p : Gcd a₁ a₂ d₁ → Gcd b₁ b₂ d₂ → Gcd(a₁ ⋅ b₁)(a₂ ⋅ b₂)(d₁ ⋅ d₂)
+  p g1 g2 =
+    let d₁a₁ = Gcd.divisorₗ g1
+        d₁a₂ = Gcd.divisorᵣ g1
+        ad₁m = Gcd.maximum₂ g1
+        d₂b₁ = Gcd.divisorₗ g2
+        d₂b₂ = Gcd.divisorᵣ g2
+        bd₂m = Gcd.maximum₂ g2
+    in Gcd.intro₂
+      (divides-with-[⋅]-both d₁a₁ d₂b₁)
+      (divides-with-[⋅]-both d₁a₂ d₂b₂)
+      (\{d} da₁b₁ da₂b₂ → {!!})
+      -- swap coprime-divides-of-[⋅] coprim1
+      -- ad₁m{d} 
+-}

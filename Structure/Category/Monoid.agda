@@ -19,7 +19,7 @@ open Category(cat)
 
 -- A monoid constructed from a category for a specific object.
 monoid : ∀{x} → Monoid(_∘_ {x = x})
-Monoid.binary-operator monoid = binaryOperator
+Monoid.binaryOperator monoid = binaryOperator
 Associativity.proof (Monoid.associativity monoid) = Morphism.associativity(_∘_)
 ∃.witness (Monoid.identity-existence monoid) = id
 Identityₗ.proof (Identity.left  (∃.proof (Monoid.identity-existence monoid))) = Morphism.identityₗ(_∘_)(id)

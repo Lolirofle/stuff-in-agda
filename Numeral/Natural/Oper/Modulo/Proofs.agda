@@ -122,6 +122,14 @@ mod-of-modulus-sum-multiple {a} {𝐒 b} {𝐒 c} =
 mod-of-modulus-sum-multiple-commuted : ∀{a b c} ⦃ _ : IsTrue(positive?(b)) ⦄ → ((a + (c ⋅ b)) mod b ≡ a mod b)
 mod-of-modulus-sum-multiple-commuted {a}{𝐒 b}{c} = congruence₁(_mod 𝐒(b)) (congruence₂ᵣ(_+_)(a) (commutativity(_⋅_) {c}{𝐒 b})) 🝖 mod-of-modulus-sum-multiple{a}{𝐒 b}{c}
 
+mod-of-modulus-sum-divisibleᵣ : ∀{a b c} ⦃ _ : IsTrue(positive?(c)) ⦄ → (c ∣ b) → ((a + b) mod c ≡ a mod c)
+mod-of-modulus-sum-divisibleᵣ {a} {b} {c} cb
+  with [∃]-intro x ⦃ [≡]-intro ⦄ ← [↔]-to-[←] divides-[⋅]-existence cb
+  = mod-of-modulus-sum-multiple {a}{c}{x}
+
+mod-of-modulus-sum-divisibleₗ : ∀{a b c} ⦃ _ : IsTrue(positive?(c)) ⦄ → (c ∣ a) → ((a + b) mod c ≡ b mod c)
+mod-of-modulus-sum-divisibleₗ {a} {b} {c} ca = congruence₁(_mod c) (commutativity(_+_) {a}{b}) 🝖 mod-of-modulus-sum-divisibleᵣ {b} ca
+
 -- When the dividend is greater than the modulus, the modulus can be subtracted from the dividend without altering the result.
 mod-greater-than-modulus : ∀{a b} → ⦃ _ : (a > b) ⦄ → (a mod 𝐒(b) ≡ (a −₀ 𝐒(b)) mod 𝐒(b))
 mod-greater-than-modulus {a}{b} ⦃ a>b ⦄ =
@@ -156,7 +164,7 @@ mod-divisibility {a}{𝐒(b)} = [↔]-intro l r where
     ... | [∨]-introᵣ ba with [↔]-to-[←] [≤]-equivalence ba
     ... |    [∃]-intro p ⦃ [≡]-intro ⦄ =
       divides-with-[+]
-        divides-reflexivity
+        (reflexivity(_∣_))
         (prev p ⦃ succ ([≤]-of-[+]ᵣ {b}{p}) ⦄ (
           p mod 𝐒(b)          🝖-[ symmetry(_≡_) (mod-of-modulus-add {p}{b}) ]
           (𝐒(b) + p) mod 𝐒(b) 🝖-[ ab0 ]

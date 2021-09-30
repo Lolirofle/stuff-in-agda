@@ -24,7 +24,7 @@ Countable(T) = (ℕ ≽ T)
 
 -- Definition of a countably infinite type
 CountablyInfinite : (T : Type{ℓ}) → ⦃ equiv : Equiv{ℓₑ}(T) ⦄ → Stmt
-CountablyInfinite(T) ⦃ equiv ⦄ = _≍_ ℕ ⦃ [≡]-equiv ⦄ T
+CountablyInfinite(T) ⦃ equiv ⦄ = (ℕ ≍ T) ⦃ [≡]-equiv ⦄
 
 private variable A : Type{ℓ₁}
 private variable B : Type{ℓ₂}

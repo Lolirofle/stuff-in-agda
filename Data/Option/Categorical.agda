@@ -82,7 +82,8 @@ module _ {_▫_ : T → T → T} where
 
   instance
     and-combine-absorberₗ : Absorberₗ(and-combine(_▫_))(None)
-    Absorberₗ.proof and-combine-absorberₗ = [≡]-intro
+    Absorberₗ.proof and-combine-absorberₗ {None}   = [≡]-intro
+    Absorberₗ.proof and-combine-absorberₗ {Some x} = [≡]-intro
 
   instance
     and-combine-absorberᵣ : Absorberᵣ(and-combine(_▫_))(None)

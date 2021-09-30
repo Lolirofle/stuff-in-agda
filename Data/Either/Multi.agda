@@ -37,6 +37,17 @@ pattern alt₇,₈ x = _‖_.Right(alt₆,₇ x)
 pattern alt₈,₉ x = _‖_.Right(alt₇,₈ x)
 
 {-
+open import Lang.Reflection
+import      Data.List.Functions.Positional as List 
+
+-- TODO: Is it impossible to use reflection to define a general pattern synonym?
+alt : (n : ℕ) → 𝕟₌(n) → Pattern → Pattern
+alt 𝟎     𝟎     p = con (quote(_‖_.Right)) (List.singleton (arg (arg-info visible relevant) p))
+alt (𝐒 _) 𝟎     p = con (quote(_‖_.Left))  (List.singleton (arg (arg-info visible relevant) p))
+alt (𝐒 n) (𝐒 i) p = con (quote(_‖_.Right)) (List.singleton (arg (arg-info visible relevant) (alt n i p)))
+-}
+
+{-
 -- TODO: Move or generalize uncurry
 uncurryTypes : (n : ℕ) → ∀{ℓ𝓈}{ℓ}{B : Type{ℓ}} → (TypesOfTypes{𝐒(n)}(ℓ𝓈) ⇉ B) → (Types(ℓ𝓈) → B)
 uncurryTypes(𝟎)    f          = f

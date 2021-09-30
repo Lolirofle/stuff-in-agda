@@ -12,6 +12,18 @@ module From-[≤][<] {ℓ₁}{ℓ₂}{ℓ₃} {T : Type{ℓ₁}} (_≤_ : T → 
   open Template.From-[<] (_<_) public
   open Template.From-[≤] (_≤_) public
 
+  _<_≤_ : T → T → T → Stmt
+  x < y ≤ z = (x < y) ∧ (y ≤ z)
+
+  _≤_<_ : T → T → T → Stmt
+  x ≤ y < z = (x ≤ y) ∧ (y < z)
+
+  _>_≥_ : T → T → T → Stmt
+  x > y ≥ z = (x > y) ∧ (y ≥ z)
+
+  _≥_>_ : T → T → T → Stmt
+  x ≥ y > z = (x ≥ y) ∧ (y > z)
+
 module From-[<][≡] {ℓ₁}{ℓ₂}{ℓ₃} {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) (_≡_ : T → T → Stmt{ℓ₃}) where
   _≤_ : T → T → Stmt
   x ≤ y = (x < y) ∨ (x ≡ y)

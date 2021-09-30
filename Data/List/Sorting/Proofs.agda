@@ -68,6 +68,7 @@ module _ (asym : ∀{x y} → (x ≤? y ≡ not(y ≤? x))) where
   -}
 
 open import Data using (Unit ; <>)
+open import Data.List.Relation.Permutation.Proofs
 open import Data.Option
 import      Data.Option.Functions as Option
 open import Data.Tuple using (_⨯_ ; _,_)
@@ -75,7 +76,7 @@ extractMinimal-permutation : ∀{l} → Option.partialMap (∅ permutes l) (\{(x
 extractMinimal-permutation {∅} = empty
 extractMinimal-permutation {x ⊰ ∅} = prepend empty
 extractMinimal-permutation {x ⊰ l@(_ ⊰ _)} with extractMinimal l | extractMinimal-permutation{l}
-... | None           | p with () ← Proofs.permutes-empty-not-empty p
+... | None           | p with () ← permutes-empty-not-empty p
 ... | (Some(y , l₂)) | p with (x ≤? y)
 ... | 𝑇 = reflexivity(_permutes_)
 ... | 𝐹 = trans swap (prepend p)

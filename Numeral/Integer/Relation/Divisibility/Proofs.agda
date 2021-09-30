@@ -6,7 +6,10 @@ import      Numeral.Natural.Relation.Divisibility as ℕ
 import      Numeral.Natural.Relation.Divisibility.Proofs as ℕ
 open import Numeral.Natural using (ℕ)
 import      Numeral.Natural.Oper as ℕ
+open import Numeral.Integer.Construction
+open import Numeral.Integer.Construction.Proofs
 open import Numeral.Integer.Oper
+open import Numeral.Integer.Oper.Proofs
 open import Numeral.Integer.Proofs
 open import Numeral.Integer.Relation.Divisibility
 open import Numeral.Integer
@@ -74,4 +77,3 @@ divides-with-[+] {−𝐒ₙ a} {−𝐒ₙ b} {−𝐒ₙ c} ab ac = ℕ.divide
 
 divides-with-[⋅] : ∀{a b c} → ((a ∣ b) ∨ (a ∣ c)) → (a ∣ (b ⋅ c))
 divides-with-[⋅] {a} {b} {c} p = substitute₂ᵣ(ℕ._∣_) {absₙ a} (symmetry(_≡_) (preserving₂(absₙ)(_⋅_)(ℕ._⋅_) {b}{c})) (ℕ.divides-with-[⋅] {absₙ a}{absₙ b}{absₙ c} p)
-

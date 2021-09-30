@@ -13,6 +13,7 @@ open import Relator.Equals.Proofs.Equiv
 open import Relator.Ordering
 open import Structure.Function
 open import Structure.Function.Domain
+open import Structure.Operator.Properties
 open import Syntax.Function
 open import Syntax.Transitivity
 
@@ -43,3 +44,6 @@ open From-[≤][<] (_≤_) (_<_) public
   r{𝟎}   {y}    ([∃]-intro(z) ⦃ 𝟎+z≡y   ⦄) = [≤def].min
   r{𝐒(x)}{𝟎}    ([∃]-intro(z) ⦃ ⦄)
   r{𝐒(x)}{𝐒(y)} ([∃]-intro(z) ⦃ 𝐒x+z≡𝐒y ⦄) = [≤def].succ (r{x}{y} ([∃]-intro(z) ⦃ injective(𝐒)(𝐒x+z≡𝐒y) ⦄))
+
+[≤]-witness-order : ∀{x y} → (([∃]-intro z) : x ≤ y) → (z ≤ y)
+[≤]-witness-order {x} {y} ([∃]-intro z ⦃ p ⦄) = [∃]-intro x ⦃ commutativity(_+_) {z}{x} 🝖 p ⦄

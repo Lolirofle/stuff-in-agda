@@ -41,4 +41,4 @@ separate(𝐒(𝐒(n))) l = {!!}
 --   separateBy(_mod 3) [0,1,2,3,4,5,6,7,8,9] = [[0,3,6,9] , [1,4,7] , [2,5,8]]
 separateBy : ∀{n} → (T → 𝕟(n)) → List(T) → (List(T) ^ n)
 separateBy f ∅       = Raise.repeat _ ∅
-separateBy f (x ⊰ l) = Raise.updateAt (f(x)) (x ⊰_) (separateBy f l)
+separateBy f (x ⊰ l) = Raise.mapAt (f(x)) (x ⊰_) (separateBy f l)

@@ -161,6 +161,13 @@ module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T�
     field proof : Names.Distributivityᵣ(_▫₁_)(_▫₂_)
   distributivityᵣ = inst-fn Distributivityᵣ.proof
 
+module _ {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_▫₁_ : T → T → T) (_▫₂_ : T → T → T) where
+  record Distributivity : Stmt{Lvl.of(Type.of(_▫₁_)) Lvl.⊔ ℓₑ} where
+    constructor intro
+    field
+      instance ⦃ left ⦄  : Distributivityₗ(_▫₁_)(_▫₂_)
+      instance ⦃ right ⦄ : Distributivityᵣ(_▫₁_)(_▫₂_)
+
 module _ {T₁ : Type{ℓ₁}} {T₂ : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(T₂) ⦄ {T₃ : Type{ℓ₃}} ⦃ _ : Equiv{ℓₑ₃}(T₃) ⦄ (_▫_ : T₁ → T₂ → T₃) where
   record Cancellationₗ : Stmt{Lvl.of(Type.of(_▫_)) Lvl.⊔ ℓₑ₂ Lvl.⊔ ℓₑ₃} where
     constructor intro

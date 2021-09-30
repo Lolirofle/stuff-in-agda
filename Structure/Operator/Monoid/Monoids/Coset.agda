@@ -28,8 +28,8 @@ private variable T : Type{ℓ}
 
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ function : ∀{f : T → T} → Function(f) ⦄ {_▫_ : T → T → T} (monoid : Monoid(_▫_)) where
   cosetₗ-submonoid : Submonoid(function-monoid)(⊶(_▫_))
-  Submonoid.contains-identity cosetₗ-submonoid = [∃]-intro (_) ⦃ intro(identityₗ(_▫_)(_)) ⦄
-  Submonoid.operator-closure  cosetₗ-submonoid {f}{g} ⦃ [∃]-intro a ⦃ pa ⦄ ⦄ ⦃ [∃]-intro b ⦃ pb ⦄ ⦄ =
+  Submonoid.identity-closure cosetₗ-submonoid = [∃]-intro (_) ⦃ intro(identityₗ(_▫_)(_)) ⦄
+  Submonoid.operator-closure  cosetₗ-submonoid {f}{g} ([∃]-intro a ⦃ pa ⦄) ([∃]-intro b ⦃ pb ⦄) =
     [∃]-intro (a ▫ b) ⦃ intro (\{x} →
       ((a ▫ b) ▫ x) 🝖[ _≡ₑ_ ]-[ associativity(_▫_) ]
       (a ▫ (b ▫ x)) 🝖[ _≡ₑ_ ]-[ _⊜_.proof pa ]
@@ -39,8 +39,8 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ function : ∀{f : T → T} → Fu
     ) ⦄
 
   cosetᵣ-submonoid : Submonoid(function-monoid)(⊶(swap(_▫_)))
-  Submonoid.contains-identity cosetᵣ-submonoid = [∃]-intro (_) ⦃ intro(identityᵣ(_▫_)(_)) ⦄
-  Submonoid.operator-closure  cosetᵣ-submonoid {f}{g} ⦃ [∃]-intro a ⦃ pa ⦄ ⦄ ⦃ [∃]-intro b ⦃ pb ⦄ ⦄ =
+  Submonoid.identity-closure cosetᵣ-submonoid = [∃]-intro (_) ⦃ intro(identityᵣ(_▫_)(_)) ⦄
+  Submonoid.operator-closure  cosetᵣ-submonoid {f}{g} ([∃]-intro a ⦃ pa ⦄) ([∃]-intro b ⦃ pb ⦄) =
     [∃]-intro (b ▫ a) ⦃ intro (\{x} →
       (x ▫ (b ▫ a)) 🝖[ _≡ₑ_ ]-[ associativity(_▫_) ]-sym
       ((x ▫ b) ▫ a) 🝖[ _≡ₑ_ ]-[ _⊜_.proof pa ]

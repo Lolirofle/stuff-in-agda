@@ -6,25 +6,12 @@ open import Type
 infixl 10000 _∘_
 infixl 10000 _⩺_
 infixl 10000 _⩹_
-infixl 30 _→ᶠ_ _←_ _←ᶠ_
 infixr 0 _$_
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
-private variable T X X₁ X₂ X₃ X₄ Y Y₁ Y₂ Y₃ Y₄ Z : Type{ℓ}
+private variable A B C D E F T X X₁ X₂ X₃ X₄ Y Y₁ Y₂ Y₃ Y₄ Z : Type{ℓ}
 
--- Converse of a function type
-_←_ : Type{ℓ₁} → Type{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}
-Y ← X = X → Y
-
--- Function type as a function
-_→ᶠ_ : Type{ℓ₁} → Type{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}
-X →ᶠ Y = X → Y
-
--- Converse function type as a function
-_←ᶠ_ : Type{ℓ₁} → Type{ℓ₂} → Type{ℓ₁ Lvl.⊔ ℓ₂}
-Y ←ᶠ X = Y ← X
-
-
+open import Function using (_←_ ; _→ᶠ_ ; _←ᶠ_) public
 
 -- The identity function.
 -- Returns the applied argument.
@@ -47,14 +34,6 @@ apply(x)(f) = f(x)
 _$_ : (X → Y) → X → Y
 _$_ = id
 {-# INLINE _$_ #-}
-
-_$ᵢₘₚₗ_ : ({ _ : X } → Y) → (X → Y)
-f $ᵢₘₚₗ x = f{x}
-{-# INLINE _$ᵢₘₚₗ_ #-}
-
-_$ᵢₙₛₜ_ : (⦃ _ : X ⦄ → Y) → (X → Y)
-f $ᵢₙₛₜ x = f ⦃ x ⦄
-{-# INLINE _$ᵢₙₛₜ_ #-}
 
 -- Function application as an operator. Function to the left, value to the right.
 _⩹_ : (X → Y) → X → Y
@@ -122,30 +101,39 @@ _∘₃_ f = (f ∘₂_) ∘_
 _∘₄_ : let _ = X₁ ; _ = X₂ ; _ = X₃ ; _ = X₄ in (Y → Z) → (X₁ → X₂ → X₃ → X₄ → Y) → (X₁ → X₂ → X₃ → X₄ → Z)
 _∘₄_ f = (f ∘₃_) ∘_
 
--- map₂Arg₁ : let _ = X in (Y₁ → Y₂ → Z) → (X → Y₁) → (X → Y₂) → (X → Z)
--- map₂Arg₁ f g₁ g₂ x = f(g₁ x)(g₂ x)
-
--- map₂Arg₂ : let _ = X₁ ; _ = X₂ in (Y₁ → Y₂ → Z) → (X₁ → Y₁) → (X₂ → Y₂) → (X₁ → X₂ → Z)
--- map₂Arg₂ f g₁ g₂ x₁ x₂ = f(g₁ x₁)(g₂ x₂)
-
--- Function lifting //TODO: Consider removing because it is the same as _∘_
+-- Function type lifting.
 liftₗ : (X → Y) → ((Z → X) → (Z → Y))
-liftₗ = _∘_ -- liftₗ(f) = f ∘_
+liftₗ = _∘_
 
 liftᵣ : (X → Y) → ((Y → Z) → (X → Z))
-liftᵣ = swap(_∘_) -- liftᵣ(f) = _∘ f
+liftᵣ = swap(_∘_)
 
 -- Applies an argument to two arguments of a binary function.
 _$₂_ : (X → X → Y) → (X → Y)
 f $₂ x = f x x
 
 apply₂ : X → (X → X → Y) → Y
-apply₂ x f = f x x
+apply₂ = swap(_$₂_)
 
 proj₂ₗ : X → Y → X
 proj₂ₗ = const
 
 proj₂ᵣ : X → Y → Y
 proj₂ᵣ = const id
+
+-- Alternative definition: pointwise₂,₁(_▫_) f g a = f(a) ▫ g(a)
+pointwise₂,₁ : let _ = A in (B → C → D) → (A → B) → (A → C) → (A → D)
+pointwise₂,₁(_▫_) = ((_∘ₛ_) ∘ ((_▫_) ∘_))
+{-# INLINE pointwise₂,₁ #-}
+
+-- Alternative definition: pointwise₂,₂(_▫_) f g a b = (f a b) ▫ (g a b)
+pointwise₂,₂ : let _ = A ; _ = B in (C → D → E) → (A → B → C) → (A → B → D) → (A → B → E)
+pointwise₂,₂(_▫_) = pointwise₂,₁(pointwise₂,₁(_▫_))
+{-# INLINE pointwise₂,₂ #-}
+
+-- Alternative definition: pointwise₂,₃(_▫_) f g a b c = (f a b c) ▫ (g a b c)
+pointwise₂,₃ : let _ = A ; _ = B ; _ = C in (D → E → F) → (A → B → C → D) → (A → B → C → E) → (A → B → C → F)
+pointwise₂,₃(_▫_) = pointwise₂,₁(pointwise₂,₂(_▫_))
+{-# INLINE pointwise₂,₃ #-}
 
 open import Syntax.Function public

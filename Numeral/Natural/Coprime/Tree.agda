@@ -36,7 +36,7 @@ CoprimeTree-order leaf₁ = succ (succ min)
 CoprimeTree-order leaf₂ = succ (succ min)
 CoprimeTree-order {b}{_} (branch₁{c}{_} t) =
   𝐒(b)         🝖[ _≤_ ]-[]
-  b + 1        🝖[ _≤_ ]-[ [≤]-with-[+] {b}{b} ⦃ reflexivity(_≤_) ⦄ {1}{b −₀ c} ⦃ [−₀]-positive (CoprimeTree-order t) ⦄ ]
+  b + 1        🝖[ _≤_ ]-[ [≤]-with-[+] {b}{b} ⦃ reflexivity(_≤_) ⦄ {1}{b −₀ c} ⦃ [<][−₀]-transfer (CoprimeTree-order t) ⦄ ]
   b + (b −₀ c) 🝖[ _≡_ ]-[ symmetry(_≡_) ([+][−₀]-almost-associativity {b}{b}{c} ([≤]-predecessor (CoprimeTree-order t))) ]-sub
   (b + b) −₀ c 🝖[ _≡_ ]-[ congruence₂ₗ(_−₀_)(c) (commutativity(_⋅_) {b}{2}) ]-sub
   (2 ⋅ b) −₀ c 🝖-end
