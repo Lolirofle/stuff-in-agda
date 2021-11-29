@@ -7,7 +7,7 @@ open Structure.Logic.Classical.NaturalDeduction.ClassicalLogic {ℓₗ} {Formula
 open Structure.Logic.Classical.SetTheory.ZFC.Signature {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic ⦄ {_∈_} (signature)
 open Structure.Logic.Classical.SetTheory.ZFC.ZF        {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic ⦄ {_∈_} ⦃ signature ⦄ (axioms)
 
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Structure.Logic.Classical.NaturalDeduction.Proofs            ⦃ classicLogic ⦄
 open import Structure.Logic.Classical.SetTheory.SetBoundedQuantification ⦃ classicLogic ⦄ (_∈_)

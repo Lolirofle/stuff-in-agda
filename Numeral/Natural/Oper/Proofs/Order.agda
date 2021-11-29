@@ -12,12 +12,14 @@ open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Classical
 open import Numeral.Natural.Relation.Order.Proofs
+open import Numeral.Natural.Relation.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Relator.Ordering.Proofs
 open import Structure.Function.Domain
 open import Structure.Operator
 open import Structure.Operator.Properties
+open import Structure.Relator
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 open import Type
@@ -140,6 +142,20 @@ open import Type
 {-# CATCHALL #-}
 [<][−₀]ₗ-preserving-converse {a₁}   {𝐒 a₂} {𝟎}   a1b        a2b        ord = ord
 
+[≤][+]ᵣ-same : ∀{a₁ a₂ b c} → (a₁ + b ≤ a₂ + b) → (a₁ + c ≤ a₂ + c)
+[≤][+]ᵣ-same {a₁} {a₂} {b}   {𝐒 c} ord        = succ([≤][+]ᵣ-same{a₁}{a₂}{b}{c} ord)
+[≤][+]ᵣ-same {a₁} {a₂} {𝟎}   {𝟎}   ord        = ord
+[≤][+]ᵣ-same {a₁} {a₂} {𝐒 b} {𝟎}   (succ ord) = [≤][+]ᵣ-same{a₁}{a₂}{b}{𝟎} ord
+
+[≤][+]ₗ-same : ∀{a b c₁ c₂} → (a + c₁ ≤ a + c₂) → (b + c₁ ≤ b + c₂)
+[≤][+]ₗ-same {a}{b}{c₁}{c₂} ord = substitute₂(_≤_) (commutativity(_+_) {c₁}{b}) (commutativity(_+_) {c₂}{b}) ([≤][+]ᵣ-same {c₁}{c₂}{a}{b} (substitute₂(_≤_) (commutativity(_+_) {a}{c₁}) (commutativity(_+_) {a}{c₂}) ord))
+
+[<][+]ᵣ-same : ∀{a₁ a₂ b c} → (a₁ + b < a₂ + b) → (a₁ + c < a₂ + c)
+[<][+]ᵣ-same {a₁}{a₂}{b}{c} = [≤][+]ᵣ-same {𝐒 a₁}{a₂}{b}{c}
+
+[<][+]ₗ-same : ∀{a b c₁ c₂} → (a + c₁ < a + c₂) → (b + c₁ < b + c₂)
+[<][+]ₗ-same {a}{b}{c₁}{c₂} = [≤][+]ₗ-same {a}{b}{𝐒 c₁}{c₂}
+
 -- TODO: Converse is probably also true. One way to prove the equivalence is contraposition of [−₀]-comparison. Another is by [≤]-with-[+]ᵣ and some other stuff, but it seems to require more work. Also, this is [−₀]-positive
 [<][−₀]-transfer : ∀{x y} → (y > x) → (y −₀ x > 0)
 [<][−₀]-transfer {𝟎}   {𝐒(y)} _        = [≤]-with-[𝐒] ⦃ [≤]-minimum ⦄
@@ -172,6 +188,10 @@ open import Type
 [+][−₀]-almost-associativity : ∀{x y z} → (y ≥ z) → ((x + y) −₀ z ≡ x + (y −₀ z))
 [+][−₀]-almost-associativity {x} {y}   {.𝟎}  min      = [≡]-intro
 [+][−₀]-almost-associativity {x} {𝐒 y} {𝐒 z} (succ p) = [+][−₀]-almost-associativity {x}{y}{z} p
+
+[+][−₀]-almost-associativityₗ : ∀{x y z} → (x ≥ z) → ((x + y) −₀ z ≡ (x −₀ z) + y)
+[+][−₀]-almost-associativityₗ {x}   {y} {𝟎}   min      = [≡]-intro
+[+][−₀]-almost-associativityₗ {𝐒 x} {y} {𝐒 z} (succ p) = [+][−₀]-almost-associativityₗ {x}{y}{z} p
 
 [−₀][𝄩]-equality-condition : ∀{x y} → (x ≥ y) ↔ (x −₀ y ≡ x 𝄩 y)
 [−₀][𝄩]-equality-condition = [↔]-intro l r where
@@ -261,16 +281,8 @@ open import Type
 [⋅]ₗ-strictly-growing {n} {1} (succ())
 [⋅]ₗ-strictly-growing {n} {𝐒(𝐒 c)} = [<]-with-[⋅]ₗ {n}{1}{𝐒(𝐒(c))}
 
-[^]-positive : ∀{a b} → ((𝐒(a) ^ b) > 0)
-[^]-positive {a}{𝟎} = reflexivity(_≤_)
-[^]-positive {a}{𝐒 b} =
-  𝐒(a) ^ 𝐒(b)       🝖[ _≥_ ]-[]
-  𝐒(a) ⋅ (𝐒(a) ^ b) 🝖[ _≥_ ]-[ [<]-with-[⋅]ₗ {a} ([^]-positive {a}{b}) ]
-  𝐒(𝐒(a) ⋅ 0)       🝖[ _≥_ ]-[ succ min ]
-  1                 🝖[ _≥_ ]-end
-
 [^]ₗ-strictly-growing : ∀{n a b} → (a < b) → ((𝐒(𝐒(n)) ^ a) < (𝐒(𝐒(n)) ^ b))
-[^]ₗ-strictly-growing {n} {𝟎}   {.(𝐒 b)} (succ {y = b} p) = [≤]-with-[+]ᵣ [≤]-minimum 🝖 [≤]-with-[⋅]ₗ {𝐒(𝐒(n))}{1}{𝐒(𝐒(n)) ^ b} ([^]-positive {𝐒(n)}{b})
+[^]ₗ-strictly-growing {n} {𝟎}   {.(𝐒 b)} (succ {y = b} p) = [≤]-with-[+]ᵣ [≤]-minimum 🝖 [≤]-with-[⋅]ₗ {𝐒(𝐒(n))}{1}{𝐒(𝐒(n)) ^ b} ([↔]-to-[→] Positive-greater-than-zero ([^]-positive {𝐒(𝐒(n))}{b}))
 [^]ₗ-strictly-growing {n} {𝐒 a} {.(𝐒 b)} (succ {y = b} p) = [<]-with-[⋅]ₗ {𝐒(n)} ([^]ₗ-strictly-growing {n}{a}{b} p)
 
 [^]ₗ-growing : ∀{n a b} → ¬((n ≡ 𝟎) ∧ (a ≡ 𝟎)) → (a ≤ b) → ((n ^ a) ≤ (n ^ b))

@@ -4,7 +4,7 @@ module Graph.Properties where
 
 open import Functional
 open import Function.Equals
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Propositional
 import      Lvl
@@ -25,7 +25,7 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) w
 
     field
       reverse-involution : ∀{a b} → (reverse ∘ reverse ⊜ (id {T = a ⟶ b}))
-  undirected-reverse = inst-fn Undirected.reverse
+  undirected-reverse = inferArg Undirected.reverse
 
   -- Construction of an undirected graph from any graph.
   undirect : Graph{ℓ₁}{ℓ₂}(V)
@@ -37,18 +37,18 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) w
   record Singular : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : ∀{a b : V} → MereProposition(a ⟶ b)
-  singular = inst-fn(\inst {a}{b}{x}{y} → MereProposition.uniqueness(Singular.proof inst {a}{b}) {x}{y})
+  singular = inferArg(\inst {a}{b}{x}{y} → MereProposition.uniqueness(Singular.proof inst {a}{b}) {x}{y})
 
   -- A complete graph have an edge for each pair of vertices from V. Loops are allowed.
   record Complete : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : ∀{x y : V} → (x ⟶ y) ↔ (x ≢ y)
-  complete = inst-fn Complete.proof
+  complete = inferArg Complete.proof
 
   record CompleteWithLoops : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : ∀{x y : V} → (x ⟶ y)
-  completeWithLoops = inst-fn CompleteWithLoops.proof
+  completeWithLoops = inferArg CompleteWithLoops.proof
 
   -- A linear graph contains vertices with a maximum of one outgoing edge and a maximum of one ingoing edge.
   record Linear : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
@@ -62,13 +62,13 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) w
     record InitialVertex : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       constructor intro
       field proof : ∀{x} → ¬(x ⟶ v)
-    initialVertex = inst-fn InitialVertex.proof
+    initialVertex = inferArg InitialVertex.proof
 
     -- A final vertex have no outgoing edges pointing from it.
     record FinalVertex : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       constructor intro
       field proof : ∀{x} → ¬(v ⟶ x)
-    finalVertex = inst-fn FinalVertex.proof
+    finalVertex = inferArg FinalVertex.proof
 
   -- A graph is a list when it is linear and has an unique initial vertex and an unique final vertex.
   -- The linearity guarantees so that if there are preceding and succeding elements of the list, they are unique.
@@ -100,12 +100,12 @@ module _ {ℓ₁ ℓ₂} {V : Type{ℓ₁}} (_⟶_ : Graph{ℓ₁}{ℓ₂}(V)) w
     record IsTree : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       constructor intro
       field proof : ∀{x y : V} → ∃!{Obj = Walk(_⟶_) x y}(Path)
-    isTree = inst-fn IsTree.proof
+    isTree = inferArg IsTree.proof
 
     record IsForest : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       constructor intro
       field proof : ∀{x y : V} → Unique{Obj = Walk(_⟶_) x y}(Path)
-    isForest = inst-fn IsForest.proof
+    isForest = inferArg IsForest.proof
 
     record IsOutwardRootedTree : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
       constructor intro

@@ -1,3 +1,4 @@
+-- Note that an alternative to these functions is to use a list of sigma types instead.
 module Data.List.FunctionsProven where
 
 import      Lvl
@@ -7,7 +8,7 @@ import      Data.List.Functions as List
 open import Data.List.Relation.Membership
 open import Data.List.Relation.Quantification
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Syntax.Function
 open import Type
 

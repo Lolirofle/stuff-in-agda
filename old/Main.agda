@@ -51,7 +51,7 @@ import Function.Iteration.Proofs
 -- import Geometry.Test2
 import Geometry.Test3
 import Graph
-import Lang.Instance
+import Functional.Instance
 import Lang.Irrelevance
 import Logic.Classical
 import Logic.Classical.DoubleNegated

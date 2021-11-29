@@ -7,6 +7,7 @@ open import Data.List.Functions.Positional as List
 open import Data.Option
 open import Data
 open import Lang.Reflection
+open import Lang.Reflection.DoNotation
 open import Syntax.Do
 open import Type
 

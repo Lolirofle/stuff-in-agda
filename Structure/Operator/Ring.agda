@@ -59,6 +59,7 @@ record Rg {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ (_+_  : T �
       identityₗ           to [+]-identityₗ ;
       identityᵣ           to [+]-identityᵣ
     ) public
+  module NonZero = NonIdentityRelation(non-zero-relation)
   open NonIdentityRelation(non-zero-relation)
     using()
     renaming(NonIdentity to NonZero ; proof to nonZero)

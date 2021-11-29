@@ -208,12 +208,13 @@ import Iterator
 import Js
 import Lang.Function
 import Lang.Inspect
-import Lang.Instance
+import Functional.Instance
 import Lang.Irrelevance.Convertable
 import Lang.Irrelevance.Squash
 import Lang.Irrelevance
 import Lang.Reflection
 import Lang.Size
+import Lang.Templates.Fractions
 import Lang.Templates.Order
 import Lang.Vars.Structure.Operator
 import Logic.Classical.DoubleNegated
@@ -304,6 +305,8 @@ import Numeral.Natural.Inductions.Proofs
 import Numeral.Natural.Inductions
 import Numeral.Natural.LinearSearch.Proofs
 import Numeral.Natural.LinearSearch
+import Numeral.Natural.Oper.CeiledDivision.Proofs
+import Numeral.Natural.Oper.CeiledDivision
 import Numeral.Natural.Oper.Comparisons.Proofs
 import Numeral.Natural.Oper.Comparisons
 import Numeral.Natural.Oper.DivMod.Proofs
@@ -380,6 +383,7 @@ import Operator.Summation.Range.Proofs
 import Operator.Summation.Range
 import Operator.Summation
 import Operator.Summation2
+import Operator.Summation3
 import ReductionSystem
 import Relator.Category
 import Relator.Congruence.Proofs

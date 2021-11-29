@@ -4,7 +4,7 @@ import      Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Function
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Xor

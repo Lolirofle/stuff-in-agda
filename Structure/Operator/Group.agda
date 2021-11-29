@@ -9,6 +9,7 @@ open import Logic.IntroInstances
 open import Logic.Predicate
 open import Structure.Function
 open import Structure.Operator
+import      Structure.Operator.InverseOperatorFromFunction as InverseOperatorFromFunction
 open import Structure.Operator.Monoid using (Monoid ; intro)
 open import Structure.Operator.Properties hiding (associativity ; commutativity)
 open import Type.Size
@@ -54,7 +55,7 @@ record Group : Stmt{ℓ Lvl.⊔ ℓₑ} where
     inverseᵣ = InverseFunction.right(inverse)
 
   inv-op : T → T → T
-  inv-op x y = x ▫ inv y
+  inv-op = InverseOperatorFromFunction.invOpᵣ(_▫_)(inv)
 
 Group-from-monoid : ⦃ monoid@(intro ⦃ identity-existence = identity-existence ⦄) : Monoid(_▫_) ⦄ → (inv : T → T) → ⦃ func : Function(inv) ⦄ → ⦃ inver : InverseFunction(_▫_) ⦃ identity-existence ⦄ inv ⦄ → Group
 Group-from-monoid ⦃ intro ⦄ inv = intro

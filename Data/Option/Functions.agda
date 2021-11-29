@@ -4,7 +4,7 @@ import      Lvl
 open import Data
 open import Data.Boolean
 open import Data.Either as Either using (_‖_)
-open import Data.Option
+open import Data.Option as Option
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Type
@@ -13,36 +13,50 @@ private variable ℓ : Lvl.Level
 private variable T A B T₁ T₂ T₃ : Type{ℓ}
 
 -- Either transforming the value inside the option container or the default value when it is none.
--- An option eliminator.
+-- A non-dependent variant of the option eliminator.
+-- Alternative implementation:
+--   partialMap def f(None)   = def
+--   partialMap def f(Some x) = f(x)
 partialMap : B → (A → B) → (Option(A) → B)
-partialMap _   f (Some x) = f(x)
-partialMap def _ None     = def
+partialMap = Option.elim
 
 -- Applies a function to the inner value of the option container.
 -- A functor map for options.
+-- Alternative implementation:
+--   map def f(None)   = None
+--   map def f(Some x) = Some(f(x))
 map : (T₁ → T₂) → Option(T₁) → Option(T₂)
 map = partialMap None ∘ (Some ∘_)
 
 -- Either the value inside the option container or the default value when it is none.
 -- An option eliminator.
+-- Alternative implementation:
+--   None     or y = y
+--   (Some x) or y = x
 _or_ : Option(T) → T → T
 o or def = partialMap def id o
 
 -- If the option have a value (is Some).
+-- Alternative implementation:
+--   isSome = partialMap 𝐹 (const 𝑇)
 isSome : Option(T) → Bool
-isSome (Some _) = 𝑇
 isSome None     = 𝐹
+isSome (Some _) = 𝑇
 
 -- If the option have no value (is None).
+-- Alternative implementation:
+--   isNone = partialMap 𝑇 (const 𝐹)
 isNone : Option(T) → Bool
-isNone (Some _) = 𝐹
 isNone None     = 𝑇
+isNone (Some _) = 𝐹
 
 -- Passes the inner value of the option to an option-valued function.
 -- A monadic bind for options.
+-- Alternative implementation:
+--   _andThen_ None     _ = None
+--   _andThen_ (Some x) f = f(x)
 _andThen_ : Option(T₁) → (T₁ → Option(T₂)) → Option(T₂)
-_andThen_ None     _ = None
-_andThen_ (Some x) f = f(x)
+_andThen_ = swap(Option.elim None)
 
 combine : (T₁ → T₂ → T₃) → (T₁ → Option(T₃)) → (T₂ → Option(T₃)) → (Option(T₁) → Option(T₂) → Option(T₃))
 combine(_▫_) l r None     None     = None

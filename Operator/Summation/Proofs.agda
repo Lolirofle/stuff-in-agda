@@ -12,7 +12,7 @@ open import Structure.Operator
 open import Structure.Setoid
 open import Type
 
-private variable ℓ ℓᵢ ℓₑ ℓₑᵢ ℓₑₗ ℓₑₗ₁ ℓₑₗ₂ : Lvl.Level
+private variable ℓ ℓᵢ ℓₑ ℓₑᵢ ℓₑₗ ℓₑₗ₁ ℓₑₗ₂ ℓₙ₀ : Lvl.Level
 private variable T A B I : Type{ℓ}
 private variable _▫_ : T → T → T
 
@@ -20,7 +20,7 @@ open        Data.List.Functions.LongOper
 open import Data.List.Proofs
 open import Functional as Fn using (_$_ ; _∘_ ; const)
 import      Function.Equals as Fn
-open import Lang.Instance
+open import Functional.Instance
 open import Numeral.Natural.Relation.Order
 import      Operator.Summation
 open import Operator.Summation.Range
@@ -150,7 +150,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
       (f(r₀) ⋅ c) + ((∑(r) f) ⋅ c)      🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) {f(r₀)}{∑(r) f}{c} ]-sym
       (f(r₀) + (∑(r) f)) ⋅ c            🝖-end
 
-  module _ ⦃ field-structure : Field(_+_)(_⋅_) ⦄ where
+  module _ ⦃ field-structure : Field(_+_)(_⋅_) {ℓₙ₀} ⦄ where
     open Field(field-structure)
     open Operator.Summation {I = ℕ} ⦃ monoid = [+]-monoid ⦄
 

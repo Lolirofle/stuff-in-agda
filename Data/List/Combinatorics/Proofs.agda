@@ -117,7 +117,7 @@ insertedEverywhere-first : first(insertedEverywhere x l) ≡ Option.Some(x ⊰ l
 insertedEverywhere-first {l = ∅}     = [≡]-intro
 insertedEverywhere-first {l = x ⊰ l} = [≡]-intro
 
-{- TODO: Transitivity is a problem. Maybe prove that _permutes_ and _insertion-permutes_ are equivalent first, and then count insertion-permutes which is much closer to the usual counting proof
+{- -- TODO: Transitivity is a problem. Maybe prove that _permutes_ and _insertion-permutes_ are equivalent first, and then count insertion-permutes which is much closer to the usual counting proof
 permutations-completeness : (l₁ permutes l₂) → (l₁ ∈ permutations(l₂))
 permutations-completeness _permutes_.empty          = • [≡]-intro
 permutations-completeness (_permutes_.prepend {l₁ = l₁} {l₂} {x} perm) =
@@ -203,7 +203,7 @@ tuples-length {𝐒(𝐒(n))}{l = x ⊰ l} =
   length(x ⊰ l) ^ 𝐒(𝐒(n))                                                           🝖-end
 
 rotations-length : length(rotations l) ≡ length(l)
-rotations-length{l = l} = length-accumulateIterate₀{f = rotateₗ(1)}{init = l}
+rotations-length{l = l} = length-accumulateIterate₀{f = rotateₗ}{init = l}
 
 insertedEverywhere-contents-length : AllElements(p ↦ length(p) ≡ 𝐒(length(l))) (insertedEverywhere x l)
 insertedEverywhere-contents-length = AllElements-fn (Function.congruence ⦃ _ ⦄ permutes-length-function) permutes-insertedEverywhere
@@ -222,17 +222,30 @@ insertedEverywhere-length {x = x} {a ⊰ l} =
 permutation-length : AllElements(p ↦ length p ≡ length l) (permutations l)
 permutation-length{l = l} = AllElements-fn (Function.congruence ⦃ _ ⦄ permutes-length-function) (permutations-correctness{l = l})
 
-{-permutations-length : length(permutations l) ≡ length(l) !
+-- TODO: Move
+map-operator-raw-function : ∀{f g : A → B} → AllElements(x ↦ f(x) ≡ g(x))(l) → (map f(l) ≡ map g(l))
+map-operator-raw-function ∅       = [≡]-intro
+map-operator-raw-function (p ⊰ l) = congruence₂(_⊰_) p (map-operator-raw-function l)
+
+permutations-length : length(permutations l) ≡ length(l) !
 permutations-length {l = ∅}         = [≡]-intro
 permutations-length {l = x ⊰ ∅}     = [≡]-intro
 permutations-length {l = x ⊰ y ⊰ l} =
-  length(permutations(x ⊰ y ⊰ l))                                🝖[ _≡_ ]-[]
-  length(concatMap(insertedEverywhere x) (permutations(y ⊰ l)))  🝖[ _≡_ ]-[ length-concatMap{l = permutations(y ⊰ l)}{f = insertedEverywhere x} ]
-  foldᵣ (_+_ ∘ length ∘ insertedEverywhere x) 𝟎 (permutations (y ⊰ l)) 🝖[ _≡_ ]-[ {!!} ]
-  foldᵣ (_+_ ∘ length) 𝟎 (map (insertedEverywhere x) (permutations (y ⊰ l))) 🝖[ _≡_ ]-[ {!!} ]
-  𝐒(𝐒(length l)) ⋅ (𝐒(length l) ⋅ (length(l)!)) 🝖[ _≡_ ]-[]
-  length(x ⊰ y ⊰ l)! 🝖-end
--}
+  length(permutations(x ⊰ y ⊰ l))                                     🝖[ _≡_ ]-[]
+  length(concatMap(insertedEverywhere x) (permutations(y ⊰ l)))       🝖[ _≡_ ]-[ length-concatMap{l = permutations(y ⊰ l)}{f = insertedEverywhere x} ]
+  foldᵣ(_+_ ∘ length ∘ insertedEverywhere x) 𝟎 (permutations(y ⊰ l))  🝖[ _≡_ ]-[ foldᵣ-operator-raw {l₁ = permutations(y ⊰ l)} (\{l}{y} → congruence₂ₗ(_+_)(y) (insertedEverywhere-length{l = l})) [≡]-intro [≡]-intro ]
+  foldᵣ(_+_ ∘ 𝐒 ∘ length) 𝟎 (permutations(y ⊰ l))                     🝖[ _≡_ ]-[ foldᵣ-map-preserve {f = length}{l = permutations(y ⊰ l)} ]
+  foldᵣ(_+_ ∘ 𝐒) 𝟎 (map length(permutations(y ⊰ l)))                  🝖[ _≡_ ]-[ congruence₁(foldᵣ(_+_ ∘ 𝐒) 𝟎) (map-operator-raw-function(permutation-length{l = y ⊰ l})) ]
+  foldᵣ(_+_ ∘ 𝐒) 𝟎 (map (const(length(y ⊰ l))) (permutations(y ⊰ l))) 🝖[ _≡_ ]-[ foldᵣ-map-preserve {f = const(length(y ⊰ l))}{l = permutations(y ⊰ l)} ]-sym
+  foldᵣ(_+_ ∘ 𝐒 ∘ const(length(y ⊰ l))) 𝟎 (permutations(y ⊰ l))       🝖[ _≡_ ]-[]
+  foldᵣ(_+_ ∘ const(𝐒(length(y ⊰ l)))) 𝟎 (permutations(y ⊰ l))        🝖[ _≡_ ]-[]
+  foldᵣ(const(𝐒(length(y ⊰ l)) +_)) 𝟎 (permutations(y ⊰ l))           🝖[ _≡_ ]-[ foldᵣ-constant-[+]ₗ {l = permutations(y ⊰ l)}{step = 𝐒(length(y ⊰ l))} ]
+  length(permutations(y ⊰ l)) ⋅ 𝐒(length(y ⊰ l)) + 𝟎                  🝖[ _≡_ ]-[]
+  length(permutations(y ⊰ l)) ⋅ 𝐒(length(y ⊰ l))                      🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(𝐒(length(y ⊰ l))) (permutations-length {l = y ⊰ l}) ]
+  (length(y ⊰ l)!) ⋅ 𝐒(length(y ⊰ l))                                 🝖[ _≡_ ]-[ commutativity(_⋅_) {length(y ⊰ l)!}{𝐒(length(y ⊰ l))} ]
+  𝐒(length(y ⊰ l)) ⋅ (length(y ⊰ l)!)                                 🝖[ _≡_ ]-[]
+  length(x ⊰ y ⊰ l)!                                                  🝖-end
+
 {-permutations-length {l = x ⊰ y ⊰ l} with permutations(y ⊰ l) | permutations-length {l = y ⊰ l}
 ... | ∅       | p = {!!}
 ... | z ⊰ pyl | p =
@@ -260,3 +273,19 @@ foldᵣ((_+_) ∘ const(𝐒 ∘ length(y ⊰ l))) (permutations(y ⊰ l))
   𝐒(𝐒(length l)) ⋅ (𝐒(length l) ⋅ (length(l) !))                      🝖[ _≡_ ]-[]
   (length(x ⊰ y ⊰ l) !)                                               🝖-end
 -}
+
+
+open import Numeral.Finite
+tuples-correctness : ∀{t : T Tuple₊.^ n} → (∀{i : 𝕟(n)} → ((Tuple₊.index i t) ∈ l)) → (t ∈ tuples n l)
+tuples-correctness {n = 𝟎}             {t = <>} dom = • [≡]-intro
+tuples-correctness {n = 𝐒 𝟎}           {t = t}  dom = dom{𝟎}
+tuples-correctness {n = 𝐒(𝐒 n)}{l = l} {t = (x , t)} dom =
+  [↔]-to-[←] ([∈]-concatMap ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ {f = \x → map(Tuple₊.prepend x) (tuples(𝐒(n)) l)}{x = x , t}{l = l})
+  ([∃]-intro x ⦃ [∧]-intro
+    (dom{𝟎})
+    (
+      [↔]-to-[→] ([∈]-map {f = Tuple₊.prepend{n = 𝐒 n} _}{x , t}{l = tuples(𝐒 n) l})
+      ([∃]-intro t ⦃ [∧]-intro ([≡]-intro{ℓ = Lvl.of(Type.of l)}) (tuples-correctness {n = 𝐒 n}{l = l}{t = t} (\{i} → dom{𝐒 i})) ⦄)
+    )
+  ⦄)
+-- 

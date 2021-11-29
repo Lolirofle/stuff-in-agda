@@ -13,7 +13,8 @@ private variable Z : Type{ℓₒ}
 
 record Integer ⦃ equiv : Equiv{ℓₑ}(Z) ⦄ (_+_ : Z → Z → Z) (_⋅_ : Z → Z → Z) (_≤_ : Z → Z → Type{ℓₗ}) : Typeω where
   constructor intro
-  field ⦃ ring ⦄              : Ring(_+_)(_⋅_)
+  field {ℓₙ₀}                 : Lvl.Level
+  field ⦃ ring ⦄              : Ring(_+_)(_⋅_) {ℓₙ₀}
   field ⦃ [+]-commutativity ⦄ : Commutativity(_+_)
   open Ring(ring) public
   field ⦃ ordered ⦄ : Ordered(_+_)(_⋅_)(_≤_)

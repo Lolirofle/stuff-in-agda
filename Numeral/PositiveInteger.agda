@@ -32,7 +32,5 @@ fromℕ (ℕ.𝐒(ℕ.𝐒(x))) ⦃ p ⦄ = 𝐒(fromℕ (ℕ.𝐒(x)) ⦃ p ⦄
 ℕ₊-is-ℕ = [≡]-intro
 
 instance
-  ℕ₊-numeral : Numeral(ℕ₊)
-  Numeral.restriction-ℓ (ℕ₊-numeral)    = Lvl.𝟎
-  Numeral.restriction   (ℕ₊-numeral)  n = IsTrue(positive?(n))
-  num                  ⦃ ℕ₊-numeral ⦄ n = fromℕ n
+  ℕ₊-numeral : Numeral(ℕ₊) (n ↦ IsTrue(positive?(n)))
+  num ⦃ ℕ₊-numeral ⦄ n = fromℕ n

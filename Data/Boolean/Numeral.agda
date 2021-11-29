@@ -18,7 +18,5 @@ Bool-to-ℕ 𝑇 = 1
 ℕ-to-Bool 1 = 𝑇
 
 instance
-  Bool-from-ℕ : Numeral(Bool)
-  Numeral.restriction-ℓ Bool-from-ℕ     = Lvl.𝟎
-  Numeral.restriction   Bool-from-ℕ   n = IsTrue(n <? 2)
-  num                 ⦃ Bool-from-ℕ ⦄ n = ℕ-to-Bool n
+  Bool-from-ℕ : Numeral(Bool) (\n → IsTrue(n <? 2))
+  num ⦃ Bool-from-ℕ ⦄ n = ℕ-to-Bool n

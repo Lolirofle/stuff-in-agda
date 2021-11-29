@@ -6,11 +6,12 @@ open import Data.Boolean.Stmt
 open import Data.Either as Either using ()
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
+open import Logic.Predicate.Theorems
 open import Numeral.Natural
 open import Numeral.Natural.Relation.Divisibility
 open import Numeral.Natural.Relation.Divisibility.Proofs
@@ -106,8 +107,8 @@ open import Type
 prime-lower-bound : ∀{n} → Prime(n) → (n ≥ 2)
 prime-lower-bound {𝐒(𝐒 _)} p = succ (succ min)
 
-composite-lower-bound : ∀{n} → Composite(n) → (n ≥ 2)
-composite-lower-bound {𝐒(𝐒 _)} c = succ (succ min)
+composite-lower-bound : ∀{n} → Composite(n) → (n ≥ 4)
+composite-lower-bound {.(𝐒 (𝐒 a) ⋅ 𝐒 (𝐒 b))} (intro a b) = succ(succ(succ(succ min)))
 
 prime-only-divisors : ∀{n} → Prime(n) → (∀{x} → (x ∣ n) → ((x ≡ 1) ∨ (x ≡ n)))
 prime-only-divisors {𝐒 (𝐒 n)} (intro prime) {𝟎}   = [⊥]-elim ∘ [0]-divides-not
@@ -154,6 +155,18 @@ module _ where
 
 composite-existence : ∀{n} → Composite(n) ↔ ∃{Obj = ℕ ⨯ ℕ}(\(a , b) → (a + 2) ⋅ (b + 2) ≡ n)
 composite-existence = [↔]-intro (\{([∃]-intro (a , b) ⦃ [≡]-intro ⦄) → intro a b}) \{(intro a b) → [∃]-intro (a , b) ⦃ [≡]-intro ⦄}
+
+composite-existence-with-bound : ∀{n} → Composite(n) ↔ ∃{Obj = ℕ ⨯ ℕ}(\(a , b) → (a ≥ 2) ∧ (b ≥ 2) ∧ (a ⋅ b ≡ n))
+composite-existence-with-bound =
+  [↔]-transitivity composite-existence ([↔]-intro
+    (\{
+      ([∃]-intro (𝟎 , _) ⦃ [∧]-intro ([∧]-intro () _) _ ⦄) ;
+      ([∃]-intro (𝐒 𝟎 , _) ⦃ [∧]-intro ([∧]-intro (succ()) _) _ ⦄) ;
+      ([∃]-intro (𝐒(𝐒 _) , 𝐒 𝟎) ⦃ [∧]-intro ([∧]-intro _ (succ())) _ ⦄) ; 
+      ([∃]-intro (𝐒(𝐒 a) , 𝐒(𝐒 b)) ⦃ [∧]-intro _ p ⦄) → [∃]-intro (a , b) ⦃ p ⦄
+    })
+    (\([∃]-intro (a , b) ⦃ p ⦄) → [∃]-intro (a + 2 , b + 2) ⦃ [∧]-intro ([∧]-intro (succ(succ min)) (succ(succ min))) p ⦄)
+  )
 
 prime-positive : ∀{p} → Prime(p) → Positive(p)
 prime-positive {𝐒 p} _ = <>

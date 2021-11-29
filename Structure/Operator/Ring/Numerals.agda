@@ -3,11 +3,11 @@ open import Structure.Setoid
 open import Type
 
 module Structure.Operator.Ring.Numerals
-  {ℓF ℓₑF}
+  {ℓF ℓₑF ℓₙ₀}
   {F : Type{ℓF}}
   ⦃ equiv-F : Equiv{ℓₑF}(F) ⦄
   {_+_}{_⋅_}
-  ⦃ ring : Ring(_+_)(_⋅_) ⦄
+  ⦃ ring : Ring(_+_)(_⋅_) {ℓₙ₀} ⦄
   where
 
 open import Functional
@@ -72,6 +72,6 @@ Whole-to-ℕ (pos nat)       = ℤ.+ₙ (Natural-to-ℕ nat)
 Whole-to-ℕ (subst _ whole) = Whole-to-ℕ whole
 
 -- Whether an element of the field is the standard representation of a rational number.
-data Rational ⦃ div : Division(_+_)(_⋅_) ⦄ : F → Type{ℓF Lvl.⊔ ℓₑF} where
+data Rational ⦃ div : Division(_+_)(_⋅_) ⦄ : F → Type{ℓF Lvl.⊔ ℓₑF Lvl.⊔ ℓₙ₀} where
   quot  : ∀{a b} → Whole(a) → Natural(b) → ⦃ nonzero-b : NonZero(b) ⦄ → let open Division(div) in Rational(a / b)
   subst : ∀{x y} → (x ≡ y) → (Rational(x) → Rational(y))

@@ -15,7 +15,7 @@ open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓ ℓᵥ ℓᵥₗ ℓᵥᵣ ℓᵥ₁ ℓᵥ₂ ℓᵥ₃ ℓₛ ℓᵥₑ ℓᵥₑₗ ℓᵥₑᵣ ℓᵥₑ₁ ℓᵥₑ₂ ℓᵥₑ₃ ℓₛₑ : Lvl.Level
+private variable ℓ ℓᵥ ℓᵥₗ ℓᵥᵣ ℓᵥ₁ ℓᵥ₂ ℓᵥ₃ ℓₛ ℓᵥₑ ℓᵥₑₗ ℓᵥₑᵣ ℓᵥₑ₁ ℓᵥₑ₂ ℓᵥₑ₃ ℓₛₑ ℓₙ₀ ℓₙ₀ₗ ℓₙ₀ᵣ ℓₙ₀₁ ℓₙ₀₂ ℓₙ₀₃ : Lvl.Level
 private variable V Vₗ Vᵣ V₁ V₂ V₃ S : Type{ℓ}
 private variable _+ᵥ_ _+ᵥₗ_ _+ᵥᵣ_ _+ᵥ₁_ _+ᵥ₂_ _+ᵥ₃_ : V → V → V
 private variable _⋅ₛᵥ_ _⋅ₛᵥₗ_ _⋅ₛᵥᵣ_ _⋅ₛᵥ₁_ _⋅ₛᵥ₂_ _⋅ₛᵥ₃_ : S → V → V
@@ -28,8 +28,8 @@ module _
   ⦃ equiv-Vₗ : Equiv{ℓᵥₑₗ}(Vₗ) ⦄
   ⦃ equiv-Vᵣ : Equiv{ℓᵥₑᵣ}(Vᵣ) ⦄
   ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
-  (vectorSpaceₗ : VectorSpace{V = Vₗ}{S = S}(_+ᵥₗ_)(_⋅ₛᵥₗ_)(_+ₛ_)(_⋅ₛ_))
-  (vectorSpaceᵣ : VectorSpace{V = Vᵣ}{S = S}(_+ᵥᵣ_)(_⋅ₛᵥᵣ_)(_+ₛ_)(_⋅ₛ_))
+  (vectorSpaceₗ : VectorSpace{V = Vₗ}{S = S}(_+ᵥₗ_)(_⋅ₛᵥₗ_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀ₗ})
+  (vectorSpaceᵣ : VectorSpace{V = Vᵣ}{S = S}(_+ᵥᵣ_)(_⋅ₛᵥᵣ_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀ᵣ})
   where
 
   instance _ = vectorSpaceₗ
@@ -50,7 +50,7 @@ module _
 module _
   ⦃ equiv-V : Equiv{ℓᵥₑ}(V) ⦄
   ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
-  (vectorSpace : VectorSpace{V = V}{S = S}(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_))
+  (vectorSpace : VectorSpace{V = V}{S = S}(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀})
   where
 
   instance _ = vectorSpace
@@ -64,9 +64,9 @@ module _
   ⦃ equiv-V₂ : Equiv{ℓᵥₑ₂}(V₂) ⦄
   ⦃ equiv-V₂ : Equiv{ℓᵥₑ₃}(V₃) ⦄
   ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
-  (vectorSpace₁ : VectorSpace{V = V₁}{S = S}(_+ᵥ₁_)(_⋅ₛᵥ₁_)(_+ₛ_)(_⋅ₛ_))
-  (vectorSpace₂ : VectorSpace{V = V₂}{S = S}(_+ᵥ₂_)(_⋅ₛᵥ₂_)(_+ₛ_)(_⋅ₛ_))
-  (vectorSpace₃ : VectorSpace{V = V₃}{S = S}(_+ᵥ₃_)(_⋅ₛᵥ₃_)(_+ₛ_)(_⋅ₛ_))
+  (vectorSpace₁ : VectorSpace{V = V₁}{S = S}(_+ᵥ₁_)(_⋅ₛᵥ₁_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀₁})
+  (vectorSpace₂ : VectorSpace{V = V₂}{S = S}(_+ᵥ₂_)(_⋅ₛᵥ₂_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀₂})
+  (vectorSpace₃ : VectorSpace{V = V₃}{S = S}(_+ᵥ₃_)(_⋅ₛᵥ₃_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀₃})
   where
 
   instance _ = vectorSpace₁
@@ -89,7 +89,7 @@ module _
     s ⋅ₛᵥ₃ (f ∘ g)(v)  🝖-end
 
 module _ ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄ {_+ₛ_ _⋅ₛ_ : S → S → S} where
-  private variable A B C : VectorSpaceVObject {ℓᵥ}{_}{ℓᵥₑ}{ℓₛₑ} ⦃ equiv-S ⦄ (_+ₛ_)(_⋅ₛ_)
+  private variable A B C : VectorSpaceVObject {ℓᵥ}{_}{ℓᵥₑ}{ℓₛₑ} ⦃ equiv-S ⦄ (_+ₛ_)(_⋅ₛ_) {ℓₙ₀}
   open VectorSpaceVObject hiding (𝟎ᵥ)
 
   𝟎ˡⁱⁿᵉᵃʳᵐᵃᵖ : A →ˡⁱⁿᵉᵃʳᵐᵃᵖ B

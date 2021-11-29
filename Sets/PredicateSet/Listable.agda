@@ -7,7 +7,7 @@ open import Data.List.Relation.Membership renaming (_∈_ to _∈ₗ_ ; _∈!_ t
 open import Data.List.Relation.Permutation
 open import Data.List.Relation.Quantification using (∀ₗᵢₛₜ ; module AllElements ; ExistsElement ; ExistsElementEquivalence ; module ExistsElementEquivalence)
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Propositional
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
@@ -30,7 +30,7 @@ module _ (S : PredSet{ℓ}(T)) where
 
     proof : ∀ₛ(S) (_∈ₗ list)
     proof = IsUnit.unit ∘ unique
-  list = inst-fn Listable.list
+  list = inferArg Listable.list
 
 private variable l l₁ l₂ l₁₂ : Listable(S)
 

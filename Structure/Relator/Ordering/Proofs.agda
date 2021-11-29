@@ -2,7 +2,7 @@ module Structure.Relator.Ordering.Proofs where
 
 import      Lvl
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Structure.Relator
 open import Structure.Relator.Proofs

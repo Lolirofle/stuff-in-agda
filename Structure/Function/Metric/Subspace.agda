@@ -6,11 +6,11 @@ open import Structure.OrderedField
 open import Type
 
 module Structure.Function.Metric.Subspace
-  {ℓF ℓₑF ℓ≤ ℓₘ ℓₑₘ}
+  {ℓF ℓₑF ℓ≤ ℓₘ ℓₑₘ ℓₙ₀}
   {F : Type{ℓF}} ⦃ equiv-F : Equiv{ℓₑF}(F) ⦄
   {_+_}{_⋅_}
   {_≤_ : _ → _ → Type{ℓ≤}}
-  ⦃ orderedField-F : OrderedField{F = F}(_+_)(_⋅_)(_≤_) ⦄
+  ⦃ orderedField-F : OrderedField{F = F}{ℓₙ₀ = ℓₙ₀}(_+_)(_⋅_)(_≤_) ⦄
   {M : Type{ℓₘ}} ⦃ equiv-M : Equiv{ℓₑₘ}(M) ⦄
   (d : M → M → F) ⦃ metric : MetricSpace(d) ⦄
   where

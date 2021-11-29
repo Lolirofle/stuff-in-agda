@@ -3,7 +3,7 @@ module Structure.Container.SetLike where
 open import Data.Boolean
 open import Data.Boolean.Stmt
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Logic
 open import Logic.Propositional
@@ -67,18 +67,18 @@ module _ {C : Type{ℓ₁}} {E : Type{ℓ₂}} (_∈_ : E → C → Stmt{ℓ₃}
       _closed-under₂_ : C → (E → E → E) → Stmt
       S closed-under₂ (_▫_) = (∀{x y} → (x ∈ S) → (y ∈ S) → ((x ▫ y) ∈ S))
 
-    open import Lang.Instance
+    open import Functional.Instance
     module _ (S : C) (f : E → E) where
       record _closed-under₁_ : Stmt{Lvl.of(S Names.closed-under₁ f)} where
         constructor intro
         field proof : S Names.closed-under₁ f
-      _closureUnder₁_ = inst-fn _closed-under₁_.proof
+      _closureUnder₁_ = inferArg _closed-under₁_.proof
 
     module _ (S : C) (_▫_ : E → E → E) where
       record _closed-under₂_ : Stmt{Lvl.of(S Names.closed-under₂ (_▫_))} where
         constructor intro
         field proof : S Names.closed-under₂ (_▫_)
-      _closureUnder₂_ = inst-fn _closed-under₂_.proof
+      _closureUnder₂_ = inferArg _closed-under₂_.proof
 
 module _ (_∈_ : _) ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄} ⦄ where
   open SetLike(setLike)

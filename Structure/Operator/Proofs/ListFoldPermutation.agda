@@ -4,7 +4,7 @@ import      Lvl
 -- open import Data.Either as Either using ()
 -- open import Data.Tuple as Tuple using (_,_)
 -- open import Function.Equals
--- open import Lang.Instance
+-- open import Functional.Instance
 -- open import Logic.Predicate
 open import Logic.Propositional
 open import Relator.Equals

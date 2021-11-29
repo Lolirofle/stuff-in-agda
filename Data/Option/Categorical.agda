@@ -6,7 +6,7 @@ open import Function.Equals
 open import Data.Option
 open import Data.Option.Functions
 open import Data.Option.Proofs
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Predicate
 open import Relator.Equals

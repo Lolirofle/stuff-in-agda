@@ -1,6 +1,6 @@
 module Structure.Numeral.Natural where
 
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Logic.Predicate
 open import Logic.Propositional
@@ -25,7 +25,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(N) ⦄ where
     record Induction : Type{ℓₑ Lvl.⊔ Lvl.of(N) Lvl.⊔ Lvl.𝐒(ℓ)} where
       constructor intro
       field proof : (P : N → Type{ℓ}) ⦃ rel : UnaryRelator(P) ⦄ → P(𝟎) → ((n : N) → P(n) → P(𝐒(n))) → ((n : N) → P(n))
-    induction = inst-fn Induction.proof
+    induction = inferArg Induction.proof
 
   record Elemental (𝟎 : N) (𝐒 : N → N) : Type{ℓₑ Lvl.⊔ Lvl.of(N)} where
     constructor intro

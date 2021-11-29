@@ -1,7 +1,7 @@
 module Structure.Type.Identity where
 
 import      Lvl
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Propositional
 open import Logic
 open import Structure.Relator.Properties
@@ -58,7 +58,7 @@ module _ {ℓ ℓₑ ℓₚ} {T : Type{ℓ}} (Id : T → T → Stmt{ℓₑ}) ⦃
   record IdentityEliminator : Stmt{ℓ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₚ)} where
     constructor intro
     field elim : Names.IdentityEliminator{ℓₚ = ℓₚ}(Id)
-  idElim = inst-fn IdentityEliminator.elim
+  idElim = inferArg IdentityEliminator.elim
 
 module _
   {ℓ ℓₘ ℓₑ ℓₘₑ}
@@ -73,7 +73,7 @@ module _
   record IdentityEliminationOfIntro : Stmt{ℓ Lvl.⊔ Lvl.𝐒 ℓₘ Lvl.⊔ ℓₑ Lvl.⊔ ℓₘₑ} where
     constructor intro
     field proof : (P : ∀{x y : T} → (Id x y) → Stmt{ℓₘ}) → (p : ∀{x} → P{x}{x}(refl)) → (∀{x : T} → (idElim(Id)(P) p refl ≡ p{x}))
-  idElimOfIntro = inst-fn IdentityEliminationOfIntro.proof
+  idElimOfIntro = inferArg IdentityEliminationOfIntro.proof
 
 module _ {ℓₑ : Lvl.Level → Lvl.Level} (Id : ∀{ℓ}{T : Type{ℓ}} → T → T → Stmt{ℓₑ(ℓ)}) where
   record IdentityType : Stmtω where

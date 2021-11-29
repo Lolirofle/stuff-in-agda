@@ -73,18 +73,45 @@ Tuple.right ([⌊/⌋]-positive {a@(𝐒 _)} {b@(𝐒 _)}) <> = <>
       (eq ↦ substitute₁ₗ(P) (congruence₁(𝐒) ([↔]-to-[→] [⌊/⌋]-zero ([↔]-to-[→] [−₀]-when-0 (sub₂(_≡_)(_≤_) eq)))) (p1(sub₂(_≡_)(_≤_) eq))))
     (ab ↦ substitute₁ᵣ(x ↦ P{x} (𝐒((a −₀ b) ⌈/⌉ b))) ([↔]-to-[→] [−₀][+]-nullify2ᵣ (sub₂(_<_)(_≤_) ab)) (p+{a −₀ b} ⦃ [↔]-to-[→] [−₀]-positive ab ⦄ (prev(a −₀ b) (succ ([−₀]-lesser {A}{B})))))
     (trichotomy(_<_)(_≡_) {a}{b})
-    
 
 -- TODO: Move somewhere else and prove the following: (b ∣ a) ↔ (a ⌊/⌋ b ≡ a ⌈/⌉ b) and (b ∤ a) ↔ (𝐒(a ⌊/⌋ b) ≡ a ⌈/⌉ b)
 
-{-
 open import Numeral.Natural.Oper.Modulo
 open import Numeral.Natural.Oper.Modulo.Proofs
 open import Numeral.Natural.Relation.Proofs
 open import Structure.Operator
 
--- [⌈/⌉][mod]-is-division-with-remainder : ∀{x y} ⦃ pos : Positive(y) ⦄ → (((x ⌈/⌉ y) ⋅ y) −₀ (y − ₀(x mod y)) ≡ x)
-[⌈/⌉][mod]-is-division-with-remainder : ∀{x y} ⦃ pos : Positive(y) ⦄ → ((𝐏(x ⌈/⌉ y) ⋅ y) + (x mod y) ≡ x) -- TODO: Maybe not correct? Or maybe it is the proof method
+{-
+⌈/⌉-and-⌊/⌋ : ∀{x y} → (x ⌈/⌉ y ≡ (x + 𝐏(y)) ⌊/⌋ y)
+⌈/⌉-and-⌊/⌋ = ?
+-}
+
+{-
+[⌈/⌉][mod]-is-division-with-remainder : ∀{x y} ⦃ pos : Positive(y) ⦄ → (((x ⌈/⌉ y) ⋅ y) −₀ (y −₀ (x mod y)) ≡ x) -- TODO: Also false when x = y. The problem is the modulo operation. If (y mod y = y), then this would work, or just change it to (((x ⌈/⌉ y) ⋅ y) −₀ ((y −₀ (x mod y)) mod y) ≡ x), but would such a complicated formula really be useful?
+[⌈/⌉][mod]-is-division-with-remainder {x} {y@(𝐒 Y)} = [⌈/⌉]-elim(\{x} div → ((div ⋅ y) −₀ (y −₀ (x mod y)) ≡ x)) {y} [≡]-intro base1 step {x} where
+  base1 : ∀{x} ⦃ pos-x : Positive x ⦄ → (x < y) → (y −₀ (y −₀ (x mod y)) ≡ x)
+  base1 {x} (succ lt) =
+    y −₀ (y −₀ (x mod y)) 🝖[ _≡_ ]-[ [↔]-to-[→] [−₀]-nested-sameₗ (sub₂(_<_)(_≤_) (mod-maxᵣ {x}{y})) ]
+    x mod y               🝖[ _≡_ ]-[ mod-lesser-than-modulus ⦃ lt ⦄ ]
+    x                     🝖-end
+
+  step : ∀{x} → (((x ⌈/⌉ y) ⋅ y) −₀ (y −₀ (x mod y)) ≡ x) → ((𝐒(x ⌈/⌉ y) ⋅ y) −₀ (y −₀ ((x + y) mod y)) ≡ x + y)
+  step {𝟎}       prev =
+    (𝐒(𝟎 ⌈/⌉ y) ⋅ y) −₀ (y −₀ ((𝟎 + y) mod y)) 🝖[ _≡_ ]-[]
+    y −₀ (y −₀ (y mod y))                      🝖[ _≡_ ]-[ {!!} ]
+    y −₀ (y −₀ 𝟎)                              🝖[ _≡_ ]-[ {!!} ]
+    y −₀ y                                     🝖[ _≡_ ]-[ {!!} ]
+    y                                          🝖[ _≡_ ]-[]
+    𝟎 + 𝐒 Y                                    🝖-end
+  step {x@(𝐒 _)} prev =
+    (𝐒(x ⌈/⌉ y) ⋅ y) −₀ (y −₀ ((x + y) mod y)) 🝖[ _≡_ ]-[ congruence₂(_−₀_) ([⋅]-with-[𝐒]ₗ {x ⌈/⌉ y}{y}) (congruence₂ᵣ(_−₀_)(y) (mod-of-modulus-addᵣ {x}{Y})) ]
+    (((x ⌈/⌉ y) ⋅ y) + y) −₀ (y −₀ (x mod y))  🝖[ _≡_ ]-[ [+][−₀]-almost-associativityₗ {(x ⌈/⌉ y) ⋅ y}{y}{y −₀ (x mod y)} {!!} ]
+    (((x ⌈/⌉ y) ⋅ y) −₀ (y −₀ (x mod y))) + y  🝖[ _≡_ ]-[ {!!} ]
+    x + y                                      🝖-end
+-}
+
+{-
+[⌈/⌉][mod]-is-division-with-remainder : ∀{x y} ⦃ pos : Positive(y) ⦄ → ((𝐏(x ⌈/⌉ y) ⋅ y) + (x mod y) ≡ x) -- TODO: False when x = y
 [⌈/⌉][mod]-is-division-with-remainder {x} {y@(𝐒 Y)} = [⌈/⌉]-elim(\{x} div → ((𝐏(div) ⋅ y) + (x mod y) ≡ x)) {y} [≡]-intro base1 step {x} where
   base1 : ∀{x} ⦃ pos-x : Positive x ⦄ → (x < y) → (x mod y ≡ x)
   base1(succ lt) = mod-lesser-than-modulus ⦃ lt ⦄
@@ -97,10 +124,10 @@ open import Structure.Operator
     ((((x ⌈/⌉ y) ⋅ y) −₀ y) + (x mod y)) + y 🝖[ _≡_ ]-[ {!!} ]
     ((𝐏(x ⌈/⌉ y) ⋅ y) + (x mod y)) + y       🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(y) prev ]
     x + y                                    🝖-end
+-}
 
 {-
 13/3 = 5
 13/3*3 = 15
 13/3*3 - 3 + 1 = 15
--}
 -}

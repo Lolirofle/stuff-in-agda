@@ -2,7 +2,7 @@ module Structure.Relator.Ordering where
 
 import      Lvl
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
@@ -136,7 +136,7 @@ module Strict {T : Type{ℓ₁}} (_<_ : T → T → Stmt{ℓ₂}) where
     -- TODO: Maybe move this to ReductionSystems because it is formalized like this in those cases, but well-foundedness is usually defined using some other formula classically?
     WellFounded : Stmt{ℓ₁ Lvl.⊔ ℓ₂}
     WellFounded = ∀ₗ(Accessibleₗ)
-    wellfounded = \{a} ⦃ acc ⦄ {x} ⦃ p ⦄ → inst-fn(Accessibleₗ.proof {a = a}) ⦃ acc ⦄ {x} ⦃ p ⦄
+    wellfounded = \{a} ⦃ acc ⦄ {x} ⦃ p ⦄ → inferArg(Accessibleₗ.proof {a = a}) ⦃ acc ⦄ {x} ⦃ p ⦄
 
     wellfounded-induction : ⦃ WellFounded ⦄ → ∀{P : T → Type{ℓ₃}} → (∀{x} → (∀{prev} → ⦃ _ : (prev < x) ⦄ → P(prev)) → P(x)) → (∀{x} → P(x))
     wellfounded-induction proof = accessible-induction proof

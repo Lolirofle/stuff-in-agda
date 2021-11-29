@@ -3,7 +3,7 @@ module Structure.Operator.Group.Proofs where
 open import Functional hiding (id)
 open import Function.Iteration.Order
 import      Lvl
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Propositional
 open import Logic.Predicate
 open import Structure.Setoid

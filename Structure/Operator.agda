@@ -2,7 +2,7 @@ module Structure.Operator where
 
 import Lvl
 open import Functional using (_$_)
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Predicate
 open import Logic
 open import Structure.Setoid
@@ -44,18 +44,18 @@ module _
     congruenceᵣ = Function.congruence(right)
 
   [≡]-congruence2-left : ⦃ inst : BinaryOperator ⦄ → (x : _) → Function(_▫ x)
-  [≡]-congruence2-left = x ↦ inst-fn(BinaryOperator.left) {x}
+  [≡]-congruence2-left = x ↦ inferArg(BinaryOperator.left) {x}
 
   [≡]-congruence2-right : ⦃ inst : BinaryOperator ⦄ → (x : _) → Function(x ▫_)
-  [≡]-congruence2-right = x ↦ inst-fn(BinaryOperator.right) {x}
+  [≡]-congruence2-right = x ↦ inferArg(BinaryOperator.right) {x}
 
-  congruence₂ = inst-fn BinaryOperator.congruence
+  congruence₂ = inferArg BinaryOperator.congruence
 
   congruence₂ₗ : ⦃ inst : BinaryOperator ⦄ → (a : A₂) → ∀{x y : A₁} → (x ≡ y) → (x ▫ a ≡ y ▫ a)
-  congruence₂ₗ _ = inst-fn BinaryOperator.congruenceₗ -- (congruence₁(_▫ a) ⦃ [≡]-congruence2-left ⦃ inst ⦄ a ⦄)
+  congruence₂ₗ _ = inferArg BinaryOperator.congruenceₗ -- (congruence₁(_▫ a) ⦃ [≡]-congruence2-left ⦃ inst ⦄ a ⦄)
 
   congruence₂ᵣ : ⦃ inst : BinaryOperator ⦄ → (a : A₁) → ∀{x y : A₂} → (x ≡ y) → (a ▫ x ≡ a ▫ y)
-  congruence₂ᵣ _ = inst-fn BinaryOperator.congruenceᵣ
+  congruence₂ᵣ _ = inferArg BinaryOperator.congruenceᵣ
 
   functions-to-binaryOperator : ⦃ l : ∀{y} → Function(_▫ y) ⦄ ⦃ r : ∀{x} → Function(x ▫_) ⦄ → BinaryOperator
   BinaryOperator.congruence functions-to-binaryOperator {x₁} {y₁} {x₂} {y₂} leq req =
@@ -75,4 +75,4 @@ module _
     constructor intro
     field congruence : Congruence₃(_▫_▫_)
 
-  congruence₃ = inst-fn TrinaryOperator.congruence
+  congruence₃ = inferArg TrinaryOperator.congruence

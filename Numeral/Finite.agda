@@ -52,7 +52,5 @@ maximum{𝐒(n)} = 𝐒(maximum{n})
 ℕ-to-𝕟 (ℕ.𝐒(x)) {ℕ.𝐒(n)} ⦃ p ⦄ = 𝐒(ℕ-to-𝕟 (x) {n} ⦃ p ⦄)
 
 instance
-  𝕟-from-ℕ : ∀{N} → Numeral(𝕟(N))
-  Numeral.restriction-ℓ ( 𝕟-from-ℕ {N} ) = Lvl.𝟎
-  Numeral.restriction ( 𝕟-from-ℕ {N} ) (n) = IsTrue(n <? N)
-  num ⦃ 𝕟-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = ℕ-to-𝕟 (n) {N} ⦃ proof ⦄
+  𝕟-from-ℕ : ∀{N} → Numeral(𝕟(N)) (n ↦ IsTrue(n <? N))
+  num ⦃ 𝕟-from-ℕ {N} ⦄ n = ℕ-to-𝕟 n {N}

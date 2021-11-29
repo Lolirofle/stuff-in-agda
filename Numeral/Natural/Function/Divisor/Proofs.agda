@@ -19,6 +19,7 @@ open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Divisibility
 open import Numeral.Natural.Relation.Divisibility.Decidable
 open import Numeral.Natural.Relation.Divisibility.Proofs
+open import Numeral.Natural.Relation.Divisibility.Proofs.Product
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Classical
 open import Numeral.Natural.Relation.Order.Decidable
@@ -56,7 +57,7 @@ leastDivisor-minimal {d} n@{𝐒(𝐒 _)} range div with findBoundedMin 2 n (_�
   ¬(2 ≤ d < n)        ⇒-[ [¬]-preserves-[∧][∨]ᵣ ⦃ decider-classical(2 ≤ d) ⦄ ⦃ decider-classical(d < n) ⦄ ]
   ((2 ≰ d) ∨ (d ≮ n)) ⇒-[ [∨]-elim2 (sub₂(_≰_)(_>_)) (sub₂(_≮_)(_≥_)) ]
   ((2 > d) ∨ (d ≥ n)) ⇒-[ [∨]-elim ([⊥]-elim ∘ [≤]-to-[≯] range) id ]
-  (n ≤ d)                                 ⇒-end
+  (n ≤ d)             ⇒-end
 ... | Some m | intro eq =
   • (range ⇒
     (2 ≤ d) ⇒-end
@@ -102,6 +103,11 @@ leastDivisor-prime {n} range = prime-when-only-divisors (leastDivisor-range rang
       (leastDivisor-minimal{n = n} (succ(succ min)) (transitivity(_∣_) div leastDivisor-correctness) )
     )
 
+leastDivisor-small-or-prime : (n < 2) ∨ Prime(leastDivisor n)
+leastDivisor-small-or-prime {0}           = [∨]-introₗ (succ min)
+leastDivisor-small-or-prime {1}           = [∨]-introₗ (succ(succ min))
+leastDivisor-small-or-prime {n@(𝐒(𝐒(_)))} = [∨]-introᵣ (leastDivisor-prime{n} (succ(succ min)))
+
 leastDivisor-when-fixpoint : (leastDivisor n ≡ n) ↔ ((n < 2) ∨ Prime(n))
 leastDivisor-when-fixpoint = [↔]-intro l r where
   l : (leastDivisor n ≡ n) ← ((n < 2) ∨ Prime(n))
@@ -129,6 +135,16 @@ leastDivisor-when-fixpoint = [↔]-intro l r where
 leastDivisor-order : (leastDivisor n ≤ n)
 leastDivisor-order {𝟎}   = min
 leastDivisor-order {𝐒 n} = divides-upper-limit leastDivisor-correctness
+
+open import Numeral.Natural.Prime.Decidable
+leastDivisor-strict-order : (leastDivisor n < n) ↔ ((n ≥ 2) ∧ Composite(n))
+leastDivisor-strict-order{n} =
+  leastDivisor n < n           ⇔-[ [↔]-intro ([≤][≢]-to-[<] leastDivisor-order) [<]-to-[≢] ]
+  leastDivisor n ≢ n           ⇔-[ [¬]-unaryOperator leastDivisor-when-fixpoint ]
+  ¬((n < 2) ∨ Prime n)         ⇔-[ [¬]-unaryOperator ([↔]-intro ([∨]-elim ([∨]-introₗ ∘ sub₂(_≱_)(_<_)) ([¬→]-disjunctive-formᵣ ⦃ decider-to-classical ⦄ ∘ (_∘ sub₂(_≮_)(_≥_)) ∘ swap([⊕]-not-not-left ∘ prime-xor-composite))) ([∨]-elim ([∨]-introₗ ∘ [<]-to-[≱]) ([→]-disjunctive-formᵣ ⦃ decider-to-classical ⦄ ∘ swap([⊕]-not-left ∘ prime-xor-composite)))) ]
+  ¬(¬(n ≥ 2) ∨ ¬(Composite n)) ⇔-[ [¬]-unaryOperator ([¬]-preserves-[∧][∨] ⦃ decider-to-classical ⦄ ⦃ decider-to-classical ⦄) ]-sym
+  ¬¬((n ≥ 2) ∧ (Composite n))  ⇔-[ double-negation ⦃ [∧]-classical-intro ⦃ decider-to-classical ⦄ ⦃ decider-to-classical ⦄ ⦄ ]-sym
+  (n ≥ 2) ∧ Composite n        ⇔-end
 
 open import Numeral.Natural.Decidable
 open import Numeral.Natural.Oper.Comparisons
@@ -163,6 +179,7 @@ open import Numeral.Natural.Oper
 open import Syntax.Transitivity
 
 -- Intuitively, if a divides b, it means that b may have prime divisors that differ from a, and some may be smaller.
+-- TODO: Prove when assuming (leastDivisor a ∣ b) instead. It will imply this
 leastDivisor-divisibility-order : ∀{a b} → (a ≥ 2) → (a ∣ b) → (leastDivisor a ≥ leastDivisor b)
 leastDivisor-divisibility-order {a}{b} dom ab =
   leastDivisor-intro(\b db → (a ∣ b) → (leastDivisor a ≥ db))
@@ -211,3 +228,43 @@ open import Structure.Operator.Properties
 leastDivisor-of-[^] : (2 ≤ a) → ⦃ Positive(n) ⦄ → (leastDivisor(a ^ n) ≡ leastDivisor(a))
 leastDivisor-of-[^] {a} {1}      bound-a           = [≡]-intro
 leastDivisor-of-[^] {a} {𝐒(𝐒 n)} bound-a ⦃ pos-n ⦄ = leastDivisor-of-[⋅] {a}{a ^ 𝐒(n)} bound-a (bound-a 🝖 [^]ₗ-growing{a}{1}{𝐒(n)} (\()) ([↔]-to-[→] Positive-greater-than-zero pos-n)) 🝖 ([↔]-to-[→] min-defᵣ (leastDivisor-[⋅]ₗ-order {a}{a ^ n} bound-a) 🝖 leastDivisor-of-[^] {a}{𝐒 n} bound-a)
+
+leastDivisor-of-lesser-prime-[⋅]ₗ : Prime(a) → (a ≤ leastDivisor b) → (leastDivisor(a ⋅ b) ≡ a)
+leastDivisor-of-lesser-prime-[⋅]ₗ {a}{b} prim-a ab =
+  leastDivisor(a ⋅ b)                    🝖[ _≡_ ]-[ leastDivisor-of-[⋅] (prime-lower-bound prim-a) (prime-lower-bound prim-a 🝖 ab 🝖 leastDivisor-order{b}) ]
+  ℕ.min(leastDivisor a) (leastDivisor b) 🝖[ _≡_ ]-[ [↔]-to-[→] min-defₗ (leastDivisor-order 🝖 ab) ]
+  leastDivisor a                         🝖[ _≡_ ]-[ [↔]-to-[←] leastDivisor-when-fixpoint ([∨]-introᵣ prim-a) ]
+  a                                      🝖-end
+
+open import Data.Tuple using (_,_)
+open import Logic.Predicate
+open import Numeral.Natural.Oper.FlooredDivision
+open import Numeral.Natural.Oper.FlooredDivision.Proofs
+open import Numeral.Natural.Oper.FlooredDivision.Proofs.Compatibility
+open import Structure.Function
+open import Structure.Relator
+
+Composite-without-leastDivisor-lower-bound : (c : Composite(n)) →
+  let instance _ = leastDivisor-positive (Positive-greater-than(composite-lower-bound c))
+  in  ((n ⌊/⌋ leastDivisor n) ≥ 2)
+Composite-without-leastDivisor-lower-bound {n} c
+  with [∃]-intro (a , b) ⦃ [∧]-intro ([∧]-intro a2 b2) abn ⦄ ← [↔]-to-[→] composite-existence-with-bound c
+  =
+    let instance _ = leastDivisor-positive (Positive-greater-than(composite-lower-bound c))
+    in [∨]-elim
+      (\div-a →
+        2                          🝖[ _≤_ ]-[ [≤]-with-[⋅] {1}{2}{a ⌊/⌋ leastDivisor n}{b} ([↔]-to-[→] Positive-greater-than-zero ([↔]-to-[→] ([⌊/⌋]-positive {a}{leastDivisor n}) (divides-upper-limit ⦃ Positive-greater-than a2 ⦄ div-a))) b2 ]
+        (a ⌊/⌋ leastDivisor n) ⋅ b 🝖[ _≤_ ]-[ sub₂(_≡_)(_≤_) (symmetry(_≡_) ([⌊/⌋][⋅]ₗ-compatibility {a}{b} div-a)) ]
+        (a ⋅ b) ⌊/⌋ leastDivisor n 🝖[ _≤_ ]-[ sub₂(_≡_)(_≤_) (congruence₁(_⌊/⌋ leastDivisor n) abn) ]
+        n ⌊/⌋ leastDivisor n       🝖-end
+      )
+      (\div-b →
+        2                          🝖[ _≤_ ]-[ [≤]-with-[⋅] {2}{1}{a}{b ⌊/⌋ leastDivisor n} a2 (([↔]-to-[→] Positive-greater-than-zero ([↔]-to-[→] ([⌊/⌋]-positive {b}{leastDivisor n}) (divides-upper-limit ⦃ Positive-greater-than b2 ⦄ div-b)))) ]
+        a ⋅ (b ⌊/⌋ leastDivisor n) 🝖[ _≤_ ]-[ sub₂(_≡_)(_≤_) (symmetry(_≡_) ([⌊/⌋][⋅]ᵣ-compatibility {a}{b} div-b)) ]
+        (a ⋅ b) ⌊/⌋ leastDivisor n 🝖[ _≤_ ]-[ sub₂(_≡_)(_≤_) (congruence₁(_⌊/⌋ leastDivisor n) abn) ]
+        n ⌊/⌋ leastDivisor n       🝖-end
+      )
+      (prime-divides-of-[⋅] {leastDivisor n}{a}{b}
+        (leastDivisor-prime{n} ([≤]-predecessor ([≤]-predecessor ([≤]-with-[⋅] a2 b2)) 🝖 sub₂(_≡_)(_≤_) abn))
+        (substitute₂ᵣ(_∣_) (symmetry(_≡_) abn) leastDivisor-correctness)
+      )

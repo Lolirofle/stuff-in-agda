@@ -36,7 +36,7 @@ digraph dependencies {
    m234[label="Logic.Predicate.Proofs"];
    m235[label="Numeral.Natural.Combinatorics.Proofs"];
    m236[label="Structure.Operator.Functions"];
-   m36[label="Lang.Instance"];
+   m36[label="Functional.Instance"];
    m237[label="Numeral.Natural.Function.Divisor"];
    m246[label="Structure.Setoid.Names"];
    m109[label="Function.Domains"];

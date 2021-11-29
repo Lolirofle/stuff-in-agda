@@ -196,7 +196,7 @@ assume-closure ([∃]-elim   p q)   = [∃]-elim (assume-closure {!!}) (assume-c
     ([⟶]-intro ([∃]-elim ([⟶]-intro-inverse ([Ɐ]-elim (direct (Left (Right [≡]-intro))))) (direct (Right [≡]-intro))))
     ([Ɐ]-intro ([⟶]-intro ([⟶]-elim ([∃]-intro (direct (Right [≡]-intro))) (direct (Left (Right [≡]-intro))))))
 
-open import Lang.Instance
+open import Functional.Instance
 
 -- 2.3.1
 data NegativeFragment : Formula(vars) → Type{ℓₚ Lvl.⊔ ℓₒ} where

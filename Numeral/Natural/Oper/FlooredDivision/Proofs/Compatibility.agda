@@ -2,7 +2,7 @@ module Numeral.Natural.Oper.FlooredDivision.Proofs.Compatibility where
 
 open import Data
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Predicate
 open import Logic.Propositional
 open import Logic.Propositional.Theorems

@@ -13,12 +13,14 @@ open import Structure.Operator.Field
 open import Structure.Operator.Group
 open import Structure.Operator.Monoid
 open import Structure.Operator.Properties
+open import Structure.Operator.Ring
+open import Structure.Operator.Semi
 open import Structure.Operator.Vector
 open import Structure.Operator
 open import Structure.Relator.Properties
 open import Type
 
-private variable ℓ ℓₑ ℓₗ ℓₗₑ : Lvl.Level
+private variable ℓ ℓₑ ℓₗ ℓₗₑ ℓₙ₀ : Lvl.Level
 private variable I S T : Type{ℓ}
 private variable _+_ _⋅_ : S → S → S
 
@@ -78,6 +80,10 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   pointwiseFunction-const-preserves : Preserving₂(const₁) (_▫_) (pointwise(1)(2) {As = I} (_▫_))
   pointwiseFunction-const-preserves = intro(intro(reflexivity(_≡_)))
 
+  pointwiseFunction-semi : ⦃ semi : Semi(_▫_) ⦄ → Semi(pointwise(1)(2) {As = I} (_▫_))
+  Semi.binaryOperator pointwiseFunction-semi = pointwiseFunction-binaryOperator
+  Semi.associativity  pointwiseFunction-semi = pointwiseFunction-associativity
+
   -- A component-wise operator is a monoid when its underlying operator is a monoid.
   pointwiseFunction-monoid : ⦃ monoid : Monoid(_▫_) ⦄ → Monoid(pointwise(1)(2) {As = I} (_▫_))
   Monoid.binaryOperator     pointwiseFunction-monoid = pointwiseFunction-binaryOperator
@@ -95,16 +101,19 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
 module _
   ⦃ equiv : Equiv{ℓₑ}(S) ⦄
-  (field-structure : Field{T = S}(_+_)(_⋅_))
+  (field-structure : Field{T = S}(_+_)(_⋅_) {ℓₙ₀})
   where
   open Field(field-structure)
 
+  pointwiseFunction-scalarMultiplication : ScalarMultiplicationCore(pointwise(1)(2) {As = I} (_+_))(pointwise(1)(1) ∘ (_⋅_))(_+_)(_⋅_) ⦃ semiRg ⦄ ⦃ pointwiseFunction-semi ⦄
+  _⊜_.proof (BinaryOperator.congruence (ScalarMultiplicationCore.[⋅ₛᵥ]-binaryOperator      pointwiseFunction-scalarMultiplication) p (intro q)) = congruence₂(_⋅_) p q
+  _⊜_.proof (Distributivityₗ.proof     (ScalarMultiplicationCore.[⋅ₛᵥ][+ᵥ]-distributivityₗ pointwiseFunction-scalarMultiplication)) = distributivityₗ(_⋅_)(_+_)
+  _⊜_.proof (Preserving.proof          (ScalarMultiplicationCore.[⋅ₛᵥ]ₗ[⋅]ᵣ-preserving     pointwiseFunction-scalarMultiplication)) = associativity(_⋅_)
+  _⊜_.proof (Preserving.proof          (ScalarMultiplicationCore.[⋅ₛᵥ]ₗ[+]-preserving      pointwiseFunction-scalarMultiplication)) = distributivityᵣ(_⋅_)(_+_)
+
   -- Component-wise operators constructs a vector space from a field when using the fields as scalars and coordinate vectors as vectors.
   pointwiseFunction-vectorSpace : VectorSpace(pointwise(1)(2) {As = I} (_+_))(pointwise(1)(1) ∘ (_⋅_))(_+_)(_⋅_)
-  VectorSpace.scalarField pointwiseFunction-vectorSpace = field-structure
-  VectorSpace.vectorCommutativeGroup                                          pointwiseFunction-vectorSpace = pointwiseFunction-commutativeGroup ⦃ commutativeGroup = intro ⦄
-  _⊜_.proof (BinaryOperator.congruence (VectorSpace.[⋅ₛᵥ]-binaryOperator      pointwiseFunction-vectorSpace) p (intro q)) = congruence₂(_⋅_) p q
-  _⊜_.proof (Preserving.proof          (VectorSpace.[⋅ₛᵥ]ₗ[⋅]ᵣ-preserving     pointwiseFunction-vectorSpace)) = associativity(_⋅_)
-  _⊜_.proof (Identityₗ.proof           (VectorSpace.[⋅ₛᵥ]-identity            pointwiseFunction-vectorSpace)) = identityₗ(_⋅_)(𝟏)
-  _⊜_.proof (Distributivityₗ.proof     (VectorSpace.[⋅ₛᵥ][+ᵥ]-distributivityₗ pointwiseFunction-vectorSpace)) = distributivityₗ(_⋅_)(_+_)
-  _⊜_.proof (Preserving.proof          (VectorSpace.[⋅ₛᵥ]ₗ[+]-preserving      pointwiseFunction-vectorSpace)) = distributivityᵣ(_⋅_)(_+_)
+  VectorSpace.scalarField                pointwiseFunction-vectorSpace = field-structure
+  VectorSpace.vectorCommutativeGroup     pointwiseFunction-vectorSpace = pointwiseFunction-commutativeGroup ⦃ commutativeGroup = intro ⦄
+  VectorSpace.[⋅ₛᵥ]-scalarMultiplication pointwiseFunction-vectorSpace = pointwiseFunction-scalarMultiplication
+  _⊜_.proof (Identityₗ.proof (VectorSpace.[⋅ₛᵥ]-identity pointwiseFunction-vectorSpace)) = identityₗ(_⋅_)(𝟏)

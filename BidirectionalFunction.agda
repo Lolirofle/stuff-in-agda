@@ -1,7 +1,7 @@
 module BidirectionalFunction where
 
 open import Data.Tuple as Tuple using (_⨯_)
-open import Function
+open import Function using (_←_)
 import      Lvl
 open import Type
 

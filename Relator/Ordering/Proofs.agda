@@ -3,7 +3,7 @@ module Relator.Ordering.Proofs where
 open import Data
 import      Lvl
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Classical
 open import Logic.Propositional

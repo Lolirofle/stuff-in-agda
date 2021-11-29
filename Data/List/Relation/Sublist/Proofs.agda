@@ -35,6 +35,26 @@ private variable a x y : T
 private variable l l₁ l₂ l₃ : List(T)
 private variable n : ℕ
 
+----------------------------------------------------------------------------------------------
+-- Fundamental stuff on (_⊑_)
+
+[⊑]-without-[⊰] : ((x ⊰ l₁) ⊑ (y ⊰ l₂)) → (l₁ ⊑ l₂)
+[⊑]-without-[⊰]                (use _ p)       = p
+[⊑]-without-[⊰]                (skip(use _ p)) = skip p
+[⊑]-without-[⊰] {x = x}{y = y} (skip(skip p))  = skip([⊑]-without-[⊰] {x = x}{y = y} (skip p))
+
+[⊑]-not-prepend : ¬((x ⊰ l) ⊑ l)
+[⊑]-not-prepend {x} {y ⊰ l₂} (use xy p) = [⊑]-not-prepend {y}{l₂} p
+[⊑]-not-prepend {x} {y ⊰ _}  (skip   p) = [⊑]-not-prepend([⊑]-without-[⊰] {y = y} (skip p))
+
+module _ {ℓₑₗ} ⦃ equiv-List : Equiv{ℓₑₗ}(List(T)) ⦄ where
+  [⊑]-empty : (l ⊑ ∅) → (l ≡ ∅)
+  [⊑]-empty {∅}     _ = reflexivity(_≡_)
+  [⊑]-empty {_ ⊰ _} ()
+
+----------------------------------------------------------------------------------------------
+-- Order related on (_⊑_)
+
 instance
   [⊑]-reflexivity : Reflexivity(_⊑_ {T = T})
   [⊑]-reflexivity = intro p where
@@ -52,20 +72,6 @@ instance
     p (use xy l₁l₂) (skip   l₂l₃) = skip(p (use xy l₁l₂) l₂l₃)
     p (skip l₁l₂)   (use yz l₂l₃) = skip(p l₁l₂ l₂l₃)
     p (skip l₁l₂)   (skip   l₂l₃) = skip(p (skip l₁l₂) l₂l₃)
-
-[⊑]-without-[⊰] : ((x ⊰ l₁) ⊑ (y ⊰ l₂)) → (l₁ ⊑ l₂)
-[⊑]-without-[⊰]                (use _ p)       = p
-[⊑]-without-[⊰]                (skip(use _ p)) = skip p
-[⊑]-without-[⊰] {x = x}{y = y} (skip(skip p))  = skip([⊑]-without-[⊰] {x = x}{y = y} (skip p))
-
-[⊑]-not-prepend : ¬((x ⊰ l) ⊑ l)
-[⊑]-not-prepend {x} {y ⊰ l₂} (use xy p) = [⊑]-not-prepend {y}{l₂} p
-[⊑]-not-prepend {x} {y ⊰ _}  (skip   p) = [⊑]-not-prepend([⊑]-without-[⊰] {y = y} (skip p))
-
-module _ {ℓₑₗ} ⦃ equiv-List : Equiv{ℓₑₗ}(List(T)) ⦄ where
-  [⊑]-empty : (l ⊑ ∅) → (l ≡ ∅)
-  [⊑]-empty {∅}     _ = reflexivity(_≡_)
-  [⊑]-empty {_ ⊰ _} ()
 
 module _ {ℓₑₗ} ⦃ equiv-List : Equiv{ℓₑₗ}(List(T)) ⦄ ⦃ ext : Extensionality(equiv-List) ⦄ where
   instance
@@ -117,13 +123,16 @@ module _ {ℓₑₗ} ⦃ equiv-List : Equiv{ℓₑₗ}(List(T)) ⦄ ⦃ ext : Ex
     [⊑]-weakPartialOrder : Weak.PartialOrder(_⊑_ {T = T})
     [⊑]-weakPartialOrder = record{}
 
-[⊑]-prepend : (l ⊑ x ⊰ l)
-[⊑]-prepend {∅}     = skip empty
-[⊑]-prepend {x ⊰ l} = skip (reflexivity(_⊑_))
-
 [⊑]-minimum : (∅ ⊑ l)
 [⊑]-minimum {∅}     = empty
 [⊑]-minimum {a ⊰ l} = skip([⊑]-minimum{l})
+
+----------------------------------------------------------------------------------------------
+-- List functions on (_⊑_)
+
+[⊑]-prepend : (l ⊑ x ⊰ l)
+[⊑]-prepend {∅}     = skip empty
+[⊑]-prepend {x ⊰ l} = skip (reflexivity(_⊑_))
 
 [⊑]ᵣ-of-[++]ₗ : (l₁ ⊑ (l₂ ++ l₁))
 [⊑]ᵣ-of-[++]ₗ {l₁}{∅}      = reflexivity(_⊑_)
@@ -184,19 +193,13 @@ Tuple.right ([⊑]-separate₂ {x ⊰ y ⊰ l}) = skip (use (reflexivity(_≡_))
 [⊑]-length (use _ p) = [≤]-with-[𝐒] ⦃ [⊑]-length p ⦄
 [⊑]-length (skip  p) = [≤]-predecessor ([≤]-with-[𝐒] ⦃ [⊑]-length p ⦄)
 
-
+----------------------------------------------------------------------------------------------
+-- Fundamental stuff on (_⊏_)
 
 [⊏]-without-[⊰] : ((x ⊰ l₁) ⊏ (y ⊰ l₂)) → (l₁ ⊏ l₂)
 [⊏]-without-[⊰]                (use _ p)         = p
 [⊏]-without-[⊰]                (skip (use _ p))  = skip p
 [⊏]-without-[⊰] {x = x}{y = y} (skip (skip p)) = skip ([⊑]-without-[⊰] {x = x}{y = y} (skip p))
-
-instance
-  [⊏]-irreflexivity : Irreflexivity(_⊏_ {T = T})
-  [⊏]-irreflexivity = intro p where
-    p : Names.Irreflexivity(_⊏_)
-    p{∅}     ()
-    p{x ⊰ l} prev = p{l} ([⊏]-without-[⊰] prev)
 
 [⊏]-to-[⊑] : (l₁ ⊏ l₂) → (l₁ ⊑ l₂)
 [⊏]-to-[⊑] (use xy p) = use xy ([⊏]-to-[⊑] p)
@@ -205,6 +208,23 @@ instance
 [⊏]-skip-[⊰] : (l₁ ⊏ l₂) → (l₁ ⊏ (x ⊰ l₂))
 [⊏]-skip-[⊰] (use xy p) = skip ([⊏]-to-[⊑] (use xy p))
 [⊏]-skip-[⊰] (skip   p) = skip (skip p)
+
+[⊏]-emptyₗ : (∅ ⊏ (x ⊰ l))
+[⊏]-emptyₗ {l = ∅}     = skip empty
+[⊏]-emptyₗ {l = x ⊰ l} = skip ([⊏]-to-[⊑] ([⊏]-emptyₗ {l = l}))
+
+[⊏]-emptyᵣ : ¬(l ⊏ ∅)
+[⊏]-emptyᵣ ()
+
+----------------------------------------------------------------------------------------------
+-- Order related on (_⊏_)
+
+instance
+  [⊏]-irreflexivity : Irreflexivity(_⊏_ {T = T})
+  [⊏]-irreflexivity = intro p where
+    p : Names.Irreflexivity(_⊏_)
+    p{∅}     ()
+    p{x ⊰ l} prev = p{l} ([⊏]-without-[⊰] prev)
 
 instance
   [⊏]-transitivity : Transitivity(_⊏_ {T = T})
@@ -225,12 +245,8 @@ module _ {ℓₑₗ} ⦃ equiv-List : Equiv{ℓₑₗ}(List(T)) ⦄ where
   [⊏]-minimum {∅}     = [∨]-introₗ (reflexivity(_≡_))
   [⊏]-minimum {x ⊰ l} = [∨]-introᵣ (skip [⊑]-minimum)
 
-[⊏]-emptyₗ : (∅ ⊏ (x ⊰ l))
-[⊏]-emptyₗ {l = ∅}     = skip empty
-[⊏]-emptyₗ {l = x ⊰ l} = skip ([⊏]-to-[⊑] ([⊏]-emptyₗ {l = l}))
-
-[⊏]-emptyᵣ : ¬(l ⊏ ∅)
-[⊏]-emptyᵣ ()
+----------------------------------------------------------------------------------------------
+-- List functions on (_⊏_)
 
 [⊏]-length : (l₁ ⊏ l₂) → (length(l₁) < length(l₂))
 [⊏]-length (use _ p) = [≤]-with-[𝐒] ⦃ [⊏]-length p ⦄
@@ -274,13 +290,23 @@ Tuple.right ([⊏]-separate₂ {x ⊰ y ⊰ l} (succ (succ min))) = skip (use (r
 [⊏]ᵣ-of-[++]ᵣ {a ⊰ l₂} {∅}      (skip p) = skip p
 [⊏]ᵣ-of-[++]ᵣ {a ⊰ l₂} {b ⊰ l₁} (skip p) = use (reflexivity(_≡_)) ([⊏]ᵣ-of-[++]ᵣ {a ⊰ l₂} {l₁} (skip p))
 
-instance
-  [⊏][⊑]-subtransitivityₗ : Subtransitivityₗ(_⊏_)(_⊑_)
-  [⊏][⊑]-subtransitivityₗ = intro proof where
-    proof : (l₁ ⊑ l₂) → (l₂ ⊏ l₃) → (l₁ ⊏ l₃)
-    proof p          (skip   q) = skip(transitivity(_⊑_) p q)
-    proof (use xy p) (use yz q) = use (xy 🝖 yz) (proof p q)
-    proof (skip   p) (use yz q) = [⊏]-skip-[⊰] (proof p q)
+module _ {_≤?_ : T → T → Bool} where
+  open import Data using (Unit ; <>)
+  open import Data.List.Sorting.Functions(_≤?_)
+  import      Data.Option as Option
+  import      Data.Option.Functions as Option
+
+  [⊏]-extractMinimal : Option.partialMap Unit (\{(_ , sl) → sl ⊏ l}) (extractMinimal l)
+  [⊏]-extractMinimal {∅} = <>
+  [⊏]-extractMinimal {x ⊰ ∅} = skip empty
+  [⊏]-extractMinimal {x ⊰ l@(_ ⊰ _)} with extractMinimal l | [⊏]-extractMinimal{l}
+  ... | Option.None         | _ = <>
+  ... | Option.Some(y , ll) | p with (x ≤? y)
+  ... | 𝑇 = skip (reflexivity(_⊑_))
+  ... | 𝐹 = use (reflexivity(_≡_)) p
+
+----------------------------------------------------------------------------------------------
+-- Order related 2 on (_⊏_)
 
 instance
   [⊏][<]-on-length-sub : (_⊏_ {T = T}) ⊆₂ ((_<_) on₂ length)
@@ -297,10 +323,26 @@ module _ where
     [⊏]-well-founded : WellFounded(_⊏_ {T = T})
     [⊏]-well-founded = accessibleₗ-sub₂ ⦃ [⊏][<]-on-length-sub ⦄
 
-module _ where
-  open import Relator.Equals.Proofs.Equivalence
+----------------------------------------------------------------------------------------------
+-- Relating the weak and strict order ((_⊏_) and (_⊑_))
 
-  [⊑]-to-[⊏] : (l₁ ⊑ l₂) → ((l₁ ⊏ l₂) ∨ (length(l₁) ≡ₑ length(l₂)))
-  [⊑]-to-[⊏] empty      = [∨]-introᵣ [≡ₑ]-intro
-  [⊑]-to-[⊏] (use xy p) = Either.map (use xy) (congruence₁ ⦃ _ ⦄ ⦃ _ ⦄ (𝐒) ⦃ [≡]-function ⦄) ([⊑]-to-[⊏] p)
+instance
+  [⊏][⊑]-subtransitivityₗ : Subtransitivityₗ(_⊏_)(_⊑_)
+  [⊏][⊑]-subtransitivityₗ = intro proof where
+    proof : (l₁ ⊑ l₂) → (l₂ ⊏ l₃) → (l₁ ⊏ l₃)
+    proof p          (skip   q) = skip(transitivity(_⊑_) p q)
+    proof (use xy p) (use yz q) = use (xy 🝖 yz) (proof p q)
+    proof (skip   p) (use yz q) = [⊏]-skip-[⊰] (proof p q)
+
+instance
+  [⊏][⊑]-sub : (_⊏_) ⊆₂ (_⊑_)
+  [⊏][⊑]-sub = intro p where
+    p : Names.Subrelation(_⊏_)(_⊑_)
+    p (use xy l₁l₂) = use xy (p l₁l₂)
+    p (skip xl₂)    = skip xl₂
+
+module _ {ℓₑₗ} ⦃ equiv-List : Equiv{ℓₑₗ}(List(T)) ⦄ ⦃ ext : Extensionality(equiv-List) ⦄ where
+  [⊑]-to-[⊏] : (l₁ ⊑ l₂) → ((l₁ ⊏ l₂) ∨ (l₁ ≡ l₂))
+  [⊑]-to-[⊏] empty      = [∨]-introᵣ (reflexivity(_≡_))
+  [⊑]-to-[⊏] (use xy p) = Either.map (use xy) (congruence₂(_⊰_) xy) ([⊑]-to-[⊏] p)
   [⊑]-to-[⊏] (skip p)   = [∨]-introₗ (skip p)

@@ -2,17 +2,17 @@
 -- The names here must be redefined because this project binds its custom builtin data types.
 module Lang.Reflection where
 
+open import Char
 open import Data.Boolean
 open import Data.List
-open import Data
+open import Data using () renaming (Unit to ⊤)
 open import Float
 import      Lvl
 open import FFI.MachineWord
-open import Numeral.Natural
-open import String
--- open import Agda.Builtin.Int
+open import Numeral.Natural using () renaming (ℕ to Nat)
+open import String hiding (string)
 open import Type.Dependent
-open import Type
+open import Type hiding (Type)
 
 -- Names --
 
@@ -81,7 +81,7 @@ primitive
   primMetaEquality : Meta → Meta → Bool
   primMetaLess     : Meta → Meta → Bool
   primShowMeta     : Meta → String
-  primMetaToNat    : Meta → ℕ
+  primMetaToNat    : Meta → Nat
 
 -- Arguments --
 
@@ -124,7 +124,7 @@ data Abs {a} (A : TYPE a) : TYPE a where
 -- Literals --
 
 data Literal : TYPE where
-  nat    : (n : ℕ)      → Literal
+  nat    : (n : Nat)    → Literal
   word64 : (n : Word64) → Literal
   float  : (x : Float)  → Literal
   char   : (c : Char)   → Literal
@@ -141,36 +141,22 @@ data Literal : TYPE where
 {-# BUILTIN AGDALITQNAME  name    #-}
 {-# BUILTIN AGDALITMETA   meta    #-}
 
--- Patterns --
 
-data Pattern : TYPE where
-  con    : (c : Name) (ps : List (Arg Pattern)) → Pattern
-  dot    : Pattern
-  var    : (s : String)  → Pattern
-  lit    : (l : Literal) → Pattern
-  proj   : (f : Name)    → Pattern
-  absurd : Pattern
+-- Terms and patterns --
 
-{-# BUILTIN AGDAPATTERN   Pattern #-}
-{-# BUILTIN AGDAPATCON    con     #-}
-{-# BUILTIN AGDAPATLIT    lit     #-}
-{-# BUILTIN AGDAPATPROJ   proj    #-}
-{-# BUILTIN AGDAPATABSURD absurd  #-}
-
--- Terms --
-
-data Sort   : TYPE
-data Clause : TYPE
-data Term   : TYPE
-TypeTerm = Term
+data Term    : TYPE
+data Sort    : TYPE
+data Pattern : TYPE
+data Clause  : TYPE
+TType = Term
 
 data Term where
-  var       : (x : ℕ) (args : List (Arg Term)) → Term
+  var       : (x : Nat) (args : List (Arg Term)) → Term
   con       : (c : Name) (args : List (Arg Term)) → Term
   def       : (f : Name) (args : List (Arg Term)) → Term
   lam       : (v : Visibility) (t : Abs Term) → Term
   pat-lam   : (cs : List Clause) (args : List (Arg Term)) → Term
-  pi        : (a : Arg TypeTerm) (b : Abs TypeTerm) → Term
+  pi        : (a : Arg TType) (b : Abs TType) → Term
   agda-sort : (s : Sort) → Term
   lit       : (l : Literal) → Term
   meta      : (x : Meta) → List (Arg Term) → Term
@@ -178,16 +164,25 @@ data Term where
 
 data Sort where
   set     : (t : Term) → Sort
-  lit     : (n : ℕ) → Sort
+  lit     : (n : Nat) → Sort
   unknown : Sort
 
-data Clause where
-  clause        : (ps : List (Arg Pattern)) (t : Term) → Clause
-  absurd-clause : (ps : List (Arg Pattern)) → Clause
+data Pattern where
+  con    : (c : Name) (ps : List (Arg Pattern)) → Pattern
+  dot    : (t : Term)    → Pattern
+  var    : (x : Nat)     → Pattern
+  lit    : (l : Literal) → Pattern
+  proj   : (f : Name)    → Pattern
+  absurd : Pattern
 
-{-# BUILTIN AGDASORT    Sort   #-}
-{-# BUILTIN AGDATERM    Term   #-}
-{-# BUILTIN AGDACLAUSE  Clause #-}
+data Clause where
+  clause        : (tel : List (Σ String λ _ → Arg TType)) (ps : List (Arg Pattern)) (t : Term) → Clause
+  absurd-clause : (tel : List (Σ String λ _ → Arg TType)) (ps : List (Arg Pattern)) → Clause
+
+{-# BUILTIN AGDATERM      Term    #-}
+{-# BUILTIN AGDASORT      Sort    #-}
+{-# BUILTIN AGDAPATTERN   Pattern #-}
+{-# BUILTIN AGDACLAUSE    Clause  #-}
 
 {-# BUILTIN AGDATERMVAR         var       #-}
 {-# BUILTIN AGDATERMCON         con       #-}
@@ -204,11 +199,21 @@ data Clause where
 {-# BUILTIN AGDASORTLIT         lit     #-}
 {-# BUILTIN AGDASORTUNSUPPORTED unknown #-}
 
+{-# BUILTIN AGDAPATCON    con     #-}
+{-# BUILTIN AGDAPATDOT    dot     #-}
+{-# BUILTIN AGDAPATVAR    var     #-}
+{-# BUILTIN AGDAPATLIT    lit     #-}
+{-# BUILTIN AGDAPATPROJ   proj    #-}
+{-# BUILTIN AGDAPATABSURD absurd  #-}
+
+{-# BUILTIN AGDACLAUSECLAUSE clause        #-}
+{-# BUILTIN AGDACLAUSEABSURD absurd-clause #-}
+
 -- Definitions --
 
 data Definition : TYPE where
   function    : (cs : List Clause) → Definition
-  data-type   : (pars : ℕ) (cs : List Name) → Definition
+  data-type   : (pars : Nat) (cs : List Name) → Definition
   record-type : (c : Name) (fs : List (Arg Name)) → Definition
   data-cons   : (d : Name) → Definition
   axiom       : Definition
@@ -240,27 +245,27 @@ postulate
   TC               : ∀ {a} → TYPE a → TYPE a
   returnTC         : ∀ {a} {A : TYPE a} → A → TC A
   bindTC           : ∀ {a b} {A : TYPE a} {B : TYPE b} → TC A → (A → TC B) → TC B
-  unify            : Term → Term → TC(Unit{Lvl.𝟎})
+  unify            : Term → Term → TC(⊤{Lvl.𝟎})
   typeError        : ∀ {a} {A : TYPE a} → List ErrorPart → TC A
-  inferType        : Term → TC TypeTerm
-  checkType        : Term → TypeTerm → TC Term
+  inferType        : Term → TC TType
+  checkType        : Term → TType → TC Term
   normalise        : Term → TC Term
   reduce           : Term → TC Term
   catchTC          : ∀ {a} {A : TYPE a} → TC A → TC A → TC A
   quoteTC          : ∀ {a} {A : TYPE a} → A → TC Term
   unquoteTC        : ∀ {a} {A : TYPE a} → Term → TC A
   quoteωTC         : ∀ {A : Typeω} → A → TC Term
-  getContext       : TC (List (Arg TypeTerm))
-  extendContext    : ∀ {a} {A : TYPE a} → Arg TypeTerm → TC A → TC A
-  inContext        : ∀ {a} {A : TYPE a} → List (Arg TypeTerm) → TC A → TC A
+  getContext       : TC (List (Arg TType))
+  extendContext    : ∀ {a} {A : TYPE a} → Arg TType → TC A → TC A
+  inContext        : ∀ {a} {A : TYPE a} → List (Arg TType) → TC A → TC A
   freshName        : String → TC Name
-  declareDef       : Arg Name → TypeTerm → TC(Unit{Lvl.𝟎})
-  declarePostulate : Arg Name → TypeTerm → TC(Unit{Lvl.𝟎})
-  defineFun        : Name → List Clause → TC(Unit{Lvl.𝟎})
-  getType          : Name → TC TypeTerm
+  declareDef       : Arg Name → TType → TC(⊤{Lvl.𝟎})
+  declarePostulate : Arg Name → TType → TC(⊤{Lvl.𝟎})
+  defineFun        : Name → List Clause → TC(⊤{Lvl.𝟎})
+  getType          : Name → TC TType
   getDefinition    : Name → TC Definition
   blockOnMeta      : ∀ {a} {A : TYPE a} → Meta → TC A
-  commitTC         : TC(Unit{Lvl.𝟎})
+  commitTC         : TC(⊤{Lvl.𝟎})
   isMacro          : Name → TC Bool
 
   -- If the argument is 'true' makes the following primitives also normalise
@@ -269,7 +274,7 @@ postulate
 
   -- Prints the third argument if the corresponding verbosity level is turned
   -- on (with the -v flag to Agda).
-  debugPrint : String → ℕ → List ErrorPart → TC(Unit{Lvl.𝟎})
+  debugPrint : String → Nat → List ErrorPart → TC(⊤{Lvl.𝟎})
 
   -- Fail if the given computation gives rise to new, unsolved
   -- "blocking" constraints.
@@ -292,7 +297,7 @@ postulate
 {-# BUILTIN AGDATCMCATCHERROR                 catchTC                    #-}
 {-# BUILTIN AGDATCMQUOTETERM                  quoteTC                    #-}
 {-# BUILTIN AGDATCMUNQUOTETERM                unquoteTC                  #-}
--- {-# BUILTIN AGDATCMQUOTEOMEGATERM             quoteωTC                   #-}
+{-# BUILTIN AGDATCMQUOTEOMEGATERM             quoteωTC                   #-}
 {-# BUILTIN AGDATCMGETCONTEXT                 getContext                 #-}
 {-# BUILTIN AGDATCMEXTENDCONTEXT              extendContext              #-}
 {-# BUILTIN AGDATCMINCONTEXT                  inContext                  #-}
@@ -309,11 +314,3 @@ postulate
 {-# BUILTIN AGDATCMDEBUGPRINT                 debugPrint                 #-}
 {-# BUILTIN AGDATCMNOCONSTRAINTS              noConstraints              #-}
 {-# BUILTIN AGDATCMRUNSPECULATIVE             runSpeculative             #-}
-
-module DoNotation where
-  open import Syntax.Do
-
-  instance
-    TC-doNotation : ∀{ℓ} → DoNotation{ℓ}(TC)
-    return ⦃ TC-doNotation ⦄ = returnTC
-    _>>=_  ⦃ TC-doNotation ⦄ = bindTC

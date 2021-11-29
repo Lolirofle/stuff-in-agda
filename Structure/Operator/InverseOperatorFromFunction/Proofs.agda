@@ -59,6 +59,20 @@ module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : 
   inverse-operator-eq-by-comm : let _ = comm in (∀{x y} → (x ▫⁻¹ₗ y ≡ y ▫⁻¹ᵣ x))
   inverse-operator-eq-by-comm = commutativity(_)
 
+  inverse-operatorₗ-identityₗ-by-identity-inverseFunc : let _ = op , select-id(id)(ident) , select-inv(id)(ident)(inv)(inver) in Identityₗ(_▫⁻¹ₗ_)(id)
+  Identityₗ.proof (inverse-operatorₗ-identityₗ-by-identity-inverseFunc {id = id}) {x} =
+    id ▫⁻¹ₗ x   🝖[ _≡_ ]-[]
+    inv(id) ▫ x 🝖[ _≡_ ]-[ congruence₂ₗ(_▫_)(x) One.inv-of-id ]
+    id ▫ x      🝖[ _≡_ ]-[ identityₗ(_▫_)(id) ]
+    x           🝖-end
+
+  inverse-operatorᵣ-identityᵣ-by-identity-inverseFunc : let _ = op , select-id(id)(ident) , select-inv(id)(ident)(inv)(inver) in Identityᵣ(_▫⁻¹ᵣ_)(id)
+  Identityᵣ.proof (inverse-operatorᵣ-identityᵣ-by-identity-inverseFunc {id = id}) {x} =
+    x ▫⁻¹ᵣ id   🝖[ _≡_ ]-[]
+    x ▫ inv(id) 🝖[ _≡_ ]-[ congruence₂ᵣ(_▫_)(x) One.inv-of-id ]
+    x ▫ id      🝖[ _≡_ ]-[ identityᵣ(_▫_)(id) ]
+    x           🝖-end
+
   module _ {id : T} {_△_ : T → T → T} where
     open Lang.Vars.Structure.Operator.OneTypeTwoOp ⦃ equiv = equiv ⦄ {_▫₁_ = _△_} {_▫₂_ = _▫_} using (op₁ ; op₂ ; assoc₂ ; distriₗ ; distriᵣ ; absorbₗ₁ ; absorbᵣ₁ ; ident₂ ; inver₂)
 

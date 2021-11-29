@@ -106,7 +106,7 @@ module _ where
   open import Data.List.Relation.Permutation.Proofs
   open import Numeral.Natural.Relation.Divisibility.Proofs.List
   open import Numeral.Natural.Oper.FlooredDivision
-  open import Numeral.Natural.Oper.FlooredDivision.Proofs -- TODO: Used for [⌊/⌋][⋅]ᵣ-compatibility
+  open import Numeral.Natural.Oper.FlooredDivision.Proofs.Compatibility
   open import Numeral.Natural.Oper.FlooredDivision.Proofs.Inverse
 
   -- TODO: Generalize

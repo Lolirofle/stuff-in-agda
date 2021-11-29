@@ -11,14 +11,14 @@ open import Syntax.Function
 private variable x y : ℕ
 
 [+]-baseₗ : 𝟎 + y ≡ y
-[+]-baseₗ {x} = ℕ-elim [≡]-intro (x ↦ [≡]-with(𝐒) {𝟎 + x}{x}) x
+[+]-baseₗ {x} = ℕ-elim _ [≡]-intro (x ↦ [≡]-with(𝐒) {𝟎 + x}{x}) x
 {-# REWRITE [+]-baseₗ #-}
 
 [+]-baseᵣ : x + 𝟎 ≡ x
 [+]-baseᵣ = [≡]-intro
 
 [+]-stepₗ : 𝐒(x) + y ≡ 𝐒(x + y)
-[+]-stepₗ {x}{y} = ℕ-elim [≡]-intro (i ↦ [≡]-with(𝐒) {𝐒(x) + i} {x + 𝐒(i)}) y
+[+]-stepₗ {x}{y} = ℕ-elim _ [≡]-intro (i ↦ [≡]-with(𝐒) {𝐒(x) + i} {x + 𝐒(i)}) y
 {-# REWRITE [+]-stepₗ #-}
 
 [+]-stepᵣ : x + 𝐒(y) ≡ 𝐒(x + y)

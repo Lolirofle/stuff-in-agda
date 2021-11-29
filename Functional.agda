@@ -11,18 +11,7 @@ infixr 0 _$_
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 private variable A B C D E F T X X₁ X₂ X₃ X₄ Y Y₁ Y₂ Y₃ Y₄ Z : Type{ℓ}
 
-open import Function using (_←_ ; _→ᶠ_ ; _←ᶠ_) public
-
--- The identity function.
--- Returns the applied argument.
-id : T → T
-id(x) = x
-{-# INLINE id #-}
-
--- The constant function.
--- Returns the first argument independent of the second.
-const : let _ = X in Y → (X → Y)
-const(x)(_) = x
+open import Function using (_←_ ; _→ᶠ_ ; _←ᶠ_ ; id ; const) public
 
 -- Function application as a function.
 -- Applies the first argument on the function on the second argument.

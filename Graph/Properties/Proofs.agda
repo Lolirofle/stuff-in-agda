@@ -5,7 +5,7 @@ module Graph.Properties.Proofs where
 open import Data.Either.Proofs
 open import Functional
 open import Function.Equals
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Theorems

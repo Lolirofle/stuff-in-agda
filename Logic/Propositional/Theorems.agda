@@ -77,24 +77,10 @@ module _ {ℓ₁}{ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
 
 module _ {ℓ₁}{ℓ₂}{ℓ₃} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}}{R : Stmt{ℓ₃}} where
   [∧]-associativity : ((P ∧ Q) ∧ R) ↔ (P ∧ (Q ∧ R))
-  [∧]-associativity = [↔]-intro l r
-    where l : ((P ∧ Q) ∧ R) ← (P ∧ (Q ∧ R))
-          l ([∧]-intro p ([∧]-intro q r)) = [∧]-intro ([∧]-intro p q) r
-
-          r : ((P ∧ Q) ∧ R) → (P ∧ (Q ∧ R))
-          r ([∧]-intro ([∧]-intro p q) r) = [∧]-intro p ([∧]-intro q r)
+  [∧]-associativity = [↔]-intro Tuple.associateLeft Tuple.associateRight
 
   [∨]-associativity : ((P ∨ Q) ∨ R) ↔ (P ∨ (Q ∨ R))
-  [∨]-associativity = [↔]-intro l r
-    where l : ((P ∨ Q) ∨ R) ← (P ∨ (Q ∨ R))
-          l ([∨]-introₗ p) = [∨]-introₗ([∨]-introₗ p)
-          l ([∨]-introᵣ([∨]-introₗ q)) = [∨]-introₗ([∨]-introᵣ q)
-          l ([∨]-introᵣ([∨]-introᵣ r)) = [∨]-introᵣ r
-
-          r : ((P ∨ Q) ∨ R) → (P ∨ (Q ∨ R))
-          r ([∨]-introₗ([∨]-introₗ p)) = [∨]-introₗ p
-          r ([∨]-introₗ([∨]-introᵣ q)) = [∨]-introᵣ([∨]-introₗ q)
-          r ([∨]-introᵣ r) = [∨]-introᵣ([∨]-introᵣ r)
+  [∨]-associativity = [↔]-intro Either.associateLeft Either.associateRight
 
 ------------------------------------------
 -- Distributivity
@@ -272,16 +258,12 @@ module _ {ℓ} {P : Stmt{ℓ}} where
 
 module _ {ℓ₁ ℓ₂} {P : Stmt{ℓ₁}}{Q : Stmt{ℓ₂}} where
   [¬]-preserves-[∧][∨]ₗ : (¬ (P ∧ Q)) ← ((¬ P) ∨ (¬ Q))
-  [¬]-preserves-[∧][∨]ₗ ([∨]-introₗ np) = np ∘ [∧]-elimₗ
-  [¬]-preserves-[∧][∨]ₗ ([∨]-introᵣ nq) = nq ∘ [∧]-elimᵣ
+  [¬]-preserves-[∧][∨]ₗ = [∨]-elim (_∘ [∧]-elimₗ) (_∘ [∧]-elimᵣ)
 
   [¬]-preserves-[∨][∧] : (¬ (P ∨ Q)) ↔ ((¬ P) ∧ (¬ Q))
-  [¬]-preserves-[∨][∧] = [↔]-intro l r where
-    l : ¬(P ∨ Q) ← ((¬ P) ∧ (¬ Q))
-    l ([∧]-intro np nq) = [∨]-elim np nq
-
-    r : (¬ (P ∨ Q)) → ((¬ P) ∧ (¬ Q))
-    r f = [∧]-intro (f ∘ [∨]-introₗ) (f ∘ [∨]-introᵣ)
+  [¬]-preserves-[∨][∧] = [↔]-intro
+    (Tuple.elim [∨]-elim)
+    (f ↦ [∧]-intro (f ∘ [∨]-introₗ) (f ∘ [∨]-introᵣ))
 
 ------------------------------------------
 -- Conjunction and implication (Tuples and functions)

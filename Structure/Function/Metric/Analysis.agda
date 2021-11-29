@@ -6,12 +6,12 @@ open import Structure.Setoid
 open import Type
 
 module Structure.Function.Metric.Analysis
-  {ℓF ℓₑF ℓ≤}
+  {ℓF ℓₑF ℓ≤ ℓₙ₀}
   {F : Type{ℓF}}
   ⦃ equiv-F : Equiv{ℓₑF}(F) ⦄
   {_+_}{_⋅_}
   {_≤_ : _ → _ → Type{ℓ≤}}
-  ⦃ orderedField-F : OrderedField{F = F}(_+_)(_⋅_)(_≤_) ⦄
+  ⦃ orderedField-F : OrderedField{F = F}{ℓₙ₀ = ℓₙ₀}(_+_)(_⋅_)(_≤_) ⦄
   where
 
 open OrderedField(orderedField-F)
@@ -22,7 +22,7 @@ open import Data.Boolean.Proofs
 import      Data.Either as Either
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional as Fn
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Finite as 𝕟 using (𝕟)

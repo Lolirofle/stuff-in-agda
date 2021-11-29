@@ -4,7 +4,7 @@ import      Structure.Logic.Classical.NaturalDeduction
 module Structure.Logic.Classical.SetTheory.ZFC {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic : _ ⦄ (_∈_ : Domain → Domain → Formula) where
 open Structure.Logic.Classical.NaturalDeduction.ClassicalLogic {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} (classicLogic)
 
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Structure.Logic.Classical.NaturalDeduction.Proofs            ⦃ classicLogic ⦄
 open import Structure.Logic.Classical.SetTheory.SetBoundedQuantification ⦃ classicLogic ⦄ (_∈_)

@@ -43,6 +43,11 @@ prime? 0          = 𝐹
 prime? 1          = 𝐹
 prime? n@(𝐒(𝐒 _)) = decide(2)(_≡_) ⦃ [∃]-intro _ ⦃ List.[≡]-decider ⦃ dec = ℕ-equality-decider ⦄ ⦄ ⦄ (findBoundedAll 2 n (_∣₀? n)) ∅
 
+composite? : ℕ → Bool
+composite? 0          = 𝐹
+composite? 1          = 𝐹
+composite? n@(𝐒(𝐒 _)) = not(prime? n)
+
 instance
   Prime-decider : Decider(1)(Prime)(prime?)
   Prime-decider {𝟎} = false \()
@@ -115,8 +120,19 @@ abstract
     ∃{Obj = ℕ ⨯ ℕ}(\(a , b) → (𝐒(𝐒(a)) ⋅ 𝐒(𝐒(b)) ≡ 𝐒(𝐒(n))))                        ⇒-[ [↔]-to-[←] composite-existence ]
     Composite(𝐒(𝐒 n))                                                               ⇒-end
 
-prime-xor-composite : ∀{n} → Prime(𝐒(𝐒(n))) ⊕ Composite(𝐒(𝐒(n)))
-prime-xor-composite {n} = [⊕]-or-not-both prime-or-composite (Tuple.uncurry prime-composite-not)
+prime-xor-composite : ∀{n} → (n ≥ 2) → Prime(n) ⊕ Composite(n)
+prime-xor-composite {.(𝐒(𝐒 _))} (succ(succ _)) = [⊕]-or-not-both prime-or-composite (Tuple.uncurry prime-composite-not)
+
+non-prime-non-composite-condition : ∀{n} → ¬ Prime(n) → ¬ Composite(n) → (n < 2)
+non-prime-non-composite-condition {𝟎}          _  _  = succ min
+non-prime-non-composite-condition {𝐒 𝟎}        _  _  = succ(succ min)
+non-prime-non-composite-condition {n@(𝐒(𝐒 _))} np nc with () ← [∨]-elim np nc (prime-or-composite{n})
+
+instance
+  Composite-decider : Decider(1)(Composite)(composite?)
+  Composite-decider {𝟎}          = false \()
+  Composite-decider {𝐒 𝟎}        = false \()
+  Composite-decider {n@(𝐒(𝐒 x))} = [↔]-to-[→] (decider-relator ([⊕]-right-[↔] (prime-xor-composite (succ(succ min)))) [≡]-intro) (not-decider ⦃ Prime-decider ⦄)
 
 open import Data.Tuple
 open import Numeral.Natural.Inductions

@@ -10,7 +10,7 @@ open import Data.Boolean.Proofs
 open import Data.Either as Either using (_‖_)
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Names
 open import Logic.Propositional
@@ -35,7 +35,7 @@ module _ (P : Stmt{ℓ}) where
     constructor intro
     field
       ⦃ excluded-middle ⦄ : ExcludedMiddleOn(P)
-  excluded-middle = inst-fn Classical.excluded-middle
+  excluded-middle = inferArg Classical.excluded-middle
 open Classical ⦃ ... ⦄ hiding (excluded-middle) public
 
 ------------------------------------------

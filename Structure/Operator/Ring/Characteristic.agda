@@ -4,10 +4,10 @@ open import Structure.Setoid
 open import Type
 
 module Structure.Operator.Ring.Characteristic
-  {ℓ ℓₑ}
+  {ℓ ℓₑ ℓₙ₀}
   {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄
   (_+_ _⋅_  : T → T → T)
-  ⦃ rg : Rg(_+_)(_⋅_) ⦄
+  ⦃ rg : Rg(_+_)(_⋅_) {ℓₙ₀} ⦄
   where
 
 open Rg(rg)

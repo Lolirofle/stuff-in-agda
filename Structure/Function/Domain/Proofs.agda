@@ -6,7 +6,7 @@ open import Functional
 open import Function.Domains
 open import Function.Equals
 import      Function.Names as Names
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Classical
 open import Logic.Propositional

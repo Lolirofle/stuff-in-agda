@@ -121,7 +121,7 @@ tuples (𝐒(𝐒(n))) l = concatMap(x ↦ map (Tuple₊.prepend x) (tuples (�
 --   rotations [a,b,c]   = [[a,b,c] , [b,c,a] , [c,a,b]]
 --   rotations [a,b,c,d] = [[a,b,c,d] , [b,c,d,a] , [c,d,a,b] , [d,a,b,c]]
 rotations : List(T) → List(List(T))
-rotations l = accumulateIterate₀(length l) (rotateₗ(1)) l
+rotations l = accumulateIterate₀(length l) rotateₗ l
 
 -- Accumulated `insertAt` for every position of the given list.
 -- Examples:

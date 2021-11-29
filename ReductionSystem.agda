@@ -8,7 +8,7 @@ open import Functional
 open import Graph.Properties
 open import Graph.Walk
 open import Graph.Walk.Proofs
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Logic
 open import Logic.Propositional
@@ -100,27 +100,27 @@ module _ (a : Term) where
   record Confluent : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Confluent(a)
-  confluent = inst-fn Confluent.proof
+  confluent = inferArg Confluent.proof
 
   record Semiconfluent : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.Semiconfluent(a)
-  semiconfluent = inst-fn Semiconfluent.proof
+  semiconfluent = inferArg Semiconfluent.proof
 
   record LocallyConfluent : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.LocallyConfluent(a)
-  locally-confluent = inst-fn LocallyConfluent.proof
+  locally-confluent = inferArg LocallyConfluent.proof
 
   record StronglyConfluent : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.StronglyConfluent(a)
-  strongly-confluent = inst-fn StronglyConfluent.proof
+  strongly-confluent = inferArg StronglyConfluent.proof
 
   record DiamondProperty : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : Names.DiamondProperty(a)
-  diamond-property = inst-fn DiamondProperty.proof
+  diamond-property = inferArg DiamondProperty.proof
 
 -- All terms are confluent.
 -- In terms of paths, this means that parts starting from the same point can always eventually meet.

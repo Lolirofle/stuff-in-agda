@@ -4,6 +4,7 @@ import      Lvl
 open import Logic
 open import Logic.Predicate
 open import Logic.Propositional
+open import Logic.Propositional.Theorems
 open import Structure.Setoid
 open import Structure.Operator
 open import Structure.Operator.Properties hiding (associativity ; identityₗ ; identityᵣ)
@@ -50,9 +51,14 @@ record MonoidObject : Stmt{Lvl.𝐒(ℓ Lvl.⊔ ℓₑ)} where
     ⦃ monoid ⦄ : Monoid(_▫_)
   open Monoid(monoid) public
 
-record NonIdentityRelation {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ {_▫_ : T → T → T} (monoid : Monoid(_▫_)) {ℓₙᵢ} : Stmt{ℓ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₙᵢ)} where
-  constructor intro
-  open Monoid(monoid)
-  field
-    NonIdentity : T → Stmt{ℓₙᵢ}
-    proof : ∀{x} → NonIdentity(x) ↔ (x ≢ id)
+module _ {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ {_▫_ : T → T → T} where
+  record NonIdentityRelation (monoid : Monoid(_▫_)) {ℓₙᵢ} : Stmt{ℓ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₙᵢ)} where
+    constructor intro
+    open Monoid(monoid)
+    field
+      NonIdentity : T → Stmt{ℓₙᵢ}
+      proof : ∀{x} → NonIdentity(x) ↔ (x ≢ id)
+
+  defaultNonIdentityRelation : ∀{monoid : Monoid(_▫_)} → NonIdentityRelation(monoid)
+  NonIdentityRelation.NonIdentity (defaultNonIdentityRelation {monoid}) = _≢ id where open Monoid(monoid)
+  NonIdentityRelation.proof defaultNonIdentityRelation = [↔]-reflexivity

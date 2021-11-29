@@ -15,16 +15,16 @@ open import Type
 private variable ℓ : Lvl.Level
 
 ℤ-non-negative-recursion : (P : ℤ → Type{ℓ}) → P(𝟎) → (∀(n) → P(+ₙ(n)) → P(+𝐒ₙ(n))) → (∀(n) → P(+ₙ n))
-ℤ-non-negative-recursion P = ℕ-elim {T = P ∘ +ₙ_}
+ℤ-non-negative-recursion P = ℕ-elim(P ∘ +ₙ_)
 
 ℤ-positive-recursion : (P : ℤ → Type{ℓ}) → P(+𝐒ₙ(ℕ.𝟎)) → (∀(n) → P(+𝐒ₙ(n)) → P(+𝐒ₙ(ℕ.𝐒(n)))) → (∀(n) → P(+𝐒ₙ n))
-ℤ-positive-recursion P = ℕ-elim {T = P ∘ +𝐒ₙ_}
+ℤ-positive-recursion P = ℕ-elim(P ∘ +𝐒ₙ_)
 
 ℤ-non-positive-recursion : (P : ℤ → Type{ℓ}) → P(𝟎) → (∀(n) → P(−ₙ(n)) → P(−𝐒ₙ(n))) → (∀(n) → P(−ₙ n))
-ℤ-non-positive-recursion P = ℕ-elim {T = P ∘ −ₙ_}
+ℤ-non-positive-recursion P = ℕ-elim(P ∘ −ₙ_)
 
 ℤ-negative-recursion : (P : ℤ → Type{ℓ}) → P(−𝐒ₙ(ℕ.𝟎)) → (∀(n) → P(−𝐒ₙ(n)) → P(−𝐒ₙ(ℕ.𝐒(n)))) → (∀(n) → P(−𝐒ₙ n))
-ℤ-negative-recursion P = ℕ-elim {T = P ∘ −𝐒ₙ_}
+ℤ-negative-recursion P = ℕ-elim(P ∘ −𝐒ₙ_)
 
 -- An intuitive recursion proof method on integers splitting the integers into three cases: negatives, zero and positives.
 ℤ-sign-recursion : (P : ℤ → Type{ℓ}) → (∀(n) → P(−ₙ n) → P(−𝐒ₙ(n))) → P(𝟎) → (∀(n) → P(+ₙ n) → P(+𝐒ₙ(n))) → (∀(n) → P(n))

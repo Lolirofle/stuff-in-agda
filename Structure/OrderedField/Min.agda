@@ -14,7 +14,7 @@ module Structure.OrderedField.Min
 
 import      Data.Either as Either
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Lang.Templates.Order
 open import Logic.Propositional
 open import Structure.Function

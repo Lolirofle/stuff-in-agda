@@ -9,7 +9,7 @@ import Data.Either
 import Data.Option
 -- import Data.Proofs
 import Data.Tuple
-import Lang.Instance
+import Functional.Instance
 import Lang.Irrelevance
 import Lang.Size
 import Logic

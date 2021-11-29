@@ -68,7 +68,7 @@ module _ where
     _⊜_.proof andThenᵣ-Some {Some x} = reflexivity(_≡_)
 
   module _ ⦃ _ : Equiv{ℓₑ}(Option(A)) ⦄ where
-    andThenᵣ-None : o andThen (const{Y = Option(A)} None) ≡ None
+    andThenᵣ-None : o andThen (const(None{T = A})) ≡ None
     andThenᵣ-None {o = None}   = reflexivity(_≡_)
     andThenᵣ-None {o = Some x} = reflexivity(_≡_)
 

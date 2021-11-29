@@ -32,7 +32,7 @@ instance
 
 instance
   [+]-identityᵣ : Identityᵣ(_+_)(0)
-  Identityᵣ.proof([+]-identityᵣ) {x} = ℕ-elim [≡]-intro (x ↦ [≡]-with(𝐒) {x + 𝟎}{x}) x
+  Identityᵣ.proof([+]-identityᵣ) {x} = ℕ-elim _ [≡]-intro (x ↦ [≡]-with(𝐒) {x + 𝟎}{x}) x
 
 instance
   [+]-identity : Identity (_+_) (0)
@@ -40,11 +40,11 @@ instance
 
 instance
   [+]-associativity : Associativity(_+_)
-  Associativity.proof([+]-associativity) {x}{y}{z} = ℕ-elim [≡]-intro (i ↦ [≡]-with(𝐒) {(x + y) + i} {x + (y + i)}) z
+  Associativity.proof([+]-associativity) {x}{y}{z} = ℕ-elim _ [≡]-intro (i ↦ [≡]-with(𝐒) {(x + y) + i} {x + (y + i)}) z
 
 instance
   [+]-commutativity : Commutativity (_+_)
-  Commutativity.proof([+]-commutativity) {x}{y} = ℕ-elim base next y where
+  Commutativity.proof([+]-commutativity) {x}{y} = ℕ-elim _ base next y where
     base = identityᵣ(_+_)(𝟎) 🝖 symmetry(_≡_) (identityₗ(_+_)(𝟎))
     next = \i eq → ([≡]-with(𝐒) {x + i}{i + x} eq) 🝖 symmetry(_≡_) ([+]-stepₗ {i}{x})
 
@@ -55,7 +55,7 @@ instance
 [1+]-and-[𝐒] {x} = [+1]-and-[𝐒] {x} 🝖 commutativity(_+_) {x}{1}
 
 [⋅]-absorberₗ-raw : Names.Absorberₗ(_⋅_)(0)
-[⋅]-absorberₗ-raw {x} = ℕ-elim [≡]-intro (\i → [≡]-with(0 +_) {0 ⋅ i}{0}) x
+[⋅]-absorberₗ-raw {x} = ℕ-elim _ [≡]-intro (\i → [≡]-with(0 +_) {0 ⋅ i}{0}) x
 {-# REWRITE [⋅]-absorberₗ-raw #-}
 instance
   [⋅]-absorberₗ : Absorberₗ(_⋅_)(0)
@@ -70,7 +70,7 @@ instance
   [⋅]-absorber = intro
 
 [⋅]-identityₗ-raw : Names.Identityₗ(_⋅_)(1)
-[⋅]-identityₗ-raw {x} = ℕ-elim [≡]-intro (\i eq → (commutativity(_+_) {1} {1 ⋅ i}) 🝖 ([≡]-with(𝐒) {_}{i} eq)) x
+[⋅]-identityₗ-raw {x} = ℕ-elim _ [≡]-intro (\i eq → (commutativity(_+_) {1} {1 ⋅ i}) 🝖 ([≡]-with(𝐒) {_}{i} eq)) x
 {-# REWRITE [⋅]-identityₗ-raw #-}
 instance
   [⋅]-identityₗ : Identityₗ(_⋅_)(1)
@@ -86,7 +86,7 @@ instance
 
 instance
   [⋅][+]-distributivityᵣ : Distributivityᵣ(_⋅_)(_+_)
-  Distributivityᵣ.proof([⋅][+]-distributivityᵣ) {x}{y}{z} = ℕ-elim [≡]-intro next z where
+  Distributivityᵣ.proof([⋅][+]-distributivityᵣ) {x}{y}{z} = ℕ-elim _ [≡]-intro next z where
     next : ∀(z : ℕ) → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z)) → ((x + y) ⋅ 𝐒(z)) ≡ ((x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)))
     next z prev =
       (x + y) ⋅ 𝐒(z)                🝖[ _≡_ ]-[]
@@ -102,7 +102,7 @@ instance
 
 instance
   [⋅][+]-distributivityₗ : Distributivityₗ(_⋅_)(_+_)
-  Distributivityₗ.proof([⋅][+]-distributivityₗ) {x}{y}{z} = ℕ-elim [≡]-intro next z where
+  Distributivityₗ.proof([⋅][+]-distributivityₗ) {x}{y}{z} = ℕ-elim _ [≡]-intro next z where
     next : ∀(z : ℕ) → Names.DistributiveOnₗ(_⋅_)(_+_) x y z → Names.DistributiveOnₗ(_⋅_)(_+_) x y (𝐒(z))
     next z prev =
       x ⋅ (y + 𝐒(z))          🝖[ _≡_ ]-[]
@@ -113,7 +113,7 @@ instance
 
 instance
   [⋅]-associativity : Associativity(_⋅_)
-  Associativity.proof([⋅]-associativity) {x}{y}{z} = ℕ-elim [≡]-intro next z where
+  Associativity.proof([⋅]-associativity) {x}{y}{z} = ℕ-elim _ [≡]-intro next z where
     next : ∀(z : ℕ) → Names.AssociativeOn(_⋅_) x y z → Names.AssociativeOn(_⋅_) x y (𝐒(z))
     next z prev =
       (x ⋅ y) ⋅ 𝐒(z)          🝖[ _≡_ ]-[]
@@ -124,7 +124,7 @@ instance
 
 instance
   [⋅]-commutativity : Commutativity(_⋅_)
-  Commutativity.proof([⋅]-commutativity) {x}{y} = ℕ-elim [≡]-intro next y where
+  Commutativity.proof([⋅]-commutativity) {x}{y} = ℕ-elim _ [≡]-intro next y where
     next : ∀(y : ℕ) → Names.Commuting(_⋅_) x y → Names.Commuting(_⋅_) x (𝐒(y))
     next y prev =
       x ⋅ 𝐒(y)    🝖[ _≡_ ]-[]
@@ -138,7 +138,7 @@ instance
 
 [+]-sum-is-0 : ∀{a b} → (a + b ≡ 0) → ((a ≡ 0) ∧ (b ≡ 0))
 [+]-sum-is-0 {a}{b} proof = [∧]-intro (l{a}{b} proof) r where
-  l = \{a b} → ℕ-elim{T = \b → (a + b ≡ 0) → (a ≡ 0)} id (\_ p → p ∘ [≡]-with(𝐏)) b
+  l = \{a b} → ℕ-elim(\b → (a + b ≡ 0) → (a ≡ 0)) id (\_ p → p ∘ [≡]-with(𝐏)) b
   r = l{b}{a} (commutativity(_+_) {b}{a} 🝖 proof)
 
 [+]-positive : ∀{a b} → (Positive(a) ∨ Positive(b)) ↔ Positive(a + b)
@@ -175,9 +175,21 @@ instance
   l : ∀{a b} → Positive(a ⋅ b) → (Positive(a) ∧ Positive(b))
   l {𝐒 a} {𝐒 b} pab = [∧]-intro <> <>
 
+-- Alternative proof:
+--   [^]-positive : ∀{a b} → ((𝐒(a) ^ b) > 0)
+--   [^]-positive {a}{𝟎} = reflexivity(_≤_)
+--   [^]-positive {a}{𝐒 b} =
+--     𝐒(a) ^ 𝐒(b)       🝖[ _≥_ ]-[]
+--     𝐒(a) ⋅ (𝐒(a) ^ b) 🝖[ _≥_ ]-[ [<]-with-[⋅]ₗ {a} ([^]-positive {a}{b}) ]
+--     𝐒(𝐒(a) ⋅ 0)       🝖[ _≥_ ]-[ succ min ]
+--     1                 🝖[ _≥_ ]-end
+[^]-positive : ∀{a b} ⦃ pos-a : Positive(a) ⦄  → Positive(a ^ b)
+[^]-positive {a}{𝟎}             = <>
+[^]-positive {a}{𝐒 b} ⦃ pos-a ⦄ = [↔]-to-[→] [⋅]-positive ([∧]-intro pos-a ([^]-positive {a}{b}))
+
 instance
   [+]-cancellationᵣ : Cancellationᵣ(_+_)
-  Cancellationᵣ.proof([+]-cancellationᵣ) {a} {x}{y} = ℕ-elim{T = \a → (x + a ≡ y + a) → (x ≡ y)} id (\_ → _∘ injective(𝐒)) a
+  Cancellationᵣ.proof([+]-cancellationᵣ) {a} {x}{y} = ℕ-elim(\a → (x + a ≡ y + a) → (x ≡ y)) id (\_ → _∘ injective(𝐒)) a
 
 instance
   [+]-cancellationₗ : Cancellationₗ(_+_)
@@ -191,7 +203,7 @@ instance
 [^]-of-𝟏ₗ {𝐒 x} = [^]-of-𝟏ₗ {x}
 
 [−₀]-absorberₗ-raw : ∀{x} → ((𝟎 −₀ x) ≡ 𝟎)
-[−₀]-absorberₗ-raw {n} = ℕ-elim{T = \n → ((𝟎 −₀ n) ≡ 𝟎)} [≡]-intro (\_ _ → [≡]-intro) n
+[−₀]-absorberₗ-raw {n} = ℕ-elim(\n → ((𝟎 −₀ n) ≡ 𝟎)) [≡]-intro (\_ _ → [≡]-intro) n
 {-# REWRITE [−₀]-absorberₗ-raw #-}
 instance
   [−₀]-absorberₗ : Absorberₗ (_−₀_) (𝟎)
@@ -202,7 +214,7 @@ instance
   Identityᵣ.proof([−₀]-identityᵣ) {x} = [≡]-intro
 
 [−₀]-self : ∀{x} → ((x −₀ x) ≡ 𝟎)
-[−₀]-self {n} = ℕ-elim{T = \n → ((n −₀ n) ≡ 𝟎)} [≡]-intro (\_ p → p) n
+[−₀]-self {n} = ℕ-elim(\n → ((n −₀ n) ≡ 𝟎)) [≡]-intro (\_ p → p) n
 {-# REWRITE [−₀]-self #-}
 
 [−₀]-with-[𝐒]ᵣ : ∀{x y} → ((x −₀ 𝐒(y)) ≡ 𝐏(x −₀ y))

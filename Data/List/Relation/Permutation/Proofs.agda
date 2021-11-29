@@ -41,6 +41,7 @@ open import Structure.Relator
 import      Structure.Relator.Names as Names
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
+open import Structure.Relator.Properties.Proofs
 open import Structure.Setoid using (Equiv)
 open import Syntax.Function
 open import Syntax.Transitivity
@@ -319,3 +320,7 @@ permutes-on-singleton (trans p q)
 permutes-insertIn : ∀{n} → ((insertIn x l n) permutes (x ⊰ l))
 permutes-insertIn {n = 𝟎}               = reflexivity(_permutes_)
 permutes-insertIn {l = x ⊰ l} {n = 𝐒 n} = trans (prepend (permutes-insertIn {n = n})) swap
+
+instance
+  permutes-[≡]-subtransitivityₗ : Subtransitivityₗ(_permutes_ {T = T})(_≡_)
+  permutes-[≡]-subtransitivityₗ = subrelation-transitivity-to-subtransitivityₗ

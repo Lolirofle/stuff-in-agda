@@ -65,7 +65,7 @@ module _ {s : Signature{ℓᵢ₁}{ℓᵢ₂}} where
   open import Data.Tuple.Raiseᵣ.Proofs
   open import Functional
   open import Function.Proofs
-  open import Lang.Instance
+  open import Functional.Instance
   open import Structure.Operator
   open import Structure.Relator.Properties
   open import Syntax.Transitivity

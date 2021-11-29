@@ -37,6 +37,7 @@ open import Syntax.Transitivity
 
 -- Note: The structure stuff here is actually a specialization of Function.PointwiseStructure
 module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
+  private variable ℓₙ₀ : Lvl.Level
   private variable _▫_ _▫₁_ _▫₂_ _+_ _⋅_ : T → T → T
   private variable f inv : T → T
   private variable id 𝟎ₛ 𝟏ₛ x init : T
@@ -134,7 +135,7 @@ module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
 
   instance
     -- Component-wise operators constructs a vector space from a field when using the fields as scalars and coordinate vectors as vectors.
-    CoordinateVector-vectorSpace : ⦃ field-structure : Field(_+_)(_⋅_) ⦄ → VectorSpace(map₂{d = n}(_+_)) (s ↦ map{d = n}(s ⋅_)) (_+_) (_⋅_)
+    CoordinateVector-vectorSpace : ⦃ field-structure : Field(_+_)(_⋅_){ℓₙ₀} ⦄ → VectorSpace(map₂{d = n}(_+_)) (s ↦ map{d = n}(s ⋅_)) (_+_) (_⋅_)
     CoordinateVector-vectorSpace ⦃ field-structure ⦄ = pointwiseFunction-vectorSpace field-structure
 
   indexProject-values : ∀{true false : T} → (proj(indexProject i true false) j ≡ true) ∨ (proj(indexProject i true false) j ≡ false)

@@ -17,7 +17,7 @@ open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓ ℓᵥ ℓₛ ℓᵥₑ ℓₛₑ : Lvl.Level
+private variable ℓ ℓᵥ ℓₛ ℓᵥₑ ℓₛₑ ℓₙ₀ : Lvl.Level
 private variable V Vₗ Vᵣ S : Type{ℓ}
 private variable _+ᵥ_ : V → V → V
 private variable _⋅ₛᵥ_ : S → V → V
@@ -29,7 +29,7 @@ private variable vf : Vec(n)(V)
 module _
   ⦃ equiv-V : Equiv{ℓᵥₑ}(V) ⦄
   ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
-  (vectorSpace : VectorSpace{V = V}{S = S}(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_))
+  (vectorSpace : VectorSpace{V = V}{S = S}(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀})
   where
 
   open VectorSpace(vectorSpace)

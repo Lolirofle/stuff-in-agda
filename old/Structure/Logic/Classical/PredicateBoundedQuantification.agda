@@ -4,7 +4,7 @@ module Structure.Logic.Classical.PredicateBoundedQuantification {ℓₗ} {Formul
 open Structure.Logic.Classical.NaturalDeduction.ClassicalLogic {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} (classicLogic)
 
 open import Functional hiding (Domain)
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Type.Dependent
 

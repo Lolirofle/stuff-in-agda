@@ -3,7 +3,7 @@ module Structure.Relator where
 import Lvl
 open import Functional using (_∘₂_)
 open import Functional.Dependent
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Propositional
 open import Structure.Setoid
@@ -36,9 +36,9 @@ module _ {A : Type{ℓₒ}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ (P : A → Stmt{ℓ�
     substitution-sym = substitution ∘ Structure.Relator.Properties.symmetry(_≡_)
     substitution-equivalence : ∀{x y : A} → (x ≡ y) → (P(x) ↔ P(y))
     substitution-equivalence xy = [↔]-intro (substitution-sym xy) (substitution xy)
-  substitute₁ₗ = inst-fn UnaryRelator.substitution-sym
-  substitute₁ᵣ = inst-fn UnaryRelator.substitution
-  substitute₁ₗᵣ = inst-fn UnaryRelator.substitution-equivalence
+  substitute₁ₗ = inferArg UnaryRelator.substitution-sym
+  substitute₁ᵣ = inferArg UnaryRelator.substitution
+  substitute₁ₗᵣ = inferArg UnaryRelator.substitution-equivalence
   substitute₁ = substitute₁ᵣ
   unaryRelator = resolve UnaryRelator
 
@@ -60,10 +60,10 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ�
     substitution-sym xy1 xy2 = substitution (Structure.Relator.Properties.symmetry(_≡_) xy1) (Structure.Relator.Properties.symmetry(_≡_) xy2)
     substitution-equivalence : ∀{x₁ y₁ : A}{x₂ y₂ : B} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → ((x₁ ▫ x₂) ↔ (y₁ ▫ y₂))
     substitution-equivalence xy1 xy2 = [↔]-intro (substitution-sym xy1 xy2) (substitution xy1 xy2)
-  substitute₂ = inst-fn BinaryRelator.substitution
-  substitute₂ₗ = inst-fn BinaryRelator.substitutionₗ
-  substitute₂ᵣ = inst-fn BinaryRelator.substitutionᵣ
-  substitute₂ₗᵣ = inst-fn BinaryRelator.substitution-equivalence
+  substitute₂ = inferArg BinaryRelator.substitution
+  substitute₂ₗ = inferArg BinaryRelator.substitutionₗ
+  substitute₂ᵣ = inferArg BinaryRelator.substitutionᵣ
+  substitute₂ₗᵣ = inferArg BinaryRelator.substitution-equivalence
   binaryRelator = resolve BinaryRelator
 
 module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ {C : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₗ₃}(C) ⦄ (_▫_▫_ : A → B → C → Stmt{ℓₗ₄}) where
@@ -91,11 +91,11 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ�
     substitution-binary₁₂ = \{a x₁ x₂ y₁ y₂} → BinaryRelator.substitution(binary₁₂ {a}) {x₁}{x₂}{y₁}{y₂}
     substitution-binary₁₃ = \{a x₁ x₂ y₁ y₂} → BinaryRelator.substitution(binary₁₃ {a}) {x₁}{x₂}{y₁}{y₂}
     substitution-binary₂₃ = \{a x₁ x₂ y₁ y₂} → BinaryRelator.substitution(binary₂₃ {a}) {x₁}{x₂}{y₁}{y₂}
-  substitute₃ = inst-fn TrinaryRelator.substitution
-  substitute₃-unary₁ = inst-fn TrinaryRelator.substitution-unary₁
-  substitute₃-unary₂ = inst-fn TrinaryRelator.substitution-unary₂
-  substitute₃-unary₃ = inst-fn TrinaryRelator.substitution-unary₃
-  substitute₃-binary₁₂ = inst-fn TrinaryRelator.substitution-binary₁₂
-  substitute₃-binary₁₃ = inst-fn TrinaryRelator.substitution-binary₁₃
-  substitute₃-binary₂₃ = inst-fn TrinaryRelator.substitution-binary₂₃
+  substitute₃ = inferArg TrinaryRelator.substitution
+  substitute₃-unary₁ = inferArg TrinaryRelator.substitution-unary₁
+  substitute₃-unary₂ = inferArg TrinaryRelator.substitution-unary₂
+  substitute₃-unary₃ = inferArg TrinaryRelator.substitution-unary₃
+  substitute₃-binary₁₂ = inferArg TrinaryRelator.substitution-binary₁₂
+  substitute₃-binary₁₃ = inferArg TrinaryRelator.substitution-binary₁₃
+  substitute₃-binary₂₃ = inferArg TrinaryRelator.substitution-binary₂₃
   trinaryRelator = resolve TrinaryRelator

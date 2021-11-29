@@ -1,7 +1,7 @@
 module Structure.Sets where
 
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Logic
 open import Logic.Propositional
@@ -17,4 +17,4 @@ module _ ⦃ equiv-S : let _ = E ; _ = S ; _ = ℓₗ in Equiv{ℓₑ}(S) ⦄ wh
   module _ (_∈_ : E → S → Stmt{ℓₗ}) where
     SetExtensionality = SetEqualityRelation(_∈_)(_∈_) (Equiv._≡_ equiv-S)
     module SetExtensionality = SetEqualityRelation{_∈ₗ_ = _∈_}{_∈ᵣ_ = _∈_}{_≡_ = Equiv._≡_ equiv-S}
-    set-extensionality = inst-fn SetExtensionality.membership
+    set-extensionality = inferArg SetExtensionality.membership

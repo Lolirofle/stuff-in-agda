@@ -33,3 +33,15 @@ f ﹛$﹜ x = f{x}
 _﹛∘﹜_ : let _ = X in ({@(tactic no-infer) y : Y} → Z) → ({@(tactic no-infer) x : X} → Y) → ({@(tactic no-infer) x : X} → Z)
 (f ﹛∘﹜ g){x} = f{g{x}}
 {-# INLINE _﹛∘﹜_ #-}
+
+infer : {x : X} → X
+infer {x = x} = x
+{-# INLINE infer #-}
+
+module _ where
+  private variable A : Type{ℓ}
+  private variable B : A → Type{ℓ}
+
+  inferArg : ((a : A) → B(a)) → ({a : A} → B(a))
+  inferArg f = f infer
+  {-# INLINE inferArg #-}

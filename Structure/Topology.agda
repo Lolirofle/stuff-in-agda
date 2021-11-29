@@ -40,7 +40,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   open import Data.Boolean
   open import Data.Tuple as Tuple using (_⨯_ ; _,_)
   open import Functional
-  open import Lang.Instance
+  open import Functional.Instance
   open import Logic.Propositional
   open import Logic.Predicate
   open import Lvl.Proofs

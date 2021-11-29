@@ -4,7 +4,7 @@ module Structure.Container.SetLike.Proofs where
 open import Data.Boolean
 open import Data.Boolean.Stmt
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Logic
 open import Logic.Propositional

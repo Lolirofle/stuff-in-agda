@@ -23,6 +23,10 @@ module _ where
   const y _ = y
   {-# INLINE const #-}
 
+  constAlt : (x : X) → Y(x) → X
+  constAlt x _ = x
+  {-# INLINE constAlt #-}
+
   _$_ : ((x : X) → Y(x)) → (x : X) → Y(x)
   f $ x = f(x)
   {-# INLINE _$_ #-}

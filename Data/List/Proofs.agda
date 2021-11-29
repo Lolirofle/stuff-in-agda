@@ -26,7 +26,7 @@ open import Syntax.Transitivity
 open import Type
 
 private variable ℓ ℓₑ ℓₑₗ ℓₑₒ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑₗ₁ ℓₑₗ₂ ℓₑₗ₃ : Lvl.Level
-private variable T A B C : Type{ℓ}
+private variable T A B C D : Type{ℓ}
 private variable n : ℕ
 
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List(T)) ⦄ ⦃ extensionality : Extensionality(equiv-List) ⦄ where
@@ -179,6 +179,13 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List
       (𝐒(length(l)) ⋅ step) + init        🝖[ _≡_ ]-[]
       (length(x ⊰ l) ⋅ step) + init       🝖-end
 
+  instance
+    [++^]-identityᵣ : Identityᵣ(_++^_ {T = T})(𝟏)
+    [++^]-identityᵣ = intro p where
+      p : Names.Identityᵣ(_++^_)(𝟏)
+      p{∅}     = reflexivity(_≡_)
+      p{x ⊰ l} = congruence₂ᵣ(_⊰_)(x) (p{l})
+
 open import Structure.Setoid
 module _
   ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-List₁ : Equiv{ℓₑₗ₁}(List(A)) ⦄ ⦃ extensionality-A : Extensionality(equiv-List₁) ⦄
@@ -248,10 +255,10 @@ module _
     x₂ ▫₂ foldᵣ(_▫₂_) id₂ l₂ 🝖[ _≡_ ]-[]
     foldᵣ(_▫₂_) id₂ (x₂ ⊰ l₂) 🝖-end
 
-module _ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
-  private variable _▫_ : A → B → C
+module _ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ ⦃ equiv-C : Equiv{ℓₑ₃}(C) ⦄ where
+  private variable _▫_ : B → C → C
   private variable f : A → B
-  private variable id : T
+  private variable id : C
 
   foldᵣ-map-preserve : ⦃ oper : BinaryOperator(_▫_) ⦄ → ∀{l} → (foldᵣ((_▫_) ∘ f) id l ≡ foldᵣ(_▫_) id (map f(l)))
   foldᵣ-map-preserve                  {l = ∅}     = reflexivity(_≡_)

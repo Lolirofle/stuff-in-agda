@@ -134,7 +134,7 @@ module _ where
   Positional-equiv : Equiv(Positional(b))
   Positional-equiv {b} = intro _ ⦃ [≡ₚₒₛ]-equivalence {b} ⦄
 
-  open import Lang.Instance
+  open import Functional.Instance
   open import Numeral.Natural.Relation.Proofs
   open import Structure.Function
   open import Structure.Operator
@@ -167,8 +167,10 @@ module _ where
     p 𝟎     prev eq = skipᵣ empty
     p (𝐒 y) prev eq = (sub₂(_≡_)(_≡ₚₒₛ_) eq)
 
+  open import Numeral.Natural.Oper.FlooredDivision.Proofs.Compatibility
   open import Numeral.Natural.Oper.FlooredDivision.Proofs.Inverse
   open import Numeral.Natural.Oper.Proofs
+  open import Numeral.Natural.Relation.Divisibility.Proofs
   open import Structure.Operator.Properties
   from-ℕ-step-invs : ⦃ b-size : IsTrue(b >? 1) ⦄ → (from-ℕ {b} ((b ⋅ n) + (𝕟-to-ℕ d)) ≡ₚₒₛ (from-ℕ {b} n) · d)
   from-ℕ-step-invs b@{𝐒(𝐒 bb)} {n}{d} =
@@ -183,7 +185,7 @@ module _ where
         (𝕟-to-ℕ d) mod b           🝖[ _≡_ ]-[ mod-lesser-than-modulus ⦃ [≤]-without-[𝐒] [<]-of-𝕟-to-ℕ ⦄ ]
         𝕟-to-ℕ d                   🝖-end
       r =
-        (b ⋅ n + 𝕟-to-ℕ d) ⌊/⌋ b             🝖[ _≡_ ]-[ [⌊/⌋][+]-distributivityᵣ {b ⋅ n}{𝕟-to-ℕ d}{b} ]
+        (b ⋅ n + 𝕟-to-ℕ d) ⌊/⌋ b             🝖[ _≡_ ]-[ [⌊/⌋][+]-distributivityᵣ {b ⋅ n}{𝕟-to-ℕ d}{b} ([∨]-introₗ (DivN n)) ]
         ((b ⋅ n) ⌊/⌋ b) + ((𝕟-to-ℕ d) ⌊/⌋ b) 🝖[ _≡_ ]-[ congruence₂(_+_) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {b}{n}) ([⌊/⌋]-zero ([<]-of-𝕟-to-ℕ {b}{d})) ]
         n + 𝟎                                🝖[ _≡_ ]-[]
         n                                    🝖-end

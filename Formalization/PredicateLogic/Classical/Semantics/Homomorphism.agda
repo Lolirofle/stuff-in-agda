@@ -58,7 +58,7 @@ open import Data.ListSized.Proofs
 open import Functional
 open import Function.Equals
 open import Function.Proofs
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Predicate
 open import Structure.Function
 open import Structure.Operator

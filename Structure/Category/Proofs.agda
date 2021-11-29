@@ -5,7 +5,7 @@ import      Lvl
 open import Data
 open import Data.Tuple as Tuple using (_,_)
 open import Functional using (const ; swap ; _$_)
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate

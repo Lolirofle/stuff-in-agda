@@ -76,10 +76,10 @@ module _ {T : Type{ℓ}} where
 
   open import Numeral.Natural.Induction
   from-ℕ : ℕ → Ordinal(T)
-  from-ℕ = ℕ-elim 𝟎 (const 𝐒)
+  from-ℕ = ℕ-elim _ 𝟎 (const 𝐒)
 
   _+ₙ_ : Ordinal(T) → ℕ → Ordinal(T)
-  _+ₙ_ x = ℕ-elim x (const 𝐒)
+  _+ₙ_ x = ℕ-elim _ x (const 𝐒)
 
   private variable f g : T → Ordinal(T)
   private variable n : T
@@ -350,7 +350,7 @@ module _ where
   private variable n : ℕ
 
   _⋅ₙ_ : Ordinal(ℕ) → ℕ → Ordinal(ℕ)
-  _⋅ₙ_ x = ℕ-elim 𝟎 (const(lim ∘ (_+ₙ_)))
+  _⋅ₙ_ x = ℕ-elim _ 𝟎 (const(lim ∘ (_+ₙ_)))
 
   ω : Ordinal(ℕ)
   ω = lim from-ℕ

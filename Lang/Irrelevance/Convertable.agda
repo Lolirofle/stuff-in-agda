@@ -1,6 +1,6 @@
 module Lang.Irrelevance.Convertable where
 
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Type
 
@@ -14,7 +14,7 @@ module _ (T : Type{ℓ}) where
   record Convertable : Type{ℓ} where
     constructor intro
     field proof : .T → T
-  convert = inst-fn Convertable.proof
+  convert = inferArg Convertable.proof
 
 module _ where
   open import Data
@@ -51,7 +51,7 @@ module _ where
   classical-convertable : ⦃ classical : Classical(P) ⦄ → Convertable(P)
   classical-convertable{P = P} with excluded-middle(P)
   ... | [∨]-introₗ p  = intro(constᵢᵣᵣ p)
-  ... | [∨]-introᵣ np = intro([⊥]-elim ∘ᵢᵣᵣ₀ (convert(⊥) ∘ᵢᵣᵣ₋ np))
+  ... | [∨]-introᵣ np = intro([⊥]-elim ∘ᵢᵣᵣ₂ (convert(⊥) ∘ᵢᵣᵣ₁ np))
 
   decider-convertable : ⦃ dec : Decider₀(P)(b) ⦄ → Convertable(P)
   decider-convertable{P = P} = classical-convertable ⦃ decider-classical(P) ⦄

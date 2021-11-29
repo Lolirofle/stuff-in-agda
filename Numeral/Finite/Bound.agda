@@ -1,6 +1,6 @@
 module Numeral.Finite.Bound where
 
-open import Lang.Instance
+open import Functional.Instance
 open import Numeral.Finite
 open import Numeral.Natural
 open import Numeral.Natural.Relation.Order

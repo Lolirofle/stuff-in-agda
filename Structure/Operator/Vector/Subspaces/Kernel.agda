@@ -27,8 +27,8 @@ open VectorSpace ⦃ … ⦄
 open VectorSpaceVObject ⦃ … ⦄ using (_+ᵥ_; _⋅ₛᵥ_)
 open VectorSpaceVObject       using (Vector)
 
-private variable ℓ ℓᵥ ℓᵥₑ : Lvl.Level
-private variable V W : VectorSpaceVObject {ℓᵥ = ℓᵥ} {ℓᵥₑ = ℓᵥₑ} ⦃ equiv-S = equiv-S ⦄ (_+ₛ_)(_⋅ₛ_)
+private variable ℓ ℓᵥ ℓᵥₑ ℓₙ₀ : Lvl.Level
+private variable V W : VectorSpaceVObject {ℓᵥ = ℓᵥ} {ℓᵥₑ = ℓᵥₑ} ⦃ equiv-S = equiv-S ⦄ (_+ₛ_)(_⋅ₛ_) {ℓₙ₀}
 private variable F : V →ˡⁱⁿᵉᵃʳᵐᵃᵖ W
 
 kernel : (V →ˡⁱⁿᵉᵃʳᵐᵃᵖ W) → PredSet(Vector(V))

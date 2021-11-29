@@ -9,6 +9,7 @@ module _ where
   open import Numeral.Natural as ℕ using (ℕ)
   open import Numeral.Natural.Relation as ℕ
 
+  -- TODO: Maybe define this more generally so that the numerator could be ℤ also? Maybe by requiring that the denominator is a scalar in some kind of weak vector space with the numerator as vectors?
   record ℚ₊₀ : Type{Lvl.𝟎} where
     constructor _/ₙ_
     eta-equality
@@ -63,6 +64,13 @@ module _ where
   crossMul : ∀{ℓ}{T : Type{ℓ}} → (ℕ → ℕ → T) → (ℚ₊₀ → ℚ₊₀ → T)
   crossMul(_▫_) (x₁ /ₙ y₁) (x₂ /ₙ y₂) = (x₁ ℕ.⋅ y₂) ▫ (x₂ ℕ.⋅ y₁)
 
+  -- Cross-multiplied numbers of two rational numbers on an operator.
+  -- x₁    x₂
+  -- ―― ⤨ ――
+  -- y₁    y₂
+  crossMulAlt : ∀{ℓ}{T : Type{ℓ}} → (ℕ → ℕ → T) → (ℚ₊₀ → ℚ₊₀ → T)
+  crossMulAlt(_▫_) (x₁ /ₙ y₁) (x₂ /ₙ y₂) = (x₁ ℕ.⋅ y₂) ▫ (y₁ ℕ.⋅ x₂)
+
   open import Logic.Propositional
   import      Numeral.Natural.Oper.Proofs as ℕ
   import      Numeral.Natural.Relation as ℕ
@@ -109,7 +117,7 @@ module _ where
 
 module _ where
   open import Functional
-  open import Lang.Instance
+  open import Functional.Instance
   open import Numeral.Natural as ℕ using (ℕ)
   import      Numeral.Natural.Oper as ℕ
   import      Numeral.Natural.Oper.Proofs as ℕ
@@ -120,8 +128,9 @@ module _ where
 
   -- TODO: Consider using crossMul in the numerator instead. This would require all proofs to be fixed because the difference is that (y₁ ℕ.⋅ x₂) is swapped around.
   additiveOp : (ℕ → ℕ → ℕ) → (ℚ₊₀ → ℚ₊₀ → ℚ₊₀)
-  additiveOp(_▫_) (x₁ /ₙ y₁) (x₂ /ₙ y₂) = (((x₁ ℕ.⋅ y₂) ▫ (y₁ ℕ.⋅ x₂)) /ₙ (y₁ ℕ.⋅ y₂)) ⦃ ℕ.[⋅]-positiveᵣ{y₁}{y₂} infer infer ⦄
+  additiveOp(_▫_) q₁@(x₁ /ₙ y₁) q₂@(x₂ /ₙ y₂) = (crossMulAlt(_▫_) q₁ q₂ /ₙ (y₁ ℕ.⋅ y₂)) ⦃ ℕ.[⋅]-positiveᵣ{y₁}{y₂} infer infer ⦄
 
+  -- TODO: Some proofs of the properties of _+_ is able to be generalized to additiveOp
   _+_ : ℚ₊₀ → ℚ₊₀ → ℚ₊₀
   _+_ = additiveOp(ℕ._+_)
 
@@ -144,6 +153,7 @@ module _ where
   import      Numeral.Natural.Oper as ℕ
   open import Numeral.Natural.Oper.CeiledDivision as ℕ
   open import Numeral.Natural.Oper.FlooredDivision as ℕ
+  open import Numeral.Natural.Oper.Modulo as ℕ
   import      Numeral.Natural.Function.Coprimalize as ℕ
   import      Numeral.Natural.Function.GreatestCommonDivisor as ℕ
 
@@ -186,7 +196,7 @@ module _ where
 
   -- Fractional part of 
   frac : ℚ₊₀ → ℚ₊₀
-  frac(x /ₙ y) = (x ℕ.−₀ (floor(x /ₙ y) ℕ.⋅ y)) /ₙ y
+  frac(x /ₙ y) = (x mod y) /ₙ y
 
 module _ where
   open import Functional
@@ -293,8 +303,8 @@ module _ where
         )
 
   open import Numeral.Natural.Coprime
-  -- When the pairs (x₁,x₂) and (y₁,y₂) both are coprime and have the same ratio, then they are equal.
-  -- In other words, if (x₁/x₂ = y₁/y₂) when viewing the ratios as rational numbers, and they are both in reduced forms, then the numerators and the denominators are equal.
+  -- When the pairs (x₁,x₂) and (y₁,y₂) both are coprime and have the same ratio, they are equal.
+  -- In other words, if (x₁/x₂ = y₁/y₂) when viewing the ratios as rational numbers, and they are both in their reduced forms, then the two numerators and the two denominators are equal.
   Coprime-unique-quotient : ∀{x₁ x₂ y₁ y₂} → Coprime x₁ x₂ → Coprime y₁ y₂ → Id(x₁ ℕ.⋅ y₂) (y₁ ℕ.⋅ x₂) → (Id x₁ y₁) ∧ (Id x₂ y₂)
   Coprime-unique-quotient {x₁}{x₂}{y₁}{y₂} coprim-x coprim-y eq =
     let
@@ -510,14 +520,14 @@ module _ where
     [⋅][+]-distributivity : Distributivity(_⋅_)(_+_)
     [⋅][+]-distributivity = intro
 
-  open import Lang.Instance
+  open import Functional.Instance
   open import Logic.Predicate
   open import Syntax.Function
   open import Syntax.Implication
 
   avg₂ : ℚ₊₀ → ℚ₊₀ → ℚ₊₀
-  avg₂((x₁ /ₙ x₂) ⦃ pos-x ⦄) ((y₁ /ₙ y₂) ⦃ pos-y ⦄) =
-    (((x₁ ℕ.⋅ y₂) ℕ.+ (y₁ ℕ.⋅ x₂)) /ₙ (2 ℕ.⋅ (x₂ ℕ.⋅ y₂)))
+  avg₂ x@((x₁ /ₙ x₂) ⦃ pos-x ⦄) y@((y₁ /ₙ y₂) ⦃ pos-y ⦄) =
+    (crossMul(ℕ._+_) x y /ₙ (2 ℕ.⋅ (x₂ ℕ.⋅ y₂)))
     ⦃ [↔]-to-[→] (ℕ.[⋅]-positive {a = 2}) ([∧]-intro <> ([↔]-to-[→] ℕ.[⋅]-positive ([∧]-intro pos-x pos-y))) ⦄
 
   {-

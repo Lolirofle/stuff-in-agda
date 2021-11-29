@@ -2,7 +2,7 @@ open import Type
 
 module Graph.Walk.Proofs {ℓ₁ ℓ₂} {V : Type{ℓ₁}} where
 
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 import      Lvl
 open import Graph{ℓ₁}{ℓ₂}(V)

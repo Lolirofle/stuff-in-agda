@@ -17,16 +17,16 @@ open import Structure.Setoid
 open import Syntax.Function
 open import Type
 
-private variable ℓ ℓₗₑ ℓₑ : Lvl.Level
+private variable ℓ ℓₗₑ ℓₑ ℓₙ₀ : Lvl.Level
 private variable R : Type{ℓ}
 
 -- One way of defining the axioms of ℝ in classical logic.
 -- The axioms are the following:
 -- • An ordered field.
 -- • Monotone convergence.
-record RealTheory ⦃ equiv-R : Equiv{ℓₑ}(R) ⦄ (_+_ _⋅_ : R → R → R) (_≤_ : R → R → Stmt{ℓₗₑ}) : Type{Lvl.of(R) Lvl.⊔ ℓₗₑ Lvl.⊔ ℓₑ} where
+record RealTheory ⦃ equiv-R : Equiv{ℓₑ}(R) ⦄ (_+_ _⋅_ : R → R → R) (_≤_ : R → R → Stmt{ℓₗₑ}) : Type{Lvl.of(R) Lvl.⊔ ℓₗₑ Lvl.⊔ ℓₑ Lvl.⊔ Lvl.𝐒(ℓₙ₀)} where
   field
-    ⦃ orderedField ⦄ : OrderedField(_+_)(_⋅_)(_≤_)
+    ⦃ orderedField ⦄ : OrderedField{ℓₙ₀ = ℓₙ₀} (_+_)(_⋅_)(_≤_)
 
   open OrderedField(orderedField) public
   open Structure.OrderedField.AbsoluteValue(_+_)(_⋅_)(_≤_)
@@ -38,10 +38,10 @@ record RealTheory ⦃ equiv-R : Equiv{ℓₑ}(R) ⦄ (_+_ _⋅_ : R → R → R)
   -- TODO: Is this equivalent to the usual formalization using Dedekind completeness or Cauchy sequences?
   field
     supFn : (f : ℕ → R) → ⦃ Increasing(ℕ._≤_)(_≤_)(f) ⦄ → ⦃ UpperBounded(ℕ._≤_)(_≤_)(f) ⦄ → R
-    supFn-convergence : ∀{f} → ⦃ inc : Increasing(ℕ._≤_)(_≤_)(f) ⦄ → ⦃ bound : UpperBounded(ℕ._≤_)(_≤_)(f) ⦄
+    supFn-convergence : ∀{f} → ⦃ inc : Increasing(ℕ._≤_)(_≤_)(f) ⦄ → ⦃ bounded : UpperBounded(ℕ._≤_)(_≤_)(f) ⦄
                       → (f ≡ₗᵢₘ const(supFn(f)))
-    supFn-extensionality : ∀{f} ⦃ inc-f : Increasing(ℕ._≤_)(_≤_)(f) ⦄ ⦃ bound-f : UpperBounded(ℕ._≤_)(_≤_)(f) ⦄
-                         → ∀{g} ⦃ inc-g : Increasing(ℕ._≤_)(_≤_)(g) ⦄ ⦃ bound-g : UpperBounded(ℕ._≤_)(_≤_)(g) ⦄
+    supFn-extensionality : ∀{f} ⦃ inc-f : Increasing(ℕ._≤_)(_≤_)(f) ⦄ ⦃ bounded-f : UpperBounded(ℕ._≤_)(_≤_)(f) ⦄
+                         → ∀{g} ⦃ inc-g : Increasing(ℕ._≤_)(_≤_)(g) ⦄ ⦃ bounded-g : UpperBounded(ℕ._≤_)(_≤_)(g) ⦄
                          → (supFn(f) ≡ supFn(g)) ↔ (f ≡ₗᵢₘ g)
 
   {-

@@ -281,8 +281,8 @@ findAll-sorted {𝟎}      {f} = AdjacentlyPairwise.empty
 findAll-sorted {𝐒 𝟎} {f} with f(𝟎) | inspect f(𝟎)
 findAll-sorted {𝐒 𝟎} {f} | 𝑇 | intro f0 = AdjacentlyPairwise.single
 findAll-sorted {𝐒 𝟎} {f} | 𝐹 | intro f0 = AdjacentlyPairwise.empty
-findAll-sorted {𝐒(𝐒 n)} {f} with f(𝟎) | f(𝐒 𝟎) | AdjacentlyPairwise-map {_▫₁_ = IsTrue ∘₂ _≤?_}{f = 𝐒}{_▫₂_ = IsTrue ∘₂ _≤?_} id (findAll-sorted {𝐒 n}{f ∘ 𝐒})
-... | 𝑇 | 𝑇 | prev = AdjacentlyPairwise.step ⦃ <> ⦄ ⦃ prev ⦄
+findAll-sorted {𝐒(𝐒 n)} {f} with f(𝟎) | f(𝐒 𝟎) | AdjacentlyPairwise-map {f = id}{_▫₁_ = IsTrue ∘₂ _≤?_}{g = 𝐒}{_▫₂_ = IsTrue ∘₂ _≤?_} id (findAll-sorted {𝐒 n}{f ∘ 𝐒})
+... | 𝑇 | 𝑇 | prev = AdjacentlyPairwise.step <> prev
 ... | 𝑇 | 𝐹 | prev = AdjacentlyPairwise-prepend (\{ {𝟎} → <> ; {𝐒 _} → <>}) prev
 ... | 𝐹 | 𝑇 | prev = prev
 ... | 𝐹 | 𝐹 | prev = prev

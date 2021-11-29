@@ -3,7 +3,7 @@ module Numeral.Natural.Prime.Proofs.Product where
 import      Lvl
 open import Data.Either as Either using ()
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Propositional
 open import Numeral.Natural
 open import Numeral.Natural.Relation.Divisibility.Proofs

@@ -7,7 +7,7 @@ open import Data.List
 open import Data.List.Functions
 open import Data.List.Proofs
 open import Data.List.Equiv.Id
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Propositional
 open import Relator.Equals

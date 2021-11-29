@@ -26,7 +26,7 @@ open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓ ℓᵥ ℓᵥₗ ℓᵥᵣ ℓᵥ₁ ℓᵥ₂ ℓᵥ₃ ℓₛ ℓᵥₑ ℓᵥₑₗ ℓᵥₑᵣ ℓᵥₑ₁ ℓᵥₑ₂ ℓᵥₑ₃ ℓₛₑ : Lvl.Level
+private variable ℓ ℓᵥ ℓᵥₗ ℓᵥᵣ ℓᵥ₁ ℓᵥ₂ ℓᵥ₃ ℓₛ ℓᵥₑ ℓᵥₑₗ ℓᵥₑᵣ ℓᵥₑ₁ ℓᵥₑ₂ ℓᵥₑ₃ ℓₛₑ ℓₙ₀ : Lvl.Level
 private variable V Vₗ Vᵣ V₁ V₂ V₃ S : Type{ℓ}
 private variable _+ᵥ_ _+ᵥₗ_ _+ᵥᵣ_ _+ᵥ₁_ _+ᵥ₂_ _+ᵥ₃_ : V → V → V
 private variable _⋅ₛᵥ_ _⋅ₛᵥₗ_ _⋅ₛᵥᵣ_ _⋅ₛᵥ₁_ _⋅ₛᵥ₂_ _⋅ₛᵥ₃_ : S → V → V
@@ -37,7 +37,7 @@ open VectorSpace ⦃ … ⦄
 open VectorSpaceVObject
 
 module _ ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄ {_+ₛ_ _⋅ₛ_ : S → S → S} where
-  private variable A B : VectorSpaceVObject {ℓᵥ}{_}{ℓᵥₑ}{ℓₛₑ} ⦃ equiv-S ⦄ (_+ₛ_)(_⋅ₛ_)
+  private variable A B : VectorSpaceVObject {ℓᵥ}{_}{ℓᵥₑ}{ℓₛₑ} ⦃ equiv-S ⦄ (_+ₛ_)(_⋅ₛ_) {ℓₙ₀}
 
   instance
     [_→ˡⁱⁿᵉᵃʳᵐᵃᵖ_]-reflexivity : Reflexivity(_↔ˡⁱⁿᵉᵃʳᵐᵃᵖ_ {ℓᵥₗ = ℓᵥₗ}{ℓᵥₑₗ = ℓᵥₑₗ}{_+ₛ_ = _+ₛ_}{_⋅ₛ_ = _⋅ₛ_})
@@ -69,7 +69,7 @@ module _ ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄ {_+ₛ_ _⋅ₛ_ : S → S → S}
   instance
     [_→ˡⁱⁿᵉᵃʳᵐᵃᵖ_]-equiv : Equiv(A →ˡⁱⁿᵉᵃʳᵐᵃᵖ B)
     [_→ˡⁱⁿᵉᵃʳᵐᵃᵖ_]-equiv {A = A} {B = B} = [≡∃]-equiv ⦃ [⊜]-equiv ⦃ Vector-equiv B ⦄ ⦄
-    
+
   -- Equiv._≡_ [_→ˡⁱⁿᵉᵃʳᵐᵃᵖ_]-equiv ([∃]-intro f) ([∃]-intro g) = {!!}
   -- Equiv.equivalence [_→ˡⁱⁿᵉᵃʳᵐᵃᵖ_]-equiv = {!!}
 

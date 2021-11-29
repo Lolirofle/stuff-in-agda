@@ -8,7 +8,7 @@ import      Data.Tuple.Raiseᵣ.Functions as Raise
 open import Data.Tuple.RaiseTypeᵣ
 open import Data.Tuple.RaiseTypeᵣ.Functions
 open import Function.Multi
-open import Functional using (_→ᶠ_ ; id ; _∘_ ; _∘ᵢₙₛₜ_ ; _⦗_⦘_) renaming (const to const₁ ; apply to apply₁ ; swap to swap₁ ; _$_ to _$₁_)
+open import Functional using (_→ᶠ_ ; id ; _∘_ ; _∘₂_ ; _∘ₛ_ ; _∘ᵢₙₛₜ_ ; _⦗_⦘_) renaming (const to const₁ ; apply to apply₁ ; swap to swap₁ ; _$_ to _$₁_)
 open import Logic
 import      Lvl
 import      Lvl.MultiFunctions as Lvl
@@ -107,9 +107,11 @@ swap(n₁)(𝐒(𝐒(n₂))) f b = swap(n₁)(𝐒(n₂)) ((_$₁ b) ∘ᵣ f)
 pointwise : (n₁ n₂ : ℕ) → ∀{ℓ𝓈₁}{As : Types{n₁}(ℓ𝓈₁)}{ℓ𝓈₂}{Bs : Types{n₂}(ℓ𝓈₂)}{ℓ}{C : Type{ℓ}} → (Bs ⇉ C) → (map (As ⇉_) Bs) ⇉ (As ⇉ C)
 pointwise(n₁)(0)            = const(n₁)
 pointwise(n₁)(1)            = compose(n₁)
-pointwise(n₁)(𝐒(𝐒(n₂))) {As = As}{Bs = B , Bs}{C = C} f g = p{n = 𝐒(n₂)} (pointwise(n₁)(𝐒(n₂))) (f ∘ᵣ g) where
+pointwise(n₁)(𝐒(n₂@(𝐒(_)))) = compose(n₂) (applyTwice(n₁)) ∘₂ (swap(n₁)(n₂) ∘₂ (compose(n₁) (pointwise(n₁)(n₂)) ∘₂ compose(n₁)))
+{-pointwise(n₁)(𝐒(𝐒(n₂))) {As = As}{Bs = B , Bs}{C = C} f g = p{n = 𝐒(n₂)} (pointwise(n₁)(𝐒(n₂))) (f ∘ᵣ g) where
   p : ∀{Ts : Types{n}(ℓ𝓈)} → ((Bs ⇉ C) → (Ts ⇉ As ⇉ C)) → ((As ⇉ Bs ⇉ C) → (Ts ⇉ As ⇉ C)) -- TODO: Is it possible to simplify this helper function?
   p{n = n}{Ts = Ts} f g = compose(n) (applyTwice(n₁)) (swap(n₁)(n) (compose(n₁) f g))
+-}
 _∘ₗ : ∀{As : Types{n₁}(ℓ𝓈₁)}{Bs : Types{n₂}(ℓ𝓈₂)}{C : Type{ℓ}} → (Bs ⇉ C) → (map (As ⇉_) Bs) ⇉ (As ⇉ C)
 _∘ₗ {n₁ = n₁}{n₂ = n₂} = pointwise(n₁)(n₂)
 
@@ -140,11 +142,11 @@ applyTuple(n) = swap₁(uncurry(n))
 
 -- Applies an argument to a specific position in the arguments of an argument list of a multivariate function.
 -- Examples:
---   applyAt 0 (x ↦ y ↦ ... ↦ f(x,y)) a = (y ↦ ... ↦ f(a,y))
---   applyAt 1 (x ↦ y ↦ ... ↦ f(x,y)) b = (x ↦ ... ↦ f(x,b))
---   applyAt 0 (x ↦ y ↦ z ↦ ... ↦ f(x,y,z)) a = (y ↦ z ↦ ... ↦ f(a,y,z))
---   applyAt 1 (x ↦ y ↦ z ↦ ... ↦ f(x,y,z)) b = (x ↦ z ↦ ... ↦ f(x,b,z))
---   applyAt 2 (x ↦ y ↦ z ↦ ... ↦ f(x,y,z)) c = (x ↦ y ↦ ... ↦ f(x,y,c))
+--   applyAt 0 (x ↦ y ↦ f(x,y)) a = (y ↦ f(a,y))
+--   applyAt 1 (x ↦ y ↦ f(x,y)) b = (x ↦ f(x,b))
+--   applyAt 0 (x ↦ y ↦ z ↦ f(x,y,z)) a = (y ↦ z ↦ f(a,y,z))
+--   applyAt 1 (x ↦ y ↦ z ↦ f(x,y,z)) b = (x ↦ z ↦ f(x,b,z))
+--   applyAt 2 (x ↦ y ↦ z ↦ f(x,y,z)) c = (x ↦ y ↦ f(x,y,c))
 applyAt : (n : ℕ) → ∀{ℓ𝓈}{As : Types{𝐒(n)}(ℓ𝓈)}{ℓ}{B : Type{ℓ}} → (i : 𝕟(𝐒(n))) → (index i As) → (As ⇉ B) → (without i As ⇉ B)
 applyAt(0)       𝟎      xi f    = f xi
 applyAt(1)       𝟎      xi f x  = f xi x
@@ -166,7 +168,7 @@ onEach(𝐒(𝐒(n))) f g = curry(n) (gs ↦ x ↦ uncurry(n) (onEach(𝐒(n)) (
 -- Note: One of the parts of being an "applicative functor". The other being `const`
 liftedApply : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ₁}{B : Type{ℓ₁}}{ℓ₂}{C : Type{ℓ₂}} → (As ⇉ (B → C)) → ((As ⇉ B) → (As ⇉ C))
 liftedApply(0)             = id
-liftedApply(1)       f g x = f x (g x)
+liftedApply(1)             = _∘ₛ_
 liftedApply(𝐒(𝐒(n))) f g x = liftedApply(𝐒(n)) (f(x)) (g(x))
 
 lifted-[,] : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ₁}{B : Type{ℓ₁}}{ℓ₂}{C : Type{ℓ₂}} → (As ⇉ B) → (As ⇉ C) → (As ⇉ (B ⨯ C))
@@ -196,6 +198,9 @@ binaryTypeRelator₊(𝐒(𝐒(n))) (_▫_) id A = compose(𝐒(n)) (A ▫_) (bi
 -- Used to define nested universal and existential quantifications.
 -- Example:
 --   quantifier₊(3) □(P) = □(x ↦ □(y ↦ □(z ↦ P(x)(y)(z))))
+--   quantifier₊(4) ∀ₑₓₚₗ P = ∀(x)(y)(z)(w) → P x y z w = (x : _) → (y : _) → (z : _) → (w : _) → P x y z w
+--   quantifier₊(4) ∀ᵢₘₚₗ P = ∀{x}{y}{z}{w} → P x y z w
+--   quantifier₊(4) ∀ᵢₙₛₜ P = ∀ ⦃ x ⦄ ⦃ y ⦄ ⦃ z ⦄ ⦃ w ⦄ → P x y z w
 quantifier₊ : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (∀{ℓ₁ ℓ₂}{T : Type{ℓ₁}} → (T → Stmt{ℓ₂}) → Stmt{ℓ₁ Lvl.⊔ ℓ₂}) → (As ⇉ Stmt{ℓ}) → Stmt{ℓ Lvl.⊔ (Lvl.⨆(ℓ𝓈))}
 quantifier₊(0)       □(P) = P
 quantifier₊(1)       □(P) = □(P)
@@ -210,15 +215,6 @@ quantifier₊ᵢₙₛₜ : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} �
 quantifier₊ᵢₙₛₜ(0)       □(P) = P
 quantifier₊ᵢₙₛₜ(1)       □(P) = □(x ↦ P ⦃ x ⦄)
 quantifier₊ᵢₙₛₜ(𝐒(𝐒(n))) □(P) = □(x ↦ quantifier₊ᵢₙₛₜ(𝐒(n)) □(P ⦃ x ⦄))
-
-quantify : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (As ⇉ Stmt{ℓ}) → Stmt{ℓ Lvl.⊔ (Lvl.⨆(ℓ𝓈))}
-quantify(n) P = quantifier₊(n) (Pred ↦ (∀(x) → Pred(x))) P
-
-quantifyᵢₘₚₗ : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (As ⇉ᵢₘₚₗ Stmt{ℓ}) → Stmt{ℓ Lvl.⊔ (Lvl.⨆(ℓ𝓈))}
-quantifyᵢₘₚₗ(n) P = quantifier₊ᵢₘₚₗ(n) (Pred ↦ (∀{x} → Pred(x))) P
-
-quantifyᵢₙₛₜ : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (As ⇉ᵢₙₛₜ Stmt{ℓ}) → Stmt{ℓ Lvl.⊔ (Lvl.⨆(ℓ𝓈))}
-quantifyᵢₙₛₜ(n) P = quantifier₊ᵢₙₛₜ(n) (Pred ↦ (∀ ⦃ x ⦄ → Pred(x))) P
 
 quantifierSpecific : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (∀{i} → (index i As → Stmt{ℓ}) → Stmt{ℓ}) → (As ⇉ Stmt{ℓ}) → Stmt{ℓ}
 quantifierSpecific(0)       □(P) = P

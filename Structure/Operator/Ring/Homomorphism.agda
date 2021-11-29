@@ -48,6 +48,16 @@ module Ring where
       ⦃ antipreserve-[⋅] ⦄ : ∀{x y} → (f(x ⋅X y) ≡ f(y) ⋅Y f(x))
       ⦃ preserve-𝟏 ⦄       : Preserving₀(f)(𝟏ₗ)(𝟏ᵣ)
 
+  {- TODO: Use this when an "opposite" function have been implemented for rings
+  Antihomomorphism :
+    ∀{ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂ ℓₙ₀₁ ℓₙ₀₂}
+    {X : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(X) ⦄ {_+X_ _⋅X_ : X → X → X} (structureₗ : Ring(_+X_)(_⋅X_) {ℓₙ₀₁})
+    {Y : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ {_+Y_ _⋅Y_ : Y → Y → Y} (structureᵣ : Ring(_+Y_)(swap(_⋅Y_)) {ℓₙ₀₂})
+    (f : X → Y)
+    → Stmt
+  Antihomomorphism sₗ sᵣ f = Homomorphism sₗ sᵣ f
+  -}
+
 _→ʳⁱⁿᵍ_ : ∀{ℓₗ ℓₗₑ ℓₗₙ₀ ℓᵣ ℓᵣₑ ℓᵣₙ₀} → RingObject{ℓₗ}{ℓₗₑ}{ℓₗₙ₀} → RingObject{ℓᵣ}{ℓᵣₑ}{ℓᵣₙ₀} → Type
 A →ʳⁱⁿᵍ B = ∃(Ring.Homomorphism(RingObject.ring A)(RingObject.ring B))
 
@@ -55,37 +65,37 @@ module SemiRg where
   open Structure.Operator.Ring
 
   record Homomorphism
-    {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂ ℓₙ₀₁ ℓₙ₀₂}
-    {X : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(X) ⦄ {_+X_ _⋅X_ : X → X → X} (structureₗ : Ring(_+X_)(_⋅X_) {ℓₙ₀₁})
-    {Y : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ {_+Y_ _⋅Y_ : Y → Y → Y} (structureᵣ : Ring(_+Y_)(_⋅Y_) {ℓₙ₀₂})
+    {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂}
+    {X : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(X) ⦄ {_+X_ _⋅X_ : X → X → X} (structureₗ : SemiRg(_+X_)(_⋅X_))
+    {Y : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ {_+Y_ _⋅Y_ : Y → Y → Y} (structureᵣ : SemiRg(_+Y_)(_⋅Y_))
     (f : X → Y)
     : Stmt{ℓ₁ Lvl.⊔ ℓₑ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓₑ₂} where
 
     constructor intro
-
-    𝟏ₗ = Ring.𝟏(structureₗ)
-    𝟏ᵣ = Ring.𝟏(structureᵣ)
-
     field
       ⦃ function ⦄     : Function(f)
       ⦃ preserve-[+] ⦄ : Preserving₂(f)(_+X_)(_+Y_)
       ⦃ preserve-[⋅] ⦄ : Preserving₂(f)(_⋅X_)(_⋅Y_)
-      ⦃ preserve-𝟏 ⦄   : Preserving₀(f)(𝟏ₗ)(𝟏ᵣ)
 
   record Antihomomorphism
-    {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂ ℓₙ₀₁ ℓₙ₀₂}
-    {X : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(X) ⦄ {_+X_ _⋅X_ : X → X → X} (structureₗ : Ring(_+X_)(_⋅X_) {ℓₙ₀₁})
-    {Y : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ {_+Y_ _⋅Y_ : Y → Y → Y} (structureᵣ : Ring(_+Y_)(_⋅Y_) {ℓₙ₀₂})
+    {ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂}
+    {X : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(X) ⦄ {_+X_ _⋅X_ : X → X → X} (structureₗ : SemiRg(_+X_)(_⋅X_))
+    {Y : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ {_+Y_ _⋅Y_ : Y → Y → Y} (structureᵣ : SemiRg(_+Y_)(_⋅Y_))
     (f : X → Y)
     : Stmt{ℓ₁ Lvl.⊔ ℓₑ₁ Lvl.⊔ ℓ₂ Lvl.⊔ ℓₑ₂} where
 
     constructor intro
-
-    𝟏ₗ = Ring.𝟏(structureₗ)
-    𝟏ᵣ = Ring.𝟏(structureᵣ)
-
     field
       ⦃ function ⦄         : Function(f)
       ⦃ preserve-[+] ⦄     : Preserving₂(f)(_+X_)(_+Y_)
       ⦃ antipreserve-[⋅] ⦄ : ∀{x y} → (f(x ⋅X y) ≡ f(y) ⋅Y f(x))
-      ⦃ preserve-𝟏 ⦄       : Preserving₀(f)(𝟏ₗ)(𝟏ᵣ)
+
+  {- TODO: See above
+  Antihomomorphism :
+    ∀{ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂}
+    {X : Type{ℓ₁}} ⦃ _ : Equiv{ℓₑ₁}(X) ⦄ {_+X_ _⋅X_ : X → X → X} (structureₗ : SemiRg(_+X_)(_⋅X_))
+    {Y : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ {_+Y_ _⋅Y_ : Y → Y → Y} (structureᵣ : SemiRg(_+Y_)(swap(_⋅Y_)))
+    (f : X → Y)
+    → Stmt
+  Antihomomorphism sₗ sᵣ f = Homomorphism sₗ sᵣ f
+  -}

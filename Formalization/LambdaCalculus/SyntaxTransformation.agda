@@ -1,7 +1,7 @@
 module Formalization.LambdaCalculus.SyntaxTransformation where
 
 open import Formalization.LambdaCalculus
-open import Lang.Instance
+open import Functional.Instance
 open import Numeral.Natural
 open import Numeral.Finite
 open import Numeral.Finite.Bound

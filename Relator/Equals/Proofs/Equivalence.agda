@@ -2,7 +2,7 @@ module Relator.Equals.Proofs.Equivalence where
 
 open import Functional
 import      Lvl
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Propositional
 open import Logic
 open import Relator.Equals

@@ -3,7 +3,7 @@ module Numeral.CoordinateVector where
 import      Lvl
 open import Data.Boolean
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Numeral.Finite
 open import Numeral.Finite.Bound
 open import Numeral.Finite.Oper
@@ -108,11 +108,11 @@ foldᵣ {d = 𝟎}    (_▫_) (init) (v) = init
 foldᵣ {d = 𝐒(d)} (_▫_) (init) (v) = (head v) ▫ (foldᵣ {d = d} (_▫_) (init) (tail v))
 
 -- Example:
---   foldᵣ-init (_▫_) (0) [1,2,3,4]
+--   foldInitᵣ (_▫_) (0) [1,2,3,4]
 --   = 0 ▫ (1 ▫ (2 ▫ (3 ▫ 4)))
-foldᵣ-init : (A → A → A) → A → Vector(d)(A) → A
-foldᵣ-init {d = 𝟎}    (_▫_) (init) (v) = init
-foldᵣ-init {d = 𝐒(d)} (_▫_) (init) (v) = init ▫ (foldᵣ-init {d = d} (_▫_) (head v) (tail v))
+foldInitᵣ : (A → A → A) → A → Vector(d)(A) → A
+foldInitᵣ {d = 𝟎}    (_▫_) (init) (v) = init
+foldInitᵣ {d = 𝐒(d)} (_▫_) (init) (v) = init ▫ (foldInitᵣ {d = d} (_▫_) (head v) (tail v))
 
 -- Example:
 --   reduceᵣ (_▫_) [1,2,3,4]

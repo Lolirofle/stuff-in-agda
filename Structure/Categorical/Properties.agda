@@ -1,7 +1,7 @@
 module Structure.Categorical.Properties where
 
 import      Functional.Dependent as Fn
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Logic
 open import Logic.Predicate
@@ -39,34 +39,34 @@ module Morphism where
       record Associativity : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
         constructor intro
         field proof : Names.Morphism.Associativity{Morphism = Morphism}(_▫_)
-      associativity = inst-fn Associativity.proof
+      associativity = inferArg Associativity.proof
 
       module _ {x : Obj} (f : x ⟶ x) where
         record Idempotent : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
           constructor intro
           field proof : Names.Morphism.Idempotent{Morphism = Morphism}(_▫_)(f)
-        idempotent = inst-fn Idempotent.proof
+        idempotent = inferArg Idempotent.proof
 
       module IdModule (id : Names.Reflexivity(_⟶_)) where
         record Identityₗ : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
           constructor intro
           field proof : Names.Morphism.Identityₗ(_▫_)(\{a} → id{a})
-        identityₗ = inst-fn Identityₗ.proof
+        identityₗ = inferArg Identityₗ.proof
 
         record Identityᵣ : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
           constructor intro
           field proof : Names.Morphism.Identityᵣ(_▫_)(\{a} → id{a})
-        identityᵣ = inst-fn Identityᵣ.proof
+        identityᵣ = inferArg Identityᵣ.proof
 
         Identity = Identityₗ ∧ Identityᵣ
-        identity-left  = inst-fn{X = Identity}(Identityₗ.proof Fn.∘ [∧]-elimₗ{Q = Identityᵣ})
-        identity-right = inst-fn{X = Identity}(Identityᵣ.proof Fn.∘ [∧]-elimᵣ{P = Identityₗ})
+        identity-left  = inferArg{X = Identity}(Identityₗ.proof Fn.∘ [∧]-elimₗ{Q = Identityᵣ})
+        identity-right = inferArg{X = Identity}(Identityᵣ.proof Fn.∘ [∧]-elimᵣ{P = Identityₗ})
 
         module _ {x : Obj} (f : x ⟶ x) where
           record Involution : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
             constructor intro
             field proof : Names.Morphism.Involution{Morphism = Morphism}(_▫_)(id)(f)
-          involution = inst-fn Involution.proof
+          involution = inferArg Involution.proof
 
         module _ {x y : Obj} (f : x ⟶ y) where
           module _ (f⁻¹ : y ⟶ x) where
@@ -75,14 +75,14 @@ module Morphism where
             record Inverseₗ : Stmt{ℓₘ Lvl.⊔ ℓₑ} where
               constructor intro
               field proof : Names.Morphism.Inverseₗ(_▫_)(\{a} → id{a})(f)(f⁻¹)
-            inverseₗ = inst-fn Inverseₗ.proof
+            inverseₗ = inferArg Inverseₗ.proof
 
             -- A morphism have a right inverse morphism.
             -- Also called: Split epimorphism, section
             record Inverseᵣ : Stmt{ℓₘ Lvl.⊔ ℓₑ} where
               constructor intro
               field proof : Names.Morphism.Inverseᵣ(_▫_)(\{a} → id{a})(f)(f⁻¹)
-            inverseᵣ = inst-fn Inverseᵣ.proof
+            inverseᵣ = inferArg Inverseᵣ.proof
 
             Inverse = Inverseₗ ∧ Inverseᵣ
             module Inverse(inverse : Inverse) where
@@ -129,7 +129,7 @@ module Morphism where
           constructor intro
           field
             proof : ∀{z} → Names.CancellationOnₗ {T₂ = z ⟶ x} (_▫_) (f)
-        cancellationₗ = inst-fn Monomorphism.proof
+        cancellationₗ = inferArg Monomorphism.proof
 
         -- A morphism is an epimorphism when it is right-cancellable ("surjective").
         -- ∀{z}{g₁ g₂ : y ⟶ z} → (g₁ ∘ f ≡ g₂ ∘ f) → (g₁ ≡ g₂)
@@ -137,7 +137,7 @@ module Morphism where
           constructor intro
           field
             proof : ∀{z} → Names.CancellationOnᵣ {T₁ = y ⟶ z} (_▫_) (f)
-        cancellationᵣ = inst-fn Epimorphism.proof
+        cancellationᵣ = inferArg Epimorphism.proof
 
       -- Proposition stating that two objects are monomorphic.
       Monomorphic : Obj → Obj → Stmt
@@ -161,20 +161,20 @@ module Polymorphism where
         record IdempotentOn : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
           constructor intro
           field proof : Names.Polymorphism.IdempotentOn{Morphism = Morphism}(_▫_)(x)(y)(f)
-        idempotent-on = inst-fn IdempotentOn.proof
+        idempotent-on = inferArg IdempotentOn.proof
 
       module IdModule (id : Names.Reflexivity(_⟶_)) where
         module _ (x y : Obj) (f : ∀{x y} → (x ⟶ y)) where
           record InvolutionOn : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
             constructor intro
             field proof : Names.Polymorphism.InvolutionOn{Morphism = Morphism}(_▫_)(id) (x)(y) (f)
-          involution-on = inst-fn InvolutionOn.proof
+          involution-on = inferArg InvolutionOn.proof
 
         module _ (f : ∀{x y} → (x ⟶ y)) where
           record Involution : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
             constructor intro
             field proof : Names.Polymorphism.Involution{Morphism = Morphism}(_▫_)(id)(f)
-          involution = inst-fn Involution.proof
+          involution = inferArg Involution.proof
 
         module _ (inv : ∀{x y : Obj} → (x ⟶ y) → (y ⟶ x)) where
           -- A morphism have a right inverse morphism.
@@ -186,7 +186,7 @@ module Polymorphism where
               inverseₗ : ∀{x y : Obj}{f : x ⟶ y} → Morphism.Inverseₗ(_▫_)(\{x} → id{x})(f)(inv f)
               inverseₗ = Morphism.intro proof
 
-          inverterₗ = inst-fn Inverterₗ.proof
+          inverterₗ = inferArg Inverterₗ.proof
 
           -- A morphism have a right inverse morphism.
           -- Also called: Split epimorphism, section
@@ -196,7 +196,7 @@ module Polymorphism where
             instance
               inverseᵣ : ∀{x y : Obj}{f : x ⟶ y} → Morphism.Inverseᵣ(_▫_)(\{x} → id{x})(f)(inv f)
               inverseᵣ = Morphism.intro proof
-          inverterᵣ = inst-fn Inverterᵣ.proof
+          inverterᵣ = inferArg Inverterᵣ.proof
 
           Inverter = Inverterₗ ∧ Inverterᵣ
           module Inverter(inverter : Inverter) where

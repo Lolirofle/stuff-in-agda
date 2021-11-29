@@ -1,7 +1,7 @@
 module Structure.Logic.Constructive.Proofs where
 
 open import Functional as Fn
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Propositional as Logic using (_←_ ; _↔_)
 open import Logic.Predicate     as Logic hiding (∀ₗ)
 import      Lvl

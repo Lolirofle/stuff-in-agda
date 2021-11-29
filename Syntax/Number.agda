@@ -1,73 +1,60 @@
 module Syntax.Number where
 
+open import Data
+open import Function
 import      Lvl
-open import Logic.Propositional
 open import Numeral.Natural
+open import Numeral.Natural.Induction
 open import Type
 
-record Numeral {ℓ} (T : Type{ℓ}) : Typeω where
-  field
-    {restriction-ℓ} : Lvl.Level
-    restriction : ℕ → Type{restriction-ℓ}
-    num : (n : ℕ) → ⦃ _ : restriction(n) ⦄ → T
+private variable ℓ ℓᵣ : Lvl.Level
+
+-- A numeral allows the syntactical conversion from some natural numbers to its inhabitants.
+-- The restriction restricts which natural numbers that are able to represent inhabitants.
+record Numeral (T : Type{ℓ}) (R : ℕ → Type{ℓᵣ}) : Type{ℓ Lvl.⊔ ℓᵣ} where
+  Restriction = R
+  field num : (n : ℕ) → ⦃ restriction : Restriction(n) ⦄ → T
+
+-- An infinite numeral allows the syntactical conversion from any natural numbers to its inhabitants.
+InfiniteNumeral : (T : Type{ℓ}) → Type
+InfiniteNumeral(T) = Numeral(T) (const(Unit{Lvl.𝟎}))
+module InfiniteNumeral {T : Type{ℓ}} where
+  intro : (ℕ → T) → InfiniteNumeral(T)
+  Numeral.num(intro(f)) n = f(n)
+
+  num : ⦃ InfiniteNumeral(T) ⦄ → ℕ → T
+  num ⦃ num ⦄ n = Numeral.num num n
+
+-- A negative numeral allows the syntactical conversion from some negative natural numbers to its inhabitants.
+-- This is similar to Numeral. The difference is that it converts natural numbers with a negative sign in front syntactically.
+record NegativeNumeral (T : Type{ℓ}) (R : ℕ → Type{ℓᵣ}) : Type{ℓ Lvl.⊔ ℓᵣ} where
+  Restriction = R
+  field num : (n : ℕ) → ⦃ restriction : Restriction(n) ⦄ → T
+
+-- An infinite numeral allows the syntactical conversion from any negative natural numbers to its inhabitants.
+InfiniteNegativeNumeral : (T : Type{ℓ}) → Type
+InfiniteNegativeNumeral(T) = NegativeNumeral(T) (const(Unit{Lvl.𝟎}))
+module InfiniteNegativeNumeral {T : Type{ℓ}} where
+  intro : (ℕ → T) → InfiniteNegativeNumeral(T)
+  NegativeNumeral.num(intro(f)) n = f(n)
+
+  num : ⦃ InfiniteNegativeNumeral(T) ⦄ → ℕ → T
+  num ⦃ num ⦄ n = NegativeNumeral.num num n
+
+
+
 open Numeral ⦃ ... ⦄ public using (num)
 {-# BUILTIN FROMNAT num #-}
 
-InfiniteNumeral = Numeral
-module InfiniteNumeral {ℓ} {T : Type{ℓ}} where
-  intro : (ℕ → T) → InfiniteNumeral(T)
-  Numeral.restriction-ℓ (intro(_))         = Lvl.𝟎
-  Numeral.restriction   (intro(_)) _       = ⊤
-  Numeral.num           (intro(f)) n ⦃ _ ⦄ = f(n)
-
--- record InfiniteNumeral {ℓ} (T : Type{ℓ}) : Type{ℓ} where
--- record InfiniteNumeral {ℓ} (T : Type{ℓ}) : Type{ℓ} where
---   field
---     num : ℕ → T
-
--- instance
---   Numeral-from-InfiniteNumeral : ∀{ℓ}{T} → ⦃ _ : InfiniteNumeral{ℓ}(T) ⦄ → Numeral{ℓ}(T)
---   Numeral.restriction-ℓ ( Numeral-from-InfiniteNumeral ) = Lvl.𝟎
---   Numeral.restriction ( Numeral-from-InfiniteNumeral ) (_) = ⊤
---   num ⦃ Numeral-from-InfiniteNumeral ⦃ infNum ⦄ ⦄ (n) ⦃ _ ⦄ = InfiniteNumeral.num(infNum) (n)
-
-instance
-  ℕ-InfiniteNumeral : InfiniteNumeral (ℕ)
-  ℕ-InfiniteNumeral = InfiniteNumeral.intro(id) where
-    id : ℕ → ℕ
-    id x = x
-
-instance
-  Level-InfiniteNumeral : InfiniteNumeral (Lvl.Level)
-  Level-InfiniteNumeral = InfiniteNumeral.intro(f) where
-    f : ℕ → Lvl.Level
-    f(ℕ.𝟎)    = Lvl.𝟎
-    f(ℕ.𝐒(n)) = Lvl.𝐒(f(n))
-
-
-
-record NegativeNumeral {ℓ} (T : Type{ℓ}) : Typeω where
-  field
-    {restriction-ℓ} : Lvl.Level
-    restriction : ℕ → Type{restriction-ℓ}
-    num : (n : ℕ) → ⦃ _ : restriction(n) ⦄ → T
 open NegativeNumeral ⦃ ... ⦄ public using () renaming (num to -num)
 {-# BUILTIN FROMNEG -num #-}
 
-InfiniteNegativeNumeral = NegativeNumeral
-module InfiniteNegativeNumeral {ℓ} {T : Type{ℓ}} where
-  intro : (ℕ → T) → InfiniteNegativeNumeral(T)
-  NegativeNumeral.restriction-ℓ (intro(_))         = Lvl.𝟎
-  NegativeNumeral.restriction   (intro(_)) _       = ⊤
-  NegativeNumeral.num           (intro(f)) n ⦃ _ ⦄ = f(n)
 
--- record InfiniteNegativeNumeral {ℓ} (T : Type{ℓ}) : Type{ℓ} where
---   field
---     num : ℕ → T
--- open InfiniteNegativeNumeral ⦃ ... ⦄ public
 
--- instance
---   NegativeNumeral-from-InfiniteNegativeNumeral : ∀{ℓ}{T} → ⦃ _ : InfiniteNegativeNumeral{ℓ}(T) ⦄ → NegativeNumeral{ℓ}(T)
---   NegativeNumeral.restriction-ℓ ( NegativeNumeral-from-InfiniteNegativeNumeral ) = Lvl.𝟎
---   NegativeNumeral.restriction ( NegativeNumeral-from-InfiniteNegativeNumeral ) (_) = ⊤
---   -num ⦃ NegativeNumeral-from-InfiniteNegativeNumeral ⦃ infNegNum ⦄ ⦄ (n) ⦃ _ ⦄ = InfiniteNegativeNumeral.num(infNegNum) (n)
+instance
+  ℕ-InfiniteNumeral : InfiniteNumeral(ℕ)
+  ℕ-InfiniteNumeral = InfiniteNumeral.intro id
+
+instance
+  Level-InfiniteNumeral : InfiniteNumeral(Lvl.Level)
+  Level-InfiniteNumeral = InfiniteNumeral.intro(ℕ-elim _ Lvl.𝟎 (const Lvl.𝐒))

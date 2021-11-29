@@ -23,7 +23,7 @@ open import Structure.Setoid renaming (_≡_ to _≡ₛ_)
 open import Syntax.Transitivity
 open import Type
 
-private variable ℓ ℓₑ ℓₑ₁ ℓₑ₂ : Lvl.Level
+private variable ℓ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ : Lvl.Level
 private variable T A B C : Type{ℓ}
 
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
@@ -153,13 +153,18 @@ module _ ⦃ equiv : Equiv{ℓₑ₁}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑ₂}(L
       with [∃]-intro l2 ⦃ [∧]-intro l₁ll xl₁ ⦄ ← R{x}{ll} xl
       = [∃]-intro l2 ⦃ [∧]-intro (⊰ l₁ll) xl₁ ⦄
 
+module _ ⦃ equiv₁ : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv₂ : Equiv{ℓₑ₂}(B) ⦄ ⦃ equiv-List : Equiv{ℓₑ₃}(List(B)) ⦄ ⦃ ext : Extensionality(equiv-List) ⦄ where
+  private variable l : List(A)
+  private variable x : B
+  private variable f : A → List(B)
+
   open import Data.List.Equiv.Id
   open import Logic.Propositional.Theorems
   [∈]-concatMap : ⦃ func : Function(f) ⦄ → (x ∈ concatMap f(l)) ↔ ∃(y ↦ (y ∈ l) ∧ (x ∈ f(y)))
   [∈]-concatMap{f}{x}{l}
     rewrite concatMap-concat-map{f = f}{l}
     = [↔]-transitivity
-      ([∈]-concat {x}{map f(l)})
+      ([∈]-concat {x = x}{map f(l)})
       ([↔]-intro
         (\([∃]-intro y ⦃ [∧]-intro p q ⦄) → [∃]-intro (f(y)) ⦃ [∧]-intro ([∈]-mapᵣ p) q ⦄)
         (\([∃]-intro y ⦃ [∧]-intro p q ⦄) →

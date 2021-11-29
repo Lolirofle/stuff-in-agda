@@ -35,3 +35,10 @@ module _ ⦃ _ : Equiv{ℓₑ}(Obj) ⦄ where
   instance
     [≡∃]-equiv : Equiv{ℓₑ}(∃{Obj = Obj} Pred)
     [≡∃]-equiv = intro(_≡∃_) ⦃ [≡∃]-equivalence ⦄
+
+{- TODO: Replace above with this
+open import Functional
+open import Structure.Relator.Equivalence.Proofs
+∃ₗ-equiv : ∀{ℓ₁ ℓ₂ ℓₑ}{A : Type{ℓ₁}} ⦃ equiv : Equiv{ℓₑ}(A) ⦄ {B : A → Type{ℓ₂}} → Equiv(∃ B)
+∃ₗ-equiv ⦃ equiv ⦄ = intro ((_≡_) on₂ [∃]-witness) ⦃ on₂-equivalence{_▫_ = _≡_}{f = [∃]-witness} ⦃ Equiv.equivalence equiv ⦄ ⦄
+-}

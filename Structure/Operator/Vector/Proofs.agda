@@ -22,7 +22,7 @@ open import Syntax.Transitivity
 open import Type
 
 module _
-  {ℓᵥ ℓₛ ℓᵥₑ ℓₛₑ : Lvl.Level}
+  {ℓᵥ ℓₛ ℓᵥₑ ℓₛₑ ℓₙ₀ : Lvl.Level}
   {V : Type{ℓᵥ}}
   ⦃ equiv-V : Equiv{ℓᵥₑ}(V) ⦄
   {S : Type{ℓₛ}}
@@ -32,7 +32,7 @@ module _
   {_+ₛ_ _⋅ₛ_ : S → S → S}
   where
 
-  module _ ⦃ vectorSpace : VectorSpace(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) ⦄ where
+  module _ ⦃ vectorSpace : VectorSpace(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀} ⦄ where
     open VectorSpace(vectorSpace)
 
     [⋅ₛᵥ]-absorberₗ : ∀{v} → (𝟎ₛ ⋅ₛᵥ v ≡ 𝟎ᵥ)

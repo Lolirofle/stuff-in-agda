@@ -4,7 +4,7 @@ open import Structure.Setoid
 open import Type
 
 module Structure.Operator.Ring.Characteristic.Proofs
-  {ℓ ℓₑ}
+  {ℓ ℓₑ ℓₙ₀}
   {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄
   (_+_ _⋅_  : T → T → T)
   where
@@ -20,7 +20,7 @@ open import Relator.Equals using () renaming (_≡_ to _≡ₑ_ ; [≡]-intro to
 open import Sets.PredicateSet using () renaming (_≡_ to _≡ₛ_)
 open import Structure.Operator
 open import Structure.Operator.Properties
-open import Structure.Operator.Ring.Characteristic(_+_)(_⋅_)
+open import Structure.Operator.Ring.Characteristic {ℓₙ₀ = ℓₙ₀} (_+_)(_⋅_)
 open import Structure.Relator
 open import Structure.Relator.Ordering.Lattice
 open import Structure.Relator.Ordering.Lattice.Proofs

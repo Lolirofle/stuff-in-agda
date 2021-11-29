@@ -215,7 +215,7 @@ record Ordered ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) ⦃ 
       [<]-identities : 𝟎 < 𝟏
       [<]-identities = [≤][≢]-to-[<] [≤]-identities ([↔]-to-[→] nonZero distinct-identities ∘ symmetry(_≡_))
 
-open import Lang.Instance
+open import Functional.Instance
 open import Structure.Relator.Ordering.Proofs
 
 -- Theory defining the axioms of an ordered field (a field with a weak total order).

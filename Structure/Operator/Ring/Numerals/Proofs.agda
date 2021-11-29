@@ -3,11 +3,11 @@ open import Structure.Setoid
 open import Type
 
 module Structure.Operator.Ring.Numerals.Proofs
-  {ℓF ℓₑF}
+  {ℓF ℓₑF ℓₙ₀}
   {F : Type{ℓF}}
   ⦃ equiv-F : Equiv{ℓₑF}(F) ⦄
   {_+_}{_⋅_}
-  ⦃ ring : Ring(_+_)(_⋅_) ⦄
+  ⦃ ring : Ring(_+_)(_⋅_) {ℓₙ₀} ⦄
   where
 
 open import Functional
@@ -77,7 +77,7 @@ module _ where
     ((_+ x) ^ ℕ.𝐒(n))(𝟎)         🝖-end
 
   open import Data
-  open import Lang.Instance
+  open import Functional.Instance
   import      Numeral.Natural.Relation as ℕ
   open import Numeral.Natural.Equiv.Id
   open import Structure.Function

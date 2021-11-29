@@ -2,7 +2,7 @@ module Numeral.Finite.Functions where
 
 import Lvl
 open import Syntax.Number
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Propositional
 open import Logic.Predicate
 open import Numeral.Finite

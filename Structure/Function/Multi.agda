@@ -11,7 +11,7 @@ import      Function.Equals.Multi as Multi
 open import Function.Multi
 import      Function.Multi.Functions as Multi
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
@@ -105,7 +105,7 @@ module _ {X : Type{ℓ₁}} {Y : Type{ℓ₂}} ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ w
     record Preserving : Stmt{if positive?(n) then (ℓ₁ Lvl.⊔ ℓₑ₂) else ℓₑ₂} where -- TODO: Is it possible to prove for levels that an if-expression is less if both are less?
       constructor intro
       field proof : Names.Preserving(n) (f)(g₁)(g₂)
-    preserving = inst-fn Preserving.proof
+    preserving = inferArg Preserving.proof
 
   Preserving₀ = Preserving(0)
   Preserving₁ = Preserving(1)
@@ -138,7 +138,7 @@ module _ {T : Type{ℓ}} where
     record Compatible : Stmt{ℓₗ Lvl.⊔ (if positive?(n) then ℓ else Lvl.𝟎)} where
       constructor intro
       field proof : Names.Compatible(n) (_▫_)(f)
-    compatible = inst-fn Compatible.proof
+    compatible = inferArg Compatible.proof
 
   Compatible₀ = Compatible(0)
   Compatible₁ = Compatible(1)

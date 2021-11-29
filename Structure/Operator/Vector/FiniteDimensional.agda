@@ -4,13 +4,13 @@ open import Structure.Setoid
 open import Type
 
 module Structure.Operator.Vector.FiniteDimensional
-  {ℓᵥ ℓₛ ℓᵥₑ ℓₛₑ}
+  {ℓᵥ ℓₛ ℓᵥₑ ℓₛₑ ℓₙ₀}
   {V : Type{ℓᵥ}} ⦃ equiv-V : Equiv{ℓᵥₑ}(V) ⦄
   {S : Type{ℓₛ}} ⦃ equiv-S : Equiv{ℓₛₑ}(S) ⦄
   {_+ᵥ_ : V → V → V}
   {_⋅ₛᵥ_ : S → V → V}
   {_+ₛ_ _⋅ₛ_ : S → S → S}
-  ⦃ vectorSpace : VectorSpace(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) ⦄
+  ⦃ vectorSpace : VectorSpace(_+ᵥ_)(_⋅ₛᵥ_)(_+ₛ_)(_⋅ₛ_) {ℓₙ₀} ⦄
   where
 
 open VectorSpace(vectorSpace)

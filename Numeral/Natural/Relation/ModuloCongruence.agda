@@ -25,7 +25,7 @@ instance
 mod-congruence-equiv : (m : ℕ) → ⦃ pos : IsTrue(positive? m) ⦄ → Equiv(ℕ)
 mod-congruence-equiv m = intro(_≡_[mod m ]) ⦃ mod-congruence-equivalence {m} ⦄
 
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Propositional
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Modulo.Proofs
@@ -114,6 +114,7 @@ open import Numeral.Natural.Function.GreatestCommonDivisor
 open import Numeral.Natural.Function.GreatestCommonDivisor.Proofs
 open import Numeral.Natural.Oper.FlooredDivision
 open import Numeral.Natural.Oper.FlooredDivision.Proofs
+open import Numeral.Natural.Oper.FlooredDivision.Proofs.Compatibility
 open import Numeral.Natural.Oper.FlooredDivision.Proofs.Inverse
 open import Numeral.Natural.Coprime
 open import Numeral.Natural.Coprime.Proofs

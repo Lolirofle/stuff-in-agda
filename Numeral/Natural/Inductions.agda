@@ -4,6 +4,7 @@ import Lvl
 open import Logic
 open import Logic.Propositional
 open import Functional
+open import Functional.Dependent using () renaming (const to constDep)
 open import Numeral.Natural
 open import Numeral.Natural.Induction
 open import Numeral.Natural.Relation.Order
@@ -15,8 +16,8 @@ open import Type
 private variable ℓ : Lvl.Level
 
 ℕ-strong-recursion : (P : ℕ → Type{ℓ}) → ((n : ℕ) → ((i : ℕ) → (i < n) → P(i)) → P(n)) → ((n : ℕ) → P(n))
-ℕ-strong-recursion P step n = ℕ-elim{T = n ↦ ((i : ℕ) → (i < n) → P(i))}
-  (\_ ())
+ℕ-strong-recursion P step n = ℕ-elim(n ↦ ((i : ℕ) → (i < n) → P(i)))
+  (constDep([⊥]-elim ∘ [≤][0]ᵣ-negation))
   (n ↦ prev ↦ i ↦ i𝐒n ↦ step i (j ↦ ji ↦ prev j (transitivity(_≤_) ji ([≤]-without-[𝐒] i𝐒n))))
   (𝐒(n)) n (reflexivity(_≤_))
 
@@ -30,12 +31,10 @@ module _ where
   open Strict.Properties
 
   instance
-    ℕ-accessibleₗ : ∀{n} → Accessibleₗ(_<_)(n)
-    ℕ-accessibleₗ{n} = intro ⦃ proof{n} ⦄ where
+    ℕ-wellfounded : WellFounded(_<_)
+    ℕ-wellfounded{n} = intro ⦃ proof{n} ⦄ where
       proof : ∀{n m} → ⦃ _ : (m < n) ⦄ → Accessibleₗ(_<_)(m)
       proof {𝟎}   {m}    ⦃ ⦄
       proof{𝐒(n)} {𝟎}    ⦃ succ mn ⦄ = intro ⦃ \ ⦃ ⦄ ⦄
-      proof{𝐒(n)} {𝐒(m)} ⦃ succ mn ⦄ = intro ⦃ \{k} ⦃ xsm ⦄ → Accessibleₗ.proof (ℕ-accessibleₗ {n}) ⦃ transitivity(_≤_) xsm mn ⦄ ⦄
+      proof{𝐒(n)} {𝐒(m)} ⦃ succ mn ⦄ = intro ⦃ \{k} ⦃ xsm ⦄ → Accessibleₗ.proof (ℕ-wellfounded {n}) ⦃ transitivity(_≤_) xsm mn ⦄ ⦄
 
-  ℕ-wellfounded : WellFounded(_<_)
-  ℕ-wellfounded = ℕ-accessibleₗ

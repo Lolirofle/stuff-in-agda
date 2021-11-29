@@ -2,7 +2,7 @@ module Structure.Setoid {ℓₑ ℓₒ} where
 
 import Lvl
 open import Functional.Dependent
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Propositional
 open import Logic.Predicate
 open import Structure.Relator.Equivalence

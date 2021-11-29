@@ -1,6 +1,6 @@
 module Function.Axioms where
 
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Predicate
 open import Logic
 import      Lvl
@@ -20,12 +20,12 @@ module _
   record FunctionExtensionalityOn : Stmt{ℓₒ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓₗ₃} where
     constructor intro
     field proof : Names.FunctionExtensionalityOn(f)(g)
-  functionExtensionalityOn = inst-fn FunctionExtensionalityOn.proof
+  functionExtensionalityOn = inferArg FunctionExtensionalityOn.proof
 
   record FunctionApplicationOn : Stmt{ℓₒ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓₗ₃} where
     constructor intro
     field proof : Names.FunctionApplicationOn(f)(g)
-  functionApplicationOn = inst-fn FunctionApplicationOn.proof
+  functionApplicationOn = inferArg FunctionApplicationOn.proof
 
 module _ (A : Type{ℓₒ₁}) (B : Type{ℓₒ₂}) ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ ⦃ _ : Equiv{ℓₗ₃}(A → B) ⦄ where
   FunctionExtensionality : Stmt
@@ -48,7 +48,7 @@ module _
   record DependentFunctionExtensionalityOn : Stmt{ℓₒ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓₗ₃} where
     constructor intro
     field proof : Names.DependentFunctionExtensionalityOn(f)(g)
-  dependentFunctionExtensionalityOn = inst-fn DependentFunctionExtensionalityOn.proof
+  dependentFunctionExtensionalityOn = inferArg DependentFunctionExtensionalityOn.proof
 
 module _ (A : Type{ℓₒ₁}) (B : A → Type{ℓₒ₂}) ⦃ _ : ∀{a} → Equiv{ℓₗ₂}(B(a)) ⦄ ⦃ _ : Equiv{ℓₗ₃}((a : A) → B(a)) ⦄ where
   DependentFunctionExtensionality : Stmt
@@ -66,7 +66,7 @@ module _
   record DependentImplicitFunctionExtensionalityOn : Stmt{ℓₒ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓₗ₃} where
     constructor intro
     field proof : Names.DependentImplicitFunctionExtensionalityOn(f)(g)
-  dependentImplicitFunctionExtensionalityOn = inst-fn DependentImplicitFunctionExtensionalityOn.proof
+  dependentImplicitFunctionExtensionalityOn = inferArg DependentImplicitFunctionExtensionalityOn.proof
 
 module _ (A : Type{ℓₒ₁}) (B : A → Type{ℓₒ₂}) ⦃ _ : ∀{a} → Equiv{ℓₗ₂}(B(a)) ⦄ ⦃ _ : Equiv{ℓₗ₃}({a : A} → B(a)) ⦄ where
   DependentImplicitFunctionExtensionality : Stmt
@@ -84,7 +84,7 @@ module _
   record DependentInstanceFunctionExtensionalityOn : Stmt{ℓₒ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓₗ₃} where
     constructor intro
     field proof : Names.DependentInstanceFunctionExtensionalityOn(f)(g)
-  dependentInstanceFunctionExtensionalityOn = inst-fn DependentInstanceFunctionExtensionalityOn.proof
+  dependentInstanceFunctionExtensionalityOn = inferArg DependentInstanceFunctionExtensionalityOn.proof
 
 module _ (A : Type{ℓₒ₁}) (B : A → Type{ℓₒ₂}) ⦃ _ : ∀{a} → Equiv{ℓₗ₂}(B(a)) ⦄ ⦃ _ : Equiv{ℓₗ₃}(⦃ a : A ⦄ → B(a)) ⦄ where
   DependentInstanceFunctionExtensionality : Stmt

@@ -1,7 +1,7 @@
 module Type.Properties.Singleton {ℓ ℓₑ} where
 
 import      Lvl
-open import Lang.Instance
+open import Functional.Instance
 open import Structure.Setoid
 open import Type
 

@@ -1,7 +1,7 @@
 module Structure.Function where
 
 import Lvl
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Predicate
 open import Logic
 open import Structure.Function.Names
@@ -22,7 +22,7 @@ module _
   record Function : Stmt{Lvl.of(A) Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂} where
     constructor intro
     field congruence : Congruence₁(f)
-  congruence₁ = inst-fn Function.congruence
+  congruence₁ = inferArg Function.congruence
 
 _→ᶠⁿ_ : (A : Setoid{ℓₗ₁}{ℓₒ₁}) → (B : Setoid{ℓₗ₂}{ℓₒ₂}) → Type{ℓₒ₁ Lvl.⊔ ℓₒ₂ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂}
 ([∃]-intro A) →ᶠⁿ ([∃]-intro B) = ∃(Function{A = A}{B = B})

@@ -6,12 +6,12 @@ open import Structure.OrderedField
 open import Type
 
 module Structure.OrderedField.AbsoluteValue
-  {ℓ ℓₗ ℓₑ}
+  {ℓ ℓₗ ℓₑ ℓₙ₀}
   {F : Type{ℓ}}
   ⦃ equiv : Equiv{ℓₑ}(F) ⦄
   (_+_ _⋅_ : F → F → F)
   (_≤_ : F → F → Stmt{ℓₗ})
-  ⦃ ring : Ring(_+_)(_⋅_) ⦄ -- TODO: The definition does not require a ring, only some kind of total order compatible with an operation with an identity and an inverse
+  ⦃ ring : Ring(_+_)(_⋅_) {ℓₙ₀} ⦄ -- TODO: The definition does not require a ring, only some kind of total order compatible with an operation with an identity and an inverse
   ⦃ [+]-commutativity : Commutativity(_+_) ⦄
   -- ⦃ identity : Identity(_+_) ⦄
   -- ⦃ inverseFunction : InverseFunction(_+_)(−_) ⦄

@@ -1,7 +1,7 @@
 module Structure.Category.Functor where
 
 open import Functional using (_on₂_)
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Logic.Predicate
 open import Structure.Category

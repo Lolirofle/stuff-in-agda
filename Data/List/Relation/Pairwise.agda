@@ -21,10 +21,9 @@ open import Logic.Propositional
 --   }
 -- Note: Equivalent to OrderedPairwise(_▫_) when (_▫_) is transitive.
 data AdjacentlyPairwise(_▫_ : T → T → Stmt{ℓ₂}) : List(T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
-  instance
-    empty  : AdjacentlyPairwise(_▫_)(∅)
-    single : ∀{a} → AdjacentlyPairwise(_▫_)(List.singleton(a))
-    step   : ∀{a b}{l} → ⦃ _ : (a ▫ b) ⦄ → ⦃ _ : AdjacentlyPairwise(_▫_)(b ⊰ l) ⦄ → AdjacentlyPairwise(_▫_)(a ⊰ b ⊰ l)
+  empty  : AdjacentlyPairwise(_▫_)(∅)
+  single : ∀{a} → AdjacentlyPairwise(_▫_)(List.singleton(a))
+  step   : ∀{a b}{l} → (a ▫ b) → AdjacentlyPairwise(_▫_)(b ⊰ l) → AdjacentlyPairwise(_▫_)(a ⊰ b ⊰ l)
 
 -- Whether a list's elements pairwise satisfy a binary relation with all the successive elements in the list.
 -- Example:
@@ -41,11 +40,16 @@ data AdjacentlyPairwise(_▫_ : T → T → Stmt{ℓ₂}) : List(T) → Stmt{ℓ
 --     • (c ▫ e)
 --     • (d ▫ e)
 --   }
--- Note: Equivalent to Pairwise(_▫_) when (_▫_) is symmetric.
+-- Note: Equivalent to Pairwise(_▫_) when (_▫_) is symmetric and reflexive.
 data OrderedPairwise(_▫_ : T → T → Stmt{ℓ₂}) : List(T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
   empty  : OrderedPairwise(_▫_)(∅)
   step   : ∀{a}{l} → AllElements(a ▫_)(l) → OrderedPairwise(_▫_)(l) → OrderedPairwise(_▫_)(a ⊰ l)
 
+-- Note: Equivalent to Pairwise(_▫_) when (_▫_) is symmetric.
+data OrderedPairwise₌(_▫_ : T → T → Stmt{ℓ₂}) : List(T) → Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
+  empty  : OrderedPairwise₌(_▫_)(∅)
+  step   : ∀{a}{l} → AllElements(a ▫_)(a ⊰ l) → OrderedPairwise₌(_▫_)(l) → OrderedPairwise₌(_▫_)(a ⊰ l)
+
 -- TODO: Is this correct? Using (_∧_)?
 Pairwise : (T → T → Stmt{ℓ₂}) → List(T) → Stmt
-Pairwise(_▫_) = OrderedPairwise(x ↦ y ↦ (y ▫ x) ∧ (x ▫ y))
+Pairwise(_▫_) l = AllElements(y ↦ AllElements(x ↦ x ▫ y)(l))(l)

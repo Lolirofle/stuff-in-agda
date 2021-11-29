@@ -2,7 +2,7 @@ module Data.Either where
 
 import      Lvl
 open import Data.Boolean using (Bool ; 𝑇 ; 𝐹)
-open import Functional using (id ; _∘_)
+open import Functional using (id ; _∘_ ; const)
 open import Type
 
 infixr 100 _‖_
@@ -23,9 +23,11 @@ elim _ fb (Right b) = fb(b)
 map1 : let _ = A ; _ = B ; _ = C in (A → C) → (B → C) → (A ‖ B) → C
 map1 = elim
 
+-- Alternative implementation:
+--   swap (Left t) = Right t
+--   swap (Right t) = Left t
 swap : (A ‖ B) → (B ‖ A)
-swap (Left t) = Right t
-swap (Right t) = Left t
+swap = map1 Right Left
 
 extract : (A ‖ A) → A
 extract = map1 id id
@@ -39,10 +41,24 @@ mapLeft f = map f id
 mapRight : let _ = A ; _ = B₁ ; _ = B₂ in (B₁ → B₂) → (A ‖ B₁) → (A ‖ B₂)
 mapRight f = map id f
 
+-- Alternative implementation:
+--   isLeft = map1 (const 𝑇) (const 𝐹)
 isLeft : (A ‖ B) → Bool
-isLeft(Left  _) = 𝑇
-isLeft(Right _) = 𝐹
+isLeft (Left  _) = 𝑇
+isLeft (Right _) = 𝐹
 
+-- Alternative implementation:
+--   isRight = map1 (const 𝐹) (const 𝑇)
 isRight : (A ‖ B) → Bool
-isRight(Left  _) = 𝐹
-isRight(Right _) = 𝑇
+isRight (Left  _) = 𝐹
+isRight (Right _) = 𝑇
+
+associateLeft : (A ‖ (B ‖ C)) → ((A ‖ B) ‖ C)
+associateLeft (Left x)         = Left(Left x)
+associateLeft (Right(Left y))  = Left(Right y)
+associateLeft (Right(Right z)) = Right z
+
+associateRight : ((A ‖ B) ‖ C) → (A ‖ (B ‖ C))
+associateRight (Left(Left x))  = Left x
+associateRight (Left(Right y)) = Right(Left y)
+associateRight (Right z)       = Right(Right z)

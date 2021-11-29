@@ -4,7 +4,7 @@ import      Lvl
 open import Data
 open import Data.Boolean.Stmt
 open import Functional
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Propositional
 open import Numeral.Natural
 open import Numeral.Natural.Inductions
@@ -46,7 +46,7 @@ private variable d d₁ d₂ b a' b' : ℕ
 [⌊/⌋]-of-1ᵣ {𝟎} = [≡]-intro
 [⌊/⌋]-of-1ᵣ {𝐒 m} = inddiv-result-𝐒 {0}{0}{m}{0} 🝖 [≡]-with(𝐒) ([⌊/⌋]-of-1ᵣ {m})
 
-[⌊/⌋]-of-same : ∀{n} ⦃ pos-n : IsTrue(positive?(n))⦄ → (n ⌊/⌋ n ≡ 1)
+[⌊/⌋]-of-same : ∀{n} ⦃ pos-n : Positive(n)⦄ → (n ⌊/⌋ n ≡ 1)
 [⌊/⌋]-of-same {𝐒 n} = inddiv-of-denominator-successor {b' = n}
 
 [⌊/⌋]-zero : ∀{a b} ⦃ pos-b : Positive(b)⦄ → (a < b) → (a ⌊/⌋ b ≡ 𝟎)
@@ -150,6 +150,14 @@ open import Logic.Predicate
       𝟎        🝖[ _≤_ ]-[ min ]
       a ⌊/⌋ b₂ 🝖-end
 
+[≤][⌊/⌋]-preserving : ∀{a₁ a₂ b₁ b₂} ⦃ pos-b₂ : Positive(b₂) ⦄ → (a₁ ≤ a₂) → (ord : b₁ ≥ b₂) →
+  let instance _ = [≤]-to-positive ord pos-b₂
+  in (a₁ ⌊/⌋ b₁ ≤ a₂ ⌊/⌋ b₂)
+[≤][⌊/⌋]-preserving {a₁}{a₂}{b₁}{b₂} pa pb =
+  (a₁ ⌊/⌋ b₁) ⦃ _ ⦄ 🝖[ _≤_ ]-[ [≤][⌊/⌋]ᵣ-antipreserving {a₁}{b₁}{b₂} pb ]
+  a₁ ⌊/⌋ b₂         🝖[ _≤_ ]-[ [≤][⌊/⌋]ₗ-preserving {a₁}{a₂}{b₂} pa ]
+  a₂ ⌊/⌋ b₂         🝖-end
+
 -- TODO: Not true. For example a₁=0, a₂=1, b=2 (because (_ ⌊/⌋_) is non-injective). Can be resolved by comparing some mod b
 -- postulate [<][⌊/⌋]ₗ-preserving : ∀{a₁ a₂ b} ⦃ pos-b : Positive(b) ⦄ → (a₁ < a₂) → (a₁ ⌊/⌋ b < a₂ ⌊/⌋ b)
 {-[<][⌊/⌋]ₗ-preserving {a₁}{a₂}{b} ord = [≤][≢]-to-[<]
@@ -188,3 +196,55 @@ open import Logic.Predicate
   })
 
 -- postulate [⌊/⌋]-associate-commute : ∀{a b c} ⦃ pos-b : Positive(b) ⦄ ⦃ pos-c : Positive(c) ⦄ → ((a ⌊/⌋ b) ⌊/⌋ c ≡ (a ⌊/⌋ c) ⌊/⌋ b)
+
+[⌊/⌋]-operator : ∀{a₁ a₂ b₁ b₂} ⦃ pos-b₁ : Positive(b₁) ⦄ → (a₁ ≡ a₂) → (pb : b₁ ≡ b₂) → (a₁ ⌊/⌋ b₁ ≡ (a₂ ⌊/⌋ b₂) ⦃ substitute₁(Positive) pb pos-b₁ ⦄)
+[⌊/⌋]-operator [≡]-intro [≡]-intro = [≡]-intro
+
+open import Structure.Function.Domain
+[⌊/⌋]-one : ∀{a b} ⦃ pos-b : Positive(b) ⦄ → (b ≤ a < (b ⋅ 2)) ↔ (a ⌊/⌋ b ≡ 1)
+[⌊/⌋]-one {a}{b} ⦃ pos-b ⦄ = [↔]-intro
+  ([⌊/⌋]-elim
+    {P = \{a} div → (b ≤ a < (b ⋅ 2)) ← (div ≡ 1)}{b = b}
+    (\_ ())
+    (\{a} p 𝐒div1 → [∧]-intro
+      ([≤][+]ᵣ-same {𝟎}{a}{𝟎}{b} min)
+      ([∨]-elim
+        (\{[≡]-intro → [<][+]ᵣ-same {0}{b}{𝟎}{b} ([↔]-to-[→] Positive-greater-than-zero pos-b)})
+        ([<][+]ᵣ-same {a}{b}{𝟎}{b})
+        ([⌊/⌋]-is-0 {a}{b} (injective(𝐒) 𝐒div1))
+      )
+    )
+    {a}
+  )
+  ([⌊/⌋]-elim
+    {P = \{a} div → (b ≤ a < (b ⋅ 2)) → (div ≡ 1)}{b = b}
+    (\ab ([∧]-intro ba _) → [⊥]-elim ([≤][𝐒]ₗ (ab 🝖 ba)))
+    (\{a} _ ([∧]-intro _ abbb) → congruence₁(𝐒) ([⌊/⌋]-zero {a}{b} ([<][+]ᵣ-same {a}{b}{b}{0} abbb)))
+    {a}
+  )
+
+{- TODO: Maybe this is unnecessary.
+open import Lang.Inspect
+[⌊/⌋]-greater-than-1 : ∀{a b} ⦃ pos-b : Positive(b) ⦄ → (a ≥ (b ⋅ 2)) ↔ (a ⌊/⌋ b > 1)
+[⌊/⌋]-greater-than-1 {a}{b@(𝐒 B)} = [↔]-intro l r where
+  l : ∀{a} → (a ≥ (b ⋅ 2)) ← (a ⌊/⌋ b > 1)
+  l{a@(𝐒 _)} p = succ {![⌊/⌋]-positive!}
+
+  r : ∀{a} → (a ≥ (b ⋅ 2)) → (a ⌊/⌋ b > 1)
+  r{a@(𝐒 A)} ab with (a ⌊/⌋ b) | inspect (_⌊/⌋ b) a
+  ... | 𝟎       | intro eq = {!!} -- with () ← substitute₁(Positive) eq ([↔]-to-[→] [⌊/⌋]-positive ([≤]-predecessor ab))
+  ... | 𝐒 𝟎     | intro eq = {![↔]-to-[←] ([⌊/⌋]-one {a}{b}) eq!}
+  ... | 𝐒 (𝐒 d) | intro eq = succ(succ min)
+  -- = {![↔]-to-[→] [⌊/⌋]-positive ([≤]-predecessor ab)!}
+
+-- TODO: This is not necessarily true
+[⌊/⌋]-greater-than-1 : ∀{a b} ⦃ pos-b : Positive(b) ⦄ → (b ∣ a) → (a > b) ↔ (a ⌊/⌋ b > 1)
+[⌊/⌋]-greater-than-1 {𝟎}{b} ba = [↔]-intro (\p → [⊥]-elim ([≤][0]ᵣ-negation (subtransitivityᵣ(_<_)(_≡_) p ([⌊/⌋]-of-0ₗ {b})))) \()
+[⌊/⌋]-greater-than-1 {a@(𝐒 A)}{b} ba = [↔]-intro l r where
+  l : (a > b) ← (a ⌊/⌋ b > 1)
+  l p = [≤][≢]-to-[<] (divides-upper-limit ba) \{[≡]-intro → [<]-to-[≢] p (symmetry(_≡_) ([⌊/⌋]-of-same {b}))}
+
+  r : (a > b) → (a ⌊/⌋ b > 1)
+  r p = subtransitivityᵣ(_<_)(_≡_) (succ ([↔]-to-[→] Positive-greater-than-zero ([↔]-to-[→] ([⌊/⌋]-positive {a −₀ b}{b}) {!!}))) (symmetry(_≡_) ([⌊/⌋]-step-[−₀] (sub₂(_<_)(_≤_) p)))
+
+-}

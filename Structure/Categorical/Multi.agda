@@ -11,7 +11,7 @@ open import Function.Multi
 open import Function.Multi.Functions
 open import Functional using (_→ᶠ_)
 import      Functional.Dependent as Fn
-open import Lang.Instance
+open import Functional.Instance
 import      Lvl
 open import Logic
 open import Logic.Predicate

@@ -277,7 +277,7 @@ module _ {ℓₚ} {P : Type{ℓₚ}} where
     open import Formalization.ClassicalPropositionalLogic.NaturalDeduction
 
     open import Data.List.Relation.Quantification
-    open import Lang.Instance
+    open import Functional.Instance
     open import Sets.PredicateSet as PredSet using (PredSet)
     open import Sets.PredicateSet.Listable
     open import Type.Properties.MereProposition

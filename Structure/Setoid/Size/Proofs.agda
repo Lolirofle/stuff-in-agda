@@ -6,11 +6,12 @@ import      Data.Either        as Either
 import      Data.Either.Proofs as Either
 import      Lvl
 open import Functional
-open import Function.Proofs
+open import Function.Domains
 open import Function.Inverseₗ
 open import Function.Inverse
 open import Function.Iteration
-open import Lang.Instance
+open import Function.Proofs
+open import Functional.Instance
 open import Logic
 open import Logic.Classical
 open import Logic.Propositional
@@ -52,8 +53,11 @@ module _ where
   [≼]-to-[≽]-not-all : ¬((_≼_ {ℓ}) ⊆₂ swap(_≽_))
   [≼]-to-[≽]-not-all (intro proof) = [≽]-empty-is-not-minimal(proof [≼]-empty-is-minimal)
 
-  [≼]-to-[≽]-for-inhabited : ⦃ _ : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ ⦃ inh-A : (◊([∃]-witness A)) ⦄ → ((A ≼ B) → (B ≽ A))
-  [≼]-to-[≽]-for-inhabited {A = [∃]-intro a} {B = [∃]-intro b} ([∃]-intro f ⦃ [∧]-intro f-func f-inj ⦄) = [∃]-intro (invₗ-construction(const [◊]-existence) f) ⦃ [∧]-intro (invₗ-construction-function ⦃ inj = f-inj ⦄) (inverseₗ-surjective ⦃ inverₗ = invₗ-construction-inverseₗ ⦃ inj = f-inj ⦄ ⦄) ⦄
+  module _ ⦃ classical-fiber-existence : ∀{f : [∃]-witness A → [∃]-witness B}{y} → Classical(∃(Fiber f(y))) ⦄ ⦃ inh-A : (◊([∃]-witness A)) ⦄ where
+    [≼]-to-[≽]-for-inhabited : ((A ≼ B) → (B ≽ A))
+    [≼]-to-[≽]-for-inhabited ([∃]-intro f ⦃ [∧]-intro f-func f-inj ⦄) = [∃]-intro
+      (invₗ-construction(const [◊]-existence) f)
+      ⦃ [∧]-intro (invₗ-construction-function ⦃ inj = f-inj ⦄) (inverseₗ-surjective ⦃ inverₗ = invₗ-construction-inverseₗ ⦃ inj = f-inj ⦄ ⦄) ⦄
 
   {- TODO: Maybe this proof could be made to a proof about invertibility instead
   [≼][≍]-almost-antisymmetry : ⦃ _ : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ → (A ≼ B) → (B ≼ A) → (A ≽ B)
@@ -157,11 +161,17 @@ module _ where
       ... | Either.Right nep₁                 | Either.Left ([∃]-intro y₂ ⦃ p₂ ⦄) | cxp₁fxy₂   = symmetry(_≡_) (inj-mix p₂ nep₁ (symmetry(_≡_) cxp₁fxy₂))
       ... | Either.Right nep₁                 | Either.Right nep₂                 | cxp₁cxp₂   = inj-c nep₁ nep₂ cxp₁cxp₂
 
+module _ ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ where
+  -- ⦃ classical-fiber-existence-AB : ∀{f : [∃]-witness A → [∃]-witness B}{y} → Classical(∃(Fiber f(y))) ⦄ → ⦃ classical-fiber-existence-BA : ∀{f : [∃]-witness B → [∃]-witness A}{y} → Classical(∃(Fiber f(y))) ⦄
+  open import Structure.Operator
+  open import Structure.Relator
+  open import Structure.Setoid.Uniqueness
+
   -- The property of antisymmetry for injection existence.
   -- Also called: Cantor-Schröder-Bernstein Theorem, Schröder-Bernstein Theorem, Cantor–Bernstein theorem
   -- Source: https://artofproblemsolving.com/wiki/index.php/Schroeder-Bernstein_Theorem
-  [≼][≍]-antisymmetry-raw : ⦃ _ : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ → (A ≼ B) → (B ≼ A) → (A ≍ B) -- TODO: Not everything needs to be classical, only forall, exists, and equality
-  [≼][≍]-antisymmetry-raw {A = [∃]-intro A}{B = [∃]-intro B} ⦃ classical ⦄ ([∃]-intro f ⦃ [∧]-intro func-f inj-f ⦄) ([∃]-intro g ⦃ [∧]-intro func-g inj-g ⦄) = [∃]-intro h ⦃ [∧]-intro func-h (injective-surjective-to-bijective(h)) ⦄ where
+  [≼][≍]-antisymmetry-raw : (A ≼ B) → (B ≼ A) → (A ≍ B) -- TODO: Not everything needs to be classical, only forall, exists, and equality
+  [≼][≍]-antisymmetry-raw {A = [∃]-intro A}{B = [∃]-intro B} ([∃]-intro f ⦃ [∧]-intro func-f inj-f ⦄) ([∃]-intro g ⦃ [∧]-intro func-g inj-g ⦄) = [∃]-intro h ⦃ [∧]-intro func-h (injective-surjective-to-bijective(h)) ⦄ where
     open import Logic.Predicate.Theorems
     open import Function.Inverseₗ
     open import Numeral.Natural
@@ -297,6 +307,7 @@ module _ where
           ⦄) ⦄))
         })
 
+module _ where
   instance
     [≼][≍]-antisymmetry : ⦃ _ : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ → Antisymmetry(_≼_ {ℓₑ}{ℓ})(_≍_)
     [≼][≍]-antisymmetry = intro [≼][≍]-antisymmetry-raw
@@ -382,8 +393,8 @@ module _ where
     --     g₂(c₂) = b
     --   They are, because: ((a ≡ a) implies (g₁(c₁) ≡ g₁(c₂)) implies (c₁ ≡ c₂) which is true).
     --   and              : ((b ≡ b) implies (g₂(c₁) ≡ g₂(c₂)) implies (c₁ ≡ c₂) which is true).
-    --   This is a simplified example for finite sets, and a restriction of this proposition for finite sets is actually provable because it is possible to enumerate all functions up to function extensionality.
-    --   The real problem comes when the sets are non-finite because then, there is no general way to enumerate the elements. How would an injection be chosen in this case?
+    --   This is a simplified example using finite sets, and a restriction of this proposition for finite sets is actually provable because it is possible to enumerate all functions up to function extensionality and check all of them in finite time.
+    --   The real problem comes when the sets are non-finite because then, there are no general methods to enumerate the elements. How would an injection be chosen in those cases?
     -- Note that if the surjection is injective, then it is a bijection, and therefore also an injection.
     record SurjectionInjectionChoice (A : Setoid{ℓₑ₁}{ℓ₁}) (B : Setoid{ℓₑ₂}{ℓ₂}) : Stmt{ℓₑ₁ Lvl.⊔ ℓ₁ Lvl.⊔ ℓₑ₂ Lvl.⊔ ℓ₂} where
       constructor intro
@@ -412,13 +423,10 @@ module _ where
     -- TODO: Totality of (_≼_).  Is this difficult to prove?
     -- [≼]-total : ((A ≼ B) ∨ (B ≼ A))
   
-  -- TODO: Move
-  global-equiv : ∀{ℓ}{T : Type{ℓ}} → Equiv{ℓₑ}(T)
-  Equiv._≡_                                   global-equiv  = const(const Unit)
-  Equivalence.reflexivity  (Equiv.equivalence global-equiv) = intro <>
-  Equivalence.symmetry     (Equiv.equivalence global-equiv) = intro(const <>)
-  Equivalence.transitivity (Equiv.equivalence global-equiv) = intro(const(const <>))
 
+  open import Structure.Setoid.Universal
+
+  -- The existence of a surjection from an injection for all sets implies excluded middle.
   [≼]-to-[≽]-for-inhabited-to-excluded-middle : (∀{ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂}{A : Setoid{ℓₑ₁}{ℓ₁}}{B : Setoid{ℓₑ₂}{ℓ₂}} → ⦃ ◊([∃]-witness A) ⦄ → (A ≼ B) → (B ≽ A)) → (∀{P : Type{ℓ}} → Classical(P))
   Classical.excluded-middle ([≼]-to-[≽]-for-inhabited-to-excluded-middle p {P = P}) = proof where
     open import Data.Boolean
@@ -435,7 +443,7 @@ module _ where
 
     instance
       equiv-pos-P : Equiv{Lvl.𝟎}(◊ P)
-      equiv-pos-P = global-equiv
+      equiv-pos-P = universal-equiv
 
     func-f : Function(f)
     Function.congruence func-f {None}   {None}   _ = reflexivity(_≡_ ⦃ [≡]-equiv ⦄)
@@ -455,16 +463,17 @@ module _ where
     g-value-elim l r {𝑇} = l
     g-value-elim l r {𝐹} = r
 
-    open Equiv(Option-equiv ⦃ equiv-pos-P ⦄) using () renaming (transitivity to Option-trans ; symmetry to Option-sym)
+    open Equiv(Option-equiv ⦃ equiv-pos-P ⦄) using () renaming (transitivity to Option-trans ; symmetry to Option-sym ; reflexivity to Option-refl)
     proof : (P ∨ ¬ P)
     proof with g(𝐹) | g(𝑇) | (\p → Surjective.proof ([∧]-elimᵣ([∃]-proof surjection)) {Some(intro ⦃ p ⦄)}) | g-value-elim{Option.None}
     ... | Some l | Some r | _    | _ = [∨]-introₗ (◊.existence l)
     ... | Some l | None   | _    | _ = [∨]-introₗ (◊.existence l)
     ... | None   | Some r | _    | _ = [∨]-introₗ (◊.existence r)
     ... | None   | None   | surj | tttest = [∨]-introᵣ
-      (\p →
-        empty(transitivity _ ⦃ Option-trans ⦄ {Some(intro ⦃ p ⦄)}{g([∃]-witness(surj p))}{None} (symmetry _ ⦃ Option-sym ⦄ {g([∃]-witness(surj p))}{Some(intro ⦃ p ⦄)} ([∃]-proof(surj p))) (tttest <> <>))
-      )
+      (\p → empty(transitivity(_≡_ {T = Option(◊ P)}) {Some(intro ⦃ p ⦄)} {g([∃]-witness(surj p))} {None}
+        (symmetry(_≡_ {T = Option(◊ P)}) {g([∃]-witness(surj p))} ([∃]-proof(surj p)))
+        (tttest <> <>)
+      ))
       {-
         Some(intro ⦃ p ⦄)      🝖[ Equiv._≡_ Option-equiv ]-[ [∃]-proof(surj p) ]-sym
         g([∃]-witness(surj p)) 🝖[ Equiv._≡_ Option-equiv ]-[ tttest <> <> ]

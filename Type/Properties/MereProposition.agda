@@ -1,7 +1,7 @@
 module Type.Properties.MereProposition {ℓ ℓₑ} where
 
 import      Lvl
-open import Lang.Instance
+open import Functional.Instance
 open import Structure.Setoid
 open import Type
 
@@ -19,6 +19,6 @@ module _ (T : Type{ℓ}) ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
   record MereProposition : Type{ℓ Lvl.⊔ ℓₑ} where
     constructor intro
     field uniqueness : ∀{x y : T} → (x ≡ y)
-  uniqueness = inst-fn MereProposition.uniqueness
+  uniqueness = inferArg MereProposition.uniqueness
 
 -- TODO: Consider using unicode ◐○●⧭⦵⦳

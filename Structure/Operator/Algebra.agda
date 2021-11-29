@@ -34,3 +34,5 @@ module _
 
     vectorRing : ⦃ Associativity(_⋅ᵥ_) ⦄ → ⦃ ∃(Identity(_⋅ᵥ_)) ⦄ → Ring(_+ᵥ_)(_⋅ᵥ_) {ℓᵥₙ₀}
     Monoid.binaryOperator (Ring.[⋅]-monoid vectorRing) = BilinearMap.binaryOperator [⋅ᵥ]-bilinearity
+
+  -- TODO: UnitalAssociativeAlgebra

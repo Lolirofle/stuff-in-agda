@@ -65,7 +65,7 @@ primeGreater ([∃]-intro n) = [∃]-map-proof [∧]-elimₗ (prime-greater-exis
 prime-to-ℕ : (∃ Prime) → ℕ
 prime-to-ℕ = [∃]-witness
 
-open import Lang.Instance
+open import Functional.Instance
 open import Logic.Predicate.Equiv
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv

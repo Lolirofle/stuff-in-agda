@@ -53,8 +53,16 @@ private variable Pred P Q R : X → Type{ℓ}
 ------------------------------------------
 -- Universal quantification (Forall, All)
 
-∀ₗ : (Pred : Obj → Stmt{ℓ}) → Stmt
-∀ₗ (Pred) = (∀{x} → Pred(x))
+∀ₑₓₚₗ : (Pred : Obj → Stmt{ℓ}) → Stmt
+∀ₑₓₚₗ (Pred) = (∀(x) → Pred(x))
+
+∀ᵢₘₚₗ : (Pred : Obj → Stmt{ℓ}) → Stmt
+∀ᵢₘₚₗ (Pred) = (∀{x} → Pred(x))
+
+∀ᵢₙₛₜ : (Pred : Obj → Stmt{ℓ}) → Stmt
+∀ᵢₙₛₜ (Pred) = (∀ ⦃ x ⦄ → Pred(x))
+
+∀ₗ = ∀ᵢₘₚₗ
 
 [∀]-intro : ((a : Obj) → Pred(a)) → ∀ₗ(x ↦ Pred(x))
 [∀]-intro p{a} = p(a)

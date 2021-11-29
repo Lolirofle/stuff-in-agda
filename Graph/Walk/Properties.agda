@@ -2,7 +2,7 @@ open import Type
 
 module Graph.Walk.Properties {ℓ₁ ℓ₂} {V : Type{ℓ₁}} where
 
-open import Lang.Instance
+open import Functional.Instance
 open import Logic
 import      Lvl
 open import Graph{ℓ₁}{ℓ₂}(V)
@@ -42,10 +42,10 @@ module _ {_⟶_ : Graph} {a b : V} (walk : Walk(_⟶_) a b) where
   record Path : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : ∀{v : V} → MereProposition(Visits(_⟶_) v walk)
-  path = inst-fn Path.proof
+  path = inferArg Path.proof
 
   -- A walk that visits every vertex in the graph.
   record Traceable : Stmt{ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
     field proof : ∀{v : V} → Visits(_⟶_) v walk
-  traceable = inst-fn Traceable.proof
+  traceable = inferArg Traceable.proof

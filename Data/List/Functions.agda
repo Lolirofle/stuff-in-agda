@@ -32,43 +32,46 @@ tails : List(T) → List(List(T))
 tails ∅       = singleton(∅)
 tails (x ⊰ l) = (x ⊰ l) ⊰ tails l
 
--- Applies a binary operator to each element in the list starting with the initial element.
+-- Applies a binary operator to each element in the list left-associativitely, and starting with the initial element.
+-- This means that the initial element will be the left-most and the most deeply nested element.
 -- Example:
 --   foldₗ(▫)(init)[]          = init
---   foldₗ(▫)(init)[a]         = init▫a
---   foldₗ(▫)(init)[a,b]       = (init▫a)▫b
---   foldₗ(▫)(init)[a,b,c,d,e] = ((((init▫a)▫b)▫c)▫d)▫e
+--   foldₗ(▫)(init)[a]         = init ▫ a
+--   foldₗ(▫)(init)[a,b]       = (init ▫ a)▫b
+--   foldₗ(▫)(init)[a,b,c,d,e] = ((((init ▫ a) ▫ b) ▫ c) ▫ d) ▫ e
 foldₗ : (Result → T → Result) → Result → List(T) → Result
 foldₗ _   result ∅          = result
 foldₗ _▫_ result (elem ⊰ l) = foldₗ _▫_ (result ▫ elem) l
 
--- Applies a binary operator to each element in the list starting with the initial element.
+-- Applies a binary operator to each element in the list right-associativitely, and starting with the initial element.
+-- This means that the initial element will be the right-most and the most deeply nested element.
 -- Example:
 --   foldᵣ(▫)(init)[]          = init
---   foldᵣ(▫)(init)[a]         = a▫init
---   foldᵣ(▫)(init)[a,b]       = a▫(b▫init)
---   foldᵣ(▫)(init)[a,b,c,d,e] = a▫(b▫(c▫(d▫(e▫init))))
+--   foldᵣ(▫)(init)[a]         = a ▫ init
+--   foldᵣ(▫)(init)[a,b]       = a ▫ (b ▫ init)
+--   foldᵣ(▫)(init)[a,b,c,d,e] = a ▫ (b ▫ (c ▫ (d ▫ (e ▫ init))))
 foldᵣ : (T → Result → Result) → Result → List(T) → Result
 foldᵣ _   init ∅          = init
 foldᵣ _▫_ init (elem ⊰ l) = elem ▫ (foldᵣ _▫_ init l)
 
--- Applies a binary operator to each element in the list starting with the initial element.
+-- Applies a binary operator to each element in the list right-associativitely, and ending with the initial element.
+-- This means that the initial element will be the left-most and the least deeply nested element.
 -- Example:
---   foldᵣ-init(▫)(init)[]          = init
---   foldᵣ-init(▫)(init)[a]         = init▫a
---   foldᵣ-init(▫)(init)[a,b]       = init▫(a▫b)
---   foldᵣ-init(▫)(init)[a,b,c,d,e] = init▫(a▫(b▫(c▫(d▫e))))
+--   foldInitᵣ(▫)(init)[]          = init
+--   foldInitᵣ(▫)(init)[a]         = init ▫ a
+--   foldInitᵣ(▫)(init)[a,b]       = init ▫ (a ▫ b)
+--   foldInitᵣ(▫)(init)[a,b,c,d,e] = init ▫ (a ▫ (b ▫ (c ▫ (d ▫ e))))
 -- Same as (reduceOrᵣ (_▫_) (a) (a⊰l)) except that
 -- this allows matching out one element when
 -- there is only a first element as the head
 --  and an _arbitrary_ list as the tail.
--- Also, this dIffers from foldᵣ in the following way:
+-- Also, this differs from foldᵣ in the following way:
 --   foldᵣ      (_▫_) (1) [2,3] = 2 ▫ (3 ▫ 1)
---   foldᵣ-init (_▫_) (1) [2,3] = 1 ▫ (2 ▫ 3)
--- Also: foldᵣ-init(▫)(init)(l++[last]) = foldᵣ(▫)(last)(init⊰l)
-foldᵣ-init : (T → T → T) → T → List(T) → T
-foldᵣ-init _   init ∅          = init
-foldᵣ-init _▫_ init (elem ⊰ l) = init ▫ (foldᵣ-init _▫_ elem l)
+--   foldInitᵣ (_▫_) (1) [2,3] = 1 ▫ (2 ▫ 3)
+-- Also: foldInitᵣ(▫)(init)(l++[last]) = foldᵣ(▫)(last)(init⊰l)
+foldInitᵣ : (T → T → T) → T → List(T) → T
+foldInitᵣ _   init ∅          = init
+foldInitᵣ _▫_ init (elem ⊰ l) = init ▫ (foldInitᵣ _▫_ elem l)
 
 -- If the list is empty, use the result, else like foldₗ
 -- Example:
@@ -90,7 +93,7 @@ reduceOrₗ _▫_ result (elem ⊰ l) = foldₗ _▫_ elem l
 --   reduceOrᵣ(▫)(result)[a,b,c,d,e] = a▫(b▫(c▫(d▫e)))
 reduceOrᵣ : (T → T → T) → T → List(T) → T
 reduceOrᵣ _   init ∅          = init
-reduceOrᵣ _▫_ init (elem ⊰ l) = foldᵣ-init _▫_ elem l
+reduceOrᵣ _▫_ init (elem ⊰ l) = foldInitᵣ _▫_ elem l
 
 -- Accumulates the results of every step in `foldₗ` into a list.
 -- Example:
@@ -142,7 +145,7 @@ accumulateIterate n = accumulateIterate₀(𝐒(n))
 --   [a] ++ [b] = [a,b]
 --   [a,b,c] ++ [d,e,f] = [a,b,c,d,e,f]
 _++_ : List(T) → List(T) → List(T)
-_++_ = swap(foldᵣ (_⊰_))
+_++_ = swap(foldᵣ(_⊰_))
 
 -- Concatenates multiple lists together.
 -- Examples:
@@ -191,10 +194,8 @@ map f (x ⊰ l) = f(x) ⊰ (map f l)
 
 -- Filters the list while mapping it
 mapFilter : (A → Option(B)) → (List(A) → List(B))
-mapFilter _ ∅ = ∅
-mapFilter f (x ⊰ l) with f(x)
-... | Option.Some(y) = y ⊰ (mapFilter f l)
-... | Option.None    = mapFilter f l
+mapFilter _ ∅       = ∅
+mapFilter f (x ⊰ l) = Option.partialMap id (_⊰_) (f(x)) (mapFilter f l)
 
 -- Maps every element to a list in the given list and then concatenates the resulting list.
 -- Note: Functionally equivalent to: `concat ∘₂ map`.
@@ -244,7 +245,6 @@ skip _      ∅         = ∅
 skip 𝟎      l@(_ ⊰ _) = l
 skip (𝐒(n)) (x ⊰ l)   = skip n l
 
--- TODO: Maybe rename this to "extractFirst"?
 -- Extracts the first element from the list if there is one.
 -- Example: `splitFirst [1,2,3] = Some(1 , [2,3])`
 splitFirst : List(T) → Option(T ⨯ List(T))
@@ -286,6 +286,7 @@ splits₂ l = (∅ , l) ⊰ f ∅ l where
 -- • `length []      = 0`
 -- • `length [a]     = 1`
 -- • `length [a,b]   = 2`
+-- • `length [b,a]   = 2`
 -- • `length [a,b,c] = 3`
 -- • `length [b,c,a] = 3`
 -- • `length [c,a,b] = 3`
@@ -349,11 +350,22 @@ satisfiesAll pred (x ⊰ l) with pred(x)
 ... | 𝑇 = satisfiesAll(pred)(l)
 ... | 𝐹 = 𝐹
 
-satisfiesAll₂ : (T → T → Bool) → (T → Bool) → (T → Bool) → (List(T) → List(T) → Bool)
+satisfiesAll₂ : (T → T → Bool) → (T → List(T) → Bool) → (T → List(T) → Bool) → (List(T) → List(T) → Bool)
 satisfiesAll₂(_▫_) l r ∅          ∅          = 𝑇
-satisfiesAll₂(_▫_) l r l₁@(_ ⊰ _) ∅          = satisfiesAll l l₁
-satisfiesAll₂(_▫_) l r ∅          l₂@(_ ⊰ _) = satisfiesAll r l₂
-satisfiesAll₂(_▫_) l r (x₁ ⊰ l₁)  (x₂ ⊰ l₂)  = (x₁ ▫ x₂) && satisfiesAll₂(_▫_) l r l₁ l₂
+satisfiesAll₂(_▫_) l r (x ⊰ l₁)   ∅          = l x l₁
+satisfiesAll₂(_▫_) l r ∅          (x ⊰ l₂)   = r x l₂
+satisfiesAll₂(_▫_) l r (x₁ ⊰ l₁)  (x₂ ⊰ l₂) with (x₁ ▫ x₂)
+... | 𝑇 = satisfiesAll₂(_▫_) l r l₁ l₂
+... | 𝐹 = 𝐹
+
+satisfiesAny₂ : (T → T → Bool) → (T → List(T) → Bool) → (T → List(T) → Bool) → (List(T) → List(T) → Bool)
+satisfiesAny₂(_▫_) l r ∅          ∅          = 𝑇
+satisfiesAny₂(_▫_) l r (x ⊰ l₁)   ∅          = l x l₁
+satisfiesAny₂(_▫_) l r ∅          (x ⊰ l₂)   = r x l₂
+satisfiesAny₂(_▫_) l r (x₁ ⊰ l₁)  (x₂ ⊰ l₂) with (x₁ ▫ x₂)
+... | 𝑇 = 𝑇
+... | 𝐹 = satisfiesAny₂(_▫_) l r l₁ l₂
+
 {-satisfiesAll₂(_▫_) l r (x₁ ⊰ l₁)  (x₂ ⊰ l₂)  with (x₁ ▫ x₂)
 ... | 𝑇 = satisfiesAll₂(_▫_) l r l₁ l₂
 ... | 𝐹 = 𝐹-}
@@ -452,7 +464,7 @@ interleave ls with satisfiesAll isEmpty ls
 ... | 𝑇 = ∅
 ... | 𝐹 = foldᵣ (Option.partialMap id (_⊰_) ∘ first) (interleave(map tail ls)) ls
 
--- Note: This is similiar to a function called `zipWith` in the Haskell standard library.
+-- Note: This is similiar to a function called `zipWith` in the Haskell standard library. Specifically, `map₂(_▫_) (const ∅) (const ∅) ⊜ zipWith(_▫_)`.
 -- TODO: Generalize like https://stackoverflow.com/questions/39991581/how-can-i-implement-generalized-zipn-and-unzipn-in-haskell
 map₂ : (A₁ → A₂ → B) → (List(A₁) → List(B)) → (List(A₂) → List(B)) → (List(A₁) → List(A₂) → List(B))
 map₂ f g₁ g₂ ∅          ∅          = ∅
@@ -462,20 +474,24 @@ map₂ f g₁ g₂ (x₁ ⊰ l₁)  (x₂ ⊰ l₂)  = f x₁ x₂ ⊰ map₂ f 
 
 -- Rotates to the left.
 -- Example:
---   rotateₗ 3 [a,b,c,d,e]
---   = rotateₗ 2 [b,c,d,e,a]
---   = rotateₗ 1 [c,d,e,a,b]
---   = rotateₗ 0 [d,e,a,b,c]
+--   (rotateₗ ^ 3) [a,b,c,d,e]
+--   = (rotateₗ ^ 2) [b,c,d,e,a]
+--   = (rotateₗ ^ 1) [c,d,e,a,b]
+--   = (rotateₗ ^ 0) [d,e,a,b,c]
 --   = [d,e,a,b,c]
-rotateₗ : ℕ → List(T) → List(T)
-rotateₗ 𝟎      l       = l
-rotateₗ (𝐒(n)) ∅       = ∅
-rotateₗ (𝐒(n)) (x ⊰ l) = postpend x (rotateₗ n l)
+rotateₗ : List(T) → List(T)
+rotateₗ ∅       = ∅
+rotateₗ (x ⊰ l) = postpend x l
 
-rotateᵣ : ℕ → List(T) → List(T)
-rotateᵣ n l with splitLast l
-... | Option.None        = ∅
-... | Option.Some(r , x) = x ⊰ r
+-- Rotates to the right.
+-- Example:
+--   (rotateᵣ ^ 3) [a,b,c,d,e]
+--   = (rotateᵣ ^ 2) [e,a,b,c,d]
+--   = (rotateᵣ ^ 1) [d,e,a,b,c]
+--   = (rotateᵣ ^ 0) [c,d,e,a,b]
+--   = [b,c,d,e,a]
+rotateᵣ : List(T) → List(T)
+rotateᵣ l = Option.partialMap ∅ (Tuple.uncurry(swap(_⊰_))) (splitLast l)
 
 -- Examples:
 --   every n [] = []
@@ -499,7 +515,7 @@ rotateᵣ n l with splitLast l
 every : ℕ → List(T) → List(T)
 every 𝟎      = const ∅
 every (𝐒(n)) = impl 𝟎 where
-  -- TODO: Is it possible to prove stuff about `every` when `impl` is hidden in a where clause? `impl` essentially contains a counter, so an alternative implementation would be having `every` having two arguments.
+  -- TODO: Is it possible to prove stuff about `every` when `impl` is hidden in a where clause? `impl` essentially contains a counter, so an alternative implementation would be having `every` have two arguments.
   impl : ℕ → List(T) → List(T)
   impl _     ∅       = ∅
   impl 𝟎     (x ⊰ l) = x ⊰ impl n l
@@ -525,3 +541,35 @@ insertIn : T → (l : List(T)) → 𝕟₌(length l) → List(T)
 insertIn a l       𝟎      = a ⊰ l
 insertIn a ∅       (𝐒(_)) = singleton a
 insertIn a (x ⊰ l) (𝐒(i)) = x ⊰ insertIn a l i
+
+foldUntilᵣ : (A → Option(B → B)) → (List(A) → B) → List(A) → B
+foldUntilᵣ f i ∅ = i(∅)
+foldUntilᵣ f i (x ⊰ l) with f(x)
+... | Option.None   = i(x ⊰ l)
+... | Option.Some s = s(foldUntilᵣ f i l)
+
+-- Also called: groupBy (Haskell) (Though there is a difference in behaviour. The first element in every group is used to compare to all the successive in the group).
+-- Alternative implementation (accepted by the termination checker):
+--   adjacencyPartition f(∅)     = ∅
+--   adjacencyPartition f(x ⊰ l) with adjacencyPartition f(l)
+--   ... | ∅            = singleton(singleton x)
+--   ... | ∅ ⊰ Ll       = (singleton x) ⊰ Ll
+--   ... | (y ⊰ L) ⊰ Ll = if (f x y) then ((x ⊰ y ⊰ L) ⊰ Ll) else ((singleton x) ⊰ (y ⊰ L) ⊰ Ll)
+-- Termination: `rest` is a strict sublist of `x ⊰ l` because foldUntilᵣ do not grow the right tuple value and it uses `l`.
+-- Note: concat ∘ adjacencyPartition(_▫_) ≡ id
+-- Example: adjacencyPartitionCount(_≡?_) [0,1,2,2,2,3,3,4,4,5,5,5,5,6] = [[0],[1],[2,2,2],[3,3],[4,4],[5,5,5,5],[6]]
+{-# TERMINATING #-}
+adjacencyPartition : (T → T → Bool) → List(T) → List(List(T))
+adjacencyPartition f ∅      = ∅
+adjacencyPartition f(x ⊰ l) =
+  let (g , rest) = foldUntilᵣ(y ↦ (if(f x y) then Option.Some(Tuple.mapLeft (y ⊰_)) else Option.None)) (∅ ,_) l
+  in (x ⊰ g) ⊰ adjacencyPartition f(rest)
+
+-- Note: concatMap(Tuple.uncurry repeat) ∘ adjacencyPartitionCount(_▫_) ≡ id
+-- Example: adjacencyPartitionCount(_≡?_) [0,1,2,2,2,3,3,4,4,5,5,5,5,6] = [(0,1) , (1,1) , (2,3) , (3,2) , (4,2) , (5,4) , (6,1)]
+{-# TERMINATING #-}
+adjacencyPartitionCount : (T → T → Bool) → List(T) → List(T ⨯ ℕ)
+adjacencyPartitionCount f ∅      = ∅
+adjacencyPartitionCount f(x ⊰ l) =
+  let (n , rest) = foldUntilᵣ(y ↦ (if(f x y) then Option.Some(Tuple.mapLeft 𝐒) else Option.None)) (𝟏 ,_) l
+  in (x , n) ⊰ adjacencyPartitionCount f(rest)
