@@ -17,7 +17,3 @@ instance
 instance
   fromChars-injective : Injective(fromChars)
   fromChars-injective = intro \{a b} → Primitives.primStringFromListInjective a b
-
-chars-fromChars-inverseᵣ : Inverseᵣ(chars)(fromChars)
-Inverseᵣ.proof chars-fromChars-inverseᵣ {x} = {!!}
--- [≡]-intro

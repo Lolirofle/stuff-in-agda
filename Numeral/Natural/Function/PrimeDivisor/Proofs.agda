@@ -265,8 +265,6 @@ primeDivisors-of-[^] {a@(𝐒 _)} {𝐒(n@(𝐒 N))} =
   primeDivisors(a) ++ (primeDivisors(a) List.++^ n) 🝖[ _permutes_ ]-[]
   primeDivisors(a) List.++^ 𝐒(n)                    🝖-end
 
-groupBy : List(T)
-
 -- TODO: groupBy stuff so that the gcd and lcm prime divisor list stuff can be proven
 
 {- TODO: Remove. Old stuff

@@ -59,8 +59,8 @@ module Morphism where
         identityᵣ = inferArg Identityᵣ.proof
 
         Identity = Identityₗ ∧ Identityᵣ
-        identity-left  = inferArg{X = Identity}(Identityₗ.proof Fn.∘ [∧]-elimₗ{Q = Identityᵣ})
-        identity-right = inferArg{X = Identity}(Identityᵣ.proof Fn.∘ [∧]-elimᵣ{P = Identityₗ})
+        identity-left  = inferArg{A = Identity}(Identityₗ.proof Fn.∘ [∧]-elimₗ{Q = Identityᵣ})
+        identity-right = inferArg{A = Identity}(Identityᵣ.proof Fn.∘ [∧]-elimᵣ{P = Identityₗ})
 
         module _ {x : Obj} (f : x ⟶ x) where
           record Involution : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where

@@ -12,11 +12,16 @@ import Automaton.Deterministic
 -- import Automaton.NonDeterministic
 -- import Automaton.Pushdown
 -- import Automaton.TuringMachine
+import BidirectionalFunction.Equiv
 import BidirectionalFunction
+import Char.Functions
+import Char.Proofs
+import Char
 import Data.Any
 import Data.BinaryTree.Heap
 import Data.BinaryTree.Properties
 import Data.BinaryTree
+import Data.Boolean.Decidable
 import Data.Boolean.Equiv.Path
 import Data.Boolean.Functions
 import Data.Boolean.NaryOperators
@@ -46,11 +51,15 @@ import Data.List.Equiv.Id
 import Data.List.Equiv
 import Data.List.Functions.Multi
 import Data.List.Functions.Positional
+import Data.List.Functions.Tuple
 import Data.List.Functions
+import Data.List.FunctionsProven.Proofs
 import Data.List.FunctionsProven
 import Data.List.Iterable
 import Data.List.Proofs.Length
+import Data.List.Proofs.Simple
 import Data.List.Proofs
+import Data.List.Relation.Fixes
 import Data.List.Relation.Membership.Functions
 import Data.List.Relation.Membership.Proofs
 import Data.List.Relation.Membership
@@ -131,7 +140,7 @@ import Formalization.ClassicalPropositionalLogic.Syntax
 import Formalization.ClassicalPropositionalLogic.TruthTable
 -- import Formalization.ClassicalPropositionalLogic
 -- import Formalization.FunctionalML
-import Formalization.ImperativePL
+-- import Formalization.ImperativePL
 import Formalization.LambdaCalculus.Semantics.CallByName
 import Formalization.LambdaCalculus.Semantics.CallByValue
 import Formalization.LambdaCalculus.Semantics.Reduction
@@ -208,15 +217,17 @@ import Iterator
 import Js
 import Lang.Function
 import Lang.Inspect
-import Functional.Instance
 import Lang.Irrelevance.Convertable
 import Lang.Irrelevance.Squash
 import Lang.Irrelevance
+import Lang.Reflection.DoNotation
 import Lang.Reflection
 import Lang.Size
 import Lang.Templates.Fractions
 import Lang.Templates.Order
 import Lang.Vars.Structure.Operator
+import Logic.Choice.Proofs
+import Logic.Choice
 import Logic.Classical.DoubleNegated
 import Logic.Classical
 import Logic.DiagonalMethod
@@ -360,6 +371,7 @@ import Numeral.Natural.Relation.Properties
 import Numeral.Natural.Relation
 import Numeral.Natural.Sequence.Proofs
 import Numeral.Natural.Sequence
+import Numeral.Natural.String
 import Numeral.Natural.TotalOper
 import Numeral.Natural.UnclosedOper
 import Numeral.Natural
@@ -384,6 +396,8 @@ import Operator.Summation.Range
 import Operator.Summation
 import Operator.Summation2
 import Operator.Summation3
+-- import Prop.Squash
+-- import Prop
 import ReductionSystem
 import Relator.Category
 import Relator.Congruence.Proofs
@@ -415,6 +429,8 @@ import Sets.PredicateSet
 import Sized.Data.List
 import Stream.Iterable
 import Stream
+import String.Functions
+import String.Proofs
 import String
 -- import Structure.Categorical.Multi
 import Structure.Categorical.Names
@@ -563,6 +579,7 @@ import Structure.Relator.Proofs
 import Structure.Relator.Properties.Proofs
 import Structure.Relator.Properties
 import Structure.Relator
+import Structure.Relator2
 import Structure.Semicategory
 import Structure.Setoid.Category.HomFunctor
 import Structure.Setoid.Category
@@ -572,6 +589,7 @@ import Structure.Setoid.Size.Proofs
 import Structure.Setoid.Size
 import Structure.Setoid.Uniqueness.Proofs
 import Structure.Setoid.Uniqueness
+import Structure.Setoid.Universal
 import Structure.Setoid
 import Structure.Sets.Names
 import Structure.Sets.Operator
@@ -589,6 +607,8 @@ import Structure.SignatureMulti
 -- import Structure.Topology.Proofs
 -- import Structure.Topology.Properties
 import Structure.Topology
+import Structure.Type.Function.Functions
+import Structure.Type.Function
 import Structure.Type.Identity.Proofs.Eliminator
 -- import Structure.Type.Identity.Proofs.Multi
 import Structure.Type.Identity.Proofs
@@ -624,10 +644,13 @@ import Type.Cubical.Quotient
 import Type.Cubical.SubtypeSet
 import Type.Cubical.Univalence
 import Type.Cubical
+import Type.Dependent.Equiv
 import Type.Dependent.Functions
+import Type.Dependent.FunctionsΣ
 import Type.Dependent
 import Type.Equiv
-import Type.Identity.Heterogenous
+-- import Type.Identity.Heterogenous.Proofs
+-- import Type.Identity.Heterogenous
 import Type.Identity.Proofs
 import Type.Identity
 import Type.Isomorphism

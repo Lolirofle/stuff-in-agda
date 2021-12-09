@@ -98,7 +98,7 @@ data _⊢ₑ_,_::_ where
   func   : ∀{Γ₁ Γ₂}{A B}{var}{body} → ((addTyping var A Γ₁) ⊢ₑ Γ₂ , body :: B) → (Γ₁ ⊢ₑ Γ₁ , (func var A body) :: FnTy A B)
   ifelse : ∀{Γ₁ Γ₂ Γ₃ Γ₄}{b t f}{T} → (Γ₁ ⊢ₑ Γ₂ , b :: BoolTy) → (Γ₂ ⊢ₑ Γ₃ , t :: T) → (Γ₂ ⊢ₑ Γ₄ , f :: T) → (Γ₁ ⊢ₑ Γ₂ , (ifelse b t f) :: T)
   loop   : ∀{Γ₁ Γ₂ Γ₃}{e}{ty} → (Γ₁ ⊢ₑ Γ₂ , e :: ty) → (Γ₂ ⊢ₑ Γ₃ , loop e :: ty) → (Γ₁ ⊢ₑ Γ₃ , loop e :: ty)
-  stmts  : ∀{Γ}{n} → (Γ ⊢ₑ Γ , (stmts ) :: NatTy)
+  -- TODO stmts  : ∀{Γ}{n} → (Γ ⊢ₑ Γ , (stmts ) :: NatTy)
 
 data _⊢ₑ_,_⇓_ where
   lit    : ∀{Γ}{v} → (Γ ⊢ₑ Γ , (lit v) ⇓ v)

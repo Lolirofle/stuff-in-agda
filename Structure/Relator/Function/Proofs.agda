@@ -5,6 +5,7 @@ open import Logic
 open import Logic.Propositional
 open import Logic.Predicate
 open import Functional
+import      Structure.Function as Func
 open import Structure.Relator.Function
 open import Structure.Setoid
 open import Structure.Setoid.Uniqueness
@@ -14,8 +15,20 @@ open import Type
 
 private variable ℓ₁ ℓ₂ ℓ₃ ℓₗ ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₒ₄ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ : Lvl.Level
 
-module _ {A : Type{ℓₒ₁}}{B : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ (φ : A → B → Stmt{ℓₗ}) ⦃ totality : Total(φ)⦄ ⦃ func : Function(φ)⦄ ⦃ _ : ∀{x} → UnaryRelator(φ(x)) ⦄ where
-  -- There is a function for a binary relation that is total and function-like.
+module _ {A : Type{ℓₒ₁}}{B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ (φ : A → B → Stmt{ℓₗ}) where
+  totalFunction : ⦃ tot : Total(φ) ⦄ → ⦃ func : Function(φ) ⦄ → (∀{x} → ∃!(φ(x)))
+  totalFunction ⦃ tot ⦄ ⦃ func ⦄ = [∧]-intro (Total.proof tot) (Function.proof func)
+
+  total-to-computable : ⦃ rel : ∀{x} → UnaryRelator(φ(x)) ⦄ → Total(φ) → ∃(Computable(φ))
+  ∃.witness (total-to-computable tot) = Total.compute tot
+  Computable.proof (∃.proof (total-to-computable tot)) {x} eq = substitute₁(φ(x)) eq ([∃]-proof(Total.proof tot{x}))
+
+module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ (φ : A → B → Stmt{ℓₗ}) where
+  Total-compute-function : ⦃ rel : BinaryRelator(φ) ⦄ → ⦃ tot : Total(φ) ⦄ → ⦃ func : Function(φ) ⦄ → Func.Function(Total.compute tot)
+  Func.Function.congruence Total-compute-function {x}{y} xy = function(φ) {y}  (substitute₂ₗ(φ) xy ([∃]-proof(total(φ)))) ([∃]-proof(total(φ)))
+
+module _ {A : Type{ℓₒ₁}}{B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ (φ : A → B → Stmt{ℓₗ}) ⦃ totality : Total(φ)⦄ ⦃ func : Function(φ)⦄ ⦃ _ : ∀{x} → UnaryRelator(φ(x)) ⦄ where
+  -- There is a function for a total and function-like binary relation.
   relation-function-existence : ∃(f ↦ ∀{x}{y} → (f(x) ≡ y) ↔ φ(x)(y))
   relation-function-existence = [∃]-intro(f) ⦃ \{x y} → proof{x}{y} ⦄ where
     -- The function
@@ -36,7 +49,7 @@ module _ {A : Type{ℓₒ₁}}{B : Type{ℓₒ₁ Lvl.⊔ ℓₒ₂}} ⦃ equiv-
   relation-function = [∃]-witness(relation-function-existence)
 
 module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ {f : A → B} where
-  -- A function is total
+  -- Actual functions are total.
   -- ∀{x} → ∃(y ↦ f(x) ≡ y)
   Function-totality : Total(x ↦ y ↦ f(x) ≡ y)
   Total.proof(Function-totality) {x} = [∃]-intro(f(x)) ⦃ reflexivity(_≡_) ⦄
@@ -49,12 +62,12 @@ module _ {X : Type{ℓₒ₁}} {Y : X → Type{ℓₒ₂}} {φ : (x : X) → Y(x
   --   ∃(choice: X → Y)∀(x: X). φ(x)(choice(x)) means that there is a function that picks out a particular y.
   -- Note: This proposition can be recognised as one equivalent variant of "Axiom of Choice" from set theory when formulated in classical logic.
   -- Note: This is similar to what one does in the process of "Skolemization" for an existentially quantified formula in logic.
-  dependent-function-predicate-choice : (∀{x : X} → ∃{Obj = Y(x)}(y ↦ φ(x)(y))) → ∃{Obj = (x : X) → Y(x)}(choice ↦ ∀{x : X} → φ(x)(choice(x)))
-  dependent-function-predicate-choice(function) = [∃]-intro(x ↦ [∃]-witness(function{x})) ⦃ \{x} → [∃]-proof(function{x}) ⦄
+  dependent-function-choice : (∀{x : X} → ∃{Obj = Y(x)}(y ↦ φ(x)(y))) → ∃{Obj = (x : X) → Y(x)}(choice ↦ ∀{x : X} → φ(x)(choice(x)))
+  dependent-function-choice(function) = [∃]-intro(x ↦ [∃]-witness(function{x})) ⦃ \{x} → [∃]-proof(function{x}) ⦄
 
 module _ {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} {φ : X → Y → Stmt{ℓₗ}} where
-  function-predicate-choice : (∀{x} → ∃(y ↦ φ(x)(y))) → ∃{Obj = X → Y}(choice ↦ ∀{x} → φ(x)(choice(x)))
-  function-predicate-choice = dependent-function-predicate-choice
+  function-choice : (∀{x} → ∃(y ↦ φ(x)(y))) → ∃{Obj = X → Y}(choice ↦ ∀{x} → φ(x)(choice(x)))
+  function-choice = dependent-function-choice
 
 {-
 module _ {ℓₗ₁ ℓₗ₂ ℓₒ} {X : Type{ℓₒ}} {P : (X → Stmt{ℓₗ₁}) → Stmt{ℓₗ₂}} where

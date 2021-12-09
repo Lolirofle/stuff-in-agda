@@ -280,12 +280,12 @@ tuples-correctness : ∀{t : T Tuple₊.^ n} → (∀{i : 𝕟(n)} → ((Tuple�
 tuples-correctness {n = 𝟎}             {t = <>} dom = • [≡]-intro
 tuples-correctness {n = 𝐒 𝟎}           {t = t}  dom = dom{𝟎}
 tuples-correctness {n = 𝐒(𝐒 n)}{l = l} {t = (x , t)} dom =
-  [↔]-to-[←] ([∈]-concatMap ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ {f = \x → map(Tuple₊.prepend x) (tuples(𝐒(n)) l)}{x = x , t}{l = l})
-  ([∃]-intro x ⦃ [∧]-intro
-    (dom{𝟎})
-    (
-      [↔]-to-[→] ([∈]-map {f = Tuple₊.prepend{n = 𝐒 n} _}{x , t}{l = tuples(𝐒 n) l})
-      ([∃]-intro t ⦃ [∧]-intro ([≡]-intro{ℓ = Lvl.of(Type.of l)}) (tuples-correctness {n = 𝐒 n}{l = l}{t = t} (\{i} → dom{𝐒 i})) ⦄)
-    )
-  ⦄)
--- 
+  [↔]-to-[←] {ℓ₁ = Lvl.𝟎} -- TODO: What is ℓ₁?
+    ([∈]-concatMap ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ ⦃ [≡]-equiv ⦄ {f = \x → map(Tuple₊.prepend x) (tuples(𝐒(n)) l)}{x = x , t}{l = l})
+    ([∃]-intro x ⦃ [∧]-intro
+      (dom{𝟎})
+      (
+        [↔]-to-[→] ([∈]-map {f = Tuple₊.prepend{n = 𝐒 n} _}{x , t}{l = tuples(𝐒 n) l})
+        ([∃]-intro t ⦃ [∧]-intro ([≡]-intro{ℓ = Lvl.of(Type.of l)}) (tuples-correctness {n = 𝐒 n}{l = l}{t = t} (\{i} → dom{𝐒 i})) ⦄)
+      )
+    ⦄)

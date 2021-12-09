@@ -62,9 +62,22 @@ sign₀ (𝟎-sign i) = Sign.𝟎
 -- Absolute value.
 -- The natural part of an integer.
 absₙ : ℤ → ℕ
-absₙ(−ₙ n) = n
-absₙ(+ₙ n) = n
+absₙ(signed _ n) = n
 absₙ(𝟎-sign _) = ℕ.𝟎
+
+
+
+open import Type.Properties.MereProposition
+elimProp : ∀{ℓ} → (P : ℤ → Type{ℓ}) ⦃ prop : ∀{x} → MereProposition(P(x)) ⦄ → (neg : (n : ℕ) → P(−ₙ n)) → (pos : (n : ℕ) → P(+ₙ n)) → ((n : ℤ) → P(n))
+elimProp(P) neg _   (−ₙ n) = neg n
+elimProp(P) _   pos (+ₙ n) = pos n
+elimProp(P) neg pos (𝟎-sign i) = test i where
+  test2 : ∀{x y} → P(x) ≡ P(y)
+  test2 i = {!!}
+  test3 : PathP (\i → (x : ℕ) → P({!test2 i!})) neg pos
+  test3 i = {!!}
+  test : PathP(\i → P(𝟎-sign i)) (neg(ℕ.𝟎)) (pos(ℕ.𝟎))
+  test = {!!}
 
 open import Data.Either
 open import Functional using (_$_)
@@ -131,6 +144,15 @@ import Numeral.Natural.Oper.Proofs as ℕ
 
 _⋅_ : ℤ → ℤ → ℤ
 x ⋅ y = signed ((sign x) Sign.⨯ (sign y)) ((absₙ x) ℕ.⋅ (absₙ y))
+
+open import Data.Boolean
+open import Data.Boolean.Stmt
+import      Numeral.Natural.Oper.Comparisons as ℕ
+nonZero : ℤ → Bool 
+nonZero = ℕ.positive? Functional.∘ absₙ
+
+NonZero : ℤ → Type
+NonZero = IsTrue Functional.∘ nonZero
 
 𝟎-signs : ∀{s₁ s₂} → (signed s₁ ℕ.𝟎 ≡ signed s₂ ℕ.𝟎)
 𝟎-signs {➕} {➕} = reflexivity(_≡_)
@@ -315,6 +337,15 @@ instance
       x + (y + signed s (ℕ.𝐒 z))    🝖-end
     p {x} {y} {𝟎-sign i} = reflexivity(_≡_)
 
+open import Structure.Operator.Proofs
+instance
+  [+]-cancellationₗ : Cancellationₗ(_+_)
+  [+]-cancellationₗ = One.cancellationₗ-by-associativity-inverse {_▫_ = _+_}
+
+instance
+  [+]-cancellationᵣ : Cancellationᵣ(_+_)
+  [+]-cancellationᵣ = One.cancellationᵣ-by-associativity-inverse {_▫_ = _+_}
+
 Stepᵣ-injective : ∀{s}{x y} → (step s x ≡ step s y) → (x ≡ y)
 Stepᵣ-injective {s} {x} {y} p = symmetry(_≡_) (step-inverses Sign.[−]-no-fixpoints) 🝖 congruence₂ᵣ(step)(Sign.− s) p 🝖 step-inverses Sign.[−]-no-fixpoints
 
@@ -412,8 +443,33 @@ instance
 open Monoid([⋅]-monoid) using() renaming(semi to [⋅]-semi)
 
 instance
-  [⋅]-preRg : PreRg(_+_)(_⋅_)
-  [⋅]-preRg = intro
+  [⋅]-distributivity : Distributivity(_⋅_)(_+_)
+  [⋅]-distributivity = intro
+
+open import Logic.Propositional.Theorems
+import      Numeral.Natural.Oper.Proofs.Structure as ℕ
+import      Structure.Function.Names as Names
+
+instance
+  absₙ-function : Function ⦃ Path-equiv ⦄ ⦃ Id-equiv ⦄ (absₙ)
+  Function.congruence absₙ-function xy = sub₂(Path)(Id) (congruence₁(absₙ) xy)
+
+absₙ-injective-for-0 : ∀{x} → Id(absₙ(x)) ℕ.𝟎 → (x ≡ 𝟎)
+absₙ-injective-for-0 {x} eq =
+  x                        🝖[ _≡_ ]-[ signed-inverse{x} ]-sym
+  signed (sign x) (absₙ x) 🝖[ _≡_ ]-[ congruence₂ᵣ(signed)(sign x) (sub₂(Id)(Path) eq) ]
+  signed (sign x) ℕ.𝟎      🝖[ _≡_ ]-[ 𝟎-signs ]
+  signed ➕ ℕ.𝟎            🝖-end
+
+instance
+  ℤ-nonZeroRelation : NonIdentityRelation([+]-monoid)
+  NonIdentityRelation.NonIdentity ℤ-nonZeroRelation = NonZero
+  NonIdentityRelation.proof ℤ-nonZeroRelation {x} = [↔]-transitivity
+    (NonIdentityRelation.proof ⦃ _ ⦄ ℕ.ℕ-nonZero {absₙ x})
+    ([↔]-intro
+      (contrapositiveᵣ absₙ-injective-for-0)
+      (contrapositiveᵣ(congruence₁ ⦃ Path-equiv ⦄ ⦃ Id-equiv ⦄ (absₙ)))
+    )
 
 instance
   [⋅]-ring : Ring(_+_)(_⋅_)
@@ -427,7 +483,8 @@ open Ring([⋅]-ring) using()
 
 instance
   [⋅]-ringNonZero : Unity.DistinctIdentities [⋅]-unity
-  Ring.NonZero.proof [⋅]-ringNonZero = ℤ-different-identities ∘ symmetry(_≡_)
+  [⋅]-ringNonZero = record {}
+  -- Ring.NonZero.proof [⋅]-ringNonZero = ℤ-different-identities ∘ symmetry(_≡_)
 
 open import Data
 open import Data.Boolean
@@ -444,15 +501,18 @@ test ➕ ➖ = ((_&&_) on₂ ((!) ∘ ℕ.positive?))
 test ➖ ➕ = (const ∘ const) 𝑇
 test ➖ ➖ = (ℕ._≥?_)
 
+_≤?_ : ℤ → ℤ → Bool
+signed s₁ x ≤? signed s₂ y = test s₁ s₂ x y
+signed ➕ ℕ.𝟎     ≤? 𝟎-sign _ = 𝑇
+signed ➕ (ℕ.𝐒 x) ≤? 𝟎-sign _ = 𝐹
+signed ➖ _       ≤? 𝟎-sign _ = 𝑇
+𝟎-sign _ ≤? signed ➕ _       = 𝑇
+𝟎-sign _ ≤? signed ➖ ℕ.𝟎     = 𝑇
+𝟎-sign _ ≤? signed ➖ (ℕ.𝐒 y) = 𝐹
+𝟎-sign _ ≤? 𝟎-sign _ = 𝑇
+
 _≤_ : ℤ → ℤ → Type{Lvl.𝟎}
-signed s₁ x ≤ signed s₂ y = IsTrue(test s₁ s₂ x y)
-signed ➕ ℕ.𝟎     ≤ 𝟎-sign _ = ⊤
-signed ➕ (ℕ.𝐒 x) ≤ 𝟎-sign _ = ⊥
-signed ➖ _       ≤ 𝟎-sign _ = ⊤
-𝟎-sign _ ≤ signed ➕ _       = ⊤
-𝟎-sign _ ≤ signed ➖ ℕ.𝟎     = ⊤
-𝟎-sign _ ≤ signed ➖ (ℕ.𝐒 y) = ⊥
-𝟎-sign _ ≤ 𝟎-sign _ = ⊤
+_≤_ = IsTrue ∘₂ (_≤?_)
 
 {-data _≤_ : ℤ → ℤ → Type{Lvl.𝟎} where
   neg : ∀{x y} → (x ℕ.≥ y) → ((signed ➖ x) ≤ (signed ➖ y))

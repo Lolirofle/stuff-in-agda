@@ -27,6 +27,7 @@ skip_modules = {
 	'Formalization.PredicateLogic.Minimal.NaturalDeduction.NegativeTranslations',
 	'Formalization.PredicateLogic.Minimal.SequentCalculus',
 	'Formalization.FunctionalML',
+	'Formalization.ImperativePL',
 	'Formalization.PureTypeSystem',
 	'Geometry.Axioms',
 	'Geometry.HilbertAxioms',
@@ -39,6 +40,8 @@ skip_modules = {
 	'Numeral.Natural.Oper.Proofs.Structure',
 	'Numeral.Rational.AlterAdd',
 	'Numeral.Rational.SternBrocot',
+	'Prop',
+	'Prop.Squash',
 	'Sets.ExtensionalPredicateSet.SetLike',
 	'Sets.ImageSet.SetLike',
 	'Structure.Categorical.Multi',
@@ -68,6 +71,8 @@ skip_modules = {
 	'Structure.Topology.Properties',
 	'Structure.Type.Identity.Proofs.Multi',
 	'Type.Category.IntensionalFunctionsCategory.HomFunctor',
+	'Type.Identity.Heterogenous',
+	'Type.Identity.Heterogenous.Proofs',
 	'Type.Properties.Homotopy.Proofs',
 }
 
