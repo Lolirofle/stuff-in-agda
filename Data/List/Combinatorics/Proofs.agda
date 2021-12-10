@@ -65,7 +65,7 @@ sublists₊-completeness : (l₁ ⊑ l₂) → (l₁ ≡ ∅) ∨ (l₁ ∈ subl
 sublists₊-completeness _⊑_.empty = [∨]-introₗ [≡]-intro
 sublists₊-completeness {l₁ = x ⊰ l₁}{l₂ = y ⊰ l₂} (use xy p) = [∨]-introᵣ $ [∨]-elim
   (l₁∅ ↦ (• congruence₂(_⊰_) xy l₁∅))
-  (⊰_ ∘ [↔]-to-[←] ([∈]-concatMap {f = x ↦ x ⊰ (y ⊰ x) ⊰ ∅}{l = sublists₊ l₂}) ∘ (l₁l₂ ↦ [∃]-intro l₁ ⦃ [∧]-intro l₁l₂ (⊰ • congruence₂ₗ(_⊰_)(l₁) xy) ⦄))
+  (⊰_ ∘ [↔]-to-[←] ([∈]-concatMap {f = x ↦ x ⊰ (y ⊰ x) ⊰ ∅}{l = sublists₊ l₂}) ∘ (l₁l₂ ↦ [∃]-intro l₁ ⦃ [∧]-intro l₁l₂ (⊰ • congruence₂-₁(_⊰_)(l₁) xy) ⦄))
   (sublists₊-completeness p)
 sublists₊-completeness {l₁ = l₁}{l₂ = x ⊰ l₂}(skip p) = [∨]-elim2
   id
@@ -171,7 +171,7 @@ combinations-length {1}   {l = x ⊰ l} =
 combinations-length {𝐒(𝐒 k)} {l = x ⊰ l} =
   length(combinations (𝐒(𝐒 k)) (x ⊰ l))                                       🝖[ _≡_ ]-[]
   length(map (x ,_) (combinations (𝐒 k) l) ++ combinations (𝐒(𝐒 k)) l)        🝖[ _≡_ ]-[ length-[++] {l₁ = map (x ,_) (combinations (𝐒 k) l)}{l₂ = combinations (𝐒(𝐒 k)) l} ]
-  length(map (x ,_) (combinations (𝐒 k) l)) + length(combinations (𝐒(𝐒 k)) l) 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(length(combinations (𝐒(𝐒 k)) l)) (length-map{f = (x ,_)}{x = combinations (𝐒 k) l}) ]
+  length(map (x ,_) (combinations (𝐒 k) l)) + length(combinations (𝐒(𝐒 k)) l) 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(length(combinations (𝐒(𝐒 k)) l)) (length-map{f = (x ,_)}{x = combinations (𝐒 k) l}) ]
   length(combinations (𝐒 k) l) + length(combinations (𝐒(𝐒 k)) l)              🝖[ _≡_ ]-[ congruence₂(_+_) (combinations-length {𝐒 k} {l = l}) (combinations-length {𝐒(𝐒 k)} {l = l}) ]
   𝑐𝐶(length(l))(𝐒 k) + 𝑐𝐶(length(l))(𝐒(𝐒 k))                                  🝖[ _≡_ ]-[]
   𝑐𝐶 (length(x ⊰ l)) (𝐒(𝐒 k))                                                 🝖-end
@@ -183,7 +183,7 @@ repeatableCombinations-length {𝐒 k}    {l = ∅} = symmetry(_≡_) (𝑐𝐶-
 repeatableCombinations-length {𝐒(𝐒 k)} {l = x ⊰ l} =
   length (repeatableCombinations (𝐒(𝐒 k)) (x ⊰ l))                                                        🝖[ _≡_ ]-[]
   length(map(x ,_) (repeatableCombinations (𝐒 k) (x ⊰ l)) ++ repeatableCombinations(𝐒(𝐒 k)) l)            🝖[ _≡_ ]-[ length-[++] {l₁ = map(x ,_) (repeatableCombinations (𝐒 k) (x ⊰ l))}{l₂ = repeatableCombinations(𝐒(𝐒 k)) l} ]
-  length(map(x ,_) (repeatableCombinations (𝐒 k) (x ⊰ l))) + length(repeatableCombinations(𝐒(𝐒 k)) l)     🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(length(repeatableCombinations(𝐒(𝐒 k)) l)) (length-map {f = x ,_}{x = repeatableCombinations (𝐒 k) (x ⊰ l)}) ]
+  length(map(x ,_) (repeatableCombinations (𝐒 k) (x ⊰ l))) + length(repeatableCombinations(𝐒(𝐒 k)) l)     🝖[ _≡_ ]-[ congruence₂-₁(_+_)(length(repeatableCombinations(𝐒(𝐒 k)) l)) (length-map {f = x ,_}{x = repeatableCombinations (𝐒 k) (x ⊰ l)}) ]
   length(repeatableCombinations (𝐒 k) (x ⊰ l))             + length(repeatableCombinations(𝐒(𝐒 k)) l)     🝖[ _≡_ ]-[ congruence₂(_+_) (repeatableCombinations-length{k = 𝐒 k}{l = x ⊰ l}) (repeatableCombinations-length{k = 𝐒(𝐒 k)}{l = l}) ]
   𝑐𝐶((length(x ⊰ l) + 𝐒(k)) −₀ 1)(𝐒(k))                    + 𝑐𝐶((length(l) + 𝐒(𝐒(k))) −₀ 1)(𝐒(𝐒(k)))      🝖[ _≡_ ]-[]
   𝑐𝐶((length(x ⊰ l) + 𝐒(𝐒 k)) −₀ 1) (𝐒(𝐒 k))                                                              🝖-end
@@ -198,7 +198,7 @@ tuples-length {𝐒(𝐒(n))}{l = x ⊰ l} =
   foldᵣ((_+_) ∘ length ∘ (y ↦ map (y Tuple₊.⊰_) (tuples (𝐒(n)) (x ⊰ l)))) 𝟎 (x ⊰ l) 🝖[ _≡_ ]-[ foldᵣ-function₊-raw {l₁ = x ⊰ l}{a₁ = 𝟎} (\{a b} → [≡]-with(_+ b) (length-map{f = a Tuple₊.⊰_}{x = tuples (𝐒(n)) (x ⊰ l)})) [≡]-intro [≡]-intro ]
   foldᵣ((_+_) ∘ length ∘ (y ↦ tuples (𝐒(n)) (x ⊰ l))) 𝟎 (x ⊰ l)                     🝖[ _≡_ ]-[]
   foldᵣ(const(length(tuples (𝐒(n)) (x ⊰ l)) +_)) 𝟎 (x ⊰ l)                          🝖[ _≡_ ]-[ foldᵣ-constant-[+]ₗ{l = x ⊰ l} {init = 𝟎}{step = length(tuples (𝐒(n)) (x ⊰ l))} ]
-  length(x ⊰ l) ⋅ length(tuples(𝐒(n)) (x ⊰ l))                                      🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_) (length(x ⊰ l)) (tuples-length {𝐒(n)} {l = x ⊰ l}) ]
+  length(x ⊰ l) ⋅ length(tuples(𝐒(n)) (x ⊰ l))                                      🝖[ _≡_ ]-[ congruence₂-₂(_⋅_) (length(x ⊰ l)) (tuples-length {𝐒(n)} {l = x ⊰ l}) ]
   length(x ⊰ l) ⋅ (length(x ⊰ l) ^ 𝐒(n))                                            🝖[ _≡_ ]-[]
   length(x ⊰ l) ^ 𝐒(𝐒(n))                                                           🝖-end
 
@@ -233,7 +233,7 @@ permutations-length {l = x ⊰ ∅}     = [≡]-intro
 permutations-length {l = x ⊰ y ⊰ l} =
   length(permutations(x ⊰ y ⊰ l))                                     🝖[ _≡_ ]-[]
   length(concatMap(insertedEverywhere x) (permutations(y ⊰ l)))       🝖[ _≡_ ]-[ length-concatMap{l = permutations(y ⊰ l)}{f = insertedEverywhere x} ]
-  foldᵣ(_+_ ∘ length ∘ insertedEverywhere x) 𝟎 (permutations(y ⊰ l))  🝖[ _≡_ ]-[ foldᵣ-operator-raw {l₁ = permutations(y ⊰ l)} (\{l}{y} → congruence₂ₗ(_+_)(y) (insertedEverywhere-length{l = l})) [≡]-intro [≡]-intro ]
+  foldᵣ(_+_ ∘ length ∘ insertedEverywhere x) 𝟎 (permutations(y ⊰ l))  🝖[ _≡_ ]-[ foldᵣ-operator-raw {l₁ = permutations(y ⊰ l)} (\{l}{y} → congruence₂-₁(_+_)(y) (insertedEverywhere-length{l = l})) [≡]-intro [≡]-intro ]
   foldᵣ(_+_ ∘ 𝐒 ∘ length) 𝟎 (permutations(y ⊰ l))                     🝖[ _≡_ ]-[ foldᵣ-map-preserve {f = length}{l = permutations(y ⊰ l)} ]
   foldᵣ(_+_ ∘ 𝐒) 𝟎 (map length(permutations(y ⊰ l)))                  🝖[ _≡_ ]-[ congruence₁(foldᵣ(_+_ ∘ 𝐒) 𝟎) (map-operator-raw-function(permutation-length{l = y ⊰ l})) ]
   foldᵣ(_+_ ∘ 𝐒) 𝟎 (map (const(length(y ⊰ l))) (permutations(y ⊰ l))) 🝖[ _≡_ ]-[ foldᵣ-map-preserve {f = const(length(y ⊰ l))}{l = permutations(y ⊰ l)} ]-sym
@@ -241,7 +241,7 @@ permutations-length {l = x ⊰ y ⊰ l} =
   foldᵣ(_+_ ∘ const(𝐒(length(y ⊰ l)))) 𝟎 (permutations(y ⊰ l))        🝖[ _≡_ ]-[]
   foldᵣ(const(𝐒(length(y ⊰ l)) +_)) 𝟎 (permutations(y ⊰ l))           🝖[ _≡_ ]-[ foldᵣ-constant-[+]ₗ {l = permutations(y ⊰ l)}{step = 𝐒(length(y ⊰ l))} ]
   length(permutations(y ⊰ l)) ⋅ 𝐒(length(y ⊰ l)) + 𝟎                  🝖[ _≡_ ]-[]
-  length(permutations(y ⊰ l)) ⋅ 𝐒(length(y ⊰ l))                      🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(𝐒(length(y ⊰ l))) (permutations-length {l = y ⊰ l}) ]
+  length(permutations(y ⊰ l)) ⋅ 𝐒(length(y ⊰ l))                      🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(𝐒(length(y ⊰ l))) (permutations-length {l = y ⊰ l}) ]
   (length(y ⊰ l)!) ⋅ 𝐒(length(y ⊰ l))                                 🝖[ _≡_ ]-[ commutativity(_⋅_) {length(y ⊰ l)!}{𝐒(length(y ⊰ l))} ]
   𝐒(length(y ⊰ l)) ⋅ (length(y ⊰ l)!)                                 🝖[ _≡_ ]-[]
   length(x ⊰ y ⊰ l)!                                                  🝖-end
@@ -251,9 +251,9 @@ permutations-length {l = x ⊰ y ⊰ l} =
 ... | z ⊰ pyl | p =
   length(foldᵣ((_++_) ∘ insertedEverywhere x) ∅ (z ⊰ pyl))                            🝖[ _≡_ ]-[]
   length(insertedEverywhere x z ++ foldᵣ((_++_) ∘ insertedEverywhere x) ∅ pyl)        🝖[ _≡_ ]-[ length-[++] {l₁ = insertedEverywhere x z}{l₂ = foldᵣ((_++_) ∘ insertedEverywhere x) ∅ pyl} ]
-  length(insertedEverywhere x z) + length(foldᵣ((_++_) ∘ insertedEverywhere x) ∅ pyl) 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(length(foldᵣ((_++_) ∘ insertedEverywhere x) ∅ pyl)) (insertedEverywhere-length {x = x}{l = z}) ]
+  length(insertedEverywhere x z) + length(foldᵣ((_++_) ∘ insertedEverywhere x) ∅ pyl) 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(length(foldᵣ((_++_) ∘ insertedEverywhere x) ∅ pyl)) (insertedEverywhere-length {x = x}{l = z}) ]
   𝐒(length z)                    + length(foldᵣ((_++_) ∘ insertedEverywhere x) ∅ pyl) 🝖[ _≡_ ]-[ {!!} ]
-  𝐒(𝐒(length l)) ⋅ 𝐒(length pyl)                                                      🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(𝐒(𝐒(length l))) p ]
+  𝐒(𝐒(length l)) ⋅ 𝐒(length pyl)                                                      🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(𝐒(𝐒(length l))) p ]
   𝐒(𝐒(length l)) ⋅ (𝐒(length l) ⋅ (length(l) !))                                      🝖-end-}
 {- TODO: Proof of above
 length(concatMap (insertedEverywhere x) (permutations(y ⊰ l)))

@@ -46,9 +46,9 @@ record Semilattice (_▫_ : L → L → L) : Stmt{ℓ Lvl.⊔ ℓₑ} where
     x ▫ y 🝖-[ xy ]
     y     🝖-end
   Transitivity.proof (Weak.PartialOrder.transitivity partialOrder) {x}{y}{z} xy yz =
-    x ▫ z       🝖-[ congruence₂ᵣ(_▫_)(_) (symmetry(_≡_) yz) ]
+    x ▫ z       🝖-[ congruence₂-₂(_▫_)(_) (symmetry(_≡_) yz) ]
     x ▫ (y ▫ z) 🝖-[ symmetry(_≡_) (associativity(_▫_)) ]
-    (x ▫ y) ▫ z 🝖-[ congruence₂ₗ(_▫_)(_) xy ]
+    (x ▫ y) ▫ z 🝖-[ congruence₂-₁(_▫_)(_) xy ]
     y ▫ z       🝖-[ yz ]
     z           🝖-end
   Reflexivity.proof  (Weak.PartialOrder.reflexivity  partialOrder) = idempotence(_▫_)
@@ -75,7 +75,7 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ Lvl.�
   instance
     [∨]-idempotence : Idempotence(_∨_)
     Idempotence.proof [∨]-idempotence {x} =
-      x ∨ x             🝖-[ congruence₂ᵣ(_∨_)(_) (symmetry(_≡_) (absorptionₗ(_∧_)(_∨_))) ]
+      x ∨ x             🝖-[ congruence₂-₂(_∨_)(_) (symmetry(_≡_) (absorptionₗ(_∧_)(_∨_))) ]
       x ∨ (x ∧ (x ∨ x)) 🝖-[ absorptionₗ(_∨_)(_∧_) ]
       x                 🝖-end
 
@@ -90,7 +90,7 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ Lvl.�
   instance
     [∧]-idempotence : Idempotence(_∧_)
     Idempotence.proof [∧]-idempotence {x} =
-      x ∧ x             🝖-[ congruence₂ᵣ(_∧_)(_) (symmetry(_≡_) (absorptionₗ(_∨_)(_∧_))) ]
+      x ∧ x             🝖-[ congruence₂-₂(_∧_)(_) (symmetry(_≡_) (absorptionₗ(_∨_)(_∧_))) ]
       x ∧ (x ∨ (x ∧ x)) 🝖-[ absorptionₗ(_∧_)(_∨_) ]
       x                 🝖-end
 

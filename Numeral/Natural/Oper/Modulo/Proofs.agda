@@ -120,7 +120,7 @@ mod-of-modulus-sum-multiple {a} {𝐒 b} {𝐒 c} =
   a mod 𝐒(b)                         🝖-end
 
 mod-of-modulus-sum-multiple-commuted : ∀{a b c} ⦃ _ : IsTrue(positive?(b)) ⦄ → ((a + (c ⋅ b)) mod b ≡ a mod b)
-mod-of-modulus-sum-multiple-commuted {a}{𝐒 b}{c} = congruence₁(_mod 𝐒(b)) (congruence₂ᵣ(_+_)(a) (commutativity(_⋅_) {c}{𝐒 b})) 🝖 mod-of-modulus-sum-multiple{a}{𝐒 b}{c}
+mod-of-modulus-sum-multiple-commuted {a}{𝐒 b}{c} = congruence₁(_mod 𝐒(b)) (congruence₂-₂(_+_)(a) (commutativity(_⋅_) {c}{𝐒 b})) 🝖 mod-of-modulus-sum-multiple{a}{𝐒 b}{c}
 
 mod-of-modulus-sum-divisibleᵣ : ∀{a b c} ⦃ _ : IsTrue(positive?(c)) ⦄ → (c ∣ b) → ((a + b) mod c ≡ a mod c)
 mod-of-modulus-sum-divisibleᵣ {a} {b} {c} cb
@@ -184,7 +184,7 @@ mod-of-[+] {a}{b}{𝐒 m} =
   (a + b) mod 𝐒(m)                                                                           🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₂(_+_) ([⌊/⌋][mod]-is-division-with-remainder{a}{m}) ([⌊/⌋][mod]-is-division-with-remainder{b}{m})) ]-sym
   ((((a ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m)) + (a mod 𝐒(m))) + (((b ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m)) + (b mod 𝐒(m)))) mod 𝐒(m) 🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (One.associate-commute4-c {_▫_ = _+_} {a = (a ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m)}{a mod 𝐒(m)}{(b ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m)}{b mod 𝐒(m)}) ]
   ((((a ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m)) + ((b ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m))) + ((a mod 𝐒(m)) + (b mod 𝐒(m)))) mod 𝐒(m) 🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (commutativity(_+_) {((a ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m)) + ((b ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m))}{(a mod 𝐒(m)) + (b mod 𝐒(m))}) ]
-  (((a mod 𝐒(m)) + (b mod 𝐒(m))) + (((a ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m)) + ((b ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m)))) mod 𝐒(m) 🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₂ᵣ(_+_)((a mod 𝐒(m)) + (b mod 𝐒(m))) (distributivityᵣ(_⋅_)(_+_) {a ⌊/⌋ 𝐒(m)}{b ⌊/⌋ 𝐒(m)}{𝐒(m)})) ]-sym
+  (((a mod 𝐒(m)) + (b mod 𝐒(m))) + (((a ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m)) + ((b ⌊/⌋ 𝐒(m)) ⋅ 𝐒(m)))) mod 𝐒(m) 🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₂-₂(_+_)((a mod 𝐒(m)) + (b mod 𝐒(m))) (distributivityᵣ(_⋅_)(_+_) {a ⌊/⌋ 𝐒(m)}{b ⌊/⌋ 𝐒(m)}{𝐒(m)})) ]-sym
   (((a mod 𝐒(m)) + (b mod 𝐒(m))) + (((a ⌊/⌋ 𝐒(m)) + (b ⌊/⌋ 𝐒(m))) ⋅ 𝐒(m))) mod 𝐒(m)          🝖[ _≡_ ]-[ mod-of-modulus-sum-multiple-commuted{(a mod 𝐒(m)) + (b mod 𝐒(m))}{𝐒(m)}{(a ⌊/⌋ 𝐒(m)) + (b ⌊/⌋ 𝐒(m))} ]
   ((a mod 𝐒(m)) + (b mod 𝐒(m))) mod 𝐒(m)                                                     🝖-end
 
@@ -238,16 +238,16 @@ record Homomorphism(f : ℕ → ℕ) : Type{Lvl.𝟎} where
     preserves-𝐒 : ∀{n} → (f(𝐒(n)) ≡ 𝐒(f(n)))
 
   preserves-[+] : ∀{a b} → (f(a + b) ≡ f(a) + f(b))
-  preserves-[+] {a} {𝟎} = symmetry(_≡_) (congruence₂ᵣ(_+_)(f(a)) preserves-𝟎)
-  preserves-[+] {a} {𝐒 b} = preserves-𝐒 🝖 congruence₁(𝐒) (preserves-[+] {a} {b}) 🝖 congruence₂ᵣ(_+_)(f(a)) (symmetry(_≡_) preserves-𝐒)
+  preserves-[+] {a} {𝟎} = symmetry(_≡_) (congruence₂-₂(_+_)(f(a)) preserves-𝟎)
+  preserves-[+] {a} {𝐒 b} = preserves-𝐒 🝖 congruence₁(𝐒) (preserves-[+] {a} {b}) 🝖 congruence₂-₂(_+_)(f(a)) (symmetry(_≡_) preserves-𝐒)
 
   preserves-[⋅]ₗ : ∀{a b} → (f(a ⋅ b) ≡ f(a) ⋅ b)
   preserves-[⋅]ₗ {a} {𝟎} = preserves-𝟎
-  preserves-[⋅]ₗ {a} {𝐒 b} = preserves-[+] {a}{a ⋅ b} 🝖 congruence₂ᵣ(_+_)(f(a)) (preserves-[⋅]ₗ {a}{b})
+  preserves-[⋅]ₗ {a} {𝐒 b} = preserves-[+] {a}{a ⋅ b} 🝖 congruence₂-₂(_+_)(f(a)) (preserves-[⋅]ₗ {a}{b})
 
   preserves-[−₀] : ∀{a b} → (f(a −₀ b) ≡ f(a) −₀ f(b))
-  preserves-[−₀] {𝟎} {b} = preserves-𝟎 🝖 congruence₂ₗ(_−₀_)(f(b)) (symmetry(_≡_) preserves-𝟎)
-  preserves-[−₀] {𝐒 a} {𝟎} = congruence₂ᵣ(_−₀_)(f(𝐒(a))) (symmetry(_≡_) preserves-𝟎)
+  preserves-[−₀] {𝟎} {b} = preserves-𝟎 🝖 congruence₂-₁(_−₀_)(f(b)) (symmetry(_≡_) preserves-𝟎)
+  preserves-[−₀] {𝐒 a} {𝟎} = congruence₂-₂(_−₀_)(f(𝐒(a))) (symmetry(_≡_) preserves-𝟎)
   preserves-[−₀] {𝐒 a} {𝐒 b} = preserves-[−₀] {a} {b} 🝖 symmetry(_≡_) (congruence₂(_−₀_) (preserves-𝐒{a}) (preserves-𝐒{b}))
 
   -- TODO: But we also need to prove that floored division is a function without mentioning modulo (otherwise, circle argument). Below is the proof of modulo being a function depending on floored division being a function

@@ -89,7 +89,7 @@ product-primeDivisors-inverse n@{𝐒 _} = primeDivisors-intro(\n l → ⦃ Posi
       leastDiv-pos = leastDivisor-positive ([↔]-to-[←] Positive-greater-than-zero ([≤]-predecessor pos-n))
   in
     List.foldᵣ(_⋅_) 1 (leastDivisor n ⊰ primeDivisors((n ⌊/⌋ leastDivisor n) ⦃ _ ⦄)) 🝖[ _≡_ ]-[]
-    leastDivisor n ⋅ List.foldᵣ(_⋅_) 1 (primeDivisors((n ⌊/⌋ leastDivisor n) ⦃ _ ⦄)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(leastDivisor n) (eq ⦃ [↔]-to-[→] ([⌊/⌋]-positive{n}) leastDivisor-order ⦄) ]
+    leastDivisor n ⋅ List.foldᵣ(_⋅_) 1 (primeDivisors((n ⌊/⌋ leastDivisor n) ⦃ _ ⦄)) 🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(leastDivisor n) (eq ⦃ [↔]-to-[→] ([⌊/⌋]-positive{n}) leastDivisor-order ⦄) ]
     leastDivisor n ⋅ (n ⌊/⌋ leastDivisor n) ⦃ _ ⦄                                    🝖[ _≡_ ]-[ [⋅][⌊/⌋]-inverseOperatorₗ leastDivisor-correctness ]
     n                                                                                🝖-end
 
@@ -184,8 +184,8 @@ primeDivisors-of-[⋅]-prime {a}{b} ⦃ pa ⦄ ⦃ pb ⦄ = primeDivisors-intro(
         in sub₂(_≡_)(_permutes_) $
           primeDivisors(a ⋅ b)                                                         🝖[ _≡_ ]-[ step ]
           leastDivisor(a ⋅ b) ⊰ primeDivisors(((a ⋅ b) ⌊/⌋ leastDivisor(a ⋅ b)) ⦃ _ ⦄) 🝖[ _≡_ ]-[ congruence₂(_⊰_) min-div-ab (congruence₁(primeDivisors) ([⌊/⌋]-operator (reflexivity(_≡_)) min-div-ab)) ]
-          a ⊰ primeDivisors(((a ⋅ b) ⌊/⌋ a) ⦃ _ ⦄)                                     🝖[ _≡_ ]-[ congruence₂ᵣ(_⊰_)(a) (congruence₁(primeDivisors) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {a}{b} ⦃ prime-positive pa ⦄)) ]
-          a ⊰ primeDivisors(b)                                                         🝖[ _≡_ ]-[ congruence₂ᵣ(_⊰_)(a) (primeDivisors-step b2) ]
+          a ⊰ primeDivisors(((a ⋅ b) ⌊/⌋ a) ⦃ _ ⦄)                                     🝖[ _≡_ ]-[ congruence₂-₂(_⊰_)(a) (congruence₁(primeDivisors) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {a}{b} ⦃ prime-positive pa ⦄)) ]
+          a ⊰ primeDivisors(b)                                                         🝖[ _≡_ ]-[ congruence₂-₂(_⊰_)(a) (primeDivisors-step b2) ]
           a ⊰ leastDivisor b ⊰ primeDivisors((b ⌊/⌋ leastDivisor b) ⦃ _ ⦄)             🝖-end
       )
       (\nab →
@@ -198,7 +198,7 @@ primeDivisors-of-[⋅]-prime {a}{b} ⦃ pa ⦄ ⦃ pb ⦄ = primeDivisors-intro(
         in
           primeDivisors(a ⋅ b)                                                         🝖[ _≡_ ]-[ step ]-sub
           leastDivisor(a ⋅ b) ⊰ primeDivisors(((a ⋅ b) ⌊/⌋ leastDivisor(a ⋅ b)) ⦃ _ ⦄) 🝖[ _≡_ ]-[ congruence₂(_⊰_) min-div-ab (congruence₁(primeDivisors) ([⌊/⌋]-operator (reflexivity(_≡_)) min-div-ab)) ]-sub
-          leastDivisor b ⊰ primeDivisors(((a ⋅ b) ⌊/⌋ leastDivisor(b)) ⦃ _ ⦄)          🝖[ _≡_ ]-[ congruence₂ᵣ(_⊰_)(leastDivisor b) (congruence₁(primeDivisors) ([⌊/⌋][⋅]ᵣ-compatibility {a}{b}{leastDivisor b} ⦃ leastDivisor-positive (Positive-greater-than b2) ⦄ leastDivisor-correctness)) ]-sub
+          leastDivisor b ⊰ primeDivisors(((a ⋅ b) ⌊/⌋ leastDivisor(b)) ⦃ _ ⦄)          🝖[ _≡_ ]-[ congruence₂-₂(_⊰_)(leastDivisor b) (congruence₁(primeDivisors) ([⌊/⌋][⋅]ᵣ-compatibility {a}{b}{leastDivisor b} ⦃ leastDivisor-positive (Positive-greater-than b2) ⦄ leastDivisor-correctness)) ]-sub
           leastDivisor b ⊰ primeDivisors(a ⋅ (b ⌊/⌋ leastDivisor(b)) ⦃ _ ⦄)            🝖[ _permutes_ ]-[ _permutes_.prepend (prev ⦃ [↔]-to-[→] ([⌊/⌋]-positive {b}{leastDivisor b}) (divides-upper-limit(leastDivisor-correctness{b})) ⦄) ]
           leastDivisor b ⊰ a ⊰ primeDivisors((b ⌊/⌋ leastDivisor b) ⦃ _ ⦄)             🝖[ _permutes_ ]-[ _permutes_.swap ]
           a ⊰ leastDivisor b ⊰ primeDivisors((b ⌊/⌋ leastDivisor b) ⦃ _ ⦄)             🝖-end
@@ -261,7 +261,7 @@ primeDivisors-of-[^] {𝐒 _}     {𝐒 𝟎}        = sub₂(_≡_)(_permutes_)
 primeDivisors-of-[^] {a@(𝐒 _)} {𝐒(n@(𝐒 N))} =
   primeDivisors(a ^ 𝐒(n))                           🝖[ _permutes_ ]-[]
   primeDivisors(a ⋅ (a ^ n))                        🝖[ _permutes_ ]-[ primeDivisors-of-[⋅] {a}{a ^ n} ⦃ pos-b = [^]-positive {a}{n} ⦄ ]
-  primeDivisors(a) ++ primeDivisors(a ^ n)          🝖[ _permutes_ ]-[ congruence₂ᵣ ⦃ _ ⦄ ⦃ _ ⦄ ⦃ _ ⦄ (_++_) ⦃ permutes-[++]-function ⦄ (primeDivisors(a)) (primeDivisors-of-[^] {a}{n}) ]
+  primeDivisors(a) ++ primeDivisors(a ^ n)          🝖[ _permutes_ ]-[ congruence₂-₂ ⦃ _ ⦄ ⦃ _ ⦄ ⦃ _ ⦄ (_++_) ⦃ permutes-[++]-function ⦄ (primeDivisors(a)) (primeDivisors-of-[^] {a}{n}) ]
   primeDivisors(a) ++ (primeDivisors(a) List.++^ n) 🝖[ _permutes_ ]-[]
   primeDivisors(a) List.++^ 𝐒(n)                    🝖-end
 
@@ -300,11 +300,11 @@ primeDivisors-of-[⋅]-prime2 {a}{b} = ℕ-strong-recursion(\a → (b : ℕ) →
               in
                 primeDivisors(a ⋅ b)                                                         🝖[ _≡_ ]-[ primeDivisors-step (b2 🝖 [⋅]ᵣ-growing {b}{a} ([≤]-predecessor (prime-lower-bound pa))) ]
                 leastDivisor(a ⋅ b) ⊰ primeDivisors(((a ⋅ b) ⌊/⌋ leastDivisor(a ⋅ b)) ⦃ _ ⦄) 🝖[ _≡_ ]-[ congruence₂(_⊰_) min-div (congruence₁(primeDivisors) ([⌊/⌋]-operator ⦃ leastDivisor-positive{a ⋅ b} ([↔]-to-[→] [⋅]-positive ([∧]-intro (prime-positive pa) (Positive-greater-than b2))) ⦄ [≡]-intro min-div)) ]
-                a ⊰ primeDivisors(((a ⋅ b) ⌊/⌋ a) ⦃ _ ⦄)                                     🝖[ _≡_ ]-[ congruence₂ᵣ(_⊰_)(a) (congruence₁(primeDivisors) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {a}{b} ⦃ prime-positive pa ⦄)) ]
+                a ⊰ primeDivisors(((a ⋅ b) ⌊/⌋ a) ⦃ _ ⦄)                                     🝖[ _≡_ ]-[ congruence₂-₂(_⊰_)(a) (congruence₁(primeDivisors) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {a}{b} ⦃ prime-positive pa ⦄)) ]
                 a ⊰ primeDivisors(b)                                                         🝖-end
           in sub₂(_≡_)(_permutes_) $
             primeDivisors(a ⋅ (p ⋅ b)) 🝖[ _≡_ ]-[ proof pa pb2 (sub₂(_≡_)(_≤_) (symmetry(_≡_) min-div-apb) 🝖 leastDivisor-divisibility-order{p ⋅ b}{a ⋅ (p ⋅ b)} pb2 (divides-with-[⋅] {p ⋅ b}{a} ([∨]-introᵣ (reflexivity(_∣_))))) ]
-            a ⊰ primeDivisors(p ⋅ b)   🝖[ _≡_ ]-[ congruence₂ᵣ(_⊰_)(a) (proof{p}{b} pp (succ(succ min)) (AllElements-prepend-head min-p)) ]
+            a ⊰ primeDivisors(p ⋅ b)   🝖[ _≡_ ]-[ congruence₂-₂(_⊰_)(a) (proof{p}{b} pp (succ(succ min)) (AllElements-prepend-head min-p)) ]
             a ⊰ p ⊰ primeDivisors b    🝖-end
         )
         (\gt →

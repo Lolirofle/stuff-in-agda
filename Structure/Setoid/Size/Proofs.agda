@@ -121,7 +121,7 @@ module _ where
 
   module _ ⦃ equiv-X : Equiv{ℓₑ₁}(X) ⦄ ⦃ equiv-Y : Equiv{ℓₑ₂}(Y) ⦄ ⦃ equiv-Z : Equiv{ℓₑ₃}(Z) ⦄ (P : X → Y → Type{ℓₗ}) ⦃ classical-P : ∀{x} → Classical(∃(P(x))) ⦄ (c : (x : X) → ¬(∃(P(x))) → Z) (f : X → Y → Z) ⦃ func-f : BinaryOperator(f) ⦄ where
     existence-decider-fn : X → Z
-    existence-decider-fn(x) = existence-decider (P(x)) (c(x)) (f(x)) ⦃ BinaryOperator.right func-f ⦄
+    existence-decider-fn(x) = existence-decider (P(x)) (c(x)) (f(x)) ⦃ BinaryOperator.unary₂ func-f ⦄
 
     open import Structure.Relator
     existence-decider-fn-function : (∀{x} → Unique(P(x))) → (∀{x₁ x₂}{p₁ p₂} → (x₁ ≡ x₂) → (c x₁ p₁ ≡ c x₂ p₂)) → ⦃ ∀{y} → UnaryRelator(swap P y) ⦄ → Function(existence-decider-fn)
@@ -137,16 +137,16 @@ module _ where
     existence-decider-fn-surjective : (∀{x} → Unique(P(x))) → ⦃ ∀{x} → Constant(c(x)) ⦄ → (∀{z} → ∃(x ↦ (∀{y} → P(x)(y) → (f x y ≡ z)) ∧ ((nepx : ¬ ∃(P(x))) → (c x nepx ≡ z)))) → Surjective(existence-decider-fn)
     Surjective.proof (existence-decider-fn-surjective unique-p property) {z} with [∃]-intro x ⦃ px ⦄ ← property{z} with excluded-middle(∃(P(x)))
     ... | [∨]-introₗ ([∃]-intro y ⦃ pxy ⦄)
-      = [∃]-intro x ⦃ symmetry(_≡_) (existence-decider-satisfaction-value(P(x)) (c(x)) (f(x)) ⦃ BinaryOperator.right func-f ⦄ unique-p pxy) 🝖 [∧]-elimₗ px pxy ⦄
+      = [∃]-intro x ⦃ symmetry(_≡_) (existence-decider-satisfaction-value(P(x)) (c(x)) (f(x)) ⦃ BinaryOperator.unary₂ func-f ⦄ unique-p pxy) 🝖 [∧]-elimₗ px pxy ⦄
     ... | [∨]-introᵣ nepx
-      = [∃]-intro x ⦃ symmetry(_≡_) (existence-decider-unsatisfaction-value(P(x)) (c(x)) (f(x)) ⦃ BinaryOperator.right func-f ⦄ nepx) 🝖 [∧]-elimᵣ px nepx ⦄
+      = [∃]-intro x ⦃ symmetry(_≡_) (existence-decider-unsatisfaction-value(P(x)) (c(x)) (f(x)) ⦃ BinaryOperator.unary₂ func-f ⦄ nepx) 🝖 [∧]-elimᵣ px nepx ⦄
 
     existence-decider-fn-surjective2 : (∀{x} → Unique(P(x))) → ⦃ ∀{x} → Constant(c(x)) ⦄ → (∃{Obj = Z → X}(x ↦ (∀{z}{y} → P(x(z))(y) → (f (x(z)) y ≡ z)) ∧ (∀{z} → (nepx : ¬ ∃(P(x(z)))) → (c (x(z)) nepx ≡ z)))) → Surjective(existence-decider-fn)
     Surjective.proof (existence-decider-fn-surjective2 unique-p property) {z} with [∃]-intro x ⦃ px ⦄ ← property with excluded-middle(∃(P(x(z))))
     ... | [∨]-introₗ ([∃]-intro y ⦃ pxy ⦄)
-      = [∃]-intro (x(z)) ⦃ symmetry(_≡_) (existence-decider-satisfaction-value(P(x(z))) (c(x(z))) (f(x(z))) ⦃ BinaryOperator.right func-f ⦄ unique-p pxy) 🝖 [∧]-elimₗ px pxy ⦄
+      = [∃]-intro (x(z)) ⦃ symmetry(_≡_) (existence-decider-satisfaction-value(P(x(z))) (c(x(z))) (f(x(z))) ⦃ BinaryOperator.unary₂ func-f ⦄ unique-p pxy) 🝖 [∧]-elimₗ px pxy ⦄
     ... | [∨]-introᵣ nepx
-      = [∃]-intro (x(z)) ⦃ symmetry(_≡_) (existence-decider-unsatisfaction-value(P(x(z))) (c(x(z))) (f(x(z))) ⦃ BinaryOperator.right func-f ⦄ nepx) 🝖 [∧]-elimᵣ px nepx ⦄
+      = [∃]-intro (x(z)) ⦃ symmetry(_≡_) (existence-decider-unsatisfaction-value(P(x(z))) (c(x(z))) (f(x(z))) ⦃ BinaryOperator.unary₂ func-f ⦄ nepx) 🝖 [∧]-elimᵣ px nepx ⦄
 
     module _
       (inj-f   : ∀{x₁ x₂}{y₁ y₂} → P(x₁)(y₁) → P(x₂)(y₂) → (f x₁ y₁ ≡ f x₂ y₂) → (x₁ ≡ x₂))
@@ -213,7 +213,7 @@ module _ ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ where
 
     instance
       func-const-invₗ-construction : BinaryOperator(const ∘ g⁻¹)
-      func-const-invₗ-construction = functions-to-binaryOperator _ ⦃ r = const-function ⦄
+      func-const-invₗ-construction = BinaryOperator-unary-intro _ infer const-function
 
     -- The to-be-proven bijection.
     -- `h` is a mapping such that:

@@ -25,7 +25,7 @@ private variable T : Type{ℓ}
 
 instance
   Some-injectivity : Injective {B = Option(T)} (Some)
-  Injective.proof Some-injectivity {x}{y} = congruence₂ₗ(_or_)(x)
+  Injective.proof Some-injectivity {x}{y} = congruence₂-₁(_or_)(x)
 
 instance
   Path-Option-extensionality : Extensionality{A = T} (Path-equiv)

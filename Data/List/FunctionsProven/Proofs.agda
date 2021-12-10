@@ -24,7 +24,7 @@ private variable f g : A → B
 
 map-preserves-id : (map constAlt l ap ≡ l)
 map-preserves-id {l = ∅}     {ap = ∅}      = [≡]-intro
-map-preserves-id {l = x ⊰ l} {ap = p ⊰ ap} = congruence₂ᵣ(_⊰_)(x) (map-preserves-id {l = l}{ap = ap})
+map-preserves-id {l = x ⊰ l} {ap = p ⊰ ap} = congruence₂-₂(_⊰_)(x) (map-preserves-id {l = l}{ap = ap})
 
 map-preserves-[∘] : let _ = A ; _ = B ; _ = C ; _ = P ; _ = Q in ∀{f : (b : B) → P(b) → C}{g : (a : A) → Q(a) → B}{aq : AllElements Q(l)}{ap : AllElements P(map g l aq)} → (qp : ∀{a} → (qa : Q(a)) → P(g a qa)) → (∀{x}{p q} → (f x p ≡ f x q)) → (map f (map g l aq) ap ≡ map (\a qa → f(g a qa) (qp qa)) l aq)
 map-preserves-[∘] {l = ∅}     {aq = ∅}      {ap = ∅}      qp fpq = [≡]-intro

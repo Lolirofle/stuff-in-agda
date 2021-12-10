@@ -114,12 +114,12 @@ module _ where
   foldᵣ-[⋅]-preserves-division {x} (•_ {y}{l} p) =
     List.foldᵣ _⋅_ 1 (without (y ⊰ l) (• p)) 🝖[ _≡_ ]-[]
     List.foldᵣ _⋅_ 1 l                       🝖[ _≡_ ]-[ [⌊/⌋][swap⋅]-inverseOperatorᵣ {x} ]-sym
-    (x ⋅ List.foldᵣ _⋅_ 1 l) ⌊/⌋ x           🝖[ _≡_ ]-[ congruence₁(_⌊/⌋ x) (congruence₂ₗ(_⋅_)(List.foldᵣ(_⋅_)(1) l) p) ]
+    (x ⋅ List.foldᵣ _⋅_ 1 l) ⌊/⌋ x           🝖[ _≡_ ]-[ congruence₁(_⌊/⌋ x) (congruence₂-₁(_⋅_)(List.foldᵣ(_⋅_)(1) l) p) ]
     (y ⋅ List.foldᵣ _⋅_ 1 l) ⌊/⌋ x           🝖[ _≡_ ]-[]
     List.foldᵣ _⋅_ 1 (y ⊰ l) ⌊/⌋ x           🝖-end
   foldᵣ-[⋅]-preserves-division {x} (⊰_ {l}{y} p) =
     List.foldᵣ(_⋅_) 1 (without (y ⊰ l) (⊰ p)) 🝖[ _≡_ ]-[]
-    y ⋅ List.foldᵣ(_⋅_) 1 (without l p)       🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(y) (foldᵣ-[⋅]-preserves-division p) ]
+    y ⋅ List.foldᵣ(_⋅_) 1 (without l p)       🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(y) (foldᵣ-[⋅]-preserves-division p) ]
     y ⋅ (List.foldᵣ(_⋅_) 1 l ⌊/⌋ x)           🝖[ _≡_ ]-[ [⌊/⌋][⋅]ᵣ-compatibility{y} (divides-[⋅]-list p) ]-sym
     (y ⋅ List.foldᵣ(_⋅_) 1 l) ⌊/⌋ x           🝖[ _≡_ ]-[]
     List.foldᵣ(_⋅_) 1 (y ⊰ l) ⌊/⌋ x           🝖-end

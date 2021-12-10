@@ -32,13 +32,13 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rg : Rg{T = T}(_+_)(_⋅_){ℓₙ�
 
   [⋅]-absorberₗ-by-cancellationᵣ : ⦃ canc : Cancellationᵣ(_+_) ⦄ → Absorberₗ(_⋅_)(𝟎)
   Absorberₗ.proof [⋅]-absorberₗ-by-cancellationᵣ {x} = One.zero-when-redundant-addition $
-    𝟎 ⋅ x             🝖-[ congruence₂ₗ(_⋅_)(x) (identityₗ(_+_)(𝟎)) ]-sym
+    𝟎 ⋅ x             🝖-[ congruence₂-₁(_⋅_)(x) (identityₗ(_+_)(𝟎)) ]-sym
     (𝟎 + 𝟎) ⋅ x       🝖-[ distributivityᵣ(_⋅_)(_+_) ]
     (𝟎 ⋅ x) + (𝟎 ⋅ x) 🝖-end
 
   [⋅]-absorberᵣ-by-cancellationᵣ : ⦃ canc : Cancellationᵣ(_+_) ⦄ → Absorberᵣ(_⋅_)(𝟎)
   Absorberᵣ.proof [⋅]-absorberᵣ-by-cancellationᵣ {x} = One.zero-when-redundant-addition $
-    x ⋅ 𝟎             🝖-[ congruence₂ᵣ(_⋅_)(x) (identityₗ(_+_)(𝟎)) ]-sym
+    x ⋅ 𝟎             🝖-[ congruence₂-₂(_⋅_)(x) (identityₗ(_+_)(𝟎)) ]-sym
     x ⋅ (𝟎 + 𝟎)       🝖-[ distributivityₗ(_⋅_)(_+_) ]
     (x ⋅ 𝟎) + (x ⋅ 𝟎) 🝖-end
 
@@ -74,22 +74,22 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rg : Rg{T = T}(_+_)(_⋅_){ℓₙ�
       [⋅]-cancellationₗ : ∀{x y z} ⦃ nonzero : NonZero(x) ⦄ → (x ⋅ y ≡ x ⋅ z) → (y ≡ z)
       [⋅]-cancellationₗ {x}{y}{z} xyxz =
         y               🝖[ _≡_ ]-[ identityₗ(_⋅_)(𝟏) ]-sym
-        𝟏 ⋅ y           🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(y) [⋅]-inverseᵣ ]-sym
+        𝟏 ⋅ y           🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(y) [⋅]-inverseᵣ ]-sym
         ((⅟ x) ⋅ x) ⋅ y 🝖[ _≡_ ]-[ associativity(_⋅_) ]
-        (⅟ x) ⋅ (x ⋅ y) 🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(⅟ x) xyxz ]
+        (⅟ x) ⋅ (x ⋅ y) 🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(⅟ x) xyxz ]
         (⅟ x) ⋅ (x ⋅ z) 🝖[ _≡_ ]-[ associativity(_⋅_) ]-sym
-        ((⅟ x) ⋅ x) ⋅ z 🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(z) [⋅]-inverseᵣ ]
+        ((⅟ x) ⋅ x) ⋅ z 🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(z) [⋅]-inverseᵣ ]
         𝟏 ⋅ z           🝖[ _≡_ ]-[ identityₗ(_⋅_)(𝟏) ]
         z               🝖-end
 
       [⋅]-cancellationᵣ : ∀{x y z} ⦃ nonzero : NonZero(z) ⦄ → (x ⋅ z ≡ y ⋅ z) → (x ≡ y)
       [⋅]-cancellationᵣ {x}{y}{z} xzyz =
         x               🝖[ _≡_ ]-[ identityᵣ(_⋅_)(𝟏) ]-sym
-        x ⋅ 𝟏           🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(x) [⋅]-inverseₗ ]-sym
+        x ⋅ 𝟏           🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(x) [⋅]-inverseₗ ]-sym
         x ⋅ (z ⋅ (⅟ z)) 🝖[ _≡_ ]-[ associativity(_⋅_) ]-sym
-        (x ⋅ z) ⋅ (⅟ z) 🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(⅟ z) xzyz ]
+        (x ⋅ z) ⋅ (⅟ z) 🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(⅟ z) xzyz ]
         (y ⋅ z) ⋅ (⅟ z) 🝖[ _≡_ ]-[ associativity(_⋅_) ]
-        y ⋅ (z ⋅ (⅟ z)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(y) [⋅]-inverseₗ ]
+        y ⋅ (z ⋅ (⅟ z)) 🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(y) [⋅]-inverseₗ ]
         y ⋅ 𝟏           🝖[ _≡_ ]-[ identityᵣ(_⋅_)(𝟏) ]
         y               🝖-end
 
@@ -97,13 +97,13 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rg : Rg{T = T}(_+_)(_⋅_){ℓₙ�
       [⋅][/]-inverseOperᵣ {x}{y} =
         ((x ⋅ y) / y)     🝖[ _≡_ ]-[]
         ((x ⋅ y) ⋅ (⅟ y)) 🝖[ _≡_ ]-[ associativity(_⋅_) ]
-        x ⋅ (y ⋅ (⅟ y))   🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(x) [⋅]-inverseₗ ]
+        x ⋅ (y ⋅ (⅟ y))   🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(x) [⋅]-inverseₗ ]
         x ⋅ 𝟏             🝖[ _≡_ ]-[ identityᵣ(_⋅_)(𝟏) ]
         x                 🝖-end
 
       [swap⋅][/]-inverseOperᵣ : ⦃ comm : Commutativity(_⋅_) ⦄ → ∀{x y} ⦃ nonzero : NonZero(x) ⦄ → ((x ⋅ y) / x ≡ y)
       [swap⋅][/]-inverseOperᵣ {x}{y} =
-        ((x ⋅ y) / x)     🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(⅟ x) (commutativity(_⋅_)) ]
+        ((x ⋅ y) / x)     🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(⅟ x) (commutativity(_⋅_)) ]
         ((y ⋅ x) / x)     🝖[ _≡_ ]-[ [⋅][/]-inverseOperᵣ ]
         y                 🝖-end
 
@@ -140,7 +140,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_){ℓ�
   [+]-negation-distribution = [+]-negation-distribution-commuted 🝖 commutativity(_+_)
 
   [−]-negation-distribution : ∀{x y} → (−(x − y) ≡ y − x)
-  [−]-negation-distribution = One.inverse-distribution 🝖 congruence₂ₗ(_−_) ⦃ [−]-binaryOperator ⦄ (_) (involution(−_))
+  [−]-negation-distribution = One.inverse-distribution 🝖 congruence₂-₁(_−_) ⦃ [−]-binaryOperator ⦄ (_) (involution(−_))
 
   -- TODO: Use abs-of-negation when ordered. Otherwise, assume multiplicative cancellation first. −x=x is x+x=0 which means x is its own inverse
   -- zero-when-equal-negation : ∀{x} → (− x ≡ x) → (x ≡ 𝟎)
@@ -163,7 +163,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_){ℓ�
   [−][swap+]-inverseOperᵣ = intro (commutativity(_+_) 🝖 inverseOperᵣ(_−_)(_+_) ⦃ [−][+]-inverseOperᵣ ⦄)
 
   [swap+][−]-inverseOperᵣ : ⦃ comm : Commutativity(_+_) ⦄ → InverseOperatorᵣ(swap(_+_))(_−_)
-  [swap+][−]-inverseOperᵣ = intro (congruence₂ₗ(_+_)(− _) (commutativity(_+_)) 🝖 inverseOperᵣ(_+_)(_−_) ⦃ [+][−]-inverseOperᵣ ⦄)
+  [swap+][−]-inverseOperᵣ = intro (congruence₂-₁(_+_)(− _) (commutativity(_+_)) 🝖 inverseOperᵣ(_+_)(_−_) ⦃ [+][−]-inverseOperᵣ ⦄)
 
   [−]-of-𝟎 : ((− 𝟎) ≡ 𝟎)
   [−]-of-𝟎 = One.inv-of-id
@@ -176,7 +176,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_){ℓ�
 
   -- Alternative proof using (− 𝟏):
   --   [⋅]ₗ-of-[−] {x}{y} =
-  --     ((− x) ⋅ y)       🝖-[ congruence₂ₗ(_⋅_)(y) [⋅]ₗ-of-[−1] ]-sym
+  --     ((− x) ⋅ y)       🝖-[ congruence₂-₁(_⋅_)(y) [⋅]ₗ-of-[−1] ]-sym
   --     (((− 𝟏) ⋅ x) ⋅ y) 🝖-[ associativity(_⋅_) ]
   --     ((− 𝟏) ⋅ (x ⋅ y)) 🝖-[ [⋅]ₗ-of-[−1] ]
   --     (−(x ⋅ y))        🝖-end
@@ -185,7 +185,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_){ℓ�
 
   -- Alternative proof using (− 𝟏):
   --   [⋅]ᵣ-of-[−] {x}{y} =
-  --     (x ⋅ (− y))       🝖-[ congruence₂ᵣ(_⋅_)(x) [⋅]ᵣ-of-[−1] ]-sym
+  --     (x ⋅ (− y))       🝖-[ congruence₂-₂(_⋅_)(x) [⋅]ᵣ-of-[−1] ]-sym
   --     (x ⋅ (y ⋅ (− 𝟏))) 🝖-[ associativity(_⋅_) ]-sym
   --     ((x ⋅ y) ⋅ (− 𝟏)) 🝖-[ [⋅]ᵣ-of-[−1] ]
   --     (−(x ⋅ y))        🝖-end
@@ -221,23 +221,23 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_){ℓ�
       IsUnit.unit       (r oi)     = 𝟎
       IsUnit.uniqueness (r oi) {x} =
         x     🝖[ _≡_ ]-[ identityᵣ(_⋅_)(𝟏) ]-sym
-        x ⋅ 𝟏 🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(x) oi ]-sym
+        x ⋅ 𝟏 🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(x) oi ]-sym
         x ⋅ 𝟎 🝖[ _≡_ ]-[ absorberᵣ(_⋅_)(𝟎) ]
         𝟎     🝖-end
 
     [⋅]ₗ-of-[−1] : ∀{x} → ((− 𝟏) ⋅ x ≡ − x)
     [⋅]ₗ-of-[−1] {x} = One.unique-inverseᵣ-by-id $
-      x + ((− 𝟏) ⋅ x)       🝖-[ congruence₂ₗ(_+_)(_) (identityₗ(_⋅_)(𝟏)) ]-sym
+      x + ((− 𝟏) ⋅ x)       🝖-[ congruence₂-₁(_+_)(_) (identityₗ(_⋅_)(𝟏)) ]-sym
       (𝟏 ⋅ x) + ((− 𝟏) ⋅ x) 🝖-[ distributivityᵣ(_⋅_)(_+_) ]-sym
-      (𝟏 + (− 𝟏)) ⋅ x       🝖-[ congruence₂ₗ(_⋅_)(x) (inverseFunctionᵣ(_+_)(−_)) ]
+      (𝟏 + (− 𝟏)) ⋅ x       🝖-[ congruence₂-₁(_⋅_)(x) (inverseFunctionᵣ(_+_)(−_)) ]
       𝟎 ⋅ x                 🝖-[ absorberₗ(_⋅_)(𝟎) ]
       𝟎                     🝖-end
 
     [⋅]ᵣ-of-[−1] : ∀{x} → (x ⋅ (− 𝟏) ≡ − x)
     [⋅]ᵣ-of-[−1] {x} = One.unique-inverseₗ-by-id $
-      (x ⋅ (− 𝟏)) + x       🝖-[ congruence₂ᵣ(_+_)(_) (identityᵣ(_⋅_)(𝟏)) ]-sym
+      (x ⋅ (− 𝟏)) + x       🝖-[ congruence₂-₂(_+_)(_) (identityᵣ(_⋅_)(𝟏)) ]-sym
       (x ⋅ (− 𝟏)) + (x ⋅ 𝟏) 🝖-[ distributivityₗ(_⋅_)(_+_) ]-sym
-      x ⋅ ((− 𝟏) + 𝟏)       🝖-[ congruence₂ᵣ(_⋅_)(x) (inverseFunctionₗ(_+_)(−_)) ]
+      x ⋅ ((− 𝟏) + 𝟏)       🝖-[ congruence₂-₂(_⋅_)(x) (inverseFunctionₗ(_+_)(−_)) ]
       x ⋅ 𝟎                 🝖-[ absorberᵣ(_⋅_)(𝟎) ]
       𝟎                     🝖-end
 
@@ -265,7 +265,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_){ℓ�
 
     module _ ⦃ ident : DistinctIdentities ⦄ where
       regular-divisorₗ-non-zero-sub : ∀{x} → RegularDivisorₗ(x) → NonZero(x)
-      regular-divisorₗ-non-zero-sub (intro div) = [↔]-to-[←] nonZero \x0 → [↔]-to-[→] nonZero ident(div(congruence₂ₗ(_⋅_)(𝟏) x0 🝖 absorberₗ(_⋅_)(𝟎)))
+      regular-divisorₗ-non-zero-sub (intro div) = [↔]-to-[←] nonZero \x0 → [↔]-to-[→] nonZero ident(div(congruence₂-₁(_⋅_)(𝟏) x0 🝖 absorberₗ(_⋅_)(𝟎)))
 
       regular-divisorᵣ-non-zero-sub : ∀{x} → RegularDivisorᵣ(x) → NonZero(x)
-      regular-divisorᵣ-non-zero-sub (intro div) = [↔]-to-[←] nonZero \x0 → [↔]-to-[→] nonZero ident(div(congruence₂ᵣ(_⋅_)(𝟏) x0 🝖 absorberᵣ(_⋅_)(𝟎)))
+      regular-divisorᵣ-non-zero-sub (intro div) = [↔]-to-[←] nonZero \x0 → [↔]-to-[→] nonZero ident(div(congruence₂-₂(_⋅_)(𝟏) x0 🝖 absorberᵣ(_⋅_)(𝟎)))

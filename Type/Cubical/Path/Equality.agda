@@ -72,7 +72,7 @@ instance
   Path-coercion = intro(Path.spaceMap)
 
 Path-sub-of-reflexive : ⦃ refl : Reflexivity(_▫_) ⦄ → (Path ⊆₂ (_▫_))
-Path-sub-of-reflexive {_▫_ = _▫_} = intro(\{a b} → ab ↦ sub₂(Path)(_→ᶠ_) ⦃ Path-coercion ⦄ (congruence₂ᵣ(_▫_)(a) ab) (reflexivity(_▫_) {a}))
+Path-sub-of-reflexive {_▫_ = _▫_} = intro(\{a b} → ab ↦ sub₂(Path)(_→ᶠ_) ⦃ Path-coercion ⦄ (congruence₂-₂(_▫_)(a) ab) (reflexivity(_▫_) {a}))
 
 instance
   Path-function-extensionality : FunctionExtensionality A B

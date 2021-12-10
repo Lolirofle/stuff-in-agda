@@ -147,15 +147,15 @@ open import Numeral.Natural.Relation.Order
 open import Structure.Operator
 test : ∀{n₁ n₂} → (n₁ ≤ n₂) → (n₁ ≤ length(l)) → (n₂ ≤ length(l)) → (insert n₁ x (insert n₂ y l) ≡ insert (𝐒(n₂)) y (insert n₁ x l))
 test {l = _}     min      min       _         = [≡]-intro
-test {l = x ⊰ l} (succ p) (succ l1) (succ l2) = congruence₂ᵣ(_⊰_)(x) (test p l1 l2)
+test {l = x ⊰ l} (succ p) (succ l1) (succ l2) = congruence₂-₂(_⊰_)(x) (test p l1 l2)
 
 test2 : ∀{n₁ n₂} → (n₁ > n₂) → (n₁ ≤ length(l)) → (n₂ ≤ length(l)) → (insert (𝐒(n₁)) x (insert n₂ y l) ≡ insert n₂ y (insert n₁ x l))
 test2 {l = x ⊰ l} (succ p) (succ l1) min = [≡]-intro
-test2 {l = x ⊰ l} (succ p) (succ l1) (succ l2) = congruence₂ᵣ(_⊰_)(x) (test2 p l1 l2)
+test2 {l = x ⊰ l} (succ p) (succ l1) (succ l2) = congruence₂-₂(_⊰_)(x) (test2 p l1 l2)
 
 insertIn-insert-eq : ∀{n} → (insertIn x l n ≡ insert (𝕟-to-ℕ n) x l)
 insertIn-insert-eq {l = _}     {n = 𝟎}   = [≡]-intro
-insertIn-insert-eq {l = x ⊰ l} {n = 𝐒 n} = congruence₂ᵣ(_⊰_)(x) (insertIn-insert-eq {l = l} {n = n})
+insertIn-insert-eq {l = x ⊰ l} {n = 𝐒 n} = congruence₂-₂(_⊰_)(x) (insertIn-insert-eq {l = l} {n = n})
 
 ins1 : ∀{n₁ n₂} → ((insertIn x l₁ n₁) insertion-permutes (insertIn x l₂ n₂)) → ((insertIn x l₁ n₁) insertion-permutes (insertIn x l₂ (𝐒(n₂))))
 ins1 = ?

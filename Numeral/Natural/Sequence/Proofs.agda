@@ -148,7 +148,7 @@ tupleIndexing-inverseₗ{n} = intro(proof{n}) where
   proof {𝐒(n)}{x , xs} =
     Tuple.mapRight spaceFilling (diagonalFilling (pairIndexing x (tupleIndexing xs))) 🝖[ _≡_ ]-[ congruence₁(Tuple.mapRight spaceFilling) (inverseₗ(Tuple.uncurry pairIndexing)(diagonalFilling)) ]
     Tuple.mapRight spaceFilling (x , tupleIndexing xs)                                🝖[ _≡_ ]-[]
-    (x , spaceFilling(tupleIndexing xs))                                              🝖[ _≡_ ]-[ congruence₂ᵣ(_,_)(x) (proof{n}{xs}) ]
+    (x , spaceFilling(tupleIndexing xs))                                              🝖[ _≡_ ]-[ congruence₂-₂(_,_)(x) (proof{n}{xs}) ]
     (x , xs)                                                                          🝖-end
 
 instance

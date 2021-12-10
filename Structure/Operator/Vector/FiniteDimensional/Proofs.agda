@@ -60,7 +60,7 @@ linearIndependence-equivalence : LinearlyIndependent(vf) ↔ (∀{sf} → (linea
 linearIndependence-equivalence =
   Two.injective-kernel
     {_▫₁_ = Vec.map₂(_+ₛ_)}
-    ⦃ func = BinaryOperator.right linearCombination-binaryOperator ⦄
+    ⦃ func = BinaryOperator.unary₂ linearCombination-binaryOperator ⦄
     ⦃ cancₗ₂ = One.cancellationₗ-by-associativity-inverse ⦄
     {inv₁ = Vec.map(−ₛ_)}
 

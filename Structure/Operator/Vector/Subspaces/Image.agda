@@ -55,7 +55,7 @@ SetLike.FunctionProperties._closed-under₂_.proof (Subspace.add-closure (image-
 SetLike.FunctionProperties._closed-under₁_.proof (Subspace.mul-closure (image-subspace {_} {_} {V} {_} {_} {W} {F = F@([∃]-intro f)}) {s}) {v} vim =
   vim ⇒
   v ∈ image(F)                ⇒-[]
-  ∃(x ↦ f(x) ≡ v)             ⇒-[ [∃]-map-proof (congruence₂ᵣ(_⋅ₛᵥ_)(s)) ]
+  ∃(x ↦ f(x) ≡ v)             ⇒-[ [∃]-map-proof (congruence₂-₂(_⋅ₛᵥ_)(s)) ]
   ∃(x ↦ s ⋅ₛᵥ f(x) ≡ s ⋅ₛᵥ v) ⇒-[ [∃]-map (s ⋅ₛᵥ_) (preserving₁(f)(s ⋅ₛᵥ_)(s ⋅ₛᵥ_) 🝖_) ]
   ∃(x ↦ f(x) ≡ s ⋅ₛᵥ v)       ⇒-[]
   (s ⋅ₛᵥ v) ∈ image(F)        ⇒-end

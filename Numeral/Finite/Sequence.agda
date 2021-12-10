@@ -349,8 +349,8 @@ interleave-join-equality {a = a}{b = b} = intro(p{a = a}{b = b}) where
 interleave-split-equality : ∀{af : 𝕟(a) → A}{bf : 𝕟(b) → B} → (interleave af bf ⊜ Either.map af bf ∘ Interleaving.split)
 interleave-split-equality {a = a}{b = b}{af = af}{bf = bf} =
   interleave af bf                                                🝖[ _⊜_ ]-[]
-  interleave af bf ∘ id                                           🝖[ _⊜_ ]-[ congruence₂ᵣ(_∘_)(interleave af bf) (intro(inverseᵣ(Interleaving.join{a}{b})(Interleaving.split{a}{b}))) ]-sym
-  interleave af bf ∘ Interleaving.join{a}{b} ∘ Interleaving.split 🝖[ _⊜_ ]-[ congruence₂ₗ(_∘_)(Interleaving.split) (interleave-join-equality{a = a}{b = b}{af = af}{bf = bf}) ]
+  interleave af bf ∘ id                                           🝖[ _⊜_ ]-[ congruence₂-₂(_∘_)(interleave af bf) (intro(inverseᵣ(Interleaving.join{a}{b})(Interleaving.split{a}{b}))) ]-sym
+  interleave af bf ∘ Interleaving.join{a}{b} ∘ Interleaving.split 🝖[ _⊜_ ]-[ congruence₂-₁(_∘_)(Interleaving.split) (interleave-join-equality{a = a}{b = b}{af = af}{bf = bf}) ]
   Either.map af bf ∘ Interleaving.split                          🝖-end
 
 instance

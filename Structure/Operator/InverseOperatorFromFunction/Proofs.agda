@@ -40,7 +40,7 @@ module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : 
 
   inverse-operatorₗ-by-involuting-inverse-propₗ : let _ = op , select-invol ⦃ equiv ⦄(inv)(invol) , select-invPropₗ(inv)(inverPropₗ) in InverseOperatorₗ(_▫⁻¹ₗ_)(_▫_)
   InverseOperatorₗ.proof (inverse-operatorₗ-by-involuting-inverse-propₗ) {x} {y} =
-    x ▫ (inv x ▫ y)            🝖-[ congruence₂ₗ(_▫_)((inv x ▫ y)) (involution(inv)) ]-sym
+    x ▫ (inv x ▫ y)            🝖-[ congruence₂-₁(_▫_)((inv x ▫ y)) (involution(inv)) ]-sym
     inv(inv(x)) ▫ (inv x ▫ y)  🝖-[ inversePropₗ(_▫_)(inv) ]
     y                          🝖-end
 
@@ -49,7 +49,7 @@ module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : 
 
   inverse-operatorᵣ-by-involuting-inverse-propᵣ : let _ = op , select-invol ⦃ equiv ⦄(inv)(invol) , select-invPropᵣ(inv)(inverPropᵣ) in InverseOperatorᵣ(invOpᵣ(_▫_)(inv))(_▫_)
   InverseOperatorᵣ.proof (inverse-operatorᵣ-by-involuting-inverse-propᵣ) {x} {y} =
-    (x ▫ inv y) ▫ y           🝖-[ congruence₂ᵣ(_▫_)((x ▫ inv y)) (involution(inv)) ]-sym
+    (x ▫ inv y) ▫ y           🝖-[ congruence₂-₂(_▫_)((x ▫ inv y)) (involution(inv)) ]-sym
     (x ▫ inv y) ▫ inv(inv(y)) 🝖-[ inversePropᵣ(_▫_)(inv) ]
     x                         🝖-end
 
@@ -62,14 +62,14 @@ module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : 
   inverse-operatorₗ-identityₗ-by-identity-inverseFunc : let _ = op , select-id(id)(ident) , select-inv(id)(ident)(inv)(inver) in Identityₗ(_▫⁻¹ₗ_)(id)
   Identityₗ.proof (inverse-operatorₗ-identityₗ-by-identity-inverseFunc {id = id}) {x} =
     id ▫⁻¹ₗ x   🝖[ _≡_ ]-[]
-    inv(id) ▫ x 🝖[ _≡_ ]-[ congruence₂ₗ(_▫_)(x) One.inv-of-id ]
+    inv(id) ▫ x 🝖[ _≡_ ]-[ congruence₂-₁(_▫_)(x) One.inv-of-id ]
     id ▫ x      🝖[ _≡_ ]-[ identityₗ(_▫_)(id) ]
     x           🝖-end
 
   inverse-operatorᵣ-identityᵣ-by-identity-inverseFunc : let _ = op , select-id(id)(ident) , select-inv(id)(ident)(inv)(inver) in Identityᵣ(_▫⁻¹ᵣ_)(id)
   Identityᵣ.proof (inverse-operatorᵣ-identityᵣ-by-identity-inverseFunc {id = id}) {x} =
     x ▫⁻¹ᵣ id   🝖[ _≡_ ]-[]
-    x ▫ inv(id) 🝖[ _≡_ ]-[ congruence₂ᵣ(_▫_)(x) One.inv-of-id ]
+    x ▫ inv(id) 🝖[ _≡_ ]-[ congruence₂-₂(_▫_)(x) One.inv-of-id ]
     x ▫ id      🝖[ _≡_ ]-[ identityᵣ(_▫_)(id) ]
     x           🝖-end
 
@@ -80,7 +80,7 @@ module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : 
     Distributivityₗ.proof invᵣ-distributivityₗ {x}{y}{z} =
       (x △ (y ▫⁻¹ᵣ z))         🝖[ _≡_ ]-[]
       (x △ (y ▫ inv(z)))       🝖[ _≡_ ]-[ distributivityₗ(_△_)(_▫_) ]
-      ((x △ y) ▫ (x △ inv(z))) 🝖[ _≡_ ]-[ congruence₂ᵣ(_▫_)(x △ y) OneTypeTwoOp.distributeᵣ-inv ]
+      ((x △ y) ▫ (x △ inv(z))) 🝖[ _≡_ ]-[ congruence₂-₂(_▫_)(x △ y) OneTypeTwoOp.distributeᵣ-inv ]
       ((x △ y) ▫ inv(x △ z))   🝖[ _≡_ ]-[]
       ((x △ y) ▫⁻¹ᵣ (x △ z))   🝖-end
 
@@ -88,6 +88,6 @@ module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ : 
     Distributivityᵣ.proof invᵣ-distributivityᵣ {x}{y}{z} =
       ((x ▫⁻¹ᵣ y) △ z)         🝖[ _≡_ ]-[]
       ((x ▫ inv(y)) △ z)       🝖[ _≡_ ]-[ distributivityᵣ(_△_)(_▫_) ]
-      ((x △ z) ▫ (inv(y) △ z)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_▫_)(x △ z) OneTypeTwoOp.distributeₗ-inv ]
+      ((x △ z) ▫ (inv(y) △ z)) 🝖[ _≡_ ]-[ congruence₂-₂(_▫_)(x △ z) OneTypeTwoOp.distributeₗ-inv ]
       ((x △ z) ▫ inv(y △ z))   🝖[ _≡_ ]-[]
       ((x △ z) ▫⁻¹ᵣ (y △ z))   🝖-end

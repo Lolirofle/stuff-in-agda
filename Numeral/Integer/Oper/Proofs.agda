@@ -339,7 +339,7 @@ instance
 [+][𝐏]-stepₗ : ∀{x y} → (𝐏(x) + y ≡ 𝐏(x + y))
 [+][𝐏]-stepₗ {x}{y} =
   𝐏(x) + y                 🝖[ _≡_ ]-[ congruence₂(_+_) (congruence₁(𝐏) (involution(−_) {x})) (involution(−_) {y}) ]-sym
-  𝐏(−(− x)) + (−(− y))     🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(−(− y)) (preserving₁(−_)(𝐒)(𝐏) {− x}) ]-sym
+  𝐏(−(− x)) + (−(− y))     🝖[ _≡_ ]-[ congruence₂-₁(_+_)(−(− y)) (preserving₁(−_)(𝐒)(𝐏) {− x}) ]-sym
   (− 𝐒(− x)) + (−(− y))    🝖[ _≡_ ]-[ preserving₂(−_)(_+_)(_+_) {𝐒(− x)}{− y} ]-sym
   −(𝐒(− x) + (− y))        🝖[ _≡_ ]-[ congruence₁(−_) ([+][𝐒]-stepₗ {− x}{− y}) ]
   −(𝐒((− x) + (− y)))      🝖[ _≡_ ]-[ preserving₁(−_)(𝐒)(𝐏) ]
@@ -354,7 +354,7 @@ instance
 [+][𝐏]-stepᵣ : ∀{x y} → (x + 𝐏(y) ≡ 𝐏(x + y))
 [+][𝐏]-stepᵣ {x}{y} =
   x + 𝐏(y)                 🝖[ _≡_ ]-[ congruence₂(_+_) (involution(−_) {x}) (congruence₁(𝐏) (involution(−_) {y})) ]-sym
-  (−(− x)) + 𝐏(−(− y))     🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(−(− x)) (preserving₁(−_)(𝐒)(𝐏) {− y}) ]-sym
+  (−(− x)) + 𝐏(−(− y))     🝖[ _≡_ ]-[ congruence₂-₂(_+_)(−(− x)) (preserving₁(−_)(𝐒)(𝐏) {− y}) ]-sym
   (−(− x)) + (− 𝐒(− y))    🝖[ _≡_ ]-[ preserving₂(−_)(_+_)(_+_) {− x}{𝐒(− y)} ]-sym
   −((− x) + 𝐒(− y))        🝖[ _≡_ ]-[ congruence₁(−_) ([+][𝐒]-stepᵣ {− x}{− y}) ]
   −(𝐒((− x) + (− y)))      🝖[ _≡_ ]-[ preserving₁(−_)(𝐒)(𝐏) ]
@@ -470,23 +470,23 @@ instance
   Associativity.proof [+]-associativity {x}{y}{z} = ℤ-sign-recursion(Names.AssociativeOn(_+_) x y) neg zero pos z where
     zero =
       (x + y) + 𝟎 🝖[ _≡_ ]-[ identityᵣ(_+_)(𝟎) ]
-      x + y       🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x) (identityᵣ(_+_)(𝟎)) ]-sym
+      x + y       🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x) (identityᵣ(_+_)(𝟎)) ]-sym
       x + (y + 𝟎) 🝖-end
     pos = \z prev →
       (x + y) + (+𝐒ₙ(z))   🝖[ _≡_ ]-[]
       (x + y) + 𝐒(+ₙ(z))   🝖[ _≡_ ]-[ [+][𝐒]-stepᵣ {x + y}{+ₙ(z)} ]
       𝐒((x + y) + (+ₙ(z))) 🝖[ _≡_ ]-[ congruence₁(𝐒) prev ]
       𝐒(x + (y + (+ₙ(z)))) 🝖[ _≡_ ]-[ [+][𝐒]-stepᵣ {x}{y + (+ₙ z)} ]-sym
-      x + 𝐒(y + (+ₙ(z)))   🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x) ([+][𝐒]-stepᵣ {y}{+ₙ z}) ]-sym
+      x + 𝐒(y + (+ₙ(z)))   🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x) ([+][𝐒]-stepᵣ {y}{+ₙ z}) ]-sym
       x + (y + 𝐒(+ₙ(z)))   🝖[ _≡_ ]-[]
       x + (y + (+𝐒ₙ(z)))   🝖-end
     neg = \z prev →
-      (x + y) + (−𝐒ₙ(z))   🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x + y) [𝐏]-negative ]-sym
+      (x + y) + (−𝐒ₙ(z))   🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x + y) [𝐏]-negative ]-sym
       (x + y) + 𝐏(−ₙ(z))   🝖[ _≡_ ]-[ [+][𝐏]-stepᵣ {x + y}{−ₙ(z)} ]
       𝐏((x + y) + (−ₙ(z))) 🝖[ _≡_ ]-[ congruence₁(𝐏) prev ]
       𝐏(x + (y + (−ₙ(z)))) 🝖[ _≡_ ]-[ [+][𝐏]-stepᵣ {x}{y + (−ₙ z)} ]-sym
-      x + 𝐏(y + (−ₙ(z)))   🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x) ([+][𝐏]-stepᵣ {y}{−ₙ z}) ]-sym
-      x + (y + 𝐏(−ₙ(z)))   🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x) (congruence₂ᵣ(_+_)(y) [𝐏]-negative) ]
+      x + 𝐏(y + (−ₙ(z)))   🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x) ([+][𝐏]-stepᵣ {y}{−ₙ z}) ]-sym
+      x + (y + 𝐏(−ₙ(z)))   🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x) (congruence₂-₂(_+_)(y) [𝐏]-negative) ]
       x + (y + (−𝐒ₙ(z)))   🝖-end
 
 instance
@@ -637,19 +637,19 @@ instance
 [⋅][𝐏]-stepᵣ {x} {+ₙ ℕ.𝟎} =
   x ⋅ −𝟏          🝖[ _≡_ ]-[ [⋅]-negative-identityᵣ ]
   − x             🝖[ _≡_ ]-[ identityᵣ(_+_)(𝟎) ]-sym
-  (− x) + 𝟎       🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(− x) (absorberᵣ(_⋅_)(𝟎)) ]-sym
+  (− x) + 𝟎       🝖[ _≡_ ]-[ congruence₂-₂(_+_)(− x) (absorberᵣ(_⋅_)(𝟎)) ]-sym
   (− x) + (x ⋅ 𝟎) 🝖-end
 [⋅][𝐏]-stepᵣ {x} {+ₙ ℕ.𝐒 y} =
   x ⋅ (+ₙ y)                 🝖[ _≡_ ]-[ identityₗ(_+_)(𝟎) ]-sym
-  𝟎 + (x ⋅ (+ₙ y))           🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(x ⋅ (+ₙ y)) (inverseFunctionₗ(_+_)(−_) {x}) ]-sym
+  𝟎 + (x ⋅ (+ₙ y))           🝖[ _≡_ ]-[ congruence₂-₁(_+_)(x ⋅ (+ₙ y)) (inverseFunctionₗ(_+_)(−_) {x}) ]-sym
   ((− x) + x) + (x ⋅ (+ₙ y)) 🝖[ _≡_ ]-[ associativity(_+_) {− x}{x}{x ⋅ (+ₙ y)} ]
-  (− x) + (x + (x ⋅ (+ₙ y))) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(− x) ([⋅][𝐒]-stepᵣ {x}{+ₙ y}) ]-sym
+  (− x) + (x + (x ⋅ (+ₙ y))) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(− x) ([⋅][𝐒]-stepᵣ {x}{+ₙ y}) ]-sym
   (− x) + (x ⋅ (+𝐒ₙ y))      🝖-end
 [⋅][𝐏]-stepᵣ {+ₙ x} {−𝐒ₙ y} =
   (+ₙ x) ⋅ (−𝐒ₙ ℕ.𝐒 y)              🝖[ _≡_ ]-[ [−]-preserves-[⋅]ᵣ {+ₙ x}{+𝐒ₙ ℕ.𝐒 y} ]
   −((+ₙ x) ⋅ (+𝐒ₙ ℕ.𝐒 y))           🝖[ _≡_ ]-[ congruence₁(−_) ([⋅][𝐒]-stepᵣ {+ₙ x} {+𝐒ₙ y}) ]
   −((+ₙ x) + ((+ₙ x) ⋅ (+𝐒ₙ y)))    🝖[ _≡_ ]-[ preserving₂(−_) (_+_)(_+_) {+ₙ x}{(+ₙ x) ⋅ (+𝐒ₙ y)} ]
-  (−(+ₙ x)) + (−((+ₙ x) ⋅ (+𝐒ₙ y))) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(−(+ₙ x)) ([−]-preserves-[⋅]ᵣ {+ₙ x}{+𝐒ₙ y}) ]-sym
+  (−(+ₙ x)) + (−((+ₙ x) ⋅ (+𝐒ₙ y))) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(−(+ₙ x)) ([−]-preserves-[⋅]ᵣ {+ₙ x}{+𝐒ₙ y}) ]-sym
   (−(+ₙ x)) + ((+ₙ x) ⋅ (−𝐒ₙ y))    🝖-end
 [⋅][𝐏]-stepᵣ {−𝐒ₙ x} {−𝐒ₙ y} =
   (−𝐒ₙ x) ⋅ 𝐏 (−𝐒ₙ y)               🝖[ _≡_ ]-[]
@@ -661,13 +661,13 @@ instance
 [⋅][𝐒]-stepᵣ {x} {−𝐒ₙ ℕ.𝟎} =
   x ⋅ 𝟎        🝖[ _≡_ ]-[ absorberᵣ(_⋅_)(𝟎) ]
   𝟎            🝖[ _≡_ ]-[ inverseFunctionᵣ(_+_)(−_) {x} ]-sym
-  x + (− x)    🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x) [⋅]-negative-identityᵣ ]-sym
+  x + (− x)    🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x) [⋅]-negative-identityᵣ ]-sym
   x + (x ⋅ −𝟏) 🝖-end
 [⋅][𝐒]-stepᵣ {x} {−𝐒ₙ(ℕ.𝐒 y)} =
   x ⋅ (−𝐒ₙ y)                 🝖[ _≡_ ]-[ identityₗ(_+_)(𝟎) ]-sym
-  𝟎 + (x ⋅ (−𝐒ₙ y))           🝖[ _≡_ ]-[ congruence₂ₗ(_+_)((x) ⋅ (−𝐒ₙ y)) (inverseFunctionᵣ(_+_)(−_) {x}) ]-sym
+  𝟎 + (x ⋅ (−𝐒ₙ y))           🝖[ _≡_ ]-[ congruence₂-₁(_+_)((x) ⋅ (−𝐒ₙ y)) (inverseFunctionᵣ(_+_)(−_) {x}) ]-sym
   (x + (− x)) + (x ⋅ (−𝐒ₙ y)) 🝖[ _≡_ ]-[ associativity(_+_) {x}{−(x)}{(x) ⋅ (−𝐒ₙ y)} ]
-  x + ((− x) + (x ⋅ (−𝐒ₙ y))) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x) ([⋅][𝐏]-stepᵣ {x}{−𝐒ₙ y}) ]-sym
+  x + ((− x) + (x ⋅ (−𝐒ₙ y))) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x) ([⋅][𝐏]-stepᵣ {x}{−𝐒ₙ y}) ]-sym
   x + (x ⋅ 𝐏(−𝐒ₙ y))          🝖[ _≡_ ]-[]
   x + (x ⋅ (−𝐒ₙ ℕ.𝐒 y))       🝖-end
 [⋅][𝐒]-stepᵣ {+ₙ x} {+ₙ y} =
@@ -675,14 +675,14 @@ instance
   (+ₙ x) ⋅ (+ₙ(ℕ.𝐒(y)))      🝖[ _≡_ ]-[ preserving₂(+ₙ_) (ℕ._⋅_)(_⋅_) {x}{ℕ.𝐒(y)} ]-sym
   (+ₙ (x ℕ.⋅ ℕ.𝐒(y)))        🝖[ _≡_ ]-[]
   (+ₙ (x ℕ.+ (x ℕ.⋅ y)))     🝖[ _≡_ ]-[]
-  (+ₙ x) + (+ₙ(x ℕ.⋅ y))     🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(+ₙ x) (preserving₂(+ₙ_) (ℕ._⋅_) (_⋅_) {x}{y}) ]
+  (+ₙ x) + (+ₙ(x ℕ.⋅ y))     🝖[ _≡_ ]-[ congruence₂-₂(_+_)(+ₙ x) (preserving₂(+ₙ_) (ℕ._⋅_) (_⋅_) {x}{y}) ]
   (+ₙ x) + ((+ₙ x) ⋅ (+ₙ y)) 🝖-end
 [⋅][𝐒]-stepᵣ {−𝐒ₙ x} {+ₙ y} =
   (−𝐒ₙ x) ⋅ (+𝐒ₙ y)               🝖[ _≡_ ]-[]
   (−(+𝐒ₙ x)) ⋅ (+𝐒ₙ y)            🝖[ _≡_ ]-[ [−]-preserves-[⋅]ₗ {+𝐒ₙ x}{+𝐒ₙ y} ]
   −((+𝐒ₙ x) ⋅ (+𝐒ₙ y))            🝖[ _≡_ ]-[ congruence₁(−_) ([⋅][𝐒]-stepᵣ {+𝐒ₙ x} {+ₙ y}) ]
   −((+𝐒ₙ x) + ((+𝐒ₙ x) ⋅ (+ₙ y))) 🝖[ _≡_ ]-[ preserving₂(−_) (_+_)(_+_) {+𝐒ₙ x}{(+𝐒ₙ x) ⋅ (+ₙ y)} ]
-  (−𝐒ₙ x) − ((+𝐒ₙ x) ⋅ (+ₙ y))    🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(−𝐒ₙ x) ([−]-preserves-[⋅]ₗ {+𝐒ₙ x}{+ₙ y}) ]-sym
+  (−𝐒ₙ x) − ((+𝐒ₙ x) ⋅ (+ₙ y))    🝖[ _≡_ ]-[ congruence₂-₂(_+_)(−𝐒ₙ x) ([−]-preserves-[⋅]ₗ {+𝐒ₙ x}{+ₙ y}) ]-sym
   (−𝐒ₙ x) + ((−𝐒ₙ x) ⋅ (+ₙ y))    🝖-end
 
 [⋅]-step-stepᵣ : ∀{x y}{s} → (x ⋅ step s y ≡ (signOn s x) + (x ⋅ y))
@@ -694,16 +694,16 @@ instance
   [⋅][+]-distributivityₗ : Distributivityₗ(_⋅_)(_+_)
   Distributivityₗ.proof [⋅][+]-distributivityₗ {x} {y} {z} = ℤ-signed-step-recursion(Names.DistributiveOnₗ(_⋅_)(_+_) x y) zero next z where
     zero =
-      x ⋅ (y + 𝟎)       🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(x) (identityᵣ(_+_)(𝟎)) ]
+      x ⋅ (y + 𝟎)       🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(x) (identityᵣ(_+_)(𝟎)) ]
       x ⋅ y             🝖[ _≡_ ]-[ identityᵣ(_+_)(𝟎) ]-sym
-      (x ⋅ y) + 𝟎       🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x ⋅ y) (absorberᵣ(_⋅_)(𝟎)) ]-sym
+      (x ⋅ y) + 𝟎       🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x ⋅ y) (absorberᵣ(_⋅_)(𝟎)) ]-sym
       (x ⋅ y) + (x ⋅ 𝟎) 🝖-end
     next = \s z prev →
-      x ⋅ (y + step s (signed s z))               🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(x) (preserving₁(step s) (y +_)(y +_) ⦃ step-preserving-[+]ᵣ {s}{y} ⦄ {signed s z}) ]-sym
+      x ⋅ (y + step s (signed s z))               🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(x) (preserving₁(step s) (y +_)(y +_) ⦃ step-preserving-[+]ᵣ {s}{y} ⦄ {signed s z}) ]-sym
       x ⋅ step s (y + (signed s z))               🝖[ _≡_ ]-[ [⋅]-step-stepᵣ {x}{y + signed s z}{s} ]
-      (signOn s x) + (x ⋅ (y + (signed s z)))     🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(signOn s x) prev ]
+      (signOn s x) + (x ⋅ (y + (signed s z)))     🝖[ _≡_ ]-[ congruence₂-₂(_+_)(signOn s x) prev ]
       (signOn s x) + ((x ⋅ y) + (x ⋅ signed s z)) 🝖[ _≡_ ]-[ One.commuteₗ-assocᵣ {a = signOn s x}{b = x ⋅ y}{c = x ⋅ signed s z} ]
-      (x ⋅ y) + ((signOn s x) + (x ⋅ signed s z)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x ⋅ y) ([⋅]-step-stepᵣ {x}{signed s z}{s}) ]-sym
+      (x ⋅ y) + ((signOn s x) + (x ⋅ signed s z)) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x ⋅ y) ([⋅]-step-stepᵣ {x}{signed s z}{s}) ]-sym
       (x ⋅ y) + (x ⋅ step s (signed s z))         🝖-end
   {-
     x ⋅ (y + z)                                                                                                                     🝖[ _≡_ ]-[]
@@ -721,26 +721,26 @@ instance
     zero =
       (x ⋅ y) ⋅ 𝟎 🝖[ _≡_ ]-[ absorberᵣ(_⋅_)(𝟎) ]
       𝟎           🝖[ _≡_ ]-[ absorberᵣ(_⋅_)(𝟎) ]-sym
-      x ⋅ 𝟎       🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(x) (absorberᵣ(_⋅_)(𝟎)) ]-sym
+      x ⋅ 𝟎       🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(x) (absorberᵣ(_⋅_)(𝟎)) ]-sym
       x ⋅ (y ⋅ 𝟎) 🝖-end
     next = \s z prev →
       (x ⋅ y) ⋅ step s (signed s z)                 🝖[ _≡_ ]-[ [⋅]-step-stepᵣ {x ⋅ y}{signed s z}{s} ]
-      (signOn s (x ⋅ y)) + ((x ⋅ y) ⋅ (signed s z)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(signOn s (x ⋅ y)) prev ]
-      (signOn s (x ⋅ y)) + (x ⋅ (y ⋅ (signed s z))) 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(x ⋅ (y ⋅ (signed s z))) (signOn-preserves-[⋅]ᵣ {x}{y}{s}) ]-sym
+      (signOn s (x ⋅ y)) + ((x ⋅ y) ⋅ (signed s z)) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(signOn s (x ⋅ y)) prev ]
+      (signOn s (x ⋅ y)) + (x ⋅ (y ⋅ (signed s z))) 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(x ⋅ (y ⋅ (signed s z))) (signOn-preserves-[⋅]ᵣ {x}{y}{s}) ]-sym
       (x ⋅ signOn s y) + (x ⋅ (y ⋅ (signed s z)))   🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) {x}{signOn s y}{y ⋅ (signed s z)} ]-sym
-      x ⋅ (signOn s y + (y ⋅ (signed s z)))         🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(x) ([⋅]-step-stepᵣ {y}{signed s z}{s}) ]-sym
+      x ⋅ (signOn s y + (y ⋅ (signed s z)))         🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(x) ([⋅]-step-stepᵣ {y}{signed s z}{s}) ]-sym
       x ⋅ (y ⋅ step s (signed s z)) 🝖-end
     {-
     congruence₂(signed0)
       (
         (sign0(signed0 (sign0 x Sign.⨯ sign0 y) (absₙ x ℕ.⋅ absₙ y)) Sign.⨯ sign0(z)) 🝖[ _≡_ ]-[ {!!} ]
-        (sign0(x) Sign.⨯ (sign0(y) Sign.⨯ sign0(z))) 🝖[ _≡_ ]-[ congruence₂ᵣ(Sign._⨯_)(sign0(x)) sign-of-[⋅] ]-sym
+        (sign0(x) Sign.⨯ (sign0(y) Sign.⨯ sign0(z))) 🝖[ _≡_ ]-[ congruence₂-₂(Sign._⨯_)(sign0(x)) sign-of-[⋅] ]-sym
         (sign0(x) Sign.⨯ sign0(y ⋅ z)) 🝖-end
       )
       -- associativity(Sign0._⨯_)
-      -- (congruence₂ₗ(Sign._⨯_)(sign0 z) sign0-inverse                                                  🝖 associativity(Sign._⨯_)                      🝖 symmetry(_≡_) (congruence₂ᵣ(Sign._⨯_)(sign0(x)) (sign-of-[⋅] {y}{z})))
+      -- (congruence₂-₁(Sign._⨯_)(sign0 z) sign0-inverse                                                  🝖 associativity(Sign._⨯_)                      🝖 symmetry(_≡_) (congruence₂-₂(Sign._⨯_)(sign0(x)) (sign-of-[⋅] {y}{z})))
       {!!}
-      -- (congruence₂ₗ(ℕ._⋅_)   (absₙ(z)) (absₙ-inverse{sign0(x) Sign.⨯ sign0(y)}{absₙ(x) ℕ.⋅ absₙ(y)})  🝖 associativity(ℕ._⋅_){absₙ x}{absₙ y}{absₙ z} 🝖 symmetry(_≡_) (congruence₂ᵣ(ℕ._⋅_)   (absₙ (x)) (absₙ-of-[⋅] {y}{z})))
+      -- (congruence₂-₁(ℕ._⋅_)   (absₙ(z)) (absₙ-inverse{sign0(x) Sign.⨯ sign0(y)}{absₙ(x) ℕ.⋅ absₙ(y)})  🝖 associativity(ℕ._⋅_){absₙ x}{absₙ y}{absₙ z} 🝖 symmetry(_≡_) (congruence₂-₂(ℕ._⋅_)   (absₙ (x)) (absₙ-of-[⋅] {y}{z})))
     -}
 
 instance
@@ -761,7 +761,7 @@ instance
   Distributivityₗ.proof [⋅][−]-distributivityₗ {x} {y} {z} =
     x ⋅ (y − z)           🝖[ _≡_ ]-[]
     x ⋅ (y + (− z))       🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) ]
-    (x ⋅ y) + (x ⋅ (− z)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x ⋅ y) [−]-preserves-[⋅]ᵣ ]
+    (x ⋅ y) + (x ⋅ (− z)) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x ⋅ y) [−]-preserves-[⋅]ᵣ ]
     (x ⋅ y) + (−(x ⋅ z))  🝖[ _≡_ ]-[]
     (x ⋅ y) − (x ⋅ z)     🝖-end
 

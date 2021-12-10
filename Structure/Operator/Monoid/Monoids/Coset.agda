@@ -51,7 +51,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ function : ∀{f : T → T} → Fu
 
   cosetₗ-homomorphism : ∃(Homomorphism monoid (Submonoid.monoid cosetₗ-submonoid))
   ∃.witness cosetₗ-homomorphism a = [∃]-intro (a ▫_) ⦃ [∃]-intro a ⦃ reflexivity(_≡ₑ_) {a ▫_} ⦄ ⦄
-  _⊜_.proof (Function.congruence (Homomorphism.function (∃.proof cosetₗ-homomorphism)) ab) {x}  = congruence₂ₗ(_▫_)(x) ab
+  _⊜_.proof (Function.congruence (Homomorphism.function (∃.proof cosetₗ-homomorphism)) ab) {x}  = congruence₂-₁(_▫_)(x) ab
   _⊜_.proof (Preserving.proof (Homomorphism.preserve-op (∃.proof cosetₗ-homomorphism))     {x}) = associativity(_▫_)
   _⊜_.proof (Preserving.proof (Homomorphism.preserve-id (∃.proof cosetₗ-homomorphism)))    {x}  = identityₗ(_▫_)(_)
 
@@ -74,7 +74,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ function : ∀{f : T → T} → Fu
   {-
   cosetᵣ-homomorphism : ∃(Homomorphism monoid (Submonoid.monoid cosetᵣ-submonoid))
   ∃.witness cosetᵣ-homomorphism a = [∃]-intro (_▫ a) ⦃ [∃]-intro a ⦃ reflexivity(_≡ₑ_) {_▫ a} ⦄ ⦄
-  _⊜_.proof (Function.congruence (Homomorphism.function (∃.proof cosetᵣ-homomorphism)) ab) {x}  = congruence₂ᵣ(_▫_)(x) ab
+  _⊜_.proof (Function.congruence (Homomorphism.function (∃.proof cosetᵣ-homomorphism)) ab) {x}  = congruence₂-₂(_▫_)(x) ab
   _⊜_.proof (Preserving.proof (Homomorphism.preserve-op (∃.proof cosetᵣ-homomorphism)) {a} {b}) {x} =
     (x ▫ (a ▫ b)) 🝖[ _≡ₑ_ ]-[ {!!} ]
     ((x ▫ b) ▫ a) 🝖-end

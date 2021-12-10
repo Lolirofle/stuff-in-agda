@@ -89,28 +89,28 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List
 
   instance
     [++]-identityᵣ : Identityᵣ(_++_) ∅
-    Identityᵣ.proof([++]-identityᵣ) {x = l} = elim (reflexivity(_≡_)) (\x l → congruence₂ᵣ(_⊰_)(x) {l ++ ∅}{l}) l
+    Identityᵣ.proof([++]-identityᵣ) {x = l} = elim (reflexivity(_≡_)) (\x l → congruence₂-₂(_⊰_)(x) {l ++ ∅}{l}) l
 
   instance
     [++]-associativity : Associativity(_++_)
-    Associativity.proof([++]-associativity) {l₁}{l₂}{l₃} = elim (reflexivity(_≡_)) (\x l → congruence₂ᵣ(_⊰_)(x) {(l ++ l₂) ++ l₃}{l ++ (l₂ ++ l₃)}) l₁
+    Associativity.proof([++]-associativity) {l₁}{l₂}{l₃} = elim (reflexivity(_≡_)) (\x l → congruence₂-₂(_⊰_)(x) {(l ++ l₂) ++ l₃}{l ++ (l₂ ++ l₃)}) l₁
 
   reverse-postpend : (reverse(postpend a l) ≡ a ⊰ reverse l)
-  reverse-postpend {a = a}{l = l} = elim (reflexivity(_≡ₗ_)) (\x l p → congruence₂ᵣ(postpend) ⦃ postpend-function ⦄ (x) {reverse(postpend a l)}{a ⊰ reverse l} p) l
+  reverse-postpend {a = a}{l = l} = elim (reflexivity(_≡ₗ_)) (\x l p → congruence₂-₂(postpend) ⦃ postpend-function ⦄ (x) {reverse(postpend a l)}{a ⊰ reverse l} p) l
 
   prepend-[++] : (a ⊰ l ≡ singleton{T = T}(a) ++ l)
   prepend-[++] = reflexivity(_≡_)
 
   postpend-[++] : (postpend{T = T} a l ≡ l ++ singleton(a))
-  postpend-[++] {a = a}{l = l} = elim (reflexivity(_≡_)) (\x l → congruence₂ᵣ(_⊰_)(x) {postpend a l}{l ++ (singleton a)}) l
+  postpend-[++] {a = a}{l = l} = elim (reflexivity(_≡_)) (\x l → congruence₂-₂(_⊰_)(x) {postpend a l}{l ++ (singleton a)}) l
 
   postpend-of-[++] : (postpend{T = T} a (l₁ ++ l₂) ≡ l₁ ++ postpend a l₂)
-  postpend-of-[++] {a = a} {l₁}{l₂} = elim (reflexivity(_≡_)) (\x l → congruence₂ᵣ(_⊰_)(x) {postpend a (l ++ l₂)}{l ++ (postpend a l₂)}) l₁
+  postpend-of-[++] {a = a} {l₁}{l₂} = elim (reflexivity(_≡_)) (\x l → congruence₂-₂(_⊰_)(x) {postpend a (l ++ l₂)}{l ++ (postpend a l₂)}) l₁
 
   reverse-[++] : (reverse(l₁ ++ l₂) ≡ reverse(l₂) ++ reverse(l₁))
   reverse-[++] {l₁ = l₁} {l₂ = l₂} = elim
     (congruence₁(reverse) (identityₗ(_++_)(∅) {l₂}) 🝖 symmetry(_≡_) (identityᵣ(_++_)(∅) {reverse l₂}))
-    (\x l₁ p → congruence₂ᵣ(postpend) ⦃ postpend-function ⦄ (x) {reverse (l₁ ++ l₂)}{reverse l₂ ++ reverse l₁} p 🝖 postpend-of-[++] {l₁ = reverse l₂} {l₂ = reverse l₁})
+    (\x l₁ p → congruence₂-₂(postpend) ⦃ postpend-function ⦄ (x) {reverse (l₁ ++ l₂)}{reverse l₂ ++ reverse l₁} p 🝖 postpend-of-[++] {l₁ = reverse l₂} {l₂ = reverse l₁})
     l₁
 
   [∅]-postpend-unequal : (postpend x l ≢ ∅)
@@ -124,7 +124,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List
   [++]-middle-prepend-postpend : postpend x l₁ ++ l₂ ≡ l₁ ++ (x ⊰ l₂)
   [++]-middle-prepend-postpend {l₁ = ∅}      {l₂ = ∅} = reflexivity(_≡_)
   [++]-middle-prepend-postpend {l₁ = ∅}      {l₂ = x ⊰ l₂} = reflexivity(_≡_)
-  [++]-middle-prepend-postpend {l₁ = x ⊰ l₁} {l₂ = l₂} = congruence₂ᵣ(_⊰_)(x) ([++]-middle-prepend-postpend {l₁ = l₁} {l₂ = l₂})
+  [++]-middle-prepend-postpend {l₁ = x ⊰ l₁} {l₂ = l₂} = congruence₂-₂(_⊰_)(x) ([++]-middle-prepend-postpend {l₁ = l₁} {l₂ = l₂})
 
   instance
     [++]-cancellationₗ : Cancellationₗ(_++_)
@@ -146,7 +146,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List
 
   reverse-involution-raw : Names.Involution(reverse{T = T})
   reverse-involution-raw {x = ∅}     = reflexivity(_≡_)
-  reverse-involution-raw {x = x ⊰ l} = reverse-postpend {a = x}{l = reverse l} 🝖 congruence₂ᵣ(_⊰_)(x) (reverse-involution-raw {x = l})
+  reverse-involution-raw {x = x ⊰ l} = reverse-postpend {a = x}{l = reverse l} 🝖 congruence₂-₂(_⊰_)(x) (reverse-involution-raw {x = l})
 
   instance
     reverse-involution : Involution(reverse{T = T})
@@ -172,10 +172,10 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List
     foldᵣ-constant-[+]ₗ {l = ∅}                  = reflexivity(_≡_)
     foldᵣ-constant-[+]ₗ {l = x ⊰ l} {init}{step} =
       foldᵣ(const(step +_)) init (x ⊰ l)  🝖[ _≡_ ]-[]
-      step + foldᵣ(const(step +_)) init l 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(step) (foldᵣ-constant-[+]ₗ {l = l} {init}{step}) ]
+      step + foldᵣ(const(step +_)) init l 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(step) (foldᵣ-constant-[+]ₗ {l = l} {init}{step}) ]
       step + ((length(l) ⋅ step) + init)  🝖[ _≡_ ]-[ associativity(_+_) {step}{length(l) ⋅ step}{init} ]-sym
-      (step + (length(l) ⋅ step)) + init  🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(init) (commutativity(_+_) {step}{length(l) ⋅ step}) ]
-      ((length(l) ⋅ step) + step) + init  🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(init) ([⋅]-with-[𝐒]ₗ {length(l)}{step}) ]-sym
+      (step + (length(l) ⋅ step)) + init  🝖[ _≡_ ]-[ congruence₂-₁(_+_)(init) (commutativity(_+_) {step}{length(l) ⋅ step}) ]
+      ((length(l) ⋅ step) + step) + init  🝖[ _≡_ ]-[ congruence₂-₁(_+_)(init) ([⋅]-with-[𝐒]ₗ {length(l)}{step}) ]-sym
       (𝐒(length(l)) ⋅ step) + init        🝖[ _≡_ ]-[]
       (length(x ⊰ l) ⋅ step) + init       🝖-end
 
@@ -184,7 +184,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑₗ}(List
     [++^]-identityᵣ = intro p where
       p : Names.Identityᵣ(_++^_)(𝟏)
       p{∅}     = reflexivity(_≡_)
-      p{x ⊰ l} = congruence₂ᵣ(_⊰_)(x) (p{l})
+      p{x ⊰ l} = congruence₂-₂(_⊰_)(x) (p{l})
 
 open import Structure.Setoid
 module _
@@ -199,11 +199,11 @@ module _
   private variable f g : A → B
 
   map-postpend : (map f(postpend a l) ≡ postpend (f(a)) (map f(l)))
-  map-postpend {f = f} {a = a}{l = l} = elim (reflexivity(_≡_)) (\x l → congruence₂ᵣ(_⊰_)(f(x)) {map f (postpend a l)}{postpend (f(a)) (map f l)}) l
+  map-postpend {f = f} {a = a}{l = l} = elim (reflexivity(_≡_)) (\x l → congruence₂-₂(_⊰_)(f(x)) {map f (postpend a l)}{postpend (f(a)) (map f l)}) l
 
   instance
     map-preserves-[++] : Preserving₂(map f)(_++_)(_++_)
-    Preserving.proof (map-preserves-[++] {f = f}) {l₁} {l₂} = elim (reflexivity(_≡_)) (\x l₁ → congruence₂ᵣ(_⊰_)(f(x)) {map f(l₁ ++ l₂)}{(map f l₁) ++ (map f l₂)}) l₁
+    Preserving.proof (map-preserves-[++] {f = f}) {l₁} {l₂} = elim (reflexivity(_≡_)) (\x l₁ → congruence₂-₂(_⊰_)(f(x)) {map f(l₁ ++ l₂)}{(map f l₁) ++ (map f l₂)}) l₁
 
   open import Function.Equals using (_⊜_)
   open import Logic.Propositional
@@ -262,7 +262,7 @@ module _ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ ⦃ equiv-C : Equiv{ℓₑ₃}(C)
 
   foldᵣ-map-preserve : ⦃ oper : BinaryOperator(_▫_) ⦄ → ∀{l} → (foldᵣ((_▫_) ∘ f) id l ≡ foldᵣ(_▫_) id (map f(l)))
   foldᵣ-map-preserve                  {l = ∅}     = reflexivity(_≡_)
-  foldᵣ-map-preserve{_▫_ = _▫_}{f = f}{l = x ⊰ l} = congruence₂ᵣ(_▫_)(f(x)) (foldᵣ-map-preserve{_▫_ = _▫_}{f = f}{l = l})
+  foldᵣ-map-preserve{_▫_ = _▫_}{f = f}{l = x ⊰ l} = congruence₂-₂(_▫_)(f(x)) (foldᵣ-map-preserve{_▫_ = _▫_}{f = f}{l = l})
 
 module _ ⦃ equiv-B : Equiv{ℓₑ}(Option(B)) ⦄ where
   private variable f : A → B

@@ -101,7 +101,7 @@ record Ordered ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) ⦃ 
     𝟎 + x           🝖[ _≤_ ]-[ [≤][+]ₗ-preserve 𝟎yx ]
     (y − x) + x     🝖[ _≤_ ]-[]
     (y + (− x)) + x 🝖[ _≡_ ]-[ associativity(_+_) ]-sub
-    y + ((− x) + x) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(_) (inverseFunctionₗ(_+_)(−_)) ]-sub
+    y + ((− x) + x) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(_) (inverseFunctionₗ(_+_)(−_)) ]-sub
     y + 𝟎           🝖[ _≡_ ]-[ identityᵣ(_+_)(𝟎) ]-sub
     y               🝖-end
 
@@ -110,7 +110,7 @@ record Ordered ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) ⦃ 
   [≤]-non-positive-difference : ∀{x y} → ((x − y) ≤ 𝟎) → (x ≤ y)
   [≤]-non-positive-difference {x}{y} xy𝟎 =
     x               🝖[ _≡_ ]-[ symmetry(_≡_) (identityᵣ(_+_)(𝟎)) ]-sub
-    x + 𝟎           🝖[ _≡_ ]-[ symmetry(_≡_) (congruence₂ᵣ(_+_)(_) (inverseFunctionₗ(_+_)(−_))) ]-sub
+    x + 𝟎           🝖[ _≡_ ]-[ symmetry(_≡_) (congruence₂-₂(_+_)(_) (inverseFunctionₗ(_+_)(−_))) ]-sub
     x + ((− y) + y) 🝖[ _≡_ ]-[ symmetry(_≡_) (associativity(_+_)) ]-sub
     (x + (− y)) + y 🝖[ _≤_ ]-[]
     (x − y) + y     🝖[ _≤_ ]-[ [≤][+]ₗ-preserve xy𝟎 ]
@@ -121,7 +121,7 @@ record Ordered ⦃ equiv : Equiv{ℓₑ}(F) ⦄ (_+_ _⋅_ : F → F → F) ⦃ 
   [≤]-with-[−] {x}{y} xy = [≤]-non-positive-difference proof3 where
     proof3 : (((− y) − (− x)) ≤ 𝟎)
     proof3 =
-      (− y) − (− x) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(_) (involution(−_)) ]-sub
+      (− y) − (− x) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(_) (involution(−_)) ]-sub
       (− y) + x     🝖[ _≡_ ]-[ commutativity(_+_) ]-sub
       x − y         🝖[ _≤_ ]-[ [≤][+]ₗ-preserve xy ]
       y − y         🝖[ _≡_ ]-[ inverseFunctionᵣ(_+_)(−_) ]-sub

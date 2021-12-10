@@ -33,11 +33,11 @@ module _ where
 
   instance
     𝐒-function : Function(𝐒)
-    𝐒-function = BinaryOperator.left [+]-binaryOperator
+    𝐒-function = BinaryOperator.unary₁ [+]-binaryOperator
 
   instance
     𝐏-function : Function(𝐏)
-    𝐏-function = BinaryOperator.left [+]-binaryOperator
+    𝐏-function = BinaryOperator.unary₁ [+]-binaryOperator
 
   from-ℕ-is-𝐒-iteration : ∀{n} → (from-ℕ n ≡ (𝐒 ^ n)(𝟎))
   from-ℕ-is-𝐒-iteration {ℕ.𝟎}        = reflexivity(_≡_)
@@ -137,7 +137,7 @@ module _ where
   {-
   instance
     positive-nonzero : ⦃ division : Division(_+_)(_⋅_) ⦄ ⦃ dist-ident : DistinctIdentities ⦄ → ∀{n} → ⦃ ℕ.Positive(n) ⦄ → NonZero(from-ℕ n)
-    NonZero.proof(positive-nonzero ⦃ dist-ident = dist-ident@(intro dist-ident-raw) ⦄ {ℕ.𝐒(ℕ.𝐒 n)}) ssn0 = dist-ident-raw (symmetry(_≡_) (identityₗ(_+_)(𝟎)) 🝖 congruence₁(𝐒) (symmetry(_≡_) (absorberᵣ(_⋅_)(𝟎) {from-ℕ (ℕ.𝐒(n))}) 🝖 congruence₂ᵣ(_⋅_)(from-ℕ (ℕ.𝐒 n)) {!!} 🝖 identityᵣ(_⋅_)(𝟏)) 🝖 symmetry(_≡_) (from-ℕ-preserve-𝐒 {ℕ.𝐒 n}) 🝖 ssn0)
+    NonZero.proof(positive-nonzero ⦃ dist-ident = dist-ident@(intro dist-ident-raw) ⦄ {ℕ.𝐒(ℕ.𝐒 n)}) ssn0 = dist-ident-raw (symmetry(_≡_) (identityₗ(_+_)(𝟎)) 🝖 congruence₁(𝐒) (symmetry(_≡_) (absorberᵣ(_⋅_)(𝟎) {from-ℕ (ℕ.𝐒(n))}) 🝖 congruence₂-₂(_⋅_)(from-ℕ (ℕ.𝐒 n)) {!!} 🝖 identityᵣ(_⋅_)(𝟏)) 🝖 symmetry(_≡_) (from-ℕ-preserve-𝐒 {ℕ.𝐒 n}) 🝖 ssn0)
     -- [⋅]-cancellationᵣ ⦃ nonzero = positive-nonzero ⦃ dist-ident = dist-ident ⦄ {ℕ.𝐒 n} ⦃ <> ⦄ ⦄
     -- symmetry(_≡_) (from-ℕ-preserve-𝐒 {n}) 🝖 sn0
     --  🝖 sn0 🝖 symmetry(_≡_) (absorberᵣ(_⋅_)(𝟎) {𝐒(from-ℕ n)})

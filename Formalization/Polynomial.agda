@@ -163,7 +163,7 @@ module Semantics where
       eval(𝟎 {ℕ.𝐒 n}) x              🝖[ _≡_ ]-[]
       eval(ℕ.𝟎 ⊰ 𝟎 {n}) x            🝖[ _≡_ ]-[]
       ℕ.𝟎 ℕ.+ (x ℕ.⋅ eval (𝟎 {n}) x) 🝖[ _≡_ ]-[]
-      x ℕ.⋅ eval (𝟎 {n}) x           🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._⋅_)(x) (eval-preserves-zero{n}{x}) ]
+      x ℕ.⋅ eval (𝟎 {n}) x           🝖[ _≡_ ]-[ congruence₂-₂(ℕ._⋅_)(x) (eval-preserves-zero{n}{x}) ]
       x ℕ.⋅ ℕ.𝟎                      🝖[ _≡_ ]-[ absorberᵣ(ℕ._⋅_)(ℕ.𝟎) {x} ]
       ℕ.𝟎                            🝖-end
 
@@ -173,7 +173,7 @@ module Semantics where
       eval{ℕ.𝐒 n} (const a) x                  🝖[ _≡_ ]-[]
       eval(a ⊰ repeat ℕ.𝟎 (ℕ.𝐒 n)) x           🝖[ _≡_ ]-[ eval-of-[⊰] {x = x}{a}{repeat ℕ.𝟎 (ℕ.𝐒 n)} ]
       a ℕ.+ (x ℕ.⋅ eval(repeat ℕ.𝟎 (ℕ.𝐒 n)) x) 🝖[ _≡_ ]-[]
-      a ℕ.+ (x ℕ.⋅ eval{n} 𝟎 x)                🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a) (eval-preserves-zero{ℕ.𝐒 n}{x = x}) ]
+      a ℕ.+ (x ℕ.⋅ eval{n} 𝟎 x)                🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a) (eval-preserves-zero{ℕ.𝐒 n}{x = x}) ]
       a ℕ.+ (x ℕ.⋅ ℕ.𝟎)                        🝖[ _≡_ ]-[]
       a ℕ.+ ℕ.𝟎                                🝖[ _≡_ ]-[ identityᵣ(ℕ._+_)(ℕ.𝟎) ]
       a                                        🝖-end
@@ -184,7 +184,7 @@ module Semantics where
     eval-preserves-var : ∀{x}{a : Polynomial(n)} → (eval (var{n}) x ≡ x)
     eval-preserves-var {n}{x}{a} =
       eval (var{n}) x      🝖[ _≡_ ]-[ eval-preserves-var⋅{n}{x}{𝟏} ]
-      x ℕ.⋅ eval (𝟏 {n}) x 🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._⋅_)(x) (eval-preserves-one {n}{x}) ]
+      x ℕ.⋅ eval (𝟏 {n}) x 🝖[ _≡_ ]-[ congruence₂-₂(ℕ._⋅_)(x) (eval-preserves-one {n}{x}) ]
       x ℕ.⋅ ℕ.𝐒(ℕ.𝟎)       🝖[ _≡_ ]-[ identityᵣ(ℕ._⋅_)(ℕ.𝐒(ℕ.𝟎)) {x} ]
       x                    🝖-end
 
@@ -194,15 +194,15 @@ module Semantics where
     eval-preserves-addition {x = x} {a ⊰ as@(_ ⊰ _)} {singleton b}    =
       eval ((a ⊰ as) + (singleton b)) x            🝖[ _≡_ ]-[]
       (a ℕ.+ b) ℕ.+ (x ℕ.⋅ (eval as x))            🝖[ _≡_ ]-[ associativity(ℕ._+_) {a}{b} ]
-      a ℕ.+ (b ℕ.+ (x ℕ.⋅ (eval as x)))            🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a) (commutativity(ℕ._+_) {x = b}) ]
+      a ℕ.+ (b ℕ.+ (x ℕ.⋅ (eval as x)))            🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a) (commutativity(ℕ._+_) {x = b}) ]
       a ℕ.+ ((x ℕ.⋅ (eval as x)) ℕ.+ b)            🝖[ _≡_ ]-[ associativity(ℕ._+_) {a}{x ℕ.⋅ eval as x} ]-sym
       (a ℕ.+ (x ℕ.⋅ (eval as x))) ℕ.+ b            🝖[ _≡_ ]-[]
       (eval (a ⊰ as) x) ℕ.+ (eval (singleton b) x) 🝖-end
     eval-preserves-addition {x = x} {a ⊰ as@(_ ⊰ _)} {b ⊰ bs@(_ ⊰ _)} =
       eval ((a ⊰ as) + (b ⊰ bs)) x                                  🝖[ _≡_ ]-[]
       eval ((a ℕ.+ b) ⊰ (as + bs)) x                                🝖[ _≡_ ]-[]
-      (a ℕ.+ b) ℕ.+ (x ℕ.⋅ (eval (as + bs) x))                      🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a ℕ.+ b) (congruence₂ᵣ(ℕ._⋅_)(x) (eval-preserves-addition {x = x}{as}{bs})) ]
-      (a ℕ.+ b) ℕ.+ (x ℕ.⋅ ((eval as x) ℕ.+ (eval bs x)))           🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a ℕ.+ b) (distributivityₗ(ℕ._⋅_)(ℕ._+_) {x}{eval as x}{eval bs x}) ]
+      (a ℕ.+ b) ℕ.+ (x ℕ.⋅ (eval (as + bs) x))                      🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a ℕ.+ b) (congruence₂-₂(ℕ._⋅_)(x) (eval-preserves-addition {x = x}{as}{bs})) ]
+      (a ℕ.+ b) ℕ.+ (x ℕ.⋅ ((eval as x) ℕ.+ (eval bs x)))           🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a ℕ.+ b) (distributivityₗ(ℕ._⋅_)(ℕ._+_) {x}{eval as x}{eval bs x}) ]
       (a ℕ.+ b) ℕ.+ ((x ℕ.⋅ (eval as x)) ℕ.+ (x ℕ.⋅ (eval bs x)))   🝖[ _≡_ ]-[ One.associate-commute4 {a = a}{b = b}{c = x ℕ.⋅ (eval as x)}{d = x ℕ.⋅ (eval bs x)} (commutativity(ℕ._+_) {b}) ]
       (a ℕ.+ (x ℕ.⋅ (eval as x))) ℕ.+ (b ℕ.+ (x ℕ.⋅ (eval bs x)))   🝖[ _≡_ ]-[]
       (eval (a ⊰ as) x) ℕ.+ (eval (b ⊰ bs) x)                       🝖-end
@@ -212,8 +212,8 @@ module Semantics where
     eval-preserves-scalar-multiplication {ℕ.𝐒 n} {x} {a} {b ⊰ bs@(_ ⊰ _)} =
       eval (a ⋅ (b ⊰ bs)) x                     🝖[ _≡_ ]-[]
       eval ((a ℕ.⋅ b) ⊰ (a ⋅ bs)) x             🝖[ _≡_ ]-[]
-      (a ℕ.⋅ b) ℕ.+ (x ℕ.⋅ (eval (a ⋅ bs) x))   🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a ℕ.⋅ b) (congruence₂ᵣ(ℕ._⋅_)(x) (eval-preserves-scalar-multiplication {n} {x}{a}{bs})) ]
-      (a ℕ.⋅ b) ℕ.+ (x ℕ.⋅ (a ℕ.⋅ (eval bs x))) 🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a ℕ.⋅ b) (One.commuteₗ-assocᵣ {a = x}{b = a}{c = eval bs x}) ]
+      (a ℕ.⋅ b) ℕ.+ (x ℕ.⋅ (eval (a ⋅ bs) x))   🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a ℕ.⋅ b) (congruence₂-₂(ℕ._⋅_)(x) (eval-preserves-scalar-multiplication {n} {x}{a}{bs})) ]
+      (a ℕ.⋅ b) ℕ.+ (x ℕ.⋅ (a ℕ.⋅ (eval bs x))) 🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a ℕ.⋅ b) (One.commuteₗ-assocᵣ {a = x}{b = a}{c = eval bs x}) ]
       (a ℕ.⋅ b) ℕ.+ (a ℕ.⋅ (x ℕ.⋅ (eval bs x))) 🝖[ _≡_ ]-[ distributivityₗ(ℕ._⋅_)(ℕ._+_) {x = a}{y = b}{z = x ℕ.⋅ (eval bs x)} ]-sym
       a ℕ.⋅ (b ℕ.+ (x ℕ.⋅ (eval bs x)))         🝖[ _≡_ ]-[]
       a ℕ.⋅ eval (b ⊰ bs) x                     🝖-end
@@ -222,15 +222,15 @@ module Semantics where
     eval-preserves-pad {ℕ.𝟎}    {ℕ.𝟎}    {x} {a ⊰ ∅}          ⦃ ord@min ⦄  = reflexivity(_≡_)
     eval-preserves-pad {ℕ.𝟎}    {ℕ.𝐒 n₂} {x} {a ⊰ ∅}          ⦃ ord@min ⦄  =
       eval (pad ⦃ ord ⦄ (a ⊰ ∅)) x  🝖[ _≡_ ]-[]
-      a ℕ.+ (x ℕ.⋅ eval (𝟎 {n₂}) x) 🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a) (congruence₂ᵣ(ℕ._⋅_)(x) (eval-preserves-zero{n₂}{x})) ]
-      a ℕ.+ (x ℕ.⋅ ℕ.𝟎)             🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a) (absorberᵣ(ℕ._⋅_)(ℕ.𝟎) {x}) ]
+      a ℕ.+ (x ℕ.⋅ eval (𝟎 {n₂}) x) 🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a) (congruence₂-₂(ℕ._⋅_)(x) (eval-preserves-zero{n₂}{x})) ]
+      a ℕ.+ (x ℕ.⋅ ℕ.𝟎)             🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a) (absorberᵣ(ℕ._⋅_)(ℕ.𝟎) {x}) ]
       a ℕ.+ ℕ.𝟎                     🝖[ _≡_ ]-[ identityᵣ(ℕ._+_)(ℕ.𝟎) ]
       a                             🝖[ _≡_ ]-[]
       eval (a ⊰ ∅) x                🝖-end
     eval-preserves-pad {ℕ.𝐒 n₁} {ℕ.𝐒 n₂} {x} {a ⊰ as@(_ ⊰ _)} ⦃ ord@(succ p) ⦄ =
       eval (pad ⦃ ord ⦄ (a ⊰ as)) x       🝖[ _≡_ ]-[]
       eval (a ⊰ pad ⦃ _ ⦄ as) x           🝖[ _≡_ ]-[ eval-of-[⊰] {n₂}{x}{a}{pad ⦃ p ⦄ as} ]
-      a ℕ.+ (x ℕ.⋅ eval (pad ⦃ _ ⦄ as) x) 🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a) (congruence₂ᵣ(ℕ._⋅_)(x) (eval-preserves-pad {n₁}{n₂}{x}{as} ⦃ p ⦄)) ]
+      a ℕ.+ (x ℕ.⋅ eval (pad ⦃ _ ⦄ as) x) 🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a) (congruence₂-₂(ℕ._⋅_)(x) (eval-preserves-pad {n₁}{n₂}{x}{as} ⦃ p ⦄)) ]
       a ℕ.+ (x ℕ.⋅ eval as x)       🝖[ _≡_ ]-[ eval-of-[⊰] {n₁}{x}{a}{as} ]-sym
       eval (a ⊰ as) x               🝖-end
 
@@ -248,7 +248,7 @@ module Semantics where
       eval (a ⊰ ∅) x ℕ.⋅ eval (b ⊰ bs) x 🝖-end
     eval-preserves-multiplication {ℕ.𝐒 n₁}{ℕ.𝐒 n₂}{x} {a ⊰ as@(_ ⊰ _)} {b ⊰ bs@(_ ⊰ _)} =
       eval((a ℕ.⋅ b) ⊰ lr) x                                                                                                    🝖[ _≡_ ]-[ eval-of-[⊰] {x = x}{a = a ℕ.⋅ b}{al = lr} ]
-      (a ℕ.⋅ b) ℕ.+ (x ℕ.⋅ eval lr x)                                                                                           🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a ℕ.⋅ b) (congruence₂ᵣ(ℕ._⋅_)(x) eval-lr) ]
+      (a ℕ.⋅ b) ℕ.+ (x ℕ.⋅ eval lr x)                                                                                           🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a ℕ.⋅ b) (congruence₂-₂(ℕ._⋅_)(x) eval-lr) ]
       (a ℕ.⋅ b) ℕ.+ (x ℕ.⋅ (((b ℕ.⋅ eval as x) ℕ.+ (a ℕ.⋅ eval bs x)) ℕ.+ (x ℕ.⋅ (eval as x ℕ.⋅ eval bs x))))                   🝖[ _≡_ ]-[ alg{a}{b}{x}{eval as x}{eval bs x} ]
       (a ℕ.+ (x ℕ.⋅ eval as x)) ℕ.⋅ (b ℕ.+ (x ℕ.⋅ eval bs x))                                                                   🝖[ _≡_ ]-[ congruence₂(ℕ._⋅_) (eval-of-[⊰] {x = x}{a = a}{al = as}) (eval-of-[⊰] {x = x}{a = b}{al = bs}) ]
       (eval(a ⊰ as) x ℕ.⋅ eval(b ⊰ bs) x)                                                                                       🝖-end
@@ -279,7 +279,7 @@ module Semantics where
         eval-r =
           eval r x                        🝖[ _≡_ ]-[]
           eval (var⋅ (as ⨯ bs)) x         🝖[ _≡_ ]-[ eval-preserves-var⋅ {x = x}{as ⨯ bs} ]
-          x ℕ.⋅ eval (as ⨯ bs) x          🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._⋅_)(x) (eval-preserves-multiplication {x = x}{as}{bs}) ]
+          x ℕ.⋅ eval (as ⨯ bs) x          🝖[ _≡_ ]-[ congruence₂-₂(ℕ._⋅_)(x) (eval-preserves-multiplication {x = x}{as}{bs}) ]
           x ℕ.⋅ (eval as x ℕ.⋅ eval bs x) 🝖-end
 
         eval-substitution : ∀{m n}{a : Polynomial(m)}{eq : (m ≡ n)}{x} → (eval ([≡]-substitutionᵣ eq {Polynomial} a) x ≡ eval a x)
@@ -294,9 +294,9 @@ module Semantics where
 
         alg : ∀{a b x q r} → ((a ℕ.⋅ b) ℕ.+ (x ℕ.⋅ (((b ℕ.⋅ q) ℕ.+ (a ℕ.⋅ r)) ℕ.+ (x ℕ.⋅ (q ℕ.⋅ r)))) ≡ (a ℕ.+ (x ℕ.⋅ q)) ℕ.⋅ (b ℕ.+ (x ℕ.⋅ r)))
         alg {a}{b}{x}{q}{r} =
-          (a ℕ.⋅ b) ℕ.+ (x ℕ.⋅ (((b ℕ.⋅ q) ℕ.+ (a ℕ.⋅ r)) ℕ.+ (x ℕ.⋅ (q ℕ.⋅ r))))                   🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a ℕ.⋅ b) (distributivityₗ(ℕ._⋅_)(ℕ._+_) {x}{(b ℕ.⋅ q) ℕ.+ (a ℕ.⋅ r)}{x ℕ.⋅ (q ℕ.⋅ r)}) ]
-          (a ℕ.⋅ b) ℕ.+ ((x ℕ.⋅ ((b ℕ.⋅ q) ℕ.+ (a ℕ.⋅ r))) ℕ.+ (x ℕ.⋅ (x ℕ.⋅ (q ℕ.⋅ r))))           🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a ℕ.⋅ b) (congruence₂(ℕ._+_) (distributivityₗ(ℕ._⋅_)(ℕ._+_) {x}{b ℕ.⋅ q}{a ℕ.⋅ r}) (symmetry(_≡_) (associativity(ℕ._⋅_) {x}{x}{q ℕ.⋅ r}))) ]
-          (a ℕ.⋅ b) ℕ.+ (((x ℕ.⋅ (b ℕ.⋅ q)) ℕ.+ (x ℕ.⋅ (a ℕ.⋅ r))) ℕ.+ ((x ℕ.⋅ x) ℕ.⋅ (q ℕ.⋅ r)))   🝖[ _≡_ ]-[ congruence₂ᵣ(ℕ._+_)(a ℕ.⋅ b) (congruence₂(ℕ._+_) (congruence₂(ℕ._+_) (One.commuteᵣ-assocᵣ {_▫_ = ℕ._⋅_}{a = x}{b}{q}) (One.commuteₗ-assocᵣ {_▫_ = ℕ._⋅_}{a = x}{a}{r})) (One.associate-commute4-c {_▫_ = ℕ._⋅_}{a = x}{x}{q}{r})) ]
+          (a ℕ.⋅ b) ℕ.+ (x ℕ.⋅ (((b ℕ.⋅ q) ℕ.+ (a ℕ.⋅ r)) ℕ.+ (x ℕ.⋅ (q ℕ.⋅ r))))                   🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a ℕ.⋅ b) (distributivityₗ(ℕ._⋅_)(ℕ._+_) {x}{(b ℕ.⋅ q) ℕ.+ (a ℕ.⋅ r)}{x ℕ.⋅ (q ℕ.⋅ r)}) ]
+          (a ℕ.⋅ b) ℕ.+ ((x ℕ.⋅ ((b ℕ.⋅ q) ℕ.+ (a ℕ.⋅ r))) ℕ.+ (x ℕ.⋅ (x ℕ.⋅ (q ℕ.⋅ r))))           🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a ℕ.⋅ b) (congruence₂(ℕ._+_) (distributivityₗ(ℕ._⋅_)(ℕ._+_) {x}{b ℕ.⋅ q}{a ℕ.⋅ r}) (symmetry(_≡_) (associativity(ℕ._⋅_) {x}{x}{q ℕ.⋅ r}))) ]
+          (a ℕ.⋅ b) ℕ.+ (((x ℕ.⋅ (b ℕ.⋅ q)) ℕ.+ (x ℕ.⋅ (a ℕ.⋅ r))) ℕ.+ ((x ℕ.⋅ x) ℕ.⋅ (q ℕ.⋅ r)))   🝖[ _≡_ ]-[ congruence₂-₂(ℕ._+_)(a ℕ.⋅ b) (congruence₂(ℕ._+_) (congruence₂(ℕ._+_) (One.commuteᵣ-assocᵣ {_▫_ = ℕ._⋅_}{a = x}{b}{q}) (One.commuteₗ-assocᵣ {_▫_ = ℕ._⋅_}{a = x}{a}{r})) (One.associate-commute4-c {_▫_ = ℕ._⋅_}{a = x}{x}{q}{r})) ]
           (a ℕ.⋅ b) ℕ.+ ((((x ℕ.⋅ q) ℕ.⋅ b) ℕ.+ (a ℕ.⋅ (x ℕ.⋅ r))) ℕ.+ ((x ℕ.⋅ q) ℕ.⋅ (x ℕ.⋅ r)))   🝖[ _≡_ ]-[ One.associate4-231-222 {_▫_ = ℕ._+_} {a = a ℕ.⋅ b}{(x ℕ.⋅ q) ℕ.⋅ b}{a ℕ.⋅ (x ℕ.⋅ r)}{(x ℕ.⋅ q) ℕ.⋅ (x ℕ.⋅ r)} ]
           ((a ℕ.⋅ b) ℕ.+ ((x ℕ.⋅ q) ℕ.⋅ b)) ℕ.+ ((a ℕ.⋅ (x ℕ.⋅ r)) ℕ.+ ((x ℕ.⋅ q) ℕ.⋅ (x ℕ.⋅ r)))   🝖[ _≡_ ]-[ OneTypeTwoOp.cross-distribute{a = a}{x ℕ.⋅ q}{b}{x ℕ.⋅ r} ]-sym
           (a ℕ.+ (x ℕ.⋅ q)) ℕ.⋅ (b ℕ.+ (x ℕ.⋅ r))                                                   🝖-end

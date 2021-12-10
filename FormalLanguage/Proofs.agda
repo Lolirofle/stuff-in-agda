@@ -190,7 +190,7 @@ module _ {Σ : Alphabet{ℓ}} where
       ... | 𝐹 = [≡]-intro
       _≅[_]≅_.suffix-lang ([𝁼][∪]-distributivityₗ-raw {x = x}{y}{z}) {c} with accepts x
       ... | 𝑇 =
-        ((suffix x c) 𝁼 (y ∪ z)) ∪ ((suffix y c) ∪ (suffix z c))                  🝖[ _≅_ ]-[ congruence₂ₗ(_∪_) _ [𝁼][∪]-distributivityₗ-raw ]
+        ((suffix x c) 𝁼 (y ∪ z)) ∪ ((suffix y c) ∪ (suffix z c))                  🝖[ _≅_ ]-[ congruence₂-₁(_∪_) _ [𝁼][∪]-distributivityₗ-raw ]
         (((suffix x c) 𝁼 y) ∪ ((suffix x c) 𝁼 z)) ∪ ((suffix y c) ∪ (suffix z c)) 🝖[ _≅_ ]-[ One.associate-commute4 (commutativity(_∪_)) ]
         (((suffix x c) 𝁼 y) ∪ (suffix y c)) ∪ (((suffix x c) 𝁼 z) ∪ (suffix z c)) 🝖[ _≅_ ]-end
       ... | 𝐹 = [𝁼][∪]-distributivityₗ-raw
@@ -223,8 +223,8 @@ x
       ... | 𝐹 = [≡]-intro
       _≅[_]≅_.suffix-lang ([𝁼][∪]-distributivityᵣ-raw {x = x}{y}{z}) {c} with accepts x | accepts y
       ... | 𝑇 | 𝑇 =
-        (((suffix x c) ∪ (suffix y c)) 𝁼 z) ∪ (suffix z c)                        🝖[ _≅_ ]-[ congruence₂ₗ(_∪_) _ [𝁼][∪]-distributivityᵣ-raw ]
-        (((suffix x c) 𝁼 z) ∪ ((suffix y c) 𝁼 z)) ∪ (suffix z c)                  🝖[ _≅_ ]-[ congruence₂ᵣ(_∪_) _ {!!} ]-sym
+        (((suffix x c) ∪ (suffix y c)) 𝁼 z) ∪ (suffix z c)                        🝖[ _≅_ ]-[ congruence₂-₁(_∪_) _ [𝁼][∪]-distributivityᵣ-raw ]
+        (((suffix x c) 𝁼 z) ∪ ((suffix y c) 𝁼 z)) ∪ (suffix z c)                  🝖[ _≅_ ]-[ congruence₂-₂(_∪_) _ {!!} ]-sym
         (((suffix x c) 𝁼 z) ∪ ((suffix y c) 𝁼 z)) ∪ ((suffix z c) ∪ (suffix z c)) 🝖[ _≅_ ]-[ One.associate-commute4 (commutativity(_∪_)) ]
         (((suffix x c) 𝁼 z) ∪ (suffix z c)) ∪ (((suffix y c) 𝁼 z) ∪ (suffix z c)) 🝖[ _≅_ ]-end
       ... | 𝑇 | 𝐹 = {!!}
@@ -240,13 +240,13 @@ x
       ... | 𝐹 = [≡]-intro
       _≅[_]≅_.suffix-lang ([𝁼]-associativity-raw {s = s} {x} {y} {z}) {c} {sₛ} with [𝁼]-associativity-raw {s = sₛ} {suffix x c}{y}{z} | accepts(x) | accepts(y)
       ... | p | 𝑇 | 𝑇 =
-        ((((suffix x c) 𝁼 y) ∪ (suffix y c)) 𝁼 z) ∪ (suffix z c)       🝖[ _≅_ ]-[ congruence₂ₗ(_∪_) _ (distributivityᵣ(_𝁼_)(_∪_)) ]
-        ((((suffix x c) 𝁼 y) 𝁼 z) ∪ ((suffix y c) 𝁼 z)) ∪ (suffix z c) 🝖[ _≅_ ]-[ congruence₂ₗ(_∪_) _ (congruence₂ₗ(_∪_) _ p) ]
+        ((((suffix x c) 𝁼 y) ∪ (suffix y c)) 𝁼 z) ∪ (suffix z c)       🝖[ _≅_ ]-[ congruence₂-₁(_∪_) _ (distributivityᵣ(_𝁼_)(_∪_)) ]
+        ((((suffix x c) 𝁼 y) 𝁼 z) ∪ ((suffix y c) 𝁼 z)) ∪ (suffix z c) 🝖[ _≅_ ]-[ congruence₂-₁(_∪_) _ (congruence₂-₁(_∪_) _ p) ]
         (((suffix x c) 𝁼 (y 𝁼 z)) ∪ ((suffix y c) 𝁼 z)) ∪ (suffix z c) 🝖[ _≅_ ]-[ associativity(_∪_) ]
         ((suffix x c) 𝁼 (y 𝁼 z)) ∪ (((suffix y c) 𝁼 z) ∪ (suffix z c)) 🝖[ _≅_ ]-end
       ... | p | 𝑇 | 𝐹 =
         (((suffix x c) 𝁼 y) ∪ (suffix y c)) 𝁼 z       🝖[ _≅_ ]-[ distributivityᵣ(_𝁼_)(_∪_) ]
-        (((suffix x c) 𝁼 y) 𝁼 z) ∪ ((suffix y c) 𝁼 z) 🝖[ _≅_ ]-[ congruence₂ₗ(_∪_) _ p ]
+        (((suffix x c) 𝁼 y) 𝁼 z) ∪ ((suffix y c) 𝁼 z) 🝖[ _≅_ ]-[ congruence₂-₁(_∪_) _ p ]
         ((suffix x c) 𝁼 (y 𝁼 z)) ∪ ((suffix y c) 𝁼 z) 🝖[ _≅_ ]-end
       ... | p | 𝐹 | _ = p
 
@@ -362,7 +362,7 @@ module _ {Σ : Alphabet{ℓ}} where
       ... | 𝐹 = [≡]-intro
       _≅[_]≅_.suffix-lang ([𝁼][∪]-distributivityₗ-raw {s = s} {x = x}{y}{z}) {c} with accepts x
       ... | 𝑇 =
-        ((suffix x c) 𝁼 (y ∪ z)) ∪ ((suffix y c) ∪ (suffix z c))                  🝖[ _≅[ s ]≅_ ]-[ congruence₂ₗ(_∪_) _ [𝁼][∪]-distributivityₗ-raw ]
+        ((suffix x c) 𝁼 (y ∪ z)) ∪ ((suffix y c) ∪ (suffix z c))                  🝖[ _≅[ s ]≅_ ]-[ congruence₂-₁(_∪_) _ [𝁼][∪]-distributivityₗ-raw ]
         (((suffix x c) 𝁼 y) ∪ ((suffix x c) 𝁼 z)) ∪ ((suffix y c) ∪ (suffix z c)) 🝖[ _≅[ s ]≅_ ]-[ One.associate-commute4 (commutativity(_∪_)) ]
         (((suffix x c) 𝁼 y) ∪ (suffix y c)) ∪ (((suffix x c) 𝁼 z) ∪ (suffix z c)) 🝖[ _≅[ s ]≅_ ]-end
       ... | 𝐹 = [𝁼][∪]-distributivityₗ-raw

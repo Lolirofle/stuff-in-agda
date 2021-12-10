@@ -148,8 +148,8 @@ module _ where
     p (𝐒 y) prev eq ⦃ ord ⦄ =
       from-ℕ (𝐒(y))                                                         🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) eq ]
       from-ℕ (𝐒(y) ⌊/⌋ b) · ℕ-to-𝕟 (𝐒(y) mod b) ⦃ yb-ord? ⦄                 🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (prev ⦃ [⌊/⌋]-ltₗ{𝐒 y}{b}  ⦄ ⦃ div-ord ⦄) ]
-      ∅ · ℕ-to-𝕟 (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · ℕ-to-𝕟 (𝐒(y) mod b) ⦃ yb-ord? ⦄ 🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂ᵣ(_·_)(_) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ yb-ord? ⦄ (mod-lesser-than-modulus {𝐒 y}{𝐒 bb} ⦃ yb-ord ⦄))) ]
-      ∅ · ℕ-to-𝕟 (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · ℕ-to-𝕟 (𝐒(y))                   🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂ᵣ(_·_)(_) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ div-ord ⦄ ([⌊/⌋]-zero {𝐒 y}{b} yb-ord2)))) ]
+      ∅ · ℕ-to-𝕟 (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · ℕ-to-𝕟 (𝐒(y) mod b) ⦃ yb-ord? ⦄ 🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂-₂(_·_)(_) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ yb-ord? ⦄ (mod-lesser-than-modulus {𝐒 y}{𝐒 bb} ⦃ yb-ord ⦄))) ]
+      ∅ · ℕ-to-𝕟 (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · ℕ-to-𝕟 (𝐒(y))                   🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂-₂(_·_)(_) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ div-ord ⦄ ([⌊/⌋]-zero {𝐒 y}{b} yb-ord2)))) ]
       ∅ · 𝟎 · ℕ-to-𝕟 (𝐒(y))                                                 🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (skipₗ empty) ]
       ∅ · ℕ-to-𝕟 (𝐒(y))                                                     🝖-end
       where
@@ -209,7 +209,7 @@ module _ where
       p (𝐒 y) prev eq =
         to-ℕ {b} (from-ℕ (𝐒 y))                                                       🝖[ _≡_ ]-[ congruence₁(to-ℕ) eq ]
         to-ℕ {b} ((from-ℕ (𝐒(y) ⌊/⌋ b)) · (ℕ-to-𝕟 (𝐒(y) mod b) ⦃ _ ⦄))                🝖[ _≡_ ]-[]
-        (b ⋅ to-ℕ {b} (from-ℕ {b} (𝐒(y) ⌊/⌋ b))) + 𝕟-to-ℕ (ℕ-to-𝕟 (𝐒(y) mod b) ⦃ _ ⦄) 🝖[ _≡_ ]-[ congruence₂(_+_) (congruence₂ᵣ(_⋅_)(b) (prev{𝐒(y) ⌊/⌋ b} ⦃ ord2 ⦄)) (𝕟-ℕ-inverse {b}{𝐒(y) mod b} ⦃ ord1 ⦄) ]
+        (b ⋅ to-ℕ {b} (from-ℕ {b} (𝐒(y) ⌊/⌋ b))) + 𝕟-to-ℕ (ℕ-to-𝕟 (𝐒(y) mod b) ⦃ _ ⦄) 🝖[ _≡_ ]-[ congruence₂(_+_) (congruence₂-₂(_⋅_)(b) (prev{𝐒(y) ⌊/⌋ b} ⦃ ord2 ⦄)) (𝕟-ℕ-inverse {b}{𝐒(y) mod b} ⦃ ord1 ⦄) ]
         (b ⋅ (𝐒(y) ⌊/⌋ b)) + (𝐒(y) mod b)                                             🝖[ _≡_ ]-[ [⌊/⌋][mod]-is-division-with-remainder-pred-commuted {𝐒 y}{b} ]
         𝐒(y)                                                                          🝖-end
         where

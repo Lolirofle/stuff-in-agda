@@ -50,7 +50,7 @@ instance
     (
       𝟎                 🝖[ _≡_ ]-[ symmetry(_≡_) distance-to-self ]-sub
       d(x)(x)           🝖[ _≤_ ]-[ triangle-inequality ]
-      d(x)(y) + d(y)(x) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(d(x)(y)) (commutativity(d)) ]-sub
+      d(x)(y) + d(y)(x) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(d(x)(y)) (commutativity(d)) ]-sub
       d(x)(y) + d(x)(y) 🝖-end
     ) ⇒
     (𝟎 ≤ (d(x)(y) + d(x)(y)))                         ⇒-[ [≤][−]ₗ-preserve ]

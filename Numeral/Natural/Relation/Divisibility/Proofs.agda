@@ -88,7 +88,7 @@ divides-quotient = divides-elim 𝟎 𝐒
 
 divides-quotient-correctness : ∀{x y}{yx : (y ∣ x)} → (y ⋅ (divides-quotient yx) ≡ x)
 divides-quotient-correctness        {yx = Div𝟎}    = [≡]-intro
-divides-quotient-correctness {_}{y} {yx = Div𝐒 yx} = congruence₂ᵣ(_+_)(y) (divides-quotient-correctness {yx = yx})
+divides-quotient-correctness {_}{y} {yx = Div𝐒 yx} = congruence₂-₂(_+_)(y) (divides-quotient-correctness {yx = yx})
 
 divides-[⋅]-existence : ∀{x y} → ∃(n ↦ y ⋅ n ≡ x) ↔ (y ∣ x)
 divides-[⋅]-existence = [↔]-intro l r where

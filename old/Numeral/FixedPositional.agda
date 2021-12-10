@@ -130,7 +130,7 @@ module Test where
       p 𝟎     _    _    = [≡]-intro
       p (𝐒 y) prev step =
         to-ℕ b (Strict.Properties.accessible-recursion(_<_) (from-ℕ-rec b) (𝐒 y)) 🝖[ _≡_ ]-[ congruence₁(to-ℕ b) (step {𝐒(y) ⌊/⌋ b} ⦃ [⌊/⌋]-ltₗ {𝐒 y}{b} ⦄) ]
-        (𝐒(y) mod b) + (b ⋅ to-ℕ b (Strict.Properties.accessible-recursion(_<_) (from-ℕ-rec b) (𝐒(y) ⌊/⌋ b))) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(𝐒(y) mod b) (congruence₂ᵣ(_⋅_)(b) (prev{𝐒(y) ⌊/⌋ b} ⦃ [⌊/⌋]-ltₗ {𝐒 y}{b} ⦄)) ]
+        (𝐒(y) mod b) + (b ⋅ to-ℕ b (Strict.Properties.accessible-recursion(_<_) (from-ℕ-rec b) (𝐒(y) ⌊/⌋ b))) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(𝐒(y) mod b) (congruence₂-₂(_⋅_)(b) (prev{𝐒(y) ⌊/⌋ b} ⦃ [⌊/⌋]-ltₗ {𝐒 y}{b} ⦄)) ]
         (𝐒(y) mod b) + (b ⋅ (𝐒(y) ⌊/⌋ b)) 🝖[ _≡_ ]-[ commutativity(_+_) {𝐒(y) mod b}{b ⋅ (𝐒(y) ⌊/⌋ b)} ]
         (b ⋅ (𝐒(y) ⌊/⌋ b)) + (𝐒(y) mod b) 🝖[ _≡_ ]-[ [⌊/⌋][mod]-is-division-with-remainder-pred-commuted {𝐒 y}{b} ]
         𝐒(y) 🝖-end

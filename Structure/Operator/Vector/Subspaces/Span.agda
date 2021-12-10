@@ -47,5 +47,5 @@ Span-subspace : ∀{vf} → Subspace(Span{n}(vf))
 ∃.witness (_closed-under₁_.proof (Subspace.mul-closure Span-subspace {s}) ([∃]-intro sf)) = Vec.map(s ⋅ₛ_) sf
 ∃.proof (_closed-under₁_.proof (Subspace.mul-closure (Span-subspace {vf = vf}) {s}) {v} ([∃]-intro sf ⦃ p ⦄)) =
   linearCombination vf (i ↦ s ⋅ₛ sf(i)) 🝖[ _≡_ ]-[ preserving₁(linearCombination vf) (Vec.map(s ⋅ₛ_)) (s ⋅ₛᵥ_) ]
-  s ⋅ₛᵥ (linearCombination vf sf)       🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅ₛᵥ_)(s) p ]
+  s ⋅ₛᵥ (linearCombination vf sf)       🝖[ _≡_ ]-[ congruence₂-₂(_⋅ₛᵥ_)(s) p ]
   s ⋅ₛᵥ v                               🝖-end

@@ -38,7 +38,7 @@ module _
       accessible-transition {s} {a = a} ⦃ [∃]-intro w ⦃ p ⦄ ⦄ = [∃]-intro (postpend a w)
         ⦃
           wordTransition start (postpend a w)   🝖-[ wordTransition-postpend {d = d} {start}{w}{a} ]
-          transition (wordTransition start w) a 🝖-[ congruence₂ₗ(transition) a p ]
+          transition (wordTransition start w) a 🝖-[ congruence₂-₁(transition) a p ]
           transition s a                        🝖-end
         ⦄
 

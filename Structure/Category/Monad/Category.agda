@@ -41,13 +41,13 @@ module _ (T : Object → Object) ⦃ extSys : ExtensionSystem(T) ⦄ where
     f₂ ∘ₑₓₜ g₂           🝖-end
   Morphism.Associativity.proof (Category.associativity categoryₑₓₜ) {x} {y} {z} {w} {f} {g} {h} =
     (f ∘ₑₓₜ g) ∘ₑₓₜ h     🝖[ _≡_ ]-[]
-    ext(ext(f) ∘ g) ∘ h   🝖[ _≡_ ]-[ congruence₂ₗ(_∘_)(_) ext-distribute ]
+    ext(ext(f) ∘ g) ∘ h   🝖[ _≡_ ]-[ congruence₂-₁(_∘_)(_) ext-distribute ]
     (ext(f) ∘ ext(g)) ∘ h 🝖[ _≡_ ]-[ Morphism.associativity(_∘_) ]
     ext(f) ∘ (ext(g) ∘ h) 🝖[ _≡_ ]-[]
     f ∘ₑₓₜ (g ∘ₑₓₜ h)     🝖-end
   Morphism.Identityₗ.proof (Tuple.left (Category.identity categoryₑₓₜ)) {x} {y} {f} =
     idₑₓₜ ∘ₑₓₜ f           🝖[ _≡_ ]-[]
-    ext(η(y)) ∘ f          🝖[ _≡_ ]-[ congruence₂ₗ(_∘_)(f) ext-inverse ]
+    ext(η(y)) ∘ f          🝖[ _≡_ ]-[ congruence₂-₁(_∘_)(f) ext-inverse ]
     id ∘ f                 🝖[ _≡_ ]-[ Morphism.identityₗ(_∘_)(id) ]
     f                      🝖-end
   Morphism.Identityᵣ.proof (Tuple.right (Category.identity categoryₑₓₜ)) {x} {y} {f} =
@@ -67,17 +67,17 @@ module _ (T : Object → Object) ⦃ functor : Functor(category)(category)(T) �
   BinaryOperator.congruence (Category.binaryOperator monad-category {x}{y}{z}) {f₁}{f₂} {g₁}{g₂} f₁f₂ g₁g₂ =
     ext(f₁) ∘ g₁         🝖[ _≡_ ]-[]
     (μ(z) ∘ map f₁) ∘ g₁ 🝖-[ Morphism.associativity(_∘_) ]
-    μ(z) ∘ (map f₁ ∘ g₁) 🝖-[ congruence₂ᵣ(_∘_)(μ(z)) (congruence₂(_∘_) (congruence₁(map) f₁f₂) g₁g₂) ]
+    μ(z) ∘ (map f₁ ∘ g₁) 🝖-[ congruence₂-₂(_∘_)(μ(z)) (congruence₂(_∘_) (congruence₁(map) f₁f₂) g₁g₂) ]
     μ(z) ∘ (map f₂ ∘ g₂) 🝖-[ Morphism.associativity(_∘_) ]-sym
     (μ(z) ∘ map f₂) ∘ g₂ 🝖[ _≡_ ]-[]
     ext(f₂) ∘ g₂         🝖-end
   Morphism.Associativity.proof (Category.associativity monad-category) {x} {y} {z} {w} {f} {g} {h} =
-    ext(ext(f) ∘ g) ∘ h   🝖-[ congruence₂ₗ(_∘_)(_) (ext-distribute) ]
+    ext(ext(f) ∘ g) ∘ h   🝖-[ congruence₂-₁(_∘_)(_) (ext-distribute) ]
     (ext(f) ∘ ext(g)) ∘ h 🝖-[ Morphism.associativity(_∘_) ]
     ext(f) ∘ (ext(g) ∘ h) 🝖-end
   Morphism.Identityₗ.proof (Tuple.left (Category.identity monad-category)) {x} {y} {f} =
     ext(η(y)) ∘ f          🝖[ _≡_ ]-[]
-    (μ(y) ∘ map(η(y))) ∘ f 🝖-[ congruence₂ₗ(_∘_)(f) (_⊜_.proof μ-functor-[∘]-identityₗ) ]
+    (μ(y) ∘ map(η(y))) ∘ f 🝖-[ congruence₂-₁(_∘_)(f) (_⊜_.proof μ-functor-[∘]-identityₗ) ]
     id ∘ f                 🝖-[ Morphism.identityₗ(_∘_)(id) ]
     f                      🝖-end
   Morphism.Identityᵣ.proof (Tuple.right (Category.identity monad-category)) {x} {y} {f} = ext-identity

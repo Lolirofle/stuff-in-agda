@@ -95,9 +95,9 @@ module _ where
     [^]-add ⦃ [∘]-op ⦄ {f} {𝐒 a} {𝐒 b} =
       (f ^ 𝐒(a)) ∘ (f ^ 𝐒(b))    🝖-[ reflexivity(_≡_) ]
       (f ^ 𝐒(a)) ∘ (f ∘ (f ^ b)) 🝖-[ reflexivity(_≡_) ]
-      ((f ^ 𝐒(a)) ∘ f) ∘ (f ^ b) 🝖-[ congruence₂ₗ(_∘_)(f ^ b) ([^]-inner {f} ⦃ [≡]-congruence2-right(_∘_)(f) ⦄ {𝐒(a)}) ]
+      ((f ^ 𝐒(a)) ∘ f) ∘ (f ^ b) 🝖-[ congruence₂-₁(_∘_)(f ^ b) ([^]-inner {f} ⦃ BinaryOperator-unary₂(_∘_){f} ⦄ {𝐒(a)}) ]
       f ∘ ((f ^ 𝐒(a)) ∘ (f ^ b)) 🝖-[ reflexivity(_≡_) ]
-      (f ∘ (f ^ 𝐒(a))) ∘ (f ^ b) 🝖-[ congruence₂ᵣ(_∘_)(f) ([^]-add{f} {𝐒 a} {b}) ]
+      (f ∘ (f ^ 𝐒(a))) ∘ (f ^ b) 🝖-[ congruence₂-₂(_∘_)(f) ([^]-add{f} {𝐒 a} {b}) ]
       f ∘ (f ^ (𝐒(a) + b))       🝖-[ reflexivity(_≡_) ]
       f ^ (𝐒(a) + 𝐒(b))          🝖-end
 
@@ -107,7 +107,7 @@ module _ where
     [^]-multiply ⦃ [∘]-op ⦄ {f} {𝐒 a} {𝟎}   = reflexivity(_≡_)
     [^]-multiply ⦃ [∘]-op ⦄ {f} {𝐒 a} {𝐒 b} =
       (f ^ 𝐒(a)) ^ 𝐒(b)             🝖-[ reflexivity(_≡_) ]
-      (f ^ 𝐒(a)) ∘ ((f ^ 𝐒(a)) ^ b) 🝖-[ congruence₂ᵣ(_∘_)(f ^ 𝐒(a)) ([^]-multiply{f} {𝐒 a} {b}) ]
+      (f ^ 𝐒(a)) ∘ ((f ^ 𝐒(a)) ^ b) 🝖-[ congruence₂-₂(_∘_)(f ^ 𝐒(a)) ([^]-multiply{f} {𝐒 a} {b}) ]
       (f ^ 𝐒(a)) ∘ (f ^ (𝐒(a) ⋅ b)) 🝖-[ [^]-add {f} {𝐒(a)} {𝐒(a) ⋅ b} ]
       f ^ (𝐒(a) + (𝐒(a) ⋅ b))       🝖-[ reflexivity(_≡_) ]
       f ^ (𝐒(a) ⋅ 𝐒(b))             🝖-end
@@ -116,7 +116,7 @@ module _ where
     [^]-distanceₗ {f} {𝟎}   {𝟎}   = id
     [^]-distanceₗ {f} {𝟎}   {𝐒 b} = symmetry(_≡_)
     [^]-distanceₗ {f} {𝐒 a} {𝟎}   = id
-    [^]-distanceₗ {f} {𝐒 a} {𝐒 b} = congruence₂ᵣ(_∘_)(f) ∘ ([^]-distanceₗ {f} {a} {b})
+    [^]-distanceₗ {f} {𝐒 a} {𝐒 b} = congruence₂-₂(_∘_)(f) ∘ ([^]-distanceₗ {f} {a} {b})
 
     [^]-distanceᵣ : ⦃ [∘]-op : BinaryOperator(_∘_) ⦄ → ⦃ [∘]-cancₗ : Cancellationₗ(_∘_) ⦄ → ∀{f : X → X}{a b} → (f ^ a ≡ f ^ b) → (f ^ (a 𝄩 b) ≡ id)
     [^]-distanceᵣ {f} {𝟎}   {𝟎}   = id
@@ -141,7 +141,7 @@ module _ where
       [^]-of-[∘] {f}{g} com {𝟎}   = reflexivity(_≡_)
       [^]-of-[∘] {f}{g} com {𝐒 n} =
         (f ∘ g) ^ 𝐒(n)                🝖-[ reflexivity(_≡_) ]
-        (f ∘ g) ∘ ((f ∘ g) ^ n)       🝖-[ congruence₂ᵣ(_∘_)(f ∘ g) ([^]-of-[∘] {f}{g} com {n}) ]
+        (f ∘ g) ∘ ((f ∘ g) ^ n)       🝖-[ congruence₂-₂(_∘_)(f ∘ g) ([^]-of-[∘] {f}{g} com {n}) ]
         (f ∘ g) ∘ ((f ^ n) ∘ (g ^ n)) 🝖-[ One.associate-commute4 {a = f} {g} {f ^ n}{g ^ n} (symmetry(_≡_) ([^]-commuting {f} {g} com {n} {1})) ]
         (f ∘ (f ^ n)) ∘ (g ∘ (g ^ n)) 🝖-[ reflexivity(_≡_) ]
         (f ^ 𝐒(n)) ∘ (g ^ 𝐒(n))       🝖-end
@@ -153,7 +153,7 @@ module _ where
 
     repeatᵣₗ-flip-equality : ∀{_▫_ : Y → X → Y} → ⦃ op : BinaryOperator(_▫_) ⦄ → (repeatᵣ n (swap(_▫_)) x init ≡ repeatₗ n (_▫_) init x)
     repeatᵣₗ-flip-equality {n = 𝟎}                      = reflexivity(_≡_)
-    repeatᵣₗ-flip-equality {n = 𝐒(n)}{x = x}{_▫_ = _▫_} = congruence₂ₗ(_▫_)(x) (repeatᵣₗ-flip-equality {n = n}{_▫_ = _▫_})
+    repeatᵣₗ-flip-equality {n = 𝐒(n)}{x = x}{_▫_ = _▫_} = congruence₂-₁(_▫_)(x) (repeatᵣₗ-flip-equality {n = n}{_▫_ = _▫_})
 
     repeatₗᵣ-flip-equality : ∀{_▫_ : X → Y → Y} → ⦃ op : BinaryOperator(_▫_) ⦄ → (repeatₗ n (swap _▫_) init x ≡ repeatᵣ n (_▫_) x init)
     repeatₗᵣ-flip-equality {n = n}{init = init}{x = x}{_▫_ = _▫_} = symmetry(_≡_) (repeatᵣₗ-flip-equality {n = n}{x = x}{init = init}{_▫_ = swap(_▫_)} ⦃ op = swap-binaryOperator ⦄)
@@ -175,29 +175,29 @@ module _ where
     -- TODO: Should also be provable using associativity? Prove (CommutingOn(_▫_)(x)(x) → AssociativityOn(_▫_)(x)). Is this helping?
     repeat-swap-side : ⦃ op : BinaryOperator(_▫_) ⦄ ⦃ comm : Commutativity(_▫_) ⦄ → (repeatₗ n (_▫_) x x ≡ repeatᵣ n (_▫_) x x)
     repeat-swap-side            {n = 𝟎}      = reflexivity(_≡_)
-    repeat-swap-side {_▫_ = _▫_}{n = 𝐒 n}{x} = congruence₂ₗ(_▫_)(x) (repeat-swap-side {n = n}) 🝖 commutativity(_▫_)
+    repeat-swap-side {_▫_ = _▫_}{n = 𝐒 n}{x} = congruence₂-₁(_▫_)(x) (repeat-swap-side {n = n}) 🝖 commutativity(_▫_)
 
     repeat-swap-side-by-associativity : ⦃ op : BinaryOperator(_▫_) ⦄ ⦃ _ : Associativity(_▫_) ⦄ → (repeatₗ n (_▫_) x x ≡ repeatᵣ n (_▫_) x x)
     repeat-swap-side-by-associativity             {n = 𝟎}         = reflexivity(_≡_)
     repeat-swap-side-by-associativity             {n = 𝐒 𝟎}   {x} = reflexivity(_≡_)
     repeat-swap-side-by-associativity {_▫_ = _▫_} {n = 𝐒(𝐒 n)}{x} =
       repeatₗ (𝐒(𝐒(n))) (_▫_) x x        🝖[ _≡_ ]-[]
-      repeatₗ (𝐒(n)) (_▫_) x x ▫ x       🝖[ _≡_ ]-[ congruence₂ₗ(_▫_)(x) (repeat-swap-side-by-associativity {n = 𝐒 n}) ]
+      repeatₗ (𝐒(n)) (_▫_) x x ▫ x       🝖[ _≡_ ]-[ congruence₂-₁(_▫_)(x) (repeat-swap-side-by-associativity {n = 𝐒 n}) ]
       repeatᵣ (𝐒(n)) (_▫_) x x ▫ x       🝖[ _≡_ ]-[]
       (x ▫ repeatᵣ n (_▫_) x x) ▫ x      🝖[ _≡_ ]-[ associativity(_▫_) ]
-      x ▫ (repeatᵣ n (_▫_) x x ▫ x)      🝖[ _≡_ ]-[ congruence₂ᵣ(_▫_)(x) (congruence₂ₗ(_▫_)(x) (repeat-swap-side-by-associativity {n = n})) ]-sym
+      x ▫ (repeatᵣ n (_▫_) x x ▫ x)      🝖[ _≡_ ]-[ congruence₂-₂(_▫_)(x) (congruence₂-₁(_▫_)(x) (repeat-swap-side-by-associativity {n = n})) ]-sym
       x ▫ (repeatₗ n (_▫_) x x ▫ x)      🝖[ _≡_ ]-[]
-      x ▫ repeatₗ (𝐒(n)) (_▫_) x x       🝖[ _≡_ ]-[ congruence₂ᵣ(_▫_)(x) (repeat-swap-side-by-associativity {n = 𝐒(n)}) ]
+      x ▫ repeatₗ (𝐒(n)) (_▫_) x x       🝖[ _≡_ ]-[ congruence₂-₂(_▫_)(x) (repeat-swap-side-by-associativity {n = 𝐒(n)}) ]
       x ▫ repeatᵣ (𝐒(n)) (_▫_) x x       🝖[ _≡_ ]-[]
       repeatᵣ (𝐒(𝐒(n))) (_▫_) x x        🝖[ _≡_ ]-end
 
     repeat-with-id-swap-side : ⦃ op : BinaryOperator(_▫_) ⦄ ⦃ comm : Commutativity(_▫_) ⦄ ⦃ ident : Identity(_▫_)(init) ⦄ → (repeatₗ n (_▫_) init x ≡ repeatᵣ n (_▫_) x init)
     repeat-with-id-swap-side {n = 𝟎} = reflexivity(_≡_)
-    repeat-with-id-swap-side {_▫_ = _▫_}{n = 𝐒 n}{x = x} = congruence₂ₗ(_▫_)(x) (repeat-with-id-swap-side {n = n}) 🝖 commutativity(_▫_)
+    repeat-with-id-swap-side {_▫_ = _▫_}{n = 𝐒 n}{x = x} = congruence₂-₁(_▫_)(x) (repeat-with-id-swap-side {n = n}) 🝖 commutativity(_▫_)
 
     repeat-raise-equality : ⦃ op : BinaryOperator(_▫_) ⦄ → (repeatᵣ n (_▫_) elem (x) ≡ ((elem ▫_) ^ n)(x))
     repeat-raise-equality           {n = 𝟎}             = reflexivity(_≡_)
-    repeat-raise-equality{_▫_ = _▫_}{n = 𝐒(n)}{elem}{x} = congruence₂ᵣ(_▫_)(elem) (repeat-raise-equality{_▫_ = _▫_}{n = n}{elem}{x})
+    repeat-raise-equality{_▫_ = _▫_}{n = 𝐒(n)}{elem}{x} = congruence₂-₂(_▫_)(elem) (repeat-raise-equality{_▫_ = _▫_}{n = n}{elem}{x})
 
 
 module _ {X : Type{ℓ}} where
@@ -229,7 +229,7 @@ module _ where
     repeatₗ-by-sum {_▫_} {x} {id} ⦃ identᵣ ⦄ {a} {𝐒 b} =
       (repeatₗ a (_▫_) id x) ▫ (repeatₗ (𝐒(b)) (_▫_) id x)  🝖-[ reflexivity(_≡_) ]
       (repeatₗ a (_▫_) id x) ▫ ((repeatₗ b (_▫_) id x) ▫ x) 🝖-[ symmetry(_≡_) (associativity(_▫_)) ]
-      ((repeatₗ a (_▫_) id x) ▫ (repeatₗ b (_▫_) id x)) ▫ x 🝖-[ congruence₂ₗ(_▫_)(_) (repeatₗ-by-sum{a = a}{b = b}) ]
+      ((repeatₗ a (_▫_) id x) ▫ (repeatₗ b (_▫_) id x)) ▫ x 🝖-[ congruence₂-₁(_▫_)(_) (repeatₗ-by-sum{a = a}{b = b}) ]
       (repeatₗ (a + b) (_▫_) id x) ▫ x                      🝖-[ reflexivity(_≡_) ]
       repeatₗ (a + 𝐒(b)) (_▫_) id x                         🝖-end
 
@@ -239,7 +239,7 @@ module _ where
       repeatₗ (a ⋅ 𝟎) (_▫_) id x                  🝖-end
     repeatₗ-by-product {_▫_} {x} {id} ⦃ identᵣ ⦄ {a} {𝐒 b} =
       repeatₗ (𝐒(b)) (_▫_) id ((repeatₗ a (_▫_) id x))                       🝖-[ reflexivity(_≡_) ]
-      (repeatₗ b (_▫_) id ((repeatₗ a (_▫_) id x))) ▫ (repeatₗ a (_▫_) id x) 🝖-[ congruence₂ₗ(_▫_)(_) (repeatₗ-by-product{a = a}{b = b}) ]
+      (repeatₗ b (_▫_) id ((repeatₗ a (_▫_) id x))) ▫ (repeatₗ a (_▫_) id x) 🝖-[ congruence₂-₁(_▫_)(_) (repeatₗ-by-product{a = a}{b = b}) ]
       (repeatₗ (a ⋅ b) (_▫_) id x) ▫ (repeatₗ a (_▫_) id x)                  🝖-[ repeatₗ-by-sum {a = a ⋅ b}{a} ]
       repeatₗ ((a ⋅ b) + a) (_▫_) id x                                       🝖-[ [≡]-to-equivalence (congruence₁(expr ↦ repeatₗ expr (_▫_) id x) {a ⋅ b + a}{a + a ⋅ b} (commutativity(_+_) {a ⋅ b})) ]
       repeatₗ (a ⋅ 𝐒(b)) (_▫_) id x                                          🝖-end
@@ -250,7 +250,7 @@ module _ where
     repeatₗ-by-distanceₗ {_▫_} {x} {id} {𝟎}   {𝟎}   p = p
     repeatₗ-by-distanceₗ {_▫_} {x} {id} {𝟎}   {𝐒 b} p = symmetry(_≡_) p
     repeatₗ-by-distanceₗ {_▫_} {x} {id} {𝐒 a} {𝟎}   p = p
-    repeatₗ-by-distanceₗ {_▫_} {x} {id} {𝐒 a} {𝐒 b} p = congruence₂ₗ(_▫_)(_) (repeatₗ-by-distanceₗ {_▫_} {x} {id} {a} {b} p)
+    repeatₗ-by-distanceₗ {_▫_} {x} {id} {𝐒 a} {𝐒 b} p = congruence₂-₁(_▫_)(_) (repeatₗ-by-distanceₗ {_▫_} {x} {id} {a} {b} p)
 
     repeatₗ-by-distanceᵣ : ∀{_▫_ : X → X → X}{x id} → ⦃ _ : BinaryOperator(_▫_) ⦄ → ⦃ _ : Identityᵣ(_▫_)(id) ⦄ → ⦃ _ : Associativity(_▫_) ⦄ → ⦃ cancᵣ : Cancellationᵣ(_▫_) ⦄ → ∀{a b} → (repeatₗ a (_▫_) id x ≡ repeatₗ b (_▫_) id x) → (repeatₗ (a 𝄩 b) (_▫_) id x ≡ id)
     repeatₗ-by-distanceᵣ {_▫_} {x} {id} {𝟎}   {𝟎}   p = p
@@ -264,7 +264,7 @@ module _ where
       repeatₗ-distributivityₗ {x}{y}{n = 𝐒(n)} =
         x ▫₁ (repeatₗ(𝐒(n)) (_▫₂_) id y)           🝖[ _≡_ ]-[]
         x ▫₁ ((repeatₗ n (_▫₂_) id y) ▫₂ y)        🝖[ _≡_ ]-[ distributivityₗ(_▫₁_)(_▫₂_) ]
-        (x ▫₁ (repeatₗ n (_▫₂_) id y)) ▫₂ (x ▫₁ y) 🝖[ _≡_ ]-[ congruence₂ₗ(_▫₂_)(x ▫₁ y) (repeatₗ-distributivityₗ {x}{y}{n = n}) ]
+        (x ▫₁ (repeatₗ n (_▫₂_) id y)) ▫₂ (x ▫₁ y) 🝖[ _≡_ ]-[ congruence₂-₁(_▫₂_)(x ▫₁ y) (repeatₗ-distributivityₗ {x}{y}{n = n}) ]
         (repeatₗ n (_▫₂_) id (x ▫₁ y)) ▫₂ (x ▫₁ y) 🝖[ _≡_ ]-[]
         repeatₗ(𝐒(n)) (_▫₂_) id (x ▫₁ y)           🝖-end
 
@@ -274,7 +274,7 @@ module _ where
       repeatₗ-distributivityᵣ {x}{y}{n = 𝐒(n)} =
         (repeatₗ(𝐒(n)) (_▫₂_) id x) ▫₁ y           🝖[ _≡_ ]-[]
         ((repeatₗ n (_▫₂_) id x) ▫₂ x) ▫₁ y        🝖[ _≡_ ]-[ distributivityᵣ(_▫₁_)(_▫₂_) ]
-        ((repeatₗ n (_▫₂_) id x) ▫₁ y) ▫₂ (x ▫₁ y) 🝖[ _≡_ ]-[ congruence₂ₗ(_▫₂_)(x ▫₁ y) (repeatₗ-distributivityᵣ {x}{y}{n = n}) ]
+        ((repeatₗ n (_▫₂_) id x) ▫₁ y) ▫₂ (x ▫₁ y) 🝖[ _≡_ ]-[ congruence₂-₁(_▫₂_)(x ▫₁ y) (repeatₗ-distributivityᵣ {x}{y}{n = n}) ]
         (repeatₗ n (_▫₂_) id (x ▫₁ y)) ▫₂ (x ▫₁ y) 🝖[ _≡_ ]-[]
         repeatₗ(𝐒(n)) (_▫₂_) id (x ▫₁ y)           🝖-end
 

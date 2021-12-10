@@ -55,7 +55,7 @@ instance
   Transitivity.proof [≤]-transitivity {a}{b}{c} ([∃]-intro n₁ ⦃ an₁b ⦄) ([∃]-intro n₂ ⦃ bn₂c ⦄) = [∃]-intro (n₁ + n₂) ⦃ p ⦄ where
     p =
       a + (n₁ + n₂) 🝖[ _≡_ ]-[ associativity(_+_) {a}{n₁}{n₂} ]-sym
-      (a + n₁) + n₂ 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(n₂) an₁b ]
+      (a + n₁) + n₂ 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(n₂) an₁b ]
       b + n₂        🝖[ _≡_ ]-[ bn₂c ]
       c             🝖-end
 
@@ -67,14 +67,14 @@ instance
   [≤]-antisymmetry : Antisymmetry(_≤_)(_≡_)
   Antisymmetry.proof [≤]-antisymmetry {a} {b} ([∃]-intro(n₁) ⦃ an₁b ⦄) ([∃]-intro(n₂) ⦃ bn₂a ⦄) =
     a      🝖[ _≡_ ]-[]
-    a + 𝟎  🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(a) n₁0 ]-sym
+    a + 𝟎  🝖[ _≡_ ]-[ congruence₂-₂(_+_)(a) n₁0 ]-sym
     a + n₁ 🝖[ _≡_ ]-[ an₁b ]
     b      🝖-end
     where
       n₁n₂0 : (n₁ + n₂ ≡ 0)
       n₁n₂0 = cancellationₗ(_+_) $
         a + (n₁ + n₂) 🝖[ _≡_ ]-[ associativity(_+_) {a}{n₁}{n₂} ]-sym
-        (a + n₁) + n₂ 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(n₂) an₁b ]
+        (a + n₁) + n₂ 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(n₂) an₁b ]
         b + n₂        🝖[ _≡_ ]-[ bn₂a ]
         a             🝖[ _≡_ ]-[]
         a + 0         🝖-end

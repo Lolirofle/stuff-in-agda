@@ -90,7 +90,7 @@ instance
     next : ∀(z : ℕ) → ((x + y) ⋅ z) ≡ ((x ⋅ z) + (y ⋅ z)) → ((x + y) ⋅ 𝐒(z)) ≡ ((x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z)))
     next z prev =
       (x + y) ⋅ 𝐒(z)                🝖[ _≡_ ]-[]
-      (x + y) + ((x + y) ⋅ z)       🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x + y) prev ]
+      (x + y) + ((x + y) ⋅ z)       🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x + y) prev ]
       (x + y) + ((x ⋅ z) + (y ⋅ z)) 🝖[ _≡_ ]-[ One.associate-commute4 {a = x}{y}{x ⋅ z}{y ⋅ z} (commutativity(_+_){x = y}) ]
       (x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z))       🝖-end
 
@@ -106,7 +106,7 @@ instance
     next : ∀(z : ℕ) → Names.DistributiveOnₗ(_⋅_)(_+_) x y z → Names.DistributiveOnₗ(_⋅_)(_+_) x y (𝐒(z))
     next z prev =
       x ⋅ (y + 𝐒(z))          🝖[ _≡_ ]-[]
-      x + (x ⋅ (y + z))       🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x) prev ]
+      x + (x ⋅ (y + z))       🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x) prev ]
       x + ((x ⋅ y) + (x ⋅ z)) 🝖[ _≡_ ]-[ One.commuteₗ-assocᵣ {a = x}{b = x ⋅ y}{c = x ⋅ z} ]
       (x ⋅ y) + (x + (x ⋅ z)) 🝖[ _≡_ ]-[]
       (x ⋅ y) + (x ⋅ 𝐒(z))    🝖-end
@@ -117,7 +117,7 @@ instance
     next : ∀(z : ℕ) → Names.AssociativeOn(_⋅_) x y z → Names.AssociativeOn(_⋅_) x y (𝐒(z))
     next z prev =
       (x ⋅ y) ⋅ 𝐒(z)          🝖[ _≡_ ]-[]
-      (x ⋅ y) + ((x ⋅ y) ⋅ z) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x ⋅ y) prev ]
+      (x ⋅ y) + ((x ⋅ y) ⋅ z) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x ⋅ y) prev ]
       (x ⋅ y) + (x ⋅ (y ⋅ z)) 🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) {x}{y}{y ⋅ z} ]-sym
       x ⋅ (y + (y ⋅ z))       🝖[ _≡_ ]-[]
       x ⋅ (y ⋅ 𝐒(z))          🝖-end
@@ -129,7 +129,7 @@ instance
     next y prev =
       x ⋅ 𝐒(y)    🝖[ _≡_ ]-[]
       x + (x ⋅ y) 🝖[ _≡_ ]-[ commutativity(_+_) {x}{x ⋅ y} ]
-      (x ⋅ y) + x 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(x) prev ]
+      (x ⋅ y) + x 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(x) prev ]
       (y ⋅ x) + x 🝖[ _≡_ ]-[ [⋅]-with-[𝐒]ₗ {y}{x} ]-sym
       𝐒(y) ⋅ x    🝖-end
 
@@ -328,7 +328,7 @@ instance
 
 instance
   [swap+][𝄩]-inverseOperatorᵣ : InverseOperatorᵣ(swap(_+_))(_𝄩_)
-  InverseOperatorᵣ.proof [swap+][𝄩]-inverseOperatorᵣ {x}{y} = congruence₂ₗ(_𝄩_)(y) (commutativity(_+_) {y}{x}) 🝖 inverseOperᵣ(_+_)(_𝄩_) {x}{y}
+  InverseOperatorᵣ.proof [swap+][𝄩]-inverseOperatorᵣ {x}{y} = congruence₂-₁(_𝄩_)(y) (commutativity(_+_) {y}{x}) 🝖 inverseOperᵣ(_+_)(_𝄩_) {x}{y}
 
 instance
   [swap+][𝄩]-inverseOperatorₗ : InverseOperatorₗ(swap(_+_))(_𝄩_)

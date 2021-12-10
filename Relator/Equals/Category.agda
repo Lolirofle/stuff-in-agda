@@ -115,7 +115,7 @@ NaturalTransformation.natural (∃.proof (Monad.Μ (identityFunctionMonad {f = f
   symmetry(Id) (congruence₁(f) (p(x)))                                               🝖[ Id ]-[ Morphism.Identityₗ.proof (Tuple.left  (Category.identity identityTypeCategory)) ]-sym
   symmetry(Id) (congruence₁(f) (p(x))) 🝖 intro                                       🝖[ Id ]-[]
   symmetry(Id) (congruence₁(f) (p(x))) 🝖 congruence₁(f) intro                        🝖-end
-_⊜_.proof (Monad.μ-functor-[∘]-commutativity (identityFunctionMonad {f = f} p preserv)) {x} = congruence₂ₗ(_🝖_)(symmetry(Id) (congruence₁(f) (p(x)))) $
+_⊜_.proof (Monad.μ-functor-[∘]-commutativity (identityFunctionMonad {f = f} p preserv)) {x} = congruence₂-₁(_🝖_)(symmetry(Id) (congruence₁(f) (p(x)))) $
   congruence₁(f) (symmetry(Id) (congruence₁(f) (p(x)))) 🝖[ Id ]-[ Groupoid.Functor.inv-preserving (functionFunctor{f = f}) {f = congruence₁(f) (p x)} ]
   symmetry(Id) (congruence₁(f) (congruence₁(f) (p(x)))) 🝖[ Id ]-[ congruence₁(symmetry(Id)) (congruence₁(congruence₁(f)) preserv) ]-sym
   symmetry(Id) (congruence₁(f) (p(f(x))))               🝖-end
@@ -124,6 +124,6 @@ _⊜_.proof (Monad.μ-functor-[∘]-identityₗ (identityFunctionMonad {f = f} p
   p(f(x)) 🝖 symmetry(Id) (p(f(x)))                             🝖[ Id ]-[ Morphism.Inverseₗ.proof (Tuple.left(Groupoid.inverse identityTypeGroupoid {f = p(f x)})) ]
   intro{x = f(x)}                                              🝖-end
 _⊜_.proof (Monad.μ-functor-[∘]-identityᵣ (identityFunctionMonad {f = f} p preserv)) {x} =
-  p(f(x)) 🝖 symmetry(Id) (congruence₁(f) (p(x))) 🝖[ Id ]-[ congruence₂ᵣ(_🝖_)(p(f(x))) (congruence₁(symmetry(Id)) preserv) ]-sym
+  p(f(x)) 🝖 symmetry(Id) (congruence₁(f) (p(x))) 🝖[ Id ]-[ congruence₂-₂(_🝖_)(p(f(x))) (congruence₁(symmetry(Id)) preserv) ]-sym
   p(f(x)) 🝖 symmetry(Id) (p(f(x)))               🝖[ Id ]-[ Morphism.Inverseₗ.proof (Tuple.left(Groupoid.inverse identityTypeGroupoid {f = p(f x)})) ]
   intro{x = f(x)}                                🝖-end

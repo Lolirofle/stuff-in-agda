@@ -29,13 +29,13 @@ module _ {Obj : Type{ℓₒ}} {_⟶_ : Obj → Obj → Type{ℓₘ}} (C : Catego
   covariantHomFunctor : Obj → ((intro C) →ᶠᵘⁿᶜᵗᵒʳ typeExtensionalFnCategoryObject{ℓₘ})
   ∃.witness (covariantHomFunctor x) y = (x ⟶ y)
   Functor.map (∃.proof (covariantHomFunctor _)) = (_∘_)
-  _⊜_.proof (Function.congruence (Functor.map-function (∃.proof (covariantHomFunctor _))) {f₁} {f₂} f₁f₂) {g} = congruence₂ₗ(_∘_) ⦃ binaryOperator ⦄ g f₁f₂
+  _⊜_.proof (Function.congruence (Functor.map-function (∃.proof (covariantHomFunctor _))) {f₁} {f₂} f₁f₂) {g} = congruence₂-₁(_∘_) ⦃ binaryOperator ⦄ g f₁f₂
   _⊜_.proof (Functor.op-preserving (∃.proof (covariantHomFunctor _))) = Morphism.associativity(_∘_)
   _⊜_.proof (Functor.id-preserving (∃.proof (covariantHomFunctor _))) = Morphism.identityₗ(_∘_)(id)
 
   contravariantHomFunctor : Obj → (dual(intro C) →ᶠᵘⁿᶜᵗᵒʳ typeExtensionalFnCategoryObject{ℓₘ})
   ∃.witness (contravariantHomFunctor x) y = (y ⟶ x)
   Functor.map (∃.proof (contravariantHomFunctor _)) = Fn.swap(_∘_)
-  _⊜_.proof (Function.congruence (Functor.map-function (∃.proof (contravariantHomFunctor _))) {g₁} {g₂} g₁g₂) {f} = congruence₂ᵣ(_∘_) ⦃ binaryOperator ⦄ f g₁g₂
+  _⊜_.proof (Function.congruence (Functor.map-function (∃.proof (contravariantHomFunctor _))) {g₁} {g₂} g₁g₂) {f} = congruence₂-₂(_∘_) ⦃ binaryOperator ⦄ f g₁g₂
   _⊜_.proof (Functor.op-preserving (∃.proof (contravariantHomFunctor _))) = symmetry(_) (Morphism.associativity(_∘_))
   _⊜_.proof (Functor.id-preserving (∃.proof (contravariantHomFunctor _))) = Morphism.identityᵣ(_∘_)(id)

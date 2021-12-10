@@ -106,7 +106,7 @@ instance
     proof : (gcd(a)(b) ⋅ c ≡ gcd(a ⋅ c)(b ⋅ c))
     proof {a}{b}{𝟎}    = [≡]-intro
     proof {a}{b}{𝐒(c)} =
-      gcd(a)(b) ⋅ 𝐒(c)                         🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(𝐒(c)) ([↔]-to-[→] Gcd-gcd-value (p{gcd(a ⋅ 𝐒(c))(b ⋅ 𝐒(c)) ⌊/⌋ 𝐒(c)} ([↔]-to-[←] Gcd-gcd-value (symmetry(_≡_) q)))) ]
+      gcd(a)(b) ⋅ 𝐒(c)                         🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(𝐒(c)) ([↔]-to-[→] Gcd-gcd-value (p{gcd(a ⋅ 𝐒(c))(b ⋅ 𝐒(c)) ⌊/⌋ 𝐒(c)} ([↔]-to-[←] Gcd-gcd-value (symmetry(_≡_) q)))) ]
       gcd(a ⋅ 𝐒(c)) (b ⋅ 𝐒(c)) ⌊/⌋ 𝐒(c) ⋅ 𝐒(c) 🝖[ _≡_ ]-[ q ]
       gcd(a ⋅ 𝐒(c)) (b ⋅ 𝐒(c))                 🝖-end
       where
@@ -208,7 +208,7 @@ gcd-of-powers-min {n}{𝐒 a}{𝟎}   = absorberᵣ(gcd)(1) {n ^ 𝐒(a)}
 gcd-of-powers-min {n}{𝐒 a}{𝐒 b} =
   gcd (n ^ 𝐒(a)) (n ^ 𝐒(b))       🝖[ _≡_ ]-[]
   gcd (n ⋅ (n ^ a)) (n ⋅ (n ^ b)) 🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(gcd) {n}{n ^ a}{n ^ b} ]-sym
-  n ⋅ gcd (n ^ a) (n ^ b)         🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(n) (gcd-of-powers-min {n}{a}{b}) ]
+  n ⋅ gcd (n ^ a) (n ^ b)         🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(n) (gcd-of-powers-min {n}{a}{b}) ]
   n ⋅ n ^ ℕ.min(a)(b)             🝖[ _≡_ ]-[]
   n ^ 𝐒(ℕ.min(a)(b))              🝖[ _≡_ ]-[]
   n ^ ℕ.min(𝐒(a))(𝐒(b))           🝖-end
@@ -229,7 +229,7 @@ postulate Lcm-lcm : Lcm a b (lcm a b)
 [⋅]-lcm-coprim : Coprime a b → (lcm a b ≡ a ⋅ b)
 [⋅]-lcm-coprim {a}{b} coprim =
   lcm a b                🝖[ _≡_ ]-[ identityₗ(_⋅_)(𝟏) {lcm a b} ]-sym
-  𝟏 ⋅ lcm a b            🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(lcm a b) ([↔]-to-[→] Coprime-gcd coprim) ]-sym
+  𝟏 ⋅ lcm a b            🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(lcm a b) ([↔]-to-[→] Coprime-gcd coprim) ]-sym
   gcd a b ⋅ lcm a b      🝖[ _≡_ ]-[ [⋅]-gcd-lcm {a}{b} ]
   a ⋅ b                  🝖-end
 

@@ -50,15 +50,15 @@ open import Type.Properties.Decidable.Proofs
 [∣ᵣₑₘ]-is-division-with-remainder {𝐒 .(x + y)}    {𝐒 y} {𝟎}   (DivRem𝐒 {x = x} p) =
   𝐒([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)         🝖[ _≡_ ]-[ [⋅]-with-[𝐒]ₗ {[∣ᵣₑₘ]-quotient p}{𝐒(y)} ]
   (([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + 𝐒(y) 🝖[ _≡_ ]-[]
-  𝐒((([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + y) 🝖[ _≡_ ]-[ congruence₁(𝐒) (congruence₂ₗ(_+_)(y) ([∣ᵣₑₘ]-is-division-with-remainder p)) ]
+  𝐒((([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + y) 🝖[ _≡_ ]-[ congruence₁(𝐒) (congruence₂-₁(_+_)(y) ([∣ᵣₑₘ]-is-division-with-remainder p)) ]
   𝐒(x + y)                            🝖-end
 [∣ᵣₑₘ]-is-division-with-remainder {𝐒 .(𝕟-to-ℕ r)} {𝐒 y} {𝐒 r} DivRem𝟎 = [≡]-intro
 [∣ᵣₑₘ]-is-division-with-remainder {𝐒 .(x + y)} {𝐒(y@(𝐒 _))} {r@(𝐒 _)} (DivRem𝐒 {x = x} p) =
   (([∣ᵣₑₘ]-quotient (DivRem𝐒 p)) ⋅ 𝐒(y)) + (𝕟-to-ℕ r) 🝖[ _≡_ ]-[]
-  (𝐒([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y))          + (𝕟-to-ℕ r) 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(𝕟-to-ℕ r) ([⋅]-with-[𝐒]ₗ {[∣ᵣₑₘ]-quotient p}{𝐒(y)}) ]
+  (𝐒([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y))          + (𝕟-to-ℕ r) 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(𝕟-to-ℕ r) ([⋅]-with-[𝐒]ₗ {[∣ᵣₑₘ]-quotient p}{𝐒(y)}) ]
   ((([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + 𝐒(y))  + (𝕟-to-ℕ r) 🝖[ _≡_ ]-[ One.commuteᵣ-assocₗ {a = ([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)}{b = 𝐒(y)}{c = 𝕟-to-ℕ r} ]
   ((([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + (𝕟-to-ℕ r)) + 𝐒(y)  🝖[ _≡_ ]-[]
-  𝐒(((([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + (𝕟-to-ℕ r)) + y)  🝖[ _≡_ ]-[ congruence₁(𝐒) (congruence₂ₗ(_+_)(y) ([∣ᵣₑₘ]-is-division-with-remainder p)) ]
+  𝐒(((([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + (𝕟-to-ℕ r)) + y)  🝖[ _≡_ ]-[ congruence₁(𝐒) (congruence₂-₁(_+_)(y) ([∣ᵣₑₘ]-is-division-with-remainder p)) ]
   𝐒(x + y)                                                 🝖-end 
 
 -- When the arguments in the divisibility relation are related to each other.
@@ -70,7 +70,7 @@ open import Type.Properties.Decidable.Proofs
   l {x}{y}{𝐒 q}{r} p = substitute₁(x ↦ (y ∣ᵣₑₘ x)(r)) eq (DivRem𝐒 (l{(q ⋅ y) + (𝕟-to-ℕ r)}{y}{q}{r} [≡]-intro)) where
     eq =
       ((q ⋅ y) + (𝕟-to-ℕ r)) + y 🝖[ _≡_ ]-[ One.commuteᵣ-assocₗ {a = q ⋅ y}{b = 𝕟-to-ℕ r}{c = y} ]
-      ((q ⋅ y) + y) + (𝕟-to-ℕ r) 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(𝕟-to-ℕ r) ([⋅]-with-[𝐒]ₗ {q}{y}) ]-sym
+      ((q ⋅ y) + y) + (𝕟-to-ℕ r) 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(𝕟-to-ℕ r) ([⋅]-with-[𝐒]ₗ {q}{y}) ]-sym
       (𝐒(q) ⋅ y) + (𝕟-to-ℕ r)    🝖[ _≡_ ]-[ p ]
       x                          🝖-end
 
@@ -139,7 +139,7 @@ open import Type.Properties.MereProposition
   proof {y} {r} (intro .(𝕟-to-ℕ r) DivRem𝟎) (intro .(𝕟-to-ℕ r) DivRem𝟎) = [≡]-intro
   proof {y} {r} (intro .(𝕟-to-ℕ r) DivRem𝟎) (intro .(x₂ + y) (DivRem𝐒{x = x₂} p₂)) = {!!}
   proof {y} {r} (intro .(x₁ + y) (DivRem𝐒{x = x₁} p₁)) (intro .(𝕟-to-ℕ r) DivRem𝟎) = {!!}
-  proof {y} {r} (intro .(x₁ + y) (DivRem𝐒{x = x₁} p₁)) (intro .(x₂ + y) (DivRem𝐒{x = x₂} p₂)) = {!congruence₂ₗ(_+_)(y) (congruence₁(Σ.left) eq)!} where
+  proof {y} {r} (intro .(x₁ + y) (DivRem𝐒{x = x₁} p₁)) (intro .(x₂ + y) (DivRem𝐒{x = x₂} p₂)) = {!congruence₂-₁(_+_)(y) (congruence₁(Σ.left) eq)!} where
     eq = proof (intro x₁ p₁) (intro x₂ p₂)
     test : ∀{a₁ a₂ : A}{b₁ : B(a₁)}{b₂ : B(a₂)} → (a₁ ≡ a₂) → (intro a₁ b₁ ≡ intro a₂ b₂)
 -}

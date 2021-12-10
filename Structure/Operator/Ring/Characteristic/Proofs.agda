@@ -45,7 +45,7 @@ module _ ⦃ rig : Rig(_+_)(_⋅_) ⦄ where
   Tuple.left (characteristic-multiple-by-unity {n}) p {a} =
     repeatₗ n (_+_) 𝟎 a       🝖[ _≡_ ]-[ repeatₗ-function (intro{x = n}) (reflexivity(_≡_)) (reflexivity(_≡_) {𝟎}) (identityᵣ(_⋅_)(𝟏)) ]-sym
     repeatₗ n (_+_) 𝟎 (a ⋅ 𝟏) 🝖[ _≡_ ]-[ repeatₗ-distributivityₗ{x = a}{y = 𝟏}{n = n} ]-sym
-    a ⋅ (repeatₗ n (_+_) 𝟎 𝟏) 🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(a) p ]
+    a ⋅ (repeatₗ n (_+_) 𝟎 𝟏) 🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(a) p ]
     a ⋅ 𝟎                     🝖[ _≡_ ]-[ absorberᵣ(_⋅_)(𝟎) ]
     𝟎                         🝖-end
   Tuple.right characteristic-multiple-by-unity p = p{𝟏}

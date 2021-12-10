@@ -20,7 +20,7 @@ private variable T A B : Type{ℓ}
 function-type-surjectivity-fixpoint : (A ≽ (A → B)) → ∀{f : B → B} → ∃(Fixpoint f)
 function-type-surjectivity-fixpoint ([∃]-intro s) {f}
   with [∃]-intro i ⦃ p ⦄ ← surjective(s) {f ∘ (s $₂_)}
-  = [∃]-intro(s i i) ⦃ intro(symmetry(_≡_) (congruence₂ₗ(_$_)(i) p)) ⦄
+  = [∃]-intro(s i i) ⦃ intro(symmetry(_≡_) (congruence₂-₁(_$_)(i) p)) ⦄
 
 module _ where
   open import Data.Boolean

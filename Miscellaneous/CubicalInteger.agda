@@ -233,10 +233,10 @@ step-swap {➖} {➖} {x} = reflexivity(_≡_)
 [+]ₗ-of-step {s₁} {x} {signed s₂ ℕ.𝟎} = reflexivity(_≡_)
 [+]ₗ-of-step {s₁} {x} {signed s₂ (ℕ.𝐒 n)} =
   step s₁ x + signed s₂ (ℕ.𝐒 n)       🝖[ _≡_ ]-[]
-  step s₂ (step s₁ x + signed s₂ n)   🝖[ _≡_ ]-[ congruence₂ᵣ(step)(s₂) ([+]ₗ-of-step {s₁} {x} {signed s₂ n}) ]
+  step s₂ (step s₁ x + signed s₂ n)   🝖[ _≡_ ]-[ congruence₂-₂(step)(s₂) ([+]ₗ-of-step {s₁} {x} {signed s₂ n}) ]
   step s₂ (step s₁ (x + signed s₂ n)) 🝖[ _≡_ ]-[ step-swap{s₂}{s₁}{x + signed s₂ n} ]
-  step s₁ (step s₂ (x + signed s₂ n)) 🝖[ _≡_ ]-[ congruence₂ᵣ(step)(s₁) ([+]ᵣ-of-step {s₂} {x} {signed s₂ n}) ]-sym
-  step s₁ (x + step s₂ (signed s₂ n)) 🝖[ _≡_ ]-[ congruence₂ᵣ(step)(s₁) (congruence₂ᵣ(_+_)(x) (𝐒-to-step {s₂}{n})) ]-sym
+  step s₁ (step s₂ (x + signed s₂ n)) 🝖[ _≡_ ]-[ congruence₂-₂(step)(s₁) ([+]ᵣ-of-step {s₂} {x} {signed s₂ n}) ]-sym
+  step s₁ (x + step s₂ (signed s₂ n)) 🝖[ _≡_ ]-[ congruence₂-₂(step)(s₁) (congruence₂-₂(_+_)(x) (𝐒-to-step {s₂}{n})) ]-sym
   step s₁ (x + signed s₂ (ℕ.𝐒 n))     🝖-end
 [+]ₗ-of-step {➕} {signed ➕ ℕ.𝟎} {𝟎-sign i} j = 𝟏
 [+]ₗ-of-step {➕} {signed ➖ ℕ.𝟎} {𝟎-sign i} j = 𝟏
@@ -260,11 +260,11 @@ instance
     p : Names.Commutativity(_+_)
     ps : ∀{x}{s}{n} → (x + signed s (ℕ.𝐒 n) ≡ signed s (ℕ.𝐒 n) + x)
     ps {x}{s}{n} =
-      (x + signed s (ℕ.𝐒 n))   🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(_) (𝐒-to-step{s}{n}) ]
+      (x + signed s (ℕ.𝐒 n))   🝖[ _≡_ ]-[ congruence₂-₂(_+_)(_) (𝐒-to-step{s}{n}) ]
       (x + step s(signed s n)) 🝖[ _≡_ ]-[ [+]ᵣ-of-step {s}{x}{signed s n} ]
-      step s(x + signed s n)   🝖[ _≡_ ]-[ congruence₂ᵣ(step)(s) (p {x} {signed s n}) ]
+      step s(x + signed s n)   🝖[ _≡_ ]-[ congruence₂-₂(step)(s) (p {x} {signed s n}) ]
       step s(signed s n + x)   🝖[ _≡_ ]-[ [+]ₗ-of-step {s}{signed s n}{x} ]-sym
-      (step s(signed s n) + x) 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(x) (𝐒-to-step{s}{n}) ]-sym
+      (step s(signed s n) + x) 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(x) (𝐒-to-step{s}{n}) ]-sym
       (signed s (ℕ.𝐒 n) + x)   🝖-end
     {-# INLINE ps #-}
 
@@ -307,7 +307,7 @@ instance
       signed s (ℕ.𝐒 n) + (− signed s (ℕ.𝐒 n))                     🝖[ _≡_ ]-[]
       signed s (ℕ.𝐒 n) + signed (Sign.− s) (ℕ.𝐒 n)                🝖[ _≡_ ]-[ congruence₂(_+_) (𝐒-to-step {s} {n}) (𝐒-to-step {Sign.− s} {n}) ]
       step s (signed s n) + step (Sign.− s) (signed (Sign.− s) n) 🝖[ _≡_ ]-[ [+]ₗ-of-step {s}{signed s n}{step (Sign.− s) (signed (Sign.− s) n)} ]
-      step s (signed s n + step (Sign.− s) (signed (Sign.− s) n)) 🝖[ _≡_ ]-[ congruence₂ᵣ(step)(s) ([+]ᵣ-of-step {Sign.− s}{signed s n}{signed (Sign.− s) n}) ]
+      step s (signed s n + step (Sign.− s) (signed (Sign.− s) n)) 🝖[ _≡_ ]-[ congruence₂-₂(step)(s) ([+]ᵣ-of-step {Sign.− s}{signed s n}{signed (Sign.− s) n}) ]
       step s (step (Sign.− s) (signed s n + signed (Sign.− s) n)) 🝖[ _≡_ ]-[ step-inverses (Sign.[−]-no-fixpoints ∘ symmetry(Id)) ]
       signed s n + signed (Sign.− s) n                            🝖[ _≡_ ]-[]
       signed s n + (− signed s n)                                 🝖[ _≡_ ]-[ p{signed s n} ]
@@ -328,12 +328,12 @@ instance
     p : Names.Associativity(_+_)
     p {x} {y} {signed s ℕ.𝟎} = reflexivity(_≡_)
     p {x} {y} {signed s (ℕ.𝐒 z)} =
-      (x + y) + signed s (ℕ.𝐒 z)    🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x + y) (𝐒-to-step {s}{z}) ]
+      (x + y) + signed s (ℕ.𝐒 z)    🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x + y) (𝐒-to-step {s}{z}) ]
       (x + y) + step s (signed s z) 🝖[ _≡_ ]-[ [+]ᵣ-of-step {s}{x + y}{signed s z} ]
-      step s ((x + y) + signed s z) 🝖[ _≡_ ]-[ congruence₂ᵣ(step)(s) (p{x}{y}{signed s z}) ]
+      step s ((x + y) + signed s z) 🝖[ _≡_ ]-[ congruence₂-₂(step)(s) (p{x}{y}{signed s z}) ]
       step s (x + (y + signed s z)) 🝖[ _≡_ ]-[ [+]ᵣ-of-step {s}{x}{y + signed s z} ]-sym
-      x + step s (y + signed s z)   🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x) ([+]ᵣ-of-step {s}{y}{signed s z}) ]-sym
-      x + (y + step s (signed s z)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x) (congruence₂ᵣ(_+_)(y) (𝐒-to-step {s})) ]-sym
+      x + step s (y + signed s z)   🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x) ([+]ᵣ-of-step {s}{y}{signed s z}) ]-sym
+      x + (y + step s (signed s z)) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x) (congruence₂-₂(_+_)(y) (𝐒-to-step {s})) ]-sym
       x + (y + signed s (ℕ.𝐒 z))    🝖-end
     p {x} {y} {𝟎-sign i} = reflexivity(_≡_)
 
@@ -347,7 +347,7 @@ instance
   [+]-cancellationᵣ = One.cancellationᵣ-by-associativity-inverse {_▫_ = _+_}
 
 Stepᵣ-injective : ∀{s}{x y} → (step s x ≡ step s y) → (x ≡ y)
-Stepᵣ-injective {s} {x} {y} p = symmetry(_≡_) (step-inverses Sign.[−]-no-fixpoints) 🝖 congruence₂ᵣ(step)(Sign.− s) p 🝖 step-inverses Sign.[−]-no-fixpoints
+Stepᵣ-injective {s} {x} {y} p = symmetry(_≡_) (step-inverses Sign.[−]-no-fixpoints) 🝖 congruence₂-₂(step)(Sign.− s) p 🝖 step-inverses Sign.[−]-no-fixpoints
 
 open import Numeral.Natural.Equiv.Path
 
@@ -457,7 +457,7 @@ instance
 absₙ-injective-for-0 : ∀{x} → Id(absₙ(x)) ℕ.𝟎 → (x ≡ 𝟎)
 absₙ-injective-for-0 {x} eq =
   x                        🝖[ _≡_ ]-[ signed-inverse{x} ]-sym
-  signed (sign x) (absₙ x) 🝖[ _≡_ ]-[ congruence₂ᵣ(signed)(sign x) (sub₂(Id)(Path) eq) ]
+  signed (sign x) (absₙ x) 🝖[ _≡_ ]-[ congruence₂-₂(signed)(sign x) (sub₂(Id)(Path) eq) ]
   signed (sign x) ℕ.𝟎      🝖[ _≡_ ]-[ 𝟎-signs ]
   signed ➕ ℕ.𝟎            🝖-end
 

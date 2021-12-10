@@ -104,7 +104,7 @@ module _ ⦃ equiv-T : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃ op : Bin
       [^]-by-id-add : ∀{a} → (x ^ (n + a)  ≡ x ^ a)
       [^]-by-id-add {a} =
         x ^ (n + a)       🝖-[ symmetry(_≡_) ([^]-by-add {n}{a}) ]
-        (x ^ n) ▫ (x ^ a) 🝖-[ congruence₂ₗ(_▫_)(_) n-id ]
+        (x ^ n) ▫ (x ^ a) 🝖-[ congruence₂-₁(_▫_)(_) n-id ]
         id ▫ (x ^ a)      🝖-[ identityₗ(_▫_)(id) ]
         x ^ a             🝖-end
 
@@ -152,7 +152,7 @@ module _ ⦃ equiv-T : Equiv{ℓₑ}(T) ⦄ (_▫_ : T → T → T) ⦃ op : Bin
         mod-is-id : x ^ (𝐒(n) mod ord(x) ⦃ p ⦄) ≡ id
         mod-is-id =
           x ^ (𝐒(n) mod ord(x) ⦃ p ⦄)                                                      🝖-[ symmetry(_≡_) (identityₗ(_▫_)(id)) ]
-          id ▫ (x ^ (𝐒(n) mod ord(x) ⦃ p ⦄))                                               🝖-[ congruence₂ₗ(_▫_)(_) (symmetry(_≡_) ([^]-by-id-multiple {ord(x) ⦃ p ⦄} ([^]-by-ord ⦃ p ⦄) {𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄})) ]
+          id ▫ (x ^ (𝐒(n) mod ord(x) ⦃ p ⦄))                                               🝖-[ congruence₂-₁(_▫_)(_) (symmetry(_≡_) ([^]-by-id-multiple {ord(x) ⦃ p ⦄} ([^]-by-ord ⦃ p ⦄) {𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄})) ]
           (x ^ ((ord(x) ⦃ p ⦄) ⋅ (𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄))) ▫ (x ^ (𝐒(n) mod ord(x) ⦃ p ⦄)) 🝖-[ [^]-by-add {(ord(x) ⦃ p ⦄) ⋅ (𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄)} {𝐒(n) mod ord(x) ⦃ p ⦄} ]
           x ^ (((ord(x) ⦃ p ⦄) ⋅ (𝐒(n) ⌊/⌋ ord(x) ⦃ p ⦄)) + (𝐒(n) mod ord(x) ⦃ p ⦄))       🝖-[ congruence₁(x ^_) ⦃ Relator.Equals.Proofs.Equiv.[≡]-to-function ⦄ ([≡]-to-equivalence([⌊/⌋][mod]-is-division-with-remainder-pred-commuted{𝐒(n)}{ord(x) ⦃ p ⦄})) ]
           x ^ 𝐒(n)                                                                         🝖-[ xnid ]

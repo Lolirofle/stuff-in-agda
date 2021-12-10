@@ -26,7 +26,7 @@ open import Syntax.Transitivity
 -- The division theorem.
 [⌊/⌋][mod]-is-division-with-remainder : ∀{x y} → (((x ⌊/⌋ 𝐒(y)) ⋅ 𝐒(y)) + (x mod 𝐒(y)) ≡ x)
 [⌊/⌋][mod]-is-division-with-remainder {x}{y} with [∃]-intro r ⦃ p ⦄ ← [∣ᵣₑₘ]-existence-alt {x}{y} =
-  ((x ⌊/⌋ 𝐒(y)) ⋅ 𝐒(y)) + (x mod 𝐒(y))                         🝖[ _≡_ ]-[ congruence₂(_+_) (congruence₂ₗ(_⋅_)(𝐒(y)) ([⌊/⌋][∣ᵣₑₘ]-quotient-equality {x}{y}{r}{p})) ([mod][∣ᵣₑₘ]-remainder-equality {x}{y}{r}{p}) ]
+  ((x ⌊/⌋ 𝐒(y)) ⋅ 𝐒(y)) + (x mod 𝐒(y))                         🝖[ _≡_ ]-[ congruence₂(_+_) (congruence₂-₁(_⋅_)(𝐒(y)) ([⌊/⌋][∣ᵣₑₘ]-quotient-equality {x}{y}{r}{p})) ([mod][∣ᵣₑₘ]-remainder-equality {x}{y}{r}{p}) ]
   (([∣ᵣₑₘ]-quotient p) ⋅ 𝐒(y)) + (𝕟-to-ℕ ([∣ᵣₑₘ]-remainder p)) 🝖[ _≡_ ]-[ [∣ᵣₑₘ]-is-division-with-remainder {x}{𝐒(y)}{r} p ]
   x                                                            🝖-end
 

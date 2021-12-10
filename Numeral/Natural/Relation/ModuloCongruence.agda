@@ -47,13 +47,13 @@ Function.congruence (mod-congruence-loose-linear-map {f}{g₁}{g₂}{h} add mul 
   p : ∀{a b n₁ n₂} → (a < 𝐒(m)) → (b < 𝐒(m)) → (a ≡ b) → (f(a + (n₁ ⋅ 𝐒(m))) mod 𝐒(m)) ≡ (f(b + (n₂ ⋅ 𝐒(m))) mod 𝐒(m))
   p {a}{b}{n₁}{n₂} am bm ab =
     f(a + (n₁ ⋅ 𝐒(m))) mod 𝐒(m)       🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (add{a}{n₁ ⋅ 𝐒(m)}) ]
-    (g₁(a) + g₂(n₁ ⋅ 𝐒(m))) mod 𝐒(m)  🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₂ᵣ(_+_)(g₁(a)) (congruence₁(g₂) (commutativity(_⋅_) {n₁}{𝐒 m}))) ]
-    (g₁(a) + g₂(𝐒(m) ⋅ n₁)) mod 𝐒(m)  🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₂ᵣ(_+_)(g₁(a)) (mul{𝐒(m)}{n₁})) ]
+    (g₁(a) + g₂(n₁ ⋅ 𝐒(m))) mod 𝐒(m)  🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₂-₂(_+_)(g₁(a)) (congruence₁(g₂) (commutativity(_⋅_) {n₁}{𝐒 m}))) ]
+    (g₁(a) + g₂(𝐒(m) ⋅ n₁)) mod 𝐒(m)  🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₂-₂(_+_)(g₁(a)) (mul{𝐒(m)}{n₁})) ]
     (g₁(a) + (𝐒(m) ⋅ h(n₁))) mod 𝐒(m) 🝖[ _≡_ ]-[ mod-of-modulus-sum-multiple{g₁(a)}{𝐒 m}{h(n₁)} ]
     g₁(a) mod 𝐒(m)                    🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₁(g₁) ab) ]
     g₁(b) mod 𝐒(m)                    🝖[ _≡_ ]-[ mod-of-modulus-sum-multiple{g₁(b)}{𝐒 m}{h(n₂)} ]-sym
-    (g₁(b) + (𝐒(m) ⋅ h(n₂))) mod 𝐒(m) 🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₂ᵣ(_+_)(g₁(b)) (mul{𝐒(m)}{n₂})) ]-sym
-    (g₁(b) + g₂(𝐒(m) ⋅ n₂)) mod 𝐒(m)  🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₂ᵣ(_+_)(g₁(b)) (congruence₁(g₂) (commutativity(_⋅_) {n₂}{𝐒 m}))) ]-sym
+    (g₁(b) + (𝐒(m) ⋅ h(n₂))) mod 𝐒(m) 🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₂-₂(_+_)(g₁(b)) (mul{𝐒(m)}{n₂})) ]-sym
+    (g₁(b) + g₂(𝐒(m) ⋅ n₂)) mod 𝐒(m)  🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (congruence₂-₂(_+_)(g₁(b)) (congruence₁(g₂) (commutativity(_⋅_) {n₂}{𝐒 m}))) ]-sym
     (g₁(b) + g₂(n₂ ⋅ 𝐒(m))) mod 𝐒(m)  🝖[ _≡_ ]-[ congruence₁(_mod 𝐒(m)) (add{b}{n₂ ⋅ 𝐒(m)}) ]-sym
     f(b + (n₂ ⋅ 𝐒(m))) mod 𝐒(m)       🝖-end
 
@@ -135,8 +135,8 @@ mod-congruence-scale-modulus {m} ⦃ pos ⦄ {a}{b}{c} = [↔]-transitivity  ([�
     ((m ⌊/⌋ gcd c m) ⋅ gcd c m) ∣ ((a 𝄩 b) ⋅ gcd c m) ⇒-[ substitute₂ₗ(_∣_) ([⋅][⌊/⌋]-inverseOperatorᵣ (Gcd.divisorᵣ Gcd-gcd)) ]
     m ∣ ((a 𝄩 b) ⋅ gcd c m)                           ⇒-[ divides-with-[⋅] {c = (c ⌊/⌋ gcd c m) ⦃ _ ⦄} ∘ [∨]-introₗ ]
     m ∣ ((a 𝄩 b) ⋅ gcd c m) ⋅ (c ⌊/⌋ gcd c m)         ⇒-[ substitute₂ᵣ(_∣_) (associativity(_⋅_) {a 𝄩 b}{gcd c m}{(c ⌊/⌋ gcd c m) ⦃ _ ⦄}) ]
-    m ∣ (a 𝄩 b) ⋅ (gcd c m ⋅ (c ⌊/⌋ gcd c m))         ⇒-[ substitute₂ᵣ(_∣_) (congruence₂ᵣ(_⋅_)(a 𝄩 b) (symmetry(_≡_) ([⌊/⌋][⋅]ᵣ-compatibility {gcd c m}{c}{gcd c m} (Gcd.divisorₗ{c}{m} Gcd-gcd)))) ]
-    m ∣ (a 𝄩 b) ⋅ ((gcd c m ⋅ c) ⌊/⌋ gcd c m)         ⇒-[ substitute₂ᵣ(_∣_) (congruence₂ᵣ(_⋅_)(a 𝄩 b) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {gcd c m}{c})) ]
+    m ∣ (a 𝄩 b) ⋅ (gcd c m ⋅ (c ⌊/⌋ gcd c m))         ⇒-[ substitute₂ᵣ(_∣_) (congruence₂-₂(_⋅_)(a 𝄩 b) (symmetry(_≡_) ([⌊/⌋][⋅]ᵣ-compatibility {gcd c m}{c}{gcd c m} (Gcd.divisorₗ{c}{m} Gcd-gcd)))) ]
+    m ∣ (a 𝄩 b) ⋅ ((gcd c m ⋅ c) ⌊/⌋ gcd c m)         ⇒-[ substitute₂ᵣ(_∣_) (congruence₂-₂(_⋅_)(a 𝄩 b) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {gcd c m}{c})) ]
     m ∣ (a 𝄩 b) ⋅ c                                   ⇒-[ substitute₂ᵣ(_∣_) (commutativity(_⋅_) {a 𝄩 b}{c}) ]
     m ∣ c ⋅ (a 𝄩 b)                                   ⇒-[ substitute₂ᵣ(_∣_) (distributivityₗ(_⋅_)(_𝄩_) {c}{a}{b}) ]
     m ∣ ((c ⋅ a) 𝄩 (c ⋅ b))                           ⇒-end

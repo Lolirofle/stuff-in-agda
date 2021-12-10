@@ -106,8 +106,8 @@ module Proofs
   -- TODO: Move
   open import Structure.Relator.Properties
   double-is-single-is-identity : ∀{x : V} → (x +ᵥ x ≡ x) → Identity(_+ᵥ_)(x)
-  Identityₗ.proof (Identity.left (double-is-single-is-identity {x} xxx)) {y} = congruence₂ₗ(_+ᵥ_)(y) (cancellationᵣ(_+ᵥ_) (xxx 🝖 symmetry(_≡_) (identityₗ(_+ᵥ_)(𝟎ᵥ)))) 🝖 identityₗ(_+ᵥ_)(𝟎ᵥ)
-  Identityᵣ.proof (Identity.right (double-is-single-is-identity {x} xxx)) {y} = congruence₂ᵣ(_+ᵥ_)(y) (cancellationₗ(_+ᵥ_) (xxx 🝖 symmetry(_≡_) (identityᵣ(_+ᵥ_)(𝟎ᵥ)))) 🝖 identityᵣ(_+ᵥ_)(𝟎ᵥ)
+  Identityₗ.proof (Identity.left (double-is-single-is-identity {x} xxx)) {y} = congruence₂-₁(_+ᵥ_)(y) (cancellationᵣ(_+ᵥ_) (xxx 🝖 symmetry(_≡_) (identityₗ(_+ᵥ_)(𝟎ᵥ)))) 🝖 identityₗ(_+ᵥ_)(𝟎ᵥ)
+  Identityᵣ.proof (Identity.right (double-is-single-is-identity {x} xxx)) {y} = congruence₂-₂(_+ᵥ_)(y) (cancellationₗ(_+ᵥ_) (xxx 🝖 symmetry(_≡_) (identityᵣ(_+ᵥ_)(𝟎ᵥ)))) 🝖 identityᵣ(_+ᵥ_)(𝟎ᵥ)
 
   -- TODO: Maybe these are general results about functions preserving an operator with inverse function and preserving element
   instance
@@ -135,26 +135,26 @@ module Proofs
     Preserving.proof [⋆ᵥ]-preserving-[−ᵥ]₂ {x} {y} =
       (x −ᵥ y) ⋆ᵥ          🝖[ _≡_ ]-[]
       (x +ᵥ (−ᵥ y)) ⋆ᵥ     🝖[ _≡_ ]-[ preserving₂(_⋆ᵥ)(_+ᵥ_)(_+ᵥ_) ]
-      (x ⋆ᵥ) +ᵥ ((−ᵥ y)⋆ᵥ) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+ᵥ_)(x ⋆ᵥ) (preserving₁(_⋆ᵥ)(−ᵥ_)(−ᵥ_)) ]
+      (x ⋆ᵥ) +ᵥ ((−ᵥ y)⋆ᵥ) 🝖[ _≡_ ]-[ congruence₂-₂(_+ᵥ_)(x ⋆ᵥ) (preserving₁(_⋆ᵥ)(−ᵥ_)(−ᵥ_)) ]
       (x ⋆ᵥ) +ᵥ (−ᵥ(y ⋆ᵥ)) 🝖[ _≡_ ]-[]
       (x ⋆ᵥ) −ᵥ (y ⋆ᵥ)     🝖-end
 
   [⋆ᵥ][⋅ᵥ]ₗ-move : ∀{x y} → ((x ⋆ᵥ) ⋅ᵥ y ≡ ((y ⋆ᵥ) ⋅ᵥ x)⋆ᵥ)
   [⋆ᵥ][⋅ᵥ]ₗ-move {x}{y} =
-    (x ⋆ᵥ) ⋅ᵥ y          🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅ᵥ_)(x ⋆ᵥ) (involution(_⋆ᵥ) ⦃ [⋆ᵥ]-involution ⦄) ]-sym
+    (x ⋆ᵥ) ⋅ᵥ y          🝖[ _≡_ ]-[ congruence₂-₂(_⋅ᵥ_)(x ⋆ᵥ) (involution(_⋆ᵥ) ⦃ [⋆ᵥ]-involution ⦄) ]-sym
     (x ⋆ᵥ) ⋅ᵥ ((y ⋆ᵥ)⋆ᵥ) 🝖[ _≡_ ]-[ Ring.Antihomomorphism.antipreserve-[⋅] [⋆ᵥ]-antihomomorphism ]-sym -- preserving₂(_⋆ᵥ)(_⋅ᵥ_)(Fn.swap(_⋅ᵥ_)) ⦃  ⦄
     ((y ⋆ᵥ) ⋅ᵥ x)⋆ᵥ      🝖-end
 
   [⋆ᵥ][⋅ᵥ]ᵣ-move : ∀{x y} → (x ⋅ᵥ (y ⋆ᵥ) ≡ (y ⋅ᵥ (x ⋆ᵥ))⋆ᵥ)
   [⋆ᵥ][⋅ᵥ]ᵣ-move {x}{y} =
-    x ⋅ᵥ (y ⋆ᵥ)          🝖[ _≡_ ]-[ congruence₂ₗ(_⋅ᵥ_)(y ⋆ᵥ) (involution(_⋆ᵥ) ⦃ [⋆ᵥ]-involution ⦄) ]-sym
+    x ⋅ᵥ (y ⋆ᵥ)          🝖[ _≡_ ]-[ congruence₂-₁(_⋅ᵥ_)(y ⋆ᵥ) (involution(_⋆ᵥ) ⦃ [⋆ᵥ]-involution ⦄) ]-sym
     ((x ⋆ᵥ)⋆ᵥ) ⋅ᵥ (y ⋆ᵥ) 🝖[ _≡_ ]-[ Ring.Antihomomorphism.antipreserve-[⋅] [⋆ᵥ]-antihomomorphism ]-sym
     (y ⋅ᵥ (x ⋆ᵥ))⋆ᵥ      🝖-end
 
   [⋆ᵥ][⋅ᵥ]-antipreserving-neutralizingᵣ : ∀{x y} → ((x ⋅ᵥ (y ⋆ᵥ))⋆ᵥ ≡ y ⋅ᵥ (x ⋆ᵥ))
   [⋆ᵥ][⋅ᵥ]-antipreserving-neutralizingᵣ {x}{y} =
     (x ⋅ᵥ (y ⋆ᵥ)) ⋆ᵥ      🝖[ _≡_ ]-[ Ring.Antihomomorphism.antipreserve-[⋅] [⋆ᵥ]-antihomomorphism ]
-    ((y ⋆ᵥ) ⋆ᵥ) ⋅ᵥ (x ⋆ᵥ) 🝖[ _≡_ ]-[ congruence₂ₗ(_⋅ᵥ_)(x ⋆ᵥ) (involution(_⋆ᵥ) ⦃ [⋆ᵥ]-involution ⦄) ]
+    ((y ⋆ᵥ) ⋆ᵥ) ⋅ᵥ (x ⋆ᵥ) 🝖[ _≡_ ]-[ congruence₂-₁(_⋅ᵥ_)(x ⋆ᵥ) (involution(_⋆ᵥ) ⦃ [⋆ᵥ]-involution ⦄) ]
     y ⋅ᵥ (x ⋆ᵥ)           🝖-end
 
 import      Structure.Operator.Ring.Numerals
@@ -205,26 +205,26 @@ module ComplexConstruction
 
   [⋅]-identityᵣ : Identityᵣ(_⋅_)(𝟏)
   left (Identityᵣ.proof [⋅]-identityᵣ {x₁ , x₂}) =
-    (x₁ ⋅ᵥ 𝟏ᵥ) −ᵥ ((𝟎ᵥ ⋆ᵥ) ⋅ᵥ x₂) 🝖[ _≡_ ]-[ congruence₂(_−ᵥ_) ⦃ [−]-binaryOperator ⦄ (identityᵣ(_⋅ᵥ_)(𝟏ᵥ)) (congruence₂ₗ(_⋅ᵥ_)(x₂) (preserving₀(_⋆ᵥ)(𝟎ᵥ)(𝟎ᵥ) ⦃ [⋆ᵥ]-preserving-[𝟎ᵥ] ⦄)) ]
-    x₁ −ᵥ (𝟎ᵥ ⋅ᵥ x₂)              🝖[ _≡_ ]-[ congruence₂ᵣ(_−ᵥ_) ⦃ [−]-binaryOperator ⦄ (x₁) (absorberₗ(_⋅ᵥ_)(𝟎ᵥ)) ]
+    (x₁ ⋅ᵥ 𝟏ᵥ) −ᵥ ((𝟎ᵥ ⋆ᵥ) ⋅ᵥ x₂) 🝖[ _≡_ ]-[ congruence₂(_−ᵥ_) ⦃ [−]-binaryOperator ⦄ (identityᵣ(_⋅ᵥ_)(𝟏ᵥ)) (congruence₂-₁(_⋅ᵥ_)(x₂) (preserving₀(_⋆ᵥ)(𝟎ᵥ)(𝟎ᵥ) ⦃ [⋆ᵥ]-preserving-[𝟎ᵥ] ⦄)) ]
+    x₁ −ᵥ (𝟎ᵥ ⋅ᵥ x₂)              🝖[ _≡_ ]-[ congruence₂-₂(_−ᵥ_) ⦃ [−]-binaryOperator ⦄ (x₁) (absorberₗ(_⋅ᵥ_)(𝟎ᵥ)) ]
     x₁ −ᵥ 𝟎ᵥ                      🝖[ _≡_ ]-[ identityᵣ(_−ᵥ_)(𝟎ᵥ) ⦃ inverse-operatorᵣ-identityᵣ-by-identity-inverseFunc ⦄ ]
     x₁ 🝖-end
   right (Identityᵣ.proof [⋅]-identityᵣ {x₁ , x₂}) =
-    (𝟎ᵥ ⋅ᵥ x₁) +ᵥ (x₂ ⋅ᵥ (𝟏ᵥ ⋆ᵥ)) 🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) (absorberₗ(_⋅ᵥ_)(𝟎ᵥ)) (congruence₂ᵣ(_⋅ᵥ_)(x₂) (preserving₀(_⋆ᵥ)(𝟏ᵥ)(𝟏ᵥ) ⦃ Ring.Antihomomorphism.preserve-𝟏 [⋆ᵥ]-antihomomorphism ⦄)) ]
-    𝟎ᵥ +ᵥ (x₂ ⋅ᵥ 𝟏ᵥ)              🝖[ _≡_ ]-[ congruence₂ᵣ(_+ᵥ_)(𝟎ᵥ) (identityᵣ(_⋅ᵥ_)(𝟏ᵥ)) ]
+    (𝟎ᵥ ⋅ᵥ x₁) +ᵥ (x₂ ⋅ᵥ (𝟏ᵥ ⋆ᵥ)) 🝖[ _≡_ ]-[ congruence₂(_+ᵥ_) (absorberₗ(_⋅ᵥ_)(𝟎ᵥ)) (congruence₂-₂(_⋅ᵥ_)(x₂) (preserving₀(_⋆ᵥ)(𝟏ᵥ)(𝟏ᵥ) ⦃ Ring.Antihomomorphism.preserve-𝟏 [⋆ᵥ]-antihomomorphism ⦄)) ]
+    𝟎ᵥ +ᵥ (x₂ ⋅ᵥ 𝟏ᵥ)              🝖[ _≡_ ]-[ congruence₂-₂(_+ᵥ_)(𝟎ᵥ) (identityᵣ(_⋅ᵥ_)(𝟏ᵥ)) ]
     𝟎ᵥ +ᵥ x₂                      🝖[ _≡_ ]-[ identityₗ(_+ᵥ_)(𝟎ᵥ) ]
     x₂                            🝖-end
 
   [⋅]-commutativity : (∀{x} → ((x ⋆ᵥ) ≡ x)) → ⦃ commᵥ : Commutativity(_⋅ᵥ_) ⦄ → Commutativity(_⋅_)
   left (Commutativity.proof ([⋅]-commutativity [⋆ᵥ]-is-id) {x₁ , x₂} {y₁ , y₂}) =
-    (x₁ ⋅ᵥ y₁) −ᵥ ((y₂ ⋆ᵥ) ⋅ᵥ x₂) 🝖[ _≡_ ]-[ congruence₂ᵣ(_−ᵥ_) ⦃ [−]-binaryOperator ⦄ (x₁ ⋅ᵥ y₁) (congruence₂ₗ(_⋅ᵥ_)(x₂) [⋆ᵥ]-is-id) ]
+    (x₁ ⋅ᵥ y₁) −ᵥ ((y₂ ⋆ᵥ) ⋅ᵥ x₂) 🝖[ _≡_ ]-[ congruence₂-₂(_−ᵥ_) ⦃ [−]-binaryOperator ⦄ (x₁ ⋅ᵥ y₁) (congruence₂-₁(_⋅ᵥ_)(x₂) [⋆ᵥ]-is-id) ]
     (x₁ ⋅ᵥ y₁) −ᵥ (y₂ ⋅ᵥ x₂)      🝖[ _≡_ ]-[ congruence₂(_−ᵥ_) ⦃ [−]-binaryOperator ⦄ (commutativity(_⋅ᵥ_)) (commutativity(_⋅ᵥ_)) ]
-    (y₁ ⋅ᵥ x₁) −ᵥ (x₂ ⋅ᵥ y₂)      🝖[ _≡_ ]-[ congruence₂ᵣ(_−ᵥ_) ⦃ [−]-binaryOperator ⦄ (y₁ ⋅ᵥ x₁) (congruence₂ₗ(_⋅ᵥ_)(y₂) [⋆ᵥ]-is-id) ]-sym
+    (y₁ ⋅ᵥ x₁) −ᵥ (x₂ ⋅ᵥ y₂)      🝖[ _≡_ ]-[ congruence₂-₂(_−ᵥ_) ⦃ [−]-binaryOperator ⦄ (y₁ ⋅ᵥ x₁) (congruence₂-₁(_⋅ᵥ_)(y₂) [⋆ᵥ]-is-id) ]-sym
     (y₁ ⋅ᵥ x₁) −ᵥ ((x₂ ⋆ᵥ) ⋅ᵥ y₂) 🝖-end
   right (Commutativity.proof ([⋅]-commutativity [⋆ᵥ]-is-id) {x₁ , x₂} {y₁ , y₂}) =
-    (y₂ ⋅ᵥ x₁) +ᵥ (x₂ ⋅ᵥ (y₁ ⋆ᵥ)) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+ᵥ_)(y₂ ⋅ᵥ x₁) (congruence₂ᵣ(_⋅ᵥ_)(x₂) [⋆ᵥ]-is-id) ]
+    (y₂ ⋅ᵥ x₁) +ᵥ (x₂ ⋅ᵥ (y₁ ⋆ᵥ)) 🝖[ _≡_ ]-[ congruence₂-₂(_+ᵥ_)(y₂ ⋅ᵥ x₁) (congruence₂-₂(_⋅ᵥ_)(x₂) [⋆ᵥ]-is-id) ]
     (y₂ ⋅ᵥ x₁) +ᵥ (x₂ ⋅ᵥ y₁)      🝖[ _≡_ ]-[ commutativity(_+ᵥ_) ]
-    (x₂ ⋅ᵥ y₁) +ᵥ (y₂ ⋅ᵥ x₁)      🝖[ _≡_ ]-[ congruence₂ᵣ(_+ᵥ_)(x₂ ⋅ᵥ y₁) (congruence₂ᵣ(_⋅ᵥ_)(y₂) [⋆ᵥ]-is-id) ]-sym
+    (x₂ ⋅ᵥ y₁) +ᵥ (y₂ ⋅ᵥ x₁)      🝖[ _≡_ ]-[ congruence₂-₂(_+ᵥ_)(x₂ ⋅ᵥ y₁) (congruence₂-₂(_⋅ᵥ_)(y₂) [⋆ᵥ]-is-id) ]-sym
     (x₂ ⋅ᵥ y₁) +ᵥ (y₂ ⋅ᵥ (x₁ ⋆ᵥ)) 🝖-end
 
   postulate [⋅]-associativity : ⦃ commᵥ : Commutativity(_⋅ᵥ_) ⦄ {- ⦃ assocᵥ : Associativity(_⋅ᵥ_) ⦄ -} → Associativity(_⋅_)
@@ -236,8 +236,8 @@ module ComplexConstruction
     (x₁ ⋅ᵥ ((y₁ ⋅ᵥ z₁) −ᵥ ((z₂ ⋆ᵥ) ⋅ᵥ y₂))) −ᵥ ((((z₂ ⋅ᵥ y₁) +ᵥ (y₂ ⋅ᵥ (z₁ ⋆ᵥ)))⋆ᵥ) ⋅ᵥ x₂)                       🝖-end
     where
       p =
-        (((z₂ ⋅ᵥ y₁) +ᵥ (y₂ ⋅ᵥ (z₁ ⋆ᵥ)))⋆ᵥ) ⋅ᵥ x₂               🝖[ _≡_ ]-[ congruence₂ₗ(_⋅ᵥ_)(x₂) (preserving₂(_⋆ᵥ)(_+ᵥ_)(_+ᵥ_)) ]
-        (((z₂ ⋅ᵥ y₁)⋆ᵥ) +ᵥ ((y₂ ⋅ᵥ (z₁ ⋆ᵥ))⋆ᵥ)) ⋅ᵥ x₂           🝖[ _≡_ ]-[ congruence₂ₗ(_⋅ᵥ_)(x₂) (congruence₂(_+ᵥ_) (Ring.Antihomomorphism.antipreserve-[⋅] [⋆ᵥ]-antihomomorphism) [⋆ᵥ][⋅ᵥ]-antipreserving-neutralizingᵣ) ]
+        (((z₂ ⋅ᵥ y₁) +ᵥ (y₂ ⋅ᵥ (z₁ ⋆ᵥ)))⋆ᵥ) ⋅ᵥ x₂               🝖[ _≡_ ]-[ congruence₂-₁(_⋅ᵥ_)(x₂) (preserving₂(_⋆ᵥ)(_+ᵥ_)(_+ᵥ_)) ]
+        (((z₂ ⋅ᵥ y₁)⋆ᵥ) +ᵥ ((y₂ ⋅ᵥ (z₁ ⋆ᵥ))⋆ᵥ)) ⋅ᵥ x₂           🝖[ _≡_ ]-[ congruence₂-₁(_⋅ᵥ_)(x₂) (congruence₂(_+ᵥ_) (Ring.Antihomomorphism.antipreserve-[⋅] [⋆ᵥ]-antihomomorphism) [⋆ᵥ][⋅ᵥ]-antipreserving-neutralizingᵣ) ]
         (((y₁ ⋆ᵥ) ⋅ᵥ (z₂ ⋆ᵥ)) +ᵥ (z₁ ⋅ᵥ (y₂ ⋆ᵥ))) ⋅ᵥ x₂         🝖[ _≡_ ]-[ distributivityᵣ(_⋅ᵥ_)(_+ᵥ_) ]
         (((y₁ ⋆ᵥ) ⋅ᵥ (z₂ ⋆ᵥ)) ⋅ᵥ x₂) +ᵥ ((z₁ ⋅ᵥ (y₂ ⋆ᵥ)) ⋅ᵥ x₂) 🝖-end
   right (Associativity.proof [⋅]-associativity {x₁ , x₂}{y₁ , y₂}{z₁ , z₂}) =

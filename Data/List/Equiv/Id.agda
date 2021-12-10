@@ -114,7 +114,7 @@ concatMap-concat-map : (concatMap f l ≡ concat(map f l))
 concatMap-concat-map        {l = ∅} = reflexivity(_≡_)
 concatMap-concat-map {f = f}{l = x ⊰ l} =
   concatMap f (x ⊰ l)     🝖[ _≡_ ]-[]
-  f(x) ++ concatMap f l   🝖[ _≡_ ]-[ congruence₂ᵣ(_++_)(f(x)) (concatMap-concat-map {l = l}) ]
+  f(x) ++ concatMap f l   🝖[ _≡_ ]-[ congruence₂-₂(_++_)(f(x)) (concatMap-concat-map {l = l}) ]
   f(x) ++ concat(map f l) 🝖[ _≡_ ]-[]
   concat(f(x) ⊰ map f l)  🝖[ _≡_ ]-[]
   concat(map f (x ⊰ l))   🝖-end
@@ -188,7 +188,7 @@ foldᵣ-preserves-[++] {_▫₁_ = _▫₁_}{_▫₂_ = _▫₂_}{id} {∅}     
   (foldᵣ(_▫₁_) id ∅) ▫₂ (foldᵣ _▫₁_ id b) 🝖-end
 foldᵣ-preserves-[++] {_▫₁_ = _▫₁_}{_▫₂_ = _▫₂_}{id} {a ⊰ al} {b} p =
   foldᵣ(_▫₁_) id (a ⊰ (al ++ b))                   🝖[ _≡_ ]-[]
-  a ▫₁ (foldᵣ(_▫₁_) id (al ++ b))                  🝖[ _≡_ ]-[ congruence₂ᵣ(_▫₁_)(a) (foldᵣ-preserves-[++] {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_} {id} {al} {b} p) ]
+  a ▫₁ (foldᵣ(_▫₁_) id (al ++ b))                  🝖[ _≡_ ]-[ congruence₂-₂(_▫₁_)(a) (foldᵣ-preserves-[++] {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_} {id} {al} {b} p) ]
   a ▫₁ ((foldᵣ(_▫₁_) id al) ▫₂ (foldᵣ(_▫₁_) id b)) 🝖[ _≡_ ]-[ p ]-sym
   (a ▫₁ (foldᵣ(_▫₁_) id al)) ▫₂ (foldᵣ(_▫₁_) id b) 🝖[ _≡_ ]-[]
   (foldᵣ(_▫₁_) id (a ⊰ al)) ▫₂ (foldᵣ(_▫₁_) id b)  🝖-end

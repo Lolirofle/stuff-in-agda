@@ -94,11 +94,11 @@ module _
   -- Note: ((swap ∘ wordTransition) d (w₁ ++ w₂) ⊜ (swap ∘ wordTransition) d w₂ ∘ (swap ∘ wordTransition) d w₁)
   wordTransition-[++] : ∀{s}{w₁ w₂} → (wordTransition s (w₁ ++ w₂) ≡ (wordTransition (wordTransition s w₁) w₂))
   wordTransition-[++] {s = s} {w₁ = w₁} {w₂ = ε} =
-    wordTransition s (w₁ ++ ε)             🝖[ _≡_ ]-[ congruence₂ᵣ(wordTransition)(s) (identityᵣ(_++_)(ε) {w₁}) ]
+    wordTransition s (w₁ ++ ε)             🝖[ _≡_ ]-[ congruence₂-₂(wordTransition)(s) (identityᵣ(_++_)(ε) {w₁}) ]
     wordTransition s w₁                    🝖[ _≡_ ]-[]
     wordTransition (wordTransition s w₁) ε 🝖-end
   wordTransition-[++] {s = s} {w₁ = w₁} {w₂ = c₂ · w₂} =
-    wordTransition s (w₁ ++ (c₂ · w₂))                      🝖[ _≡_ ]-[ congruence₂ᵣ(wordTransition)(s) ([++]-middle-prepend-postpend{l₁ = w₁}) ]-sym
+    wordTransition s (w₁ ++ (c₂ · w₂))                      🝖[ _≡_ ]-[ congruence₂-₂(wordTransition)(s) ([++]-middle-prepend-postpend{l₁ = w₁}) ]-sym
     wordTransition s (postpend c₂ w₁ ++ w₂)                 🝖[ _≡_ ]-[ wordTransition-[++] {s = s}{w₁ = postpend c₂ w₁}{w₂ = w₂} ]
-    wordTransition (wordTransition s (postpend c₂ w₁)) w₂   🝖[ _≡_ ]-[ congruence₂ₗ(wordTransition)(w₂) (wordTransition-postpend{s = s}{w = w₁}) ]
+    wordTransition (wordTransition s (postpend c₂ w₁)) w₂   🝖[ _≡_ ]-[ congruence₂-₁(wordTransition)(w₂) (wordTransition-postpend{s = s}{w = w₁}) ]
     wordTransition (transition (wordTransition s w₁) c₂) w₂ 🝖-end

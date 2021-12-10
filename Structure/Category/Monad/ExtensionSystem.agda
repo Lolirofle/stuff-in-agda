@@ -48,10 +48,10 @@ record ExtensionSystem (T : Object → Object) : Type{Lvl.of(Type.of(cat))} wher
 
   functor : Functor(category)(category)(T)
   Functor.map functor {x} {y} f = ext(η(y) ∘ f)
-  Function.congruence (Functor.map-function functor) xy = congruence₁(ext) (congruence₂ᵣ(_∘_)(_) xy)
+  Function.congruence (Functor.map-function functor) xy = congruence₁(ext) (congruence₂-₂(_∘_)(_) xy)
   Functor.op-preserving functor {x} {y} {z} {f} {g} =
     ext(η(z) ∘ f ∘ g)               🝖-[ congruence₁(ext) (Morphism.associativity(_∘_)) ]-sym
-    ext((η(z) ∘ f) ∘ g)             🝖-[ congruence₁(ext) (congruence₂ₗ(_∘_)(g) (symmetry(_≡_) ext-identity)) ]
+    ext((η(z) ∘ f) ∘ g)             🝖-[ congruence₁(ext) (congruence₂-₁(_∘_)(g) (symmetry(_≡_) ext-identity)) ]
     ext((ext(η(z) ∘ f) ∘ η(y)) ∘ g) 🝖-[ congruence₁(ext) (Morphism.associativity(_∘_)) ]
     ext(ext(η(z) ∘ f) ∘ (η(y) ∘ g)) 🝖-[ ext-distribute ]
     ext(η(z) ∘ f) ∘ ext(η(y) ∘ g)   🝖-end
@@ -69,7 +69,7 @@ record ExtensionSystem (T : Object → Object) : Type{Lvl.of(Type.of(cat))} wher
     μ(y) ∘ ext(η(T(y)) ∘ ext(η(y) ∘ f))      🝖[ _≡_ ]-[]
     ext(id) ∘ ext(η(T(y)) ∘ ext(η(y) ∘ f))   🝖-[ ext-distribute ]-sym
     ext(ext(id) ∘ (η(T(y)) ∘ ext(η(y) ∘ f))) 🝖-[ congruence₁(ext) (symmetry(_≡_) (Morphism.associativity(_∘_))) ]
-    ext((ext(id) ∘ η(T(y))) ∘ ext(η(y) ∘ f)) 🝖-[ congruence₁(ext) (congruence₂ₗ(_∘_)(_) ext-identity) ]
+    ext((ext(id) ∘ η(T(y))) ∘ ext(η(y) ∘ f)) 🝖-[ congruence₁(ext) (congruence₂-₁(_∘_)(_) ext-identity) ]
     ext(id ∘ ext(η(y) ∘ f))                  🝖-[ congruence₁(ext) (Morphism.identityₗ(_∘_)(id)) ]
     ext(ext(η(y) ∘ f))                       🝖-[ congruence₁(ext) (Morphism.identityᵣ(_∘_)(id)) ]-sym
     ext(ext(η(y) ∘ f) ∘ id)                  🝖-[ ext-distribute ]
@@ -80,7 +80,7 @@ record ExtensionSystem (T : Object → Object) : Type{Lvl.of(Type.of(cat))} wher
     ext(id) ∘ map(ext(id))             🝖[ _≡_ ]-[]
     ext(id) ∘ ext(η(T(x)) ∘ ext(id))   🝖-[ ext-distribute ]-sym
     ext(ext(id) ∘ (η(T(x)) ∘ ext(id))) 🝖-[ congruence₁(ext) (symmetry(_≡_) (Morphism.associativity(_∘_))) ]
-    ext((ext(id) ∘ η(T(x))) ∘ ext(id)) 🝖-[ congruence₁(ext) (congruence₂ₗ(_∘_)(_) ext-identity) ]
+    ext((ext(id) ∘ η(T(x))) ∘ ext(id)) 🝖-[ congruence₁(ext) (congruence₂-₁(_∘_)(_) ext-identity) ]
     ext(id ∘ ext(id))                  🝖-[ congruence₁(ext) (Morphism.identityₗ(_∘_)(id)) ]
     ext(ext(id))                       🝖-[ congruence₁(ext) (Morphism.identityᵣ(_∘_)(id)) ]-sym
     ext(ext(id) ∘ id)                  🝖-[ ext-distribute ]
@@ -90,7 +90,7 @@ record ExtensionSystem (T : Object → Object) : Type{Lvl.of(Type.of(cat))} wher
     μ(x) ∘ ext(η(T(x)) ∘ η(x))      🝖[ _≡_ ]-[]
     ext(id) ∘ ext(η(T(x)) ∘ η(x))   🝖[ _≡_ ]-[ ext-distribute ]-sym
     ext(ext(id) ∘ (η(T(x)) ∘ η(x))) 🝖[ _≡_ ]-[ congruence₁(ext) (symmetry(_≡_) (Morphism.associativity(_∘_))) ]
-    ext((ext(id) ∘ η(T(x))) ∘ η(x)) 🝖[ _≡_ ]-[ congruence₁(ext) (congruence₂ₗ(_∘_)(_) ext-identity) ]
+    ext((ext(id) ∘ η(T(x))) ∘ η(x)) 🝖[ _≡_ ]-[ congruence₁(ext) (congruence₂-₁(_∘_)(_) ext-identity) ]
     ext(id ∘ η(x))                  🝖[ _≡_ ]-[ congruence₁(ext) (Morphism.identityₗ(_∘_)(id)) ]
     ext(η(x))                       🝖[ _≡_ ]-[ ext-inverse ]
     id                              🝖[ _≡_ ]-end
@@ -140,7 +140,7 @@ module _ where
   ExtensionSystem.ext (monad-to-extensionSystem ⦃ functor ⦄ ⦃ monad ⦄) = ext
   Function.congruence (ExtensionSystem.ext-function monad-to-extensionSystem  {x} {y}) {f} {g} fg =
     ((μ(y) ∘_) ∘ᶠⁿ map) f 🝖[ _≡_ ]-[]
-    μ(y) ∘ map f          🝖[ _≡_ ]-[ congruence₂ᵣ(_∘_) _ (congruence₁(map) fg) ]
+    μ(y) ∘ map f          🝖[ _≡_ ]-[ congruence₂-₂(_∘_) _ (congruence₁(map) fg) ]
     μ(y) ∘ map g          🝖[ _≡_ ]-[]
     ((μ(y) ∘_) ∘ᶠⁿ map) g 🝖[ _≡_ ]-end
   ExtensionSystem.ext-inverse monad-to-extensionSystem {x} =
@@ -150,19 +150,19 @@ module _ where
   ExtensionSystem.ext-identity (monad-to-extensionSystem {T = T}) {x} {y} {f} =
     ((μ(y) ∘_) ∘ᶠⁿ map)(f) ∘ η(x) 🝖[ _≡_ ]-[]
     (μ(y) ∘ (map f)) ∘ η(x)       🝖[ _≡_ ]-[ Morphism.associativity(_∘_) ]
-    μ(y) ∘ ((map f) ∘ η(x))       🝖[ _≡_ ]-[ congruence₂ᵣ(_∘_) _ η-natural ]-sym
+    μ(y) ∘ ((map f) ∘ η(x))       🝖[ _≡_ ]-[ congruence₂-₂(_∘_) _ η-natural ]-sym
     μ(y) ∘ (η(T(y)) ∘ f)          🝖[ _≡_ ]-[ Morphism.associativity(_∘_) ]-sym
-    (μ(y) ∘ η(T(y))) ∘ f          🝖[ _≡_ ]-[ congruence₂ₗ(_∘_) _ (_⊜_.proof μ-functor-[∘]-identityᵣ) ]
+    (μ(y) ∘ η(T(y))) ∘ f          🝖[ _≡_ ]-[ congruence₂-₁(_∘_) _ (_⊜_.proof μ-functor-[∘]-identityᵣ) ]
     id ∘ f                        🝖[ _≡_ ]-[ Morphism.identityₗ(_∘_)(id) ]
     f                             🝖[ _≡_ ]-end
   ExtensionSystem.ext-distribute (monad-to-extensionSystem {T = T}) {x} {y} {z} {f} {g} =
     ((μ(z) ∘_) ∘ᶠⁿ map)(((μ(z) ∘_) ∘ᶠⁿ map)(f) ∘ g) 🝖[ _≡_ ]-[]
-    μ(z) ∘ map((μ(z) ∘ (map f)) ∘ g)                🝖[ _≡_ ]-[ congruence₂ᵣ(_∘_) _ op-preserving ]
-    μ(z) ∘ (map(μ(z) ∘ (map f)) ∘ (map g))          🝖[ _≡_ ]-[ congruence₂ᵣ(_∘_) _ (congruence₂ₗ(_∘_) _ op-preserving) ]
+    μ(z) ∘ map((μ(z) ∘ (map f)) ∘ g)                🝖[ _≡_ ]-[ congruence₂-₂(_∘_) _ op-preserving ]
+    μ(z) ∘ (map(μ(z) ∘ (map f)) ∘ (map g))          🝖[ _≡_ ]-[ congruence₂-₂(_∘_) _ (congruence₂-₁(_∘_) _ op-preserving) ]
     μ(z) ∘ ((map(μ(z)) ∘ map(map f)) ∘ (map g))     🝖[ _≡_ ]-[ associate4-231-121 category ]
-    (μ(z) ∘ map(μ(z))) ∘ (map(map f) ∘ (map g))     🝖[ _≡_ ]-[ congruence₂ₗ(_∘_) _ (_⊜_.proof μ-functor-[∘]-commutativity) ]
+    (μ(z) ∘ map(μ(z))) ∘ (map(map f) ∘ (map g))     🝖[ _≡_ ]-[ congruence₂-₁(_∘_) _ (_⊜_.proof μ-functor-[∘]-commutativity) ]
     (μ(z) ∘ μ(T(z))) ∘ (map(map f) ∘ (map g))       🝖[ _≡_ ]-[ associate4-213-121 category ]-sym
-    (μ(z) ∘ (μ(T(z)) ∘ map(map f))) ∘ (map g)       🝖[ _≡_ ]-[ congruence₂ₗ(_∘_) _ (congruence₂ᵣ(_∘_) _ μ-natural) ]
+    (μ(z) ∘ (μ(T(z)) ∘ map(map f))) ∘ (map g)       🝖[ _≡_ ]-[ congruence₂-₁(_∘_) _ (congruence₂-₂(_∘_) _ μ-natural) ]
     (μ(z) ∘ ((map f) ∘ μ(y))) ∘ (map g)             🝖[ _≡_ ]-[ associate4-213-121 category ]
     (μ(z) ∘ (map f)) ∘ (μ(y) ∘ (map g))             🝖[ _≡_ ]-[]
     ((μ(z) ∘_) ∘ᶠⁿ map)(f) ∘ ((μ(y) ∘_) ∘ᶠⁿ map)(g) 🝖[ _≡_ ]-end

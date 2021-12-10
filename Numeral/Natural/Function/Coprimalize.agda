@@ -44,8 +44,8 @@ coprimalize-positive {x}{y}
       (r{x}{y})
     )
     ([↔]-intro
-      (l{y}{x} ∘ substitute₁(Positive) (congruence₂ᵣ(_⌊/⌋₀_)(y) (commutativity(gcd) {x}{y})))
-      (substitute₁(Positive) (congruence₂ᵣ(_⌊/⌋₀_)(y) (commutativity(gcd) {y}{x})) ∘ r{y}{x})
+      (l{y}{x} ∘ substitute₁(Positive) (congruence₂-₂(_⌊/⌋₀_)(y) (commutativity(gcd) {x}{y})))
+      (substitute₁(Positive) (congruence₂-₂(_⌊/⌋₀_)(y) (commutativity(gcd) {y}{x})) ∘ r{y}{x})
     )
     where
       l : ∀{x y} → Positive(x) ← Positive(x ⌊/⌋₀ (gcd x y))

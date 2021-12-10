@@ -56,7 +56,7 @@ SetLike.FunctionProperties._closed-under₂_.proof (Subspace.add-closure (kernel
 SetLike.FunctionProperties._closed-under₁_.proof (Subspace.mul-closure (kernel-subspace {_}{_}{V}{_}{_}{W} {F = F@([∃]-intro f)}) {s}) {v} vkern =
   vkern ⇒
   v ∈ kernel(F)         ⇒-[]
-  f(v) ≡ 𝟎ᵥ             ⇒-[ congruence₂ᵣ(_⋅ₛᵥ_)(s) ]
+  f(v) ≡ 𝟎ᵥ             ⇒-[ congruence₂-₂(_⋅ₛᵥ_)(s) ]
   s ⋅ₛᵥ f(v) ≡ s ⋅ₛᵥ 𝟎ᵥ ⇒-[ _🝖 [⋅ₛᵥ]-absorberᵣ ]
   s ⋅ₛᵥ f(v) ≡ 𝟎ᵥ       ⇒-[ preserving₁(f)(s ⋅ₛᵥ_)(s ⋅ₛᵥ_) 🝖_ ]
   f(s ⋅ₛᵥ v) ≡ 𝟎ᵥ       ⇒-[]

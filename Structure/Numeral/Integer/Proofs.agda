@@ -60,9 +60,9 @@ module _ ⦃ equiv : Equiv{ℓₑ}(Z) ⦄ ⦃ int : Integer ⦃ equiv ⦄ (_+_)(
     pred {x} p {y} =
       𝐏(x) ⋅ y          🝖[ _≡_ ]-[]
       (x − 𝟏) ⋅ y       🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_−_) ⦃ [⋅][−]-distributivityᵣ ⦄ ]
-      (x ⋅ y) − (𝟏 ⋅ y) 🝖[ _≡_ ]-[ congruence₂ᵣ(_−_) ⦃ [−]-binaryOperator ⦄ (_) (identityₗ(_⋅_)(𝟏)) ]
-      (x ⋅ y) − y       🝖[ _≡_ ]-[ congruence₂ₗ(_−_) ⦃ [−]-binaryOperator ⦄ (_) p ]
-      (y ⋅ x) − y       🝖[ _≡_ ]-[ congruence₂ᵣ(_−_) ⦃ [−]-binaryOperator ⦄ (_) (identityᵣ(_⋅_)(𝟏)) ]-sym
+      (x ⋅ y) − (𝟏 ⋅ y) 🝖[ _≡_ ]-[ congruence₂-₂(_−_) ⦃ [−]-binaryOperator ⦄ (_) (identityₗ(_⋅_)(𝟏)) ]
+      (x ⋅ y) − y       🝖[ _≡_ ]-[ congruence₂-₁(_−_) ⦃ [−]-binaryOperator ⦄ (_) p ]
+      (y ⋅ x) − y       🝖[ _≡_ ]-[ congruence₂-₂(_−_) ⦃ [−]-binaryOperator ⦄ (_) (identityᵣ(_⋅_)(𝟏)) ]-sym
       (y ⋅ x) − (y ⋅ 𝟏) 🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_−_) ⦃ [⋅][−]-distributivityₗ ⦄ ]-sym
       y ⋅ (x − 𝟏)       🝖[ _≡_ ]-[]
       y ⋅ 𝐏(x)          🝖-end
@@ -71,9 +71,9 @@ module _ ⦃ equiv : Equiv{ℓₑ}(Z) ⦄ ⦃ int : Integer ⦃ equiv ⦄ (_+_)(
     succ {x} p {y} =
       𝐒(x) ⋅ y          🝖[ _≡_ ]-[]
       (x + 𝟏) ⋅ y       🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) ]
-      (x ⋅ y) + (𝟏 ⋅ y) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(_) (identityₗ(_⋅_)(𝟏)) ]
-      (x ⋅ y) + y       🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(_) p ]
-      (y ⋅ x) + y       🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(_) (identityᵣ(_⋅_)(𝟏)) ]-sym
+      (x ⋅ y) + (𝟏 ⋅ y) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(_) (identityₗ(_⋅_)(𝟏)) ]
+      (x ⋅ y) + y       🝖[ _≡_ ]-[ congruence₂-₁(_+_)(_) p ]
+      (y ⋅ x) + y       🝖[ _≡_ ]-[ congruence₂-₂(_+_)(_) (identityᵣ(_⋅_)(𝟏)) ]-sym
       (y ⋅ x) + (y ⋅ 𝟏) 🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) ]-sym
       y ⋅ (x + 𝟏)       🝖[ _≡_ ]-[]
       y ⋅ 𝐒(x)          🝖-end
@@ -103,10 +103,10 @@ module _ ⦃ equiv : Equiv{ℓₑ}(Z) ⦄ ⦃ int : Integer ⦃ equiv ⦄ (_+_)(
   [<]-with-𝐏 = [<][+]-preserveₗ
 
   𝐒-𝐏-inverse : ∀{x} → (𝐒(𝐏(x)) ≡ x)
-  𝐒-𝐏-inverse = associativity(_+_) 🝖 congruence₂ᵣ(_+_)(_) (inverseFunctionₗ(_+_)(−_)) 🝖 identityᵣ(_+_)(𝟎)
+  𝐒-𝐏-inverse = associativity(_+_) 🝖 congruence₂-₂(_+_)(_) (inverseFunctionₗ(_+_)(−_)) 🝖 identityᵣ(_+_)(𝟎)
 
   𝐏-𝐒-inverse : ∀{x} → (𝐏(𝐒(x)) ≡ x)
-  𝐏-𝐒-inverse = associativity(_+_) 🝖 congruence₂ᵣ(_+_)(_) (inverseFunctionᵣ(_+_)(−_)) 🝖 identityᵣ(_+_)(𝟎)
+  𝐏-𝐒-inverse = associativity(_+_) 🝖 congruence₂-₂(_+_)(_) (inverseFunctionᵣ(_+_)(−_)) 🝖 identityᵣ(_+_)(𝟎)
 
   𝐒-order : ∀{x} → (x < 𝐒(x))
   𝐒-order {x} = induction

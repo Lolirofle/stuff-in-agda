@@ -38,19 +38,19 @@ CoprimeTree-order {b}{_} (branch₁{c}{_} t) =
   𝐒(b)         🝖[ _≤_ ]-[]
   b + 1        🝖[ _≤_ ]-[ [≤]-with-[+] {b}{b} ⦃ reflexivity(_≤_) ⦄ {1}{b −₀ c} ⦃ [<][−₀]-transfer (CoprimeTree-order t) ⦄ ]
   b + (b −₀ c) 🝖[ _≡_ ]-[ symmetry(_≡_) ([+][−₀]-almost-associativity {b}{b}{c} ([≤]-predecessor (CoprimeTree-order t))) ]-sub
-  (b + b) −₀ c 🝖[ _≡_ ]-[ congruence₂ₗ(_−₀_)(c) (commutativity(_⋅_) {b}{2}) ]-sub
+  (b + b) −₀ c 🝖[ _≡_ ]-[ congruence₂-₁(_−₀_)(c) (commutativity(_⋅_) {b}{2}) ]-sub
   (2 ⋅ b) −₀ c 🝖-end
 CoprimeTree-order {b}{_} (branch₂{c}{_} t) =
   𝐒(b)        🝖[ _≤_ ]-[]
   b + 1       🝖[ _≤_ ]-[ [≤]-with-[+] {b}{b} ⦃ reflexivity(_≤_) ⦄ {1}{b + c} ⦃ succ min 🝖 CoprimeTree-order t 🝖 [≤]-of-[+]ₗ {b}{c} ⦄ ]
   b + (b + c) 🝖[ _≡_ ]-[ symmetry(_≡_) (associativity(_+_) {b}{b}{c}) ]-sub
-  (b + b) + c 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(c) (commutativity(_⋅_) {b}{2}) ]-sub
+  (b + b) + c 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(c) (commutativity(_⋅_) {b}{2}) ]-sub
   (2 ⋅ b) + c 🝖-end
 CoprimeTree-order {b}{_} (branch₃{_}{c} t) =
   𝐒(b)        🝖[ _≤_ ]-[]
   b + 1       🝖[ _≤_ ]-[ [≤]-with-[+] {b}{b} ⦃ reflexivity(_≤_) ⦄ {1}{b + c} ⦃ succ min 🝖 CoprimeTree-order t 🝖 [≤]-of-[+]ᵣ {b}{c} ⦄ ]
   b + (b + c) 🝖[ _≡_ ]-[ symmetry(_≡_) (associativity(_+_) {b}{b}{c}) ]-sub
-  (b + b) + c 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(c) (commutativity(_⋅_) {b}{2}) ]-sub
+  (b + b) + c 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(c) (commutativity(_⋅_) {b}{2}) ]-sub
   (2 ⋅ b) + c 🝖-end
 
 CoprimeTreeₗ-lower-bound : (CoprimeTree a b) → (a ≥ 1)
@@ -64,7 +64,7 @@ CoprimeTreeₗ-lower-bound (branch₃ t) = CoprimeTreeₗ-lower-bound t
 
 CoprimeTreeᵣ-lower-bound leaf₁       = succ(succ min)
 CoprimeTreeᵣ-lower-bound leaf₂       = succ(succ min)
-CoprimeTreeᵣ-lower-bound {a}{_} (branch₁{b}{_} t) = subtransitivityᵣ(_≤_)(_≡_)  ([≤]-with-[+] ⦃ CoprimeTreeᵣ-lower-bound t ⦄ ⦃ min ⦄) (symmetry(_≡_) ([+][−₀]-almost-associativity {a}{a}{b} ([≤]-predecessor (CoprimeTree-order t))) 🝖 congruence₂ₗ(_−₀_)(b) (commutativity(_⋅_) {a}{2}))
+CoprimeTreeᵣ-lower-bound {a}{_} (branch₁{b}{_} t) = subtransitivityᵣ(_≤_)(_≡_)  ([≤]-with-[+] ⦃ CoprimeTreeᵣ-lower-bound t ⦄ ⦃ min ⦄) (symmetry(_≡_) ([+][−₀]-almost-associativity {a}{a}{b} ([≤]-predecessor (CoprimeTree-order t))) 🝖 congruence₂-₁(_−₀_)(b) (commutativity(_⋅_) {a}{2}))
 CoprimeTreeᵣ-lower-bound {a}{_} (branch₂{b}{_} t) = [≤]-with-[+] {2}{2 ⋅ a} ⦃ [⋅]ₗ-growing ([≤]-predecessor (CoprimeTreeᵣ-lower-bound t)) ⦄ {0}{b} ⦃ min ⦄
 CoprimeTreeᵣ-lower-bound {a}{_} (branch₃{_}{b} t) = [≤]-with-[+] {0}{2 ⋅ a} ⦃ min ⦄ {2}{b} ⦃ CoprimeTreeᵣ-lower-bound t ⦄
 
@@ -74,7 +74,7 @@ CoprimeTree-correctness        leaf₂ = Coprime-of-1
 CoprimeTree-correctness {a}{_} (branch₁{c} p) =
   • (
     a + (a −₀ c) 🝖[ _≡_ ]-[ [+][−₀]-almost-associativity {a}{a}{c} prev-ord ]-sym
-    (a + a) −₀ c 🝖[ _≡_ ]-[ congruence₂ₗ(_−₀_)(c) (commutativity(_⋅_) {2}{a}) ]-sym
+    (a + a) −₀ c 🝖[ _≡_ ]-[ congruence₂-₁(_−₀_)(c) (commutativity(_⋅_) {2}{a}) ]-sym
     (2 ⋅ a) −₀ c 🝖-end
   )
   • (
@@ -92,7 +92,7 @@ CoprimeTree-correctness {a}{_} (branch₁{c} p) =
 CoprimeTree-correctness {a}{_} (branch₂{c} p) =
   • (
     a + (a + c) 🝖[ _≡_ ]-[ associativity(_+_) {a}{a}{c} ]-sym
-    (a + a) + c 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(c) (commutativity(_⋅_) {a}{2}) ]
+    (a + a) + c 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(c) (commutativity(_⋅_) {a}{2}) ]
     (2 ⋅ a) + c 🝖-end
   )
   • (
@@ -107,7 +107,7 @@ CoprimeTree-correctness {a}{_} (branch₂{c} p) =
 CoprimeTree-correctness {a}{_} (branch₃{_}{c} p) =
   • (
     a + (a + c) 🝖[ _≡_ ]-[ associativity(_+_) {a}{a}{c} ]-sym
-    (a + a) + c 🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(c) (commutativity(_⋅_) {a}{2}) ]
+    (a + a) + c 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(c) (commutativity(_⋅_) {a}{2}) ]
     (2 ⋅ a) + c 🝖-end
   )
   • (

@@ -33,9 +33,9 @@ open import Relator.Equals.Proofs.Equiv
 {-
 ⌊/⌋[⋅]-compatibility : ∀{x y z} ⦃ pos-y : Positive(y) ⦄ ⦃ pos-z : Positive(z) ⦄ → (y ⋅ z ∣ x) → ((x ⌊/⌋ y) ⌊/⌋ z ≡ (x ⌊/⌋ (y ⋅ z)) ⦃ [⋅]-positiveᵣ pos-y pos-z ⦄)
 ⌊/⌋[⋅]-compatibility {x}{y}{z} ⦃ pos-y ⦄ ⦃ pos-z ⦄ div = [⋅]-cancellationᵣ {x = y ⋅ z} $
-  ((x ⌊/⌋ y) ⌊/⌋ z) ⋅ (y ⋅ z) 🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)((x ⌊/⌋ y) ⌊/⌋ z) (commutativity(_⋅_) {y}{z}) ]
+  ((x ⌊/⌋ y) ⌊/⌋ z) ⋅ (y ⋅ z) 🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)((x ⌊/⌋ y) ⌊/⌋ z) (commutativity(_⋅_) {y}{z}) ]
   ((x ⌊/⌋ y) ⌊/⌋ z) ⋅ (z ⋅ y) 🝖[ _≡_ ]-[ associativity(_⋅_) {(x ⌊/⌋ y) ⌊/⌋ z}{z}{y} ]-sym
-  (((x ⌊/⌋ y) ⌊/⌋ z) ⋅ z) ⋅ y 🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(y) ([⋅][⌊/⌋]-inverseOperatorᵣ {x ⌊/⌋ y}{z} ([↔]-to-[←] (divides-div {x}{y}{z} div-yx) div)) ]
+  (((x ⌊/⌋ y) ⌊/⌋ z) ⋅ z) ⋅ y 🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(y) ([⋅][⌊/⌋]-inverseOperatorᵣ {x ⌊/⌋ y}{z} ([↔]-to-[←] (divides-div {x}{y}{z} div-yx) div)) ]
   (x ⌊/⌋ y) ⋅ y               🝖[ _≡_ ]-[ [⋅][⌊/⌋]-inverseOperatorᵣ {x}{y} div-yx ]
   x                           🝖[ _≡_ ]-[ [⋅][⌊/⌋]-inverseOperatorᵣ {x}{y ⋅ z} div ]-sym
   (x ⌊/⌋ (y ⋅ z)) ⋅ (y ⋅ z)   🝖-end
@@ -52,7 +52,7 @@ open import Relator.Equals.Proofs.Equiv
 [⌊/⌋][+]-distributivityᵣ : ∀{a b c} ⦃ pos-c : Positive(c) ⦄ → ((c ∣ a) ∨ (c ∣ b)) → ((a + b) ⌊/⌋ c ≡ (a ⌊/⌋ c) + (b ⌊/⌋ c))
 [⌊/⌋][+]-distributivityᵣ {a}{b}{c@(𝐒 C)} ([∨]-introₗ ca) = [⋅]-cancellationᵣ{c} $
   ((a + b) ⌊/⌋ c) ⋅ c               🝖[ _≡_ ]-[ [⌊/⌋][⋅]-semiInverseOperatorᵣ {a + b}{C} ]
-  (a + b) −₀ ((a + b) mod c)        🝖[ _≡_ ]-[ congruence₂ᵣ(_−₀_)(a + b) (mod-of-modulus-sum-divisibleₗ {a}{b} ca) ]
+  (a + b) −₀ ((a + b) mod c)        🝖[ _≡_ ]-[ congruence₂-₂(_−₀_)(a + b) (mod-of-modulus-sum-divisibleₗ {a}{b} ca) ]
   (a + b) −₀ (b mod c)              🝖[ _≡_ ]-[ [+][−₀]-almost-associativity {a}{b}{b mod c} (mod-maxₗ {b}{c}) ]
   a + (b −₀ (b mod c))              🝖[ _≡_ ]-[ congruence₂(_+_) ([⋅][⌊/⌋]-inverseOperatorᵣ ca) ([⌊/⌋][⋅]-semiInverseOperatorᵣ {b}{C}) ]-sym
   ((a ⌊/⌋ c) ⋅ c) + ((b ⌊/⌋ c) ⋅ c) 🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) {a ⌊/⌋ c}{b ⌊/⌋ c}{c} ]-sym
@@ -69,7 +69,7 @@ open import Relator.Equals.Proofs.Equiv
 [⌊/⌋][⋅]ₗ-compatibility {a} {𝐒 b} {c} ca =
   (a ⋅ 𝐒(b)) ⌊/⌋ c            🝖[ _≡_ ]-[]
   (a + (a ⋅ b)) ⌊/⌋ c         🝖[ _≡_ ]-[ [⌊/⌋][+]-distributivityᵣ {a}{a ⋅ b}{c} ([∨]-introₗ ca) ]
-  (a ⌊/⌋ c) + ((a ⋅ b) ⌊/⌋ c) 🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(a ⌊/⌋ c) ([⌊/⌋][⋅]ₗ-compatibility {a}{b}{c} ca) ]
+  (a ⌊/⌋ c) + ((a ⋅ b) ⌊/⌋ c) 🝖[ _≡_ ]-[ congruence₂-₂(_+_)(a ⌊/⌋ c) ([⌊/⌋][⋅]ₗ-compatibility {a}{b}{c} ca) ]
   (a ⌊/⌋ c) + ((a ⌊/⌋ c) ⋅ b) 🝖[ _≡_ ]-[]
   (a ⌊/⌋ c) ⋅ 𝐒(b)            🝖-end
 
@@ -107,9 +107,9 @@ open import Numeral.Natural.Oper.FlooredDivision.Proofs
   )
   (\{x} prev →
     ((x + (y ⋅ z)) ⌊/⌋ y) ⌊/⌋ z         🝖[ _≡_ ]-[ congruence₁(_⌊/⌋₀ z) ([⌊/⌋][+]-distributivityᵣ {x} ([∨]-introᵣ (divides-with-[⋅] {y}{y}{z} ([∨]-introₗ (reflexivity(_∣_) {y}))))) ]
-    ((x ⌊/⌋ y) + ((y ⋅ z) ⌊/⌋ y)) ⌊/⌋ z 🝖[ _≡_ ]-[ congruence₁(_⌊/⌋₀ z) (congruence₂ᵣ(_+_)(x ⌊/⌋ y) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {y}{z})) ]
+    ((x ⌊/⌋ y) + ((y ⋅ z) ⌊/⌋ y)) ⌊/⌋ z 🝖[ _≡_ ]-[ congruence₁(_⌊/⌋₀ z) (congruence₂-₂(_+_)(x ⌊/⌋ y) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {y}{z})) ]
     ((x ⌊/⌋ y) + z) ⌊/⌋ z               🝖[ _≡_ ]-[ [⌊/⌋][+]-distributivityᵣ {x ⌊/⌋ y}{z} ([∨]-introᵣ (reflexivity(_∣_) {z})) ]
-    ((x ⌊/⌋ y) ⌊/⌋ z) + (z ⌊/⌋ z)       🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)((x ⌊/⌋ y) ⌊/⌋ z) ([⌊/⌋]-of-same {z}) ]
+    ((x ⌊/⌋ y) ⌊/⌋ z) + (z ⌊/⌋ z)       🝖[ _≡_ ]-[ congruence₂-₂(_+_)((x ⌊/⌋ y) ⌊/⌋ z) ([⌊/⌋]-of-same {z}) ]
     ((x ⌊/⌋ y) ⌊/⌋ z) + 1               🝖[ _≡_ ]-[]
     𝐒((x ⌊/⌋ y) ⌊/⌋ z)                  🝖[ _≡_ ]-[ congruence₁(𝐒) prev ]
     𝐒(x ⌊/⌋ (y ⋅ z))                    🝖-end
@@ -125,7 +125,7 @@ open import Numeral.Natural.Oper.FlooredDivision.Proofs
 ⌊/⌋₀-swapᵣ : ∀{x y z} → ((x ⌊/⌋₀ y) ⌊/⌋₀ z ≡ (x ⌊/⌋₀ z) ⌊/⌋₀ y)
 ⌊/⌋₀-swapᵣ {x}{y}{z} =
   (x ⌊/⌋₀ y) ⌊/⌋₀ z 🝖[ _≡_ ]-[ ⌊/⌋₀[⋅]-compatibility {x}{y}{z} ]
-  x ⌊/⌋₀ (y ⋅ z)    🝖[ _≡_ ]-[ congruence₂ᵣ(_⌊/⌋₀_)(x) (commutativity(_⋅_) {y}{z}) ]
+  x ⌊/⌋₀ (y ⋅ z)    🝖[ _≡_ ]-[ congruence₂-₂(_⌊/⌋₀_)(x) (commutativity(_⋅_) {y}{z}) ]
   x ⌊/⌋₀ (z ⋅ y)    🝖[ _≡_ ]-[ ⌊/⌋₀[⋅]-compatibility {x}{z}{y} ]-sym
   (x ⌊/⌋₀ z) ⌊/⌋₀ y 🝖-end
 
@@ -142,12 +142,12 @@ open import Numeral.Natural.Oper.FlooredDivision.Proofs
 
 [⌊/⌋]-equalityₗ : ∀{x₁ x₂ y₁ y₂} ⦃ pos-x₂ : Positive(x₂) ⦄ ⦃ pos-y₂ : Positive(y₂) ⦄ → (x₂ ∣ x₁) → (y₂ ∣ y₁) → (x₁ ⌊/⌋ x₂ ≡ y₁ ⌊/⌋ y₂) → (x₁ ⋅ y₂ ≡ y₁ ⋅ x₂)
 [⌊/⌋]-equalityₗ {x₁} {x₂} {y₁} {y₂} div-x div-y eq =
-  x₁ ⋅ y₂                 🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(y₂) ([⋅][⌊/⌋]-inverseOperatorᵣ div-x) ]-sym
+  x₁ ⋅ y₂                 🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(y₂) ([⋅][⌊/⌋]-inverseOperatorᵣ div-x) ]-sym
   ((x₁ ⌊/⌋ x₂) ⋅ x₂) ⋅ y₂ 🝖[ _≡_ ]-[ associativity(_⋅_) {x₁ ⌊/⌋ x₂}{x₂}{y₂} ]
-  (x₁ ⌊/⌋ x₂) ⋅ (x₂ ⋅ y₂) 🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(x₂ ⋅ y₂) eq ]
-  (y₁ ⌊/⌋ y₂) ⋅ (x₂ ⋅ y₂) 🝖[ _≡_ ]-[ congruence₂ᵣ(_⋅_)(y₁ ⌊/⌋ y₂) (commutativity(_⋅_) {x₂}{y₂}) ]
+  (x₁ ⌊/⌋ x₂) ⋅ (x₂ ⋅ y₂) 🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(x₂ ⋅ y₂) eq ]
+  (y₁ ⌊/⌋ y₂) ⋅ (x₂ ⋅ y₂) 🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)(y₁ ⌊/⌋ y₂) (commutativity(_⋅_) {x₂}{y₂}) ]
   (y₁ ⌊/⌋ y₂) ⋅ (y₂ ⋅ x₂) 🝖[ _≡_ ]-[ associativity(_⋅_) {y₁ ⌊/⌋ y₂}{y₂}{x₂} ]-sym
-  ((y₁ ⌊/⌋ y₂) ⋅ y₂) ⋅ x₂ 🝖[ _≡_ ]-[ congruence₂ₗ(_⋅_)(x₂) ([⋅][⌊/⌋]-inverseOperatorᵣ div-y) ]
+  ((y₁ ⌊/⌋ y₂) ⋅ y₂) ⋅ x₂ 🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(x₂) ([⋅][⌊/⌋]-inverseOperatorᵣ div-y) ]
   y₁ ⋅ x₂                 🝖-end
 
 [⌊/⌋₀]-equalityᵣ : ∀{x₁ x₂ y₁ y₂} ⦃ pos-x₂ : Positive(x₂) ⦄ ⦃ pos-y₂ : Positive(y₂) ⦄ → (x₁ ⋅ y₂ ≡ y₁ ⋅ x₂) → (x₁ ⌊/⌋₀ x₂ ≡ y₁ ⌊/⌋₀ y₂)

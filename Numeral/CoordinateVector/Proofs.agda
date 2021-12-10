@@ -211,7 +211,7 @@ module _ {ℓ ℓₑ} {T : Type{ℓ}} ⦃ _ : Equiv{ℓₑ}(T) ⦄ where
     foldᵣ-function {d} {f = f}{init = init} = intro(p{d = d}) where
       p : ∀{d} → Names.Congruence₁(foldᵣ{d = d} f init)
       p {𝟎}       _  = reflexivity(_≡_)
-      p {𝐒(𝟎)}    xy = congruence₂ₗ(f)(_) (_⊜_.proof xy)
+      p {𝐒(𝟎)}    xy = congruence₂-₁(f)(_) (_⊜_.proof xy)
       p {𝐒(𝐒(d))} xy = congruence₂(f) (_⊜_.proof xy) (p {𝐒(d)} (congruence₁(tail) ⦃ tail-function ⦄ xy))
 
   -- TODO: Generalize Numeral.Natural.Oper.Summation for these kinds of proofs

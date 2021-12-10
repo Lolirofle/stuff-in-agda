@@ -104,7 +104,7 @@ open import Structure.Operator
     y                                          🝖[ _≡_ ]-[]
     𝟎 + 𝐒 Y                                    🝖-end
   step {x@(𝐒 _)} prev =
-    (𝐒(x ⌈/⌉ y) ⋅ y) −₀ (y −₀ ((x + y) mod y)) 🝖[ _≡_ ]-[ congruence₂(_−₀_) ([⋅]-with-[𝐒]ₗ {x ⌈/⌉ y}{y}) (congruence₂ᵣ(_−₀_)(y) (mod-of-modulus-addᵣ {x}{Y})) ]
+    (𝐒(x ⌈/⌉ y) ⋅ y) −₀ (y −₀ ((x + y) mod y)) 🝖[ _≡_ ]-[ congruence₂(_−₀_) ([⋅]-with-[𝐒]ₗ {x ⌈/⌉ y}{y}) (congruence₂-₂(_−₀_)(y) (mod-of-modulus-addᵣ {x}{Y})) ]
     (((x ⌈/⌉ y) ⋅ y) + y) −₀ (y −₀ (x mod y))  🝖[ _≡_ ]-[ [+][−₀]-almost-associativityₗ {(x ⌈/⌉ y) ⋅ y}{y}{y −₀ (x mod y)} {!!} ]
     (((x ⌈/⌉ y) ⋅ y) −₀ (y −₀ (x mod y))) + y  🝖[ _≡_ ]-[ {!!} ]
     x + y                                      🝖-end
@@ -122,7 +122,7 @@ open import Structure.Operator
     ((x ⌈/⌉ y) ⋅ y) + ((x + y) mod y)        🝖[ _≡_ ]-[ congruence₂(_+_) (symmetry(_≡_) ([↔]-to-[→] ([−₀][+]-nullify2ᵣ {y}) ([⋅]ᵣ-growing {_}{x ⌈/⌉ y} ([↔]-to-[→] Positive-greater-than-zero ([↔]-to-[→] ([⌊/⌋]-positive {x}{y}) <>))))) (mod-of-modulus-addᵣ {x}{Y}) ]
     ((((x ⌈/⌉ y) ⋅ y) −₀ y) + y) + (x mod y) 🝖[ _≡_ ]-[ {!!} ]
     ((((x ⌈/⌉ y) ⋅ y) −₀ y) + (x mod y)) + y 🝖[ _≡_ ]-[ {!!} ]
-    ((𝐏(x ⌈/⌉ y) ⋅ y) + (x mod y)) + y       🝖[ _≡_ ]-[ congruence₂ₗ(_+_)(y) prev ]
+    ((𝐏(x ⌈/⌉ y) ⋅ y) + (x mod y)) + y       🝖[ _≡_ ]-[ congruence₂-₁(_+_)(y) prev ]
     x + y                                    🝖-end
 -}
 

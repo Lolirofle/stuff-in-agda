@@ -157,7 +157,7 @@ instance
 [⋅]-commutativity-raw {𝟏} {𝐒 y} = [≡]-intro
 [⋅]-commutativity-raw {𝐒 x} {𝐒 y} =
   𝐒 x ⋅ 𝐒 y           🝖[ _≡_ ]-[]
-  𝐒 x + (𝐒 x ⋅ y)     🝖-[ congruence₁(𝐒) (congruence₂ᵣ(_+_)(x) ([⋅]-commutativity-raw {𝐒 x} {y})) ]
+  𝐒 x + (𝐒 x ⋅ y)     🝖-[ congruence₁(𝐒) (congruence₂-₂(_+_)(x) ([⋅]-commutativity-raw {𝐒 x} {y})) ]
   𝐒 x + (y ⋅ 𝐒 x)     🝖[ _≡_ ]-[]
   𝐒 x + (y ⋅ 𝐒 x)     🝖[ _≡_ ]-[]
   𝐒 x + (y + (y ⋅ x)) 🝖-[ congruence₁(𝐒) (associativity(_+_) {x}{y}{y ⋅ x}) ]-sym
@@ -166,7 +166,7 @@ instance
   𝐒(y + x) + (x ⋅ y)  🝖[ _≡_ ]-[]
   (𝐒 y + x) + (x ⋅ y) 🝖-[ congruence₁(𝐒) (associativity(_+_) {y}{x}{x ⋅ y}) ]
   𝐒 y + (x + (x ⋅ y)) 🝖[ _≡_ ]-[]
-  𝐒 y + (x ⋅ 𝐒 y)     🝖-[ congruence₁(𝐒) (congruence₂ᵣ(_+_)(y) ([⋅]-commutativity-raw {𝐒 y} {x})) ]-sym
+  𝐒 y + (x ⋅ 𝐒 y)     🝖-[ congruence₁(𝐒) (congruence₂-₂(_+_)(y) ([⋅]-commutativity-raw {𝐒 y} {x})) ]-sym
   𝐒 y + (𝐒 y ⋅ x)     🝖[ _≡_ ]-[]
   𝐒 y ⋅ 𝐒 x           🝖-end
 
@@ -193,7 +193,7 @@ instance
 [⋅]-associativity-raw : Names.Associativity(_⋅_)
 [⋅]-associativity-raw {x} {y} {𝟏} = [≡]-intro
 [⋅]-associativity-raw {x} {y} {𝐒 z} =
-  (x ⋅ y) + (x ⋅ y ⋅ z)   🝖[ _≡_ ]-[ congruence₂ᵣ(_+_)(x ⋅ y) ([⋅]-associativity-raw {x}{y}{z}) ]
+  (x ⋅ y) + (x ⋅ y ⋅ z)   🝖[ _≡_ ]-[ congruence₂-₂(_+_)(x ⋅ y) ([⋅]-associativity-raw {x}{y}{z}) ]
   (x ⋅ y) + (x ⋅ (y ⋅ z)) 🝖[ _≡_ ]-[ distributivityₗ(_⋅_)(_+_) {x = x}{y = y}{z = y ⋅ z} ]-sym
   x ⋅ (y + (y ⋅ z))       🝖-end
 

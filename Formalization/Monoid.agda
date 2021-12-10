@@ -83,7 +83,7 @@ module Monoid where
           proof {x ⊰ xs} {ys} =
             evalNormal env ((x ⊰ xs) ++ ys)                 🝖[ _≡_ ]-[]
             evalNormal env (x ⊰ (xs ++ ys))                 🝖[ _≡_ ]-[]
-            env x ∙ evalNormal env (xs ++ ys)               🝖[ _≡_ ]-[ congruence₂ᵣ(_∙_)(_) (proof {xs}{ys}) ]
+            env x ∙ evalNormal env (xs ++ ys)               🝖[ _≡_ ]-[ congruence₂-₂(_∙_)(_) (proof {xs}{ys}) ]
             env x ∙ (evalNormal env xs ∙ evalNormal env ys) 🝖[ _≡_ ]-[ associativity(_∙_) ]-sym
             (env x ∙ evalNormal env xs) ∙ evalNormal env ys 🝖[ _≡_ ]-[]
             evalNormal env (x ⊰ xs) ∙ evalNormal env ys     🝖-end

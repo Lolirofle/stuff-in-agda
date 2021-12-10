@@ -168,8 +168,8 @@ instance
 [𝄩]-triangle-inequality : ∀{x y z} → ((x 𝄩 z) ≤ ((x 𝄩 y) + (y 𝄩 z)))
 [𝄩]-triangle-inequality {x}{y}{z} =
   x 𝄩 z                     🝖[ _≤_ ]-[]
-  ‖ x − z ‖                 🝖[ _≡_ ]-[ congruence₁(‖_‖) (congruence₂ₗ(_−_) ⦃ [−]-binaryOperator ⦄ (z) (symmetry(_≡_) (identityᵣ(_+_)(𝟎)))) ]-sub
-  ‖ (x + 𝟎) − z ‖           🝖[ _≡_ ]-[ congruence₁(‖_‖) (congruence₂ₗ(_−_) ⦃ [−]-binaryOperator ⦄ (z) (congruence₂ᵣ(_+_)(x) (symmetry(_≡_) (inverseFunctionₗ(_+_)(−_))))) ]-sub
+  ‖ x − z ‖                 🝖[ _≡_ ]-[ congruence₁(‖_‖) (congruence₂-₁(_−_) ⦃ [−]-binaryOperator ⦄ (z) (symmetry(_≡_) (identityᵣ(_+_)(𝟎)))) ]-sub
+  ‖ (x + 𝟎) − z ‖           🝖[ _≡_ ]-[ congruence₁(‖_‖) (congruence₂-₁(_−_) ⦃ [−]-binaryOperator ⦄ (z) (congruence₂-₂(_+_)(x) (symmetry(_≡_) (inverseFunctionₗ(_+_)(−_))))) ]-sub
   ‖ (x + ((− y) + y)) − z ‖ 🝖[ _≡_ ]-[ congruence₁(‖_‖) ((One.associate4-213-222 {_▫_ = _+_} {a = x}{− y}{y}{− z})) ]-sub
   ‖ (x + (− y)) + (y − z) ‖ 🝖[ _≤_ ]-[]
   ‖ (x − y) + (y − z) ‖     🝖[ _≤_ ]-[ abs-triangle-inequality ]
@@ -179,7 +179,7 @@ instance
 [𝄩]-self : ∀{x y} → (x 𝄩 y ≡ 𝟎) ↔ (x ≡ y)
 [𝄩]-self {x}{y} = [↔]-intro l r where
   l =
-    (x ≡ y)            ⇒-[ symmetry(_≡_) ∘ congruence₂ᵣ(_𝄩_)(x) ]
+    (x ≡ y)            ⇒-[ symmetry(_≡_) ∘ congruence₂-₂(_𝄩_)(x) ]
     (x 𝄩 y ≡ x 𝄩 x)     ⇒-[]
     (_     ≡ ‖ x − x ‖) ⇒-[ _🝖 congruence₁(‖_‖) (inverseFunctionᵣ(_+_)(−_)) ]
     (_     ≡ ‖ 𝟎 ‖)     ⇒-[ _🝖 abs-of-zero ]

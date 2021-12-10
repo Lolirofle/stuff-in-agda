@@ -124,7 +124,7 @@ module Sequence
       • cg{N} (max-orderᵣ{Nf}{Ng})
       ⇒₂-[ [<][+]-preserve ]
       ((d(f(N)) x + d(f(N)) y) < (ε + ε))  ⇒-[ swap(subtransitivityᵣ(_<_)(_≡_)) ({!symmetry(_≡_) ([⋅]-distributeᵣ-over-𝐒-iteration {2}{ε})!} 🝖 symmetry(_≡_) {!!}) ]
-      ((d(f(N)) x + d(f(N)) y) < d(x)(y))  ⇒-[ subtransitivityₗ(_<_)(_≡_) (congruence₂ₗ(_+_)(d(f(N)) y) (commutativity(d))) ]
+      ((d(f(N)) x + d(f(N)) y) < d(x)(y))  ⇒-[ subtransitivityₗ(_<_)(_≡_) (congruence₂-₁(_+_)(d(f(N)) y) (commutativity(d))) ]
       ((d x (f(N)) + d(f(N)) y) < d(x)(y)) ⇒-[ subtransitivityₗ(_<_)(_≤_) triangle-inequality ]
       (d(x)(y) < d(x)(y))                  ⇒-[ irreflexivity(_<_) ]
       ⊥                                    ⇒-end

@@ -105,7 +105,7 @@ Tuple.right (findBoundedMin-Some-correctness {min}{max} {f} {n}) p with [≤]-or
   = (let [∃]-intro m ⦃ [∧]-intro mmin q ⦄ = map-Some-value{f = _+ min}{o = findUpperboundedMin(max −₀ min) (f ∘ (_+ min))} p in
     findUpperboundedMin (max −₀ min) (f ∘ (_+ min)) 🝖[ _≡_ ]-[ q ]
     Some(m)                                           🝖[ _≡_ ]-[ congruence₁(Some) (inverseOperᵣ(_+_)(_−₀_) {m}{min}) ]-sym
-    Some((m + min) −₀ min)                          🝖[ _≡_ ]-[ congruence₁(Some) (congruence₂ₗ(_−₀_)(min) mmin) ]
+    Some((m + min) −₀ min)                          🝖[ _≡_ ]-[ congruence₁(Some) (congruence₂-₁(_−₀_)(min) mmin) ]
     Some(n −₀ min)                                   🝖-end
   ) ⇒
   _ ⇒-[ [↔]-to-[→] (findUpperboundedMin-Some-correctness{max −₀ min}{f ∘ (_+ min)}{n −₀ min}) ]

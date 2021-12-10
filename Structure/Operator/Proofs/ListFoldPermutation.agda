@@ -66,11 +66,11 @@ module _
 
   foldᵣ-permutationₗ : (List.foldᵣ(_▫_) id a ≡ List.foldᵣ(_▫_) id b) ← (a permutes b)
   foldᵣ-permutationₗ _permutes_.empty       = reflexivity(_≡_)
-  foldᵣ-permutationₗ (prepend {x = x} perm) = congruence₂ᵣ(_▫_)(x) (foldᵣ-permutationₗ perm)
+  foldᵣ-permutationₗ (prepend {x = x} perm) = congruence₂-₂(_▫_)(x) (foldᵣ-permutationₗ perm)
   foldᵣ-permutationₗ {id} (swap{x = x}{y = y}{l}) =
     List.foldᵣ(_▫_) id (x ⊰ y ⊰ l)   🝖[ _≡_ ]-[]
     x ▫ (y ▫ (List.foldᵣ(_▫_) id l)) 🝖[ _≡_ ]-[ associativity(_▫_) ]-sym
-    (x ▫ y) ▫ (List.foldᵣ(_▫_) id l) 🝖[ _≡_ ]-[ congruence₂ₗ(_▫_)(_) (commutativity(_▫_)) ]
+    (x ▫ y) ▫ (List.foldᵣ(_▫_) id l) 🝖[ _≡_ ]-[ congruence₂-₁(_▫_)(_) (commutativity(_▫_)) ]
     (y ▫ x) ▫ (List.foldᵣ(_▫_) id l) 🝖[ _≡_ ]-[ associativity(_▫_) ]
     y ▫ (x ▫ (List.foldᵣ(_▫_) id l)) 🝖[ _≡_ ]-[]
     List.foldᵣ(_▫_) id (y ⊰ x ⊰ l)   🝖-end

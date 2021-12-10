@@ -29,9 +29,9 @@ module _ (C : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}) where
 
   covariantHomFunctor : Object → (C →ᶠᵘⁿᶜᵗᵒʳ setoidCategoryObject)
   ∃.witness (covariantHomFunctor x) y = [∃]-intro (x ⟶ y)
-  Functor.map (∃.proof (covariantHomFunctor _)) f = [∃]-intro (f ∘_) ⦃ BinaryOperator.right binaryOperator ⦄
+  Functor.map (∃.proof (covariantHomFunctor _)) f = [∃]-intro (f ∘_) ⦃ BinaryOperator.unary₂ binaryOperator ⦄
   _⊜_.proof (Function.congruence (Functor.map-function (∃.proof (covariantHomFunctor _))) {f₁} {f₂} f₁f₂) {g} =
-    f₁ ∘ g 🝖-[ congruence₂ₗ(_∘_) g f₁f₂ ]
+    f₁ ∘ g 🝖-[ congruence₂-₁(_∘_) g f₁f₂ ]
     f₂ ∘ g 🝖-end
   _⊜_.proof (Functor.op-preserving (∃.proof (covariantHomFunctor _)) {f = f} {g = g}) {h} =
     (f ∘ g) ∘ h            🝖[ _≡_ ]-[ Morphism.associativity(_∘_) ]
@@ -44,9 +44,9 @@ module _ (C : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}) where
 
   contravariantHomFunctor : Object → (C →ᶜᵒⁿᵗʳᵃᵛᵃʳⁱᵃⁿᵗᶠᵘⁿᶜᵗᵒʳ setoidCategoryObject)
   ∃.witness (contravariantHomFunctor x) y = [∃]-intro (y ⟶ x)
-  Functor.map (∃.proof (contravariantHomFunctor _)) f = [∃]-intro (_∘ f) ⦃ BinaryOperator.left binaryOperator ⦄
+  Functor.map (∃.proof (contravariantHomFunctor _)) f = [∃]-intro (_∘ f) ⦃ BinaryOperator.unary₁ binaryOperator ⦄
   _⊜_.proof (Function.congruence (Functor.map-function (∃.proof (contravariantHomFunctor _))) {g₁} {g₂} g₁g₂) {f} =
-    f ∘ g₁ 🝖-[ congruence₂ᵣ(_∘_) f g₁g₂ ]
+    f ∘ g₁ 🝖-[ congruence₂-₂(_∘_) f g₁g₂ ]
     f ∘ g₂ 🝖-end
   _⊜_.proof (Functor.op-preserving (∃.proof (contravariantHomFunctor _)) {f = h} {g = g}) {f} =
     f ∘ (g ∘ h)            🝖[ _≡_ ]-[ Morphism.associativity(_∘_) ]-sym

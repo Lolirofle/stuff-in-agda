@@ -30,12 +30,12 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ 
     Transitivity.proof inverseRelationᵣ-transitivity xy yz
       with [∃]-intro a ⦃ pa ⦄ ← [↔]-to-[→] (InverseRelationᵣ.proof invRel) xy
       with [∃]-intro b ⦃ pb ⦄ ← [↔]-to-[→] (InverseRelationᵣ.proof invRel) yz
-      = [↔]-to-[←] (InverseRelationᵣ.proof invRel) ([∃]-intro (a ▫ b) ⦃ symmetry(_≡_) (associativity(_▫_)) 🝖 congruence₂ₗ(_▫_)(b) pa 🝖 pb ⦄)
+      = [↔]-to-[←] (InverseRelationᵣ.proof invRel) ([∃]-intro (a ▫ b) ⦃ symmetry(_≡_) (associativity(_▫_)) 🝖 congruence₂-₁(_▫_)(b) pa 🝖 pb ⦄)
 
   inverseRelationᵣ-with-opᵣ : ∀{a x y} → (x ⨞ y) → ((a ▫ x) ⨞ (a ▫ y))
   inverseRelationᵣ-with-opᵣ {a}{x}{y} xy
     with [∃]-intro z ⦃ xzy ⦄ ← [↔]-to-[→] (InverseRelationᵣ.proof invRel) xy
-    = [↔]-to-[←] (InverseRelationᵣ.proof invRel) ([∃]-intro z ⦃ associativity(_▫_) 🝖 congruence₂ᵣ(_▫_)(a) xzy ⦄)
+    = [↔]-to-[←] (InverseRelationᵣ.proof invRel) ([∃]-intro z ⦃ associativity(_▫_) 🝖 congruence₂-₂(_▫_)(a) xzy ⦄)
 
   inverseRelationᵣ-without-opᵣ : ⦃ cancₗ : Cancellationₗ(_▫_) ⦄ → ∀{a x y} → ((a ▫ x) ⨞ (a ▫ y)) → (x ⨞ y)
   inverseRelationᵣ-without-opᵣ {a}{x}{y} xy
@@ -57,7 +57,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ monoid : Monoid{T = T}(_▫_) ⦄ 
     inverseRelationᵣ-to-invertibleᵣ : ∀{x} → ⦃ x ⨞ id ⦄ → InvertibleElementᵣ(_▫_) ⦃ Monoid.identity-existenceᵣ(monoid) ⦄ (x)
     inverseRelationᵣ-to-invertibleᵣ {x} ⦃ xid ⦄ = [∃]-intro (id ⋄ x) ⦃ intro p ⦄ where
       p =
-        (x ▫ (id ⋄ x))                                                    🝖[ _≡_ ]-[ congruence₂ᵣ(_▫_)(x) (InverseOperatorᵣ.proof invOper {id}{x}) ]
+        (x ▫ (id ⋄ x))                                                    🝖[ _≡_ ]-[ congruence₂-₂(_▫_)(x) (InverseOperatorᵣ.proof invOper {id}{x}) ]
         (x ▫ [∃]-witness([↔]-to-[→] (InverseRelationᵣ.proof invRel) xid)) 🝖[ _≡_ ]-[ [∃]-proof([↔]-to-[→] (InverseRelationᵣ.proof invRel) xid) ]
         id                                                                🝖-end
 

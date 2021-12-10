@@ -94,7 +94,7 @@ module _
   identity-eliminator-flipped-transitivityᵣ-of-refl : ∀{x} → (ftrans refl refl ≡ refl{x})
   identity-eliminator-flipped-transitivityᵣ-of-refl {z} = sub₂(_≡_)((_≡_) on₂ (apply refl)) ⦃ minimal-reflection-transport ⦄ identity-eliminator-transport-of-refl
   -- sub₂(_≡_)((_≡_) on₂ (apply refl)) ⦃ intro test ⦄ identity-eliminator-transport-of-refl
-  -- congruence₂ₗ ⦃ ? ⦄ ⦃ ? ⦄ ⦃ ? ⦄ (Functional._$_) ⦃ ? ⦄ (refl)
+  -- congruence₂-₁ ⦃ ? ⦄ ⦃ ? ⦄ ⦃ ? ⦄ (Functional._$_) ⦃ ? ⦄ (refl)
 
   identity-eliminator-transitivity-of-refl : ∀{x} → (trans refl refl ≡ refl{x})
   identity-eliminator-transitivity-of-refl = transitivity(_≡_) ⦃ identity-eliminator-to-transitivity ⦄ p identity-eliminator-flipped-transitivityᵣ-of-refl where

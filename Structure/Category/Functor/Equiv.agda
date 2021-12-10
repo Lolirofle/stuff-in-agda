@@ -68,11 +68,11 @@ instance
   _≡ᶠᵘⁿᶜᵗᵒʳ_.functor-proof (Symmetry.proof [≡ᶠᵘⁿᶜᵗᵒʳ]-symmetry xy) = symmetry(_⊜_) (_≡ᶠᵘⁿᶜᵗᵒʳ_.functor-proof xy)
   NaturalTransformation.natural (_≡ᶠᵘⁿᶜᵗᵒʳ_.map-proof (Symmetry.proof [≡ᶠᵘⁿᶜᵗᵒʳ]-symmetry {[∃]-intro F₁} {[∃]-intro F₂} (intro (intro fe) (intro me)))) {x}{y} {f = f} =
     trans-sym(y) ∘ map(f)                               🝖[ _≡ᵣₘ_ ]-[ Morphism.identityᵣ(_∘_)(id) ]-sym
-    (trans-sym(y) ∘ map(f)) ∘ id                        🝖[ _≡ᵣₘ_ ]-[ congruence₂ᵣ(_∘_)(_) ([∘]-on-transport-inverseᵣ catᵣ {ab = fe}) ]-sym
+    (trans-sym(y) ∘ map(f)) ∘ id                        🝖[ _≡ᵣₘ_ ]-[ congruence₂-₂(_∘_)(_) ([∘]-on-transport-inverseᵣ catᵣ {ab = fe}) ]-sym
     (trans-sym(y) ∘ map(f)) ∘ (trans(x) ∘ trans-sym(x)) 🝖[ _≡ᵣₘ_ ]-[ associate4-213-121 (category catᵣ) ]-sym
-    (trans-sym(y) ∘ (map(f) ∘ trans(x))) ∘ trans-sym(x) 🝖[ _≡ᵣₘ_ ]-[ congruence₂ₗ(_∘_)(_) (congruence₂ᵣ(_∘_)(_) me) ]-sym
+    (trans-sym(y) ∘ (map(f) ∘ trans(x))) ∘ trans-sym(x) 🝖[ _≡ᵣₘ_ ]-[ congruence₂-₁(_∘_)(_) (congruence₂-₂(_∘_)(_) me) ]-sym
     (trans-sym(y) ∘ (trans(y) ∘ map(f))) ∘ trans-sym(x) 🝖[ _≡ᵣₘ_ ]-[ associate4-213-121 (category catᵣ) ]
-    (trans-sym(y) ∘ trans(y)) ∘ (map(f) ∘ trans-sym(x)) 🝖[ _≡ᵣₘ_ ]-[ congruence₂ₗ(_∘_)(_) ([∘]-on-transport-inverseₗ catᵣ {ab = fe}) ]
+    (trans-sym(y) ∘ trans(y)) ∘ (map(f) ∘ trans-sym(x)) 🝖[ _≡ᵣₘ_ ]-[ congruence₂-₁(_∘_)(_) ([∘]-on-transport-inverseₗ catᵣ {ab = fe}) ]
     id ∘ (map(f) ∘ trans-sym(x))                        🝖[ _≡ᵣₘ_ ]-[ Morphism.identityₗ(_∘_)(id) ]
     map(f) ∘ trans-sym(x)                               🝖-end
     where
@@ -83,13 +83,13 @@ instance
   [≡ᶠᵘⁿᶜᵗᵒʳ]-transitivity : Transitivity(_≡ᶠᵘⁿᶜᵗᵒʳ_)
   _≡ᶠᵘⁿᶜᵗᵒʳ_.functor-proof (Transitivity.proof [≡ᶠᵘⁿᶜᵗᵒʳ]-transitivity (intro fe₁ _) (intro fe₂ _)) = transitivity(_⊜_) fe₁ fe₂
   NaturalTransformation.natural (_≡ᶠᵘⁿᶜᵗᵒʳ_.map-proof (Transitivity.proof [≡ᶠᵘⁿᶜᵗᵒʳ]-transitivity {[∃]-intro F₁} {[∃]-intro F₂} {[∃]-intro F₃} (intro (intro fe₁) (intro me₁)) (intro (intro fe₂) (intro me₂)))) {x}{y} {f = f} =
-    transport catᵣ (transitivity(_≡ₑ_) (fe₁{y}) (fe₂{y})) ∘ map(f) 🝖[ _≡ᵣₘ_ ]-[ congruence₂ₗ(_∘_)(_) (transport-of-transitivity catᵣ {ab = fe₁}{bc = fe₂}) ]
+    transport catᵣ (transitivity(_≡ₑ_) (fe₁{y}) (fe₂{y})) ∘ map(f) 🝖[ _≡ᵣₘ_ ]-[ congruence₂-₁(_∘_)(_) (transport-of-transitivity catᵣ {ab = fe₁}{bc = fe₂}) ]
     (transport catᵣ (fe₂{y}) ∘ transport catᵣ (fe₁{y})) ∘ map(f)         🝖[ _≡ᵣₘ_ ]-[ Morphism.associativity(_∘_) ]
-    transport catᵣ (fe₂{y}) ∘ (transport catᵣ (fe₁{y}) ∘ map(f))         🝖[ _≡ᵣₘ_ ]-[ congruence₂ᵣ(_∘_)(_) me₁ ]
+    transport catᵣ (fe₂{y}) ∘ (transport catᵣ (fe₁{y}) ∘ map(f))         🝖[ _≡ᵣₘ_ ]-[ congruence₂-₂(_∘_)(_) me₁ ]
     transport catᵣ (fe₂{y}) ∘ (map(f) ∘ transport catᵣ (fe₁{x}))         🝖[ _≡ᵣₘ_ ]-[ Morphism.associativity(_∘_) ]-sym
-    (transport catᵣ (fe₂{y}) ∘ map(f)) ∘ transport catᵣ (fe₁{x})         🝖[ _≡ᵣₘ_ ]-[ congruence₂ₗ(_∘_)(_) me₂ ]
+    (transport catᵣ (fe₂{y}) ∘ map(f)) ∘ transport catᵣ (fe₁{x})         🝖[ _≡ᵣₘ_ ]-[ congruence₂-₁(_∘_)(_) me₂ ]
     (map(f) ∘ transport catᵣ (fe₂{x})) ∘ transport catᵣ (fe₁{x})         🝖[ _≡ᵣₘ_ ]-[ Morphism.associativity(_∘_) ]
-    map(f) ∘ (transport catᵣ (fe₂{x}) ∘ transport catᵣ (fe₁{x}))         🝖[ _≡ᵣₘ_ ]-[ congruence₂ᵣ(_∘_)(_) (transport-of-transitivity catᵣ {ab = fe₁}{bc = fe₂}) ]-sym
+    map(f) ∘ (transport catᵣ (fe₂{x}) ∘ transport catᵣ (fe₁{x}))         🝖[ _≡ᵣₘ_ ]-[ congruence₂-₂(_∘_)(_) (transport-of-transitivity catᵣ {ab = fe₁}{bc = fe₂}) ]-sym
     map(f) ∘ transport catᵣ (transitivity(_≡ₑ_) (fe₁{x}) (fe₂{x})) 🝖-end
 
 instance

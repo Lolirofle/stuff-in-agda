@@ -84,4 +84,4 @@ module _
     open module LinearMapᵣ{x} = LinearMap(linearMap₂{x}) renaming (function to functionᵣ ; preserves-[+ᵥ] to preserves-[+ᵥ]ᵣ ; preserves-[⋅ₛᵥ] to preserves-[⋅ₛᵥ]ᵣ) public
 
     binaryOperator : BinaryOperator(f)
-    binaryOperator = functions-to-binaryOperator(f) ⦃ functionₗ ⦄ ⦃ functionᵣ ⦄
+    binaryOperator = BinaryOperator-unary-intro f functionₗ functionᵣ
