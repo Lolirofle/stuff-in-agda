@@ -4,7 +4,7 @@ open import Type
 module FormalLanguage.RegularExpression {ℓ} (Σ : Type{ℓ}) where
 
 open import Data.Boolean
-open import Data.Boolean.Stmt.Proofs
+open import Data.Boolean.Stmt.Logic
 open import Data.List as List using (List)
 open import FormalLanguage
 open import FormalLanguage.Proofs

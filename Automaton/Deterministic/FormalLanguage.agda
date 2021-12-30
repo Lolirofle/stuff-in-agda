@@ -67,7 +67,7 @@ module Proofs where
     where
       open DFA(auto)
       open LetterNotation
-  -- [≡]-with {!DFA.F(auto)!} (Language-isWordAccepted {Σ = Σ} auto {w})
+  -- congruence₁ {!DFA.F(auto)!} (Language-isWordAccepted {Σ = Σ} auto {w})
   -}
 
   -- Language-isWordAccepted (_)          {[]}    = [≡]-intro
@@ -92,7 +92,7 @@ module Proofs where
     [∁]-δ̂ {q}{a ⊰ w} = [∁]-δ̂ {DFA.δ(∁ auto)(q)(a)}{w}
 
     [∁]-isWordAccepted : ∀{w} → DFA.isWordAccepted(∁ auto)(w) ≡ !(DFA.isWordAccepted(auto)(w))
-    [∁]-isWordAccepted {w} = [≡]-with(x ↦ !(DFA.F(auto)(x))) ([∁]-δ̂{DFA.q₀(auto)}{w})
+    [∁]-isWordAccepted {w} = congruence₁(x ↦ !(DFA.F(auto)(x))) ([∁]-δ̂{DFA.q₀(auto)}{w})
 
     -- TODO: Prove ∁ postulates regarding languages before accepting them, because the definition of ∁ for languages might be wrong.
     -- [∁]-language : 𝔏(∁ auto) ≡ Oper.∁(𝔏(auto))
@@ -131,10 +131,10 @@ module Proofs where
     -- TODO: δ̂-on-[𝁼]
 
     [⨯]-isWordAccepted : ∀{w} → DFA.isWordAccepted(auto ⨯ auto₂)(w) ≡ DFA.isWordAccepted(auto)(w) && DFA.isWordAccepted(auto₂)(w)
-    [⨯]-isWordAccepted {w} = [≡]-with(DFA.F(auto ⨯ auto₂)) ([⨯]-δ̂{DFA.q₀(auto)}{DFA.q₀(auto₂)}{w})
+    [⨯]-isWordAccepted {w} = congruence₁(DFA.F(auto ⨯ auto₂)) ([⨯]-δ̂{DFA.q₀(auto)}{DFA.q₀(auto₂)}{w})
 
     [+]-isWordAccepted : ∀{w} → DFA.isWordAccepted(auto + auto₂)(w) ≡ DFA.isWordAccepted(auto)(w) || DFA.isWordAccepted(auto₂)(w)
-    [+]-isWordAccepted {w} = [≡]-with(DFA.F(auto + auto₂)) ([+]-δ̂{DFA.q₀(auto)}{DFA.q₀(auto₂)}{w})
+    [+]-isWordAccepted {w} = congruence₁(DFA.F(auto + auto₂)) ([+]-δ̂{DFA.q₀(auto)}{DFA.q₀(auto₂)}{w})
 
     -- TODO: Prove postulates
     postulate [⨯]-language : 𝔏(auto ⨯ auto₂) ≡ 𝔏(auto) ∩ 𝔏(auto₂)

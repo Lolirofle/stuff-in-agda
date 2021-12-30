@@ -228,7 +228,7 @@ concat {a = 𝐒 a} {b = b}   af bf (𝐒 n) = concat {a = a} {b = b} (af ∘ �
 
 concat-is-left : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n : 𝕟(a)} → (concat af bf (bound-[≤] [≤]-of-[+]ₗ n) ≡ Either.Left(af(n)))
 concat-is-left {a = 𝐒 a} {b} {af}{bf} {n = 𝟎}   = [≡]-intro
-concat-is-left {a = 𝐒 a} {𝟎} {af}{bf} {n = 𝐒 n} = ([≡]-with(concat af bf) (p{n = n})) 🝖 concat-is-left {a = a} {b = 𝟎} {af = af ∘ 𝐒}{bf = bf} {n = n} where
+concat-is-left {a = 𝐒 a} {𝟎} {af}{bf} {n = 𝐒 n} = (congruence₁(concat af bf) (p{n = n})) 🝖 concat-is-left {a = a} {b = 𝟎} {af = af ∘ 𝐒}{bf = bf} {n = n} where
   p : ∀{A}{n : 𝕟(A)} → (bound-[≤] ([≤]-of-[+]ₗ {𝐒 A}{𝟎}) (𝐒(n)) ≡ 𝐒(bound-[≤] [≤]-of-[+]ₗ n))
   p {.(𝐒 _)} {𝟎}   = [≡]-intro
   p {.(𝐒 _)} {𝐒 n} = [≡]-intro
@@ -238,7 +238,7 @@ concat-is-left-on-0 : ∀{a}{af : 𝕟(a) → A}{bf : 𝕟(𝟎) → B}{n : 𝕟
 concat-is-left-on-0 {a = 𝐒 a} {n = 𝟎} = [≡]-intro
 concat-is-left-on-0 {a = 𝐒 a} {n = 𝐒 n} = concat-is-left-on-0 {a = a} {n = n}
 
--- concat-is-right : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(𝐒 b) → B}{n : 𝕟(b)} → (concat af bf (maximum{n = a} 𝕟.+ n) ≡ Either.Right(bf(bound-𝐒 n)))
+-- concat-is-right : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(𝐒 b) → B}{n : 𝕟(b)} → (concat af bf (maximum{𝐒 a} 𝕟.+ n) ≡ Either.Right(bf(bound-𝐒 n)))
 
 concat-left-pattern : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n : 𝕟(a ℕ.+ b)}{aa} → (concat af bf n ≡ Either.Left(aa)) → ∃(k ↦ (af(k) ≡ aa))
 concat-left-pattern {a = 𝟎} {𝟎} {af} {bf} {}
@@ -257,8 +257,8 @@ concat-right-pattern {a = 𝐒 a} {𝐒 b} {af} {bf} {𝐒 n} {bb} p = concat-ri
 
 concat-left-or-right : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n : 𝕟(a ℕ.+ b)} → ∃(aa ↦ concat af bf n ≡ Either.Left(af(aa))) ∨ ∃(bb ↦ concat af bf n ≡ Either.Right(bf(bb)))
 concat-left-or-right {a = a} {b} {af} {bf} {n} with concat af bf n | inspect (concat af bf) n
-... | [∨]-introₗ aa | intro q with [∃]-intro r ⦃ rp ⦄ ← concat-left-pattern{a = a}{b}{af}{bf}{n}{aa} q = [∨]-introₗ ([∃]-intro r ⦃ [≡]-with(Either.Left) (symmetry(_≡_) rp) ⦄)
-... | [∨]-introᵣ bb | intro q with [∃]-intro r ⦃ rp ⦄ ← concat-right-pattern{a = a}{b}{af}{bf}{n}{bb} q = [∨]-introᵣ ([∃]-intro r ⦃ [≡]-with(Either.Right) (symmetry(_≡_) rp) ⦄)
+... | [∨]-introₗ aa | intro q with [∃]-intro r ⦃ rp ⦄ ← concat-left-pattern{a = a}{b}{af}{bf}{n}{aa} q = [∨]-introₗ ([∃]-intro r ⦃ congruence₁(Either.Left) (symmetry(_≡_) rp) ⦄)
+... | [∨]-introᵣ bb | intro q with [∃]-intro r ⦃ rp ⦄ ← concat-right-pattern{a = a}{b}{af}{bf}{n}{bb} q = [∨]-introᵣ ([∃]-intro r ⦃ congruence₁(Either.Right) (symmetry(_≡_) rp) ⦄)
 
 instance
   concat-injective : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B} → ⦃ Injective(af) ⦄ → ⦃ Injective(bf) ⦄ → Injective(concat af bf)
@@ -323,7 +323,7 @@ concat-when-greater {a = 𝐒 a} {𝐒 b} {af} {bf} {𝐒 n} ([≤]-with-[𝐒] 
 open import Numeral.Natural.Relation.Order.Proofs
 bound-[≤]-of-refl : ∀{n}{x} → (bound-[≤] (reflexivity(_≤_) {n}) x ≡ x)
 bound-[≤]-of-refl {𝐒 n} {𝟎}   = [≡]-intro
-bound-[≤]-of-refl {𝐒 n} {𝐒 x} = [≡]-with(𝐒) (bound-[≤]-of-refl {n}{x})
+bound-[≤]-of-refl {𝐒 n} {𝐒 x} = congruence₁(𝐒) (bound-[≤]-of-refl {n}{x})
 
 concat-surjective-left : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{x} → ⦃ Surjective(af) ⦄ → ∃(n ↦ concat af bf n ≡ Either.Left(x))
 concat-surjective-left {a = 𝟎} {b} {af} {bf} {x} with () ← [∃]-witness(surjective(af) {x})

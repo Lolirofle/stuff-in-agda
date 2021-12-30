@@ -10,7 +10,7 @@ open import Structure.Setoid
 open import Type
 open import Type.Properties.MereProposition
 open import Type.Properties.Singleton
-open import Type.Properties.Singleton.Proofs
+open import Type.Properties.Proofs
 
 private variable ℓ ℓₑ : Lvl.Level
 private variable T U : Type{ℓ}

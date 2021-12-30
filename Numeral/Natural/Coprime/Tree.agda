@@ -17,6 +17,7 @@ data CoprimeTree : (a : ℕ) → (b : ℕ) → Type{Lvl.𝟎} where
   branch₃ : (CoprimeTree a b) → (CoprimeTree a ((2 ⋅ a) + b))
 
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Numeral.Natural.Coprime
 open import Numeral.Natural.Coprime.Proofs
 open import Numeral.Natural.Oper.Proofs
@@ -84,7 +85,7 @@ CoprimeTree-correctness {a}{_} (branch₁{c} p) =
     Coprime a (a −₀ c)        ⇒-[ Coprime-of-[+] ]
     Coprime a (a + (a −₀ c))  ⇒-end
   )
-  ⇒₂-[ substitute₂ᵣ(Coprime) ]
+  ⇒₂-[ substitute₂-₂ᵣ(Coprime)(a) ]
   Coprime a ((2 ⋅ a) −₀ c)  ⇒-end
   where
     prev-ord : c ≤ a
@@ -102,7 +103,7 @@ CoprimeTree-correctness {a}{_} (branch₂{c} p) =
     Coprime a (a + c)         ⇒-[ Coprime-of-[+] ]
     Coprime a (a + (a + c))   ⇒-end
   )
-  ⇒₂-[ substitute₂ᵣ(Coprime) ]
+  ⇒₂-[ substitute₂-₂ᵣ(Coprime)(a) ]
   Coprime a (2 ⋅ a + c) ⇒-end
 CoprimeTree-correctness {a}{_} (branch₃{_}{c} p) =
   • (
@@ -116,7 +117,7 @@ CoprimeTree-correctness {a}{_} (branch₃{_}{c} p) =
     Coprime a (a + c)         ⇒-[ Coprime-of-[+] ]
     Coprime a (a + (a + c))   ⇒-end
   )
-  ⇒₂-[ substitute₂ᵣ(Coprime) ]
+  ⇒₂-[ substitute₂-₂ᵣ(Coprime)(a) ]
   Coprime a (2 ⋅ a + c) ⇒-end
 
 -- TODO: Is this actually true? The Wikipedia article states this but without proof 

@@ -188,7 +188,7 @@ digraph dependencies {
    m64[label="Relator.Equals.Proofs.Equivalence"];
    m422[label="Structure.Signature"];
    m57[label="Structure.Operator.Properties"];
-   m100[label="Data.Boolean.Stmt.Proofs"];
+   m100[label="Data.Boolean.Stmt.Logic"];
    m423[label="Sets.IterativeSet.Oper"];
    m2[label="Logic"];
    m424[label="Structure.Relator.Apartness.Proofs"];

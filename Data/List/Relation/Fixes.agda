@@ -153,7 +153,7 @@ open import Type.Properties.Decidable
 
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ dec : EquivDecidable(T) ⦄ where
   open import Data.Boolean.Decidable
-  open import Data.Boolean.Stmt.Proofs
+  open import Data.Boolean.Stmt.Logic
   open import Lang.Inspect
   open        Operator.Equals
   open import Relator.Equals.Proofs.Equivalence

@@ -6,6 +6,7 @@ open import Data.Boolean.Stmt
 open import Functional
 open import Logic
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.Oper
@@ -82,11 +83,11 @@ mod-maxᵣ {𝐒 a} {𝐒(𝐒 b)} = [≤]-with-[𝐒] ⦃ mod'-maxᵣ {1}{b}{a}
 -- When proving properties about the modulo operation, only proofs about numbers lesser than the modulus is necessary.
 mod-intro : ∀{ℓ} → (P : {ℕ} → ℕ → Type{ℓ}) → ∀{b} ⦃ _ : IsTrue(positive?(b)) ⦄ → (∀{a n} → (a < b) → P{a + (n ⋅ b)}(a)) → (∀{a} → P{a}(a mod b))
 mod-intro P {𝐒 b} proof {a} with [<][≥]-dichotomy {a}{𝐒 b}
-... | [∨]-introₗ lt = substitute₂(\x y → P{x}(y))
+... | [∨]-introₗ lt = substitute₂ᵣ(\x y → P{x}(y))
   (reflexivity(_≡_))
   (symmetry(_≡_) (mod-lesser-than-modulus ⦃ [≤]-without-[𝐒] lt ⦄))
   (proof{a}{0} lt)
-... | [∨]-introᵣ ge = substitute₂(\x y → P{x}(y))
+... | [∨]-introᵣ ge = substitute₂ᵣ(\x y → P{x}(y))
   ([↔]-to-[→] ([−₀][+]-nullify2ᵣ {(a ⌊/⌋ 𝐒(b)) ⋅ 𝐒(b)}{a}) (subtransitivityᵣ(_≤_)(_≡_) ([≤]-of-[+]ₗ {(a ⌊/⌋ 𝐒(b)) ⋅ 𝐒(b)}{a mod 𝐒(b)}) ([⌊/⌋][mod]-is-division-with-remainder {a}{b})))
   (symmetry(_≡_) ([⌊/⌋][⋅]-inverseOperatorᵣ-error {a}{b}))
   (proof{a −₀ ((a ⌊/⌋ 𝐒(b)) ⋅ 𝐒(b))}{a ⌊/⌋ 𝐒(b)} (subtransitivityₗ(_<_)(_≡_) (symmetry(_≡_) ([⌊/⌋][⋅]-inverseOperatorᵣ-error {a}{b})) (mod-maxᵣ{a}{𝐒 b})))
@@ -133,7 +134,7 @@ mod-of-modulus-sum-divisibleₗ {a} {b} {c} ca = congruence₁(_mod c) (commutat
 -- When the dividend is greater than the modulus, the modulus can be subtracted from the dividend without altering the result.
 mod-greater-than-modulus : ∀{a b} → ⦃ _ : (a > b) ⦄ → (a mod 𝐒(b) ≡ (a −₀ 𝐒(b)) mod 𝐒(b))
 mod-greater-than-modulus {a}{b} ⦃ a>b ⦄ =
-  symmetry(_≡_) ([≡]-with(_mod 𝐒(b)) ([↔]-to-[→] [−₀][+]-nullify2 a>b))
+  symmetry(_≡_) (congruence₁(_mod 𝐒(b)) ([↔]-to-[→] [−₀][+]-nullify2 a>b))
   🝖 mod-of-modulus-add {a −₀ 𝐒(b)} {b}
 
 mod-cases : ∀{a b} → (a mod 𝐒(b) ≡ a) ∨ (a mod 𝐒(b) ≡ (a −₀ 𝐒(b)) mod 𝐒(b))

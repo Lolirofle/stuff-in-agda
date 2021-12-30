@@ -40,7 +40,7 @@ module _
   transport = sub₂(_≡ₑ_)(_⟶_) ⦃ [≡]-sub-of-reflexive ⦃ intro id ⦄ ⦄
 
   transport-function : Function ⦃ [≡]-equiv ⦄ ⦃ morphism-equiv ⦄ (transport {a = a}{b = b})
-  Function.congruence transport-function xy = sub₂(_≡ₑ_)(_≡_) ⦃ [≡]-sub-of-reflexive ⦃ Equiv.reflexivity(morphism-equiv) ⦄ ⦄ ([≡]-with(transport) xy)
+  Function.congruence transport-function xy = sub₂(_≡ₑ_)(_≡_) ⦃ [≡]-sub-of-reflexive ⦃ Equiv.reflexivity(morphism-equiv) ⦄ ⦄ (congruence₁(transport) xy)
 
   transport-of-reflexivity : (transport(reflexivity(_≡ₑ_)) ≡ id{a})
   transport-of-reflexivity = reflexivity(_≡_) ⦃ Equiv.reflexivity morphism-equiv ⦄

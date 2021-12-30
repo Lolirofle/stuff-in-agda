@@ -70,7 +70,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(N) ⦄ where
 
     𝟎-or-𝐒 : ∀{x} → (x ≡ 𝟎) ∨ ∃(y ↦ x ≡ 𝐒(y))
     𝟎-or-𝐒 {x} = induction(𝟎)(𝐒)
-      (x ↦ (x ≡ 𝟎) ∨ ∃(y ↦ x ≡ 𝐒(y))) ⦃ [∨]-unaryRelator ⦃ rel-P = BinaryRelator.left [≡]-binaryRelator ⦄ ⦃ rel-Q = [∃]-unaryRelator ⦃ rel-P = BinaryRelator.left [≡]-binaryRelator ⦄ ⦄ ⦄
+      (x ↦ (x ≡ 𝟎) ∨ ∃(y ↦ x ≡ 𝐒(y))) ⦃ [∨]-unaryRelator ⦃ rel-P = BinaryRelator.unary₁ _ [≡]-binaryRelator ⦄ ⦃ rel-Q = [∃]-unaryRelator ⦃ rel-P = BinaryRelator.unary₁ _ [≡]-binaryRelator ⦄ ⦄ ⦄
       ([∨]-introₗ (reflexivity(_≡_)))
       (x ↦ [∨]-elim
         (p ↦ [∨]-introᵣ([∃]-intro 𝟎 ⦃ congruence₁(𝐒) p ⦄))

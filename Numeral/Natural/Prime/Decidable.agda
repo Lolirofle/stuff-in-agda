@@ -3,7 +3,7 @@ module Numeral.Natural.Prime.Decidable where
 open import Data
 open import Data.Boolean
 open import Data.Boolean.Stmt
-open import Data.Boolean.Stmt.Proofs
+open import Data.Boolean.Stmt.Logic
 open import Data.List
 open import Data.List.Decidable as List
 open import Data.List.Equiv.Id

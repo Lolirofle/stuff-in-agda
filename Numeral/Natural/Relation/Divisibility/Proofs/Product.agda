@@ -5,6 +5,7 @@ open import Functional
 open import Logic
 open import Logic.Predicate
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 import      Lvl
 open import Numeral.Integer
 import      Numeral.Integer.Oper as ℤ
@@ -39,7 +40,7 @@ private variable n x y d p x₁ x₂ y₁ y₂ : ℕ
 coprime-divides-of-[⋅] : (d ∣ (x ⋅ y)) → Coprime(d)(x) → (d ∣ y)
 coprime-divides-of-[⋅] {d}{x}{y} dxy coprim
   with [∃]-intro (a , b) ⦃ p ⦄ ← gcd-linearCombination-existence {d}{x}
-  = sub₂((ℤ._∣_) on₂ (+ₙ_))(_∣_) (substitute₂ᵣ(ℤ._∣_) {+ₙ d} eq div) where
+  = sub₂((ℤ._∣_) on₂ (+ₙ_))(_∣_) (substitute₂-₂ᵣ(ℤ._∣_)(+ₙ d) eq div) where
     eq =
       ((+ₙ d) ℤ.⋅ a ℤ.⋅ (+ₙ y)) ℤ.+ ((+ₙ x) ℤ.⋅ b ℤ.⋅ (+ₙ y)) 🝖[ _≡_ ]-[ distributivityᵣ(ℤ._⋅_)(ℤ._+_) {(+ₙ d) ℤ.⋅ a}{(+ₙ x) ℤ.⋅ b}{+ₙ y} ]-sym
       (((+ₙ d) ℤ.⋅ a) ℤ.+ ((+ₙ x) ℤ.⋅ b)) ℤ.⋅ (+ₙ y)          🝖[ _≡_ ]-[ congruence₂-₁(ℤ._⋅_)(+ₙ y) {_}{+ₙ 1} (p 🝖 congruence₁(+ₙ_) ([↔]-to-[→] Coprime-gcd coprim)) ]
@@ -55,7 +56,7 @@ coprime-divides-of-[⋅] {d}{x}{y} dxy coprim
     div : (+ₙ d) ℤ.∣ ((+ₙ d) ℤ.⋅ a ℤ.⋅ (+ₙ y) ℤ.+ (+ₙ x) ℤ.⋅ b ℤ.⋅ (+ₙ y))
     div = ℤ.divides-with-[+] {+ₙ d}{(+ₙ d) ℤ.⋅ a ℤ.⋅ (+ₙ y)}{(+ₙ x) ℤ.⋅ b ℤ.⋅ (+ₙ y)}
       (ℤ.divides-with-[⋅] {+ₙ d}{(+ₙ d) ℤ.⋅ a} ([∨]-introₗ (ℤ.divides-with-[⋅] {+ₙ d}{+ₙ d} ([∨]-introₗ (reflexivity(_∣_))))))
-      (substitute₂ᵣ(ℤ._∣_) {+ₙ d} r-eq (ℤ.divides-with-[⋅] {+ₙ d}{+ₙ(x ⋅ y)} ([∨]-introₗ dxy)))
+      (substitute₂-₂ᵣ(ℤ._∣_)(+ₙ d) r-eq (ℤ.divides-with-[⋅] {+ₙ d}{+ₙ(x ⋅ y)} ([∨]-introₗ dxy)))
 
 coprime-divides-is-unit : (d ∣ x) → Coprime(d)(x) → (d ≡ 1)
 coprime-divides-is-unit = [1]-only-divides-[1] ∘₂ coprime-divides-of-[⋅]

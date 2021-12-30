@@ -225,7 +225,7 @@ module _ ⦃ axioms : Axioms ⦄ where
     =
       • (b ≡ b) ∧ (p ≡ b)            :-[ [∧]-intro (reflexivity(_≡_)) (symmetry(_≡_) (Equidistanced-point bpaa)) ]
       • Equidistanced(b , p) (b , p) :-[ reflexivity(Equidistanced) ]
-      ⇒₂-[ substitute₂ᵣ(Equidistanced) ]
+      ⇒₂-[ substitute₂-₂ᵣ(Equidistanced) _ ]
       Equidistanced(b , p) (b , b) ⇒-[ Equidistanced-symmetric-transitivity bpaa ]
       Equidistanced(a , a) (b , b) ⇒-end
 
@@ -234,8 +234,8 @@ module _ ⦃ axioms : Axioms ⦄ where
   segment-sum : (Aligned a₁ b₁ c₁) → (Aligned a₂ b₂ c₂) → Equidistanced(a₁ , b₁)(a₂ , b₂) → Equidistanced(b₁ , c₁)(b₂ , c₂) → Equidistanced(a₁ , c₁)(a₂ , c₂)
   segment-sum {a₁ = a₁}{b₁ = b₁} abc₁ abc₂ ab₁ab₂ bc₁bc₂ with excluded-middle(a₁ ≡ b₁)
   ... | [∨]-introₗ a₁b₁
-    with a₂b₂ ← Equidistanced-point (symmetry(Equidistanced) (substitute₂ₗ(Equidistanced) ([∧]-intro a₁b₁ (reflexivity(_≡ₚ_))) ab₁ab₂))
-    = substitute₂(Equidistanced) ([∧]-intro (symmetry(_≡ₚ_) a₁b₁) (reflexivity(_≡ₚ_))) ([∧]-intro (symmetry(_≡ₚ_) a₂b₂) (reflexivity(_≡ₚ_))) bc₁bc₂
+    with a₂b₂ ← Equidistanced-point (symmetry(Equidistanced) (substitute₂-₁ᵣ(Equidistanced) _ ([∧]-intro a₁b₁ (reflexivity(_≡ₚ_))) ab₁ab₂))
+    = substitute₂-₂ᵣ(Equidistanced) _ ([∧]-intro (symmetry(_≡ₚ_) a₁b₁) (reflexivity(_≡ₚ_))) ([∧]-intro (symmetry(_≡ₚ_) a₂b₂) (reflexivity(_≡ₚ_))) bc₁bc₂
   ... | [∨]-introᵣ na₁b₁ =
     Equidistanced-flipped
     🝖 (five-segment

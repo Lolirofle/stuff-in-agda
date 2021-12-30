@@ -33,8 +33,8 @@ module VarNumeralSyntax where
   -- Syntax for writing Var as a numeral.
   instance
     Term-from-ℕ : ∀{N} → Numeral(Term(N))
-    Numeral.restriction-ℓ ( Term-from-ℕ {N} ) = Numeral.restriction-ℓ ( 𝕟-from-ℕ {N} )
-    Numeral.restriction   ( Term-from-ℕ {N} ) = Numeral.restriction ( 𝕟-from-ℕ {N} )
+    Numeral.restriction-ℓ ( Term-from-ℕ {N} ) = Numeral.restriction-ℓ ( 𝕟-numeral {N} )
+    Numeral.restriction   ( Term-from-ℕ {N} ) = Numeral.restriction ( 𝕟-numeral {N} )
     num                   ⦃ Term-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = Var(num n)
 
 module ExplicitLambdaSyntax where

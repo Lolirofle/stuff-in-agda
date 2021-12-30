@@ -54,17 +54,29 @@ module _ {A : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(A) ⦄ where
   Idempotent : (A → A) → Stmt
   Idempotent(f) = ∀ₗ(IdempotentOn f)
 
+module _ {A : Type{ℓₒ₁}} (_▫₁_ : A → A → Type{ℓₗ₁}) {B : Type{ℓₒ₂}} (_▫₂_ : B → B → Type{ℓₗ₂}) where
+  Compatible₁ : (A → B) → Stmt
+  Compatible₁(f) = (∀{x y : A} → (x ▫₁ y) → (f(x) ▫₂ f(y)))
+
+  module _ {C : Type{ℓₒ₃}} (_▫₃_ : C → C → Type{ℓₗ₃}) where
+    Compatible₂ : (A → B → C) → Stmt
+    Compatible₂(f) = (∀{x₁ y₁ : A}{x₂ y₂ : B} → (x₁ ▫₁ y₁) → (x₂ ▫₂ y₂) → (f x₁ x₂ ▫₃ f y₁ y₂))
+
+    module _ {D : Type{ℓₒ₄}} (_▫₄_ : D → D → Type{ℓₗ₄}) where
+      Compatible₃ : (A → B → C → D) → Stmt
+      Compatible₃(f) = (∀{x₁ y₁ : A}{x₂ y₂ : B}{x₃ y₃ : C} → (x₁ ▫₁ y₁) → (x₂ ▫₂ y₂) → (x₃ ▫₃ y₃) → (f x₁ x₂ x₃ ▫₄ f y₁ y₂ y₃))
+
 module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₗ₂}(B) ⦄ where
   Congruence₁ : (A → B) → Stmt
-  Congruence₁(f) = (∀{x y : A} → (x ≡ y) → (f(x) ≡ f(y)))
+  Congruence₁ = Compatible₁(_≡_)(_≡_)
 
-  module _ {C : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₗ₃}(C) ⦄ where
+  module _ {C : Type{ℓₒ₃}} ⦃ equiv-C : Equiv{ℓₗ₃}(C) ⦄ where
     Congruence₂ : (A → B → C) → Stmt
-    Congruence₂(f) = (∀{x₁ y₁ : A}{x₂ y₂ : B} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (f x₁ x₂ ≡ f y₁ y₂))
+    Congruence₂ = Compatible₂(_≡_)(_≡_)(_≡_)
 
-    module _ {D : Type{ℓₒ₄}} ⦃ _ : Equiv{ℓₗ₄}(D) ⦄ where
+    module _ {D : Type{ℓₒ₄}} ⦃ equiv-D : Equiv{ℓₗ₄}(D) ⦄ where
       Congruence₃ : (A → B → C → D) → Stmt
-      Congruence₃(f) = (∀{x₁ y₁ : A}{x₂ y₂ : B}{x₃ y₃ : C} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (x₃ ≡ y₃) → (f x₁ x₂ x₃ ≡ f y₁ y₂ y₃))
+      Congruence₃ = Compatible₃(_≡_)(_≡_)(_≡_)(_≡_)
 
 module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ ⦃ _ : Equiv{ℓₗ₃}(A → B) ⦄ where
   FunctionExtensionalityOn : (A → B) → (A → B) → Stmt

@@ -35,15 +35,6 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ�
     Injective.proof(bijective-to-injective ⦃ intro(bij) ⦄) {x₁}{x₂} (fx₁fx₂) =
       ([∃!]-existence-eq (bij {f(x₂)}) {x₁} (fx₁fx₂))
       🝖 symmetry(_≡_) ([∃!]-existence-eq (bij {f(x₂)}) {x₂} (reflexivity(_≡_)))
-    -- ∀{y : B} → ∃!(x ↦ f(x) ≡ y)
-    -- ∃!(x ↦ f(x) ≡ f(x₂))
-    -- ∀{x} → (f(x) ≡ f(x₂)) → (x ≡ [∃!]-witness e)
-    -- (f(x₁) ≡ f(x₂)) → (x₁ ≡ [∃!]-witness e)
-    --
-    -- ∀{y : B} → ∃!(x ↦ f(x) ≡ y)
-    -- ∃!(x ↦ f(x) ≡ f(x₂))
-    -- ∀{x} → (f(x) ≡ f(x₂)) → (x ≡ [∃!]-witness e)
-    -- (f(x₂) ≡ f(x₂)) → (x₂ ≡ [∃!]-witness e)
 
   instance
     bijective-to-surjective : ⦃ bij : Bijective(f) ⦄ → Surjective(f)
@@ -64,18 +55,19 @@ module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ�
 module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
   instance
     injective-relator : UnaryRelator(Injective{A = A}{B = B})
-    Injective.proof (UnaryRelator.substitution injective-relator {f₁}{f₂} (intro f₁f₂) (intro inj-f₁)) f₂xf₂y = inj-f₁ (f₁f₂ 🝖 f₂xf₂y 🝖 symmetry(_≡_) f₁f₂)
+    injective-relator = UnaryRelator-introᵣ \{f₁}{f₂} (intro f₁f₂) (intro inj-f₁) → intro \f₂xf₂y → inj-f₁(f₁f₂ 🝖 f₂xf₂y 🝖 symmetry(_≡_) f₁f₂)
 
 module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
   instance
     surjective-relator : UnaryRelator(Surjective{A = A}{B = B})
-    Surjective.proof (UnaryRelator.substitution surjective-relator {f₁}{f₂} (intro f₁f₂) (intro surj-f₁)) {y} = [∃]-map-proof (\{x} f₁xf₁y → symmetry(_≡_) (f₁f₂{x}) 🝖 f₁xf₁y) (surj-f₁{y})
+    surjective-relator = UnaryRelator-introᵣ \{f₁}{f₂} (intro f₁f₂) (intro surj-f₁) → intro \{y} → [∃]-map-proof (\{x} f₁xf₁y → symmetry(_≡_) (f₁f₂{x}) 🝖 f₁xf₁y) (surj-f₁{y})
 
 module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
   instance
     bijective-relator : UnaryRelator(Bijective{A = A}{B = B})
-    UnaryRelator.substitution bijective-relator {f₁}{f₂} f₁f₂ bij-f₁ = injective-surjective-to-bijective(f₂) ⦃ substitute₁(Injective) f₁f₂ (bijective-to-injective(f₁)) ⦄ ⦃ substitute₁(Surjective) f₁f₂ (bijective-to-surjective(f₁)) ⦄ where
-      instance _ = bij-f₁
+    bijective-relator = UnaryRelator-introᵣ \{f₁}{f₂} f₁f₂ bij-f₁ → injective-surjective-to-bijective(f₂)
+      ⦃ substitute₁ᵣ(Injective)  f₁f₂ (bijective-to-injective (f₁) ⦃ bij-f₁ ⦄) ⦄
+      ⦃ substitute₁ᵣ(Surjective) f₁f₂ (bijective-to-surjective(f₁) ⦃ bij-f₁ ⦄) ⦄
 
 module _
   {A : Type{ℓₒ₁}}

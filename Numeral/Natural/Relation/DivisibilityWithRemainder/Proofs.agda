@@ -6,6 +6,7 @@ open import Data.Boolean.Stmt
 open import Functional
 open import Logic.Predicate
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Numeral.Finite
 import      Numeral.Finite.Proofs as 𝕟
 open import Numeral.Natural
@@ -39,7 +40,7 @@ open import Type.Properties.Decidable.Proofs
 -- The quotient is the dividend when divided by 1.
 [∣ᵣₑₘ]-quotient-of-1 : ∀{x}{r} → (p : (1 ∣ᵣₑₘ x)(r)) → ([∣ᵣₑₘ]-quotient p ≡ x)
 [∣ᵣₑₘ]-quotient-of-1 {𝟎}  {𝟎} DivRem𝟎     = [≡]-intro
-[∣ᵣₑₘ]-quotient-of-1 {𝐒 x}{𝟎} (DivRem𝐒 p) = [≡]-with(𝐒) ([∣ᵣₑₘ]-quotient-of-1 {x}{𝟎} p)
+[∣ᵣₑₘ]-quotient-of-1 {𝐒 x}{𝟎} (DivRem𝐒 p) = congruence₁(𝐒) ([∣ᵣₑₘ]-quotient-of-1 {x}{𝟎} p)
 
 -- [∣ᵣₑₘ]-remainder-dividend : ∀{x y}{r : 𝕟(y)} → (x < y) → (y ∣ᵣₑₘ x)(r) → (x ≡ 𝕟-to-ℕ r)
 
@@ -67,7 +68,7 @@ open import Type.Properties.Decidable.Proofs
 [∣ᵣₑₘ]-equivalence = [↔]-intro (p ↦ l {q = [∃]-witness p} ([∃]-proof p)) (p ↦ [∃]-intro ([∣ᵣₑₘ]-quotient p) ⦃ [∣ᵣₑₘ]-is-division-with-remainder p ⦄) where
   l :  ∀{x y q}{r} → ((q ⋅ y) + (𝕟-to-ℕ r) ≡ x) → (y ∣ᵣₑₘ x)(r)
   l {_}{_}{𝟎}  {_} [≡]-intro = DivRem𝟎
-  l {x}{y}{𝐒 q}{r} p = substitute₁(x ↦ (y ∣ᵣₑₘ x)(r)) eq (DivRem𝐒 (l{(q ⋅ y) + (𝕟-to-ℕ r)}{y}{q}{r} [≡]-intro)) where
+  l {x}{y}{𝐒 q}{r} p = substitute₁ᵣ(x ↦ (y ∣ᵣₑₘ x)(r)) eq (DivRem𝐒 (l{(q ⋅ y) + (𝕟-to-ℕ r)}{y}{q}{r} [≡]-intro)) where
     eq =
       ((q ⋅ y) + (𝕟-to-ℕ r)) + y 🝖[ _≡_ ]-[ One.commuteᵣ-assocₗ {a = q ⋅ y}{b = 𝕟-to-ℕ r}{c = y} ]
       ((q ⋅ y) + y) + (𝕟-to-ℕ r) 🝖[ _≡_ ]-[ congruence₂-₁(_+_)(𝕟-to-ℕ r) ([⋅]-with-[𝐒]ₗ {q}{y}) ]-sym
@@ -85,14 +86,14 @@ open import Type.Properties.Decidable.Proofs
 -}
 
 DivRem𝟎Alt : ∀{x y} → (xy : (x < y)) → (y ∣ᵣₑₘ x)(ℕ-to-𝕟 x ⦃ [↔]-to-[→] decider-true xy ⦄)
-DivRem𝟎Alt {x} {𝐒 y} (succ p) = [≡]-substitutionᵣ (𝕟.𝕟-ℕ-inverse) {expr ↦ (𝐒 y ∣ᵣₑₘ expr)(ℕ-to-𝕟 x)} ((DivRem𝟎{𝐒(y)}{ℕ-to-𝕟 x})) where
+DivRem𝟎Alt {x} {𝐒 y} (succ p) = substitute₁ᵣ(expr ↦ (𝐒 y ∣ᵣₑₘ expr)(ℕ-to-𝕟 x)) (𝕟.𝕟-ℕ-inverse) ((DivRem𝟎{𝐒(y)}{ℕ-to-𝕟 x})) where
   instance
     x<𝐒y : IsTrue (x <? 𝐒(y))
     x<𝐒y = [↔]-to-[→] decider-true ([≤]-with-[𝐒] ⦃ p ⦄)
 
 DivRem𝐒Alt : ∀{x y}{r : 𝕟(y)} → (x ≥ y) → (y ∣ᵣₑₘ x −₀ y)(r) → (y ∣ᵣₑₘ x)(r)
 DivRem𝐒Alt{x}{𝟎}{}
-DivRem𝐒Alt{x}{𝐒(y)}{r} xy = [≡]-substitutionᵣ ([↔]-to-[→] ([−₀][+]-nullify2ᵣ{𝐒(y)}{x}) xy) {\expr → (𝐒(y) ∣ᵣₑₘ expr) r} ∘ DivRem𝐒{𝐒(y)}{x −₀ 𝐒(y)}{r}
+DivRem𝐒Alt{x}{𝐒(y)}{r} xy = substitute₁ᵣ(\expr → (𝐒(y) ∣ᵣₑₘ expr) r) ([↔]-to-[→] ([−₀][+]-nullify2ᵣ{𝐒(y)}{x}) xy) ∘ DivRem𝐒{𝐒(y)}{x −₀ 𝐒(y)}{r}
 
 -- Every pair of numbers (positive divisor) when divided will yield a remainder and there is always a proof of it being the case.
 -- This is an alternative way of constructing the modulo operator.

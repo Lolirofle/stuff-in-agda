@@ -2,7 +2,7 @@ module Numeral.Natural.LinearSearch.Proofs where
 
 open import Data.Boolean
 open import Data.Boolean.Stmt
-open import Data.Boolean.Stmt.Proofs
+open import Data.Boolean.Stmt.Logic
 open import Data.Option
 import      Data.Option.Functions as Option
 open import Data.Option.Equiv.Id
@@ -12,6 +12,7 @@ open import Function.Equals
 open import Functional
 open import Lang.Inspect
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.LinearSearch
@@ -81,7 +82,7 @@ findBoundedMin-None-correctness{min}{max}{f} with [≤]-or-[>] {min}{max}
   _ ⇔-[ findUpperboundedMin-None-correctness{max −₀ min}{f ∘ (_+ min)} ]
   _ ⇔-[ [↔]-intro
     (\p{i} ord → p{i + min} ([∧]-intro ([≤]-of-[+]ᵣ {i}) (subtransitivityᵣ(_<_)(_≡_) ([<]-with-[+]ᵣ ord) ([↔]-to-[→] [−₀][+]-nullify2ᵣ le))))
-    (\p{i} ([∧]-intro pmin pmax) → substitute₁(IsFalse) (congruence₁(f) ([↔]-to-[→] [−₀][+]-nullify2ᵣ pmin)) (p{i −₀ min} ([<][−₀]ₗ-preserving pmin pmax)))
+    (\p{i} ([∧]-intro pmin pmax) → substitute₁ᵣ(IsFalse) (congruence₁(f) ([↔]-to-[→] [−₀][+]-nullify2ᵣ pmin)) (p{i −₀ min} ([<][−₀]ₗ-preserving pmin pmax)))
   ]
   _ ⇔-end
 
@@ -109,7 +110,7 @@ Tuple.right (findBoundedMin-Some-correctness {min}{max} {f} {n}) p with [≤]-or
     Some(n −₀ min)                                   🝖-end
   ) ⇒
   _ ⇒-[ [↔]-to-[→] (findUpperboundedMin-Some-correctness{max −₀ min}{f ∘ (_+ min)}{n −₀ min}) ]
-  _ ⇒-[ (\([∧]-intro ([∧]-intro ft pmax) minimal) → [∧]-intro ([∧]-intro (substitute₁(IsTrue) (congruence₁(f) ([↔]-to-[→] [−₀][+]-nullify2ᵣ pmin)) ft) ([∧]-intro pmin ([<][−₀]ₗ-preserving-converse pmin le pmax))) (\{i} pmini fi → [≤][−₀]ₗ-preserving-converse pmin pmini (minimal{i −₀ min} (substitute₁ₗ(IsTrue) (congruence₁(f) ([↔]-to-[→] [−₀][+]-nullify2ᵣ pmini)) fi)))) ]
+  _ ⇒-[ (\([∧]-intro ([∧]-intro ft pmax) minimal) → [∧]-intro ([∧]-intro (substitute₁ᵣ(IsTrue) (congruence₁(f) ([↔]-to-[→] [−₀][+]-nullify2ᵣ pmin)) ft) ([∧]-intro pmin ([<][−₀]ₗ-preserving-converse pmin le pmax))) (\{i} pmini fi → [≤][−₀]ₗ-preserving-converse pmin pmini (minimal{i −₀ min} (substitute₁ₗ(IsTrue) (congruence₁(f) ([↔]-to-[→] [−₀][+]-nullify2ᵣ pmini)) fi)))) ]
   _ ⇒-end
   where
     map-ord : ∀{a b}{o} → (Option.map(_+ a) o ≡ Some b) → (a ≤ b) -- TODO: Is this neccessary? Maybe just use map-Some-value instead?
@@ -139,7 +140,7 @@ findUpperboundedMax-None-correctness {max} {f} =
   findUpperboundedMin max (f ∘ (max −₀_) ∘ 𝐒) ≡ None                              ⇔-[ findUpperboundedMin-None-correctness {max} {f ∘ (max −₀_) ∘ 𝐒} ]
   (∀{i} → (i < max) → IsFalse((f ∘ (max −₀_) ∘ 𝐒)(i)))                            ⇔-[ [↔]-intro
     (\p {i} ord → p{max −₀ 𝐒(i)} ([−₀]-strictly-lesser ord))
-    (\p {i} ord → substitute₁(IsFalse) (congruence₁(f) ([−₀]-with-[𝐒]ᵣ {max}{max −₀ 𝐒(i)} 🝖 congruence₁(𝐏) ([↔]-to-[→] [−₀]-nested-sameₗ ord))) (p{max −₀ 𝐒(i)} ([−₀]-strictly-lesser ord)))
+    (\p {i} ord → substitute₁ᵣ(IsFalse) (congruence₁(f) ([−₀]-with-[𝐒]ᵣ {max}{max −₀ 𝐒(i)} 🝖 congruence₁(𝐏) ([↔]-to-[→] [−₀]-nested-sameₗ ord))) (p{max −₀ 𝐒(i)} ([−₀]-strictly-lesser ord)))
   ]
   (∀{i} → (i < max) → IsFalse(f(i)))                                              ⇔-end
 -}

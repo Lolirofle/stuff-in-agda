@@ -9,7 +9,7 @@ open import Data.Boolean.Proofs
 open import Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Data.Boolean.Stmt
-open import Data.Boolean.Stmt.Proofs
+open import Data.Boolean.Stmt.Logic
 import      Data.Tuple as Tuple
 open import FormalLanguage
 open import FormalLanguage.Equals
@@ -22,6 +22,8 @@ open import Logic.Propositional.Theorems
 open import Relator.Equals using ([≡]-intro) renaming (_≡_ to _≡ₑ_)
 open import Relator.Equals.Proofs
 import      Function.Names as Names
+open import Structure.Function
+open import Structure.Function.Domain
 open import Structure.Setoid
 open import Structure.Operator.Monoid
 import      Structure.Operator.Names as Names
@@ -29,7 +31,6 @@ open import Structure.Operator.Proofs
 open import Structure.Operator.Properties
 -- open import Structure.Operator.SetAlgebra
 open import Structure.Operator
-open import Structure.Function.Domain
 open import Structure.Relator
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
@@ -99,7 +100,7 @@ module _ {Σ : Alphabet{ℓ}} where
     [∪]-binaryOperator : BinaryOperator ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ (_∪_)
     BinaryOperator.congruence([∪]-binaryOperator {s = s}) = [∪]-binaryOperator-raw {s = s} where
       [∪]-binaryOperator-raw : ∀{s} → Names.Congruence₂ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ (_∪_)
-      _≅[_]≅_.accepts-ε   ([∪]-binaryOperator-raw aeq beq) = [≡]-with-op(_||_) (_≅[_]≅_.accepts-ε aeq) (_≅[_]≅_.accepts-ε beq)
+      _≅[_]≅_.accepts-ε   ([∪]-binaryOperator-raw aeq beq) = congruence₁-op(_||_) (_≅[_]≅_.accepts-ε aeq) (_≅[_]≅_.accepts-ε beq)
       _≅[_]≅_.suffix-lang ([∪]-binaryOperator-raw aeq beq) = [∪]-binaryOperator-raw (_≅[_]≅_.suffix-lang aeq) (_≅[_]≅_.suffix-lang beq)
 
   instance
@@ -160,7 +161,7 @@ module _ {Σ : Alphabet{ℓ}} where
     [∩]-binaryOperator : BinaryOperator ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ (_∩_)
     BinaryOperator.congruence([∩]-binaryOperator {s = s}) = [∩]-binaryOperator-raw {s = s} where
       [∩]-binaryOperator-raw : ∀{s} → Names.Congruence₂ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄ ⦃ [≅]-equiv {s = s} ⦄(_∩_)
-      _≅[_]≅_.accepts-ε   ([∩]-binaryOperator-raw aeq beq) = [≡]-with-op(_&&_) (_≅[_]≅_.accepts-ε aeq) (_≅[_]≅_.accepts-ε beq)
+      _≅[_]≅_.accepts-ε   ([∩]-binaryOperator-raw aeq beq) = congruence₁-op(_&&_) (_≅[_]≅_.accepts-ε aeq) (_≅[_]≅_.accepts-ε beq)
       _≅[_]≅_.suffix-lang ([∩]-binaryOperator-raw aeq beq) = [∩]-binaryOperator-raw (_≅[_]≅_.suffix-lang aeq) (_≅[_]≅_.suffix-lang beq)
 
   instance

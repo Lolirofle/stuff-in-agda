@@ -4,6 +4,7 @@ open import Data
 open import Data.List
 import      Data.Tuple as Tuple
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Propositional.Theorems
 open import Numeral.Natural
 open import Numeral.Natural.Function.Divisor
@@ -52,7 +53,7 @@ primeDivisors-intro P p0 p1 pd {n} = Strict.Properties.wellfounded-recursion-int
           pos-d = leastDivisor-positive{n} <>
     in prev{(n ⌊/⌋ d) ⦃ pos-d ⦄} ⦃ [⌊/⌋]-ltₗ {n}{d} ⦃ [↔]-to-[→] decider-true (leastDivisor-range{n} (succ(succ min))) ⦄ ⦄ ⇒
     P (n ⌊/⌋ d) (primeDivisors(n ⌊/⌋ d)) ⇒-[ pd{n} ]
-    P n (d ⊰ primeDivisors(n ⌊/⌋ d))     ⇒-[ substitute₂ᵣ(P) (symmetry(_≡_) eq) ]
+    P n (d ⊰ primeDivisors(n ⌊/⌋ d))     ⇒-[ substitute₂-₂ₗ(P)(_) eq ]
     P n (primeDivisors n)                ⇒-end
 
 primeDivisors-step : (n2 : n ≥ 2) → (primeDivisors n ≡ leastDivisor n ⊰ primeDivisors((n ⌊/⌋ leastDivisor n) ⦃ leastDivisor-positive([↔]-to-[←] Positive-greater-than-zero([≤]-predecessor n2)) ⦄))
@@ -102,12 +103,12 @@ primeDivisors-intro-by-prime : ∀{ℓ} → (P : ℕ → List(ℕ) → Type{ℓ}
                              → (∀{n} → P n (primeDivisors n))
 primeDivisors-intro-by-prime P p0 p1 pd {n} = primeDivisors-intro(P) p0 p1 (\{ {n@(𝐒 _)} ⦃ ord-n ⦄ prev →
     let instance _ = leastDivisor-positive{n} <> in
-    substitute₂ₗ(P)
+    substitute₂-₁ᵣ(P)(_)
       ([⋅][⌊/⌋]-inverseOperatorₗ leastDivisor-correctness)
       (pd{(n ⌊/⌋ leastDivisor n)}{leastDivisor n}
         ⦃ [↔]-to-[→] ([⌊/⌋]-positive {n}{leastDivisor n}) (divides-upper-limit(leastDivisor-correctness)) ⦄
         (leastDivisor-prime ord-n)
-        (substitute₂ᵣ(AllElements) (primeDivisors-tail ord-n) ([∧]-elimᵣ ([↔]-to-[→] AllElements-head-tail (AllElements-fn₂ leastDivisor-minimal (AllElements-fn prime-lower-bound (primeDivisors-prime{n = n})) primeDivisors-divisors))))
+        (substitute₂-₂ᵣ(AllElements)(_) (primeDivisors-tail ord-n) ([∧]-elimᵣ ([↔]-to-[→] AllElements-head-tail (AllElements-fn₂ leastDivisor-minimal (AllElements-fn prime-lower-bound (primeDivisors-prime{n = n})) primeDivisors-divisors))))
         prev
       )
   })
@@ -222,7 +223,7 @@ primeDivisors-leastDivisor-is-lower-bound = primeDivisors-intro(\n → AllElemen
         pos-minDiv : Positive(leastDivisor n)
         pos-minDiv = leastDivisor-positive pos-n
     in reflexivity(_≤_) ⊰ [∨]-elim
-      (\prim → substitute₂ᵣ(AllElements) (symmetry(_≡_) (congruence₁(primeDivisors) {_}{1} ([⌊/⌋]-operator (reflexivity(_≡_)) ([↔]-to-[←] leastDivisor-when-fixpoint ([∨]-introᵣ prim)) 🝖 [⌊/⌋]-of-same {n}))) ∅)
+      (\prim → substitute₂-₂ₗ(AllElements)(_) (congruence₁(primeDivisors) {_}{1} ([⌊/⌋]-operator (reflexivity(_≡_)) ([↔]-to-[←] leastDivisor-when-fixpoint ([∨]-introᵣ prim)) 🝖 [⌊/⌋]-of-same {n})) ∅)
       (\comp → AllElements-fn
         (_🝖 leastDivisor-divisibility-order{(n ⌊/⌋ leastDivisor n) ⦃ pos-minDiv ⦄}{n}
           (Composite-without-leastDivisor-lower-bound comp)

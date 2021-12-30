@@ -32,6 +32,9 @@ _≡_ = IsTrue ∘₂ (_≡?_)
 _≢_ : 𝕟(an) → 𝕟(bn) → Type
 _≢_ = IsTrue ∘₂ (_≢?_)
 
+Positive : 𝕟(n)  → Type
+Positive = IsTrue ∘ positive?
+
 -- TODO: open import Structure.Relator.Properties
 
 import Numeral.Natural.Relation.Order as ℕ
@@ -40,10 +43,10 @@ import Numeral.Natural.Relation.Order as ℕ
 [≤]-minimum {a = 𝟎}   = <>
 [≤]-minimum {a = 𝐒 _} = <>
 
--- [≤]-maximum : (bound a ℕ.≤ n) → (a ≤ maximum{n})
+-- [≤]-maximum : (bound a ℕ.≤ n) → (a ≤ maximum{𝐒(n)})
 -- [≤]-maximum {_}    {𝟎}            ℕ.[≤]-with-[𝐒]                 = <>
 -- [≤]-maximum {𝐒 an} {𝐒 a} {.(𝐒 n)} (ℕ.[≤]-with-[𝐒] {y = n} ⦃ p ⦄) = [≤]-maximum {an}{a}{n} p
-[≤]-maximum : (bound a ℕ.≤ 𝐒(n)) → (a ≤ maximum{n})
+[≤]-maximum : (bound a ℕ.≤ 𝐒(n)) → (a ≤ maximum{𝐒(n)})
 [≤]-maximum {a = 𝟎}         {𝟎}   (ℕ.succ _) = <>
 [≤]-maximum {a = 𝟎}         {𝐒 _} (ℕ.succ _) = <>
 [≤]-maximum {a = 𝐒 a}       {𝐒 x} (ℕ.succ p) = [≤]-maximum {a = a} p

@@ -19,11 +19,11 @@ private variable A : S
 [∀ₛ]-unaryRelator = [∀]-unaryRelator ⦃ rel-P = [→]-unaryRelator ⦄
 
 [∃ₛ]-binaryRelator : ∀{P : S → S → S → Type{ℓ}} → ⦃ rel-P : ∀{x} → BinaryRelator(P(x)) ⦄ → BinaryRelator(\A y → ∃ₛ(A)(x ↦ P(x)(A)(y)))
-[∃ₛ]-binaryRelator = binaryRelator-from-unaryRelator
-  ⦃ relₗ = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-P = binary-unaryRelatorₗ ⦄ ⦃ rel-Q = binary-unaryRelatorᵣ ⦄ ⦄ ⦄
-  ⦃ relᵣ = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-Q = binary-unaryRelatorₗ ⦄ ⦄ ⦄
+[∃ₛ]-binaryRelator{P = P} = BinaryRelator-unary-intro
+  ([∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-P = BinaryRelator-unary₂(_∈_) ⦄ ⦃ rel-Q = BinaryRelator-unary₁(P(_)) ⦄ ⦄)
+  ([∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-Q = BinaryRelator-unary₂(P(_)) ⦄ ⦄)
 
 [∀ₛ]-binaryRelator : ∀{P : S → S → S → Type{ℓ}} → ⦃ rel-P : ∀{x} → BinaryRelator(P(x)) ⦄ → BinaryRelator(\A y → ∀ₛ(A)(x ↦ P(x)(A)(y)))
-[∀ₛ]-binaryRelator = binaryRelator-from-unaryRelator
-  ⦃ relₗ = [∀]-unaryRelator ⦃ rel-P = [→]-unaryRelator ⦃ rel-P = binary-unaryRelatorₗ ⦄ ⦃ rel-Q = binary-unaryRelatorᵣ ⦄ ⦄ ⦄
-  ⦃ relᵣ = [∀]-unaryRelator ⦃ rel-P = [→]-unaryRelator ⦃ rel-Q = binary-unaryRelatorₗ ⦄ ⦄ ⦄
+[∀ₛ]-binaryRelator{P = P} = BinaryRelator-unary-intro
+  ([∀]-unaryRelator ⦃ rel-P = [→]-unaryRelator ⦃ rel-P = BinaryRelator-unary₂(_∈_) ⦄ ⦃ rel-Q = BinaryRelator-unary₁(P(_)) ⦄ ⦄)
+  ([∀]-unaryRelator ⦃ rel-P = [→]-unaryRelator ⦃ rel-Q = BinaryRelator-unary₂(P(_)) ⦄ ⦄)

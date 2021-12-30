@@ -9,8 +9,6 @@ open Relator.Equals.Proofs.Equivalence.Two   {A = T} public
 open Relator.Equals.Proofs.Equivalence.Three {A = T} public
 open Relator.Equals.Proofs.Equivalence.Four  {A = T} public
 
-instance [≡]-unaryRelator-instance    = [≡]-unaryRelator
-instance [≡]-binaryRelator-instance   = [≡]-binaryRelator
 instance [≡]-binaryOperator-instance  = [≡]-binaryOperator
 instance [≡]-trinaryOperator-instance = [≡]-trinaryOperator
 instance [≡]-to-function-instance      = [≡]-to-function

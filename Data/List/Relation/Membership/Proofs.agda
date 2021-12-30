@@ -33,8 +33,8 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   instance
     [∈]-relatorₗ : UnaryRelator(_∈ l)
-    [∈]-relatorₗ = intro p where
-      p : Names.Substitution₁(_∈ l)
+    [∈]-relatorₗ = UnaryRelator-introᵣ p where
+      p : Names.Substitution₁ᵣ(_∈ l)
       p{x ⊰ _}     xy (• q) = • (symmetry(_≡ₛ_) xy 🝖 q)
       p{x ⊰ y ⊰ l} xy (⊰ q) = ⊰ p{y ⊰ l} xy q
 
@@ -51,7 +51,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   [∈]-singleton : (a ∈ singleton(b)) ↔ (a ≡ₛ b)
   [∈]-singleton = [↔]-intro L R where
     L : (a ∈ singleton(b)) ← (a ≡ₛ b)
-    L p = substitute₁(_∈ _) (symmetry(_≡ₛ_) p) [∈]-in-singleton
+    L p = substitute₁ᵣ(_∈ _) (symmetry(_≡ₛ_) p) [∈]-in-singleton
 
     R : (a ∈ singleton(b)) → (a ≡ₛ b)
     R(use p) = p
@@ -77,7 +77,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   [∈]-postpend{l = _ ⊰ l} = skip([∈]-postpend{l = l})
 
   open import Data
-  open import Data.Boolean.Stmt.Proofs
+  open import Data.Boolean.Stmt.Logic
   open import Lang.Inspect
   open import Relator.Equals using() renaming (_≡_ to _≡ₑ_)
   open import Relator.Equals.Proofs.Equivalence
@@ -89,7 +89,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     L{a}{x ⊰ l} p fa with f(x) | inspect f(x)
     L{a}{x ⊰ l} (• p) fa | 𝑇 | _        = • p
     L{a}{x ⊰ l} (⊰ p) fa | 𝑇 | _        = ⊰ L {a} {l} p fa
-    L{a}{x ⊰ l} (• p) fa | 𝐹 | intro fx with () ← disjointness (substitute₁(IsTrue) ⦃ [≡]-unaryRelator ⦄ (congruence₁(f) p) fa) ([↔]-to-[←] IsFalse.is-𝐹 fx)
+    L{a}{x ⊰ l} (• p) fa | 𝐹 | intro fx with () ← disjointness (substitute₁ᵣ(IsTrue) ⦃ [≡]-unaryRelator ⦄ (congruence₁(f) p) fa) ([↔]-to-[←] IsFalse.is-𝐹 fx)
     L{a}{x ⊰ l} (⊰ p) fa | 𝐹 | intro _  = L {a} {l} p fa
 
     R₁ : (a ∈ filter f(l)) → (a ∈ l)
@@ -120,7 +120,7 @@ module _ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B)
   [∈]-mapₗ {l = a ⊰ l} (⊰ p) = [∃]-map-proof ([∧]-map id (⊰_)) ([∈]-mapₗ p)
 
   [∈]-map : ⦃ func-f : Function(f) ⦄ → ∃(a ↦ (b ≡ₛ f(a)) ∧ (a ∈ l)) ↔ (b ∈ map f(l))
-  [∈]-map {f = f}{l = l} = [↔]-intro [∈]-mapₗ \([∃]-intro a ⦃ [∧]-intro eq al ⦄) → substitute₁(_∈ map f(l)) (symmetry(_≡ₛ_) eq) ([∈]-mapᵣ al)
+  [∈]-map {f = f}{l = l} = [↔]-intro [∈]-mapₗ \([∃]-intro a ⦃ [∧]-intro eq al ⦄) → substitute₁ᵣ(_∈ map f(l)) (symmetry(_≡ₛ_) eq) ([∈]-mapᵣ al)
 
 module _ ⦃ equiv : Equiv{ℓₑ₁}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑ₂}(List(T)) ⦄ ⦃ ext : Extensionality(equiv-List) ⦄ where
   private variable l l₁ l₂ : List(T)
@@ -130,20 +130,20 @@ module _ ⦃ equiv : Equiv{ℓₑ₁}(T) ⦄ ⦃ equiv-List : Equiv{ℓₑ₂}(L
 
   instance
     [∈]-relatorᵣ : UnaryRelator(x ∈_)
-    [∈]-relatorᵣ {x} = intro p where
-      p : Names.Substitution₁(x ∈_)
+    [∈]-relatorᵣ {x} = UnaryRelator-introᵣ p where
+      p : Names.Substitution₁ᵣ(x ∈_)
       p {x₁ ⊰ l₁} {∅}       eq mem with () ← [∅][⊰]-unequal (symmetry(Equiv._≡_ equiv-List) eq)
       p {x₁ ⊰ l₁} {x₂ ⊰ l₂} eq (• mem) = • (mem 🝖 [⊰]-generalized-cancellationᵣ eq)
       p {x₁ ⊰ l₁} {x₂ ⊰ l₂} eq (⊰ mem) = ⊰ p{l₁}{l₂} ([⊰]-generalized-cancellationₗ eq) mem
 
   instance
     [∈]-relator : BinaryRelator(_∈_)
-    [∈]-relator = binaryRelator-from-unaryRelator ⦃ relₗ = [∈]-relatorₗ ⦄ ⦃ relᵣ = [∈]-relatorᵣ ⦄
+    [∈]-relator = BinaryRelator-unary-intro [∈]-relatorₗ [∈]-relatorᵣ
 
   [∈]-concat : (x ∈ concat ll) ↔ ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
   [∈]-concat = [↔]-intro L R where
     L : (x ∈ concat ll) ← ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
-    L {x}{ll = ll0 ⊰ ll} ([∃]-intro l ⦃ [∧]-intro (• lll) xl ⦄) = [↔]-to-[←] ([∈][++] {a = x}{ll0}{concat ll}) ([∨]-introₗ (substitute₂ᵣ(_∈_) lll xl))
+    L {x}{ll = ll0 ⊰ ll} ([∃]-intro l ⦃ [∧]-intro (• lll) xl ⦄) = [↔]-to-[←] ([∈][++] {a = x}{ll0}{concat ll}) ([∨]-introₗ (substitute₂-₂ᵣ(_∈_)(x) lll xl))
     L {x}{ll = ll0 ⊰ ll} ([∃]-intro l ⦃ [∧]-intro (⊰ lll) xl ⦄) = [↔]-to-[←] ([∈][++] {a = x}{ll0}{concat ll}) ([∨]-introᵣ (L{ll = ll} ([∃]-intro l ⦃ [∧]-intro lll xl ⦄)))
 
     R : (x ∈ concat ll) → ∃(l ↦ (l ∈ ll) ∧ (x ∈ l))
@@ -169,7 +169,7 @@ module _ ⦃ equiv₁ : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv₂ : Equiv{ℓₑ₂}(
         (\([∃]-intro y ⦃ [∧]-intro p q ⦄) → [∃]-intro (f(y)) ⦃ [∧]-intro ([∈]-mapᵣ p) q ⦄)
         (\([∃]-intro y ⦃ [∧]-intro p q ⦄) →
           let ([∃]-intro z ⦃ [∧]-intro r s ⦄) = [∈]-mapₗ {f = f}{l = l} p
-          in [∃]-intro z ⦃ [∧]-intro s (substitute₁(x ∈_) r q) ⦄
+          in [∃]-intro z ⦃ [∧]-intro s (substitute₁ᵣ(x ∈_) r q) ⦄
         )
       )
 
@@ -182,8 +182,8 @@ module _ where
   private variable x : T
 
   [∈]-relatorᵣ-by-permutation : UnaryRelator ⦃ permutes-equiv ⦄ (x ∈_)
-  [∈]-relatorᵣ-by-permutation {x = x} = intro p where
-      p : Names.Substitution₁ ⦃ permutes-equiv ⦄ (x ∈_)
+  [∈]-relatorᵣ-by-permutation {x = x} = UnaryRelator-introᵣ ⦃ permutes-equiv ⦄ p where
+      p : Names.Substitution₁ᵣ ⦃ permutes-equiv ⦄ (x ∈_)
       p (prepend perm)      (• xl)     = • xl
       p (prepend perm)      (⊰ xl)     = ⊰ p perm xl
       p _permutes_.swap     (• xl)     = ⊰ (• xl)

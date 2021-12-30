@@ -11,6 +11,7 @@ a ∣≢ b = (a ∣ b) ∧ (a ≢ b)
 
 open import Functional
 open import Numeral.Natural.Relation.Divisibility.Proofs
+open import Logic.Propositional.Equiv hiding ([↔]-reflexivity)
 open import Logic.Propositional.Theorems
 open import Relator.Equals.Proofs.Equiv
 import      Relator.Ordering.Proofs

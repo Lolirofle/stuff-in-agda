@@ -1,101 +1,129 @@
 module Structure.Relator where
 
-import Lvl
-open import Functional using (_∘₂_)
-open import Functional.Dependent
+import      Lvl
+open import Functional using (_∘_ ; _∘₂_ ; _∘₃_ ; swap ; _→ᶠ_)
 open import Functional.Instance
 open import Logic
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
+open import Structure.Function
+open import Structure.Function.Names
+open import Structure.Operator
 open import Structure.Setoid
-open import Structure.Relator.Names
 open import Structure.Relator.Properties
 open import Syntax.Function
 open import Type
 
--- TODO: It seems possible to define UnaryRelator as a special case of Function, so let's do that
-
-private variable ℓₒ ℓₒ₁ ℓₒ₂ ℓₒ₃ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ ℓₗ₄ : Lvl.Level
+private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓₗ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ : Lvl.Level
 
 module Names where
-  module _ {A : Type{ℓₒ}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ (P : A → Stmt{ℓₗ₂}) where
-    Substitution₁ = ∀{x y : A} → (x ≡ y) → P(x) → P(y)
+  module _ {A : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(A) ⦄ (P : A → Stmt{ℓₗ}) where
+    Substitution₁ = Congruence₁ ⦃ equiv ⦄ ⦃ [↔]-equiv ⦄ P
+    Substitution₁ₗ = Compatible₁(_≡_ ⦃ equiv ⦄)(_←_) P
+    Substitution₁ᵣ = Compatible₁(_≡_ ⦃ equiv ⦄)(_→ᶠ_) P
 
-  module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ (_▫_ : A → B → Stmt{ℓₗ₃}) where
-    Substitution₂ = ∀{x₁ y₁ : A}{x₂ y₂ : B} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (x₁ ▫ x₂) → (y₁ ▫ y₂)
+  module _ {A : Type{ℓ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ (_▫_ : A → B → Stmt{ℓₗ}) where
+    Substitution₂ = Congruence₂ ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ ⦃ [↔]-equiv ⦄ (_▫_)
+    Substitution₂ₗ = Compatible₂(_≡_ ⦃ equiv-A ⦄)(_≡_ ⦃ equiv-B ⦄)(_←_) (_▫_)
+    Substitution₂ᵣ = Compatible₂(_≡_ ⦃ equiv-A ⦄)(_≡_ ⦃ equiv-B ⦄)(_→ᶠ_) (_▫_)
 
-  module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ {C : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₗ₃}(C) ⦄ (_▫_▫_ : A → B → C → Stmt{ℓₗ₄}) where
-    Substitution₃ = ∀{x₁ y₁ : A}{x₂ y₂ : B}{x₃ y₃ : C} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (x₃ ≡ y₃) → (x₁ ▫ x₂ ▫ x₃) → (y₁ ▫ y₂ ▫ y₃)
+  module _ {A : Type{ℓ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ {C : Type{ℓ₃}} ⦃ equiv-C : Equiv{ℓₑ₃}(C) ⦄ (_▫_▫_ : A → B → C → Stmt{ℓₗ}) where
+    Substitution₃ = Congruence₃ ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ ⦃ equiv-C ⦄ ⦃ [↔]-equiv ⦄ (_▫_▫_)
+    Substitution₃ₗ = Compatible₃(_≡_ ⦃ equiv-A ⦄)(_≡_ ⦃ equiv-B ⦄)(_≡_ ⦃ equiv-C ⦄)(_←_) (_▫_▫_)
+    Substitution₃ᵣ = Compatible₃(_≡_ ⦃ equiv-A ⦄)(_≡_ ⦃ equiv-B ⦄)(_≡_ ⦃ equiv-C ⦄)(_→ᶠ_) (_▫_▫_)
 
--- The unary relator `P` "(behaves like)/is a relator" in the context of `_≡_` from the Equiv instance.
-module _ {A : Type{ℓₒ}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ (P : A → Stmt{ℓₗ₂}) where
-  record UnaryRelator : Stmt{ℓₒ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂} where
-    constructor intro
-    field
-      substitution : Names.Substitution₁(P)
-    substitution-sym : ∀{x y : A} → (x ≡ y) → P(x) ← P(y)
-    substitution-sym = substitution ∘ Structure.Relator.Properties.symmetry(_≡_)
-    substitution-equivalence : ∀{x y : A} → (x ≡ y) → (P(x) ↔ P(y))
-    substitution-equivalence xy = [↔]-intro (substitution-sym xy) (substitution xy)
-  substitute₁ₗ = inferArg UnaryRelator.substitution-sym
-  substitute₁ᵣ = inferArg UnaryRelator.substitution
-  substitute₁ₗᵣ = inferArg UnaryRelator.substitution-equivalence
-  substitute₁ = substitute₁ᵣ
-  unaryRelator = resolve UnaryRelator
+module _ {A : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(A) ⦄ where
+  module _ (P : A → Stmt{ℓₗ}) where
+    -- The unary relator `P` is a relator with respect to the given setoid.
+    UnaryRelator = Function ⦃ equiv ⦄ ⦃ [↔]-equiv ⦄ P
 
--- The binary relator `_▫_` "(behaves like)/is a relator" in the context of `_≡_` from the Equiv instance.
-module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ (_▫_ : A → B → Stmt{ℓₗ₃}) where
-  open Structure.Relator.Properties
+    substitute₁ = congruence₁ ⦃ equiv ⦄ ⦃ [↔]-equiv ⦄ P
+    substitute₁ₗ = \ ⦃ inst ⦄ {x}{y} → [↔]-to-[←] ∘ substitute₁ ⦃ inst ⦄ {x}{y}
+    substitute₁ᵣ = \ ⦃ inst ⦄ {x}{y} → [↔]-to-[→] ∘ substitute₁ ⦃ inst ⦄ {x}{y}
 
-  record BinaryRelator : Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓₗ₃} where
-    constructor intro
-    field
-      substitution : Names.Substitution₂(_▫_)
-    left : ∀{x} → UnaryRelator(_▫ x)
-    left = intro(\p → substitution p (reflexivity(_≡_)))
-    right : ∀{x} → UnaryRelator(x ▫_)
-    right = intro(\p → substitution (reflexivity(_≡_)) p)
-    substitutionₗ = \{a x y} → UnaryRelator.substitution(left {a}) {x}{y}
-    substitutionᵣ = \{a x y} → UnaryRelator.substitution(right{a}) {x}{y}
-    substitution-sym : ∀{x₁ y₁ : A}{x₂ y₂ : B} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → ((x₁ ▫ x₂) ← (y₁ ▫ y₂))
-    substitution-sym xy1 xy2 = substitution (Structure.Relator.Properties.symmetry(_≡_) xy1) (Structure.Relator.Properties.symmetry(_≡_) xy2)
-    substitution-equivalence : ∀{x₁ y₁ : A}{x₂ y₂ : B} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → ((x₁ ▫ x₂) ↔ (y₁ ▫ y₂))
-    substitution-equivalence xy1 xy2 = [↔]-intro (substitution-sym xy1 xy2) (substitution xy1 xy2)
-  substitute₂ = inferArg BinaryRelator.substitution
-  substitute₂ₗ = inferArg BinaryRelator.substitutionₗ
-  substitute₂ᵣ = inferArg BinaryRelator.substitutionᵣ
-  substitute₂ₗᵣ = inferArg BinaryRelator.substitution-equivalence
-  binaryRelator = resolve BinaryRelator
+    module UnaryRelator ⦃ rel : UnaryRelator ⦄ where
+      open Function(rel) using () renaming (congruence to substitution) public
 
-module _ {A : Type{ℓₒ₁}} ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ {C : Type{ℓₒ₃}} ⦃ _ : Equiv{ℓₗ₃}(C) ⦄ (_▫_▫_ : A → B → C → Stmt{ℓₗ₄}) where
-  open Structure.Relator.Properties
+  module _ {P : A → Stmt{ℓₗ}} where
+    UnaryRelator-introₗ : (∀{x y} → (x ≡ y) → P(x) ← P(y)) → UnaryRelator(P)
+    UnaryRelator-introₗ p = intro(xy ↦ [↔]-intro (p xy) (p(symmetry(_≡_) xy)))
+    UnaryRelator-introᵣ : (∀{x y} → (x ≡ y) → P(x) → P(y)) → UnaryRelator(P)
+    UnaryRelator-introᵣ p = intro(xy ↦ [↔]-intro (p(symmetry(_≡_) xy)) (p xy))
 
-  record TrinaryRelator : Stmt{ℓₒ₁ Lvl.⊔ ℓₒ₂ Lvl.⊔ ℓₒ₃ Lvl.⊔ ℓₗ₁ Lvl.⊔ ℓₗ₂ Lvl.⊔ ℓₗ₃ Lvl.⊔ ℓₗ₄} where
-    constructor intro
-    field
-      substitution : Names.Substitution₃(_▫_▫_)
-    unary₁ : ∀{y z} → UnaryRelator(_▫ y ▫ z)
-    unary₁ = intro(\p → substitution p (reflexivity(_≡_)) (reflexivity(_≡_)))
-    unary₂ : ∀{x z} → UnaryRelator(x ▫_▫ z)
-    unary₂ = intro(\p → substitution (reflexivity(_≡_)) p (reflexivity(_≡_)))
-    unary₃ : ∀{x y} → UnaryRelator(x ▫ y ▫_)
-    unary₃ = intro(\p → substitution (reflexivity(_≡_)) (reflexivity(_≡_)) p)
-    binary₁₂ : ∀{z} → BinaryRelator(_▫_▫ z)
-    binary₁₂ = intro(\p q → substitution p q (reflexivity(_≡_)))
-    binary₁₃ : ∀{y} → BinaryRelator(_▫ y ▫_)
-    binary₁₃ = intro(\p q → substitution p (reflexivity(_≡_)) q)
-    binary₂₃ : ∀{x} → BinaryRelator(x ▫_▫_)
-    binary₂₃ = intro(\p q → substitution (reflexivity(_≡_)) p q)
-    substitution-unary₁ = \{a b x y} → UnaryRelator.substitution(unary₁ {a}{b}) {x}{y}
-    substitution-unary₂ = \{a b x y} → UnaryRelator.substitution(unary₂ {a}{b}) {x}{y}
-    substitution-unary₃ = \{a b x y} → UnaryRelator.substitution(unary₃ {a}{b}) {x}{y}
-    substitution-binary₁₂ = \{a x₁ x₂ y₁ y₂} → BinaryRelator.substitution(binary₁₂ {a}) {x₁}{x₂}{y₁}{y₂}
-    substitution-binary₁₃ = \{a x₁ x₂ y₁ y₂} → BinaryRelator.substitution(binary₁₃ {a}) {x₁}{x₂}{y₁}{y₂}
-    substitution-binary₂₃ = \{a x₁ x₂ y₁ y₂} → BinaryRelator.substitution(binary₂₃ {a}) {x₁}{x₂}{y₁}{y₂}
-  substitute₃ = inferArg TrinaryRelator.substitution
-  substitute₃-unary₁ = inferArg TrinaryRelator.substitution-unary₁
-  substitute₃-unary₂ = inferArg TrinaryRelator.substitution-unary₂
-  substitute₃-unary₃ = inferArg TrinaryRelator.substitution-unary₃
-  substitute₃-binary₁₂ = inferArg TrinaryRelator.substitution-binary₁₂
-  substitute₃-binary₁₃ = inferArg TrinaryRelator.substitution-binary₁₃
-  substitute₃-binary₂₃ = inferArg TrinaryRelator.substitution-binary₂₃
-  trinaryRelator = resolve TrinaryRelator
+module _ {A : Type{ℓ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
+  module _ (_▫_ : A → B → Stmt{ℓₗ}) where
+    -- The binary relator `P` is a relator with respect to the given setoid.
+    BinaryRelator = BinaryOperator ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ ⦃ [↔]-equiv ⦄ (_▫_)
+
+    substitute₂ = congruence₂ ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ ⦃ [↔]-equiv ⦄ (_▫_)
+    substitute₂ₗ = \ ⦃ inst ⦄ {x₁}{y₁}{x₂}{y₂} → [↔]-to-[←] ∘₂ substitute₂ ⦃ inst ⦄ {x₁}{y₁}{x₂}{y₂}
+    substitute₂ᵣ = \ ⦃ inst ⦄ {x₁}{y₁}{x₂}{y₂} → [↔]-to-[→] ∘₂ substitute₂ ⦃ inst ⦄ {x₁}{y₁}{x₂}{y₂}
+
+    module BinaryRelator = BinaryOperator ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ ⦃ [↔]-equiv ⦄ {_▫_}
+      renaming (
+        congruence  to substitution ;
+        congruence₁ to substitution₁ ;
+        congruence₂ to substitution₂
+      )
+
+    BinaryRelator-unary₁ = inferArg BinaryRelator.unary₁
+    BinaryRelator-unary₂ = inferArg BinaryRelator.unary₂
+
+    substitute₂-₁ = inferArg BinaryRelator.substitution₁
+    substitute₂-₂ = inferArg BinaryRelator.substitution₂
+    substitute₂-₁ₗ = \ ⦃ inst ⦄ a {x}{y} → [↔]-to-[←] ∘ substitute₂-₁ ⦃ inst ⦄ a {x}{y}
+    substitute₂-₁ᵣ = \ ⦃ inst ⦄ a {x}{y} → [↔]-to-[→] ∘ substitute₂-₁ ⦃ inst ⦄ a {x}{y}
+    substitute₂-₂ₗ = \ ⦃ inst ⦄ a {x}{y} → [↔]-to-[←] ∘ substitute₂-₂ ⦃ inst ⦄ a {x}{y}
+    substitute₂-₂ᵣ = \ ⦃ inst ⦄ a {x}{y} → [↔]-to-[→] ∘ substitute₂-₂ ⦃ inst ⦄ a {x}{y}
+
+  module _ {_▫_ : A → B → Stmt{ℓₗ}} where
+    BinaryRelator-unary-intro : (∀{y} → UnaryRelator(_▫ y)) → (∀{x} → UnaryRelator(x ▫_)) → BinaryRelator(_▫_)
+    BinaryRelator-unary-intro = BinaryOperator-unary-intro(_▫_)
+
+    BinaryRelator-introₗ : (∀{x₁ y₁}{x₂ y₂} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (x₁ ▫ x₂) ← (y₁ ▫ y₂)) → BinaryRelator(_▫_)
+    BinaryRelator-introₗ p = intro(xy₁ ↦ xy₂ ↦ [↔]-intro (p xy₁ xy₂) (p(symmetry(_≡_) xy₁) (symmetry(_≡_) xy₂)))
+    BinaryRelator-introᵣ : (∀{x₁ y₁}{x₂ y₂} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (x₁ ▫ x₂) → (y₁ ▫ y₂)) → BinaryRelator(_▫_)
+    BinaryRelator-introᵣ p = intro(xy₁ ↦ xy₂ ↦ [↔]-intro (p(symmetry(_≡_) xy₁) (symmetry(_≡_) xy₂)) (p xy₁ xy₂))
+
+module _ {A : Type{ℓ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ {C : Type{ℓ₃}} ⦃ equiv-C : Equiv{ℓₑ₃}(C) ⦄ where
+  module _ (_▫_▫_ : A → B → C → Stmt{ℓₗ}) where
+    -- The trinary relator `P` is a relator with respect to the given setoid.
+    TrinaryRelator = TrinaryOperator ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ ⦃ equiv-C ⦄ ⦃ [↔]-equiv ⦄ (_▫_▫_)
+
+    substitute₃ = congruence₃ ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ ⦃ equiv-C ⦄ ⦃ [↔]-equiv ⦄ (_▫_▫_)
+    substitute₃ₗ = \ ⦃ inst ⦄ {x₁}{y₁}{x₂}{y₂}{x₃}{y₃} → [↔]-to-[←] ∘₃ substitute₃ ⦃ inst ⦄ {x₁}{y₁}{x₂}{y₂}{x₃}{y₃}
+    substitute₃ᵣ = \ ⦃ inst ⦄ {x₁}{y₁}{x₂}{y₂}{x₃}{y₃} → [↔]-to-[→] ∘₃ substitute₃ ⦃ inst ⦄ {x₁}{y₁}{x₂}{y₂}{x₃}{y₃}
+
+    module TrinaryRelator = TrinaryOperator ⦃ equiv-A ⦄ ⦃ equiv-B ⦄ ⦃ equiv-C ⦄ ⦃ [↔]-equiv ⦄ {_▫_▫_}
+      renaming (
+        congruence    to substitution ;
+        congruence₁   to substitution₁ ;
+        congruence₂   to substitution₂ ;
+        congruence₃   to substitution₃ ;
+        congruence₁,₂ to substitution₁,₂ ;
+        congruence₁,₃ to substitution₁,₃ ;
+        congruence₂,₃ to substitution₂,₃
+      )
+
+    TrinaryRelator-unary₁    = inferArg TrinaryRelator.unary₁
+    TrinaryRelator-unary₂    = inferArg TrinaryRelator.unary₂
+    TrinaryRelator-unary₃    = inferArg TrinaryRelator.unary₃
+    TrinaryRelator-binary₁,₂ = inferArg TrinaryRelator.binary₁,₂
+    TrinaryRelator-binary₁,₃ = inferArg TrinaryRelator.binary₁,₃
+    TrinaryRelator-binary₂,₃ = inferArg TrinaryRelator.binary₂,₃
+
+    substitute₃-₁   = inferArg TrinaryRelator.substitution₁
+    substitute₃-₂   = inferArg TrinaryRelator.substitution₂
+    substitute₃-₃   = inferArg TrinaryRelator.substitution₃
+    substitute₃-₁,₂ = inferArg TrinaryRelator.substitution₁,₂
+    substitute₃-₁,₃ = inferArg TrinaryRelator.substitution₁,₃
+    substitute₃-₂,₃ = inferArg TrinaryRelator.substitution₂,₃
+
+  module _ {_▫_▫_ : A → B → C → Stmt{ℓₗ}} where
+    TrinaryRelator-introₗ : (∀{x₁ y₁}{x₂ y₂}{x₃ y₃} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (x₃ ≡ y₃) → (x₁ ▫ x₂ ▫ x₃) ← (y₁ ▫ y₂ ▫ y₃)) → TrinaryRelator(_▫_▫_)
+    TrinaryRelator-introₗ p = intro(xy₁ ↦ xy₂ ↦ xy₃ ↦ [↔]-intro (p xy₁ xy₂ xy₃) (p(symmetry(_≡_) xy₁) (symmetry(_≡_) xy₂) (symmetry(_≡_) xy₃)))
+    TrinaryRelator-introᵣ : (∀{x₁ y₁}{x₂ y₂}{x₃ y₃} → (x₁ ≡ y₁) → (x₂ ≡ y₂) → (x₃ ≡ y₃) → (x₁ ▫ x₂ ▫ x₃) → (y₁ ▫ y₂ ▫ y₃)) → TrinaryRelator(_▫_▫_)
+    TrinaryRelator-introᵣ p = intro(xy₁ ↦ xy₂ ↦ xy₃ ↦ [↔]-intro (p(symmetry(_≡_) xy₁) (symmetry(_≡_) xy₂) (symmetry(_≡_) xy₃)) (p xy₁ xy₂ xy₃))
+
+    TrinaryRelator-unary-intro : (∀{y}{z} → Function(_▫ y ▫ z)) → (∀{x}{z} → Function(x ▫_▫ z)) → (∀{x}{y} → Function(x ▫ y ▫_)) → TrinaryRelator(_▫_▫_)
+    TrinaryRelator-unary-intro = TrinaryOperator-unary-intro(_▫_▫_)

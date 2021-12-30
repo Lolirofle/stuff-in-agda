@@ -71,8 +71,8 @@ private variable Pred P Q R : X → Type{ℓ}
 [∀]-elim p(a) = p{a}
 
 -- Eliminates universal quantification for a non-empty domain using a witnessed existence which proves that the domain is non-empty.
-[∀ₑ]-elim : ⦃ _ : ◊ Obj ⦄ → ∀{P : Obj → Stmt{ℓ}} → ∀ₗ(x ↦ P(x)) → P([◊]-existence)
-[∀ₑ]-elim {Obj = Obj} ⦃ proof ⦄ {P} apx = [∀]-elim {Obj = Obj}{P} apx(◊.existence(proof))
+[∀ₑ]-elim : ⦃ _ : ◊ Obj ⦄ → ∀{P : Obj → Stmt{ℓ}} → ∀ₗ(x ↦ P(x)) → P(inhabitant)
+[∀ₑ]-elim {Obj = Obj} ⦃ proof ⦄ {P} apx = [∀]-elim {Obj = Obj}{P} apx(◊.inhabitant(proof))
 
 syntax ∀ₗ{T}(λ x → y) = ∀❪ x ꞉ T ❫․ y
 

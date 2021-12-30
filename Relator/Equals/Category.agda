@@ -3,6 +3,7 @@ module Relator.Equals.Category where
 import      Data.Tuple as Tuple
 open import Functional as Fn using (_$_)
 open import Functional.Dependent using () renaming (_∘_ to _∘ᶠ_)
+open import Logic.Propositional.Equiv
 open import Logic.Predicate
 import      Lvl
 open import Relator.Equals
@@ -78,7 +79,7 @@ Groupoid.Functor.id-preserving  functionFunctor                         = intro
 
 -- A functor to the category of types is a predicate and a proof of it being a relation (having the substitution property).
 predicateFunctor : Category.Functor(identityTypeCategory)(typeIntensionalFnCategory) P -- TODO: Is it possible to generalize so that the target (now `typeIntensionalFnCategory`) is more general? `idTransportFunctor` seems to be similar. Maybe on the on₂-category to the right?
-Category.Functor.map (predicateFunctor{P = P}) = substitute₁(P)
+Category.Functor.map (predicateFunctor{P = P}) = substitute₁ᵣ(P)
 Category.Functor.op-preserving predicateFunctor {x} {.x} {.x} {intro} {intro} = intro
 Category.Functor.id-preserving predicateFunctor = intro
 

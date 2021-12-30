@@ -204,7 +204,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rng : Rng{T = T}(_+_)(_⋅_){ℓ�
   module _ ⦃ unity : Unity(_+_)(_⋅_) ⦄ where
     open import Type.Properties.MereProposition
     open import Type.Properties.Singleton
-    open import Type.Properties.Singleton.Proofs
+    open import Type.Properties.Proofs
 
     open Unity(unity)
 

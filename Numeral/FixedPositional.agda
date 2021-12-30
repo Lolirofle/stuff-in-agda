@@ -178,15 +178,15 @@ module _ where
     from-ℕ ((b ⋅ n + 𝕟-to-ℕ d) ⌊/⌋ b) · (ℕ-to-𝕟 ((b ⋅ n + 𝕟-to-ℕ d) mod b) ⦃ _ ⦄) 🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂(_·_) (congruence₁(from-ℕ) r) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ ord1 ⦄ ⦃ ord2 ⦄ q 🝖 ℕ-𝕟-inverse)) ]
     from-ℕ n · d                                                                  🝖-end where
       ord1 = [↔]-to-[→] decider-true (mod-maxᵣ{(b ⋅ n) + (𝕟-to-ℕ d)}{b})
-      ord2 = [↔]-to-[→] decider-true ([<]-of-𝕟-to-ℕ {b}{d})
+      ord2 = [↔]-to-[→] decider-true (𝕟-to-ℕ-bounded {b}{d})
       q =
         ((b ⋅ n) + 𝕟-to-ℕ d) mod b 🝖[ _≡_ ]-[ congruence₁(_mod b) (commutativity(_+_) {b ⋅ n}{𝕟-to-ℕ d}) ]
         (𝕟-to-ℕ d + (b ⋅ n)) mod b 🝖[ _≡_ ]-[ mod-of-modulus-sum-multiple {𝕟-to-ℕ d}{b}{n} ]
-        (𝕟-to-ℕ d) mod b           🝖[ _≡_ ]-[ mod-lesser-than-modulus ⦃ [≤]-without-[𝐒] [<]-of-𝕟-to-ℕ ⦄ ]
+        (𝕟-to-ℕ d) mod b           🝖[ _≡_ ]-[ mod-lesser-than-modulus ⦃ [≤]-without-[𝐒] 𝕟-to-ℕ-bounded ⦄ ]
         𝕟-to-ℕ d                   🝖-end
       r =
         (b ⋅ n + 𝕟-to-ℕ d) ⌊/⌋ b             🝖[ _≡_ ]-[ [⌊/⌋][+]-distributivityᵣ {b ⋅ n}{𝕟-to-ℕ d}{b} ([∨]-introₗ (DivN n)) ]
-        ((b ⋅ n) ⌊/⌋ b) + ((𝕟-to-ℕ d) ⌊/⌋ b) 🝖[ _≡_ ]-[ congruence₂(_+_) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {b}{n}) ([⌊/⌋]-zero ([<]-of-𝕟-to-ℕ {b}{d})) ]
+        ((b ⋅ n) ⌊/⌋ b) + ((𝕟-to-ℕ d) ⌊/⌋ b) 🝖[ _≡_ ]-[ congruence₂(_+_) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {b}{n}) ([⌊/⌋]-zero (𝕟-to-ℕ-bounded {b}{d})) ]
         n + 𝟎                                🝖[ _≡_ ]-[]
         n                                    🝖-end
 

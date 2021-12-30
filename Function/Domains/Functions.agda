@@ -45,7 +45,7 @@ module _ {X : Type{ℓₒ₁}} {Y : Type{ℓₒ₂}} where
   -- [⊶]-function-surjective {f} {intro(y-value) ⦃ [∃]-intro (x) ⦃ proof ⦄ ⦄} =
   --   Lang.Irrelevance.axiom(
   --     ([∃]-intro (x)
-  --       ⦃ [≡]-with-specific {_}{_} {_}{_} {f(x)} {y-value}
+  --       ⦃ congruence₁-specific {_}{_} {_}{_} {f(x)} {y-value}
   --         (expr ↦ \ ⦃ [≡]-intro ⦄ → \ ⦃ [≡]-intro ⦄ →
   --           (intro
   --             (expr)

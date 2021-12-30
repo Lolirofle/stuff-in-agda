@@ -194,7 +194,7 @@ permutes-countᵣ-function = intro proof where
   proof : (l₁ permutes l₂) → (count P l₁ ≡ count P l₂)
   proof empty = [≡]-intro
   proof {l₁ = x₁ ⊰ l₁} {P = P} (prepend {x = x} p) with P(x)
-  ... | 𝑇 = [≡]-with 𝐒(proof {l₁ = l₁} {P = P} p)
+  ... | 𝑇 = congruence₁ 𝐒(proof {l₁ = l₁} {P = P} p)
   ... | 𝐹 = proof {l₁ = l₁} {P = P} p
   proof {P = P} (swap {x = x} {y = y}) with P(x) | P(y)
   ... | 𝑇 | 𝑇 = [≡]-intro

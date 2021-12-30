@@ -6,6 +6,7 @@ open import Data.List.Functions as List using (_++_)
 open import Functional as Fn using (_∘_)
 import      Lang.Irrelevance.Squash as Irr
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Predicate
 import      Lvl
 open import Numeral.Natural
@@ -52,8 +53,8 @@ module _ where
         [∃]-intro(A , B) ⦃ p ⦄ = [↔]-to-[→] composite-existence comp
         a = 𝐒(𝐒(A))
         b = 𝐒(𝐒(B))        
-        [∃]-intro da ⦃ pa ⦄ = prev{a} ⦃ substitute₂ᵣ(_∣≢_){a} p ([∣≢]-of-[⋅]ₗ {a}{b}) ⦄
-        [∃]-intro db ⦃ pb ⦄ = prev{b} ⦃ substitute₂ᵣ(_∣≢_){b} p ([∣≢]-of-[⋅]ᵣ {a}{b}) ⦄
+        [∃]-intro da ⦃ pa ⦄ = prev{a} ⦃ substitute₂-₂ᵣ(_∣≢_)(a) p ([∣≢]-of-[⋅]ₗ {a}{b}) ⦄
+        [∃]-intro db ⦃ pb ⦄ = prev{b} ⦃ substitute₂-₂ᵣ(_∣≢_)(b) p ([∣≢]-of-[⋅]ᵣ {a}{b}) ⦄
         pab =
           n                                                                           🝖[ _≡_ ]-[ p ]-sym
           a ⋅ b                                                                       🝖[ _≡_ ]-[ congruence₂(_⋅_) pa pb ]
@@ -78,7 +79,7 @@ module _ where
         (p ≡ 1)                   ⇒-end
       )
       • Prime(p) :-[ pp ]
-      ⇒₂-[ substitute₁(Prime) ]
+      ⇒₂-[ substitute₁ᵣ(Prime) ]
       Prime(1)                  ⇒-[ [1]-nonprime ]
       ⊥                         ⇒-end
     prime-in-prime-list {p}{x ⊰ l} pp (px ⊰ pl) div =
@@ -132,7 +133,7 @@ module _ where
   foldᵣ-primes-permutation {a ⊰ al}{∅} (pa ⊰ apa) apb eq with () ←
     • List.foldᵣ(_⋅_) 1 (a ⊰ al) ≡ List.foldᵣ(_⋅_) 1 ∅ :-[ eq ]
     • a ∣ a ⋅ List.foldᵣ(_⋅_) 1 al                     :-[ divides-with-[⋅] {c = List.foldᵣ(_⋅_) 1 al} ([∨]-introₗ (reflexivity(_∣_))) ]
-    ⇒₂-[ substitute₂ᵣ(_∣_){a} ]
+    ⇒₂-[ substitute₂-₂ᵣ(_∣_)(a) ]
     (a ∣ List.foldᵣ(_⋅_) 1 ∅) ⇒-[]
     (a ∣ 1)                   ⇒-[ prime-in-prime-list pa apb ]
     (a ∈ ∅)                   ⇒-[ [∉]-empty ]
@@ -149,7 +150,7 @@ module _ where
         • (
           • List.foldᵣ(_⋅_)(1) (b ⊰ bl) ≡ List.foldᵣ(_⋅_)(1) a :-[ symmetry(_≡_) eq ]
           • b ∣ (b ⋅ List.foldᵣ _⋅_ 1 bl)                      :-[ divides-with-[⋅] {c = List.foldᵣ(_⋅_) 1 bl} ([∨]-introₗ (reflexivity(_∣_))) ]
-          ⇒₂-[ substitute₂ᵣ(_∣_){b} ]
+          ⇒₂-[ substitute₂-₂ᵣ(_∣_)(b) ]
           b ∣ List.foldᵣ(_⋅_)(1) a ⇒-end
         )
         ⇒₃-[ prime-in-prime-list ]

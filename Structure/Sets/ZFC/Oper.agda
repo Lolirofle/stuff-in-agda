@@ -44,17 +44,17 @@ module _ ⦃ zfc : ZFC ⦄ where
   -- Intersection operator.
   -- Constructs a set which consists of elements which are in both LHS and RHS.
   _∩_ : S → S → S
-  a ∩ b = filter(_∈ b) ⦃ binary-unaryRelatorᵣ ⦄ a
+  a ∩ b = filter(_∈ b) ⦃ BinaryRelator-unary₁(_∈_) ⦄ a
 
   -- "Without"-operator.
   -- Constructs a set which consists of elements which are in LHS, but not RHS.
   _∖_ : S → S → S
-  a ∖ b = filter(_∉ b) ⦃ [¬]-unaryRelator ⦃ rel-P = binary-unaryRelatorᵣ ⦄ ⦄ a
+  a ∖ b = filter(_∉ b) ⦃ [¬]-unaryRelator ⦃ rel-P = BinaryRelator-unary₁(_∈_) ⦄ ⦄ a
 
   -- Intersection over arbitrary sets.
   -- Constructs a set which consists of elements which are in all of the specified sets.
   ⋂ : S → S
-  ⋂(As) = filter(a ↦ (∀ₛ(As) (a ∈_))) ⦃ [∀]-unaryRelator ⦃ rel-P = [→]-unaryRelator ⦃ rel-Q = binary-unaryRelatorᵣ ⦄ ⦄ ⦄ (⋃(As))
+  ⋂(As) = filter(a ↦ (∀ₛ(As) (a ∈_))) ⦃ [∀]-unaryRelator ⦃ rel-P = [→]-unaryRelator ⦃ rel-Q = BinaryRelator-unary₁(_∈_) ⦄ ⦄ ⦄ (⋃(As))
 
   -- Tuple value.
   -- An ordered pair of values.
@@ -63,20 +63,20 @@ module _ ⦃ zfc : ZFC ⦄ where
 
   -- Set product (Set of tuples) (Cartesian product).
   _⨯_ : S → S → S
-  A ⨯ B = filter(t ↦ ∃ₛ(A)(a ↦ ∃ₛ(B)(b ↦ t ≡ₑ (a , b)))) ⦃ [∃ₛ]-unaryRelator ⦃ rel-P = [∃ₛ]-unaryRelator ⦃ rel-P = binary-unaryRelatorᵣ ⦃ rel-P = [≡ₑ]-binaryRelator ⦄ ⦄ ⦄ ⦄ (℘(℘(A ∪ B)))
+  A ⨯ B = filter(t ↦ ∃ₛ(A)(a ↦ ∃ₛ(B)(b ↦ t ≡ₑ (a , b)))) ⦃ [∃ₛ]-unaryRelator ⦃ rel-P = [∃ₛ]-unaryRelator ⦃ rel-P = BinaryRelator-unary₁(_≡ₑ_) ⦃ [≡ₑ]-binaryRelator ⦄ ⦄ ⦄ ⦄ (℘(℘(A ∪ B)))
 
   identityPair : S → S
-  identityPair(D) = filter(xy ↦ ∃(a ↦ xy ≡ₑ (a , a))) ⦃ [∃]-unaryRelator ⦃ rel-P = binary-unaryRelatorᵣ ⦃ rel-P = [≡ₑ]-binaryRelator ⦄ ⦄ ⦄ (D ⨯ D)
+  identityPair(D) = filter(xy ↦ ∃(a ↦ xy ≡ₑ (a , a))) ⦃ [∃]-unaryRelator ⦃ rel-P = BinaryRelator-unary₁(_≡ₑ_) ⦃ [≡ₑ]-binaryRelator ⦄ ⦄ ⦄ (D ⨯ D)
 
   -- Quotient set.
   -- The set of equivalence classes.
   _/_ : S → (_▫_ : S → S → Type{ℓ}) ⦃ rel : BinaryRelator(_▫_) ⦄ → S
-  (a / (_▫_)) ⦃ rel ⦄ = filter(aₛ ↦ ∀ₛ(aₛ)(x ↦ ∀ₛ(aₛ)(x ▫_))) ⦃ binary-unaryRelatorᵣ ⦃ rel-P = [∀ₛ]-binaryRelator {P = \x A _ → ∀ₛ(A) (x ▫_)} ⦃ rel-P = [∀ₛ]-binaryRelator ⦃ rel-P = const-binaryRelator ⦄ ⦄ ⦄ {∅} ⦄ (℘(a))
+  (a / (_▫_)) ⦃ rel ⦄ = filter(aₛ ↦ ∀ₛ(aₛ)(x ↦ ∀ₛ(aₛ)(x ▫_))) ⦃ BinaryRelator-unary₁(_) ⦃ [∀ₛ]-binaryRelator {P = \x A _ → ∀ₛ(A) (x ▫_)} ⦃ rel-P = [∀ₛ]-binaryRelator ⦃ rel-P = const-binaryRelator ⦄ ⦄ ⦄ {∅} ⦄ (℘(a))
 
   -- Equivalence class.
   -- The set of elements which are equivalent to the specified one.
   [_of_,_] : S → S → (_▫_ : S → S → Type{ℓ}) ⦃ rel : BinaryRelator(_▫_) ⦄ → S
-  [ x of a , (_▫_) ] = filter(x ▫_) ⦃ binary-unaryRelatorₗ ⦄ a
+  [ x of a , (_▫_) ] = filter(x ▫_) ⦃ BinaryRelator-unary₂ _ ⦄ a
 
   -- The unmap of a set.
   -- The set of elements in the domain X when applied to a function gives an element in Y.
@@ -87,8 +87,7 @@ module _ ⦃ zfc : ZFC ⦄ where
   --   For example: `const(x): Domain → Domain` for any (x: Domain) is a class function for which its domain is not a set.
   --   This is because const is defined for all objects in `Domain`, so if a set would have to have all objects in `Domain`, it has to be the universal set, but there is no universal set.
   unmap : S → (f : S → S) ⦃ func : Function(f) ⦄ → S → S
-  unmap(X) f(Y) = filter(x ↦ f(x) ∈ Y) ⦃ [∘]-unaryRelator {P = _∈ Y} ⦃ binary-unaryRelatorᵣ ⦄ ⦄ X
-
+  unmap(X) f(Y) = filter(x ↦ f(x) ∈ Y) ⦃ [∘]-unaryRelator {P = _∈ Y} ⦃ BinaryRelator-unary₁ _ ⦄ ⦄ X
 
   [∩]-inclusion : IntersectMembership(_∩_)
   [∩]-inclusion {A = A}{B = B}{x = x} =
@@ -137,7 +136,7 @@ module _ ⦃ zfc : ZFC ⦄ where
     ⋂-function : Function(⋂)
     Function.congruence ⋂-function {x = As}{y = Bs} AsBs = filter-function ⦃ _ ⦄ ⦃ _ ⦄ p (congruence₁(⋃) AsBs) where
       p : ∀{x} → (∀{A} → (A ∈ As) → (x ∈ A)) ↔ (∀{B} → (B ∈ Bs) → (x ∈ B))
-      p = [↔]-intro (_∘ (substitute₂ᵣ(_∈_) AsBs)) (_∘ (substitute₂ᵣ(_∈_) (symmetry(_≡ₑ_) AsBs)))
+      p = [↔]-intro (_∘ (substitute₂-₂ᵣ(_∈_)(_) AsBs)) (_∘ (substitute₂-₂ᵣ(_∈_)(_) (symmetry(_≡ₑ_) AsBs)))
 
   instance
     ∪-operator : BinaryOperator(_∪_)

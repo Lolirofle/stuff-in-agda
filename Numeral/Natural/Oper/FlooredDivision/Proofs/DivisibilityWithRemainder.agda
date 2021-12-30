@@ -13,15 +13,16 @@ open import Numeral.Natural.Relation.DivisibilityWithRemainder hiding (base₀ ;
 open import Numeral.Natural.Relation.DivisibilityWithRemainder.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function
 open import Syntax.Transitivity
 
 -- The quotient of the divisibility relation is given by the floored division operation.
 [⌊/⌋][∣ᵣₑₘ]-quotient-equality : ∀{x y r}{p : (𝐒(y) ∣ᵣₑₘ x)(r)} → ((x ⌊/⌋ 𝐒(y)) ≡ [∣ᵣₑₘ]-quotient p)
 [⌊/⌋][∣ᵣₑₘ]-quotient-equality {𝟎}             {_}   {𝟎}   {DivRem𝟎} = [≡]-intro
 [⌊/⌋][∣ᵣₑₘ]-quotient-equality {𝐒 .(𝕟-to-ℕ r)} {𝐒 y} {𝐒 r} {DivRem𝟎} =
-  ([ 0 , 𝐒(y) ] (𝕟-to-ℕ r) div y) 🝖[ _≡_ ]-[ inddiv-lesser(𝕟.bounded{y}{r}) ]
+  ([ 0 , 𝐒(y) ] (𝕟-to-ℕ r) div y) 🝖[ _≡_ ]-[ inddiv-lesser(𝕟.𝕟-to-ℕ-bounded{𝐒 y}{r}) ]
   𝟎                               🝖-end
-[⌊/⌋][∣ᵣₑₘ]-quotient-equality {𝐒 x} {𝟎} {𝟎} {DivRem𝐒 p} = inddiv-result-𝐒 {0}{0}{x}{0} 🝖_ $ [≡]-with(𝐒) $
+[⌊/⌋][∣ᵣₑₘ]-quotient-equality {𝐒 x} {𝟎} {𝟎} {DivRem𝐒 p} = inddiv-result-𝐒 {0}{0}{x}{0} 🝖_ $ congruence₁(𝐒) $
   ([ 0 , 0 ] x div 0) 🝖[ _≡_ ]-[ [⌊/⌋]-of-1ᵣ ]
   x                   🝖[ _≡_ ]-[ [∣ᵣₑₘ]-quotient-of-1 p ]-sym
   [∣ᵣₑₘ]-quotient p   🝖-end
@@ -29,5 +30,5 @@ open import Syntax.Transitivity
 [⌊/⌋][∣ᵣₑₘ]-quotient-equality {𝐒 .(x + y)} {y} {r} {DivRem𝐒 {x = x} p} =
   ([ 0 , y ] (𝐒(x) + y) div y) 🝖[ _≡_ ]-[ inddiv-step-denominator{0}{(y)}{𝐒(x)}{y} ]
   ([ 0 , y ] 𝐒(x) div 𝟎)       🝖[ _≡_ ]-[ inddiv-result-𝐒 {0}{y}{x}{y} ]
-  𝐒([ 0 , y ] x div y)         🝖[ _≡_ ]-[ [≡]-with(𝐒) ([⌊/⌋][∣ᵣₑₘ]-quotient-equality {p = p}) ]
+  𝐒([ 0 , y ] x div y)         🝖[ _≡_ ]-[ congruence₁(𝐒) ([⌊/⌋][∣ᵣₑₘ]-quotient-equality {p = p}) ]
   𝐒([∣ᵣₑₘ]-quotient p)         🝖-end

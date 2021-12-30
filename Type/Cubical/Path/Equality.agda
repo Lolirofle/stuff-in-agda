@@ -61,11 +61,11 @@ instance
 
 instance
   Path-substitution₁ : UnaryRelator(P)
-  Path-substitution₁ {P = P} = intro(Path.liftedSpaceMap P)
+  Path-substitution₁ {P = P} = UnaryRelator-introᵣ(Path.liftedSpaceMap P)
 
 instance
   Path-substitution₂ : BinaryRelator(_▫_)
-  Path-substitution₂ {_▫_ = _▫_} = intro(Path.liftedSpaceMap₂(_▫_))
+  Path-substitution₂ {_▫_ = _▫_} = BinaryRelator-introᵣ(Path.liftedSpaceMap₂(_▫_))
 
 instance
   Path-coercion : Path ⊆₂ (_→ᶠ_ {ℓ}{ℓ})

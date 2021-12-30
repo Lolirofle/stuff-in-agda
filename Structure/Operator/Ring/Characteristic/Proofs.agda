@@ -13,6 +13,7 @@ import      Data.Tuple as Tuple
 open import Function.Iteration
 open import Function.Iteration.Proofs
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Numeral.Natural as ℕ using (ℕ)
 open import Numeral.Natural.Relation.Divisibility
 open import Numeral.Natural.Relation.Divisibility.Proofs
@@ -34,7 +35,7 @@ module _ ⦃ rg : Rg(_+_)(_⋅_) ⦄ where
 
   -- A ring have a characteristic of 0 when 0 only occurs at the start for iterated applications of addition.
   characteristic-zero : Characteristic(ℕ.𝟎) ↔ (∀{n} → CharacteristicMultiple(n) → (n ≡ₑ ℕ.𝟎))
-  Tuple.left  characteristic-zero p = intro ⦃ \{_} → reflexivity(_≡_) ⦄ ⦃ intro(\{x} ⦃ char ⦄ → substitute₂ᵣ(_∣_) (symmetry(_≡ₑ_) (p{x} (\{x} → char{x}))) Div𝟎) ⦄
+  Tuple.left  characteristic-zero p = intro ⦃ \{_} → reflexivity(_≡_) ⦄ ⦃ intro(\{x} ⦃ char ⦄ → substitute₂-₂ₗ(_∣_)(_) (p{x} (\{x} → char{x})) Div𝟎) ⦄
   Tuple.right characteristic-zero (intro ⦃ correctness ⦄ ⦃ intro minimality ⦄) {n} char = [0]-only-divides-[0] (minimality{n} ⦃ char ⦄)
 
 module _ ⦃ rig : Rig(_+_)(_⋅_) ⦄ where

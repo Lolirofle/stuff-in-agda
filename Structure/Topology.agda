@@ -42,6 +42,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   open import Functional
   open import Functional.Instance
   open import Logic.Propositional
+  open import Logic.Propositional.Equiv
   open import Logic.Predicate
   open import Lvl.Proofs
   open import Structure.Function.Domain
@@ -53,17 +54,17 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   open import Syntax.Transitivity
 
   module _ where
-    open import Relator.Equals.Proofs.Equiv{T = Bool} renaming ([≡]-equiv to bool-equiv)
+    open import Relator.Equals.Proofs.Equiv{T = Bool} using ([≡]-to-function) renaming ([≡]-equiv to bool-equiv)
 
     union-closure : ∀{A B} → (A ∈ 𝓣) → (B ∈ 𝓣) → ((A ∪ B) ∈ 𝓣)
-    union-closure {A}{B} pa pb = substitute₂(_∋_) (reflexivity(_≡_) {x = 𝓣}) (⋃ᵢ-of-bijection ([∃]-intro Lvl.Up.obj) 🝖 ⋃ᵢ-of-boolean) (indexed-union-closure f-proof) where
+    union-closure {A}{B} pa pb = substitute₂-₁ᵣ(_∈_) ⦃ [∈]-binaryRelator ⦄ (𝓣) {⋃ᵢ((if_then B else A) ∘ Lvl.Up.obj)}{A ∪ B} (⋃ᵢ-of-bijection{f = if_then B else A} ([∃]-intro Lvl.Up.obj) 🝖 (⋃ᵢ-of-boolean{A = A}{B = B})) (indexed-union-closure f-proof) where
       f-proof : ∀{i} → ((if i then B else A) ∈ 𝓣)
       f-proof {𝐹} = pa
       f-proof {𝑇} = pb
 
   instance
     Neighborhood-unaryRelator : ∀{N} → UnaryRelator(p ↦ Neighborhood p N)
-    UnaryRelator.substitution Neighborhood-unaryRelator xy (intro O ⦃ contains-point = p ⦄) = intro O ⦃ contains-point = substitute₁(_∈ O) xy p ⦄
+    Neighborhood-unaryRelator = UnaryRelator-introᵣ \xy (intro O ⦃ contains-point = p ⦄) → intro O ⦃ contains-point = substitute₁ᵣ(_∈ O) xy p ⦄
 
   -- TODO: Is it usable when defined like this?
   record Base {I : Type{ℓ₁ Lvl.⊔ ℓ₃}} (Bi : I → PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X)) : Stmt{Lvl.𝐒(ℓ₁ Lvl.⊔ ℓ₃)} where
@@ -80,7 +81,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
 
   instance
     ClosurePoint-unaryRelator : ∀{A} → UnaryRelator(ClosurePoint(A))
-    ClosurePoint.proof (UnaryRelator.substitution ClosurePoint-unaryRelator xy Ax) {N} ⦃ neigh-y ⦄ = [∃]-map-proof id (ClosurePoint.proof Ax {N} ⦃ substitute₁ₗ(p ↦ Neighborhood p N) xy neigh-y ⦄)
+    ClosurePoint-unaryRelator = UnaryRelator-introᵣ \xy Ax → intro \{N} ⦃ neigh-y ⦄ → [∃]-map-proof id (ClosurePoint.proof Ax {N} ⦃ substitute₁ₗ(p ↦ Neighborhood p N) xy neigh-y ⦄)
 
   InternalPoint = swap Neighborhood
 
@@ -91,7 +92,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   -- TODO: Use how IsolatedPoint and LimitPoint are related to prove this
   instance
     postulate LimitPoint-unaryRelator : ∀{A} → UnaryRelator(LimitPoint(A))
-    {-LimitPoint.proof (UnaryRelator.substitution (LimitPoint-unaryRelator {A = A}) xy (intro proof)) {N} ⦃ neigh ⦄ = substitute₁(_) xy (proof ⦃ substitute₁ₗ(_) xy neigh ⦄) where
+    {-LimitPoint.proof (UnaryRelator.substitution (LimitPoint-unaryRelator {A = A}) xy (intro proof)) {N} ⦃ neigh ⦄ = substitute₁ᵣ(_) xy (proof ⦃ substitute₁ₗ(_) xy neigh ⦄) where
       instance
         inst : UnaryRelator(x ↦ NonEmpty(A ∩ (N ∖ (• x))))
         inst = [∘]-unaryRelator {f = x ↦ A ∩ (N ∖ (• x))} ⦃ {!!} ⦄ {P = NonEmpty} ⦃ {!!} ⦄
@@ -107,7 +108,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
 
   instance
     IsolatedPoint-unaryRelator : ∀{A} → UnaryRelator(IsolatedPoint(A))
-    UnaryRelator.substitution IsolatedPoint-unaryRelator xy (intro N p) = intro N ⦃ substitute₁(a ↦ Neighborhood a N) xy infer ⦄ (p 🝖 (congruence₁ (•_) ⦃ singleton-function ⦃ equiv ⦄ ⦄ xy))
+    IsolatedPoint-unaryRelator = UnaryRelator-introᵣ \xy (intro N p) → intro N ⦃ substitute₁ᵣ(a ↦ Neighborhood a N) xy infer ⦄ (p 🝖 (congruence₁ (•_) ⦃ singleton-function ⦃ equiv ⦄ ⦄ xy))
 
   Closure : PredSet{ℓ₁ Lvl.⊔ ℓ₃}(X) → PredSet(X)
   Closure(A) = intro(ClosurePoint(A))

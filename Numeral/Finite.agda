@@ -1,11 +1,13 @@
 module Numeral.Finite where
 
-import Lvl
-open import Syntax.Number
+import      Lvl
+open import Data
 open import Data.Boolean.Stmt
 open import Functional
 open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Natural hiding (𝐏)
+import      Numeral.Natural.Relation as ℕ
+open import Syntax.Number
 open import Type
 
 -- A structure corresponding to a finite set of natural numbers (0,..,n−1).
@@ -26,31 +28,35 @@ open import Type
 data 𝕟 : ℕ → Type{Lvl.𝟎} where
   𝟎 : ∀{n} → 𝕟(ℕ.𝐒(n))        -- Zero
   𝐒 : ∀{n} → 𝕟(n) → 𝕟(ℕ.𝐒(n)) -- Successor function
-{-# INJECTIVE 𝕟 #-}
+-- {-# INJECTIVE 𝕟 #-}
 
 𝕟₌ = 𝕟 ∘ 𝐒
 
 bound : ∀{n} → 𝕟(n) → ℕ
 bound{n} _ = n
 
-minimum : ∀{n} → 𝕟(ℕ.𝐒(n))
-minimum{_} = 𝟎
+minimum : ∀{n} ⦃ pos : ℕ.Positive(n) ⦄ → 𝕟(n)
+minimum{𝐒 _} = 𝟎
 
-maximum : ∀{n} → 𝕟(ℕ.𝐒(n))
-maximum{𝟎}    = 𝟎
-maximum{𝐒(n)} = 𝐒(maximum{n})
+maximum : ∀{n} ⦃ pos : ℕ.Positive(n) ⦄ → 𝕟(n)
+maximum{𝐒(𝟎)}    = 𝟎
+maximum{𝐒(𝐒(n))} = 𝐒(maximum{𝐒(n)})
 
 𝕟-to-ℕ : ∀{n} → 𝕟(n) → ℕ
 𝕟-to-ℕ {ℕ.𝟎}    ()
 𝕟-to-ℕ {ℕ.𝐒(_)} (𝟎)    = ℕ.𝟎
 𝕟-to-ℕ {ℕ.𝐒(_)} (𝐒(n)) = ℕ.𝐒(𝕟-to-ℕ (n))
 
-ℕ-to-𝕟 : (x : ℕ) → ∀{n} → . ⦃ _ : IsTrue(x <? n) ⦄ → 𝕟(n)
+ℕ-to-𝕟 : (x : ℕ) → ∀{n} → .⦃ _ : IsTrue(x <? n) ⦄ → 𝕟(n)
 ℕ-to-𝕟 (ℕ.𝟎)    {ℕ.𝟎}    ⦃ ⦄
 ℕ-to-𝕟 (ℕ.𝐒(x)) {ℕ.𝟎}    ⦃ ⦄
 ℕ-to-𝕟 (ℕ.𝟎)    {ℕ.𝐒(_)} ⦃ _ ⦄ = 𝟎
 ℕ-to-𝕟 (ℕ.𝐒(x)) {ℕ.𝐒(n)} ⦃ p ⦄ = 𝐒(ℕ-to-𝕟 (x) {n} ⦃ p ⦄)
 
 instance
-  𝕟-from-ℕ : ∀{N} → Numeral(𝕟(N)) (n ↦ IsTrue(n <? N))
-  num ⦃ 𝕟-from-ℕ {N} ⦄ n = ℕ-to-𝕟 n {N}
+  𝕟-numeral : ∀{N} → Numeral(𝕟(N)) (IsTrue ∘ (_<? N))
+  num ⦃ 𝕟-numeral {N} ⦄ n = ℕ-to-𝕟 n {N}
+
+𝕟-to-ℕ-bound : ∀{N}{n : 𝕟(N)} → IsTrue(𝕟-to-ℕ n <? N)
+𝕟-to-ℕ-bound{n = 𝟎}   = <>
+𝕟-to-ℕ-bound{n = 𝐒 n} = 𝕟-to-ℕ-bound{n = n}

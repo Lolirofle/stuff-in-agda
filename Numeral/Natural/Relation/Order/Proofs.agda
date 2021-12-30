@@ -5,6 +5,7 @@ open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Numeral.Natural
@@ -99,7 +100,7 @@ instance
     proof {𝐒(_)} {𝟎}    ()
     proof {𝟎}    {𝐒(_)} (_) ()
     proof {𝐒(a)} {𝐒(b)} (succ proofₗ) (succ proofᵣ) =
-      [≡]-with(𝐒) (proof {a}{b} proofₗ proofᵣ)
+      congruence₁(𝐒) (proof {a}{b} proofₗ proofᵣ)
 
 instance
   [≤]-totality : ConverseTotal(_≤_)
@@ -230,7 +231,7 @@ instance
 
   r : ∀{x} → (x > 0) → (x ≢ 0)
   r{𝟎}    ()
-  r{𝐒(x)} (𝟏≤𝐒x) (𝐒x≡𝟎) with [≡]-substitutionᵣ (𝐒x≡𝟎) {expr ↦ 1 ≤ expr} (𝟏≤𝐒x)
+  r{𝐒(x)} (𝟏≤𝐒x) (𝐒x≡𝟎) with substitute₁ᵣ(1 ≤_) (𝐒x≡𝟎) (𝟏≤𝐒x)
   ... | ()
 
 [≤]-to-[<][≡] : ∀{a b : ℕ} → (a ≤ b) → (a < b)∨(a ≡ b)
@@ -238,7 +239,7 @@ instance
 [≤]-to-[<][≡] {𝟎}   {𝐒(b)} ([≤]-minimum)    = [∨]-introₗ([<]-minimum)
 [≤]-to-[<][≡] {𝐒(a)}{𝐒(b)} (succ(a≤b)) with [≤]-to-[<][≡] {a}{b} (a≤b)
 ... | [∨]-introₗ(a<b) = [∨]-introₗ(succ(a<b))
-... | [∨]-introᵣ(a≡b) = [∨]-introᵣ([≡]-with(𝐒) (a≡b))
+... | [∨]-introᵣ(a≡b) = [∨]-introᵣ(congruence₁(𝐒) (a≡b))
 
 [≮][≢]-to-[≰] : ∀{a b : ℕ} → (a ≮ b) → (a ≢ b) → (a ≰ b)
 [≮][≢]-to-[≰] (a≮b) (a≢b) (a≤b) with [≤]-to-[<][≡] (a≤b)
@@ -361,19 +362,19 @@ instance
 
 instance
   [>][≡]-subtransitivityₗ : Subtransitivityₗ(_>_)(_≡_)
-  [>][≡]-subtransitivityₗ = intro(substitute₂ₗ(_>_) ∘ symmetry(_≡_))
+  [>][≡]-subtransitivityₗ = intro(substitute₂-₁ₗ(_>_)(_))
 
 instance
   [>][≡]-subtransitivityᵣ : Subtransitivityᵣ(_>_)(_≡_)
-  [>][≡]-subtransitivityᵣ = intro(swap(substitute₂ᵣ(_>_)))
+  [>][≡]-subtransitivityᵣ = intro(swap(substitute₂-₂ᵣ(_>_)(_)))
 
 instance
   [<][≡]-subtransitivityₗ : Subtransitivityₗ(_<_)(_≡_)
-  [<][≡]-subtransitivityₗ = intro(substitute₂ₗ(_<_) ∘ symmetry(_≡_))
+  [<][≡]-subtransitivityₗ = intro(substitute₂-₁ₗ(_<_)(_))
 
 instance
   [<][≡]-subtransitivityᵣ : Subtransitivityᵣ(_<_)(_≡_)
-  [<][≡]-subtransitivityᵣ = intro(swap(substitute₂ᵣ(_<_)))
+  [<][≡]-subtransitivityᵣ = intro(swap(substitute₂-₂ᵣ(_<_)(_)))
 
 instance
   [<][≤]-subtransitivityₗ : Subtransitivityₗ(_<_)(_≤_)

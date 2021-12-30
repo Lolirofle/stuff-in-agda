@@ -121,7 +121,7 @@ module _ where
                     → P([∃]-intro 𝟎 ⦃ zero ⦄)
                     → (∀{x} → P(x) → P([∃]-map 𝐒 succ x))
                     → (∀{x} → P(x))
-  Natural-induction P pz ps {x} = Natural-induction-raw(\x nat → P([∃]-intro x ⦃ nat ⦄)) pz (\_ → ps) (\eq → substitute₁(P) eq) ([∃]-proof x)
+  Natural-induction P pz ps {x} = Natural-induction-raw(\x nat → P([∃]-intro x ⦃ nat ⦄)) pz (\_ → ps) (\eq → substitute₁ᵣ(P) eq) ([∃]-proof x)
 
   {-
   TODO: Characteristic(_+_)(_⋅_)(ℕ.𝟎) → DistinctIdentities ?

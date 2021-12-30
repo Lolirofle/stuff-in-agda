@@ -107,9 +107,9 @@ module _
   open Structure.Setoid
 
   instance
-    and-combine-associativity : ⦃ _ : Associativity(_▫_) ⦄ → Associativity(and-combine(_▫_))
-    and-combine-associativity = intro (\{x}{y}{z} → p{x}{y}{z}) where
-      p : Names.Associativity(and-combine(_▫_))
+    andCombine-associativity : ⦃ _ : Associativity(_▫_) ⦄ → Associativity(andCombine(_▫_))
+    andCombine-associativity = intro (\{x}{y}{z} → p{x}{y}{z}) where
+      p : Names.Associativity(andCombine(_▫_))
       p {None}   {None}   {None}   = reflexivity(_≡_)
       p {None}   {None}   {Some _} = reflexivity(_≡_)
       p {None}   {Some _} {None}   = reflexivity(_≡_)
@@ -119,10 +119,10 @@ module _
       p {Some _} {Some _} {None}   = reflexivity(_≡_)
       p {Some _} {Some _} {Some _} = congruence₁(Some) (associativity(_▫_))
 
-  module _ where --instance
-    or-combine-associativity : ∀{f} ⦃ idemp-f : Idempotent(f) ⦄ (_ : ∀{x y} → (f(x) ▫ y ≡ f(x ▫ y))) (_ : ∀{x y} → (x ▫ f(y) ≡ f(x ▫ y))) → ⦃ _ : Associativity(_▫_) ⦄ → Associativity(or-combine(_▫_) f f) -- TODO: What are the unnamed properties here in the assumptions called? Also, the constant function of an absorber have all these properties. The identity function also have it.
-    or-combine-associativity {f = f} compatₗ compatᵣ = intro (\{x}{y}{z} → p{x}{y}{z}) where
-      p : Names.Associativity(or-combine(_▫_) f f)
+  module _ where
+    orCombine-associativity : ∀{f} ⦃ idemp-f : Idempotent(f) ⦄ (_ : ∀{x y} → (f(x) ▫ y ≡ f(x ▫ y))) (_ : ∀{x y} → (x ▫ f(y) ≡ f(x ▫ y))) → ⦃ _ : Associativity(_▫_) ⦄ → Associativity(orCombine(_▫_) f f) -- TODO: What are the unnamed properties here in the assumptions called? Also, the constant function of an absorber have all these properties. The identity function also have it.
+    orCombine-associativity {f = f} compatₗ compatᵣ = intro (\{x}{y}{z} → p{x}{y}{z}) where
+      p : Names.Associativity(orCombine(_▫_) f f)
       p {None}   {None}   {None}   = reflexivity(_≡_)
       p {None}   {None}   {Some z} = congruence₁(Some) (symmetry(_≡_) (idempotent(f)))
       p {None}   {Some y} {None}   = reflexivity(_≡_)

@@ -2,6 +2,7 @@ module Numeral.Integer.Relation.Divisibility.Proofs where
 
 open import Functional
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 import      Numeral.Natural.Relation.Divisibility as ℕ
 import      Numeral.Natural.Relation.Divisibility.Proofs as ℕ
 open import Numeral.Natural using (ℕ)
@@ -76,4 +77,4 @@ divides-with-[+] {−𝐒ₙ a} {−𝐒ₙ b} {+ₙ  c} ab ac = divides-with-[�
 divides-with-[+] {−𝐒ₙ a} {−𝐒ₙ b} {−𝐒ₙ c} ab ac = ℕ.divides-with-[+] ab ac
 
 divides-with-[⋅] : ∀{a b c} → ((a ∣ b) ∨ (a ∣ c)) → (a ∣ (b ⋅ c))
-divides-with-[⋅] {a} {b} {c} p = substitute₂ᵣ(ℕ._∣_) {absₙ a} (symmetry(_≡_) (preserving₂(absₙ)(_⋅_)(ℕ._⋅_) {b}{c})) (ℕ.divides-with-[⋅] {absₙ a}{absₙ b}{absₙ c} p)
+divides-with-[⋅] {a} {b} {c} p = substitute₂-₂ᵣ(ℕ._∣_)(absₙ a) (symmetry(_≡_) (preserving₂(absₙ)(_⋅_)(ℕ._⋅_) {b}{c})) (ℕ.divides-with-[⋅] {absₙ a}{absₙ b}{absₙ c} p)

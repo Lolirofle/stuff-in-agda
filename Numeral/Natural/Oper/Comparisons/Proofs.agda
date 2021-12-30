@@ -53,3 +53,19 @@ open import Relator.Equals
 [≡?]-zero : ∀{n} → (n ≡? 𝟎) ≡ zero?(n)
 [≡?]-zero {𝟎}    = [≡]-intro
 [≡?]-zero {𝐒(_)} = [≡]-intro
+
+[≤?]-transitivity : ∀{x y z} → IsTrue(x ≤? y) → IsTrue(y ≤? z) → IsTrue(x ≤? z)
+[≤?]-transitivity {𝟎}                xy yz = [⊤]-intro
+[≤?]-transitivity {𝐒 x}   {𝟎}  {𝟎}   xy yz = xy
+[≤?]-transitivity {𝐒 𝟎}   {𝟎}  {𝐒 z} xy yz = [⊤]-intro
+[≤?]-transitivity {𝐒(𝐒 x)}{𝟎}  {𝐒 z} xy yz = [≤?]-transitivity {𝐒 x}{𝟎}{z} xy [⊤]-intro
+[≤?]-transitivity {𝐒 x}   {𝐒 y}{𝟎}   xy yz = yz
+[≤?]-transitivity {𝐒 x}   {𝐒 y}{𝐒 z} xy yz = [≤?]-transitivity {x}{y}{z} xy yz
+
+[<?][≤?]-subtransitivityᵣ : ∀{x y z} → IsTrue(x <? y) → IsTrue(y ≤? z) → IsTrue(x <? z)
+[<?][≤?]-subtransitivityᵣ {_}  {𝟎}  {𝟎}   xy yz = xy
+[<?][≤?]-subtransitivityᵣ {_}  {𝐒 y}{𝟎}   xy yz = yz
+[<?][≤?]-subtransitivityᵣ {𝟎}  {𝟎}  {𝐒 _} xy yz = [⊤]-intro
+[<?][≤?]-subtransitivityᵣ {𝟎}  {𝐒 _}{𝐒 _} xy yz = [⊤]-intro
+[<?][≤?]-subtransitivityᵣ {𝐒 x}{𝟎}  {𝐒 z} xy yz = [<?][≤?]-subtransitivityᵣ {x}{𝟎}{z} xy [⊤]-intro
+[<?][≤?]-subtransitivityᵣ {𝐒 x}{𝐒 y}{𝐒 z} xy yz = [<?][≤?]-subtransitivityᵣ {x}{y}{z} xy yz

@@ -23,6 +23,7 @@ open import Relator.Equals.Proofs
 open import Relator.Equals.Proofs.Equiv
 open import Sets.PredicateSet using (PredSet ; _∈_ ; _∉_ ; _∪_ ; _∪•_ ; _∖_ ; _⊆_ ; _⊇_ ; ∅ ; [≡]-to-[⊆] ; [≡]-to-[⊇]) renaming (•_ to singleton ; _≡_ to _≡ₛ_)
 open        Sets.PredicateSet.BoundedQuantifiers
+open import Structure.Function
 open import Structure.Relator.Properties
 open import Syntax.Function
 open import Type.Properties.Decidable.Proofs
@@ -421,7 +422,7 @@ module NaturalDeduction where
     max-maximal {φ = φ}{Γ = Γ}
       with n ← CountablyInfinite.indexing(Formula P) φ
       with Logic.excluded-middle(maxi2 Γ n ⊢ CountablyInfinite.index(Formula P) n) | inspect(maxi2 Γ) (𝐒 n)
-    ... | Left  p | intro q with r ← [≡]-with(_$ CountablyInfinite.index(Formula P) n) q = Left  (Logic.[∃]-intro (𝐒(n)) ⦃ Right {!!} ⦄)
+    ... | Left  p | intro q with r ← congruence₁(_$ CountablyInfinite.index(Formula P) n) q = Left  (Logic.[∃]-intro (𝐒(n)) ⦃ Right {!!} ⦄)
     ... | Right p | intro q = Right (Logic.[∃]-intro (𝐒(n)) ⦃ Right {!q!} ⦄)
 
     instance
@@ -612,7 +613,7 @@ module _ where
     consistency-of-∅ = satisfiable-consistent [∅]-satisfiable
 
   module _ where
-    open import Data.Boolean.Stmt.Proofs
+    open import Data.Boolean.Stmt.Logic
     open import Lang.Inspect
 
     modelSet : Model(P) → Formulas(P)
@@ -628,7 +629,7 @@ module _ where
         p : ConsistentElementMaximality(modelSet(𝔐))
         p {φ} cons with TruthTable.eval 𝔐 φ | inspect (TruthTable.eval 𝔐) φ
         ... | 𝑇 | intro eval-𝑇 = TruthTable.eval-to-models {φ = φ} (Logic.[↔]-to-[←] IsTrue.is-𝑇 eval-𝑇)
-        ... | 𝐹 | intro eval-𝐹 = Logic.[⊥]-elim (cons ([⊥]-intro (direct (Right [≡]-intro)) (weaken Left (direct (TruthTable.eval-to-models {φ = ¬ φ} (Logic.[↔]-to-[←] IsTrue.is-𝑇 ([≡]-with(BoolOp.¬) eval-𝐹)))))))
+        ... | 𝐹 | intro eval-𝐹 = Logic.[⊥]-elim (cons ([⊥]-intro (direct (Right [≡]-intro)) (weaken Left (direct (TruthTable.eval-to-models {φ = ¬ φ} (Logic.[↔]-to-[←] IsTrue.is-𝑇 (congruence₁(BoolOp.¬) eval-𝐹)))))))
 
       {-maximally-consistent-is-modelSet : MaximallyConsistent(Γ) → (Γ ≡ₛ modelSet(𝔐))
       maximally-consistent-is-modelSet maxCon {• x} = Logic.[↔]-intro {!Logic.[↔]-to-[←] Logic.decide-is-true!} {!Logic.[↔]-to-[→] Logic.decide-is-true!}

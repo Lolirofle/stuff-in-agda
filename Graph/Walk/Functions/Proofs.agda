@@ -5,6 +5,7 @@ module Graph.Walk.Functions.Proofs {ℓ₁ ℓ₂} {V : Type{ℓ₁}} where
 import      Data.Either as Either
 open import Data.Either.Proofs
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 import      Lvl
 open import Graph{ℓ₁}{ℓ₂}(V)
 open import Graph.Properties
@@ -16,6 +17,8 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function
+open import Structure.Relator
 open import Structure.Relator.Properties
 open import Syntax.Function
 open import Type.Dependent
@@ -33,17 +36,17 @@ module _ (_⟶_ : Graph) where
 
   prepend-path-length : ∀{a b c}{e : a ⟶ b}{w : Walk(_⟶_) b c} → length(prepend e w) ≡ 𝐒(length w)
   prepend-path-length {w = at}          = reflexivity(_≡_)
-  prepend-path-length {w = prepend e w} = [≡]-with(𝐒) (prepend-path-length{e = e}{w = w})
+  prepend-path-length {w = prepend e w} = congruence₁(𝐒) (prepend-path-length{e = e}{w = w})
 
   [++]-identityᵣ : ∀{a b}{w : Walk(_⟶_) a b} → (w ++ at ≡ w)
   [++]-identityᵣ {w = at}          = reflexivity(_≡_)
-  [++]-identityᵣ {w = prepend x w} = [≡]-with(prepend x) ([++]-identityᵣ {w = w})
+  [++]-identityᵣ {w = prepend x w} = congruence₁(prepend x) ([++]-identityᵣ {w = w})
   {-# REWRITE [++]-identityᵣ #-}
 
   [++]-path-length : ∀{a b c}{w₁ : Walk(_⟶_) a b}{w₂ : Walk(_⟶_) b c} → length(w₁ ++ w₂) ≡ length w₁ + length w₂
   [++]-path-length {a} {.a} {.a} {at}            {at}          = reflexivity(_≡_)
   [++]-path-length {a} {.a} {c}  {at}            {prepend e w} = prepend-path-length {e = e}{w = w}
-  [++]-path-length {a} {b}  {c}  {prepend e₁ w₁} {w₂}          = [≡]-with(𝐒) ([++]-path-length {w₁ = w₁}{w₂ = w₂})
+  [++]-path-length {a} {b}  {c}  {prepend e₁ w₁} {w₂}          = congruence₁(𝐒) ([++]-path-length {w₁ = w₁}{w₂ = w₂})
   {-# REWRITE [++]-path-length #-}
 
   at-visits : ∀{v} → Visits(_⟶_) v (at{x = v})
@@ -84,5 +87,5 @@ module _ (_⟶_ : Graph) where
   [++]-visitsₗ {v} {a} {.a} {.a} {at}           {at}            p = [∨]-introₗ p
   [++]-visitsₗ {v} {a} {.a} {c}  {at}           {prepend x w₂}  p = [∨]-introᵣ p
   [++]-visitsₗ {v} {a} {b}  {c}  {prepend e w₁} {w₂}            p with prepend-visitsₗ p
-  [++]-visitsₗ {v} {a} {b}  {c}  {prepend e w₁} {w₂}            p | [∨]-introₗ eq = [∨]-introₗ ([≡]-substitutionₗ eq (Visits.current {path = prepend e w₁}))
+  [++]-visitsₗ {v} {a} {b}  {c}  {prepend e w₁} {w₂}            p | [∨]-introₗ eq = [∨]-introₗ (substitute₁ₗ _ eq (Visits.current {path = prepend e w₁}))
   [++]-visitsₗ {v} {a} {b}  {c}  {prepend e w₁} {w₂}            _ | [∨]-introᵣ p  = Either.mapLeft skip ([++]-visitsₗ {w₁ = w₁} {w₂ = w₂} p)

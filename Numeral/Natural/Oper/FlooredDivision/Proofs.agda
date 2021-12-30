@@ -6,6 +6,7 @@ open import Data.Boolean.Stmt
 open import Functional
 open import Functional.Instance
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Numeral.Natural
 open import Numeral.Natural.Inductions
 open import Numeral.Natural.Oper.Comparisons
@@ -44,7 +45,7 @@ private variable d d₁ d₂ b a' b' : ℕ
 
 [⌊/⌋]-of-1ᵣ : ∀{m} → (m ⌊/⌋ 1 ≡ m)
 [⌊/⌋]-of-1ᵣ {𝟎} = [≡]-intro
-[⌊/⌋]-of-1ᵣ {𝐒 m} = inddiv-result-𝐒 {0}{0}{m}{0} 🝖 [≡]-with(𝐒) ([⌊/⌋]-of-1ᵣ {m})
+[⌊/⌋]-of-1ᵣ {𝐒 m} = inddiv-result-𝐒 {0}{0}{m}{0} 🝖 congruence₁(𝐒) ([⌊/⌋]-of-1ᵣ {m})
 
 [⌊/⌋]-of-same : ∀{n} ⦃ pos-n : Positive(n)⦄ → (n ⌊/⌋ n ≡ 1)
 [⌊/⌋]-of-same {𝐒 n} = inddiv-of-denominator-successor {b' = n}
@@ -56,15 +57,15 @@ private variable d d₁ d₂ b a' b' : ℕ
 [⌊/⌋]-step-[−₀] {𝐒 a} {𝐒 b} (succ ord) = inddiv-greater (succ ord) 🝖 inddiv-result-𝐒 {0}{b}{a −₀ b}{b}
 
 [⌊/⌋]-step-[+] : ∀{a b} ⦃ pos-b : Positive(b)⦄ → ((a + b) ⌊/⌋ b ≡ 𝐒(a ⌊/⌋ b))
-[⌊/⌋]-step-[+] {a}{b} = [⌊/⌋]-step-[−₀] ([≤]-of-[+]ᵣ {a}{b}) 🝖 [≡]-with(𝐒) ([≡]-with(_⌊/⌋ b) (inverseOperᵣ(_+_)(_−₀_) {a}{b}))
+[⌊/⌋]-step-[+] {a}{b} = [⌊/⌋]-step-[−₀] ([≤]-of-[+]ᵣ {a}{b}) 🝖 congruence₁(𝐒) (congruence₁(_⌊/⌋ b) (inverseOperᵣ(_+_)(_−₀_) {a}{b}))
 
 [⌊/⌋]-step₊-[−₀] : ∀{a b d} ⦃ pos-b : Positive(b)⦄ → (a ≥ b ⋅ d) → (a ⌊/⌋ b ≡ ((a −₀ (b ⋅ d)) ⌊/⌋ b) + d)
 [⌊/⌋]-step₊-[−₀] {_}{_}{𝟎}   _   = reflexivity(_≡_)
 [⌊/⌋]-step₊-[−₀] {a}{b}{𝐒 d} abd =
-  a ⌊/⌋ b                              🝖[ _≡_ ]-[ [≡]-with(_⌊/⌋ b) ([↔]-to-[→] ([−₀][+]-nullify2ᵣ {b}{a}) ([≤]-of-[+]ₗ 🝖 abd)) ]-sym
+  a ⌊/⌋ b                              🝖[ _≡_ ]-[ congruence₁(_⌊/⌋ b) ([↔]-to-[→] ([−₀][+]-nullify2ᵣ {b}{a}) ([≤]-of-[+]ₗ 🝖 abd)) ]-sym
   ((a −₀ b) + b) ⌊/⌋ b                 🝖[ _≡_ ]-[ [⌊/⌋]-step-[+] {a −₀ b}{b} ]
-  𝐒((a −₀ b) ⌊/⌋ b)                    🝖[ _≡_ ]-[ [≡]-with(𝐒) ([⌊/⌋]-step₊-[−₀] {a −₀ b}{b}{d} (subtransitivityₗ(_≤_)(_≡_) (symmetry(_≡_) (inverseOperᵣ(swap(_+_))(_−₀_) {b ⋅ d}{b})) ([≤]-with-[−₀]ₗ {y = b} abd))) ]
-  𝐒((((a −₀ b) −₀ (b ⋅ d)) ⌊/⌋ b) + d) 🝖[ _≡_ ]-[ [≡]-with(_+ 𝐒(d)) {((a −₀ b) −₀ (b ⋅ d)) ⌊/⌋ b}{(a −₀ (b ⋅ 𝐒(d))) ⌊/⌋ b} ([≡]-with(_⌊/⌋ b) ([−₀][−₀]-to-[−₀][+] {a}{b}{b ⋅ d})) ]
+  𝐒((a −₀ b) ⌊/⌋ b)                    🝖[ _≡_ ]-[ congruence₁(𝐒) ([⌊/⌋]-step₊-[−₀] {a −₀ b}{b}{d} (subtransitivityₗ(_≤_)(_≡_) (symmetry(_≡_) (inverseOperᵣ(swap(_+_))(_−₀_) {b ⋅ d}{b})) ([≤]-with-[−₀]ₗ {y = b} abd))) ]
+  𝐒((((a −₀ b) −₀ (b ⋅ d)) ⌊/⌋ b) + d) 🝖[ _≡_ ]-[ congruence₁(_+ 𝐒(d)) {((a −₀ b) −₀ (b ⋅ d)) ⌊/⌋ b}{(a −₀ (b ⋅ 𝐒(d))) ⌊/⌋ b} (congruence₁(_⌊/⌋ b) ([−₀][−₀]-to-[−₀][+] {a}{b}{b ⋅ d})) ]
   ((a −₀ (b ⋅ 𝐒(d))) ⌊/⌋ b) + 𝐒(d) 🝖-end
 
 [⌊/⌋]-positive : ∀{a b} ⦃ pos-b : Positive(b) ⦄ → (a ≥ b) ↔ Positive(a ⌊/⌋ b)
@@ -72,7 +73,7 @@ private variable d d₁ d₂ b a' b' : ℕ
   l : ∀{a b} ⦃ pos-b : Positive(b) ⦄ → Positive(a ⌊/⌋ b) → (a ≥ b)
   l{𝐒 a}{𝐒 b} ab with [≤]-or-[>] {𝐒 b}{𝐒 a}
   ... | [∨]-introₗ p = p
-  ... | [∨]-introᵣ p with () ← substitute₁(Positive) ([⌊/⌋]-zero p) ab
+  ... | [∨]-introᵣ p with () ← substitute₁ᵣ(Positive) ([⌊/⌋]-zero p) ab
 
   r : ∀{a b} ⦃ pos-b : Positive(b) ⦄ → (a ≥ b) → Positive(a ⌊/⌋ b)
   r ab rewrite [⌊/⌋]-step-[−₀] ab = <>
@@ -119,7 +120,7 @@ open import Logic.Predicate
   (a ↦ prev ↦ [∨]-elim
     (ba ↦
       let [∃]-intro x ⦃ xeq ⦄ = [↔]-to-[←] [≤]-equivalence ba
-      in substitute₁(a ↦ P{a}(a ⌊/⌋ b)) (commutativity(_+_) {x}{b} 🝖 xeq) (substitute₁ₗ(div ↦ P{x + b}(div)) ([⌊/⌋]-step-[+] {x}{b}) (step{x} (prev x ([↔]-to-[→] ([≤]-equivalence {𝐒(x)}) ([≤]-witness-order {B} ([∃]-intro (𝐒(x)) ⦃ xeq ⦄))))))
+      in substitute₁ᵣ(a ↦ P{a}(a ⌊/⌋ b)) (commutativity(_+_) {x}{b} 🝖 xeq) (substitute₁ₗ(div ↦ P{x + b}(div)) ([⌊/⌋]-step-[+] {x}{b}) (step{x} (prev x ([↔]-to-[→] ([≤]-equivalence {𝐒(x)}) ([≤]-witness-order {B} ([∃]-intro (𝐒(x)) ⦃ xeq ⦄))))))
     )
     ((substitute₁ₗ(P) ∘ [⌊/⌋]-zero) ∘ₛ base)
     ([≤]-or-[>] {b}{a})
@@ -197,7 +198,7 @@ open import Logic.Predicate
 
 -- postulate [⌊/⌋]-associate-commute : ∀{a b c} ⦃ pos-b : Positive(b) ⦄ ⦃ pos-c : Positive(c) ⦄ → ((a ⌊/⌋ b) ⌊/⌋ c ≡ (a ⌊/⌋ c) ⌊/⌋ b)
 
-[⌊/⌋]-operator : ∀{a₁ a₂ b₁ b₂} ⦃ pos-b₁ : Positive(b₁) ⦄ → (a₁ ≡ a₂) → (pb : b₁ ≡ b₂) → (a₁ ⌊/⌋ b₁ ≡ (a₂ ⌊/⌋ b₂) ⦃ substitute₁(Positive) pb pos-b₁ ⦄)
+[⌊/⌋]-operator : ∀{a₁ a₂ b₁ b₂} ⦃ pos-b₁ : Positive(b₁) ⦄ → (a₁ ≡ a₂) → (pb : b₁ ≡ b₂) → (a₁ ⌊/⌋ b₁ ≡ (a₂ ⌊/⌋ b₂) ⦃ substitute₁ᵣ(Positive) pb pos-b₁ ⦄)
 [⌊/⌋]-operator [≡]-intro [≡]-intro = [≡]-intro
 
 open import Structure.Function.Domain
@@ -232,7 +233,7 @@ open import Lang.Inspect
 
   r : ∀{a} → (a ≥ (b ⋅ 2)) → (a ⌊/⌋ b > 1)
   r{a@(𝐒 A)} ab with (a ⌊/⌋ b) | inspect (_⌊/⌋ b) a
-  ... | 𝟎       | intro eq = {!!} -- with () ← substitute₁(Positive) eq ([↔]-to-[→] [⌊/⌋]-positive ([≤]-predecessor ab))
+  ... | 𝟎       | intro eq = {!!} -- with () ← substitute₁ᵣ(Positive) eq ([↔]-to-[→] [⌊/⌋]-positive ([≤]-predecessor ab))
   ... | 𝐒 𝟎     | intro eq = {![↔]-to-[←] ([⌊/⌋]-one {a}{b}) eq!}
   ... | 𝐒 (𝐒 d) | intro eq = succ(succ min)
   -- = {![↔]-to-[→] [⌊/⌋]-positive ([≤]-predecessor ab)!}

@@ -33,7 +33,7 @@ data Perfect {L : Type{ℓₗ}}{N : Type{ℓₙ}}{n} : FixedTree(n) L N → ℕ 
 data Complete {L : Type{ℓₗ}}{N : Type{ℓₙ}}{n} : FixedTree(n) L N → ℕ → Bool → Type{ℓₗ Lvl.⊔ ℓₙ} where
   perfect-leaf : ∀{l} → Complete(Leaf l)(𝟎)(𝑇)
   imperfect-leaf : ∀{l} → Complete(Leaf l)(𝐒(𝟎))(𝐹)
-  step : ∀{a}{c}{h}{t : 𝕟(n)} → (∀{i : 𝕟(n)} → Complete(Raise.index i c)(h)(i ≤? t)) → Complete(Node a c)(𝐒(h))(t ≤? maximum{n})
+  step : ∀{a}{c}{h}{t : 𝕟(n)} → (∀{i : 𝕟(n)} → Complete(Raise.index i c)(h)(i ≤? t)) → Complete(Node a c)(𝐒(h))(t ≤? maximum{𝐒 n})
 
 data DepthOrdered {L : Type{ℓₗ}}{N : Type{ℓₙ}} (_≤_ : N → N → Type{ℓₒ}) {n} : FixedTree(n) L N → Type{ℓₗ Lvl.⊔ ℓₙ Lvl.⊔ ℓₒ} where
   leaf : ∀{l} → DepthOrdered(_≤_)(Leaf l)

@@ -9,6 +9,7 @@ open import Data.List.Relation.Quantification.Proofs
 open import Functional
 open import Logic
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 import      Lvl
 open import Structure.Relator
 open import Structure.Relator.Properties
@@ -141,7 +142,7 @@ OrderedPairwise-to-OrderedPairwise₌ (step a p) = step (reflexivity(_) ⊰ a) (
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rel : BinaryRelator{A = T}(_▫_) ⦄ where
   OrderedPairwise-sublist : (l₁ ⊑ l₂) → (OrderedPairwise(_▫_)(l₁) ← OrderedPairwise(_▫_)(l₂))
   OrderedPairwise-sublist empty empty = empty
-  OrderedPairwise-sublist (use xy sub) (step yl₂ pair) = step (AllElements-fn (substitute₂ₗ(_▫_) (symmetry(_≡_) xy)) (AllElements-sublist ⦃ rel = BinaryRelator.right rel ⦄ sub yl₂)) (OrderedPairwise-sublist sub pair)
+  OrderedPairwise-sublist (use xy sub) (step yl₂ pair) = step (AllElements-fn (substitute₂-₁ᵣ(_▫_)(_) (symmetry(_≡_) xy)) (AllElements-sublist ⦃ rel = BinaryRelator.unary₂ _ rel ⦄ sub yl₂)) (OrderedPairwise-sublist sub pair)
   OrderedPairwise-sublist (skip sub) (step xl₂ pair) = OrderedPairwise-sublist sub pair
 
   {- Note: Unprovable because it is possible for a sublist to skip some of the elements inbetween. Example: AdjacentlyPairwise(_▫_) [a,b,c,d] ⇔ (a ▫ b) ∧ (b ▫ c) ∧ (c ▫ d), and [b,d] ⊑ [a,b,c,d], but (b ▫ d) is not implied. Use Data.List.Relation.Fixes.Infix instead of (_⊑_) and this will be provable because it does not allow skipping any elements
@@ -150,7 +151,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rel : BinaryRelator{A = T}(_▫_) 
   AdjacentlyPairwise-sublist (use x empty) single = single
   AdjacentlyPairwise-sublist (skip empty) single = empty
   AdjacentlyPairwise-sublist (use {l₁ = ∅} x sub) (step p pair) = single
-  AdjacentlyPairwise-sublist (use {l₁ = x₁ ⊰ l₁} x (use x₂ sub)) (step p pair) = step (substitute₂(_▫_) (symmetry(_≡_) x) (symmetry(_≡_) x₂) p) (AdjacentlyPairwise-sublist (use x₂ sub) pair) -- AdjacentlyPairwise-sublist sub (AdjacentlyPairwise-tail pair)
+  AdjacentlyPairwise-sublist (use {l₁ = x₁ ⊰ l₁} x (use x₂ sub)) (step p pair) = step (substitute₂ᵣ(_▫_) (symmetry(_≡_) x) (symmetry(_≡_) x₂) p) (AdjacentlyPairwise-sublist (use x₂ sub) pair) -- AdjacentlyPairwise-sublist sub (AdjacentlyPairwise-tail pair)
   AdjacentlyPairwise-sublist (use {l₁ = x₁ ⊰ l₁} x (skip sub)) (step p pair) = step {!(AdjacentlyPairwise-sublist sub (AdjacentlyPairwise-tail pair))!} (AdjacentlyPairwise-sublist sub (AdjacentlyPairwise-tail pair))
   -- step ((substitute₂ₗ(_▫_) (symmetry(_≡_) x)) {!sub!}) (AdjacentlyPairwise-sublist sub pair)
   AdjacentlyPairwise-sublist (skip sub) (step p pair) = AdjacentlyPairwise-sublist sub pair

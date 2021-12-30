@@ -9,10 +9,12 @@ open import Formalization.ClassicalPropositionalLogic.Semantics
 open import Functional
 open import Logic.Classical     as Logic using (Classical)
 import      Logic.Propositional as Logic
+open import Logic.Propositional.Equiv
 import      Logic.Predicate     as Logic
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Sets.PredicateSet using (PredSet ; _∈_ ; _∉_ ; _∪_ ; _∪•_ ; _∖_ ; _⊆_ ; _⊇_ ; ∅ ; [≡]-to-[⊆] ; [≡]-to-[⊇]) renaming (•_ to singleton ; _≡_ to _≡ₛ_)
+open import Structure.Relator
 open import Type
 
 private variable ℓₚ ℓ : Lvl.Level
@@ -34,7 +36,7 @@ private variable φ ψ : Formula(P)
 [⊧₊]-of-[∪]ᵣ 𝔐Γ₁Γ₂ 𝔐Γ₂ = 𝔐Γ₁Γ₂ (Right 𝔐Γ₂)
 
 [⊧]-to-[⊧₊] : (𝔐 ⊧ φ) Logic.↔ (𝔐 ⊧₊ singleton(φ))
-[⊧]-to-[⊧₊] = Logic.[↔]-intro (_$ [≡]-intro) (\𝔐φ φγ → [≡]-substitutionᵣ φγ 𝔐φ)
+[⊧]-to-[⊧₊] = Logic.[↔]-intro (_$ [≡]-intro) (\𝔐φ φγ → substitute₂-₂ᵣ(_⊧_)(_) φγ 𝔐φ)
 
 [⊧]-contradiction : (𝔐 ⊧ φ) → (𝔐 ⊧ (¬ φ)) → (𝔐 ⊧ ⊥)
 [⊧]-contradiction = apply

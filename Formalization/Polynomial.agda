@@ -23,6 +23,7 @@ module _ where
   open import Data.ListSized.Functions
   import      Functional as Fn
   open import Logic.Propositional
+  open import Logic.Propositional.Equiv
   open import Logic.Predicate
   import      Numeral.Natural.Function as ℕ
   open import Numeral.Natural.Function.Proofs
@@ -31,6 +32,7 @@ module _ where
   open import Numeral.Natural.Relation.Order.Proofs
   open import Relator.Equals
   open import Relator.Equals.Proofs.Equiv{T = ℕ}
+  open import Structure.Relator
 
   -- Constant polynomial.
   -- Semantically, this corresponds to a constant.
@@ -107,7 +109,7 @@ module _ where
     r = var⋅ (as ⨯ bs)
 
     lr : Polynomial(ℕ.𝐒(n₁ ℕ.+ n₂))
-    lr = [≡]-substitutionᵣ ([↔]-to-[→] max-defᵣ [≤]-of-[𝐒]) {Polynomial} (l + r)
+    lr = substitute₁ᵣ(Polynomial) ([↔]-to-[→] max-defᵣ [≤]-of-[𝐒]) (l + r)
 
   normalize : Polynomial(n) → ∃(Polynomial)
   normalize {ℕ.𝟎}   (x ⊰ ∅)      = [∃]-intro ℕ.𝟎 ⦃ x ⊰ ∅ ⦄
@@ -131,6 +133,7 @@ module _ where
 module Semantics where
   open import Data.ListSized.Functions
   open import Logic.Propositional
+  open import Logic.Propositional.Equiv
   open import Numeral.Finite as 𝕟 using (𝕟)
   import      Numeral.Natural.Oper as ℕ
   open import Numeral.Natural.Oper.Proofs
@@ -141,6 +144,7 @@ module Semantics where
   open import Structure.Operator.Proofs.Util
   open import Structure.Operator.Properties
   open import Structure.Relator.Properties
+  open import Structure.Relator
   open import Structure.Setoid
   open import Syntax.Function
   open import Syntax.Transitivity
@@ -265,7 +269,7 @@ module Semantics where
         r = var⋅ (as ⨯ bs)
 
         lr : Polynomial(ℕ.𝐒(n₁ ℕ.+ n₂))
-        lr = [≡]-substitutionᵣ ([↔]-to-[→] max-defᵣ [≤]-of-[𝐒]) {Polynomial} (l + r)
+        lr = substitute₁ᵣ(Polynomial) ([↔]-to-[→] max-defᵣ [≤]-of-[𝐒]) (l + r)
 
         eval-l : (eval l x ≡ (b ℕ.⋅ eval as x) ℕ.+ (a ℕ.⋅ eval bs x))
         eval-l =
@@ -282,7 +286,7 @@ module Semantics where
           x ℕ.⋅ eval (as ⨯ bs) x          🝖[ _≡_ ]-[ congruence₂-₂(ℕ._⋅_)(x) (eval-preserves-multiplication {x = x}{as}{bs}) ]
           x ℕ.⋅ (eval as x ℕ.⋅ eval bs x) 🝖-end
 
-        eval-substitution : ∀{m n}{a : Polynomial(m)}{eq : (m ≡ n)}{x} → (eval ([≡]-substitutionᵣ eq {Polynomial} a) x ≡ eval a x)
+        eval-substitution : ∀{m n}{a : Polynomial(m)}{eq : (m ≡ n)}{x} → (eval(substitute₁ᵣ(Polynomial) eq a) x ≡ eval a x)
         eval-substitution {eq = [≡]-intro} = [≡]-intro
 
         eval-lr : (eval lr x ≡ ((b ℕ.⋅ eval as x) ℕ.+ (a ℕ.⋅ eval bs x)) ℕ.+ (x ℕ.⋅ (eval as x ℕ.⋅ eval bs x)))

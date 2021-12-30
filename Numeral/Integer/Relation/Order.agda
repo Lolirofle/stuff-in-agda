@@ -24,6 +24,7 @@ open From-[≤][<] (_≤_)(_<_) public
 
 
 import      Data.Either as Either
+open import Logic.Propositional.Equiv
 import      Numeral.Natural as ℕ
 import      Numeral.Natural.Relation.Order.Proofs as ℕ
 open import Relator.Equals

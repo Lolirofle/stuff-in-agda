@@ -219,7 +219,7 @@ module _ where
   import      Data.Boolean.Operators
   open        Data.Boolean.Operators.Programming
   open import Data.Boolean.Stmt
-  open import Data.Boolean.Stmt.Proofs
+  open import Data.Boolean.Stmt.Logic
   instance
     booleanLogic : PropositionalLogic IsTrue
     PropositionalLogic.bottom      booleanLogic = [∃]-intro 𝐹    ⦃ record{elim = Logic.[⊥]-elim ∘ IsTrue.[𝐹]-elim} ⦄

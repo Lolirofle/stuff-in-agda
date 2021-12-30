@@ -7,6 +7,7 @@ import      Lvl
 open import Data.List
 import      Data.List.Functions as List
 open import Data.BinaryTree
+open import Data.BinaryTree.Functions
 import      Data.BinaryTree.Heap as Heap
 open import Functional using (_∘_)
 

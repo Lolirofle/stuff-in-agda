@@ -38,3 +38,6 @@ _>?_ = elim₃ 𝐹 𝐹 𝑇 ∘₂ (_⋚?_)
 -- Greater-than or equals check
 _≥?_ : ∀{a b} → 𝕟(a) → 𝕟(b) → Bool
 _≥?_ = elim₃ 𝐹 𝑇 𝑇 ∘₂ (_⋚?_)
+
+positive? : ∀{n} → 𝕟(n) → Bool
+positive? = _>? (𝟎{1})

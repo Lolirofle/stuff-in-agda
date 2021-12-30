@@ -5,6 +5,7 @@ open Signature(𝔏)
 
 open import Data.DependentWidthTree as Tree hiding (height)
 import      Functional.Dependent
+import      Logic.Propositional as Logic
 import      Lvl
 open import Formalization.PredicateLogic.Syntax(𝔏)
 open import Formalization.PredicateLogic.Syntax.Substitution(𝔏)
@@ -19,6 +20,7 @@ open import Relator.Equals
 open import Structure.Relator
 open import Structure.Relator.Ordering
 open import Structure.Relator.Ordering.Proofs
+open import Structure.Relator.Properties
 open import Type.Dependent
 open import Type
 
@@ -67,28 +69,28 @@ induction-on-height P step {vars}{φ} = Strict.Properties.wellfounded-induction(
 ⊥-height-order = [≤]-minimum
 
 ∧-height-orderₗ : (height φ < height(φ ∧ ψ))
-∧-height-orderₗ = [≤]-with-[𝐒]
+∧-height-orderₗ = succ(Logic.[∧]-elimₗ max-order)
 
 ∧-height-orderᵣ : (height ψ < height(φ ∧ ψ))
-∧-height-orderᵣ = [≤]-with-[𝐒]
+∧-height-orderᵣ = succ(Logic.[∧]-elimᵣ max-order)
 
 ∨-height-orderₗ : (height φ < height(φ ∨ ψ))
-∨-height-orderₗ = [≤]-with-[𝐒]
+∨-height-orderₗ = succ(Logic.[∧]-elimₗ max-order)
 
 ∨-height-orderᵣ : (height ψ < height(φ ∨ ψ))
-∨-height-orderᵣ = [≤]-with-[𝐒]
+∨-height-orderᵣ = succ(Logic.[∧]-elimᵣ max-order)
 
 ⟶-height-orderₗ : (height φ < height(φ ⟶ ψ))
-⟶-height-orderₗ = [≤]-with-[𝐒]
+⟶-height-orderₗ = succ(Logic.[∧]-elimₗ max-order)
 
 ⟶-height-orderᵣ : (height ψ < height(φ ⟶ ψ))
-⟶-height-orderᵣ = [≤]-with-[𝐒]
+⟶-height-orderᵣ = succ(Logic.[∧]-elimᵣ max-order)
 
 Ɐ-height-order : (height φ < height(Ɐ φ))
-Ɐ-height-order = [<]-of-[𝐒]
+Ɐ-height-order = succ(reflexivity(_≤_))
 
 ∃-height-order : (height φ < height(∃ φ))
-∃-height-order = [<]-of-[𝐒]
+∃-height-order = succ(reflexivity(_≤_))
 
 -- induction-on-height : ∀{P : ∀{vars} → Formula(vars) → Type{ℓ}} → (∀{vars} → P{vars}(⊤)) → (∀{vars} → P{vars}(⊥)) → ((∀{vars}{ψ : Formula(vars)} → (height ψ < height φ) → P(ψ)) → P(φ)) → P(φ)
 -- induction-on-height {φ = φ} base⊤ base⊥ step = step {!Strict.Properties.wellfounded-induction(_<↑_)!}

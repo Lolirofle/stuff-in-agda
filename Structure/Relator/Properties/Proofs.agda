@@ -34,7 +34,7 @@ negated-symmetry : ⦃ sym : Symmetry(_<_) ⦄ → Symmetry((¬_) ∘₂ (_<_))
 Symmetry.proof (negated-symmetry {_<_ = _<_}) nxy yx = nxy(symmetry(_<_) yx)
 
 antisymmetry-irreflexivity-to-asymmetry : ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ rel : BinaryRelator{A = T}(_<_) ⦄ ⦃ antisym : Antisymmetry(_<_)(_≡_) ⦄ ⦃ irrefl : Irreflexivity(_<_) ⦄ → Asymmetry(_<_)
-Asymmetry.proof (antisymmetry-irreflexivity-to-asymmetry {_<_ = _<_}) xy yx = irreflexivity(_<_) (substitute₂ᵣ(_<_) (antisymmetry(_<_)(_≡_) xy yx) yx)
+Asymmetry.proof (antisymmetry-irreflexivity-to-asymmetry {_<_ = _<_}) xy yx = irreflexivity(_<_) (substitute₂-₂ᵣ(_<_)(_) (antisymmetry(_<_)(_≡_) xy yx) yx)
 
 asymmetry-to-antisymmetry : ⦃ asym : Asymmetry(_<_) ⦄ → Antisymmetry(_<_)(_▫_)
 Antisymmetry.proof (asymmetry-to-antisymmetry {_<_ = _<_}) ab ba = [⊥]-elim(asymmetry(_<_) ab ba)

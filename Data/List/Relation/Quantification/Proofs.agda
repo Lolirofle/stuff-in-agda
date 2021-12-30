@@ -11,6 +11,7 @@ import      Data.Tuple as Tuple
 open import Functional
 open import Logic.Predicate
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic
 open import Structure.Relator.Properties
 open import Type.Dependent

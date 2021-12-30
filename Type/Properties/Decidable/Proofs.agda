@@ -20,8 +20,9 @@ open import Numeral.Natural
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
 open import Type.Properties.Decidable
-open import Type.Properties.Empty
+open import Type.Properties.Empty using (IsEmpty ; intro)
 open import Type.Properties.Inhabited
+open import Type.Properties.Proofs
 open import Type.Properties.Singleton.Proofs
 open import Type
 
@@ -66,14 +67,14 @@ module _ where
   decider-false ⦃ dec = true  p ⦄  = [↔]-intro empty (empty ∘ apply p)
   decider-false ⦃ dec = false np ⦄ = [↔]-intro (const(empty ∘ np)) (const <>)
 
-  isempty-decider : ⦃ empty : IsEmpty(P) ⦄ → Decider₀(P)(𝐹)
+  isempty-decider : ⦃ empty : IsEmpty{ℓ}(P) ⦄ → Decider₀(P)(𝐹)
   isempty-decider ⦃ intro p ⦄ = false (empty ∘ p)
 
   inhabited-decider : ⦃ inhab : (◊ P) ⦄ → Decider₀(P)(𝑇)
   inhabited-decider ⦃ intro ⦃ p ⦄ ⦄ = true p
 
   empty-decider : Decider₀(Empty{ℓ})(𝐹)
-  empty-decider = isempty-decider
+  empty-decider = isempty-decider{Lvl.𝟎}
 
   unit-decider : Decider₀(Unit{ℓ})(𝑇)
   unit-decider = inhabited-decider ⦃ unit-is-pos ⦄

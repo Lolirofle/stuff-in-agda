@@ -34,6 +34,7 @@ tail{_}{_ List.⊰ _}(_ ⊰+ l) = l
 module _ where
   open import Data.List.Equiv.Id
   open import Data.List.Proofs
+  open import Logic.Propositional.Equiv
   open import Relator.Equals
   open import Relator.Equals.Proofs
   open import Structure.Relator

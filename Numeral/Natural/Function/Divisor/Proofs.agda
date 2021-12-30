@@ -7,12 +7,13 @@ open import Numeral.Natural.Oper.Divisibility
 
 open import Data
 open import Data.Boolean.Stmt
-open import Data.Boolean.Stmt.Proofs
+open import Data.Boolean.Stmt.Logic
 open import Data.Option
 open import Functional
 open import Lang.Inspect
 open import Logic.Classical
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Propositional.Theorems
 open import Numeral.Natural.LinearSearch.Proofs
 open import Numeral.Natural.Relation
@@ -266,5 +267,5 @@ Composite-without-leastDivisor-lower-bound {n} c
       )
       (prime-divides-of-[⋅] {leastDivisor n}{a}{b}
         (leastDivisor-prime{n} ([≤]-predecessor ([≤]-predecessor ([≤]-with-[⋅] a2 b2)) 🝖 sub₂(_≡_)(_≤_) abn))
-        (substitute₂ᵣ(_∣_) (symmetry(_≡_) abn) leastDivisor-correctness)
+        (substitute₂-₂ₗ(_∣_)(_) abn leastDivisor-correctness)
       )

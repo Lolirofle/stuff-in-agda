@@ -2,7 +2,7 @@ module Numeral.Finite.Decidable.Quantifiers where
 
 open import Data
 open import Data.Boolean
-open import Data.Boolean.Stmt.Proofs
+open import Data.Boolean.Stmt.Logic
 open import Data.Option
 import      Data.Option.Functions as Option
 open import Functional

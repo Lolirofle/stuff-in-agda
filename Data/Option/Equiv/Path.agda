@@ -29,7 +29,7 @@ instance
 
 instance
   Path-Option-extensionality : Extensionality{A = T} (Path-equiv)
-  Extensionality.cases-inequality (Path-Option-extensionality {T = T}) {x} p with () ← substitute₁(elim{A = T}{B = λ _ → Type}(Option(T)) (const Empty)) p (Some x)
+  Extensionality.cases-inequality (Path-Option-extensionality {T = T}) {x} p with () ← substitute₁ᵣ(elim{A = T}{B = λ _ → Type}(Option(T)) (const Empty)) p (Some x)
 
 instance
   Option-identityPath : ⦃ IdentityPathType(T) ⦄ → IdentityPathType(Option(T))

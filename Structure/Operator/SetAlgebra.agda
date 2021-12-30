@@ -8,6 +8,7 @@ open import Logic
 open import Logic.Propositional
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function
 open import Structure.Operator.Properties
 open import Structure.Operator.Proofs
 open import Structure.Relator.Properties
@@ -90,33 +91,33 @@ record Complement : Stmt{ℓ} where
   [∪]-idempotence{s} =
     ([≡]-intro)
     🝖 (symmetry(_≡_) (identityᵣ(_∩_)(𝐔)))
-    🝖 ([≡]-with(expr ↦ ((s ∪ s) ∩ expr)) (symmetry(_≡_) [∪]-inverseᵣ))
+    🝖 (congruence₁(expr ↦ ((s ∪ s) ∩ expr)) (symmetry(_≡_) [∪]-inverseᵣ))
     🝖 (symmetry(_≡_) (distributivityₗ(_∪_)(_∩_)))
-    🝖 ([≡]-with(expr ↦ (s ∪ expr)) [∩]-inverseᵣ)
+    🝖 (congruence₁(expr ↦ (s ∪ expr)) [∩]-inverseᵣ)
     🝖 ((identityᵣ(_∪_)(∅)))
 
   [∩]-idempotence : ∀{s : S} → (s ∩ s) ≡ s
   [∩]-idempotence{s} =
     ([≡]-intro)
     🝖 (symmetry(_≡_) (identityᵣ(_∪_)(∅)))
-    🝖 ([≡]-with(expr ↦ ((s ∩ s) ∪ expr)) (symmetry(_≡_) [∩]-inverseᵣ))
+    🝖 (congruence₁(expr ↦ ((s ∩ s) ∪ expr)) (symmetry(_≡_) [∩]-inverseᵣ))
     🝖 (symmetry(_≡_) (distributivityₗ(_∩_)(_∪_)))
-    🝖 ([≡]-with(expr ↦ (s ∩ expr)) [∪]-inverseᵣ)
+    🝖 (congruence₁(expr ↦ (s ∩ expr)) [∪]-inverseᵣ)
     🝖 ((identityᵣ(_∩_)(𝐔)))
 
   [∪]-absorber : ∀{s : S} → (s ∪ 𝐔) ≡ 𝐔
   [∪]-absorber{s} =
-    ([≡]-with(expr ↦ s ∪ expr) (symmetry(_≡_) [∪]-inverseᵣ))
+    (congruence₁(expr ↦ s ∪ expr) (symmetry(_≡_) [∪]-inverseᵣ))
     🝖 (symmetry(_≡_) (associativity(_∪_)))
-    🝖 ([≡]-with(expr ↦ expr ∪ ∁(s)) [∪]-idempotence)
+    🝖 (congruence₁(expr ↦ expr ∪ ∁(s)) [∪]-idempotence)
     🝖 ([∪]-inverseᵣ)
     -- s∪𝐔 = s∪(s ∪ ∁(s)) = (s∪s) ∪ ∁(s) = s ∪ ∁(s) = 𝐔
 
   [∩]-absorber : ∀{s : S} → (s ∩ ∅) ≡ ∅
   [∩]-absorber{s} =
-    ([≡]-with(expr ↦ s ∩ expr) (symmetry(_≡_) [∩]-inverseᵣ))
+    (congruence₁(expr ↦ s ∩ expr) (symmetry(_≡_) [∩]-inverseᵣ))
     🝖 (symmetry(_≡_) (associativity(_∩_)))
-    🝖 ([≡]-with(expr ↦ expr ∩ ∁(s)) [∩]-idempotence)
+    🝖 (congruence₁(expr ↦ expr ∩ ∁(s)) [∩]-idempotence)
     🝖 ([∩]-inverseᵣ)
     -- s∩∅ = s∩(s ∩ ∁(s)) = (s∩s) ∩ ∁(s) = s ∩ ∁(s) = ∅
 
@@ -191,11 +192,11 @@ record Complement : Stmt{ℓ} where
     proof1 : s ≡ s ∪ ∁(∁(s))
     proof1 =
       [∩]-inverseᵣ {∁(s)}
-      ⩺ [≡]-with(s ∪_)
+      ⩺ congruence₁(s ∪_)
       ⩺ (eq ↦ transitivity(_≡_) eq ((identityᵣ(_∪_)(∅)) {s}))
       ⩺ symmetry(_≡_)
       ⩺ (eq ↦ transitivity(_≡_) eq ((distributivityₗ(_∪_)(_∩_))))
-      ⩺ (eq ↦ transitivity(_≡_) eq ([≡]-with(_∩ (s ∪ ∁(∁(s)))) ([∪]-inverseᵣ)))
+      ⩺ (eq ↦ transitivity(_≡_) eq (congruence₁(_∩ (s ∪ ∁(∁(s)))) ([∪]-inverseᵣ)))
       ⩺ (eq ↦ transitivity(_≡_) eq (identityₗ(_∩_)(𝐔)))
       -- ∁(s) ∩ ∁(∁(s)) ≡ ∅
       -- s ∪ (∁(s) ∩ ∁(∁(s))) ≡ s ∪ ∅
@@ -208,11 +209,11 @@ record Complement : Stmt{ℓ} where
     proof2 : ∁(∁(s)) ≡ s ∪ ∁(∁(s))
     proof2 =
       [∩]-inverseᵣ {s}
-      ⩺ [≡]-with(_∪ ∁(∁(s)))
+      ⩺ congruence₁(_∪ ∁(∁(s)))
       ⩺ (eq ↦ transitivity(_≡_) eq (identityₗ(_∪_)(∅)))
       ⩺ symmetry(_≡_)
       ⩺ (eq ↦ transitivity(_≡_) eq ((distributivityᵣ(_∪_)(_∩_))))
-      ⩺ (eq ↦ transitivity(_≡_) eq ([≡]-with((s ∪ ∁(∁(s))) ∩_) ([∪]-inverseᵣ)))
+      ⩺ (eq ↦ transitivity(_≡_) eq (congruence₁((s ∪ ∁(∁(s))) ∩_) ([∪]-inverseᵣ)))
       ⩺ (eq ↦ transitivity(_≡_) eq ((identityᵣ(_∩_)(𝐔))))
       -- (s ∩ ∁(s)) ∪ ∁(∁(s)) ≡ ∅ ∪ ∁(∁(s))
       -- (s ∩ ∁(s)) ∪ ∁(∁(s)) ≡ ∁(∁(s))

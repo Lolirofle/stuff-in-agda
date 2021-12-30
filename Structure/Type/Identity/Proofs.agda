@@ -41,7 +41,7 @@ module _ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ minRefl : MinimalReflexiveRel
 
 module _ ⦃ equiv-T : Equiv{ℓₑ}(T) ⦄ ⦃ minRefl : MinimalReflexiveRelation{ℓₚ = ℓ}(Equiv._≡_ equiv-T) ⦄ where
   minimal-reflection-to-relator : ∀{P : T → Stmt{ℓ}} → UnaryRelator(P)
-  minimal-reflection-to-relator {P = P} = intro (sub₂(Equiv._≡_ equiv-T)((_→ᶠ_) on₂ P) ⦃ minimal-reflection-transport ⦄)
+  minimal-reflection-to-relator {P = P} = UnaryRelator-introᵣ(sub₂(Equiv._≡_ equiv-T)((_→ᶠ_) on₂ P) ⦃ minimal-reflection-transport ⦄)
 
 module _ ⦃ minRefl : MinimalReflexiveRelation(_≡_) ⦄ where
   minimal-reflection-to-flipped-transitivityᵣ : Names.FlippedTransitivityᵣ(_≡_)

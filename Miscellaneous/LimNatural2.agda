@@ -20,7 +20,7 @@ pattern ∞ = None
 𝐒  = Option.map ℕ.𝐒
 𝐏₀ = Option.map ℕ.𝐏
 
-_+_ = Option.and-combine(ℕ._+_)
+_+_ = Option.andCombine(ℕ._+_)
 infixl 10010 _+_
 
 _⋅_ : ℕ∞ → ℕ∞ → ℕ∞

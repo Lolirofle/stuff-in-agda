@@ -5,7 +5,7 @@ open import Syntax.Number
 open import Data
 open import Data.Boolean
 open import Data.Boolean.Stmt
-open import Data.Boolean.Stmt.Proofs
+open import Data.Boolean.Stmt.Logic
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 import      Functional as Fn
 open import Function.Equals

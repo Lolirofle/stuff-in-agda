@@ -1,5 +1,6 @@
 module Numeral.Natural.Function where
 
+open import Data.Tuple as Tuple
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 
@@ -19,6 +20,12 @@ min (𝐒(_)) 𝟎      = 𝟎
 min 𝟎      (𝐒(_)) = 𝟎
 min (𝐒(a)) (𝐒(b)) = 𝐒(min a b)
 -- min a b = (a + b) −₀ max(a)(b)
+
+minmax : ℕ → ℕ → (ℕ ⨯ ℕ)
+minmax 𝟎      𝟎      = (𝟎 , 𝟎)
+minmax (𝐒(a)) 𝟎      = (𝟎 , 𝐒(a))
+minmax 𝟎      (𝐒(b)) = (𝟎 , 𝐒(b))
+minmax (𝐒(a)) (𝐒(b)) = Tuple.map 𝐒 𝐒 (minmax a b)
 
 -- min and max as binary operators
 infixl 100 _[max]_ _[min]_

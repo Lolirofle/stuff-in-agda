@@ -203,10 +203,11 @@ module _ where
 module _ {X : Type{ℓ}} where
   open import Relator.Equals
   open import Relator.Equals.Proofs
+  open import Structure.Function
 
   raise-repeat-equality : ∀{n : ℕ}{f : X → X} → (f ^ n ≡ repeatᵣ n (_∘_) f id)
   raise-repeat-equality{𝟎}       = reflexivity(_≡_)
-  raise-repeat-equality{𝐒(n)}{f} = [≡]-with(f ∘_) (raise-repeat-equality{n}{f})
+  raise-repeat-equality{𝐒(n)}{f} = congruence₁(f ∘_) (raise-repeat-equality{n}{f})
 
 module _ where
   open import Structure.Setoid

@@ -6,7 +6,7 @@ module Data.List.Sorting.Proofs {ℓ} {T : Type{ℓ}} (_≤?_ : T → T → Bool
 
 open import Data.Boolean.Proofs
 open import Data.Boolean.Stmt
-open import Data.Boolean.Stmt.Proofs
+open import Data.Boolean.Stmt.Logic
 open import Data.List
 import      Data.List.Functions as List
 open import Data.List.Relation.Membership as Membership using (_∈_ ; use ; skip)
@@ -17,6 +17,7 @@ open import Functional hiding (swap)
 open import Lang.Inspect
 open import Functional.Instance
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
 open import Structure.Relator.Properties

@@ -368,7 +368,7 @@ instance
   postulate [⋅]-commutativity : Commutativity(_⋅_)
   {-Commutativity.proof [⋅]-commutativity {signed s₁ x} {signed s₂ y} = congruence₂(signed) (sub₂(Id)(Path) (commutativity ⦃ Id-equiv ⦄ (Sign._⨯_) {s₁}{s₂})) (sub₂(Id)(Path) (commutativity ⦃ Id-equiv ⦄ (ℕ._⋅_) {x}{y}))
   Commutativity.proof [⋅]-commutativity {signed ➕ x} {𝟎-sign i} j    = {!!}
-  -- {!substitute₁(\expr → ((signed ➕ x) ⋅ expr) ≡ (expr ⋅ (signed ➕ x))) ? ?!}
+  -- {!substitute₁ᵣ(\expr → ((signed ➕ x) ⋅ expr) ≡ (expr ⋅ (signed ➕ x))) ? ?!}
   Commutativity.proof [⋅]-commutativity {signed ➖ x} {𝟎-sign i}    = {!sub₂(Id)(Path) ?!}
   Commutativity.proof [⋅]-commutativity {𝟎-sign i}    {signed s y}  = {!𝟎-sign i!}
   Commutativity.proof [⋅]-commutativity {𝟎-sign i}    {𝟎-sign i₁}   = {!!}-}
@@ -376,7 +376,7 @@ instance
     rewrite commutativity ⦃ Id-equiv ⦄ (ℕ._⋅_) {x}{y}
     rewrite commutativity ⦃ Id-equiv ⦄ (Sign._⨯_) {s₁}{s₂}
     = reflexivity(Path)
-  Commutativity.proof [⋅]-commutativity {signed ➕ x} {𝟎-sign i}    = {!substitute₁(\expr → ((signed ➕ x) ⋅ expr) ≡ (expr ⋅ (signed ➕ x))) ? ?!}
+  Commutativity.proof [⋅]-commutativity {signed ➕ x} {𝟎-sign i}    = {!substitute₁ᵣ(\expr → ((signed ➕ x) ⋅ expr) ≡ (expr ⋅ (signed ➕ x))) ? ?!}
   Commutativity.proof [⋅]-commutativity {signed ➖ x} {𝟎-sign i}    = {!sub₂(Id)(Path) ?!}
   Commutativity.proof [⋅]-commutativity {𝟎-sign i}    {signed s y}  = {!𝟎-sign i!}
   Commutativity.proof [⋅]-commutativity {𝟎-sign i}    {𝟎-sign i₁}   = {!!}-}

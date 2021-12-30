@@ -50,6 +50,6 @@ module _ where
   test3 : HId x y → Id (Type.of x) (Type.of y)
   test3 intro = intro
 
-  test4 : (e : HId x y) → Id x (substitute₁())
+  test4 : (e : HId x y) → Id x (substitute₁ᵣ())
   test4 intro = intro
 -}

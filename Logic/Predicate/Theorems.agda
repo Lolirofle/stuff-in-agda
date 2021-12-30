@@ -8,7 +8,7 @@ open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Syntax.Type
 open import Type
-open import Type.Properties.Inhabited using (◊ ; [◊]-existence)
+open import Type.Properties.Inhabited using (◊ ; inhabitant)
 
 ------------------------------------------
 -- Swapping nested quantifiers
@@ -25,7 +25,7 @@ module _ {ℓₒ₁}{ℓₒ₂}{ℓₗ} {X : Type{ℓₒ₁}}{Y : Type{ℓₒ₂
 
 module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} ⦃ pos : ◊ X ⦄ {P : Stmt{ℓₗ}} where
   [∃]-unnecessary-intro : P → ∃{Obj = X}(x ↦ P)
-  [∃]-unnecessary-intro(p) = [∃]-intro([◊]-existence ⦃ pos ⦄) ⦃ p ⦄
+  [∃]-unnecessary-intro(p) = [∃]-intro(inhabitant ⦃ pos ⦄) ⦃ p ⦄
 
 module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} {P : Stmt{ℓₗ}} where
   [∀]-unnecessary-intro : P → ∀ₗ{Obj = X}(x ↦ P)
@@ -91,13 +91,13 @@ module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} {P : X → Stmt{ℓₗ}} where
 
 module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} ⦃ pos : ◊ X ⦄ {P : X → Stmt{ℓₗ}} where
   [¬∃]-to-[∃¬] : ¬(∃ P) → ∃(¬_ ∘ P)
-  [¬∃]-to-[∃¬] (nexpx) = [∃]-intro ([◊]-existence ⦃ pos ⦄) ⦃ [¬∃]-to-[∀¬] {ℓₒ}{ℓₗ} {X}{P} (nexpx) ⦄
+  [¬∃]-to-[∃¬] (nexpx) = [∃]-intro (inhabitant ⦃ pos ⦄) ⦃ [¬∃]-to-[∀¬] {ℓₒ}{ℓₗ} {X}{P} (nexpx) ⦄
 
   [¬∃]-to-[¬∀] : ¬(∃ P) → ¬(∀ₗ P)
   [¬∃]-to-[¬∀] = ([∃¬]-to-[¬∀] {ℓₒ}{ℓₗ} {X}{P}) ∘ [¬∃]-to-[∃¬]
 
   [∀¬]-to-[¬∀] : ∀ₗ(¬_ ∘ P) → ¬(∀ₗ P)
-  [∀¬]-to-[¬∀] axnpx axpx = (axnpx{[◊]-existence ⦃ pos ⦄}) (axpx{[◊]-existence ⦃ pos ⦄})
+  [∀¬]-to-[¬∀] axnpx axpx = (axnpx{inhabitant ⦃ pos ⦄}) (axpx{inhabitant ⦃ pos ⦄})
 
 ------------------------------------------
 -- Introducing negations to change quantifier
@@ -148,7 +148,7 @@ module _ {ℓₒ}{ℓₗ} {X : Type{ℓₒ}} ⦃ pos : ◊ X ⦄ {P : X → Stmt
   -- Note: If X would be empty, then this would be unprovable because [∀]-elim needs a constructed element.
   [∀ₑ]-to-[∃] : ∀ₗ(x ↦ P(x)) → ∃(x ↦ P(x))
   [∀ₑ]-to-[∃] (apx) =
-    [∃]-intro ([◊]-existence ⦃ pos ⦄) ⦃ [∀ₑ]-elim{Obj = X}{P = P}(apx) ⦄
+    [∃]-intro (inhabitant ⦃ pos ⦄) ⦃ [∀ₑ]-elim{Obj = X}{P = P}(apx) ⦄
 
 ------------------------------------------
 -- "Distributing" quantifiers into logical operators

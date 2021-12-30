@@ -13,9 +13,11 @@ open import Function.Iteration
 open import Function.Iteration.Proofs
 open import Logic
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Numeral.Natural
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Relator
 open import Type
 
 private variable ℓ : Lvl.Level
@@ -128,7 +130,7 @@ module _ where
 
   [∈]-tails : ((tail ^ n)(l) ⊆ l)
   [∈]-tails {n = 𝟎}   {l = l} {a} tailn = tailn
-  [∈]-tails {n = 𝐒 n} {l = l} {a} tailn = [∈]-tail ([∈]-tails {n = n} {l = tail l} {a} ([≡]-substitutionₗ ([^]-inner-value {f = tail}{x = l}{n}) {a ∈_} tailn))
+  [∈]-tails {n = 𝐒 n} {l = l} {a} tailn = [∈]-tail ([∈]-tails {n = n} {l = tail l} {a} (substitute₁ₗ(a ∈_) ([^]-inner-value {f = tail}{x = l}{n}) tailn))
 
   [∈]-head-tail : (head(tail(l)) ∈ l)
   [∈]-head-tail = [∈]-tail ([∈]-head)

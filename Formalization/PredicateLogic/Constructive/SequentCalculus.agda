@@ -166,7 +166,7 @@ module Variant3 where
 
   module _ ⦃ pos-prop : ◊(Prop(0)) ⦄ where
     no-excludedMiddle : Meta.¬(∀{A : Formula(vars)} → (∅ ⇒ (A ∨ (¬ A))))
-    no-excludedMiddle as = proof(as{[◊]-existence $ S.∅}) where
+    no-excludedMiddle as = proof(as{inhabitant $ S.∅}) where
       proof : Meta.¬(∅ ⇒ ((p $ x) ∨ ¬(p $ x)))
       proof (permuteₗ perm q)            rewrite Proofs.permutes-on-empty perm = proof q
       proof (∨ᵣₗ (permuteₗ perm q))      rewrite Proofs.permutes-on-empty perm = no-empty-axiomᵣ q
@@ -175,7 +175,7 @@ module Variant3 where
       proof (∨ᵣᵣ (⟶ᵣ (permuteₗ perm q))) rewrite Proofs.permutes-on-singleton perm = no-empty-axiomₗ q
 
     no-doubleNegation : Meta.¬(∀{A : Formula(vars)} → (∅ ⇒ ((¬ ¬ A) ⟶ A)))
-    no-doubleNegation as = proof(as{[◊]-existence $ S.∅}) where
+    no-doubleNegation as = proof(as{inhabitant $ S.∅}) where
       proof : Meta.¬(∅ ⇒ ((¬ ¬(p $ x)) ⟶ (p $ x)))
       proof (permuteₗ perm q) rewrite Proofs.permutes-on-empty perm = proof q
       proof (⟶ᵣ (permuteₗ perm q)) = {!!}
@@ -189,7 +189,7 @@ module Variant3 where
     {-# INLINE test #-}
 
     no-callCC : Meta.¬(∀{A B : Formula(vars)} → (∅ ⇒ ((A ⟶ B) ⟶ A) ⟶ A))
-    no-callCC as = proof(as{[◊]-existence $ S.∅}{⊥}) where
+    no-callCC as = proof(as{inhabitant $ S.∅}{⊥}) where
       proof2 : Meta.¬((∅ ∪· ((p $ x ⟶ ⊥) ⟶ p $ x) ∪· p $ x) ⇒ ⊥)
       proof2 (permuteₗ x t) = {!t!}
 

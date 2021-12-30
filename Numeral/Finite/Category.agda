@@ -1,9 +1,71 @@
 module Numeral.Finite.Category where
 
-open import Functional
-import      Lvl
 open import Numeral.Finite
 open import Numeral.Natural
+
+module _ where
+  open import Data
+  open import Logic.Predicate
+  open import Logic.Propositional
+  open import Numeral.Finite.Proofs
+  open import Numeral.Finite.SequenceTransform
+  open import Numeral.Finite.SequenceTransform.Proofs
+  import      Numeral.Natural.Relation.Order as ℕ
+  open import Relator.Equals
+  open import Relator.Equals.Proofs.Equiv
+  open import Structure.Function.Domain
+  open import Structure.Relator.Properties
+  open import Type.Properties.MereProposition
+  open import Type.Properties.Proofs
+  open import Type.Size
+
+  [≤][≼]-𝕟-compatibility : ∀{a b} → (a ℕ.≤ b) ↔ (𝕟(a) ≼ 𝕟(b))
+  [≤][≼]-𝕟-compatibility = [↔]-intro l r where
+    l : ∀{a b} → (a ℕ.≤ b) ← (𝕟(a) ≼ 𝕟(b))
+    l{𝟎}     {b}     ([∃]-intro f) = ℕ.min
+    l{𝐒 a}   {𝟎}     ([∃]-intro f) with () ← f(𝟎)
+    l{𝐒 a}   {𝐒(𝐒 b)}([∃]-intro f) = ℕ.succ(l{a}{𝐒 b} ([∃]-intro (popShiftMap f) ⦃ popShiftMap-injective ⦄))
+    l{𝐒 𝟎}   {𝐒 𝟎}   ([∃]-intro f) = ℕ.succ ℕ.min
+    l{𝐒(𝐒 a)}{𝐒 𝟎}   ([∃]-intro f) with () ← injective(f) {𝟎}{𝐒 𝟎} (uniqueness(𝕟(1)) ⦃ inst = unit-is-prop ⦄)
+
+    r : ∀{a b} → (a ℕ.≤ b) → (𝕟(a) ≼ 𝕟(b))
+    r ℕ.min       = [∃]-intro (\()) ⦃ intro \{} ⦄
+    r (ℕ.succ ab) =
+      let [∃]-intro f = r ab
+      in  [∃]-intro (prependIdMap f) ⦃ prependIdMap-injective ⦄
+
+  {-
+  -- TODO: One can use [≼]-to-[≽]-for-inhabited to prove that there is a surjection. The classical-fiber-existence parameter should hold for 𝕟 because it is finite (use linear search)
+  [≥][≽]-𝕟-compatibility : ∀{a b} → (a ℕ.≥ b) ↔ (𝕟(a) ≽ 𝕟(b))
+  [≥][≽]-𝕟-compatibility = [↔]-intro l r where
+    l : ∀{a b} → (a ℕ.≥ b) ← (𝕟(a) ≽ 𝕟(b))
+    l{a}  {𝟎}      ([∃]-intro f) = ℕ.min
+    l{𝟎}  {𝐒 b}    ([∃]-intro f) with () ← [∃]-witness(surjective(f) {𝟎})
+    l{𝐒 a}{𝐒 𝟎}    ([∃]-intro f) = ℕ.succ ℕ.min
+    l{𝐒 a}{𝐒(𝐒 b)} ([∃]-intro f) = ℕ.succ(l{a}{𝐒 b} ([∃]-intro (popShiftMap f) ⦃ {!!} ⦄))
+
+    r : ∀{a b} → (a ℕ.≥ b) → (𝕟(a) ≽ 𝕟(b))
+    r ab = {!!}
+  -}
+
+  open import Logic.Classical
+  open import Numeral.Natural.Relation.Order.Proofs
+  open import Numeral.Natural.Decidable
+  open import Type.Size.Proofs
+  open import Type.Properties.Decidable.Proofs
+
+  instance
+    𝕟-injective : Injective(𝕟)
+    𝕟-injective =
+      intro(contrapositiveₗ ⦃ decider-to-classical ⦄ \nxy nxny →
+        nxy(antisymmetry(ℕ._≤_)(_≡_)
+          ([↔]-to-[←] [≤][≼]-𝕟-compatibility (sub₂(_≡_)(\A B → A ≼ B) nxny))
+          ([↔]-to-[←] [≤][≼]-𝕟-compatibility (sub₂(_≡_)(\A B → A ≼ B) (symmetry(_≡_) nxny)))
+        )
+      )
+
+open import Functional
+import      Lvl
 open import Type
 open import Syntax.Function
 
@@ -33,12 +95,13 @@ module _ where
   𝕟-functor : Groupoid.Functor(identityTypeGroupoid{T = ℕ})(𝕟-identityTypeGroupoid) id
   𝕟-functor = idTransportFunctor
 
+  {- TODO: This works when using the INJECTIVE pragma on 𝕟 because injective(𝕟) becomes equal definitionally
   instance
     𝕟-injectivity : Injective(𝕟)
     𝕟-injectivity = intro proof where
       proof : Names.Injective(𝕟)
       proof {𝟎}   {𝟎}    [≡]-intro = [≡]-intro
-      proof {𝐒 a} {𝐒 .a} [≡]-intro = [≡]-with(𝐒) (proof [≡]-intro)
+      proof {𝐒 a} {𝐒 .a} [≡]-intro = congruence₁(𝐒) (proof [≡]-intro)
 
   𝕟-inverse-functor : Groupoid.Functor(𝕟-identityTypeGroupoid)(identityTypeGroupoid{T = ℕ}) id
   Groupoid.Functor.map 𝕟-inverse-functor = injective(𝕟)
@@ -61,6 +124,7 @@ module _ where
       rewrite proof{x}
       rewrite Groupoid.Functor.id-preserving 𝕟-inverse-functor {x}
       = [≡]-intro
+  -}
 
   open import Function.Equals
   open import Numeral.Finite.Bound
@@ -76,8 +140,8 @@ module _ where
   Function.congruence (Category.Functor.map-function bound-functor) [≡]-intro = reflexivity(_⊜_)
   Category.Functor.op-preserving bound-functor {x}{y}{z} {p}{q} = proof{x}{y}{z} {p}{q} where
     proof : ∀{x y z}{p : (y ≤ z)}{q : (x ≤ y)} → (bound-[≤] (transitivity(_≤_) q p) ⊜ (bound-[≤] p) ∘ (bound-[≤] q))
-    _⊜_.proof (proof {𝐒 x} {𝐒 y} {𝐒 z} {succ _} {succ _}) {𝟎}   = [≡]-intro
-    _⊜_.proof (proof {𝐒 x} {𝐒 y} {𝐒 z} {succ _} {succ _}) {𝐒 n} = congruence₁(𝐒) (_⊜_.proof (proof {x} {y} {z}) {n})
+    _⊜_.proof (proof {𝐒 x} {𝐒 y} {𝐒 z} {succ _}  {succ _})  {𝟎}   = [≡]-intro
+    _⊜_.proof (proof {𝐒 x} {𝐒 y} {𝐒 z} {succ yz} {succ xy}) {𝐒 n} = congruence₁(𝐒) (_⊜_.proof (proof {x}{y}{z} {yz}{xy}) {n})
   Category.Functor.id-preserving bound-functor {n} = proof{n} where
     proof : ∀{n} → (bound-[≤] (reflexivity(_≤_) {n}) ⊜ id)
     _⊜_.proof (proof {𝟎})   {()}

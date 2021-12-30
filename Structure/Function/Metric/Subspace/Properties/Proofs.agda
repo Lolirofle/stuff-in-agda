@@ -205,16 +205,16 @@ module _
     [∁]-preserves-[⋂][⋃] : ⦃ rel : UnaryRelator ⦃ intro(_≡ₛ_) ⦃ [≡]-equivalence ⦄ ⦄ Es ⦄ → (∁(⋂ Es) ≡ₛ ⋃(unmap ∁(Es)))
     [∁]-preserves-[⋂][⋃] {Es = Es} ⦃ rel = rel ⦄ = [↔]-intro
       (\([∃]-intro E ⦃ [∧]-intro p q ⦄) a → a p q)
-      ([∃]-map ∁ ([∧]-map (substitute₁ ⦃ _ ⦄ (Es) ⦃ rel ⦄ double-negation) id ∘ [¬→][∧]ᵣ) ∘ ([¬∀]-to-[∃¬] ⦃ classical ⦄))
+      ([∃]-map ∁ ([∧]-map (substitute₁ᵣ ⦃ _ ⦄ (Es) ⦃ rel ⦄ double-negation) id ∘ [¬→][∧]ᵣ) ∘ ([¬∀]-to-[∃¬] ⦃ classical ⦄))
 
     [∁]-preserves-[⋃][⋂] : ⦃ rel : UnaryRelator ⦃ intro(_≡ₛ_) ⦃ [≡]-equivalence ⦄ ⦄ Es ⦄ → (∁(⋃ Es) ≡ₛ ⋂(unmap ∁(Es)))
     [∁]-preserves-[⋃][⋂] {Es = Es} ⦃ rel = rel ⦄ = [↔]-intro
-      (\a ([∃]-intro E ⦃ [∧]-intro p q ⦄) → a{∁ E} (substitute₁ ⦃ _ ⦄ (Es) ⦃ rel ⦄ double-negation p) q)
+      (\a ([∃]-intro E ⦃ [∧]-intro p q ⦄) → a{∁ E} (substitute₁ᵣ ⦃ _ ⦄ (Es) ⦃ rel ⦄ double-negation p) q)
       (\ne {E} EnEs → [¬¬]-elim \nxE → ne ([∃]-intro (∁ E) ⦃ [∧]-intro EnEs nxE ⦄))
 
     instance
       UnaryRelator-unaryRelator : ∀{ℓ ℓₑ ℓₗ}{T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ → UnaryRelator ⦃ intro(_≡ₛ_ {ℓₗ}) ⦃ [≡]-equivalence ⦄ ⦄ (UnaryRelator{A = T})
-      UnaryRelator.substitution UnaryRelator-unaryRelator PQ (intro relP) = intro \xy → [↔]-to-[→] PQ ∘ relP xy ∘ [↔]-to-[←] PQ
+      UnaryRelator-unaryRelator = UnaryRelator-introᵣ ⦃ _ ⦄ \PQ relP → UnaryRelator-introᵣ \{_}{_} xy → [↔]-to-[→] (PQ{_}) ∘ substitute₁ᵣ _ ⦃ relP ⦄ xy ∘ [↔]-to-[←] (PQ{_})
 
     union-is-closed : ⦃ UnaryRelator(E₁) ⦄ → ⦃ UnaryRelator(E₂) ⦄ → Closed(E₁) → Closed(E₂) → Closed(E₁ ∪ E₂)
     union-is-closed {E₁ = E₁}{E₂ = E₂} cl1 cl2 = [↔]-to-[→] (open-closed-eq2 ⦃ [∨]-unaryRelator ⦄) ([↔]-to-[→] (Open-function (symmetry(_≡ₛ_) (\{x} → [∁]-preserves-[∪][∩] {E₁ = E₁}{E₂ = E₂}{x}))) (intersection-is-open ([↔]-to-[←] open-closed-eq2 cl1) ([↔]-to-[←] open-closed-eq2 cl2)))
@@ -223,7 +223,7 @@ module _
     intersection-is-closed {E₁ = E₁}{E₂ = E₂} cl1 cl2 = [↔]-to-[→] (open-closed-eq2 ⦃ [∧]-unaryRelator ⦄) ([↔]-to-[→] (Open-function (symmetry(_≡ₛ_) (\{x} → [∁]-preserves-[∩][∪] {E₁ = E₁}{E₂ = E₂}{x}))) (union-is-open ([↔]-to-[←] open-closed-eq2 cl1) ([↔]-to-[←] open-closed-eq2 cl2)))
 
     big-intersection-is-closed : ⦃ rel : UnaryRelator ⦃ intro(_≡ₛ_) ⦃ [≡]-equivalence ⦄ ⦄ Es ⦄ → (∀{E} → (E ∈ Es) → UnaryRelator(E)) → (∀{E} → (E ∈ Es) → Closed(E)) → Closed(⋂ Es)
-    big-intersection-is-closed {Es = Es} ⦃ rel = rel ⦄ rel-E Ec = [↔]-to-[→] (open-closed-eq2 ⦃ [∀]-unaryRelator ⦃ rel-P = [→]-dependent-unaryRelator rel-E ⦄ ⦄) ([↔]-to-[→] (Open-function (symmetry(_≡ₛ_) (\{x} → [∁]-preserves-[⋂][⋃] {Es = Es}{x}))) (big-union-is-open \{E} p → [↔]-to-[←] (open-closed-eq1 ⦃ substitute₁ ⦃ _ ⦄ (UnaryRelator) ⦃ UnaryRelator-unaryRelator ⦄ (\{x} → [↔]-symmetry (double-negation ⦃ classical ⦄)) ([¬]-unaryRelator ⦃ rel-P = rel-E p ⦄) ⦄) (Ec{∁ E} p)))
+    big-intersection-is-closed {Es = Es} ⦃ rel = rel ⦄ rel-E Ec = [↔]-to-[→] (open-closed-eq2 ⦃ [∀]-unaryRelator ⦃ rel-P = [→]-dependent-unaryRelator rel-E ⦄ ⦄) ([↔]-to-[→] (Open-function (symmetry(_≡ₛ_) (\{x} → [∁]-preserves-[⋂][⋃] {Es = Es}{x}))) (big-union-is-open \{E} p → [↔]-to-[←] (open-closed-eq1 ⦃ substitute₁ᵣ ⦃ _ ⦄ (UnaryRelator) ⦃ UnaryRelator-unaryRelator ⦄ (\{x} → [↔]-symmetry (double-negation ⦃ classical ⦄)) ([¬]-unaryRelator ⦃ rel-P = rel-E p ⦄) ⦄) (Ec{∁ E} p)))
 
 {-
     interior-is-largest-open-subspace : ∀{ℓ₁ ℓ₂}{E : PredSet{ℓ₁}(M)}{Eₛ : PredSet{ℓ₂}(M)} → Open(Eₛ) → (Eₛ ⊆ E) → (Eₛ ⊆ Interior(E))

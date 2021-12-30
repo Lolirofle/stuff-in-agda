@@ -72,6 +72,7 @@ module _ where
   crossMulAlt(_▫_) (x₁ /ₙ y₁) (x₂ /ₙ y₂) = (x₁ ℕ.⋅ y₂) ▫ (y₁ ℕ.⋅ x₂)
 
   open import Logic.Propositional
+  open import Logic.Propositional.Equiv
   import      Numeral.Natural.Oper.Proofs as ℕ
   import      Numeral.Natural.Relation as ℕ
   open import Relator.Equals.Proofs.Equiv
@@ -97,11 +98,11 @@ module _ where
     )
     • (xy23 ⇒
       (x₂ ℕ.⋅ y₃) ▫ (x₃ ℕ.⋅ y₂)                   ⇒-[ [↔]-to-[→] (p{z = y₁}) ]
-      ((x₂ ℕ.⋅ y₃) ℕ.⋅ y₁) ▫ ((x₃ ℕ.⋅ y₂) ℕ.⋅ y₁) ⇒-[ substitute₂ₗ(_▫_) (One.commuteᵣ-assocₗ{a = x₂}{b = y₃}{c = y₁}) ]
+      ((x₂ ℕ.⋅ y₃) ℕ.⋅ y₁) ▫ ((x₃ ℕ.⋅ y₂) ℕ.⋅ y₁) ⇒-[ substitute₂-₁ᵣ(_▫_) _ (One.commuteᵣ-assocₗ{a = x₂}{b = y₃}{c = y₁}) ]
       ((x₂ ℕ.⋅ y₁) ℕ.⋅ y₃) ▫ ((x₃ ℕ.⋅ y₂) ℕ.⋅ y₁) ⇒-end
     )
     ⇒₂-[ transitivity(_▫_) ]
-    ((x₁ ℕ.⋅ y₂) ℕ.⋅ y₃) ▫ ((x₃ ℕ.⋅ y₂) ℕ.⋅ y₁) ⇒-[ substitute₂(_▫_) (One.commuteᵣ-assocₗ{a = x₁}{b = y₂}{c = y₃}) (One.commuteᵣ-assocₗ{a = x₃}{b = y₂}{c = y₁}) ]
+    ((x₁ ℕ.⋅ y₂) ℕ.⋅ y₃) ▫ ((x₃ ℕ.⋅ y₂) ℕ.⋅ y₁) ⇒-[ substitute₂ᵣ(_▫_) (One.commuteᵣ-assocₗ{a = x₁}{b = y₂}{c = y₃}) (One.commuteᵣ-assocₗ{a = x₃}{b = y₂}{c = y₁}) ]
     ((x₁ ℕ.⋅ y₃) ℕ.⋅ y₂) ▫ ((x₃ ℕ.⋅ y₁) ℕ.⋅ y₂) ⇒-[ [↔]-to-[←] (p{x₁ ℕ.⋅ y₃}{x₃ ℕ.⋅ y₁}{y₂}) ]
     (x₁ ℕ.⋅ y₃) ▫ (x₃ ℕ.⋅ y₁)                   ⇒-[]
     crossMul(_▫_) (x₁ /ₙ y₁) (x₃ /ₙ y₃)         ⇒-end

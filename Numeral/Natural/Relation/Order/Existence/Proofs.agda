@@ -4,6 +4,7 @@ import Lvl
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Numeral.Natural
@@ -12,7 +13,8 @@ open import Numeral.Natural.Oper.Proofs
 open import Numeral.Natural.Induction
 open import Numeral.Natural.Relation.Order.Existence
 open import Relator.Equals
-open import Relator.Equals.Proofs
+open import Relator.Equals.Proofs.Equiv
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Operator
 open import Structure.Operator.Properties
@@ -36,7 +38,7 @@ open import Type
 [≤][0]ᵣ-negation {x} (Sx≤0) = [𝐒]-not-0([↔]-to-[→] ([≤][0]ᵣ {𝐒(x)}) (Sx≤0))
 
 [≤]-successor : ∀{a b : ℕ} → (a ≤ b) → (a ≤ 𝐒(b))
-[≤]-successor ([∃]-intro(n) ⦃ proof ⦄) = [∃]-intro (𝐒(n)) ⦃ [≡]-with(𝐒) (proof) ⦄
+[≤]-successor ([∃]-intro(n) ⦃ proof ⦄) = [∃]-intro (𝐒(n)) ⦃ congruence₁(𝐒) (proof) ⦄
 
 [≤]-predecessor : ∀{a b : ℕ} → (𝐒(a) ≤ b) → (a ≤ b)
 [≤]-predecessor ([∃]-intro n) = [∃]-intro(𝐒(n))

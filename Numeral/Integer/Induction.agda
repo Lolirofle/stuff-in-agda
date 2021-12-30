@@ -1,6 +1,7 @@
 module Numeral.Integer.Induction where
 
 open import Functional.Dependent
+open import Logic.Propositional.Equiv
 import      Lvl
 open import Numeral.Integer
 open import Numeral.Integer.Construction
@@ -10,6 +11,7 @@ open import Numeral.Natural as ℕ using (ℕ)
 open import Numeral.Natural.Induction
 import      Numeral.Sign as Sign
 open import Relator.Equals.Proofs
+open import Structure.Relator
 open import Type
 
 private variable ℓ : Lvl.Level
@@ -36,4 +38,4 @@ private variable ℓ : Lvl.Level
 
 -- An recursion proof method with similarities to the recursion for ℕ.
 ℤ-signed-step-recursion : (P : ℤ → Type{ℓ}) → P(𝟎) → (∀(s)(n) → P(signed s n) → P(step s (signed s n))) → (∀(n) → P(n))
-ℤ-signed-step-recursion P zero step = ℤ-sign-recursion P ([≡]-substitutionᵣ [𝐏]-negative {P} ∘₂ step(Sign.➖)) zero (step(Sign.➕))
+ℤ-signed-step-recursion P zero step = ℤ-sign-recursion P (substitute₁ᵣ(P) [𝐏]-negative ∘₂ step(Sign.➖)) zero (step(Sign.➕))

@@ -18,6 +18,7 @@ open import Numeral.Natural.Relation.DivisibilityWithRemainder
 open import Numeral.Natural.Relation.DivisibilityWithRemainder.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function
 open import Structure.Operator
 open import Structure.Operator.Proofs.Util
 open import Structure.Operator.Properties
@@ -31,7 +32,7 @@ open import Syntax.Transitivity
   x                                                            🝖-end
 
 [⌊/⌋][mod]-is-division-with-remainder-pred-commuted : ∀{x y} ⦃ _ : Positive(y) ⦄ → ((y ⋅ (x ⌊/⌋ y)) + (x mod y) ≡ x)
-[⌊/⌋][mod]-is-division-with-remainder-pred-commuted {x} {𝐒 y} = [≡]-with(_+ (x mod 𝐒(y))) (commutativity(_⋅_) {𝐒(y)}{x ⌊/⌋ 𝐒(y)}) 🝖 [⌊/⌋][mod]-is-division-with-remainder {x}{y}
+[⌊/⌋][mod]-is-division-with-remainder-pred-commuted {x} {𝐒 y} = congruence₁(_+ (x mod 𝐒(y))) (commutativity(_⋅_) {𝐒(y)}{x ⌊/⌋ 𝐒(y)}) 🝖 [⌊/⌋][mod]-is-division-with-remainder {x}{y}
 
 -- Floored division and multiplication is not inverse operators for all numbers.
 -- This shows why it is not exactly.

@@ -1,9 +1,9 @@
 module Function.Multi₌.Functions where
 
 open import Data
-open import Data.Tuple renaming (curry to curry₁ ; uncurry to uncurry₁) hiding (swap ; map ; repeat)
+open import Data.Tuple as Tuple renaming (curry to curry₁ ; uncurry to uncurry₁) hiding (swap ; map ; repeat)
 open import Data.Tuple.Raise
-open import Data.Tuple.Raiseᵣ.Functions
+open import Data.Tuple.Raiseᵣ.Functions as Raise
 open import Data.Tuple.RaiseTypeᵣ
 import      Data.Tuple.RaiseTypeᵣ.Functions as RaiseTypeᵣ
 open import Function.Multi₌
@@ -121,7 +121,7 @@ f $[ i ] x = applyAt i x f
 -- Example:
 --   (f ∘ₗ g₁ g₂ g₃ ...) x₁ x₂ x₃ ... = f (g₁ x₁) (g₂ x₂) (g₃ x₃) ...
 -- TODO: Try to get rid of the curry/uncurry by using (_∘ᵣ_)
-_∘ₗ : ∀{n}{As : Type{ℓ} ^ n}{Bs : Type{ℓ} ^ n}{C} → (Bs ⇉₌ C) → (As ⦗ map₂(_→ᶠ_) ⦘ Bs) ⇉₌ (As ⇉₌ C)
+_∘ₗ : ∀{n}{As : Type{ℓ} ^ n}{Bs : Type{ℓ} ^ n}{C} → (Bs ⇉₌ C) → (As ⦗ Raise.map₂(_→ᶠ_) ⦘ Bs) ⇉₌ (As ⇉₌ C)
 _∘ₗ {n = 𝟎}      = id
 _∘ₗ {n = 𝐒(𝟎)}   = _∘_
 _∘ₗ {n = 𝐒(𝐒(n))} f g = curry{n = n} (gs ↦ x ↦ apply{n = n} gs (_∘ₗ {n = 𝐒(n)} (f(g(x)))))
@@ -166,7 +166,7 @@ _on_ {n = 𝐒(𝐒(n))} f g x     = _on_ {n = 𝐒(n)} (f(g(x))) g
 -- The resulting function is a function where each value is dependent on only one of its arguments.
 -- Note: The converse is not possible in general because one value can depend on multiple arguments. See `splitMultivariate` for a possible implementation of this idea.
 -- TODO: Why is this uncurried
-fnsToMultivariate : ∀{n}{As Bs : Type{ℓ} ^ 𝐒(n)} → (reduceᵣ(_⨯_) (As ⦗ map₂(_→ᶠ_) ⦘ Bs)) → (As ⇉₌ reduceᵣ(_⨯_) Bs)
+fnsToMultivariate : ∀{n}{As Bs : Type{ℓ} ^ 𝐒(n)} → (reduceᵣ(_⨯_) (As ⦗ Raise.map₂(_→ᶠ_) ⦘ Bs)) → (As ⇉₌ reduceᵣ(_⨯_) Bs)
 fnsToMultivariate {n = 𝟎}               = id
 fnsToMultivariate {n = 𝐒(n)} (f , fs) x = (f(x) ,_) ∘ᵣ fnsToMultivariate{n = n} fs
 

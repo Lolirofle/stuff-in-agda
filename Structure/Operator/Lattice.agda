@@ -35,7 +35,7 @@ record Semilattice (_▫_ : L → L → L) : Stmt{ℓ Lvl.⊔ ℓₑ} where
   order = Structure.Operator.Lattice.OrderRelation.order(L)(_▫_)
 
   partialOrder : Weak.PartialOrder(order)
-  BinaryRelator.substitution (Weak.PartialOrder.relator partialOrder) {x₁}{y₁}{x₂}{y₂} xy1 xy2 p =
+  Weak.PartialOrder.relator partialOrder = BinaryRelator-introᵣ \{x₁}{y₁}{x₂}{y₂} xy1 xy2 p →
     (y₁ ▫ y₂) 🝖[ _≡_ ]-[ congruence₂(_▫_) xy1 xy2 ]-sym
     (x₁ ▫ x₂) 🝖[ _≡_ ]-[ p ]
     x₂        🝖[ _≡_ ]-[ xy2 ]

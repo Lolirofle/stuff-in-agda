@@ -5,6 +5,7 @@ open import Data
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Logic.Predicate.Theorems
@@ -25,6 +26,7 @@ open import Numeral.Natural.Relation.Order.Existence.Proofs using ()
 open import Numeral.Natural.Relation.Divisibility
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function
 open import Structure.Operator
 open import Structure.Operator.Proofs.Util
 open import Structure.Operator.Properties
@@ -49,13 +51,13 @@ Even-mereProposition : ∀{n} → MereProposition(Even(n))
 Even-mereProposition = intro proof where
   proof : ∀{n}{p q : Even n} → (p ≡ q)
   proof {𝟎}       {Even0}   {Even0}   = [≡]-intro
-  proof {𝐒(𝐒(n))} {Even𝐒 p} {Even𝐒 q} = [≡]-with(Even𝐒) (proof {n} {p} {q})
+  proof {𝐒(𝐒(n))} {Even𝐒 p} {Even𝐒 q} = congruence₁(Even𝐒) (proof {n} {p} {q})
 
 Odd-mereProposition : ∀{n} → MereProposition(Odd(n))
 Odd-mereProposition = intro proof where
   proof : ∀{n}{p q : Odd n} → (p ≡ q)
   proof {𝐒(𝟎)}    {Odd0}   {Odd0}   = [≡]-intro
-  proof {𝐒(𝐒(n))} {Odd𝐒 p} {Odd𝐒 q} = [≡]-with(Odd𝐒) (proof {n} {p} {q})
+  proof {𝐒(𝐒(n))} {Odd𝐒 p} {Odd𝐒 q} = congruence₁(Odd𝐒) (proof {n} {p} {q})
 -}
 
 {-
@@ -96,7 +98,7 @@ divides-[⋅]-existence = [↔]-intro l r where
   l yx = [∃]-intro (divides-quotient yx) ⦃ divides-quotient-correctness {yx = yx} ⦄
 
   r : ∀{x y} → (∃(n ↦ y ⋅ n ≡ x)) → (y ∣ x)
-  r {x}{y} ([∃]-intro n ⦃ y⋅n≡x ⦄) = [≡]-substitutionᵣ y⋅n≡x {y ∣_} (DivN{y}(n))
+  r {x}{y} ([∃]-intro n ⦃ y⋅n≡x ⦄) = substitute₂-₂ᵣ(_∣_)(y) y⋅n≡x (DivN{y}(n))
 
 divides-[⋅]-existence₊ : ∀{x y} → (y ∣ 𝐒(x)) → ∃(n ↦ y ⋅ 𝐒(n) ≡ 𝐒(x))
 divides-[⋅]-existence₊ {x}{y} p with [↔]-to-[←] (divides-[⋅]-existence{𝐒(x)}{y}) p
@@ -111,7 +113,7 @@ instance
         (n₁ ⋅ n₂)
         ⦃
           (symmetry(_≡_) (associativity(_⋅_) {a}{n₁}{n₂}))
-          🝖 ([≡]-with(expr ↦ expr ⋅ n₂) (a⋅n₁≡b))
+          🝖 (congruence₁(_⋅ n₂) (a⋅n₁≡b))
           🝖 (b⋅n₂≡c)
         ⦄
       )
@@ -125,7 +127,7 @@ divides-with-[+] {a}{b}{c} (a-div-b) (a-div-c) with ([↔]-to-[←] divides-[⋅
       (n₁ + n₂)
       ⦃
         (distributivityₗ(_⋅_)(_+_) {a}{n₁}{n₂})
-        🝖 ([≡]-with-op(_+_)
+        🝖 (congruence₂(_+_)
           (a⋅n₁≡b)
           (a⋅n₂≡c)
         )
@@ -141,7 +143,7 @@ divides-with-[−₀] {a}{b}{c} (a-div-b) (a-div-c) with ([↔]-to-[←] divides
       (n₁ −₀ n₂)
       ⦃
         (distributivityₗ(_⋅_)(_−₀_) {a}{n₁}{n₂})
-        🝖 ([≡]-with-op(_−₀_)
+        🝖 (congruence₂(_−₀_)
           (a⋅n₁≡b)
           (a⋅n₂≡c)
         )
@@ -152,15 +154,15 @@ divides-with-[−₀] {a}{b}{c} (a-div-b) (a-div-c) with ([↔]-to-[←] divides
 divides-without-[+] : ∀{a b c} → (a ∣ (b + c)) → ((a ∣ b) ↔ (a ∣ c))
 divides-without-[+] {a}{b}{c} abc = [↔]-intro (l abc) (r abc) where
   l : ∀{a b c} → (a ∣ (b + c)) → (a ∣ b) ← (a ∣ c)
-  l{a}{b}{c} abc ac = [≡]-substitutionᵣ ([−₀]ₗ[+]ᵣ-nullify{b}{c}) {expr ↦ (a ∣ expr)} (divides-with-[−₀] {a}{b + c}{c} abc ac)
+  l{a}{b}{c} abc ac = substitute₁ᵣ(a ∣_) ([−₀]ₗ[+]ᵣ-nullify{b}{c}) (divides-with-[−₀] {a}{b + c}{c} abc ac)
 
   r : ∀{a b c} → (a ∣ (b + c)) → (a ∣ b) → (a ∣ c)
-  r{a}{b}{c} abc ab = l {a}{c}{b} ([≡]-substitutionᵣ (commutativity(_+_) {b}{c}) {expr ↦ a ∣ expr} abc) ab
+  r{a}{b}{c} abc ab = l {a}{c}{b} (substitute₁ᵣ(a ∣_) (commutativity(_+_) {b}{c}) abc) ab
 
 divides-without-[−₀] : ∀{a b c} → (b ≥ c) → (a ∣ (b −₀ c)) → ((a ∣ b) ↔ (a ∣ c))
 divides-without-[−₀] ord abc = [↔]-intro
-  (\ac → substitute₂ᵣ(_∣_) ([↔]-to-[→] [−₀][+]-nullify2ᵣ ord) (divides-with-[+] abc ac))
-  (\ab → substitute₂ᵣ(_∣_) ([↔]-to-[→] [−₀]-nested-sameₗ ord) (divides-with-[−₀] ab abc))
+  (\ac → substitute₁ᵣ(_ ∣_) ([↔]-to-[→] [−₀][+]-nullify2ᵣ ord) (divides-with-[+] abc ac))
+  (\ab → substitute₁ᵣ(_ ∣_) ([↔]-to-[→] [−₀]-nested-sameₗ ord) (divides-with-[−₀] ab abc))
 
 divides-with-[𝄩] : ∀{a b c} → (a ∣ b) → (a ∣ c) → (a ∣ (b 𝄩 c))
 divides-with-[𝄩] {a} ab ac
@@ -176,9 +178,8 @@ instance
   [1]-divides : ∀{n} → (1 ∣ n)
   [1]-divides {𝟎}    = Div𝟎
   [1]-divides {𝐒(n)} =
-    [≡]-substitutionₗ
+    substitute₁ₗ(1 ∣_)
       (commutativity(_+_) {n}{1})
-      {expr ↦ (1 ∣ expr)}
       (Div𝐒([1]-divides{n}))
 
 [∣][1]-minimal : Weak.Properties.LE.Minimum(_∣_)(𝟏)
@@ -212,10 +213,10 @@ divides-with-[⋅] {a}{b}{c} = [∨]-elim (l{a}{b}{c}) (r{a}{b}{c}) where
   l : ∀{a b c} → (a ∣ b) → (a ∣ (b ⋅ c))
   l Div𝟎 = Div𝟎
   l {a}{a}{c} (Div𝐒 Div𝟎) = DivN{a} c
-  l {a} {.(a + x)} {c} (Div𝐒 {.a} {x} ab@(Div𝐒 _)) = [≡]-substitutionₗ (distributivityᵣ(_⋅_)(_+_) {a}{x}{c}) {a ∣_} (divides-with-[+] (l {a}{a}{c} (Div𝐒 Div𝟎)) (l {a}{x}{c} ab))
+  l {a} {.(a + x)} {c} (Div𝐒 {.a} {x} ab@(Div𝐒 _)) = substitute₁ₗ(a ∣_) (distributivityᵣ(_⋅_)(_+_) {a}{x}{c}) (divides-with-[+] (l {a}{a}{c} (Div𝐒 Div𝟎)) (l {a}{x}{c} ab))
 
   r : ∀{a b c} → (a ∣ c) → (a ∣ (b ⋅ c))
-  r {a}{b}{c} ac = [≡]-substitutionᵣ (commutativity(_⋅_) {c}{b}) {a ∣_} (l {a}{c}{b} ac)
+  r {a}{b}{c} ac = substitute₁ᵣ(a ∣_) (commutativity(_⋅_) {c}{b}) (l {a}{c}{b} ac)
 
 divides-upper-limit : ∀{a b} ⦃ pos : Positive(b) ⦄ → (a ∣ b) → (a ≤ b)
 divides-upper-limit {𝟎}   {𝐒 _}  proof = [⊥]-elim ([0]-divides-not proof)
@@ -234,7 +235,7 @@ Div𝐏 {x}{y} proof = [↔]-to-[→] (divides-without-[+] {y}{y}{x} proof) (ref
 
 Div𝐏-monus : ∀{x y : ℕ} → (y ∣ x) → (y ∣ (x −₀ y))
 Div𝐏-monus Div𝟎 = Div𝟎
-Div𝐏-monus {.(y + x)}{y} (Div𝐒 {_}{x} yx) = [≡]-substitutionₗ ([−₀]ₗ[+]ₗ-nullify {y}{x}) {y ∣_} yx
+Div𝐏-monus {.(y + x)}{y} (Div𝐒 {_}{x} yx) = substitute₁ₗ(y ∣_) ([−₀]ₗ[+]ₗ-nullify {y}{x}) yx
 
 divides-with-[⋅]ₗ-both : ∀{x y z} → (x ∣ y) → (z ⋅ x ∣ z ⋅ y)
 divides-with-[⋅]ₗ-both {x} {.0}       {z} Div𝟎 = Div𝟎
@@ -263,7 +264,7 @@ divides-without-[⋅]ᵣ-both {x}{y}{z} p
   = [↔]-to-[→] divides-[⋅]-existence ([∃]-intro n ⦃ [⋅]-cancellationᵣ{𝐒(z)} (symmetry(_≡_) (One.commuteᵣ-assocₗ{_▫_ = _⋅_}{x}{𝐒(z)}{n}) 🝖 peq) ⦄)
 
 divides-without-[⋅]ₗ-both : ∀{x y z} → (𝐒(z) ⋅ x ∣ 𝐒(z) ⋅ y) → (x ∣ y)
-divides-without-[⋅]ₗ-both {x}{y}{z} p = divides-without-[⋅]ᵣ-both {x}{y}{z} (substitute₂(_∣_) (commutativity(_⋅_) {𝐒(z)}{x}) (commutativity(_⋅_) {𝐒(z)}{y}) p)
+divides-without-[⋅]ₗ-both {x}{y}{z} p = divides-without-[⋅]ᵣ-both {x}{y}{z} (substitute₂ᵣ(_∣_) (commutativity(_⋅_) {𝐒(z)}{x}) (commutativity(_⋅_) {𝐒(z)}{y}) p)
 
 divides-without-[⋅]ᵣ-both' : ∀{x y z} ⦃ pos : Positive(z) ⦄ → (x ⋅ z ∣ y ⋅ z) → (x ∣ y)
 divides-without-[⋅]ᵣ-both' {x}{y}{𝐒(z)} = divides-without-[⋅]ᵣ-both {x}{y}{z}

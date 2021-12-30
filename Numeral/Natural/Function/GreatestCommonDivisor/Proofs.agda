@@ -146,6 +146,7 @@ gcd-of-successor = Gcd.intro₂ [1]-divides [1]-divides p where
   p Div𝟎 dsn = dsn
   p (Div𝐒 dn) dsn = p dn ([↔]-to-[→] (divides-without-[+] dsn) (reflexivity(_∣_)))
 
+open import Logic.Propositional.Equiv
 open import Logic.Propositional.Theorems
 open import Numeral.Natural.Coprime
 open import Numeral.Natural.Coprime.Proofs
@@ -175,15 +176,15 @@ instance
     • (
       Gcd.divisorₗ gcd-D ⇒
       (D ∣ (a ⌊/⌋₀ d))         ⇒-[ divides-with-[⋅]ᵣ-both {z = d} ]
-      (D ⋅ d ∣ (a ⌊/⌋₀ d) ⋅ d) ⇒-[ substitute₂ᵣ(_∣_) ([⋅][⌊/⌋₀]-inverseOperatorᵣ (gcd-dividesₗ {b = b})) ]
-      (D ⋅ d ∣ a)              ⇒-[ substitute₂ₗ(_∣_) (commutativity(_⋅_) {D}{d}) ]
+      (D ⋅ d ∣ (a ⌊/⌋₀ d) ⋅ d) ⇒-[ substitute₂-₂ᵣ(_∣_) _ ([⋅][⌊/⌋₀]-inverseOperatorᵣ (gcd-dividesₗ {b = b})) ]
+      (D ⋅ d ∣ a)              ⇒-[ substitute₂-₁ᵣ(_∣_) _ (commutativity(_⋅_) {D}{d}) ]
       (d ⋅ D ∣ a)              ⇒-end
     )
     • (
       Gcd.divisorᵣ gcd-D ⇒
       (D ∣ (b ⌊/⌋₀ d))         ⇒-[ divides-with-[⋅]ᵣ-both {z = d} ]
-      (D ⋅ d ∣ (b ⌊/⌋₀ d) ⋅ d) ⇒-[ substitute₂ᵣ(_∣_) ([⋅][⌊/⌋₀]-inverseOperatorᵣ (gcd-dividesᵣ {a = a})) ]
-      (D ⋅ d ∣ b)              ⇒-[ substitute₂ₗ(_∣_) (commutativity(_⋅_) {D}{d}) ]
+      (D ⋅ d ∣ (b ⌊/⌋₀ d) ⋅ d) ⇒-[ substitute₂-₂ᵣ(_∣_) _ ([⋅][⌊/⌋₀]-inverseOperatorᵣ (gcd-dividesᵣ {a = a})) ]
+      (D ⋅ d ∣ b)              ⇒-[ substitute₂-₁ᵣ(_∣_) _ (commutativity(_⋅_) {D}{d}) ]
       (d ⋅ D ∣ b)              ⇒-end
     )
     ⇒₂-[ Gcd.maximum₂ Gcd-gcd ]
@@ -194,7 +195,7 @@ instance
     Coprime(a ⌊/⌋₀ d) (b ⌊/⌋₀ d) ⇒-end
 
 [⌊/⌋]-gcd-coprime : (nz : Positive(a) ∨ Positive(b)) → Coprime((a ⌊/⌋ gcd(a)(b)) ⦃ [↔]-to-[→] gcd-positive nz ⦄) ((b ⌊/⌋ gcd(a)(b)) ⦃ [↔]-to-[→] gcd-positive nz ⦄)
-[⌊/⌋]-gcd-coprime {a}{b} nz = substitute₂(Coprime)
+[⌊/⌋]-gcd-coprime {a}{b} nz = substitute₂ᵣ(Coprime)
   ([⌊/⌋][⌊/⌋₀]-equality ⦃ [↔]-to-[→] gcd-positive nz ⦄)
   ([⌊/⌋][⌊/⌋₀]-equality ⦃ [↔]-to-[→] gcd-positive nz ⦄)
   ([⌊/⌋₀]-gcd-coprime nz)
@@ -238,7 +239,7 @@ divides-[⋅]-lcm {a}{b} = Lcm.minimum₂(Lcm-lcm{a}{b}) (divides-with-[⋅] {c 
 
 divides-with-[⋅]ₗ : Coprime a b → (a ∣ c) → (b ∣ c) → ((a ⋅ b) ∣ c)
 divides-with-[⋅]ₗ {a}{b}{𝟎} _ _ _ = Div𝟎
-divides-with-[⋅]ₗ {a}{b}{c@(𝐒 _)} coprim = substitute₂ₗ(_∣_) ([⋅]-lcm-coprim coprim) ∘₂ Lcm.minimum₂ (Lcm-lcm{a}{b}) {c}
+divides-with-[⋅]ₗ {a}{b}{c@(𝐒 _)} coprim = substitute₂-₁ᵣ(_∣_)(_) ([⋅]-lcm-coprim coprim) ∘₂ Lcm.minimum₂ (Lcm-lcm{a}{b}) {c}
 
 coprime-divides-only-when-1 : Coprime a b → (a ∣ b) → (a ≡ 1)
 coprime-divides-only-when-1 (intro cop) div = cop (reflexivity(_∣_)) div

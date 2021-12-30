@@ -130,7 +130,7 @@ module _
   instance _ = identity-eliminator-to-reflexive-subrelation
   instance _ = minimal-reflection-to-relator
 
-  identity-eliminator-relator-of-refl : ∀{P : T → Stmt}{x}{p : P(x)} → (substitute₁(P) refl p ≡ₘ p)
+  identity-eliminator-relator-of-refl : ∀{P : T → Stmt}{x}{p : P(x)} → (substitute₁ᵣ(P) refl p ≡ₘ p)
   identity-eliminator-relator-of-refl {p = p} = sub₂(_≡ₘ_)((_≡ₘ_) on₂ (apply p)) ⦃ minimal-reflection-transport ⦄ identity-eliminator-transport-of-refl
 module _
   {_≡_ : T → T → Type{ℓₑ}}

@@ -1,25 +1,20 @@
 module Type.Properties.Empty.Proofs where
 
-import      Data.Tuple
-open import Data
+open import Data as Data using (Empty)
 open import Functional
 open import Logic.Propositional
 import      Lvl
-open import Type.Properties.Inhabited
 open import Type.Properties.Empty
 open import Type
 
-private variable ℓ : Lvl.Level
+private variable ℓ ℓₜ : Lvl.Level
 private variable A B T : Type{ℓ}
 
--- A type is never inhabited and empty at the same time.
-notInhabitedAndEmpty : (◊ T) → IsEmpty(T) → ⊥
-notInhabitedAndEmpty (intro ⦃ obj ⦄) (intro empty) with () ← empty{Empty} (obj)
-
 -- A type being empty is equivalent to the existence of a function from the type to the empty type of any universe level.
-empty-negation-eq : IsEmpty(T) ↔ (T → Empty{ℓ})
-IsEmpty.empty (Data.Tuple.left empty-negation-eq nt) = empty ∘ nt
-Data.Tuple.right empty-negation-eq (intro e) t with () ← e {Empty} t
+empty-negation-eq : IsEmpty{ℓₜ}(T) ↔ (T → Empty{ℓ})
+empty-negation-eq = [↔]-intro
+  (intro ∘ (Data.empty ∘_))
+  (e ↦ Data.empty ∘ empty ⦃ e ⦄)
 
-empty-by-function : (f : A → B) → (IsEmpty{ℓ}(B) → IsEmpty{ℓ}(A))
+empty-by-function : (f : A → B) → (IsEmpty{ℓₜ}(A) ← IsEmpty{ℓₜ}(B))
 empty-by-function f (intro empty-B) = intro(empty-B ∘ f)

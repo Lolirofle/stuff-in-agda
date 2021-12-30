@@ -44,11 +44,11 @@ module _ ⦃ zfc : ZFC ⦄ where
     let
       instance
         pos-rel : UnaryRelator(x ↦ P ∨ (x ≡ 𝑇))
-        pos-rel = [∨]-unaryRelator ⦃ rel-Q = binary-unaryRelatorᵣ ⦄
+        pos-rel = [∨]-unaryRelator ⦃ rel-Q = BinaryRelator-unary₁(_≡_) ⦄
 
       instance
         neg-rel : UnaryRelator(x ↦ P ∨ (x ≡ 𝐹))
-        neg-rel = [∨]-unaryRelator ⦃ rel-Q = binary-unaryRelatorᵣ ⦄
+        neg-rel = [∨]-unaryRelator ⦃ rel-Q = BinaryRelator-unary₁(_≡_) ⦄
 
       pos = filter (x ↦ P ∨ (x ≡ 𝑇)) BoolSet
       neg = filter (x ↦ P ∨ (x ≡ 𝐹)) BoolSet

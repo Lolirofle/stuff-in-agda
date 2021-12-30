@@ -40,7 +40,7 @@ module _ ⦃ setLike : SetLike{ℓ₁}{ℓ₁}{ℓ₂}{C}{C} (_∈_) {ℓ₄}{�
     private
       instance
         big-intersection-filter-unaryRelator : ⦃ _ : Equiv{ℓₗ}(E) ⦄ ⦃ _ : BinaryRelator{B = C}(_∈_) ⦄ → ∀{As} → UnaryRelator(\a → ∀{A} → (A ∈ As) → (a ∈ A))
-        big-intersection-filter-unaryRelator ⦃ [∈]-binaryRelator ⦄ = [∀]-unaryRelator ⦃ rel-P = \{A} → [→]-unaryRelator ⦃ rel-P = const-unaryRelator ⦄ ⦃ rel-Q = BinaryRelator.left (binaryRelator(_∈_)) {A} ⦄ ⦄
+        big-intersection-filter-unaryRelator ⦃ [∈]-binaryRelator ⦄ = [∀]-unaryRelator ⦃ rel-P = \{A} → [→]-unaryRelator ⦃ rel-P = const-unaryRelator ⦄ ⦃ rel-Q = BinaryRelator.unary₁ _ (binaryRelator(_∈_)) {A} ⦄ ⦄
 
     filter-big-union-to-big-intersection : ⦃ _ : BinaryRelator(_∈_) ⦄ ⦃ _ : FilterFunction(_∈_){ℓ = ℓ₁ Lvl.⊔ ℓ₂} ⦄ ⦃ _ : BigUnionOperator(_∈_)(_∈_) ⦄ → BigIntersectionOperator(_∈_)(_∈_)
     BigIntersectionOperator.⋂ filter-big-union-to-big-intersection As = filter(\a → ∀{A} → (A ∈ As) → (a ∈ A))(⋃ As)
@@ -92,8 +92,8 @@ module _ ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{�
       where
 
       filter-to-intersection : ⦃ _ : FilterFunction(_∈_){ℓ = ℓ₃} ⦄ → IntersectionOperator(_∈_)
-      IntersectionOperator._∩_ filter-to-intersection a b = filter (_∈ b) ⦃ unaryRelator = BinaryRelator.left infer ⦄ a
-      IntersectionOperator.membership filter-to-intersection = Filter.membership ⦃ unaryRelator = BinaryRelator.left infer ⦄
+      IntersectionOperator._∩_ filter-to-intersection a b = filter (_∈ b) ⦃ unaryRelator = BinaryRelator.unary₁ _ infer ⦄ a
+      IntersectionOperator.membership filter-to-intersection = Filter.membership ⦃ unaryRelator = BinaryRelator.unary₁ _ infer ⦄
 
   module _ ⦃ equivalence : Equivalence(_≡_) ⦄ where
     private
@@ -117,7 +117,7 @@ module _ ⦃ setLike : SetLike{ℓ₁}{ℓ₂}{ℓ₃}{C}{E} (_∈_) {ℓ₄}{�
       BinaryRelator.substitution [⊆]-binaryRelator p1 p2 ps = sub₂(_≡_)(_⊇_) p1 🝖 ps 🝖 sub₂(_≡_)(_⊆_) p2
 
       [⊇]-binaryRelator : BinaryRelator(_⊇_)
-      BinaryRelator.substitution [⊇]-binaryRelator = swap(substitute₂(_⊆_) ⦃ [⊆]-binaryRelator ⦄)
+      BinaryRelator.substitution [⊇]-binaryRelator = swap(substitute₂ᵣ(_⊆_) ⦃ [⊆]-binaryRelator ⦄)
 
   [≡]-to-[⊆] : (_≡_) ⊆₂ (_⊆_)
   _⊆₂_.proof [≡]-to-[⊆] =

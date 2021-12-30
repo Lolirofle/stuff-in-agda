@@ -53,11 +53,11 @@ min-correctness{x}{y} = min-intro(m ↦ (m ≤ x) ∧ (m ≤ y))
 min-when-left : (x ≤ y) ↔ (min x y ≡ x)
 min-when-left{x}{y} = min-intro(m ↦ (x ≤ y) ↔ (m ≡ x))
   (xy ↦ [↔]-intro (const xy) (const(reflexivity(_≡_))))
-  (yx ↦ [↔]-intro (sub₂(_≡_)(_≤_) ⦃ reflexive-binaryRelator-sub ⦄ ∘ symmetry(_≡_)) (antisymmetry(_≤_)(_≡_) yx))
+  (yx ↦ [↔]-intro (sub₂(_≡_)(_≤_) ⦃ reflexive-rel-sub ⦄ ∘ symmetry(_≡_)) (antisymmetry(_≤_)(_≡_) yx))
 
 min-when-right : (x ≥ y) ↔ (min x y ≡ y)
 min-when-right{x}{y} = min-intro(m ↦ (x ≥ y) ↔ (m ≡ y))
-  (xy ↦ [↔]-intro (sub₂(_≡_)(_≤_) ⦃ reflexive-binaryRelator-sub ⦄ ∘ symmetry(_≡_)) (antisymmetry(_≤_)(_≡_) xy))
+  (xy ↦ [↔]-intro (sub₂(_≡_)(_≤_) ⦃ reflexive-rel-sub ⦄ ∘ symmetry(_≡_)) (antisymmetry(_≤_)(_≡_) xy))
   (yx ↦ [↔]-intro (const yx) (const(reflexivity(_≡_))))
 
 min-self : (min x x ≡ x)
@@ -75,7 +75,7 @@ instance
       (y21 ↦ p2)
     )
     where
-      instance _ = subrelation-transitivity-to-subtransitivityₗ ⦃ reflexive-binaryRelator-sub ⦃ equiv ⦄ {_▫_ = _≤_} ⦃ Weak.TotalOrder.reflexivity ⦃ equiv ⦄ ord ⦄ ⦃ Weak.TotalOrder.relator ⦃ equiv ⦄ ord ⦄ ⦄ ⦃ Weak.TotalOrder.transitivity ⦃ equiv ⦄ ord ⦄
+      instance _ = subrelation-transitivity-to-subtransitivityₗ ⦃ reflexive-rel-sub ⦃ equiv ⦄ {_▫_ = _≤_} ⦃ Weak.TotalOrder.reflexivity ⦃ equiv ⦄ ord ⦄ ⦃ Weak.TotalOrder.relator ⦃ equiv ⦄ ord ⦄ ⦄ ⦃ Weak.TotalOrder.transitivity ⦃ equiv ⦄ ord ⦄
 
 instance
   min-commutativity : Commutativity(min)

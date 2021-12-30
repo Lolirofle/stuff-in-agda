@@ -93,7 +93,7 @@ module _ {T : Type{ℓ}} where
   [<]-limitᵣ-inv (limitᵣ{n} p) = [∃]-intro n ⦃ p ⦄
 
   [<]-lim-minimal : ⦃ ◊ T ⦄ → (𝟎 < lim f)
-  [<]-lim-minimal = limitᵣ{i = [◊]-existence} minimal
+  [<]-lim-minimal = limitᵣ{i = inhabitant} minimal
 
   [<]-lim-maximum : (f(n) < lim f)
   [<]-of-step : (x < 𝐒(x))
@@ -162,7 +162,7 @@ module _ {T : Type{ℓ}} where
   open import Relator.Equals renaming (_≡_ to _≡ₑ_)
   [<]-less-than-one : ⦃ ◊ T ⦄ → (x < 𝐒(𝟎)) → (x ≡ₑ 𝟎)
   [<]-less-than-one minimal = [≡]-intro
-  [<]-less-than-one (limitₗ p) with () ← p{[◊]-existence}
+  [<]-less-than-one (limitₗ p) with () ← p{inhabitant}
 
   [<][≤]-semitransitivityₗ : ⦃ ◊ T ⦄ → (x ≤ y) → (y < z) → (x < z)
   [<][≤]-semitransitivityₗ {_}        {y}        {.(lim _)} xy                 (limitᵣ yz)  = limitᵣ ([<][≤]-semitransitivityₗ xy yz)
@@ -171,7 +171,7 @@ module _ {T : Type{ℓ}} where
   [<][≤]-semitransitivityₗ {.𝟎}       {.(lim _)} {.(𝐒 _)}    minimal            (limitₗ x)  = minimal
   [<][≤]-semitransitivityₗ {.(𝐒 _)}   {.(𝐒 _)}   {.(𝐒 _)}    (step xy)          (step yz)   = step ([<][≤]-semitransitivityₗ xy yz)
   [<][≤]-semitransitivityₗ {.(𝐒 _)}   {.(lim _)} {.(𝐒 _)}    (step (limitᵣ xy)) (limitₗ yz) = step ([<][≤]-semitransitivityₗ xy yz)
-  [<][≤]-semitransitivityₗ {.(lim _)} {.𝟎}       {.(𝐒 _)}    (limitₗ xy)        minimal     with () ← xy{[◊]-existence}
+  [<][≤]-semitransitivityₗ {.(lim _)} {.𝟎}       {.(𝐒 _)}    (limitₗ xy)        minimal     with () ← xy{inhabitant}
   [<][≤]-semitransitivityₗ {.(lim _)} {.(𝐒 _)}   {.(𝐒 _)}    (limitₗ xy)        (step yz)   = limitₗ ([<][≤]-semitransitivityₗ xy yz)
   [<][≤]-semitransitivityₗ {.(lim _)} {.(lim _)} {.(𝐒 _)}    (limitₗ xy)        (limitₗ yz) = limitₗ ([<][≤]-semitransitivityₗ ([∃]-proof([<]-limitᵣ-inv xy)) yz)
 
@@ -185,7 +185,7 @@ module _ {T : Type{ℓ}} where
   [<][≤]-semitransitivityᵣ {.𝟎}       {.(𝐒 𝟎)}       {.(𝐒 _)}   minimal (step minimal)         = minimal
   [<][≤]-semitransitivityᵣ {.𝟎}       {.(𝐒 (𝐒 _))}   {.(𝐒 _)}   minimal (step (step yz))       = minimal
   [<][≤]-semitransitivityᵣ {.𝟎}       {.(𝐒 (lim _))} {.(𝐒 _)}   minimal (step (limitₗ yz))     = minimal
-  [<][≤]-semitransitivityᵣ {.𝟎}       {.(𝐒 _)}       {.(lim _)} minimal (step (limitᵣ yz))     = limitᵣ{[◊]-existence} minimal
+  [<][≤]-semitransitivityᵣ {.𝟎}       {.(𝐒 _)}       {.(lim _)} minimal (step (limitᵣ yz))     = limitᵣ{inhabitant} minimal
   [<][≤]-semitransitivityᵣ {.(𝐒 _)}   {.(𝐒 _)}       {𝐒 z}      (step xy) (step yz)            = step ([<][≤]-semitransitivityᵣ xy yz)
   [<][≤]-semitransitivityᵣ {.(𝐒 _)}   {.(𝐒 _)}       {lim z}    (step xy) (step (limitᵣ yz))   = limitᵣ (step ([<][≤]-semitransitivityᵣ xy yz))
   [<][≤]-semitransitivityᵣ {.(lim _)} {.(𝐒 _)}       {𝐒 z}      (limitₗ xy) (step yz)          = limitₗ ([<][≤]-semitransitivityᵣ xy yz)
@@ -277,7 +277,7 @@ module _ {T : Type{ℓ}} where
   -}
 
   lim-of-constant : ⦃ ◊ T ⦄ → (lim(const x) ≡ 𝐒(x))
-  lim-of-constant = [∧]-intro (step (limitᵣ{[◊]-existence} [<]-of-step)) (limitₗ [<]-of-step)
+  lim-of-constant = [∧]-intro (step (limitᵣ{inhabitant} [<]-of-step)) (limitₗ [<]-of-step)
 
   lim-of-sequence-with-maximum : ∀{max} → (∀{n} → (f(n) ≤ f(max))) → (lim f ≡ 𝐒(f(max)))
   lim-of-sequence-with-maximum{max = max} p = [∧]-intro (step (limitᵣ{max} [<]-of-step)) (limitₗ p)
@@ -311,7 +311,7 @@ module _ {T : Type{ℓ}} where
   [+]ᵣ-[<]-function : ⦃ ◊ T ⦄ → (y < z) → ((x + y) < (x + z))
   [+]ᵣ-[<]-function (minimal {𝟎})     = [<]-of-step
   [+]ᵣ-[<]-function (minimal {𝐒 x})   = [<]-stepᵣ ([+]ᵣ-[<]-function minimal)
-  [+]ᵣ-[<]-function (minimal {lim x}) = [<]-stepᵣ (limitᵣ{[◊]-existence} ([+]ᵣ-[<]-function minimal))
+  [+]ᵣ-[<]-function (minimal {lim x}) = [<]-stepᵣ (limitᵣ{inhabitant} ([+]ᵣ-[<]-function minimal))
   [+]ᵣ-[<]-function (step p)   = step ([+]ᵣ-[<]-function p)
   [+]ᵣ-[<]-function (limitₗ p) = limitₗ ([+]ᵣ-[<]-function p)
   [+]ᵣ-[<]-function (limitᵣ p) = limitᵣ ([+]ᵣ-[<]-function p)
@@ -335,7 +335,7 @@ module _ {T : Type{ℓ}} where
   Ordinal-accessibleₗ {n} = intro ⦃ proof{n} ⦄ where
     proof : ∀{y x} → ⦃ _ : (x < y) ⦄ → Strict.Properties.Accessibleₗ(_<_)(x)
     proof {_}        {𝟎}                          = intro ⦃ \ ⦃ ⦄ ⦄
-    proof {𝐒 𝟎}      {lim y} ⦃ limitₗ p ⦄         with () ← p{[◊]-existence}
+    proof {𝐒 𝟎}      {lim y} ⦃ limitₗ p ⦄         with () ← p{inhabitant}
     proof {𝐒 x}      {𝐒 y}   ⦃ step p ⦄           = intro ⦃ \{z} ⦃ pz ⦄ → Strict.Properties.Accessibleₗ.proof (Ordinal-accessibleₗ {x}) ⦃ [<][≤]-semitransitivityₗ pz p ⦄ ⦄
     proof {𝐒(𝐒 x)}   {lim y} ⦃ limitₗ p ⦄         = intro ⦃ \{z} ⦃ pz ⦄ → Strict.Properties.Accessibleₗ.proof (Ordinal-accessibleₗ {𝐒 x}) ⦃ [<][≤]-semitransitivityₗ ([∃]-proof([<]-limitᵣ-inv pz)) p ⦄ ⦄
     proof {𝐒(lim x)} {lim y} ⦃ limitₗ p ⦄         = intro ⦃ \{z} ⦃ pz ⦄ → Strict.Properties.Accessibleₗ.proof (Ordinal-accessibleₗ {lim x}) ⦃ [<][≤]-semitransitivityₗ ([∃]-proof([<]-limitᵣ-inv pz)) p ⦄ ⦄
@@ -373,9 +373,11 @@ module _ where
     ℕ-inhabited : ◊ ℕ
     ℕ-inhabited = intro ⦃ 𝟎 ⦄
 
+  open import Logic.Propositional.Equiv
+
   strictly-increasing-sequence-when-zero : (∀{n} → (f(n) < f(𝐒(n)))) → (f(n) ≡ₑ 𝟎) → (n ≡ₑ 𝟎)
   strictly-increasing-sequence-when-zero {f = f}{n = 𝟎} ord p = [≡]-intro
   strictly-increasing-sequence-when-zero {f = f}{n = 𝐒 n} ord p with f(n) | ord{n}
-  ... | 𝟎     | ord' with () ← [<]-irreflexivity (substitute₂ᵣ(_<_) p ord')
-  ... | 𝐒 fn  | ord' with () ← [<]-asymmetry minimal (substitute₂ᵣ(_<_) p ord')
-  ... | lim x | ord' with () ← [<]-asymmetry [<]-lim-minimal (substitute₂ᵣ(_<_) p ord')
+  ... | 𝟎     | ord' with () ← [<]-irreflexivity (substitute₂-₂ᵣ(_<_)(_) p ord')
+  ... | 𝐒 fn  | ord' with () ← [<]-asymmetry minimal (substitute₂-₂ᵣ(_<_)(_) p ord')
+  ... | lim x | ord' with () ← [<]-asymmetry [<]-lim-minimal (substitute₂-₂ᵣ(_<_)(_) p ord')

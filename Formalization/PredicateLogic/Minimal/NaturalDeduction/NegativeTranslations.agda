@@ -374,9 +374,9 @@ ggTrans-correctnessᵣ (Classical.[∨]-introᵣ p) = [⟶]-elim (ggTrans-correc
 ggTrans-correctnessᵣ (Classical.[∨]-elim p q r) = [⟶]-elim₃ ([⟶]-intro(weaken map-preserves-union-singleton (ggTrans-correctnessᵣ p))) ([⟶]-intro(weaken map-preserves-union-singleton (ggTrans-correctnessᵣ q))) (ggTrans-correctnessᵣ r) ([∨]-elim-by-[¬¬∧¬] ([¬¬]-elim-on-negativeFragment ggTrans-negativeFragment))
 ggTrans-correctnessᵣ (Classical.[⟶]-intro p) = [⟶]-intro (weaken map-preserves-union-singleton (ggTrans-correctnessᵣ p))
 ggTrans-correctnessᵣ (Classical.[⟶]-elim p q) = [⟶]-elim (ggTrans-correctnessᵣ p) (ggTrans-correctnessᵣ q)
-ggTrans-correctnessᵣ (Classical.[Ɐ]-intro p) = [Ɐ]-intro (substitute₁(_ ⊢_) ggTrans-substitute0 (ggTrans-correctnessᵣ p))
+ggTrans-correctnessᵣ (Classical.[Ɐ]-intro p) = [Ɐ]-intro (substitute₁ᵣ(_ ⊢_) ggTrans-substitute0 (ggTrans-correctnessᵣ p))
 ggTrans-correctnessᵣ (Classical.[Ɐ]-elim p) = substitute₁ₗ(_ ⊢_) ggTrans-substitute0 ([Ɐ]-elim (ggTrans-correctnessᵣ p))
-ggTrans-correctnessᵣ (Classical.[∃]-intro p) = [⟶]-elim (substitute₁(_ ⊢_) ggTrans-substitute0 (ggTrans-correctnessᵣ p)) [∃]-intro-by-[¬Ɐ¬]
+ggTrans-correctnessᵣ (Classical.[∃]-intro p) = [⟶]-elim (substitute₁ᵣ(_ ⊢_) ggTrans-substitute0 (ggTrans-correctnessᵣ p)) [∃]-intro-by-[¬Ɐ¬]
 ggTrans-correctnessᵣ (Classical.[∃]-elim p q) = [⟶]-elim ([⟶]-intro ([⟶]-elim ([Ɐ]-intro ([⟶]-intro ([⟶]-elim (weaken {!map-preserves-union-singleton!} (ggTrans-correctnessᵣ p)) (direct (Left (Right [≡]-intro)))))) (weaken-union (ggTrans-correctnessᵣ q)))) ([¬¬]-elim-on-negativeFragment ggTrans-negativeFragment)
 
 koTrans-stability : Stable{ℓ}(koTrans(φ))
@@ -441,14 +441,14 @@ ggTrans-koTransₗ {φ = φ ⟶ ψ} = [⟶]-elim₃
   (([⟶]-elim₂ (ggTrans-koTransᵣ {φ = φ}) (ggTrans-koTransₗ {φ = ψ}) [⟶]-map))
   [⟶]-map
 ggTrans-koTransₗ {Γ = Γ}{φ = Ɐ φ} = [⟶]-elim₃
-  ([⟶]-elim₂ [¬¬]-preserve-[Ɐ] ([⟶]-elim ([Ɐ]-intro (substitute₁(\φ → Γ ⊢ ((¬¬ φ) ⟶ φ)) koTrans-substitute0 koTrans-stability)) ([Ɐ]-map {φ₂ = koTrans φ})) [⟶]-trans)
+  ([⟶]-elim₂ [¬¬]-preserve-[Ɐ] ([⟶]-elim ([Ɐ]-intro (substitute₁ᵣ(\φ → Γ ⊢ ((¬¬ φ) ⟶ φ)) koTrans-substitute0 koTrans-stability)) ([Ɐ]-map {φ₂ = koTrans φ})) [⟶]-trans)
   [⟶]-refl
-  ([⟶]-elim ([Ɐ]-intro (substitute₂(\a b → Γ ⊢ (a ⟵ b)) ggTrans-substitute0 koTrans-substitute0 (ggTrans-koTransₗ {φ = substitute0 _ φ}))) [Ɐ]-map)
+  ([⟶]-elim ([Ɐ]-intro (substitute₂ᵣ(\a b → Γ ⊢ (a ⟵ b)) ggTrans-substitute0 koTrans-substitute0 (ggTrans-koTransₗ {φ = substitute0 _ φ}))) [Ɐ]-map)
   [⟶]-map
 ggTrans-koTransₗ {φ = ∃ φ} = [⟶]-elim₃
   ([⟶]-elim ([⟷]-to-[⟵] [¬]-preserve-[∃][Ɐ]) [⟶]-contrapositiveᵣ)
   [⟶]-refl
-  ([⟶]-elim ([⟶]-elim ([Ɐ]-intro ([⟶]-elim (substitute₂(\a b → _ ⊢ (a ⟵ b)) ggTrans-substitute0 koTrans-substitute0 (ggTrans-koTransₗ {φ = substitute0 _ φ})) [¬]-map)) [Ɐ]-map) [¬]-map)
+  ([⟶]-elim ([⟶]-elim ([Ɐ]-intro ([⟶]-elim (substitute₂ᵣ(\a b → _ ⊢ (a ⟵ b)) ggTrans-substitute0 koTrans-substitute0 (ggTrans-koTransₗ {φ = substitute0 _ φ})) [¬]-map)) [Ɐ]-map) [¬]-map)
   [⟶]-map
 
 ggTrans-koTransᵣ {φ = P $ x} = [⟶]-refl

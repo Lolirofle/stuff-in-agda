@@ -53,10 +53,10 @@ module _ {vars} ⦃ pos-term : ◊(Term(vars)) ⦄ where
   tree([∨]-elim   p q r) = Node 3 \{𝟎 → tree p ; (𝐒 𝟎) → tree q ; (𝐒(𝐒 𝟎)) → tree r}
   tree([⟶]-intro  p)     = Node 1 \{𝟎 → tree p}
   tree([⟶]-elim   p q)   = Node 2 \{𝟎 → tree p ; (𝐒 𝟎) → tree q}
-  tree([Ɐ]-intro  p)     = Node 1 \{𝟎 → tree (p{[◊]-existence})}
+  tree([Ɐ]-intro  p)     = Node 1 \{𝟎 → tree (p{inhabitant})}
   tree([Ɐ]-elim   p)     = Node 1 \{𝟎 → tree p}
   tree([∃]-intro  p)     = Node 1 \{𝟎 → tree p}
-  tree([∃]-elim   p q)   = Node 2 \{𝟎 → tree (p{[◊]-existence}) ; (𝐒 𝟎) → tree q}
+  tree([∃]-elim   p q)   = Node 2 \{𝟎 → tree (p{inhabitant}) ; (𝐒 𝟎) → tree q}
 
   height : (Γ ⊢ φ) → ℕ
   height = Tree.height ∘ tree

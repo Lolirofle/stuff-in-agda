@@ -5,6 +5,7 @@ open import Data
 import      Data.Tuple as Tuple
 open import Functional
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Numeral.Natural
 open import Numeral.Natural.Inductions
 open import Numeral.Natural.Oper

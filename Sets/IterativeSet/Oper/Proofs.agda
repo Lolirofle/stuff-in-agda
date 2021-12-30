@@ -79,18 +79,18 @@ module _ where
 
       indexFilter-elem-membership : ∀{i : Index(A)} → (elem(A)(i) ∈ indexFilter A P) ↔ P(i)
       Tuple.left   indexFilter-elem-membership = indexFilter-elem-membershipₗ
-      Tuple.right (indexFilter-elem-membership {i = i}) ([∃]-intro (intro iA PiA) ⦃ pp ⦄) = substitute₁(P) (injective(elem A) (symmetry(_≡_) pp)) PiA
+      Tuple.right (indexFilter-elem-membership {i = i}) ([∃]-intro (intro iA PiA) ⦃ pp ⦄) = substitute₁ᵣ(P) (injective(elem A) (symmetry(_≡_) pp)) PiA
 
   filter-elem-membership : ∀{A : Iset{ℓ}}{P} ⦃ _ : UnaryRelator(P) ⦄ {i : Index(A)} → (elem(A)(i) ∈ filter A P) ↔ P(elem(A)(i))
   Tuple.left  (filter-elem-membership {A = A}{P = P}) = indexFilter-elem-membershipₗ {A = A}{P = P ∘ elem(A)}
-  Tuple.right (filter-elem-membership {P = P}) ([∃]-intro (intro iA PiA) ⦃ pp ⦄) = substitute₁(P) (symmetry(_≡_) pp) PiA
+  Tuple.right (filter-elem-membership {P = P}) ([∃]-intro (intro iA PiA) ⦃ pp ⦄) = substitute₁ᵣ(P) (symmetry(_≡_) pp) PiA
 
   filter-membership : ∀{A : Iset{ℓ}}{P} ⦃ _ : UnaryRelator(P) ⦄ {x : Iset{ℓ}} → (x ∈ filter A P) ↔ ((x ∈ A) ∧ P(x))
-  ∃.witness (Tuple.left(filter-membership {P = P}) ([∧]-intro ([∃]-intro i ⦃ p ⦄) pb)) = intro i (substitute₁(P) p pb)
+  ∃.witness (Tuple.left(filter-membership {P = P}) ([∧]-intro ([∃]-intro i ⦃ p ⦄) pb)) = intro i (substitute₁ᵣ(P) p pb)
   ∃.proof   (Tuple.left(filter-membership) ([∧]-intro ([∃]-intro i ⦃ p ⦄) pb)) = p
   ∃.witness (Tuple.left (Tuple.right(filter-membership) ([∃]-intro (intro iA PiA) ⦃ pp ⦄))) = iA
   ∃.proof (Tuple.left (Tuple.right(filter-membership) ([∃]-intro (intro iA PiA) ⦃ pp ⦄))) = pp
-  Tuple.right (Tuple.right(filter-membership {P = P}) ([∃]-intro (intro iA PiA) ⦃ pp ⦄)) = substitute₁(P) (symmetry(_≡_) pp) PiA
+  Tuple.right (Tuple.right(filter-membership {P = P}) ([∃]-intro (intro iA PiA) ⦃ pp ⦄)) = substitute₁ᵣ(P) (symmetry(_≡_) pp) PiA
 
   mapSet-membership : ∀{A : Iset{ℓ}}{f} ⦃ _ : Function(f) ⦄ {y : Iset{ℓ}} → (y ∈ mapSet f(A)) ↔ ∃(x ↦ (x ∈ A) ∧ (y ≡ f(x)))
   ∃.witness (Tuple.left  (mapSet-membership)                         ([∃]-intro x ⦃ [∧]-intro xA fxy ⦄)) = [∃]-witness xA
@@ -135,7 +135,7 @@ module _ where
     _⊇_.proof (Tuple.right (∃.proof (℘-membershipₗ {A = A} {B = B} BA))) = _⊆_.proof BA
 
     ℘-membershipᵣ : ∀{A : Iset{ℓ}}{B : Iset{ℓ}} → (B ∈ ℘(A)) → (B ⊆ A)
-    ℘-membershipᵣ ([∃]-intro witness ⦃ b≡indexFilterBool ⦄) = substitute₂ₗ(_⊆_) (symmetry(_≡_) b≡indexFilterBool) indexFilterBool-subset
+    ℘-membershipᵣ ([∃]-intro witness ⦃ b≡indexFilterBool ⦄) = substitute₂-₁ₗ(_⊆_)(_) b≡indexFilterBool indexFilterBool-subset
 
     ℘-membership : ∀{A : Iset{ℓ}}{x : Iset{ℓ}} → (x ∈ ℘(A)) ↔ (x ⊆ A)
     ℘-membership = [↔]-intro ℘-membershipₗ ℘-membershipᵣ

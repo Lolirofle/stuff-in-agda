@@ -50,4 +50,4 @@ module _
     BinaryOperator.congruence (transition-binaryOperator (accessibleAutomaton d)) = congruence₂(transition d)
     start (accessibleAutomaton d) = [∃]-intro (start d) ⦃ accessible-start d ⦄
     Final (accessibleAutomaton d) PredSet.∋ [∃]-intro s = s ∈ Final d
-    UnaryRelator.substitution (PredSet.preserve-equiv (Final (accessibleAutomaton d))) {[∃]-intro x} {[∃]-intro y} = substitute₂ᵣ(_∋_) {intro (_∈ Final d)}
+    PredSet.preserve-equiv (Final (accessibleAutomaton d)) = UnaryRelator-introᵣ \{ {[∃]-intro x} {[∃]-intro y} → substitute₂-₂ᵣ(_∋_)(Final d) {x}{y} }

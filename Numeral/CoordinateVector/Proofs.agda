@@ -3,7 +3,7 @@ module Numeral.CoordinateVector.Proofs where
 import      Lvl
 open import Data.Boolean
 open import Data.Boolean.Stmt
-open import Data.Boolean.Stmt.Proofs
+open import Data.Boolean.Stmt.Logic
 import      Data.Either as Either
 import      Functional as Fn
 open import Function.Equals

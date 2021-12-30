@@ -82,7 +82,7 @@ module _ {ℓ₁ ℓ₂} {T : ℕ → Type{ℓ₁}} {P : (x : ℕ) → T(x) → 
     proof 𝟎 p = prec 𝟎 p [≡]-intro
     proof (𝐒 n) p = prec (𝐒 n) p {! ℕ-strong-recursion T rec (n)!}
     -- proof 𝟎 p = prec 𝟎 p {!ℕ-strong-recursion T rec 𝟎!}
-    -- proof (𝐒 n) p with a ← ℕ-strong-recursion T rec (𝐒 n) = {!prec (𝐒 n) p!} -- prec (𝐒 n) p ([≡]-with(rec(𝐒 n)) {![≡]-intro!})
+    -- proof (𝐒 n) p with a ← ℕ-strong-recursion T rec (𝐒 n) = {!prec (𝐒 n) p!} -- prec (𝐒 n) p (congruence₁(rec(𝐒 n)) {![≡]-intro!})
   -}
 
 {-

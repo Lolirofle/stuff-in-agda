@@ -34,7 +34,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(Z) ⦄ ⦃ int : Integer ⦃ equiv ⦄ (_+_)(
 
   negative-induction : ∀{ℓ}{P : Z → Type{ℓ}} ⦃ rel-p : UnaryRelator(P) ⦄ → P(𝟎) → (∀{n} → (n ≤ 𝟎) → P(n) → P(𝐏(n))) → (∀{n} → (n ≤ 𝟎) → P(n))
   negative-induction {P = P} pz ps {n} neg =
-    substitute₁(P) (involution(−_)) (positive-induction
+    substitute₁ᵣ(P) (involution(−_)) (positive-induction
       {P = P ∘ (−_)}
       ⦃ [∘]-unaryRelator ⦄
       (substitute₁ₗ(P) [−]-of-𝟎 pz)

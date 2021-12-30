@@ -4,6 +4,7 @@ open import Data
 open import Functional
 open import Logic
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Propositional.Theorems
 open import Numeral.Natural
 open import Numeral.Natural.Oper
@@ -16,6 +17,7 @@ open import Numeral.Natural.Relation.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Relator.Ordering.Proofs
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Operator
 open import Structure.Operator.Properties
@@ -66,10 +68,10 @@ open import Type
   r {𝟎}   {𝟎}    proof = [≡]-intro
   r {𝟎}   {𝐒(_)} proof = [≡]-intro
   r {𝐒(_)}{𝟎}    ()
-  r {𝐒(x)}{𝐒(y)} (succ proof) = [≡]-with(𝐒) (r{x}{y} (proof))
+  r {𝐒(x)}{𝐒(y)} (succ proof) = congruence₁(𝐒) (r{x}{y} (proof))
 
 [−₀][+]-nullify2ᵣ : ∀{x y} → (x ≤ y) ↔ ((y −₀ x) + x ≡ y)
-[−₀][+]-nullify2ᵣ {x}{y} = [↔]-transitivity [−₀][+]-nullify2 ([≡]-substitution (commutativity(_+_) {x}{y −₀ x}) {_≡ y})
+[−₀][+]-nullify2ᵣ {x}{y} = transitivity(_↔_) [−₀][+]-nullify2 (substitute₂-₁(_≡_)(y) (commutativity(_+_) {x}{y −₀ x}))
 
 [−₀]-when-0 : ∀{x y} → (x ≤ y) ↔ (x −₀ y ≡ 𝟎)
 [−₀]-when-0 {x}{y} = [↔]-intro (l{x}{y}) (r{x}{y}) where
@@ -148,7 +150,7 @@ open import Type
 [≤][+]ᵣ-same {a₁} {a₂} {𝐒 b} {𝟎}   (succ ord) = [≤][+]ᵣ-same{a₁}{a₂}{b}{𝟎} ord
 
 [≤][+]ₗ-same : ∀{a b c₁ c₂} → (a + c₁ ≤ a + c₂) → (b + c₁ ≤ b + c₂)
-[≤][+]ₗ-same {a}{b}{c₁}{c₂} ord = substitute₂(_≤_) (commutativity(_+_) {c₁}{b}) (commutativity(_+_) {c₂}{b}) ([≤][+]ᵣ-same {c₁}{c₂}{a}{b} (substitute₂(_≤_) (commutativity(_+_) {a}{c₁}) (commutativity(_+_) {a}{c₂}) ord))
+[≤][+]ₗ-same {a}{b}{c₁}{c₂} ord = substitute₂ᵣ(_≤_) (commutativity(_+_) {c₁}{b}) (commutativity(_+_) {c₂}{b}) ([≤][+]ᵣ-same {c₁}{c₂}{a}{b} (substitute₂ᵣ(_≤_) (commutativity(_+_) {a}{c₁}) (commutativity(_+_) {a}{c₂}) ord))
 
 [<][+]ᵣ-same : ∀{a₁ a₂ b c} → (a₁ + b < a₂ + b) → (a₁ + c < a₂ + c)
 [<][+]ᵣ-same {a₁}{a₂}{b}{c} = [≤][+]ᵣ-same {𝐒 a₁}{a₂}{b}{c}
@@ -181,7 +183,7 @@ open import Type
 
   r : ∀{x y} → (x ≥ y) → (x −₀ (x −₀ y) ≡ y)
   r{x}{y} x≥y =
-    x −₀ (x −₀ y)              🝖[ _≡_ ]-[ [≡]-with(_−₀ (x −₀ y)) (symmetry(_≡_) ([↔]-to-[→] ([−₀][+]-nullify2 {y}{x}) (x≥y)) 🝖 commutativity(_+_) {y}{x −₀ y}) ]
+    x −₀ (x −₀ y)              🝖[ _≡_ ]-[ congruence₁(_−₀ (x −₀ y)) (symmetry(_≡_) ([↔]-to-[→] ([−₀][+]-nullify2 {y}{x}) (x≥y)) 🝖 commutativity(_+_) {y}{x −₀ y}) ]
     ((x −₀ y) + y) −₀ (x −₀ y) 🝖[ _≡_ ]-[ [−₀]ₗ[+]ₗ-nullify {x −₀ y}{y} ]
     y                          🝖-end
 

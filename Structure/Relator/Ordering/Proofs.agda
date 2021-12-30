@@ -21,7 +21,7 @@ private variable x : A
 
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ ord : Weak.PartialOrder{T = T}(_≤_) ⦄ where
   [≡][≤]-sub : (_≡_) ⊆₂ (_≤_)
-  _⊆₂_.proof [≡][≤]-sub = apply (reflexivity(_≤_)) ∘ substitute₂ᵣ(_≤_)
+  _⊆₂_.proof [≡][≤]-sub = apply (reflexivity(_≤_)) ∘ substitute₂-₂ᵣ(_≤_)(_)
 
 module _ ⦃ trans : Transitivity{T = B}(_≤_) ⦄ where
   open Strict.Properties

@@ -6,6 +6,7 @@ import      Data.Tuple as Tuple
 open import Functional
 open import Logic
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Predicate
 open import Numeral.Natural
 open import Numeral.Natural.Induction
@@ -19,6 +20,7 @@ open import Structure.Operator
 open import Structure.Operator.Proofs.Util
 open import Structure.Operator.Properties
 import      Structure.Operator.Names as Names
+open import Structure.Relator
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
 
@@ -32,7 +34,7 @@ instance
 
 instance
   [+]-identityᵣ : Identityᵣ(_+_)(0)
-  Identityᵣ.proof([+]-identityᵣ) {x} = ℕ-elim _ [≡]-intro (x ↦ [≡]-with(𝐒) {x + 𝟎}{x}) x
+  Identityᵣ.proof([+]-identityᵣ) {x} = ℕ-elim _ [≡]-intro (x ↦ congruence₁(𝐒) {x + 𝟎}{x}) x
 
 instance
   [+]-identity : Identity (_+_) (0)
@@ -40,13 +42,13 @@ instance
 
 instance
   [+]-associativity : Associativity(_+_)
-  Associativity.proof([+]-associativity) {x}{y}{z} = ℕ-elim _ [≡]-intro (i ↦ [≡]-with(𝐒) {(x + y) + i} {x + (y + i)}) z
+  Associativity.proof([+]-associativity) {x}{y}{z} = ℕ-elim _ [≡]-intro (i ↦ congruence₁(𝐒) {(x + y) + i} {x + (y + i)}) z
 
 instance
   [+]-commutativity : Commutativity (_+_)
-  Commutativity.proof([+]-commutativity) {x}{y} = ℕ-elim _ base next y where
+  Commutativity.proof([+]-commutativity) {x}{y} = ℕ-elim(y ↦ Names.Commuting(_+_) x y) base next y where
     base = identityᵣ(_+_)(𝟎) 🝖 symmetry(_≡_) (identityₗ(_+_)(𝟎))
-    next = \i eq → ([≡]-with(𝐒) {x + i}{i + x} eq) 🝖 symmetry(_≡_) ([+]-stepₗ {i}{x})
+    next = \i eq → (congruence₁(𝐒) {x + i}{i + x} eq) 🝖 symmetry(_≡_) ([+]-stepₗ {i}{x})
 
 [+1]-and-[𝐒] : ∀{x : ℕ} → (x + 1 ≡ 𝐒(x))
 [+1]-and-[𝐒] {x} = [≡]-intro
@@ -55,7 +57,7 @@ instance
 [1+]-and-[𝐒] {x} = [+1]-and-[𝐒] {x} 🝖 commutativity(_+_) {x}{1}
 
 [⋅]-absorberₗ-raw : Names.Absorberₗ(_⋅_)(0)
-[⋅]-absorberₗ-raw {x} = ℕ-elim _ [≡]-intro (\i → [≡]-with(0 +_) {0 ⋅ i}{0}) x
+[⋅]-absorberₗ-raw {x} = ℕ-elim _ [≡]-intro (\i → congruence₁(0 +_) {0 ⋅ i}{0}) x
 {-# REWRITE [⋅]-absorberₗ-raw #-}
 instance
   [⋅]-absorberₗ : Absorberₗ(_⋅_)(0)
@@ -70,7 +72,7 @@ instance
   [⋅]-absorber = intro
 
 [⋅]-identityₗ-raw : Names.Identityₗ(_⋅_)(1)
-[⋅]-identityₗ-raw {x} = ℕ-elim _ [≡]-intro (\i eq → (commutativity(_+_) {1} {1 ⋅ i}) 🝖 ([≡]-with(𝐒) {_}{i} eq)) x
+[⋅]-identityₗ-raw {x} = ℕ-elim(x ↦ 1 ⋅ x ≡ x) [≡]-intro (\i eq → (commutativity(_+_) {1} {1 ⋅ i}) 🝖 (congruence₁(𝐒) {_}{i} eq)) x
 {-# REWRITE [⋅]-identityₗ-raw #-}
 instance
   [⋅]-identityₗ : Identityₗ(_⋅_)(1)
@@ -95,7 +97,7 @@ instance
       (x ⋅ 𝐒(z)) + (y ⋅ 𝐒(z))       🝖-end
 
 [⋅]-with-[𝐒]ₗ : ∀{x y} → (𝐒(x) ⋅ y ≡ (x ⋅ y) + y)
-[⋅]-with-[𝐒]ₗ {x}{y} = (distributivityᵣ(_⋅_)(_+_) {x}{1}{y}) 🝖 ([≡]-with(expr ↦ (x ⋅ y) + expr) ([⋅]-identityₗ-raw {y}))
+[⋅]-with-[𝐒]ₗ {x}{y} = (distributivityᵣ(_⋅_)(_+_) {x}{1}{y}) 🝖 (congruence₁(expr ↦ (x ⋅ y) + expr) ([⋅]-identityₗ-raw {y}))
 
 [⋅]-with-[𝐒]ᵣ : ∀{x y} → (x ⋅ 𝐒(y) ≡ x + (x ⋅ y))
 [⋅]-with-[𝐒]ᵣ = [≡]-intro
@@ -138,7 +140,7 @@ instance
 
 [+]-sum-is-0 : ∀{a b} → (a + b ≡ 0) → ((a ≡ 0) ∧ (b ≡ 0))
 [+]-sum-is-0 {a}{b} proof = [∧]-intro (l{a}{b} proof) r where
-  l = \{a b} → ℕ-elim(\b → (a + b ≡ 0) → (a ≡ 0)) id (\_ p → p ∘ [≡]-with(𝐏)) b
+  l = \{a b} → ℕ-elim(\b → (a + b ≡ 0) → (a ≡ 0)) id (\_ p → p ∘ congruence₁(𝐏)) b
   r = l{b}{a} (commutativity(_+_) {b}{a} 🝖 proof)
 
 [+]-positive : ∀{a b} → (Positive(a) ∨ Positive(b)) ↔ Positive(a + b)
@@ -157,7 +159,7 @@ instance
 [⋅]-product-is-1ₗ : ∀{a b} → (a ⋅ b ≡ 1) → (a ≡ 1)
 [⋅]-product-is-1ₗ {𝟎}   {_}   p = p
 [⋅]-product-is-1ₗ {𝐒 a} {𝟎}   ()
-[⋅]-product-is-1ₗ {𝐒 a} {𝐒 b} p = [≡]-with(𝐒) ([∧]-elimₗ ([+]-sum-is-0 (injective(𝐒) p)))
+[⋅]-product-is-1ₗ {𝐒 a} {𝐒 b} p = congruence₁(𝐒) ([∧]-elimₗ ([+]-sum-is-0 (injective(𝐒) p)))
 
 [⋅]-product-is-1ᵣ : ∀{a b} → (a ⋅ b ≡ 1) → (b ≡ 1)
 [⋅]-product-is-1ᵣ {a}{b} = [⋅]-product-is-1ₗ {b}{a} ∘ (commutativity(_⋅_) {b}{a} 🝖_)
@@ -242,7 +244,7 @@ instance
   InverseOperatorᵣ.proof [+][−₀]-inverseOperatorᵣ {x} {y} = [−₀]ₗ[+]ᵣ-nullify {x}{y}
 
 [−₀]ₗ[+]ₗ-nullify : ∀{x y} → ((x + y) −₀ x ≡ y)
-[−₀]ₗ[+]ₗ-nullify {x}{y} = [≡]-substitutionᵣ (commutativity(_+_) {y}{x}) {expr ↦ (expr −₀ x ≡ y)} ([−₀]ₗ[+]ᵣ-nullify {y}{x})
+[−₀]ₗ[+]ₗ-nullify {x}{y} = substitute₁ᵣ(expr ↦ (expr −₀ x ≡ y)) (commutativity(_+_) {y}{x}) ([−₀]ₗ[+]ᵣ-nullify {y}{x})
 instance
   [swap+][−₀]-inverseOperatorᵣ : InverseOperatorᵣ(swap(_+_))(_−₀_)
   InverseOperatorᵣ.proof [swap+][−₀]-inverseOperatorᵣ {x} {y} = [−₀]ₗ[+]ₗ-nullify {y}{x}
@@ -253,7 +255,7 @@ instance
 
 [−₀][+]ₗ-nullify : ∀{x y₁ y₂} → ((x + y₁) −₀ (x + y₂) ≡ y₁ −₀ y₂)
 [−₀][+]ₗ-nullify {x}{y₁}{y₂} =
-  [≡]-with-op(_−₀_) (commutativity(_+_) {x}{y₁}) (commutativity(_+_) {x}{y₂})
+  congruence₂(_−₀_) (commutativity(_+_) {x}{y₁}) (commutativity(_+_) {x}{y₂})
   🝖 [−₀][+]ᵣ-nullify{y₁}{y₂}{x}
 
 [−₀]-cases : ∀{x y} → ((x −₀ y) + y ≡ x) ∨ (x −₀ y ≡ 𝟎)
@@ -261,7 +263,7 @@ instance
 [−₀]-cases {𝟎}   {𝐒(_)} = [∨]-introᵣ [≡]-intro
 [−₀]-cases {𝐒(_)}{𝟎}    = [∨]-introₗ [≡]-intro
 [−₀]-cases {𝐒(x)}{𝐒(y)} with [−₀]-cases {x}{y}
-... | [∨]-introₗ proof = [∨]-introₗ ([≡]-with(𝐒) (proof))
+... | [∨]-introₗ proof = [∨]-introₗ (congruence₁(𝐒) (proof))
 ... | [∨]-introᵣ proof = [∨]-introᵣ proof
 
 [−₀]-cases-commuted : ∀{x y} → (y + (x −₀ y) ≡ x) ∨ (x −₀ y ≡ 𝟎)
@@ -362,7 +364,7 @@ instance
 [𝄩]-equality {𝟎}   {𝟎}    [≡]-intro = [≡]-intro
 [𝄩]-equality {𝟎}   {𝐒(y)} ()
 [𝄩]-equality {𝐒(x)}{𝟎}    ()
-[𝄩]-equality {𝐒(x)}{𝐒(y)} proof     = [≡]-with(𝐒) ([𝄩]-equality {x}{y} proof)
+[𝄩]-equality {𝐒(x)}{𝐒(y)} proof     = congruence₁(𝐒) ([𝄩]-equality {x}{y} proof)
 
 instance
   [⋅][𝄩]-distributivityᵣ : Distributivityᵣ(_⋅_)(_𝄩_)

@@ -39,7 +39,7 @@ module _ where
     instance _ = [≡]-equiv {T = Object(C)}
   NaturalTransformation.natural (_≡ᶠᵘⁿᶜᵗᵒʳ_.map-proof (BinaryOperator.congruence ([∘ᶠᵘⁿᶜᵗᵒʳ]-binaryOperator {A = A} {B = B} {C = C}) {[∃]-intro F₁}{[∃]-intro F₂} {[∃]-intro G₁}{[∃]-intro G₂} (intro fp₁ mp₁) (intro fp₂ mp₂))) {x}{y} {f} = anything {-
     transport C (_⊜_.proof (congruence₂(Fn._∘_) ⦃ [⊜][∘]-binaryOperator ⦃ function = [≡]-function _ ⦄ ⦄ fp₁ fp₂)) ∘ map(map f)      🝖-[ {!x₂ y₂!} ]
-    map(map f) ∘ transport C ([≡]-with-op (Object C) (λ v v₁ → {!v!}) (_⊜_.proof fp₁) (_⊜_.proof fp₂)) 🝖-[ {!!} ]
+    map(map f) ∘ transport C (congruence₁-op (Object C) (λ v v₁ → {!v!}) (_⊜_.proof fp₁) (_⊜_.proof fp₂)) 🝖-[ {!!} ]
     map(map f) ∘ transport C (_⊜_.proof (congruence₂(Fn._∘_) ⦃ [⊜][∘]-binaryOperator ⦃ function = [≡]-function _ ⦄ ⦄ fp₁ fp₂)) 🝖-end-}
     where
       postulate anything : ∀{ℓ}{a : Type{ℓ}} → a
@@ -50,7 +50,7 @@ module _ where
       instance _ = category C
       instance _ = [≡]-equiv {T = Object B}
       instance _ = [≡]-equiv {T = Object C}
-      -- [≡]-with-op
+      -- congruence₁-op
 
   instance
     [∘ᶠᵘⁿᶜᵗᵒʳ]-identityₗ : Morphism.Identityₗ {Obj = CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}} (\{A} → _∘ᶠᵘⁿᶜᵗᵒʳ_ {A = A})(idᶠᵘⁿᶜᵗᵒʳ)

@@ -5,7 +5,7 @@ import      Lvl
 open import Data
 open import Data.Boolean
 open import Data.Boolean.Stmt
-open import Data.Boolean.Stmt.Proofs using (module IsTrue ; module IsFalse)
+open import Data.Boolean.Stmt.Logic using (module IsTrue ; module IsFalse)
 open import Data.Boolean.Proofs
 open import Data.Either as Either using (_‖_)
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
@@ -213,7 +213,7 @@ module _ {X : Type{ℓ₁}} ⦃ _ : (◊ X) ⦄ {P : X → Stmt{ℓ₂}} where
     [∃]-classical-elim : ⦃ _ : Classical(∃ P) ⦄ → ∃(x ↦ Classical(P(x)))
     [∃]-classical-elim ⦃ classical-expx ⦄ with excluded-middle(∃ P)
     ... | [∨]-introₗ(expx)  = [∃]-intro([∃]-witness(expx)) ⦃ intro ⦃ [∨]-introₗ([∃]-proof(expx)) ⦄ ⦄
-    ... | [∨]-introᵣ(nexpx) = [∃]-intro([◊]-existence) ⦃ intro ⦃ [∨]-introᵣ([¬∃]-to-[∀¬] (nexpx) {[◊]-existence}) ⦄ ⦄
+    ... | [∨]-introᵣ(nexpx) = [∃]-intro(inhabitant) ⦃ intro ⦃ [∨]-introᵣ([¬∃]-to-[∀¬] (nexpx) {inhabitant}) ⦄ ⦄
 
 ------------------------------------------
 -- ???
@@ -350,8 +350,8 @@ module _ {X : Type{ℓ₁}} ⦃ _ : (◊ X) ⦄ {P : X → Stmt{ℓ₂}} where
 
   [∃]-classical-intro : ⦃ _ : Classical(∀ₗ P) ⦄ ⦃ _ : Classical(∀ₗ(¬_ ∘ P)) ⦄ → Classical(∃ P)
   Classical.excluded-middle ([∃]-classical-intro ⦃ classical-pa ⦄ ⦃ classical-npa ⦄) with excluded-middle(∀ₗ P) | excluded-middle(∀ₗ(¬_ ∘ P))
-  ... | [∨]-introₗ ap  | [∨]-introₗ nap  with () ← nap(ap {[◊]-existence})
-  ... | [∨]-introₗ ap  | [∨]-introᵣ nanp = [∨]-introₗ ([∃]-intro [◊]-existence ⦃ ap ⦄)
+  ... | [∨]-introₗ ap  | [∨]-introₗ nap  with () ← nap(ap {inhabitant})
+  ... | [∨]-introₗ ap  | [∨]-introᵣ nanp = [∨]-introₗ ([∃]-intro inhabitant ⦃ ap ⦄)
   ... | [∨]-introᵣ npa | [∨]-introₗ nap  = [∨]-introᵣ ([∀¬]-to-[¬∃] nap)
   ... | [∨]-introᵣ npa | [∨]-introᵣ nanp = [∨]-introₗ ([¬∀¬]-to-[∃] nanp)
 -}
@@ -381,7 +381,7 @@ module _ {X : Type{ℓ₁}}{P : X → Stmt{ℓ₂}} ⦃ classical-proof1 : ∀{x
 
   [∃]-unrelatedₗ-[→]ₗ : ⦃ _ : ◊ X ⦄ → ⦃ _ : Classical(∀ₗ P) ⦄ → ∀{Q : Stmt{ℓ₃}} → ∃(x ↦ (P(x) → Q)) ← (∀ₗ(x ↦ P(x)) → Q)
   [∃]-unrelatedₗ-[→]ₗ ⦃ pos-x ⦄ ⦃ classical-axpx ⦄ {Q} axpxq with excluded-middle(∀ₗ P)
-  ... | ([∨]-introₗ axpx)  = [∃]-intro([◊]-existence) ⦃ const(axpxq (axpx)) ⦄
+  ... | ([∨]-introₗ axpx)  = [∃]-intro(inhabitant) ⦃ const(axpxq (axpx)) ⦄
   ... | ([∨]-introᵣ naxpx) = [∃]-map-proof ([⊥]-elim ∘_) ([¬∀]-to-[∃¬] (naxpx))
   -- (∀x. P(x)) → Q
   -- • ∀x. P(x)

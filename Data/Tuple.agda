@@ -7,7 +7,7 @@ open import Type
 infixr 200 _⨯_ _,_
 
 private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ : Lvl.Level
-private variable A B C A₁ A₂ B₁ B₂ : Type{ℓ}
+private variable A B C A₁ A₂ A₃ B₁ B₂ B₃ : Type{ℓ}
 
 -- Definition of a 2-tuple
 record _⨯_ (A : Type{ℓ₁}) (B : Type{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂} where
@@ -25,6 +25,9 @@ invElim f a b = f(a , b)
 
 map : (A₁ → A₂) → (B₁ → B₂) → (A₁ ⨯ B₁) → (A₂ ⨯ B₂)
 map f g (x , y) = (f(x) , g(y))
+
+map₂ : (A₁ → A₂ → A₃) → (B₁ → B₂ → B₃) → (A₁ ⨯ B₁) → (A₂ ⨯ B₂) → (A₃ ⨯ B₃)
+map₂ f g (x₁ , y₁) (x₂ , y₂) = (f x₁ x₂ , g y₁ y₂)
 
 -- Curries a function taking a 2-tuple, transforming it to a function returning a function instead
 curry : ((A ⨯ B) → C) → (A → B → C)

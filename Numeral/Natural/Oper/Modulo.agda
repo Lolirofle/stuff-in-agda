@@ -2,6 +2,7 @@ module Numeral.Natural.Oper.Modulo where
 
 import Lvl
 open import Data
+open import Data.Option as Option using (Option)
 open import Data.Boolean.Stmt
 open import Logic.Propositional.Theorems
 open import Numeral.Natural
@@ -72,3 +73,7 @@ a mod 𝐒(m) = [ 𝟎 , m ] a mod' m
 _mod₀_ : ℕ → ℕ → ℕ
 _ mod₀ 𝟎    = 𝟎
 a mod₀ 𝐒(m) = [ 𝟎 , m ] a mod' m
+
+_modₒₚₜ_ : ℕ → ℕ → Option(ℕ)
+_ modₒₚₜ 𝟎    = Option.None
+a modₒₚₜ 𝐒(m) = Option.Some([ 𝟎 , m ] a mod' m)

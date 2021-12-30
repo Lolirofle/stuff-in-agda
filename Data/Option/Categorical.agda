@@ -12,6 +12,7 @@ open import Logic.Predicate
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
 import      Structure.Category.Functor as Functor
+open import Structure.Function
 open import Structure.Operator.Monoid
 open import Structure.Operator.Properties
 open import Structure.Operator
@@ -41,56 +42,56 @@ instance
   Dependent._⊜_.proof (Monad.ext-identity   ⦃ andThen-monad ⦄) = [≡]-intro
   Dependent._⊜_.proof (Monad.ext-distribute ⦃ andThen-monad ⦄ {f = f} {g}) {x} = andThen-associativity {f = g}{g = f}{o = x}
 
--- A monoid is constructed by lifting an associative binary operator using `or-combine`.
+-- A monoid is constructed by lifting an associative binary operator using `orCombine`.
 -- Essentially means that an additional value (None) is added to the type, and it becomes an identity by definition.
 module _ {_▫_ : T → T → T} where
   instance
-    or-combine-monoid : ⦃ assoc : Associativity(_▫_) ⦄ → Monoid(or-combine(_▫_) Fn.id Fn.id)
-    Associativity.proof (Monoid.associativity or-combine-monoid) {None}   {None}   {None}   = [≡]-intro
-    Associativity.proof (Monoid.associativity or-combine-monoid) {None}   {None}   {Some z} = [≡]-intro
-    Associativity.proof (Monoid.associativity or-combine-monoid) {None}   {Some y} {None}   = [≡]-intro
-    Associativity.proof (Monoid.associativity or-combine-monoid) {None}   {Some y} {Some z} = [≡]-intro
-    Associativity.proof (Monoid.associativity or-combine-monoid) {Some x} {None}   {None}   = [≡]-intro
-    Associativity.proof (Monoid.associativity or-combine-monoid) {Some x} {None}   {Some z} = [≡]-intro
-    Associativity.proof (Monoid.associativity or-combine-monoid) {Some x} {Some y} {None}   = [≡]-intro
-    Associativity.proof (Monoid.associativity or-combine-monoid) {Some x} {Some y} {Some z} = [≡]-with(Some) (associativity(_▫_))
-    ∃.witness (Monoid.identity-existence or-combine-monoid) = None
-    Identityₗ.proof (Identity.left  (∃.proof (Monoid.identity-existence or-combine-monoid))) {None}   = [≡]-intro
-    Identityₗ.proof (Identity.left  (∃.proof (Monoid.identity-existence or-combine-monoid))) {Some x} = [≡]-intro
-    Identityᵣ.proof (Identity.right (∃.proof (Monoid.identity-existence or-combine-monoid))) {None}   = [≡]-intro
-    Identityᵣ.proof (Identity.right (∃.proof (Monoid.identity-existence or-combine-monoid))) {Some x} = [≡]-intro
+    orCombine-monoid : ⦃ assoc : Associativity(_▫_) ⦄ → Monoid(orCombine(_▫_) Fn.id Fn.id)
+    Associativity.proof (Monoid.associativity orCombine-monoid) {None}   {None}   {None}   = [≡]-intro
+    Associativity.proof (Monoid.associativity orCombine-monoid) {None}   {None}   {Some z} = [≡]-intro
+    Associativity.proof (Monoid.associativity orCombine-monoid) {None}   {Some y} {None}   = [≡]-intro
+    Associativity.proof (Monoid.associativity orCombine-monoid) {None}   {Some y} {Some z} = [≡]-intro
+    Associativity.proof (Monoid.associativity orCombine-monoid) {Some x} {None}   {None}   = [≡]-intro
+    Associativity.proof (Monoid.associativity orCombine-monoid) {Some x} {None}   {Some z} = [≡]-intro
+    Associativity.proof (Monoid.associativity orCombine-monoid) {Some x} {Some y} {None}   = [≡]-intro
+    Associativity.proof (Monoid.associativity orCombine-monoid) {Some x} {Some y} {Some z} = congruence₁(Some) (associativity(_▫_))
+    ∃.witness (Monoid.identity-existence orCombine-monoid) = None
+    Identityₗ.proof (Identity.left  (∃.proof (Monoid.identity-existence orCombine-monoid))) {None}   = [≡]-intro
+    Identityₗ.proof (Identity.left  (∃.proof (Monoid.identity-existence orCombine-monoid))) {Some x} = [≡]-intro
+    Identityᵣ.proof (Identity.right (∃.proof (Monoid.identity-existence orCombine-monoid))) {None}   = [≡]-intro
+    Identityᵣ.proof (Identity.right (∃.proof (Monoid.identity-existence orCombine-monoid))) {Some x} = [≡]-intro
 
 module _ {_▫_ : T → T → T} where
   open Monoid ⦃ … ⦄ using (id)
 
-  -- A monoid is still a monoid when lifting a binary operator using `and-combine`.
+  -- A monoid is still a monoid when lifting a binary operator using `andCombine`.
   instance
-    and-combine-monoid : ⦃ monoid : Monoid(_▫_) ⦄ → Monoid(and-combine(_▫_))
-    Associativity.proof (Monoid.associativity and-combine-monoid) {None}   {None}   {None}   = [≡]-intro
-    Associativity.proof (Monoid.associativity and-combine-monoid) {None}   {None}   {Some z} = [≡]-intro
-    Associativity.proof (Monoid.associativity and-combine-monoid) {None}   {Some y} {None}   = [≡]-intro
-    Associativity.proof (Monoid.associativity and-combine-monoid) {None}   {Some y} {Some z} = [≡]-intro
-    Associativity.proof (Monoid.associativity and-combine-monoid) {Some x} {None}   {None}   = [≡]-intro
-    Associativity.proof (Monoid.associativity and-combine-monoid) {Some x} {None}   {Some z} = [≡]-intro
-    Associativity.proof (Monoid.associativity and-combine-monoid) {Some x} {Some y} {None}   = [≡]-intro
-    Associativity.proof (Monoid.associativity and-combine-monoid) {Some x} {Some y} {Some z} = [≡]-with(Some) (associativity(_▫_))
-    ∃.witness (Monoid.identity-existence and-combine-monoid) = Some(id)
-    Identityₗ.proof (Identity.left  (∃.proof (Monoid.identity-existence and-combine-monoid))) {None}   = [≡]-intro
-    Identityₗ.proof (Identity.left  (∃.proof (Monoid.identity-existence and-combine-monoid))) {Some x} = [≡]-with(Some) (identityₗ(_▫_)(_))
-    Identityᵣ.proof (Identity.right (∃.proof (Monoid.identity-existence and-combine-monoid))) {None}   = [≡]-intro
-    Identityᵣ.proof (Identity.right (∃.proof (Monoid.identity-existence and-combine-monoid))) {Some x} = [≡]-with(Some) (identityᵣ(_▫_)(_))
+    andCombine-monoid : ⦃ monoid : Monoid(_▫_) ⦄ → Monoid(andCombine(_▫_))
+    Associativity.proof (Monoid.associativity andCombine-monoid) {None}   {None}   {None}   = [≡]-intro
+    Associativity.proof (Monoid.associativity andCombine-monoid) {None}   {None}   {Some z} = [≡]-intro
+    Associativity.proof (Monoid.associativity andCombine-monoid) {None}   {Some y} {None}   = [≡]-intro
+    Associativity.proof (Monoid.associativity andCombine-monoid) {None}   {Some y} {Some z} = [≡]-intro
+    Associativity.proof (Monoid.associativity andCombine-monoid) {Some x} {None}   {None}   = [≡]-intro
+    Associativity.proof (Monoid.associativity andCombine-monoid) {Some x} {None}   {Some z} = [≡]-intro
+    Associativity.proof (Monoid.associativity andCombine-monoid) {Some x} {Some y} {None}   = [≡]-intro
+    Associativity.proof (Monoid.associativity andCombine-monoid) {Some x} {Some y} {Some z} = congruence₁(Some) (associativity(_▫_))
+    ∃.witness (Monoid.identity-existence andCombine-monoid) = Some(id)
+    Identityₗ.proof (Identity.left  (∃.proof (Monoid.identity-existence andCombine-monoid))) {None}   = [≡]-intro
+    Identityₗ.proof (Identity.left  (∃.proof (Monoid.identity-existence andCombine-monoid))) {Some x} = congruence₁(Some) (identityₗ(_▫_)(_))
+    Identityᵣ.proof (Identity.right (∃.proof (Monoid.identity-existence andCombine-monoid))) {None}   = [≡]-intro
+    Identityᵣ.proof (Identity.right (∃.proof (Monoid.identity-existence andCombine-monoid))) {Some x} = congruence₁(Some) (identityᵣ(_▫_)(_))
 
   instance
-    and-combine-absorberₗ : Absorberₗ(and-combine(_▫_))(None)
-    Absorberₗ.proof and-combine-absorberₗ {None}   = [≡]-intro
-    Absorberₗ.proof and-combine-absorberₗ {Some x} = [≡]-intro
+    andCombine-absorberₗ : Absorberₗ(andCombine(_▫_))(None)
+    Absorberₗ.proof andCombine-absorberₗ {None}   = [≡]-intro
+    Absorberₗ.proof andCombine-absorberₗ {Some x} = [≡]-intro
 
   instance
-    and-combine-absorberᵣ : Absorberᵣ(and-combine(_▫_))(None)
-    Absorberᵣ.proof and-combine-absorberᵣ {None}   = [≡]-intro
-    Absorberᵣ.proof and-combine-absorberᵣ {Some x} = [≡]-intro
+    andCombine-absorberᵣ : Absorberᵣ(andCombine(_▫_))(None)
+    Absorberᵣ.proof andCombine-absorberᵣ {None}   = [≡]-intro
+    Absorberᵣ.proof andCombine-absorberᵣ {Some x} = [≡]-intro
 
-  -- `and-combine` essentially adds an additional value (None) to the type, and it becomes an absorber by definition.
+  -- `andCombine` essentially adds an additional value (None) to the type, and it becomes an absorber by definition.
   instance
-    and-combine-absorber : Absorber(and-combine(_▫_))(None)
-    and-combine-absorber = intro
+    andCombine-absorber : Absorber(andCombine(_▫_))(None)
+    andCombine-absorber = intro

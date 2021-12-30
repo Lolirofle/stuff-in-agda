@@ -15,7 +15,7 @@ open import Type.Cubical.Path.Equality
 open import Type.Cubical.Univalence
 open import Type.Cubical
 open import Type.Properties.MereProposition
-open import Type.Properties.Singleton.Proofs
+open import Type.Properties.MereProposition.Proofs
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ ℓₑ : Lvl.Level

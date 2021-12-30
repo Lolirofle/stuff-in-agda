@@ -5,7 +5,7 @@ open import Data
 open import Data.Boolean
 open import Data.Boolean.Proofs
 open import Data.Boolean.Stmt
-open import Data.Boolean.Stmt.Proofs
+open import Data.Boolean.Stmt.Logic
 open import Data.Either as Either using (_‖_)
 open import Data.Tuple as Tuple using ()
 open import Functional
@@ -149,8 +149,8 @@ module _ where
 
   instance
     [∈]-binaryRelation : BinaryRelator(_∈_ {ℓ})
-    [∈]-binaryRelation = intro [∈]-binaryRelation-raw
+    [∈]-binaryRelation = BinaryRelator-introᵣ [∈]-binaryRelation-raw
 
   instance
     [⊆]-binaryRelator : BinaryRelator(_⊆_ {ℓ}{ℓ})
-    BinaryRelator.substitution [⊆]-binaryRelator p1 p2 ps = sub₂(_≡_)(_⊇_) p1 🝖 ps 🝖 sub₂(_≡_)(_⊆_) p2
+    [⊆]-binaryRelator = BinaryRelator-introᵣ \p1 p2 ps → sub₂(_≡_)(_⊇_) p1 🝖 ps 🝖 sub₂(_≡_)(_⊆_) p2

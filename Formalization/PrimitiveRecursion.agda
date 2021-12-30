@@ -243,33 +243,34 @@ module Proofs where
   open import Numeral.Natural.Oper.Proofs
   open import Relator.Equals
   open import Relator.Equals.Proofs
+  open import Structure.Function using (congruence₁)
   open import Structure.Operator.Properties
   open import Structure.Relator.Properties
   open import Syntax.Transitivity
 
   addition-correctness : ∀{a b} → (evaluate Arithmetic.Addition (a ⊰ b ⊰ ∅) ≡ a + b)
   addition-correctness {𝟎}   {b} = [≡]-intro
-  addition-correctness {𝐒 a} {b} = [≡]-with(𝐒) (addition-correctness {a}{b})
+  addition-correctness {𝐒 a} {b} = congruence₁(𝐒) (addition-correctness {a}{b})
 
   multiplication-correctness : ∀{a b} → (evaluate Arithmetic.Multiplication (a ⊰ b ⊰ ∅) ≡ a ⋅ b)
   multiplication-correctness {𝟎}   {b} = [≡]-intro
   multiplication-correctness {𝐒 a} {b} =
     addition-correctness {evaluate Arithmetic.Multiplication (a ⊰ b ⊰ ∅)}{b}
-    🝖 [≡]-with(_+ b) (multiplication-correctness {a}{b})
+    🝖 congruence₁(_+ b) (multiplication-correctness {a}{b})
     🝖 symmetry(_≡_) ([⋅]-with-[𝐒]ₗ {a}{b})
 
   exponentiation-correctness : ∀{a b} → (evaluate Arithmetic.Exponentiation (a ⊰ b ⊰ ∅) ≡ a ^ b)
   exponentiation-correctness {a} {𝟎}   = [≡]-intro
   exponentiation-correctness {a} {𝐒 b} =
     multiplication-correctness {evaluate Arithmetic.Exponentiation (a ⊰ b ⊰ ∅)}{a}
-    🝖 [≡]-with(_⋅ a) (exponentiation-correctness {a}{b})
+    🝖 congruence₁(_⋅ a) (exponentiation-correctness {a}{b})
     🝖 commutativity(_⋅_) {a ^ b}{a}
 
   factorial-correctness : ∀{a} → (evaluate Arithmetic.Factorial (a ⊰ ∅) ≡ a !)
   factorial-correctness {𝟎}   = [≡]-intro
   factorial-correctness {𝐒 a} =
     multiplication-correctness {𝐒 a}
-    🝖 [≡]-with(𝐒(a) ⋅_) (factorial-correctness {a})
+    🝖 congruence₁(𝐒(a) ⋅_) (factorial-correctness {a})
 
   predecessor-correctness : ∀{a} → (evaluate Arithmetic.Predecessor (a ⊰ ∅) ≡ 𝐏(a))
   predecessor-correctness {𝟎}   = [≡]-intro
@@ -277,10 +278,10 @@ module Proofs where
 
   monus-correctness : ∀{a b} → (evaluate Arithmetic.Monus (a ⊰ b ⊰ ∅) ≡ a −₀ b)
   monus-correctness {a}   {𝟎}   = [≡]-intro
-  monus-correctness {𝟎}   {𝐒 b} = predecessor-correctness{evaluate Arithmetic.Monus (𝟎 ⊰ b ⊰ ∅)} 🝖 [≡]-with(𝐏) (monus-correctness {𝟎}{b})
+  monus-correctness {𝟎}   {𝐒 b} = predecessor-correctness{evaluate Arithmetic.Monus (𝟎 ⊰ b ⊰ ∅)} 🝖 congruence₁(𝐏) (monus-correctness {𝟎}{b})
   monus-correctness {𝐒 a} {𝐒 b} =
     predecessor-correctness{evaluate Arithmetic.Monus (𝐒(a) ⊰ b ⊰ ∅)}
-    🝖 [≡]-with(𝐏) (monus-correctness {𝐒 a}{b})
+    🝖 congruence₁(𝐏) (monus-correctness {𝐒 a}{b})
     🝖 symmetry(_≡_) ([−₀]-with-[𝐒]ᵣ {𝐒(a)}{b})
 
   isnonzero-correctness : ∀{a} → (evaluate Arithmetic.IsNonZero (a ⊰ ∅) ≡ ℕbool(a ≢? 𝟎))

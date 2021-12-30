@@ -2,6 +2,7 @@ module Numeral.Natural.Relation.Order.Classical where
 
 import Lvl
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Numeral.Natural
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Decidable

@@ -117,7 +117,7 @@ module _ {ℓₑₗ} ⦃ equiv-List : Equiv{ℓₑₗ}(List(T)) ⦄ ⦃ ext : Ex
 
   instance
     [⊑]-relator : BinaryRelator(_⊑_ {T = T})
-    BinaryRelator.substitution [⊑]-relator xy1 xy2 sub = sub₂(_≡_)(_⊒_) xy1 🝖 sub 🝖 sub₂(_≡_)(_⊑_) xy2
+    [⊑]-relator = BinaryRelator-introᵣ \xy1 xy2 sub → sub₂(_≡_)(_⊒_) xy1 🝖 sub 🝖 sub₂(_≡_)(_⊑_) xy2
 
   instance
     [⊑]-weakPartialOrder : Weak.PartialOrder(_⊑_ {T = T})

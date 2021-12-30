@@ -53,7 +53,7 @@ module From-[≤] (_≤_ : T → T → Stmt{ℓₗ}) where
 
     instance
       [<]-relator : BinaryRelator(_<_)
-      BinaryRelator.substitution [<]-relator xy1 xy2 = _∘ substitute₂(_≤_) (symmetry(_≡_) xy2) (symmetry(_≡_) xy1)
+      [<]-relator = BinaryRelator-introᵣ(\xy1 xy2 → _∘ substitute₂ᵣ(_≤_) (symmetry(_≡_) xy2) (symmetry(_≡_) xy1))
 
     instance
       [<]-irreflexivity : Irreflexivity(_<_)
@@ -224,12 +224,12 @@ module From-[≤][<]
   [≤]-def-[<][≡]ₗ-[<]-def-[≤][≢]ᵣ = [↔]-intro (\([∧]-intro p q) → l p ⦃ q ⦄) (\([∧]-intro p q) → r p ⦃ q ⦄) where
     l : (∀{a b} → (a < b) → ((a ≤ b) ∧ (a ≢ b))) → ⦃ refl : Reflexivity(_≤_) ⦄ → ((∀{a b} → (a ≤ b) ← ((a < b) ∨ (a ≡ b))) ∧ Irreflexivity(_<_))
     l [<]-def-[≤][≢]ᵣ = [∧]-intro
-      ([∨]-elim (lt ↦ [∧]-elimₗ ([<]-def-[≤][≢]ᵣ lt)) (sub₂(_≡_)(_≤_) ⦃ reflexive-binaryRelator-sub ⦄))
+      ([∨]-elim (lt ↦ [∧]-elimₗ ([<]-def-[≤][≢]ᵣ lt)) (sub₂(_≡_)(_≤_) ⦃ reflexive-rel-sub ⦄))
       (intro(xx ↦ [∧]-elimᵣ ([<]-def-[≤][≢]ᵣ xx) (reflexivity(_≡_))))
 
     r : (∀{a b} → (a ≤ b) ← ((a < b) ∨ (a ≡ b))) → ⦃ irrefl : Irreflexivity(_<_) ⦄ → ((∀{a b} → (a < b) → ((a ≤ b) ∧ (a ≢ b))) ∧ Reflexivity(_≤_))
     r [≤]-def-[<][≡]ᵣ = [∧]-intro
-      (lt ↦ [∧]-intro ([≤]-def-[<][≡]ᵣ ([∨]-introₗ lt)) (eq ↦ empty(irreflexivity(_<_) (substitute₂ₗ(_<_) eq lt))))
+      (lt ↦ [∧]-intro ([≤]-def-[<][≡]ᵣ ([∨]-introₗ lt)) (eq ↦ empty(irreflexivity(_<_) (substitute₂-₁ᵣ(_<_)(_) eq lt))))
       (intro ([≤]-def-[<][≡]ᵣ ([∨]-introᵣ (reflexivity(_≡_)))))
 
   module By-[≤] ([<]-def-[≤][≢] : ∀{a b} → (a < b) ↔ ((a ≤ b) ∧ (a ≢ b))) where
@@ -277,7 +277,7 @@ module From-[≤][<]
     Transitivity.proof [<]-transitivity-by-asym-trans xy yz =
       let [∧]-intro xy-le nxy = [↔]-to-[→] [<]-def-[≤][≢] xy
           [∧]-intro yz-le nyz = [↔]-to-[→] [<]-def-[≤][≢] yz
-      in  [↔]-to-[←] [<]-def-[≤][≢] ([∧]-intro (transitivity(_≤_) xy-le yz-le) (xz ↦ asymmetry(_<_) (substitute₂ₗ(_<_) xz xy) yz))
+      in  [↔]-to-[←] [<]-def-[≤][≢] ([∧]-intro (transitivity(_≤_) xy-le yz-le) (xz ↦ asymmetry(_<_) (substitute₂-₁ᵣ(_<_)(_) xz xy) yz))
 
     module By-transitivity ⦃ trans : Transitivity(_≤_) ⦄ where
       instance
@@ -295,7 +295,7 @@ module From-[≤][<]
           let [∧]-intro y≤z y≢z = [↔]-to-[→] [<]-def-[≤][≢] y<z
           in  [↔]-to-[←] [<]-def-[≤][≢] ([∧]-intro
             (x≤y 🝖 y≤z)
-            (xz ↦ By-antisymmetry.[≤][>]-not (subtransitivityₗ(_≤_)(_≡_) ⦃ subrelation-transitivity-to-subtransitivityₗ ⦃ sub = reflexive-binaryRelator-sub ⦄ ⦄ (symmetry(_≡_) xz) x≤y) y<z))
+            (xz ↦ By-antisymmetry.[≤][>]-not (subtransitivityₗ(_≤_)(_≡_) ⦃ subrelation-transitivity-to-subtransitivityₗ ⦃ sub = reflexive-rel-sub ⦄ ⦄ (symmetry(_≡_) xz) x≤y) y<z))
 
       instance
         [<][≤]-subtransitivityᵣ : Subtransitivityᵣ(_<_)(_≤_)
@@ -303,7 +303,7 @@ module From-[≤][<]
           let [∧]-intro x≤y x≢y = [↔]-to-[→] [<]-def-[≤][≢] x<y
           in  [↔]-to-[←] [<]-def-[≤][≢] ([∧]-intro
             (x≤y 🝖 y≤z)
-            (xz ↦ By-antisymmetry.[≤][>]-not (subtransitivityᵣ(_≤_)(_≡_) ⦃ subrelation-transitivity-to-subtransitivityᵣ ⦃ sub = reflexive-binaryRelator-sub ⦄ ⦄ y≤z (symmetry(_≡_) xz)) x<y))
+            (xz ↦ By-antisymmetry.[≤][>]-not (subtransitivityᵣ(_≤_)(_≡_) ⦃ subrelation-transitivity-to-subtransitivityᵣ ⦃ sub = reflexive-rel-sub ⦄ ⦄ y≤z (symmetry(_≡_) xz)) x<y))
 
   module By-[<] ([≤]-def-[<][≡] : ∀{a b} → (a ≤ b) ↔ ((a < b) ∨ (a ≡ b))) where
     instance
@@ -348,8 +348,8 @@ module From-[≤][<]
     [≤]-transitivity-by-trans : ⦃ [<]-trans : Transitivity(_<_) ⦄ → Transitivity(_≤_)
     Transitivity.proof [≤]-transitivity-by-trans xy yz with [↔]-to-[→] [≤]-def-[<][≡] xy | [↔]-to-[→] [≤]-def-[<][≡] yz
     ... | [∨]-introₗ xy-lt | [∨]-introₗ yz-lt = [↔]-to-[←] [≤]-def-[<][≡] ([∨]-introₗ (transitivity(_<_) xy-lt yz-lt))
-    ... | [∨]-introₗ xy-lt | [∨]-introᵣ yz-eq = [↔]-to-[←] [≤]-def-[<][≡] ([∨]-introₗ (substitute₂ᵣ(_<_) yz-eq xy-lt))
-    ... | [∨]-introᵣ xy-eq | [∨]-introₗ yz-lt = [↔]-to-[←] [≤]-def-[<][≡] ([∨]-introₗ (substitute₂ₗ(_<_) (symmetry(_≡_) xy-eq) yz-lt))
+    ... | [∨]-introₗ xy-lt | [∨]-introᵣ yz-eq = [↔]-to-[←] [≤]-def-[<][≡] ([∨]-introₗ (substitute₂-₂ᵣ(_<_)(_) yz-eq xy-lt))
+    ... | [∨]-introᵣ xy-eq | [∨]-introₗ yz-lt = [↔]-to-[←] [≤]-def-[<][≡] ([∨]-introₗ (substitute₂-₁ᵣ(_<_)(_) (symmetry(_≡_) xy-eq) yz-lt))
     ... | [∨]-introᵣ xy-eq | [∨]-introᵣ yz-eq = [↔]-to-[←] [≤]-def-[<][≡] ([∨]-introᵣ (transitivity(_≡_) xy-eq yz-eq))
 
     module _ ⦃ asym : Asymmetry(_<_) ⦄ where
@@ -378,7 +378,7 @@ module From-[≤][<]
         • (
           (\xz →
             • (xz ⇒
-              (x ≡ z) ⇒-[ apply xy ∘ substitute₂ₗ(_<_) ]
+              (x ≡ z) ⇒-[ apply xy ∘ substitute₂-₁ᵣ(_<_)(_) ]
               (z < y) ⇒-end
             )
             • (yz ⇒
@@ -395,13 +395,13 @@ module From-[≤][<]
       [<][≱]-sub-by-asym : ((_<_) ⊆₂ (_≱_))
       _⊆₂_.proof [<][≱]-sub-by-asym lt-xy ge-xy = [∨]-elim
         (lt-yx ↦ asymmetry(_<_) lt-xy lt-yx)
-        (eq-yx ↦ irreflexivity(_<_) ⦃ [asymmetry]-to-irreflexivity ⦄ (substitute₂ᵣ(_<_) eq-yx lt-xy))
+        (eq-yx ↦ irreflexivity(_<_) ⦃ [asymmetry]-to-irreflexivity ⦄ (substitute₂-₂ᵣ(_<_)(_) eq-yx lt-xy))
         ([↔]-to-[→] [≤]-def-[<][≡] ge-xy)
 
       [>][≰]-sub-by-asym : ((_>_) ⊆₂ (_≰_))
       _⊆₂_.proof [>][≰]-sub-by-asym gt le = [∨]-elim
         (asymmetry(_<_) gt)
-        (eq ↦ irreflexivity(_<_) ⦃ [asymmetry]-to-irreflexivity ⦄ (substitute₂ᵣ(_<_) eq gt))
+        (eq ↦ irreflexivity(_<_) ⦃ [asymmetry]-to-irreflexivity ⦄ (substitute₂-₂ᵣ(_<_)(_) eq gt))
         ([↔]-to-[→] [≤]-def-[<][≡] le)
 
     module _
@@ -438,7 +438,7 @@ module From-[≤][<]
     [<]-classical-by-asym-tri : Classical₂(_<_)
     Classical.excluded-middle ([<]-classical-by-asym-tri {x} {y}) with trichotomy(_<_)(_≡_) {x}{y}
     ... | [∨]-introₗ([∨]-introₗ lt) = [∨]-introₗ lt
-    ... | [∨]-introₗ([∨]-introᵣ eq) = [∨]-introᵣ (lt ↦ irreflexivity(_<_) ⦃ [asymmetry]-to-irreflexivity ⦄ (substitute₂ₗ(_<_) eq lt))
+    ... | [∨]-introₗ([∨]-introᵣ eq) = [∨]-introᵣ (lt ↦ irreflexivity(_<_) ⦃ [asymmetry]-to-irreflexivity ⦄ (substitute₂-₁ᵣ(_<_)(_) eq lt))
     ... | [∨]-introᵣ            gt  = [∨]-introᵣ (lt ↦ asymmetry(_<_) lt gt)
 
   module ByReflTriSub
@@ -450,7 +450,7 @@ module From-[≤][<]
     [≰][≯]-not : (a ≰ b) → (a ≯ b) → ⊥
     [≰][≯]-not {a}{b} nle ngt with trichotomy(_<_)(_≡_) {a}{b}
     ... | [∨]-introₗ([∨]-introₗ lt) = nle (sub₂(_<_)(_≤_) lt)
-    ... | [∨]-introₗ([∨]-introᵣ eq) = substitute₂ₗ(_≰_) ⦃ [¬]-binaryRelator ⦄ eq nle (reflexivity(_≤_))
+    ... | [∨]-introₗ([∨]-introᵣ eq) = substitute₂-₁ᵣ(_≰_) ⦃ [¬]-binaryRelator ⦄ (_) eq nle (reflexivity(_≤_))
     ... | [∨]-introᵣ            gt  = ngt gt
 
     [≮][≱]-not : (a ≮ b) → (a ≱ b) → ⊥

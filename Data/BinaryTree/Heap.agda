@@ -12,6 +12,7 @@ BinaryHeap = BinaryTree (Unit{Lvl.𝟎}) (T)
 private variable ℓᵣ : Lvl.Level
 private variable R : Type{ℓᵣ}
 
+open import Data.BinaryTree.Functions
 open import Data.Option
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional as Fn using (_∘_ ; _∘₂_ ; _$_)
@@ -25,7 +26,7 @@ merge x@(Node xa xl xr) y@(Node ya yl yr) with (xa ≤? ya) | (\_ → merge y xr
 ... | 𝐹 | _ | 𝐹-branch = Node ya (𝐹-branch(<>{Lvl.𝟎})) yl
 
 insert : T → BinaryHeap → BinaryHeap
-insert a = merge(singleton a)
+insert a = merge(singletonTree a)
 
 pop : BinaryHeap → Option(T ⨯ BinaryHeap)
 pop (Leaf <>)    = None

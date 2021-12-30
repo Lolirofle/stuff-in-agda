@@ -14,6 +14,7 @@ open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function
 open import Structure.Function.Multi
 open import Structure.Operator.Properties
 open import Structure.Operator
@@ -42,7 +43,7 @@ instance
   Preserving.proof (length-preserves-prepend {a = a}) {x} = [≡]-intro
 
 length-postpend : ((length ∘ postpend a) ⊜ (𝐒 ∘ length))
-length-postpend {x = l} = List.elim [≡]-intro (\x l → [≡]-with(𝐒) {length(postpend _ l)}{𝐒(length l)}) l
+length-postpend {x = l} = List.elim [≡]-intro (\x l → congruence₁(𝐒) {length(postpend _ l)}{𝐒(length l)}) l
 
 instance
   length-preserves-postpend : Preserving₁(length)(postpend a)(𝐒)
@@ -57,7 +58,7 @@ length-[++] {T = T} {l₁ = l₁} {l₂} = List.elim base next l₁ where
   next x l stmt =
     length((x ⊰ l) ++ l₂)      🝖[ _≡_ ]-[]
     length(x ⊰ (l ++ l₂))      🝖[ _≡_ ]-[]
-    𝐒(length(l ++ l₂))         🝖[ _≡_ ]-[ [≡]-with(𝐒) stmt ]
+    𝐒(length(l ++ l₂))         🝖[ _≡_ ]-[ congruence₁(𝐒) stmt ]
     𝐒(length(l) + length(l₂))  🝖[ _≡_ ]-[ [+]-stepₗ {length(l)} {length(l₂)} ]
     𝐒(length(l)) + length(l₂)  🝖[ _≡_ ]-[]
     length(x ⊰ l) + length(l₂) 🝖-end
@@ -68,7 +69,7 @@ instance
 
 length-reverse : ((length{T = T} ∘ reverse) ⊜ length)
 length-reverse {x = ∅}     = [≡]-intro
-length-reverse {x = x ⊰ l} = length-postpend{a = x}{x = reverse l} 🝖 [≡]-with(𝐒) (length-reverse {x = l})
+length-reverse {x = x ⊰ l} = length-postpend{a = x}{x = reverse l} 🝖 congruence₁(𝐒) (length-reverse {x = l})
 
 instance
   length-preserves-reverse : Preserving₁(length{T = T})(reverse)(id)
@@ -76,7 +77,7 @@ instance
 
 length-repeat : ((length{T = T} ∘ repeat(a)) ⊜ id)
 length-repeat{T = T}{x = 𝟎}    = [≡]-intro
-length-repeat{T = T}{x = 𝐒(n)} = [≡]-with(𝐒) (length-repeat{T = T}{x = n})
+length-repeat{T = T}{x = 𝐒(n)} = congruence₁(𝐒) (length-repeat{T = T}{x = n})
 
 length-tail : ((length{T = T} ∘ tail) ⊜ (𝐏 ∘ length))
 length-tail{x = ∅}     = [≡]-intro
@@ -88,7 +89,7 @@ instance
 
 length-map : ∀{f : A → B} → ((length ∘ map f) ⊜ length)
 length-map {f = f}{x = ∅}     = [≡]-intro
-length-map {f = f}{x = x ⊰ l} = [≡]-with(𝐒) (length-map {f = f}{x = l})
+length-map {f = f}{x = x ⊰ l} = congruence₁(𝐒) (length-map {f = f}{x = l})
 
 instance
   length-preserves-map : Preserving₁(length{T = T})(map f)(id)
@@ -99,7 +100,7 @@ length-foldᵣ {l = ∅}                    _ = [≡]-intro
 length-foldᵣ {l = x ⊰ l} {init} {f} {g} p =
   length(foldᵣ f init (x ⊰ l))    🝖[ _≡_ ]-[]
   length(f(x) (foldᵣ f init l))   🝖[ _≡_ ]-[ p ]
-  g(x) (length(foldᵣ f init l))   🝖[ _≡_ ]-[ [≡]-with(g(x)) (length-foldᵣ {l = l} {init} {f} {g} p) ]
+  g(x) (length(foldᵣ f init l))   🝖[ _≡_ ]-[ congruence₁(g(x)) (length-foldᵣ {l = l} {init} {f} {g} p) ]
   g(x) (foldᵣ g (length init) l)  🝖[ _≡_ ]-[]
   foldᵣ g (length init) (x ⊰ l)   🝖-end
 
@@ -108,13 +109,13 @@ length-concatMap {l = l} {f} = length-foldᵣ{l = l}{init = ∅}{f = (_++_) ∘ 
 
 length-accumulateIterate₀ : ∀{n}{f}{init : T} → (length(accumulateIterate₀ n f init) ≡ n)
 length-accumulateIterate₀ {n = 𝟎}      = [≡]-intro
-length-accumulateIterate₀ {n = 𝐒 n}{f} = [≡]-with(𝐒) (length-accumulateIterate₀ {n = n}{f})
+length-accumulateIterate₀ {n = 𝐒 n}{f} = congruence₁(𝐒) (length-accumulateIterate₀ {n = n}{f})
 
 length-[++^] : (length(l ++^ n) ≡ length(l) ⋅ n)
 length-[++^] {l = l}{𝟎}    = [≡]-intro
 length-[++^] {l = l}{𝐒(n)} =
   length-[++] {l₁ = l}{l ++^ n}
-  🝖 [≡]-with(expr ↦ length(l) + expr) (length-[++^] {l = l}{n})
+  🝖 congruence₁(expr ↦ length(l) + expr) (length-[++^] {l = l}{n})
 
 length-isEmpty : (length(l) ≡ 0) ↔ (isEmpty(l) ≡ 𝑇)
 length-isEmpty {l = ∅}     = [↔]-intro (const [≡]-intro) (const [≡]-intro)

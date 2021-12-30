@@ -184,7 +184,7 @@ record ZFC : Typeω where
 
   instance
     Inductive-unaryRelator : UnaryRelator(Inductive)
-    Inductive-unaryRelator = [∧]-unaryRelator ⦃ rel-P = binary-unaryRelatorₗ ⦄ ⦃ rel-Q = [∀]-unaryRelator ⦃ rel-P = [→]-unaryRelator ⦃ rel-P = binary-unaryRelatorₗ ⦄ ⦃ rel-Q = binary-unaryRelatorₗ ⦄ ⦄ ⦄
+    Inductive-unaryRelator = [∧]-unaryRelator ⦃ rel-P = BinaryRelator-unary₂(_∈_) ⦄ ⦃ rel-Q = [∀]-unaryRelator ⦃ rel-P = [→]-unaryRelator ⦃ rel-P = BinaryRelator-unary₂(_∈_) ⦄ ⦃ rel-Q = BinaryRelator-unary₂(_∈_) ⦄ ⦄ ⦄
 
   open import Logic.Predicate.Theorems
   open import Logic.Propositional.Theorems
@@ -193,19 +193,19 @@ record ZFC : Typeω where
 
   instance
     [≡]-binaryRelator : BinaryRelator(_≡_)
-    BinaryRelator.substitution [≡]-binaryRelator xy₁ xy₂ x₁x₂ = [↔]-to-[→] set-extensionality (BinaryRelator.substitution [≡ₑ]-binaryRelator xy₁ xy₂ ([↔]-to-[←] set-extensionality x₁x₂))
+    [≡]-binaryRelator = BinaryRelator-introᵣ \xy₁ xy₂ x₁x₂ → \{_} → [↔]-to-[→] set-extensionality (substitute₂ᵣ _ ⦃ [≡ₑ]-binaryRelator ⦄ xy₁ xy₂ ([↔]-to-[←] set-extensionality (x₁x₂{_})))
 
   instance
     [⊆]-binaryRelator : BinaryRelator(_⊆_)
-    BinaryRelator.substitution [⊆]-binaryRelator p1 p2 sub = [↔]-to-[→] ([↔]-to-[→] set-extensionality p2) ∘ sub ∘ [↔]-to-[←] ([↔]-to-[→] set-extensionality p1)
+    [⊆]-binaryRelator = BinaryRelator-introᵣ \p1 p2 sub {_} → [↔]-to-[→] ([↔]-to-[→] (set-extensionality{_}) p2) ∘ sub{_} ∘ [↔]-to-[←] ([↔]-to-[→] (set-extensionality{_}) p1)
 
   instance
     pair-binaryOperator : BinaryOperator(pair)
-    BinaryOperator.congruence pair-binaryOperator p1 p2 = [↔]-to-[←] set-extensionality (\{x} → [↔]-transitivity pairing ([↔]-transitivity ([∨]-map-[↔] (substitute₂ₗᵣ(_≡ₑ_) ⦃ [≡ₑ]-binaryRelator ⦄ (reflexivity(_≡ₑ_) {x}) p1) (substitute₂ₗᵣ(_≡ₑ_) ⦃ [≡ₑ]-binaryRelator  ⦄ (reflexivity(_≡ₑ_) {x}) p2)) ([↔]-symmetry pairing)))
+    BinaryOperator.congruence pair-binaryOperator p1 p2 = [↔]-to-[←] set-extensionality (\{x} → [↔]-transitivity pairing ([↔]-transitivity ([∨]-map-[↔] (substitute₂(_≡ₑ_) ⦃ [≡ₑ]-binaryRelator ⦄ (reflexivity(_≡ₑ_) {x}) p1) (substitute₂(_≡ₑ_) ⦃ [≡ₑ]-binaryRelator  ⦄ (reflexivity(_≡ₑ_) {x}) p2)) ([↔]-symmetry pairing)))
 
   instance
     ℘-function : Function(℘)
-    Function.congruence ℘-function xy = [↔]-to-[←] set-extensionality \{x} → [↔]-transitivity power ([↔]-transitivity ([↔]-intro (substitute₂ᵣ(_⊆_) ⦃ [⊆]-binaryRelator ⦄ (symmetry(_≡ₑ_) xy)) (substitute₂ᵣ(_⊆_) ⦃ [⊆]-binaryRelator ⦄ xy)) ([↔]-symmetry power))
+    Function.congruence ℘-function xy = [↔]-to-[←] set-extensionality \{x} → [↔]-transitivity power ([↔]-transitivity ([↔]-intro (substitute₂-₂ₗ(_⊆_) ⦃ [⊆]-binaryRelator ⦄ _ xy) (substitute₂-₂ᵣ(_⊆_) ⦃ [⊆]-binaryRelator ⦄ (_) xy)) ([↔]-symmetry power))
 
   instance
     ⋃-function : Function(⋃)
@@ -217,7 +217,7 @@ record ZFC : Typeω where
   map-function : ∀{f} ⦃ func-f : Function(f) ⦄ {g} ⦃ func-g : Function(g) ⦄ → (f ⊜ g) → ∀{A B} → (A ≡ₑ B) → (map f(A) ≡ₑ map g(B))
   map-function {f = f}{g = g} (intro fg) {A = A}{B = B} AB = [↔]-to-[←] set-extensionality $ \{y} →
     (y ∈ map f A)        ⇔-[ replacement ]
-    ∃ₛ(A)(x ↦ f(x) ≡ₑ y) ⇔-[ [∃]-map-proof-[↔] (\{x} → [∧]-map-[↔] ([↔]-to-[→] set-extensionality AB) (substitute₂ₗᵣ(_≡ₑ_) ⦃ [≡ₑ]-binaryRelator ⦄ (fg{x}) (reflexivity(_≡ₑ_)))) ]
+    ∃ₛ(A)(x ↦ f(x) ≡ₑ y) ⇔-[ [∃]-map-proof-[↔] (\{x} → [∧]-map-[↔] ([↔]-to-[→] set-extensionality AB) (substitute₂(_≡ₑ_) ⦃ [≡ₑ]-binaryRelator ⦄ (fg{x}) (reflexivity(_≡ₑ_)))) ]
     ∃ₛ(B)(x ↦ g(x) ≡ₑ y) ⇔-[ replacement ]-sym
     (y ∈ map g B)        ⇔-end
 
@@ -230,12 +230,12 @@ record ZFC : Typeω where
       ((y ≡ₑ A) ∧ (x ∈ y)) ∨ ((y ≡ₑ B) ∧ (x ∈ y)) ⇔-end
     ) ]
     ∃(y ↦ ((y ≡ₑ A) ∧ (x ∈ y)) ∨ ((y ≡ₑ B) ∧ (x ∈ y)))    ⇔-[ [∃][∨]-distributivity ]
-    ∃(y ↦ (y ≡ₑ A) ∧ (x ∈ y)) ∨ ∃(y ↦ (y ≡ₑ B) ∧ (x ∈ y)) ⇔-[ [∨]-map-[↔] (p ⦃ rel = binary-unaryRelatorₗ ⦄) (p ⦃ rel = binary-unaryRelatorₗ ⦄) ]
+    ∃(y ↦ (y ≡ₑ A) ∧ (x ∈ y)) ∨ ∃(y ↦ (y ≡ₑ B) ∧ (x ∈ y)) ⇔-[ [∨]-map-[↔] (p ⦃ rel = BinaryRelator-unary₂(_∈_) ⦄) (p ⦃ rel = BinaryRelator-unary₂(_∈_) ⦄) ]
     (x ∈ A) ∨ (x ∈ B)                                     ⇔-end
     where
       -- TODO: Maybe move this somewhere else
       p : ∀{T : Type{ℓ₁}} ⦃ equiv : Equiv{ℓₑ₁}(T) ⦄ {P : T → Type{ℓ₂}} ⦃ rel : UnaryRelator(P) ⦄ {y} → ∃(x ↦ (x ≡ₑ y) ∧ P(x)) ↔ P(y)
-      p {P = P} = [↔]-intro (py ↦ [∃]-intro _ ⦃ [∧]-intro (reflexivity(_≡ₑ_)) py ⦄) (\([∃]-intro x ⦃ [∧]-intro xy px ⦄) → substitute₁(P) xy px)
+      p {P = P} = [↔]-intro (py ↦ [∃]-intro _ ⦃ [∧]-intro (reflexivity(_≡ₑ_)) py ⦄) (\([∃]-intro x ⦃ [∧]-intro xy px ⦄) → substitute₁ᵣ(P) xy px)
 
   BoolSet-inclusion : (x ∈ BoolSet) ↔ (x ≡ₑ 𝑇) ∨ (x ≡ₑ 𝐹)
   BoolSet-inclusion = pairing
@@ -257,18 +257,20 @@ record ZFC : Typeω where
 
   pair-superset : (x ∈ A) → (y ∈ A) → (pair x y ⊆ A)
   pair-superset pa pb p = [∨]-elim
-    (eq ↦ substitute₂ₗ(_∈_) (symmetry(_≡ₑ_) eq) pa)
-    (eq ↦ substitute₂ₗ(_∈_) (symmetry(_≡ₑ_) eq) pb)
+    (eq ↦ substitute₂-₁ₗ(_∈_)(_) eq pa)
+    (eq ↦ substitute₂-₁ₗ(_∈_)(_) eq pb)
     ([↔]-to-[→] pairing p)
 
   pair-superset-union : (a ∈ A) → (b ∈ B) → (pair a b ⊆ (A ∪ B))
   pair-superset-union pa pb p = pair-superset (([↔]-to-[←] [∪]-inclusion ∘ [∨]-introₗ) pa) (([↔]-to-[←] [∪]-inclusion ∘ [∨]-introᵣ) pb) p
 
   instance
-    postulate [≡][⊆]-sub : (_≡_) ⊆₂ (_⊆_)
+    [≡][⊆]-sub : (_≡_) ⊆₂ (_⊆_)
+    _⊆₂_.proof [≡][⊆]-sub xy = [↔]-to-[→] (xy{_})
 
   instance
-    postulate [⊆]-transitivity : Transitivity(_⊆_)
+    [⊆]-transitivity : Transitivity(_⊆_)
+    Transitivity.proof [⊆]-transitivity xy yz = yz ∘ xy
 
   open import Data.Either as Either using ()
   import      Data.Tuple as Tuple
@@ -303,7 +305,7 @@ record ZFC : Typeω where
   singleton-nonempty{x = x} = [∃]-intro x ⦃ singleton-contains-element ⦄
 
   singleton-superset : (a ∈ A) → (singleton a ⊆ A)
-  singleton-superset pa p = substitute₂ₗ(_∈_) (symmetry(_≡ₑ_) ([↔]-to-[→] singleton-inclusion p)) pa
+  singleton-superset pa p = substitute₂-₁ₗ(_∈_)(_) ([↔]-to-[→] singleton-inclusion p) pa
 
   zero-one-ineq : (𝟎 ≢ 𝟏)
   zero-one-ineq p =

@@ -8,6 +8,5 @@ open import Type
 -- Also called: Pointed type.
 record ◊ (T : Type{ℓ}) : Type{ℓ} where
   constructor intro
-  field
-    ⦃ existence ⦄ : T
-open ◊ ⦃ ... ⦄ renaming (existence to [◊]-existence) public
+  field ⦃ inhabitant ⦄ : T
+open ◊ ⦃ ... ⦄ public

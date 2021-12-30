@@ -28,7 +28,7 @@ module _ ⦃ prop : MereProposition(B) ⦄ where
 
 module _ {P : HTrunc₁(A) → Type{ℓ}} ⦃ prop-p : ∀{a} → MereProposition(P(a)) ⦄ where
   HTrunc₁-property : (∀{x} → P(trunc x)) → (∀{a} → P(a))
-  HTrunc₁-property axpx {a} = HTrunc₁-function (x ↦ substitute₁(P) (uniqueness(HTrunc₁(A)) {trunc x}{a}) axpx) a
+  HTrunc₁-property axpx {a} = HTrunc₁-function (x ↦ substitute₁ᵣ(P) (uniqueness(HTrunc₁(A)) {trunc x}{a}) axpx) a
 
 data HTrunc₂(A : Type{ℓ}) : Type{ℓ} where
   trunc : A → HTrunc₂(A)

@@ -10,6 +10,7 @@ open import Structure.Relator.Properties
 open import Relator.Congruence
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function
 open import Structure.Function.Names
 open import Syntax.Transitivity
 open import Type
@@ -40,7 +41,7 @@ module _ {ℓ₁ ℓ₂} {X : Type{ℓ₁}}{Y : Type{ℓ₂}} {f : X → Y} wher
 
 module _ {ℓ₁ ℓ₂ ℓ₃} {X₁ : Type{ℓ₁}}{X₂ : Type{ℓ₂}}{Y : Type{ℓ₃}} where
   [≅]-composition : ∀{x₁ x₂ : X₁}{g : X₁ → X₂} → (x₁ ≅ x₂ of g) → ∀{f : X₂ → Y} → (g(x₁) ≅ g(x₂) of f)
-  [≅]-composition ([≅]-intro (fx₁≡fx₂)) {f} = [≅]-intro ([≡]-with(f) (fx₁≡fx₂))
+  [≅]-composition ([≅]-intro (fx₁≡fx₂)) {f} = [≅]-intro (congruence₁(f) (fx₁≡fx₂))
     -- x₁ ≅ x₂
     -- ⇔ g(x₁) = g(x₂)
     -- ⇒ f(g(x₁)) = f(g(x₂))

@@ -21,14 +21,14 @@ private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓₗ ℓₗ₁ ℓₗ₂ ℓₗ₃ �
 private variable A B A₁ A₂ B₁ B₂ : Type{ℓ}
 
 [≡]-binaryRelator : ∀ ⦃ equiv : Equiv{ℓₗ}(A) ⦄ → BinaryRelator ⦃ equiv ⦄ (_≡_)
-BinaryRelator.substitution [≡]-binaryRelator {x₁} {y₁} {x₂} {y₂} xy1 xy2 x1x2 =
+[≡]-binaryRelator = BinaryRelator-introᵣ \{x₁} {y₁} {x₂} {y₂} xy1 xy2 x1x2 →
   y₁ 🝖-[ xy1 ]-sym
   x₁ 🝖-[ x1x2 ]
   x₂ 🝖-[ xy2 ]
   y₂ 🝖-end
 
-reflexive-binaryRelator-sub : ∀ ⦃ equiv : Equiv{ℓₗ}(A) ⦄ {_▫_ : A → A → Type{ℓ}} ⦃ refl : Reflexivity(_▫_) ⦄ ⦃ rel : BinaryRelator ⦃ equiv ⦄ (_▫_) ⦄ → ((_≡_) ⊆₂ (_▫_))
-_⊆₂_.proof (reflexive-binaryRelator-sub {_▫_ = _▫_}) xy = substitute₂ᵣ(_▫_) xy (reflexivity(_▫_))
+reflexive-rel-sub : ∀ ⦃ equiv : Equiv{ℓₗ}(A) ⦄ {_▫_ : A → A → Type{ℓ}} ⦃ refl : Reflexivity(_▫_) ⦄ ⦃ rel : BinaryRelator ⦃ equiv ⦄ (_▫_) ⦄ → ((_≡_) ⊆₂ (_▫_))
+_⊆₂_.proof (reflexive-rel-sub {_▫_ = _▫_}) xy = substitute₂-₁ₗ(_▫_)(_) xy (reflexivity(_▫_))
 
 module _
   ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄
@@ -38,7 +38,7 @@ module _
   where
 
   [∘]-unaryRelator : UnaryRelator(P ∘ f)
-  [∘]-unaryRelator = [↔]-to-[←] relator-function₁ ([∘]-function ⦃ equiv-c = [↔]-equiv ⦄ ⦃ func-f = [↔]-to-[→] relator-function₁ rel ⦄)
+  [∘]-unaryRelator = [∘]-function {f = P}
 
 module _
   ⦃ equiv-A₁ : Equiv{ℓₑ₁}(A₁) ⦄
@@ -60,10 +60,7 @@ module _
   where
 
   unaryRelator-sub : UnaryRelator(▫ ∘ P)
-  unaryRelator-sub = [∘]-unaryRelator
-    ⦃ equiv-B = [↔]-equiv ⦄
-    ⦃ func = [↔]-to-[→] relator-function₁ rel-P ⦄
-    ⦃ rel = [↔]-to-[←] (relator-function₁ ⦃ [↔]-equiv ⦄) rel ⦄
+  unaryRelator-sub = [∘]-unaryRelator{f = P}
 
 module _
   ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄
@@ -74,12 +71,7 @@ module _
   where
 
   binaryRelator-sub : BinaryRelator(x ↦ y ↦ P(x) ▫ Q(y))
-  binaryRelator-sub = [∘]-binaryRelator
-    ⦃ equiv-A₂ = [↔]-equiv ⦄
-    ⦃ equiv-B₂ = [↔]-equiv ⦄
-    ⦃ func-f = [↔]-to-[→] relator-function₁ rel-P ⦄
-    ⦃ func-g = [↔]-to-[→] relator-function₁ rel-Q ⦄
-    ⦃ rel = [↔]-to-[←] (relator-function₂ ⦃ [↔]-equiv ⦄ ⦃ [↔]-equiv ⦄) rel ⦄
+  binaryRelator-sub = [∘]-binaryRelator {f = P}{g = Q}
 
 module _
   ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄
@@ -95,49 +87,40 @@ module _
   [↔]-binaryRelator = binaryRelator-sub{_▫_ = _↔_}
 
 [→]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : A → Stmt{ℓₗ₁}}{Q : A → Stmt{ℓₗ₂}} → ⦃ rel-P : UnaryRelator(P) ⦄ → ⦃ rel-Q : UnaryRelator(Q) ⦄ → UnaryRelator(\x → P(x) → Q(x))
-UnaryRelator.substitution ([→]-unaryRelator {P = P}{Q = Q}) xy pxqx py = substitute₁(Q) xy (pxqx(substitute₁(P) (symmetry(_≡_) xy) py))
+[→]-unaryRelator {P = P}{Q = Q} = UnaryRelator-introᵣ \xy pxqx → substitute₁ᵣ(Q) xy ∘ pxqx ∘ substitute₁ₗ(P) xy
 
 [→]-dependent-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : B → A → Stmt{ℓₗ₁}} → ((b : B) → UnaryRelator(P(b))) → UnaryRelator(\a → (b : B) → P(b)(a))
-UnaryRelator.substitution ([→]-dependent-unaryRelator rel) xy px b = UnaryRelator.substitution (rel b) xy (px b)
+[→]-dependent-unaryRelator rel = UnaryRelator-introᵣ \xy px b → [↔]-to-[→] (UnaryRelator.substitution ⦃ rel = rel b ⦄ xy) (px b)
 
 [∀]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : B → A → Stmt{ℓₗ₁}} → ⦃ rel-P : ∀{x} → UnaryRelator(P(x)) ⦄ → UnaryRelator(\y → ∀{x} → P(x)(y))
-UnaryRelator.substitution ([∀]-unaryRelator {P = P}) {x} {a} xy px {b} = substitute₁ (P b) xy px
+[∀]-unaryRelator {P = P} = UnaryRelator-introᵣ \{x} {a} xy px {b} → substitute₁ᵣ (P b) xy (px{b})
 
 [∃]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : B → A → Stmt{ℓₗ₁}} → ⦃ rel-P : ∀{x} → UnaryRelator(P(x)) ⦄ → UnaryRelator(\y → ∃(x ↦ P(x)(y)))
-UnaryRelator.substitution ([∃]-unaryRelator {P = P}) xy = [∃]-map-proof (substitute₁(P _) xy)
+[∃]-unaryRelator {P = P} = UnaryRelator-introᵣ \xy → [∃]-map-proof (substitute₁ᵣ(P _) xy)
 
 instance
   const-unaryRelator : ∀{P : Stmt{ℓₗ₁}} → ⦃ _ : Equiv{ℓₗ}(A) ⦄ → UnaryRelator{A = A}(const P)
-  UnaryRelator.substitution const-unaryRelator = const id
+  const-unaryRelator = UnaryRelator-introᵣ(const id)
 
 [¬]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ {P : A → Stmt{ℓₗ₁}} → ⦃ rel-P : UnaryRelator(P) ⦄ → UnaryRelator(\x → ¬ P(x))
 [¬]-unaryRelator {P = P} = [→]-unaryRelator
 
 [∧]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : A → Stmt{ℓₗ₁}}{Q : A → Stmt{ℓₗ₂}} → ⦃ rel-P : UnaryRelator(P) ⦄ → ⦃ rel-Q : UnaryRelator(Q) ⦄ → UnaryRelator(x ↦ P(x) ∧ Q(x))
-UnaryRelator.substitution [∧]-unaryRelator xy = Tuple.map (substitute₁(_) xy) (substitute₁(_) xy)
+[∧]-unaryRelator = UnaryRelator-introᵣ \xy → Tuple.map (substitute₁ᵣ(_) xy) (substitute₁ᵣ(_) xy)
 
 [∨]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : A → Stmt{ℓₗ₁}}{Q : A → Stmt{ℓₗ₂}} → ⦃ rel-P : UnaryRelator(P) ⦄ → ⦃ rel-Q : UnaryRelator(Q) ⦄ → UnaryRelator(x ↦ P(x) ∨ Q(x))
-UnaryRelator.substitution [∨]-unaryRelator xy = Either.map (substitute₁(_) xy) (substitute₁(_) xy)
+[∨]-unaryRelator = UnaryRelator-introᵣ \xy → Either.map (substitute₁ᵣ(_) xy) (substitute₁ᵣ(_) xy)
 
 binary-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ {P : A → A → Stmt{ℓₗ₁}} → ⦃ rel-P : BinaryRelator(P) ⦄ → UnaryRelator(P $₂_)
-UnaryRelator.substitution (binary-unaryRelator {P = P}) xy pxx = substitute₂(P) xy xy pxx
-
-binary-unaryRelatorₗ : ∀ ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ {_▫_ : A → B → Stmt{ℓₗ₃}} → ⦃ rel-P : BinaryRelator(_▫_) ⦄ → ∀{x} → UnaryRelator(x ▫_)
-UnaryRelator.substitution binary-unaryRelatorₗ xy x1x2 = substitute₂ _ (reflexivity(_≡_)) xy x1x2
-
-binary-unaryRelatorᵣ : ∀ ⦃ _ : Equiv{ℓₗ₁}(A) ⦄ ⦃ _ : Equiv{ℓₗ₂}(B) ⦄ {_▫_ : A → B → Stmt{ℓₗ₃}} → ⦃ rel-P : BinaryRelator(_▫_) ⦄ → ∀{x} → UnaryRelator(_▫ x)
-UnaryRelator.substitution binary-unaryRelatorᵣ xy x1x2 = substitute₂ _ xy (reflexivity(_≡_)) x1x2
-
-binaryRelator-from-unaryRelator : ∀ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ {_▫_ : A → B → Stmt{ℓₗ}} → ⦃ relₗ : ∀{x} → UnaryRelator(_▫ x) ⦄ → ⦃ relᵣ : ∀{x} → UnaryRelator(x ▫_) ⦄ → BinaryRelator(_▫_)
-BinaryRelator.substitution binaryRelator-from-unaryRelator xy1 xy2 = substitute₁ _ xy1 ∘ substitute₁ _ xy2
+binary-unaryRelator {P = P} = UnaryRelator-introᵣ \xy pxx → substitute₂ᵣ(P) xy xy pxx
 
 instance
   const-binaryRelator : ∀{P : Stmt{ℓₗ}} → ⦃ equiv-A : Equiv{ℓₗ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₗ₂}(B) ⦄ → BinaryRelator{A = A}{B = B}((const ∘ const) P)
-  BinaryRelator.substitution const-binaryRelator = (const ∘ const) id
+  const-binaryRelator = BinaryRelator-introᵣ((const ∘ const) id)
 
 -- TODO: Temporary until substitution is a specialization of congruence
 [¬]-binaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ ⦃ _ : Equiv{ℓₗ₃}(B) ⦄ {P : A → B → Stmt{ℓₗ₁}} → ⦃ rel-P : BinaryRelator(P) ⦄ → BinaryRelator(\x y → ¬ P(x)(y))
-BinaryRelator.substitution ([¬]-binaryRelator {P = P}) xy₁ xy₂ npx py = npx(substitute₂(P) (symmetry(_≡_) xy₁) (symmetry(_≡_) xy₂) py)
+[¬]-binaryRelator {P = P} = BinaryRelator-introᵣ \xy₁ xy₂ npx → npx ∘ substitute₂ₗ(P) xy₁ xy₂
 
 swap-binaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ ⦃ _ : Equiv{ℓₗ₃}(B) ⦄ {P : A → B → Stmt{ℓₗ₁}} → ⦃ rel-P : BinaryRelator(P) ⦄ → BinaryRelator(swap P)
-BinaryRelator.substitution (swap-binaryRelator {P = P}) = swap(substitute₂(P))
+swap-binaryRelator {P = P} = BinaryRelator-introᵣ(swap(substitute₂ᵣ(P)))

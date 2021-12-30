@@ -18,6 +18,8 @@ import Char.Functions
 import Char.Proofs
 import Char
 import Data.Any
+import Data.BinaryTree.Functions.Proofs
+import Data.BinaryTree.Functions
 import Data.BinaryTree.Heap
 import Data.BinaryTree.Properties
 import Data.BinaryTree
@@ -28,6 +30,7 @@ import Data.Boolean.NaryOperators
 import Data.Boolean.Numeral
 import Data.Boolean.Operators
 import Data.Boolean.Proofs
+import Data.Boolean.Stmt.Logic
 import Data.Boolean.Stmt.Proofs
 import Data.Boolean.Stmt
 import Data.Boolean
@@ -255,6 +258,7 @@ import Lvl
 import Main
 import Numeral.CoordinateVector.Proofs
 import Numeral.CoordinateVector
+import Numeral.Finite.Bound.Proofs
 import Numeral.Finite.Bound
 import Numeral.Finite.Category
 import Numeral.Finite.Conversions
@@ -265,10 +269,13 @@ import Numeral.Finite.Functions
 import Numeral.Finite.LinearSearch
 import Numeral.Finite.Oper.Comparisons.Proofs
 import Numeral.Finite.Oper.Comparisons
+import Numeral.Finite.Oper.Proofs
 import Numeral.Finite.Oper
 import Numeral.Finite.Proofs
 import Numeral.Finite.Relation.Order
 import Numeral.Finite.Sequence
+import Numeral.Finite.SequenceTransform.Proofs
+import Numeral.Finite.SequenceTransform
 import Numeral.Finite
 import Numeral.FixedPositional
 import Numeral.Integer.Construction.Proofs
@@ -283,7 +290,7 @@ import Numeral.Integer.Proofs
 import Numeral.Integer.Relation.Divisibility.Proofs
 import Numeral.Integer.Relation.Divisibility
 import Numeral.Integer.Relation.Order
--- import Numeral.Integer.Relation
+import Numeral.Integer.Relation
 import Numeral.Integer.Sign
 import Numeral.Integer
 -- import Numeral.Matrix.OverField
@@ -332,6 +339,7 @@ import Numeral.Natural.Oper.Modulo.Proofs.Algorithm
 import Numeral.Natural.Oper.Modulo.Proofs.DivisibilityWithRemainder
 import Numeral.Natural.Oper.Modulo.Proofs.Elim
 import Numeral.Natural.Oper.Modulo.Proofs
+import Numeral.Natural.Oper.Modulo.Unclosed
 import Numeral.Natural.Oper.Modulo
 -- import Numeral.Natural.Oper.Proofs.Elemantary
 -- import Numeral.Natural.Oper.Proofs.Iteration
@@ -579,7 +587,6 @@ import Structure.Relator.Proofs
 import Structure.Relator.Properties.Proofs
 import Structure.Relator.Properties
 import Structure.Relator
-import Structure.Relator2
 import Structure.Semicategory
 import Structure.Setoid.Category.HomFunctor
 import Structure.Setoid.Category
@@ -662,7 +669,10 @@ import Type.Properties.Empty
 -- import Type.Properties.Homotopy.Proofs
 import Type.Properties.Homotopy
 import Type.Properties.Inhabited
+import Type.Properties.MereProposition.Equiv
+import Type.Properties.MereProposition.Proofs
 import Type.Properties.MereProposition
+import Type.Properties.Proofs
 import Type.Properties.Singleton.Proofs
 import Type.Properties.Singleton
 import Type.Singleton.Proofs

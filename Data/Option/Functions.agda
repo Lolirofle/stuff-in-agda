@@ -36,6 +36,14 @@ map = partialMap None ∘ (Some ∘_)
 _or_ : Option(T) → T → T
 o or def = partialMap def id o
 
+-- Constructs a total function from a partial function expressed using Option and a function for default/fallback values.
+-- Alternative implementation:
+--   totalMap def f(x) with f(x)
+--   ... | Some(y) = y
+--   ... | None    = def(x)
+totalMap : (A → B) → (A → Option(B)) → (A → B)
+totalMap def = (swap(_or_) ∘ def) ∘ₛ_
+
 -- If the option have a value (is Some).
 -- Alternative implementation:
 --   isSome = partialMap 𝐹 (const 𝑇)
@@ -65,32 +73,32 @@ combine(_▫_) l r (Some x) None     = l(x)
 combine(_▫_) l r (Some x) (Some y) = Some(x ▫ y)
 
 -- Combines options of different types by applying the specified binary operator when both options have a value, and none otherwise.
-and-combine : (T₁ → T₂ → T₃) → (Option(T₁) → Option(T₂) → Option(T₃))
-and-combine(_▫_) = combine(_▫_) (const None) (const None)
+andCombine : (T₁ → T₂ → T₃) → (Option(T₁) → Option(T₂) → Option(T₃))
+andCombine(_▫_) = combine(_▫_) (const None) (const None)
 
 -- Combines options of different types by applying the specified binary operator when both options have a value, and the side functions when only the respective sides have a value. None otherwise.
-or-combine : (T₁ → T₂ → T₃) → (T₁ → T₃) → (T₂ → T₃) → (Option(T₁) → Option(T₂) → Option(T₃))
-or-combine(_▫_) l r = combine(_▫_) (Some ∘ l) (Some ∘ r)
+orCombine : (T₁ → T₂ → T₃) → (T₁ → T₃) → (T₂ → T₃) → (Option(T₁) → Option(T₂) → Option(T₃))
+orCombine(_▫_) l r = combine(_▫_) (Some ∘ l) (Some ∘ r)
 
 module Same where
   _orₗ_ : Option(T) → Option(T) → Option(T)
-  _orₗ_ = or-combine(\x y → x) (\x → x) (\x → x)
+  _orₗ_ = orCombine(\x y → x) (\x → x) (\x → x)
 
   _orᵣ_ : Option(T) → Option(T) → Option(T)
-  _orᵣ_ = or-combine(\x y → y) (\x → x) (\x → x)
+  _orᵣ_ = orCombine(\x y → y) (\x → x) (\x → x)
 
   _andₗ_ : Option(T) → Option(T) → Option(T)
-  _andₗ_ = and-combine(\x y → x)
+  _andₗ_ = andCombine(\x y → x)
 
   _andᵣ_ : Option(T) → Option(T) → Option(T)
-  _andᵣ_ = and-combine(\x y → y)
+  _andᵣ_ = andCombine(\x y → y)
 
 module Different where
   _orₗ_ : Option(T₁) → Option(T₂) → Option(T₁ ‖ T₂)
-  _orₗ_ = or-combine(\x y → Either.Left(x)) Either.Left Either.Right
+  _orₗ_ = orCombine(\x y → Either.Left(x)) Either.Left Either.Right
 
   _orᵣ_ : Option(T₁) → Option(T₂) → Option(T₁ ‖ T₂)
-  _orᵣ_ = or-combine(\x y → Either.Right(y)) Either.Left Either.Right
+  _orᵣ_ = orCombine(\x y → Either.Right(y)) Either.Left Either.Right
 
   _and_ : Option(T₁) → Option(T₂) → Option(T₁ ⨯ T₂)
-  _and_ = and-combine(_,_)
+  _and_ = andCombine(_,_)

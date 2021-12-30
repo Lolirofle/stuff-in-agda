@@ -21,11 +21,11 @@ module _ {A : Type{ℓₒ₁}}{B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ�
 
   total-to-computable : ⦃ rel : ∀{x} → UnaryRelator(φ(x)) ⦄ → Total(φ) → ∃(Computable(φ))
   ∃.witness (total-to-computable tot) = Total.compute tot
-  Computable.proof (∃.proof (total-to-computable tot)) {x} eq = substitute₁(φ(x)) eq ([∃]-proof(Total.proof tot{x}))
+  Computable.proof (∃.proof (total-to-computable tot)) {x} eq = substitute₁ᵣ(φ(x)) eq ([∃]-proof(Total.proof tot{x}))
 
 module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ (φ : A → B → Stmt{ℓₗ}) where
   Total-compute-function : ⦃ rel : BinaryRelator(φ) ⦄ → ⦃ tot : Total(φ) ⦄ → ⦃ func : Function(φ) ⦄ → Func.Function(Total.compute tot)
-  Func.Function.congruence Total-compute-function {x}{y} xy = function(φ) {y}  (substitute₂ₗ(φ) xy ([∃]-proof(total(φ)))) ([∃]-proof(total(φ)))
+  Func.Function.congruence Total-compute-function {x}{y} xy = function(φ) {y}  (substitute₂-₁ᵣ(φ)(_) xy ([∃]-proof(total(φ)))) ([∃]-proof(total(φ)))
 
 module _ {A : Type{ℓₒ₁}}{B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ (φ : A → B → Stmt{ℓₗ}) ⦃ totality : Total(φ)⦄ ⦃ func : Function(φ)⦄ ⦃ _ : ∀{x} → UnaryRelator(φ(x)) ⦄ where
   -- There is a function for a total and function-like binary relation.
@@ -39,7 +39,7 @@ module _ {A : Type{ℓₒ₁}}{B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₑ�
     proof : ∀{x}{y} → (f(x) ≡ y) ↔ φ(x)(y)
     proof{x}{y} = [↔]-intro l r where
       r : (f(x) ≡ y) → φ(x)(y)
-      r(fxy) = substitute₁(φ(x)) fxy ([∃]-proof(total(φ){x}))
+      r(fxy) = substitute₁ᵣ(φ(x)) fxy ([∃]-proof(total(φ){x}))
 
       l : (f(x) ≡ y) ← φ(x)(y)
       l(φxy) = [∃!]-existence-eq-any(totalFunction(φ)) φxy

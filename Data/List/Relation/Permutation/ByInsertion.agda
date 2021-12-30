@@ -8,6 +8,7 @@ open import Data.List.Relation
 open import Data.List.Relation.Permutation
 open import Functional using (id ; _∘_ ; const)
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic
 import      Lvl
 open import Numeral.Finite
@@ -59,7 +60,7 @@ insertion-permutation-mapping empty                       ()
 insertion-permutation-mapping (ins 𝟎 p)                   𝟎     = 𝟎
 insertion-permutation-mapping (ins {l₁ = x ⊰ l₁} (𝐒 n) p) 𝟎     = 𝟎
 insertion-permutation-mapping (ins 𝟎 p)                   (𝐒 i) = 𝐒(insertion-permutation-mapping p i)
-insertion-permutation-mapping (ins {l₁ = x ⊰ l₁} (𝐒 n) p) (𝐒 i) = 𝐒(insertion-permutation-mapping p (substitute₁(𝕟) (length-insertIn {l = l₁} {n = n}) i))
+insertion-permutation-mapping (ins {l₁ = x ⊰ l₁} (𝐒 n) p) (𝐒 i) = 𝐒(insertion-permutation-mapping p (substitute₁ᵣ(𝕟) (length-insertIn {l = l₁} {n = n}) i))
 
 open import Data using ()
 open import Numeral.Natural

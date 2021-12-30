@@ -12,7 +12,8 @@ open import Function.Inverse
 open import Function.Proofs
 open import Logic
 open import Logic.Propositional
-open import Logic.Propositional.Theorems
+open import Logic.Propositional.Equiv
+open import Logic.Propositional.Theorems using (contrapositiveᵣ) renaming ([↔]-transitivity to [↔]-transitivity-raw)
 open import Logic.Predicate
 open import Structure.Setoid renaming (_≡_ to _≡ₑ_)
 open import Structure.Function.Domain
@@ -72,39 +73,39 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   -- Contains nothing.
   ∅ : PredSet{ℓ}(T)
   ∅ ∋ x = Empty
-  UnaryRelator.substitution (preserve-equiv ∅) = const id
+  preserve-equiv ∅ = UnaryRelator-introᵣ(const id)
 
   -- An universal set.
   -- Contains everything.
   -- Note: Everything as in every object of type  T.
   𝐔 : PredSet{ℓ}(T)
   𝐔 ∋ x = Unit
-  UnaryRelator.substitution (preserve-equiv 𝐔) = const id
+  preserve-equiv 𝐔 = UnaryRelator-introᵣ(const id)
 
   -- A singleton set (a set containing only one element).
   •_ : T → PredSet(T)
   (• a) ∋ x = x ≡ₑ a
-  UnaryRelator.substitution (preserve-equiv (• a)) xy xa = symmetry(_≡ₑ_) xy 🝖 xa
+  preserve-equiv (• a) = UnaryRelator-introᵣ \xy xa → symmetry(_≡ₑ_) xy 🝖 xa
 
   -- An union of two sets.
   -- Contains the elements that any of the both sets contain.
   _∪_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → PredSet(T)
   (A ∪ B) ∋ x = (A ∋ x) ∨ (B ∋ x)
-  UnaryRelator.substitution (preserve-equiv (A ∪ B)) xy = Either.map (substitute₁(A ∋_) xy) (substitute₁(B ∋_) xy)
+  preserve-equiv (A ∪ B) = UnaryRelator-introᵣ \xy → Either.map (substitute₁ᵣ(A ∋_) xy) (substitute₁ᵣ(B ∋_) xy)
   infixr 1000 _∪_
 
   -- An intersection of two sets.
   -- Contains the elements that both of the both sets contain.
   _∩_ : PredSet{ℓ₁}(T) → PredSet{ℓ₂}(T) → PredSet(T)
   (A ∩ B) ∋ x = (A ∋ x) ∧ (B ∋ x)
-  UnaryRelator.substitution (preserve-equiv (A ∩ B)) xy = Tuple.map (substitute₁(A ∋_) xy) (substitute₁(B ∋_) xy)
+  preserve-equiv (A ∩ B) = UnaryRelator-introᵣ \xy → Tuple.map (substitute₁ᵣ(A ∋_) xy) (substitute₁ᵣ(B ∋_) xy)
   infixr 1001 _∩_
 
   -- A complement of a set.
   -- Contains the elements that the set does not contain.
   ∁_ : PredSet{ℓ}(T) → PredSet(T)
   (∁ A) ∋ x = A ∌ x
-  UnaryRelator.substitution (preserve-equiv (∁ A)) xy = contrapositiveᵣ (substitute₁(A ∋_) (symmetry(_≡ₑ_) xy))
+  preserve-equiv (∁ A) = UnaryRelator-introᵣ \xy → contrapositiveᵣ(substitute₁ᵣ(A ∋_) (symmetry(_≡ₑ_) xy))
   infixr 1002 ∁_
 
   -- A relative complement of a set.
@@ -115,28 +116,27 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   filter : (P : T → Stmt{ℓ₁}) ⦃ _ : UnaryRelator(P) ⦄ → PredSet{ℓ₂}(T) → PredSet(T)
   filter P(A) ∋ x = (x ∈ A) ∧ P(x)
-  _⨯_.left (UnaryRelator.substitution (preserve-equiv (filter P A)) xy ([∧]-intro xA Px)) = substitute₁(A ∋_) xy xA
-  _⨯_.right (UnaryRelator.substitution (preserve-equiv (filter P A)) xy ([∧]-intro xA Px)) = substitute₁(P) xy Px
+  preserve-equiv (filter P A) = UnaryRelator-introᵣ \xy ([∧]-intro xA Px) → [∧]-intro (substitute₁ᵣ(A ∋_) xy xA) (substitute₁ᵣ(P) xy Px)
 
 unapply : ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ → (f : A → B) ⦃ func-f : Function(f) ⦄ → B → PredSet(A)
 unapply f(y) ∋ x = f(x) ≡ₑ y
-preserve-equiv (unapply f(y)) = [∘]-unaryRelator ⦃ rel = binary-unaryRelatorᵣ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄
+preserve-equiv (unapply f(y)) = [∘]-unaryRelator ⦃ rel = BinaryRelator.unary₁ _ [≡]-binaryRelator ⦄
 
 ⊶ : ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ → (f : A → B) → PredSet(B)
 ⊶ f ∋ y = ∃(x ↦ f(x) ≡ₑ y)
-preserve-equiv (⊶ f) = [∃]-unaryRelator ⦃ rel-P = binary-unaryRelatorₗ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄
+preserve-equiv (⊶ f) = [∃]-unaryRelator ⦃ rel-P = BinaryRelator.unary₂ _ [≡]-binaryRelator ⦄
 
 unmap : ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ → (f : A → B) ⦃ _ : Function(f) ⦄ → PredSet{ℓ}(B) → PredSet(A)
 (unmap f(Y)) ∋ x = f(x) ∈ Y
-preserve-equiv (unmap f x) = [∘]-unaryRelator
+preserve-equiv (unmap f x) = [∘]-unaryRelator{f = f}
 
 map : ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ → (f : A → B) → PredSet{ℓ}(A) → PredSet(B)
 map f(S) ∋ y = ∃(x ↦ (x ∈ S) ∧ (f(x) ≡ₑ y))
-preserve-equiv (map f S) = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-Q = binary-unaryRelatorₗ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄ ⦄
+preserve-equiv (map f S) = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-Q = BinaryRelator.unary₂ _ [≡]-binaryRelator ⦄ ⦄
 
 map₂ : ⦃ _ : Equiv{ℓₑ₁}(A₁) ⦄ ⦃ _ : Equiv{ℓₑ₂}(A₂) ⦄ ⦃ _ : Equiv{ℓₑ₃}(B) ⦄ → (_▫_ : A₁ → A₂ → B) → PredSet{ℓ₁}(A₁) → PredSet{ℓ₂}(A₂) → PredSet(B)
 map₂(_▫_) S₁ S₂ ∋ y = ∃{Obj = _ ⨯ _}(\{(x₁ , x₂) → (x₁ ∈ S₁) ∧ (x₂ ∈ S₂) ∧ ((x₁ ▫ x₂) ≡ₑ y)})
-preserve-equiv (map₂ (_▫_) S₁ S₂) = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦄ ⦃ rel-Q = binary-unaryRelatorₗ ⦃ rel-P = [≡]-binaryRelator ⦄ ⦄ ⦄
+preserve-equiv (map₂ (_▫_) S₁ S₂) = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦄ ⦃ rel-Q = BinaryRelator.unary₂ _ [≡]-binaryRelator ⦄ ⦄
 
 -- Set-set relations.
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
@@ -154,18 +154,18 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   instance
     [≡]-reflexivity : Reflexivity(_≡_ {ℓ})
-    Reflexivity.proof [≡]-reflexivity = intro [↔]-reflexivity
+    Reflexivity.proof [≡]-reflexivity = intro(reflexivity(_↔_))
 
   instance
     [≡]-symmetry : Symmetry(_≡_ {ℓ})
-    Symmetry.proof [≡]-symmetry (intro xy) = intro([↔]-symmetry xy)
+    Symmetry.proof [≡]-symmetry (intro xy) = intro(symmetry(_↔_) xy)
 
   [≡]-transitivity-raw : ∀{A : PredSet{ℓ₁}(T)}{B : PredSet{ℓ₂}(T)}{C : PredSet{ℓ₃}(T)} → (A ≡ B) → (B ≡ C) → (A ≡ C)
-  [≡]-transitivity-raw (intro xy) (intro yz) = intro([↔]-transitivity xy yz)
+  [≡]-transitivity-raw (intro xy) (intro yz) = intro([↔]-transitivity-raw xy yz)
 
   instance
     [≡]-transitivity : Transitivity(_≡_ {ℓ})
-    Transitivity.proof [≡]-transitivity (intro xy) (intro yz) = intro([↔]-transitivity xy yz)
+    Transitivity.proof [≡]-transitivity (intro xy) (intro yz) = intro(transitivity(_↔_) xy yz)
 
   instance
     [≡]-equivalence : Equivalence(_≡_ {ℓ})
@@ -180,32 +180,35 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   instance
     -- Note: The purpose of this module is to satisfy this property for arbitrary equivalences.
     [∋]-binaryRelator : BinaryRelator(_∋_ {ℓ}{T = T})
-    BinaryRelator.substitution [∋]-binaryRelator (intro pₛ) pₑ p = [↔]-to-[→] pₛ(substitute₁(_) pₑ p)
+    [∋]-binaryRelator = BinaryRelator-introᵣ \(intro pₛ) pₑ p → [↔]-to-[→] pₛ(substitute₁ᵣ(_) pₑ p)
+
+  [∈]-binaryRelator : BinaryRelator(_∈_ {T = T}{ℓ})
+  [∈]-binaryRelator = BinaryRelator-introᵣ \pₑ (intro pₛ) p → [↔]-to-[→] pₛ(substitute₁ᵣ(_) pₑ p)
 
   instance
     [∋]-unaryRelatorₗ : ∀{a : T} → UnaryRelator(A ↦ _∋_ {ℓ} A a)
-    [∋]-unaryRelatorₗ = BinaryRelator.left [∋]-binaryRelator
+    [∋]-unaryRelatorₗ = BinaryRelator.unary₁ _ [∋]-binaryRelator
 
--- TODO: There are level problems here that I am not sure how to solve. The big union of a set of sets are not of the same type as the inner sets. So, for example it would be useful if (⋃ As : PredSet{ℓₒ Lvl.⊔ Lvl.𝐒(ℓ₁)}(T)) and (A : PredSet{ℓ₁}(T)) for (A ∈ As) had the same type/levels when (As : PredSet{Lvl.𝐒(ℓ₁)}(PredSet{ℓ₁}(T))) so that they become comparable. But here, the result of big union is a level greater.
+-- TODO: There are level problems here that I am not sure how to solve. The big union of a set of sets are not of the same type as the inner sets. So, for example it would be useful if (⋃ As : PredSet{ℓₒ Lvl.⊔ Lvl.𝐒(ℓ₁)}(T)) and (A : PredSet{ℓ₁}(T)) for (A ∈ As) had the same type/levels when (As : PredSet{Lvl.𝐒(ℓ₁)}(PredSet{ℓ₁}(T))) so that they become comparable. But here, the result of big union have one greater level.
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   -- ⋃_ : PredSet{Lvl.𝐒(ℓ₁)}(PredSet{ℓ₁}(T)) → PredSet{ℓₒ Lvl.⊔ Lvl.𝐒(ℓ₁)}(T)
   ⋃ : PredSet{ℓ₁}(PredSet{ℓ₂}(T)) → PredSet(T)
   (⋃ As) ∋ x = ∃(A ↦ (A ∈ As) ∧ (x ∈ A))
-  UnaryRelator.substitution (preserve-equiv (⋃ As)) xy = [∃]-map-proof (Tuple.mapRight (substitute₁(_) xy))
+  preserve-equiv (⋃ As) = UnaryRelator-introᵣ \xy → [∃]-map-proof (Tuple.mapRight (substitute₁ᵣ(_) xy))
 
   ⋂ : PredSet{ℓ₁}(PredSet{ℓ₂}(T)) → PredSet(T)
   (⋂ As) ∋ x = ∀{A} → (A ∈ As) → (x ∈ A)
-  UnaryRelator.substitution (preserve-equiv (⋂ As)) xy = substitute₁(_) xy ∘_
+  preserve-equiv (⋂ As) = UnaryRelator-introᵣ \xy p{A} → substitute₁ᵣ(_) xy ∘ p{A}
 
 -- Indexed set operations.
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   ⋃ᵢ : ∀{I : Type{ℓ₁}} → (I → PredSet{ℓ₂}(T)) → PredSet{ℓ₁ Lvl.⊔ ℓ₂}(T)
   (⋃ᵢ Ai) ∋ x = ∃(i ↦ x ∈ Ai(i))
-  UnaryRelator.substitution (preserve-equiv (⋃ᵢ Ai)) xy = [∃]-map-proof (\{i} → substitute₁(_) ⦃ preserve-equiv(Ai(i)) ⦄ xy)
+  preserve-equiv (⋃ᵢ Ai) = UnaryRelator-introᵣ \xy → [∃]-map-proof (\{i} → substitute₁ᵣ(_) ⦃ preserve-equiv(Ai(i)) ⦄ xy)
 
   ⋂ᵢ : ∀{I : Type{ℓ₁}} → (I → PredSet{ℓ₂}(T)) → PredSet{ℓ₁ Lvl.⊔ ℓ₂}(T)
   (⋂ᵢ Ai) ∋ x = ∀ₗ(i ↦ x ∈ Ai(i))
-  UnaryRelator.substitution (preserve-equiv (⋂ᵢ Ai)) xy p {i} = substitute₁(_) ⦃ preserve-equiv(Ai(i)) ⦄ xy p
+  preserve-equiv (⋂ᵢ Ai) = UnaryRelator-introᵣ \xy p{i} → substitute₁ᵣ(_) ⦃ preserve-equiv(Ai(i)) ⦄ xy (p{i})
 
   -- When the indexed union is indexed by a boolean, it is the same as the small union.
   ⋃ᵢ-of-boolean : ∀{A B : PredSet{ℓ}(T)} → ((⋃ᵢ{I = Bool}(if_then B else A)) ≡ (A ∪ B))
@@ -231,13 +234,13 @@ module _
 
   ⋃ᵢ-of-bijection : ∀{f : B → PredSet{ℓ}(T)} ⦃ func-f : Function(f)⦄ → (([∃]-intro g) : A ≍ B) → (⋃ᵢ{I = A}(f ∘ g) ≡ ⋃ᵢ{I = B}(f))
   ∃.witness (_⨯_.left (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = inv g ⦃ bijective-to-invertible ⦄ (b)
-  ∃.proof (_⨯_.left (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = substitute₂(_∋_) (symmetry(_≡_) (congruence₁(f) (inverse-right(g)(inv g ⦃ bijective-to-invertible ⦄) ⦃ [∧]-elimᵣ([∃]-proof bijective-to-invertible) ⦄))) (reflexivity(_≡ₑ_)) p
+  ∃.proof (_⨯_.left (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = substitute₂ᵣ(_∋_) (symmetry(_≡_) (congruence₁(f) (inverse-right(g)(inv g ⦃ bijective-to-invertible ⦄) ⦃ [∧]-elimᵣ([∃]-proof bijective-to-invertible) ⦄))) (reflexivity(_≡ₑ_)) p
   ∃.witness (_⨯_.right (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro a ⦃ p ⦄)) = g(a)
   ∃.proof (_⨯_.right (_≡_.proof (⋃ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄))) ([∃]-intro b ⦃ p ⦄)) = p
 
   ⋂ᵢ-of-bijection : ∀{f : B → PredSet{ℓ}(T)} ⦃ func-f : Function(f)⦄ → (([∃]-intro g) : A ≍ B) → (⋂ᵢ{I = A}(f ∘ g) ≡ ⋂ᵢ{I = B}(f))
   _⨯_.left (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = p{g(b)}
-  _⨯_.right (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = substitute₂(_∋_) (congruence₁(f) (inverse-right(g)(inv g ⦃ bijective-to-invertible ⦄) ⦃ [∧]-elimᵣ([∃]-proof bijective-to-invertible) ⦄)) (reflexivity(_≡ₑ_)) (p{inv g ⦃ bijective-to-invertible ⦄ (b)})
+  _⨯_.right (_≡_.proof (⋂ᵢ-of-bijection {f = f} ([∃]-intro g ⦃ bij-g ⦄)) {x}) p {b} = substitute₂ᵣ(_∋_) (congruence₁(f) (inverse-right(g)(inv g ⦃ bijective-to-invertible ⦄) ⦃ [∧]-elimᵣ([∃]-proof bijective-to-invertible) ⦄)) (reflexivity(_≡ₑ_)) (p{inv g ⦃ bijective-to-invertible ⦄ (b)})
 
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   instance

@@ -168,7 +168,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     Sets.FilterFunction.filter     filter-membership f       = filter{ℓ = ℓₑ} f
     Sets.FilterFunction.membership filter-membership {P = P} = proof where
       proof : (x ∈ filter P(A)) ↔ ((x ∈ A) ∧ P(x))
-      Tuple.left proof ([∧]-intro ([∃]-intro i ⦃ p ⦄) pb) = [∃]-intro (intro i (substitute₁(P) p pb)) ⦃ p ⦄
+      Tuple.left proof ([∧]-intro ([∃]-intro i ⦃ p ⦄) pb) = [∃]-intro (intro i (substitute₁ᵣ(P) p pb)) ⦃ p ⦄
       Tuple.left  (Tuple.right proof ([∃]-intro (intro iA PiA)))        = [∃]-intro iA
       Tuple.right (Tuple.right proof ([∃]-intro (intro iA PiA) ⦃ pp ⦄)) = substitute₁ₗ(P) pp PiA
 

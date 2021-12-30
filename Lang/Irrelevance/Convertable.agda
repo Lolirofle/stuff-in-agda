@@ -46,7 +46,7 @@ module _ where
   private variable b b₁ b₂ d : Bool
 
   Inhabited-convertable : ⦃ pos : (◊ T) ⦄ → Convertable(T)
-  Inhabited-convertable = intro(constᵢᵣᵣ [◊]-existence)
+  Inhabited-convertable = intro(constᵢᵣᵣ inhabitant)
 
   classical-convertable : ⦃ classical : Classical(P) ⦄ → Convertable(P)
   classical-convertable{P = P} with excluded-middle(P)

@@ -126,7 +126,7 @@ module _ {F@([∃]-intro f) : _→ₛₜᵣᵤ_ {ℓₘ}{ℓₘ} A B} where
         f⁻¹(f(fn A fi (map f⁻¹ xs)))      🝖[ _≡_ ]-[ Inverseₗ.proof(Logic.[∧]-elimₗ inver) ]
         fn A fi (map f⁻¹ xs)              🝖-end
 
-      Homomorphism.preserve-relations hom {ri = ri} {xs = xs} p = Embedding.preserve-relations-converse embed {xs = map f⁻¹ xs} (substitute₁(IsTrue ∘ rel B ri) (_⊜_.proof proof {xs}) p) where
+      Homomorphism.preserve-relations hom {ri = ri} {xs = xs} p = Embedding.preserve-relations-converse embed {xs = map f⁻¹ xs} (substitute₁ᵣ(IsTrue ∘ rel B ri) (_⊜_.proof proof {xs}) p) where
         proof =
           id                🝖[ _⊜_ ]-[ map-id ]-sym
           map id            🝖[ _⊜_ ]-[ congruence₁(map) (intro (Inverseᵣ.proof(Logic.[∧]-elimᵣ inver))) ]-sym

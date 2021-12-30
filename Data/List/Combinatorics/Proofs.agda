@@ -135,10 +135,10 @@ sublists₊-length {l = ∅} = [≡]-intro
 sublists₊-length {l = x ⊰ l} =
   length(sublists₊ (x ⊰ l))                                                               🝖[ _≡_ ]-[]
   length(singleton(x) ⊰ foldᵣ (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest)) ∅ (sublists₊ l)) 🝖[ _≡_ ]-[]
-  𝐒(length(foldᵣ (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest)) ∅ (sublists₊ l)))             🝖[ _≡_ ]-[ [≡]-with(𝐒) (length-foldᵣ {l = sublists₊(l)}{init = ∅}{f = (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest))}{g = const(𝐒 ∘ 𝐒)} [≡]-intro) ]
-  𝐒(foldᵣ (prev ↦ rest ↦ 𝐒(𝐒(rest))) 𝟎 (sublists₊ l))                                     🝖[ _≡_ ]-[ [≡]-with(𝐒) (foldᵣ-constant-[+]ᵣ{l = sublists₊ l}{init = 𝟎}) ]
-  𝐒(2 ⋅ length(sublists₊ l))     🝖[ _≡_ ]-[ [≡]-with(𝐒 ∘ (2 ⋅_)) (sublists₊-length {l = l}) ]
-  𝐒(2 ⋅ (2 ^ (length l) −₀ 1))   🝖[ _≡_ ]-[ [≡]-with(𝐒) (distributivityₗ(_⋅_)(_−₀_) {2}{2 ^ length(l)}{1}) ]
+  𝐒(length(foldᵣ (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest)) ∅ (sublists₊ l)))             🝖[ _≡_ ]-[ congruence₁(𝐒) (length-foldᵣ {l = sublists₊(l)}{init = ∅}{f = (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest))}{g = const(𝐒 ∘ 𝐒)} [≡]-intro) ]
+  𝐒(foldᵣ (prev ↦ rest ↦ 𝐒(𝐒(rest))) 𝟎 (sublists₊ l))                                     🝖[ _≡_ ]-[ congruence₁(𝐒) (foldᵣ-constant-[+]ᵣ{l = sublists₊ l}{init = 𝟎}) ]
+  𝐒(2 ⋅ length(sublists₊ l))     🝖[ _≡_ ]-[ congruence₁(𝐒 ∘ (2 ⋅_)) (sublists₊-length {l = l}) ]
+  𝐒(2 ⋅ (2 ^ (length l) −₀ 1))   🝖[ _≡_ ]-[ congruence₁(𝐒) (distributivityₗ(_⋅_)(_−₀_) {2}{2 ^ length(l)}{1}) ]
   𝐒((2 ⋅ (2 ^ (length l))) −₀ 2) 🝖[ _≡_ ]-[]
   𝐒((2 ^ 𝐒(length l)) −₀ 2)      🝖[ _≡_ ]-[]
   𝐒((2 ^ length(x ⊰ l)) −₀ 2)    🝖[ _≡_ ]-[ [↔]-to-[→] [−₀][𝐒]ₗ-equality ([^]ₗ-strictly-growing {0}{0}{𝐒(length l)} [≤]-with-[𝐒]) ]-sym
@@ -150,7 +150,7 @@ sublists-length : length(sublists l) ≡ 2 ^ (length l)
 sublists-length {l = l} =
   length(sublists l)      🝖[ _≡_ ]-[]
   length(∅ ⊰ sublists₊ l) 🝖[ _≡_ ]-[]
-  𝐒(length(sublists₊ l))  🝖[ _≡_ ]-[ [≡]-with(𝐒) (sublists₊-length {l = l}) ]
+  𝐒(length(sublists₊ l))  🝖[ _≡_ ]-[ congruence₁(𝐒) (sublists₊-length {l = l}) ]
   𝐒((2 ^ length(l)) −₀ 1) 🝖[ _≡_ ]-[ [↔]-to-[→] [−₀][𝐒]ₗ-equality ([^]ₗ-growing {2}{0}{length l} (\()) [≤]-minimum) ]-sym
   𝐒(2 ^ length(l)) −₀ 1   🝖[ _≡_ ]-[]
   2 ^ length(l)           🝖-end
@@ -195,7 +195,7 @@ tuples-length {𝐒(𝐒(n))}{l = ∅} = [≡]-intro
 tuples-length {𝐒(𝐒(n))}{l = x ⊰ l} =
   length(tuples(𝐒(𝐒(n))) (x ⊰ l))                                                   🝖[ _≡_ ]-[]
   length(concatMap(y ↦ map (y Tuple₊.⊰_) (tuples (𝐒(n)) (x ⊰ l))) (x ⊰ l))          🝖[ _≡_ ]-[ length-concatMap {l = x ⊰ l}{f = y ↦ map (y Tuple₊.⊰_) (tuples (𝐒(n)) (x ⊰ l))} ]
-  foldᵣ((_+_) ∘ length ∘ (y ↦ map (y Tuple₊.⊰_) (tuples (𝐒(n)) (x ⊰ l)))) 𝟎 (x ⊰ l) 🝖[ _≡_ ]-[ foldᵣ-function₊-raw {l₁ = x ⊰ l}{a₁ = 𝟎} (\{a b} → [≡]-with(_+ b) (length-map{f = a Tuple₊.⊰_}{x = tuples (𝐒(n)) (x ⊰ l)})) [≡]-intro [≡]-intro ]
+  foldᵣ((_+_) ∘ length ∘ (y ↦ map (y Tuple₊.⊰_) (tuples (𝐒(n)) (x ⊰ l)))) 𝟎 (x ⊰ l) 🝖[ _≡_ ]-[ foldᵣ-function₊-raw {l₁ = x ⊰ l}{a₁ = 𝟎} (\{a b} → congruence₁(_+ b) (length-map{f = a Tuple₊.⊰_}{x = tuples (𝐒(n)) (x ⊰ l)})) [≡]-intro [≡]-intro ]
   foldᵣ((_+_) ∘ length ∘ (y ↦ tuples (𝐒(n)) (x ⊰ l))) 𝟎 (x ⊰ l)                     🝖[ _≡_ ]-[]
   foldᵣ(const(length(tuples (𝐒(n)) (x ⊰ l)) +_)) 𝟎 (x ⊰ l)                          🝖[ _≡_ ]-[ foldᵣ-constant-[+]ₗ{l = x ⊰ l} {init = 𝟎}{step = length(tuples (𝐒(n)) (x ⊰ l))} ]
   length(x ⊰ l) ⋅ length(tuples(𝐒(n)) (x ⊰ l))                                      🝖[ _≡_ ]-[ congruence₂-₂(_⋅_) (length(x ⊰ l)) (tuples-length {𝐒(n)} {l = x ⊰ l}) ]
@@ -213,8 +213,8 @@ insertedEverywhere-length {x = x} {∅}     = [≡]-intro
 insertedEverywhere-length {x = x} {a ⊰ l} =
   length(insertedEverywhere x (a ⊰ l))                                  🝖[ _≡_ ]-[]
   length((x ⊰ a ⊰ l) ⊰ (map (List.prepend a) (insertedEverywhere x l))) 🝖[ _≡_ ]-[]
-  𝐒(length(map (List.prepend a) (insertedEverywhere x l)))              🝖[ _≡_ ]-[ [≡]-with(𝐒) (length-map{f = List.prepend a}{x = insertedEverywhere x l}) ]
-  𝐒(length(insertedEverywhere x l))                                     🝖[ _≡_ ]-[ [≡]-with(𝐒) (insertedEverywhere-length {x = x} {l}) ]
+  𝐒(length(map (List.prepend a) (insertedEverywhere x l)))              🝖[ _≡_ ]-[ congruence₁(𝐒) (length-map{f = List.prepend a}{x = insertedEverywhere x l}) ]
+  𝐒(length(insertedEverywhere x l))                                     🝖[ _≡_ ]-[ congruence₁(𝐒) (insertedEverywhere-length {x = x} {l}) ]
   𝐒(𝐒(length(l)))                                                       🝖[ _≡_ ]-[]
   𝐒(length(a ⊰ l))                                                      🝖-end
 

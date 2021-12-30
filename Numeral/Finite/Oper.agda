@@ -8,6 +8,7 @@ open import Logic.Predicate
 import      Lvl
 open import Numeral.Finite as 𝕟 using (𝕟 ; 𝕟₌ ; 𝕟-to-ℕ)
 open import Numeral.Finite.Bound
+import      Numeral.Finite.Relation.Order as 𝕟
 open import Numeral.Natural hiding (𝟎 ; 𝐒 ; 𝐏)
 import      Numeral.Natural.Function as ℕ
 open import Numeral.Natural.Function.Proofs
@@ -21,16 +22,19 @@ open import Syntax.Number
 module Exact where
   -- Predecessor bounded at the minimum (0) for both the value and the maximum.
   -- Example: (𝐏₀(5): 𝕟(8)) = (4: 𝕟(7))
-  𝐏₀ : ∀{n} → 𝕟(ℕ.𝐒(ℕ.𝐒(n))) → 𝕟(ℕ.𝐒(n))
-  𝐏₀(𝕟.𝟎)    = 𝕟.𝟎
-  𝐏₀(𝕟.𝐒(n)) = n
+  𝐏₀ : ∀{n} ⦃ pos : ℕ.Positive(n) ⦄ → 𝕟(ℕ.𝐒(n)) → 𝕟(n)
+  𝐏₀ {ℕ.𝐒 _} (𝕟.𝟎)    = 𝕟.𝟎
+  𝐏₀ {ℕ.𝐒 _} (𝕟.𝐒(n)) = n
 
   -- Addition for both the value and the maximum.
-  -- Example: (5: 𝕟(8)) + (4: 𝕟(6)) = ((5+4): 𝕟(8+6)) = (9: 𝕟(14))
-  _+_ : ∀{b₁ b₂} → 𝕟(b₁) → 𝕟(b₂) → 𝕟(b₁ ℕ.+ b₂)
-  _+_ {ℕ.𝐒(b₁)}{ℕ.𝐒(b₂)} 𝕟.𝟎      𝕟.𝟎      = 𝕟.𝟎
-  _+_ {ℕ.𝐒(b₁)}{ℕ.𝐒(b₂)} 𝕟.𝟎      (𝕟.𝐒(b)) = 𝕟.𝐒(𝕟.𝟎{b₁} + b)
-  _+_ {ℕ.𝐒(b₁)}{ℕ.𝐒(b₂)} (𝕟.𝐒(a)) b        = 𝕟.𝐒(a + b)
+  -- Example: (5: 𝕟₌(8)) + (4: 𝕟₌(6)) = ((5+4): 𝕟₌(8+6)) = (9: 𝕟₌(14))
+  _+_ : ∀{b₁ b₂} → 𝕟₌(b₁) → 𝕟₌(b₂) → 𝕟₌(b₁ ℕ.+ b₂)
+  _+_ {_}    {_}     𝕟.𝟎      𝕟.𝟎      = 𝕟.𝟎
+  _+_ {b₁}   {ℕ.𝐒 _} 𝕟.𝟎      (𝕟.𝐒(b)) = 𝕟.𝐒(𝕟.𝟎{b₁} + b)
+  _+_ {ℕ.𝐒 _}{_}     (𝕟.𝐒(a)) b        = 𝕟.𝐒(a + b)
+
+  _+₀_ : ∀{b₁ b₂} → 𝕟(b₁) → 𝕟(b₂) → 𝕟(b₁ ℕ.+ b₂)
+  _+₀_ {ℕ.𝐒 b₁} {ℕ.𝐒 b₂} a b = bound-𝐒(a + b)
 
   -- Distance between two numbers.
   -- Examples:
@@ -47,9 +51,9 @@ module Exact where
 
   _⋅_ : ∀{b₁ b₂} → 𝕟(b₁) → 𝕟(b₂) → 𝕟(b₁ ℕ.⋅ b₂)
   _⋅_ {ℕ.𝐒 b₁} {ℕ.𝐒 b₂} a 𝕟.𝟎     = 𝕟.𝟎
-  _⋅_ {ℕ.𝐒 b₁} {ℕ.𝐒 b₂} a (𝕟.𝐒 b) = a + (a ⋅ b)
+  _⋅_ {ℕ.𝐒 b₁} {ℕ.𝐒 b₂} a (𝕟.𝐒 b) = a +₀ (a ⋅ b)
 
-module Bounded where -- TODO: It is possible to define many of the other operators by using these
+module Bounded where -- TODO: It may be possible to define many of the other operators by using these
   -- Predecessor bounded at the minimum (0).
   -- Examples:
   --   (𝐏₀(5): 𝕟(8)) = (4: 𝕟(8))
@@ -99,7 +103,7 @@ module Bounded where -- TODO: It is possible to define many of the other operato
   max {b₃ = ℕ.𝐒 (ℕ.𝐒 b₃)} (𝕟.𝐒 a) z@𝕟.𝟎   = 𝕟.𝐒(max a z)
   max {b₃ = ℕ.𝐒 (ℕ.𝐒 b₃)} (𝕟.𝐒 a) (𝕟.𝐒 b) = 𝕟.𝐒(max a b)
 
-module Total where
+module Conditional where
   𝐒 : ∀{b} → (n : 𝕟(b)) → ⦃ _ : IsTrue(ℕ.𝐒(𝕟-to-ℕ (n)) ℕ.<? b) ⦄ → 𝕟(b)
   𝐒 {ℕ.𝐒(ℕ.𝐒(b))} (𝕟.𝟎)    = 𝕟.𝐒(𝕟.𝟎)
   𝐒 {ℕ.𝐒(ℕ.𝐒(b))} (𝕟.𝐒(n)) = 𝕟.𝐒(𝐒(n))
@@ -116,13 +120,13 @@ module Optional where
   _+₀ₗ_ : ∀{b₁ b₂} → Option(𝕟(b₁)) → 𝕟(b₂) → 𝕟(b₁ ℕ.+ b₂)
   _+₀ₗ_      None     𝕟.𝟎      = 𝕟.𝟎
   _+₀ₗ_ {b₁} None     (𝕟.𝐒(b)) = 𝕟.𝐒(_+₀ₗ_ {b₁} None b)
-  _+₀ₗ_      (Some a) b        = a Exact.+ b
+  _+₀ₗ_      (Some a) b        = a Exact.+₀ b
 
   _+₀ᵣ_ : ∀{b₁ b₂} → 𝕟(b₁) → Option(𝕟(b₂)) → 𝕟(b₁ ℕ.+ b₂)
   _+₀ᵣ_ 𝕟.𝟎      None     = 𝕟.𝟎
   _+₀ᵣ_ (𝕟.𝐒(a)) None     = 𝕟.𝐒(_+₀ᵣ_ a None)
   {-# CATCHALL #-}
-  _+₀ᵣ_ a        (Some b) = a Exact.+ b
+  _+₀ᵣ_ a        (Some b) = a Exact.+₀ b
 
 module Unclosed where
   _+ₙₗ_ : ∀{b₂} → (b₁ : ℕ) → 𝕟(b₂) → 𝕟(b₁ ℕ.+ b₂)
@@ -132,6 +136,11 @@ module Unclosed where
   _+ₙᵣ_ : ∀{b₁} → 𝕟(b₁) → (b₂ : ℕ) → 𝕟(b₁ ℕ.+ b₂)
   a +ₙᵣ ℕ.𝟎    = a
   a +ₙᵣ ℕ.𝐒(b) = 𝕟.𝐒(a +ₙᵣ b)
+
+  _ₙ−_ : (x : ℕ) → 𝕟₌(x) → 𝕟₌(x)
+  ℕ.𝟎    ₙ− 𝕟.𝟎    = 𝕟.𝟎
+  ℕ.𝐒(x) ₙ− 𝕟.𝟎    = 𝕟.𝐒(x ₙ− 𝕟.𝟎)
+  ℕ.𝐒(x) ₙ− 𝕟.𝐒(y) = bound-𝐒 (x ₙ− y)
 
   -- Example: shrink-subtract(5) (7 : 𝕟(6 + 5)) = (2 : 𝕟(6))
   shrink-subtractₗ : ∀{b₁} → (b₂ : ℕ) → 𝕟(ℕ.𝐒(b₁) ℕ.+ b₂) → 𝕟(ℕ.𝐒(b₁))
@@ -153,63 +162,91 @@ module Unclosed where
 
   _⋅ₙᵣ_ : ∀{b₁} → 𝕟(b₁) → (b₂ : ℕ) → 𝕟(ℕ.𝐒(b₁ ℕ.⋅ b₂)) -- TODO: Bounds is too great
   _⋅ₙᵣ_ {ℕ.𝐒 _} a ℕ.𝟎     = 𝕟.𝟎
-  _⋅ₙᵣ_ {ℕ.𝐒 _} a (ℕ.𝐒 b) = a Exact.+ (a ⋅ₙᵣ b)
+  _⋅ₙᵣ_ {ℕ.𝐒 _} a (ℕ.𝐒 b) = a Exact.+₀ (a ⋅ₙᵣ b)
 
 module Wrapping where
   -- Wrapping subtraction.
-  -- Essentially: _[−]_ {b₁}{b₂} a b = (a −ℤ b) mod b₁
+  -- Essentially: _[−]_ {b₁}{b₂} a b = (a ℤ.− b) mod b₁
   _[−]_ : ∀{b₁ b₂} → 𝕟(b₁) → 𝕟(b₂) → 𝕟(b₁)
   _[−]_ {_}      {ℕ.𝐒 _}  a       𝕟.𝟎     = a
-  _[−]_ {ℕ.𝐒 b₁} {ℕ.𝐒 _}  𝕟.𝟎     (𝕟.𝐒 b) = 𝕟.maximum {b₁} [−] b
+  _[−]_ {ℕ.𝐒 b₁} {ℕ.𝐒 _}  𝕟.𝟎     (𝕟.𝐒 b) = 𝕟.maximum {ℕ.𝐒 b₁} [−] b
   _[−]_ {ℕ.𝐒 b₁} {ℕ.𝐒 b₂} (𝕟.𝐒 a) (𝕟.𝐒 b) = _[−]_ {ℕ.𝐒 b₁}{b₂} (bound-𝐒 a) b
 
-  -- Wrapping negation (Flipping around the symmetric point).
-  -- Essentially: [−]_ {b} n = (−ℤ n) mod b
+  -- (Flipping around the symmetric point)
+  flip : ∀{b} → 𝕟(b) → 𝕟(b)
+  flip {ℕ.𝐒(b)} n = 𝕟.maximum{ℕ.𝐒 b} [−] n
+
+  -- Wrapping negation.
+  -- Essentially: [−]_ {b} n = (ℤ.− n) mod b
   [−]_ : ∀{b} → 𝕟(b) → 𝕟(b)
-  [−]_ {ℕ.𝐒 b} n = 𝕟.maximum {b} [−] n
+  [−]_ {ℕ.𝐒(b)} n = 𝕟.minimum{ℕ.𝐒 b} [−] n
 
-{- TODO: Cannot solve first. Unsure why
-[𝐒]-not-0 : ∀{b : ℕ}{n : 𝕟(ℕ.𝐒(b))} → (𝐒{b}(n) ≢ 𝟎{ℕ.𝐒(b)})
-[𝐒]-not-0 ()
+  -- Wrapping addition.
+  -- Essentially: _[−]_ {b₁}{b₂} a b = (a ℤ.+ b) mod b₁
+  _[+]_ : ∀{b₁ b₂} → 𝕟(b₁) → 𝕟(b₂) → 𝕟(b₁)
+  _[+]_ {ℕ.𝐒(b₁)} a b = a [−] (𝕟.minimum{ℕ.𝐒(b₁)} [−] b)
 
-𝐏keep : ∀{b} → (n : 𝕟(𝐒(b))) → ⦃ _ : n ≢ 𝟎 ⦄ → 𝕟(𝐒(b))
-𝐏keep {ℕ.𝟎}    (𝟎)       ⦃ proof ⦄ with proof([≡]-intro)
-... | ()
-𝐏keep {ℕ.𝐒(b)} (𝟎)       ⦃ _ ⦄     = 𝟎
-𝐏keep {ℕ.𝐒(b)} (𝐒(𝟎))    ⦃ _ ⦄     = 𝟎
-𝐏keep {ℕ.𝐒(b)} (𝐒(𝐒(n))) ⦃ proof ⦄ = 𝐒(𝐏keep {b} (𝐒(n)) ⦃ [𝐒]-not-0 ⦄)
--}
 
--- _ : ∀{b} → (n : 𝕟(b)) → (𝕟-to-ℕ (n) < b)
+  -- Like (_[−]_) but subtracting an ℕ instead.
+  _[−ₙ]_ : ∀{n} → 𝕟(n) → ℕ → 𝕟(n)
+  _[−ₙ]_ {_}      a       ℕ.𝟎     = a
+  _[−ₙ]_ {ℕ.𝐒 n} 𝕟.𝟎     (ℕ.𝐒 b) = 𝕟.maximum {ℕ.𝐒 n} [−ₙ] b
+  _[−ₙ]_ {ℕ.𝐒 n} (𝕟.𝐒 a) (ℕ.𝐒 b) = _[−ₙ]_ {ℕ.𝐒 n} (bound-𝐒 a) b
 
--- _+small_ : ∀{b₁ b₂} → (x : 𝕟(𝐒(b₁))) → (y : 𝕟(𝐒(b₂))) → 𝕟(ℕ.𝐒(𝕟-to-ℕ (x) ℕ.+ 𝕟-to-ℕ (y)))
--- _+small_      𝟎       𝟎      = 𝟎
--- _+small_ {b₁} (𝐒(a))  𝟎      = 𝐒(a +small 𝟎)
--- _+small_      a       (𝐒(b)) = 𝐒(a +small b)
+  -- Like (_[+]_) but adding an ℕ instead.
+  _[+ₙ]_ : ∀{n} → 𝕟(n) → ℕ → 𝕟(n)
+  _[+ₙ]_ {ℕ.𝐒(n)} a b = a [−] (𝕟.minimum{ℕ.𝐒(n)} [−ₙ] b)
 
--- _−small_ : ∀{b} → (x : 𝕟(𝐒(b))) → (y : 𝕟(ℕ.𝐒(𝕟-to-ℕ (x)))) → 𝕟(ℕ.𝐒(𝕟-to-ℕ (x) ℕ.−₀ 𝕟-to-ℕ (y)))
--- 𝟎    −small 𝟎    = 𝟎
--- 𝐒(a) −small 𝟎    = 𝐒(a −small 𝟎)
--- 𝐒(a) −small 𝐒(b) = a −small b
+  -- Alternative definition of the modulo operator (Alternative to Numeral.Natural.Oper.Modulo._mod_. The algorithm should be similar, but this uses the operators of 𝕟).
+  _modₙ_ : ℕ → (m : ℕ) ⦃ pos : ℕ.Positive(m) ⦄ → 𝕟(m)
+  a modₙ m = 𝕟.minimum [+ₙ] a
 
-{- TODO: Will not work like this
--- Modulo subtraction.
--- Essentially: a [−] b mod n = (a −ℤ b) mod n
-_[−]_mod_ : ℕ → ℕ → (n : ℕ) → 𝕟₌(n)
-_    [−] _    mod 𝟎    = 𝟎
-𝟎    [−] 𝟎    mod 𝐒(n) = 𝟎
-𝐒(a) [−] 𝟎    mod 𝐒(n) = a [−] n mod 𝐒(n)
-𝟎    [−] 𝐒(b) mod 𝐒(n) = n [−] b mod 𝐒(n)
-𝐒(a) [−] 𝐒(b) mod 𝐒(n) = a [−] b mod 𝐒(n)
+-- (shiftRepeat c) is a mapping that shifts all numbers greater than c downwards.
+-- It is similar to the identity mapping but skips 𝐒(c) and instead repeats c.
+-- It is more similar to 𝐏 but instead of shifting all numbers down truncating at 0, it only shifts numbers greater than c and truncates at c.
+-- Alternative definition by cases:
+--   (x ≤ c) → (shiftRepeat c x = id(x))
+--   (x > c) → (shiftRepeat c x = 𝐏(x))
+-- Examples (Table of n = 4):
+--   shiftRepeat{4} 0 0 = 0
+--   shiftRepeat{4} 0 1 = 0
+--   shiftRepeat{4} 0 2 = 1
+--   shiftRepeat{4} 0 3 = 2
+--   shiftRepeat{4} 0 4 = 3
+--
+--   shiftRepeat{4} 1 0 = 0
+--   shiftRepeat{4} 1 1 = 1
+--   shiftRepeat{4} 1 2 = 1
+--   shiftRepeat{4} 1 3 = 2
+--   shiftRepeat{4} 1 4 = 3
+--
+--   shiftRepeat{4} 2 0 = 0
+--   shiftRepeat{4} 2 1 = 1
+--   shiftRepeat{4} 2 2 = 2
+--   shiftRepeat{4} 2 3 = 2
+--   shiftRepeat{4} 2 4 = 3
+--
+--   shiftRepeat{4} 3 0 = 0
+--   shiftRepeat{4} 3 1 = 1
+--   shiftRepeat{4} 3 2 = 2
+--   shiftRepeat{4} 3 3 = 3
+--   shiftRepeat{4} 3 4 = 3
+shiftRepeat : ∀{n} → 𝕟(n) → (𝕟(ℕ.𝐒(n)) → 𝕟(n))
+shiftRepeat {ℕ.𝐒 _} _      𝕟.𝟎      = 𝕟.𝟎
+shiftRepeat       𝕟.𝟎      (𝕟.𝐒(x)) = x
+shiftRepeat       (𝕟.𝐒(c)) (𝕟.𝐒(x)) = 𝕟.𝐒(shiftRepeat c x)
 
-open import Data
-test1 : [−]_ {4} 1 ≡ 3
-test1 = [≡]-intro
--}
+-- (shiftSkip c) is a mapping that shifts all numbers greater than c downwards.
+-- It is functionally equivalent to shiftRepeat, but instead skips the case of (c = x).
+shiftSkip :  ∀{n} → (c : 𝕟(ℕ.𝐒(n))) → (x : 𝕟(ℕ.𝐒(n))) → .⦃ c 𝕟.≢ x ⦄ → 𝕟(n)
+shiftSkip {ℕ.𝟎}   (𝕟.𝐒(c)) 𝕟.𝟎      = c
+shiftSkip {ℕ.𝐒 _} _        𝕟.𝟎      = 𝕟.𝟎
+shiftSkip {ℕ.𝐒 _} 𝕟.𝟎      (𝕟.𝐒(x)) = x
+shiftSkip {ℕ.𝐒 _} (𝕟.𝐒(c)) (𝕟.𝐒(x)) = 𝕟.𝐒(shiftSkip c x)
 
--- _−_ : ∀{b} → (x : 𝕟(𝐒(b))) → (y : 𝕟(ℕ.𝐒(𝕟-to-ℕ (x)))) → 𝕟(𝐒(b))
--- 𝟎    − 𝟎    = 𝟎
--- 𝐒(a) − 𝟎    = 𝐒(a)
--- 𝐒(a) − 𝐒(b) = bound-𝐒(a − b)
+shiftRepeat' : ∀{n} ⦃ pos : ℕ.Positive(n) ⦄ → 𝕟(ℕ.𝐒(n)) → (𝕟(ℕ.𝐒(n)) → 𝕟(n))
+shiftRepeat' {ℕ.𝐒 ℕ.𝟎}    _        _        = 𝕟.𝟎
+shiftRepeat' {ℕ.𝐒(ℕ.𝐒 _)} _        𝕟.𝟎      = 𝕟.𝟎
+shiftRepeat' {ℕ.𝐒(ℕ.𝐒 _)} 𝕟.𝟎      (𝕟.𝐒(x)) = x
+shiftRepeat' {ℕ.𝐒(ℕ.𝐒 _)} (𝕟.𝐒(c)) (𝕟.𝐒(x)) = 𝕟.𝐒(shiftRepeat' c x)
 
--- TODO: Wrapping and bounded operations

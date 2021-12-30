@@ -22,6 +22,7 @@ open OrderedField(orderedField-F)
 import      Lvl
 open import Functional as Fn
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Sets.PredicateSet renaming (_≡_ to _≡ₛ_)
@@ -54,7 +55,7 @@ instance
       d(x)(y) + d(x)(y) 🝖-end
     ) ⇒
     (𝟎 ≤ (d(x)(y) + d(x)(y)))                         ⇒-[ [≤][−]ₗ-preserve ]
-    ((𝟎 − d(x)(y)) ≤ ((d(x)(y) + d(x)(y)) − d(x)(y))) ⇒-[ substitute₂(_≤_) (identityₗ(_+_)(𝟎)) (inverseOperᵣ(_+_)(_−_)) ]
+    ((𝟎 − d(x)(y)) ≤ ((d(x)(y) + d(x)(y)) − d(x)(y))) ⇒-[ substitute₂ᵣ(_≤_) (identityₗ(_+_)(𝟎)) (inverseOperᵣ(_+_)(_−_)) ]
     ((− d(x)(y)) ≤ d(x)(y))                           ⇒-[ [↔]-to-[←] [≤]-positive-by-self-negativity ]
     (𝟎 ≤ d(x)(y))                                     ⇒-end
 

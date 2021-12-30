@@ -40,4 +40,4 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   instance
     [∈]-unaryOperatorₗ : ∀{A : ImageSet{ℓᵢ}(T)} → UnaryRelator(_∈ A)
-    UnaryRelator.substitution [∈]-unaryOperatorₗ xy ([∃]-intro i ⦃ p ⦄) = [∃]-intro i ⦃ symmetry(_≡ₛ_) xy 🝖 p ⦄
+    [∈]-unaryOperatorₗ = UnaryRelator-introᵣ \xy ([∃]-intro i ⦃ p ⦄) → [∃]-intro i ⦃ symmetry(_≡ₛ_) xy 🝖 p ⦄

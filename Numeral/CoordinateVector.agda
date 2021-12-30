@@ -1,6 +1,7 @@
 module Numeral.CoordinateVector where
 
 import      Lvl
+open import Data using (<>)
 open import Data.Boolean
 open import Functional
 open import Functional.Instance
@@ -38,6 +39,7 @@ proj = id
 
 -- TODO: Move this to a separate "Relations" file
 open import Logic
+open import Logic.Propositional
 open import Relator.Equals.Proofs.Equivalence
 open import Structure.Function.Domain
 open import Structure.Setoid
@@ -78,7 +80,7 @@ map₂ : (A → B → C) → Vector(d)(A) → Vector(d)(B) → Vector(d)(C)
 (map₂(_▫_) (v₁)(v₂))(i) = v₁(i) ▫ v₂(i)
 
 map₂-min : (A → B → C) → ∀{d₁ d₂} → Vector(d₁)(A) → Vector(d₂)(B) → Vector(min d₁ d₂)(C)
-(map₂-min(_▫_) (v₁)(v₂))(i) = v₁(bound-[≤] infer i) ▫ v₂(bound-[≤] infer i)
+(map₂-min(_▫_) (v₁)(v₂))(i) = v₁(bound-[≤] ([∧]-elimₗ min-order) i) ▫ v₂(bound-[≤] ([∧]-elimᵣ min-order) i)
 
 -- Example:
 --   foldₗ (_▫_) (0) [1,2,3,4]

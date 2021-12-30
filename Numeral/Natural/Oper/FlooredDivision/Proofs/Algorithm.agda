@@ -4,9 +4,11 @@ import      Lvl
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.FlooredDivision
+open import Numeral.Natural.Oper.Proofs.Rewrite
 open import Numeral.Natural.Relation.Order
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function
 open import Syntax.Transitivity
 
 private variable d d₁ d₂ b a' b' : ℕ
@@ -18,7 +20,7 @@ inddiv-result-𝐒 {d} {b} {𝐒 a'} {𝐒 b'} = inddiv-result-𝐒 {d}{b}{a'}{b
 
 inddiv-result : [ d , b ] a' div b' ≡ d + ([ 𝟎 , b ] a' div b')
 inddiv-result {𝟎}              = [≡]-intro
-inddiv-result {𝐒 d}{b}{a'}{b'} = inddiv-result-𝐒 {d}{b}{a'}{b'} 🝖 [≡]-with(𝐒) (inddiv-result {d}{b}{a'}{b'})
+inddiv-result {𝐒 d}{b}{a'}{b'} = inddiv-result-𝐒 {d}{b}{a'}{b'} 🝖 congruence₁(𝐒) (inddiv-result {d}{b}{a'}{b'})
 
 inddiv-of-denominator : [ d , b ] b' div b' ≡ d
 inddiv-of-denominator {d} {b} {𝟎}    = [≡]-intro

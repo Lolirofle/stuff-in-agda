@@ -25,7 +25,6 @@ open import Structure.Relator.Equivalence
 open import Structure.Relator.Ordering
 open import Structure.Relator.Properties
 open import Syntax.Transitivity
-open import Type.Properties.Empty
 open import Type.Properties.Inhabited
 open import Type
 
@@ -56,7 +55,7 @@ module _ where
   module _ ⦃ classical-fiber-existence : ∀{f : [∃]-witness A → [∃]-witness B}{y} → Classical(∃(Fiber f(y))) ⦄ ⦃ inh-A : (◊([∃]-witness A)) ⦄ where
     [≼]-to-[≽]-for-inhabited : ((A ≼ B) → (B ≽ A))
     [≼]-to-[≽]-for-inhabited ([∃]-intro f ⦃ [∧]-intro f-func f-inj ⦄) = [∃]-intro
-      (invₗ-construction(const [◊]-existence) f)
+      (invₗ-construction(const inhabitant) f)
       ⦃ [∧]-intro (invₗ-construction-function ⦃ inj = f-inj ⦄) (inverseₗ-surjective ⦃ inverₗ = invₗ-construction-inverseₗ ⦃ inj = f-inj ⦄ ⦄) ⦄
 
   {- TODO: Maybe this proof could be made to a proof about invertibility instead
@@ -127,11 +126,11 @@ module _ where
     existence-decider-fn-function : (∀{x} → Unique(P(x))) → (∀{x₁ x₂}{p₁ p₂} → (x₁ ≡ x₂) → (c x₁ p₁ ≡ c x₂ p₂)) → ⦃ ∀{y} → UnaryRelator(swap P y) ⦄ → Function(existence-decider-fn)
     Function.congruence (existence-decider-fn-function unique constant) {x₁} {x₂} x₁x₂ with excluded-middle(∃(P(x₁))) | excluded-middle(∃(P(x₂))) | x₁x₂
     ... | [∨]-introₗ ([∃]-intro y₁ ⦃ p₁ ⦄) | [∨]-introₗ ([∃]-intro y₂ ⦃ p₂ ⦄) | _
-      = congruence₂(f) x₁x₂ (unique (substitute₁(swap P y₁) x₁x₂ p₁) p₂)
+      = congruence₂(f) x₁x₂ (unique (substitute₁ᵣ(swap P y₁) x₁x₂ p₁) p₂)
     ... | [∨]-introₗ ([∃]-intro y₁ ⦃ p₁ ⦄) | [∨]-introᵣ ngba2 | _
-      with () ← ngba2 ([∃]-intro y₁ ⦃ substitute₁(swap P y₁) x₁x₂ p₁ ⦄)
+      with () ← ngba2 ([∃]-intro y₁ ⦃ substitute₁ᵣ(swap P y₁) x₁x₂ p₁ ⦄)
     ... | [∨]-introᵣ ngba1 | [∨]-introₗ ([∃]-intro y₂ ⦃ p₂ ⦄) | _
-      with () ← ngba1 ([∃]-intro y₂ ⦃ substitute₁(swap P y₂) (symmetry(_≡_) x₁x₂) p₂ ⦄)
+      with () ← ngba1 ([∃]-intro y₂ ⦃ substitute₁ᵣ(swap P y₂) (symmetry(_≡_) x₁x₂) p₂ ⦄)
     ... | [∨]-introᵣ _ | [∨]-introᵣ _ | _ = constant x₁x₂
 
     existence-decider-fn-surjective : (∀{x} → Unique(P(x))) → ⦃ ∀{x} → Constant(c(x)) ⦄ → (∀{z} → ∃(x ↦ (∀{y} → P(x)(y) → (f x y ≡ z)) ∧ ((nepx : ¬ ∃(P(x))) → (c x nepx ≡ z)))) → Surjective(existence-decider-fn)
@@ -187,7 +186,7 @@ module _ ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ where
 
     instance
       lone-desc-rel : ∀{y} → UnaryRelator(x ↦ Lone(y) ∧ Desc(f(x)) y)
-      UnaryRelator.substitution lone-desc-rel xy = [∧]-map id (ep ↦ [∃]-map-proof-dependent ep (symmetry(_≡_) (congruence₁(f) ⦃ func-f ⦄ xy) 🝖_))
+      lone-desc-rel = UnaryRelator-introᵣ \xy → [∧]-map id (ep ↦ [∃]-map-proof-dependent ep (symmetry(_≡_) (congruence₁(f) ⦃ func-f ⦄ xy) 🝖_))
 
     f⁻¹ : B → A
     f⁻¹ = invₗ-construction g f
@@ -462,9 +461,9 @@ module _ where
     open Equiv(Option-equiv ⦃ equiv-pos-P ⦄) using () renaming (transitivity to Option-trans ; symmetry to Option-sym ; reflexivity to Option-refl)
     proof : (P ∨ ¬ P)
     proof with g(𝐹) | g(𝑇) | (\p → Surjective.proof ([∧]-elimᵣ([∃]-proof surjection)) {Some(intro ⦃ p ⦄)}) | g-value-elim{Option.None}
-    ... | Some l | Some r | _    | _ = [∨]-introₗ (◊.existence l)
-    ... | Some l | None   | _    | _ = [∨]-introₗ (◊.existence l)
-    ... | None   | Some r | _    | _ = [∨]-introₗ (◊.existence r)
+    ... | Some l | Some r | _    | _ = [∨]-introₗ (◊.inhabitant l)
+    ... | Some l | None   | _    | _ = [∨]-introₗ (◊.inhabitant l)
+    ... | None   | Some r | _    | _ = [∨]-introₗ (◊.inhabitant r)
     ... | None   | None   | surj | tttest = [∨]-introᵣ
       (\p → empty(transitivity(_≡_ {T = Option(◊ P)}) {Some(intro ⦃ p ⦄)} {g([∃]-witness(surj p))} {None}
         (symmetry(_≡_ {T = Option(◊ P)}) {g([∃]-witness(surj p))} ([∃]-proof(surj p)))
@@ -481,7 +480,8 @@ module _ where
     Classical.excluded-middle (surjection-injection-choice-to-excluded-middle {P = P}) = {!!}
   -}
 
+open import Logic.Propositional.Equiv
 open import Structure.Relator
 instance
   id-relator : UnaryRelator ⦃ intro _ ⦃ [≍]-equivalence{ℓ₁}{ℓ₂} ⦄ ⦄ [∃]-witness
-  id-relator = intro [∃]-witness
+  id-relator = UnaryRelator-introᵣ ⦃ _ ⦄ [∃]-witness

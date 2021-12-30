@@ -1,5 +1,6 @@
 module Numeral.Finite.LinearSearch where -- TODO: Maybe move to Numeral.CoordinateVector.LinearSearch
 
+open import Data
 open import Data.Boolean
 open import Data.Boolean.Stmt
 open import Data.List
@@ -67,7 +68,7 @@ test : ∀{x y : 𝕟(n)} → (x Wrapping.[−] (x Wrapping.[−] y) ≡ y)
 -}
 
 open import Data
-open import Data.Boolean.Stmt.Proofs
+open import Data.Boolean.Stmt.Logic
 import      Data.List.Functions as List
 open import Data.List.Relation.Membership using (_∈_)
 open import Data.List.Relation.Membership.Proofs
@@ -79,6 +80,7 @@ open import Data.List.Sorting
 open import Data.Option.Equiv.Id
 open import Lang.Inspect
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Logic.Propositional.Theorems
 open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Finite.Oper.Comparisons.Proofs
@@ -209,7 +211,7 @@ findMax-maximal {𝐒 n} {f} {i = i} eq p | 𝐹 | intro m | Some x | intro find
 -}
 
 {- TODO
-test : ∀{i : 𝕟(𝐒(n))} → ¬(maximum{n} < i)
+test : ∀{i : 𝕟(𝐒(n))} → ¬(maximum{𝐒 n} < i)
 test {𝟎}   {𝟎}   p = p
 test {𝐒 n} {𝟎}   p = p
 test {𝐒 n} {𝐒 i} p = test {n}{i} p
@@ -217,11 +219,11 @@ test {𝐒 n} {𝐒 i} p = test {n}{i} p
 {-
 findMax-maximal2 : (findMax f ≡ Some(max)) → (i > max) → IsFalse(f(i))
 findMax-maximal2 {𝐒 n} {f} {max} {i} eq p with f(maximum) | inspect f(maximum)
-findMax-maximal2 {𝐒 n} {f} {𝟎} {𝐒 i} eq p | 𝑇 | intro fmax with maximum-0(injective(Some) eq)
+findMax-maximal2 {𝐒 n} {f} {𝟎} {𝐒 i} eq p | 𝑇 | intro fmax with maximum-is-minimum-1(injective(Some) eq)
 findMax-maximal2 {𝐒 .0} {f} {𝟎} {𝐒 ()} eq p | 𝑇 | intro fmax | [≡]-intro
 findMax-maximal2 {𝐒 (𝐒 n)} {f} {𝐒 max} {𝐒 i} eq p | 𝑇 | intro fmax with f(bound-𝐒 maximum) | inspect (f ∘ bound-𝐒)(maximum)
 findMax-maximal2 {𝐒 (𝐒 n)} {f} {𝐒 .maximum} {𝐒 i} [≡]-intro p | 𝑇 | intro fmax | 𝑇 | intro x with () ← test{n} p
-findMax-maximal2 {𝐒 (𝐒 n)} {f} {𝐒 {.(𝐒 n)} .(maximum {n})} {𝐒 {.(𝐒 n)} i} ([≡]-intro {x = .(Some (𝐒 {𝐒 n} (maximum {n})))}) p | 𝑇 | intro fmax | 𝐹 | intro x with () ← test{n} p
+findMax-maximal2 {𝐒 (𝐒 n)} {f} {𝐒 {.(𝐒 n)} .(maximum {𝐒 n})} {𝐒 {.(𝐒 n)} i} ([≡]-intro {x = .(Some (𝐒 {𝐒 n} (maximum {𝐒 n})))}) p | 𝑇 | intro fmax | 𝐹 | intro x with () ← test{n} p
 findMax-maximal2 {𝐒 n} {f} {𝟎} {𝐒 i} eq p | 𝐹 | intro fmax = {!!}
 findMax-maximal2 {𝐒 n} {f} {𝐒 max} {𝐒 i} eq p | 𝐹 | intro fmax = {!!}
 -}

@@ -24,6 +24,7 @@ open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Function
 open import Structure.Function.Domain
 open import Structure.Operator.Properties
 open import Structure.Relator.Properties
@@ -112,7 +113,7 @@ composite-lower-bound {.(𝐒 (𝐒 a) ⋅ 𝐒 (𝐒 b))} (intro a b) = succ(su
 
 prime-only-divisors : ∀{n} → Prime(n) → (∀{x} → (x ∣ n) → ((x ≡ 1) ∨ (x ≡ n)))
 prime-only-divisors {𝐒 (𝐒 n)} (intro prime) {𝟎}   = [⊥]-elim ∘ [0]-divides-not
-prime-only-divisors {𝐒 (𝐒 n)} (intro prime) {𝐒 x} = Either.map ([≡]-with(𝐒)) ([≡]-with(𝐒)) ∘ prime
+prime-only-divisors {𝐒 (𝐒 n)} (intro prime) {𝐒 x} = Either.map (congruence₁(𝐒)) (congruence₁(𝐒)) ∘ prime
 
 prime-when-only-divisors : ∀{n} → (n ≥ 2) → (∀{x} → (x ∣ n) → ((x ≡ 1) ∨ (x ≡ n))) → Prime(n)
 prime-when-only-divisors {𝐒(𝐒 n)} (succ _) proof = intro p where

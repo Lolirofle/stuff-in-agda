@@ -109,6 +109,7 @@ mod-congruence-[𝄩] {a} {b} {𝐒 m} = [↔]-intro (l{a}{b}) (r{a}{b}) where
   r {𝐒 a} {𝟎}   eq = [↔]-to-[→] mod-divisibility eq
   r {𝐒 a} {𝐒 b} eq = r{a}{b} (injective ⦃ mod-congruence-equiv _ ⦄ ⦃ mod-congruence-equiv _ ⦄ (𝐒) {a}{b} eq)
 
+open import Logic.Propositional.Equiv using ([↔]-equiv)
 open import Logic.Propositional.Theorems
 open import Numeral.Natural.Function.GreatestCommonDivisor
 open import Numeral.Natural.Function.GreatestCommonDivisor.Proofs
@@ -132,20 +133,20 @@ mod-congruence-scale-modulus {m} ⦃ pos ⦄ {a}{b}{c} = [↔]-transitivity  ([�
   l : (m ∣ ((c ⋅ a) 𝄩 (c ⋅ b))) ← ((m ⌊/⌋ gcd c m) ⦃ _ ⦄ ∣ (a 𝄩 b))
   l =
     (m ⌊/⌋ gcd c m) ∣ (a 𝄩 b)                         ⇒-[ divides-with-[⋅]ᵣ-both {z = gcd c m} ]
-    ((m ⌊/⌋ gcd c m) ⋅ gcd c m) ∣ ((a 𝄩 b) ⋅ gcd c m) ⇒-[ substitute₂ₗ(_∣_) ([⋅][⌊/⌋]-inverseOperatorᵣ (Gcd.divisorᵣ Gcd-gcd)) ]
+    ((m ⌊/⌋ gcd c m) ⋅ gcd c m) ∣ ((a 𝄩 b) ⋅ gcd c m) ⇒-[ substitute₂-₁ᵣ(_∣_) _ ([⋅][⌊/⌋]-inverseOperatorᵣ (Gcd.divisorᵣ Gcd-gcd)) ]
     m ∣ ((a 𝄩 b) ⋅ gcd c m)                           ⇒-[ divides-with-[⋅] {c = (c ⌊/⌋ gcd c m) ⦃ _ ⦄} ∘ [∨]-introₗ ]
-    m ∣ ((a 𝄩 b) ⋅ gcd c m) ⋅ (c ⌊/⌋ gcd c m)         ⇒-[ substitute₂ᵣ(_∣_) (associativity(_⋅_) {a 𝄩 b}{gcd c m}{(c ⌊/⌋ gcd c m) ⦃ _ ⦄}) ]
-    m ∣ (a 𝄩 b) ⋅ (gcd c m ⋅ (c ⌊/⌋ gcd c m))         ⇒-[ substitute₂ᵣ(_∣_) (congruence₂-₂(_⋅_)(a 𝄩 b) (symmetry(_≡_) ([⌊/⌋][⋅]ᵣ-compatibility {gcd c m}{c}{gcd c m} (Gcd.divisorₗ{c}{m} Gcd-gcd)))) ]
-    m ∣ (a 𝄩 b) ⋅ ((gcd c m ⋅ c) ⌊/⌋ gcd c m)         ⇒-[ substitute₂ᵣ(_∣_) (congruence₂-₂(_⋅_)(a 𝄩 b) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {gcd c m}{c})) ]
-    m ∣ (a 𝄩 b) ⋅ c                                   ⇒-[ substitute₂ᵣ(_∣_) (commutativity(_⋅_) {a 𝄩 b}{c}) ]
-    m ∣ c ⋅ (a 𝄩 b)                                   ⇒-[ substitute₂ᵣ(_∣_) (distributivityₗ(_⋅_)(_𝄩_) {c}{a}{b}) ]
+    m ∣ ((a 𝄩 b) ⋅ gcd c m) ⋅ (c ⌊/⌋ gcd c m)         ⇒-[ substitute₂-₂ᵣ(_∣_) _ (associativity(_⋅_) {a 𝄩 b}{gcd c m}{(c ⌊/⌋ gcd c m) ⦃ _ ⦄}) ]
+    m ∣ (a 𝄩 b) ⋅ (gcd c m ⋅ (c ⌊/⌋ gcd c m))         ⇒-[ substitute₂-₂ᵣ(_∣_) _ (congruence₂-₂(_⋅_)(a 𝄩 b) (symmetry(_≡_) ([⌊/⌋][⋅]ᵣ-compatibility {gcd c m}{c}{gcd c m} (Gcd.divisorₗ{c}{m} Gcd-gcd)))) ]
+    m ∣ (a 𝄩 b) ⋅ ((gcd c m ⋅ c) ⌊/⌋ gcd c m)         ⇒-[ substitute₂-₂ᵣ(_∣_) _ (congruence₂-₂(_⋅_)(a 𝄩 b) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {gcd c m}{c})) ]
+    m ∣ (a 𝄩 b) ⋅ c                                   ⇒-[ substitute₂-₂ᵣ(_∣_) _ (commutativity(_⋅_) {a 𝄩 b}{c}) ]
+    m ∣ c ⋅ (a 𝄩 b)                                   ⇒-[ substitute₂-₂ᵣ(_∣_) _ (distributivityₗ(_⋅_)(_𝄩_) {c}{a}{b}) ]
     m ∣ ((c ⋅ a) 𝄩 (c ⋅ b))                           ⇒-end
 
   r : (m ∣ ((c ⋅ a) 𝄩 (c ⋅ b))) → ((m ⌊/⌋ gcd c m) ⦃ _ ⦄ ∣ (a 𝄩 b))
   r =
-    (m ∣ (c ⋅ a 𝄩 c ⋅ b))                                        ⇒-[ substitute₂ᵣ(_∣_) (symmetry(_≡_) (distributivityₗ(_⋅_)(_𝄩_) {c}{a}{b})) ]
+    (m ∣ (c ⋅ a 𝄩 c ⋅ b))                                        ⇒-[ substitute₂-₂ₗ(_∣_) _ (distributivityₗ(_⋅_)(_𝄩_) {c}{a}{b}) ]
     (m ∣ c ⋅ (a 𝄩 b))                                            ⇒-[ divides-[⌊/⌋] {m}{c ⋅ (a 𝄩 b)}{gcd c m} (Gcd.divisorᵣ Gcd-gcd) ]
-    (m ⌊/⌋ gcd c m) ⦃ _ ⦄ ∣ ((c ⋅ (a 𝄩 b)) ⌊/⌋ gcd c m) ⦃ _ ⦄    ⇒-[ substitute₂ᵣ(_∣_) ([⌊/⌋][⋅]ₗ-compatibility {c}{a 𝄩 b}{gcd c m} ⦃ pgcd ⦄ (Gcd.divisorₗ {c}{m} Gcd-gcd)) ]
+    (m ⌊/⌋ gcd c m) ⦃ _ ⦄ ∣ ((c ⋅ (a 𝄩 b)) ⌊/⌋ gcd c m) ⦃ _ ⦄    ⇒-[ substitute₂-₂ᵣ(_∣_) _ ([⌊/⌋][⋅]ₗ-compatibility {c}{a 𝄩 b}{gcd c m} ⦃ pgcd ⦄ (Gcd.divisorₗ {c}{m} Gcd-gcd)) ]
     (m ⌊/⌋ gcd c m) ⦃ _ ⦄ ∣ ((c ⌊/⌋ gcd c m) ⦃ pgcd ⦄ ⋅ (a 𝄩 b)) ⇒-[ swap(coprime-divides-of-[⋅] {(m ⌊/⌋ gcd c m) ⦃ _ ⦄}{(c ⌊/⌋ gcd c m) ⦃ _ ⦄}{a 𝄩 b}) (symmetry(Coprime) ([⌊/⌋]-gcd-coprime{c}{m} ([∨]-introᵣ pos))) ]
     ((m ⌊/⌋ gcd c m) ⦃ _ ⦄ ∣ (a 𝄩 b))                            ⇒-end
 

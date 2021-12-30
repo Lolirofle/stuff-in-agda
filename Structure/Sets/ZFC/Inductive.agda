@@ -74,7 +74,7 @@ module _ ⦃ zfc : ZFC ⦄ where
   infixl 2000 _<_ _≤_ _>_ _≥_
 
   𝕟 : S → S
-  𝕟(n) = filter(_< n) ⦃ binary-unaryRelatorᵣ ⦄ (ℕ)
+  𝕟(n) = filter(_< n) ⦃ BinaryRelator-unary₁ _ ⦄ (ℕ)
 
   -- The set ℕ contains zero and all successors.
   ℕ-inductive : Inductive(ℕ)

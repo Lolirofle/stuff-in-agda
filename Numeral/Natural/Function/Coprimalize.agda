@@ -18,6 +18,7 @@ coprimalize(x , y) = ((x ⌊/⌋₀ gcd(x)(y)) , (y ⌊/⌋₀ gcd(x)(y)))
 -- TODO: Maybe prove something like (b ∣ a) → ((d ∣ (a / b)) ↔ ((d ∣ a) ∧ (d ∤ b))) if it holds? (20210728: Why? Where is this proof required?)
 open import Functional
 open import Logic.Propositional
+open import Logic.Propositional.Equiv
 open import Numeral.Natural.Coprime
 open import Numeral.Natural.Function.GreatestCommonDivisor.Proofs
 open import Numeral.Natural.Oper.FlooredDivision.Proofs
@@ -44,8 +45,8 @@ coprimalize-positive {x}{y}
       (r{x}{y})
     )
     ([↔]-intro
-      (l{y}{x} ∘ substitute₁(Positive) (congruence₂-₂(_⌊/⌋₀_)(y) (commutativity(gcd) {x}{y})))
-      (substitute₁(Positive) (congruence₂-₂(_⌊/⌋₀_)(y) (commutativity(gcd) {y}{x})) ∘ r{y}{x})
+      (l{y}{x} ∘ substitute₁ᵣ(Positive) (congruence₂-₂(_⌊/⌋₀_)(y) (commutativity(gcd) {x}{y})))
+      (substitute₁ᵣ(Positive) (congruence₂-₂(_⌊/⌋₀_)(y) (commutativity(gcd) {y}{x})) ∘ r{y}{x})
     )
     where
       l : ∀{x y} → Positive(x) ← Positive(x ⌊/⌋₀ (gcd x y))
