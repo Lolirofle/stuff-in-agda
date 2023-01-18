@@ -2,7 +2,7 @@ module Function.Inverseₗ where
 
 import      Lvl
 import      Data.Either as Either
-open import Data.Either.Proofs
+open import Data.Either.Proofs.Map
 open import Lang.Inspect
 open import Logic
 open import Logic.Classical

@@ -10,7 +10,8 @@ open import Logic.Predicate
 open import Numeral.Finite
 open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Sign
-open import Numeral.Sign.Oper0
+open import Numeral.Charge
+open import Numeral.Charge.Oper
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equivalence
 import      Structure.Operator.Names as Names
@@ -33,7 +34,7 @@ open import Syntax.Number
 ⋚-of-𝟎𝐒-not-𝟎 {b = 𝟎}    ⦃ ⦄
 ⋚-of-𝟎𝐒-not-𝟎 {b = 𝐒(_)} ⦃ ⦄
 
-⋚-surjective : ∀{an bn}{a : 𝕟(an)}{b : 𝕟(bn)} → ∃{Obj = (−|0|+)} (a ⋚? b ≡_)
+⋚-surjective : ∀{an bn}{a : 𝕟(an)}{b : 𝕟(bn)} → ∃{Obj = Charge} (a ⋚? b ≡_)
 ⋚-surjective {a = 𝟎}   {𝟎}   = [∃]-intro 𝟎
 ⋚-surjective {a = 𝟎}   {𝐒 b} = [∃]-intro ➖
 ⋚-surjective {a = 𝐒 a} {𝟎}   = [∃]-intro ➕

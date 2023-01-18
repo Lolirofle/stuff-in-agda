@@ -12,7 +12,7 @@ open import Numeral.Natural
 open import Relator.Equals using () renaming (_≡_ to Id ; [≡]-intro to intro)
 open import Sets.IterativeSet
 open import Syntax.Function
-open import Type.Dependent
+open import Type.Dependent.Sigma
 
 module _ where
   private variable {ℓ ℓ₁ ℓ₂} : Lvl.Level

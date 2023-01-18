@@ -32,10 +32,8 @@ Expression = Term(0)
 module VarNumeralSyntax where
   -- Syntax for writing Var as a numeral.
   instance
-    Term-from-ℕ : ∀{N} → Numeral(Term(N))
-    Numeral.restriction-ℓ ( Term-from-ℕ {N} ) = Numeral.restriction-ℓ ( 𝕟-numeral {N} )
-    Numeral.restriction   ( Term-from-ℕ {N} ) = Numeral.restriction ( 𝕟-numeral {N} )
-    num                   ⦃ Term-from-ℕ {N} ⦄ (n) ⦃ proof ⦄ = Var(num n)
+    Term-from-ℕ : ∀{N} → Numeral(Term(N)) (Numeral.Restriction(𝕟-numeral{N}))
+    num ⦃ Term-from-ℕ ⦄ n = Var(num n)
 
 module ExplicitLambdaSyntax where
   open VarNumeralSyntax public
@@ -147,7 +145,7 @@ module _ where
 -}
 
 open import Numeral.CoordinateVector
-open import Type.Dependent
+open import Type.Dependent.Sigma
 module Typing
   (Sort : ∀{d} → Term(d) → Meta.Type{0})
   (Axioms : Constants → Expression → Meta.Type{0})
@@ -191,7 +189,7 @@ module Typing
 0: 3
 1: 4
 
-𝕟-to-ℕ (Wrapping.[−] i₁) ≡ 𝕟-to-ℕ (Wrapping.[−] i₂)
+toℕ (Wrapping.[−] i₁) ≡ toℕ (Wrapping.[−] i₂)
 -}
   data _≡d_ : Term(d₁) → Term(d₂) → Meta.Type{0} where
     application : (F₁ ≡d F₂) → (X₁ ≡d X₂) → (Apply F₁ X₁ ≡d Apply F₂ X₂)

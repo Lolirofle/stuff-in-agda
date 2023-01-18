@@ -29,9 +29,17 @@ open import Syntax.Transitivity
 open import Type.Properties.MereProposition
 open import Type
 
+[≤]-with-[𝐏] : ∀{x y} → (x ≤ y) → (𝐏(x) ≤ 𝐏(y))
+[≤]-with-[𝐏] min       = min
+[≤]-with-[𝐏] (succ xy) = xy
+
+[≤]-without-[𝐒] : ∀{x y : ℕ} → (𝐒(x) ≤ 𝐒(y)) → (x ≤ y)
+[≤]-without-[𝐒] = [≤]-with-[𝐏]
+
 instance
   [≤]-succ-injectivity : ∀{x y} → Injective(succ{x}{y})
-  Injective.proof [≤]-succ-injectivity [≡]-intro = [≡]-intro
+  Injective.proof [≤]-succ-injectivity {min}    {min}    p = [≡]-intro
+  Injective.proof [≤]-succ-injectivity {succ x} {succ y} p = congruence₁([≤]-without-[𝐒]) p
 
 instance
   [≤]-mereProposition : ∀{x y} → MereProposition(x ≤ y)
@@ -44,8 +52,8 @@ instance
 [<]-minimum = \{y} → succ([≤]-minimum {y})
 
 [≡]-to-[≤] : ∀{x y : ℕ} → (x ≡ y) → (x ≤ y)
-[≡]-to-[≤] {𝟎}   {_}    _         = [≤]-minimum
-[≡]-to-[≤] {𝐒(x)}{𝐒(y)} [≡]-intro = succ([≡]-to-[≤] {x}{y} [≡]-intro)
+[≡]-to-[≤] {𝟎}   {_}    _  = [≤]-minimum
+[≡]-to-[≤] {𝐒(x)}{𝐒(y)} eq = succ([≡]-to-[≤] {x}{y} (injective(𝐒) eq))
 
 [≡]-to-[≥] : ∀{x y : ℕ} → (x ≡ y) → (x ≥ y)
 [≡]-to-[≥] = [≡]-to-[≤] ∘ symmetry(_≡_)
@@ -72,9 +80,6 @@ instance
 [≤]-predecessor {x}   {𝟎}    ()
 [≤]-predecessor {𝟎}   {𝐒(y)} (_) = [≤]-minimum
 [≤]-predecessor {𝐒(x)}{𝐒(y)} (succ proof) = succ([≤]-predecessor {x}{y} (proof))
-
-[≤]-without-[𝐒] : ∀{x y : ℕ} → (𝐒(x) ≤ 𝐒(y)) → (x ≤ y)
-[≤]-without-[𝐒] (succ proof) = proof
 
 [≤][𝐒]ₗ : ∀{x : ℕ} → ¬(𝐒(x) ≤ x)
 [≤][𝐒]ₗ {𝟎}    (1≤0)    = [≤][0]ᵣ-negation{0}(1≤0)

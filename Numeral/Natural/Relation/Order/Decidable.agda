@@ -12,19 +12,20 @@ open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Structure.Function.Domain
 open import Type.Properties.Decidable
+import      Type.Properties.Decidable.Functions as Decider
 
 instance
   [≤]-decider : Decider(2)(_≤_)(_≤?_)
   [≤]-decider {𝟎} {𝟎} = true [≤]-minimum
   [≤]-decider {𝟎} {𝐒 y} = true [≤]-minimum
   [≤]-decider {𝐒 x} {𝟎} = false \()
-  [≤]-decider {𝐒 x} {𝐒 y} = step{f = id} (true ∘ \p → [≤]-with-[𝐒] ⦃ p ⦄) (false ∘ contrapositiveᵣ [≤]-without-[𝐒]) ([≤]-decider {x}{y})
+  [≤]-decider {𝐒 x} {𝐒 y} = Decider.mapProp(\p → [≤]-with-[𝐒] ⦃ p ⦄) (contrapositiveᵣ [≤]-without-[𝐒]) ([≤]-decider {x}{y})
 
 [<]-decider : Decider(2)(_<_)(_<?_)
 [<]-decider {𝟎} {𝟎} = false (λ ())
 [<]-decider {𝟎} {𝐒 y} = true (succ min)
 [<]-decider {𝐒 x} {𝟎} = false (λ ())
-[<]-decider {𝐒 x} {𝐒 y} = step{f = id} (true ∘ succ) (false ∘ contrapositiveᵣ [≤]-without-[𝐒]) ([<]-decider {x} {y})
+[<]-decider {𝐒 x} {𝐒 y} = Decider.mapProp succ (contrapositiveᵣ [≤]-without-[𝐒]) ([<]-decider {x} {y})
 
 [≥]-decider : Decider(2)(_≥_)(_≥?_)
 [≥]-decider = [≤]-decider

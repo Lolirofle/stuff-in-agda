@@ -23,7 +23,7 @@ import      Logic.Predicate     as Logic
 open import Sets.PredicateSet using (PredSet)
 open        Sets.PredicateSet.BoundedQuantifiers
 open import Syntax.Function
-open import Type.Dependent renaming (intro to _,_)
+open import Type.Dependent.Sigma renaming (intro to _,_)
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level

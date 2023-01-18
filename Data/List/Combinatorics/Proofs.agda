@@ -2,16 +2,16 @@ module Data.List.Combinatorics.Proofs where
 
 import      Lvl
 open import Data
-open import Data.List
+open import Data.List as List
 open import Data.List.Combinatorics
-open import Data.List.Functions hiding (skip) renaming (module LongOper to List)
-open        Data.List.Functions.LongOper
+open import Data.List.Functions hiding (skip)
 open import Data.List.Relation.Permutation
 open import Data.List.Relation.Permutation.Proofs
 open import Data.List.Relation.Membership using (_∈_)
 open import Data.List.Relation.Membership.Proofs
 open import Data.List.Relation.Quantification
-open import Data.List.Relation.Quantification.Proofs
+open import Data.List.Relation.Quantification.Universal.Functions
+open import Data.List.Relation.Quantification.Universal.Proofs
 open import Data.List.Relation.Sublist
 open import Data.List.Relation.Sublist.Proofs
 open import Data.List.Proofs
@@ -135,7 +135,7 @@ sublists₊-length {l = ∅} = [≡]-intro
 sublists₊-length {l = x ⊰ l} =
   length(sublists₊ (x ⊰ l))                                                               🝖[ _≡_ ]-[]
   length(singleton(x) ⊰ foldᵣ (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest)) ∅ (sublists₊ l)) 🝖[ _≡_ ]-[]
-  𝐒(length(foldᵣ (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest)) ∅ (sublists₊ l)))             🝖[ _≡_ ]-[ congruence₁(𝐒) (length-foldᵣ {l = sublists₊(l)}{init = ∅}{f = (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest))}{g = const(𝐒 ∘ 𝐒)} [≡]-intro) ]
+  𝐒(length(foldᵣ (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest)) ∅ (sublists₊ l)))             🝖[ _≡_ ]-[ congruence₁(𝐒) (length-foldᵣ {f = (prev ↦ rest ↦ (prev ⊰ (x ⊰ prev) ⊰ rest))}{g = const(𝐒 ∘ 𝐒)} [≡]-intro {∅}{sublists₊(l)}) ]
   𝐒(foldᵣ (prev ↦ rest ↦ 𝐒(𝐒(rest))) 𝟎 (sublists₊ l))                                     🝖[ _≡_ ]-[ congruence₁(𝐒) (foldᵣ-constant-[+]ᵣ{l = sublists₊ l}{init = 𝟎}) ]
   𝐒(2 ⋅ length(sublists₊ l))     🝖[ _≡_ ]-[ congruence₁(𝐒 ∘ (2 ⋅_)) (sublists₊-length {l = l}) ]
   𝐒(2 ⋅ (2 ^ (length l) −₀ 1))   🝖[ _≡_ ]-[ congruence₁(𝐒) (distributivityₗ(_⋅_)(_−₀_) {2}{2 ^ length(l)}{1}) ]
@@ -194,7 +194,7 @@ tuples-length {1} = [≡]-intro
 tuples-length {𝐒(𝐒(n))}{l = ∅} = [≡]-intro
 tuples-length {𝐒(𝐒(n))}{l = x ⊰ l} =
   length(tuples(𝐒(𝐒(n))) (x ⊰ l))                                                   🝖[ _≡_ ]-[]
-  length(concatMap(y ↦ map (y Tuple₊.⊰_) (tuples (𝐒(n)) (x ⊰ l))) (x ⊰ l))          🝖[ _≡_ ]-[ length-concatMap {l = x ⊰ l}{f = y ↦ map (y Tuple₊.⊰_) (tuples (𝐒(n)) (x ⊰ l))} ]
+  length(concatMap(y ↦ map (y Tuple₊.⊰_) (tuples (𝐒(n)) (x ⊰ l))) (x ⊰ l))          🝖[ _≡_ ]-[ length-concatMap {f = y ↦ map (y Tuple₊.⊰_) (tuples (𝐒(n)) (x ⊰ l))}{l = x ⊰ l} ]
   foldᵣ((_+_) ∘ length ∘ (y ↦ map (y Tuple₊.⊰_) (tuples (𝐒(n)) (x ⊰ l)))) 𝟎 (x ⊰ l) 🝖[ _≡_ ]-[ foldᵣ-function₊-raw {l₁ = x ⊰ l}{a₁ = 𝟎} (\{a b} → congruence₁(_+ b) (length-map{f = a Tuple₊.⊰_}{x = tuples (𝐒(n)) (x ⊰ l)})) [≡]-intro [≡]-intro ]
   foldᵣ((_+_) ∘ length ∘ (y ↦ tuples (𝐒(n)) (x ⊰ l))) 𝟎 (x ⊰ l)                     🝖[ _≡_ ]-[]
   foldᵣ(const(length(tuples (𝐒(n)) (x ⊰ l)) +_)) 𝟎 (x ⊰ l)                          🝖[ _≡_ ]-[ foldᵣ-constant-[+]ₗ{l = x ⊰ l} {init = 𝟎}{step = length(tuples (𝐒(n)) (x ⊰ l))} ]
@@ -232,11 +232,11 @@ permutations-length {l = ∅}         = [≡]-intro
 permutations-length {l = x ⊰ ∅}     = [≡]-intro
 permutations-length {l = x ⊰ y ⊰ l} =
   length(permutations(x ⊰ y ⊰ l))                                     🝖[ _≡_ ]-[]
-  length(concatMap(insertedEverywhere x) (permutations(y ⊰ l)))       🝖[ _≡_ ]-[ length-concatMap{l = permutations(y ⊰ l)}{f = insertedEverywhere x} ]
+  length(concatMap(insertedEverywhere x) (permutations(y ⊰ l)))       🝖[ _≡_ ]-[ length-concatMap{f = insertedEverywhere x}{l = permutations(y ⊰ l)} ]
   foldᵣ(_+_ ∘ length ∘ insertedEverywhere x) 𝟎 (permutations(y ⊰ l))  🝖[ _≡_ ]-[ foldᵣ-operator-raw {l₁ = permutations(y ⊰ l)} (\{l}{y} → congruence₂-₁(_+_)(y) (insertedEverywhere-length{l = l})) [≡]-intro [≡]-intro ]
-  foldᵣ(_+_ ∘ 𝐒 ∘ length) 𝟎 (permutations(y ⊰ l))                     🝖[ _≡_ ]-[ foldᵣ-map-preserve {f = length}{l = permutations(y ⊰ l)} ]
+  foldᵣ(_+_ ∘ 𝐒 ∘ length) 𝟎 (permutations(y ⊰ l))                     🝖[ _≡_ ]-[ foldᵣ-map-preserve {f = length}{x = permutations(y ⊰ l)} ]
   foldᵣ(_+_ ∘ 𝐒) 𝟎 (map length(permutations(y ⊰ l)))                  🝖[ _≡_ ]-[ congruence₁(foldᵣ(_+_ ∘ 𝐒) 𝟎) (map-operator-raw-function(permutation-length{l = y ⊰ l})) ]
-  foldᵣ(_+_ ∘ 𝐒) 𝟎 (map (const(length(y ⊰ l))) (permutations(y ⊰ l))) 🝖[ _≡_ ]-[ foldᵣ-map-preserve {f = const(length(y ⊰ l))}{l = permutations(y ⊰ l)} ]-sym
+  foldᵣ(_+_ ∘ 𝐒) 𝟎 (map (const(length(y ⊰ l))) (permutations(y ⊰ l))) 🝖[ _≡_ ]-[ foldᵣ-map-preserve {f = const(length(y ⊰ l))}{x = permutations(y ⊰ l)} ]-sym
   foldᵣ(_+_ ∘ 𝐒 ∘ const(length(y ⊰ l))) 𝟎 (permutations(y ⊰ l))       🝖[ _≡_ ]-[]
   foldᵣ(_+_ ∘ const(𝐒(length(y ⊰ l)))) 𝟎 (permutations(y ⊰ l))        🝖[ _≡_ ]-[]
   foldᵣ(const(𝐒(length(y ⊰ l)) +_)) 𝟎 (permutations(y ⊰ l))           🝖[ _≡_ ]-[ foldᵣ-constant-[+]ₗ {l = permutations(y ⊰ l)}{step = 𝐒(length(y ⊰ l))} ]

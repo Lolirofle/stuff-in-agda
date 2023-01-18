@@ -4,10 +4,10 @@ import      Lvl
 open import Data using (<>)
 open import Data.Boolean
 open import Functional
-open import Functional.Instance
+open import Logic.Propositional
 open import Numeral.Finite
 open import Numeral.Finite.Bound
-open import Numeral.Finite.Oper
+open import Numeral.Finite.Oper.Wrapping using ([−]_)
 open import Numeral.Finite.Oper.Comparisons
 open import Numeral.Natural
 import      Numeral.Natural.Oper as ℕ
@@ -37,24 +37,13 @@ dim{d = d} = const d
 proj : Vector(d)(T) → 𝕟(d) → T
 proj = id
 
--- TODO: Move this to a separate "Relations" file
-open import Logic
-open import Logic.Propositional
-open import Relator.Equals.Proofs.Equivalence
-open import Structure.Function.Domain
-open import Structure.Setoid
-private variable ℓₑ : Lvl.Level
--- The vector's elements are all distinct (the vector contains no duplicate elements).
-Distinct : ⦃ equiv : Equiv{ℓₑ}(T) ⦄ → Vector(d)(T) → Stmt
-Distinct = Injective ⦃ [≡]-equiv ⦄
-
 -- The first element of a non-empty vector
 head : Vector(𝐒(d))(T) → T
 head(v) = v(𝟎)
 
 -- The list without the first element of a non-empty vector
 tail : Vector(𝐒(d))(T) → Vector(d)(T)
-(tail{𝐒(_)}(v)) (i) = v(𝐒(i))
+tail = _∘ 𝐒
 
 -- The list without the first element if there were any
 tail₀ : Vector(d)(T) → Vector(Numeral.Natural.𝐏(d))(T)
@@ -194,7 +183,7 @@ count {d = 𝟎}    (f)(v) = 𝟎
 count {d = 𝐒(n)} (f)(v) = (if f(head v) then 𝐒 else id) (count{d = n} (f)(tail v))
 
 reverse : Vector(d)(T) → Vector(d)(T)
-(reverse(v)) (n) = v(Wrapping.[−] n)
+(reverse(v)) (n) = v([−] n)
 
 indexProject : 𝕟(d) → T → T → Vector(d)(T)
 indexProject n true false i = if(n ≡? i) then true else false

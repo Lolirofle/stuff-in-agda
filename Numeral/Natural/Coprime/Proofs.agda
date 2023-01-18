@@ -11,6 +11,7 @@ open import Numeral.Finite
 open import Numeral.Natural
 open import Numeral.Natural.Coprime
 open import Numeral.Natural.Function.GreatestCommonDivisor
+open import Numeral.Natural.Function.GreatestCommonDivisor.Relation.Proofs
 open import Numeral.Natural.Relation.Divisibility.Decidable
 open import Numeral.Natural.Relation.Divisibility.Proofs
 open import Numeral.Natural.Oper
@@ -25,7 +26,8 @@ open import Structure.Relator.Properties
 open import Type.Properties.Decidable.Proofs
 open import Type
 
-private variable n x y d p : ℕ
+private variable n x y z d p x₁ x₂ y₁ y₂ : ℕ
+private variable _▫_ : ℕ → ℕ → ℕ
 
 -- 1 is the only number coprime to itself because it does not have any divisors except for itself.
 Coprime-reflexivity-condition : Coprime(n)(n) ↔ (n ≡ 1)
@@ -43,7 +45,7 @@ instance
   Coprime.proof(Symmetry.proof Coprime-symmetry (intro proof)) {n} nx ny = proof {n} ny nx
 
 -- The only number coprime to 0 is 1 because while all numbers divide 0, only 1 divides 1.
-Coprime-of-0-condition : ∀{x} → Coprime(0)(x) → (x ≡ 1)
+Coprime-of-0-condition : Coprime(0)(x) → (x ≡ 1)
 Coprime-of-0-condition {0}       (intro n1) = n1 Div𝟎 Div𝟎
 Coprime-of-0-condition {1}       (intro n1) = [≡]-intro
 Coprime-of-0-condition {𝐒(𝐒(x))} (intro n1) = n1 Div𝟎 (reflexivity(_∣_))
@@ -52,10 +54,10 @@ Coprime-of-0-condition {𝐒(𝐒(x))} (intro n1) = n1 Div𝟎 (reflexivity(_∣
 Coprime-of-1 : Coprime(1)(x)
 Coprime.proof (Coprime-of-1 {x}) {n} n1 nx = [1]-only-divides-[1] n1
 
-Coprime-without-operator : ∀{_▫_ : ℕ → ℕ → ℕ} → (∀{n} → (n ∣ x) → (n ∣ y) → (n ∣ (x ▫ y))) → Coprime(x)(x ▫ y) → Coprime(x)(y)
+Coprime-without-operator : (∀{n} → (n ∣ x) → (n ∣ y) → (n ∣ (x ▫ y))) → Coprime(x)(x ▫ y) → Coprime(x)(y)
 Coprime.proof (Coprime-without-operator div (intro proof)) nx ny = proof nx (div nx ny)
 
-Coprime-of-operator : ∀{_▫_ : ℕ → ℕ → ℕ} → (∀{n} → (n ∣ (x ▫ y)) → (n ∣ x) → (n ∣ y)) → Coprime(x)(y) → Coprime(x)(x ▫ y)
+Coprime-of-operator : (∀{n} → (n ∣ (x ▫ y)) → (n ∣ x) → (n ∣ y)) → Coprime(x)(y) → Coprime(x)(x ▫ y)
 Coprime.proof (Coprime-of-operator {x}{y} div (intro proof)) {n} nx nxy = proof {n} nx (div nxy nx)
 
 Coprime-of-[+] : Coprime(x)(y) → Coprime(x)(x + y)
@@ -83,10 +85,10 @@ Coprime-gcd = [↔]-transitivity ([↔]-intro l r) Gcd-gcd-value where
 --   x ∈ {1,2,3,4,5,6}
 --   None of them is able to have 7 as a prime factor because it is greater:
 --   1=1, 2=2, 3=3, 4=2⋅2, 5=5, 6=2⋅3
-Coprime-of-Prime : (𝐒(x) < y) → Prime(y) → Coprime(𝐒(x))(y)
-Coprime.proof (Coprime-of-Prime (succ(succ lt)) prim) nx ny with prime-only-divisors prim ny
-Coprime.proof (Coprime-of-Prime (succ(succ lt)) prim) nx ny | [∨]-introₗ n1        = n1
-Coprime.proof (Coprime-of-Prime (succ(succ lt)) prim) nx ny | [∨]-introᵣ [≡]-intro with () ← [≤]-to-[≯] lt ([≤]-without-[𝐒] (divides-upper-limit nx))
+Coprime-of-Prime : ⦃ Positive(x) ⦄ → Prime(y) → (x < y) → Coprime(x)(y)
+Coprime.proof (Coprime-of-Prime prim (succ(succ lt))) nx ny with prime-only-divisors prim ny
+Coprime.proof (Coprime-of-Prime prim (succ(succ lt))) nx ny | [∨]-introₗ n1        = n1
+Coprime.proof (Coprime-of-Prime prim (succ(succ lt))) nx ny | [∨]-introᵣ [≡]-intro with () ← [≤]-to-[≯] lt ([≤]-without-[𝐒] (divides-upper-limit nx))
 
 -- A prime number either divides a number or forms a coprime pair.
 -- If a prime number does not divide a number, then it cannot share any divisors because by definition, a prime only has 1 as a divisor.
@@ -98,17 +100,24 @@ Prime-to-div-or-coprime {y = y} (intro {x} prim) = [¬→]-disjunctive-formᵣ �
   ... | [∨]-introₗ [≡]-intro = [≡]-intro
   ... | [∨]-introᵣ [≡]-intro with () ← nxy ny
 
-divides-to-converse-coprimeₗ : ∀{x y z} → (x ∣ y) → Coprime(y)(z) → Coprime(x)(z)
+divides-to-converse-coprimeₗ : (x ∣ y) → Coprime(y)(z) → Coprime(x)(z)
 divides-to-converse-coprimeₗ xy (intro yz) = intro(nx ↦ nz ↦ yz (transitivity(_∣_) nx xy) nz)
 
-divides-to-converse-coprimeᵣ : ∀{x y z} → (x ∣ y) → Coprime(z)(y) → Coprime(z)(x)
+divides-to-converse-coprimeᵣ : (x ∣ y) → Coprime(z)(y) → Coprime(z)(x)
 divides-to-converse-coprimeᵣ div cop = symmetry(Coprime) (divides-to-converse-coprimeₗ div (symmetry(Coprime) cop))
 
-divides-to-converse-coprime : ∀{x₁ x₂ y₁ y₂} → (x₁ ∣ x₂) → (y₁ ∣ y₂) → Coprime(x₂)(y₂) → Coprime(x₁)(y₁)
+divides-to-converse-coprime : (x₁ ∣ x₂) → (y₁ ∣ y₂) → Coprime(x₂)(y₂) → Coprime(x₁)(y₁)
 divides-to-converse-coprime div1 div2 coprim = divides-to-converse-coprimeₗ div1 (divides-to-converse-coprimeᵣ div2 coprim)
 
-Coprime-positive : ∀{x y} → Coprime x y → (Positive(x) ∨ Positive(y))
+Coprime-positive : Coprime x y → (Positive(x) ∨ Positive(y))
 Coprime-positive {𝟎}   {𝟎}   coprim with () ← Coprime-of-0-condition coprim
 Coprime-positive {𝟎}   {𝐒 y} coprim = [∨]-introᵣ <>
 Coprime-positive {𝐒 x} {𝟎}   coprim = [∨]-introₗ <>
 Coprime-positive {𝐒 x} {𝐒 y} coprim = [∨]-introᵣ <>
+
+coprime-divides-only-when-1 : Coprime x y → (x ∣ y) → (x ≡ 1)
+coprime-divides-only-when-1 (intro cop) div = cop (reflexivity(_∣_)) div
+
+Coprime-of-[^]ₗ : ⦃ Positive(n) ⦄ → Coprime(x)(y) ← Coprime(x)(y ^ n)
+Coprime-of-[^]ₗ {1}     {x}{y} p         = p
+Coprime-of-[^]ₗ {𝐒(𝐒 n)}{x}{y} (intro p) = Coprime-of-[^]ₗ {𝐒 n} (intro \{d} dx dyn → p dx (divides-with-[⋅] {d}{y}{y ^ 𝐒(n)} ([∨]-introᵣ dyn)))

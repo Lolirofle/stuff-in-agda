@@ -28,7 +28,7 @@ open import Syntax.Transitivity
 [⋅][⌊/⌋]-inverseOperatorᵣ {x}{𝐒 y} div =
   x ⌊/⌋ 𝐒(y) ⋅ 𝐒(y)                  🝖[ _≡_ ]-[]
   x ⌊/⌋ 𝐒(y) ⋅ 𝐒(y) + 𝟎              🝖[ _≡_ ]-[ congruence₂-₂(_+_)(_) ([↔]-to-[←] mod-divisibility div) ]-sym
-  (x ⌊/⌋ 𝐒(y) ⋅ 𝐒(y)) + (x mod 𝐒(y)) 🝖[ _≡_ ]-[ [⌊/⌋][mod]-is-division-with-remainder {x}{y} ]
+  (x ⌊/⌋ 𝐒(y) ⋅ 𝐒(y)) + (x mod 𝐒(y)) 🝖[ _≡_ ]-[ [⌊/⌋][mod]-is-division-with-remainder {x}{𝐒 y} ]
   x                                  🝖-end
 
 [⋅][⌊/⌋]-inverseOperatorₗ : ∀{x y} ⦃ pos : Positive(y) ⦄ → (y ∣ x) → (y ⋅ (x ⌊/⌋ y) ≡ x)

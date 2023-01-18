@@ -17,3 +17,4 @@ record Extensionality ⦃ equiv-A : Equiv{ℓₑₐ}(A) ⦄ (equiv : Equiv{ℓ�
     ⦃ Some-function ⦄ : Function Some
     ⦃ Some-injective ⦄ : Injective Some
     cases-inequality : ∀{x : A} → (None ≢ Some(x))
+open Extensionality ⦃ … ⦄ public

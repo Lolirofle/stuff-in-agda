@@ -8,7 +8,7 @@ open import Data
 open import Data.Either
 open import Functional
 import      Lvl
-open import Type.Dependent
+open import Type.Dependent.Sigma
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level

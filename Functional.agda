@@ -4,40 +4,30 @@ import      Lvl
 open import Type
 
 infixl 10000 _∘_
-infixl 10000 _⩺_
-infixl 10000 _⩹_
 infixr 0 _$_
+infixl 0 _₴_
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 private variable A B C D E F T X X₁ X₂ X₃ X₄ Y Y₁ Y₂ Y₃ Y₄ Z : Type{ℓ}
 
 open import Function using (_←_ ; _→ᶠ_ ; _←ᶠ_ ; id ; const) public
 
--- Function application as a function.
--- Applies the first argument on the function on the second argument.
-apply : X → (X → Y) → Y
-apply(x)(f) = f(x)
-{-# INLINE apply #-}
+-- Swapping the arguments of a binary operation
+swap : (X → Y → Z) → (Y → X → Z)
+swap f(y)(x) = f(x)(y)
+{-# INLINE swap #-}
 
--- Function application as an operator
+-- Function application as an operator. The function on LHS, the value on RHS.
 _$_ : (X → Y) → X → Y
 _$_ = id
 {-# INLINE _$_ #-}
 
--- Function application as an operator. Function to the left, value to the right.
-_⩹_ : (X → Y) → X → Y
-f ⩹ x = f(x)
-{-# INLINE _⩹_ #-}
-
--- Function application as an operator. Value to the left, function to the right.
-_⩺_ : X → (X → Y) → Y
-x ⩺ f = f(x)
-{-# INLINE _⩺_ #-}
-
--- Swapping the arguments of a binary operation
-swap : (X → Y → Z) → (Y → X → Z)
-swap f(y)(x) = f(x)(y)
-{-# INLINE swap  #-}
+-- Function application as an operator. The value on LHS, the function on RHS.
+_₴_ : X → (X → Y) → Y
+_₴_ = swap id
+{-# INLINE _₴_ #-}
+apply = _₴_
+{-# INLINE apply #-}
 
 -- Function composition
 _∘_ : let _ = X in (Y → Z) → (X → Y) → (X → Z)
@@ -71,7 +61,6 @@ _on₂_ : let _ = X in (Y → Y → Z) → (X → Y) → (X → X → Z)
 _on₃_ : let _ = X in (Y → Y → Y → Z) → (X → Y) → (X → X → X → Z)
 ((_▫_▫_) on₃ f)(y₁) = (f(y₁) ▫_▫_) on₂ f -- f(y₁) ▫ f(y₂) ▫ f(y₃)
 
--- TODO: Move these to Function.Multi
 _∘₀_ : (Y → Z) → Y → Z
 _∘₀_ = id
 

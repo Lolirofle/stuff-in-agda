@@ -67,9 +67,16 @@ _⇔-end _ = [↔]-intro id id
 infixr 0.99 _⇔-end
 {-# INLINE _⇔-end #-}
 
-_⇔_ = Functional.apply
+
+_⇔_ : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X ↔ Y) → (Y ↔ Z) → (X ↔ Z)
+_⇔_ ([↔]-intro pₗ pᵣ) ([↔]-intro qₗ qᵣ) = [↔]-intro (pₗ ∘ qₗ) (qᵣ ∘ pᵣ)
 infixl 0.97 _⇔_
 {-# INLINE _⇔_ #-}
+
+_⇔-sym_ : ∀{X : Type{ℓ₁}}{Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X ↔ Y) → (Z ↔ Y) → (X ↔ Z)
+_⇔-sym_ ([↔]-intro pₗ pᵣ) ([↔]-intro qₗ qᵣ) = [↔]-intro (pₗ ∘ qᵣ) (qₗ ∘ pᵣ)
+infixl 0.97 _⇔-sym_
+{-# INLINE _⇔-sym_ #-}
 
 _⇔-[_]_ : ∀(X : Type{ℓ₁}){Y : Type{ℓ₂}}{Z : Type{ℓ₃}} → (X ↔ Y) → (Y ↔ Z) → (X ↔ Z)
 _⇔-[_]_ _ ([↔]-intro pₗ pᵣ) ([↔]-intro qₗ qᵣ) = [↔]-intro (pₗ ∘ qₗ) (qᵣ ∘ pᵣ)

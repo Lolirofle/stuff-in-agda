@@ -75,6 +75,21 @@ module _ (Proof : Formula → Type{ℓₘₗ}) where
   ∃.witness [¬][⊥]-to-[⊤] = ¬ ⊥
   Top.intro (∃.proof [¬][⊥]-to-[⊤]) = ¬.intro{Y = ⊥} ⊥.elim ⊥.elim
 
+  {- TODO: Move these to Classical
+  [¬][∨]-to-[∧] : ⦃ neg : ∃(Negation) ⦄ → ⦃ or : ∃(Disjunction) ⦄ → ∃(Conjunction)
+  ∃.witness [¬][∨]-to-[∧] X Y = ¬((¬ X) ∨ (¬ Y))
+  Conjunction.intro (∃.proof [¬][∨]-to-[∧]) {X} x y = ¬.intro{Y = X} (∨.elim (¬.elim x) (¬.elim y)) (∨.elim (¬.elim x) (¬.elim y))
+  Conjunction.elimₗ (∃.proof [¬][∨]-to-[∧]) nnxny = ¬.elim (∨.introₗ (¬.intro {!!} {!!})) nnxny
+  Conjunction.elimᵣ (∃.proof [¬][∨]-to-[∧]) nnxny = {!!}
+
+  [¬][∧]-to-[∨] : ⦃ neg : ∃(Negation) ⦄ → ⦃ and : ∃(Conjunction) ⦄ → ∃(Disjunction)
+  ∃.witness [¬][∧]-to-[∨] X Y = ¬((¬ X) ∧ (¬ Y))
+  Disjunction.introₗ (∃.proof [¬][∧]-to-[∨]) {X} x = ¬.intro {Y = X} (¬.elim x ∘ ∧.elimₗ) (¬.elim x ∘ ∧.elimₗ)
+  Disjunction.introᵣ (∃.proof [¬][∧]-to-[∨]) {X} y = ¬.intro {Y = X} (¬.elim y ∘ ∧.elimᵣ) (¬.elim y ∘ ∧.elimᵣ)
+  Disjunction.elim   (∃.proof [¬][∧]-to-[∨]) xz yz nnxny = {!!}
+  -- ¬.elim {!!} nnxny
+  -}
+
   [⟷]-to-[⊤] : Formula → ⦃ eq : ∃(Equivalence) ⦄ → ∃(Top)
   ∃.witness ([⟷]-to-[⊤] φ) = φ ⟷ φ
   Top.intro (∃.proof ([⟷]-to-[⊤] φ)) = [⟷]-reflexivity
@@ -84,12 +99,22 @@ module _ (Proof : Formula → Type{ℓₘₗ}) where
   Negation.intro (∃.proof [⟷][⊥]-to-[¬]) xy xy⊥ = ⟷.intro ⊥.elim ((⟷.elimᵣ ∘ xy⊥) ∘ₛ xy)
   Negation.elim  (∃.proof [⟷][⊥]-to-[¬])        = ⊥.elim ∘₂ swap ⟷.elimᵣ
 
+  [⟶][⊥]-to-[¬] : ⦃ eq : ∃(Implication) ⦄ → ⦃ bot : ∃(Bottom) ⦄ → ∃(Negation)
+  ∃.witness [⟶][⊥]-to-[¬] = _⟶ ⊥
+  Negation.intro (∃.proof [⟶][⊥]-to-[¬]) xy xy⊥ = ⟶.intro ((swap ⟶.elim ∘ xy) ∘ₛ xy⊥)
+  Negation.elim  (∃.proof [⟶][⊥]-to-[¬])        = ⊥.elim ∘₂ swap ⟶.elim
+
   [∨][⟷][⊥]-adequacy : ⦃ or : ∃(Disjunction) ⦄ → ⦃ eq : ∃(Equivalence) ⦄ → ⦃ bot : ∃(Bottom) ⦄ → Logic
   Logic.top         [∨][⟷][⊥]-adequacy = [⟷]-to-[⊤] ⊥
   Logic.implication [∨][⟷][⊥]-adequacy = [∨][⟷]-to-[⟶]
   Logic.negation    [∨][⟷][⊥]-adequacy = [⟷][⊥]-to-[¬]
   Logic.conjunction [∨][⟷][⊥]-adequacy = [⟶][⟷]-to-[∧] where instance _ = Logic.implication [∨][⟷][⊥]-adequacy
   Logic.consequence [∨][⟷][⊥]-adequacy = [⟶]-to-[⟵]    where instance _ = Logic.implication [∨][⟷][⊥]-adequacy
+
+  [⟶][∧][∨][⊤][⊥]-adequacy : ⦃ impl : ∃(Implication) ⦄ → ⦃ and : ∃(Conjunction) ⦄ → ⦃ or : ∃(Disjunction) ⦄ → ⦃ top : ∃(Top) ⦄ → ⦃ bot : ∃(Bottom) ⦄ → Logic
+  Logic.consequence [⟶][∧][∨][⊤][⊥]-adequacy = [⟶]-to-[⟵]
+  Logic.equivalence [⟶][∧][∨][⊤][⊥]-adequacy = [⟵][⟶][∧]-to-[⟷] where instance _ = Logic.consequence [⟶][∧][∨][⊤][⊥]-adequacy
+  Logic.negation    [⟶][∧][∨][⊤][⊥]-adequacy = [⟶][⊥]-to-[¬]
 
 module _ (Proof : Formula → Type{ℓₘₗ}) where
   open Structure.Logic.Constructive.Propositional(Proof)
@@ -169,7 +194,7 @@ module _ where
     PredicateLogic.universal   typePredicateLogic = [∃]-intro Logic.∀ₗ ⦃ record{intro = id ; elim = id} ⦄
     PredicateLogic.existential typePredicateLogic = [∃]-intro Logic.∃  ⦃ record{intro = \{_}{x} p → Logic.[∃]-intro x ⦃ p ⦄ ; elim = Logic.[∃]-elim} ⦄
 
-  open import Type.Dependent
+  open import Type.Dependent.Sigma
   
   instance
     typeBoundedPredicateLogic : ∀{T : Type{ℓₒ}} → BoundedPredicateLogic{Formula = Type{ℓₒ Lvl.⊔ ℓₗ}} id {Predicate = (x : T) → ∀{B : T → Type{ℓₒ Lvl.⊔ ℓₗ}} → B(x) → Type{ℓₒ Lvl.⊔ ℓₗ}} {Domain = T} id

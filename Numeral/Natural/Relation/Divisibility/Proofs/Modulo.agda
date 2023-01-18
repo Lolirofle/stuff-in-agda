@@ -12,6 +12,7 @@ open import Numeral.Natural.Oper.FlooredDivision
 open import Numeral.Natural.Oper.Modulo
 open import Numeral.Natural.Oper.Modulo.Proofs
 open import Numeral.Natural.Oper.Proofs
+open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Divisibility
 open import Numeral.Natural.Relation.Divisibility.Proofs
 open import Relator.Equals
@@ -23,8 +24,8 @@ open import Structure.Operator.Proofs.Util
 open import Syntax.Transitivity
 open import Type
 
-divides-mod : ∀{a b d} → (d ∣ 𝐒(b)) → (d ∣ a) ↔ (d ∣ a mod 𝐒(b))
-divides-mod {a}{b}{d} db = [↔]-intro (l db) (r db) where
+divides-mod : ∀{a b} ⦃ pos : Positive(b) ⦄ {d} → (d ∣ b) → (d ∣ a) ↔ (d ∣ a mod b)
+divides-mod {a}{𝐒 b}{d} db = [↔]-intro (l db) (r db) where
   l : ∀{a b d} → (d ∣ 𝐒(b)) → (d ∣ a) ← (d ∣ (a mod₀ 𝐒(b)))
   l {a}{b}{𝟎}    db dmod with () ← [0]-only-divides-[0] db
   l {a}{b}{𝐒(d)} db dmod
@@ -37,7 +38,7 @@ divides-mod {a}{b}{d} db = [↔]-intro (l db) (r db) where
       (𝐒(d) ⋅ ((a ⌊/⌋ (𝐒(d) ⋅ 𝐒(n))) ⋅ 𝐒(n))) + (𝐒(d) ⋅ m)            🝖[ _≡_ ]-[ congruence₁(_+ (𝐒(d) ⋅ m)) (One.commuteₗ-assocᵣ {a = 𝐒(d)}{a ⌊/⌋ (𝐒(d) ⋅ 𝐒(n))}{𝐒(n)}) ]
       ((a ⌊/⌋ (𝐒(d) ⋅ 𝐒(n))) ⋅ (𝐒(d) ⋅ 𝐒(n))) + (𝐒(d) ⋅ m)            🝖[ _≡_ ]-[ congruence₁(((a ⌊/⌋ (𝐒(d) ⋅ 𝐒(n))) ⋅ (𝐒(d) ⋅ 𝐒(n))) +_) dmmod ]
       ((a ⌊/⌋ (𝐒(d) ⋅ 𝐒(n))) ⋅ (𝐒(d) ⋅ 𝐒(n))) + (a mod 𝐒(b))          🝖[ _≡_ ]-[ congruence₁(expr ↦ ((a ⌊/⌋ (𝐒(d) ⋅ 𝐒(n))) ⋅ (𝐒(d) ⋅ 𝐒(n))) + (a mod 𝐒(expr))) (injective(𝐒) dnb) ]-sym
-      ((a ⌊/⌋ (𝐒(d) ⋅ 𝐒(n))) ⋅ (𝐒(d) ⋅ 𝐒(n))) + (a mod (𝐒(d) ⋅ 𝐒(n))) 🝖[ _≡_ ]-[ [⌊/⌋][mod]-is-division-with-remainder {a}{d + 𝐒(d) ⋅ n} ]
+      ((a ⌊/⌋ (𝐒(d) ⋅ 𝐒(n))) ⋅ (𝐒(d) ⋅ 𝐒(n))) + (a mod (𝐒(d) ⋅ 𝐒(n))) 🝖[ _≡_ ]-[ [⌊/⌋][mod]-is-division-with-remainder {a}{𝐒(d) ⋅ 𝐒(n)} ]
       a                                                               🝖-end
 
   r : ∀{a b d} → (d ∣ 𝐒(b)) → (d ∣ a) → (d ∣ (a mod₀ 𝐒(b)))

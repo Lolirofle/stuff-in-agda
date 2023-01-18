@@ -62,24 +62,24 @@ module _ {vars} ⦃ pos-term : ◊(Term(vars)) ⦄ where
   height = Tree.height ∘ tree
 
   open import Data.Tuple as Tuple using (_⨯_ ; _,_)
-  import      Functional.Dependent
+  import      DependentFunctional
   open        Functional using (_on₂_)
   open import Numeral.Natural.Induction
   open import Numeral.Natural.Inductions  
   open import Numeral.Natural.Relation.Order.Proofs
   open import Structure.Relator.Ordering
   open import Structure.Relator.Ordering.Proofs
-  open import Type.Dependent
+  open import Type.Dependent.Sigma
 
   -- Ordering of natural deduction proofs on height.
   _<⊢↑_ : Σ(PredSet{ℓ}(Formula(vars)) ⨯ Formula(vars))(Tuple.uncurry(_⊢_)) → Σ(PredSet(Formula(vars)) ⨯ Formula(vars))(Tuple.uncurry(_⊢_)) → Type
-  _<⊢↑_ = (_<_) on₂ (height Functional.Dependent.∘ Σ.right)
+  _<⊢↑_ = (_<_) on₂ (height DependentFunctional.∘ Σ.right)
 
   instance
     [<⊢↑]-wellfounded : Strict.Properties.WellFounded(_<⊢↑_ {ℓ})
-    [<⊢↑]-wellfounded = wellfounded-image-by-trans {f = height Functional.Dependent.∘ Σ.right}
+    [<⊢↑]-wellfounded = wellfounded-image-by-trans {f = height DependentFunctional.∘ Σ.right}
 
   -- induction-on-height : ∀{P : ∀{Γ : PredSet{ℓₚ}(Formula(vars))}{φ} → (Γ ⊢ φ) → Type{ℓ}} → (∀{x : Prop(vars)} → P(direct x)) → P([⊤]-intro) → (∀{p₂ : Γ ⊢ φ} → (∀{Γ₁}{φ₁}{p₁ : Γ₁ ⊢ φ₁} → (height p₁ < height p₂) → P(p₁)) → P(p₂)) → (∀{p : (Γ ⊢ φ)} → P(p))
-  -- induction-on-height {Γ = Γ}{φ = φ} {P = P} dir top step {p} = Strict.Properties.wellfounded-induction(_<⊢↑_) {P = P Functional.Dependent.∘ Σ.right} {!!} {intro (Γ , φ) p}
+  -- induction-on-height {Γ = Γ}{φ = φ} {P = P} dir top step {p} = Strict.Properties.wellfounded-induction(_<⊢↑_) {P = P DependentFunctional.∘ Σ.right} {!!} {intro (Γ , φ) p}
 
   -- substitute0-height : ∀{t} → height(substitute0 t φ) ≡ 

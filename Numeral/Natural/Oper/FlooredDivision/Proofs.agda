@@ -249,3 +249,7 @@ open import Lang.Inspect
   r p = subtransitivityᵣ(_<_)(_≡_) (succ ([↔]-to-[→] Positive-greater-than-zero ([↔]-to-[→] ([⌊/⌋]-positive {a −₀ b}{b}) {!!}))) (symmetry(_≡_) ([⌊/⌋]-step-[−₀] (sub₂(_<_)(_≤_) p)))
 
 -}
+
+[⌊/⌋₀]-of-0ₗ : ∀{n} → (𝟎 ⌊/⌋₀ n ≡ 𝟎)
+[⌊/⌋₀]-of-0ₗ {𝟎}   = [≡]-intro
+[⌊/⌋₀]-of-0ₗ {𝐒 n} = [≡]-intro

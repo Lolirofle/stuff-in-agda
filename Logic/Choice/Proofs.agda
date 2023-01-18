@@ -19,8 +19,8 @@ open import Structure.Setoid.Proofs
 open import Syntax.Function
 open import Syntax.Transitivity
 open import Type
-open import Type.Dependent
-open import Type.Dependent.Equiv
+open import Type.Dependent.Sigma
+open import Type.Dependent.Sigma.Equiv
 
 module ProductChoiceAxiom(prod-choice : ProductChoiceAxiom) where
   product-to-predicate-choice : PredicateChoiceAxiom
@@ -163,7 +163,7 @@ module DisjointProductChoiceAxiom(prod-choice : DisjointProductChoiceAxiom) wher
       choose-function = intro([∧]-elimᵣ ∘ Function.congruence ⦃ _ ⦄ ⦃ _ ⦄ choose-function) }
 
 open import Function.Proofs
-open import Structure.Relator.Equivalence.Proofs
+open import Structure.Relator.Equivalence.Proofs.On₂
 
 module DistinctProductChoiceAxiom(prod-choice : DistinctProductChoiceAxiom) where
   product-choice : ProductChoiceAxiom

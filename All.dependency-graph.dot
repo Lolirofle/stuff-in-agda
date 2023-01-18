@@ -60,7 +60,7 @@ digraph dependencies {
    m276[label="Data.Option.Iterable"];
    m277[label="Structure.Setoid.Category"];
    m278[label="Formalization.ClassicalPropositionalLogic.NaturalDeduction.Proofs"];
-   m281[label="Formalization.LambdaCalculus.SyntaxTransformation"];
+   m281[label="Formalization.LambdaCalculus.ByVarCount.SyntaxTransformations"];
    m204[label="Type.Size.Countable"];
    m8[label="Syntax.Type"];
    m283[label="Numeral.Natural.Oper.FlooredDivision.Proofs.Compatibility"];
@@ -71,7 +71,7 @@ digraph dependencies {
    m141[label="Type.Cubical.Path"];
    m294[label="Lang.Function"];
    m300[label="Formalization.Monoid"];
-   m302[label="Structure.Sets.Operator"];
+   m302[label="Structure.Sets.Operators"];
    m305[label="Lang.Irrelevance.Squash"];
    m308[label="Numeral.Natural.Coprime.Proofs"];
    m311[label="Type.Properties.Empty.Proofs"];
@@ -121,14 +121,14 @@ digraph dependencies {
    m363[label="Structure.Operator.Vector.LinearMaps"];
    m98[label="Logic.Classical"];
    m326[label="Structure.Function.Metric.Subspace.Properties"];
-   m353[label="Numeral.Natural.Relation.Divisibility.Proofs.Product"];
+   m353[label="Numeral.Natural.Relation.Divisibility.Proofs.Productᵣ"];
    m258[label="Numeral.CoordinateVector.Proofs"];
    m284[label="Numeral.Natural.Oper.FlooredDivision.Proofs.Inverse"];
    m367[label="Structure.Real"];
    m309[label="Numeral.Natural.Relation.Divisibility.Decidable"];
    m322[label="Logic.Predicate.Equiv"];
    m369[label="Structure.Operator.Vector.Eigen"];
-   m370[label="Structure.Sets.Relators"];
+   m370[label="Structure.Sets.Relatorss"];
    m354[label="Numeral.Integer.Relation.Divisibility"];
    m197[label="Numeral.Natural.Oper.Proofs.Order"];
    m88[label="Data.Tuple.Raiseᵣ"];
@@ -136,7 +136,7 @@ digraph dependencies {
    m372[label="Graph.Properties.Proofs"];
    m159[label="Graph"];
    m373[label="Sets.PredicateSet.Listable"];
-   m374[label="Formalization.LambdaCalculus.Terms.Combinators"];
+   m374[label="Formalization.LambdaCalculus.ByVarCount.ByLevels.Terms.Combinators"];
    m249[label="Numeral.Natural.Function.GreatestCommonDivisor"];
    m250[label="Numeral.Natural.Relation.Divisibility.Proofs.Modulo"];
    m41[label="Logic.Propositional.Xor"];
@@ -147,7 +147,7 @@ digraph dependencies {
    m128[label="Relator.Sets"];
    m7[label="Syntax.Function"];
    m20[label="Data.List"];
-   m388[label="Structure.Category.Monoid"];
+   m388[label="Structure.Category.Enriched.Monoid"];
    m389[label="Lvl.Decidable"];
    m51[label="Relator.Equals"];
    m390[label="Structure.Setoid.Size"];
@@ -160,12 +160,12 @@ digraph dependencies {
    m243[label="Numeral.Finite.Relation.Order"];
    m406[label="Structure.Operator.Vector.InfiniteDimensional"];
    m75[label="Numeral.Natural.Proofs"];
-   m282[label="Formalization.LambdaCalculus"];
+   m282[label="Formalization.LambdaCalculus.ByVarCount"];
    m314[label="Data.BinaryTree.Heap"];
    m86[label="Lvl.MultiFunctions"];
    m408[label="Numeral.Natural.TotalOper"];
    m409[label="Data.Boolean.Numeral"];
-   m410[label="Type.WellOrdering"];
+   m410[label="Type.W"];
    m76[label="Numeral.Natural.Oper.Proofs.Rewrite"];
    m411[label="Operator.Summation2"];
    m23[label="Numeral.Finite"];
@@ -208,7 +208,7 @@ digraph dependencies {
    m355[label="Numeral.Integer.Relation.Divisibility.Proofs"];
    m94[label="Data.Tuple.RaiseTypeᵣ.Functions"];
    m432[label="Data.List.Combinatorics"];
-   m433[label="Formalization.LambdaCalculus.Semantics.CallByName"];
+   m433[label="Formalization.LambdaCalculus.ByVarCount.ByLevels.Semantics.CallByName"];
    m435[label="Structure.Category.Monad.Category"];
    m436[label="Type.Category.IntensionalFunctionsCategory.LvlUpFunctor"];
    m437[label="Formalization.ClassicalPredicateLogic.Syntax.Substitution"];
@@ -263,7 +263,7 @@ digraph dependencies {
    m296[label="Float"];
    m238[label="Numeral.Natural.Oper.Divisibility"];
    m82[label="Structure.Operator.Semi"];
-   m434[label="Formalization.LambdaCalculus.Semantics"];
+   m434[label="Formalization.LambdaCalculus.ByVarCount.ByLevels.Semantics"];
    m25[label="Data.Boolean.Operators"];
    m461[label="Js"];
    m107[label="Function.Inverseᵣ"];
@@ -274,7 +274,7 @@ digraph dependencies {
    m244[label="Numeral.Finite.Oper.Comparisons.Proofs"];
    m397[label="Type.Category.IntensionalFunctionsCategory"];
    m134[label="Numeral.Integer.Sign"];
-   m37[label="Functional.Dependent"];
+   m37[label="DependentFunctional"];
    m81[label="Structure.Operator.Monoid"];
    m270[label="Data.List.Functions.Multi"];
    m425[label="Structure.Relator.Apartness"];
@@ -322,7 +322,7 @@ digraph dependencies {
    m475[label="Formalization.PredicateLogic.Syntax.Tree"];
    m30[label="Data.Option.Functions"];
    m477[label="Type.Cubical.InductivePath"];
-   m210[label="Data.Either.Proofs"];
+   m210[label="Data.Either.Proofs.Map"];
    m47[label="Structure.Setoid.Uniqueness"];
    m45[label="Structure.Function"];
    m120[label="Operator.Summation"];
@@ -348,7 +348,7 @@ digraph dependencies {
    m453[label="Logic.Classical.DoubleNegated"];
    m486[label="Structure.Relator.Function.Multi"];
    m487[label="Formalization.PredicateLogic.Syntax.NegativeTranslations"];
-   m135[label="Numeral.Sign.Oper0"];
+   m135[label="Numeral.Charge.Oper"];
    m46[label="Structure.Function.Names"];
    m239[label="Numeral.Natural.LinearSearch"];
    m200[label="Numeral.Natural.Oper.Modulo"];
@@ -387,7 +387,7 @@ digraph dependencies {
    m496[label="Data.List.Sorting.MergeSort"];
    m497[label="Numeral.Natural.Prime.Proofs.Representation"];
    m53[label="Relator.Ordering"];
-   m501[label="Formalization.LambdaCalculus.Semantics.CallByValue"];
+   m501[label="Formalization.LambdaCalculus.ByVarCount.ByLevels.Semantics.CallByValue"];
    m310[label="Numeral.Natural.Coprime"];
    m26[label="Numeral.Natural.Oper.Comparisons"];
    m498[label="Numeral.Natural.Relation.Divisibility.Strict"];
@@ -494,7 +494,7 @@ digraph dependencies {
    m543[label="Graph.Category"];
    m68[label="Structure.Type.Identity"];
    m544[label="Structure.Setoid.Category.HomFunctor"];
-   m545[label="Structure.Relator.Equivalence.Proofs"];
+   m545[label="Structure.Relator.Equivalence.Proofs.On₂"];
    m466[label="Relator.Congruence"];
    m348[label="Formalization.PredicateLogic.Signature"];
    m152[label="Structure.Operator.Proofs"];
@@ -504,14 +504,14 @@ digraph dependencies {
    m272[label="Numeral.Finite.Conversions"];
    m110[label="Type.Dependent"];
    m547[label="Numeral.Integer.Function"];
-   m304[label="Structure.Sets.Relator"];
+   m304[label="Structure.Sets.Relators"];
    m13[label="Data"];
    m400[label="Type.Category.ExtensionalFunctionsCategory"];
    m93[label="Function.Multi.Functions"];
    m377[label="ReductionSystem"];
    m548[label="Numeral.Natural.Function.PrimeDivisor.Proofs"];
    m129[label="Operator.Summation.Range.Proofs"];
-   m379[label="Formalization.LambdaCalculus.Semantics.Reduction"];
+   m379[label="Formalization.LambdaCalculus.ByVarCount.ByLevels.Semantics.Reduction"];
    m61[label="Logic.Propositional.Equiv"];
    m173[label="Data.List.Relation.Permutation.Proofs"];
    m112[label="Function.Equals.Proofs"];
@@ -522,7 +522,7 @@ digraph dependencies {
    m55[label="Relator.Equals.Proofs"];
    m552[label="Data.Option.Categorical"];
    m553[label="Function.Domains.Proofs"];
-   m180[label="Data.List.Relation.Quantification.Proofs"];
+   m180[label="Data.List.Relation.Quantification.Universal.Functions"];
    m554[label="Structure.Logic"];
    m387[label="Type.Cubical.HTrunc₁"];
    m555[label="Structure.Operator.Monoid.Invertible.Proofs"];
@@ -542,7 +542,7 @@ digraph dependencies {
    m225[label="Data.Tuple.Equiv.Id"];
    m42[label="Type.Properties.Singleton"];
    m201[label="Numeral.Natural.Oper.Proofs.Multiplication"];
-   m146[label="Type.Cubical.Path.Proofs"];
+   m146[label="Type.Cubical.Path.Functions"];
    m560[label="Graph.Oper"];
    m376[label="Graph.Walk.Proofs"];
    m549[label="Numeral.Natural.Function.PrimeDivisor"];

@@ -66,7 +66,7 @@ primeDivisors-tail : (n2 : n ≥ 2) → (List.tail(primeDivisors n) ≡ primeDiv
 primeDivisors-tail n2 = congruence₁(List.tail) (primeDivisors-step n2)
 
 open import Data.List.Relation.Quantification
-open import Data.List.Relation.Quantification.Proofs
+open import Data.List.Relation.Quantification.Universal.Functions
 open import Numeral.Natural.Oper.FlooredDivision.Proofs.Inverse
 open import Numeral.Natural.Relation.Divisibility.Proofs.FlooredDivision
 open import Structure.Operator
@@ -78,7 +78,7 @@ primeDivisors-prime = primeDivisors-intro(\_ l → AllElements Prime l) ∅ ∅ 
 
 -- All prime divisors of n are divisors of n.
 primeDivisors-divisors : AllElements(_∣ n) (primeDivisors n)
-primeDivisors-divisors = primeDivisors-intro(\n l → AllElements(_∣ n) l) ∅ ∅ (\ ⦃ n2 ⦄ prev → leastDivisor-correctness AllElements.⊰ AllElements-fn (divides-without-divᵣ ⦃ leastDivisor-positive ([↔]-to-[←] Positive-greater-than-zero ([≤]-predecessor n2)) ⦄ leastDivisor-correctness) prev)
+primeDivisors-divisors = primeDivisors-intro(\n l → AllElements(_∣ n) l) ∅ ∅ (\ ⦃ n2 ⦄ prev → leastDivisor-correctness AllElements.⊰ AllElements-fn (divides-withoutᵣ-⌊/⌋ ⦃ [∨]-introᵣ (leastDivisor-positive ([↔]-to-[←] Positive-greater-than-zero ([≤]-predecessor n2))) ⦄ leastDivisor-correctness) prev)
 
 -- The product of the prime divisors of a number is the number itself.
 -- Alternative proof of the fundamental theorem of arithmetic.
@@ -138,7 +138,7 @@ primeDivisors-sorted = primeDivisors-intro(\_ → Sorted(_≤?_)) AdjacentlyPair
   proof : ∀{n} → ⦃ n2 : n ≥ 2 ⦄ →
           Sorted(_≤?_)(primeDivisors((n ⌊/⌋ leastDivisor n))) →
           Sorted(_≤?_)((leastDivisor n) ⊰ primeDivisors((n ⌊/⌋ leastDivisor n)))
-  proof {n} ⦃ n2 ⦄ s = Sorted-by-least-element(_≤?_) (AllElements-fn₂ (\prim div → [↔]-to-[→] (decider-true ⦃ [≤]-decider ⦄) (leastDivisor-minimal (prime-lower-bound prim) (divides-without-divᵣ{n} ⦃ leastDiv-pos{n} ⦄ leastDivisor-correctness div))) primeDivisors-prime primeDivisors-divisors) s
+  proof {n} ⦃ n2 ⦄ s = Sorted-by-least-element(_≤?_) (AllElements-fn₂ (\prim div → [↔]-to-[→] (decider-true ⦃ [≤]-decider ⦄) (leastDivisor-minimal (prime-lower-bound prim) (divides-withoutᵣ-⌊/⌋{n} ⦃ [∨]-introᵣ (leastDiv-pos{n}) ⦄ leastDivisor-correctness div))) primeDivisors-prime primeDivisors-divisors) s
 
 -- TODO: Prove using Sorted-permutes-identity and if the following is proven (∀{l} → AllElements Prime(l) → AllElements(_∣ n) l → → (l permutes primeDivisors n))
 -- primeDivisors-uniqueness : ∀{l} → AllElements Prime(l) → AllElements(_∣ n) l → Sorted(_≤?_) l → (l ≡ primeDivisors n)
@@ -232,7 +232,7 @@ primeDivisors-leastDivisor-is-lower-bound = primeDivisors-intro(\n → AllElemen
             ([⌊/⌋]-greater-than-1 {n}{leastDivisor n} leastDivisor-correctness)
             ([↔]-to-[←] leastDivisor-strict-order ([∧]-intro n2 comp))
           )-}
-          (dividesₗ-div leastDivisor-correctness)
+          (dividesₗ-div ⦃ [∨]-introᵣ pos-minDiv ⦄ leastDivisor-correctness)
         )
         ap
       )

@@ -42,7 +42,7 @@ module _ (asym : ∀{x y} → (x ≤? y ≡ not(y ≤? x))) where
   ... | 𝐹 | intro p rewrite asym{x}{y} = step ([↔]-to-[←] IsFalse.is-𝐹 p) single
   insert-sorted-proof {x} {y ⊰ z ⊰ l} (step yz sl) with (x ≤? y) | inspect (x ≤?_) y
   ... | 𝑇 | intro p = step ([↔]-to-[←] IsTrue.is-𝑇 p) (step yz sl)
-  ... | 𝐹 | intro p rewrite asym{x}{y} = if-intro {x = x ⊰ z ⊰ l}{y = z ⊰ insert x l}{P = expr ↦ Sorted(y ⊰ expr)}{B = x ≤? z} (xzt ↦ step (IsFalse.[¬]-elim([↔]-to-[←] IsFalse.is-𝐹 p)) (step ([↔]-to-[←] IsTrue.is-𝑇 xzt) sl)) (xzf ↦ step yz (if-elimᵣ {x = x ⊰ z ⊰ l}{y = z ⊰ insert x l}{P = Sorted} (insert-sorted-proof {x} {z ⊰ l} sl) xzf)) where
+  ... | 𝐹 | intro p rewrite asym{x}{y} = if-intro-old {x = x ⊰ z ⊰ l}{y = z ⊰ insert x l}{P = expr ↦ Sorted(y ⊰ expr)}{B = x ≤? z} (xzt ↦ step (IsFalse.[¬]-elim([↔]-to-[←] IsFalse.is-𝐹 p)) (step ([↔]-to-[←] IsTrue.is-𝑇 xzt) sl)) (xzf ↦ step yz (if-elimᵣ {x = x ⊰ z ⊰ l}{y = z ⊰ insert x l}{P = Sorted} (insert-sorted-proof {x} {z ⊰ l} sl) xzf)) where
     if-elimᵣ : ∀{b : Bool}{x y : A}{P : A → Type{ℓ₁}} → P(if b then x else y) → (b ≡ 𝐹) → P(y)
     if-elimᵣ x [≡]-intro = x
 
@@ -61,14 +61,14 @@ module _ where
   open import Data.List.Relation.Quantification
 
   prepend-sorted-by-all : AllElements(IsTrue ∘ (x ≤?_))(l) → Sorted(l) → Sorted(x ⊰ l)
-  prepend-sorted-by-all = AdjacentlyPairwise-prepend-local
+  prepend-sorted-by-all = AdjacentlyPairwise-prepend
 
 module _ ⦃ trans : Transitivity(IsTrue ∘₂ (_≤?_)) ⦄ where
   open import Data.List.Relation.Sublist
   open import Data.List.Relation.Pairwise
   open import Data.List.Relation.Pairwise.Proofs
   open import Data.List.Relation.Quantification
-  open import Data.List.Relation.Quantification.Proofs
+  open import Data.List.Relation.Quantification.Universal.Proofs
 
   sorted-head-minimal : Sorted(x ⊰ l) → AllElements(IsTrue ∘ (x ≤?_))(l)
   sorted-head-minimal s = OrderedPairwise-head(AdjacentlyPairwise-to-OrderedPairwise s)
@@ -97,7 +97,7 @@ open import Data.List.Relation.Quantification
 open import Data.List.Relation.Pairwise.Proofs
 
 Sorted-by-least-element : ∀{x l} → AllElements(IsTrue ∘ (x ≤?_))(l) → Sorted(l) → Sorted(x ⊰ l)
-Sorted-by-least-element = AdjacentlyPairwise-prepend-local
+Sorted-by-least-element = AdjacentlyPairwise-prepend
 
 {- TODO
 Sorted-permutes-identity : ∀{l₁ l₂ : List(ℕ)} → Sorted(_≤?_)(l₁) → Sorted(_≤?_)(l₂) → (l₁ permutes l₂) → (l₁ ≡ l₂)

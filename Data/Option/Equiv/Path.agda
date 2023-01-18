@@ -3,25 +3,27 @@
 module Data.Option.Equiv.Path where
 
 import      Lvl
+open import BidirectionalFunction using (_$ₗ_ ; _$ᵣ_ ; intro)
 open import Data
-open import Data.Boolean.Equiv.Path
 open import Data.Option
-open import Data.Option.Functions
-open import Data.Option.Equiv
+open import Data.Option.Functions as Option using (_or_)
+open import Data.Option.Functions.Unmap
+open import Data.Option.Functions.Unmap.Proofs
+open import Data.Option.Equiv as Option
 open import Functional
-open import Structure.Function
+open import Logic.Predicate
+open import Logic.Propositional
 open import Structure.Function.Domain
+open import Structure.Function.Domain.Proofs
 open import Structure.Operator
 open import Structure.Relator
-open import Structure.Relator.Properties
+import      Type.Cubical.Isomorphism as Iso
 open import Type.Cubical.Path.Equality
-open import Type.Cubical.Path.Properties
+open import Type.Cubical.Path.Univalence
 open import Type
-open import Type.Identity using (Id ; intro)
-open import Type.Identity.Proofs
 
 private variable ℓ : Lvl.Level
-private variable T : Type{ℓ}
+private variable T A B : Type{ℓ}
 
 instance
   Some-injectivity : Injective {B = Option(T)} (Some)
@@ -31,9 +33,17 @@ instance
   Path-Option-extensionality : Extensionality{A = T} (Path-equiv)
   Extensionality.cases-inequality (Path-Option-extensionality {T = T}) {x} p with () ← substitute₁ᵣ(elim{A = T}{B = λ _ → Type}(Option(T)) (const Empty)) p (Some x)
 
+Option-[≍]-injective : (Option A Iso.≍ Option B) → (A Iso.≍ B)
+Option-[≍]-injective {A = A}{B = B} ([∃]-intro f ⦃ intro ⦄) = [∃]-intro
+  (intro
+    (unmap(f $ₗ_) ⦃ inverseₗ-to-injective ⦄)
+    (unmap(f $ᵣ_) ⦃ inverseₗ-to-injective ⦄)
+  )
+  ⦃ intro
+    ⦃ left  = unmap-inverseᵣ ⦃ inj = _ ⦄ ⦄
+    ⦃ right = unmap-inverseᵣ ⦃ inj = _ ⦄ ⦄
+  ⦄
+
 instance
-  Option-identityPath : ⦃ IdentityPathType(T) ⦄ → IdentityPathType(Option(T))
-  _⊆₂_.proof Option-identityPath {None}   {None}     = const intro
-  _⊆₂_.proof Option-identityPath {None}   {Some x} p with () ← Bool-different-values(congruence₁(isSome) p)
-  _⊆₂_.proof Option-identityPath {Some x} {None}   p with () ← Bool-different-values(congruence₁(isNone) p)
-  _⊆₂_.proof Option-identityPath {Some x} {Some y}   = congruence₁ ⦃ _ ⦄ ⦃ _ ⦄ (Some) ⦃ Id-to-function ⦃ Id-equiv ⦄ ⦄ ∘ sub₂(_≡_)(Id) ∘ injective(Some)
+  Option-injective : Injective(Option{ℓ})
+  Option-injective = intro([↔]-to-[←] type-extensionality ∘ Option-[≍]-injective ∘ [↔]-to-[→] type-extensionality)

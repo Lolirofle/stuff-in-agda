@@ -53,5 +53,7 @@ associateRight ((x , y) , z) = (x , (y , z))
 swap : (A ⨯ B) → (B ⨯ A)
 swap(x , y) = (y , x)
 
-repeat : A → (A ⨯ A)
-repeat x = (x , x)
+-- Fills a tuple using identical elements.
+-- This is the diagonal when interpreting it as indices in a 2-dimensional grid.
+diag : A → (A ⨯ A)
+diag x = (x , x)

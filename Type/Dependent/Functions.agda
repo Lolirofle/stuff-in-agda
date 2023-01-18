@@ -1,9 +1,10 @@
 module Type.Dependent.Functions where
 
 import      Lvl
-open import Functional.Dependent
+open import DependentFunctional hiding (_$_)
 open import Type
-open import Type.Dependent
+open import Type.Dependent.Pi
+open import Type.Dependent.Sigma
 open import Syntax.Function
 
 module _ {ℓ₁ ℓ₂ ℓ₃}
@@ -11,14 +12,14 @@ module _ {ℓ₁ ℓ₂ ℓ₃}
          {B : A → Type{ℓ₂}}
          {C : ∀{x} → B(x) → Type{ℓ₃}}
          where
-  _[Π]-∘_ : (∀{x} → Π(B(x))(C)) → (g : Π(A)(B)) → Π(A)(\x → C(Π.apply g x))
-  Π.apply (f [Π]-∘ g) x = Π.apply f (Π.apply g x)
+  _[Π]-∘_ : (∀{x} → Π(B(x))(C)) → (g : Π(A)(B)) → Π(A)(\x → C(g $ x))
+  (f [Π]-∘ g) $ x = f $ (g $ x)
 
   depCurry : (Π(Σ A B) (C ∘ Σ.right)) → (Π A (a ↦ (Π(B(a)) C)))
-  Π.apply (Π.apply (depCurry f) a) b = Π.apply f (intro a b)
+  ((depCurry f) $ a) $ b = f $ (intro a b)
 
   depUncurry : (Π A (a ↦ Π(B(a)) C)) → (Π(Σ A B) (C ∘ Σ.right))
-  Π.apply (depUncurry f) (intro a b) = Π.apply(Π.apply f a) b
+  (depUncurry f) $ (intro a b) = (f $ a) $ b
 
 module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄}
          {A₁ : Type{ℓ₁}}

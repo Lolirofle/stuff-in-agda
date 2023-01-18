@@ -1,7 +1,7 @@
 module Function.Multi₌.Functions where
 
 open import Data
-open import Data.Tuple as Tuple renaming (curry to curry₁ ; uncurry to uncurry₁) hiding (swap ; map ; repeat)
+open import Data.Tuple as Tuple renaming (curry to curry₁ ; uncurry to uncurry₁) hiding (swap ; map)
 open import Data.Tuple.Raise
 open import Data.Tuple.Raiseᵣ.Functions as Raise
 open import Data.Tuple.RaiseTypeᵣ

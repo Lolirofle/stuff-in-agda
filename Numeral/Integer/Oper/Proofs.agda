@@ -5,7 +5,7 @@ open import Data.Tuple  as Tuple using (_,_)
 open import Logic
 import      Lvl
 open import Functional hiding (_∘_ ; _∘₂_)
-open import Functional.Dependent using (_∘_ ; _∘₂_)
+open import DependentFunctional using (_∘_ ; _∘₂_)
 open import Numeral.Integer
 open import Numeral.Integer.Construction
 open import Numeral.Integer.Construction.Proofs
@@ -21,8 +21,10 @@ import      Numeral.Natural.Oper.Proofs as ℕ
 import      Numeral.Natural.Oper.Proofs.Structure as ℕ
 import      Numeral.Natural.Relation.Order as ℕ
 import      Numeral.Sign as Sign
-import      Numeral.Sign.Oper0 as Sign
-import      Numeral.Sign.Proofs as Sign
+import      Numeral.Sign.Oper as Sign
+import      Numeral.Charge as Charge
+import      Numeral.Charge.Oper as Charge
+import      Numeral.Charge.Proofs as Charge
 open import Lang.Inspect
 open import Logic.IntroInstances
 open import Logic.Propositional
@@ -142,7 +144,7 @@ instance
   Preserving.proof [absₙ][⋅]-preserving {−𝐒ₙ ℕ.𝐒 x} {+ₙ ℕ.𝐒 y}  = [≡]-intro
 
 instance
-  [sign0][⋅]-preserving : Preserving₂(sign0)(_⋅_)(Sign._⨯_)
+  [sign0][⋅]-preserving : Preserving₂(sign0)(_⋅_)(Charge._⨯_)
   Preserving.proof [sign0][⋅]-preserving {+ₙ ℕ.𝟎}    {+ₙ ℕ.𝟎}    = [≡]-intro
   Preserving.proof [sign0][⋅]-preserving {+ₙ ℕ.𝟎}    {+ₙ ℕ.𝐒 y}  = [≡]-intro
   Preserving.proof [sign0][⋅]-preserving {+ₙ ℕ.𝐒 x}  {+ₙ ℕ.𝟎}    = [≡]-intro
@@ -529,7 +531,7 @@ absₙ-of-[⋅] {−𝐒ₙ ℕ.𝟎}   {+ₙ ℕ.𝐒 y}  = [≡]-intro
 absₙ-of-[⋅] {−𝐒ₙ ℕ.𝐒 x} {+ₙ ℕ.𝟎}    = [≡]-intro
 absₙ-of-[⋅] {−𝐒ₙ ℕ.𝐒 x} {+ₙ ℕ.𝐒 y}  = [≡]-intro
 
-sign-of-[⋅] : ∀{x y} → (sign0(x ⋅ y) ≡ sign0(x) Sign.⨯ sign0(y))
+sign-of-[⋅] : ∀{x y} → (sign0(x ⋅ y) ≡ sign0(x) Charge.⨯ sign0(y))
 sign-of-[⋅] {+ₙ ℕ.𝟎}    {+ₙ ℕ.𝟎}    = [≡]-intro
 sign-of-[⋅] {+ₙ ℕ.𝟎}    {+ₙ ℕ.𝐒 y}  = [≡]-intro
 sign-of-[⋅] {+ₙ ℕ.𝐒 x}  {+ₙ ℕ.𝟎}    = [≡]-intro
@@ -550,56 +552,56 @@ signed-inverse {𝟎}     = [≡]-intro
 signed-inverse {−𝐒ₙ _} = [≡]-intro
 
 sign0-inverse : ∀{x}{y} → (sign0(signed0 x (ℕ.𝐒(y))) ≡ x)
-sign0-inverse {Sign.➕} {y} = [≡]-intro
-sign0-inverse {Sign.𝟎}  {y} = [≡]-intro
-sign0-inverse {Sign.➖} {y} = [≡]-intro
+sign0-inverse {Charge.➕} {y} = [≡]-intro
+sign0-inverse {Charge.𝟎}  {y} = [≡]-intro
+sign0-inverse {Charge.➖} {y} = [≡]-intro
 
-absₙ-inverse : ∀{x}{y} → (x ≢ Sign.𝟎) → (absₙ(signed0 x y) ≡ y)
-absₙ-inverse {Sign.➕} {ℕ.𝟎}   _ = [≡]-intro
-absₙ-inverse {Sign.➕} {ℕ.𝐒 y} _ = [≡]-intro
-absₙ-inverse {Sign.➖} {ℕ.𝟎}   _ = [≡]-intro
-absₙ-inverse {Sign.➖} {ℕ.𝐒 y} _ = [≡]-intro
-absₙ-inverse {Sign.𝟎} {ℕ.𝟎}    _ = [≡]-intro
-absₙ-inverse {Sign.𝟎} {ℕ.𝐒 y}  p with () ← p [≡]-intro
+absₙ-inverse : ∀{x}{y} → (x ≢ Charge.𝟎) → (absₙ(signed0 x y) ≡ y)
+absₙ-inverse {Charge.➕} {ℕ.𝟎}   _ = [≡]-intro
+absₙ-inverse {Charge.➕} {ℕ.𝐒 y} _ = [≡]-intro
+absₙ-inverse {Charge.➖} {ℕ.𝟎}   _ = [≡]-intro
+absₙ-inverse {Charge.➖} {ℕ.𝐒 y} _ = [≡]-intro
+absₙ-inverse {Charge.𝟎} {ℕ.𝟎}    _ = [≡]-intro
+absₙ-inverse {Charge.𝟎} {ℕ.𝐒 y}  p with () ← p [≡]-intro
 
 absₙ-of-[−] : ∀{x} → (absₙ(− x) ≡ absₙ x)
 absₙ-of-[−] {+𝐒ₙ _} = [≡]-intro
 absₙ-of-[−] {𝟎}     = [≡]-intro
 absₙ-of-[−] {−𝐒ₙ _} = [≡]-intro
 
-[⋅]-equality : ∀{x y z} → (x ⋅ y ≡ z) ↔ (sign0(x) Sign.⨯ sign0(y) ≡ sign0 z) ∧ (absₙ(x) ℕ.⋅ absₙ(y) ≡ absₙ(z))
+[⋅]-equality : ∀{x y z} → (x ⋅ y ≡ z) ↔ (sign0(x) Charge.⨯ sign0(y) ≡ sign0 z) ∧ (absₙ(x) ℕ.⋅ absₙ(y) ≡ absₙ(z))
 [⋅]-equality {x}{y}{z} = [↔]-intro (Tuple.uncurry l) r where
-  l : ∀{x y z} → (sign0(x) Sign.⨯ sign0(y) ≡ sign0 z) → (absₙ(x) ℕ.⋅ absₙ(y) ≡ absₙ(z)) → (x ⋅ y ≡ z)
+  l : ∀{x y z} → (sign0(x) Charge.⨯ sign0(y) ≡ sign0 z) → (absₙ(x) ℕ.⋅ absₙ(y) ≡ absₙ(z)) → (x ⋅ y ≡ z)
   l{x}{y}{z} p q = congruence₂(signed0) p q 🝖 signed-inverse
 
-  r : ∀{x y z} → (x ⋅ y ≡ z) → (sign0(x) Sign.⨯ sign0(y) ≡ sign0 z) ∧ (absₙ(x) ℕ.⋅ absₙ(y) ≡ absₙ(z))
-  r{x}{y}{z} p = [∧]-intro (symmetry(_≡_) (preserving₂(sign0)(_⋅_)(Sign._⨯_)) 🝖 congruence₁(sign0) p) (symmetry(_≡_) (preserving₂(absₙ)(_⋅_)(ℕ._⋅_) {x}{y}) 🝖 congruence₁(absₙ) p)
+  r : ∀{x y z} → (x ⋅ y ≡ z) → (sign0(x) Charge.⨯ sign0(y) ≡ sign0 z) ∧ (absₙ(x) ℕ.⋅ absₙ(y) ≡ absₙ(z))
+  r{x}{y}{z} p = [∧]-intro (symmetry(_≡_) (preserving₂(sign0)(_⋅_)(Charge._⨯_)) 🝖 congruence₁(sign0) p) (symmetry(_≡_) (preserving₂(absₙ)(_⋅_)(ℕ._⋅_) {x}{y}) 🝖 congruence₁(absₙ) p)
 
 instance
   [⋅]-identityₗ : Identityₗ(_⋅_)(𝟏)
   Identityₗ.proof [⋅]-identityₗ {x} with sign0 x | x
-  ... | Sign.➕ | 𝟎     = [≡]-intro
-  ... | Sign.➕ | +𝐒ₙ _ = [≡]-intro
-  ... | Sign.➕ | −𝐒ₙ _ = [≡]-intro
-  ... | Sign.𝟎 | 𝟎     = [≡]-intro
-  ... | Sign.𝟎 | +𝐒ₙ _ = [≡]-intro
-  ... | Sign.𝟎 | −𝐒ₙ _ = [≡]-intro
-  ... | Sign.➖ | 𝟎     = [≡]-intro
-  ... | Sign.➖ | +𝐒ₙ _ = [≡]-intro
-  ... | Sign.➖ | −𝐒ₙ _ = [≡]-intro
+  ... | Charge.➕ | 𝟎     = [≡]-intro
+  ... | Charge.➕ | +𝐒ₙ _ = [≡]-intro
+  ... | Charge.➕ | −𝐒ₙ _ = [≡]-intro
+  ... | Charge.𝟎 | 𝟎     = [≡]-intro
+  ... | Charge.𝟎 | +𝐒ₙ _ = [≡]-intro
+  ... | Charge.𝟎 | −𝐒ₙ _ = [≡]-intro
+  ... | Charge.➖ | 𝟎     = [≡]-intro
+  ... | Charge.➖ | +𝐒ₙ _ = [≡]-intro
+  ... | Charge.➖ | −𝐒ₙ _ = [≡]-intro
 
 instance
   [⋅]-identityᵣ : Identityᵣ(_⋅_)(𝟏)
   Identityᵣ.proof [⋅]-identityᵣ {x} with sign0 x | x
-  ... | Sign.➕ | 𝟎     = [≡]-intro
-  ... | Sign.➕ | +𝐒ₙ _ = [≡]-intro
-  ... | Sign.➕ | −𝐒ₙ _ = [≡]-intro
-  ... | Sign.𝟎 | 𝟎     = [≡]-intro
-  ... | Sign.𝟎 | +𝐒ₙ _ = [≡]-intro
-  ... | Sign.𝟎 | −𝐒ₙ _ = [≡]-intro
-  ... | Sign.➖ | 𝟎     = [≡]-intro
-  ... | Sign.➖ | +𝐒ₙ _ = [≡]-intro
-  ... | Sign.➖ | −𝐒ₙ _ = [≡]-intro
+  ... | Charge.➕ | 𝟎     = [≡]-intro
+  ... | Charge.➕ | +𝐒ₙ _ = [≡]-intro
+  ... | Charge.➕ | −𝐒ₙ _ = [≡]-intro
+  ... | Charge.𝟎 | 𝟎     = [≡]-intro
+  ... | Charge.𝟎 | +𝐒ₙ _ = [≡]-intro
+  ... | Charge.𝟎 | −𝐒ₙ _ = [≡]-intro
+  ... | Charge.➖ | 𝟎     = [≡]-intro
+  ... | Charge.➖ | +𝐒ₙ _ = [≡]-intro
+  ... | Charge.➖ | −𝐒ₙ _ = [≡]-intro
 
 instance
   [⋅]-identity : Identity(_⋅_)(𝟏)
@@ -607,7 +609,7 @@ instance
 
 instance
   [⋅]-commutativity : Commutativity(_⋅_)
-  Commutativity.proof [⋅]-commutativity {x}{y} = congruence₂(signed0) (commutativity(Sign._⨯_)) (commutativity(ℕ._⋅_) {absₙ x}{absₙ y})
+  Commutativity.proof [⋅]-commutativity {x}{y} = congruence₂(signed0) (commutativity(Charge._⨯_)) (commutativity(ℕ._⋅_) {absₙ x}{absₙ y})
 
 instance
   [⋅]-absorberₗ : Absorberₗ(_⋅_)(𝟎)

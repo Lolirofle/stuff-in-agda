@@ -65,7 +65,7 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ Lvl.�
     ⦃ [∨]-associativity ⦄ : Associativity(_∨_)
     ⦃ [∧]-associativity ⦄ : Associativity(_∧_)
 
-    ⦃ [∨][∧]-absorptionₗ ⦄ : Absorptionₗ(_∨_)(_∧_)
+    ⦃ [∨][∧]-absorptionₗ ⦄ : Absorptionₗ(_∨_)(_∧_) -- TODO: Is it possible to get one of the absorptions from the other absorption? Including these also connect semilattices to lattices (because (a ≤ b) ↔ (a ∧ b = a) and (b ≤ a) ↔ (a ∨ b = a) when expressed as posets)
     ⦃ [∧][∨]-absorptionₗ ⦄ : Absorptionₗ(_∧_)(_∨_)
 
   instance
@@ -189,22 +189,6 @@ record Lattice (_∨_ : L → L → L) (_∧_ : L → L → L) : Stmt{ℓ Lvl.�
         ¬(¬((¬ x) ∧ (¬ y)))    🝖-[ involution(¬_) ]
         (¬ x) ∧ (¬ y)          🝖-end
 open Lattice using (intro) public
-
-{- TODO: ?
-semilattices-to-lattice : ∀{_∨_ _∧_} → ⦃ _ : Semilattice(_∨_) ⦄ → ⦃ _ : Semilattice(_∧_) ⦄ → Lattice(_∨_)(_∧_)
-Lattice.[∨]-operator (semilattices-to-lattice ⦃ join ⦄ ⦃ meet ⦄) = Semilattice.operator join
-Lattice.[∧]-operator (semilattices-to-lattice ⦃ join ⦄ ⦃ meet ⦄) = Semilattice.operator meet
-Lattice.[∨]-commutativity (semilattices-to-lattice ⦃ join ⦄ ⦃ meet ⦄) = Semilattice.commutative join
-Lattice.[∧]-commutativity (semilattices-to-lattice ⦃ join ⦄ ⦃ meet ⦄) = Semilattice.commutative meet
-Lattice.[∨]-associativity (semilattices-to-lattice ⦃ join ⦄ ⦃ meet ⦄) = Semilattice.associative join
-Lattice.[∧]-associativity (semilattices-to-lattice ⦃ join ⦄ ⦃ meet ⦄) = Semilattice.associative meet
-Absorptionₗ.proof (Lattice.[∨][∧]-absorptionₗ (semilattices-to-lattice {_∨_}{_∧_} ⦃ join ⦄ ⦃ meet ⦄)) {x} {y} =
-  x ∨ (x ∧ y)    🝖-[ {!!} ]
-  x    🝖-end
-Absorptionₗ.proof (Lattice.[∧][∨]-absorptionₗ (semilattices-to-lattice {_∨_}{_∧_} ⦃ join ⦄ ⦃ meet ⦄)) {x} {y} =
-  x ∧ (x ∨ y)    🝖-[ {!!} ]
-  x    🝖-end
--}
 
 -- Also called: De Morgan algebra
 record MorganicAlgebra (_∨_ : L → L → L) (_∧_ : L → L → L) (¬_ : L → L) (⊥ : L) (⊤ : L) : Stmt{ℓ Lvl.⊔ ℓₑ} where

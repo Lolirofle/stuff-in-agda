@@ -1,19 +1,27 @@
 module Type.Properties.MereProposition.Proofs where
 
 open import Data.Proofs
-open import Function.Axioms
+open import DependentFunction.Equiv as DependentFunction
+open import Function.Equiv as Function
 import      Lvl
 open import Type.Properties.Empty
 open import Type.Properties.MereProposition
 open import Logic.Propositional
 open import Logic.Predicate
-open import Structure.Setoid
+open import Structure.Function.Domain
 open import Structure.Operator
+open import Structure.Setoid
 open import Type.Properties.Proofs
 open import Type
 
 private variable ℓ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ ℓₑ₅ : Lvl.Level
 private variable A B T U P : Type{ℓ}
+private variable f : A → B
+
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  -- If there is a constant injective unary operator for a type, then it is a mere proposition.
+  prop-by-constant-injection : ∀{f : T → T} → ⦃ Constant(f) ⦄ → ⦃ Injective(f) ⦄ → MereProposition(T)
+  prop-by-constant-injection{f} = intro(injective(f) (constant(f)))
 
 module _
   ⦃ equiv-a : Equiv{ℓₑ₁}(A) ⦄
@@ -27,19 +35,19 @@ module _
 module _
   ⦃ equiv-b : Equiv{ℓₑ₁}(B) ⦄
   ⦃ equiv-ab : Equiv{ℓₑ₂}(A → B) ⦄
-  ⦃ funcExt : FunctionExtensionality(A)(B) ⦄
+  ⦃ funcExt : Function.Extensionality equiv-b equiv-ab ⦄
   where
   prop-implication : ⦃ prop-b : MereProposition(B) ⦄ → MereProposition(A → B)
-  MereProposition.uniqueness prop-implication = functionExtensionality(A)(B) (uniqueness(B))
+  MereProposition.uniqueness prop-implication = Function.functionExtensionality (uniqueness(B))
 
 module _
   {B : A → Type{ℓ}}
   ⦃ equiv-b : ∀{a} → Equiv{ℓₑ₁}(B(a)) ⦄
   ⦃ equiv-ab : Equiv{ℓₑ₂}((a : A) → B(a)) ⦄
-  ⦃ funcExt : DependentFunctionExtensionality(A)(B) ⦄
+  ⦃ funcExt : DependentFunction.Extensionality equiv-b equiv-ab ⦄
   where
   prop-dependent-implication : ⦃ prop-b : ∀{a} → MereProposition(B(a)) ⦄ → MereProposition((a : A) → B(a))
-  MereProposition.uniqueness prop-dependent-implication = dependentFunctionExtensionality(A)(B)(\{a} → uniqueness(B(a)))
+  MereProposition.uniqueness prop-dependent-implication = DependentFunction.functionExtensionality(\{a} → uniqueness(B(a)))
 
 module _ ⦃ equiv-top : Equiv{ℓₑ}(⊤) ⦄ where
   instance
@@ -51,6 +59,7 @@ module _ ⦃ equiv-bottom : Equiv{ℓₑ}(⊥) ⦄ where
     prop-bottom : MereProposition(⊥) ⦃ equiv-bottom ⦄
     MereProposition.uniqueness prop-bottom {}
 
+{-
 module _
   {P : A → Type{ℓ}} ⦃ equiv-p : ∀{x} → Equiv{ℓₑ₁}(P(x)) ⦄
   ⦃ equiv-ap : Equiv{ℓₑ₂}(∀ₗ P) ⦄
@@ -58,6 +67,7 @@ module _
   where
   prop-universal : ⦃ prop-p : ∀{x} → MereProposition(P(x)) ⦄ → MereProposition(∀ₗ P)
   MereProposition.uniqueness prop-universal = dependentImplicitFunctionExtensionality(A)(P) (\{x} → uniqueness(P(x)))
+-}
 
 module _
   ⦃ equiv-a : Equiv{ℓₑ₁}(A) ⦄
@@ -66,8 +76,8 @@ module _
   ⦃ equiv-ab : Equiv{ℓₑ₄}(A → B) ⦄
   ⦃ equiv-eq : Equiv{ℓₑ₅}(A ↔ B) ⦄
   ⦃ op : BinaryOperator([↔]-intro) ⦄
-  ⦃ funcExtₗ : FunctionExtensionality(B)(A) ⦄
-  ⦃ funcExtᵣ : FunctionExtensionality(A)(B) ⦄
+  ⦃ funcExtₗ : Function.Extensionality equiv-a equiv-ba ⦄
+  ⦃ funcExtᵣ : Function.Extensionality equiv-b equiv-ab ⦄
   where
   prop-equivalence : ⦃ prop-a : MereProposition(A) ⦄ → ⦃ prop-b : MereProposition(B) ⦄ → MereProposition(A ↔ B)
   prop-equivalence = prop-conjunction ⦃ prop-a = prop-implication ⦄ ⦃ prop-b = prop-implication ⦄
@@ -76,7 +86,7 @@ module _
   ⦃ equiv-a      : Equiv{ℓₑ₁}(A) ⦄
   ⦃ equiv-bottom : Equiv{ℓₑ₂}(⊥) ⦄
   ⦃ equiv-na     : Equiv{ℓₑ₃}(¬ A) ⦄
-  ⦃ funcExt : FunctionExtensionality (A)(⊥) ⦃ equiv-bottom ⦄ ⦄
+  ⦃ funcExt : Function.Extensionality equiv-bottom equiv-na ⦄
   where
   prop-negation : MereProposition(¬ A)
   prop-negation = prop-implication
@@ -89,6 +99,34 @@ module _
   where
   not-prop-disjunction : MereProposition(A ∨ B) → IsEmpty{ℓ}(A ∧ B)
   IsEmpty.empty (not-prop-disjunction (intro uniqueness)) ([∧]-intro a b) with () ← left-right-neq(uniqueness{[∨]-introₗ a}{[∨]-introᵣ b})
+
+open import BidirectionalFunction
+open import Structure.Function
+open import Structure.Function.Domain
+open import Structure.Relator.Properties
+open import Syntax.Transitivity
+
+module _ ⦃ equiv-a : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-b : Equiv{ℓₑ₂}(B) ⦄ where
+  prop-by-injectivity : (f : A → B) ⦃ inj : Injective(f) ⦄ → (MereProposition(A) ← MereProposition(B))
+  prop-by-injectivity f (intro p) = intro \{x}{y} → injective(f) (p{f(x)}{f(y)})
+
+  prop-by-surjectivity : (f : A → B) ⦃ func : Function(f) ⦄ ⦃ surj : Surjective(f) ⦄ → (MereProposition(A) → MereProposition(B))
+  prop-by-surjectivity f (intro p) = intro \{x}{y} →
+    let [∃]-intro fx ⦃ px ⦄ = surjective(f) {x}
+        [∃]-intro fy ⦃ py ⦄ = surjective(f) {y}
+    in symmetry(_≡_) px 🝖 congruence₁(f) (p{fx}{fy}) 🝖 py
+
+module _ ⦃ equiv-a : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-b : Equiv{ℓₑ₂}(B) ⦄ where
+  prop-by-inverseₗ : (f : A → B) → (f⁻¹ : B → A) → ⦃ func : Function(f⁻¹) ⦄ ⦃ inv : Inverseₗ(f)(f⁻¹) ⦄ → (MereProposition(A) ← MereProposition(B))
+  prop-by-inverseₗ f f⁻¹ (intro p) = intro \{x}{y} → symmetry(_≡_) (inverseₗ(f)(f⁻¹)) 🝖 congruence₁(f⁻¹) (p{f(x)}{f(y)}) 🝖 inverseₗ(f)(f⁻¹)
+
+module _ ⦃ equiv-a : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-b : Equiv{ℓₑ₂}(B) ⦄ where
+  prop-by-inverseᵣ : (f : A → B) → (f⁻¹ : B → A) → ⦃ func : Function(f) ⦄ ⦃ inv : Inverseᵣ(f)(f⁻¹) ⦄ → (MereProposition(A) → MereProposition(B))
+  prop-by-inverseᵣ f f⁻¹ = prop-by-inverseₗ f⁻¹ f
+
+module _ ⦃ equiv-a : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-b : Equiv{ℓₑ₂}(B) ⦄ where
+  prop-by-inverse : (f : A ↔ B) → ⦃ funcₗ : Function(f $ₗ_) ⦄ ⦃ funcᵣ : Function(f $ᵣ_) ⦄ ⦃ inv : InversePair(f) ⦄ → (MereProposition(A) ↔ MereProposition(B))
+  prop-by-inverse f = intro (prop-by-inverseᵣ(f $ₗ_)(f $ᵣ_)) (prop-by-inverseₗ(f $ₗ_)(f $ᵣ_))
 
 {-
 module _ {B : A → Type{ℓ}} where

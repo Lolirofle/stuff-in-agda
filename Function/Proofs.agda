@@ -2,13 +2,12 @@ module Function.Proofs where
 
 import      Lvl
 open import Logic
-open import Logic.Classical
 open import Logic.Propositional
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Functional
 open import Function.Inverseᵣ
-open import Function.Names using (_⊜_)
+open import Function.Names using (_⊜_ ; _⊜₂_)
 open import Structure.Setoid using (Equiv) renaming (_≡_ to _≡ₛ_)
 open import Structure.Setoid.Uniqueness
 open import Structure.Relator.Properties
@@ -165,8 +164,8 @@ module _
   {h : a₁ → b₁ → b₂} ⦃ func-h : BinaryOperator(h) ⦄
   where
 
-  [∘]-binaryOperator : BinaryOperator(x ↦ y ↦ f(g x y)(h x y))
-  BinaryOperator.congruence [∘]-binaryOperator xy1 xy2 = congruence₂(f) (congruence₂(g) xy1 xy2) (congruence₂(h) xy1 xy2)
+  pointwise₂,₂-binaryOperator : BinaryOperator(pointwise₂,₂ f g h)
+  BinaryOperator.congruence pointwise₂,₂-binaryOperator xy1 xy2 = congruence₂(f) (congruence₂(g) xy1 xy2) (congruence₂(h) xy1 xy2)
 
 module _
   {a : Type{ℓₒ₁}} ⦃ equiv-a : Equiv{ℓₑ₁}(a) ⦄
@@ -184,8 +183,34 @@ module _ {X : Type{ℓ₁}} {Y : Type{ℓ₂}} {Z : Type{ℓ₃}} where
   swap-involution-fn : ⦃ _ : Equiv{ℓₑ}((X → Y → Z) → (X → Y → Z)) ⦄ → (swap ∘ swap ≡ₛ id {T = X → Y → Z})
   swap-involution-fn = reflexivity(_≡ₛ_)
 
-  swap-binaryOperator : ⦃ _ : Equiv{ℓₑ₁}(X) ⦄ ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ ⦃ _ : Equiv{ℓₑ₃}(Z) ⦄ → ∀{_▫_ : X → Y → Z} → ⦃ _ : BinaryOperator(_▫_) ⦄ → BinaryOperator(swap(_▫_))
+  swap-binaryOperator : ⦃ _ : Equiv{ℓₑ₁}(X) ⦄ ⦃ _ : Equiv{ℓₑ₂}(Y) ⦄ ⦃ _ : Equiv{ℓₑ₃}(Z) ⦄ → ∀{_▫_ : X → Y → Z} → ⦃ oper : BinaryOperator(_▫_) ⦄ → BinaryOperator(swap(_▫_))
   BinaryOperator.congruence (swap-binaryOperator {_▫_ = _▫_} ⦃ intro p ⦄) x₁y₁ x₂y₂ = p x₂y₂ x₁y₁
+
+module _
+  {X : Type{ℓ₁}} ⦃ equiv-x : Equiv{ℓₑ₁}(X) ⦄
+  {Y : Type{ℓ₂}} ⦃ equiv-y : Equiv{ℓₑ₂}(Y) ⦄
+  {Z : Type{ℓ₃}} ⦃ equiv-z : Equiv{ℓₑ₃}(Z) ⦄
+  {f₁ : X → Y → Z}
+  {f₂ : X → Y → Z}
+  ⦃ func-f : BinaryOperator(f₁) ∨ BinaryOperator(f₂) ⦄
+  {g₁ : X → Y}
+  {g₂ : X → Y}
+  where
+
+  s-combinator-function-function : (f₁ ⊜₂ f₂) → (g₁ ⊜ g₂) → ((f₁ ∘ₛ g₁) ⊜ (f₂ ∘ₛ g₂))
+  s-combinator-function-function pf pg {x} = [∨]-elim
+    (\cong → congruence₂-₂(f₁) ⦃ cong ⦄ (x) pg 🝖 pf)
+    (\cong → pf 🝖 congruence₂-₂(f₂) ⦃ cong ⦄ (x) pg)
+    func-f
+
+module _
+  {X : Type{ℓ₁}} ⦃ equiv-x : Equiv{ℓₑ₁}(X) ⦄
+  {Y : Type{ℓ₂}} ⦃ equiv-y : Equiv{ℓₑ₂}(Y) ⦄
+  {Z : Type{ℓ₃}} ⦃ equiv-z : Equiv{ℓₑ₃}(Z) ⦄
+  where
+
+  s-combinator-function : ∀{f : X → Y → Z}{g : X → Y} ⦃ func-f : BinaryOperator(f) ⦄ ⦃ func-g : Function(g) ⦄ → Function(f ∘ₛ g)
+  Function.congruence (s-combinator-function{f}{g}) = congruence₂(f) ∘ₛ congruence₁(g)
 
 module _ {X : Type{ℓ₁}} {Y : Type{ℓ₂}} where
   s-combinator-const-id : ⦃ _ : Equiv{ℓₑ}(X → X) ⦄ → (_∘ₛ_ {X = X}{Y = Y → X}{Z = X} const const ≡ₛ id)
@@ -221,12 +246,6 @@ module _ {X : Type{ℓₒ₁}} ⦃ eq-x : Equiv{ℓₑ₁}(X) ⦄ {Y : Type{ℓ�
 
   s-combinator-inverseₗ : Inverseₗ(_∘ₛ_ {X = X}{Y = Y}{Z = Z})(f ↦ a ↦ b ↦ f (const b) a)
   _⊜_.proof (Inverseᵣ.proof s-combinator-inverseₗ) = reflexivity(_≡ₛ_)
-
-module _ {A : Type{ℓ}} ⦃ equiv-A : Equiv{ℓₑ}(A) ⦄ where
-  classical-constant-endofunction-existence : ⦃ classical : Classical(A) ⦄ → ∃{Obj = A → A}(Constant)
-  classical-constant-endofunction-existence with excluded-middle(A)
-  ... | [∨]-introₗ a  = [∃]-intro (const a)
-  ... | [∨]-introᵣ na = [∃]-intro id ⦃ intro(\{a} → [⊥]-elim(na a)) ⦄
 
 module _ {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   open import Logic.Propositional.Theorems

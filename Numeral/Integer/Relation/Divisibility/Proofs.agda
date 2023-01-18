@@ -9,6 +9,7 @@ open import Numeral.Natural using (ℕ)
 import      Numeral.Natural.Oper as ℕ
 open import Numeral.Integer.Construction
 open import Numeral.Integer.Construction.Proofs
+open import Numeral.Integer.Function
 open import Numeral.Integer.Oper
 open import Numeral.Integer.Oper.Proofs
 open import Numeral.Integer.Proofs
@@ -16,11 +17,25 @@ open import Numeral.Integer.Relation.Divisibility
 open import Numeral.Integer
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
+open import Structure.Function.Domain
 open import Structure.Function.Multi
 open import Structure.Operator.Properties
 open import Structure.Relator
 open import Structure.Relator.Properties
 open import Type
+
+instance
+  [∣]-reflexivity : Reflexivity(_∣_)
+  [∣]-reflexivity = intro(reflexivity(ℕ._∣_))
+
+-- instance
+--   [∣]-antisymmetry : Antisymmetry(_∣_)((_≡_) on₂ abs)
+--   Antisymmetry.proof [∣]-antisymmetry x x₁ = {!!}
+-- intro(injective(absₙ) ∘₂ antisymmetry(ℕ._∣_)(_≡_))
+
+instance
+  [∣]-transitivity : Transitivity(_∣_)
+  [∣]-transitivity = intro(transitivity(ℕ._∣_))
 
 instance
   [∣][−𝐒ₙ]-sub : ((_∣_) on₂ (−𝐒ₙ_)) ⊆₂ ((ℕ._∣_) on₂ ℕ.𝐒)
@@ -77,4 +92,21 @@ divides-with-[+] {−𝐒ₙ a} {−𝐒ₙ b} {+ₙ  c} ab ac = divides-with-[�
 divides-with-[+] {−𝐒ₙ a} {−𝐒ₙ b} {−𝐒ₙ c} ab ac = ℕ.divides-with-[+] ab ac
 
 divides-with-[⋅] : ∀{a b c} → ((a ∣ b) ∨ (a ∣ c)) → (a ∣ (b ⋅ c))
-divides-with-[⋅] {a} {b} {c} p = substitute₂-₂ᵣ(ℕ._∣_)(absₙ a) (symmetry(_≡_) (preserving₂(absₙ)(_⋅_)(ℕ._⋅_) {b}{c})) (ℕ.divides-with-[⋅] {absₙ a}{absₙ b}{absₙ c} p)
+divides-with-[⋅] {a} {b} {c} p = substitute₂-₂ₗ(ℕ._∣_)(absₙ a)
+  (preserving₂(absₙ)(_⋅_)(ℕ._⋅_) {b}{c})
+  (ℕ.divides-with-[⋅] {absₙ a}{absₙ b}{absₙ c} p)
+
+divides-[⋅]ₗ : ∀{a b} → (a ∣ (a ⋅ b))
+divides-[⋅]ₗ {a}{b} = divides-with-[⋅] {a}{a}{b} ([∨]-introₗ (reflexivity(_∣_) {a}))
+
+divides-[⋅]ᵣ : ∀{a b} → (b ∣ (a ⋅ b))
+divides-[⋅]ᵣ {a}{b} = divides-with-[⋅] {b}{a}{b} ([∨]-introᵣ (reflexivity(_∣_) {b}))
+
+divides-with-[−] : ∀{a b c} → (a ∣ b) → (a ∣ c) → (a ∣ (b − c))
+divides-with-[−] {a}{b}{c} ab ac = divides-with-[+] {a}{b}{− c} ab (substitute₂-₂ₗ(ℕ._∣_)(absₙ a) (absₙ-of-[−] {c}) ac)
+
+divides-with-[⋅]-both : ∀{a₁ a₂ b₁ b₂} → (a₁ ∣ b₁) → (a₂ ∣ b₂) → ((a₁ ⋅ a₂) ∣ (b₁ ⋅ b₂))
+divides-with-[⋅]-both {a₁} {a₂} {b₁} {b₂} ab₁ ab₂ = substitute₂ₗ(ℕ._∣_)
+  (preserving₂(absₙ)(_⋅_)(ℕ._⋅_) {a₁}{a₂})
+  (preserving₂(absₙ)(_⋅_)(ℕ._⋅_) {b₁}{b₂})
+  (ℕ.divides-with-[⋅]-both ab₁ ab₂)

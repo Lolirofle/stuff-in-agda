@@ -20,6 +20,7 @@ instance
   𝐒-injective : Injective(𝐒)
   Injective.proof 𝐒-injective p = congruence₁(𝐏) p
 
+{- TODO: Not really how I thought it would work
 instance
   ℕ-identityPath : IdentityPathType(ℕ)
   ℕ-identityPath = intro proof where
@@ -28,3 +29,4 @@ instance
     proof {𝟎}   {𝐒 y}   = [⊥]-elim ∘ Bool-different-values ∘ congruence₁(positive?)
     proof {𝐒 x} {𝟎}     = [⊥]-elim ∘ Bool-different-values ∘ symmetry(Path) ∘ congruence₁(positive?)
     proof {𝐒 x} {𝐒 y} p = congruence₁ ⦃ Id-equiv ⦄ ⦃ Id-equiv ⦄ (ℕ.𝐒) ⦃ Id-function ⦄ (proof {x}{y} (injective(ℕ.𝐒) p))
+-}

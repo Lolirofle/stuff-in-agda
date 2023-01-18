@@ -6,7 +6,7 @@ open import Data.Boolean.Stmt
 open import Data.Option as Option using (Option)
 open import Data.Option.Functions as Option
 open import Logic.Propositional
-open import Numeral.Finite as 𝕟 using (𝕟 ; 𝕟₌ ; ℕ-to-𝕟)
+open import Numeral.Finite as 𝕟 using (𝕟 ; 𝕟₌ ; fromℕ)
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
 import      Numeral.Natural.Oper.Modulo as ℕ

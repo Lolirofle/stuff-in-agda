@@ -1,26 +1,24 @@
 module Structure.Category.Functor where
 
 open import Functional using (_on₂_)
-open import Functional.Instance
 import      Lvl
 open import Logic.Predicate
+open import Structure.Categorical.Functor.Properties
 open import Structure.Category
 open import Structure.Function
-open import Structure.Function.Multi
 import      Structure.Relator.Names as Names
 open import Structure.Setoid
-open import Syntax.Function
 open import Type
 
 private variable ℓ ℓₒ ℓₘ ℓₗₒ ℓₗₘ ℓᵣₒ ℓᵣₘ ℓₑ ℓₗₑ ℓᵣₑ : Lvl.Level
 private variable Obj Objₗ Objᵣ : Type{ℓ}
-private variable Morphism Morphismₗ Morphismᵣ : Objₗ → Objᵣ → Type{ℓ}
+private variable _⟶_ _⟶ₗ_ _⟶ᵣ_ : Objₗ → Objᵣ → Type{ℓ}
 
 module _
-  ⦃ morphism-equivₗ : ∀{x y : Objₗ} → Equiv{ℓₗₑ}(Morphismₗ x y) ⦄
-  ⦃ morphism-equivᵣ : ∀{x y : Objᵣ} → Equiv{ℓᵣₑ}(Morphismᵣ x y) ⦄
-  (Categoryₗ : Category(Morphismₗ))
-  (Categoryᵣ : Category(Morphismᵣ))
+  ⦃ morphism-equivₗ : ∀{x y : Objₗ} → Equiv{ℓₗₑ}(_⟶ₗ_ x y) ⦄
+  ⦃ morphism-equivᵣ : ∀{x y : Objᵣ} → Equiv{ℓᵣₑ}(_⟶ᵣ_ x y) ⦄
+  (Categoryₗ : Category(_⟶ₗ_))
+  (Categoryᵣ : Category(_⟶ᵣ_))
   where
 
   -- A covariant functor.
@@ -30,19 +28,18 @@ module _
   record Functor (F : Objₗ → Objᵣ) : Type{Lvl.of(Type.of(Categoryₗ)) Lvl.⊔ Lvl.of(Type.of(Categoryᵣ))} where
     constructor intro
     open Category ⦃ … ⦄
-    open Category.ArrowNotation ⦃ … ⦄
     private instance _ = Categoryₗ
     private instance _ = Categoryᵣ
 
     field
       -- Morphs/Transforms morphisms from the left category to the right category.
       -- ∀{x y : Objₗ} → (x ⟶ y) → (F(x) ⟶ F(y))
-      map : Names.Subrelation(_⟶_) ((_⟶_) on₂ F)
+      map : Names.Sub₂(_⟶ₗ_) ((_⟶ᵣ_) on₂ F)
 
     field
       ⦃ map-function ⦄     : ∀{x y} → Function(map{x}{y})
-      ⦃ op-preserving ⦄    : ∀{x y z : Objₗ}{f : y ⟶ z}{g : x ⟶ y} → (map(f ∘ g) ≡ map(f) ∘ map(g))
-      ⦃ id-preserving ⦄    : ∀{x : Objₗ} → Names.Preserving₀(map{x})(id)(id) --(map(id {x = x}) ≡ id)
+      ⦃ op-preserving ⦄    : ∀{x y z : Objₗ} → Preserving₂(_⟶ₗ_)(_⟶ᵣ_) map (_∘_ {x = x}{y = y}{z = z}) (_∘_)
+      ⦃ id-preserving ⦄    : ∀{x : Objₗ} → Preserving₀(_⟶ₗ_)(_⟶ᵣ_) map (id{x = x}) id
 
     open import Structure.Categorical.Properties
     open import Structure.Function.Domain
@@ -53,8 +50,8 @@ module _
     -- TODO: Conservative  = ∀{x y : Objₗ}{f : x ⟶ y} → Morphism.Isomorphism(\{x} → _∘_ {x = x})(\{x} → id{x = x})(map f) → Morphism.Isomorphism(\{x} → _∘_ {x = x})(id)(f)
 
 module _
-  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv{ℓₑ}(Morphism x y) ⦄
-  (Category : Category(Morphism))
+  ⦃ morphism-equiv : ∀{x y : Obj} → Equiv{ℓₑ}(_⟶_ x y) ⦄
+  (Category : Category(_⟶_))
   where
 
   Endofunctor = Functor(Category)(Category)

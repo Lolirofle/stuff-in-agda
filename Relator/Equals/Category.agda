@@ -2,12 +2,12 @@ module Relator.Equals.Category where
 
 import      Data.Tuple as Tuple
 open import Functional as Fn using (_$_)
-open import Functional.Dependent using () renaming (_∘_ to _∘ᶠ_)
 open import Logic.Propositional.Equiv
 open import Logic.Predicate
 import      Lvl
 open import Relator.Equals
 open import Relator.Equals.Proofs
+open import Structure.Categorical.Functor.Properties
 open import Structure.Categorical.Properties
 import      Structure.Category.Functor as Category
 open import Structure.Category.Monad
@@ -57,31 +57,31 @@ inverse-of-identity {grp = grp} =
 
 idTransportFunctor : ∀{grp : Groupoid(_⟶_)} → Groupoid.Functor(identityTypeGroupoid)(grp) Fn.id
 Groupoid.Functor.map (idTransportFunctor{_⟶_ = _⟶_}{grp = grp}) = sub₂(Id)(_⟶_) where instance _ = Groupoid.morphism-reflexivity grp
-Groupoid.Functor.op-preserving (idTransportFunctor{grp = grp}) {f = intro} {g = intro} = symmetry(Id) (Morphism.Identityₗ.proof (Tuple.left (Groupoid.identity grp)))
-Groupoid.Functor.inv-preserving (idTransportFunctor{_⟶_ = _⟶_}{grp = grp}) {f = intro} =
+Groupoid.Functor.op-preserving (idTransportFunctor{grp = grp}) = intro \{ {intro} {intro} → symmetry(Id) (Morphism.Identityₗ.proof (Tuple.left (Groupoid.identity grp))) }
+Groupoid.Functor.inv-preserving (idTransportFunctor{_⟶_ = _⟶_}{grp = grp}) = intro \{ {intro} →
   sub₂(Id)(_⟶_) (symmetry(Id) (reflexivity(Id))) 🝖[ Id ]-[]
   sub₂(Id)(_⟶_) (reflexivity(Id))                🝖[ Id ]-[]
   id                                             🝖[ Id ]-[ inverse-of-identity{grp = grp} ]-sym
   inv(id)                                        🝖[ Id ]-[]
   inv(sub₂(Id)(_⟶_) (reflexivity(Id)))           🝖-end
-  where
+  } where
     instance _ = Groupoid.morphism-reflexivity grp
     open Structure.Groupoid.Groupoid(grp)
-Groupoid.Functor.id-preserving idTransportFunctor = intro
+Groupoid.Functor.id-preserving idTransportFunctor = intro intro
 
 -- A functor in the identity type groupoid is a function and a proof of it being a function (compatibility with the identity relation, or in other words, respecting the congruence property).
 -- Note: It does not neccessarily have to be an endofunctor because different objects (types) can be chosen for the respective groupoids.
 functionFunctor : Groupoid.Functor(identityTypeGroupoid)(identityTypeGroupoid) f
 Groupoid.Functor.map (functionFunctor {f = f}) = congruence₁(f)
-Groupoid.Functor.op-preserving  functionFunctor {f = intro} {g = intro} = intro
-Groupoid.Functor.inv-preserving functionFunctor {f = intro}             = intro
-Groupoid.Functor.id-preserving  functionFunctor                         = intro
+Groupoid.Functor.op-preserving  functionFunctor = intro \{ {intro} {intro} → intro }
+Groupoid.Functor.inv-preserving functionFunctor = intro \{ {intro} → intro }
+Groupoid.Functor.id-preserving  functionFunctor = intro intro
 
 -- A functor to the category of types is a predicate and a proof of it being a relation (having the substitution property).
 predicateFunctor : Category.Functor(identityTypeCategory)(typeIntensionalFnCategory) P -- TODO: Is it possible to generalize so that the target (now `typeIntensionalFnCategory`) is more general? `idTransportFunctor` seems to be similar. Maybe on the on₂-category to the right?
 Category.Functor.map (predicateFunctor{P = P}) = substitute₁ᵣ(P)
-Category.Functor.op-preserving predicateFunctor {x} {.x} {.x} {intro} {intro} = intro
-Category.Functor.id-preserving predicateFunctor = intro
+Category.Functor.op-preserving predicateFunctor = intro \{ {intro} {intro} → intro }
+Category.Functor.id-preserving predicateFunctor = intro intro
 
 -- A natural transformation in the identity type groupoid between two functions (functors of the identity type groupoid) is a proof of them being extensionally identical.
 extensionalFnNaturalTransformation : (p : ∀(x) → (f(x) ≡ g(x))) → NaturalTransformation([∃]-intro f ⦃ Groupoid.Functor.categoryFunctor functionFunctor ⦄) ([∃]-intro g ⦃ Groupoid.Functor.categoryFunctor functionFunctor ⦄) p
@@ -91,15 +91,11 @@ NaturalTransformation.natural (extensionalFnNaturalTransformation {f = f} {g = g
   p(x) 🝖 congruence₁(g) intro 🝖-end
 
 open import Function.Equals
-open import Function.Proofs
-open import Structure.Function.Domain
-open import Structure.Function.Multi
-open import Structure.Setoid using (Equiv)
 
 -- A monad in the identity type groupoid is an identity function and a proof of it being that and it being idempotent.
 -- The proof that it behaves the same extensionally as an identity function should also preserve congruence.
 -- TODO: Instead of (∀{x} → (p(f(x))) ≡ congruence₁(f) (p(x))) , use something like ⦃ preserv : Preserving₁(p)(f)(congruence₁(f)) ⦄ , but it does not work at the moment. Maybe something is dependent here?
-identityFunctionMonad : ∀{T : Type{ℓ}}{f : T → T} → (p : ∀(x) → (x ≡ f(x))) → (∀{x} → (p(f(x))) ≡ congruence₁(f) (p(x))) → Monad(f) ⦃ Groupoid.Functor.categoryFunctor functionFunctor ⦄
+identityFunctionMonad : ∀{T : Type{ℓ}}{f : T → T} → (p : ∀(x) → (x ≡ f(x))) → (∀{x} → (p(f(x))) ≡ congruence₁(f) (p(x))) → Monad([∃]-intro f ⦃ Groupoid.Functor.categoryFunctor functionFunctor ⦄)
 ∃.witness (Monad.Η (identityFunctionMonad p _)) = p
 NaturalTransformation.natural (∃.proof (Monad.Η (identityFunctionMonad {f = f} p _))) {x}{.x}{intro} =
   Fn.id intro 🝖 p(x)          🝖[ Id ]-[]
@@ -116,15 +112,15 @@ NaturalTransformation.natural (∃.proof (Monad.Μ (identityFunctionMonad {f = f
   symmetry(Id) (congruence₁(f) (p(x)))                                               🝖[ Id ]-[ Morphism.Identityₗ.proof (Tuple.left  (Category.identity identityTypeCategory)) ]-sym
   symmetry(Id) (congruence₁(f) (p(x))) 🝖 intro                                       🝖[ Id ]-[]
   symmetry(Id) (congruence₁(f) (p(x))) 🝖 congruence₁(f) intro                        🝖-end
-_⊜_.proof (Monad.μ-functor-[∘]-commutativity (identityFunctionMonad {f = f} p preserv)) {x} = congruence₂-₁(_🝖_)(symmetry(Id) (congruence₁(f) (p(x)))) $
-  congruence₁(f) (symmetry(Id) (congruence₁(f) (p(x)))) 🝖[ Id ]-[ Groupoid.Functor.inv-preserving (functionFunctor{f = f}) {f = congruence₁(f) (p x)} ]
+_⊜_.proof (Monad.μ-on-μ-preserving-functor (identityFunctionMonad {f = f} p preserv)) {x} = congruence₂-₁(_🝖_)(symmetry(Id) (congruence₁(f) (p(x)))) $
+  congruence₁(f) (symmetry(Id) (congruence₁(f) (p(x)))) 🝖[ Id ]-[ preserving₁(Id)(Id)(congruence₁(f))(symmetry(Id))(symmetry(Id)) ⦃ Groupoid.Functor.inv-preserving (functionFunctor{f = f}) ⦄ {congruence₁(f) (p x)} ]
   symmetry(Id) (congruence₁(f) (congruence₁(f) (p(x)))) 🝖[ Id ]-[ congruence₁(symmetry(Id)) (congruence₁(congruence₁(f)) preserv) ]-sym
   symmetry(Id) (congruence₁(f) (p(f(x))))               🝖-end
-_⊜_.proof (Monad.μ-functor-[∘]-identityₗ (identityFunctionMonad {f = f} p preserv)) {x} =
+_⊜_.proof (Monad.μ-on-μ-functor-η-inverse₁ (identityFunctionMonad {f = f} p preserv)) {x} =
   congruence₁(f) (p(x)) 🝖 symmetry(Id) (congruence₁(f) (p(x))) 🝖[ Id ]-[ congruence₂(Groupoid._∘_ identityTypeGroupoid) (congruence₁(symmetry(Id)) preserv) preserv ]-sym
   p(f(x)) 🝖 symmetry(Id) (p(f(x)))                             🝖[ Id ]-[ Morphism.Inverseₗ.proof (Tuple.left(Groupoid.inverse identityTypeGroupoid {f = p(f x)})) ]
   intro{x = f(x)}                                              🝖-end
-_⊜_.proof (Monad.μ-functor-[∘]-identityᵣ (identityFunctionMonad {f = f} p preserv)) {x} =
+_⊜_.proof (Monad.μ-on-μ-functor-η-inverse₀ (identityFunctionMonad {f = f} p preserv)) {x} =
   p(f(x)) 🝖 symmetry(Id) (congruence₁(f) (p(x))) 🝖[ Id ]-[ congruence₂-₂(_🝖_)(p(f(x))) (congruence₁(symmetry(Id)) preserv) ]-sym
   p(f(x)) 🝖 symmetry(Id) (p(f(x)))               🝖[ Id ]-[ Morphism.Inverseₗ.proof (Tuple.left(Groupoid.inverse identityTypeGroupoid {f = p(f x)})) ]
   intro{x = f(x)}                                🝖-end

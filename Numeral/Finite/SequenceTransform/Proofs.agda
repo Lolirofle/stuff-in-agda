@@ -27,7 +27,7 @@ prependIdMap-injective {f = f} = intro proof where
 popShiftMap-injective : ∀{a b} ⦃ pos : ℕ.Positive(b) ⦄ {f : 𝕟(𝐒(a)) → 𝕟(𝐒(b))} → ⦃ Injective(f) ⦄ → Injective(popShiftMap f)
 popShiftMap-injective {f = f} = intro proof where
   proof : Names.Injective(popShiftMap f)
-  proof {x} {y} = injective(𝐒) ∘ injective(f) ∘ shiftRepeat'-almost-injective
+  proof {x} {y} = injective(𝐒) ∘ injective(f) ∘ shift𝐏ByRepeatRestrict-almost-injective
     ⦃ cx = [↔]-to-[→] [≢][≢?]-equivalence (contrapositiveᵣ(injective(f)) \()) ⦄
     ⦃ cy = [↔]-to-[→] [≢][≢?]-equivalence (contrapositiveᵣ(injective(f)) \()) ⦄
 
@@ -43,7 +43,7 @@ open import Syntax.Transitivity
 open import Type.Properties.Singleton
 
 {-
--- TODO: Use shiftRepeat-def1, shiftRepeat-def2 and shiftRepeat-shiftRepeat'-eq
+-- TODO: Use shift𝐏ByRepeat-def1, shift𝐏ByRepeat-def2 and shift𝐏ByRepeat-shift𝐏ByRepeatRestrict-eq
 popShiftMap-def1 : ∀{a b} ⦃ pos : ℕ.Positive(b) ⦄ {f : 𝕟(𝐒 a) → 𝕟(𝐒 b)}{x} → (f(𝐒(x)) 𝕟.≤ f(𝟎)) → (popShiftMap f(x) 𝕟.≡ f(𝐒(x)))
 popShiftMap-def1 {𝐒 a} {𝐒 b} {f}{x} = {!!}
 
@@ -68,7 +68,7 @@ popShiftMap-value-inverseᵣ = intro(p) where
   p {𝐒 (𝐒 a)} {𝐒 𝟎} {f = f} {f⁻¹} {x} = {!!}
   p {𝐒 (𝐒 a)} {𝐒 (𝐒 b)} {f = f} {f⁻¹} {x} =
     (popShiftMap f ∘ popShiftMap f⁻¹) x                        🝖[ _≡_ ]-[]
-    shiftRepeat'(f(𝟎)) (f(𝐒(shiftRepeat'(f⁻¹(𝟎)) (f⁻¹(𝐒 x))))) 🝖[ _≡_ ]-[ {!!} ]
+    shift𝐏ByRepeatRestrict(f(𝟎)) (f(𝐒(shift𝐏ByRepeatRestrict(f⁻¹(𝟎)) (f⁻¹(𝐒 x))))) 🝖[ _≡_ ]-[ {!!} ]
     x                                                          🝖-end
 
 open import Syntax.Number

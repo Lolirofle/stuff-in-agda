@@ -14,7 +14,7 @@ instance
   postulate Formula-is-countably-infinite : ⦃ _ : CountablyInfinite(P) ⦄ → CountablyInfinite(Formula(P))
 
 {-
-open import Type.WellOrdering
+open import Type.W
 Formula-W-bijectivity : Bijective(W{A = 𝕟(8)}())
 Formula-W-bijectivity = {!!
 -}

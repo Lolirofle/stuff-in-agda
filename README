@@ -1,3 +1,7 @@
-Here lies the mess of stuff I wrote in the language Agda while testing it.
+Formal proofs in mathematics/computer science/logic formalized in the Agda language. It is mostly a mess of a lot of stuff that I have found interesting.
 
-This is mostly simple mathematical definitions and proofs with some attempts on logic.
+Note: All files are independent of the standard library. The original intention was to teach myself the language and learn the concepts, but this project just grew in size.
+
+It consists mostly of simple definitions and proofs. Some examples:
+
+TODO

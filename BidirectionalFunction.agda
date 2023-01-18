@@ -15,7 +15,7 @@ _↔_ : Type{ℓ₁} → Type{ℓ₂} → Type
 X ↔ Y = (X ← Y) ⨯ (X → Y)
 open module _↔_ {ℓ₁ ℓ₂}{A : Type{ℓ₁}}{B : Type{ℓ₂}} (f : A ↔ B) = Tuple._⨯_ f
   using ()
-  renaming (left to _$ₗ_ ; right to _$ᵣ_)
+  renaming (left to infixr 0 _$ₗ_ ; right to infixr 0 _$ᵣ_)
   public
 open Tuple
   using ()
@@ -43,3 +43,4 @@ map (intro aₗ aᵣ) (intro bₗ bᵣ) = intro
 
 _∘_ : let _ = A in (B ↔ C) → (A ↔ B) → (A ↔ C)
 f ∘ g = map id f $ᵣ g
+infixl 10000 _∘_

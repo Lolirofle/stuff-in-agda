@@ -6,9 +6,10 @@ import      Lvl
 open import Data.List using (List)
 import      Data.List.Functions as List
 open import Data.List.Relation.Permutation
+open import Data.List.Relation.Permutation.Proofs
 open import Functional as Fn
 open import Type.Cubical
-open import Type.Cubical.Quotient
+open import Type.Cubical.Quotient as Quotient
 open import Type
 open import Type.Identity
 
@@ -22,7 +23,7 @@ FiniteMultiset(T) = Quotient(_permutes_ {T = T})
 pattern ∅ = class List.∅
 
 add : T → FiniteMultiset(T) → FiniteMultiset(T)
-add x = Quotient-recursion (class ∘ (x List.⊰_)) (class-extensionalityₗ ∘ prepend)
+add x = Quotient.elim(\_ → FiniteMultiset _) (class ∘ (x List.⊰_)) (class-extensionalityₗ ∘ prepend)
 
 _∪•_ : FiniteMultiset(T) → T → FiniteMultiset(T)
 _∪•_ = Fn.swap add
@@ -37,10 +38,10 @@ open import Type.Cubical.Path.Equality
 private variable l : FiniteMultiset(T)
 
 count : (T → Bool) → FiniteMultiset(T) → ℕ
-count f = Quotient-function(List.count f) ⦃ Proofs.permutes-countᵣ-function ⦄
+count f = Quotient.rec(List.count f) ⦃ {!permutes-countᵣ-function!} ⦄ -- ⦃ permutes-countᵣ-function ⦄
 
 satisfiesAny : (T → Bool) → FiniteMultiset(T) → Bool
-satisfiesAny f = Quotient-function(List.satisfiesAny f) ⦃ Proofs.permutes-satisfiesAny-functionᵣ ⦄
+satisfiesAny f = Quotient.rec(List.satisfiesAny f) ⦃ {!!} ⦄ -- ⦃ permutes-satisfiesAny-functionᵣ ⦄
 
 -- _∈_ : T → FiniteMultiset(T) → Type
 -- _∈_ x = Quotient-function (List._∈_ x) ⦃ {!!} ⦄

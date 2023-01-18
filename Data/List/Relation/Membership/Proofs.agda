@@ -8,8 +8,8 @@ open import Data.List
 open import Data.List.Equiv
 open import Data.List.Functions hiding (skip)
 open import Data.List.Relation.Membership
-open import Data.List.Relation.Quantification hiding (use ; skip)
-open import Data.List.Relation.Quantification.Proofs
+open import Data.List.Relation.Quantification
+open import Data.List.Relation.Quantification.Universal.Functions
 import      Data.Tuple as Tuple
 open import Logic
 open import Logic.Predicate
@@ -33,9 +33,9 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
 
   instance
     [∈]-relatorₗ : UnaryRelator(_∈ l)
-    [∈]-relatorₗ = UnaryRelator-introᵣ p where
-      p : Names.Substitution₁ᵣ(_∈ l)
-      p{x ⊰ _}     xy (• q) = • (symmetry(_≡ₛ_) xy 🝖 q)
+    [∈]-relatorₗ = UnaryRelator-introₗ p where
+      p : Names.Substitution₁ₗ(_∈ l)
+      p{x ⊰ _}     xy (• q) = • (xy 🝖 q)
       p{x ⊰ y ⊰ l} xy (⊰ q) = ⊰ p{y ⊰ l} xy q
 
   [∈]-self : AllElements(_∈ l)(l)
@@ -199,10 +199,10 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   private variable ll : List(List(T))
   private variable a b c x : T
 
-  [⊑]-to-[∈] : (l₁ ⊑ l₂) → (∀{x} → (x ∈ l₁) → (x ∈ l₂))
-  [⊑]-to-[∈] (_⊑_.use eq sub) (• xin) = • (xin 🝖 eq)
-  [⊑]-to-[∈] (_⊑_.use eq sub) (⊰ xin) = ⊰ [⊑]-to-[∈] sub xin
-  [⊑]-to-[∈] (_⊑_.skip sub)   xin     = ⊰ [⊑]-to-[∈] sub xin
+  [⊑]-by-[∈] : (l₁ ⊑ l₂) → (∀{x} → (x ∈ l₁) → (x ∈ l₂))
+  [⊑]-by-[∈] (_⊑_.use eq sub) (• xin) = • (xin 🝖 eq)
+  [⊑]-by-[∈] (_⊑_.use eq sub) (⊰ xin) = ⊰ [⊑]-by-[∈] sub xin
+  [⊑]-by-[∈] (_⊑_.skip sub)   xin     = ⊰ [⊑]-by-[∈] sub xin
 
   AllElements-[∈] : ∀{P : _ → Type{ℓ}} ⦃ rel : UnaryRelator(P) ⦄ → AllElements P(l) ↔ (∀{x} → (x ∈ l) → P(x))
   AllElements-[∈] {P = P} = [↔]-intro L R where
@@ -214,7 +214,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     R (px ⊰ pl) (• elem) = substitute₁ₗ(P) elem px
     R (px ⊰ pl) (⊰ elem) = R pl elem
 
-{- TODO: Stuff below is supposed to be moved to Structure.Sets.Proofs
+{- TODO: Stuff below is supposed to be moved to Structure.Set.Proofs
 
 [∈][++]-expandₗ : (a ∈ l₂) → (a ∈ (l₁ ++ l₂))
 [∈][++]-expandₗ {l₂ = l₂}{l₁ = l₁} = [↔]-to-[←] ([∈][++] {l₁ = l₁}{l₂ = l₂}) ∘ [∨]-introᵣ
@@ -333,3 +333,16 @@ module _ where
   non-empty-inclusion-existence : ∀{l : List(T)} → (l Id.≢ ∅) → ∃(_∈ l)
   non-empty-inclusion-existence {l = ∅}     p with () ← p(reflexivity(Id._≡_))
   non-empty-inclusion-existence {l = x ⊰ l} p = [∃]-intro x ⦃ •(reflexivity(Id._≡_)) ⦄
+
+module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
+  open import Numeral.Finite
+
+  [∈]-index-existence : ∀{l : List(T)}{x : T} → (x ∈ l) ↔ ∃(n ↦ (x ≡ₛ index l n))
+  [∈]-index-existence = [↔]-intro L R where
+    L : ∀{l : List(T)}{x : T} → (x ∈ l) ← ∃(n ↦ (x ≡ₛ index l n))
+    L {_ ⊰ _} ([∃]-intro 𝟎     ⦃ eq ⦄) = • eq
+    L {_ ⊰ _} ([∃]-intro (𝐒 n) ⦃ eq ⦄) = ⊰ L([∃]-intro n ⦃ eq ⦄)
+
+    R : ∀{l : List(T)}{x : T} → (x ∈ l) → ∃(n ↦ (x ≡ₛ index l n))
+    R(• eq) = [∃]-intro 𝟎 ⦃ eq ⦄
+    R(⊰ xl) = [∃]-map 𝐒 id (R xl)

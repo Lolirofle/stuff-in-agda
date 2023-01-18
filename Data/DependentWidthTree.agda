@@ -2,7 +2,7 @@ module Data.DependentWidthTree where
 
 import      Lvl
 open import Functional using (id)
-open import Functional.Dependent
+open import DependentFunctional
 open import Numeral.Finite
 open import Numeral.Natural
 open import Type

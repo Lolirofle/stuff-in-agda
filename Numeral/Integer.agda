@@ -11,6 +11,7 @@ data ℤ : Type{Lvl.𝟎} where
   +ₙ_  : ℕ → ℤ -- Positive integers including zero from the naturals (0,1,..).
   −𝐒ₙ_ : ℕ → ℤ -- Negative integers from the naturals (..,−2,−1).
 
+infixl 10100 +ₙ_ −𝐒ₙ_
 {-# BUILTIN INTEGER        ℤ  #-}
 {-# BUILTIN INTEGERPOS     +ₙ_ #-}
 {-# BUILTIN INTEGERNEGSUC −𝐒ₙ_ #-}
@@ -22,12 +23,14 @@ data ℤ : Type{Lvl.𝟎} where
 −ₙ_ : ℕ → ℤ
 −ₙ (ℕ.𝟎)    = +ₙ ℕ.𝟎
 −ₙ (ℕ.𝐒(x)) = −𝐒ₙ(x)
+infixl 10100 −ₙ_
 
 -- Intuitive constructor patterns
 pattern 𝟎      = +ₙ(ℕ.𝟎)    -- Zero (0).
 pattern +𝐒ₙ_ n = +ₙ(ℕ.𝐒(n)) -- Positive integers from the naturals (1,2,..).
 pattern 𝟏      = +ₙ(ℕ.𝟏)    -- One (1).
 pattern −𝟏     = −𝐒ₙ(ℕ.𝟎)   -- Negative one (−1).
+infixl 10100 +𝐒ₙ_
 {-# DISPLAY ℤ.+ₙ_ ℕ.𝟎  = 𝟎 #-}
 {-# DISPLAY ℤ.+ₙ_ ℕ.𝟏  = 𝟏 #-}
 {-# DISPLAY ℤ.−𝐒ₙ_ ℕ.𝟎 = −𝟏 #-}

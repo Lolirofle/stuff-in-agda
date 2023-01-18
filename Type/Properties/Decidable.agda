@@ -28,9 +28,6 @@ elim : ∀{P} → (Proof : ∀{b} → Decider₀{ℓₚ}(P)(b) → Type{ℓ}) �
 elim _ fp fnp (true  p)  = fp p
 elim _ fp fnp (false np) = fnp np
 
-step : ∀{f : Bool → Bool} → (P → Decider₀(Q)(f(𝑇))) → ((P → Empty) → Decider₀(Q)(f(𝐹))) → (∀{b} → Decider₀(P)(b) → Decider₀(Q)(f(b)))
-step{f = f} = elim (\{b} _ → Decider₀(_)(f(b)))
-
 -- Decider(n)(P)(f) states that the values of the n-ary function f decides whether the values of P is empty or inhabited for a given number of arguments.
 -- When interpreting P as an n-ary predicate (proposition), the n-ary function f decides the truth values of P.
 Decider : (n : ℕ) → ∀{ℓ}{ℓ𝓈}{As : Types{n}(ℓ𝓈)} → (As ⇉ Type{ℓ}) → (As ⇉ Bool) → Type{Lvl.𝐒(ℓ) Lvl.⊔ Lvl.⨆(ℓ𝓈)}

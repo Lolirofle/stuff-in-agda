@@ -87,8 +87,8 @@ isEmpty (prepend x l) = 𝐹
 current (prepend x l) = x
 step    (prepend x l) = l
 
-open import Data.List
+open import Data.List as List using (List)
 
 listIterator : List(T) → Iterator(T)
-listIterator ∅ = empty
-listIterator (x ⊰ l) = prepend x (listIterator l)
+listIterator List.empty         = empty
+listIterator (List.prepend x l) = prepend x (listIterator l)

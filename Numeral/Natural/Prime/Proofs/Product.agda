@@ -9,7 +9,7 @@ open import Numeral.Natural
 open import Numeral.Natural.Relation.Divisibility.Proofs
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Prime
-open import Numeral.Natural.Relation.Divisibility.Proofs.Product
+open import Numeral.Natural.Relation.Divisibility.Proofs.Productᵣ
 open import Sets.PredicateSet renaming (_≡_ to _≡ₛ_)
 open import Type
 

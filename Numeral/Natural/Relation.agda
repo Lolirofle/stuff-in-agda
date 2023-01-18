@@ -5,9 +5,7 @@ open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
 open import Logic.Propositional
 open import Logic
-import      Lvl
 open import Relator.Equals
-open import Type
 
 Positive : ℕ → Stmt
 Positive(n) = IsTrue(positive? n)

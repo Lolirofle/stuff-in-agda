@@ -2,193 +2,106 @@
 
 module Type.Cubical.Path.Proofs where
 
+open import BidirectionalFunction using (_↔_ ; _$ᵣ_)
 import      Lvl
 open import Type
 open import Type.Cubical
 open import Type.Cubical.Path
+open import Type.Cubical.Path.Functions
+open import Type.Cubical.Path.Equality
+open import Type.Properties.MereProposition
+open import Type.Properties.Singleton
 
-private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
+private variable ℓ : Lvl.Level
+private variable T A B : Type{ℓ}
+
+instance
+  prop-is-prop : MereProposition(MereProposition(A))
+  MereProposition.uniqueness prop-is-prop {intro prop₁}{intro prop₂} = map intro \i {x}{y} j → Interval.hComp(\k →
+    \{
+      (i = Interval.𝟎) → prop₁{x}{prop₁{x}{y} j} k ;
+      (i = Interval.𝟏) → prop₁{x}{prop₂{x}{y} j} k ;
+      (j = Interval.𝟎) → prop₁{x}{x} k ;
+      (j = Interval.𝟏) → prop₁{x}{y} k
+    })
+    x
 
 module _ where
-  private variable A B : Type{ℓ}
-  private variable P : Interval → Type{ℓ}
-  private variable x y z w : A
+  private variable X : Interval → Type{ℓ}
+  private variable Y : (i : Interval) → X(i) → Type{ℓ}
 
-  -- The full path from the starting point to the end.
-  path : (point : Interval → A) → Path(point(Interval.𝟎)) (point(Interval.𝟏))
-  path point i = point i
+  interval-predicate₀-pathP : ⦃ prop : ∀{i} → MereProposition(X(i)) ⦄ → ∀{x₀ : X(Interval.𝟎)}{x₁ : X(Interval.𝟏)} → PathP X x₀ x₁
+  interval-predicate₀-pathP{X = X} = pathPathP(X) $ᵣ uniqueness(X(Interval.𝟏))
 
-  -- The point on the path, given a point of the interval indexing the path.
-  pointOn : ∀{x y : A} → Path x y → (Interval → A)
-  pointOn p i = p i
-
-  -- The path from a point to itself.
-  -- This path only consists of the point itself.
-  point : Path x x
-  point{x = x} _ = x
-
-  -- The reverse path of a path.
-  -- Reverses the direction of a path by flipping all points around the point of symmetry.
-  reverseP : PathP(P) x y → PathP(\i → P(Interval.flip i)) y x
-  reverseP p(i) = p(Interval.flip i)
-
-  reverse : Path x y → Path y x
-  reverse = reverseP
-
-  -- A function mapping points between two spaces, given a path between the spaces.
-  spaceMap : Path A B → (A → B)
-  spaceMap p = Interval.transp (pointOn p) Interval.𝟎
-
-  -- TODO: Move
-  module _ {A : Type{ℓ}} where
-    private variable a₀ a₁ a₂ a₃ : A
-    private variable a₀₀ a₀₁ a₁₀ a₁₁ : A
-    private variable a₀₀₀ a₀₀₁ a₀₁₀ a₀₁₁ a₁₀₀ a₁₀₁ a₁₁₀ a₁₁₁ : A
-    private variable p₀₀₋ p₀₁₋ p₀₋₀ p₀₋₁ p₁₀₋ p₁₁₋ p₁₋₀ p₁₋₁ p₋₀₀ p₋₀₁ p₋₁₀ p₋₁₁ : Path a₀ a₁
-
-    Path-missingSide : A → A
-    Path-missingSide a = Interval.hComp diag a where
-      diag : Interval → Interval.Partial Interval.𝟎 A
-      diag i ()
-
-    module _
-      (p₀₋ : Path a₀₀ a₀₁)
-      (p₁₋ : Path a₁₀ a₁₁)
-      (p₋₀ : Path a₀₀ a₁₀)
-      (p₋₁ : Path a₀₁ a₁₁)
-      where
-      -- a₀₁ → p₋₁ → a₁₁
-      --  ↑           ↑
-      -- p₀₋         p₁₋
-      --  ↑           ↑
-      -- a₀₀ → p₋₀ → a₁₀
-      Square : Type
-      Square = PathP (\i → Path (p₋₀ i) (p₋₁ i)) p₀₋ p₁₋
-    module Square where
-      missingSide : Path a₀₀ a₀₁ → Path a₁₀ a₁₁ → Path a₀₀ a₁₀ → Path a₀₁ a₁₁
-      missingSide p₀₋ p₁₋ p₋₀ ix = Interval.hComp diagram (p₋₀ ix) where
-        diagram : Interval → Interval.Partial(Interval.max ix (Interval.flip ix)) A
-        diagram iy (ix = Interval.𝟎) = p₀₋ iy
-        diagram iy (ix = Interval.𝟏) = p₁₋ iy
-
-      module _
-        {p₀₋ : Path a₀₀ a₀₁}
-        {p₁₋ : Path a₁₀ a₁₁}
-        {p₋₀ : Path a₀₀ a₁₀}
-        {p₋₁ : Path a₀₁ a₁₁}
-        (s : Square p₀₋ p₁₋ p₋₀ p₋₁)
-        where
-
-        diagonal : Path a₀₀ a₁₁
-        diagonal i = s i i
-
-        rotate₊ : Square p₋₁ p₋₀ (reverse p₀₋) (reverse p₁₋)
-        rotate₊ iy ix = s ix (Interval.flip iy)
-
-        rotate₋ : Square (reverse p₋₀) (reverse p₋₁) p₁₋ p₀₋
-        rotate₋ iy ix = s (Interval.flip ix) iy
-
-        flipX : Square p₁₋ p₀₋ (reverse p₋₀) (reverse p₋₁)
-        flipX iy ix = s (Interval.flip iy) ix
-
-        flipY : Square (reverse p₀₋) (reverse p₁₋) p₋₁ p₋₀
-        flipY iy ix = s iy (Interval.flip ix)
-
-      module _
-        {a₀ a₁ : A}
-        (p : Path a₀ a₁)
-        where
-
-        lineX : Square point point p p
-        lineX ix iy = p ix
-
-        lineY : Square p p point point
-        lineY ix iy = p iy
-
-        min : Square point p point p
-        min ix iy = p(Interval.min ix iy)
-
-        max : Square p point p point
-        max ix iy = p(Interval.max ix iy)
-
-    module _
-      (p₀₋₋ : Square p₀₀₋ p₀₁₋ p₀₋₀ p₀₋₁)
-      (p₁₋₋ : Square p₁₀₋ p₁₁₋ p₁₋₀ p₁₋₁)
-      (p₋₀₋ : Square p₀₀₋ p₁₀₋ p₋₀₀ p₋₀₁)
-      (p₋₁₋ : Square p₀₁₋ p₁₁₋ p₋₁₀ p₋₁₁)
-      (p₋₋₀ : Square p₀₋₀ p₁₋₀ p₋₀₀ p₋₁₀)
-      (p₋₋₁ : Square p₀₋₁ p₁₋₁ p₋₀₁ p₋₁₁)
-      where
-
-      Cube : Type
-      Cube = PathP (\i → Square (p₋₀₋ i) (p₋₁₋ i) (p₋₋₀ i) (p₋₋₁ i)) p₀₋₋ p₁₋₋
-    {-
-    module Cube where
-      module _
-        (p₀₋₋ : Square p₀₀₋ p₀₁₋ p₀₋₀ p₀₋₁)
-        (p₁₋₋ : Square p₁₀₋ p₁₁₋ p₁₋₀ p₁₋₁)
-        (p₋₀₋ : Square p₀₀₋ p₁₀₋ p₋₀₀ p₋₀₁)
-        (p₋₁₋ : Square p₀₁₋ p₁₁₋ p₋₁₀ p₋₁₁)
-        (p₋₋₀ : Square p₀₋₀ p₁₋₀ p₋₀₀ p₋₁₀)
-        where
-        missingSide : Square p₀₋₁ p₁₋₁ p₋₀₁ p₋₁₁
-        missingSide ix iy = Interval.hComp diagram (p₋₋₀ ix iy) where -- (Square.max {!!} ix iy)
-          diagram : Interval → Interval.Partial {!!} A
-          {-diagram : (i : Interval) → Interval.Partial (Interval.max (Interval.max ix (Interval.flip ix)) (Interval.max iy (Interval.flip iy))) _
-          diagram iz (ix = Interval.𝟎) = Square.max p₀₋₁ ix iy
-          diagram iz (ix = Interval.𝟏) = Square.min p₁₋₁ ix iy
-          diagram iz (iy = Interval.𝟎) = Square.max p₋₀₁ ix iy
-          diagram iz (iy = Interval.𝟏) = Square.min p₋₁₁ ix iy-}
-    -}
-
-  -- Concatenates (joins the ends of) two paths.
-  concat : Path x y → Path y z → Path x z
-  concat xy yz = Square.missingSide point yz xy
+  interval-predicate₁-pathP : ⦃ prop : ∀{i : Interval}{x : X(i)} → MereProposition(Y i x) ⦄ → ∀{x₀ : X Interval.𝟎}{x₁ : X Interval.𝟏}{y₀ : Y Interval.𝟎 x₀}{y₁ : Y Interval.𝟏 x₁} → (p : PathP X x₀ x₁) → PathP(\i → Y i (p i)) y₀ y₁
+  interval-predicate₁-pathP{Y = Y} p = interval-predicate₀-pathP{X = \i → Y i (p i)}
 
 module _ where
   private variable X : Type{ℓ}
   private variable Y : X → Type{ℓ}
 
-  -- Maps a path into another space.
-  mapP : (f : (x : X) → Y(x)) → ∀{x y} → (path : Path x y) → PathP(\i → Y(path(i))) (f(x)) (f(y))
-  mapP(f) p(i) = f(p(i))
+  -- There is a path between all proofs of a predicate when it is a mere proposition and there is a path between the objects.
+  interval-predicate₁-path : ⦃ prop : ∀{x : X} → MereProposition(Y(x)) ⦄ → ∀{a₁ b₁ : X}{a₂ : Y(a₁)}{b₂ : Y(b₁)} → (p : Path a₁ b₁) → PathP(\i → Y(p i)) a₂ b₂
+  interval-predicate₁-path{X = X}{Y = Y} = interval-predicate₁-pathP{X = \_ → X}{Y = \_ → Y}
+  -- NOTE: Alternative proof of interval-predicate₁-path
+  -- module _ (P : T → Type{ℓ}) ⦃ prop-P : ∀{c} → MereProposition(P(c)) ⦄ where
+  --   property-pathP : ∀{x y}{px : P(x)}{py : P(y)} → (xy : x ≡ y) → PathP(\i → P(xy i)) px py
+  --   property-pathP {x}{y}{px}{py} xy = idElim(Path) (xy ↦ (∀{px}{py} → PathP(\i → P(xy i)) px py)) (\{c} → uniqueness(P(c))) {x}{y} xy {px}{py}
 
-  -- When there is a path between two space mappings.
-  mapping : ∀{f g : (x : X) → Y(x)} → (∀{x} → Path(f(x)) (g(x))) → Path f g
-  mapping ppt i x = ppt{x} i
 
-  mappingPoint : ∀{f g : (x : X) → Y(x)} → Path f g → (∀{x} → Path(f(x)) (g(x)))
-  mappingPoint pfg {x} i = pfg i x
+{- TODO: Organize and move everything below
 
-module _ where
-  private variable X : Type{ℓ}
-  private variable Y : X → Type{ℓ}
-  private variable Z : (x : X) → Y(x) → Type{ℓ}
+open import Type.Properties.MereProposition
+open import Type.Properties.Singleton
 
-  -- mapP₂' : (f : (x : X) → (y : Y(x)) → Z(x)(y)) → ∀{a₁ b₁ : X}{a₂ : Y(a₁)}{b₂ : Y(b₁)} → (path₁ : Path a₁ b₁) → (path₂ : Path a₂ b₂) → PathP(\i → Z(path₁(i))(?)) (f a₁ a₂) (f b₁ b₂)
+{-
+Path-isUnit : ∀{ℓ}{A : Type{ℓ}} → ⦃ _ : MereProposition(A) ⦄ → (∀{x y : A} → IsUnit(x ≡ y))
+IsUnit.unit       (Path-isUnit {A = A}) = uniqueness(A)
+IsUnit.uniqueness (Path-isUnit {A = A} ⦃ mere-A ⦄ {x = x} {y = y}) {p} i = Interval.hComp d p where
+  d : Interval → Interval.Partial (Interval.max (Interval.flip i) i) (Path x y)
+  d j (i = Interval.𝟎) = p
+  d j (i = Interval.𝟏) = {!uniqueness(A) {x}{y}!}
+-- congruence₁ (prop ↦ MereProposition.uniqueness prop {x}{y}) (IsUnit.uniqueness prop-is-prop-unit {intro (\{x y} → {!p!})})
+-}
 
-  mapP₂ : (f : (x : X) → (y : (x : X) → Y(x)) → Z(x)(y)) → ∀{a₁ b₁ : X}{a₂ b₂ : (x : X) → Y(x)} → (path₁ : Path a₁ b₁) → (path₂ : Path a₂ b₂) → PathP(\i → Z(path₁(i))(path₂(i))) (f a₁ a₂) (f b₁ b₂)
-  mapP₂ f ab1 ab2 i = mapP (mapP f ab1 i) ab2 i
+{-
+open import Structure.Setoid.Uniqueness
+open import Type.Dependent.Sigma
+-}
 
-  -- mapP₂ : (f : (x : X) → (y : Y(x)) → Z(x)(y)) → ∀{x₁ x₂} → (path : Path x₁ x₂) → PathP(\i → Y(path(i))) (f(x)) (f(y))
-  -- mapP₂(f) = ?
+-- TODO
+-- ∀{eu₁ eu₂ : ∃!{Obj = Obj}(Pred)} → () → (eu₁ ≡ eu₂)
 
-module _ where
-  private variable X X₁ X₂ Y Y₁ Y₂ : Type{ℓ}
+{-
+Unique-MereProposition-equivalence : ⦃ prop : ∀{x} → MereProposition(P(x)) ⦄ → (Unique(P) ↔ MereProposition(∃ P))
+Unique-MereProposition-equivalence {P = P} = [↔]-intro l r where
+  l : Unique(P) ← MereProposition(∃ P)
+  l (intro p) {x} {y} px py = mapP([∃]-witness) (p{[∃]-intro x ⦃ px ⦄} {[∃]-intro y ⦃ py ⦄})
+  r : Unique(P) → MereProposition(∃ P)
+  MereProposition.uniqueness (r p) {[∃]-intro w₁ ⦃ p₁ ⦄} {[∃]-intro w₂ ⦃ p₂ ⦄} i = mapP (mapP (\w p → [∃]-intro w ⦃ p ⦄) (p p₁ p₂) i) {!!} i
+  -- mapP [∃]-intro (p p₁ p₂) i ⦃ {!!} ⦄
 
-  map : (f : X → Y) → ∀{a b} → Path a b → Path (f(a)) (f(b))
-  map = mapP
+Unique-prop : ⦃ prop : ∀{x} → MereProposition(P(x)) ⦄ → MereProposition(Unique(P))
+MereProposition.uniqueness Unique-prop {u₁} {u₂} i {x} {y} px py j = Interval.hComp d x where
+  d : Interval → Interval.Partial (Interval.max (Interval.max (Interval.flip i) i) (Interval.max (Interval.flip j) j)) A
+  d k (i = Interval.𝟎) = {!!}
+  d k (i = Interval.𝟏) = {!!}
+  d k (j = Interval.𝟎) = {!!}
+  d k (j = Interval.𝟏) = {!!}
 
-  map₂ : (f : X₁ → X₂ → Y) → ∀{a₁ b₁}{a₂ b₂} → Path a₁ b₁ → Path a₂ b₂ → Path (f a₁ a₂) (f b₁ b₂)
-  map₂ f ab1 ab2 i = mapP (mapP f ab1 i) ab2 i
+[∃!trunc]-to-existence : ⦃ prop : ∀{x} → MereProposition(Pred(x)) ⦄ → HTrunc₁(∃!{Obj = Obj}(Pred)) → HomotopyLevel(0)(∃{Obj = Obj}(Pred))
+[∃!trunc]-to-existence {Pred = Pred} (trunc ([∧]-intro e u)) = intro e (\{e₂} i → [∃]-intro (u ([∃]-proof e₂) ([∃]-proof e) i) ⦃ {!!} ⦄)
+-- MereProposition.uniqueness test) {u _ _ _}
+-- sub₂(_≡_)(_→ᶠ_) ⦃ [≡][→]-sub ⦄ (congruence₁(Pred) ?) ?
+[∃!trunc]-to-existence (trunc-proof i) = {!!}
+-}
 
-  liftedSpaceMap : (S : X → Type{ℓ}) → ∀{a b} → Path a b → S(a) → S(b)
-  liftedSpaceMap S p = spaceMap(map S p)
-
-  liftedSpaceMap₂ : (S : X → Y → Type{ℓ}) → ∀{a₁ b₁}{a₂ b₂} → Path a₁ b₁ → Path a₂ b₂ → S a₁ a₂ → S b₁ b₂
-  liftedSpaceMap₂ S p q = spaceMap(map₂ S p q)
-
--- TODO: Move
-data Loop{ℓ} : Type{ℓ} where
-  base : Loop
-  loop : Path base base
+{-
+[∃!]-squashed-witness : HTrunc₁(∃!{Obj = Obj}(Pred)) → Obj
+[∃!]-squashed-witness (trunc eu) = [∃]-witness([∧]-elimₗ eu)
+[∃!]-squashed-witness (trunc-proof {trunc ([∧]-intro e₁ u₁)} {trunc ([∧]-intro e₂ u₂)} i) = u₁ ([∃]-proof e₁) ([∃]-proof e₂) i
+[∃!]-squashed-witness (trunc-proof {trunc ([∧]-intro e₁ u₁)} {trunc-proof j} i) = {!!}
+[∃!]-squashed-witness (trunc-proof {trunc-proof i₁} {trunc x} i) = {!!}
+[∃!]-squashed-witness (trunc-proof {trunc-proof i₁} {trunc-proof i₂} i) = {!!}
+-}
+-}

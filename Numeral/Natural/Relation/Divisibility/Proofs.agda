@@ -9,7 +9,6 @@ open import Logic.Propositional.Equiv
 open import Logic.Propositional.Theorems
 open import Logic.Predicate
 open import Logic.Predicate.Theorems
-open import Numeral.Finite
 open import Numeral.Natural
 open import Numeral.Natural.Function
 open import Numeral.Natural.Oper
@@ -226,6 +225,11 @@ divides-upper-limit {𝐒(a)}{𝐒(b)} proof = ([↔]-to-[→] [≤]-equivalence
 
   existence2 : ∃(n ↦ 𝐒(a) + n ≡ 𝐒(b))
   existence2 = [∃]-intro(𝐒(a) ⋅ [∃]-witness(existence1)) ⦃ [∃]-proof(existence1) ⦄
+
+divides-upper-limit' : ∀{a b} ⦃ pos : Positive(a) → Positive(b) ⦄ → (a ∣ b) → (a ≤ b)
+divides-upper-limit' {𝟎}  {b}   ⦃ pos = pos ⦄ ab = _≤_.min
+divides-upper-limit' {𝐒 a}{𝟎}   ⦃ pos = pos ⦄ ab = empty(pos <>)
+divides-upper-limit' {𝐒 a}{𝐒 b} ⦃ pos = pos ⦄ ab = divides-upper-limit ab
 
 divides-not-lower-limit : ∀{a b} → (a > 𝐒(b)) → (a ∤ 𝐒(b))
 divides-not-lower-limit {a}{b} = (contrapositiveᵣ (divides-upper-limit {a}{𝐒 b})) ∘ [>]-to-[≰]

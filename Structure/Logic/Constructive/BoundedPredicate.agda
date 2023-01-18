@@ -10,7 +10,7 @@ module Structure.Logic.Constructive.BoundedPredicate
   where
 
 import      Logic.Predicate as Meta
-open import Type.Dependent using (Σ)
+open import Type.Dependent.Sigma using (Σ)
 open import Type.Properties.Inhabited using (◊)
 import      Structure.Logic.Constructive.Propositional as Propositional
 open import Syntax.Function

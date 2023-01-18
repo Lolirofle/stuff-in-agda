@@ -3,9 +3,10 @@ module Sets.PredicateSet.Listable where
 import      Lvl
 open import Data.List as List using (List)
 open import Data.List.Functions renaming (_++_ to _∪ₗ_) using (singleton)
-open import Data.List.Relation.Membership renaming (_∈_ to _∈ₗ_ ; _∈!_ to _∈!ₗ_) using (use ; skip)
+open import Data.List.Relation.Membership renaming (_∈_ to _∈ₗ_) using (use ; skip)
 open import Data.List.Relation.Permutation
-open import Data.List.Relation.Quantification using (∀ₗᵢₛₜ ; module AllElements ; ExistsElement ; ExistsElementEquivalence ; module ExistsElementEquivalence)
+open import Data.List.Relation.Quantification using (∀ₗᵢₛₜ ; module AllElements ; ExistsElement)
+open import Data.List.Relation.Quantification.Uniqueness renaming (_∈!_ to _∈!ₗ_)
 open import Functional
 open import Functional.Instance
 open import Logic.Propositional
@@ -29,7 +30,7 @@ module _ (S : PredSet{ℓ}(T)) where
       restrict : ∀ₗᵢₛₜ(list)  (_∈ S)
 
     proof : ∀ₛ(S) (_∈ₗ list)
-    proof = IsUnit.unit ∘ unique
+    proof = IsUnit.unit ⦃ _ ⦄ ∘ unique
   list = inferArg Listable.list
 
 private variable l l₁ l₂ l₁₂ : Listable(S)
@@ -41,7 +42,7 @@ Listable.restrict ∅-listable = AllElements.∅
 
 singleton-listable : Listable(•_ ⦃ [≡]-equiv ⦄ x)
 Listable.list     singleton-listable           = singleton _
-Listable.unique   singleton-listable [≡]-intro = intro (use [≡]-intro) (\{ {ExistsElement.• x} → ExistsElementEquivalence.use})
+Listable.unique   singleton-listable [≡]-intro = intro (use [≡]-intro) (\{ {ExistsElement.• x} → [≡]-intro})
 Listable.restrict singleton-listable           = [≡]-intro AllElements.⊰ AllElements.∅
 
 {- TODO: Will not satisfy Listable because (_++_) may yield multiples which Listable does not allow, and therefore list-[∪] below is also incorrect.

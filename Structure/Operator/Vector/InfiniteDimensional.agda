@@ -19,6 +19,7 @@ open import Data.Tuple using (_⨯_ ; _,_)
 open import Logic
 open import Logic.Predicate
 open import Numeral.CoordinateVector as Vec using () renaming (Vector to Vec)
+open import Numeral.CoordinateVector.Relations as Vec
 open import Numeral.Finite
 open import Numeral.Natural
 open import Sets.ExtensionalPredicateSet as PredSet using (PredSet ; _∈_ ; [∋]-binaryRelator)

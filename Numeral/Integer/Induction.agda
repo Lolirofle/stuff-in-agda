@@ -1,6 +1,6 @@
 module Numeral.Integer.Induction where
 
-open import Functional.Dependent
+open import DependentFunctional
 open import Logic.Propositional.Equiv
 import      Lvl
 open import Numeral.Integer

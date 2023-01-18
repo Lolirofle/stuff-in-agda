@@ -52,7 +52,7 @@ module _ where
       let
         [∃]-intro(A , B) ⦃ p ⦄ = [↔]-to-[→] composite-existence comp
         a = 𝐒(𝐒(A))
-        b = 𝐒(𝐒(B))        
+        b = 𝐒(𝐒(B))
         [∃]-intro da ⦃ pa ⦄ = prev{a} ⦃ substitute₂-₂ᵣ(_∣≢_)(a) p ([∣≢]-of-[⋅]ₗ {a}{b}) ⦄
         [∃]-intro db ⦃ pb ⦄ = prev{b} ⦃ substitute₂-₂ᵣ(_∣≢_)(b) p ([∣≢]-of-[⋅]ᵣ {a}{b}) ⦄
         pab =
@@ -69,7 +69,7 @@ module _ where
 
   module _ where
     open import Numeral.Natural.Prime.Proofs
-    open import Numeral.Natural.Relation.Divisibility.Proofs.Product
+    open import Numeral.Natural.Relation.Divisibility.Proofs.Productᵣ
 
     prime-in-prime-list : ∀{p}{l} → Prime(p) → AllElements Prime(l) → (p ∣ List.foldᵣ(_⋅_) 1 l) → (p ∈ l)
     prime-in-prime-list {p} pp ∅ div with () ←
@@ -181,7 +181,8 @@ module _ where
   open import Data.List.Relation.Permutation
   open import Data.List.Relation.Permutation.Proofs
   open import Data.List.Relation.Quantification
-  open import Data.List.Relation.Quantification.Proofs
+  open import Data.List.Relation.Quantification.Universal.Functions
+  open import Data.List.Relation.Quantification.Universal.Proofs
   open import Lang.Irrelevance.Convertable
   open import Logic.Predicate.Proofs
   open import Numeral.Natural.Prime.Decidable
@@ -202,10 +203,10 @@ module _ where
       AllElements Prime(List.map [∃]-witness yl)                 ⇒-end
     )
     • (
-      List.foldᵣ(_⋅_) 𝟏 (List.map [∃]-witness xl) 🝖[ _≡_ ]-[ foldᵣ-map-preserve{_▫_ = _⋅_}{l = xl} ]-sym
+      List.foldᵣ(_⋅_) 𝟏 (List.map [∃]-witness xl) 🝖[ _≡_ ]-[ foldᵣ-map-preserve{_▫_ = _⋅_}{x = xl} ]-sym
       List.foldᵣ((_⋅_) ∘ [∃]-witness) 𝟏 xl        🝖[ _≡_ ]-[ px ]-sym
       n                                           🝖[ _≡_ ]-[ py ]
-      List.foldᵣ((_⋅_) ∘ [∃]-witness) 𝟏 yl        🝖[ _≡_ ]-[ foldᵣ-map-preserve{_▫_ = _⋅_}{l = yl} ]
+      List.foldᵣ((_⋅_) ∘ [∃]-witness) 𝟏 yl        🝖[ _≡_ ]-[ foldᵣ-map-preserve{_▫_ = _⋅_}{x = yl} ]
       List.foldᵣ(_⋅_) 𝟏 (List.map [∃]-witness yl) 🝖-end
     )
     ⇒₃-[ foldᵣ-primes-permutation ]

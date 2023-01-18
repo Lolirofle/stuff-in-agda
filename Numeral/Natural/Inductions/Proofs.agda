@@ -2,92 +2,77 @@ module Numeral.Natural.Inductions.Proofs where
 
 open import Numeral.Natural
 open import Numeral.Natural.Induction
+open import Numeral.Natural.Inductions
+open import Numeral.Natural.Relation.Order
 open import Syntax.Function
 open import Type
 
-{-
-module _ where
-  import Lvl
-  open import Data
-  open import Logic
-  open import Logic.Propositional
-  open import Functional
-  open import Numeral.Natural
-  open import Numeral.Natural.Induction
-  open import Numeral.Natural.Relation.Order
-  open import Numeral.Natural.Relation.Order.Proofs
-  open import Structure.Relator.Ordering
-  open import Structure.Relator.Properties
-  open import Type
-  ℕ-strong-recursion2 : ∀{ℓ} → (P : ℕ → Type{ℓ}) → ((n : ℕ) → ((i : ℕ) → .(i < n) → P(i)) → P(n)) → ((n : ℕ) → P(n))
-  ℕ-strong-recursion2 P step n = ℕ-elim(n ↦ ((i : ℕ) → .(i < n) → P(i)))
-    (\_ ())
-    (\n prev i i𝐒n → step i (\j ji → prev j (transitivity(_≤_) ji ([≤]-without-[𝐒] i𝐒n))))
-    (𝐒(n)) n (reflexivity(_≤_))
+module _
+  {ℓ₁ ℓ₂}
+  (T : ℕ → Type{ℓ₁})
+  (P : (x : ℕ) → T(x) → Type{ℓ₂})
+  {rec : (x : ℕ) → ((i : ℕ) → (i < x) → T(i)) → T(x)}
+  (prec : (y : ℕ)
+    → ((x : ℕ) → (xy : x < y) → P x (ℕ-strong-recursion(T) rec x))
+    → P y (ℕ-strong-recursion(T) rec y)
+  )
+  where
 
-  ℕ-strong-recursion3 : ∀{ℓ} → (P : ℕ → Type{ℓ}) → ((n : ℕ) → ((i : ℕ) → .(i < n) → P(i)) → P(n)) → ((n : ℕ) → .(n < 𝐒 n) → P(n))
-  ℕ-strong-recursion3 P step n = ℕ-elim(n ↦ ((i : ℕ) → .(i < n) → P(i)))
-    (\_ ())
-    (\n prev i i𝐒n → step i (\j ji → prev j (transitivity(_≤_) ji ([≤]-without-[𝐒] i𝐒n))))
-    (𝐒(n)) n
+  ℕ-strong-recursion-simple-intro : (x : ℕ) → P x (ℕ-strong-recursion(T) rec x)
+  ℕ-strong-recursion-simple-intro = ℕ-strong-recursion(x ↦ P x (ℕ-strong-recursion(T) rec x)) prec
 
-  module _ {ℓ₁ ℓ₂} {T : ℕ → Type{ℓ₁}} {P : (x : ℕ) → T(x) → Type{ℓ₂}} where
-    ℕ-strong-recursion-intro' : ∀{rec : (x : ℕ) → ((i : ℕ) → .(i < x) → T(i)) → T(x)}
-                              → ((y : ℕ)
-                                → ((x : ℕ) → .(xy : x < y) → P x (ℕ-strong-recursion2(T) rec x))
-                                → P y (rec y λ j .ji → {!ℕ-strong-recursion2(T) rec j!}
-                                                 -- ℕ-strong-recursion2(T) rec j
-                                                 -- ℕ-elim (λ n → (i : ℕ) → .(i < n) → T i) (λ i ()) (λ n prev i .i𝐒n → rec i (λ j₁ .ji₁ → prev j₁ (transitivity _≤_ ji₁ ([≤]-without-[𝐒] i𝐒n)))) y j (transitivity _≤_ ji ([≤]-without-[𝐒] (reflexivity _≤_)))
-                                                )
-                                -- TODO: Would be good if above was   or something similar instead
-                              )
-                              → ((x : ℕ) → P x (ℕ-strong-recursion2(T) rec x))
-    ℕ-strong-recursion-intro'{rec = rec} = ℕ-strong-recursion2(\x → P x (ℕ-strong-recursion2(T) rec x))
--}
+open import Relator.Equals
 
-module _ {ℓ₁ ℓ₂} {T : ℕ → Type{ℓ₁}} {P : (x : ℕ) → T(x) → Type{ℓ₂}} where
-  ℕ-elim-intro : ∀{base : T(𝟎)}{step : (x : ℕ) → T(x) → T(𝐒(x))}
-                 → P(𝟎)(base)
-                 → ((x : ℕ)
-                   → P x (ℕ-elim T base step x)
-                   → P(𝐒(x)) (step x (ℕ-elim T base step x))
-                 )
-                 → ((x : ℕ) → P x (ℕ-elim T base step x))
-  ℕ-elim-intro{base = base}{step = step} = ℕ-elim(x ↦ P x (ℕ-elim T base step x))
+module _
+  {ℓ}
+  (T : ℕ → Type{ℓ})
+  {rec : (x : ℕ) → ((i : ℕ) → (i < x) → T(i)) → T(x)}
+  (pt : ∀{x}{t₁ t₂} → (∀{i}{ix₁ ix₂} → (t₁ i ix₁ ≡ t₂ i ix₂)) → (rec x t₁ ≡ rec x t₂))
+  where
 
-  open import Numeral.Natural.Relation.Order
-  open import Numeral.Natural.Inductions
+  ℕ-strong-recursion-internals-ext : ∀{x₁ x₂ i : ℕ}{ix₁ : i < x₁}{ix₂ : i < x₂} → (ℕ-strong-recursion-internals T rec x₁ i ix₁ ≡ ℕ-strong-recursion-internals T rec x₂ i ix₂)
+  ℕ-strong-recursion-internals-ext {𝐒 x₁}{𝐒 x₂} {i} {ix₁} {ix₂} = pt(ℕ-strong-recursion-internals-ext{x₁}{x₂})
 
-  ℕ-strong-recursion-intro : ∀{rec : (x : ℕ) → ((i : ℕ) → (i < x) → T(i)) → T(x)}
-                             → ((y : ℕ)
-                               → ((x : ℕ) → (xy : x < y) → P x (ℕ-strong-recursion(T) rec x))
-                               → P y (ℕ-strong-recursion(T) rec y)
-                               -- TODO: Would be good if above was rec y (\x _ → ℕ-strong-recursion(T) rec x) or something similar instead
-                             )
-                             → ((x : ℕ) → P x (ℕ-strong-recursion(T) rec x))
-  ℕ-strong-recursion-intro{rec = rec} = ℕ-strong-recursion(x ↦ P x (ℕ-strong-recursion(T) rec x))
+open import Data
+open import DependentFunctional using () renaming (const to constDep)
+open import Functional
+open import Logic.Propositional.Equiv
+open import Numeral.Natural.Relation
+open import Numeral.Natural.Relation.Order
+open import Numeral.Natural.Relation.Order.Proofs
+open import Numeral.Natural.Inductions
+open import Relator.Equals.Proofs.Equiv
+open import Structure.Relator
+open import Structure.Relator.Properties
 
-  {-
-  open import Relator.Equals
+module _
+  {ℓ₁ ℓ₂}
+  (T : ℕ → Type{ℓ₁})
+  (P : (n : ℕ) → ((i : ℕ) → (i < n) → T(i)) → Type{ℓ₂})
+  {rec : (x : ℕ) → ((i : ℕ) → (i < x) → T(i)) → T(x)}
+  (pempty : P 𝟎 (\_ → empty ∘ [<][0]ᵣ))
+  (prec : (y : ℕ) → ⦃ pos : Positive(y) ⦄
+    → ((x : ℕ) → (xy : x < y) → P x (ℕ-strong-recursion-internals(T) rec x))
+    → P y (\z zy → rec z (\x xz → ℕ-strong-recursion-internals(T) rec (𝐏(y)) x (transitivity(_≤_) xz ([≤]-with-[𝐏] zy))))
+  )
+  where
 
-  ℕ-strong-recursion-intro2 : ∀{rec : (x : ℕ) → ((i : ℕ) → .(i < x) → T(i)) → T(x)}
-                            → ((y : ℕ)
-                              → ((x : ℕ) → (xy : x < y) → P x (ℕ-strong-recursion2(T) rec x))
-                              → (ℕ-strong-recursion2(T) rec y ≡ rec y (\x ord → ℕ-strong-recursion2(T) ? x))
-                              → P y (ℕ-strong-recursion2(T) rec y)
-                            )
-                            → ((x : ℕ) → P x (ℕ-strong-recursion2(T) rec x))
-  ℕ-strong-recursion-intro2{rec = rec} prec = ℕ-strong-recursion2(x ↦ P x (ℕ-strong-recursion2(T) rec x)) proof where
-    proof : (n : ℕ) → ((i : ℕ) → .(i < n) → P i (ℕ-strong-recursion2 T rec i)) → P n (ℕ-strong-recursion2 T rec n)
-    proof 𝟎 p = prec 𝟎 p [≡]-intro
-    proof (𝐒 n) p = prec (𝐒 n) p {! ℕ-strong-recursion T rec (n)!}
-    -- proof 𝟎 p = prec 𝟎 p {!ℕ-strong-recursion T rec 𝟎!}
-    -- proof (𝐒 n) p with a ← ℕ-strong-recursion T rec (𝐒 n) = {!prec (𝐒 n) p!} -- prec (𝐒 n) p (congruence₁(rec(𝐒 n)) {![≡]-intro!})
-  -}
+  ℕ-strong-recursion-internals-intro : (N : ℕ) → (n : ℕ) → (n < N) → P n (\i ord → ℕ-strong-recursion-internals(T) rec n i ord)
+  ℕ-strong-recursion-internals-intro = ℕ-strong-recursion-internals(\n → P n (ℕ-strong-recursion-internals T rec n)) (\{ 𝟎 → \_ → pempty ; (𝐒 n) → prec(𝐒 n) })
 
-{-
-ℕ-strong-recursion-function : ∀{ℓ}{T : ℕ → Type{ℓ}}{rec₁ rec₂ : (x : ℕ) → ((i : ℕ) → (i < x) → T(i)) → T(x)}
-                              → (∀{x} → rec₁ x ≡ rec₂ x)
-                              → (∀{x} → (ℕ-strong-recursion(T) rec₁ x ≡ ℕ-strong-recursion(T) rec₂ x))
-ℕ-strong-recursion-function {T = T} {rec₁} {rec₂} receq {n} = ℕ-strong-recursion-intro{T = T}{rec = rec₂}{P = \x y → ℕ-strong-recursion T rec₁ x ≡ y} {!!} n
--}
+module _
+  {ℓ₁ ℓ₂}
+  (T : ℕ → Type{ℓ₁})
+  (P : (x : ℕ) → T(x) → Type{ℓ₂})
+  {rec : (x : ℕ) → ((i : ℕ) → (i < x) → T(i)) → T(x)}
+  (pt : ∀{x}{t₁ t₂} → (∀{i}{ix₁ ix₂} → (t₁ i ix₁ ≡ t₂ i ix₂)) → (rec x t₁ ≡ rec x t₂))
+  (prec : (y : ℕ)
+    → ((x : ℕ) → (xy : x < y) → P x (ℕ-strong-recursion(T) rec x))
+    → P y (rec y (\x _ → ℕ-strong-recursion(T) rec x))
+  )
+  where
+
+  ℕ-strong-recursion-intro : (x : ℕ) → P x (ℕ-strong-recursion(T) rec x)
+  ℕ-strong-recursion-intro = ℕ-strong-recursion
+    (x ↦ P x (ℕ-strong-recursion(T) rec x))
+    (\x px → substitute₁ᵣ(P x) (pt(\{i} → ℕ-strong-recursion-internals-ext(T) pt {𝐒 i}{x}{i}{reflexivity(_≤_)})) (prec x px))

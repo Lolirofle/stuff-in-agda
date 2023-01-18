@@ -13,4 +13,4 @@ open import Type.Properties.Decidable.Proofs
 
 instance
   Coprime-decider : Decider(2)(Coprime)(\a b → gcd a b ≡? 1)
-  Coprime-decider {x}{y} = [↔]-to-[←] (decider-relator Coprime-gcd [≡]-intro) ℕ-equality-decider
+  Coprime-decider {x}{y} = [↔]-to-[←] (decider-relator Coprime-gcd [≡]-intro) [≡?]-decider

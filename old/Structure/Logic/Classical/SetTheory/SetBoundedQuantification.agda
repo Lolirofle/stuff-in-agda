@@ -7,7 +7,7 @@ open Structure.Logic.Classical.NaturalDeduction.ClassicalLogic {ℓₗ} {Formula
 open import Functional hiding (Domain)
 open import Functional.Instance
 import      Lvl
-open import Type.Dependent
+open import Type.Dependent.Sigma
 open import Structure.Logic.Classical.PredicateBoundedQuantification {ℓₗ} {Formula} {ℓₘₗ} {Proof} {ℓₒ} {Domain} ⦃ classicLogic ⦄
 
 -- Bounded universal quantifier

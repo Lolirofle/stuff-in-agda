@@ -4,7 +4,7 @@ module Miscellaneous.LimNatural where
 
 import      Lvl
 open import Numeral.Natural as ℕ using (ℕ)
-open import Numeral.Sign as Sign using (−|+ ; −|0|+ ; ➖ ; ➕)
+open import Numeral.Sign as Sign using (Sign ; Charge ; ➖ ; ➕)
 open import Type.Cubical
 open import Type.Cubical.Path.Equality
 open import Type
@@ -38,7 +38,7 @@ infixl 10020 _⋅_
 open import Data.Boolean
 open import Data.Boolean.Stmt
 open import Functional
-open import Type.Cubical.Path.Proofs
+open import Type.Cubical.Path.Functions
 
 isFinite : ℕ∞ → Bool
 isFinite 𝟎      = 𝑇
@@ -79,7 +79,7 @@ open import Structure.Function
 open import Structure.Relator.Properties
 import      Structure.Relator.Names as Names
 open import Syntax.Transitivity
-open import Type.Cubical.Path.Proofs
+open import Type.Cubical.Path.Functions
 
 private variable x y z : ℕ∞
 

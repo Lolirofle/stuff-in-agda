@@ -1,10 +1,11 @@
+{-# OPTIONS --no-qualified-instances #-}
+
 module Operator.Summation.Range.Proofs where
 
 import      Lvl
 open import Data.List
 open import Data.List.Functions
-open        Data.List.Functions.LongOper
-open import Data.List.Proofs
+open import Data.List.Proofs hiding (map-function)
 open import Data.List.Equiv.Id
 open import Data.List.Proofs.Length
 open import Functional as Fn using (_$_ ; _∘_ ; const)
@@ -71,17 +72,13 @@ Range-singleton {𝐒 a}
   = [≡]-intro
 {-# REWRITE Range-singleton #-}
 
-Range-concat : ∀{a b c} → ⦃ ab : (a ≤ b) ⦄ ⦃ bc : (b < c) ⦄ → ((a ‥ b) ++ (b ‥ c) ≡ a ‥ c)
-Range-concat {𝟎} {𝟎}   {𝐒 c} ⦃ min ⦄ ⦃ succ bc ⦄ = [≡]-intro
-Range-concat {𝟎} {𝐒 b} {𝐒 c} ⦃ min ⦄ ⦃ succ bc ⦄ = congruence₁ (prepend 0) $
+Range-concat : ∀{a b c} → (a ≤ b) → (b < c) → ((a ‥ b) ++ (b ‥ c) ≡ a ‥ c)
+Range-concat {𝟎} {𝟎}   {𝐒 c} min (succ bc) = [≡]-intro
+Range-concat {𝟎} {𝐒 b} {𝐒 c} min (succ bc) = congruence₁ (prepend 0) $
   map 𝐒(𝟎 ‥ b) ++ map 𝐒 (b ‥ c) 🝖[ _≡_ ]-[ preserving₂(map 𝐒)(_++_)(_++_) {𝟎 ‥ b}{b ‥ c} ]-sym
-  map 𝐒((𝟎 ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-concat {𝟎} {b} {c}) ]
+  map 𝐒((𝟎 ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-concat {𝟎}{b}{c} min bc) ]
   map 𝐒(𝟎 ‥ c)                  🝖-end
-  where instance _ = bc
-Range-concat {𝐒 a} {𝐒 b} {𝐒 c} ⦃ succ ab ⦄ ⦃ succ bc ⦄ =
+Range-concat {𝐒 a} {𝐒 b} {𝐒 c} (succ ab) (succ bc) =
   map 𝐒(a ‥ b) ++ map 𝐒 (b ‥ c) 🝖[ _≡_ ]-[ preserving₂(map 𝐒)(_++_)(_++_) {a ‥ b}{b ‥ c} ]-sym
-  map 𝐒((a ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-concat {a} {b} {c}) ]
+  map 𝐒((a ‥ b) ++ (b ‥ c))     🝖[ _≡_ ]-[ congruence₁(map 𝐒) (Range-concat {a}{b}{c} ab bc) ]
   map 𝐒(a ‥ c)                  🝖-end
-  where
-    instance _ = ab
-    instance _ = bc

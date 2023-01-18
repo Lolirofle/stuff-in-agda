@@ -7,7 +7,7 @@ open import Numeral.Integer.Construction
 open import Numeral.Integer.Function
 open import Numeral.Integer.Sign
 import      Numeral.Sign       as Sign
-import      Numeral.Sign.Oper0 as Sign
+import      Numeral.Charge.Oper as Sign
 
 -- Addition
 _+_ : ℤ → ℤ → ℤ

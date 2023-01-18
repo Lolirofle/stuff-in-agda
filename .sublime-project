@@ -1,0 +1,11 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"folder_exclude_patterns": ["old","gen"],
+			"file_exclude_patterns": [".*"],
+			"file_include_patterns": ["*.agda"]
+		}
+	]
+}

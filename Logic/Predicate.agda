@@ -41,7 +41,7 @@ private variable Pred P Q R : X → Type{ℓ}
 [∃]-map-proof : (∀{x} → P(x) → Q(x)) → ((∃ P) → (∃ Q))
 [∃]-map-proof (f) ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(x) ⦃ f(proof) ⦄
 
-[∃]-map : (f : X → X) → (∀{x} → P(x) → Q(f(x))) → ((∃ P) → (∃ Q))
+[∃]-map : (f : X → Y) → (∀{x} → P(x) → Q(f(x))) → ((∃ P) → (∃ Q))
 [∃]-map f p ([∃]-intro(x) ⦃ proof ⦄) = [∃]-intro(f(x)) ⦃ p(proof) ⦄
 
 [∃]-map₂ : (f : X → Y → Z) → (∀{x y} → P(x) → Q(y) → R(f x y)) → ((∃ P) → (∃ Q) → (∃ R))

@@ -5,7 +5,7 @@ open import Data
 open import Data.Either as Either using (_‖_)
 open import Data.Either.Equiv as Either
 open import Data.Either.Equiv.Id
-open import Data.Either.Proofs as Either
+open import Data.Either.Proofs.Map as Either
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Data.Tuple.Equiv as Tuple
 open import Data.Tuple.Equiv.Id

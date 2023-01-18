@@ -1,7 +1,7 @@
 module Structure.Setoid {ℓₑ ℓₒ} where
 
 import Lvl
-open import Functional.Dependent
+open import DependentFunctional
 open import Functional.Instance
 open import Logic.Propositional
 open import Logic.Predicate

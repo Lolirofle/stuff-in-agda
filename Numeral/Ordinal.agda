@@ -57,17 +57,19 @@ module _ {T : Type{ℓ}} where
   open import Functional
   open import Logic.Propositional
 
-  -- TODO: Not sure if this is correct
-  data _<_ : Ordinal(T) → Ordinal(T) → Type{ℓ} where
-    minimal : ∀{x} → (𝟎 < 𝐒(x))
-    step    : ∀{x y} → (x < y) → (𝐒(x) < 𝐒(y))
-    limitₗ  : ∀{f}{x} → (∀{i} → (f(i) < x)) → (lim f < 𝐒(x))
-    limitᵣ  : ∀{i}{f}{x} → (x < 𝐒(f(i))) → (x < lim f)
-
-  _>_ = swap(_<_)
+  data _<_ : Ordinal(T) → Ordinal(T) → Type{ℓ}
 
   _≤_ : Ordinal(T) → Ordinal(T) → Type
   x ≤ y = x < 𝐒(y)
+
+  data _<_ where
+    minimal : ∀{x} → (𝟎 < 𝐒(x))
+    step    : ∀{x y} → (x < y) → (𝐒(x) < 𝐒(y))
+    limitₗ  : ∀{f}{x} → (∀{i} → (f(i) < x)) → (lim f ≤ x)
+    limitᵣ  : ∀{i}{f}{x} → (x ≤ f(i)) → (x < lim f)
+
+  _>_ = swap(_<_)
+
 
   _≥_ = swap(_≤_)
 

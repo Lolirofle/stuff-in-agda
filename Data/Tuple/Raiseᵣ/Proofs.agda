@@ -9,7 +9,7 @@ open import Data.Tuple.Raiseᵣ
 open import Data.Tuple.Raiseᵣ.Functions
 open import Functional
 -- open import Functional using (id ; const ; apply)
--- open import Functional.Dependent using (_∘_)
+-- open import DependentFunctional using (_∘_)
 open import Numeral.Natural
 -- open import Numeral.Natural.Oper using (_+_ ; _⋅_)
 -- open import Numeral.Natural.Oper.Proofs.Rewrite

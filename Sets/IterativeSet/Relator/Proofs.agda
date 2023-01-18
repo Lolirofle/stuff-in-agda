@@ -25,7 +25,7 @@ open import Structure.Relator
 open import Syntax.Function
 open import Syntax.Transitivity
 open import Type
-open import Type.Dependent
+open import Type.Dependent.Sigma
 
 module _ where
   private variable {ℓ ℓ₁ ℓ₂} : Lvl.Level

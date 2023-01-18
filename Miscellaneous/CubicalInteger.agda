@@ -4,13 +4,16 @@ module Miscellaneous.CubicalInteger where
 
 import      Lvl
 open import Numeral.Natural as ℕ using (ℕ)
-open import Numeral.Sign as Sign using (−|+ ; −|0|+ ; ➖ ; ➕)
+open import Numeral.Charge as Charge using (Charge ; ➖ ; ➕)
+open import Numeral.Sign as Sign using (Sign ; ➖ ; ➕)
+import      Numeral.Sign.Oper as Sign
 open import Type.Cubical
+open import Type.Cubical.Path
 open import Type.Cubical.Path.Equality
 open import Type
 
-apply : ∀{ℓ}{T : Type{ℓ}}{x y : T} → Interval → (x ≡ y) → T
-apply i xy = xy i
+--apply : ∀{ℓ}{T : Type{ℓ}}{x y : T} → Interval → (x ≡ y) → T
+-- apply i xy = xy i
 
 infix 10010 −ₙ_ +ₙ_
 infix 10020 _+_ _−_
@@ -18,8 +21,8 @@ infix 10020 _+_ _−_
 -- The type of integers ℤ = {…,−2,−1,0,1,2,…}.
 -- Represented by using the exclusive union of ℕ and ℕ, but the zeroes are equal.
 data ℤ : Type{Lvl.𝟎} where
-  signed : (−|+) → ℕ → ℤ
-  𝟎-sign : (signed ➖ ℕ.𝟎 ≡ signed ➕ ℕ.𝟎)
+  signed : Sign → ℕ → ℤ
+  𝟎-sign : Path(signed ➖ ℕ.𝟎) (signed ➕ ℕ.𝟎)
 
 -- Intuitive constructor patterns
 -- −ₙ_ : ℕ → ℤ
@@ -30,34 +33,32 @@ pattern 𝟎  = +ₙ(ℕ.𝟎) -- Zero (0).
 pattern 𝟏  = +ₙ(ℕ.𝟏) -- One (1).
 pattern −𝟏 = −ₙ(ℕ.𝟏) -- Negative one (−1).
 
-open import Structure.Relator.Properties
-open import Type.Cubical.Path
-open import Type.Cubical.Path.Proofs
+-- open import Structure.Relator.Properties
+open import Type.Cubical.Path.Functions
 
--- module _ where
---   open import Type.Isomorphism
---   postulate univalence : ∀{ℓ}{A B : Type{ℓ}} → (A ≅ B) ≅ (A ≡ B)
-
-elim : ∀{ℓ} → (P : ℤ → Type{ℓ}) → (neg : (n : ℕ) → P(−ₙ n)) → (pos : (n : ℕ) → P(+ₙ n)) → PathP(pointOn(map P 𝟎-sign)) (neg ℕ.𝟎) (pos ℕ.𝟎) → ((n : ℤ) → P(n))
+elim : ∀{ℓ} → (P : ℤ → Type{ℓ}) → (neg : (n : ℕ) → P(−ₙ n)) → (pos : (n : ℕ) → P(+ₙ n)) → PathP(map P 𝟎-sign $ₚₐₜₕ_) (neg ℕ.𝟎) (pos ℕ.𝟎) → ((n : ℤ) → P(n))
 elim(P) neg _   eq (−ₙ n) = neg n
 elim(P) _   pos eq (+ₙ n) = pos n
 elim(P) _   _   eq (𝟎-sign i) = eq i
+
+rec : ∀{ℓ}{T : Type{ℓ}} → (neg : ℕ → T) → (pos : ℕ → T) → Path (neg ℕ.𝟎) (pos ℕ.𝟎) → ((n : ℤ) → T)
+rec = elim _
 
 -- Sign.
 -- The sign part of an integer where zero is interpreted as positive.
 -- Notes on the proof of the path:
 --   The 𝟎-sign case guarantees that the function respects the congruence property (in this case (−0 = +0) → (sign(−0) = sign(+0))).
 --   It is proven by providing the value on a path varying on the variable `i`. In this case, it is constant (both −0 and +0 maps to ➕).
-sign : ℤ → (−|+)
+sign : ℤ → Sign
 sign (signed _ ℕ.𝟎)      = ➕
 sign (signed s (ℕ.𝐒(_))) = s
 sign (𝟎-sign i) = ➕
 
 -- Zeroable sign.
-sign₀ : ℤ → (−|0|+)
-sign₀ (signed s ℕ.𝟎)      = Sign.𝟎
+sign₀ : ℤ → Charge
+sign₀ (signed s ℕ.𝟎)      = Charge.𝟎
 sign₀ (signed s (ℕ.𝐒(_))) = Sign.zeroable s
-sign₀ (𝟎-sign i) = Sign.𝟎
+sign₀ (𝟎-sign i) = Charge.𝟎
 
 -- Absolute value.
 -- The natural part of an integer.
@@ -65,36 +66,107 @@ absₙ : ℤ → ℕ
 absₙ(signed _ n) = n
 absₙ(𝟎-sign _) = ℕ.𝟎
 
+-- TODO: MereProposition(A) → MereProposition(B) → ((A ↔ B) ≡ (A ≡ B))
+-- TODO: Above should be used in the proof of elimProp. It should be possible to prove by using the univalence axiom and the fact that (_↔_) should be an isomorphism for mere propositions?
 
-
+open import Logic.Propositional
 open import Type.Properties.MereProposition
+open import Type.Cubical.Path.Proofs
 elimProp : ∀{ℓ} → (P : ℤ → Type{ℓ}) ⦃ prop : ∀{x} → MereProposition(P(x)) ⦄ → (neg : (n : ℕ) → P(−ₙ n)) → (pos : (n : ℕ) → P(+ₙ n)) → ((n : ℤ) → P(n))
-elimProp(P) neg _   (−ₙ n) = neg n
-elimProp(P) _   pos (+ₙ n) = pos n
-elimProp(P) neg pos (𝟎-sign i) = test i where
-  test2 : ∀{x y} → P(x) ≡ P(y)
-  test2 i = {!!}
-  test3 : PathP (\i → (x : ℕ) → P({!test2 i!})) neg pos
-  test3 i = {!!}
-  test : PathP(\i → P(𝟎-sign i)) (neg(ℕ.𝟎)) (pos(ℕ.𝟎))
-  test = {!!}
+elimProp P neg pos = elim(P) neg pos (interval-predicate₁-path{Y = P} 𝟎-sign)
+
+open import Data
+open import Structure.Type.Identity
+open import Structure.Relator.Properties
+open import Type.Properties.Homotopy
+
+open import Data.Boolean
+test : Sign → Sign → Bool
+test ➕ ➕ = 𝑇
+test ➕ ➖ = 𝐹
+test ➖ ➕ = 𝐹
+test ➖ ➖ = 𝑇
+-- if test x y then P xy else Empty
+
+open import Type.Identity
+open import Type.Identity.Proofs
+
+test10 : ∀{x y : Sign} → Id x y → Path x y
+test10 {x} {.x} intro = point
+
+test11 : ∀{x y : Sign} → Path x y → Id x y
+test11 {➕} {➕} p = intro
+test11 {➕} {➖} p = {!!}
+test11 {➖} {➕} p = {!!}
+test11 {➖} {➖} p = intro
+
+test12 : ∀{x y}{p : Path x y} → Path (test10(test11 p)) p
+test12 {➕} {➕}{p} i j = {!!}
+test12 {➕} {➖} = {!!}
+test12 {➖} {➕} = {!!}
+test12 {➖} {➖} = {!!}
+
+test13 : ∀{x y}{p : Id x y} → Path (test11(test10 p)) p
+test13 {➕} {p = intro} i = intro
+test13 {➖} {p = intro} i = intro
+
+open import Functional
+open import Structure.Type.Identity.Proofs
+
+instance
+  Sign-Id-kElim : ∀{ℓₚ} → IdentityKEliminator(Id{T = Sign}) {ℓₚ}
+  IdentityKEliminator.elim Sign-Id-kElim P p x@{➕} = idElimFixedᵣ(Id) (\{y} → Sign.elim{P = \y → Id x y → Type} (const Empty) P y) p
+  IdentityKEliminator.elim Sign-Id-kElim P p x@{➖} = idElimFixedᵣ(Id) (\{y} → Sign.elim{P = \y → Id x y → Type} P (const Empty) y) p
+
+instance
+  Sign-kElim : ∀{ℓₚ} → IdentityKEliminator(Path{P = Sign}) {ℓₚ}
+  IdentityKEliminator.elim Sign-kElim P p x@{➕} = idElimFixedᵣ(Path) (\{y} → Sign.elim{P = \y → Path x y → Type} (const Empty) P y) p
+  IdentityKEliminator.elim Sign-kElim P p x@{➖} = idElimFixedᵣ(Path) (\{y} → Sign.elim{P = \y → Path x y → Type} P (const Empty) y) p
+
+instance
+  Sign-uip : UniqueIdentityProofs(Sign)
+  Sign-uip = idKElim-to-uip(Sign)
+
+Sign-set : HomotopyLevel 2 Sign
+Sign-set = intro(\{x}{y} → uniqueness(Path x y))
+
+open import Logic.Propositional.Equiv
+open import Numeral.Natural.Induction
+open import Structure.Relator
+
+instance
+  ℕ-Id-kElim : ∀{ℓₚ} → IdentityKEliminator(Id{T = ℕ}) {ℓₚ}
+  IdentityKEliminator.elim ℕ-Id-kElim P p {ℕ.𝟎} intro = p
+  IdentityKEliminator.elim ℕ-Id-kElim P p {ℕ.𝐒 x} eq = {!idElimFixedᵣ(Id) {x = ℕ.𝐒 x} (\{y} xy → P{y} (substitute₂-₁ᵣ ⦃ Id-equiv ⦄ ⦃ Id-equiv ⦄ (Id) ⦃ Id-to-function₂ ⦄ (y) {ℕ.𝐒 x}{y} xy xy)) {!p!} {ℕ.𝐒 x} eq!}
+  -- idElimFixedᵣ(Id) {x = ℕ.𝐒 x} (\{y} xy → P{y} (substitute₂-₁ᵣ ⦃ Id-equiv ⦄ ⦃ Id-equiv ⦄ (Id) ⦃ Id-to-function₂ ⦄ (y) {ℕ.𝐒 x}{y} xy xy)) {!p!} {ℕ.𝐒 x} eq
+  -- idElimFixedᵣ(Id) (\{y} → ℕ-elim(\y → Id x y → Type) (const Empty) (\a b → {!P!}) y) {!!} {!!}
+
+ℕ-set : HomotopyLevel 2 ℕ
+HomotopyLevel.proof ℕ-set = {!!}
+
+ℤ-set : HomotopyLevel 2 ℤ
+HomotopyLevel.proof ℤ-set {x}{y} {p}{q} = {!x y!}
+
+-- elimSet : ∀{ℓ} → (P : ℤ → Type{ℓ}) ⦃ set : ∀{x} → HomotopyLevel 2 (P(x)) ⦄ → (neg : (n : ℕ) → P(−ₙ n)) → (pos : (n : ℕ) → P(+ₙ n)) → (P(−ₙ ℕ.𝟎) ↔ P(+ₙ ℕ.𝟎)) → ((n : ℤ) → P(n))
+-- elimSet P neg pos z = elim(P) neg pos {!!}
+
+{-
 
 open import Data.Either
 open import Functional using (_$_)
-open import Logic.Propositional
 import      Numeral.Sign.Oper as Sign
 import      Numeral.Natural.Oper as ℕ
 open import Relator.Equals using () renaming (_≡_ to Id ; [≡]-intro to Id-intro)
 open import Relator.Equals.Proofs.Equivalence using () renaming ([≡]-equiv to Id-equiv ; [≡]-symmetry to Id-symmetry ; [≡]-to-function to Id-to-function ; [≡]-function to Id-function)
 open import Syntax.Transitivity
 
-Sign-decidable-eq : ∀(s₁ s₂ : (−|+)) → ((Id s₁ s₂) ∨ ¬(Id s₁ s₂))
+Sign-decidable-eq : ∀(s₁ s₂ : Sign) → ((Id s₁ s₂) ∨ ¬(Id s₁ s₂))
 Sign-decidable-eq ➕ ➕ = [∨]-introₗ Id-intro
 Sign-decidable-eq ➕ ➖ = [∨]-introᵣ \()
 Sign-decidable-eq ➖ ➕ = [∨]-introᵣ \()
 Sign-decidable-eq ➖ ➖ = [∨]-introₗ Id-intro
 
-step : (−|+) → ℤ → ℤ
+step : Sign → ℤ → ℤ
 step s₁ (signed s₂ n) with Sign-decidable-eq s₁ s₂
 step _  (signed s n)         | Left  _ = signed s (ℕ.𝐒(n))
 step s₁ (signed s₂ ℕ.𝟎)      | Right _ = signed s₁ (ℕ.𝐒(ℕ.𝟎))
@@ -495,7 +567,7 @@ open import Functional
 import      Numeral.Natural.Oper.Comparisons as ℕ
 import      Numeral.Natural.Oper.Comparisons.Proofs as ℕ
 
-test : (−|+) → (−|+) → (ℕ → ℕ → Bool)
+test : Sign → Sign → (ℕ → ℕ → Bool)
 test ➕ ➕ = (ℕ._≤?_)
 test ➕ ➖ = ((_&&_) on₂ ((!) ∘ ℕ.positive?))
 test ➖ ➕ = (const ∘ const) 𝑇
@@ -535,4 +607,5 @@ instance
   Antisymmetry.proof [≤]-antisymmetry {signed x x₁} {𝟎-sign i} lt gt = ?
   Antisymmetry.proof [≤]-antisymmetry {𝟎-sign i} {signed x x₁} lt gt = ?
   Antisymmetry.proof [≤]-antisymmetry {𝟎-sign i} {𝟎-sign i₁} lt gt = ?
+-}
 -}

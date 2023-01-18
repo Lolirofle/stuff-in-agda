@@ -43,7 +43,23 @@ Divisor = swap(_∣_)
 -- `Multiple(n)(m)` means that `m` is a multiple of `n`.
 Multiple = _∣_
 
--- Elimination rule for (_∣_).
-divides-elim : ∀{ℓ}{P : ∀{y x} → (y ∣ x) → Type{ℓ}} → (∀{y} → P(Div𝟎{y})) → (∀{y x}{p : y ∣ x} → P(p) → P(Div𝐒 p)) → (∀{y x} → (p : y ∣ x) → P(p))
-divides-elim        z s Div𝟎     = z
-divides-elim{P = P} z s (Div𝐒 p) = s(divides-elim{P = P} z s p)
+module _ {ℓ}
+  {P : ∀{y x} → (y ∣ x) → Type{ℓ}}
+  (z : ∀{y} → P(Div𝟎{y}))
+  (s : ∀{y x}{p : y ∣ x} → P(p) → P(Div𝐒 p))
+  where
+
+  -- Elimination rule for (_∣_).
+  divides-elim : ∀{y x} → (div : y ∣ x) → P(div)
+  divides-elim Div𝟎     = z
+  divides-elim (Div𝐒 p) = s(divides-elim p)
+
+module _ {ℓ}{y}
+  (P : ∀{x} → (y ∣ x) → Type{ℓ})
+  (z : P(Div𝟎{y}))
+  (s : ∀{x} → (p : y ∣ x) → P(p) → P(Div𝐒 p))
+  where
+
+  divides-elim-alt : ∀{x} → (div : y ∣ x) → P(div)
+  divides-elim-alt Div𝟎     = z
+  divides-elim-alt (Div𝐒 p) = s p (divides-elim-alt p)

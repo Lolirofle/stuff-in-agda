@@ -1,7 +1,9 @@
-{-# OPTIONS --sized-types #-}
+{-# OPTIONS --guardedness #-}
 
 module Automaton.Deterministic.FormalLanguage where
 
+
+{-
 open import Automaton.Deterministic.Finite
 open import Automaton.Deterministic
 open import Data.Boolean
@@ -25,15 +27,15 @@ module Language where
   open import FormalLanguage.Equals
   open import Relator.Equals
   open import Relator.Equals.Proofs
-  import      Type.Dependent as Type
+  import      Type.Dependent.Sigma as Type
 
   -- The language accepted by a DFA.
   -- This is a linguistic interpretation of an automaton, that it is a grammar of the language.
   -- A language accepts the empty word when the start state is a final state.
   -- The language of a suffix is the transition function applied to the start state.
   𝔏 : ∀{s} → DFA{ℓₚ = ℓₚ}(Q)(Σ) → Language(Σ){s}
-  Language.accepts-ε   (𝔏(d))   = DFA.isFinal d (DFA.start d)
-  Language.suffix-lang (𝔏(d)) c = 𝔏(DFA.transitionedAutomaton d c)
+  Language.accepts-ε (𝔏(d))   = DFA.isFinal d (DFA.start d)
+  Language.suffix    (𝔏(d)) c = 𝔏(DFA.transitionedAutomaton d c)
 
   RegularLanguage : ∀{s}{ℓₚ ℓₑ₁} → Language(Σ) → Type
   RegularLanguage{Σ = Σ}{s = s}{ℓₚ = ℓₚ}{ℓₑ₁ = ℓₑ₁} L = ∃{Obj = Type.Σ(Type{ℓₑ₁})(Q ↦ DFA{ℓₚ = ℓₚ}(Q)(Σ))}(\(Type.intro _ auto) → (𝔏(auto) ≅[ s ]≅ L))
@@ -62,7 +64,7 @@ module Proofs where
     δ̂(q₀)(x ⊰ w) ∈ F                                   🝖[ _≡_ ]-[]
     δ̂(δ(q₀) x) w ∈ F                                   🝖[ _≡_ ]-[ {!Language-isWordAccepted (transitionedAutomaton auto x) {w}!} ]
     DFA.isWordAccepted(transitionedAutomaton auto x) w 🝖[ _≡_ ]-[ Language-isWordAccepted (transitionedAutomaton auto x) {w} ]
-    w ∈? Language.suffix-lang(𝔏(auto))(x)              🝖[ _≡_ ]-[] 
+    w ∈? Language.suffix(𝔏(auto))(x)              🝖[ _≡_ ]-[] 
     (x ⊰ w) ∈? 𝔏(auto)                                 🝖-end
     where
       open DFA(auto)
@@ -79,7 +81,7 @@ module Proofs where
 
     -- (c ⊰ w) ∈? (𝔏(auto))
     -- (c ⊰ w) ∈? (𝔏(Dfa δ q₀ F))
-    -- w ∈? (Language.suffix-lang(𝔏(Dfa δ q₀ F))(c))
+    -- w ∈? (Language.suffix(𝔏(Dfa δ q₀ F))(c))
     -- w ∈? (𝔏(Dfa δ (δ(q₀)(c)) F))
 {-
   module _ (auto : Deterministic(Q)(Σ)) where
@@ -114,9 +116,9 @@ module Proofs where
     -- testtt : ∀{auto} → Language.accepts-ε(𝔏{Q}{Σ}(∁ auto)) ≡ Language.accepts-ε(Oper.∁ 𝔏(auto))
     -- testtt {_} = [≡]-intro
 
-    -- testtt2 : ∀{auto}{c} → Language.suffix-lang(𝔏(∁ auto))(c) ≡ Oper.∁(Language.suffix-lang(𝔏(auto))(c))
-    -- testtt2 : ∀{auto}{c} → Language.suffix-lang(𝔏(∁ auto))(c) ≡ Language.suffix-lang(Oper.∁(𝔏(auto)))(c)
-    -- testtt2 : ∀{auto}{c} → Language.suffix-lang(Oper.∁(𝔏{Q}{Σ}(auto)))(c) ≡ Oper.∁(Language.suffix-lang(𝔏(auto))(c))
+    -- testtt2 : ∀{auto}{c} → Language.suffix(𝔏(∁ auto))(c) ≡ Oper.∁(Language.suffix(𝔏(auto))(c))
+    -- testtt2 : ∀{auto}{c} → Language.suffix(𝔏(∁ auto))(c) ≡ Language.suffix(Oper.∁(𝔏(auto)))(c)
+    -- testtt2 : ∀{auto}{c} → Language.suffix(Oper.∁(𝔏{Q}{Σ}(auto)))(c) ≡ Oper.∁(Language.suffix(𝔏(auto))(c))
     -- testtt2 {Dfa δ q₀ F}{_} = [≡]-intro
 
   module _ (auto : DFA(Q₁)(Σ)) (auto₂ : DFA(Q₂)(Σ)) where
@@ -139,4 +141,5 @@ module Proofs where
     -- TODO: Prove postulates
     postulate [⨯]-language : 𝔏(auto ⨯ auto₂) ≡ 𝔏(auto) ∩ 𝔏(auto₂)
     postulate [+]-language : 𝔏(auto + auto₂) ≡ 𝔏(auto) ∪ 𝔏(auto₂)
+-}
 -}

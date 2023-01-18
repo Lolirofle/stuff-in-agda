@@ -2,17 +2,18 @@ module Type.Identity.Proofs where
 
 import      Lvl
 open import Structure.Function
+open import Structure.Operator
 open import Structure.Relator.Properties
 open import Structure.Relator
 open import Structure.Relator.Equivalence
 open import Structure.Setoid
 open import Structure.Type.Identity
-open import Structure.Type.Identity.Proofs
+open import Structure.Type.Identity.Eliminator.Equality
 open import Type.Identity
 open import Type
 
 private variable ℓ ℓ₁ ℓ₂ ℓₑ ℓₑ₁ ℓₑ₂ ℓₗ ℓₚ ℓₘ : Lvl.Level
-private variable T A B : Type{ℓ}
+private variable T A B C : Type{ℓ}
 private variable P : T → Type{ℓ}
 private variable _▫_ : A → B → Type{ℓ}
 
@@ -22,24 +23,24 @@ module One{T : Type{ℓ}} where
     Reflexivity.proof Id-reflexivity = intro
 
   instance
-    Id-identityEliminator : IdentityEliminator{ℓₚ = ℓₚ}(Id{T = T})
+    Id-identityEliminator : IdentityEliminator(Id{T = T}) {ℓₚ}
     IdentityEliminator.elim Id-identityEliminator = elim
 
   instance
-    Id-identityEliminationOfIntro : IdentityEliminationOfIntro{ℓₘ = ℓₘ}(Id{T = T})(Id)
-    IdentityEliminationOfIntro.proof Id-identityEliminationOfIntro P p = intro
+    Id-identityEliminationOfIntro : ∀{P : ∀{x y : T} → Id x y → Type{ℓₚ}} → IdentityEliminationOfIntro Id P Id
+    IdentityEliminationOfIntro.proof Id-identityEliminationOfIntro p = intro
 
   instance
     Id-symmetry : Symmetry(Id{T = T})
-    Id-symmetry = identity-eliminator-to-symmetry
+    Id-symmetry = identityEliminator-to-symmetry
 
   instance
     Id-transitivity : Transitivity(Id{T = T})
-    Id-transitivity = identity-eliminator-to-transitivity
+    Id-transitivity = identityEliminator-to-transitivity
 
   instance
     Id-equivalence : Equivalence(Id{T = T})
-    Id-equivalence = intro
+    Id-equivalence = identityEliminator-to-equivalence
 
   Id-equiv : Equiv(T)
   Id-equiv = intro Id ⦃ Id-equivalence ⦄
@@ -47,8 +48,8 @@ module One{T : Type{ℓ}} where
   -- Id is a subrelation to every reflexive relation.
   -- One interpretation of this is that identity is the "smallest" reflexive relation in the sense that the size is the cardinality of the set representation of the relation (as a set of tuples).
   instance
-    Id-reflexive-relator-sub : ∀{_▫_ : T → T → Type{ℓₗ}} → ⦃ Reflexivity(_▫_) ⦄ → (Id ⊆₂ (_▫_))
-    _⊆₂_.proof Id-reflexive-relator-sub intro = reflexivity(_)
+    Id-minimalReflexiveRelation : MinimalReflexiveRelation{ℓₚ = ℓₚ}{T = T}(Id)
+    Id-minimalReflexiveRelation = identityEliminator-to-reflexive-subrelation
 open One public
 
 instance
@@ -56,16 +57,13 @@ instance
   Id-identityType = intro
 
 Id-to-function : ∀ ⦃ equiv : Equiv{ℓₑ}(B) ⦄ {f : A → B} → Function ⦃ Id-equiv ⦄ ⦃ equiv ⦄ f
-Id-to-function = minimal-reflection-to-function ⦃ equiv-A = Id-equiv ⦄
+Id-to-function = identityEliminator-to-function
 
-{-
-open import Logic.Propositional
-open import Logic.Propositional.Equiv
-open import Relator.Equals.Proofs
-open import Structure.Setoid
+Id-to-function₂ : ∀ ⦃ equiv : Equiv{ℓₑ}(C) ⦄ {f : A → B → C} → BinaryOperator ⦃ Id-equiv ⦄ ⦃ Id-equiv ⦄ ⦃ equiv ⦄ f
+Id-to-function₂ = identityEliminator-to-binaryOperator
 
-te : ⦃ equiv-A : Equiv{ℓₑ}(A)⦄ → ∀{f : A → Type{ℓ}} → Function ⦃ equiv-A ⦄ ⦃ [↔]-equiv ⦄ (f)
+Id-function : ∀{f : A → B} → Function ⦃ Id-equiv ⦄ ⦃ Id-equiv ⦄ f
+Id-function = Id-to-function ⦃ Id-equiv ⦄
 
-test : ⦃ equiv-A : Equiv{ℓₑ}(A)⦄ → ∀{P : A → Type{ℓ}} → UnaryRelator ⦃ equiv-A ⦄ (P)
-UnaryRelator.substitution test eq p = [↔]-to-[→] (Function.congruence te eq) p
--}
+Id-function₂ : ∀{f : A → B → C} → BinaryOperator ⦃ Id-equiv ⦄ ⦃ Id-equiv ⦄ ⦃ Id-equiv ⦄ f
+Id-function₂ = Id-to-function₂ ⦃ Id-equiv ⦄

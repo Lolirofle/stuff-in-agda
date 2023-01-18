@@ -69,3 +69,11 @@ open import Relator.Equals
 [<?][≤?]-subtransitivityᵣ {𝟎}  {𝐒 _}{𝐒 _} xy yz = [⊤]-intro
 [<?][≤?]-subtransitivityᵣ {𝐒 x}{𝟎}  {𝐒 z} xy yz = [<?][≤?]-subtransitivityᵣ {x}{𝟎}{z} xy [⊤]-intro
 [<?][≤?]-subtransitivityᵣ {𝐒 x}{𝐒 y}{𝐒 z} xy yz = [<?][≤?]-subtransitivityᵣ {x}{y}{z} xy yz
+
+{-
+[≤?][⋚?]-def : ∀{x y} → ((x ≤? y) ≡ (elim₃ 𝑇 𝑇 𝐹 (x ⋚? y)))
+[≤?][⋚?]-def {𝟎}  {𝟎}   = [≡]-intro
+[≤?][⋚?]-def {𝟎}  {𝐒 y} = [≡]-intro
+[≤?][⋚?]-def {𝐒 x}{𝟎}   = [≡]-intro
+[≤?][⋚?]-def {𝐒 x}{𝐒 y} = [≤?][⋚?]-def {x}{y}
+-}

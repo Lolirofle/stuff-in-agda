@@ -8,7 +8,7 @@ module Structure.Category.Morphism.Transport
   (cat : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ})
   where
 
-import      Functional.Dependent as Fn
+import      DependentFunctional as Fn
 import      Function.Equals
 open        Function.Equals.Dependent
 open import Logic
@@ -22,7 +22,7 @@ open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Relator.Properties
 
-open CategoryObject(cat)
+open CategoryObject(cat) hiding (_∘_ ; id)
 open Category(category)
 open Category.ArrowNotation(category)
 open Morphism.OperModule ⦃ morphism-equiv ⦄ (\{x} → _∘_ {x})

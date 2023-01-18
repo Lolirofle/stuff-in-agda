@@ -41,7 +41,7 @@ open import Type.Properties.Decidable.Proofs
 prime? : ℕ → Bool
 prime? 0          = 𝐹
 prime? 1          = 𝐹
-prime? n@(𝐒(𝐒 _)) = decide(2)(_≡_) ⦃ [∃]-intro _ ⦃ List.[≡]-decider ⦃ dec = ℕ-equality-decider ⦄ ⦄ ⦄ (findBoundedAll 2 n (_∣₀? n)) ∅
+prime? n@(𝐒(𝐒 _)) = decide(2)(_≡_) ⦃ [∃]-intro _ ⦃ List.[≡]-decider ⦃ dec = [≡?]-decider ⦄ ⦄ ⦄ (findBoundedAll 2 n (_∣₀? n)) ∅
 
 composite? : ℕ → Bool
 composite? 0          = 𝐹
@@ -56,12 +56,12 @@ instance
   ... | 𝑇 | intro eq = true $
     eq ⇒
     (prime? n ≡ 𝑇)                                     ⇒-[ [↔]-to-[←] IsTrue.is-𝑇 ]
-    IsTrue(prime? n)                                   ⇒-[ [↔]-to-[←] (decider-true ⦃ List.[≡]-decider ⦃ dec = ℕ-equality-decider ⦄ ⦄) ]
+    IsTrue(prime? n)                                   ⇒-[ [↔]-to-[←] (decider-true ⦃ List.[≡]-decider ⦃ dec = [≡?]-decider ⦄ ⦄) ]
     findBoundedAll 2 n (_∣₀? n) ≡ ∅                    ⇒-[ (\empty {_} → [↔]-to-[←] (findBoundedAll-emptyness{f = _∣₀? n}) empty) ]
     (∀{d} → (2 ≤ d) → (d < n) → IsFalse(d ∣₀? n))      ⇒-[ (\p {i} → [↔]-to-[←] (decider-false ⦃ [∣]-decider ⦄) ∘₂ p) ]
     (∀{d} → (2 ≤ d) → (d < n) → ¬(d ∣ n))              ⇒-[]
     (∀{d} → (2 ≤ d) → (d < 𝐒(𝐒(x))) → ¬(d ∣ 𝐒(𝐒(x))))  ⇒-[ (\p {d} div 2d dx → p{d} 2d (succ dx) div) ]
-    (∀{d} → (d ∣ 𝐒(𝐒(x))) → (2 ≤ d) → ¬(d ≤ 𝐒(x)))     ⇒-[ (\p {d} div → [¬→]-disjunctive-formᵣ ⦃ decider-to-classical ⦃ ℕ-equality-decider ⦄ ⦄ \ nd0 → antisymmetry(_≤_)(_≡_) ([≤]-without-[𝐒] (divides-upper-limit div)) (sub₂(_≯_)(_≤_) (p{𝐒 d} div (succ ([≢]-to-[<]-of-0ᵣ nd0))))) ]
+    (∀{d} → (d ∣ 𝐒(𝐒(x))) → (2 ≤ d) → ¬(d ≤ 𝐒(x)))     ⇒-[ (\p {d} div → [¬→]-disjunctive-formᵣ ⦃ decider-to-classical ⦃ [≡?]-decider ⦄ ⦄ \ nd0 → antisymmetry(_≤_)(_≡_) ([≤]-without-[𝐒] (divides-upper-limit div)) (sub₂(_≯_)(_≤_) (p{𝐒 d} div (succ ([≢]-to-[<]-of-0ᵣ nd0))))) ]
     (∀{d} → (𝐒(d) ∣ 𝐒(𝐒(x))) → ((d ≡ 0) ∨ (d ≡ 𝐒(x)))) ⇒-[ intro ]
     Prime n                                            ⇒-end
   ... | 𝐹 | intro eq = false \p →
@@ -71,7 +71,7 @@ instance
       (∀{d} → (d ∣ n) → ((d ≡ 1) ∨ (d ≡ n)))        ⇒-[ (\p {d} 2d dn div → [∨]-elim (\{[≡]-intro → [≤][0]ᵣ-negation ([≤]-without-[𝐒] 2d)}) (\{[≡]-intro → irreflexivity(_<_) dn}) (p div)) ]
       (∀{d} → (2 ≤ d) → (d < n) → ¬(d ∣ n))         ⇒-[ ((\p {i} → [↔]-to-[→] (decider-false ⦃ [∣]-decider ⦄) ∘₂ p)) ]
       (∀{d} → (2 ≤ d) → (d < n) → IsFalse(d ∣₀? n)) ⇒-[ [↔]-to-[→] findBoundedAll-emptyness ]
-      findBoundedAll 2 n (_∣₀? n) ≡ ∅               ⇒-[ [↔]-to-[→] (decider-true ⦃ List.[≡]-decider ⦃ dec = ℕ-equality-decider ⦄ ⦄) ]
+      findBoundedAll 2 n (_∣₀? n) ≡ ∅               ⇒-[ [↔]-to-[→] (decider-true ⦃ List.[≡]-decider ⦃ dec = [≡?]-decider ⦄ ⦄) ]
       IsTrue(prime? n)                              ⇒-end
     )
     • (
@@ -110,7 +110,7 @@ abstract
   prime-or-composite : ∀{n} → ⦃ _ : IsTrue(n >? 1) ⦄ → Prime(n) ∨ Composite(n)
   prime-or-composite{𝐒(𝐒 n)} = [¬→]-disjunctive-formᵣ ⦃ decider-to-classical ⦃ Prime-decider ⦄ ⦄ $
     ¬ Prime(𝐒(𝐒(n)))                                                                ⇒-[ [↔]-to-[→] (decider-false ⦃ Prime-decider ⦄) ]
-    IsFalse(prime? (𝐒(𝐒(n))))                                                       ⇒-[ [↔]-to-[←] (decider-false ⦃ List.[≡]-decider ⦃ dec = ℕ-equality-decider ⦄ ⦄) ]
+    IsFalse(prime? (𝐒(𝐒(n))))                                                       ⇒-[ [↔]-to-[←] (decider-false ⦃ List.[≡]-decider ⦃ dec = [≡?]-decider ⦄ ⦄) ]
     findBoundedAll 2 (𝐒(𝐒(n))) (_∣₀? 𝐒(𝐒(n))) ≢ ∅                                   ⇒-[ non-empty-inclusion-existence ]
     ∃(_∈ findBoundedAll 2 (𝐒(𝐒(n))) (_∣₀? 𝐒(𝐒(n))))                                 ⇒-[ [∃]-map-proof ([↔]-to-[→] (findBoundedAll-membership {f = _∣₀? 𝐒(𝐒(n))})) ]
     ∃(d ↦ (2 ≤ d) ∧ (d < 𝐒(𝐒(n))) ∧ IsTrue(d ∣₀? 𝐒(𝐒(n))))                          ⇒-[ [∃]-map-proof ([∧]-map id ([↔]-to-[←] (decider-true ⦃ [∣]-decider ⦄))) ]

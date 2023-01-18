@@ -7,7 +7,7 @@ import      Lvl
 open import Type
 import      Type.Cubical             as Cubical
 import      Type.Cubical.Path        as Cubical
-import      Type.Cubical.Path.Proofs as Cubical
+import      Type.Cubical.Path.Functions as Cubical
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 private variable A B P : Type{ℓ}

@@ -30,31 +30,13 @@ open import Syntax.Transitivity
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
 
-{-
-⌊/⌋[⋅]-compatibility : ∀{x y z} ⦃ pos-y : Positive(y) ⦄ ⦃ pos-z : Positive(z) ⦄ → (y ⋅ z ∣ x) → ((x ⌊/⌋ y) ⌊/⌋ z ≡ (x ⌊/⌋ (y ⋅ z)) ⦃ [⋅]-positiveᵣ pos-y pos-z ⦄)
-⌊/⌋[⋅]-compatibility {x}{y}{z} ⦃ pos-y ⦄ ⦃ pos-z ⦄ div = [⋅]-cancellationᵣ {x = y ⋅ z} $
-  ((x ⌊/⌋ y) ⌊/⌋ z) ⋅ (y ⋅ z) 🝖[ _≡_ ]-[ congruence₂-₂(_⋅_)((x ⌊/⌋ y) ⌊/⌋ z) (commutativity(_⋅_) {y}{z}) ]
-  ((x ⌊/⌋ y) ⌊/⌋ z) ⋅ (z ⋅ y) 🝖[ _≡_ ]-[ associativity(_⋅_) {(x ⌊/⌋ y) ⌊/⌋ z}{z}{y} ]-sym
-  (((x ⌊/⌋ y) ⌊/⌋ z) ⋅ z) ⋅ y 🝖[ _≡_ ]-[ congruence₂-₁(_⋅_)(y) ([⋅][⌊/⌋]-inverseOperatorᵣ {x ⌊/⌋ y}{z} ([↔]-to-[←] (divides-div {x}{y}{z} div-yx) div)) ]
-  (x ⌊/⌋ y) ⋅ y               🝖[ _≡_ ]-[ [⋅][⌊/⌋]-inverseOperatorᵣ {x}{y} div-yx ]
-  x                           🝖[ _≡_ ]-[ [⋅][⌊/⌋]-inverseOperatorᵣ {x}{y ⋅ z} div ]-sym
-  (x ⌊/⌋ (y ⋅ z)) ⋅ (y ⋅ z)   🝖-end
-  where
-    instance
-      pos-yz : Positive(y ⋅ z)
-      pos-yz = [⋅]-positiveᵣ pos-y pos-z
-
-    div-yx : (y ∣ x)
-    div-yx = [∧]-elimₗ (divides-of-[⋅]ₗ ([∧]-to-[↔] ([∧]-intro pos-y pos-z)) div)
--}
-
 -- TODO: Use ((a mod c) + (b mod c) < c) as the hypothesis for a generalized form of this. Not sure how useful it would be though
 [⌊/⌋][+]-distributivityᵣ : ∀{a b c} ⦃ pos-c : Positive(c) ⦄ → ((c ∣ a) ∨ (c ∣ b)) → ((a + b) ⌊/⌋ c ≡ (a ⌊/⌋ c) + (b ⌊/⌋ c))
 [⌊/⌋][+]-distributivityᵣ {a}{b}{c@(𝐒 C)} ([∨]-introₗ ca) = [⋅]-cancellationᵣ{c} $
-  ((a + b) ⌊/⌋ c) ⋅ c               🝖[ _≡_ ]-[ [⌊/⌋][⋅]-semiInverseOperatorᵣ {a + b}{C} ]
+  ((a + b) ⌊/⌋ c) ⋅ c               🝖[ _≡_ ]-[ [⌊/⌋][⋅]-semiInverseOperatorᵣ {a + b}{c} ]
   (a + b) −₀ ((a + b) mod c)        🝖[ _≡_ ]-[ congruence₂-₂(_−₀_)(a + b) (mod-of-modulus-sum-divisibleₗ {a}{b} ca) ]
   (a + b) −₀ (b mod c)              🝖[ _≡_ ]-[ [+][−₀]-almost-associativity {a}{b}{b mod c} (mod-maxₗ {b}{c}) ]
-  a + (b −₀ (b mod c))              🝖[ _≡_ ]-[ congruence₂(_+_) ([⋅][⌊/⌋]-inverseOperatorᵣ ca) ([⌊/⌋][⋅]-semiInverseOperatorᵣ {b}{C}) ]-sym
+  a + (b −₀ (b mod c))              🝖[ _≡_ ]-[ congruence₂(_+_) ([⋅][⌊/⌋]-inverseOperatorᵣ ca) ([⌊/⌋][⋅]-semiInverseOperatorᵣ {b}{c}) ]-sym
   ((a ⌊/⌋ c) ⋅ c) + ((b ⌊/⌋ c) ⋅ c) 🝖[ _≡_ ]-[ distributivityᵣ(_⋅_)(_+_) {a ⌊/⌋ c}{b ⌊/⌋ c}{c} ]-sym
   ((a ⌊/⌋ c) + (b ⌊/⌋ c)) ⋅ c       🝖-end
 
@@ -88,17 +70,12 @@ open import Relator.Equals.Proofs.Equiv
 [⌊/⌋₀][⋅]ᵣ-compatibility {a}{b}{𝟎}   = const [≡]-intro
 [⌊/⌋₀][⋅]ᵣ-compatibility {a}{b}{𝐒 c} = [⌊/⌋][⋅]ᵣ-compatibility {a}{b}{𝐒 c}
 
-divides-[⌊/⌋] : ∀{a b c} ⦃ pos : Positive(c) ⦄ → (c ∣ a) → (a ∣ b) → ((a ⌊/⌋ c) ∣ (b ⌊/⌋ c))
-divides-[⌊/⌋] {a}{b}{c} ca ab =
-  let [∃]-intro n ⦃ eq ⦄ = [↔]-to-[←] divides-[⋅]-existence ab
-  in [↔]-to-[→] divides-[⋅]-existence ([∃]-intro n ⦃ symmetry(_≡_) ([⌊/⌋][⋅]ₗ-compatibility {a}{n}{c} ca) 🝖 congruence₁(_⌊/⌋ c) eq ⦄)
-
 open import Functional
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Proofs
 open import Numeral.Natural.Oper.FlooredDivision.Proofs
 
-⌊/⌋[⋅]-compatibility : ∀{x y z} ⦃ pos-y : Positive(y) ⦄ ⦃ pos-z : Positive(z) ⦄ → ((x ⌊/⌋₀ y) ⌊/⌋₀ z ≡ x ⌊/⌋₀ (y ⋅ z))
+⌊/⌋[⋅]-compatibility : ∀{x y z} ⦃ pos-y : Positive(y) ⦄ ⦃ pos-z : Positive(z) ⦄ → ((x ⌊/⌋ y) ⌊/⌋ z ≡ (x ⌊/⌋ (y ⋅ z)) ⦃ [⋅]-positiveᵣ pos-y pos-z ⦄)
 ⌊/⌋[⋅]-compatibility {x}{y@(𝐒 Y)}{z@(𝐒 Z)} = [⌊/⌋]-elim{P = \{x} div → ((x ⌊/⌋₀ y) ⌊/⌋₀ z ≡ div)} {y ⋅ z}
   (\{x} lt → [⌊/⌋]-zero {x ⌊/⌋ y}{z} $
     x ⌊/⌋ y       🝖[ _<_ ]-[ [<][⌊/⌋]ₗ-preserving (divides-with-[⋅] {y}{y}{z} ([∨]-introₗ (reflexivity(_∣_)))) lt ]-super

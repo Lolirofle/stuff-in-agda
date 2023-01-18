@@ -9,8 +9,8 @@ open import Data.List.Relation.Quantification
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
 open import Type
-open import Type.Dependent
-import      Type.Dependent.FunctionsΣ as Σ
+open import Type.Dependent.Sigma
+import      Type.Dependent.Sigma.Functions as Σ
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 private variable T A A₁ A₂ B B₁ B₂ Result : Type{ℓ}

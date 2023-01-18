@@ -16,10 +16,12 @@ open import Logic
 open import Logic.Classical
 open import Logic.Predicate
 open import Logic.Propositional
+open import Logic.Propositional.Theorems
 open import Numeral.Natural
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
-open import Type.Properties.Decidable
+open import Type.Properties.Decidable as Decider
+open import Type.Properties.Decidable.Functions as Decider
 open import Type.Properties.Empty using (IsEmpty ; intro)
 open import Type.Properties.Inhabited
 open import Type.Properties.Proofs
@@ -67,6 +69,8 @@ module _ where
   decider-false ⦃ dec = true  p ⦄  = [↔]-intro empty (empty ∘ apply p)
   decider-false ⦃ dec = false np ⦄ = [↔]-intro (const(empty ∘ np)) (const <>)
 
+  -- TODO: Move everything below to their respective modules (_.Decidable) (for example tuple-decider to Data.Tuple.Decidable)
+
   isempty-decider : ⦃ empty : IsEmpty{ℓ}(P) ⦄ → Decider₀(P)(𝐹)
   isempty-decider ⦃ intro p ⦄ = false (empty ∘ p)
 
@@ -91,7 +95,7 @@ module _ where
     either-decider ⦃ true  p ⦄  ⦃ true  q ⦄  = true (Either.Left p)
     either-decider ⦃ true  p ⦄  ⦃ false nq ⦄ = true (Either.Left p)
     either-decider ⦃ false np ⦄ ⦃ true  q ⦄  = true (Either.Right q)
-    either-decider ⦃ false np ⦄ ⦃ false nq ⦄ = false (Either.elim np nq)
+    either-decider ⦃ false np ⦄ ⦃ false nq ⦄ = false (Either.elim _ np nq)
 
   instance
     function-decider : ⦃ dec-P : Decider₀(P)(b₁) ⦄ → ⦃ dec-Q : Decider₀(Q)(b₂) ⦄ → Decider₀(P → Q)((! b₁) || b₂)
@@ -122,13 +126,8 @@ module _ where
   on₂-decider : Decider(2)(_▫_)(_▫?_) → Decider(2)((_▫_) on₂ f)((_▫?_) on₂ f)
   on₂-decider dec = dec
 
-  {- TODO: Remove
-  on₂-decider-different : Decider(2)(_▫₁_)(_▫?_) → Decider(2)(_▫₂_)((_▫?_) on₂ f)
-  on₂-decider-different {_▫?_ = _▫?_}{_▫₂_ = _▫₂_}{f = f} dec {x}{y} with f(x) ▫? f(y) | dec{f(x)}{f(y)}
-  ... | 𝑇 | true  p  = true {!!}
-  ... | 𝐹 | false np = false (np ∘ {!!})
-  -- Decidable.elim(\_ → Decider₀(x ▫₂ y)(((_▫?_) on₂ f) x y)) {!!} {!!} dec 
-  -}
+  on₂-bool-decider : (∀{x y} → (f(x) ▫₁ f(y)) ↔ (x ▫₂ y)) → Decider(2)(_▫₁_)(_▫?_) → Decider(2)(_▫₂_)((_▫?_) on₂ f)
+  on₂-bool-decider {f = f} func dec {x}{y} = Decider.mapProp ([↔]-to-[→] func) (contrapositiveᵣ([↔]-to-[←] func)) (on₂-decider{f = f} (dec{f(x)}{f(y)}) {x}{y})
 
 {- TODO: Generalized decider-relator. Are they necessary?
 

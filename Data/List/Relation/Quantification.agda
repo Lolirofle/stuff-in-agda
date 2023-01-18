@@ -13,7 +13,7 @@ private variable P : T → Stmt{ℓ}
 
 -- TODO: How about this as an alternative definition?
 -- module _ (P : T → Type{ℓ}) where
---   open import Type.Dependent
+--   open import Type.Dependent.Sigma
 --   open Data.IndexedList(Σ T P){List(T)} using (IndexedList ; intro)
 --
 --   AllElements : List(T) → Stmt{Lvl.of(T) Lvl.⊔ ℓ}
@@ -36,39 +36,3 @@ data AllElements₂ (P : A → B → Stmt{ℓ}) : List(A) → List(B) → Stmt{L
 
 ∃ₗᵢₛₜ : List(T) → (T → Stmt{ℓ}) → Stmt
 ∃ₗᵢₛₜ(l) P = ExistsElement P l
-
-module _ {P : T → Type{ℓ}} where
-  open import Logic.Propositional
-  open import Structure.Relator.Equivalence
-  import      Structure.Relator.Names as Names
-  open import Structure.Relator.Properties
-  open import Structure.Setoid
-
-  data ExistsElementEquivalence : ExistsElement(P)(l) → ExistsElement(P)(l) → Stmt{Lvl.of(T) Lvl.⊔ ℓ} where
-    use  : ExistsElementEquivalence{l = x ⊰ l}(• px)(• py)
-    skip : ExistsElementEquivalence(px)(py) → ExistsElementEquivalence{l = x ⊰ l}(⊰ px)(⊰ py)
-
-  instance
-    ExistsElementEquivalence-equiv : Equiv(ExistsElement(P)(l))
-    Equiv._≡_ ExistsElementEquivalence-equiv = ExistsElementEquivalence
-    Equiv.equivalence ExistsElementEquivalence-equiv = intro ⦃ intro refl ⦄ ⦃ intro sym ⦄ ⦃ intro trans ⦄ where
-      refl : Names.Reflexivity(ExistsElementEquivalence{l = l})
-      refl{x = • _} = use
-      refl{x = ⊰ p} = skip(refl{x = p})
-
-      sym : Names.Symmetry(ExistsElementEquivalence{l = l})
-      sym {x = • px} {y = • py} use      = use
-      sym {x = ⊰ px} {y = ⊰ py} (skip p) = skip(sym{x = px}{y = py} p)
-
-      trans : Names.Transitivity(ExistsElementEquivalence{l = l})
-      trans {x = • px} {y = • py} {z = • pz} use      use      = use
-      trans {x = ⊰ px} {y = ⊰ py} {z = ⊰ pz} (skip p) (skip q) = skip(trans {x = px} {y = py} {z = pz} p q)
-
-module _ where
-  open import Type.Properties.Singleton
-
-  ExistsUniqueElement : (T → Stmt{ℓ}) → List(T) → Stmt
-  ExistsUniqueElement P l = IsUnit(ExistsElement(P)(l)) ⦃ ExistsElementEquivalence-equiv ⦄
-
-  ∃!ₗᵢₛₜ : List(T) → (T → Stmt{ℓ}) → Stmt
-  ∃!ₗᵢₛₜ(l) P = ExistsUniqueElement P l

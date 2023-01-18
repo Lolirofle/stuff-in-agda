@@ -6,7 +6,7 @@ open import Data.Option as Option using (Option)
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Data.Tuple.Raiseᵣ
 open import Functional as Fn using (id ; const ; apply ; swap ; _∘₂_)
-open import Functional.Dependent using (_∘_)
+open import DependentFunctional using (_∘_)
 open import Numeral.Natural
 open import Numeral.Natural.Oper using (_+_ ; _⋅_)
 open import Numeral.Natural.Oper.Proofs.Rewrite

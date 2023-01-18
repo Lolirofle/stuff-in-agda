@@ -1,6 +1,6 @@
 module Structure.Operator.Names where
 
-open import Functional.Dependent
+open import DependentFunctional
 open import Function.Names
 import      Lvl
 open import Logic

@@ -1,9 +1,10 @@
 open import Type
 
--- The relation (_⟶_) should be interpreted as "a term reduces/rewritten to another term".
+-- The relation (_⟶_) should be interpreted as "a term reduces/is rewritten to another term".
 -- Also called: Abstract reduction system, abstract rewriting system, rewriting system.
 module ReductionSystem {ℓ₁ ℓ₂} {Term : Type{ℓ₁}} (_⟶_ : Term → Term → Type{ℓ₂}) where
 
+open import Data.Either using (Left ; Right)
 open import Functional
 open import Graph.Properties
 open import Graph.Walk
@@ -73,14 +74,14 @@ CommonReduct c a b = (Walk(_⟶_) a c) ∧ (Walk(_⟶_) b c)
 
 -- Both a and b reduce to the same term in zero or more steps.
 -- In terms of paths, this means that paths starting from the two points are able to eventually meet.
--- Also called: Joinable, _⟶*_*⟵_ _↓_.
+-- Also called: Joinable, _⟶*_*⟵_, _⟶*⟵_, _↓_.
 Joinable : Term → Term → Stmt
 Joinable a b = ∃(c ↦ CommonReduct c a b)
 
 module Names where
   import Structure.Relator.Names as Names
 
-  EverywhereCommonReduct = Names.Subrelation (Walk(_⟶_)) Joinable
+  EverywhereCommonReduct = Names.Sub₂ (Walk(_⟶_)) Joinable
 
   module _ (a : Term) where
     Confluent         = ∀{b c} → (Walk(_⟶_) a b) → (Walk(_⟶_) a c) → Joinable b c
@@ -163,8 +164,7 @@ instance
 instance
   -- When one reduces to the same term as the other, the other also reduces to the same term as the first one.
   Walk-Joinable-subrelation : Walk(_⟶_) ⊆₂ Joinable
-  ∃.witness (_⊆₂_.proof Walk-Joinable-subrelation {y = y} ab) = y
-  ∃.proof   (_⊆₂_.proof Walk-Joinable-subrelation ab) = [∧]-intro ab (reflexivity(Walk(_⟶_)))
+  _⊆₂_.proof Walk-Joinable-subrelation {x}{y} ab = [∃]-intro y ⦃ [∧]-intro ab (reflexivity(Walk(_⟶_))) ⦄
 
 module _ ⦃ confl : Confluence ⦄ where
   import      Structure.Relator.Names as Names
@@ -269,3 +269,33 @@ LocallyConfluent.proof (diamond-property-locally-confluent {x}) xb xc = [∃]-ma
 -- Confluence → (Walk(_⟶_) x y) → Unique(NormalForm)
 -- Confluence → ∀{a} → Unique(a normalizes-to_)
 
+module DiamondPropertyProofs
+  (diamondProperty : ∀ₗ(Names.DiamondProperty))
+  (let _⟶*_ = Walk(_⟶_))
+  (let _⟷_ = SymmetricClosure(_⟶_))
+  (let _⟷*_ = TransitiveClosure(_⟷_))
+  where
+
+  strip-lemma : ∀{x y₁ y₂} → (x ⟶ y₁) → (x ⟶* y₂) → ∃(\z → (y₁ ⟶* z) ∧ (y₂ ⟶ z))
+  strip-lemma {x = x} {y} xy at = [∃]-intro y ⦃ [∧]-intro at xy ⦄
+  strip-lemma {x = x} {z₁} {z₂} xz₁ (prepend {b = y} xy yz₂) =
+    let [∃]-intro w ⦃ [∧]-intro yw z₁w ⦄ = diamondProperty xy xz₁
+        [∃]-intro v ⦃ [∧]-intro wv z₂v ⦄ = strip-lemma yw yz₂
+    in [∃]-intro v ⦃ [∧]-intro (prepend z₁w wv) z₂v ⦄
+
+  confluence : Names.Confluence
+  confluence {x = a} {.a} {c} at ac = [∃]-intro c ⦃ [∧]-intro ac at ⦄
+  confluence {x = a} {c₁} {c₂} (prepend {b = b₁} ab₁ b₁c₁) ac₂ =
+    let [∃]-intro f ⦃ [∧]-intro b₁f c₂f ⦄ = strip-lemma ab₁ ac₂
+        [∃]-intro g ⦃ [∧]-intro c₁g fg ⦄ = confluence b₁c₁ b₁f
+    in [∃]-intro g ⦃ [∧]-intro c₁g (prepend c₂f fg) ⦄
+
+  -- Also called: Church-Rosser property.
+  conversion-common-reduction : ∀{x₁ x₂} → (x₁ ⟷* x₂) → ∃(\y → (x₁ ⟶* y) ∧ (x₂ ⟶* y))
+  conversion-common-reduction {x₁}{x₂} (super(Left  x21)) = [∃]-intro x₁ ⦃ [∧]-intro at (prepend x21 at) ⦄
+  conversion-common-reduction {x₁}{x₂} (super(Right x12)) = [∃]-intro x₂ ⦃ [∧]-intro (prepend x12 at) at ⦄
+  conversion-common-reduction {x}{z}   (trans{y = y} xy yz) =
+    let [∃]-intro w₁ ⦃ [∧]-intro xw₁ yw₁ ⦄ = conversion-common-reduction xy
+        [∃]-intro w₂ ⦃ [∧]-intro yw₂ zw₂ ⦄ = conversion-common-reduction yz
+        [∃]-intro v ⦃ [∧]-intro w₁v w₂v ⦄ = confluence yw₁ yw₂
+    in [∃]-intro v ⦃ [∧]-intro (xw₁ 🝖 w₁v) (zw₂ 🝖 w₂v) ⦄

@@ -4,6 +4,7 @@ open import Functional using (_on₂_)
 open import Functional.Instance
 import      Lvl
 open import Logic.Predicate
+open import Structure.Categorical.Functor.Properties
 open import Structure.Category
 import      Structure.Category.Functor as Category
 open import Structure.Function
@@ -35,13 +36,13 @@ module _
     private instance _ = Groupoidᵣ
 
     field
-      map : Names.Subrelation(_⟶ₗ_) ((_⟶ᵣ_) on₂ F)
+      map : Names.Sub₂(_⟶ₗ_) ((_⟶ᵣ_) on₂ F)
 
     field
       ⦃ map-function ⦄     : ∀{x y} → Function(map{x}{y})
-      ⦃ op-preserving ⦄    : ∀{x y z : Objₗ}{f : y ⟶ₗ z}{g : x ⟶ₗ y} → (map(f ∘ g) ≡ map(f) ∘ map(g))
-      ⦃ inv-preserving ⦄   : ∀{x y : Objₗ}{f : x ⟶ₗ y} → (map(inv f) ≡ inv(map f))
-      ⦃ id-preserving ⦄    : ∀{x : Objₗ} → (map(id {x = x}) ≡ id)
+      ⦃ op-preserving ⦄    : ∀{x y z : Objₗ} → Preserving₂(_⟶ₗ_)(_⟶ᵣ_) {y}{z}{x} map (_∘_) (_∘_)
+      ⦃ inv-preserving ⦄   : ∀{x y : Objₗ} → Preserving₁(_⟶ₗ_)(_⟶ᵣ_) {x}{y} map inv inv
+      ⦃ id-preserving ⦄    : ∀{x : Objₗ} → Preserving₀(_⟶ₗ_)(_⟶ᵣ_) {x} map id id
 
     categoryFunctor : Category.Functor(category ⦃ r = Groupoidₗ ⦄)(category ⦃ r = Groupoidᵣ ⦄) (F)
     Category.Functor.map           categoryFunctor = map

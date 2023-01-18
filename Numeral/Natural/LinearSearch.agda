@@ -31,4 +31,4 @@ open import Numeral.Finite
 import      Numeral.Finite.LinearSearch as 𝕟
 
 findBoundedAll : ℕ → ℕ → (ℕ → Bool) → List(ℕ)
-findBoundedAll a b f = List.map ((_+ a) ∘ 𝕟-to-ℕ) (𝕟.findAll{b −₀ a} (f ∘ (_+ a) ∘ 𝕟-to-ℕ))
+findBoundedAll a b f = List.map ((_+ a) ∘ toℕ) (𝕟.findAll{b −₀ a} (f ∘ (_+ a) ∘ toℕ))

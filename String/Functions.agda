@@ -11,7 +11,7 @@ open import Functional as Fn
 open import Numeral.Natural
 import      Numeral.Natural.Oper as ℕ
 open import String
-open import Type.Dependent
+open import Type.Dependent.Sigma
 
 module Primitives where
   primitive primStringUncons   : String → Option(Σ Char (const String))

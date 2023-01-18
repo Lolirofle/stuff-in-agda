@@ -9,10 +9,12 @@ module Structure.Category.Monad.Category
 import      Data.Tuple as Tuple
 import      Function.Equals
 open        Function.Equals.Dependent
+open import Logic.Predicate
 import      Lvl
 open import Structure.Category.Functor
-open import Structure.Category.Monad{cat = cat}
-open import Structure.Category.Monad.ExtensionSystem{cat = cat}
+open import Structure.Category.Monad
+open import Structure.Category.Monad.ExtensionSystem {C = cat}
+open import Structure.Category.Monad.ExtensionSystem.Proofs {C = cat}
 open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Operator
@@ -20,7 +22,7 @@ open import Structure.Relator.Equivalence
 open import Structure.Setoid
 open import Syntax.Transitivity
 
-open CategoryObject(cat)
+open CategoryObject(cat) hiding (_∘_ ; id)
 open Category.ArrowNotation(category)
 open Category(category)
 private open module MorphismEquiv {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equiv{x}{y} ⦄) using ()
@@ -28,7 +30,7 @@ private open module MorphismEquiv {x}{y} = Equivalence (Equiv-equivalence ⦃ mo
 module _ (T : Object → Object) ⦃ extSys : ExtensionSystem(T) ⦄ where
   open ExtensionSystem(extSys)
   open Functor(functor)
-  open Monad ⦃ functor ⦄ (monad) using (μ-functor-[∘]-identityₗ)
+  -- open Monad ⦃ functor ⦄ (monad) using (μ-on-μ-functor-η-inverse₁)
 
   -- Also called: Kleisli category
   categoryₑₓₜ : Category(\x y → (x ⟶ T(y)))
@@ -55,12 +57,12 @@ module _ (T : Object → Object) ⦃ extSys : ExtensionSystem(T) ⦄ where
     ext(f) ∘ η(x) 🝖[ _≡_ ]-[ ext-identity ]
     f             🝖-end
 
-module _ (T : Object → Object) ⦃ functor : Functor(category)(category)(T) ⦄ ⦃ monad : Monad(T) ⦄ where
+module _ (Tᶠᵘⁿᶜᵗᵒʳ@([∃]-intro T ⦃ functor ⦄) : cat →ᶠᵘⁿᶜᵗᵒʳ cat) ⦃ monad : Monad(Tᶠᵘⁿᶜᵗᵒʳ) ⦄ where
   open Functor(functor)
   open Monad(monad) hiding (ext)
   open ExtensionSystem(monad-to-extensionSystem) hiding (η ; μ)
 
-  -- Note: This is the supposed to be the same as categoryₑₓₜ but proven from a monad directly.
+  -- Note: This is supposed to be the same as categoryₑₓₜ but proven from a monad directly.
   monad-category : Category(\x y → (x ⟶ T(y)))
   Category._∘_ monad-category f g = ext(f) ∘ g
   Category.id monad-category {x} = η(x)
@@ -77,7 +79,7 @@ module _ (T : Object → Object) ⦃ functor : Functor(category)(category)(T) �
     ext(f) ∘ (ext(g) ∘ h) 🝖-end
   Morphism.Identityₗ.proof (Tuple.left (Category.identity monad-category)) {x} {y} {f} =
     ext(η(y)) ∘ f          🝖[ _≡_ ]-[]
-    (μ(y) ∘ map(η(y))) ∘ f 🝖-[ congruence₂-₁(_∘_)(f) (_⊜_.proof μ-functor-[∘]-identityₗ) ]
+    (μ(y) ∘ map(η(y))) ∘ f 🝖-[ congruence₂-₁(_∘_)(f) (_⊜_.proof μ-on-μ-functor-η-inverse₁) ]
     id ∘ f                 🝖-[ Morphism.identityₗ(_∘_)(id) ]
     f                      🝖-end
   Morphism.Identityᵣ.proof (Tuple.right (Category.identity monad-category)) {x} {y} {f} = ext-identity

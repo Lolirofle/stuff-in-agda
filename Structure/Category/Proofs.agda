@@ -59,6 +59,9 @@ module _
   associate4-231-121 : (f ∘ ((g ∘ h) ∘ i) ≡ (f ∘ g) ∘ (h ∘ i))
   associate4-231-121 = congruence₂-₂(_∘_)(_) (Morphism.associativity(_∘_)) 🝖 symmetry(_≡_) (Morphism.associativity(_∘_))
 
+  associate4-321-213 : (f ∘ (g ∘ (h ∘ i)) ≡ (f ∘ (g ∘ h)) ∘ i)
+  associate4-321-213 = associate4-321-231 🝖 associate4-231-213
+
   id-automorphism : Automorphism(id{x})
   ∃.witness id-automorphism = id
   ∃.proof   id-automorphism = intro(Morphism.identityₗ(_∘_)(id)) , intro(Morphism.identityᵣ(_∘_)(id))
@@ -92,19 +95,19 @@ module _
 
   instance
     Isomorphic-reflexivity : Reflexivity(Isomorphic)
-    ∃.witness (Reflexivity.proof Isomorphic-reflexivity) = id
-    ∃.proof   (Reflexivity.proof Isomorphic-reflexivity) = id-automorphism
+    Isomorphic-reflexivity = intro(Isomorphic.intro-by-isomorphism id-automorphism)
 
   instance
     Isomorphic-symmetry : Symmetry(Isomorphic)
-    ∃.witness (Symmetry.proof Isomorphic-symmetry iso-xy) = inv(∃.witness iso-xy)
-    ∃.proof   (Symmetry.proof Isomorphic-symmetry iso-xy) = inverse-isomorphism(∃.witness iso-xy)
+    Isomorphic-symmetry = intro \iso → Isomorphic.intro-by-isomorphism (inverse-isomorphism _ ⦃ Isomorphic.isomorphismRight iso ⦄)
 
   module _ ⦃ op : ∀{x y z} → BinaryOperator(_∘_ {x}{y}{z}) ⦄ where
     instance
       Isomorphic-transitivity : Transitivity(Isomorphic)
-      ∃.witness (Transitivity.proof Isomorphic-transitivity ([∃]-intro xy) ([∃]-intro yz)) = yz ∘ xy
-      ∃.proof   (Transitivity.proof Isomorphic-transitivity ([∃]-intro xy) ([∃]-intro yz)) = op-closed-under-isomorphism ⦃ op ⦄ yz xy
+      Isomorphic-transitivity = intro \iso-xy iso-yz → Isomorphic.intro-by-isomorphism $
+        op-closed-under-isomorphism ⦃ op ⦄ _ _
+          ⦃ Isomorphic.isomorphismRight iso-yz ⦄
+          ⦃ Isomorphic.isomorphismRight iso-xy ⦄
 
     instance
       Isomorphic-equivalence : Equivalence(Isomorphic)

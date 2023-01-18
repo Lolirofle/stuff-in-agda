@@ -1,5 +1,6 @@
 module Structure.Categorical.Names where
 
+open import Data.Tuple using (_⨯_)
 import      Lvl
 open import Functional using (const ; swap)
 open import Logic
@@ -27,6 +28,9 @@ module _ (Morphism : Obj → Obj → Type{ℓₘ}) where
     -- Reversed arrow
     _⟵_ : Obj → Obj → Type{ℓₘ}
     _⟵_ = swap(_⟶_)
+
+    _⟷_ : Obj → Obj → Type{ℓₘ}
+    x ⟷ y = (x ⟵ y) ⨯ (x ⟶ y)
 
     -- Self-pointing arrow
     ⟲_ : Obj → Type{ℓₘ}

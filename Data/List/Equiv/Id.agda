@@ -67,16 +67,6 @@ multiply-singleton-repeat : (singleton(l) ++^ n ≡ repeat(l)(n))
 multiply-singleton-repeat {l = l} {n = 𝟎}   = reflexivity(_≡_)
 multiply-singleton-repeat {l = l} {n = 𝐒 n} = congruence₁(l ⊰_) (multiply-singleton-repeat {l = l} {n = n})
 
-module _ {f g : A → B} where
-  map-function-raw : (f ⊜ g) → (map f ⊜ map g)
-  map-function-raw p {∅} = reflexivity(_≡_)
-  map-function-raw p {x ⊰ l} rewrite p{x} = congruence₁(g(x) ⊰_) (map-function-raw p {l})
-
-module _ {f g : A → List(B)} where
-  concatMap-function-raw : (f ⊜ g) → (concatMap f ⊜ concatMap g)
-  concatMap-function-raw p {∅}                  = reflexivity(_≡_)
-  concatMap-function-raw p {x ⊰ l} rewrite p{x} = congruence₁(g(x) ++_) (concatMap-function-raw p {l})
-
 module _ {ℓ₁ ℓ₂ ℓ₃} {A : Type{ℓ₁}} {B : Type{ℓ₂}} {C : Type{ℓ₃}} {f : B → C}{g : A → B} where
   map-preserves-[∘] : (map(f ∘ g) ⊜ (map f ∘ map g))
   map-preserves-[∘] {x = ∅}     = reflexivity(_≡_)
@@ -114,7 +104,7 @@ concatMap-concat-map : (concatMap f l ≡ concat(map f l))
 concatMap-concat-map        {l = ∅} = reflexivity(_≡_)
 concatMap-concat-map {f = f}{l = x ⊰ l} =
   concatMap f (x ⊰ l)     🝖[ _≡_ ]-[]
-  f(x) ++ concatMap f l   🝖[ _≡_ ]-[ congruence₂-₂(_++_)(f(x)) (concatMap-concat-map {l = l}) ]
+  f(x) ++ concatMap f l   🝖[ _≡_ ]-[ congruence₂-₂(_++_) ⦃ [≡]-binaryOperator-instance ⦄ (f(x)) (concatMap-concat-map {l = l}) ]
   f(x) ++ concat(map f l) 🝖[ _≡_ ]-[]
   concat(f(x) ⊰ map f l)  🝖[ _≡_ ]-[]
   concat(map f (x ⊰ l))   🝖-end
@@ -154,23 +144,6 @@ foldᵣ-function₊-raw {l₁ = x₁ ⊰ l₁} {x₂ ⊰ l₂} ⦃ equiv ⦄ {_�
   x₂ ▫₁ (foldᵣ(_▫₂_) a₂ l₂) 🝖[ Equiv._≡_ equiv ]-[ opeq{x₂}{foldᵣ(_▫₂_) a₂ l₂} ]
   x₂ ▫₂ (foldᵣ(_▫₂_) a₂ l₂) 🝖[ Equiv._≡_ equiv ]-[]
   foldᵣ(_▫₂_) a₂ (x₂ ⊰ l₂)  🝖[ Equiv._≡_ equiv ]-end
-
-map-binaryOperator : BinaryOperator {A₁ = A → B} ⦃ equiv-A₁ = Fn.[⊜]-equiv ⦃ [≡]-equiv ⦄ ⦄ ⦃ equiv-A₂ = [≡]-equiv ⦄ (map)
-map-binaryOperator = intro p where
-  p : Names.Congruence₂(map)
-  p {f} {g} {∅}       {∅}       fg xy = reflexivity(_≡_)
-  p {f} {g} {x₁ ⊰ l₁} {x₂ ⊰ l₂} fg xy =
-    • (
-      f(x₁) 🝖[ _≡_ ]-[ Fn._⊜_.proof fg {x₁} ]
-      g(x₁) 🝖[ _≡_ ]-[ congruence₁(g) ([∧]-elimₗ([⊰]-general-cancellation xy)) ]
-      g(x₂) 🝖-end
-    )
-    • (
-      map f(l₁) 🝖[ _≡_ ]-[ p fg ([∧]-elimᵣ([⊰]-general-cancellation xy)) ]
-      map g(l₂) 🝖-end
-    )
-    ⇒₂-[ congruence₂(_⊰_) ]
-    (f(x₁) ⊰ map f(l₁) ≡ g(x₂) ⊰ map g(l₂)) ⇒-end
 
 count-of-[++] : ∀{P} → (count P (l₁ ++ l₂) ≡ count P l₁ + count P l₂)
 count-of-[++] {l₁ = ∅}       {l₂ = l₂} {P = P} = reflexivity(_≡_)

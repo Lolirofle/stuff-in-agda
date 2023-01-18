@@ -2,17 +2,17 @@
 
 module Type.Cubical.SubtypeSet where
 
-open import Function.Axioms
+-- open import Function.Axioms
 open import Functional
 open import Logic.Predicate as PTLogic using () renaming ([∃]-intro to intro)
 import      Lvl
 open import Structure.Function.Domain using (intro ; Inverseₗ ; Inverseᵣ)
 open import Structure.Relator.Properties
 open import Structure.Type.Identity
-open import Type.Cubical.Equiv
+--  open import Type.Cubical.Equiv
 import      Type.Cubical.Logic as Logic
 open import Type.Cubical.Path.Equality
-open import Type.Cubical.Univalence
+-- open import Type.Cubical.Univalence
 open import Type.Cubical
 open import Type.Properties.MereProposition
 open import Type.Properties.MereProposition.Proofs
@@ -22,6 +22,12 @@ private variable ℓ ℓ₁ ℓ₂ ℓₑ : Lvl.Level
 private variable T : Type{ℓ}
 
 module _ where
+  {-
+  module _ {P Q : T → Type} ⦃ prop-P : ∀{x} → MereProposition{ℓ}(P(x)) ⦄ ⦃ prop-Q : ∀{x} → MereProposition{ℓ}(Q(x)) ⦄ where
+    prop-set-extensionalityₗ : Path P Q ← (∀{x} → P(x) ↔ Q(x))
+    prop-set-extensionalityₗ pq = functionExtensionalityOn P Q (propositional-extensionalityₗ pq)
+  -}
+
   {-
   module _ {P Q : T → Type} ⦃ prop-P : ∀{x} → MereProposition{ℓ}(P(x)) ⦄ ⦃ prop-Q : ∀{x} → MereProposition{ℓ}(Q(x)) ⦄ where
     prop-set-extensionalityₗ : (P ≡ Q) ← (∀{x} → P(x) ↔ Q(x))
@@ -75,8 +81,8 @@ record SubtypeSet {ℓₑ ℓ} (T : Type{ℓ}) : Type{ℓ Lvl.⊔ Lvl.𝐒(ℓ�
 open SubtypeSet using (_∋_) public
 
 {- TODO: When Structure is generalized to arbitrary logic symbols
-import      Structure.Sets.Names
-open        Structure.Sets.Names.From-[∋] (_∋_) public
+import      Structure.Set.Names
+open        Structure.Set.Names.From-[∋] (_∋_) public
 -}
 
 _∈_ : T → SubtypeSet{ℓ}(T) → Prop

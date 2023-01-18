@@ -192,12 +192,12 @@ record Complement : Stmt{ℓ} where
     proof1 : s ≡ s ∪ ∁(∁(s))
     proof1 =
       [∩]-inverseᵣ {∁(s)}
-      ⩺ congruence₁(s ∪_)
-      ⩺ (eq ↦ transitivity(_≡_) eq ((identityᵣ(_∪_)(∅)) {s}))
-      ⩺ symmetry(_≡_)
-      ⩺ (eq ↦ transitivity(_≡_) eq ((distributivityₗ(_∪_)(_∩_))))
-      ⩺ (eq ↦ transitivity(_≡_) eq (congruence₁(_∩ (s ∪ ∁(∁(s)))) ([∪]-inverseᵣ)))
-      ⩺ (eq ↦ transitivity(_≡_) eq (identityₗ(_∩_)(𝐔)))
+      ₴ congruence₁(s ∪_)
+      ₴ (eq ↦ transitivity(_≡_) eq ((identityᵣ(_∪_)(∅)) {s}))
+      ₴ symmetry(_≡_)
+      ₴ (eq ↦ transitivity(_≡_) eq ((distributivityₗ(_∪_)(_∩_))))
+      ₴ (eq ↦ transitivity(_≡_) eq (congruence₁(_∩ (s ∪ ∁(∁(s)))) ([∪]-inverseᵣ)))
+      ₴ (eq ↦ transitivity(_≡_) eq (identityₗ(_∩_)(𝐔)))
       -- ∁(s) ∩ ∁(∁(s)) ≡ ∅
       -- s ∪ (∁(s) ∩ ∁(∁(s))) ≡ s ∪ ∅
       -- s ∪ (∁(s) ∩ ∁(∁(s))) ≡ s
@@ -209,12 +209,12 @@ record Complement : Stmt{ℓ} where
     proof2 : ∁(∁(s)) ≡ s ∪ ∁(∁(s))
     proof2 =
       [∩]-inverseᵣ {s}
-      ⩺ congruence₁(_∪ ∁(∁(s)))
-      ⩺ (eq ↦ transitivity(_≡_) eq (identityₗ(_∪_)(∅)))
-      ⩺ symmetry(_≡_)
-      ⩺ (eq ↦ transitivity(_≡_) eq ((distributivityᵣ(_∪_)(_∩_))))
-      ⩺ (eq ↦ transitivity(_≡_) eq (congruence₁((s ∪ ∁(∁(s))) ∩_) ([∪]-inverseᵣ)))
-      ⩺ (eq ↦ transitivity(_≡_) eq ((identityᵣ(_∩_)(𝐔))))
+      ₴ congruence₁(_∪ ∁(∁(s)))
+      ₴ (eq ↦ transitivity(_≡_) eq (identityₗ(_∪_)(∅)))
+      ₴ symmetry(_≡_)
+      ₴ (eq ↦ transitivity(_≡_) eq ((distributivityᵣ(_∪_)(_∩_))))
+      ₴ (eq ↦ transitivity(_≡_) eq (congruence₁((s ∪ ∁(∁(s))) ∩_) ([∪]-inverseᵣ)))
+      ₴ (eq ↦ transitivity(_≡_) eq ((identityᵣ(_∩_)(𝐔))))
       -- (s ∩ ∁(s)) ∪ ∁(∁(s)) ≡ ∅ ∪ ∁(∁(s))
       -- (s ∩ ∁(s)) ∪ ∁(∁(s)) ≡ ∁(∁(s))
       -- ∁(∁(s)) ≡ (s ∩ ∁(s)) ∪ ∁(∁(s))

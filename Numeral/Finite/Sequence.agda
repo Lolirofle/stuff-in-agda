@@ -4,7 +4,7 @@ import      Lvl
 open import Data.Either as Either using (_‖_)
 open import Data.Either.Equiv as Either
 open import Data.Either.Equiv.Id
-open import Data.Either.Proofs as Either
+open import Data.Either.Proofs.Map as Either
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Data.Tuple.Equiv as Tuple
 open import Data.Tuple.Equiv.Id
@@ -126,13 +126,14 @@ module Concatenation where
   split {𝐒 a}{𝐒 b} (𝐒 n) = Either.mapLeft 𝐒 (split {a}{𝐒 b} n)
 
   open import Numeral.Finite.Category
+  open import Structure.Categorical.Functor.Properties
   open import Structure.Category.Functor
   instance
     join-split-inverses : Inverseᵣ(join{a}{b})(split{a}{b})
     join-split-inverses {a}{b} = intro(proof{a}{b}) where
       proof : ∀{a b} → Names.Inverses(join{a}{b})(split{a}{b})
       proof {𝟎}   {𝐒 b} {n} = [≡]-intro
-      proof {𝐒 a} {𝟎}   {n} = _⊜_.proof (Functor.id-preserving bound-functor)
+      proof {𝐒 a} {𝟎}   {n} = _⊜_.proof (Preserving.proof (Functor.id-preserving bound-functor))
       proof {𝐒 a} {𝐒 b} {𝟎} = [≡]-intro
       proof {𝐒 a} {𝐒 b} {𝐒 n} with split {a}{𝐒 b} n | proof {a} {𝐒 b} {n}
       ... | Either.Left  _ | [≡]-intro = [≡]-intro
@@ -143,7 +144,7 @@ module Concatenation where
     split-join-inverses {a}{b} = intro(proof{a}{b}) where
       proof : ∀{a b} → Names.Inverses(split{a}{b})(join{a}{b})
       proof {𝟎}   {𝐒 b} {Either.Right n}     = [≡]-intro
-      proof {𝐒 a} {𝟎}   {Either.Left  n}     = congruence₁(Either.Left) (_⊜_.proof (Functor.id-preserving bound-functor))
+      proof {𝐒 a} {𝟎}   {Either.Left  n}     = congruence₁(Either.Left) (_⊜_.proof (Preserving.proof (Functor.id-preserving bound-functor)))
       proof {𝐒 a} {𝐒 b} {Either.Left  𝟎}     = [≡]-intro
       proof {𝐒 a} {𝐒 b} {Either.Left  (𝐒 n)} = congruence₁(Either.mapLeft 𝐒) (proof{a}{𝐒 b} {Either.Left  n})
       proof {𝐒 a} {𝐒 b} {Either.Right n}     = congruence₁(Either.mapLeft 𝐒) (proof{a}{𝐒 b} {Either.Right n})
@@ -180,9 +181,9 @@ module LinearSpaceFilling where
   join = Tuple.uncurry(𝕟.Exact._⋅_)
 
   -- split : 𝕟(a ℕ.⋅ b) → (𝕟(a) ⨯ 𝕟(b))
-  -- split a@{𝐒 _}{b} n = (ℕ-to-𝕟 ((𝕟-to-ℕ n) mod₀ a) ⦃ {!!} ⦄ , ℕ-to-𝕟 ((𝕟-to-ℕ n) ⌊/⌋₀ a) ⦃ {!!} ⦄) -- TODO: Some kind of division for 𝕟 or a proof that a 𝕟(a ⋅ b) divided by a 𝕟(b) is a 𝕟(a)?
+  -- split a@{𝐒 _}{b} n = (fromℕ ((toℕ n) mod₀ a) ⦃ {!!} ⦄ , fromℕ ((toℕ n) ⌊/⌋₀ a) ⦃ {!!} ⦄) -- TODO: Some kind of division for 𝕟 or a proof that a 𝕟(a ⋅ b) divided by a 𝕟(b) is a 𝕟(a)?
 
-module BaseNumerals where -- TODO: Maybe try to use Numeral.FixedPositional
+module BaseNumerals where -- TODO: Maybe try to use Numeral.FixedPositional or generalize Formalisation.Polynomial and use that
   -- When interpreting the function as a numeral in a certain base, the parameters mean the following:
   -- • `a` is the base.
   -- • `b` is the length of the numerals (the maximum number of digits).
@@ -275,45 +276,45 @@ instance
   {-# CATCHALL #-}
   Injective.proof (concat-injective {a = 𝐒 a} {b} {af} {bf}) {𝐒 x} {𝐒 y} p = congruence₁(𝐒) (Injective.proof (concat-injective {a = a} {b} {af ∘ 𝐒} {bf} ⦃ [∘]-injective {f = af}{g = 𝐒} ⦄) {x} {y} p)
 
-concat-when-left : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(aa ↦ concat af bf n ≡ Either.Left(aa)) ↔ (𝕟-to-ℕ(n) < a)
+concat-when-left : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(aa ↦ concat af bf n ≡ Either.Left(aa)) ↔ (toℕ(n) < a)
 concat-when-left {a = a} {b} {af} {bf} {n} = [↔]-intro l r where
-  l : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(aa ↦ concat af bf n ≡ Either.Left(aa)) ← (𝕟-to-ℕ(n) < a)
+  l : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(aa ↦ concat af bf n ≡ Either.Left(aa)) ← (toℕ(n) < a)
   l {a = .(𝐒 _)} {b} {af} {bf} {𝟎}   [≤]-with-[𝐒] = [∃]-intro (af(𝟎)) ⦃ reflexivity(_≡_) ⦄
   l {a = .(𝐒 _)} {b} {af} {bf} {𝐒 n} ([≤]-with-[𝐒] {y = a} ⦃ p ⦄) = l {a = a}{b}{af ∘ 𝐒}{bf}{n} p
 
-  r : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(aa ↦ concat af bf n ≡ Either.Left(aa)) → (𝕟-to-ℕ(n) < a)
+  r : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(aa ↦ concat af bf n ≡ Either.Left(aa)) → (toℕ(n) < a)
   r {a = 𝟎}   {b} {af} {bf} {𝟎}   ([∃]-intro aa ⦃ ⦄)
   r {a = 𝐒 a} {b} {af} {bf} {𝟎}   ([∃]-intro aa ⦃ p ⦄) = [<]-minimum
   r {a = 𝐒 a} {b} {af} {bf} {𝐒 n} ([∃]-intro aa ⦃ p ⦄) = [≤]-with-[𝐒] ⦃ r {a = a}{b}{af ∘ 𝐒}{bf}{n} ([∃]-intro aa ⦃ p ⦄) ⦄
 
-concat-when-right : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(bb ↦ concat af bf n ≡ Either.Right(bb)) ↔ (a ≤ 𝕟-to-ℕ(n))
+concat-when-right : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(bb ↦ concat af bf n ≡ Either.Right(bb)) ↔ (a ≤ toℕ(n))
 concat-when-right {a = a} {b} {af} {bf} {n} = [↔]-intro l r where
-  l : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(bb ↦ concat af bf n ≡ Either.Right(bb)) ← (a ≤ 𝕟-to-ℕ(n))
+  l : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(bb ↦ concat af bf n ≡ Either.Right(bb)) ← (a ≤ toℕ(n))
   l {a = 𝟎}   {𝐒 b} {af} {bf} {n} [≤]-minimum  = [∃]-intro (bf(n)) ⦃ reflexivity(_≡_) ⦄
   l {a = 𝐒 a} {b} {af} {bf} {𝐒 n} ([≤]-with-[𝐒] ⦃ p ⦄) = l {a = a}{b}{af ∘ 𝐒}{bf}{n} p
 
-  r : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(bb ↦ concat af bf n ≡ Either.Right(bb)) → (a ≤ 𝕟-to-ℕ(n))
+  r : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → ∃(bb ↦ concat af bf n ≡ Either.Right(bb)) → (a ≤ toℕ(n))
   r {a = 𝟎}   {b} {af} {bf} {_}   ([∃]-intro bb ⦃ p ⦄) = [≤]-minimum
   r {a = 𝐒 a} {b} {af} {bf} {𝟎}   ([∃]-intro bb ⦃ ⦄)
   r {a = 𝐒 a} {b} {af} {bf} {𝐒 n} ([∃]-intro bb ⦃ p ⦄) = [≤]-with-[𝐒] ⦃ r {a = a}{b}{af ∘ 𝐒}{bf}{n} ([∃]-intro bb ⦃ p ⦄) ⦄
 
-𝕟-shrink : ∀{A B} → (b : 𝕟(B)) → (𝕟-to-ℕ(b) < A) → 𝕟(A)
+𝕟-shrink : ∀{A B} → (b : 𝕟(B)) → (toℕ(b) < A) → 𝕟(A)
 𝕟-shrink {𝐒 A}{𝐒 B} 𝟎     [≤]-with-[𝐒] = 𝟎
 𝕟-shrink {𝐒 A}{𝐒 B} (𝐒 b) ([≤]-with-[𝐒] ⦃ p ⦄) = 𝐒(𝕟-shrink {A}{B} b p)
 
-𝕟-subtract : ∀{A B} → (b : 𝕟(B)) → (A < 𝕟-to-ℕ(b)) → 𝕟(𝐒(A))
+𝕟-subtract : ∀{A B} → (b : 𝕟(B)) → (A < toℕ(b)) → 𝕟(𝐒(A))
 𝕟-subtract {𝟎}  {𝐒 B} (𝐒 b) [≤]-with-[𝐒] = 𝟎
 𝕟-subtract {𝐒 A}{𝐒 B} (𝐒 b) ([≤]-with-[𝐒] ⦃ p ⦄) = 𝐒(𝕟-subtract {A}{B} b p)
 
-concat-when-lesser : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → (na : 𝕟-to-ℕ(n) < a) → (concat af bf n ≡ Either.Left(af(𝕟-shrink n na)))
+concat-when-lesser : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(b) → B}{n} → (na : toℕ(n) < a) → (concat af bf n ≡ Either.Left(af(𝕟-shrink n na)))
 concat-when-lesser {a = 𝐒 a} {b} {af} {bf} {𝟎}   [≤]-with-[𝐒]         = [≡]-intro
 concat-when-lesser {a = 𝐒 a} {b} {af} {bf} {𝐒 n} ([≤]-with-[𝐒] ⦃ p ⦄) = concat-when-lesser {a = a} {b} {af ∘ 𝐒} {bf} {n} p
 
 {-
 open import Numeral.Natural.Relation.Order.Proofs
-concat-when-greater : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(𝐒(b)) → B}{n} → (bn : 𝐒(b) < 𝕟-to-ℕ(n)) → (concat af bf n ≡ Either.Right(bf(𝕟-subtract n ([≤]-predecessor bn))))
+concat-when-greater : ∀{a b}{af : 𝕟(a) → A}{bf : 𝕟(𝐒(b)) → B}{n} → (bn : 𝐒(b) < toℕ(n)) → (concat af bf n ≡ Either.Right(bf(𝕟-subtract n ([≤]-predecessor bn))))
 concat-when-greater {a = 𝟎} {𝐒 b} {af} {bf} {𝐒 n} [≤]-with-[𝐒] = {!!}
-concat-when-greater {a = 𝐒 a} {𝟎} {af} {bf} {𝐒 n} ([≤]-with-[𝐒] {y = y} ⦃ p ⦄) with n | 𝕟-to-ℕ n
+concat-when-greater {a = 𝐒 a} {𝟎} {af} {bf} {𝐒 n} ([≤]-with-[𝐒] {y = y} ⦃ p ⦄) with n | toℕ n
 ... | 𝟎 | 𝟎 = {!concat-when-greater {a = a} {?} {af ∘ 𝐒} {bf} {𝟎}!}
 ... | 𝟎 | 𝐒 bb = {!!}
 ... | 𝐒 aa | 𝟎 = {!!}

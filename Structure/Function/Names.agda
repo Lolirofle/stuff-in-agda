@@ -1,5 +1,6 @@
 module Structure.Function.Names where
 
+open import Data.Tuple using (_,_)
 open import Function.Names
 open import Functional
 open import Logic
@@ -33,6 +34,14 @@ module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₗ�
 
   Constant : (A → B) → Stmt
   Constant(f) = (∀{x y : A} → (f(x) ≡ f(y)))
+
+module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₗ₁}(A) ⦄ {B : Type{ℓₒ₂}} where
+  InversePairOnₗ : (A ↔ B) → A → Stmt
+  InversePairOnₗ (l , r) = InversesOn l r
+
+module _ {A : Type{ℓₒ₁}} {B : Type{ℓₒ₂}} ⦃ equiv-B : Equiv{ℓₗ₂}(B) ⦄ where
+  InversePairOnᵣ : (A ↔ B) → B → Stmt
+  InversePairOnᵣ (l , r) = InversesOn r l
 
 module _ {A : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₗ}(A) ⦄ where
   Fixpoint : (A → A) → A → Stmt

@@ -24,13 +24,13 @@ module One {ℓ} {T : Type{ℓ}} where
   open   Type.Identity.Proofs.One{T = T}
     using()
     renaming(
-      Id-identityEliminator    to [≡]-identity-eliminator ;
-      Id-reflexivity           to [≡]-reflexivity ;
-      Id-symmetry              to [≡]-symmetry ;
-      Id-transitivity          to [≡]-transitivity ;
-      Id-equivalence           to [≡]-equivalence ;
-      Id-equiv                 to [≡]-equiv ;
-      Id-reflexive-relator-sub to [≡]-sub-of-reflexive
+      Id-identityEliminator       to [≡]-identity-eliminator ;
+      Id-reflexivity              to [≡]-reflexivity ;
+      Id-symmetry                 to [≡]-symmetry ;
+      Id-transitivity             to [≡]-transitivity ;
+      Id-equivalence              to [≡]-equivalence ;
+      Id-equiv                    to [≡]-equiv ;
+      Id-minimalReflexiveRelation to [≡]-sub-of-reflexive
     ) public
 
   [≡]-to-equivalence : ∀{ℓₗ}{x y : T} → (x ≡ y) → ⦃ equiv-T : Equiv{ℓₗ}(T) ⦄ → (_≡ₛ_ ⦃ equiv-T ⦄ x y)

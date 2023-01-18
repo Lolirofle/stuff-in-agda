@@ -9,6 +9,8 @@ open import Type
 private variable ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
 private variable T : Type{ℓ₁}
 
+-- TODO: Maybe change order of arguments for better performance. See https://github.com/plfa/plfa.github.io/issues/639 https://github.com/agda/agda/issues/5860 https://github.com/agda/agda-stdlib/issues/622 https://github.com/agda/agda-stdlib/pull/623
+
 -- The transitivity operator
 infixl 1000 _🝖_
 _🝖_ : ∀{_▫_ : T → T → Stmt{ℓ₂}} → ⦃ _ : Transitivity(_▫_) ⦄ → Names.Transitivity(_▫_)

@@ -40,10 +40,11 @@ catₗ →ᶜᵒⁿᵗʳᵃᵛᵃʳⁱᵃⁿᵗᶠᵘⁿᶜᵗᵒʳ catᵣ = ∃
 
 module _ (C₁ C₂ : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}) where
   open import Logic.Propositional
+  open import Structure.Categorical.Functor.Properties
   open import Structure.Relator.Equivalence
 
   open CategoryObject ⦃ … ⦄
-  open Category ⦃ … ⦄
+  open Category ⦃ … ⦄ hiding (module ArrowNotation)
   open ArrowNotation
   open Functor ⦃ … ⦄
   private open module MorphismEquiv₁ {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equiv ⦃ C₁ ⦄ {x}{y} ⦄) using ()
@@ -58,12 +59,12 @@ module _ (C₁ C₂ : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}) where
     ∃.witness (l ([∃]-intro F)) = F
     Functor.map           (∃.proof (l _)) = map
     Functor.map-function  (∃.proof (l _)) = map-function
-    Functor.op-preserving (∃.proof (l _)) = op-preserving
-    Functor.id-preserving (∃.proof (l _)) = id-preserving
+    Functor.op-preserving (∃.proof (l _)) = intro (Preserving.proof op-preserving)
+    Functor.id-preserving (∃.proof (l _)) = intro (Preserving.proof id-preserving)
 
     r : (dual(C₁) →ᶠᵘⁿᶜᵗᵒʳ C₂) → (C₁ →ᶠᵘⁿᶜᵗᵒʳ dual(C₂))
     ∃.witness (r ([∃]-intro F)) = F
     Functor.map           (∃.proof (r _)) = map
     Functor.map-function  (∃.proof (r _)) = map-function
-    Functor.op-preserving (∃.proof (r _)) = op-preserving
-    Functor.id-preserving (∃.proof (r _)) = id-preserving
+    Functor.op-preserving (∃.proof (r _)) = intro (Preserving.proof op-preserving)
+    Functor.id-preserving (∃.proof (r _)) = intro (Preserving.proof id-preserving)

@@ -3,7 +3,7 @@ module Structure.Setoid.Size.Proofs where
 open import Data
 open import Data.Proofs
 import      Data.Either        as Either
-import      Data.Either.Proofs as Either
+import      Data.Either.Proofs.Map as Either
 import      Lvl
 open import Functional
 open import Function.Domains
@@ -78,7 +78,7 @@ module _ where
         a₁    🝖-[ gba1 ]-sym
         g(b₁) 🝖-[ congruence₁(g) ⦃ func-g ⦄ b₁b₂ ]
         g(b₂) 🝖-[ gba2 ]
-        a₂    🝖-end 
+        a₂    🝖-end
       ... | [∨]-introₗ ([∃]-intro b₁ ⦃ gba1 ⦄) | [∨]-introᵣ nega₂                   | b₁fa₂ = [⊥]-elim(nega₂ ([∃]-intro (f(a₂)) ⦃ p ⦄)) where
         p =
           g(f(a₂)) 🝖-[ congruence₁(g) ⦃ func-g ⦄ b₁fa₂ ]-sym
@@ -363,45 +363,7 @@ module _ where
           ([∘]-surjective {f = g} ⦃ g-function ⦄ {g = f} ⦃ g-surjective ⦄ ⦃ f-surjective ⦄)
         ⦄
 
-  module _  where
-    -- This is variant of the "extensional axiom of choice" and is unprovable in Agda, though it is a possible axiom.
-    -- Note: This has not actually been proven to be equialent to axiom of choice. It has been proven that AC implies this though
-    -- A proof of `(A ≽ B)` means that a right inverse exist, but if the surjection is non-injective (it could be in general), then the right inverse is not a function (two equal values in the codomain of the surjection may point to two inequal objects in the domain).
-    -- Example:
-    --   For X: Set, Y: Set, f: X → Y, a: X, b: X, c₁: Y, c₂: Y
-    --   Assume:
-    --     X = {a,b}
-    --     Y = {c₁,c₂}
-    --     a ≢ b
-    --     c₁ ≡ c₂
-    --     f(a) = c₁
-    --     f(b) = c₂
-    --   This means that f is surjective (maps to both c₁ and c₂) but not injective ((c₁ ≡ c₂) implies (f(a) ≡ f(b)) implies (a ≡ b) which is false).
-    --   Then an inverse f⁻¹ to f can be constructed from the witnesses in surjectivity:
-    --     f⁻¹: Y → X
-    --     f⁻¹(c₁) = a
-    --     f⁻¹(c₂) = b
-    --   f⁻¹ is obviously injective, but it is also not a function: ((c₁ ≡ c₂) would imply (a ≡ b) if it were a function, but that is false).
-    --   This example shows that not all surjections are injective.
-    --   But looking at the example, there are functions that are injective:
-    --     g₁: Y → X
-    --     g₁(c₁) = a
-    --     g₁(c₂) = a
-    --
-    --     g₂: Y → X
-    --     g₂(c₁) = b
-    --     g₂(c₂) = b
-    --   They are, because: ((a ≡ a) implies (g₁(c₁) ≡ g₁(c₂)) implies (c₁ ≡ c₂) which is true).
-    --   and              : ((b ≡ b) implies (g₂(c₁) ≡ g₂(c₂)) implies (c₁ ≡ c₂) which is true).
-    --   This is a simplified example using finite sets, and a restriction of this proposition for finite sets is actually provable because it is possible to enumerate all functions up to function extensionality and check all of them in finite time.
-    --   The real problem comes when the sets are non-finite because then, there are no general methods to enumerate the elements. How would an injection be chosen in those cases?
-    -- Note that if the surjection is injective, then it is a bijection, and therefore also an injection.
-    -- Also called: Partition principle
-    record SurjectionInjectionChoice (A : Setoid{ℓₑ₁}{ℓ₁}) (B : Setoid{ℓₑ₂}{ℓ₂}) : Stmt{ℓₑ₁ Lvl.⊔ ℓ₁ Lvl.⊔ ℓₑ₂ Lvl.⊔ ℓ₂} where
-      constructor intro
-      field proof : (A ≽ B) → (B ≼ A)
-    open SurjectionInjectionChoice ⦃ … ⦄ using () renaming (proof to [≽]-to-[≼]) public
-
+  open import Structure.Setoid.Size.Properties.Choice
   module _ ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ ⦃ surjChoice-ab : SurjectionInjectionChoice A B ⦄ ⦃ surjChoice-ba : SurjectionInjectionChoice B A ⦄ where
     [≽][≍]-antisymmetry-raw : (A ≽ B) → (B ≽ A) → (A ≍ B)
     [≽][≍]-antisymmetry-raw ab ba = [≼][≍]-antisymmetry-raw ([≽]-to-[≼] ba) ([≽]-to-[≼] ab)
@@ -409,7 +371,7 @@ module _ where
   module _ ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ ⦃ surjChoice-ab : SurjectionInjectionChoice A B ⦄ where
     [≼][≽][≍]-antisymmetry-raw : (A ≼ B) → (A ≽ B) → (A ≍ B)
     [≼][≽][≍]-antisymmetry-raw lesser greater = [≼][≍]-antisymmetry-raw lesser ([≽]-to-[≼] greater)
-      
+
   module _ ⦃ classical : ∀{ℓ}{P : Stmt{ℓ}} → Classical(P) ⦄ ⦃ surjChoice : ∀{ℓ₁ ℓ₂ ℓₑ₁ ℓₑ₂}{A : Setoid{ℓₑ₁}{ℓ₁}}{B : Setoid{ℓₑ₂}{ℓ₂}} → SurjectionInjectionChoice A B ⦄ where
     instance
       [≽][≍]-antisymmetry : Antisymmetry(_≽_ {ℓₑ}{ℓ})(_≍_)
@@ -417,7 +379,7 @@ module _ where
 
     -- TODO: Totality of (_≼_).  Is this difficult to prove?
     -- [≼]-total : ((A ≼ B) ∨ (B ≼ A))
-  
+
 
   open import Structure.Setoid.Universal
 

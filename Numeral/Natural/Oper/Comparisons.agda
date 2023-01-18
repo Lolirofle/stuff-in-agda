@@ -4,14 +4,14 @@ import      Lvl
 open import Data.Boolean
 import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
+open import Numeral.Charge
 open import Numeral.Natural
-open import Numeral.Sign
 
 ℕbool : Bool → ℕ
 ℕbool = if_then 1 else 0
 
 -- Compare
-_⋚?_ : ℕ → ℕ → (−|0|+)
+_⋚?_ : ℕ → ℕ → Charge
 𝟎    ⋚? 𝟎    = 𝟎
 𝟎    ⋚? 𝐒(b) = ➖
 𝐒(a) ⋚? 𝟎    = ➕

@@ -156,6 +156,7 @@ module _ where
   open import Numeral.Natural.Oper.FlooredDivision as ℕ
   open import Numeral.Natural.Oper.Modulo as ℕ
   import      Numeral.Natural.Function.Coprimalize as ℕ
+  import      Numeral.Natural.Function.Coprimalize.Proofs as ℕ
   import      Numeral.Natural.Function.GreatestCommonDivisor as ℕ
 
   -- Normalize the internal representation in the ℚ₊₀ type.
@@ -163,7 +164,7 @@ module _ where
   normalize : ℚ₊₀ → ℚ₊₀
   normalize((x /ₙ y) ⦃ pos-y ⦄) =
     let (nx , ny) = ℕ.coprimalize(x , y)
-    in (nx /ₙ ny) ⦃ [↔]-to-[→] ([∧]-elimᵣ ℕ.coprimalize-positive) pos-y ⦄
+    in (nx /ₙ ny) ⦃ [↔]-to-[→] ([∧]-elimᵣ (ℕ.coprimalize-positive {x = x})) pos-y ⦄
 
   -- Floor function to ℕ. Round toward 0.
   -- Examples:
@@ -339,7 +340,7 @@ module _ where
       open import Numeral.Natural.Oper.Proofs
       open import Numeral.Natural.Relation.Divisibility
       open import Numeral.Natural.Relation.Divisibility.Proofs
-      open import Numeral.Natural.Relation.Divisibility.Proofs.Product
+      open import Numeral.Natural.Relation.Divisibility.Proofs.Productᵣ
       open import Relator.Equals.Proofs.Equiv
       open import Structure.Operator.Properties
       open import Structure.Relator.Properties
@@ -350,21 +351,22 @@ module _ where
 
   open import Functional
   open import Numeral.Natural.Function.Coprimalize
+  open import Numeral.Natural.Function.Coprimalize.Proofs
   normalize-normal : ∀{x y} → (x ≡ y) → Id (normalize x) (normalize y)
   normalize-normal {x@((x₁ /ₙ x₂) ⦃ ipos-x₂ ⦄)}{y@((y₁ /ₙ y₂) ⦃ ipos-y₂ ⦄)} xy =
     uncurry ([/ₙ]-equality ⦃ pos-nx ⦄ ⦃ pos-ny ⦄) (Coprime-unique-quotient
-      (coprimalize-is-coprime ([∨]-introᵣ pos-x₂))
-      (coprimalize-is-coprime ([∨]-introᵣ pos-y₂))
+      (coprimalize-is-coprime {x = x₁} ⦃ [∨]-introᵣ pos-x₂ ⦄)
+      (coprimalize-is-coprime {x = y₁} ⦃ [∨]-introᵣ pos-y₂ ⦄)
       (normalize-function{x}{y} xy)
     )
     where
       open import Type.Properties.Decidable.Proofs
       open import Lang.Irrelevance.Convertable
-      open import Numeral.Natural.Relation.Divisibility.Proofs.Product
+      open import Numeral.Natural.Relation.Divisibility.Proofs.Productᵣ
       pos-x₂ = convert(ℕ.Positive(x₂)) ⦃ decider-convertable ⦄ ipos-x₂
       pos-y₂ = convert(ℕ.Positive(y₂)) ⦃ decider-convertable ⦄ ipos-y₂
-      pos-nx = [↔]-to-[→] ([∧]-elimᵣ (coprimalize-positive)) pos-x₂
-      pos-ny = [↔]-to-[→] ([∧]-elimᵣ (coprimalize-positive)) pos-y₂
+      pos-nx = [↔]-to-[→] ([∧]-elimᵣ (coprimalize-positive {x = x₁})) pos-x₂
+      pos-ny = [↔]-to-[→] ([∧]-elimᵣ (coprimalize-positive {x = y₁})) pos-y₂
     {-
     let
       a = -- TODO: Similar to c, which is normalize-function
@@ -636,7 +638,7 @@ module _ where
   Whole(x /ₙ y) = y ∣ x
 
   open import Logic.Propositional
-  open import Numeral.Natural.Relation.Divisibility.Proofs.Product
+  open import Numeral.Natural.Relation.Divisibility.Proofs.Productᵣ
   open import Numeral.Natural.Coprime
   open import Numeral.Natural.Coprime.Proofs
   open import Structure.Relator.Properties

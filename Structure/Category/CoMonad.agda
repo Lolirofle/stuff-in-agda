@@ -9,7 +9,7 @@ module Structure.Category.CoMonad
 
 import      Function.Equals
 open        Function.Equals.Dependent
-open import Functional.Dependent using () renaming (_∘_ to _∘ᶠⁿ_)
+open import DependentFunctional using () renaming (_∘_ to _∘ᶠⁿ_)
 import      Lvl
 open import Logic.Predicate
 open import Structure.Category.Functor
@@ -17,7 +17,7 @@ open import Structure.Category.Functor.Functors as Functors
 open import Structure.Category.NaturalTransformation
 open import Structure.Category.NaturalTransformation.NaturalTransformations as NaturalTransformations
 
-open CategoryObject(cat)
+open CategoryObject(cat) hiding (_∘_ ; id)
 open Category.ArrowNotation(category)
 open Category(category)
 open Functors.Wrapped
@@ -45,9 +45,9 @@ record CoMonad (T : Object → Object) ⦃ functor : Functor(category)(category)
   μ-natural = NaturalTransformation.natural([∃]-proof Μ)
 
   field
-    μ-functor-[∘]-commutativity : ((μ ∘ᶠⁿ T) ∘ᴺᵀ μ ⊜ (map ∘ᶠⁿ μ) ∘ᴺᵀ μ)
-    μ-functor-[∘]-identityₗ     : ((map ∘ᶠⁿ η) ∘ᴺᵀ μ ⊜ idᴺᵀ)
-    μ-functor-[∘]-identityᵣ     : ((η   ∘ᶠⁿ T) ∘ᴺᵀ μ ⊜ idᴺᵀ)
+    μ-on-μ-preserving-functor : ((μ ∘ᶠⁿ T) ∘ᴺᵀ μ ⊜ (map ∘ᶠⁿ μ) ∘ᴺᵀ μ)
+    μ-on-μ-functor-η-inverse₁     : ((map ∘ᶠⁿ η) ∘ᴺᵀ μ ⊜ idᴺᵀ)
+    μ-on-μ-functor-η-inverse₀     : ((η   ∘ᶠⁿ T) ∘ᴺᵀ μ ⊜ idᴺᵀ)
 
   module FunctionalNames where
     extract : ∀{x} → (T(x) ⟶ x)

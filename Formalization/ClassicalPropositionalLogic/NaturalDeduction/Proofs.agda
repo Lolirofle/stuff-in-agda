@@ -169,7 +169,7 @@ data NegativeFragment {P : Type{ℓₚ}} : Formula(P) → Type{Lvl.of(P)} where
   eq     : NegativeFragment(φ) → NegativeFragment(ψ) → NegativeFragment(φ ⟷ ψ)
 
 open import Functional
-open import Type.Dependent
+open import Type.Dependent.Sigma
 open import Type.Dependent.Functions
 
 module GGNegativeTranslation where

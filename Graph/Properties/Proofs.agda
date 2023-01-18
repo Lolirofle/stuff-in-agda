@@ -2,7 +2,7 @@ open import Type
 
 module Graph.Properties.Proofs where
 
-open import Data.Either.Proofs
+open import Data.Either.Proofs.Map
 open import Functional
 open import Function.Equals
 open import Functional.Instance

@@ -4,19 +4,12 @@ import      Lvl
 open import Numeral.Finite using (𝕟)
 open import Numeral.Natural using (ℕ)
 open import Type
-open import Type.Dependent
+open import Type.Dependent.Sigma
 open import Syntax.Function
 
 private variable ℓ ℓₑ : Lvl.Level
 private variable T : Type{ℓ}
 private variable n n₁ n₂ : ℕ
-
-module Semigroup where
-  -- A term in the language of a semigroup.
-  -- It consists of a finite number of variables and a binary operator on its elements.
-  data Term (n : ℕ) : Type{Lvl.𝟎} where
-    var : 𝕟(n) → Term(n)
-    _▫_ : Term(n) → Term(n) → Term(n)
 
 module Monoid where
   open import Data.List

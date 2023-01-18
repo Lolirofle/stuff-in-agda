@@ -37,12 +37,12 @@ index 𝟎      (x ⊰ _) = x
 index (𝐒(n)) (_ ⊰ l) = index n l
 
 -- The sublist with the first n elements in the list
-first : (k : 𝕟₌(n)) → List(T)(n) → List(T)(𝕟-to-ℕ k)
+first : (k : 𝕟₌(n)) → List(T)(n) → List(T)(toℕ k)
 first 𝟎      _       = ∅
 first (𝐒(n)) (x ⊰ l) = x ⊰ (first n l)
 
 -- skip : ∀{n} → (k : 𝕟₌(n)) → List(T)(n) → List(T)(n − k)
--- last : ∀{n} → (k : 𝕟₌(n)) → List(T)(n) → List(T)(𝕟-to-ℕ k)
+-- last : ∀{n} → (k : 𝕟₌(n)) → List(T)(n) → List(T)(toℕ k)
 
 -- Length of the list (number of elements in the list)
 length : List(T)(n) → ℕ

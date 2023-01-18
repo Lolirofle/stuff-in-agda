@@ -11,7 +11,7 @@ import      Lvl
 open import FFI.MachineWord
 open import Numeral.Natural using () renaming (ℕ to Nat)
 open import String hiding (string)
-open import Type.Dependent
+open import Type.Dependent.Sigma
 open import Type hiding (Type)
 
 -- Names --

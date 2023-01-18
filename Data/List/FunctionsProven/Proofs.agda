@@ -6,12 +6,12 @@ import      Data.List.Functions as List
 open import Data.List.FunctionsProven
 open import Data.List.Relation.Quantification
 import      Functional as Fn
-open import Functional.Dependent
+open import DependentFunctional
 open import Relator.Equals
 open import Relator.Equals.Proofs
 open import Structure.Operator
 open import Type
-open import Type.Dependent
+open import Type.Dependent.Sigma
 
 private variable ℓ : Lvl.Level
 private variable T A B C : Type{ℓ}

@@ -2,7 +2,7 @@ module Numeral.Integer.Function where
 
 open import Numeral.Integer
 open import Numeral.Natural as ℕ using (ℕ)
-import      Numeral.Sign as Sign
+open import Numeral.Sign using (Sign ; ➕ ; ➖)
 
 ------------------------------------------
 -- Unary operations
@@ -22,12 +22,14 @@ import      Numeral.Sign as Sign
 -- Identity
 +_ : ℤ → ℤ
 + n = n
+infixl 10100 +_
 
 -- Negation
 −_ : ℤ → ℤ
 − 𝟎 = 𝟎
 − (+𝐒ₙ(n)) = −𝐒ₙ(n)
 − (−𝐒ₙ(n)) = +𝐒ₙ(n)
+infixl 10100 −_
 
 -- Absolute value
 abs : ℤ → ℤ
@@ -37,10 +39,10 @@ abs(−𝐒ₙ x) = +𝐒ₙ x
 ------------------------------------------
 -- Operations by signs
 
-step : (Sign.+|−) → ℤ → ℤ
-step(Sign.➕) = 𝐒
-step(Sign.➖) = 𝐏
+step : Sign → ℤ → ℤ
+step ➕ = 𝐒
+step ➖ = 𝐏
 
-signOn : (Sign.+|−) → ℤ → ℤ
-signOn(Sign.➕) = +_
-signOn(Sign.➖) = −_
+signOn : Sign → ℤ → ℤ
+signOn ➕ = +_
+signOn ➖ = −_

@@ -10,14 +10,14 @@ private variable a b n : ℕ
 
 open import Data
 
-boundExact : (i : 𝕟(a)) → .⦃ ord : IsTrue(𝕟-to-ℕ i <? b) ⦄ → 𝕟(b)
-boundExact {b = 𝐒 _} 𝟎     = 𝟎
-boundExact {b = 𝐒 _} (𝐒 i) = 𝐒(boundExact i)
+boundExact : (i : 𝕟(a)) → (b : ℕ) → .⦃ ord : IsTrue(toℕ i <? b) ⦄ → 𝕟(b)
+boundExact 𝟎     (𝐒 _) = 𝟎
+boundExact (𝐒 i) (𝐒 b) = 𝐒(boundExact i b)
 
 -- For an arbitrary number `n`, `bound-[≤] n` is the same number as `n` semantically but with a different boundary on the type.
 -- Example: bound-[≤?] (3 : 𝕟(10)) = (3 : 𝕟(20))
 bound-[≤?] : .⦃ ord : IsTrue(a ≤? b) ⦄ → (𝕟(a) → 𝕟(b))
-bound-[≤?] {a}{b} ⦃ ord ⦄ n = boundExact n ⦃ [<?][≤?]-subtransitivityᵣ{𝕟-to-ℕ n}{a}{b} (𝕟-to-ℕ-bound{a}{n}) ord ⦄
+bound-[≤?] {a}{b} ⦃ ord ⦄ n = boundExact n b ⦃ [<?][≤?]-subtransitivityᵣ{toℕ n}{a} (toℕ-bound{a}{n}) ord ⦄
 
 bound-𝐒 : 𝕟(n) → 𝕟(ℕ.𝐒(n))
 bound-𝐒 {n} = bound-[≤?] ⦃ [≤?]-𝐒 {n} ⦄

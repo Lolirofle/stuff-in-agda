@@ -340,9 +340,18 @@ module One {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫_ 
     id           🝖-end
 
   inv-is-id : let _ = select-func ⦃ equiv ⦄ ⦃ equiv ⦄ (inv)(func) , select-id(id)(ident) , select-inv(id)(ident)(inv)(inver) , select-invol ⦃ equiv ⦄(inv)(invol) in ∀{x} → (inv(x) ≡ id) ↔ (x ≡ id)
-  inv-is-id {inv = inv}{id = id} = [↔]-intro
-    (p ↦ congruence₁(inv) p 🝖 inv-of-id)
-    (p ↦ symmetry(_≡_) (involution(inv)) 🝖 congruence₁(inv) p 🝖 inv-of-id)
+  inv-is-id {inv = inv}{id = id}{x} = [↔]-intro
+    (\xid →
+      inv x  🝖[ _≡_ ]-[ congruence₁(inv) xid ]
+      inv id 🝖[ _≡_ ]-[ inv-of-id ]
+      id     🝖[ _≡_ ]-end
+    )
+    (\invxid →
+      x          🝖[ _≡_ ]-[ involution(inv) ]-sym
+      inv(inv x) 🝖[ _≡_ ]-[ congruence₁(inv) invxid ]
+      inv id     🝖[ _≡_ ]-[ inv-of-id ]
+      id         🝖-end
+    )
 
 module OneTypeTwoOp {ℓ ℓₑ} {T : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ {_▫₁_ _▫₂_ : T → T → T} where
   open Lang.Vars.Structure.Operator.OneTypeTwoOp ⦃ equiv = equiv ⦄ {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_}

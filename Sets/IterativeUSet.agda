@@ -7,7 +7,7 @@ import      Lvl.Decidable as Lvl
 open import Structure.Setoid renaming (_≡_ to _≡ₛ_)
 open import Syntax.Function
 open import Type
-open import Type.Dependent
+open import Type.Dependent.Sigma
 
 private variable ℓ ℓₒ ℓₑ ℓ₁ ℓ₂ : Lvl.Level
 private variable T Indexₗ Indexᵣ : Type{ℓ}
@@ -215,7 +215,7 @@ module Oper ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   open import Functional
   open import Logic
   open import Logic.Classical
-  open import Type.Dependent
+  open import Type.Dependent.Sigma
   open import Type.Dependent.Functions
   open import Type.Properties.Decidable
   open import Type.Properties.Decidable.Proofs

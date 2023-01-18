@@ -125,7 +125,7 @@ import Numeral.Real
 import Numeral.Real.Properties
 import Numeral.Sign
 import Numeral.Sign.Oper
-import Numeral.Sign.Oper0
+import Numeral.Charge.Oper
 import Operator.Equals
 import Relator.Bijection
 import Relator.Congruence
@@ -191,7 +191,7 @@ import Syntax.Number
 import Type
 import Type.Cardinality
 import Type.Cardinality.Proofs
-import Type.Dependent
+import Type.Dependent.Sigma
 import Type.Properties.Empty
 import Type.Properties.Empty.Proofs
 import Type.Functions

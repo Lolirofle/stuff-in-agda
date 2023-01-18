@@ -5,7 +5,7 @@ import      Lvl
 open import Numeral.Natural
 open import Structure.Setoid
 open import Type
-open import Type.Dependent
+open import Type.Dependent.Sigma
 open import Syntax.Function
 
 private variable ℓ ℓ₁ ℓ₂ ℓₑ : Lvl.Level

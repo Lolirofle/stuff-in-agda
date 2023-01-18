@@ -16,7 +16,6 @@ private variable ℓ ℓᵢ ℓₑ ℓₑᵢ ℓₑₗ ℓₑₗ₁ ℓₑₗ₂
 private variable T A B I : Type{ℓ}
 private variable _▫_ : T → T → T
 
-open        Data.List.Functions.LongOper
 open import Data.List.Proofs
 open import Functional as Fn using (_$_ ; _∘_ ; const)
 import      Function.Equals as Fn
@@ -154,6 +153,7 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
     open Field(field-structure)
     open Operator.Summation {I = ℕ} ⦃ monoid = [+]-monoid ⦄
 
+open import Logic.Propositional
 open import Relator.Equals hiding (_≡_)
 open import Relator.Equals.Proofs.Equiv
 open import Numeral.Natural.Oper
@@ -173,12 +173,12 @@ private variable r r₁ r₂ : List(ℕ)
 ∑-zero : (∑(r) (const 𝟎) ≡ 𝟎)
 ∑-zero {r} = ∑-const {r}{𝟎}
 
--- TODO: map-binaryOperator is on the equality setoid, which blocks the generalization of this
+-- TODO: map-binaryOperator is on the equality setoid, which blocks the generalization of this. Use map-operator-raw instead
 instance
   ∑-binaryOperator : BinaryOperator ⦃ equiv-A₂ = Fn.[⊜]-equiv ⦄ (∑)
   BinaryOperator.congruence ∑-binaryOperator {r₁}{r₂}{f}{g} rr fg =
     ∑(r₁) f  🝖[ _≡_ ]-[]
-    foldᵣ(_+_) 𝟎 (map f(r₁))  🝖[ _≡_ ]-[ congruence₁(foldᵣ(_+_) 𝟎) (congruence₂(map) ⦃ map-binaryOperator ⦄ fg rr) ]
+    foldᵣ(_+_) 𝟎 (map f(r₁))  🝖[ _≡_ ]-[ congruence₁(foldᵣ(_+_) 𝟎) (map-operator-raw ⦃ func-fg = [∨]-introₗ infer ⦄ (Fn._⊜_.proof fg) rr) ]
     foldᵣ(_+_) 𝟎 (map g(r₂))  🝖[ _≡_ ]-[]
     ∑(r₂) g  🝖-end
 
@@ -267,9 +267,9 @@ instance
 -- ∑-add-range : (∑(a ‥ a + b) f ≡ ∑(𝟎 ‥ b) (f ∘ (_+ a)))
 
 ∑-trans-range : ⦃ ab : (a ≤ b) ⦄ ⦃ bc : (b < c) ⦄ → (∑(a ‥ b) f + ∑(b ‥ c) f ≡ ∑(a ‥ c) f)
-∑-trans-range {a}{b}{c} {f} =
+∑-trans-range {a}{b}{c} {f} ⦃ ab ⦄ ⦃ bc ⦄ =
   ∑(a ‥ b) f + ∑(b ‥ c) f 🝖[ _≡_ ]-[ ∑-concat{r₁ = a ‥ b}{r₂ = b ‥ c}{f = f} ]-sym
-  ∑((a ‥ b) ++ (b ‥ c)) f 🝖[ _≡_ ]-[ congruence₁(r ↦ ∑(r) f) (Range-concat{a}{b}{c}) ]
+  ∑((a ‥ b) ++ (b ‥ c)) f 🝖[ _≡_ ]-[ congruence₁(r ↦ ∑(r) f) (Range-concat{a}{b}{c} ab bc) ]
   ∑(a ‥ c) f              🝖-end
 
 -- TODO: Formulate ∑({(x,y). a ≤ x ≤ y ≤ b}) f ≡ ∑(a ‥ b) (x ↦ ∑(a ‥ x) (y ↦ f(x)(y))) ≡ ∑(a ‥ b) (x ↦ ∑(x ‥ b) (y ↦ f(x)(y))) ≡ ... and first prove a theorem stating that the order of a list does not matter
@@ -340,7 +340,7 @@ module _ where
 
   -- ∑dep-test : ∑dep ∅ id ≡ 0
 
-  open import Type.Dependent
+  open import Type.Dependent.Sigma
   open import Type.Dependent.Functions
   proofList : ∀{ℓ}{T : Type{ℓ}} → (l : List(T)) → List(Σ T (_∈ l))
   proofList ∅       = ∅

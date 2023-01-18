@@ -9,7 +9,7 @@ open import Data.Option as Option using (Option)
 import      Data.Option.Functions as Option
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Functional
-open import Numeral.Finite
+open import Numeral.Finite using (𝕟 ; 𝕟₌ ; 𝟎 ; 𝐒)
 open import Numeral.Natural
 open import Type
 
@@ -178,10 +178,6 @@ insert 𝟎                = _⊰_
 insert (𝐒(_)) a ∅       = singleton a
 insert (𝐒(i)) a (x ⊰ l) = x ⊰ insert i a l
 
-module LongOper where
-  pattern empty = ∅
-  pattern prepend elem list = elem ⊰ list
-
 -- Applies a function on each element in the list
 -- Examples:
 --   map f[]      = []
@@ -318,9 +314,14 @@ _orₗ_ (l @(_ ⊰ _)) _ = l
 
 -- Reverse the order of the elements in the list.
 -- Example: `reverse [a,b,c,d] = [d,c,b,a]`.
+-- Alternative implementation:
+--   reverse ∅ = ∅
+--   reverse (x ⊰ l) = postpend x (reverse l)
 reverse : List(T) → List(T)
-reverse ∅ = ∅
-reverse (x ⊰ l) = postpend x (reverse l)
+reverse = foldₗ(swap(_⊰_)) ∅
+module reverse where
+  byPostpend : List(T) → List(T)
+  byPostpend = foldᵣ postpend ∅
 
 import Function.Iteration as Function
 
@@ -378,31 +379,32 @@ satisfiesAny₂(_▫_) l r (x₁ ⊰ l₁)  (x₂ ⊰ l₂) with (x₁ ▫ x₂)
 -- fn-to-list : ∀{L : List(Type{ℓ})}{Out : Type{ℓ}} → (foldᵣ (_→ᶠ_) (Out) (L)) → (List(Type{ℓ}) → Out)
 -- fn-to-list{∅} = 
 
+mapFilterAt : ℕ → (T → Option(T)) → List(T) → List(T)
+mapFilterAt _      f ∅       = ∅
+mapFilterAt 𝟎      f (x ⊰ l) = Option.partialMap id (_⊰_) (f(x)) l
+mapFilterAt (𝐒(n)) f (x ⊰ l) = x ⊰ mapFilterAt n f l
+
 -- Replacing the nth element in the list.
--- Example: `modifyAt 2 f [a,b,c,d] = [a,b,f(c),d]`.
-modifyAt : ℕ → (T → T) → List(T) → List(T)
-modifyAt _      f ∅       = ∅
-modifyAt 𝟎      f (x ⊰ l) = f(x) ⊰ l
-modifyAt (𝐒(n)) f (x ⊰ l) = x ⊰ modifyAt n f l
+-- Example: `mapFilterAt 2 f [a,b,c,d] = [a,b,f(c),d]`.
+mapAt : ℕ → (T → T) → List(T) → List(T)
+mapAt n = mapFilterAt n ∘ (Option.Some ∘_)
 
 -- Example: `replaceAt 2 x [a,b,c,d] = [a,b,x,d]`.
 replaceAt : ℕ → T → List(T) → List(T)
-replaceAt n = modifyAt n ∘ const
+replaceAt n = mapAt n ∘ const
 
 -- The list without the nth element in the list
--- Example: `withoutIndex 2 [a,b,c,d] = [a,b,d]`.
-withoutIndex : ℕ → List(T) → List(T)
-withoutIndex _       ∅       = ∅
-withoutIndex 𝟎       (_ ⊰ l) = l
-withoutIndex (𝐒(n))  (x ⊰ l) = x ⊰ withoutIndex(n)(l)
+-- Example: `removeAt 2 [a,b,c,d] = [a,b,d]`.
+removeAt : ℕ → List(T) → List(T)
+removeAt n = mapFilterAt n (const Option.None)
 
--- Example: `swapIndex 1 3 [a,b,c,d,e,f] = [a,d,c,b,e,f]`.
-swapIndex : ℕ → ℕ → List(T) → List(T)
-swapIndex _      _      ∅      = ∅
-swapIndex 𝟎      𝟎      (x ⊰ l) = (x ⊰ l)
-swapIndex (𝐒(a)) 𝟎      (x ⊰ l) = Option.map(_⊰ replaceAt a x l) (index₀ a l) Option.or (x ⊰ l)
-swapIndex 𝟎      (𝐒(b)) (x ⊰ l) = Option.map(_⊰ replaceAt b x l) (index₀ b l) Option.or (x ⊰ l)
-swapIndex (𝐒(a)) (𝐒(b)) (x ⊰ l) = x ⊰ swapIndex a b l
+-- Example: `swapAt 1 3 [a,b,c,d,e,f] = [a,d,c,b,e,f]`.
+swapAt : ℕ → ℕ → List(T) → List(T)
+swapAt _      _      ∅      = ∅
+swapAt 𝟎      𝟎      (x ⊰ l) = (x ⊰ l)
+swapAt (𝐒(a)) 𝟎      (x ⊰ l) = Option.map(_⊰ replaceAt a x l) (index₀ a l) Option.or (x ⊰ l)
+swapAt 𝟎      (𝐒(b)) (x ⊰ l) = Option.map(_⊰ replaceAt b x l) (index₀ b l) Option.or (x ⊰ l)
+swapAt (𝐒(a)) (𝐒(b)) (x ⊰ l) = x ⊰ swapAt a b l
 
 -- The given list with only the elements that satisfy the given predicate (without the elements that do not satisfy the given predicate).
 -- Example: `filter(_<? 10) [0,10,11,1,2,12,3,13,14,4,5] = [0,1,2,3,4,5]`.
@@ -512,14 +514,15 @@ rotateᵣ l = Option.partialMap ∅ (Tuple.uncurry(swap(_⊰_))) (splitLast l)
 --   every 1         l       = l
 --   every (𝐒(𝐒(n))) ∅       = ∅
 -- • every (𝐒(𝐒(n))) (x ⊰ l) = x ⊰ every (𝐒(𝐒(n))) (skip (𝐒(n)) l)
-every : ℕ → List(T) → List(T)
-every 𝟎      = const ∅
-every (𝐒(n)) = impl 𝟎 where
-  -- TODO: Is it possible to prove stuff about `every` when `impl` is hidden in a where clause? `impl` essentially contains a counter, so an alternative implementation would be having `every` have two arguments.
+module every(n : ℕ) where
+  -- `impl` contains a counter that `every` is hiding.
   impl : ℕ → List(T) → List(T)
   impl _     ∅       = ∅
   impl 𝟎     (x ⊰ l) = x ⊰ impl n l
   impl (𝐒 k) (x ⊰ l) = impl k l
+every : ℕ → List(T) → List(T)
+every 𝟎      = const ∅
+every (𝐒(n)) = every.impl n 𝟎
 
 -- Examples:
 --   separate 0  [0,1,2,3,4,5,6,7,8] = []
@@ -537,9 +540,15 @@ every (𝐒(n)) = impl 𝟎 where
 separate : ℕ → List(T) → List(List(T))
 separate n l = map (every n) (accumulateIterate₀ n tail l)
 
+-- Examples:
+--   insertIn 10 [0,1,2,3,4] 0 = [10 , 0 , 1 , 2 , 3 , 4]
+--   insertIn 10 [0,1,2,3,4] 1 = [0 , 10 , 1 , 2 , 3 , 4]
+--   insertIn 10 [0,1,2,3,4] 2 = [0 , 1 , 10 , 2 , 3 , 4]
+--   insertIn 10 [0,1,2,3,4] 3 = [0 , 1 , 2 , 10 , 3 , 4]
+--   insertIn 10 [0,1,2,3,4] 4 = [0 , 1 , 2 , 3 , 10 , 4]
+--   insertIn 10 [0,1,2,3,4] 5 = [0 , 1 , 2 , 3 , 4 , 10]
 insertIn : T → (l : List(T)) → 𝕟₌(length l) → List(T)
 insertIn a l       𝟎      = a ⊰ l
-insertIn a ∅       (𝐒(_)) = singleton a
 insertIn a (x ⊰ l) (𝐒(i)) = x ⊰ insertIn a l i
 
 foldUntilᵣ : (A → Option(B → B)) → (List(A) → B) → List(A) → B
@@ -548,7 +557,7 @@ foldUntilᵣ f i (x ⊰ l) with f(x)
 ... | Option.None   = i(x ⊰ l)
 ... | Option.Some s = s(foldUntilᵣ f i l)
 
--- Also called: groupBy (Haskell) (Though there is a difference in behaviour. The first element in every group is used to compare to all the successive in the group).
+-- Also called: groupBy (Haskell) (Though there is a difference in behaviour. This implementation uses the first element in every group to compare to all the successive in the group).
 -- Alternative implementation (accepted by the termination checker):
 --   adjacencyPartition f(∅)     = ∅
 --   adjacencyPartition f(x ⊰ l) with adjacencyPartition f(l)
@@ -556,7 +565,7 @@ foldUntilᵣ f i (x ⊰ l) with f(x)
 --   ... | ∅ ⊰ Ll       = (singleton x) ⊰ Ll
 --   ... | (y ⊰ L) ⊰ Ll = if (f x y) then ((x ⊰ y ⊰ L) ⊰ Ll) else ((singleton x) ⊰ (y ⊰ L) ⊰ Ll)
 -- Termination: `rest` is a strict sublist of `x ⊰ l` because foldUntilᵣ do not grow the right tuple value and it uses `l`.
--- Note: concat ∘ adjacencyPartition(_▫_) ≡ id
+-- Note: concat ∘ adjacencyPartition(_▫_) ⊜ id
 -- Example: adjacencyPartitionCount(_≡?_) [0,1,2,2,2,3,3,4,4,5,5,5,5,6] = [[0],[1],[2,2,2],[3,3],[4,4],[5,5,5,5],[6]]
 {-# TERMINATING #-}
 adjacencyPartition : (T → T → Bool) → List(T) → List(List(T))
@@ -565,7 +574,7 @@ adjacencyPartition f(x ⊰ l) =
   let (g , rest) = foldUntilᵣ(y ↦ (if(f x y) then Option.Some(Tuple.mapLeft (y ⊰_)) else Option.None)) (∅ ,_) l
   in (x ⊰ g) ⊰ adjacencyPartition f(rest)
 
--- Note: concatMap(Tuple.uncurry repeat) ∘ adjacencyPartitionCount(_▫_) ≡ id
+-- Note: concatMap(Tuple.uncurry repeat) ∘ adjacencyPartitionCount(_≡?_) ⊜ id
 -- Example: adjacencyPartitionCount(_≡?_) [0,1,2,2,2,3,3,4,4,5,5,5,5,6] = [(0,1) , (1,1) , (2,3) , (3,2) , (4,2) , (5,4) , (6,1)]
 {-# TERMINATING #-}
 adjacencyPartitionCount : (T → T → Bool) → List(T) → List(T ⨯ ℕ)

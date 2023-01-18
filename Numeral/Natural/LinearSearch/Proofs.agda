@@ -125,7 +125,7 @@ findUpperboundedMax-findUpperboundedMin-equality {𝐒(max)} {f} with f(max) | i
 ... | 𝑇 | intro fmax = [≡]-intro
 ... | 𝐹 | intro fmax =
   _ 🝖[ _≡_ ]-[ findUpperboundedMax-findUpperboundedMin-equality {max} {f} ]
-  Option.map ((max −₀_) ∘ 𝐒) (findUpperboundedMin max (f ∘ (max −₀_) ∘ 𝐒))          🝖[ _≡_ ]-[ _⊜_.proof (map-preserves-[∘] {f = max −₀_}{g = 𝐒}) {findUpperboundedMin max (f ∘ (max −₀_) ∘ 𝐒)} ]
+  Option.map ((max −₀_) ∘ 𝐒) (findUpperboundedMin max (f ∘ (max −₀_) ∘ 𝐒))          🝖[ _≡_ ]-[ (map-preserves-[∘] {f = max −₀_}{g = 𝐒}) {findUpperboundedMin max (f ∘ (max −₀_) ∘ 𝐒)} ]
   Option.map (max −₀_) (Option.map 𝐒 (findUpperboundedMin max (f ∘ (max −₀_) ∘ 𝐒))) 🝖-end
 
 {-
@@ -147,12 +147,12 @@ findUpperboundedMax-None-correctness {max} {f} =
 
 {-
 findBoundedMin : ℕ → ℕ → (ℕ → Bool) → Option(ℕ)
-findBoundedMin a b f = Option.map 𝕟-to-ℕ (𝕟.findMin{b −₀ a}(f ∘ (_+ a) ∘ 𝕟-to-ℕ))
+findBoundedMin a b f = Option.map toℕ (𝕟.findMin{b −₀ a}(f ∘ (_+ a) ∘ toℕ))
 
 findBoundedMin-None-correctness : (a < b) → (findBoundedMin a b f ≡ None) ↔ (∀{i} → (a ≤ i) → (i < b) → IsFalse(f(i)))
 findBoundedMin-None-correctness{a}{b}{f} ab
-  with [↔]-intro l r ← 𝕟.findMin-None-correctness{b −₀ a}{f ∘ (_+ a) ∘ 𝕟-to-ℕ}
-  = [↔]-intro (\p → congruence₁(Option.map 𝕟-to-ℕ) (l (\{i} → p ([≤]-of-[+]ᵣ {𝕟-to-ℕ i}) {![<]-with-[+]-weak ([∨]-introₗ ([∧]-intro ? ?))!}))) (\p{i} ai ib → {!r ? {?}!})
+  with [↔]-intro l r ← 𝕟.findMin-None-correctness{b −₀ a}{f ∘ (_+ a) ∘ toℕ}
+  = [↔]-intro (\p → congruence₁(Option.map toℕ) (l (\{i} → p ([≤]-of-[+]ᵣ {toℕ i}) {![<]-with-[+]-weak ([∨]-introₗ ([∧]-intro ? ?))!}))) (\p{i} ai ib → {!r ? {?}!})
 -}
 
 open import Data.List
@@ -160,18 +160,19 @@ import      Data.List.Functions as List
 open import Data.List.Relation.Membership using (_∈_)
 open import Data.List.Relation.Membership.Proofs
 open import Data.List.Relation.Quantification
-open import Data.List.Relation.Quantification.Proofs
+open import Data.List.Relation.Quantification.Universal.Functions
 open import Data.List.Sorting
 open import Numeral.Finite
 import      Numeral.Finite.LinearSearch as 𝕟
+import      Numeral.Finite.LinearSearch.Proofs.FindAll as 𝕟
 
 findBoundedAll-correctness : AllElements(IsTrue ∘ f)(findBoundedAll a b f)
-findBoundedAll-correctness {f} {a} {b} with 𝕟.findAll{b −₀ a} (f ∘ (_+ a) ∘ 𝕟-to-ℕ) | 𝕟.findAll-correctness{b −₀ a}{f ∘ (_+ a) ∘ 𝕟-to-ℕ}
+findBoundedAll-correctness {f} {a} {b} with 𝕟.findAll{b −₀ a} (f ∘ (_+ a) ∘ toℕ) | 𝕟.findAll-correctness{b −₀ a}{f ∘ (_+ a) ∘ toℕ}
 ... | ∅     | ∅      = ∅
-... | _ ⊰ _ | p ⊰ ps = p ⊰ AllElements-mapᵣ ((_+ a) ∘ 𝕟-to-ℕ) id ps
+... | _ ⊰ _ | p ⊰ ps = p ⊰ AllElements-mapᵣ ((_+ a) ∘ toℕ) id ps
 
 postulate findBoundedAll-completeness : IsTrue(f(i)) → (a ≤ i) → (i < b) → (i ∈ findBoundedAll a b f)
--- findBoundedAll-completeness {f}{i}{a}{b} ai ib fi = {![∈]-map {f = 𝕟-to-ℕ} (𝕟.findAll-completeness{b −₀ a}{f ∘ (_+ a) ∘ 𝕟-to-ℕ}{ℕ-to-𝕟 (i −₀ a) ⦃ ? ⦄} ?)!}
+-- findBoundedAll-completeness {f}{i}{a}{b} ai ib fi = {![∈]-map {f = toℕ} (𝕟.findAll-completeness{b −₀ a}{f ∘ (_+ a) ∘ toℕ}{fromℕ (i −₀ a) ⦃ ? ⦄} ?)!}
 
 postulate findBoundedAll-emptyness : (∀{i} → (a ≤ i) → (i < b) → IsFalse(f(i))) ↔ (findBoundedAll a b f ≡ ∅)
 
@@ -181,15 +182,15 @@ postulate findBoundedAll-sorted : Sorted(_≤?_)(findBoundedAll a b f)
 postulate findBoundedAll-membership : (i ∈ findBoundedAll a b f) ↔ ((a ≤ i) ∧ (i < b) ∧ IsTrue(f(i)))
 
 {-
-findUpperboundedMin-findMin-equality : findUpperboundedMin max f ≡ Option.map (𝕟-to-ℕ {max}) (𝕟.findMin(f ∘ 𝕟-to-ℕ))
+findUpperboundedMin-findMin-equality : findUpperboundedMin max f ≡ Option.map (toℕ {max}) (𝕟.findMin(f ∘ toℕ))
 findUpperboundedMin-findMin-equality {𝟎}     {f} = [≡]-intro
 findUpperboundedMin-findMin-equality {𝐒 max} {f} with f(𝟎) | inspect f(𝟎)
 ... | 𝑇 | intro f0 = [≡]-intro
 ... | 𝐹 | intro f0 =
   Option.map 𝐒(findUpperboundedMin max (f ∘ 𝐒))                        🝖[ _≡_ ]-[ congruence₁(Option.map 𝐒) (findUpperboundedMin-findMin-equality {max} {f ∘ 𝐒}) ]
-  Option.map(𝐒) (Option.map 𝕟-to-ℕ(𝕟.findMin(f ∘ 𝐒 ∘ 𝕟-to-ℕ {max})))   🝖[ _≡_ ]-[ {!!} ]
-  Option.map(𝐒 ∘ 𝕟-to-ℕ) (𝕟.findMin(f ∘ 𝐒 ∘ 𝕟-to-ℕ {max}))             🝖[ _≡_ ]-[ {!!} ]
-  Option.map(𝐒 ∘ 𝕟-to-ℕ) (𝕟.findMin(f ∘ 𝕟-to-ℕ {𝐒 max} ∘ 𝐒))           🝖[ _≡_ ]-[ {!!} ]
-  Option.map(𝕟-to-ℕ ∘ 𝐒) (𝕟.findMin(f ∘ 𝕟-to-ℕ {𝐒 max} ∘ 𝐒))           🝖[ _≡_ ]-[ {!!} ]
-  Option.map(𝕟-to-ℕ) (Option.map 𝐒(𝕟.findMin(f ∘ 𝕟-to-ℕ {𝐒 max} ∘ 𝐒))) 🝖-end
+  Option.map(𝐒) (Option.map toℕ(𝕟.findMin(f ∘ 𝐒 ∘ toℕ {max})))   🝖[ _≡_ ]-[ {!!} ]
+  Option.map(𝐒 ∘ toℕ) (𝕟.findMin(f ∘ 𝐒 ∘ toℕ {max}))             🝖[ _≡_ ]-[ {!!} ]
+  Option.map(𝐒 ∘ toℕ) (𝕟.findMin(f ∘ toℕ {𝐒 max} ∘ 𝐒))           🝖[ _≡_ ]-[ {!!} ]
+  Option.map(toℕ ∘ 𝐒) (𝕟.findMin(f ∘ toℕ {𝐒 max} ∘ 𝐒))           🝖[ _≡_ ]-[ {!!} ]
+  Option.map(toℕ) (Option.map 𝐒(𝕟.findMin(f ∘ toℕ {𝐒 max} ∘ 𝐒))) 🝖-end
 -}

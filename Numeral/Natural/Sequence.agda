@@ -41,7 +41,7 @@ unalternate₂(Either.Right n) = 𝐒(n ⋅ 2)
 -- Maps two natural numbers to a single one without overlaps by following the inverse diagonals downwards.
 -- A countable bijection for the tuple pairing type.
 -- Alternative forms:
---   pairIndexing a b = a + (∑(𝕟(a + b)) (i ↦ 𝕟-to-ℕ(i)))
+--   pairIndexing a b = a + (∑(𝕟(a + b)) (i ↦ toℕ(i)))
 --   pairIndexing a b = a + ((a + b) * (a + b + 1) / 2)
 -- Example:
 --   Horizontal axis is `a` starting from 0.

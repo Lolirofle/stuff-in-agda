@@ -20,7 +20,7 @@ open import Structure.Relator.Properties
 open import Structure.Relator
 open import Syntax.Transitivity
 open import Type
-open import Type.Dependent
+open import Type.Dependent.Sigma
 
 private variable ℓ ℓ₁ ℓ₂ ℓₑ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₒ₁ ℓₒ₂ : Lvl.Level
 private variable T A B C : Type{ℓ}

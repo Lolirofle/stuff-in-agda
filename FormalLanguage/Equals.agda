@@ -21,23 +21,23 @@ module _ {Σ : Alphabet{ℓ}} where
     constructor intro
     coinductive
     field
-      accepts-ε   : Language.accepts-ε(A) ≡ₑ Language.accepts-ε(B)
-      suffix-lang : ∀{c : Σ}{sₛ : <ˢⁱᶻᵉ s} → (Language.suffix-lang A c ≅[ sₛ ]≅ Language.suffix-lang B c)
+      accepts-ε : Language.accepts-ε(A) ≡ₑ Language.accepts-ε(B)
+      suffix    : ∀{c : Σ}{sₛ : <ˢⁱᶻᵉ s} → (Language.suffix A c ≅[ sₛ ]≅ Language.suffix B c)
 
   _≅_ : ∀{s : Size} → Language(Σ){∞ˢⁱᶻᵉ} → Language(Σ){∞ˢⁱᶻᵉ} → Type
   _≅_ {s} = _≅[ s ]≅_
 
   [≅]-reflexivity-raw : Names.Reflexivity(_≅[ s ]≅_)
-  _≅[_]≅_.accepts-ε   ([≅]-reflexivity-raw) = [≡]-intro
-  _≅[_]≅_.suffix-lang ([≅]-reflexivity-raw) = [≅]-reflexivity-raw
+  _≅[_]≅_.accepts-ε ([≅]-reflexivity-raw) = [≡]-intro
+  _≅[_]≅_.suffix    ([≅]-reflexivity-raw) = [≅]-reflexivity-raw
 
   [≅]-symmetry-raw : Names.Symmetry(_≅[ s ]≅_)
-  _≅[_]≅_.accepts-ε   ([≅]-symmetry-raw ab) = symmetry(_≡ₑ_) (_≅[_]≅_.accepts-ε ab)
-  _≅[_]≅_.suffix-lang ([≅]-symmetry-raw ab) = [≅]-symmetry-raw (_≅[_]≅_.suffix-lang ab)
+  _≅[_]≅_.accepts-ε ([≅]-symmetry-raw ab) = symmetry(_≡ₑ_) (_≅[_]≅_.accepts-ε ab)
+  _≅[_]≅_.suffix    ([≅]-symmetry-raw ab) = [≅]-symmetry-raw (_≅[_]≅_.suffix ab)
 
   [≅]-transitivity-raw : Names.Transitivity(_≅[ s ]≅_)
-  _≅[_]≅_.accepts-ε   ([≅]-transitivity-raw ab bc) = transitivity(_≡ₑ_) (_≅[_]≅_.accepts-ε ab) (_≅[_]≅_.accepts-ε bc)
-  _≅[_]≅_.suffix-lang ([≅]-transitivity-raw ab bc) = [≅]-transitivity-raw (_≅[_]≅_.suffix-lang ab) (_≅[_]≅_.suffix-lang bc)
+  _≅[_]≅_.accepts-ε ([≅]-transitivity-raw ab bc) = transitivity(_≡ₑ_) (_≅[_]≅_.accepts-ε ab) (_≅[_]≅_.accepts-ε bc)
+  _≅[_]≅_.suffix    ([≅]-transitivity-raw ab bc) = [≅]-transitivity-raw (_≅[_]≅_.suffix ab) (_≅[_]≅_.suffix bc)
 
   instance
     [≅]-reflexivity : Reflexivity(_≅[ s ]≅_)

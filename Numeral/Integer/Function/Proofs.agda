@@ -7,7 +7,9 @@ open import Numeral.Integer.Construction.Proofs
 open import Numeral.Integer.Function
 open import Numeral.Integer.Sign
 open import Numeral.Natural as ℕ using (ℕ)
+import      Numeral.Charge as Charge
 import      Numeral.Sign as Sign
+import      Numeral.Sign.Oper as Sign
 open import Logic.Predicate
 open import Relator.Equals
 open import Relator.Equals.Proofs
@@ -116,17 +118,17 @@ signed-inverse {𝟎}     = [≡]-intro
 signed-inverse {−𝐒ₙ _} = [≡]-intro
 
 sign0-inverse : ∀{x}{y} → (sign0(signed0 x (ℕ.𝐒(y))) ≡ x)
-sign0-inverse {Sign.➕} {y} = [≡]-intro
-sign0-inverse {Sign.𝟎}  {y} = [≡]-intro
-sign0-inverse {Sign.➖} {y} = [≡]-intro
+sign0-inverse {Charge.➕} {y} = [≡]-intro
+sign0-inverse {Charge.𝟎}  {y} = [≡]-intro
+sign0-inverse {Charge.➖} {y} = [≡]-intro
 
-absₙ-inverse : ∀{x}{y} → (x ≢ Sign.𝟎) → (absₙ(signed0 x y) ≡ y)
-absₙ-inverse {Sign.➕} {ℕ.𝟎}   _ = [≡]-intro
-absₙ-inverse {Sign.➕} {ℕ.𝐒 y} _ = [≡]-intro
-absₙ-inverse {Sign.➖} {ℕ.𝟎}   _ = [≡]-intro
-absₙ-inverse {Sign.➖} {ℕ.𝐒 y} _ = [≡]-intro
-absₙ-inverse {Sign.𝟎} {ℕ.𝟎}    _ = [≡]-intro
-absₙ-inverse {Sign.𝟎} {ℕ.𝐒 y}  p with () ← p [≡]-intro
+absₙ-inverse : ∀{x}{y} → (x ≢ Charge.𝟎) → (absₙ(signed0 x y) ≡ y)
+absₙ-inverse {Charge.➕} {ℕ.𝟎}   _ = [≡]-intro
+absₙ-inverse {Charge.➕} {ℕ.𝐒 y} _ = [≡]-intro
+absₙ-inverse {Charge.➖} {ℕ.𝟎}   _ = [≡]-intro
+absₙ-inverse {Charge.➖} {ℕ.𝐒 y} _ = [≡]-intro
+absₙ-inverse {Charge.𝟎} {ℕ.𝟎}    _ = [≡]-intro
+absₙ-inverse {Charge.𝟎} {ℕ.𝐒 y}  p with () ← p [≡]-intro
 
 absₙ-of-[−] : ∀{x} → (absₙ(− x) ≡ absₙ x)
 absₙ-of-[−] {+𝐒ₙ _} = [≡]-intro

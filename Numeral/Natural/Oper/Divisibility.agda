@@ -3,6 +3,8 @@ module Numeral.Natural.Oper.Divisibility where
 import      Lvl
 open import Data
 open import Data.Boolean
+import      Data.Boolean.Operators
+open        Data.Boolean.Operators.Programming
 open import Numeral.Natural
 open import Numeral.Natural.Oper.Comparisons
 open import Numeral.Natural.Oper.Modulo
@@ -11,6 +13,9 @@ open import Numeral.Natural.Oper.Modulo
 _∣?_ : ℕ → ℕ → Bool
 𝟎    ∣? _ = 𝐹
 𝐒(y) ∣? x = zero?(x mod 𝐒(y))
+
+_∤?_ : ℕ → ℕ → Bool
+x ∤? y = !(x ∣? y)
 
 -- Divisibility check
 _∣₀?_ : ℕ → ℕ → Bool

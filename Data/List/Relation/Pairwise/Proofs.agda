@@ -1,11 +1,15 @@
 module Data.List.Relation.Pairwise.Proofs where
 
+open import Data using (<>)
 open import Data.List
 import      Data.List.Functions as List
 open import Data.List.Relation.Pairwise
 open import Data.List.Relation.Sublist
 open import Data.List.Relation.Quantification
-open import Data.List.Relation.Quantification.Proofs
+open import Data.List.Relation.Quantification.Universal.Functions
+open import Data.List.Relation.Quantification.Universal.Proofs
+open import Data.Option.Quantifiers
+import      Data.Tuple as Tuple
 open import Functional
 open import Logic
 open import Logic.Propositional
@@ -29,11 +33,12 @@ private variable _▫₂_ : B → B → Type{ℓₗ}
 ----------------------------------------------------------------------------
 -- Basic
 
-AdjacentlyPairwise-prepend : (∀{y} → (x ▫ y)) → ∀{l} → AdjacentlyPairwise(_▫_)(l) → AdjacentlyPairwise(_▫_)(x ⊰ l)
-AdjacentlyPairwise-prepend xy {∅}     p = AdjacentlyPairwise.single
-AdjacentlyPairwise-prepend xy {_ ⊰ _} p = AdjacentlyPairwise.step xy p
+AdjacentlyPairwise-prepend-min : (∀{y} → (x ▫ y)) → ∀{l} → AdjacentlyPairwise(_▫_)(l) → AdjacentlyPairwise(_▫_)(x ⊰ l)
+AdjacentlyPairwise-prepend-min xy {∅}     p = AdjacentlyPairwise.single
+AdjacentlyPairwise-prepend-min xy {_ ⊰ _} p = AdjacentlyPairwise.step xy p
 
-AdjacentlyPairwise-head : AdjacentlyPairwise(_▫_)(x ⊰ y ⊰ l) → (x ▫ y)
+AdjacentlyPairwise-head : AdjacentlyPairwise(_▫_)(x ⊰ l) → ∀ₒₚₜ(List.first l) (x ▫_)
+AdjacentlyPairwise-head single     = <>
 AdjacentlyPairwise-head (step p _) = p
 
 AdjacentlyPairwise-tail : AdjacentlyPairwise(_▫_)(x ⊰ l) → AdjacentlyPairwise(_▫_)(l)
@@ -55,9 +60,14 @@ OrderedPairwise₌-tail (step _ rest) = rest
 Pairwise-tail : Pairwise(_▫_)(x ⊰ l) → Pairwise(_▫_)(l)
 Pairwise-tail (_ ⊰ ap) = AllElements-fn AllElements-prepend-tail ap
 
-AdjacentlyPairwise-prepend-local : AllElements(x ▫_)(l) → AdjacentlyPairwise(_▫_)(l) → AdjacentlyPairwise(_▫_)(x ⊰ l)
-AdjacentlyPairwise-prepend-local {l = ∅}     _   _      = single
-AdjacentlyPairwise-prepend-local {l = _ ⊰ _} all sorted = step (AllElements-prepend-head all) sorted
+-- TODO: Maybe remove this and prove implication of the first arg with below
+AdjacentlyPairwise-prepend : AllElements(x ▫_)(l) → AdjacentlyPairwise(_▫_)(l) → AdjacentlyPairwise(_▫_)(x ⊰ l)
+AdjacentlyPairwise-prepend {l = ∅}     _   _      = single
+AdjacentlyPairwise-prepend {l = _ ⊰ _} all sorted = step (AllElements-prepend-head all) sorted
+
+AdjacentlyPairwise-prepend-first : ∀ₒₚₜ(List.first l) (x ▫_) → AdjacentlyPairwise(_▫_)(l) → AdjacentlyPairwise(_▫_)(x ⊰ l)
+AdjacentlyPairwise-prepend-first {l = ∅}     _ _      = single
+AdjacentlyPairwise-prepend-first {l = _ ⊰ _} p sorted = step p sorted
 
 ----------------------------------------------------------------------------
 -- Applying other functions
@@ -81,6 +91,35 @@ Pairwise-map         p ∅ = ∅
 Pairwise-map {f = f} p (head ⊰ rest) = (AllElements-map id f p head) ⊰ {! (AllElements-fn AllElements-prepend-tail rest)!}
 -}
 
+AdjacentlyPairwise-[++] : ∀{_▫_ : T → T → Type{ℓ}}{l₁ l₂} → AdjacentlyPairwise(_▫_)(l₁ List.++ l₂) ↔ ((∀ₒₚₜ(List.last l₁) \x₁ → ∀ₒₚₜ(List.first l₂) \x₂ → x₁ ▫ x₂) ∧ AdjacentlyPairwise(_▫_)(l₁) ∧ AdjacentlyPairwise(_▫_)(l₂))
+AdjacentlyPairwise-[++] {_▫_ = _▫_} = [↔]-intro (Tuple.uncurry(Tuple.uncurry L)) R where
+  L : ∀{l₁ l₂} → (∀ₒₚₜ(List.last l₁) \x₁ → ∀ₒₚₜ(List.first l₂) \x₂ → x₁ ▫ x₂) → AdjacentlyPairwise(_▫_)(l₁) → AdjacentlyPairwise(_▫_)(l₂) → AdjacentlyPairwise(_▫_)(l₁ List.++ l₂)
+  L po empty       p2 = p2
+  L po single      p2 = AdjacentlyPairwise-prepend-first po p2
+  L po (step p p1) p2 = AdjacentlyPairwise-prepend-first p (L po p1 p2)
+
+  R : ∀{l₁ l₂} → AdjacentlyPairwise(_▫_)(l₁ List.++ l₂) → ((∀ₒₚₜ(List.last l₁) \x₁ → ∀ₒₚₜ(List.first l₂) \x₂ → x₁ ▫ x₂) ∧ AdjacentlyPairwise(_▫_)(l₁) ∧ AdjacentlyPairwise(_▫_)(l₂))
+  R {∅}          pa          = [∧]-intro ([∧]-intro <> AdjacentlyPairwise.empty) pa
+  R {x ⊰ ∅}      single      = [∧]-intro ([∧]-intro <> single) AdjacentlyPairwise.empty
+  R {x ⊰ ∅}      (step p pa) = [∧]-intro ([∧]-intro p single) pa
+  R {x ⊰ y ⊰ l₁} (step p pa) =
+    let [∧]-intro ([∧]-intro a b) c = R {y ⊰ l₁} pa
+    in [∧]-intro ([∧]-intro a (AdjacentlyPairwise-prepend-first p b)) c
+
+OrderedPairwise-[++] : ∀{_▫_ : T → T → Type{ℓ}}{l₁ l₂} → OrderedPairwise(_▫_)(l₁ List.++ l₂) ↔ ((∀ₗᵢₛₜ(l₁) \x₁ → ∀ₗᵢₛₜ(l₂) \x₂ → x₁ ▫ x₂) ∧ OrderedPairwise(_▫_)(l₁) ∧ OrderedPairwise(_▫_)(l₂))
+OrderedPairwise-[++] {_▫_ = _▫_} = [↔]-intro (Tuple.uncurry(Tuple.uncurry L)) R where
+  L : ∀{l₁ l₂} → (∀ₗᵢₛₜ(l₁) \x₁ → ∀ₗᵢₛₜ(l₂) \x₂ → x₁ ▫ x₂) → OrderedPairwise(_▫_)(l₁) → OrderedPairwise(_▫_)(l₂) → OrderedPairwise(_▫_)(l₁ List.++ l₂)
+  L po        empty       p2 = p2
+  L (pa ⊰ po) (step p p1) p2 = step (AllElements-[++] p pa) (L po p1 p2)
+
+  R : ∀{l₁ l₂} → OrderedPairwise(_▫_)(l₁ List.++ l₂) → ((∀ₗᵢₛₜ(l₁) \x₁ → ∀ₗᵢₛₜ(l₂) \x₂ → x₁ ▫ x₂) ∧ OrderedPairwise(_▫_)(l₁) ∧ OrderedPairwise(_▫_)(l₂))
+  R {∅}     {_}  pa          = [∧]-intro ([∧]-intro ∅ empty) pa
+  R {x ⊰ l₁}{l₂} (step p pa) =
+    let
+      [∧]-intro ([∧]-intro a b) c = R {l₁} pa
+      [∧]-intro a1 a2 = AllElements-from-[++] {l₁ = l₁}{l₂ = l₂} p
+    in [∧]-intro ([∧]-intro (a2 ⊰ a) (step a1 b)) c
+
 ----------------------------------------------------------------------------
 -- Relation between different "pairwise" relations
 
@@ -90,14 +129,14 @@ open import Structure.Relator.Properties
 instance
   OrderedPairwise-to-AdjacentlyPairwise : OrderedPairwise{ℓ₂ = ℓ}{T = T} ⊆₂ AdjacentlyPairwise
   OrderedPairwise-to-AdjacentlyPairwise = intro p where
-    p : Names.Subrelation OrderedPairwise AdjacentlyPairwise
+    p : Names.Sub₂ OrderedPairwise AdjacentlyPairwise
     p empty          = empty
-    p (step all ord) = AdjacentlyPairwise-prepend-local all (p ord)
+    p (step all ord) = AdjacentlyPairwise-prepend all (p ord)
 
 instance
   OrderedPairwise₌-to-OrderedPairwise : OrderedPairwise₌{ℓ₂ = ℓ}{T = T} ⊆₂ OrderedPairwise
   OrderedPairwise₌-to-OrderedPairwise = intro p where
-    p : Names.Subrelation OrderedPairwise₌ OrderedPairwise
+    p : Names.Sub₂ OrderedPairwise₌ OrderedPairwise
     p empty = empty
     p (step a rest) = step (AllElements-prepend-tail a) (p rest)
 

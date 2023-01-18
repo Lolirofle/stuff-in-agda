@@ -33,7 +33,7 @@ module _
   -- The type of a monoid's operator is usually restricted to a single type, but a category allows it to vary (depending on the rules of morphism instead).
   -- (One can loosely call a category to be a monoid without the "closed" property of algebraic structures).
   -- In this case, the binary operation is (_∘_) and the laws are the usual identity and associative laws.
-  -- See `Structure.Category.Monoid`.
+  -- See `Structure.Operator.Monoid`.
   --
   -- A category can also be constructed by letting objects be the models of algebraic structures, and morphisms the homomorphisms of the respective algebraic structure.
   --
@@ -110,6 +110,6 @@ record CategoryObject : Stmt{Lvl.𝐒(ℓₒ Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ)} whe
     {Morphism}         : Object → Object → Type{ℓₘ}
     ⦃ morphism-equiv ⦄ : ∀{x y} → Equiv{ℓₑ}(Morphism x y)
     category           : Category(Morphism)
-
+  open Category(category) public
   instance
     category-instance = category

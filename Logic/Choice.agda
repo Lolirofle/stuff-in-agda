@@ -9,7 +9,7 @@ open import Structure.Relator
 open import Structure.Relator.Function using (Total)
 open import Structure.Setoid
 open import Type
-open import Type.Dependent
+open import Type.Dependent.Sigma
 
 record Choice {ℓ₁ ℓ₂ ℓₒₚ ℓₑ₁ ℓₑ₂}
   {A : Type{ℓ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄

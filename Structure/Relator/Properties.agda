@@ -89,7 +89,7 @@ module _ {T : Type{ℓ₁}} (_▫_ : T → T → Stmt{ℓ₂}) where
 module _ (_▫₁_ : A → B → Stmt{ℓ₁}) (_▫₂_ : A → B → Stmt{ℓ₂}) where
   record _⊆₂_ : Stmt{Lvl.of(A) Lvl.⊔ Lvl.of(B) Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂} where
     constructor intro
-    field proof : Names.Subrelation(_▫₁_)(_▫₂_)
+    field proof : Names.Sub₂(_▫₁_)(_▫₂_)
   sub₂ = inferArg _⊆₂_.proof
 
 module _ (_▫₁_ : A → B → Stmt{ℓ₁}) (_▫₂_ : A → B → Stmt{ℓ₂}) where

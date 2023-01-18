@@ -9,10 +9,7 @@ import      Lvl
 open import Type
 open import Type.Cubical.Path.Equality
 open import Type.Cubical.HTrunc₁
-open import Type.Properties.Homotopy
 open import Type.Properties.MereProposition
-open import Structure.Relator
-open import Syntax.Function
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 private variable T A B C Obj : Type{ℓ}
@@ -25,8 +22,10 @@ open import Logic.Propositional public using
   ; ¬_  ; [¬]-intro ; [¬]-elim
   ; ⊥   ; [⊥]-elim
   ; ⊤   ; [⊤]-intro
-  ) 
+  )
 
+-- Generally, Logic._∨_ have at most two inhabitants.
+-- It is therefore not a mere proposition and here it is truncated to being one.
 _∨_ : Type{ℓ₁} → Type{ℓ₂} → Type
 _∨_ = HTrunc₁ ∘₂ (Logic._∨_)
 
@@ -43,6 +42,8 @@ instance
   [∨]-prop : MereProposition(A ∨ B)
   [∨]-prop = HTrunc₁-prop
 
+-- Generally, Logic.∃ have at most the same amount of inhabitants as its Obj if the predicate is a mere proposition for every argument.
+-- It is therefore not a mere proposition and here it is truncated to being one.
 ∃ : (Obj → Type{ℓ}) → Type
 ∃ = HTrunc₁ ∘ Logic.∃
 

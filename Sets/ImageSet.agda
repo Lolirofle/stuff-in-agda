@@ -9,7 +9,7 @@ import      Lvl
 open import Structure.Function
 open import Structure.Setoid renaming (_≡_ to _≡ₛ_)
 open import Type
-open import Type.Dependent
+open import Type.Dependent.Sigma
 
 private variable ℓ ℓₑ ℓᵢ ℓᵢ₁ ℓᵢ₂ ℓᵢ₃ ℓᵢₑ ℓ₁ ℓ₂ ℓ₃ : Lvl.Level
 private variable T X Y Z : Type{ℓ}

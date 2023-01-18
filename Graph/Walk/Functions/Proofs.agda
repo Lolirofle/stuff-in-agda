@@ -1,17 +1,17 @@
 open import Type
 
-module Graph.Walk.Functions.Proofs {ℓ₁ ℓ₂} {V : Type{ℓ₁}} where
+module Graph.Walk.Functions.Proofs where
 
 import      Data.Either as Either
-open import Data.Either.Proofs
+open import Data.Either.Proofs.Map
 open import Logic.Propositional
 open import Logic.Propositional.Equiv
 import      Lvl
-open import Graph{ℓ₁}{ℓ₂}(V)
+open import Graph
 open import Graph.Properties
-open import Graph.Walk{ℓ₁}{ℓ₂}{V}
-open import Graph.Walk.Properties{ℓ₁}{ℓ₂}{V}
-open import Graph.Walk.Functions{ℓ₁}{ℓ₂}{V}
+open import Graph.Walk
+open import Graph.Walk.Properties
+open import Graph.Walk.Functions
 open import Numeral.Natural
 open import Numeral.Natural.Oper
 open import Numeral.Natural.Oper.Proofs
@@ -21,17 +21,22 @@ open import Structure.Function
 open import Structure.Relator
 open import Structure.Relator.Properties
 open import Syntax.Function
-open import Type.Dependent
+open import Type.Dependent.Sigma
 open import Type.Dependent.Functions
 
-module _ (_⟶_ : Graph) where
-  at-path-length : ∀{a} → length{_⟶_}(at{x = a}) ≡ 0
+private variable ℓ : Lvl.Level
+private variable T V V₁ V₂ : Type{ℓ}
+private variable _⟶_ _⟶₁_ _⟶₂_ : Graph(V)
+private variable a b c : V
+
+module _ (_⟶_ : Graph{ℓ₂ = ℓ}(V)) where
+  at-path-length : ∀{a} → length{_⟶_ = _⟶_}(at{x = a}) ≡ 0
   at-path-length = reflexivity(_≡_)
 
-  edge-path-length : ∀{a b}{e : a ⟶ b} → length{_⟶_}(edge e) ≡ 1
+  edge-path-length : ∀{a b}{e : a ⟶ b} → length{_⟶_ = _⟶_}(edge e) ≡ 1
   edge-path-length = reflexivity(_≡_)
 
-  join-path-length : ∀{a b c}{e₁ : a ⟶ b}{e₂ : b ⟶ c} → length{_⟶_}(join e₁ e₂) ≡ 2
+  join-path-length : ∀{a b c}{e₁ : a ⟶ b}{e₂ : b ⟶ c} → length{_⟶_ = _⟶_}(join e₁ e₂) ≡ 2
   join-path-length = reflexivity(_≡_)
 
   prepend-path-length : ∀{a b c}{e : a ⟶ b}{w : Walk(_⟶_) b c} → length(prepend e w) ≡ 𝐒(length w)

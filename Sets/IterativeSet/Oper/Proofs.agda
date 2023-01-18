@@ -21,7 +21,7 @@ open import Structure.Relator.Properties
 open import Structure.Relator
 open import Syntax.Function
 open import Syntax.Transitivity
-open import Type.Dependent
+open import Type.Dependent.Sigma
 open import Type.Properties.Decidable
 open import Type.Properties.Decidable.Proofs
 

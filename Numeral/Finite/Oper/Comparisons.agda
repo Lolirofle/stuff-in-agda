@@ -5,11 +5,12 @@ open import Data.Boolean
 import      Data.Boolean.Operators
 open        Data.Boolean.Operators.Programming
 open import Functional
+open import Numeral.Charge
 open import Numeral.Finite
-open import Numeral.Sign
+open import Numeral.Natural
 
 -- Compare
-_⋚?_ : ∀{a b} → 𝕟(a) → 𝕟(b) → (−|0|+)
+_⋚?_ : ∀{a b} → 𝕟(a) → 𝕟(b) → Charge
 𝟎    ⋚? 𝟎    = 𝟎
 𝟎    ⋚? 𝐒(b) = ➖
 𝐒(a) ⋚? 𝟎    = ➕
@@ -41,3 +42,8 @@ _≥?_ = elim₃ 𝐹 𝑇 𝑇 ∘₂ (_⋚?_)
 
 positive? : ∀{n} → 𝕟(n) → Bool
 positive? = _>? (𝟎{1})
+
+isMax : ∀{n} → 𝕟(n) → Bool
+isMax {𝐒 𝟎}    𝟎     = 𝑇
+isMax {𝐒(𝐒 _)} 𝟎     = 𝐹
+isMax          (𝐒 x) = isMax x

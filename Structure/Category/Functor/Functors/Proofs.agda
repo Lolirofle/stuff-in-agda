@@ -25,7 +25,7 @@ open import Type
 private variable ℓₒ ℓₘ ℓₑ : Lvl.Level
 private variable A B C : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}
 
-open CategoryObject
+open CategoryObject hiding (_∘_ ; id)
 open Category ⦃ … ⦄
 open Functor ⦃ … ⦄
 

@@ -5,7 +5,7 @@ import      Lvl
 open import Type
 open import Type.Cubical
 open import Type.Cubical.Path
-open import Type.Cubical.Path.Proofs
+open import Type.Cubical.Path.Functions
 
 
 infix 15 _≡_

@@ -29,6 +29,8 @@ module Lang.Size where
 {-# BUILTIN SIZEINF  ∞ˢⁱᶻᵉ   #-}
 {-# BUILTIN SIZEMAX  _⊔ˢⁱᶻᵉ_ #-}
 
+≤ˢⁱᶻᵉ_ = \s → <ˢⁱᶻᵉ(𝐒ˢⁱᶻᵉ s)
+
 {-
 private
   module Test where

@@ -63,7 +63,7 @@ module _ where
   --   to-ℕ (# a · b · c) = 10 ⋅ (10 ⋅ (10 ⋅ 0 + a) + b) + c = (10² ⋅ a) + (10¹ ⋅ b) + c = (10² ⋅ a) + (10¹ ⋅ b) + (10⁰ ⋅ c)
   to-ℕ : Positional b → ℕ
   to-ℕ     ∅       = 𝟎
-  to-ℕ {b} (l · n) = (b ⋅ (to-ℕ l)) + (𝕟-to-ℕ n)
+  to-ℕ {b} (l · n) = (b ⋅ (to-ℕ l)) + (toℕ n)
 
   import      Data.List.Functions as List
   open import Logic.Propositional
@@ -90,7 +90,7 @@ module _ where
   -- This is the inverse of to-ℕ.
   from-ℕ-rec : ⦃ b-size : IsTrue(b >? 1) ⦄ → (x : ℕ) → ((prev : ℕ) ⦃ _ : prev < x ⦄ → Positional(b)) → Positional(b)
   from-ℕ-rec b@{𝐒(𝐒 _)} 𝟎       _    = ∅
-  from-ℕ-rec b@{𝐒(𝐒 _)} n@(𝐒 _) prev = (prev(n ⌊/⌋ b) ⦃ [⌊/⌋]-ltₗ {n}{b} ⦄) · (ℕ-to-𝕟 (n mod b) ⦃ [↔]-to-[→] decider-true (mod-maxᵣ{n}{b}) ⦄)
+  from-ℕ-rec b@{𝐒(𝐒 _)} n@(𝐒 _) prev = (prev(n ⌊/⌋ b) ⦃ [⌊/⌋]-ltₗ {n}{b} ⦄) · (fromℕ (n mod b) ⦃ [↔]-to-[→] decider-true (mod-maxᵣ{n}{b}) ⦄)
   from-ℕ : ℕ → Positional(b)
   from-ℕ {0}        = const ∅
   from-ℕ {1}        = List.repeat 𝟎
@@ -141,17 +141,17 @@ module _ where
   open import Relator.Equals
   open import Relator.Equals.Proofs
 
-  from-ℕ-digit : ⦃ b-size : IsTrue(b >? 1) ⦄ → ⦃ _ : IsTrue(n <? b) ⦄ → (from-ℕ {b} n ≡ₚₒₛ ℕ-to-𝕟 n ⊰ ∅)
-  from-ℕ-digit b@{𝐒(𝐒 bb)} {n} = Strict.Properties.wellfounded-recursion-intro(_<_) {rec = from-ℕ-rec} {φ = \{n} expr → ⦃ _ : IsTrue(n <? b) ⦄ → (expr ≡ₚₒₛ (ℕ-to-𝕟 n ⊰ ∅))} p {n} where
-    p : (y : ℕ) → _ → _ → ⦃ _ : IsTrue(y <? b) ⦄ → (from-ℕ y ≡ₚₒₛ (ℕ-to-𝕟 y ⊰ ∅))
+  from-ℕ-digit : ⦃ b-size : IsTrue(b >? 1) ⦄ → ⦃ _ : IsTrue(n <? b) ⦄ → (from-ℕ {b} n ≡ₚₒₛ fromℕ n ⊰ ∅)
+  from-ℕ-digit b@{𝐒(𝐒 bb)} {n} = Strict.Properties.wellfounded-recursion-intro(_<_) {rec = from-ℕ-rec} {φ = \{n} expr → ⦃ _ : IsTrue(n <? b) ⦄ → (expr ≡ₚₒₛ (fromℕ n ⊰ ∅))} p {n} where
+    p : (y : ℕ) → _ → _ → ⦃ _ : IsTrue(y <? b) ⦄ → (from-ℕ y ≡ₚₒₛ (fromℕ y ⊰ ∅))
     p 𝟎 prev eq = skipᵣ empty
     p (𝐒 y) prev eq ⦃ ord ⦄ =
       from-ℕ (𝐒(y))                                                         🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) eq ]
-      from-ℕ (𝐒(y) ⌊/⌋ b) · ℕ-to-𝕟 (𝐒(y) mod b) ⦃ yb-ord? ⦄                 🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (prev ⦃ [⌊/⌋]-ltₗ{𝐒 y}{b}  ⦄ ⦃ div-ord ⦄) ]
-      ∅ · ℕ-to-𝕟 (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · ℕ-to-𝕟 (𝐒(y) mod b) ⦃ yb-ord? ⦄ 🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂-₂(_·_)(_) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ yb-ord? ⦄ (mod-lesser-than-modulus {𝐒 y}{𝐒 bb} ⦃ yb-ord ⦄))) ]
-      ∅ · ℕ-to-𝕟 (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · ℕ-to-𝕟 (𝐒(y))                   🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂-₂(_·_)(_) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ div-ord ⦄ ([⌊/⌋]-zero {𝐒 y}{b} yb-ord2)))) ]
-      ∅ · 𝟎 · ℕ-to-𝕟 (𝐒(y))                                                 🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (skipₗ empty) ]
-      ∅ · ℕ-to-𝕟 (𝐒(y))                                                     🝖-end
+      from-ℕ (𝐒(y) ⌊/⌋ b) · fromℕ (𝐒(y) mod b) ⦃ yb-ord? ⦄                 🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (prev ⦃ [⌊/⌋]-ltₗ{𝐒 y}{b}  ⦄ ⦃ div-ord ⦄) ]
+      ∅ · fromℕ (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · fromℕ (𝐒(y) mod b) ⦃ yb-ord? ⦄ 🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂-₂(_·_)(∅ · fromℕ (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄) (congruence-fromℕ {x = 𝐒(y) mod b} ⦃ yb-ord? ⦄ {y = 𝐒(y)} ⦃ ord ⦄ (mod-lesser-than-modulus {𝐒 y}{b} yb-ord))) ]
+      ∅ · fromℕ (𝐒(y) ⌊/⌋ b) ⦃ div-ord ⦄ · fromℕ (𝐒(y))                   🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂-₂(_·_)(_) (congruence-fromℕ ⦃ infer ⦄ ⦃ div-ord ⦄ ([⌊/⌋]-zero {𝐒 y}{b} yb-ord2)))) ]
+      ∅ · 𝟎 · fromℕ (𝐒(y))                                                 🝖[ _≡ₚₒₛ_ ]-[ _≡ₚₒₛ_.step (skipₗ empty) ]
+      ∅ · fromℕ (𝐒(y))                                                     🝖-end
       where
         yb-ord? = [↔]-to-[→] decider-true (mod-maxᵣ {𝐒(y)}{b} ⦃ infer ⦄)
         yb-ord = [↔]-to-[←] (decider-true ⦃ [<]-decider ⦄) ord
@@ -160,10 +160,10 @@ module _ where
 
   from-ℕ-step : ⦃ b-size : IsTrue(b >? 1) ⦄
               → let pos = [↔]-to-[←] Positive-greater-than-zero ([≤]-predecessor ([↔]-to-[←] (decider-true ⦃ [<]-decider {1}{b} ⦄) b-size))
-                in (from-ℕ {b} n ≡ₚₒₛ (from-ℕ {b} ((n ⌊/⌋ b) ⦃ pos ⦄)) · (ℕ-to-𝕟 ((n mod b) ⦃ pos ⦄) ⦃ [↔]-to-[→] decider-true (mod-maxᵣ{n}{b} ⦃ pos ⦄) ⦄))
-  from-ℕ-step b@{𝐒(𝐒 bb)} {n} = Strict.Properties.wellfounded-recursion-intro(_<_) {rec = from-ℕ-rec} {φ = \{n} expr → (expr ≡ₚₒₛ from-ℕ {b} (n ⌊/⌋ b) · (ℕ-to-𝕟 (n mod b) ⦃ ord n ⦄))} p {n} where
+                in (from-ℕ {b} n ≡ₚₒₛ (from-ℕ {b} ((n ⌊/⌋ b) ⦃ pos ⦄)) · (fromℕ ((n mod b) ⦃ pos ⦄) ⦃ [↔]-to-[→] decider-true (mod-maxᵣ{n}{b} ⦃ pos ⦄) ⦄))
+  from-ℕ-step b@{𝐒(𝐒 bb)} {n} = Strict.Properties.wellfounded-recursion-intro(_<_) {rec = from-ℕ-rec} {φ = \{n} expr → (expr ≡ₚₒₛ from-ℕ {b} (n ⌊/⌋ b) · (fromℕ (n mod b) ⦃ ord n ⦄))} p {n} where
     ord = \n → [↔]-to-[→] decider-true (mod-maxᵣ{n}{b})
-    p : (y : ℕ) → _ → _ → Strict.Properties.accessible-recursion(_<_) from-ℕ-rec y ≡ₚₒₛ from-ℕ (y ⌊/⌋ b) · ℕ-to-𝕟 (y mod b) ⦃ ord y ⦄
+    p : (y : ℕ) → _ → _ → Strict.Properties.accessible-recursion(_<_) from-ℕ-rec y ≡ₚₒₛ from-ℕ (y ⌊/⌋ b) · fromℕ (y mod b) ⦃ ord y ⦄
     p 𝟎     prev eq = skipᵣ empty
     p (𝐒 y) prev eq = (sub₂(_≡_)(_≡ₚₒₛ_) eq)
 
@@ -172,21 +172,21 @@ module _ where
   open import Numeral.Natural.Oper.Proofs
   open import Numeral.Natural.Relation.Divisibility.Proofs
   open import Structure.Operator.Properties
-  from-ℕ-step-invs : ⦃ b-size : IsTrue(b >? 1) ⦄ → (from-ℕ {b} ((b ⋅ n) + (𝕟-to-ℕ d)) ≡ₚₒₛ (from-ℕ {b} n) · d)
+  from-ℕ-step-invs : ⦃ b-size : IsTrue(b >? 1) ⦄ → (from-ℕ {b} ((b ⋅ n) + (toℕ d)) ≡ₚₒₛ (from-ℕ {b} n) · d)
   from-ℕ-step-invs b@{𝐒(𝐒 bb)} {n}{d} =
-    from-ℕ (b ⋅ n + 𝕟-to-ℕ d)                                                     🝖[ _≡ₚₒₛ_ ]-[ from-ℕ-step {n = b ⋅ n + 𝕟-to-ℕ d} ]
-    from-ℕ ((b ⋅ n + 𝕟-to-ℕ d) ⌊/⌋ b) · (ℕ-to-𝕟 ((b ⋅ n + 𝕟-to-ℕ d) mod b) ⦃ _ ⦄) 🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂(_·_) (congruence₁(from-ℕ) r) (congruence-ℕ-to-𝕟 ⦃ infer ⦄ ⦃ ord1 ⦄ ⦃ ord2 ⦄ q 🝖 ℕ-𝕟-inverse)) ]
+    from-ℕ (b ⋅ n + toℕ d)                                                     🝖[ _≡ₚₒₛ_ ]-[ from-ℕ-step {n = b ⋅ n + toℕ d} ]
+    from-ℕ ((b ⋅ n + toℕ d) ⌊/⌋ b) · (fromℕ ((b ⋅ n + toℕ d) mod b) ⦃ _ ⦄) 🝖[ _≡ₚₒₛ_ ]-[ sub₂(_≡_)(_≡ₚₒₛ_) (congruence₂(_·_) (congruence₁(from-ℕ) r) (congruence-fromℕ ⦃ infer ⦄ ⦃ ord1 ⦄ ⦃ ord2 ⦄ q 🝖 ℕ-𝕟-inverse)) ]
     from-ℕ n · d                                                                  🝖-end where
-      ord1 = [↔]-to-[→] decider-true (mod-maxᵣ{(b ⋅ n) + (𝕟-to-ℕ d)}{b})
-      ord2 = [↔]-to-[→] decider-true (𝕟-to-ℕ-bounded {b}{d})
+      ord1 = [↔]-to-[→] decider-true (mod-maxᵣ{(b ⋅ n) + (toℕ d)}{b})
+      ord2 = [↔]-to-[→] decider-true (toℕ-bounded {b}{d})
       q =
-        ((b ⋅ n) + 𝕟-to-ℕ d) mod b 🝖[ _≡_ ]-[ congruence₁(_mod b) (commutativity(_+_) {b ⋅ n}{𝕟-to-ℕ d}) ]
-        (𝕟-to-ℕ d + (b ⋅ n)) mod b 🝖[ _≡_ ]-[ mod-of-modulus-sum-multiple {𝕟-to-ℕ d}{b}{n} ]
-        (𝕟-to-ℕ d) mod b           🝖[ _≡_ ]-[ mod-lesser-than-modulus ⦃ [≤]-without-[𝐒] 𝕟-to-ℕ-bounded ⦄ ]
-        𝕟-to-ℕ d                   🝖-end
+        ((b ⋅ n) + toℕ d) mod b 🝖[ _≡_ ]-[ congruence₁(_mod b) (commutativity(_+_) {b ⋅ n}{toℕ d}) ]
+        (toℕ d + (b ⋅ n)) mod b 🝖[ _≡_ ]-[ mod-of-modulus-sum-multiple {toℕ d}{b}{n} ]
+        (toℕ d) mod b           🝖[ _≡_ ]-[ mod-lesser-than-modulus ([≤]-without-[𝐒] toℕ-bounded) ]
+        toℕ d                   🝖-end
       r =
-        (b ⋅ n + 𝕟-to-ℕ d) ⌊/⌋ b             🝖[ _≡_ ]-[ [⌊/⌋][+]-distributivityᵣ {b ⋅ n}{𝕟-to-ℕ d}{b} ([∨]-introₗ (DivN n)) ]
-        ((b ⋅ n) ⌊/⌋ b) + ((𝕟-to-ℕ d) ⌊/⌋ b) 🝖[ _≡_ ]-[ congruence₂(_+_) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {b}{n}) ([⌊/⌋]-zero (𝕟-to-ℕ-bounded {b}{d})) ]
+        (b ⋅ n + toℕ d) ⌊/⌋ b             🝖[ _≡_ ]-[ [⌊/⌋][+]-distributivityᵣ {b ⋅ n}{toℕ d}{b} ([∨]-introₗ (DivN n)) ]
+        ((b ⋅ n) ⌊/⌋ b) + ((toℕ d) ⌊/⌋ b) 🝖[ _≡_ ]-[ congruence₂(_+_) ([⌊/⌋][swap⋅]-inverseOperatorᵣ {b}{n}) ([⌊/⌋]-zero (toℕ-bounded {b}{d})) ]
         n + 𝟎                                🝖[ _≡_ ]-[]
         n                                    🝖-end
 
@@ -208,8 +208,8 @@ module _ where
       p 𝟎     _    _  = [≡]-intro
       p (𝐒 y) prev eq =
         to-ℕ {b} (from-ℕ (𝐒 y))                                                       🝖[ _≡_ ]-[ congruence₁(to-ℕ) eq ]
-        to-ℕ {b} ((from-ℕ (𝐒(y) ⌊/⌋ b)) · (ℕ-to-𝕟 (𝐒(y) mod b) ⦃ _ ⦄))                🝖[ _≡_ ]-[]
-        (b ⋅ to-ℕ {b} (from-ℕ {b} (𝐒(y) ⌊/⌋ b))) + 𝕟-to-ℕ (ℕ-to-𝕟 (𝐒(y) mod b) ⦃ _ ⦄) 🝖[ _≡_ ]-[ congruence₂(_+_) (congruence₂-₂(_⋅_)(b) (prev{𝐒(y) ⌊/⌋ b} ⦃ ord2 ⦄)) (𝕟-ℕ-inverse {b}{𝐒(y) mod b} ⦃ ord1 ⦄) ]
+        to-ℕ {b} ((from-ℕ (𝐒(y) ⌊/⌋ b)) · (fromℕ (𝐒(y) mod b) ⦃ _ ⦄))                🝖[ _≡_ ]-[]
+        (b ⋅ to-ℕ {b} (from-ℕ {b} (𝐒(y) ⌊/⌋ b))) + toℕ (fromℕ (𝐒(y) mod b) ⦃ _ ⦄) 🝖[ _≡_ ]-[ congruence₂(_+_) (congruence₂-₂(_⋅_)(b) (prev{𝐒(y) ⌊/⌋ b} ⦃ ord2 ⦄)) (𝕟-ℕ-inverse {b}{𝐒(y) mod b} ⦃ ord1 ⦄) ]
         (b ⋅ (𝐒(y) ⌊/⌋ b)) + (𝐒(y) mod b)                                             🝖[ _≡_ ]-[ [⌊/⌋][mod]-is-division-with-remainder-pred-commuted {𝐒 y}{b} ]
         𝐒(y)                                                                          🝖-end
         where

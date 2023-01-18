@@ -16,12 +16,12 @@ data _‖_ (A : Type{ℓ₁}) (B : Type{ℓ₂}) : Type{ℓ₁ Lvl.⊔ ℓ₂} w
 {-# FOREIGN GHC type AgdaEither ℓ₁ ℓ₂ = Either #-}
 {-# COMPILE GHC _‖_ = data AgdaEither (Left | Right) #-}
 
-elim : ∀{P : (A ‖ B) → Type{ℓ}} → ((a : A) → P(Left a)) → ((b : B) → P(Right b)) → ((e : (A ‖ B)) → P(e))
-elim fa _ (Left  a) = fa(a)
-elim _ fb (Right b) = fb(b)
+elim : (P : (A ‖ B) → Type{ℓ}) → ((a : A) → P(Left a)) → ((b : B) → P(Right b)) → ((e : (A ‖ B)) → P(e))
+elim _ fa _ (Left  a) = fa(a)
+elim _ _ fb (Right b) = fb(b)
 
 map1 : let _ = A ; _ = B ; _ = C in (A → C) → (B → C) → (A ‖ B) → C
-map1 = elim
+map1 = elim _
 
 -- Alternative implementation:
 --   swap (Left t) = Right t

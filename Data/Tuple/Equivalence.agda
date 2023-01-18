@@ -49,8 +49,8 @@ module _ {A : Type{ℓₒ₁}} ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ {B : Type{�
 
 module _ {A : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(A) ⦄ where
   instance
-    repeat-function : Function(Tuple.repeat{A = A})
-    Function.congruence repeat-function = Tuple.repeat
+    diag-function : Function(Tuple.diag{A = A})
+    Function.congruence diag-function = Tuple.diag
 
 module _
   {A₁ : Type{ℓₒ₁}} ⦃ equiv-A₁ : Equiv{ℓₑ₁}(A₁) ⦄

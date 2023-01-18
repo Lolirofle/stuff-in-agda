@@ -4,7 +4,7 @@ module Formalization.PredicateLogic.Syntax.Tree (𝔏 : Signature) where
 open Signature(𝔏)
 
 open import Data.DependentWidthTree as Tree hiding (height)
-import      Functional.Dependent
+import      DependentFunctional
 import      Logic.Propositional as Logic
 import      Lvl
 open import Formalization.PredicateLogic.Syntax(𝔏)
@@ -21,7 +21,7 @@ open import Structure.Relator
 open import Structure.Relator.Ordering
 open import Structure.Relator.Ordering.Proofs
 open import Structure.Relator.Properties
-open import Type.Dependent
+open import Type.Dependent.Sigma
 open import Type
 
 private variable ℓ : Lvl.Level
@@ -43,7 +43,7 @@ height = Tree.height ∘ tree
 
 -- Ordering on formulas based on the height of their tree representation.
 _<↑_ : (Σ ℕ Formula) → (Σ ℕ Formula) → Type
-_<↑_ = (_<_) on₂ (height Functional.Dependent.∘ Σ.right)
+_<↑_ = (_<_) on₂ (height DependentFunctional.∘ Σ.right)
 
 substitute-height : ∀{t} → (height(substitute{vars₁ = vars₁}{vars₂ = vars₂} t φ) ≡ height φ)
 substitute-height {φ = f $ x} = [≡]-intro
@@ -57,7 +57,7 @@ substitute-height {φ = ∃ φ}   {t} rewrite substitute-height {φ = φ}{termMa
 
 instance
   [<↑]-wellfounded : Strict.Properties.WellFounded(_<↑_)
-  [<↑]-wellfounded = wellfounded-image-by-trans {f = height Functional.Dependent.∘ Σ.right}
+  [<↑]-wellfounded = wellfounded-image-by-trans {f = height DependentFunctional.∘ Σ.right}
 
 induction-on-height : (P : ∀{vars} → Formula(vars) → Type{ℓ}) → (∀{vars}{φ : Formula(vars)} → (∀{vars}{ψ : Formula(vars)} → (height ψ < height φ) → P(ψ)) → P(φ)) → ∀{vars}{φ : Formula(vars)} → P(φ)
 induction-on-height P step {vars}{φ} = Strict.Properties.wellfounded-induction(_<↑_) (\{ {intro vars φ} p → step{vars}{φ} \{vars}{ψ} ph → p{intro vars ψ} ⦃ ph ⦄}) {intro vars φ}

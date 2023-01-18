@@ -3,7 +3,7 @@ module Data.List.Relation.Permutation.Proofs where
 import      Data
 open import Data.Boolean
 open import Data.List
-open import Data.List.Functions renaming (module LongOper to List)
+open import Data.List.Functions
 open import Data.List.Relation
 open import Data.List.Relation.Permutation
 open import Functional using (id ; _∘_ ; const)
@@ -162,7 +162,7 @@ permutation-from-mapping {l₁ = x₁ ⊰ l₁} {l₂ = x₂ ⊰ l₂} p correct
 ... | 𝐒 w | _ = {!!}
 -}
 
-permutes-prepend-function : Function ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ (List.prepend x)
+permutes-prepend-function : Function ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ (prepend x)
 permutes-prepend-function = intro prepend
 
 permutes-postpend-function : Function ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ (postpend x)
@@ -173,13 +173,13 @@ permutes-postpend-function = intro proof where
   proof swap        = swap
   proof (trans x y) = trans (proof x) (proof y)
 
-postpend-prepend-permutes : (postpend x l) permutes (List.prepend x l)
+postpend-prepend-permutes : (postpend x l) permutes (prepend x l)
 postpend-prepend-permutes {l = ∅} = prepend empty
 postpend-prepend-permutes {l = x ⊰ l} = trans (prepend postpend-prepend-permutes) swap
 
-permutes-reverse : (reverse l) permutes l
+permutes-reverse : (reverse.byPostpend l) permutes l
 permutes-reverse {l = ∅} = empty
-permutes-reverse {l = x ⊰ l} = trans (Function.congruence ⦃ _ ⦄ ⦃ _ ⦄ permutes-postpend-function(permutes-reverse {l = l})) postpend-prepend-permutes
+permutes-reverse {l = x ⊰ l} = trans (Function.congruence ⦃ permutes-equiv ⦄ ⦃ permutes-equiv ⦄ permutes-postpend-function(permutes-reverse {l = l})) postpend-prepend-permutes
 
 permutes-length-function : Function ⦃ permutes-equiv {T = T} ⦄ (length)
 permutes-length-function = intro proof where

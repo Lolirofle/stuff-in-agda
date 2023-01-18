@@ -4,8 +4,9 @@ open import Data.Tuple as Tuple using (_,_)
 open import Functional using (_$_)
 open import Logic.Predicate
 import      Lvl
-open import Structure.Category
+open import Structure.Categorical.Functor.Properties
 open import Structure.Categorical.Properties
+open import Structure.Category
 open import Structure.Category.Functor
 open import Structure.Category.Functor.Equiv
 open import Structure.Function
@@ -43,14 +44,14 @@ module _
   ∃.witness (isomorphism-preserving ([∃]-intro g)) = map g
   ∃.proof (isomorphism-preserving {f = f} iso@([∃]-intro g)) =
     (Morphism.intro $
-      map g ∘ map f 🝖-[ op-preserving ]-sym
+      map g ∘ map f 🝖-[ Preserving.proof op-preserving ]-sym
       map(g ∘ f)    🝖-[ congruence₁(map) (inverseₗ(f)(g)) ]
-      map id        🝖-[ id-preserving ]
+      map id        🝖-[ Preserving.proof id-preserving ]
       id            🝖-end
     ) , (Morphism.intro $
-      map f ∘ map g 🝖-[ op-preserving ]-sym
+      map f ∘ map g 🝖-[ Preserving.proof op-preserving ]-sym
       map(f ∘ g)    🝖-[ congruence₁(map) (inverseᵣ(f)(g)) ]
-      map id        🝖-[ id-preserving ]
+      map id        🝖-[ Preserving.proof id-preserving ]
       id            🝖-end
     )
     where

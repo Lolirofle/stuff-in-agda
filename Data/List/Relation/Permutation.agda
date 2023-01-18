@@ -3,7 +3,7 @@ module Data.List.Relation.Permutation where
 import      Data
 open import Data.Boolean
 open import Data.List
-open import Data.List.Functions renaming (module LongOper to List)
+open import Data.List.Functions
 open import Data.List.Relation
 open import Functional using (id ; _∘_ ; const)
 open import Logic.Propositional
@@ -52,6 +52,4 @@ permutation-mapping swap        (𝐒 𝟎)    = 𝟎
 permutation-mapping swap        (𝐒(𝐒 n)) = 𝐒 (𝐒 n)
 permutation-mapping (trans p q)          = permutation-mapping q ∘ permutation-mapping p
 
--- TODO: It should be possible to make (_permutes_) the morphism of a category with some correct notion of equivalence (maybe trans swap swap ≡ refl for example?). Then permutation-mapping would be an instance of Functor(length) for the ((_→_) on₂ 𝕟) category?
-
-module Proofs where
+-- TODO: It should be possible to make (_permutes_) the morphism of a category with some notion of equivalence (either by trying to find everything that makes it a non-singleton type, trans swap swap ≡ refl for example, or just use universal equivalence). Then permutation-mapping would be an instance of Functor(length) for the ((_→_) on₂ 𝕟) category?

@@ -6,7 +6,7 @@ open import Functional.Instance
 open import Logic
 open import Logic.Propositional
 open import Logic.Propositional.Equiv
-open import Structure.Function
+open import Structure.Function hiding (Compatible₁)
 open import Structure.Function.Names
 open import Structure.Operator
 open import Structure.Setoid
@@ -41,8 +41,8 @@ module _ {A : Type{ℓ}} ⦃ equiv : Equiv{ℓₑ}(A) ⦄ where
     substitute₁ₗ = \ ⦃ inst ⦄ {x}{y} → [↔]-to-[←] ∘ substitute₁ ⦃ inst ⦄ {x}{y}
     substitute₁ᵣ = \ ⦃ inst ⦄ {x}{y} → [↔]-to-[→] ∘ substitute₁ ⦃ inst ⦄ {x}{y}
 
-    module UnaryRelator ⦃ rel : UnaryRelator ⦄ where
-      open Function(rel) using () renaming (congruence to substitution) public
+    module UnaryRelator = Function ⦃ equiv ⦄ ⦃ [↔]-equiv ⦄ {P}
+      renaming (congruence to substitution)
 
   module _ {P : A → Stmt{ℓₗ}} where
     UnaryRelator-introₗ : (∀{x y} → (x ≡ y) → P(x) ← P(y)) → UnaryRelator(P)

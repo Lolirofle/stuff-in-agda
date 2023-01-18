@@ -37,7 +37,7 @@ module From-[≤] (_≤_ : T → T → Stmt{ℓₗ}) where
   module ByTotalOrder ⦃ equiv : Equiv{ℓₑ}(T) ⦄ ⦃ _ : Weak.TotalOrder(_≤_) ⦄ where
     open ByNothing public
 
-    [<]-to-[≤] : Names.Subrelation(_<_)(_≤_)
+    [<]-to-[≤] : Names.Sub₂(_<_)(_≤_)
     [<]-to-[≤] {a} {b} nba with converseTotal(_≤_){a}{b}
     [<]-to-[≤] {a} {b} nba | [∨]-introₗ ab = ab
     [<]-to-[≤] {a} {b} nba | [∨]-introᵣ ba = [⊥]-elim(nba ba)
@@ -45,7 +45,7 @@ module From-[≤] (_≤_ : T → T → Stmt{ℓₗ}) where
       [<][≤]-sub : (_<_) ⊆₂ (_≤_)
       _⊆₂_.proof [<][≤]-sub = [<]-to-[≤]
 
-    [>]-to-[≥] : Names.Subrelation(_>_)(_≥_)
+    [>]-to-[≥] : Names.Sub₂(_>_)(_≥_)
     [>]-to-[≥] = [<]-to-[≤]
 
     [>][≥]-sub : (_>_) ⊆₂ (_≥_)
@@ -104,7 +104,7 @@ module From-[≤] (_≤_ : T → T → Stmt{ℓₗ}) where
       [≤][≡]-subtransitivityᵣ : Subtransitivityᵣ(_≤_)(_≡_)
       [≤][≡]-subtransitivityᵣ = subrelation-transitivity-to-subtransitivityᵣ
 
-    [≡]-to-[≥] : Names.Subrelation(_≡_)(_≥_)
+    [≡]-to-[≥] : Names.Sub₂(_≡_)(_≥_)
     [≡]-to-[≥] = sub₂(_≡_)(_≤_) ∘ symmetry(_≡_)
     instance
       [≡][≥]-sub : (_≡_) ⊆₂ (_≥_)

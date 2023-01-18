@@ -3,6 +3,7 @@ module Data.Option.Setoid where
 import      Lvl
 open import Data
 open import Data.Option
+open import Data.Option.Relation
 open import Functional
 open import Structure.Relator.Equivalence
 open import Structure.Relator.Properties
@@ -14,10 +15,7 @@ private variable A : Type{ℓ}
 
 instance
   Option-equiv : ⦃ equiv : Equiv{ℓₑ}(A) ⦄ → Equiv{ℓₑ}(Option A)
-  Equiv._≡_ Option-equiv None     None     = Unit
-  Equiv._≡_ Option-equiv None     (Some _) = Empty
-  Equiv._≡_ Option-equiv (Some _) None     = Empty
-  Equiv._≡_ Option-equiv (Some x) (Some y) = x ≡ y
+  Equiv._≡_ Option-equiv = Matching(_≡_)
   Reflexivity.proof  (Equivalence.reflexivity  (Equiv.equivalence Option-equiv)) {None}   = <>
   Reflexivity.proof  (Equivalence.reflexivity  (Equiv.equivalence Option-equiv)) {Some _} = reflexivity(_≡_)
   Symmetry.proof     (Equivalence.symmetry     (Equiv.equivalence Option-equiv)) {None}   {None}   = const(<>)

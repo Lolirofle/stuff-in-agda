@@ -6,6 +6,7 @@ open import Logic.Predicate
 import      Lvl
 open import Structure.Category
 open import Structure.Category.Functor
+open import Structure.Categorical.Functor.Properties
 open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Relator.Equivalence
@@ -50,8 +51,8 @@ module _
     -- A constant functor maps every object and morphism in a category to a single specified object and the identity morphism.
     constant : (objᵣ : Obj₂) → Functor(Category₁)(Category₂)(constᶠᵘⁿᶜᵗᵒʳ(objᵣ))
     map           (constant(objᵣ)) = Fn.const(id)
-    op-preserving (constant(objᵣ)) = symmetry(_≡_) (Morphism.identityₗ(_∘_)(id))
-    id-preserving (constant(objᵣ)) = reflexivity(_≡_)
+    op-preserving (constant(objᵣ)) = intro(symmetry(_≡_) (Morphism.identityₗ(_∘_)(id)))
+    id-preserving (constant(objᵣ)) = intro(reflexivity(_≡_))
 
 module _
   ⦃ morphism-equiv : ∀{x y : Obj} → Equiv{ℓₑ}(Morphism x y) ⦄
@@ -66,8 +67,8 @@ module _
 
   identity : Endofunctor(Category)(idᶠᵘⁿᶜᵗᵒʳ)
   map           (identity) = Fn.id
-  op-preserving (identity) = reflexivity(_≡_)
-  id-preserving (identity) = reflexivity(_≡_)
+  op-preserving (identity) = intro(reflexivity(_≡_))
+  id-preserving (identity) = intro(reflexivity(_≡_))
 
 module _
   ⦃ morphism-equiv₁ : ∀{x y : Obj₁} → Equiv{ℓₑ₁}(Morphism₁ x y) ⦄
@@ -95,17 +96,17 @@ module _
 
   map              (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y} = (map(functor₂₃){F₁₂(x)}{F₁₂(y)}) Fn.∘ (map(functor₁₂){x}{y})
   map-function     (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) = [∘]-function ⦃ func-f = map-function(functor₂₃) ⦄ ⦃ func-g = map-function(functor₁₂) ⦄
-  op-preserving    (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y}{z} {f}{g} =
-    map(functor₂₃) (map(functor₁₂) (f ∘ g))                               🝖-[ congruence₁(map(functor₂₃)) (op-preserving(functor₁₂)) ]
-    map(functor₂₃) (map(functor₁₂) f ∘ map functor₁₂ g)                   🝖-[ op-preserving(functor₂₃)]
+  op-preserving    (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)){x}{y}{z} = intro \{f}{g} →
+    map(functor₂₃) (map(functor₁₂) (f ∘ g))                               🝖-[ congruence₁(map(functor₂₃)) (preserving₂(Morphism₁)(Morphism₂) (map(functor₁₂))(_∘_)(_∘_)) ]
+    map(functor₂₃) (map(functor₁₂) f ∘ map functor₁₂ g)                   🝖-[ preserving₂(Morphism₂)(Morphism₃) (map(functor₂₃))(_∘_)(_∘_) ]
     map(functor₂₃) (map(functor₁₂) f) ∘ map(functor₂₃) (map(functor₁₂) g) 🝖-end
-  id-preserving    (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) {x} =
-    map(functor₂₃) (map(functor₁₂) id) 🝖-[ congruence₁(_) (id-preserving(functor₁₂)) ]
-    map(functor₂₃) id                  🝖-[ id-preserving(functor₂₃) ]
+  id-preserving    (composition{F₂₃}{F₁₂}(functor₂₃)(functor₁₂)) {x} = intro Fn.$
+    map(functor₂₃) (map(functor₁₂) id) 🝖-[ congruence₁(map(functor₂₃)) (preserving₀(Morphism₁)(Morphism₂) (map(functor₁₂))(id)(id)) ]
+    map(functor₂₃) id                  🝖-[ preserving₀(Morphism₂)(Morphism₃) (map(functor₂₃))(id)(id) ]
     id                                 🝖-end
 
 module Wrapped where
-  open CategoryObject
+  open CategoryObject using (Object)
 
   private variable A B C : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ}
 

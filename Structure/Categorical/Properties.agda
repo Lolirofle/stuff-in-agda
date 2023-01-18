@@ -1,6 +1,7 @@
 module Structure.Categorical.Properties where
 
-import      Functional.Dependent as Fn
+open import Data.Tuple using (_⨯_ ; _,_)
+import      DependentFunctional as Fn
 open import Functional.Instance
 import      Lvl
 open import Logic
@@ -26,14 +27,21 @@ module Object where
       -- An initial object is an object in which there is an unique morphism from it to every object.
       Initial : Obj → Stmt
       Initial(x) = (∀{y} → IsUnit(x ⟶ y))
+      module _ {x} ⦃ initial : Initial(x) ⦄ where
+        initialMorphism : ∀(y) → (x ⟶ y)
+        initialMorphism y = IsUnit.unit(initial{y})
 
       -- An terminal object is an object in which there is an unique morphism to it from every object.
       Terminal : Obj → Stmt
       Terminal(y) = (∀{x} → IsUnit(x ⟶ y))
+      module _ {y} ⦃ terminal : Terminal(y) ⦄ where
+        terminalMorphism : ∀(x) → (x ⟶ y)
+        terminalMorphism x = IsUnit.unit(terminal{x})
 
 module Morphism where
   module _ {Morphism : Obj → Obj → Type{ℓₘ}} ⦃ equiv-morphism : ∀{x y} → Equiv{ℓₑ}(Morphism x y) ⦄ where
     open Names.ArrowNotation(Morphism)
+    private variable x y z : Obj
 
     module OperModule (_▫_ : Names.SwappedTransitivity(_⟶_)) where
       record Associativity : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
@@ -41,7 +49,7 @@ module Morphism where
         field proof : Names.Morphism.Associativity{Morphism = Morphism}(_▫_)
       associativity = inferArg Associativity.proof
 
-      module _ {x : Obj} (f : x ⟶ x) where
+      module _ (f : x ⟶ x) where
         record Idempotent : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
           constructor intro
           field proof : Names.Morphism.Idempotent{Morphism = Morphism}(_▫_)(f)
@@ -62,45 +70,48 @@ module Morphism where
         identity-left  = inferArg{A = Identity}(Identityₗ.proof Fn.∘ [∧]-elimₗ{Q = Identityᵣ})
         identity-right = inferArg{A = Identity}(Identityᵣ.proof Fn.∘ [∧]-elimᵣ{P = Identityₗ})
 
-        module _ {x : Obj} (f : x ⟶ x) where
+        module _ (f : x ⟶ x) where
           record Involution : Stmt{Lvl.of(Obj) Lvl.⊔ ℓₘ Lvl.⊔ ℓₑ} where
             constructor intro
             field proof : Names.Morphism.Involution{Morphism = Morphism}(_▫_)(id)(f)
           involution = inferArg Involution.proof
 
-        module _ {x y : Obj} (f : x ⟶ y) where
-          module _ (f⁻¹ : y ⟶ x) where
-            -- A morphism have a right inverse morphism.
-            -- Also called: Split monomorphism, retraction
-            record Inverseₗ : Stmt{ℓₘ Lvl.⊔ ℓₑ} where
-              constructor intro
-              field proof : Names.Morphism.Inverseₗ(_▫_)(\{a} → id{a})(f)(f⁻¹)
-            inverseₗ = inferArg Inverseₗ.proof
+        module _ (f : x ⟶ y) (f⁻¹ : y ⟶ x) where
+          -- A morphism have a right inverse morphism.
+          -- Also called: Split epimorphism, section
+          record Inverseᵣ : Stmt{ℓₘ Lvl.⊔ ℓₑ} where
+            constructor intro
+            field proof : Names.Morphism.Inverseᵣ(_▫_)(\{a} → id{a})(f)(f⁻¹)
+          inverseᵣ = inferArg Inverseᵣ.proof
 
-            -- A morphism have a right inverse morphism.
-            -- Also called: Split epimorphism, section
-            record Inverseᵣ : Stmt{ℓₘ Lvl.⊔ ℓₑ} where
-              constructor intro
-              field proof : Names.Morphism.Inverseᵣ(_▫_)(\{a} → id{a})(f)(f⁻¹)
-            inverseᵣ = inferArg Inverseᵣ.proof
+        module _ (f : x ⟶ y) where
+          Invertibleᵣ = ∃(Inverseᵣ(f))
 
-            Inverse = Inverseₗ ∧ Inverseᵣ
-            module Inverse(inverse : Inverse) where
-              instance
-                left : Inverseₗ
-                left = [∧]-elimₗ inverse
+        -- A morphism have a right inverse morphism.
+        -- Also called: Split monomorphism, retraction
+        Inverseₗ = \{x}{y} → Fn.swap(Inverseᵣ{x}{y})
+        inverseₗ = \{x}{y} → Fn.swap(inverseᵣ{x}{y})
+        module Inverseₗ{x}{y}{f}{f⁻¹} inst = Inverseᵣ{x}{y}{f⁻¹}{f} inst
 
-              instance
-                right : Inverseᵣ
-                right = [∧]-elimᵣ inverse
+        module _ (f : x ⟶ y) where
+          Invertibleₗ = ∃(Inverseₗ(f))
 
-          Invertibleₗ = ∃(Inverseₗ)
-          Invertibleᵣ = ∃(Inverseᵣ)
+        module _ ((f⁻¹ , f) : x ⟷ y) where
+          Inverse = Inverseₗ(f)(f⁻¹) ∧ Inverseᵣ(f)(f⁻¹)
+          module Inverse(inverse : Inverse) where
+            instance
+              left : Inverseₗ(f)(f⁻¹)
+              left = [∧]-elimₗ inverse
 
-          -- A morphism is an isomorphism when it is invertible with respect to the operator.
-          -- For the set and functions category, it means that f is bijective.
+            instance
+              right : Inverseᵣ(f)(f⁻¹)
+              right = [∧]-elimᵣ inverse
+
+        -- A morphism is an isomorphism when it is invertible with respect to the operator.
+        -- For the set and functions category, this is usually equivalent to f being bijective.
+        module _ (f : x ⟶ y) where
           Isomorphism : Stmt
-          Isomorphism = ∃(Inverse)
+          Isomorphism = ∃(\f⁻¹ → Inverse(f⁻¹ , f))
           module Isomorphism ⦃ iso : Isomorphism ⦄ where
             instance inverse = [∃]-proof iso
             instance inverse-left  = [∧]-elimₗ inverse
@@ -110,8 +121,40 @@ module Morphism where
           inv ⦃ p ⦄ = [∃]-witness p
 
         -- Proposition stating that two objects are isomorphic.
-        Isomorphic : Obj → Obj → Stmt
-        Isomorphic(x)(y) = ∃(Isomorphism{x}{y})
+        module _ (x : Obj) (y : Obj) where
+          Isomorphic : Stmt
+          Isomorphic = ∃{Obj = (x ⟷ y)} Inverse
+        module Isomorphic {x : Obj} {y : Obj} where
+          module _ (iso : Isomorphic x y) where
+            left : x ⟵ y
+            left = [∧]-elimₗ ([∃]-witness iso)
+
+            right : x ⟶ y
+            right = [∧]-elimᵣ ([∃]-witness iso)
+
+            instance
+              inverseLeft : Inverseₗ(right)(left)
+              inverseLeft = [∧]-elimₗ ([∃]-proof iso)
+
+            instance
+              inverseRight : Inverseᵣ(right)(left)
+              inverseRight = [∧]-elimᵣ ([∃]-proof iso)
+
+            instance
+              inverse : Inverse([∃]-witness iso)
+              inverse = [∃]-proof iso
+
+            instance
+              isomorphismLeft : Isomorphism(left)
+              isomorphismLeft = [∃]-intro right ⦃ [∧]-intro inverseRight inverseLeft ⦄
+
+            instance
+              isomorphismRight : Isomorphism(right)
+              isomorphismRight = [∃]-intro left
+
+          intro-by-isomorphism : ∀{f : x ⟶ y} → Isomorphism(f) → Isomorphic x y
+          intro-by-isomorphism {f} ([∃]-intro f⁻¹) = [∃]-intro (f⁻¹ , f)
+
         _⤖_ = Isomorphic
 
         module _ {x : Obj} (f : ⟲ x) where
@@ -212,9 +255,9 @@ module Polymorphism where
 
             module _ {x y : Obj} {f : x ⟶ y} where
               instance
-                inverse : Morphism.Inverse(_▫_)(\{x} → id{x})(f)(inv f)
+                inverse : Morphism.Inverse(_▫_)(\{x} → id{x})(inv f , f)
                 inverse = [∧]-intro inverseₗ inverseᵣ
-              open Morphism.Inverse(_▫_)(\{x} → id{x})(f)(inv f)(inverse) renaming (left to inverseₗ ; right to inverseᵣ)
+              open Morphism.Inverse(_▫_)(\{x} → id{x})(inv f , f)(inverse) renaming (left to inverseₗ ; right to inverseᵣ)
 
             invertibleₗ : ∀{x y : Obj}{f : x ⟶ y} → Morphism.Invertibleₗ(_▫_)(\{x} → id{x})(f)
             invertibleₗ {f = f} = [∃]-intro (inv f) ⦃ inverseₗ ⦄

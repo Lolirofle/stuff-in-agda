@@ -85,7 +85,7 @@ module _ {T : Type{ℓₒ}} ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   -- A singleton set (a set containing only one element).
   •_ : T → PredSet(T)
   (• a) ∋ x = x ≡ₑ a
-  preserve-equiv (• a) = UnaryRelator-introᵣ \xy xa → symmetry(_≡ₑ_) xy 🝖 xa
+  preserve-equiv (• a) = UnaryRelator-introₗ(_🝖_)
 
   -- An union of two sets.
   -- Contains the elements that any of the both sets contain.
@@ -137,6 +137,13 @@ preserve-equiv (map f S) = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃
 map₂ : ⦃ _ : Equiv{ℓₑ₁}(A₁) ⦄ ⦃ _ : Equiv{ℓₑ₂}(A₂) ⦄ ⦃ _ : Equiv{ℓₑ₃}(B) ⦄ → (_▫_ : A₁ → A₂ → B) → PredSet{ℓ₁}(A₁) → PredSet{ℓ₂}(A₂) → PredSet(B)
 map₂(_▫_) S₁ S₂ ∋ y = ∃{Obj = _ ⨯ _}(\{(x₁ , x₂) → (x₁ ∈ S₁) ∧ (x₂ ∈ S₂) ∧ ((x₁ ▫ x₂) ≡ₑ y)})
 preserve-equiv (map₂ (_▫_) S₁ S₂) = [∃]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦃ rel-P = [∧]-unaryRelator ⦄ ⦃ rel-Q = BinaryRelator.unary₂ _ [≡]-binaryRelator ⦄ ⦄
+
+relMap : ⦃ _ : Equiv{ℓₑ₁}(A) ⦄ ⦃ _ : Equiv{ℓₑ₂}(B) ⦄ → (f : (A → Type) → (B → Type)) → (∀{P} → UnaryRelator(P) → UnaryRelator(f(P))) → PredSet{ℓ₁}(A) → PredSet{ℓ₂}(B)
+_∋_            (relMap f p (intro(_∋_))) = f(_∋_)
+preserve-equiv (relMap f p (intro(_∋_) ⦃ preserv ⦄)) = p preserv
+
+predLvl : ∀(ℓ₂) → ⦃ _ : Equiv{ℓₑ}(T) ⦄ → PredSet{ℓ₁}(T) → PredSet{ℓ₁ Lvl.⊔ ℓ₂}(T)
+predLvl ℓ₂ = relMap(Lvl.Up{ℓ₂} ∘_) (\rel → LvlUp-unaryRelator ⦃ rel-P = rel ⦄)
 
 -- Set-set relations.
 module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
@@ -225,6 +232,13 @@ module _ ⦃ equiv : Equiv{ℓₑ}(T) ⦄ where
   _⨯_.left (_≡_.proof ⋂ᵢ-of-boolean) p {𝑇} = [∧]-elimᵣ p
   _⨯_.left  (_⨯_.right (_≡_.proof ⋂ᵢ-of-boolean) p) = p{𝐹}
   _⨯_.right (_⨯_.right (_≡_.proof ⋂ᵢ-of-boolean) p) = p{𝑇}
+
+-- Set indexed set operations.
+module _ ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄ where
+  import Type.Dependent.Sigma as  Type
+  ⋃ᵢₛ : PredSet{ℓ₁}(A) → (A → PredSet{ℓ₂}(B)) → PredSet{Lvl.of(A) Lvl.⊔ ℓ₁ Lvl.⊔ ℓ₂}(B)
+  ⋃ᵢₛ S f = ⋃ᵢ{I = Type.Σ A (_∈ S)} (\(Type.intro x _) → f x)
+  -- ⋃ᵢₛ S f ∋ x = ∃(i ↦ (i ∈ S) ∧ (x ∈ f(i)))
 
 module _
   ⦃ equiv : Equiv{ℓₑ}(T) ⦄

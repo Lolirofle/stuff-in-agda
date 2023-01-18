@@ -123,21 +123,28 @@ _∘ₗ {n₁ = n₁}{n₂ = n₂} = pointwise(n₁)(n₂)
 --   curry(2) = curry₁ ∘ curry₁          : ((A₁ ⨯ A₂ ⨯ A₃)      → B) → (A₁ → A₂ → A₃      → B)
 --   curry(3) = curry₁ ∘ curry₁ ∘ curry₁ : ((A₁ ⨯ A₂ ⨯ A₃ ⨯ A₄) → B) → (A₁ → A₂ → A₃ → A₄ → B)
 -- Note: If there is a nested uncurry and curry, one can often use (_∘ᵣ_) instead (I think?).
-curry : (n : ℕ) → ∀{ℓ𝓈}{As : Types{𝐒(n)}(ℓ𝓈)}{ℓ}{B : Type{ℓ}} → (reduceᵣ(_⨯_) As → B) → (As ⇉ B)
-curry(𝟎)        = id
-curry(𝐒(n)) f x = curry(n) (f ∘ (x ,_))
+curry : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ ℓᵤ}{B : Type{ℓ}} → (reduceOrᵣ(_⨯_) (Unit{ℓᵤ}) As → B) → (As ⇉ B)
+curry(0)           = apply₁ <>
+curry(1)           = id
+curry(𝐒(𝐒(n))) f x = curry(𝐒(n)) (f ∘ (x ,_))
 
 -- Converts a curried function (nested function types) to a function using a tuple to represent its arguments.
 -- Example:
 --   uncurry(x ↦ y ↦ z ↦ ... ↦ φ) = ((x,y,z,...) ↦ φ)
-uncurry : (n : ℕ) → ∀{ℓ𝓈}{As : Types{𝐒(n)}(ℓ𝓈)}{ℓ}{B : Type{ℓ}} → (As ⇉ B) → (reduceᵣ(_⨯_) As → B)
-uncurry(𝟎)               = id
-uncurry(𝐒(n)) f (x , xs) = uncurry(n) (f(x)) xs
+uncurry : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ ℓᵤ}{B : Type{ℓ}} → (As ⇉ B) → (reduceOrᵣ(_⨯_) (Unit{ℓᵤ}) As → B)
+uncurry(0)                  = const₁
+uncurry(1)                  = id
+uncurry(𝐒(𝐒(n))) f (x , xs) = uncurry(𝐒(n)) (f(x)) xs
+
+applyIndexing : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ}{B : Type{ℓ}} → ((i : 𝕟(n)) → (index i As)) → (As ⇉ B) → B
+applyIndexing 0        _ f = f
+applyIndexing 1        x f = f(x(𝟎))
+applyIndexing (𝐒(𝐒 n)) x f = applyIndexing(𝐒 n) (\i → x(𝐒(i))) (f(x(𝟎)))
 
 -- Applies a tuple as arguments to a multivariate function.
 -- Example:
 --   apply(x,y,z,...) (x ↦ y ↦ z ↦ ... ↦ φ) = φ
-applyTuple : (n : ℕ) → ∀{ℓ𝓈}{As : Types{𝐒(n)}(ℓ𝓈)}{ℓ}{B : Type{ℓ}} → (reduceᵣ(_⨯_) As) → (As ⇉ B) → B
+applyTuple : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ ℓᵤ}{B : Type{ℓ}} → (reduceOrᵣ(_⨯_) (Unit{ℓᵤ}) As) → (As ⇉ B) → B
 applyTuple(n) = swap₁(uncurry(n))
 
 -- Applies an argument to a specific position in the arguments of an argument list of a multivariate function.
@@ -163,7 +170,7 @@ applyAt(𝐒(𝐒(n))) (𝐒(i)) xi f x  = applyAt(𝐒(n)) i xi (f(x))
 onEach : (n : ℕ) → ∀{ℓ𝓈₁}{As : Types{n}(ℓ𝓈₁)}{ℓ𝓈₂}{Bs : Types{n}(ℓ𝓈₂)}{C : Type{ℓ}} → (Bs ⇉ C) → (As ⦗ map₂(_→ᶠ_) ⦘ Bs) ⇉ (As ⇉ C)
 onEach(0)           = id
 onEach(1)           = _∘_
-onEach(𝐒(𝐒(n))) f g = curry(n) (gs ↦ x ↦ uncurry(n) (onEach(𝐒(n)) (f(g(x)))) gs)
+onEach(𝐒(𝐒(n))) f g = curry(𝐒(n)){ℓᵤ = Lvl.𝟎} (gs ↦ x ↦ uncurry(𝐒(n)) (onEach(𝐒(n)) (f(g(x)))) gs)
 
 -- Note: One of the parts of being an "applicative functor". The other being `const`
 liftedApply : (n : ℕ) → ∀{ℓ𝓈}{As : Types{n}(ℓ𝓈)}{ℓ₁}{B : Type{ℓ₁}}{ℓ₂}{C : Type{ℓ₂}} → (As ⇉ (B → C)) → ((As ⇉ B) → (As ⇉ C))

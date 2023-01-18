@@ -31,8 +31,8 @@ import Syntax.Function
 import Type
 import Type.Cubical
 import Type.Cubical.Path
-import Type.Cubical.Path.Proofs
-import Type.Dependent
+import Type.Cubical.Path.Functions
+import Type.Dependent.Sigma
 import Type.Properties.Empty
 -- import Type.Properties.Empty.Proofs
 import Type.Quotient

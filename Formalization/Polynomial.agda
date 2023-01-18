@@ -155,8 +155,8 @@ module Semantics where
 
   module Proofs where
     eval-of-[⊰] : ∀{x}{a}{al : Polynomial(n)} → (eval (a ⊰ al) x ≡ a ℕ.+ (x ℕ.⋅ (eval al x)))
-    eval-of-[⊰] {ℕ.𝟎}   {x} {a} {b ⊰ ∅}      = reflexivity(_≡_)
-    eval-of-[⊰] {ℕ.𝐒 n} {x} {a} {b ⊰ c ⊰ al} = reflexivity(_≡_)
+    eval-of-[⊰] {_} {x} {a} {b ⊰ ∅}      = reflexivity(_≡_)
+    eval-of-[⊰] {_} {x} {a} {b ⊰ c ⊰ al} = reflexivity(_≡_)
 
     eval-preserves-var⋅ : ∀{x}{a : Polynomial(n)} → (eval (var⋅ a) x ≡ x ℕ.⋅ (eval a x))
     eval-preserves-var⋅ {n}{x}{a} = eval-of-[⊰] {n}{x}{ℕ.𝟎}{a}
@@ -185,8 +185,8 @@ module Semantics where
     eval-preserves-one : ∀{x} → (eval{n} 𝟏 x ≡ ℕ.𝐒(ℕ.𝟎))
     eval-preserves-one {n}{x} = eval-preserves-const {n}{x}{ℕ.𝐒(ℕ.𝟎)}
 
-    eval-preserves-var : ∀{x}{a : Polynomial(n)} → (eval (var{n}) x ≡ x)
-    eval-preserves-var {n}{x}{a} =
+    eval-preserves-var : ∀{x} → (eval (var{n}) x ≡ x)
+    eval-preserves-var {n}{x} =
       eval (var{n}) x      🝖[ _≡_ ]-[ eval-preserves-var⋅{n}{x}{𝟏} ]
       x ℕ.⋅ eval (𝟏 {n}) x 🝖[ _≡_ ]-[ congruence₂-₂(ℕ._⋅_)(x) (eval-preserves-one {n}{x}) ]
       x ℕ.⋅ ℕ.𝐒(ℕ.𝟎)       🝖[ _≡_ ]-[ identityᵣ(ℕ._⋅_)(ℕ.𝐒(ℕ.𝟎)) {x} ]

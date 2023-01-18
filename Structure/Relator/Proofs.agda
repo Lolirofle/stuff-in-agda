@@ -63,6 +63,14 @@ module _
   unaryRelator-sub = [∘]-unaryRelator{f = P}
 
 module _
+  ⦃ equiv-A : Equiv{ℓₑ}(A) ⦄
+  {P : A → Stmt{ℓₗ₁}} ⦃ rel-P : UnaryRelator(P) ⦄
+  where
+
+  LvlUp-unaryRelator : ∀{ℓ} → UnaryRelator(Lvl.Up{ℓ} ∘ P)
+  LvlUp-unaryRelator = UnaryRelator-introᵣ \xy (Lvl.up px) → Lvl.up(substitute₁ᵣ(P) xy px)
+
+module _
   ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄
   ⦃ equiv-B : Equiv{ℓₑ₂}(B) ⦄
   {P : A → Stmt{ℓₗ₁}} ⦃ rel-P : UnaryRelator(P) ⦄
@@ -90,17 +98,13 @@ module _
 [→]-unaryRelator {P = P}{Q = Q} = UnaryRelator-introᵣ \xy pxqx → substitute₁ᵣ(Q) xy ∘ pxqx ∘ substitute₁ₗ(P) xy
 
 [→]-dependent-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : B → A → Stmt{ℓₗ₁}} → ((b : B) → UnaryRelator(P(b))) → UnaryRelator(\a → (b : B) → P(b)(a))
-[→]-dependent-unaryRelator rel = UnaryRelator-introᵣ \xy px b → [↔]-to-[→] (UnaryRelator.substitution ⦃ rel = rel b ⦄ xy) (px b)
+[→]-dependent-unaryRelator rel = UnaryRelator-introᵣ \xy px b → [↔]-to-[→] (UnaryRelator.substitution (rel b) xy) (px b)
 
 [∀]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : B → A → Stmt{ℓₗ₁}} → ⦃ rel-P : ∀{x} → UnaryRelator(P(x)) ⦄ → UnaryRelator(\y → ∀{x} → P(x)(y))
 [∀]-unaryRelator {P = P} = UnaryRelator-introᵣ \{x} {a} xy px {b} → substitute₁ᵣ (P b) xy (px{b})
 
 [∃]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₃}(A) ⦄ {P : B → A → Stmt{ℓₗ₁}} → ⦃ rel-P : ∀{x} → UnaryRelator(P(x)) ⦄ → UnaryRelator(\y → ∃(x ↦ P(x)(y)))
 [∃]-unaryRelator {P = P} = UnaryRelator-introᵣ \xy → [∃]-map-proof (substitute₁ᵣ(P _) xy)
-
-instance
-  const-unaryRelator : ∀{P : Stmt{ℓₗ₁}} → ⦃ _ : Equiv{ℓₗ}(A) ⦄ → UnaryRelator{A = A}(const P)
-  const-unaryRelator = UnaryRelator-introᵣ(const id)
 
 [¬]-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ {P : A → Stmt{ℓₗ₁}} → ⦃ rel-P : UnaryRelator(P) ⦄ → UnaryRelator(\x → ¬ P(x))
 [¬]-unaryRelator {P = P} = [→]-unaryRelator
@@ -113,6 +117,10 @@ instance
 
 binary-unaryRelator : ∀ ⦃ _ : Equiv{ℓₗ₂}(A) ⦄ {P : A → A → Stmt{ℓₗ₁}} → ⦃ rel-P : BinaryRelator(P) ⦄ → UnaryRelator(P $₂_)
 binary-unaryRelator {P = P} = UnaryRelator-introᵣ \xy pxx → substitute₂ᵣ(P) xy xy pxx
+
+instance
+  const-unaryRelator : ∀{c : Type{ℓ}} → ⦃ equiv : Equiv{ℓₗ}(A) ⦄ → UnaryRelator{A = A}(const c)
+  const-unaryRelator = const-function
 
 instance
   const-binaryRelator : ∀{P : Stmt{ℓₗ}} → ⦃ equiv-A : Equiv{ℓₗ₁}(A) ⦄ ⦃ equiv-B : Equiv{ℓₗ₂}(B) ⦄ → BinaryRelator{A = A}{B = B}((const ∘ const) P)

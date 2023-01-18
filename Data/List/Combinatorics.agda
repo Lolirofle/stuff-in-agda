@@ -4,7 +4,6 @@ import      Lvl
 open import Data
 open import Data.List
 open import Data.List.Functions
-open        Data.List.Functions.LongOper
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
 open import Data.Tuple.Raiseᵣ as Tuple₊ using (_^_)
 import      Data.Tuple.Raiseᵣ.Functions as Tuple₊

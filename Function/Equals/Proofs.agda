@@ -17,11 +17,13 @@ open import Syntax.Transitivity
 open import Syntax.Type
 open import Type
 
+-- TODO: Remove some of these functions and use Function.Equiv.Proofs instead
+
 private variable ℓ ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓₑ ℓᵤ ℓₑ₁ ℓₑ₂ ℓₑ₃ ℓₑ₄ : Lvl.Level
 
 module Dependent where
   open        Functional using (id)
-  open import Functional.Dependent
+  open import DependentFunctional
   open        Function.Equals.Dependent
 
   module _ {A : Type{ℓ₁}} {B : A → Type{ℓ₂}} ⦃ equiv-B : ∀{a} → Equiv{ℓₑ₂}(B(a)) ⦄ where
@@ -93,22 +95,14 @@ module _ ⦃ _ : let _ = A in Equiv{ℓₑ₂}(B) ⦄ where
   [⊜]-apply : ∀{f g : A → B} → (f ⊜ g) → (∀{x} → (f(x) ≡ g(x)))
   [⊜]-apply (intro proof) = proof
 
--- TODO: Is this correct?
--- [⊜]-not-all : ∀{ℓ₁ ℓ₂}{T₁ : Type{ℓ₁}}{T₂ : Type{ℓ₂}} → (∀{f g : T₁ → T₂} → (f ⊜ g)) → IsEmpty(T₁)
--- [⊜]-not-all{_}{_} {_} {_}{_} = intro(\{})
-
-{- TODO: What assumptions? Unprovable?
 module _
-  {ℓ} -- {ℓ₁}{ℓ₂}{ℓ₃}{ℓ₄}
-  {A : Type{ℓ}} ⦃ _ : Equiv(A) ⦄
-  {B : Type{ℓ}} ⦃ _ : Equiv(B) ⦄
-  {C : Type{ℓ}} ⦃ eq-c : Equiv(C) ⦄
-  {D : Type{ℓ}} ⦃ eq-d : Equiv(D) ⦄
-  {f : (A → B) → (C → D)}
-  ⦃ fn : ∀{ab} → Function {T₁ = C} ⦃ eq-c ⦄ {T₂ = D} ⦃ eq-d ⦄ (f(ab)) ⦄
+  ⦃ equiv-A : Equiv{ℓₑ₁}(A) ⦄
+  ⦃ equiv-B₁ : Equiv{ℓₑ₂}(B₁) ⦄
+  ⦃ equiv-B₂ : Equiv{ℓₑ₃}(B₂) ⦄
+  {F : A → (B₁ → B₂)}
+  ⦃ func : BinaryOperator(F) ⦄
   where
 
   instance
-    [⊜]-function : Function {T₁ = A → B} ⦃ [⊜]-equiv ⦄ {T₂ = C → D} ⦃ [⊜]-equiv ⦄ (f)
-    _⊜_.proof (Function.congruence ([⊜]-function) {g} {h} (intro eq)) {x} = {!!}
--}
+    [⊜]-functionᵣ : Function {A = A} {B = B₁ → B₂} ⦃ equiv-A ⦄ ⦃ [⊜]-equiv ⦄ (F)
+    Function.congruence([⊜]-functionᵣ) eq = intro(\{x} → congruence₂-₁(F)(x) eq)

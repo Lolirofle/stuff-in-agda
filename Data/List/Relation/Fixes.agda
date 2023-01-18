@@ -81,7 +81,7 @@ module _ ⦃ equiv : Equiv{ℓₑ₁}(T) ⦄ where
     instance
       [≡]-Prefix-sub : (_≡_) ⊆₂ Prefix
       [≡]-Prefix-sub = intro p where
-        p : Names.Subrelation (_≡_) Prefix
+        p : Names.Sub₂ (_≡_) Prefix
         p {∅}      {∅}      eq = empty
         p {∅}      {y ⊰ l₂} eq with () ← [∅][⊰]-unequal eq
         p {x ⊰ l₁} {∅}      eq with () ← [∅][⊰]-unequal (symmetry(_≡_) eq)
@@ -90,7 +90,7 @@ module _ ⦃ equiv : Equiv{ℓₑ₁}(T) ⦄ where
     instance
       [≡]-Suffix-sub : (_≡_) ⊆₂ Suffix
       [≡]-Suffix-sub = intro p where
-        p : Names.Subrelation (_≡_) Suffix
+        p : Names.Sub₂ (_≡_) Suffix
         p {∅}      {∅}      eq = empty
         p {∅}      {y ⊰ l₂} eq with () ← [∅][⊰]-unequal eq
         p {x ⊰ l₁} {∅}      eq with () ← [∅][⊰]-unequal (symmetry(_≡_) eq)
@@ -99,7 +99,7 @@ module _ ⦃ equiv : Equiv{ℓₑ₁}(T) ⦄ where
     instance
       Suffix-Infix-sub : Suffix ⊆₂ Infix
       Suffix-Infix-sub = intro p where
-        p : Names.Subrelation Suffix Infix
+        p : Names.Sub₂ Suffix Infix
         p {.∅}       {.∅}       empty             = use empty
         p {.(_ ⊰ _)} {l₂}       (Suffix.skip suf) = skip (p suf)
         p {.(_ ⊰ _)} {.(_ ⊰ _)} (use xy lfix)     = use(use xy (sub₂(_≡_)(Prefix) lfix))

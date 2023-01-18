@@ -170,11 +170,11 @@ Tuple.right ([⊑]-separate₂ {x ⊰ y ⊰ l}) = skip (use (reflexivity(_≡_))
 [⊑]-postpend {∅}     = skip empty
 [⊑]-postpend {x ⊰ l} = use (reflexivity(_≡_)) [⊑]-postpend
 
-[⊑]-withoutIndex : (withoutIndex n l ⊑ l)
-[⊑]-withoutIndex {𝟎}   {∅}     = empty
-[⊑]-withoutIndex {𝐒 n} {∅}     = empty
-[⊑]-withoutIndex {𝟎}   {x ⊰ l} = skip (reflexivity(_⊑_))
-[⊑]-withoutIndex {𝐒 n} {x ⊰ l} = use (reflexivity(_≡_)) [⊑]-withoutIndex
+[⊑]-removeAt : (removeAt n l ⊑ l)
+[⊑]-removeAt {𝟎}   {∅}     = empty
+[⊑]-removeAt {𝐒 n} {∅}     = empty
+[⊑]-removeAt {𝟎}   {x ⊰ l} = skip (reflexivity(_⊑_))
+[⊑]-removeAt {𝐒 n} {x ⊰ l} = use (reflexivity(_≡_)) [⊑]-removeAt
 
 [⊑]-initial : (initial n l ⊑ l)
 [⊑]-initial {𝟎}   {∅}     = empty
@@ -274,9 +274,9 @@ module _ {ℓₑ₂} ⦃ equiv₂ : Equiv{ℓₑ₂}(T₂) ⦄ {f : T → T₂} 
 [⊏]-skip : (𝟎 < n) → (n < length(l)) → (List.skip n l ⊏ l)
 [⊏]-skip {𝐒 n} {x ⊰ l} p q = skip [⊑]-skip
 
-[⊏]-withoutIndex : (n < length(l)) → (withoutIndex n l ⊏ l)
-[⊏]-withoutIndex {𝟎}   {x ⊰ l} p = [⊏]-prepend
-[⊏]-withoutIndex {𝐒 n} {x ⊰ l} p = use (reflexivity(_≡_)) ([⊏]-withoutIndex ([≤]-without-[𝐒] p))
+[⊏]-removeAt : (n < length(l)) → (removeAt n l ⊏ l)
+[⊏]-removeAt {𝟎}   {x ⊰ l} p = [⊏]-prepend
+[⊏]-removeAt {𝐒 n} {x ⊰ l} p = use (reflexivity(_≡_)) ([⊏]-removeAt ([≤]-without-[𝐒] p))
 
 [⊏]-separate₂ : let (l₁ , l₂) = separate₂(l) in (2 ≤ length(l)) → ((l₁ ⊏ l) ∧ (l₂ ⊏ l))
 [⊏]-separate₂ {x ⊰ ∅}     (succ())
@@ -337,7 +337,7 @@ instance
 instance
   [⊏][⊑]-sub : (_⊏_) ⊆₂ (_⊑_)
   [⊏][⊑]-sub = intro p where
-    p : Names.Subrelation(_⊏_)(_⊑_)
+    p : Names.Sub₂(_⊏_)(_⊑_)
     p (use xy l₁l₂) = use xy (p l₁l₂)
     p (skip xl₂)    = skip xl₂
 

@@ -7,7 +7,7 @@ module Structure.Category.Functor.Equiv
   {catᵣ : CategoryObject{ℓᵣₒ}{ℓᵣₘ}{ℓᵣₑ}}
   where
 
-open import Functional.Dependent as Fn using (_$_)
+open import DependentFunctional as Fn using (_$_)
 import      Function.Equals
 open        Function.Equals.Dependent
 open import Logic
@@ -31,10 +31,8 @@ open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 
-open Structure.Category
-
 open Category ⦃ … ⦄
-open CategoryObject
+open CategoryObject using (Object ; category ; morphism-equiv)
 open Functor ⦃ … ⦄
 private instance _ = category catₗ
 private instance _ = category catᵣ
@@ -45,6 +43,7 @@ module _
   (f₁@([∃]-intro F₁) f₂@([∃]-intro F₂) : (catₗ →ᶠᵘⁿᶜᵗᵒʳ catᵣ))
   where
 
+  -- Functors are equal when the functions they consist of are equal.
   record _≡ᶠᵘⁿᶜᵗᵒʳ_ : Type{Lvl.of(Type.of(catₗ)) Lvl.⊔ Lvl.of(Type.of(catᵣ))} where
     constructor intro
     field

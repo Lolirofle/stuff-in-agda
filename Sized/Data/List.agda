@@ -8,21 +8,21 @@ open import Type
 
 private variable ℓ ℓ₁ ℓ₂ : Lvl.Level
 private variable T A A₁ A₂ B B₁ B₂ Result : Type{ℓ}
-private variable s s₁ s₂ : Size
+private variable s sₛ s₁ s₂ : Size
 
-data List(s : Size){ℓ} (T : Type{ℓ}) : Type{ℓ} where
-  ∅   : List(s)(T) -- An empty list
-  _⊰_ : ∀{sₛ : <ˢⁱᶻᵉ s} → T → List(sₛ)(T) → List(s)(T) -- Cons
+data List{ℓ} (T : Type{ℓ}) : Size → Type{ℓ} where
+  ∅   : List(T) (s) -- An empty list
+  _⊰_ : T → List(T) s → List(T) (𝐒ˢⁱᶻᵉ(s)) -- Cons
 infixr 1000 _⊰_
 
-tail : List(s)(T) → List(s)(T)
+tail : List(T) s → List(T) s
 tail ∅       = ∅
 tail (_ ⊰ l) = l
 
 {-
--- TODO: Size problems. See notes in Lang.Size.
-_++_ : List(s)(T) → List(s)(T) → List(s)(T)
-_++_         ∅                   b = b
-_++_ {s = s} (_⊰_ {sₛ = sₛ} x a) b = _⊰_ {s = s}{sₛ = sₛ} x (_++_ {s = sₛ} a b)
-infixl 1000 _++_
+-- TODO: Size problems.
+_++_ : List(T) s₁ → List(T) s₂ → List(T) s₁
+∅ ++ ∅ = ∅
+∅ {sₛ} ++ (x ⊰ b) = x ⊰ _++_ {s₁ = sₛ} {!x ⊰ ∅!} b
+(x ⊰ a) ++ b = x ⊰ (a ++ b)
 -}

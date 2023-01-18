@@ -10,7 +10,7 @@ private variable b : ℕ
 
 to-ℕ : FixedPositional(b) → ℕ
 to-ℕ {_} ∅       = 𝟎
-to-ℕ {b} (n ⊰ l) = 𝕟-to-ℕ (n) + (b ⋅ to-ℕ (l))
+to-ℕ {b} (n ⊰ l) = toℕ (n) + (b ⋅ to-ℕ (l))
 
 -}
 
@@ -27,7 +27,7 @@ module Test2 where
   open import Functional
   open import Syntax.Number
   open import Type
-  open import Type.Dependent
+  open import Type.Dependent.Sigma
 
   private variable ℓ : Lvl.Level
   private variable z : Bool
@@ -51,7 +51,7 @@ module Test2 where
   open import Numeral.Natural.Oper
 
   to-ℕ : Positional b → ℕ
-  to-ℕ     (# n)   = 𝕟-to-ℕ n
+  to-ℕ     (# n)   = toℕ n
   to-ℕ {b} (l · n) = (b ⋅ (to-ℕ l)) + (to-ℕ (# n))
 
   open import Logic.Propositional
@@ -72,15 +72,15 @@ module Test2 where
   from-ℕ-rec : (b : ℕ) → ⦃ b-size : IsTrue(b >? 1) ⦄ → (x : ℕ) → ((prev : ℕ) ⦃ _ : prev < x ⦄ → Positional(b)) → Positional(b)
   from-ℕ-rec b@(𝐒(𝐒 _)) 𝟎       _    = intro 𝐹 (# 𝟎)
   from-ℕ-rec b@(𝐒(𝐒 _)) n@(𝐒 _) prev with prev(n ⌊/⌋ b) ⦃ [⌊/⌋]-ltₗ {n}{b} ⦄
-  ... | intro 𝑇 r = intro 𝑇 (r · (ℕ-to-𝕟 (n mod b) ⦃ [↔]-to-[→] decider-true (mod-maxᵣ{n}{b}) ⦄))
+  ... | intro 𝑇 r = intro 𝑇 (r · (fromℕ (n mod b) ⦃ [↔]-to-[→] decider-true (mod-maxᵣ{n}{b}) ⦄))
   ... | intro 𝐹 r = {!test2 r [≡]-intro!}
   from-ℕ : ⦃ b-size : IsTrue(b >? 1) ⦄ → ℕ → Positional(b)
   from-ℕ b@{𝐒(𝐒 _)} = Strict.Properties.wellfounded-recursion(_<_) (from-ℕ-rec b)
   {-from-ℕ {b = b@(𝐒(𝐒 _))} 𝟎 = intro 𝐹 (# 𝟎)
   from-ℕ {b = b@(𝐒(𝐒 _))} n@(𝐒 _) with [<][≥]-dichotomy {n}{b}
-  ... | [∨]-introₗ lt = intro 𝑇 (# (ℕ-to-𝕟 n ⦃ [↔]-to-[→] decider-true lt ⦄))
+  ... | [∨]-introₗ lt = intro 𝑇 (# (fromℕ n ⦃ [↔]-to-[→] decider-true lt ⦄))
   ... | [∨]-introᵣ ge with from-ℕ {b} (n ⌊/⌋ b)
-  ... |   intro 𝑇 nb = intro 𝑇 (nb · ℕ-to-𝕟 (n mod b) ⦃ [↔]-to-[→] decider-true (mod-maxᵣ{n}{b}) ⦄)
+  ... |   intro 𝑇 nb = intro 𝑇 (nb · fromℕ (n mod b) ⦃ [↔]-to-[→] decider-true (mod-maxᵣ{n}{b}) ⦄)
   ... |   intro 𝐹 _  = intro 𝑇 {!!}-}
 -}
 
@@ -185,10 +185,10 @@ module _ where
   FixedPositional-maximum : ∀{n : FixedPositional(b)} → (to-ℕ (n) < b ^ length(n))
   FixedPositional-maximum {_}   {∅}     = reflexivity(_≤_)
   FixedPositional-maximum {𝐒 b} {n ⊰ l} =
-    𝐒(𝕟-to-ℕ (n) + (𝐒(b) ⋅ to-ℕ (l)))                               🝖[ _≤_ ]-[ {!!} ]
-    𝐒(𝕟-to-ℕ (n) + (𝐒(b) ⋅ (b ^ length(l))))                        🝖[ _≤_ ]-[ {!!} ]
-    𝐒(𝕟-to-ℕ (n) + ((b ⋅ (b ^ length(l))) + (1 ⋅ (b ^ length(l))))) 🝖[ _≤_ ]-[ {!!} ]
-    𝐒(𝕟-to-ℕ (n) + ((b ^ 𝐒(length(l))) + (b ^ length(l))))          🝖[ _≤_ ]-[ {!!} ]
+    𝐒(toℕ (n) + (𝐒(b) ⋅ to-ℕ (l)))                               🝖[ _≤_ ]-[ {!!} ]
+    𝐒(toℕ (n) + (𝐒(b) ⋅ (b ^ length(l))))                        🝖[ _≤_ ]-[ {!!} ]
+    𝐒(toℕ (n) + ((b ⋅ (b ^ length(l))) + (1 ⋅ (b ^ length(l))))) 🝖[ _≤_ ]-[ {!!} ]
+    𝐒(toℕ (n) + ((b ^ 𝐒(length(l))) + (b ^ length(l))))          🝖[ _≤_ ]-[ {!!} ]
     ?                                                               🝖[ _≤_ ]-[ {!!} 
     (b ⋅ (𝐒(b) ^ length(l))) + (𝐒(b) ^ length(l))                   🝖[ _≤_ ]-[ {!!} ]
     𝐒(b) ⋅ (𝐒(b) ^ length(l))                                       🝖-end

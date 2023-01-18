@@ -30,17 +30,17 @@ private variable pt pf : ∀{b} → P(b)
 -- Eliminator
 
 module _ {pt pf : T} where
-  elim-nested : (elim pt pf (elim t f b) ≡ elim{T = const T} (elim pt pf t) (elim pt pf f) b)
-  elim-nested{t = t}{f = f}{b = b} = elim{T = b ↦ (elim pt pf (elim t f b) ≡ elim(elim pt pf t) (elim pt pf f) b)} [≡]-intro [≡]-intro b
+  elim-nested : (elim _ pt pf (elim _ t f b) ≡ elim(const T) (elim _ pt pf t) (elim _ pt pf f) b)
+  elim-nested{t = t}{f = f}{b = b} = elim(b ↦ (elim _ pt pf (elim _ t f b) ≡ elim _ (elim _ pt pf t) (elim _ pt pf f) b)) [≡]-intro [≡]-intro b
 
 module _ {x : T} where
-  elim-redundant : (elim{T = const T} x x b ≡ x)
-  elim-redundant{b = b} = elim{T = b ↦ elim x x b ≡ x} [≡]-intro [≡]-intro b
+  elim-redundant : (elim(const T) x x b ≡ x)
+  elim-redundant{b = b} = elim(b ↦ elim _ x x b ≡ x) [≡]-intro [≡]-intro b
 
-elim-inverse : (elim 𝑇 𝐹 b ≡ b)
-elim-inverse{b = b} = elim{T = b ↦ elim 𝑇 𝐹 b ≡ b} [≡]-intro [≡]-intro b
+elim-inverse : (elim _ 𝑇 𝐹 b ≡ b)
+elim-inverse{b = b} = elim(b ↦ elim _ 𝑇 𝐹 b ≡ b) [≡]-intro [≡]-intro b
 
-elim-anti-inverse : (elim 𝐹 𝑇 b ≡ ! b)
+elim-anti-inverse : (elim _ 𝐹 𝑇 b ≡ ! b)
 elim-anti-inverse {𝑇} = [≡]-intro
 elim-anti-inverse {𝐹} = [≡]-intro
 
@@ -134,6 +134,14 @@ instance
 instance
   [!=]-identityₗ : Identityₗ(_!=_)(𝐹)
   Identityₗ.proof([!=]-identityₗ) = [!=]-identityₗ-raw
+
+[→]-identityₗ-raw : ∀{a} → (𝑇 →? a ≡ a)
+[→]-identityₗ-raw {𝑇} = [≡]-intro
+[→]-identityₗ-raw {𝐹} = [≡]-intro
+{-# REWRITE [→]-identityₗ-raw #-}
+instance
+  [→]-identityₗ : Identityₗ(_→?_)(𝑇)
+  Identityₗ.proof([→]-identityₗ) = [→]-identityₗ-raw
 
 ---------------------------------------------
 -- Left absorbers
@@ -668,49 +676,14 @@ module 𝐹 where
 ---------------------------------------------
 -- If-statements
 
+module _ {ℓ₁ ℓ₂} {T : Type{ℓ₁}} {t f : T} (P : {Bool} → T → Type{ℓ₂}) where
+  if-intro : P{𝑇} t → P{𝐹} f → (∀{b} → P{b} (if b then t else f))
+  if-intro pt pf {b} = elim(\b → P{b} (if b then t else f)) pt pf b
+
 module _ {ℓ₁ ℓ₂} {T : Type{ℓ₁}} {x y : T} {P : T → Type{ℓ₂}} where
-  if-intro : ∀{B} → ((B ≡ 𝑇) → P(x)) → ((B ≡ 𝐹) → P(y)) → P(if B then x else y)
-  if-intro {𝑇} px py = px [≡]-intro
-  if-intro {𝐹} px py = py [≡]-intro
-
-module _ {ℓ₁ ℓ₂ ℓ₃} {T : Type{ℓ₁}} {x y : T} {P : T → Type{ℓ₂}} {Q : Bool → Type{ℓ₃}} where
-  if-elim : ∀{B} → P(if B then x else y) → (P(x) → Q(𝑇)) → (P(y) → Q(𝐹)) → Q(B)
-  if-elim{𝑇} p pxq pyq = pxq p
-  if-elim{𝐹} p pxq pyq = pyq p
-
-module _ {ℓ₁ ℓ₂ ℓ₃} {T : Type{ℓ₁}} {x y : T} {P : T → Type{ℓ₂}} {Q : Type{ℓ₃}} where
-  if-bool-elim : ∀{B} → P(if B then x else y) → (P(x) → (B ≡ 𝑇) → Q) → (P(y) → (B ≡ 𝐹) → Q) → Q
-  if-bool-elim{𝑇} p pxq pyq = pxq p [≡]-intro
-  if-bool-elim{𝐹} p pxq pyq = pyq p [≡]-intro
-
-module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {T : Type{ℓ₁}} {P : T → Type{ℓ₂}} {X : Type{ℓ₃}} {Y : Type{ℓ₄}} (nxy : X → Y → Logic.⊥) where
-  either-bool-left : (xy : (X ∨ Y)) → (X ↔ (Either.isRight(xy) ≡ 𝐹))
-  either-bool-left xy with bivalence{Either.isRight(xy)}
-  either-bool-left (Left  x) | Right f = [↔]-intro (const x) (const f)
-  either-bool-left (Right y) | Left  t = [↔]-intro (\()) (x ↦ empty(nxy x y))
-
-  either-bool-right : (xy : (X ∨ Y)) → (Y ↔ (Either.isRight(xy) ≡ 𝑇))
-  either-bool-right xy with bivalence{Either.isRight(xy)}
-  either-bool-right (Left  x) | Right f = [↔]-intro (\()) (y ↦ empty(nxy x y))
-  either-bool-right (Right y) | Left  t = [↔]-intro (const y) (const t)
-
-module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {T : Type{ℓ₁}} {P : T → Type{ℓ₂}} {X : Type{ℓ₃}} {Y : Type{ℓ₄}} where
-  either-bool-leftₗ : (xy : (X ∨ Y)) → (X ← (Either.isRight(xy) ≡ 𝐹))
-  either-bool-leftₗ xy with bivalence{Either.isRight(xy)}
-  either-bool-leftₗ (Left  x) | Right f = const x
-  either-bool-leftₗ (Right y) | Left  t = \()
-
-  either-bool-rightₗ : (xy : (X ∨ Y)) → (Y ← (Either.isRight(xy) ≡ 𝑇))
-  either-bool-rightₗ xy with bivalence{Either.isRight(xy)}
-  either-bool-rightₗ (Left  x) | Right f = \()
-  either-bool-rightₗ (Right y) | Left  t = const y
-
-  if-not-either-bool-intro : ∀{x y : T} → (X → P(x)) → (Y → P(y)) → (xy : (X ∨ Y)) → P(if not(Either.isRight(xy)) then x else y)
-  if-not-either-bool-intro {x}{y} xp yp xy = if-intro {x = x}{y = y} (xp ∘ either-bool-leftₗ xy ∘ 𝑇.[¬]-elim) (yp ∘ either-bool-rightₗ xy ∘ 𝑇.[¬¬]-elim ∘ 𝐹.[¬]-elim)
-
-module _ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} {T : Type{ℓ₁}} {P : T → Type{ℓ₂}} {X : Type{ℓ₃}} {Y : Type{ℓ₄}} where
-  if-either-bool-intro : ∀{x y : T} → (X → P(x)) → (Y → P(y)) → (xy : (X ∨ Y)) → P(if Either.isRight(xy) then y else x)
-  if-either-bool-intro {x}{y} xp yp xy = if-intro {x = y}{y = x} (yp ∘ either-bool-rightₗ {P = P} xy) (xp ∘ either-bool-leftₗ {P = P} xy)
+  if-intro-old : ∀{B} → ((B ≡ 𝑇) → P(x)) → ((B ≡ 𝐹) → P(y)) → P(if B then x else y)
+  if-intro-old {𝑇} px py = px [≡]-intro
+  if-intro-old {𝐹} px py = py [≡]-intro
 
 ---------------------------------------------
 -- The predicate of if-statements
@@ -733,7 +706,7 @@ module _ {ℓ} {T : Type{ℓ}} {x y : T} where
   if-not {𝑇} = [≡]-intro
 
 ---------------------------------------------
--- The results of if-statements
+-- The result of if-statements
 
 module _ {ℓ} {T : Type{ℓ}} {x : T} {B} where
   if-then-redundant : (if B then x else x ≡ x)

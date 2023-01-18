@@ -1,6 +1,6 @@
 OPTIONS=--rewriting --without-K --no-default-libraries --no-libraries --no-guardedness --no-sized-types --no-import-sorts --no-print-pattern-synonyms --exact-split
-DEBUG_OPTIONS=--show-implicit --confluence-check -W all --warning noUnknownFixityInMixfixDecl --cubical
-#--cubical --exact-split --proof-irrelevance --verbose=5 --experimental-irrelevance --instance-search-depth=10 --overlapping-instances
+DEBUG_OPTIONS=--show-implicit --confluence-check -W all --warning noUnknownFixityInMixfixDecl
+# --cubical --proof-irrelevance --verbose=5 --experimental-irrelevance --instance-search-depth=10 --overlapping-instances --no-qualified-instances  --erase-record-parameters --cubical-compatible
 
 all: typecheck
 

@@ -25,6 +25,7 @@ import      Lvl
 open import Data.Boolean
 open import Data.Boolean.Proofs
 import      Data.Either as Either
+open import Data.Either.Proofs
 open import Functional
 open import Logic.IntroInstances
 open import Logic.Propositional
@@ -50,7 +51,7 @@ instance
   ... | Either.Right p | Either.Right q = congruence₁(−_) xy
 
 abs-positive : ∀{x} → (‖ x ‖ ≥ 𝟎)
-abs-positive{x} = if-either-bool-intro {P = _≥ 𝟎} {x = x} {y = − x} id ([↔]-to-[→] [≤]-flip-negative) (converseTotal(_≤_){𝟎}{x})
+abs-positive{x} = either-elim-if-isRight {P = _≥ 𝟎} {a = x} {b = − x} id ([↔]-to-[→] [≤]-flip-negative) (converseTotal(_≤_){𝟎}{x})
 
 abs-values : ∀{x} → (‖ x ‖ ≡ x) ∨ (‖ x ‖ ≡ − x)
 abs-values{x} with converseTotal(_≤_){𝟎}{x}

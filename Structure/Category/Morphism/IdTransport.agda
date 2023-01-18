@@ -6,7 +6,7 @@ open import Type
 -- TODO: Deprecate this file and use Relator.Equals.Category instead
 module Structure.Category.Morphism.IdTransport where
 
-import      Functional.Dependent as Fn
+import      DependentFunctional as Fn
 import      Function.Equals
 open        Function.Equals.Dependent
 open import Logic
@@ -14,8 +14,9 @@ open import Logic.Propositional
 open import Logic.Predicate
 open import Relator.Equals using ([≡]-intro) renaming (_≡_ to _≡ₑ_)
 open import Relator.Equals.Proofs
-import      Structure.Categorical.Names as Names
 open import Structure.Category.Functor
+open import Structure.Categorical.Functor.Properties
+import      Structure.Categorical.Names as Names
 open import Structure.Categorical.Properties
 open import Structure.Function
 open import Structure.Relator.Equivalence
@@ -27,8 +28,7 @@ module _
   (cat : CategoryObject{ℓₒ}{ℓₘ}{ℓₑ})
   where
 
-  open CategoryObject(cat)
-  open Category(category) using (_∘_ ; id ; identityₗ ; identityᵣ)
+  open CategoryObject(cat) using (Object ; category ; morphism-equiv ; _∘_ ; id ; identityₗ ; identityᵣ)
   open Category.ArrowNotation(category)
   open Morphism.OperModule ⦃ morphism-equiv ⦄ (\{x} → _∘_ {x})
   open Morphism.IdModule   ⦃ morphism-equiv ⦄ (\{x} → _∘_ {x})(id)
@@ -77,18 +77,16 @@ module _
   {catᵣ : CategoryObject{ℓₒᵣ}{ℓₘᵣ}{ℓₑᵣ}}
   where
 
-  open CategoryObject
-  open Category using (_∘_ ; id ; identityₗ ; identityᵣ)
+  open CategoryObject using (Object ; Morphism ; category ; morphism-equiv ; _∘_ ; id ; identityₗ ; identityᵣ)
   open Category.ArrowNotation
-
-  private open module Equivᵣ {x}{y} = Equivalence (Equiv-equivalence ⦃ morphism-equiv(catᵣ){x}{y} ⦄) using ()
+  private open module Equivᵣ {x}{y} = Equiv(morphism-equiv(catᵣ){x}{y}) using ()
 
   transport-of-congruenced-functor : (([∃]-intro F ⦃ intro map ⦄) : catₗ →ᶠᵘⁿᶜᵗᵒʳ catᵣ) → ∀{a b : Object(catₗ)}{ab : (a ≡ₑ b)} → (transport(catᵣ)(congruence₁ F ab) ≡ map(transport(catₗ)(ab)))
   transport-of-congruenced-functor ([∃]-intro F functor@⦃ intro map ⦄) {ab = [≡]-intro} =
     transport catᵣ (congruence₁ F [≡]-intro) 🝖[ _≡_ ]-[]
     transport catᵣ [≡]-intro                 🝖[ _≡_ ]-[]
-    id(category(catᵣ))                       🝖[ _≡_ ]-[ Functor.id-preserving functor ]-sym
-    map(id(category(catₗ)))                  🝖[ _≡_ ]-[]
+    id(catᵣ)                                 🝖[ _≡_ ]-[ preserving₀(Morphism catₗ)(Morphism catᵣ) map (id(catₗ)) (id(catᵣ)) ]-sym
+    map(id(catₗ))                            🝖[ _≡_ ]-[]
     map(transport catₗ [≡]-intro)            🝖-end
 
   -- transport-of-congruenced-bifunctor : ∀{ab : (a ≡ₑ b)}{[∃]-intro F : Bifunctor} → (F(transport(ab)(cd)) ≡ transport(congruence₂ F ab cd))

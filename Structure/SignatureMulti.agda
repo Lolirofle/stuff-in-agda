@@ -11,7 +11,7 @@ import      Lvl.MultiFunctions as Lvl
 open import Numeral.Finite
 open import Numeral.Natural
 open import Type
-open import Type.Dependent
+open import Type.Dependent.Sigma
 
 record Signature : Type{Lvl.𝟎} where
   field

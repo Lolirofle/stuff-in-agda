@@ -20,7 +20,7 @@ open import Numeral.Natural.Relation
 open import Numeral.Natural.Relation.Divisibility
 open import Numeral.Natural.Relation.Divisibility.Decidable
 open import Numeral.Natural.Relation.Divisibility.Proofs
-open import Numeral.Natural.Relation.Divisibility.Proofs.Product
+open import Numeral.Natural.Relation.Divisibility.Proofs.Productᵣ
 open import Numeral.Natural.Relation.Order
 open import Numeral.Natural.Relation.Order.Classical
 open import Numeral.Natural.Relation.Order.Decidable
@@ -195,7 +195,7 @@ leastDivisor-[⋅]ₗ-order : ∀{a b} → (a ≥ 2) → (leastDivisor a ≥ lea
 leastDivisor-[⋅]ₗ-order{a}{b} dom = leastDivisor-divisibility-order dom (divides-with-[⋅] {c = b} ([∨]-introₗ (reflexivity(_∣_))))
 
 open import Numeral.Natural.Oper.Proofs.Order
-open import Numeral.Natural.Relation.Divisibility.Proofs.Product
+open import Numeral.Natural.Relation.Divisibility.Proofs.Productᵣ
 
 leastDivisor-of-[⋅] : (2 ≤ a) → (2 ≤ b) → (leastDivisor(a ⋅ b) ≡ ℕ.min(leastDivisor a) (leastDivisor b))
 leastDivisor-of-[⋅] {a} {b} bound-a bound-b =

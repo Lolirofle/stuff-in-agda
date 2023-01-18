@@ -44,7 +44,7 @@ record TopologicalSpace {ℓ₁ ℓ₂ ℓ₃} {X : Type{ℓ₁}} ⦃ equiv : Eq
   open import Logic.Propositional
   open import Logic.Propositional.Equiv
   open import Logic.Predicate
-  open import Lvl.Proofs
+  open import Lvl.Up.Proofs
   open import Structure.Function.Domain
   open import Structure.Function
   open import Structure.Relator.Proofs

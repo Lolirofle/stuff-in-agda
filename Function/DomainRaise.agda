@@ -58,7 +58,7 @@ applyRepeated{𝐒(𝐒(n))} f(x) = applyRepeated{𝐒(n)} (f(x)) (x)
   --   applyFn f g = f (g(2)) (g(1)) (g(0))
   applyFn : ∀{n}{T₁}{T₂} → (T₁ →̂ T₂)(n) → (𝕟(n) → T₁) → T₂
   applyFn{𝟎}    f g = f
-  applyFn{𝐒(n)} f g = applyFn{n} (f(g(ℕ-to-𝕟 (n) {𝐒(n)} ⦃ [<?]-𝐒 {n} ⦄))) (g ∘ (bound-𝐒{n}))
+  applyFn{𝐒(n)} f g = applyFn{n} (f(g(fromℕ (n) {𝐒(n)} ⦃ [<?]-𝐒 {n} ⦄))) (g ∘ (bound-𝐒{n}))
 
   -- TODO: Examples:
   --   swapReverse {3} f (y₂) (y₁) (y₀)

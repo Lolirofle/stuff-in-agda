@@ -4,7 +4,7 @@ import Lvl
 open import Logic
 open import Logic.Propositional
 open import Functional
-open import Functional.Dependent using () renaming (const to constDep)
+open import DependentFunctional using () renaming (const to constDep)
 open import Numeral.Natural
 open import Numeral.Natural.Induction
 open import Numeral.Natural.Relation.Order
@@ -15,17 +15,39 @@ open import Type
 
 private variable ℓ : Lvl.Level
 
-ℕ-strong-recursion : (P : ℕ → Type{ℓ}) → ((n : ℕ) → ((i : ℕ) → (i < n) → P(i)) → P(n)) → ((n : ℕ) → P(n))
-ℕ-strong-recursion P step n = ℕ-elim(n ↦ ((i : ℕ) → (i < n) → P(i)))
-  (constDep([⊥]-elim ∘ [≤][0]ᵣ-negation))
-  (n ↦ prev ↦ i ↦ i𝐒n ↦ step i (j ↦ ji ↦ prev j (transitivity(_≤_) ji ([≤]-without-[𝐒] i𝐒n))))
-  (𝐒(n)) n (reflexivity(_≤_))
+module _
+  (P : ℕ → Type{ℓ})
+  (step : (n : ℕ) → ((i : ℕ) → (i < n) → P(i)) → P(n))
+  where
 
-ℕ-split-strong-recursion : (P : ℕ → Type{ℓ}) → (s : ℕ) → ((i : ℕ) → (i ≤ s) → P(i)) → ((n : ℕ) → ((i : ℕ) → (s < i < n) → P(i)) → P(n)) → ((n : ℕ) → P(n))
-ℕ-split-strong-recursion P s base step = ℕ-strong-recursion P (n ↦ prev ↦ step n (i ↦ prev i ∘ [∧]-elimᵣ))
+  ℕ-strong-recursion-internals : (n : ℕ) → (i : ℕ) → (i < n) → P(i)
+  ℕ-strong-recursion-internals = ℕ-elim(n ↦ ((i : ℕ) → (i < n) → P(i)))
+    (constDep([⊥]-elim ∘ [≤][0]ᵣ-negation))
+    (n ↦ prev ↦ i ↦ i𝐒n ↦ step i (j ↦ ji ↦ prev j (transitivity(_≤_) ji ([≤]-without-[𝐒] i𝐒n))))
 
-ℕ-strong-induction : ∀{φ : ℕ → Stmt{ℓ}} → φ(𝟎) → (∀{i : ℕ} → (∀{j : ℕ} → (j ≤ i) → φ(j)) → φ(𝐒(i))) → (∀{n} → φ(n))
-ℕ-strong-induction {φ = φ} base step {n} = ℕ-strong-recursion φ (\{𝟎 _ → base ; (𝐒(n)) prev → step{n} (\{i} → prev i ∘ succ)}) n
+  ℕ-strong-recursion : (n : ℕ) → P(n)
+  ℕ-strong-recursion n = ℕ-strong-recursion-internals (𝐒(n)) n (reflexivity(_≤_))
+
+{-
+module _
+  (P : ℕ → Type{ℓ})
+  (s : ℕ)
+  -- (base : (i : ℕ) → (i ≤ s) → P(i))
+  (step : (n : ℕ) → ((i : ℕ) → (s < i < n) → P(i)) → P(n))
+  where
+
+  ℕ-split-strong-recursion : (n : ℕ) → P(n)
+  ℕ-split-strong-recursion = ℕ-strong-recursion P (n ↦ prev ↦ step n (i ↦ prev i ∘ [∧]-elimᵣ))
+-}
+
+module _
+  (P : ℕ → Type{ℓ})
+  (base : P(𝟎))
+  (step : ∀(n : ℕ) → ((i : ℕ) → (i ≤ n) → P(i)) → P(𝐒(n)))
+  where
+
+  ℕ-strong-induction : (n : ℕ) → P(n)
+  ℕ-strong-induction = ℕ-strong-recursion(P) (\{𝟎 _ → base ; (𝐒(n)) prev → step n (\i → prev i ∘ succ)})
 
 module _ where
   open Strict.Properties

@@ -1,15 +1,20 @@
-module Automaton.NonDeterministic where
-
 import      Lvl
-open import Data.Boolean
-import      Data.Boolean.Operators
-open        Data.Boolean.Operators.Programming
-open import Data.List using (List) renaming (∅ to ε ; _⊰_ to _·_)
-open import Functional
-open import Logic
-open import Sets.ExtensionalPredicateSet
+open import Structure.Set
 open import Structure.Setoid
 open import Type
+
+module Automaton.NonDeterministic
+  {ℓₐ ℓₑₐ} (Alphabet : Type{ℓₐ}) ⦃ equiv-alphabet : Equiv{ℓₑₐ}(Alphabet) ⦄
+  {ℓₛ ℓₑₛ} (State : Type{ℓₛ}) ⦃ equiv-state : Equiv{ℓₑₛ}(State) ⦄
+  {ℓₛₛ ℓₑₛₛ ℓₛₛₛ} (StateSet : Type{ℓₛₛ}) ⦃ equiv-state-set : Equiv{ℓₑₛₛ}(StateSet) ⦄
+  {_∈_ : State → StateSet → Type{ℓₛₛₛ}} ⦃ state-set-ext : SetExtensionality(_∈_) ⦄
+  where
+
+open import Data.List using (List)
+open import Structure.Operator
+
+Word = List(Alphabet)
+open Data.List renaming (∅ to ε ; _⊰_ to _·_) public
 
 -- Non-deterministic Automata
 -- `State`      (Q)  is the set of states.
@@ -17,43 +22,23 @@ open import Type
 -- `transition` (δ)  is the transition function.
 -- `start`      (q₀) is the start state.
 -- `Final`      (F)  is the subset of State which are the final/accepting states.
-record NonDeterministic {ℓₚ ℓₛ ℓₑ ℓₐ} (State : Type{ℓₛ}) ⦃ equiv-state : Equiv{ℓₑ}(State) ⦄ (Alphabet : Type{ℓₐ}) : Type{ℓₛ Lvl.⊔ ℓₑ Lvl.⊔ ℓₐ Lvl.⊔ Lvl.𝐒(ℓₚ)} where
+record NonDeterministic : Type{ℓₐ Lvl.⊔ ℓₑₐ Lvl.⊔ ℓₛ Lvl.⊔ ℓₑₛ Lvl.⊔ ℓₛₛ Lvl.⊔ ℓₑₛₛ Lvl.⊔ ℓₛₛₛ} where
   constructor nondeterministic
   field
-    transition : State → Alphabet → PredSet{ℓₚ}(State)
+    transition : State → Alphabet → StateSet
+    ⦃ transition-binaryOperator ⦄ : BinaryOperator(transition)
     start      : State
-    Final      : PredSet{ℓₚ}(State)
-
-  Word = List(Alphabet)
-
-  -- Chained transition using a word (list of characters).
-  wordTransition : State → Word → PredSet{ℓₑ}(State)
-  wordTransition initialState ε       = • initialState
-  wordTransition initialState (a · l) = {!⋃ ?!} -- wordTransition (transition initialState a) l
+    final      : StateSet
 {-
+  -- Chained transition using a word.
+  wordTransition : State → Word → PredSet{ℓₛ Lvl.⊔ ℓₜ Lvl.⊔ ℓₑₛ}(State)
+  wordTransition s ε       = predLvl(ℓₛ Lvl.⊔ ℓₜ) (• s)
+  wordTransition s (a · l) = ⋃ᵢₛ(transition s a) (swap wordTransition l)
+-}
   module LetterNotation where
     Q  = State
     Σ  = Alphabet
     δ  = transition
-    δ̂  = wordTransition
+    --δ̂  = wordTransition
     q₀ = start
-    F  = Final
-
-  -- A word is accepted by the automaton when it can transition from the start state to a final state.
-  AcceptsWord : Word → Stmt
-  AcceptsWord = (_∈ Final) ∘ wordTransition start
-
-  -- The subset of State which are the accessible states from the start state by chained transitions.
-  Accessible : PredSet(State)
-  Accessible = ⊶(wordTransition start)
-
-  automatonTransition : Alphabet → NonDeterministic(State)(Alphabet)
-  transition (automatonTransition _) = transition
-  start      (automatonTransition c) = transition start c
-  Final      (automatonTransition _) = Final
-
-  automatonTransitionWord : Word → NonDeterministic(State)(Alphabet)
-  transition (automatonTransitionWord _) = transition
-  start      (automatonTransitionWord w) = wordTransition start w
-  Final      (automatonTransitionWord _) = Final
--}
+    F  = final

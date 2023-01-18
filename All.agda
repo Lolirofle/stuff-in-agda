@@ -4,16 +4,21 @@
 module All where
 
 -- import All
-import Automaton.Deterministic.Accessible
-import Automaton.Deterministic.Finite
+-- import Automaton.Deterministic.Accessible
 -- import Automaton.Deterministic.FormalLanguage
-import Automaton.Deterministic.Oper
+-- import Automaton.Deterministic.Oper
+import Automaton.Deterministic.Proofs.Automaton
+-- import Automaton.Deterministic.Proofs
+-- import Automaton.Deterministic.Relations
 import Automaton.Deterministic
+import Automaton.FormalLanguage
 -- import Automaton.NonDeterministic
 -- import Automaton.Pushdown
 -- import Automaton.TuringMachine
+import Automaton
 import BidirectionalFunction.Equiv
 import BidirectionalFunction
+import Char.Decidable
 import Char.Functions
 import Char.Proofs
 import Char
@@ -35,10 +40,12 @@ import Data.Boolean.Stmt.Proofs
 import Data.Boolean.Stmt
 import Data.Boolean
 import Data.DependentWidthTree
+import Data.DifferenceList
 import Data.DynamicTree
 import Data.Either.Equiv.Id
 import Data.Either.Equiv
 import Data.Either.Multi
+import Data.Either.Proofs.Map
 import Data.Either.Proofs
 import Data.Either.Setoid
 import Data.Either
@@ -54,24 +61,39 @@ import Data.List.Equiv.Id
 import Data.List.Equiv
 import Data.List.Functions.Multi
 import Data.List.Functions.Positional
+import Data.List.Functions.Proofs.Positional
 import Data.List.Functions.Tuple
 import Data.List.Functions
 import Data.List.FunctionsProven.Proofs
 import Data.List.FunctionsProven
 import Data.List.Iterable
+import Data.List.Proofs.Index
 import Data.List.Proofs.Length
+import Data.List.Proofs.Reverse
 import Data.List.Proofs.Simple
 import Data.List.Proofs
+import Data.List.Relation.Enum.Proofs
+import Data.List.Relation.Enum
 import Data.List.Relation.Fixes
 import Data.List.Relation.Membership.Functions
 import Data.List.Relation.Membership.Proofs
 import Data.List.Relation.Membership
 import Data.List.Relation.Pairwise.Proofs
 import Data.List.Relation.Pairwise
+import Data.List.Relation.Permutation.ByInsertion.Height
+import Data.List.Relation.Permutation.ByInsertion.Mapping
+import Data.List.Relation.Permutation.ByInsertion.Oper.Proofs
+import Data.List.Relation.Permutation.ByInsertion.Oper
+import Data.List.Relation.Permutation.ByInsertion.Proofs
 import Data.List.Relation.Permutation.ByInsertion
 import Data.List.Relation.Permutation.Proofs
 import Data.List.Relation.Permutation
+import Data.List.Relation.Quantification.Existential.Functions
+import Data.List.Relation.Quantification.Existential.Proofs
 import Data.List.Relation.Quantification.Proofs
+import Data.List.Relation.Quantification.Uniqueness
+import Data.List.Relation.Quantification.Universal.Functions
+import Data.List.Relation.Quantification.Universal.Proofs
 import Data.List.Relation.Quantification
 import Data.List.Relation.Sublist.Proofs
 import Data.List.Relation.Sublist
@@ -87,6 +109,7 @@ import Data.List.Sorting.Proofs
 import Data.List.Sorting.QuickSort
 import Data.List.Sorting.SelectionSort
 import Data.List.Sorting
+import Data.List.Structure.Monoid
 import Data.List
 import Data.ListNonEmpty
 import Data.ListSized.Functions
@@ -96,9 +119,14 @@ import Data.Option.Categorical
 import Data.Option.Equiv.Id
 import Data.Option.Equiv.Path
 import Data.Option.Equiv
+import Data.Option.Functions.Unmap.Proofs
+import Data.Option.Functions.Unmap
 import Data.Option.Functions
 import Data.Option.Iterable
 import Data.Option.Proofs
+import Data.Option.Quantifiers.Proofs
+import Data.Option.Quantifiers
+import Data.Option.Relation
 import Data.Option.Setoid
 import Data.Option
 import Data.Proofs
@@ -118,15 +146,25 @@ import Data.Tuple.Raiseᵣ.Proofs
 import Data.Tuple.Raiseᵣ
 import Data.Tuple.Raiseₗ
 import Data.Tuple
+import Data.UniqueList
+import Data.Wrap
 import Data
+import Dataω.Tuple
+import DependentFunction.Equiv
+import DependentFunction
+import DependentFunctional
 import FFI.IO
 import FFI.MachineWord
 import Float
 -- import FormalLanguage.ContextFreeGrammar
 -- import FormalLanguage.Equals
+import FormalLanguage.Oper
 -- import FormalLanguage.Proofs
--- import FormalLanguage.RegularExpression
 -- import FormalLanguage
+import FormalLanguage2.Equals
+import FormalLanguage2.Oper
+import FormalLanguage2.Proofs
+import FormalLanguage2
 import Formalization.ClassicalPredicateLogic.Semantics
 import Formalization.ClassicalPredicateLogic.Syntax.Substitution
 import Formalization.ClassicalPredicateLogic.Syntax
@@ -144,13 +182,34 @@ import Formalization.ClassicalPropositionalLogic.TruthTable
 -- import Formalization.ClassicalPropositionalLogic
 -- import Formalization.FunctionalML
 -- import Formalization.ImperativePL
-import Formalization.LambdaCalculus.Semantics.CallByName
-import Formalization.LambdaCalculus.Semantics.CallByValue
-import Formalization.LambdaCalculus.Semantics.Reduction
-import Formalization.LambdaCalculus.Semantics
-import Formalization.LambdaCalculus.SyntaxTransformation
-import Formalization.LambdaCalculus.Terms.Combinators
-import Formalization.LambdaCalculus
+import Formalization.LambdaCalculus.ByVarCount.ByIndices.Semantics.CallByName
+import Formalization.LambdaCalculus.ByVarCount.ByIndices.Semantics.CallByValue
+import Formalization.LambdaCalculus.ByVarCount.ByIndices.Semantics.Reduction.Proofs
+import Formalization.LambdaCalculus.ByVarCount.ByIndices.Semantics.Reduction
+import Formalization.LambdaCalculus.ByVarCount.ByIndices.Terms.Combinators
+import Formalization.LambdaCalculus.ByVarCount.ByIndices
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Equals
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Semantics.Evaluator
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Semantics.Operational
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Semantics.Operators.Normal
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Semantics.Operators
+-- import Formalization.LambdaCalculus.ByVarCount.ByLevels.Semantics.Reduction.Proofs.Properties
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Semantics.Reduction.Proofs
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Semantics.Reduction
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Terms.ApplyIterated
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Terms.Boolean
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Terms.ChurchNumeral
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Terms.Combinators
+import Formalization.LambdaCalculus.ByVarCount.ByLevels.Terms.Tuple
+import Formalization.LambdaCalculus.ByVarCount.ByLevels
+import Formalization.LambdaCalculus.ByVarCount.Functions.Proofs
+import Formalization.LambdaCalculus.ByVarCount.Functions
+import Formalization.LambdaCalculus.ByVarCount.Semantics
+import Formalization.LambdaCalculus.ByVarCount.Syntax.ExplicitLambda
+import Formalization.LambdaCalculus.ByVarCount.Syntax.ImplicitLambda
+import Formalization.LambdaCalculus.ByVarCount.Syntax.VarNumeral
+import Formalization.LambdaCalculus.ByVarCount
+-- import Formalization.LambdaCalculus.ByVarIndex
 import Formalization.Monoid
 import Formalization.Polynomial
 import Formalization.PredicateLogic.Classical.NaturalDeduction
@@ -172,17 +231,26 @@ import Formalization.PredicateLogic.Syntax
 import Formalization.PrimitiveRecursion
 -- import Formalization.PureTypeSystem
 import Formalization.RecursiveFunction
+import Formalization.RegularExpression.Language
+import Formalization.RegularExpression.Relations
+import Formalization.RegularExpression
 import Formalization.SKICombinatorCalculus
+import Formalization.Semigroup
 import Formalization.SimplyTypedLambdaCalculus
-import Function.Axioms
+import Function.Category.Functors.Hom
+import Function.Category.Functors.LvlUp
+import Function.Category.Monoidal
+import Function.Category.Proofs
+import Function.Category
 import Function.DomainRaise
-import Function.Domains.Functions
-import Function.Domains.Id
 import Function.Domains.Proofs
 import Function.Domains
 import Function.Equals.Multi
 import Function.Equals.Proofs
 import Function.Equals
+import Function.EqualsRaw
+import Function.Equiv.Proofs
+import Function.Equiv
 import Function.Inverse
 import Function.Inverseᵣ
 import Function.Inverseₗ
@@ -195,27 +263,32 @@ import Function.Multi₌.Functions
 import Function.Multi₌
 import Function.Names
 import Function.PointwiseStructure
+import Function.Proofs.Classical
 import Function.Proofs
+import Function.Signature.IndexedCategory
+import Function.Structure
 import Function
+import Functional.Categorical
 import Functional.Combinations
-import Functional.Dependent
 import Functional.Implicit
 import Functional.Instance
 import Functional.Irrelevant
 import Functional.NonNormalizing
+import Functional.Setoid
 import Functional
 -- import Geometry.Axioms
 -- import Geometry.HilbertAxioms
-import Graph.Category
 import Graph.Oper
 import Graph.Properties.Proofs
 import Graph.Properties
+import Graph.Walk.Category
 import Graph.Walk.Functions.Proofs
 import Graph.Walk.Functions
 import Graph.Walk.Proofs
 import Graph.Walk.Properties
 import Graph.Walk
 import Graph
+import ImplicitFunction.Category
 import Iterator
 import Js
 import Lang.Function
@@ -244,6 +317,8 @@ import Logic.Predicate
 import Logic.Propositional.Equiv
 import Logic.Propositional.Proofs.Structures
 import Logic.Propositional.Theorems
+import Logic.Propositional.Xor.Functions
+import Logic.Propositional.Xor.Proofs
 import Logic.Propositional.Xor
 import Logic.Propositional
 import Logic.WeaklyClassical
@@ -254,28 +329,57 @@ import Lvl.MultiFunctions.Proofs
 import Lvl.MultiFunctions
 import Lvl.Order
 import Lvl.Proofs
+import Lvl.Up.Equiv
+import Lvl.Up.Equivalence
+import Lvl.Up.Proofs
 import Lvl
 import Main
+import Numeral.Bits
+import Numeral.Charge.Oper
+import Numeral.Charge.Proofs.Bool
+import Numeral.Charge.Proofs
+import Numeral.Charge
+import Numeral.CoordinateVector.List
 import Numeral.CoordinateVector.Proofs
+import Numeral.CoordinateVector.Relations
 import Numeral.CoordinateVector
 import Numeral.Finite.Bound.Proofs
+import Numeral.Finite.Bound.Substitution
 import Numeral.Finite.Bound
+import Numeral.Finite.Category.Simplex
 import Numeral.Finite.Category
 import Numeral.Finite.Conversions
 import Numeral.Finite.Decidable.Quantifiers
 import Numeral.Finite.Decidable
 import Numeral.Finite.Equiv
+import Numeral.Finite.Equiv2
+import Numeral.Finite.Functions.Proofs
 import Numeral.Finite.Functions
+import Numeral.Finite.LinearSearch.Proofs.FindAll
+import Numeral.Finite.LinearSearch.Proofs.FindMax
+import Numeral.Finite.LinearSearch.Proofs.FindMin
 import Numeral.Finite.LinearSearch
+-- import Numeral.Finite.Oper.Bounded.Proofs.fromℕ
+import Numeral.Finite.Oper.Bounded.Proofs.𝐏
+import Numeral.Finite.Oper.Bounded.Proofs.𝐒
+import Numeral.Finite.Oper.Bounded
 import Numeral.Finite.Oper.Comparisons.Proofs
 import Numeral.Finite.Oper.Comparisons
+import Numeral.Finite.Oper.Exact.Proofs
 import Numeral.Finite.Oper.Proofs
+import Numeral.Finite.Oper.Wrapping.Proofs
+import Numeral.Finite.Oper.Wrapping
 import Numeral.Finite.Oper
 import Numeral.Finite.Proofs
+import Numeral.Finite.Recursion
+import Numeral.Finite.Relation.Order.Proofs
 import Numeral.Finite.Relation.Order
+import Numeral.Finite.Relation.Order2
+import Numeral.Finite.Relation
 import Numeral.Finite.Sequence
 import Numeral.Finite.SequenceTransform.Proofs
 import Numeral.Finite.SequenceTransform
+import Numeral.Finite.Type
 import Numeral.Finite
 import Numeral.FixedPositional
 import Numeral.Integer.Construction.Proofs
@@ -284,6 +388,7 @@ import Numeral.Integer.Function.Proofs.Simple
 import Numeral.Integer.Function.Proofs
 import Numeral.Integer.Function
 import Numeral.Integer.Induction
+import Numeral.Integer.Oper.Comparisons
 import Numeral.Integer.Oper.Proofs
 import Numeral.Integer.Oper
 import Numeral.Integer.Proofs
@@ -307,17 +412,28 @@ import Numeral.Natural.Coprime
 import Numeral.Natural.Decidable
 import Numeral.Natural.Equiv.Id
 import Numeral.Natural.Equiv.Path
+import Numeral.Natural.Function.Coprimalize.Proofs
 import Numeral.Natural.Function.Coprimalize
 import Numeral.Natural.Function.Divisor.Proofs
 import Numeral.Natural.Function.Divisor
 import Numeral.Natural.Function.FlooredLogarithm
+import Numeral.Natural.Function.GcdLcm.Proofs
+import Numeral.Natural.Function.GreatestCommonDivisor.Algorithm
+import Numeral.Natural.Function.GreatestCommonDivisor.Extended.Proofs
 import Numeral.Natural.Function.GreatestCommonDivisor.Extended
+import Numeral.Natural.Function.GreatestCommonDivisor.Proofs.Distributivity
 import Numeral.Natural.Function.GreatestCommonDivisor.Proofs
+import Numeral.Natural.Function.GreatestCommonDivisor.Relation.Existence
+import Numeral.Natural.Function.GreatestCommonDivisor.Relation.Proofs
 import Numeral.Natural.Function.GreatestCommonDivisor
+import Numeral.Natural.Function.LeastCommonMultiple.Proofs
+import Numeral.Natural.Function.LeastCommonMultiple.Relation.Proofs
+import Numeral.Natural.Function.LeastCommonMultiple
 import Numeral.Natural.Function.PrimeDivisor.Proofs
 import Numeral.Natural.Function.PrimeDivisor
 import Numeral.Natural.Function.Proofs
 import Numeral.Natural.Function
+import Numeral.Natural.Induction.Proofs
 import Numeral.Natural.Induction
 import Numeral.Natural.Inductions.Proofs
 import Numeral.Natural.Inductions
@@ -331,6 +447,7 @@ import Numeral.Natural.Oper.DivMod.Proofs
 import Numeral.Natural.Oper.Divisibility
 import Numeral.Natural.Oper.FlooredDivision.Proofs.Algorithm
 import Numeral.Natural.Oper.FlooredDivision.Proofs.Compatibility
+import Numeral.Natural.Oper.FlooredDivision.Proofs.Decidable
 import Numeral.Natural.Oper.FlooredDivision.Proofs.DivisibilityWithRemainder
 import Numeral.Natural.Oper.FlooredDivision.Proofs.Inverse
 import Numeral.Natural.Oper.FlooredDivision.Proofs
@@ -350,22 +467,28 @@ import Numeral.Natural.Oper.Proofs.Rewrite
 import Numeral.Natural.Oper.Proofs
 import Numeral.Natural.Oper
 import Numeral.Natural.Prime.Decidable
+import Numeral.Natural.Prime.Proofs.FromDividesProduct
 import Numeral.Natural.Prime.Proofs.Product
 import Numeral.Natural.Prime.Proofs.Representation
 import Numeral.Natural.Prime.Proofs.Size
 import Numeral.Natural.Prime.Proofs
 import Numeral.Natural.Prime
+import Numeral.Natural.Proofs.HLevel
 import Numeral.Natural.Proofs
 import Numeral.Natural.Relation.Divisibility.Decidable
 import Numeral.Natural.Relation.Divisibility.Proofs.FlooredDivision
 import Numeral.Natural.Relation.Divisibility.Proofs.List
 import Numeral.Natural.Relation.Divisibility.Proofs.Modulo
-import Numeral.Natural.Relation.Divisibility.Proofs.Product
+import Numeral.Natural.Relation.Divisibility.Proofs.Productᵣ
+import Numeral.Natural.Relation.Divisibility.Proofs.Productₗ
 import Numeral.Natural.Relation.Divisibility.Proofs
 import Numeral.Natural.Relation.Divisibility.Strict
+import Numeral.Natural.Relation.Divisibility.Two
 import Numeral.Natural.Relation.Divisibility
 import Numeral.Natural.Relation.DivisibilityWithRemainder.Proofs
 import Numeral.Natural.Relation.DivisibilityWithRemainder
+import Numeral.Natural.Relation.ModuloCongruence.Equiv
+import Numeral.Natural.Relation.ModuloCongruence.Proofs
 import Numeral.Natural.Relation.ModuloCongruence
 import Numeral.Natural.Relation.Order.Category
 import Numeral.Natural.Relation.Order.Classical
@@ -392,9 +515,7 @@ import Numeral.PositiveInteger
 import Numeral.Rational.Proofs
 -- import Numeral.Rational.SternBrocot
 import Numeral.Rational
-import Numeral.Sign.Oper.Proofs
 import Numeral.Sign.Oper
-import Numeral.Sign.Oper0
 import Numeral.Sign.Proofs
 import Numeral.Sign
 import Operator.Equals
@@ -404,6 +525,9 @@ import Operator.Summation.Range
 import Operator.Summation
 import Operator.Summation2
 import Operator.Summation3
+-- import Operator.Summation4
+import Operator.Summation5
+-- import Operator.Summation6
 -- import Prop.Squash
 -- import Prop
 import ReductionSystem
@@ -418,9 +542,11 @@ import Relator.Equals.Proofs
 import Relator.Equals
 import Relator.Ordering.Proofs
 import Relator.Ordering
+import Relator.ReflexiveTransitiveClosure.Proofs
 import Relator.ReflexiveTransitiveClosure
 import Relator.Sets
 import Sets.BoolSet
+import Sets.ExtensionalBoolSet
 -- import Sets.ExtensionalPredicateSet.SetLike
 import Sets.ExtensionalPredicateSet
 import Sets.ImageSet.Oper
@@ -434,22 +560,34 @@ import Sets.IterativeSet
 import Sets.IterativeUSet
 import Sets.PredicateSet.Listable
 import Sets.PredicateSet
+import Signature.Algebraic
+import Signature.IndexedCategory.Functor
+import Signature.IndexedCategory
 import Sized.Data.List
 import Stream.Iterable
 import Stream
+import String.Decidable
 import String.Functions
 import String.Proofs
 import String
--- import Structure.Categorical.Multi
+import Structure.Categorical.Functor.Properties
+import Structure.Categorical.Functor
 import Structure.Categorical.Names
 import Structure.Categorical.Proofs
 import Structure.Categorical.Properties
 import Structure.Category.Action
+import Structure.Category.Adjunction
+import Structure.Category.Bifunctor
 import Structure.Category.Categories
 import Structure.Category.Category
 import Structure.Category.CoMonad
+import Structure.Category.Comma
 import Structure.Category.Dual
+import Structure.Category.Enriched.Category
+import Structure.Category.Enriched.Group
+import Structure.Category.Enriched.Monoid
 -- import Structure.Category.Equiv
+-- import Structure.Category.Foldable
 import Structure.Category.Functor.Category
 import Structure.Category.Functor.Contravariant
 import Structure.Category.Functor.Equiv
@@ -458,19 +596,35 @@ import Structure.Category.Functor.Functors
 import Structure.Category.Functor.Proofs
 import Structure.Category.Functor
 import Structure.Category.Monad.Category
+import Structure.Category.Monad.ExtensionSystem.Proofs
 import Structure.Category.Monad.ExtensionSystem
 import Structure.Category.Monad
-import Structure.Category.Monoid
+import Structure.Category.Monoidal.Diagonal
+import Structure.Category.Monoidal.Functor
 -- import Structure.Category.Monoidal
 import Structure.Category.Morphism.IdTransport
 import Structure.Category.Morphism.Transport
+import Structure.Category.NaturalIsomorphism.Functions
+import Structure.Category.NaturalIsomorphism
 import Structure.Category.NaturalTransformation.Equiv
 import Structure.Category.NaturalTransformation.NaturalTransformations
 import Structure.Category.NaturalTransformation
+import Structure.Category.On₂
+import Structure.Category.Product.Proofs
+import Structure.Category.Product.Tuple
+import Structure.Category.Product
+-- import Structure.Category.Proofs.MonadIsEndofunctorMonoid
 import Structure.Category.Proofs
+import Structure.Category.Slice
+import Structure.Category.Structure.Monoid
+import Structure.Category.Tuple.Functors
+-- import Structure.Category.Tuple.Proofs.Monoidal
+import Structure.Category.Tuple.Proofs
+import Structure.Category.Tuple
 import Structure.Category
 import Structure.Container.IndexedIterable
 import Structure.Container.Iterable
+import Structure.Container.Map
 -- import Structure.Container.SetLike.Proofs
 -- import Structure.Container.SetLike
 import Structure.Function.Domain.Proofs
@@ -491,6 +645,13 @@ import Structure.Function
 import Structure.Groupoid.Functor
 import Structure.Groupoid.Groupoids
 import Structure.Groupoid
+import Structure.IEEE754
+import Structure.IndexedCategory.Functor
+import Structure.IndexedCategory
+import Structure.IndexedOperator.Properties.Preserving
+import Structure.IndexedOperator.Properties
+import Structure.IndexedOperator
+import Structure.IndexedRelator.Properties
 import Structure.Logic.Constructive.BoundedPredicate
 import Structure.Logic.Constructive.Predicate
 import Structure.Logic.Constructive.Proofs
@@ -573,7 +734,7 @@ import Structure.Real.Abs
 import Structure.Real
 import Structure.Relator.Apartness.Proofs
 import Structure.Relator.Apartness
-import Structure.Relator.Equivalence.Proofs
+import Structure.Relator.Equivalence.Proofs.On₂
 import Structure.Relator.Equivalence
 import Structure.Relator.Function.Multi
 import Structure.Relator.Function.Proofs
@@ -588,87 +749,123 @@ import Structure.Relator.Properties.Proofs
 import Structure.Relator.Properties
 import Structure.Relator
 import Structure.Semicategory
+import Structure.Set.Equiv
+import Structure.Set.Names
+import Structure.Set.Operators.Proofs.LogicalOperator
+import Structure.Set.Operators
+import Structure.Set.Quantifiers.Proofs
+import Structure.Set.Quantifiers
+import Structure.Set.Relations.Listable
+import Structure.Set.Relators.Proofs
+import Structure.Set.Relators
+import Structure.Set.ZFC.Inductive
+import Structure.Set.ZFC.Oper
+import Structure.Set.ZFC.Proofs.Classical
+import Structure.Set.ZFC
+import Structure.Set
 import Structure.Setoid.Category.HomFunctor
 import Structure.Setoid.Category
+import Structure.Setoid.Function
 import Structure.Setoid.Names
+import Structure.Setoid.On₂
 import Structure.Setoid.Proofs
+import Structure.Setoid.Signature.IndexedCategory
 import Structure.Setoid.Size.Proofs
+import Structure.Setoid.Size.Properties.Choice
 import Structure.Setoid.Size
+-- import Structure.Setoid.Structure.Type.Function
 import Structure.Setoid.Uniqueness.Proofs
 import Structure.Setoid.Uniqueness
 import Structure.Setoid.Universal
 import Structure.Setoid
-import Structure.Sets.Names
-import Structure.Sets.Operator
-import Structure.Sets.Quantifiers.Proofs
-import Structure.Sets.Quantifiers
-import Structure.Sets.Relator
-import Structure.Sets.Relators
-import Structure.Sets.ZFC.Classical
-import Structure.Sets.ZFC.Inductive
-import Structure.Sets.ZFC.Oper
-import Structure.Sets.ZFC
-import Structure.Sets
 import Structure.Signature
 import Structure.SignatureMulti
 -- import Structure.Topology.Proofs
 -- import Structure.Topology.Properties
 import Structure.Topology
-import Structure.Type.Function.Functions
+import Structure.Type.Dependent.Function.Properties
+import Structure.Type.Dependent.Function
+-- import Structure.Type.Function.Functions
+-- import Structure.Type.Function.Properties
 import Structure.Type.Function
-import Structure.Type.Identity.Proofs.Eliminator
--- import Structure.Type.Identity.Proofs.Multi
+import Structure.Type.Identity.Eliminator.Equality.Proofs.Structures
+import Structure.Type.Identity.Eliminator.Equality.Proofs
+import Structure.Type.Identity.Eliminator.Equality
+import Structure.Type.Identity.Eliminator.Functions
+import Structure.Type.Identity.GlobalSubstitution.Equality
+-- import Structure.Type.Identity.MinimalReflexiveRelation.Equality.Function
+import Structure.Type.Identity.MinimalReflexiveRelation.Equality
 import Structure.Type.Identity.Proofs
 import Structure.Type.Identity
 import Structure.Type.Quotient
 import Syntax.Do
+import Syntax.Existential
 import Syntax.Function
 import Syntax.Idiom
 import Syntax.Implication.Dependent
 import Syntax.Implication
 import Syntax.List
 import Syntax.Number
+import Syntax.Transitivity.Structure
 import Syntax.Transitivity
 import Syntax.Type
 import TestProp
-import Type.Category.ExtensionalFunctionsCategory.HomFunctor
-import Type.Category.ExtensionalFunctionsCategory
--- import Type.Category.IntensionalFunctionsCategory.HomFunctor
-import Type.Category.IntensionalFunctionsCategory.LvlUpFunctor
+-- import Type.Category.Applicative
+import Type.Category.FakeExtensionalFunctionsCategory
+import Type.Category.Functor
 import Type.Category.IntensionalFunctionsCategory
+import Type.Category.Monad
 import Type.Category
-import Type.Cubical.Equiv
+import Type.Cubical.Glue
 import Type.Cubical.HTrunc₁
 import Type.Cubical.InductiveInterval
 import Type.Cubical.InductivePath
+import Type.Cubical.Isomorphism.Equiv
+import Type.Cubical.Isomorphism.Proofs
+import Type.Cubical.Isomorphism
+import Type.Cubical.Logic.Extensionality
 import Type.Cubical.Logic
 import Type.Cubical.Path.Category
 import Type.Cubical.Path.Equality
+import Type.Cubical.Path.Functions
 import Type.Cubical.Path.Proofs
 import Type.Cubical.Path.Properties
+import Type.Cubical.Path.Univalence
 import Type.Cubical.Path
 import Type.Cubical.Quotient
+import Type.Cubical.Sub
 import Type.Cubical.SubtypeSet
-import Type.Cubical.Univalence
 import Type.Cubical
-import Type.Dependent.Equiv
 import Type.Dependent.Functions
-import Type.Dependent.FunctionsΣ
-import Type.Dependent
-import Type.Equiv
+import Type.Dependent.Pi
+import Type.Dependent.PiFunction.Category
+import Type.Dependent.PiFunction.Equivalence
+import Type.Dependent.PiFunction
+import Type.Dependent.Sigma.Equiv
+import Type.Dependent.Sigma.Functions
+import Type.Dependent.Sigma.Implicit
+import Type.Dependent.Sigma.Instance
+import Type.Dependent.Sigma
+import Type.Dependent.Universe
+import Type.Identity.Dependent
 -- import Type.Identity.Heterogenous.Proofs
 -- import Type.Identity.Heterogenous
 import Type.Identity.Proofs
 import Type.Identity
+import Type.Isomorphism.Equiv
 import Type.Isomorphism
+import Type.M
 import Type.Proofs
+import Type.Properties.Decidable.Functions
 import Type.Properties.Decidable.Proofs
 import Type.Properties.Decidable
 import Type.Properties.Empty.Proofs
 import Type.Properties.Empty
+import Type.Properties.Enumerable
 -- import Type.Properties.Homotopy.Proofs
 import Type.Properties.Homotopy
 import Type.Properties.Inhabited
+import Type.Properties.Listable
 import Type.Properties.MereProposition.Equiv
 import Type.Properties.MereProposition.Proofs
 import Type.Properties.MereProposition
@@ -681,5 +878,8 @@ import Type.Size.Countable
 import Type.Size.Finite
 import Type.Size.Proofs
 import Type.Size
-import Type.WellOrdering
+import Type.Universe
+import Type.W.Proofs
+import Type.W
 import Type
+import Typeω.Dependent.Sigma

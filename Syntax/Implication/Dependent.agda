@@ -1,7 +1,7 @@
 module Syntax.Implication.Dependent where
 
 open import Functional using (id)
-open import Functional.Dependent
+open import DependentFunctional
 import      Lvl
 open import Type
 

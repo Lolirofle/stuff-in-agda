@@ -56,7 +56,7 @@ splitExact 𝟎      l       = Some(<> , l)
 splitExact (𝐒(n)) ∅       = None
 splitExact (𝐒(n)) (x ⊰ l) = Option.map(Tuple.map (Raise.prepend x) id) (splitExact n l)
 
-open import Type.Dependent
+open import Type.Dependent.Sigma
 open import Type.Dependent.Functions
 beginning : (n : ℕ) → List(T) → Σ ℕ (T ^_)
 beginning _      ∅       = intro 𝟎 <>

@@ -32,7 +32,7 @@ private variable x y : F
 private variable f g h f₁ f₂ g₁ g₂ h₁ h₂ : F → F
 
 min : F → F → F
-min x y = Either.elim (const x) (const y) (converseTotal(_≤_){x}{y})
+min x y = Either.elim _ (const x) (const y) (converseTotal(_≤_){x}{y})
 
 -- The defining property of a min function.
 min-intro : ∀{ℓ}(P : F → Type{ℓ}) → ((x ≤ y) → P(x)) → ((x ≥ y) → P(y)) → P(min x y)
@@ -61,7 +61,7 @@ min-when-right{x}{y} = min-intro(m ↦ (x ≥ y) ↔ (m ≡ y))
   (yx ↦ [↔]-intro (const yx) (const(reflexivity(_≡_))))
 
 min-self : (min x x ≡ x)
-min-self{x} = Either.elim{P = const _} id id (min-values{x}{x})
+min-self{x} = Either.elim(const _) id id (min-values{x}{x})
 
 instance
   min-function : BinaryOperator(min)

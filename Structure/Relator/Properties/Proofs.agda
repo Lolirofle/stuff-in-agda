@@ -15,7 +15,7 @@ open import Type
 
 private variable ℓ ℓ₁ ℓ₂ ℓₑ : Lvl.Level
 private variable T A B : Type{ℓ}
-private variable _<_ _▫_ _▫₁_ _▫₂_ : T → T → Stmt{ℓ}
+private variable _<_ _▫_ _▫₁_ _▫₂_ _▫₃_ : T → T → Stmt{ℓ}
 private variable f : T → T
 
 [asymmetry]-to-irreflexivity : ⦃ _ : Asymmetry(_<_) ⦄ → Irreflexivity(_<_)
@@ -44,6 +44,12 @@ Subtransitivityₗ.proof (subrelation-transitivity-to-subtransitivityₗ {_▫�
 
 subrelation-transitivity-to-subtransitivityᵣ : ⦃ sub : (_▫₁_) ⊆₂ (_▫₂_) ⦄ ⦃ trans : Transitivity(_▫₂_) ⦄ → Subtransitivityᵣ(_▫₂_)(_▫₁_)
 Subtransitivityᵣ.proof (subrelation-transitivity-to-subtransitivityᵣ {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_}) xy yz = transitivity(_▫₂_) xy (sub₂(_▫₁_)(_▫₂_) yz)
+
+subrelation-subtransitivityᵣ-to-subtransitivityᵣ : ⦃ sub : (_▫₁_) ⊆₂ (_▫₂_) ⦄ ⦃ trans : Subtransitivityᵣ(_▫₃_)(_▫₂_) ⦄ → Subtransitivityᵣ(_▫₃_)(_▫₁_)
+Subtransitivityᵣ.proof (subrelation-subtransitivityᵣ-to-subtransitivityᵣ {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_} {_▫₃_ = _▫₃_}) xy yz = subtransitivityᵣ(_▫₃_)(_▫₂_) xy (sub₂(_▫₁_)(_▫₂_) yz)
+
+subrelation-subtransitivityₗ-to-subtransitivityₗ : ⦃ sub : (_▫₁_) ⊆₂ (_▫₂_) ⦄ ⦃ trans : Subtransitivityₗ(_▫₃_)(_▫₂_) ⦄ → Subtransitivityₗ(_▫₃_)(_▫₁_)
+Subtransitivityₗ.proof (subrelation-subtransitivityₗ-to-subtransitivityₗ {_▫₁_ = _▫₁_} {_▫₂_ = _▫₂_} {_▫₃_ = _▫₃_}) xy yz = subtransitivityₗ(_▫₃_)(_▫₂_) (sub₂(_▫₁_)(_▫₂_) xy) yz
 
 -- TODO: https://proofwiki.org/wiki/Definition%3aRelation_Compatible_with_Operation and substitution. Special case for (≡) and function application: ∀(x∊T)∀(y∊T). (x ≡ y) → (∀(f: T→T). f(x) ≡ f(y))
 

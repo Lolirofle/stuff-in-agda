@@ -1,7 +1,7 @@
 module Structure.Category.NaturalTransformation.NaturalTransformations where
 
 open import Functional           using () renaming (id to idᶠⁿ)
-open import Functional.Dependent using () renaming (_∘_ to _∘ᶠⁿ_)
+open import DependentFunctional using () renaming (_∘_ to _∘ᶠⁿ_)
 open import Logic
 open import Logic.Predicate
 import      Lvl
@@ -15,7 +15,7 @@ open import Structure.Setoid
 open import Syntax.Transitivity
 open import Type
 
-open CategoryObject
+open CategoryObject using (Object ; category ; morphism-equiv)
 private variable ℓₒₗ ℓₒᵣ ℓₘₗ ℓₘᵣ ℓₑₗ ℓₑᵣ : Lvl.Level
 
 module Raw
@@ -33,8 +33,11 @@ module Raw
   idᴺᵀ : (x : Object(catₗ)) → (F(x) ⟶ F(x))
   idᴺᵀ _ = id
 
+  -- Vertical composition of natural transformations.
   _∘ᴺᵀ_ : ((x : Object(catₗ)) → (F₂(x) ⟶ F₃(x))) → ((x : Object(catₗ)) → (F₁(x) ⟶ F₂(x))) → ((x : Object(catₗ)) → (F₁(x) ⟶ F₃(x)))
   (comp₁ ∘ᴺᵀ comp₂)(x) = comp₁(x) ∘ comp₂(x)
+  infixr 20 _∘ᴺᵀ_
+
 
 module _
   {catₗ : CategoryObject{ℓₒₗ}{ℓₘₗ}{ℓₑₗ}}
@@ -74,5 +77,6 @@ module _
     idᴺᵀ : (F →ᴺᵀ F)
     idᴺᵀ = [∃]-intro (Raw.idᴺᵀ(catₗ)(catᵣ)) ⦃ identity ⦄
 
-    _∘ᴺᵀ_ : (F₂ →ᴺᵀ F₃) → (F₁ →ᴺᵀ F₂) → (F₁ →ᴺᵀ F₃)
+    _∘ᴺᵀ_ : let _ = F₁ in (F₂ →ᴺᵀ F₃) → (F₁ →ᴺᵀ F₂) → (F₁ →ᴺᵀ F₃)
     _∘ᴺᵀ_ ([∃]-intro F ⦃ F-proof ⦄) ([∃]-intro G ⦃ G-proof ⦄) = [∃]-intro (Raw._∘ᴺᵀ_ (catₗ)(catᵣ) F G) ⦃ composition F-proof G-proof ⦄
+    infixr 20 _∘ᴺᵀ_

@@ -3,6 +3,7 @@ module Data.Option.Functions where
 import      Lvl
 open import Data
 open import Data.Boolean
+open import Data.Boolean.Stmt
 open import Data.Either as Either using (_‖_)
 open import Data.Option as Option
 open import Data.Tuple as Tuple using (_⨯_ ; _,_)
@@ -25,7 +26,7 @@ partialMap = Option.elim
 -- Alternative implementation:
 --   map def f(None)   = None
 --   map def f(Some x) = Some(f(x))
-map : (T₁ → T₂) → Option(T₁) → Option(T₂)
+map : (A → B) → (Option(A) → Option(B))
 map = partialMap None ∘ (Some ∘_)
 
 -- Either the value inside the option container or the default value when it is none.
@@ -58,6 +59,10 @@ isNone : Option(T) → Bool
 isNone None     = 𝑇
 isNone (Some _) = 𝐹
 
+-- Extracts the optional value when there is a value.
+extract : (o : Option(T)) → .⦃ IsTrue(isSome(o)) ⦄ → T
+extract (Some x) = x
+
 -- Passes the inner value of the option to an option-valued function.
 -- A monadic bind for options.
 -- Alternative implementation:
@@ -65,6 +70,12 @@ isNone (Some _) = 𝐹
 --   _andThen_ (Some x) f = f(x)
 _andThen_ : Option(T₁) → (T₁ → Option(T₂)) → Option(T₂)
 _andThen_ = swap(Option.elim None)
+
+matching : (T₁ → T₂ → Bool) → (Option(T₁) → Option(T₂) → Bool)
+matching(_▫_) None     None     = 𝑇
+matching(_▫_) None     (Some y) = 𝐹
+matching(_▫_) (Some x) None     = 𝐹
+matching(_▫_) (Some x) (Some y) = x ▫ y
 
 combine : (T₁ → T₂ → T₃) → (T₁ → Option(T₃)) → (T₂ → Option(T₃)) → (Option(T₁) → Option(T₂) → Option(T₃))
 combine(_▫_) l r None     None     = None

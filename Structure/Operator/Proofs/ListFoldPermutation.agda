@@ -9,13 +9,13 @@ import      Lvl
 open import Logic.Propositional
 open import Relator.Equals
 open import Relator.Equals.Proofs.Equiv
--- open import Structure.Relator.Equivalence.Proofs
+-- open import Structure.Relator.Equivalence.Proofs.On₂
 open import Structure.Relator.Properties
 -- open import Structure.Setoid renaming (_≡_ to _≡ₛ_ ; _≢_ to _≢ₛ_)
 -- open import Structure.Setoid.Uniqueness
 open import Syntax.Transitivity
 open import Type
--- open import Type.Dependent
+-- open import Type.Dependent.Sigma
 
 -- open import Logic.Classical
 
